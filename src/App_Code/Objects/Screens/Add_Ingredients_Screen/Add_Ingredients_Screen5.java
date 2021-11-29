@@ -891,7 +891,7 @@ public class Add_Ingredients_Screen5 extends JFrame
                         // Removing Objects from memory as the row they belong to is gone
                         prices.remove(id);
                         shopJComboBoxes.remove(id);
-                        quantityPerPack_TxtField.remove(id);
+                        quantityPerPack.remove(id);
                     });
 
                     eastPanel.add(deleteRowBtn);
