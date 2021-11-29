@@ -1,0 +1,80 @@
+
+-- ######################################################
+delete from ingredientInShops;
+delete from ingredients_in_meal;
+delete from meals;
+delete from plans;
+delete from ingredients_info;
+
+-- ######################################################
+-- plans Database Insert Statements
+-- ######################################################
+
+INSERT INTO plans  (SelectedPlan, Plan_Name) VALUES
+(NULL, 'Temp_Plan'), 
+(true, 'Non-Vegan Plan 1');
+
+
+-- #####################################################
+-- meals Database Insert Statements
+-- #####################################################
+
+INSERT INTO meals (PlanID, Meal_Name) VALUES
+(2,'Fancy Meal'),
+(2,'Full Meal'),
+(2,'Empty Meal');
+
+
+-- #####################################################
+-- ingredients_info Database Insert Statements
+-- #####################################################
+
+INSERT INTO ingredients_info
+(Meassurement, Ingredient_Name, Ingredient_Type, Based_On_Quantity,  Protein, Carbohydrates, Fat, Saturated_Fat, Salt, Water_Content, Calories)
+
+VALUES
+('Grams', 'None Of The Above', 'None Of The Above', 0,0,0,0,0,0,0,0),
+( 'Grams', 'Carrot', 'Vegetables', 100, 0.90, 10.00, 0.20, 0.0, 69.00, 0.00, 41.00),
+( 'Grams', 'Sweet Potato', 'Potatoes', 100, 1.60, 20.00, 0.10, 0.0, 55.00, 0.00, 86.00),
+( 'Grams', 'Brown Pasta', 'Pasta', 100, 5.00, 25.00, 1.10, 0.2, 6.00, 0.00, 131.00);
+
+
+-- #####################################################
+-- ingredientInShops Database Insert Statements
+-- #####################################################
+INSERT INTO ingredientInShops
+(IngredientID, Volume_Per_Unit, Cost_Per_Unit, Store)
+
+VALUES
+
+(1, 0.00, 0.00, 'No Shop'),
+(2, 1000.00, 0.43, 'ASDA'),
+(2, 1000.00, 0.5, 'Sainsbury'),
+(3, 1000.00, 0.92, 'ASDA'),
+(4, 500.00, 0.50, 'ASDA');
+
+-- #####################################################
+-- ingredients_in_meal Database Insert Statements
+-- #####################################################
+
+INSERT INTO ingredients_in_meal
+(MealID, PlanID, IngredientID, Quantity, PDID)
+
+VALUES
+
+(2, 2, 1, 20.00, 1),
+(2, 2, 2, 20.00, 2),
+(2, 2, 2, 40.00, NULL),
+(2, 2, 3, 260.00, NULL),
+
+
+(1, 2, 2, 40.00, NULL);
+
+
+
+--#################################################################################################
+select * from ingredients_info;
+select * from ingredients_in_meal;
+select * from ingredientInShops;
+
+select * from ingredients_in_meal_calculation;

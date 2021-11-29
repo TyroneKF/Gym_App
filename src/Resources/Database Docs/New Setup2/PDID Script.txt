@@ -1,0 +1,37 @@
+
+SELECT IFNULL
+(
+	(
+		SELECT   i._NEW_POSSIBLE_PDID
+		FROM  
+		(       SELECT  n.IngredientID AS _NEW_IngredientID , i.PDID AS OLD_PDID
+				
+				FROM ingredients_in_meal i, ingredients_info n
+				
+				WHERE n.IngredientID = 1
+				AND i.PlanID = 1 AND i.Ingredients_Index = 2
+		) AS t
+
+		INNER JOIN 
+		(
+		  SELECT PDID AS _PDID, Store AS OLD_STORE FROM ingredientInShops 
+		  
+		) AS c 
+
+		ON c._PDID = t.OLD_PDID
+
+		INNER JOIN 
+		(
+			SELECT PDID _NEW_POSSIBLE_PDID, IngredientID, Store AS NEW_POSSIBLE_Supplier
+			FROM ingredientInShops		
+		) AS i 
+
+		ON 
+		i.IngredientID = t._NEW_IngredientID
+		AND
+		c.OLD_STORE = i.NEW_POSSIBLE_Supplier
+		
+	)
+	
+, NULL);
+

@@ -1,0 +1,71 @@
+DELETE FROM ingredients_in_meal  WHERE PlanID =1;
+DELETE FROM meals  WHERE PlanID =1;
+
+--###########################################################################
+-- Copy meals in planID to Temp PlanID
+--###########################################################################
+DROP TABLE IF EXISTS temp_meal;
+
+CREATE table temp_meal AS 
+SELECT * FROM meals 
+WHERE PlanID= 2;
+
+ALTER TABLE temp_meal MODIFY mealID INT; -- allow null values so when copying new ids are generated
+
+UPDATE temp_meal SET MealID = NULL;
+
+UPDATE temp_meal SET PlanID = 1;
+
+INSERT INTO meals SELECT * FROM temp_meal;
+
+DROP TABLE temp_meal;
+
+--###########################################################################
+-- Copy Meal Ingredients Over
+--###############################################
+
+DROP TABLE IF EXISTS temp_ingredients_in_meal;
+
+CREATE table temp_ingredients_in_meal  AS 
+
+SELECT 
+	i.*, m.Meal_name
+FROM 
+	ingredients_in_meal i, meals m
+
+WHERE 
+	i.PlanID= 2 AND i.mealID = m.mealID;
+	
+--###############################################
+
+ALTER TABLE temp_ingredients_in_meal MODIFY  ingredients_in_meal_ID INT; -- allow null values so when copying new ids are generated
+UPDATE temp_ingredients_in_meal SET  ingredients_in_meal_ID = NULL;
+
+UPDATE temp_ingredients_in_meal  SET PlanID = 1;
+
+UPDATE temp_ingredients_in_meal  SET MEALID = 1;
+
+UPDATE temp_ingredients_in_meal  as temp -- change table name
+
+INNER JOIN
+    (
+      SELECT * from meals WHERE PlanID = 1
+	) as M
+ON 
+    temp.Meal_Name = M.Meal_Name
+SET
+    temp.MEALID = M.MEALID;
+
+--##################################################
+ALTER TABLE temp_ingredients_in_meal DROP COLUMN Meal_Name;
+
+--###########################################################
+INSERT INTO ingredients_in_meal SELECT * FROM temp_ingredients_in_meal;
+
+DROP TABLE temp_ingredients_in_meal;
+--###########################################################################;
+
+SELECT *  FROM ingredients_in_meal;
+SELECT * FROM  ingredients_in_meal_calculation;
+SELECT * FROM  total_meal_view;
+
