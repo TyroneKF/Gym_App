@@ -125,35 +125,10 @@ public class Add_Ingredients_Screen5 extends JFrame
                 submitButton.setFont(new Font("Arial", Font.BOLD, 14)); // setting font
                 submitButton.setPreferredSize(new Dimension(50, 50)); // width, height
 
-                // creating commands for submit button to execute on
-                submitButton.addActionListener(ae -> {
-
-                    boolean errorFound = false;
-
-                    // ingredientsForm
-                    if (!(ingredientsForm.validate_IngredientsForm()))
-                    {
-                        errorFound = true;
-                    }
-
-                    // ShopForm
-                    if (!(shopForm.validateForm()))
-                    {
-                        errorFound = true;
-                    }
-
-                    if (!errorFound)
-                    {
-                        updateShops = false; updateIngredientsForm = false; // reset values
-                        if (updateBothForms(ingredientsForm.get_IngredientsForm_UpdateString(), shopForm.updateString_Shop()))
-                        {
-                            closeWindowEvent();
-                            gui.updateInfo();
-                            gui.macrosTargetsChanged(true);
-                            closeWindow();
-                        }
-                    }
-                });
+            // creating commands for submit button to execute on
+            submitButton.addActionListener(ae -> {
+                submitBTN_Action();
+            });
 
                 screenSectioned.add(submitButton, BorderLayout.SOUTH);
 
