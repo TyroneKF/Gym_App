@@ -32,10 +32,7 @@ public class Add_Ingredients_Screen5 extends JFrame
     private String planName;
     private MealPlanScreen5 gui;
 
-    private boolean formEditable = false, updateIngredientsForm = false, updateShops = false;
-
-
-    //#################################################################################################################
+    //##################################################################################################################
     // Constuctor
     //##################################################################################################################
 
@@ -90,43 +87,8 @@ public class Add_Ingredients_Screen5 extends JFrame
 
                 addIngredientsFormJPanel = new JPanel(new GridBagLayout());
                 tp.add("Add Ingredients", addIngredientsFormJPanel);
-                JPanel addForm = new createForm(
 
-                )
-                {
-                    @Override
-                    public void submitBTN_Action()
-                    {
-                        boolean errorFound = false;
-
-                        // ingredientsForm
-                        if (!(ingredientsForm.validate_IngredientsForm()))
-                        {
-                            errorFound = true;
-                        }
-
-                        // ShopForm
-                        if (!(shopForm.validateForm()))
-                        {
-                            errorFound = true;
-                        }
-
-                        if (!errorFound)
-                        {
-                            updateShops = false;
-                            updateIngredientsForm = false; // reset values
-                            if (updateBothForms(ingredientsForm.get_IngredientsForm_UpdateString(), shopForm.updateString_Shop()))
-                            {
-                                closeWindowEvent();
-                                gui.updateInfo();
-                                gui.macrosTargetsChanged(true);
-                                closeWindow();
-                            }
-                        }
-                    }
-                };
-
-                addToContainer(addIngredientsFormJPanel, addForm, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
+                addToContainer(addIngredientsFormJPanel, new createForm(), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
 
                 /*
                  //#################################################
@@ -169,6 +131,8 @@ public class Add_Ingredients_Screen5 extends JFrame
         ShopForm shopForm;
 
         JPanel scrollPaneJPanel;
+
+        private boolean formEditable = false, updateIngredientsForm = false, updateShops = false;
 
         createForm()
         {
@@ -251,7 +215,37 @@ public class Add_Ingredients_Screen5 extends JFrame
 
             // creating commands for submit button to execute on
             submitButton.addActionListener(ae -> {
-                submitBTN_Action();
+
+                boolean errorFound = false;
+
+                // ingredientsForm
+                if (!(ingredientsForm.validate_IngredientsForm()))
+                {
+                    errorFound = true;
+                }
+
+                // ShopForm
+                if (!(shopForm.validateForm()))
+                {
+                    errorFound = true;
+                }
+
+                if (!errorFound)
+                {
+                    updateShops = false;
+                    updateIngredientsForm = false; // reset values
+
+                    if (updateBothForms(ingredientsForm.get_IngredientsForm_UpdateString(), shopForm.updateString_Shop()))
+                    {
+                        gui.updateInfo();
+                        gui.macrosTargetsChanged(true);
+
+                        ingredientsForm.refreshIngredientsForm();
+                        shopForm.refreshShopForm();
+
+                        resize_GUI();
+                    }
+                }
             });
 
             add(submitButton, BorderLayout.SOUTH);
@@ -261,21 +255,6 @@ public class Add_Ingredients_Screen5 extends JFrame
             //###################################################################################
             resize_GUI();
         }
-
-        public void submitBTN_Action()
-        {
-
-        }
-
-        private void resize_GUI()
-        {
-            contentPane.revalidate();
-            scrollPaneJPanel.revalidate();
-            addIngredientsFormJPanel.revalidate();
-            addIngredientsFormJPanel.revalidate();
-            revalidate();
-        }
-
 
         //#################################################################################################################
         // IngredientsForm Methods
@@ -354,19 +333,7 @@ public class Add_Ingredients_Screen5 extends JFrame
 
                 refresh_Btn.addActionListener(ae -> {
 
-                    for (int i = 0; i < ingredientsFormObjects.size(); i++)
-                    {
-                        Component comp = ingredientsFormObjects.get(i);
-
-                        if (comp instanceof JComboBox)
-                        {
-                            ((JComboBox<?>) comp).setSelectedIndex(-1);
-                        }
-                        else if (comp instanceof JTextField)
-                        {
-                            ((JTextField) comp).setText("");
-                        }
-                    }
+                    refreshIngredientsForm();
                 });
 
                 iconPanelInsert.add(refresh_Icon_Btn);
@@ -456,6 +423,23 @@ public class Add_Ingredients_Screen5 extends JFrame
                     inputArea.add(textField);
                 }
                 mainJPanel.add(inputArea, BorderLayout.CENTER);
+            }
+
+            private void refreshIngredientsForm()
+            {
+                for (int i = 0; i < ingredientsFormObjects.size(); i++)
+                {
+                    Component comp = ingredientsFormObjects.get(i);
+
+                    if (comp instanceof JComboBox)
+                    {
+                        ((JComboBox<?>) comp).setSelectedIndex(-1);
+                    }
+                    else if (comp instanceof JTextField)
+                    {
+                        ((JTextField) comp).setText("");
+                    }
+                }
             }
 
             private boolean validate_IngredientsForm()// HELLO Modify
@@ -612,18 +596,21 @@ public class Add_Ingredients_Screen5 extends JFrame
 
         public class ShopForm extends CollapsibleJPanel
         {
-            AddShopForm_Object addShopForm_object;
             int objectID = 0;
 
             HashMap<Integer, JComboBox> shopJComboBoxes = new HashMap<>();
             HashMap<Integer, JTextField> prices = new HashMap<>();
             HashMap<Integer, JTextField> quantityPerPack = new HashMap<>();
 
+            ArrayList<AddShopForm_Object> rowsInTable = new ArrayList<>();
+
             String shopsInfo[];
+            Container parentContainer;
 
             public ShopForm(Container parentContainer, String btnText, int btnWidth, int btnHeight)
             {
                 super(parentContainer, btnText, btnWidth, btnHeight);
+                this.parentContainer = parentContainer;
 
                 String query = "SELECT DISTINCT Store_Name FROM stores;";
 
@@ -902,6 +889,18 @@ public class Add_Ingredients_Screen5 extends JFrame
                 return updateString;
             }
 
+            public void refreshShopForm()
+            {
+                Iterator<AddShopForm_Object> it = rowsInTable.iterator();
+                while(it.hasNext()) {
+                    AddShopForm_Object i = it.next();
+                    i.removeFromParentContainer();
+                    it.remove();
+                }
+
+                parentContainer.revalidate();
+            }
+
             class AddShopForm_Object extends JPanel
             {
                 private int posY = 0, id;
@@ -993,16 +992,17 @@ public class Add_Ingredients_Screen5 extends JFrame
 
                         // creating commands for submit button to execute on
                         deleteRowBtn.addActionListener(ae -> {
-                            parentContainer.remove(rowPanel); // remove this row from GUI
-                            parentContainer.revalidate(); // update screen
 
-                            // Removing Objects from memory as the row they belong to is gone
-                            prices.remove(id);
-                            shopJComboBoxes.remove(id);
-                            quantityPerPack.remove(id);
+                            removeFromParentContainer();
+                            rowsInTable.remove(this);
                         });
 
                         eastPanel.add(deleteRowBtn);
+
+                        //#####################################################
+                        // Adding row to memory
+                        //######################################################
+                        rowsInTable.add(this);
                     }
                     else
                     {
@@ -1055,6 +1055,17 @@ public class Add_Ingredients_Screen5 extends JFrame
                     addToContainer(parentContainer, rowPanel, 0, posY += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
                     parentContainer.revalidate();
                 }
+
+                public void removeFromParentContainer()
+                {
+                    // Removing Objects from memory as the row they belong to is gone
+                    prices.remove(id);
+                    shopJComboBoxes.remove(id);
+                    quantityPerPack.remove(id);
+
+                    //Remove from parent Container
+                    parentContainer.remove(this);
+                }
             }
         }
 
@@ -1082,46 +1093,59 @@ public class Add_Ingredients_Screen5 extends JFrame
             return panel;
         }
 
-    }
-    //#################################################################################################################
-    // General Methods
-    //##################################################################################################################
-
-    public boolean updateBothForms(String updateIngredients_String, String updateIngredientShops_String)
-    {
-        System.out.printf("\n\n%s", updateIngredients_String, updateIngredientShops_String);
-
-        //####################################
-        // Error forming update String (exit)
-        //####################################
-
-        if (!updateShops || !updateIngredientsForm)
+        //#################################################################################################################
+        // Other Methods
+        //##################################################################################################################
+        public boolean updateBothForms(String updateIngredients_String, String updateIngredientShops_String)
         {
-            return false;
-        }
+            System.out.printf("\n\n%s", updateIngredients_String, updateIngredientShops_String);
 
-        //####################################
-        // Uploading Query
-        //####################################
-        if (!(db.uploadData_Batch(new String[]{updateIngredients_String})))
-        {
-            JOptionPane.showMessageDialog(gui.getFrame(), "Un-able to Create Ingredient In DB!");
-            return false;
-        }
+            //####################################
+            // Error forming update String (exit)
+            //####################################
 
-        if (updateIngredientShops_String!=null)
-        {
-            if (!(db.uploadData_Batch(new String[]{updateIngredientShops_String})))
+            if (!updateShops || !updateIngredientsForm)
             {
-                JOptionPane.showMessageDialog(gui.getFrame(), "Un-able to Add Shops For Ingredient In DB!");
                 return false;
             }
+
+            //####################################
+            // Uploading Query
+            //####################################
+            if (!(db.uploadData_Batch(new String[]{updateIngredients_String})))
+            {
+                JOptionPane.showMessageDialog(gui.getFrame(), "Un-able to Create Ingredient In DB!");
+                return false;
+            }
+
+            if (updateIngredientShops_String!=null)
+            {
+                if (!(db.uploadData_Batch(new String[]{updateIngredientShops_String})))
+                {
+                    JOptionPane.showMessageDialog(gui.getFrame(), "Un-able to Add Shops For Ingredient In DB!");
+                    return false;
+                }
+            }
+
+            JOptionPane.showMessageDialog(gui.getFrame(), "Successfully Created Ingredient In DB!!!");
+
+            return true;
         }
 
-        JOptionPane.showMessageDialog(gui.getFrame(), "Successfully Created Ingredient In DB!!!");
+        private void resize_GUI()
+        {
+            contentPane.revalidate();
+            scrollPaneJPanel.revalidate();
+            addIngredientsFormJPanel.revalidate();
+            addIngredientsFormJPanel.revalidate();
+            revalidate();
+        }
 
-        return true;
     }
+
+    //##################################################################################################################
+    // General Methods
+    //##################################################################################################################
 
     public Integer getNewIngredientID()
     {
@@ -1145,11 +1169,6 @@ public class Add_Ingredients_Screen5 extends JFrame
         setResizable(false);
 
         setLocationRelativeTo(null);
-    }
-
-    public void closeWindow()
-    {
-        this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }
 
     public void closeWindowEvent()
