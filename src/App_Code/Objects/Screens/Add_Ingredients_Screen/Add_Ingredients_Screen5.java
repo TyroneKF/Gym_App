@@ -20,6 +20,7 @@ public class Add_Ingredients_Screen5 extends JFrame
     //#######################################
     // General Variables
     //#######################################
+
     private GridBagConstraints gbc = new GridBagConstraints();
     Integer newIngredientsID2;
 
@@ -163,7 +164,7 @@ public class Add_Ingredients_Screen5 extends JFrame
             int yPos = 0;
 
             //###########################
-            // JComboBox
+            // JComboBox //HELLO EDIT
             //###########################
             JPanel jp = new JPanel(new GridLayout(1, 1));
 
@@ -181,9 +182,9 @@ public class Add_Ingredients_Screen5 extends JFrame
             });
 
             jp.add(jComboBox);
-            jp.setPreferredSize(new Dimension(650, 80));
+            jp.setPreferredSize(new Dimension(650, 50));
 
-            addToContainer(scrollPaneJPanel, jp, 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+            addToContainer(scrollPaneJPanel, jp, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 10, 0);
 
             //###########################
             //Ingredients form
@@ -993,8 +994,8 @@ public class Add_Ingredients_Screen5 extends JFrame
                         // creating commands for submit button to execute on
                         deleteRowBtn.addActionListener(ae -> {
 
-                            removeFromParentContainer();
-                            rowsInTable.remove(this);
+                                removeFromParentContainer();
+                                rowsInTable.remove(this);
                         });
 
                         eastPanel.add(deleteRowBtn);
@@ -1065,6 +1066,10 @@ public class Add_Ingredients_Screen5 extends JFrame
 
                     //Remove from parent Container
                     parentContainer.remove(this);
+
+                    //Resizing
+                    parentContainer.revalidate();
+                    resize_GUI();
                 }
             }
         }
