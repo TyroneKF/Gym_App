@@ -22,7 +22,6 @@ public class Add_Ingredients_Screen5 extends JFrame
     //#######################################
 
     private GridBagConstraints gbc = new GridBagConstraints();
-    Integer newIngredientsID2;
 
     int jFramewidth = 710, jFrameheight = 750;
     Container contentPane;
@@ -32,6 +31,11 @@ public class Add_Ingredients_Screen5 extends JFrame
     private Integer temp_PlanID, planID;
     private String planName;
     private MealPlanScreen5 gui;
+
+    private boolean update = false;
+
+    private String[] ingredientNames;
+    JComboBox jComboBox = new JComboBox();
 
     //##################################################################################################################
     // Constuctor
@@ -50,8 +54,13 @@ public class Add_Ingredients_Screen5 extends JFrame
         {
             if (db.isDatabaseConnected())
             {
-                newIngredientsID2 = getNewIngredientID();
-                //###################################################################################
+                ingredientNames = getIngredientNames();
+                if(ingredientNames == null)
+                {
+                    return;
+                }
+
+               //###################################################################################
                 // Frame Set-Up
                 //###################################################################################
 
@@ -85,39 +94,18 @@ public class Add_Ingredients_Screen5 extends JFrame
                 //#################################################
                 // Creating Add Ingredients Screen
                 //#################################################
-
                 addIngredientsFormJPanel = new JPanel(new GridBagLayout());
                 tp.add("Add Ingredients", addIngredientsFormJPanel);
 
-                addToContainer(addIngredientsFormJPanel, new createForm(), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
+                addToContainer(addIngredientsFormJPanel, new createForm(false), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
 
-                /*
-                 //#################################################
+                //#################################################
                 // Creating Edit Ingredients Screen
                 //##################################################
-                editIngredientsFormJPanel = new JPanel(new GridBagLayout());
-
-                String[] petStrings = { "Bird", "Cat", "Dog", "Rabbit", "Pig" };
-                JComboBox petList = new JComboBox(petStrings);
-                petList.addItemListener(new ItemListener()
-                {
-                    public void itemStateChanged(ItemEvent ie)
-                    {
-
-                    }
-
-                });
-
+                editIngredientsFormJPanel  = new JPanel(new GridBagLayout());
                 tp.add("Edit Ingredients", editIngredientsFormJPanel);
-                new createForm(editIngredientsFormJPanel){
-                    @Override
-                    public void submitBTN_Action()
-                    {
 
-                    }
-                };
-
-                 */
+                addToContainer(editIngredientsFormJPanel , new createForm(true), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
             }
         }
         catch (Exception e)
@@ -133,9 +121,10 @@ public class Add_Ingredients_Screen5 extends JFrame
 
         JPanel scrollPaneJPanel;
 
+
         private boolean formEditable = false, updateIngredientsForm = false, updateShops = false;
 
-        createForm()
+        createForm(boolean editScreen)
         {
             //###################################################################################
             //   Create Screen for Interface
@@ -158,48 +147,98 @@ public class Add_Ingredients_Screen5 extends JFrame
             scrollPaneJPanel.setLayout(new GridBagLayout());
             addToContainer(mainCentreScreen, scrollPane, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
 
-            //##########################################################
+            //##################################################################################
             // Creating Parts of screen & adding it to interface
-            //#########################################################
+            //##################################################################################
             int yPos = 0;
 
-            //###########################
-            // JComboBox //HELLO EDIT
-            //###########################
-            JPanel jp = new JPanel(new GridLayout(1, 1));
-
-            String[] petStrings = {"Bird", "Cat", "Dog", "Rabbit", "Pig"};
-            JComboBox jComboBox = new JComboBox(petStrings);
-
-            ((JLabel) jComboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER); // centre text
-            jComboBox.addItemListener(new ItemListener()
+            if(editScreen)
             {
-                public void itemStateChanged(ItemEvent ie)
+                //############################
+                // Delete BTN Icon Setup
+                //############################
+
+                JPanel iconArea = new JPanel(new GridBagLayout());
+                addToContainer(scrollPaneJPanel, iconArea, 0, yPos+=1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+
+                IconPanel iconPanel = new IconPanel(1, 10, "East");
+                JPanel iconPanelInsert = iconPanel.getIconJpanel();
+
+                addToContainer(iconArea, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0);
+
+                //##########################
+                // DELETE Icon
+                //##########################
+                int width = 35;
+                int height = 35;
+
+                IconButton delete_Icon_Btn = new IconButton("src/images/x/x.png", "", width, height, width, height,
+                        "centre", "right"); // btn text is useless here , refactor
+
+                JButton delete_Btn = delete_Icon_Btn.returnJButton();
+                delete_Icon_Btn.makeBTntransparent();
+
+                delete_Btn.addActionListener(ae -> {
+
+
+                });
+
+                iconPanelInsert.add(delete_Icon_Btn);
+
+                //###########################
+                // JComboBox
+                //###########################
+                JPanel jp = new JPanel(new GridLayout(1, 1));
+
+                updateJComboBox();
+
+                ((JLabel) jComboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER); // centre text
+
+                /*
+                jComboBox.addItemListener(new ItemListener()
                 {
+                    public void itemStateChanged(ItemEvent ie)
+                    {
+                        System.out.printf("\nTriggered JComboBox Event");
+                        if(getUpdate())
+                        {
+                            jComboBox.removeAllItems();
+                            for(String s: ingredientNames)
+                            {
+                                jComboBox.addItem(s);
+                            }
+                            System.out.printf("\nJCOMBOBOX Ingredients List Updated");
 
-                }
+                            setUpdate(false);
+                        }
+                    }
 
-            });
+                });
+                */
 
-            jp.add(jComboBox);
-            jp.setPreferredSize(new Dimension(650, 50));
+                jp.add(jComboBox);
+                jp.setPreferredSize(new Dimension(650, 50));
 
-            addToContainer(scrollPaneJPanel, jp, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 10, 0);
+                addToContainer(scrollPaneJPanel, jp, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 10, 0);
+            }
 
             //###########################
             //Ingredients form
             //###########################
             ingredientsForm = new IngredientsForm(this, "Add Ingredinets Info", 250, 50);
             addToContainer(scrollPaneJPanel, ingredientsForm, 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+
             //###########################
             //Space Divider
             //###########################
             addToContainer(scrollPaneJPanel, new JPanel(), 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 10, 0);
+
             //###########################
             // Add shop
             //###########################
             shopForm = new ShopForm(scrollPaneJPanel, "Add Ingredient Suppliers", 250, 50);
             addToContainer(scrollPaneJPanel, shopForm, 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+
             //###########################
             //Space Divider
             //###########################
@@ -238,11 +277,23 @@ public class Add_Ingredients_Screen5 extends JFrame
 
                     if (updateBothForms(ingredientsForm.get_IngredientsForm_UpdateString(), shopForm.updateString_Shop()))
                     {
+                        //HELLO REMOVE COMMENTS
+                        /*
                         gui.updateInfo();
                         gui.macrosTargetsChanged(true);
 
+                         */
+
                         ingredientsForm.refreshIngredientsForm();
                         shopForm.refreshShopForm();
+
+                        if(!editScreen)
+                        {
+                            setUpdate(true);
+                            ingredientNames = getIngredientNames();
+                            System.out.printf("\nIngredients List Updated");
+                            updateJComboBox();
+                        }
 
                         resize_GUI();
                     }
@@ -549,7 +600,7 @@ public class Add_Ingredients_Screen5 extends JFrame
                 //####################################
                 // Get New ID
                 //####################################
-
+                Integer newIngredientsID2 = getNewIngredientID();
                 if (newIngredientsID2==null)
                 {
                     return null;
@@ -846,7 +897,7 @@ public class Add_Ingredients_Screen5 extends JFrame
                 //########################################
                 // Get new Ingredient ID
                 //########################################
-
+                Integer newIngredientsID2 = getNewIngredientID();
                 if (newIngredientsID2==null)
                 {
                     return null;
@@ -1101,6 +1152,7 @@ public class Add_Ingredients_Screen5 extends JFrame
         //#################################################################################################################
         // Other Methods
         //##################################################################################################################
+
         public boolean updateBothForms(String updateIngredients_String, String updateIngredientShops_String)
         {
             System.out.printf("\n\n%s", updateIngredients_String, updateIngredientShops_String);
@@ -1145,13 +1197,52 @@ public class Add_Ingredients_Screen5 extends JFrame
             addIngredientsFormJPanel.revalidate();
             revalidate();
         }
-
     }
 
     //##################################################################################################################
     // General Methods
     //##################################################################################################################
+    public boolean getUpdate()
+    {
+        return update;
+    }
 
+    public void setUpdate(boolean x)
+    {
+        update = x;
+    }
+
+    public void updateJComboBox()
+    {
+        jComboBox.removeAllItems();
+        String[] results = getIngredientNames();
+
+        if(results != null)
+        {
+            for (String s: results)
+            {
+                if(!(s.equals("None Of The Above")))
+                {
+                    jComboBox.addItem(s);
+                }
+            }
+        }
+        jComboBox.addItem("N/A");
+        jComboBox.setSelectedIndex(-1);
+
+        setUpdate(false);
+    }
+
+    public String[] getIngredientNames()
+    {
+        String[] results = db.getSingleColumnQuery("Select Ingredient_Name from ingredients_info ORDER BY Ingredient_Name;");
+        if(results == null)
+        {
+            JOptionPane.showMessageDialog(gui, "DB ERROR \n\nUnable to Retreive DB Ingredient Names!!");
+            return null;
+        }
+        return results;
+    }
     public Integer getNewIngredientID()
     {
         String[] newID = db.getSingleColumnQuery("SELECT MAX(IngredientID) FROM ingredients_info;");
