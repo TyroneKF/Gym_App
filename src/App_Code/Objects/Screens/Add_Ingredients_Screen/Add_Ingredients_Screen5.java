@@ -185,6 +185,20 @@ public class Add_Ingredients_Screen5 extends JFrame
 
                 iconPanelInsert.add(delete_Icon_Btn);
 
+                //##########################
+                // JCombo Title
+                //##########################
+                JLabel titleLabel = new JLabel("Choose an Ingredient To Edit");
+                titleLabel.setFont(new Font("Verdana", Font.PLAIN, 24));
+                titleLabel.setHorizontalAlignment(JLabel.CENTER);
+
+                JPanel titlePanel = new JPanel();
+                titlePanel.setBackground(Color.green);
+                titlePanel.add(titleLabel);
+
+                // Add title JPanel to scrollPanel Panel Area
+                addToContainer(scrollPaneJPanel, titlePanel, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+
                 //###########################
                 // JComboBox
                 //###########################
@@ -220,6 +234,11 @@ public class Add_Ingredients_Screen5 extends JFrame
                 jp.setPreferredSize(new Dimension(650, 50));
 
                 addToContainer(scrollPaneJPanel, jp, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 10, 0);
+
+                //###########################
+                //Space Divider
+                //###########################
+                addToContainer(scrollPaneJPanel, new JPanel(), 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 10, 0);
             }
 
             //###########################
