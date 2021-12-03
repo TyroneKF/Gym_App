@@ -11,6 +11,7 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.HashMap;
@@ -123,6 +124,8 @@ public class Add_Ingredients_Screen5 extends JFrame
 
         private boolean formEditable = false, updateIngredientsForm = false, updateShops = false;
 
+        ArrayList<ShopForm.AddShopForm_Object> shopForm_objects = new ArrayList<>();
+
         createForm(boolean editScreen)
         {
             //###################################################################################
@@ -159,9 +162,16 @@ public class Add_Ingredients_Screen5 extends JFrame
 
             if (editScreen)
             {
-                //############################
+                //###########################################
+                // Set IngredientName in form to un-editable
+                //############################################
+                ArrayList<Component> componentArrayList = ingredientsForm.getIngredientsFormObjects();
+                JTextField ingredientNameJTextField = (JTextField) componentArrayList.get(ingredientsForm.getIngredientNameObjectIndex());
+                ingredientNameJTextField.setEditable(false);
+
+                //###########################################
                 // Delete BTN Icon Setup
-                //############################
+                //###########################################
 
                 JPanel iconArea = new JPanel(new GridBagLayout());
                 addToContainer(scrollPaneJPanel, iconArea, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
@@ -171,9 +181,9 @@ public class Add_Ingredients_Screen5 extends JFrame
 
                 addToContainer(iconArea, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0);
 
-                //##########################
+                //###########################################
                 // DELETE Icon
-                //##########################
+                //###########################################
                 int width = 35;
                 int height = 35;
 
@@ -227,9 +237,9 @@ public class Add_Ingredients_Screen5 extends JFrame
 
                 iconPanelInsert.add(delete_Icon_Btn);
 
-                //##########################
+                //###########################################
                 // JCombo Title
-                //##########################
+                //###########################################
                 JLabel titleLabel = new JLabel("Choose an Ingredient To Edit");
                 titleLabel.setFont(new Font("Verdana", Font.PLAIN, 24));
                 titleLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -241,9 +251,9 @@ public class Add_Ingredients_Screen5 extends JFrame
                 // Add title JPanel to scrollPanel Panel Area
                 addToContainer(scrollPaneJPanel, titlePanel, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
-                //###########################
+                //###########################################
                 // JComboBox
-                //###########################
+                //###########################################
                 JPanel jp = new JPanel(new GridLayout(1, 1));
 
                 updateJComboBox();
@@ -256,32 +266,121 @@ public class Add_Ingredients_Screen5 extends JFrame
                     {
                         if (ie.getStateChange()==ItemEvent.SELECTED)
                         {
+                            //############################################################
+                            // Ingredient Name
+                            //############################################################
                             String chosenItem = jComboBox.getSelectedItem().toString();
+
+                            //############################################################
+                            // If Item "N/A" Selected
+                            //############################################################
                             if(chosenItem.equals("N/A"))
                             {
-                                ingredientsForm.refreshIngredientsForm();
-                                shopForm.refreshShopForm();
+                                refreshInterface(false);
+                                return;
                             }
+
+                            //############################################################
+                            // Ingredient ID
+                            //############################################################
+                            String[] ingredientID_R = db.getSingleColumnQuery(String.format("SELECT IngredientID FROM ingredients_info WHERE Ingredient_Name = '%s';", chosenItem));
+                            if (ingredientID_R==null)
+                            {
+                                JOptionPane.showMessageDialog(gui, "Unable to grab Ingredient INFO to delete it!!");
+                                refreshInterface(true);
+                                return;
+                            }
+
+                            String ingredientID = ingredientID_R[0];
 
                             //############################################################
                             // Update IngredientsForm
                             //############################################################
-                            /*
-                            for (int i = 0; i < ingredientsForm.ingredientsFormObjects.size(); i++)
+                            ArrayList<Component> formObjects = ingredientsForm.getIngredientsFormObjects();
+
+                            //##############################
+                            // Get Ingredient Info
+                            //##############################
+                            ArrayList<ArrayList<String>> ingredientInfo_R = db.getMultiColumnQuery(String.format("""
+                            SELECT  Meassurement, Ingredient_Name, Ingredient_Type, Based_On_Quantity, 
+                            Protein, Carbohydrates, Sugars_Of_Carbs, Fibre, Fat, Saturated_Fat, Salt, 
+                            Water_Content, Calories
+                            
+                            from ingredients_info 
+                            WHERE Ingredient_Name = '%s';""", chosenItem));
+
+                            if(ingredientInfo_R == null)
                             {
-                                Component comp = ingredientsForm.ingredientsFormObjects.get(i);
+                                JOptionPane.showMessageDialog(gui, "Unable to grab selected ingredient info!");
+                                refreshInterface(true);
+                                return;
+                            }
+
+                            ArrayList<String> ingredientInfo = ingredientInfo_R.get(0);
+
+                            //##############################
+                            // Set Form With Ingredient Info
+                            //##############################
+
+                            for (int i = 0; i < ingredientInfo.size(); i++)
+                            {
+                                Component comp = formObjects.get(i);
+                                String value = ingredientInfo.get(i);
 
                                 if (comp instanceof JComboBox)
                                 {
-                                    ((JComboBox<?>) comp).setSelectedIndex(-1);
+                                    ((JComboBox<?>) comp).setSelectedItem(value);
                                 }
                                 else if (comp instanceof JTextField)
                                 {
-                                    ((JTextField) comp).setText("");
+                                    ((JTextField) comp).setText(value);
                                 }
                             }
 
-                             */
+                            //############################################################
+                            // Update ShopForm
+                            //############################################################
+
+                            //Delete previous Shop info
+                            Iterator< ShopForm.AddShopForm_Object> it = shopForm_objects.iterator();
+                            while(it.hasNext())
+                            {
+                                ShopForm.AddShopForm_Object i = it.next();
+                                i.removeFromParentContainer();
+                                it.remove();
+                            }
+
+                            //###########################
+                            // Get New Ingredient Shop Info
+                            //###########################
+                            ArrayList<ArrayList<String>> ingredientShops_R = db.getMultiColumnQuery(String.format("""
+                                    SELECT Store_Name, Cost_Per_Unit, Volume_Per_Unit FROM  ingredientInShops WHERE IngredientID = %s""", ingredientID));
+
+                            if(ingredientShops_R == null)
+                            {
+                                JOptionPane.showMessageDialog(gui, "Unable to grab selected ingredient shop info! \nMaybe there isn't any suppliers created for this Ingredient!");
+                                return;
+                            }
+
+                            //###########################
+                            //Add Rows for shops onto form
+                            //###########################
+                            for (int i =0; i < ingredientShops_R.size(); i++)
+                            {
+                                ArrayList<String> rowData = ingredientShops_R.get(i);
+
+                                ShopForm.AddShopForm_Object row = shopForm.addShopForm_object();
+                                shopForm_objects.add(row);
+
+                                // Set ShopName
+                                row.getShops_JComboBox().setSelectedItem(rowData.get(0));
+
+                                // Set Cost Info
+                                row.getIngredientPrice_TxtField().setText(rowData.get(1));
+
+                                // Set Volume Info
+                                row.getQuantityPerPack_TxtField().setText(rowData.get(2));
+                            }
                         }
                     }
                 });
@@ -392,6 +491,17 @@ public class Add_Ingredients_Screen5 extends JFrame
             resize_GUI();
         }
 
+        public void refreshInterface(boolean resetJCombo)
+        {
+            ingredientsForm.refreshIngredientsForm();
+            shopForm.refreshShopForm();
+
+            if(resetJCombo)
+            {
+                jComboBox.setSelectedIndex(-1);
+            }
+        }
+
         //#################################################################################################################
         // IngredientsForm Methods
         //##################################################################################################################
@@ -405,7 +515,9 @@ public class Add_Ingredients_Screen5 extends JFrame
                     "Based_On_Quantity:", "Protein:", "Carbohydrates:", "Sugars Of Carbs:", "Fibre:", "Fat:", "Saturated Fat:",
                     "Salt:", "Water_Content:", "Calories:"};
 
-            private int ingredientNameLabelIndex = 0;
+            private int getingredientNameObjectIndex = 1;
+
+            private int ingredientNameObjectIndex = 1;
             private JComboBox ingredientsMeasure_JComboBox = new JComboBox(), ingredientsType_JComboBox = new JComboBox();
             private ArrayList<Component> ingredientsFormObjects = new ArrayList<>();
 
@@ -548,7 +660,7 @@ public class Add_Ingredients_Screen5 extends JFrame
                     if (labelTXT.equals("Ingredient Name:")) //Setting TextField limits
                     {
                         textField.setDocument(new JTextFieldLimit(255));
-                        ingredientNameLabelIndex = i;
+                        ingredientNameObjectIndex = i;
                     }
                     else
                     {
@@ -627,7 +739,7 @@ public class Add_Ingredients_Screen5 extends JFrame
                 Decimal eval Below
                 #########################################*/
 
-                        if (row==ingredientNameLabelIndex)
+                        if (row==ingredientNameObjectIndex)
                         {
                             continue;
                         }
@@ -651,7 +763,7 @@ public class Add_Ingredients_Screen5 extends JFrame
                 //Check if IngredientName Already exists in DB
                 //####################################################
 
-                JTextField ingredientName_JTxtF = (JTextField) ingredientsFormObjects.get(ingredientNameLabelIndex);
+                JTextField ingredientName_JTxtF = (JTextField) ingredientsFormObjects.get(ingredientNameObjectIndex);
                 String ingredientName_Txt = ingredientName_JTxtF.getText().trim();
 
                 if (!(ingredientName_Txt.equals("")))
@@ -724,6 +836,16 @@ public class Add_Ingredients_Screen5 extends JFrame
                 updateIngredientsForm = true;
                 return updateTargets_Query;
             }
+
+            private ArrayList<Component> getIngredientsFormObjects()
+            {
+                return ingredientsFormObjects;
+            }
+
+            private int getIngredientNameObjectIndex()
+            {
+                return ingredientNameObjectIndex;
+            }
         }
 
         //#################################################################################################################
@@ -742,6 +864,7 @@ public class Add_Ingredients_Screen5 extends JFrame
 
             String shopsInfo[];
             Container parentContainer;
+            JPanel inputArea;
 
             public ShopForm(Container parentContainer, String btnText, int btnWidth, int btnHeight)
             {
@@ -783,7 +906,7 @@ public class Add_Ingredients_Screen5 extends JFrame
                 //#####################################################
                 // Creating area for North JPanel (Add Icon)
                 //#####################################################
-                JPanel inputArea = new JPanel(new GridBagLayout());
+                inputArea = new JPanel(new GridBagLayout());
 
                 IconPanel iconPanel = new IconPanel(1, 10, "East");
                 JPanel iconPanelInsert = iconPanel.getIconJpanel();
@@ -803,8 +926,7 @@ public class Add_Ingredients_Screen5 extends JFrame
                 add_Icon_Btn.makeBTntransparent();
 
                 add_Btn.addActionListener(ae -> {
-                    setObjectID(objectID += 1);
-                    addToContainer(inputArea, new AddShopForm_Object(inputArea, true), 0, objectID, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+                    addShopForm_object();
                 });
 
                 iconPanelInsert.add(add_Icon_Btn);
@@ -815,6 +937,13 @@ public class Add_Ingredients_Screen5 extends JFrame
                 mainJPanel.add(inputArea, BorderLayout.CENTER);
 
                 addToContainer(inputArea, new AddShopForm_Object(inputArea, false), 0, objectID, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+            }
+
+            public AddShopForm_Object addShopForm_object()
+            {
+                AddShopForm_Object obj = new AddShopForm_Object(inputArea, true);
+                addToContainer(inputArea, obj, 0, objectID, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+                return obj;
             }
 
             private int getObjectID()
@@ -937,8 +1066,6 @@ public class Add_Ingredients_Screen5 extends JFrame
                 JOptionPane.showMessageDialog(gui.getFrame(), String.format("\n\nPlease fix the following rows being; \n%s", errorTxt));
                 return false;
             }
-
-
             private boolean validateShops()
             {
                 String errorTxt = "";
@@ -1043,11 +1170,13 @@ public class Add_Ingredients_Screen5 extends JFrame
                 private int posY = 0, id;
 
                 Container parentContainer;
+                JComboBox shops_JComboBox;
+                JTextField ingredientPrice_TxtField, quantityPerPack_TxtField;
 
                 AddShopForm_Object(Container parentContainer, boolean addRow)
                 {
                     this.parentContainer = parentContainer;
-                    this.id = getObjectID();
+                    setObjectID(objectID += 1); this.id = getObjectID();
 
                     addRow(addRow);
                 }
@@ -1097,7 +1226,7 @@ public class Add_Ingredients_Screen5 extends JFrame
                         //########################
                         // create JComboBox
                         //########################
-                        JComboBox shops_JComboBox = new JComboBox(shopsInfo);
+                        shops_JComboBox = new JComboBox(shopsInfo);
                         shops_JComboBox.setSelectedItem("No Shop");
 
                         ((JLabel) shops_JComboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
@@ -1107,13 +1236,13 @@ public class Add_Ingredients_Screen5 extends JFrame
                         //#####################################################
                         // Centre Side
                         //######################################################
-                        JTextField ingredientPrice_TxtField = new JTextField();
+                        ingredientPrice_TxtField = new JTextField();
                         ingredientPrice_TxtField.setDocument(new JTextFieldLimit(16));
                         ingredientPrice_TxtField.setText("0.00");
                         prices.put(id, ingredientPrice_TxtField);
                         centrePanel.add(ingredientPrice_TxtField);
 
-                        JTextField quantityPerPack_TxtField = new JTextField();
+                        quantityPerPack_TxtField = new JTextField();
                         quantityPerPack_TxtField.setDocument(new JTextFieldLimit(16));
                         quantityPerPack_TxtField.setText("0.00");
                         quantityPerPack.put(id, quantityPerPack_TxtField);
@@ -1191,6 +1320,21 @@ public class Add_Ingredients_Screen5 extends JFrame
                     //#########################################################################################################
                     addToContainer(parentContainer, rowPanel, 0, posY += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
                     parentContainer.revalidate();
+                }
+
+                private JComboBox getShops_JComboBox()
+                {
+                    return shops_JComboBox;
+                }
+
+                private JTextField getIngredientPrice_TxtField()
+                {
+                    return ingredientPrice_TxtField;
+                }
+
+                private JTextField getQuantityPerPack_TxtField()
+                {
+                    return quantityPerPack_TxtField;
                 }
 
                 public void removeFromParentContainer()
