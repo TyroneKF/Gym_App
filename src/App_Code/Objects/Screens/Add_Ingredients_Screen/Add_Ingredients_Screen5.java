@@ -201,7 +201,7 @@ public class Add_Ingredients_Screen5 extends JFrame
                         if (chosenItem.equals("N/A"))
                         {
                             JOptionPane.showMessageDialog(gui, "This item cannot be deleted from the list (its a placeholder) !");
-                            jComboBox.setSelectedIndex(-1);
+                            refreshInterface(true);
                             return;
                         }
 
@@ -216,14 +216,15 @@ public class Add_Ingredients_Screen5 extends JFrame
                             }
 
                             String ingredientID = ingredientID_R[0];
-
+                            String query0 = String.format("DELETE FROM `ingredients_in_meal` WHERE IngredientID  = %s;", ingredientID);
                             String query1 = String.format("DELETE FROM `ingredientInShops` WHERE IngredientID  = %s;", ingredientID);
                             String query2 = String.format("DELETE FROM `ingredients_info` WHERE IngredientID  = %s;", ingredientID);
 
-                            if (db.uploadData_Batch(new String[]{query1, query2}))
+                            if (db.uploadData_Batch(new String[]{query0, query1, query2}))
                             {
                                 JOptionPane.showMessageDialog(gui, String.format("Successfully Deleted '%s' From DB!", chosenItem));
                                 updateJComboBox();
+                                refreshInterface(true);
                             }
                             else
                             {
@@ -491,14 +492,14 @@ public class Add_Ingredients_Screen5 extends JFrame
             resize_GUI();
         }
 
-        public void refreshInterface(boolean resetJCombo)
+        public void refreshInterface(boolean resetJCombo) // only available to reset screen
         {
             ingredientsForm.refreshIngredientsForm();
             shopForm.refreshShopForm();
 
             if(resetJCombo)
             {
-                jComboBox.setSelectedIndex(-1);
+                jComboBox.setSelectedItem("N/A");
             }
         }
 
@@ -1446,6 +1447,9 @@ public class Add_Ingredients_Screen5 extends JFrame
         jComboBox.removeAllItems();
         String[] results = getIngredientNames();
 
+        jComboBox.addItem("N/A");
+        jComboBox.setSelectedItem("N/A");
+
         if (results!=null)
         {
             for (String s : results)
@@ -1456,8 +1460,6 @@ public class Add_Ingredients_Screen5 extends JFrame
                 }
             }
         }
-        jComboBox.addItem("N/A");
-        jComboBox.setSelectedIndex(-1);
 
         setUpdate(false);
     }
