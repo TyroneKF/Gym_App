@@ -415,56 +415,59 @@ public class Add_Ingredients_Screen5 extends JFrame
 
         protected void submissionBtnAction()
         {
-            boolean errorFound = false;
-
-            // ingredientsForm
-            if (!(ingredientsForm.validate_IngredientsForm(false)))
+            if (areYouSure("update this Ingredients information"))
             {
-                errorFound = true;
-            }
+                boolean errorFound = false;
 
-            // ShopForm
-            if (!(shopForm.validateForm()))
-            {
-                errorFound = true;
-            }
-
-            if (!errorFound)
-            {
-                super.updateShops = false;
-                super.updateIngredientsForm = false; // reset values
-
-                //########################
-                // Get ingredient ID
-                //########################
-                String ingredientID = getSelectedIngredientID();
-                if (ingredientID==null)
+                // ingredientsForm
+                if (!(ingredientsForm.validate_IngredientsForm(false)))
                 {
-                    return;
+                    errorFound = true;
                 }
 
-                //########################
-                // Get Update Strings
-                //########################
-
-                if (updateBothForms(ingredientsForm.get_IngredientsForm_UpdateString(ingredientID), shopForm.get_ShopForm_UpdateString(ingredientID)))
+                // ShopForm
+                if (!(shopForm.validateForm()))
                 {
-                    //HELLO REMOVE COMMENTS
+                    errorFound = true;
+                }
+
+                if (!errorFound)
+                {
+                    super.updateShops = false;
+                    super.updateIngredientsForm = false; // reset values
+
+                    //########################
+                    // Get ingredient ID
+                    //########################
+                    String ingredientID = getSelectedIngredientID();
+                    if (ingredientID==null)
+                    {
+                        return;
+                    }
+
+                    //########################
+                    // Get Update Strings
+                    //########################
+
+                    if (updateBothForms(ingredientsForm.get_IngredientsForm_UpdateString(ingredientID), shopForm.get_ShopForm_UpdateString(ingredientID)))
+                    {
+                        //HELLO REMOVE COMMENTS
                         /*
                         gui.updateInfo();
                         gui.macrosTargetsChanged(true);
 
                          */
 
-                    ingredientsForm.refreshIngredientsForm();
-                    shopForm.refreshShopForm();
+                        ingredientsForm.refreshIngredientsForm();
+                        shopForm.refreshShopForm();
 
-                    setUpdate(true);
-                    ingredientNames = getIngredientNames();
-                    System.out.printf("\nIngredients List Updated");
-                    updateJComboBox();
+                        setUpdate(true);
+                        ingredientNames = getIngredientNames();
+                        System.out.printf("\nIngredients List Updated");
+                        updateJComboBox();
 
-                    super.resize_GUI();
+                        super.resize_GUI();
+                    }
                 }
             }
         }
@@ -626,42 +629,45 @@ public class Add_Ingredients_Screen5 extends JFrame
 
         protected void submissionBtnAction()
         {
-            boolean errorFound = false;
-
-            // ingredientsForm
-            if (!(ingredientsForm.validate_IngredientsForm(true)))
+            if(areYouSure("add this new Ingredient"))
             {
-                errorFound = true;
-            }
+                boolean errorFound = false;
 
-            // ShopForm
-            if (!(shopForm.validateForm()))
-            {
-                errorFound = true;
-            }
-
-            if (!errorFound)
-            {
-                updateShops = false;
-                updateIngredientsForm = false; // reset values
-
-                if (updateBothForms(ingredientsForm.get_IngredientsForm_UpdateString(), shopForm.get_ShopForm_UpdateString()))
+                // ingredientsForm
+                if (!(ingredientsForm.validate_IngredientsForm(true)))
                 {
-                    //HELLO REMOVE COMMENTS
+                    errorFound = true;
+                }
+
+                // ShopForm
+                if (!(shopForm.validateForm()))
+                {
+                    errorFound = true;
+                }
+
+                if (!errorFound)
+                {
+                    updateShops = false;
+                    updateIngredientsForm = false; // reset values
+
+                    if (updateBothForms(ingredientsForm.get_IngredientsForm_UpdateString(), shopForm.get_ShopForm_UpdateString()))
+                    {
+                        //HELLO REMOVE COMMENTS
                         /*
                         gui.updateInfo();
                         gui.macrosTargetsChanged(true);
 
                          */
 
-                    refreshInterface();
+                        refreshInterface();
 
-                    setUpdate(true);
-                    ingredientNames = getIngredientNames();
-                    System.out.printf("\nIngredients List Updated");
-                    updateJComboBox();
+                        setUpdate(true);
+                        ingredientNames = getIngredientNames();
+                        System.out.printf("\nIngredients List Updated");
+                        updateJComboBox();
 
-                    resize_GUI();
+                        resize_GUI();
+                    }
                 }
             }
         }
@@ -1829,7 +1835,7 @@ public class Add_Ingredients_Screen5 extends JFrame
     protected Boolean areYouSure(String process)
     {
         int reply = JOptionPane.showConfirmDialog(gui, String.format("Are you sure you want to: %s?", process, process),
-                "Restart Game", JOptionPane.YES_NO_OPTION); //HELLO Edit
+                "Confirmation", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
         if (reply==JOptionPane.NO_OPTION || reply==JOptionPane.CLOSED_OPTION)
         {
