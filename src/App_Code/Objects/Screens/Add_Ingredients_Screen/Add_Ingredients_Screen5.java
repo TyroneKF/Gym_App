@@ -23,9 +23,9 @@ public class Add_Ingredients_Screen5 extends JFrame
 
     private GridBagConstraints gbc = new GridBagConstraints();
 
-    int jFramewidth = 710, jFrameheight = 750;
-    Container contentPane;
-    JPanel addIngredientsFormJPanel, editIngredientsFormJPanel;
+    private int jFramewidth = 710, jFrameheight = 750;
+    private  Container contentPane;
+    private JPanel addIngredientsFormJPanel, editIngredientsFormJPanel;
 
     private MyJDBC db;
     private Integer temp_PlanID, planID;
@@ -35,7 +35,7 @@ public class Add_Ingredients_Screen5 extends JFrame
     private boolean update = false;
 
     private String[] ingredientNames;
-    JComboBox edit_IngredientName_JComboBox = new JComboBox();
+    private JComboBox edit_IngredientName_JComboBox = new JComboBox();
 
     //##################################################################################################################
     // Constuctor
@@ -116,8 +116,8 @@ public class Add_Ingredients_Screen5 extends JFrame
 
     public class EditingCreateForm extends createForm
     {
-        EditIngredientsForm ingredientsForm;
-        EditShopForm shopForm;
+        private EditIngredientsForm ingredientsForm;
+        private  EditShopForm shopForm;
 
         public EditingCreateForm()
         {
@@ -532,7 +532,7 @@ public class Add_Ingredients_Screen5 extends JFrame
         protected ArrayList<ShopForm.AddShopForm_Object> shopForm_objects = new ArrayList<>();
         protected int yPos = 0;
 
-        String ingredientID; // HELLO DELTE
+        protected String ingredientID; // HELLO DELTE
 
         //#################################################################################################################
         // Constructor
@@ -732,7 +732,7 @@ public class Add_Ingredients_Screen5 extends JFrame
                     "Based_On_Quantity:", "Protein:", "Carbohydrates:", "Sugars Of Carbs:", "Fibre:", "Fat:", "Saturated Fat:",
                     "Salt:", "Water_Content:", "Calories:"};
 
-            protected int getingredientNameObjectIndex = 1;
+            protected int getingredientNameObjectIndex = 1; //HELLO REMOVE, potentially
 
             protected int ingredientNameObjectIndex = 1;
             protected JComboBox ingredientsMeasure_JComboBox = new JComboBox(), ingredientsType_JComboBox = new JComboBox();
@@ -1129,17 +1129,17 @@ public class Add_Ingredients_Screen5 extends JFrame
 
         public class ShopForm extends CollapsibleJPanel
         {
-            int objectID = 0;
+            protected int objectID = 0;
 
-            HashMap<Integer, JComboBox> shopJComboBoxes = new HashMap<>();
-            HashMap<Integer, JTextField> prices = new HashMap<>();
-            HashMap<Integer, JTextField> quantityPerPack = new HashMap<>();
+            protected HashMap<Integer, JComboBox> shopJComboBoxes = new HashMap<>();
+            protected HashMap<Integer, JTextField> prices = new HashMap<>();
+            protected HashMap<Integer, JTextField> quantityPerPack = new HashMap<>();
 
-            ArrayList<AddShopForm_Object> rowsInTable = new ArrayList<>();
+            protected ArrayList<AddShopForm_Object> rowsInTable = new ArrayList<>();
 
-            String shopsInfo[];
-            Container parentContainer;
-            JPanel inputArea;
+            protected String shopsInfo[];
+            protected Container parentContainer;
+            protected JPanel inputArea;
 
             public ShopForm(Container parentContainer, String btnText, int btnWidth, int btnHeight)
             {
