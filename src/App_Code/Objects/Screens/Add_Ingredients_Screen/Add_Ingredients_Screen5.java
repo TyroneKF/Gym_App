@@ -134,7 +134,6 @@ public class Add_Ingredients_Screen5 extends JFrame
 
             setLayout(new BorderLayout());
 
-
             //###################################################################################
             //   Create Main Centre Screen for Interface
             //##################################################################################
@@ -275,7 +274,7 @@ public class Add_Ingredients_Screen5 extends JFrame
                             //############################################################
                             // If Item "N/A" Selected
                             //############################################################
-                            if(chosenItem.equals("N/A"))
+                            if (chosenItem.equals("N/A"))
                             {
                                 refreshInterface(false);
                                 return;
@@ -303,14 +302,14 @@ public class Add_Ingredients_Screen5 extends JFrame
                             // Get Ingredient Info
                             //##############################
                             ArrayList<ArrayList<String>> ingredientInfo_R = db.getMultiColumnQuery(String.format("""
-                            SELECT  Meassurement, Ingredient_Name, Ingredient_Type, Based_On_Quantity, 
-                            Protein, Carbohydrates, Sugars_Of_Carbs, Fibre, Fat, Saturated_Fat, Salt, 
-                            Water_Content, Calories
-                            
-                            from ingredients_info 
-                            WHERE Ingredient_Name = '%s';""", chosenItem));
+                                    SELECT  Meassurement, Ingredient_Name, Ingredient_Type, Based_On_Quantity, 
+                                    Protein, Carbohydrates, Sugars_Of_Carbs, Fibre, Fat, Saturated_Fat, Salt, 
+                                    Water_Content, Calories
+                                                                
+                                    from ingredients_info 
+                                    WHERE Ingredient_Name = '%s';""", chosenItem));
 
-                            if(ingredientInfo_R == null)
+                            if (ingredientInfo_R==null)
                             {
                                 JOptionPane.showMessageDialog(gui, "Unable to grab selected ingredient info!");
                                 refreshInterface(true);
@@ -343,8 +342,8 @@ public class Add_Ingredients_Screen5 extends JFrame
                             //############################################################
 
                             //Delete previous Shop info
-                            Iterator< ShopForm.AddShopForm_Object> it = shopForm_objects.iterator();
-                            while(it.hasNext())
+                            Iterator<ShopForm.AddShopForm_Object> it = shopForm_objects.iterator();
+                            while (it.hasNext())
                             {
                                 ShopForm.AddShopForm_Object i = it.next();
                                 i.removeFromParentContainer();
@@ -357,7 +356,7 @@ public class Add_Ingredients_Screen5 extends JFrame
                             ArrayList<ArrayList<String>> ingredientShops_R = db.getMultiColumnQuery(String.format("""
                                     SELECT Store_Name, Cost_Per_Unit, Volume_Per_Unit FROM  ingredientInShops WHERE IngredientID = %s""", ingredientID));
 
-                            if(ingredientShops_R == null)
+                            if (ingredientShops_R==null)
                             {
                                 JOptionPane.showMessageDialog(gui, "Unable to grab selected ingredient shop info! \nMaybe there isn't any suppliers created for this Ingredient!");
                                 return;
@@ -366,7 +365,7 @@ public class Add_Ingredients_Screen5 extends JFrame
                             //###########################
                             //Add Rows for shops onto form
                             //###########################
-                            for (int i =0; i < ingredientShops_R.size(); i++)
+                            for (int i = 0; i < ingredientShops_R.size(); i++)
                             {
                                 ArrayList<String> rowData = ingredientShops_R.get(i);
 
@@ -439,7 +438,7 @@ public class Add_Ingredients_Screen5 extends JFrame
                 }
 
                 // ingredientsForm
-                if (!(ingredientsForm.validate_IngredientsForm()))
+                if (!(ingredientsForm.validate_IngredientsForm(!editScreen)))
                 {
                     errorFound = true;
                 }
@@ -476,7 +475,7 @@ public class Add_Ingredients_Screen5 extends JFrame
                         }
                         else
                         {
-                            jComboBox.setSelectedIndex(-1);
+                            refreshInterface(true);
                         }
 
                         resize_GUI();
@@ -497,7 +496,7 @@ public class Add_Ingredients_Screen5 extends JFrame
             ingredientsForm.refreshIngredientsForm();
             shopForm.refreshShopForm();
 
-            if(resetJCombo)
+            if (resetJCombo)
             {
                 jComboBox.setSelectedItem("N/A");
             }
@@ -691,7 +690,7 @@ public class Add_Ingredients_Screen5 extends JFrame
                 }
             }
 
-            private boolean validate_IngredientsForm()// HELLO Modify
+            private boolean validate_IngredientsForm(boolean checkIfItemIsInDB)// HELLO Modify
             {
                 if (temp_PlanID==null && planID==null && planName==null)
                 {
@@ -735,10 +734,10 @@ public class Add_Ingredients_Screen5 extends JFrame
                             continue;
                         }
 
-                /*#######################################
-                If JTextField is Ingredient Name Skip
-                Decimal eval Below
-                #########################################*/
+                        //#######################################
+                        //If JTextField is Ingredient Name Skip
+                        //Decimal eval Below
+                        //#########################################*
 
                         if (row==ingredientNameObjectIndex)
                         {
@@ -763,17 +762,19 @@ public class Add_Ingredients_Screen5 extends JFrame
                 //####################################################
                 //Check if IngredientName Already exists in DB
                 //####################################################
-
-                JTextField ingredientName_JTxtF = (JTextField) ingredientsFormObjects.get(ingredientNameObjectIndex);
-                String ingredientName_Txt = ingredientName_JTxtF.getText().trim();
-
-                if (!(ingredientName_Txt.equals("")))
+                if (checkIfItemIsInDB)
                 {
-                    String query = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Name = '%s';", ingredientName_Txt);
+                    JTextField ingredientName_JTxtF = (JTextField) ingredientsFormObjects.get(ingredientNameObjectIndex);
+                    String ingredientName_Txt = ingredientName_JTxtF.getText().trim();
 
-                    if (db.getSingleColumnQuery(query)!=null)
+                    if (!(ingredientName_Txt.equals("")))
                     {
-                        errorTxt += String.format("\n\n  Ingredient named %s already exists within the database!", ingredientName_Txt);
+                        String query = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Name = '%s';", ingredientName_Txt);
+
+                        if (db.getSingleColumnQuery(query)!=null)
+                        {
+                            errorTxt += String.format("\n\n  Ingredient named %s already exists within the database!", ingredientName_Txt);
+                        }
                     }
                 }
 
@@ -1067,6 +1068,7 @@ public class Add_Ingredients_Screen5 extends JFrame
                 JOptionPane.showMessageDialog(gui.getFrame(), String.format("\n\nPlease fix the following rows being; \n%s", errorTxt));
                 return false;
             }
+
             private boolean validateShops()
             {
                 String errorTxt = "";
@@ -1177,7 +1179,8 @@ public class Add_Ingredients_Screen5 extends JFrame
                 AddShopForm_Object(Container parentContainer, boolean addRow)
                 {
                     this.parentContainer = parentContainer;
-                    setObjectID(objectID += 1); this.id = getObjectID();
+                    setObjectID(objectID += 1);
+                    this.id = getObjectID();
 
                     addRow(addRow);
                 }
