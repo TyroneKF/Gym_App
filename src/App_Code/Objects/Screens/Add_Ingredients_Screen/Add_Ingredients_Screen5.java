@@ -35,7 +35,7 @@ public class Add_Ingredients_Screen5 extends JFrame
     private boolean update = false;
 
     private String[] ingredientNames;
-    JComboBox  edit_IngredientName_JComboBox = new JComboBox();
+    JComboBox edit_IngredientName_JComboBox = new JComboBox();
 
     //##################################################################################################################
     // Constuctor
@@ -447,7 +447,7 @@ public class Add_Ingredients_Screen5 extends JFrame
                 // Get Update Strings
                 //########################
 
-                if (super.updateBothForms(ingredientsForm.get_IngredientsForm_UpdateString(ingredientID), shopForm.get_ShopForm_UpdateString(ingredientID)))
+                if (updateBothForms(ingredientsForm.get_IngredientsForm_UpdateString(ingredientID), shopForm.get_ShopForm_UpdateString(ingredientID)))
                 {
                     //HELLO REMOVE COMMENTS
                         /*
@@ -468,19 +468,69 @@ public class Add_Ingredients_Screen5 extends JFrame
                 }
             }
         }
+
+        private boolean updateBothForms(String updateIngredients_String, String[] updateIngredientShops_String)
+        {
+            System.out.printf("\n\n%s", updateIngredients_String, Arrays.toString(updateIngredientShops_String));
+
+            //####################################
+            // Error forming update String (exit)
+            //####################################
+
+            if (!updateShops || !updateIngredientsForm)
+            {
+                return false;
+            }
+
+            //####################################
+            // Uploading Ingredient Info Query
+            //####################################
+            if (!(db.uploadData_Batch(new String[]{updateIngredients_String})))
+            {
+                JOptionPane.showMessageDialog(gui.getFrame(), "Failed 3/3 Updates - Unable To Add Ingredient Info & Shop Info In DB!");
+                return false;
+            }
+
+            JOptionPane.showMessageDialog(gui.getFrame(), "Update 1/3  - Ingredient Info DB!!!");
+
+            //####################################
+            // Delete Old Shop Info
+            //####################################
+
+            if (!(db.uploadData_Batch(new String[]{updateIngredientShops_String[0]})))
+            {
+                JOptionPane.showMessageDialog(gui.getFrame(), "Failed 1/3 Updates - Unable To Remove Old Shop Suppliers For Ingredient In DB!");
+                return false;
+            }
+
+            if(updateIngredientShops_String.length == 2)
+            {
+                //####################################
+                // Update Shop Info
+                //####################################
+                if (!(db.uploadData_Batch(new String[]{updateIngredientShops_String[1]})))
+                {
+                    JOptionPane.showMessageDialog(gui.getFrame(), "Failed 1/3 Updates - Unable To Add Shop Suppliers For Ingredient In DB!");
+                    return false;
+                }
+            }
+
+            JOptionPane.showMessageDialog(gui.getFrame(), "Update 3/3 -  New Shop Suppliers For Ingredient Updated In DB!!!");
+            return true;
+        }
     }
 
     public class createForm extends JPanel
     {
-        IngredientsForm ingredientsForm;
-        ShopForm shopForm;
+        private IngredientsForm ingredientsForm;
+        private ShopForm shopForm;
 
-        JPanel scrollPaneJPanel;
+        protected JPanel scrollPaneJPanel;
 
-        private boolean formEditable = false, updateIngredientsForm = false, updateShops = false;
+        protected boolean formEditable = false, updateIngredientsForm = false, updateShops = false;
 
-        ArrayList<ShopForm.AddShopForm_Object> shopForm_objects = new ArrayList<>();
-        int yPos = 0;
+        protected ArrayList<ShopForm.AddShopForm_Object> shopForm_objects = new ArrayList<>();
+        protected int yPos = 0;
 
         String ingredientID; // HELLO DELTE
 
@@ -1590,6 +1640,8 @@ public class Add_Ingredients_Screen5 extends JFrame
 
             private String[] get_ShopForm_UpdateString(String ingredientID)
             {
+                String deleteQuery = String.format("DELETE FROM `ingredientInShops` WHERE `IngredientID` = %s;", ingredientID);
+
                 //########################################
                 // Nothing to Update
                 //########################################
@@ -1600,13 +1652,12 @@ public class Add_Ingredients_Screen5 extends JFrame
                 else if (prices.size()==0)
                 {
                     updateShops = true;
-                    return null;
+                    return new String[]{deleteQuery};
                 }
 
                 //#############################################################
                 // Create Update  String
                 //############################################################
-                String deleteQuery = String.format("DELETE FROM `ingredientInShops` WHERE `IngredientID` = %s;", ingredientID);
 
                 String updateString = String.format("""
                         INSERT INTO ingredientInShops (IngredientID, Volume_Per_Unit, Cost_Per_Unit, Store_Name)
