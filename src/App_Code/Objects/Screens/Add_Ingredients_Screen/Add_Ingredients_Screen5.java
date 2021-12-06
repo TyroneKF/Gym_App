@@ -385,7 +385,7 @@ public class Add_Ingredients_Screen5 extends JFrame
             createForms(ingredientsForm, shopForm);
         }
 
-        protected void refreshInterface(boolean resetJCombo) // only available to reset screen
+        private void refreshInterface(boolean resetJCombo) // only available to reset screen
         {
             ingredientsForm.refreshIngredientsForm();
             shopForm.refreshShopForm();
@@ -395,13 +395,13 @@ public class Add_Ingredients_Screen5 extends JFrame
 
         private String getSelectedIngredientID()
         {
-            JComboBox ingredientName_jComboBox = (JComboBox) edit_IngredientName_JComboBox;
+
 
             //####################################
             // Get Current ID
             //####################################
 
-            String query = String.format("SELECT IngredientID FROM ingredients_info WHERE Ingredient_Name = '%s';", ingredientName_jComboBox.getSelectedItem().toString());
+            String query = String.format("SELECT IngredientID FROM ingredients_info WHERE Ingredient_Name = '%s';", edit_IngredientName_JComboBox.getSelectedItem().toString());
             String[] idResults = db.getSingleColumnQuery(query);
 
             if (idResults!=null)
@@ -415,6 +415,13 @@ public class Add_Ingredients_Screen5 extends JFrame
 
         protected void submissionBtnAction()
         {
+            if(edit_IngredientName_JComboBox.getSelectedItem().equals("N/A"))
+            {
+                JOptionPane.showMessageDialog(gui, "The Store N/A cannot be edited, its a placeholder");
+                refreshInterface(true);
+                return;
+            }
+
             if (areYouSure("update this Ingredients information"))
             {
                 boolean errorFound = false;
@@ -446,7 +453,7 @@ public class Add_Ingredients_Screen5 extends JFrame
                     }
 
                     //########################
-                    // Get Update Strings
+                    // Get Update Strings & Update
                     //########################
 
                     if (updateBothForms(ingredientsForm.get_IngredientsForm_UpdateString(ingredientID), shopForm.get_ShopForm_UpdateString(ingredientID)))
@@ -458,8 +465,7 @@ public class Add_Ingredients_Screen5 extends JFrame
 
                          */
 
-                        ingredientsForm.refreshIngredientsForm();
-                        shopForm.refreshShopForm();
+                       refreshInterface(true);
 
                         setUpdate(true);
                         ingredientNames = getIngredientNames();
@@ -672,7 +678,7 @@ public class Add_Ingredients_Screen5 extends JFrame
             }
         }
 
-        protected void refreshInterface() // only available to reset screen
+        private void refreshInterface() // only available to reset screen
         {
             ingredientsForm.refreshIngredientsForm();
             shopForm.refreshShopForm();
@@ -1353,13 +1359,25 @@ public class Add_Ingredients_Screen5 extends JFrame
                 String errorTxt = "";
 
                 int i = 1;
+                ArrayList<String> chosenShops = new ArrayList<>();
                 for (Integer key : shopJComboBoxes.keySet())
                 {
-                    if (Objects.equals(shopJComboBoxes.get(key).getSelectedItem(), "No Shop"))
+                    String chosenItem = shopJComboBoxes.get(key).getSelectedItem().toString();
+
+                    if (chosenItem.equals("No Shop"))
                     {
                         errorTxt += String.format("\nOn Row %s,  please Select a shop that isnt 'No Shop'! Or, delete the row!", i);
                     }
-                    //System.out.printf("\nObject %s", key); // HELLO REMOVE
+
+                    if(chosenShops.contains(chosenItem))
+                    {
+                        errorTxt += String.format("\nOn Row %s, there is also another row/rows with with the supplier %s - no duplicate stores!", i, chosenItem);
+                    }
+                    else
+                    {
+                        chosenShops.add(chosenItem);
+                    }
+
                     i++;
                 }
 
