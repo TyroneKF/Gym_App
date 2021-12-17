@@ -12,6 +12,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.HashMap;
 
@@ -24,7 +26,7 @@ public class Add_Ingredients_Screen5 extends JFrame
     private GridBagConstraints gbc = new GridBagConstraints();
 
     private int jFramewidth = 710, jFrameheight = 750;
-    private  Container contentPane;
+    private Container contentPane;
     private JPanel addIngredientsFormJPanel, editIngredientsFormJPanel;
 
     private MyJDBC db;
@@ -117,7 +119,7 @@ public class Add_Ingredients_Screen5 extends JFrame
     public class EditingCreateForm extends createForm
     {
         private EditIngredientsForm ingredientsForm;
-        private  EditShopForm shopForm;
+        private EditShopForm shopForm;
 
         public EditingCreateForm()
         {
@@ -415,7 +417,7 @@ public class Add_Ingredients_Screen5 extends JFrame
 
         protected void submissionBtnAction()
         {
-            if(edit_IngredientName_JComboBox.getSelectedItem().equals("N/A"))
+            if (edit_IngredientName_JComboBox.getSelectedItem().equals("N/A"))
             {
                 JOptionPane.showMessageDialog(gui, "The Store N/A cannot be edited, its a placeholder");
                 refreshInterface(true);
@@ -465,7 +467,7 @@ public class Add_Ingredients_Screen5 extends JFrame
 
                          */
 
-                       refreshInterface(true);
+                        refreshInterface(true);
 
                         setUpdate(true);
                         ingredientNames = getIngredientNames();
@@ -512,7 +514,7 @@ public class Add_Ingredients_Screen5 extends JFrame
                 return false;
             }
 
-            if(updateIngredientShops_String.length == 2)
+            if (updateIngredientShops_String.length==2)
             {
                 //####################################
                 // Update Shop Info
@@ -542,6 +544,9 @@ public class Add_Ingredients_Screen5 extends JFrame
         protected int yPos = 0;
 
         protected String ingredientID; // HELLO DELTE
+
+        protected int totalNumbersAllowed = 7,decimalScale = 2, decimalPrecision = totalNumbersAllowed - decimalScale,  charlimit = 8;
+
 
         //#################################################################################################################
         // Constructor
@@ -635,45 +640,52 @@ public class Add_Ingredients_Screen5 extends JFrame
 
         protected void submissionBtnAction()
         {
-            if(areYouSure("add this new Ingredient"))
+            if (!areYouSure("add this new Ingredient"))
             {
-                boolean errorFound = false;
+                return;
+            }
 
-                // ingredientsForm
-                if (!(ingredientsForm.validate_IngredientsForm(true)))
+            boolean errorFound = false;
+
+            // ingredientsForm
+            if (!(ingredientsForm.validate_IngredientsForm(true)))
+            {
+                errorFound = true;
+            }
+
+            // ShopForm
+            if (!(shopForm.validateForm()))
+            {
+                errorFound = true;
+            }
+
+            if (!errorFound)
+            {
+                updateShops = false;
+                updateIngredientsForm = false; // reset values
+
+                if (!areYouSure("upload these values as they may have been changed / adapted to fit our data type format"))
                 {
-                    errorFound = true;
+                    return;
                 }
 
-                // ShopForm
-                if (!(shopForm.validateForm()))
+                if (updateBothForms(ingredientsForm.get_IngredientsForm_UpdateString(), shopForm.get_ShopForm_UpdateString()))
                 {
-                    errorFound = true;
-                }
-
-                if (!errorFound)
-                {
-                    updateShops = false;
-                    updateIngredientsForm = false; // reset values
-
-                    if (updateBothForms(ingredientsForm.get_IngredientsForm_UpdateString(), shopForm.get_ShopForm_UpdateString()))
-                    {
-                        //HELLO REMOVE COMMENTS
+                    //HELLO REMOVE COMMENTS
                         /*
                         gui.updateInfo();
                         gui.macrosTargetsChanged(true);
 
                          */
 
-                        refreshInterface();
+                    refreshInterface();
 
-                        setUpdate(true);
-                        ingredientNames = getIngredientNames();
-                        System.out.printf("\nIngredients List Updated");
-                        updateJComboBox();
+                    setUpdate(true);
+                    ingredientNames = getIngredientNames();
+                    System.out.printf("\nIngredients List Updated");
+                    updateJComboBox();
 
-                        resize_GUI();
-                    }
+                    resize_GUI();
                 }
             }
         }
@@ -729,6 +741,66 @@ public class Add_Ingredients_Screen5 extends JFrame
             addIngredientsFormJPanel.revalidate();
             addIngredientsFormJPanel.revalidate();
             revalidate();
+        }
+
+        protected String convertToBigDecimal(String value, String errorTxt, String rowlabel, int rowNumber, JTextField jTextField)
+        {
+            String txt = String.format("must be number which has %s numbers in it! Or, a decimal number (%s,%s) with a max of %s numbers before the decimal point and  a of max of  %s numbers after the decimal point!",
+                    decimalPrecision, decimalPrecision, decimalScale, decimalPrecision, decimalScale);
+            try
+            {
+                BigDecimal zero = new BigDecimal(0);
+
+                //#####################################################
+                // Convert Numbers Using Precision & Scale point Values
+                //#####################################################
+                BigDecimal bdFromString = new BigDecimal(String.format("%s", value));
+                int valueScale = bdFromString.scale();
+                int valuePrecision = bdFromString.precision();
+
+                if (valueScale > decimalScale) // only round to scale, if needed as otherwise whole numbers get lost etc 5566 = nothing
+                {
+                    bdFromString = bdFromString.setScale(decimalScale, RoundingMode.DOWN); // round the number
+                }
+
+                //#####################################################
+                // Java Concept Of Precision
+                //#####################################################
+                if(valueScale == 0 && valuePrecision > decimalPrecision) // the number is too big
+                {
+                    errorTxt += String.format("\n\n  ' %s 'on Row: %s, %s ", rowlabel, rowNumber, txt);
+                }
+
+                //#####################################################
+                // MySQL Concept Of Precision
+                //#####################################################
+                else if ( valueScale > 0 && bdFromString.setScale(0, RoundingMode.FLOOR).precision() > decimalPrecision)
+                {
+                    errorTxt += String.format("\n\n  ' %s 'on Row: %s, %s ", rowlabel, rowNumber, txt);
+                }
+
+                //#####################################################
+                // Format Data in Cell
+                //#####################################################
+                jTextField.setText(String.format("%s", bdFromString));
+
+                System.out.printf("\n%s", bdFromString);
+
+                //#####################################################
+                // Check if the value is bigger than 0
+                //#####################################################
+
+                if (bdFromString.compareTo(zero) < 0)// "<")
+                {
+                    errorTxt += String.format("\n\n  ' %s 'on Row: %s, must have a value which is bigger than 0 and %s",rowlabel, rowNumber, txt);
+                }
+            }
+            catch (Exception e)
+            {
+                errorTxt += String.format("\n\n  ' %s 'on Row: %s, %s ",rowlabel, rowNumber, txt);
+            }
+
+            return errorTxt;
         }
 
         //#################################################################################################################
@@ -893,7 +965,7 @@ public class Add_Ingredients_Screen5 extends JFrame
                     }
                     else
                     {
-                        textField.setDocument(new JTextFieldLimit(9));
+                        textField.setDocument(new JTextFieldLimit(charlimit));
                     }
 
                     ingredientsFormObjects.add(textField);
@@ -928,7 +1000,7 @@ public class Add_Ingredients_Screen5 extends JFrame
                 }
 
                 String errorTxt = "";
-                BigDecimal zero = new BigDecimal(0);
+
 
                 //##############################
                 // Validation JTextFields
@@ -974,17 +1046,9 @@ public class Add_Ingredients_Screen5 extends JFrame
                         }
 
                         //#########################################
-                        // Check if JTextfield input is a Decimal
+                        // Do BigDecimal Processing
                         //#########################################
-                        try
-                        {
-                            BigDecimal bdFromString = new BigDecimal(String.format("%s", value));
-
-                        }
-                        catch (Exception e)
-                        {
-                            errorTxt += String.format("\n\n  ' %s 'on Row: %s, must have a value which is a ' Decimal(8,2) ' !'", labels[row], row + 1);
-                        }
+                        errorTxt = convertToBigDecimal(value, errorTxt, labels[row], row + 1, jTextField);
                     }
                 }
 
@@ -1273,7 +1337,8 @@ public class Add_Ingredients_Screen5 extends JFrame
 
                 for (Integer key : prices.keySet())
                 {
-                    String value = prices.get(key).getText().trim();
+                    JTextField jTextField = prices.get(key);
+                    String value = jTextField.getText().trim();
 
                     //#########################################
                     // Check if JTextfield input is empty
@@ -1286,16 +1351,9 @@ public class Add_Ingredients_Screen5 extends JFrame
                     }
 
                     //#########################################
-                    // Check if JTextfield input is a Decimal
+                    // Do BigDecimal Processing
                     //#########################################
-                    try
-                    {
-                        BigDecimal bdFromString = new BigDecimal(String.format("%s", value));
-                    }
-                    catch (Exception e)
-                    {
-                        errorTxt += String.format("\n\nOn Row: %s, 'price' must have a value which is a ' Decimal(8,2) ' !'", i);
-                    }
+                    errorTxt = convertToBigDecimal(value, errorTxt, "Prices", i, jTextField);
 
                     i++;
                 }
@@ -1317,7 +1375,8 @@ public class Add_Ingredients_Screen5 extends JFrame
 
                 for (Integer key : quantityPerPack.keySet())
                 {
-                    String value = quantityPerPack.get(key).getText().trim();
+                    JTextField jTextField = quantityPerPack.get(key);
+                    String value = jTextField.getText().trim();
 
                     //#########################################
                     // Check if JTextfield input is empty
@@ -1330,16 +1389,9 @@ public class Add_Ingredients_Screen5 extends JFrame
                     }
 
                     //#########################################
-                    // Check if JTextfield input is a Decimal
+                    // Do BigDecimal Processing
                     //#########################################
-                    try
-                    {
-                        BigDecimal bdFromString = new BigDecimal(String.format("%s", value));
-                    }
-                    catch (Exception e)
-                    {
-                        errorTxt += String.format("\n\nOn Row: %s, the 'Quantity'  must have a value which is a ' Decimal(8,2) ' !'", i);
-                    }
+                    errorTxt = convertToBigDecimal(value, errorTxt, "Quantity", i, jTextField);
 
                     i++;
                 }
@@ -1369,7 +1421,7 @@ public class Add_Ingredients_Screen5 extends JFrame
                         errorTxt += String.format("\nOn Row %s,  please Select a shop that isnt 'No Shop'! Or, delete the row!", i);
                     }
 
-                    if(chosenShops.contains(chosenItem))
+                    if (chosenShops.contains(chosenItem))
                     {
                         errorTxt += String.format("\nOn Row %s, there is also another row/rows with with the supplier %s - no duplicate stores!", i, chosenItem);
                     }
@@ -1538,13 +1590,13 @@ public class Add_Ingredients_Screen5 extends JFrame
                         // Centre Side
                         //######################################################
                         ingredientPrice_TxtField = new JTextField();
-                        ingredientPrice_TxtField.setDocument(new JTextFieldLimit(16));
+                        ingredientPrice_TxtField.setDocument(new JTextFieldLimit(charlimit));
                         ingredientPrice_TxtField.setText("0.00");
                         prices.put(id, ingredientPrice_TxtField);
                         centrePanel.add(ingredientPrice_TxtField);
 
                         quantityPerPack_TxtField = new JTextField();
-                        quantityPerPack_TxtField.setDocument(new JTextFieldLimit(16));
+                        quantityPerPack_TxtField.setDocument(new JTextFieldLimit(charlimit));
                         quantityPerPack_TxtField.setText("0.00");
                         quantityPerPack.put(id, quantityPerPack_TxtField);
                         centrePanel.add(quantityPerPack_TxtField);
