@@ -182,45 +182,7 @@ public class Add_Ingredients_Screen extends JFrame
 
             delete_Btn.addActionListener(ae -> {
 
-                if (edit_IngredientName_JComboBox.getSelectedIndex()!=-1)
-                {
-                    String chosenItem = edit_IngredientName_JComboBox.getSelectedItem().toString();
-                    if (chosenItem.equals("N/A"))
-                    {
-                        JOptionPane.showMessageDialog(gui, "This item cannot be deleted from the list (its a placeholder) !");
-                        refreshInterface(true);
-                        return;
-                    }
-
-                    if (areYouSure(String.format("delete ingredient named '%s' from the database", chosenItem)))
-                    {
-                        String[] ingredientID_R = db.getSingleColumnQuery(String.format("SELECT IngredientID FROM ingredients_info WHERE Ingredient_Name = '%s';", chosenItem));
-
-                        if (ingredientID_R==null)
-                        {
-                            JOptionPane.showMessageDialog(gui, "Unable to grab Ingredient INFO to delete it!!");
-                            return;
-                        }
-
-                        String ingredientID = ingredientID_R[0];
-                        String query0 = String.format("DELETE FROM `ingredients_in_meal` WHERE IngredientID  = %s;", ingredientID);
-                        String query1 = String.format("DELETE FROM `ingredientInShops` WHERE IngredientID  = %s;", ingredientID);
-                        String query2 = String.format("DELETE FROM `ingredients_info` WHERE IngredientID  = %s;", ingredientID);
-
-                        if (db.uploadData_Batch(new String[]{query0, query1, query2}))
-                        {
-                            JOptionPane.showMessageDialog(gui, String.format("Successfully Deleted '%s' From DB!", chosenItem));
-                            updateJComboBox();
-                            refreshInterface(true);
-                        }
-                        else
-                        {
-                            JOptionPane.showMessageDialog(gui, "Unable to delete item From DB!");
-                        }
-                    }
-                    return;
-                }
-                JOptionPane.showMessageDialog(gui, "Please select an item first before attempting to delete an ingredient!");
+                deleteIngredientBTNAction();
             });
 
             iconPanelInsert.add(delete_Icon_Btn);
@@ -386,6 +348,49 @@ public class Add_Ingredients_Screen extends JFrame
             createForms(ingredientsForm, shopForm);
         }
 
+        public void deleteIngredientBTNAction()
+        {
+            if (edit_IngredientName_JComboBox.getSelectedIndex()!=-1)
+            {
+                String chosenItem = edit_IngredientName_JComboBox.getSelectedItem().toString();
+                if (chosenItem.equals("N/A"))
+                {
+                    JOptionPane.showMessageDialog(gui, "This item cannot be deleted from the list (its a placeholder) !");
+                    refreshInterface(true);
+                    return;
+                }
+
+                if (areYouSure(String.format("delete ingredient named '%s' from the database", chosenItem)))
+                {
+                    String[] ingredientID_R = db.getSingleColumnQuery(String.format("SELECT IngredientID FROM ingredients_info WHERE Ingredient_Name = '%s';", chosenItem));
+
+                    if (ingredientID_R==null)
+                    {
+                        JOptionPane.showMessageDialog(gui, "Unable to grab Ingredient INFO to delete it!!");
+                        return;
+                    }
+
+                    String ingredientID = ingredientID_R[0];
+                    String query0 = String.format("DELETE FROM `ingredients_in_meal` WHERE IngredientID  = %s;", ingredientID);
+                    String query1 = String.format("DELETE FROM `ingredientInShops` WHERE IngredientID  = %s;", ingredientID);
+                    String query2 = String.format("DELETE FROM `ingredients_info` WHERE IngredientID  = %s;", ingredientID);
+
+                    if (db.uploadData_Batch(new String[]{query0, query1, query2}))
+                    {
+                        JOptionPane.showMessageDialog(gui, String.format("Successfully Deleted '%s' From DB!", chosenItem));
+                        updateJComboBox();
+                        refreshInterface(true);
+                    }
+                    else
+                    {
+                        JOptionPane.showMessageDialog(gui, "Unable to delete item From DB!");
+                    }
+                }
+                return;
+            }
+            JOptionPane.showMessageDialog(gui, "Please select an item first before attempting to delete an ingredient!");
+        }
+
         private void refreshInterface(boolean resetJCombo) // only available to reset screen
         {
             ingredientsForm.refreshIngredientsForm();
@@ -528,6 +533,127 @@ public class Add_Ingredients_Screen extends JFrame
             JOptionPane.showMessageDialog(gui.getFrame(), "Update 3/3 -  New Shop Suppliers For Ingredient Updated In DB!!!");
             return true;
         }
+
+
+        public class EditShopForm extends ShopForm
+        {
+            public EditShopForm(Container parentContainer, String btnText, int btnWidth, int btnHeight)
+            {
+                super(parentContainer, btnText, btnWidth, btnHeight);
+            }
+
+            private String[] get_ShopForm_UpdateString(String ingredientID)
+            {
+                String deleteQuery = String.format("DELETE FROM `ingredientInShops` WHERE `IngredientID` = %s;", ingredientID);
+
+                //########################################
+                // Nothing to Update
+                //########################################
+                if (!updateIngredientsForm)
+                {
+                    return null;
+                }
+                else if (prices.size()==0)
+                {
+                    updateShops = true;
+                    return new String[]{deleteQuery};
+                }
+
+                //#############################################################
+                // Create Update  String
+                //############################################################
+
+                String updateString = String.format("""
+                        INSERT INTO ingredientInShops (IngredientID, Volume_Per_Unit, Cost_Per_Unit, Store_Name)
+                        VALUES""");
+
+                ///#################################
+                // Creating String for Add Values
+                //#################################
+                String values = "";
+                int listSize = prices.size(), pos = 0;
+
+                for (Integer key : prices.keySet())
+                {
+                    pos++;
+                    values += String.format("\n(%s, %s, %s, '%s')", ingredientID, quantityPerPack.get(key).getText(), prices.get(key).getText(), shopJComboBoxes.get(key).getSelectedItem().toString());
+
+                    if (pos==listSize)
+                    {
+                        values += ";";
+                        continue;
+                    }
+                    values += ",";
+                }
+
+                updateString += values;
+
+                //############################################################
+                // Return values
+                //############################################################
+
+                updateShops = true;
+                return new String[]{deleteQuery, updateString};
+            }
+        }
+
+        public class EditIngredientsForm extends IngredientsForm
+        {
+            public EditIngredientsForm(Container parentContainer, String btnText, int btnWidth, int btnHeight)
+            {
+                super(parentContainer, btnText, btnWidth, btnHeight);
+            }
+
+            private String get_IngredientsForm_UpdateString(String ingreientID) // HELLO needs further update methods created for gui
+            {
+                //####################################
+                // Get Current ID
+                //####################################
+
+                JTextField ingredientName_JTxtF = (JTextField) ingredientsFormObjects.get(ingredientNameObjectIndex);
+                String ingredientName_Txt = ingredientName_JTxtF.getText().trim();
+
+                //####################################
+                // Gathering Form Txt Data
+                //####################################
+                ArrayList<String> formResults = new ArrayList<>();
+                ArrayList<Component> ingredientsFormObjects = super.getIngredientsFormObjects();
+
+                for (Component comp : ingredientsFormObjects)
+                {
+                    if (comp instanceof JTextField)
+                    {
+                        formResults.add(((JTextField) comp).getText());
+                    }
+                    else if (comp instanceof JComboBox)
+                    {
+                        formResults.add(((JComboBox) comp).getSelectedItem().toString());
+                    }
+                }
+
+                //####################################
+                // Creating Upload Query
+                //####################################
+                int i = 0;
+                String updateTargets_Query = String.format("""
+                                UPDATE ingredients_info 
+                                SET  
+                                Meassurement = '%s', Ingredient_Name = '%s', Ingredient_Type = '%s', Based_On_Quantity = %s, 
+                                Protein = %s, Carbohydrates = %s, Sugars_Of_Carbs = %s, Fibre = %s, Fat = %s, Saturated_Fat = %s,
+                                Salt = %s, Water_Content = %s, Calories = %s
+                                WHERE IngredientID = %s; """,
+                        formResults.get(i), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1),
+                        formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1),
+                        formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), ingreientID);
+
+                //####################################
+                // Return results
+                //####################################
+                updateIngredientsForm = true;
+                return updateTargets_Query;
+            }
+        }
+
     }
 
     public class createForm extends JPanel
@@ -1141,63 +1267,6 @@ public class Add_Ingredients_Screen extends JFrame
             }
         }
 
-        public class EditIngredientsForm extends IngredientsForm
-        {
-            public EditIngredientsForm(Container parentContainer, String btnText, int btnWidth, int btnHeight)
-            {
-                super(parentContainer, btnText, btnWidth, btnHeight);
-            }
-
-            private String get_IngredientsForm_UpdateString(String ingreientID) // HELLO needs further update methods created for gui
-            {
-                //####################################
-                // Get Current ID
-                //####################################
-
-                JTextField ingredientName_JTxtF = (JTextField) ingredientsFormObjects.get(ingredientNameObjectIndex);
-                String ingredientName_Txt = ingredientName_JTxtF.getText().trim();
-
-                //####################################
-                // Gathering Form Txt Data
-                //####################################
-                ArrayList<String> formResults = new ArrayList<>();
-                ArrayList<Component> ingredientsFormObjects = super.getIngredientsFormObjects();
-
-                for (Component comp : ingredientsFormObjects)
-                {
-                    if (comp instanceof JTextField)
-                    {
-                        formResults.add(((JTextField) comp).getText());
-                    }
-                    else if (comp instanceof JComboBox)
-                    {
-                        formResults.add(((JComboBox) comp).getSelectedItem().toString());
-                    }
-                }
-
-                //####################################
-                // Creating Upload Query
-                //####################################
-                int i = 0;
-                String updateTargets_Query = String.format("""
-                                UPDATE ingredients_info 
-                                SET  
-                                Meassurement = '%s', Ingredient_Name = '%s', Ingredient_Type = '%s', Based_On_Quantity = %s, 
-                                Protein = %s, Carbohydrates = %s, Sugars_Of_Carbs = %s, Fibre = %s, Fat = %s, Saturated_Fat = %s,
-                                Salt = %s, Water_Content = %s, Calories = %s
-                                WHERE IngredientID = %s; """,
-                        formResults.get(i), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1),
-                        formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1),
-                        formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), ingreientID);
-
-                //####################################
-                // Return results
-                //####################################
-                updateIngredientsForm = true;
-                return updateTargets_Query;
-            }
-        }
-
         //#################################################################################################################
         // ShopForm
         //##################################################################################################################
@@ -1703,68 +1772,6 @@ public class Add_Ingredients_Screen extends JFrame
                     parentContainer.revalidate();
                     resize_GUI();
                 }
-            }
-        }
-
-        public class EditShopForm extends ShopForm
-        {
-            public EditShopForm(Container parentContainer, String btnText, int btnWidth, int btnHeight)
-            {
-                super(parentContainer, btnText, btnWidth, btnHeight);
-            }
-
-            private String[] get_ShopForm_UpdateString(String ingredientID)
-            {
-                String deleteQuery = String.format("DELETE FROM `ingredientInShops` WHERE `IngredientID` = %s;", ingredientID);
-
-                //########################################
-                // Nothing to Update
-                //########################################
-                if (!updateIngredientsForm)
-                {
-                    return null;
-                }
-                else if (prices.size()==0)
-                {
-                    updateShops = true;
-                    return new String[]{deleteQuery};
-                }
-
-                //#############################################################
-                // Create Update  String
-                //############################################################
-
-                String updateString = String.format("""
-                        INSERT INTO ingredientInShops (IngredientID, Volume_Per_Unit, Cost_Per_Unit, Store_Name)
-                        VALUES""");
-
-                ///#################################
-                // Creating String for Add Values
-                //#################################
-                String values = "";
-                int listSize = prices.size(), pos = 0;
-
-                for (Integer key : prices.keySet())
-                {
-                    pos++;
-                    values += String.format("\n(%s, %s, %s, '%s')", ingredientID, quantityPerPack.get(key).getText(), prices.get(key).getText(), shopJComboBoxes.get(key).getSelectedItem().toString());
-
-                    if (pos==listSize)
-                    {
-                        values += ";";
-                        continue;
-                    }
-                    values += ",";
-                }
-
-                updateString += values;
-
-                //############################################################
-                // Return values
-                //############################################################
-
-                updateShops = true;
-                return new String[]{deleteQuery, updateString};
             }
         }
 
