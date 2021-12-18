@@ -39,7 +39,7 @@ public class Add_Ingredients_Screen extends JFrame
     private JComboBox edit_IngredientName_JComboBox = new JComboBox();
 
     //##################################################################################################################
-    // Constuctor
+    // Constructor
     //##################################################################################################################
 
     public Add_Ingredients_Screen(MyJDBC db, MealPlanScreen gui, int planID, int temp_PlanID, String planName)
@@ -114,6 +114,10 @@ public class Add_Ingredients_Screen extends JFrame
 
         }
     }
+
+    //##################################################################################################################
+    // Editing Form Class
+    //##################################################################################################################
 
     public class EditingCreateForm extends createForm
     {
@@ -534,7 +538,69 @@ public class Add_Ingredients_Screen extends JFrame
             return true;
         }
 
+        //########################################################################
+        // Ingredients Form
+        //########################################################################
+        public class EditIngredientsForm extends IngredientsForm
+        {
+            public EditIngredientsForm(Container parentContainer, String btnText, int btnWidth, int btnHeight)
+            {
+                super(parentContainer, btnText, btnWidth, btnHeight);
+            }
 
+            private String get_IngredientsForm_UpdateString(String ingreientID) // HELLO needs further update methods created for gui
+            {
+                //####################################
+                // Get Current ID
+                //####################################
+
+                JTextField ingredientName_JTxtF = (JTextField) ingredientsFormObjects.get(ingredientNameObjectIndex);
+                String ingredientName_Txt = ingredientName_JTxtF.getText().trim();
+
+                //####################################
+                // Gathering Form Txt Data
+                //####################################
+                ArrayList<String> formResults = new ArrayList<>();
+                ArrayList<Component> ingredientsFormObjects = super.getIngredientsFormObjects();
+
+                for (Component comp : ingredientsFormObjects)
+                {
+                    if (comp instanceof JTextField)
+                    {
+                        formResults.add(((JTextField) comp).getText());
+                    }
+                    else if (comp instanceof JComboBox)
+                    {
+                        formResults.add(((JComboBox) comp).getSelectedItem().toString());
+                    }
+                }
+
+                //####################################
+                // Creating Upload Query
+                //####################################
+                int i = 0;
+                String updateTargets_Query = String.format("""
+                                UPDATE ingredients_info 
+                                SET  
+                                Meassurement = '%s', Ingredient_Name = '%s', Ingredient_Type = '%s', Based_On_Quantity = %s, 
+                                Protein = %s, Carbohydrates = %s, Sugars_Of_Carbs = %s, Fibre = %s, Fat = %s, Saturated_Fat = %s,
+                                Salt = %s, Water_Content = %s, Calories = %s
+                                WHERE IngredientID = %s; """,
+                        formResults.get(i), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1),
+                        formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1),
+                        formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), ingreientID);
+
+                //####################################
+                // Return results
+                //####################################
+                updateIngredientsForm = true;
+                return updateTargets_Query;
+            }
+        }
+
+        //########################################################################
+        // Shop Form
+        //########################################################################
         public class EditShopForm extends ShopForm
         {
             public EditShopForm(Container parentContainer, String btnText, int btnWidth, int btnHeight)
@@ -596,65 +662,11 @@ public class Add_Ingredients_Screen extends JFrame
                 return new String[]{deleteQuery, updateString};
             }
         }
-
-        public class EditIngredientsForm extends IngredientsForm
-        {
-            public EditIngredientsForm(Container parentContainer, String btnText, int btnWidth, int btnHeight)
-            {
-                super(parentContainer, btnText, btnWidth, btnHeight);
-            }
-
-            private String get_IngredientsForm_UpdateString(String ingreientID) // HELLO needs further update methods created for gui
-            {
-                //####################################
-                // Get Current ID
-                //####################################
-
-                JTextField ingredientName_JTxtF = (JTextField) ingredientsFormObjects.get(ingredientNameObjectIndex);
-                String ingredientName_Txt = ingredientName_JTxtF.getText().trim();
-
-                //####################################
-                // Gathering Form Txt Data
-                //####################################
-                ArrayList<String> formResults = new ArrayList<>();
-                ArrayList<Component> ingredientsFormObjects = super.getIngredientsFormObjects();
-
-                for (Component comp : ingredientsFormObjects)
-                {
-                    if (comp instanceof JTextField)
-                    {
-                        formResults.add(((JTextField) comp).getText());
-                    }
-                    else if (comp instanceof JComboBox)
-                    {
-                        formResults.add(((JComboBox) comp).getSelectedItem().toString());
-                    }
-                }
-
-                //####################################
-                // Creating Upload Query
-                //####################################
-                int i = 0;
-                String updateTargets_Query = String.format("""
-                                UPDATE ingredients_info 
-                                SET  
-                                Meassurement = '%s', Ingredient_Name = '%s', Ingredient_Type = '%s', Based_On_Quantity = %s, 
-                                Protein = %s, Carbohydrates = %s, Sugars_Of_Carbs = %s, Fibre = %s, Fat = %s, Saturated_Fat = %s,
-                                Salt = %s, Water_Content = %s, Calories = %s
-                                WHERE IngredientID = %s; """,
-                        formResults.get(i), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1),
-                        formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1),
-                        formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), ingreientID);
-
-                //####################################
-                // Return results
-                //####################################
-                updateIngredientsForm = true;
-                return updateTargets_Query;
-            }
-        }
-
     }
+
+    //##################################################################################################################
+    // Original Form Class
+    //##################################################################################################################
 
     public class createForm extends JPanel
     {
@@ -1804,8 +1816,20 @@ public class Add_Ingredients_Screen extends JFrame
     }
 
     //##################################################################################################################
-    // General Methods
+    // Form Methods
     //##################################################################################################################
+    protected Boolean areYouSure(String process)
+    {
+        int reply = JOptionPane.showConfirmDialog(gui, String.format("Are you sure you want to: %s?", process, process),
+                "Confirmation", JOptionPane.YES_NO_OPTION); //HELLO Edit
+
+        if (reply==JOptionPane.NO_OPTION || reply==JOptionPane.CLOSED_OPTION)
+        {
+            return false;
+        }
+        return true;
+    }
+
     public boolean getUpdate()
     {
         return update;
@@ -1862,6 +1886,9 @@ public class Add_Ingredients_Screen extends JFrame
         return Integer.parseInt(newID[0]) + 1;
     }
 
+    //##################################################################################################################
+    // General Methods
+    //##################################################################################################################
     public void makeJframeVisible()
     {
         setExtendedState(JFrame.NORMAL);
@@ -1908,15 +1935,5 @@ public class Add_Ingredients_Screen extends JFrame
         container.add(addToContainer, gbc);
     }
 
-    protected Boolean areYouSure(String process)
-    {
-        int reply = JOptionPane.showConfirmDialog(gui, String.format("Are you sure you want to: %s?", process, process),
-                "Confirmation", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
-        if (reply==JOptionPane.NO_OPTION || reply==JOptionPane.CLOSED_OPTION)
-        {
-            return false;
-        }
-        return true;
-    }
 }
