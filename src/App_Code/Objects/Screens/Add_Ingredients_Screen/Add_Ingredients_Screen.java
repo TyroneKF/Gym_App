@@ -1691,9 +1691,7 @@ public class Add_Ingredients_Screen extends JFrame
 
                         // creating commands for submit button to execute on
                         deleteRowBtn.addActionListener(ae -> {
-
-                            removeFromParentContainer();
-                            rowsInTable.remove(this);
+                              deleteRowAction();
                         });
 
                         eastPanel.add(deleteRowBtn);
@@ -1753,6 +1751,12 @@ public class Add_Ingredients_Screen extends JFrame
                     //#########################################################################################################
                     addToContainer(parentContainer, rowPanel, 0, posY += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
                     parentContainer.revalidate();
+                }
+
+                protected void deleteRowAction()
+                {
+                    removeFromParentContainer();
+                    rowsInTable.remove(this);
                 }
 
                 private JComboBox getShops_JComboBox()
