@@ -8,8 +8,8 @@ import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
-import App_Code.Objects.Screens.Add_Ingredients_Screen.Add_Ingredients_Screen5;
-import App_Code.Objects.Screens.MacrosTargets_Screen.macrosTargets_Screen5;
+import App_Code.Objects.Screens.Add_Ingredients_Screen.Add_Ingredients_Screen;
+import App_Code.Objects.Screens.MacrosTargets_Screen.macrosTargets_Screen;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +18,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
-public class MealPlanScreen5 extends JPanel
+public class MealPlanScreen extends JPanel
 {
     private String name = "MyJTable_JDBC511_05";
     //########################################################
@@ -30,8 +30,8 @@ public class MealPlanScreen5 extends JPanel
     private Container contentPane;
 
     private MyJDBC db;
-    private macrosTargets_Screen5 macrosTargets_Screen = null;
-    private Add_Ingredients_Screen5 Add_Ingredients_Screen5 = null;
+    private App_Code.Objects.Screens.MacrosTargets_Screen.macrosTargets_Screen macrosTargets_Screen = null;
+    private Add_Ingredients_Screen Add_Ingredients_Screen = null;
 
     private MyJTable_JDBC5 macrosLeft_JTable, macros_Targets_Table;
     private MyJTable_JDBC5 jTableBeingAdded;
@@ -80,7 +80,7 @@ public class MealPlanScreen5 extends JPanel
             macroTargets_StartCol = 2, totalPlanTable_StartCol = 2, macrosLeftTable_StartCol = 2;
     //########################################################
 
-    public MealPlanScreen5()
+    public MealPlanScreen()
     {
         //############################################################################################################
         // Database Setup
@@ -427,7 +427,7 @@ public class MealPlanScreen5 extends JPanel
 
     public static void main(String[] args)
     {
-        new MealPlanScreen5();
+        new MealPlanScreen();
     }
 
     private CollapsibleJPanel create_CollapsibleJPanel(boolean mealInDB, Container container, Integer mealID, Integer temp_MealID, String mealName, int mealNo, String[] meal_total_columnNames,
@@ -958,17 +958,17 @@ public class MealPlanScreen5 extends JPanel
             return;
         }
 
-        if (Add_Ingredients_Screen5!=null)
+        if (Add_Ingredients_Screen!=null)
         {
-            Add_Ingredients_Screen5.makeJframeVisible();
+            Add_Ingredients_Screen.makeJframeVisible();
             return;
         }
-        Add_Ingredients_Screen5 = new Add_Ingredients_Screen5(db, this, planID, tempPlanID, planName);
+        Add_Ingredients_Screen = new Add_Ingredients_Screen(db, this, planID, tempPlanID, planName);
     }
 
     public void remove_addIngredients_Screen()
     {
-        Add_Ingredients_Screen5 = null;
+        Add_Ingredients_Screen = null;
     }
 
     //#####################################
@@ -1040,7 +1040,7 @@ public class MealPlanScreen5 extends JPanel
             macrosTargets_Screen.makeJframeVisible();
             return;
         }
-        macrosTargets_Screen = new macrosTargets_Screen5(db, this, planID, tempPlanID, planName);
+        macrosTargets_Screen = new macrosTargets_Screen(db, this, planID, tempPlanID, planName);
     }
 
     public void remove_macrosTargets_Screen()

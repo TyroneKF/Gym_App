@@ -3,7 +3,7 @@ package App_Code.Objects.Screens.Add_Ingredients_Screen;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Gui_Objects.*;
-import App_Code.Objects.Screens.Meal_Plan_Screen.MealPlanScreen5;
+import App_Code.Objects.Screens.Meal_Plan_Screen.MealPlanScreen;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -12,12 +12,11 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.*;
 import java.util.HashMap;
 
-public class Add_Ingredients_Screen5 extends JFrame
+public class Add_Ingredients_Screen extends JFrame
 {
     //#######################################
     // General Variables
@@ -32,7 +31,7 @@ public class Add_Ingredients_Screen5 extends JFrame
     private MyJDBC db;
     private Integer temp_PlanID, planID;
     private String planName;
-    private MealPlanScreen5 gui;
+    private MealPlanScreen gui;
 
     private boolean update = false;
 
@@ -43,7 +42,7 @@ public class Add_Ingredients_Screen5 extends JFrame
     // Constuctor
     //##################################################################################################################
 
-    public Add_Ingredients_Screen5(MyJDBC db, MealPlanScreen5 gui, int planID, int temp_PlanID, String planName)
+    public Add_Ingredients_Screen(MyJDBC db, MealPlanScreen gui, int planID, int temp_PlanID, String planName)
     {
         this.db = db;
         this.gui = gui;
