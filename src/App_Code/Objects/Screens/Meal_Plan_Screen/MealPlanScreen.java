@@ -989,7 +989,7 @@ public class MealPlanScreen extends JPanel
                 if(transferTargets(planID, tempPlanID, showUpdateMsg))
                 {
                     macrosTargetsChanged(false);
-                    updateInfo();
+                    updateTargetsAndMacrosLeft();
                     return;
                 }
             }
@@ -998,7 +998,7 @@ public class MealPlanScreen extends JPanel
                 if(transferTargets(tempPlanID, planID, showUpdateMsg))
                 {
                     macrosTargetsChanged(false);
-                    updateInfo();
+                    updateTargetsAndMacrosLeft();
                     return;
                 }
             }
@@ -1021,7 +1021,7 @@ public class MealPlanScreen extends JPanel
                 {
                     JOptionPane.showMessageDialog(frame, "\n\nMacro-Targets Successfully Refreshed!!");
                     macrosTargetsChanged(false);
-                    updateInfo();
+                    updateTargetsAndMacrosLeft();
                     return;
                 }
             }
@@ -1048,7 +1048,7 @@ public class MealPlanScreen extends JPanel
         macrosTargets_Screen = null;
     }
 
-    public void updateInfo()
+    public void updateTargetsAndMacrosLeft()
     {
         macros_Targets_Table.internal_Update_MacroTargets();
         macrosLeft_JTable.internal_Update_MacrosLeft_Table();

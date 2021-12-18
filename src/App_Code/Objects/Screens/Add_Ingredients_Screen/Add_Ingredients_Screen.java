@@ -661,6 +661,92 @@ public class Add_Ingredients_Screen extends JFrame
                 updateShops = true;
                 return new String[]{deleteQuery, updateString};
             }
+
+            @Override
+            public AddShopForm_Object addShopForm_object()
+            {
+                EditAddShopForm_Object obj = new EditAddShopForm_Object(inputArea, true);
+                addToContainer(inputArea, obj, 0, objectID, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+                return obj;
+            }
+
+            public class EditAddShopForm_Object extends AddShopForm_Object
+            {
+
+                EditAddShopForm_Object(Container parentContainer, boolean addRow)
+                {
+                    super(parentContainer, addRow);
+                }
+
+                @Override
+                protected void deleteRowAction()
+                {
+                    //################################################
+                    // Confirm if the user wants to delete the shop
+                    //################################################
+                    String chosenShop = String.valueOf(shops_JComboBox.getSelectedItem());
+                    if (!(areYouSure(String.format("you want to permanently delete %s as a Supplier for this ingredient", chosenShop))))
+                    {
+                        return;
+                    }
+
+                    //################################################
+                    // Get Ingredient ID
+                    //################################################
+                    String ingredientID = getSelectedIngredientID();
+                    if (ingredientID==null)
+                    {
+                        JOptionPane.showMessageDialog(gui, String.format("Unable to get selected ingredients information to delete the Supplier ' %s ' !", chosenShop));
+                        return;
+                    }
+
+                    //###################################################
+                    // Delete Supplier From Ingredient in Meals (PDID)
+                    //###################################################
+                    String updateQuery = String.format("""
+                            UPDATE ingredients_in_meal
+                            SET  PDID = NULL
+                            WHERE PDID =
+                            (
+                            	SELECT PDID FROM ingredientInShops i
+                            	WHERE i.IngredientID = %s AND i.Store_Name = '%s'
+                            );""", ingredientID, chosenShop);
+
+                    System.out.printf("\n\n%s", updateQuery);
+
+                    //###################################################
+                    // Delete Supplier From Ingredient
+                    //###################################################
+                    String updateQuery2 = String.format("""
+                            DELETE FROM ingredientInShops
+                            WHERE IngredientID = %s AND Store_Name = '%s';
+                            """, ingredientID, chosenShop);
+
+                    System.out.printf("\n\n%s", updateQuery2);
+
+                    //###################################################
+                    // Update
+                    //###################################################
+                    if(!(db.uploadData_Batch(new String[]{updateQuery, updateQuery2})))
+                    {
+                        JOptionPane.showMessageDialog(gui, String.format("Unable to remove the supplier ' %s ' from this ingredient!", chosenShop));
+                        return;
+                    }
+
+                    //################################################
+                    // Remove Row Object
+                    //################################################
+                    removeFromParentContainer();
+                    rowsInTable.remove(this);
+
+                     //################################################
+                    // Remove Row Object
+                    //################################################
+                    JOptionPane.showMessageDialog(gui, String.format("Successfully, remove the  supplier ' %s ' from this ingredient!", chosenShop));
+
+
+                }
+            }
         }
     }
 
@@ -682,7 +768,7 @@ public class Add_Ingredients_Screen extends JFrame
 
         protected String ingredientID; // HELLO DELTE
 
-        protected int totalNumbersAllowed = 7,decimalScale = 2, decimalPrecision = totalNumbersAllowed - decimalScale,  charlimit = 8;
+        protected int totalNumbersAllowed = 7, decimalScale = 2, decimalPrecision = totalNumbersAllowed - decimalScale, charlimit = 8;
 
 
         //#################################################################################################################
@@ -903,7 +989,7 @@ public class Add_Ingredients_Screen extends JFrame
                 //#####################################################
                 // Java Concept Of Precision
                 //#####################################################
-                if(valueScale == 0 && valuePrecision > decimalPrecision) // the number is too big
+                if (valueScale==0 && valuePrecision > decimalPrecision) // the number is too big
                 {
                     errorTxt += String.format("\n\n  ' %s 'on Row: %s, %s ", rowlabel, rowNumber, txt);
                 }
@@ -911,7 +997,7 @@ public class Add_Ingredients_Screen extends JFrame
                 //#####################################################
                 // MySQL Concept Of Precision
                 //#####################################################
-                else if ( valueScale > 0 && bdFromString.setScale(0, RoundingMode.FLOOR).precision() > decimalPrecision)
+                else if (valueScale > 0 && bdFromString.setScale(0, RoundingMode.FLOOR).precision() > decimalPrecision)
                 {
                     errorTxt += String.format("\n\n  ' %s 'on Row: %s, %s ", rowlabel, rowNumber, txt);
                 }
@@ -921,20 +1007,18 @@ public class Add_Ingredients_Screen extends JFrame
                 //#####################################################
                 jTextField.setText(String.format("%s", bdFromString));
 
-                System.out.printf("\n%s", bdFromString);
-
                 //#####################################################
                 // Check if the value is bigger than 0
                 //#####################################################
 
                 if (bdFromString.compareTo(zero) < 0)// "<")
                 {
-                    errorTxt += String.format("\n\n  ' %s 'on Row: %s, must have a value which is bigger than 0 and %s",rowlabel, rowNumber, txt);
+                    errorTxt += String.format("\n\n  ' %s 'on Row: %s, must have a value which is bigger than 0 and %s", rowlabel, rowNumber, txt);
                 }
             }
             catch (Exception e)
             {
-                errorTxt += String.format("\n\n  ' %s 'on Row: %s, %s ",rowlabel, rowNumber, txt);
+                errorTxt += String.format("\n\n  ' %s 'on Row: %s, %s ", rowlabel, rowNumber, txt);
             }
 
             return errorTxt;
@@ -1370,7 +1454,7 @@ public class Add_Ingredients_Screen extends JFrame
                 addToContainer(inputArea, new AddShopForm_Object(inputArea, false), 0, objectID, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
             }
 
-            public AddShopForm_Object addShopForm_object()
+            protected AddShopForm_Object addShopForm_object()
             {
                 AddShopForm_Object obj = new AddShopForm_Object(inputArea, true);
                 addToContainer(inputArea, obj, 0, objectID, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
@@ -1691,7 +1775,7 @@ public class Add_Ingredients_Screen extends JFrame
 
                         // creating commands for submit button to execute on
                         deleteRowBtn.addActionListener(ae -> {
-                              deleteRowAction();
+                            deleteRowAction();
                         });
 
                         eastPanel.add(deleteRowBtn);

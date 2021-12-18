@@ -180,7 +180,7 @@ public class macrosTargets_Screen extends JFrame
                         if (updateForm())
                         {
                             closeWindowEvent();
-                            gui.updateInfo();
+                            gui.updateTargetsAndMacrosLeft();
                             gui.macrosTargetsChanged(true);
                             closeeWindow();
                         }
@@ -295,7 +295,7 @@ public class macrosTargets_Screen extends JFrame
         }
 
         JOptionPane.showMessageDialog(gui.getFrame(), "Macro Targets Successfully Updated In DB");
-        gui.updateInfo();
+        gui.updateTargetsAndMacrosLeft();
         return true;
     }
 
