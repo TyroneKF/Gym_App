@@ -1114,4 +1114,51 @@ public class MealPlanScreen extends JPanel
     {
         return macroTargetsChanged;
     }
+
+    //################################################################################################################
+    // Mutator Methods
+    //################################################################################################################
+
+    private void updatePlan()
+    {
+        if (!(get_IsPlanSelected()))
+        {
+            return;
+        }
+
+        if (!(areYouSure("Refresh Data")))
+        {
+            return;
+        }
+
+        //###############################################
+        // Refresh Macro-Targets Table
+        //###############################################
+        refreshMacroTargets();
+
+        //###############################################
+        // Refresh ingredients meal table & total Tables
+        //###############################################
+        Iterator<MyJTable_JDBC5> it = listOfJTables.iterator();
+        while (it.hasNext())
+        {
+            MyJTable_JDBC5 ingredientsJtable = it.next();
+
+            // if meal is not saved in DB remove the meal
+            if (!(ingredientsJtable.getMealInDB()))
+            {
+                ingredientsJtable.deleteTableAction(); // delete table from db
+                it.remove(); // remove from list
+                continue;
+            }
+            if (!(it.hasNext()))
+            {
+                ingredientsJtable.outside_Update_MacrosLeft_Table();
+                continue;
+            }
+
+            ingredientsJtable.refresh_Btn_Action(false);
+        }
+    }
+
 }
