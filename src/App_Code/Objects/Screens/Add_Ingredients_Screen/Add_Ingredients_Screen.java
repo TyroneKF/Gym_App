@@ -56,7 +56,7 @@ public class Add_Ingredients_Screen extends JFrame
             if (db.isDatabaseConnected())
             {
                 ingredientNames = getIngredientNames();
-                if (ingredientNames==null)
+                if (ingredientNames == null)
                 {
                     return;
                 }
@@ -218,7 +218,7 @@ public class Add_Ingredients_Screen extends JFrame
             {
                 public void itemStateChanged(ItemEvent ie)
                 {
-                    if (ie.getStateChange()==ItemEvent.SELECTED)
+                    if (ie.getStateChange() == ItemEvent.SELECTED)
                     {
                         //############################################################
                         // Ingredient Name
@@ -238,7 +238,7 @@ public class Add_Ingredients_Screen extends JFrame
                         // Ingredient ID
                         //############################################################
                         String[] ingredientID_R = db.getSingleColumnQuery(String.format("SELECT IngredientID FROM ingredients_info WHERE Ingredient_Name = '%s';", chosenItem));
-                        if (ingredientID_R==null)
+                        if (ingredientID_R == null)
                         {
                             JOptionPane.showMessageDialog(gui, "Unable to grab Ingredient INFO to delete it!!");
                             refreshInterface(true);
@@ -263,7 +263,7 @@ public class Add_Ingredients_Screen extends JFrame
                                 from ingredients_info 
                                 WHERE Ingredient_Name = '%s';""", chosenItem));
 
-                        if (ingredientInfo_R==null)
+                        if (ingredientInfo_R == null)
                         {
                             JOptionPane.showMessageDialog(gui, "Unable to grab selected ingredient info!");
                             refreshInterface(true);
@@ -308,9 +308,9 @@ public class Add_Ingredients_Screen extends JFrame
                         // Get New Ingredient Shop Info
                         //###########################
                         ArrayList<ArrayList<String>> ingredientShops_R = db.getMultiColumnQuery(String.format("""
-                                SELECT Store_Name, Cost_Per_Unit, Volume_Per_Unit FROM  ingredientInShops WHERE IngredientID = %s""", ingredientID));
+                                SELECT PDID, Store_Name, Cost_Per_Unit, Volume_Per_Unit FROM  ingredientInShops WHERE IngredientID = %s""", ingredientID));
 
-                        if (ingredientShops_R==null)
+                        if (ingredientShops_R == null)
                         {
                             JOptionPane.showMessageDialog(gui, "Unable to grab selected ingredient shop info! \nMaybe there isn't any suppliers created for this Ingredient!");
                             return;
@@ -323,17 +323,18 @@ public class Add_Ingredients_Screen extends JFrame
                         {
                             ArrayList<String> rowData = ingredientShops_R.get(i);
 
-                            ShopForm.AddShopForm_Object row = shopForm.addShopForm_object();
+                            // Set PDID & Add Row
+                            ShopForm.AddShopForm_Object row = shopForm.addShopForm_object(Integer.parseInt(rowData.get(0)));
                             shopForm_objects.add(row);
 
                             // Set ShopName
-                            row.getShops_JComboBox().setSelectedItem(rowData.get(0));
+                            row.getShops_JComboBox().setSelectedItem(rowData.get(1));
 
                             // Set Cost Info
-                            row.getIngredientPrice_TxtField().setText(rowData.get(1));
+                            row.getIngredientPrice_TxtField().setText(rowData.get(2));
 
                             // Set Volume Info
-                            row.getQuantityPerPack_TxtField().setText(rowData.get(2));
+                            row.getQuantityPerPack_TxtField().setText(rowData.get(3));
                         }
                     }
                 }
@@ -354,7 +355,7 @@ public class Add_Ingredients_Screen extends JFrame
 
         public void deleteIngredientBTNAction()
         {
-            if (edit_IngredientName_JComboBox.getSelectedIndex()!=-1)
+            if (edit_IngredientName_JComboBox.getSelectedIndex() != -1)
             {
                 String chosenItem = edit_IngredientName_JComboBox.getSelectedItem().toString();
                 if (chosenItem.equals("N/A"))
@@ -368,7 +369,7 @@ public class Add_Ingredients_Screen extends JFrame
                 {
                     String[] ingredientID_R = db.getSingleColumnQuery(String.format("SELECT IngredientID FROM ingredients_info WHERE Ingredient_Name = '%s';", chosenItem));
 
-                    if (ingredientID_R==null)
+                    if (ingredientID_R == null)
                     {
                         JOptionPane.showMessageDialog(gui, "Unable to grab Ingredient INFO to delete it!!");
                         return;
@@ -414,7 +415,7 @@ public class Add_Ingredients_Screen extends JFrame
             String query = String.format("SELECT IngredientID FROM ingredients_info WHERE Ingredient_Name = '%s';", edit_IngredientName_JComboBox.getSelectedItem().toString());
             String[] idResults = db.getSingleColumnQuery(query);
 
-            if (idResults!=null)
+            if (idResults != null)
             {
                 return idResults[0];
             }
@@ -457,7 +458,7 @@ public class Add_Ingredients_Screen extends JFrame
                     // Get ingredient ID
                     //########################
                     String ingredientID = getSelectedIngredientID();
-                    if (ingredientID==null)
+                    if (ingredientID == null)
                     {
                         return;
                     }
@@ -479,7 +480,6 @@ public class Add_Ingredients_Screen extends JFrame
 
                         setUpdate(true);
                         ingredientNames = getIngredientNames();
-                        System.out.printf("\nIngredients List Updated");
                         updateJComboBox();
 
                         super.resize_GUI();
@@ -506,35 +506,33 @@ public class Add_Ingredients_Screen extends JFrame
             //####################################
             if (!(db.uploadData_Batch(new String[]{updateIngredients_String})))
             {
-                JOptionPane.showMessageDialog(gui.getFrame(), "Failed 3/3 Updates - Unable To Add Ingredient Info & Shop Info In DB!");
+                JOptionPane.showMessageDialog(gui.getFrame(), "Failed Upload - Unable To Add Ingredient Info & Shop Info In DB!");
                 return false;
             }
 
-            JOptionPane.showMessageDialog(gui.getFrame(), "Update 1/3  - Ingredient Info DB!!!");
+            JOptionPane.showMessageDialog(gui.getFrame(), "Updated  - Ingredient Info DB!!!");
 
             //####################################
-            // Delete Old Shop Info
+            // Update Shop Info
             //####################################
-
-            if (!(db.uploadData_Batch(new String[]{updateIngredientShops_String[0]})))
+            if (updateIngredientShops_String != null)
             {
-                JOptionPane.showMessageDialog(gui.getFrame(), "Failed 1/3 Updates - Unable To Remove Old Shop Suppliers For Ingredient In DB!");
-                return false;
-            }
+                int noOfDeleteUpdateProcesses = updateIngredientShops_String.length;
 
-            if (updateIngredientShops_String.length==2)
-            {
-                //####################################
-                // Update Shop Info
-                //####################################
-                if (!(db.uploadData_Batch(new String[]{updateIngredientShops_String[1]})))
+                for (int x = 0; x < noOfDeleteUpdateProcesses; x++)
                 {
-                    JOptionPane.showMessageDialog(gui.getFrame(), "Failed 1/3 Updates - Unable To Add Shop Suppliers For Ingredient In DB!");
-                    return false;
+                    if (!(db.uploadData_Batch(new String[]{updateIngredientShops_String[x]})))
+                    {
+                        JOptionPane.showMessageDialog(gui.getFrame(), String.format("Failed %s/%s Updates - Unable To Add Ingredient Supplier!",
+                                x + 1, noOfDeleteUpdateProcesses));
+
+                        return false;
+                    }
                 }
+                JOptionPane.showMessageDialog(gui.getFrame(), String.format("Update %s/%s -  Suppliers For Ingredient Updated In DB!!!",
+                        noOfDeleteUpdateProcesses, noOfDeleteUpdateProcesses));
             }
 
-            JOptionPane.showMessageDialog(gui.getFrame(), "Update 3/3 -  New Shop Suppliers For Ingredient Updated In DB!!!");
             return true;
         }
 
@@ -610,28 +608,44 @@ public class Add_Ingredients_Screen extends JFrame
 
             private String[] get_ShopForm_UpdateString(String ingredientID)
             {
-                String deleteQuery = String.format("DELETE FROM `ingredientInShops` WHERE `IngredientID` = %s;", ingredientID);
-
-                //########################################
-                // Nothing to Update
-                //########################################
-                if (!updateIngredientsForm)
+                //#############################################################
+                // Checks if there is anything to update before, updating
+                //############################################################
+                if (shopJComboBoxes.size() == 0)
                 {
                     return null;
                 }
-                else if (prices.size()==0)
-                {
-                    updateShops = true;
-                    return new String[]{deleteQuery};
-                }
 
                 //#############################################################
-                // Create Update  String
+                // Delete Old Data (From Previous Request, Prior To This)
+                //############################################################
+                String query1 = "DELETE  FROM temp_ingredientInShops;";
+
+
+                //#############################################################
+                // Create Temporary Table If It Doesnt Exist
+                //############################################################
+                String query2 = String.format("""
+                        CREATE TABLE IF NOT EXISTS temp_ingredientInShops
+                        (  
+                            IngredientID INT NOT NULL,
+                        	FOREIGN KEY (IngredientID) REFERENCES ingredients_info(IngredientID),
+                                                
+                        	Volume_Per_Unit DECIMAL(7,2) NOT NULL,
+                        	Cost_Per_Unit DECIMAL(7,2) NOT NULL,
+                                                
+                        	Store_Name VARCHAR(100) PRIMARY KEY,
+                        	FOREIGN KEY (Store_Name) REFERENCES stores(Store_Name),
+                        	
+                            UNIQUE KEY Ingredient_In_Store(Store_Name, IngredientID)	
+                        );
+                        """);
+
+                //#############################################################
+                // INSERT Into TEMP Table
                 //############################################################
 
-                String updateString = String.format("""
-                        INSERT INTO ingredientInShops (IngredientID, Volume_Per_Unit, Cost_Per_Unit, Store_Name)
-                        VALUES""");
+                String query3_UpdateString = "INSERT INTO temp_ingredientInShops (IngredientID, Volume_Per_Unit, Cost_Per_Unit, Store_Name) VALUES";
 
                 ///#################################
                 // Creating String for Add Values
@@ -644,7 +658,7 @@ public class Add_Ingredients_Screen extends JFrame
                     pos++;
                     values += String.format("\n(%s, %s, %s, '%s')", ingredientID, quantityPerPack.get(key).getText(), prices.get(key).getText(), shopJComboBoxes.get(key).getSelectedItem().toString());
 
-                    if (pos==listSize)
+                    if (pos == listSize)
                     {
                         values += ";";
                         continue;
@@ -652,32 +666,62 @@ public class Add_Ingredients_Screen extends JFrame
                     values += ",";
                 }
 
-                updateString += values;
+                query3_UpdateString += values;
+
+                //############################################################
+                // Update IngredientInShops Based Off Of The Temp Data
+                //############################################################
+                String query4 = String.format("""
+                        UPDATE ingredientInShops i
+                        LEFT JOIN temp_ingredientInShops s
+                        ON i.Store_Name = s.Store_Name AND i.IngredientID = s.IngredientID
+                        SET Volume_Per_Unit = Volume_Per_Unit AND Cost_Per_Unit  = Cost_Per_Unit;""", getSelectedIngredientID());
+
+                //############################################################
+                // DELETE
+                //############################################################
+
+                //HELLO REMOVE
+                System.out.printf("\n\nUpdate Shop Info \n\n%s \n\n%s \n",  query3_UpdateString, query4);
 
                 //############################################################
                 // Return values
                 //############################################################
-
                 updateShops = true;
-                return new String[]{deleteQuery, updateString};
+                return null;
             }
 
-            @Override
-            public AddShopForm_Object addShopForm_object()
+            public AddShopForm_Object addShopForm_object(int PDID)
             {
-                EditAddShopForm_Object obj = new EditAddShopForm_Object(inputArea, true);
+                EditAddShopForm_Object obj = new EditAddShopForm_Object(inputArea, PDID,true);
                 addToContainer(inputArea, obj, 0, objectID, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
                 return obj;
             }
 
             public class EditAddShopForm_Object extends AddShopForm_Object
             {
+                int PDID;
 
+                //#######################################
+                // Main  Consturctor
+                //#######################################
+                EditAddShopForm_Object(Container parentContainer, int PDID,  boolean addRow)
+                {
+                    super(parentContainer, addRow);
+                    this.PDID = PDID;
+                }
+
+                //#######################################
+                // Inherited Constructor
+                //#######################################
                 EditAddShopForm_Object(Container parentContainer, boolean addRow)
                 {
                     super(parentContainer, addRow);
                 }
 
+                //#######################################
+                // Delete Row
+                //#######################################
                 @Override
                 protected void deleteRowAction()
                 {
@@ -694,40 +738,35 @@ public class Add_Ingredients_Screen extends JFrame
                     // Get Ingredient ID
                     //################################################
                     String ingredientID = getSelectedIngredientID();
-                    if (ingredientID==null)
+                    if (ingredientID == null)
                     {
                         JOptionPane.showMessageDialog(gui, String.format("Unable to get selected ingredients information to delete the Supplier ' %s ' !", chosenShop));
                         return;
                     }
 
                     //###################################################
-                    // Delete Supplier From Ingredient in Meals (PDID)
+                    // Delete Supplier From ingredients_in_meal (PDID)
                     //###################################################
                     String updateQuery = String.format("""
                             UPDATE ingredients_in_meal
                             SET  PDID = NULL
-                            WHERE PDID =
-                            (
-                            	SELECT PDID FROM ingredientInShops i
-                            	WHERE i.IngredientID = %s AND i.Store_Name = '%s'
-                            );""", ingredientID, chosenShop);
+                            WHERE PDID = %s; """, ingredientID, getPDID());
 
                     System.out.printf("\n\n%s", updateQuery);
 
                     //###################################################
-                    // Delete Supplier From Ingredient
+                    // Delete Supplier From ingredientInShops
                     //###################################################
                     String updateQuery2 = String.format("""
                             DELETE FROM ingredientInShops
-                            WHERE IngredientID = %s AND Store_Name = '%s';
-                            """, ingredientID, chosenShop);
+                            WHERE PDID = %s; """, getPDID());
 
                     System.out.printf("\n\n%s", updateQuery2);
 
                     //###################################################
                     // Update
                     //###################################################
-                    if(!(db.uploadData_Batch(new String[]{updateQuery, updateQuery2})))
+                    if (!(db.uploadData_Batch(new String[]{updateQuery, updateQuery2})))
                     {
                         JOptionPane.showMessageDialog(gui, String.format("Unable to remove the supplier ' %s ' from this ingredient!", chosenShop));
                         return;
@@ -739,14 +778,18 @@ public class Add_Ingredients_Screen extends JFrame
                     removeFromParentContainer();
                     rowsInTable.remove(this);
 
-                     //################################################
+                    //################################################
                     // Remove Row Object
                     //################################################
                     JOptionPane.showMessageDialog(gui, String.format("Successfully, remove the  supplier ' %s ' from this ingredient!", chosenShop));
+                }
 
-
+                public int getPDID()
+                {
+                    return PDID;
                 }
             }
+
         }
     }
 
@@ -905,7 +948,6 @@ public class Add_Ingredients_Screen extends JFrame
 
                     setUpdate(true);
                     ingredientNames = getIngredientNames();
-                    System.out.printf("\nIngredients List Updated");
                     updateJComboBox();
 
                     resize_GUI();
@@ -943,7 +985,7 @@ public class Add_Ingredients_Screen extends JFrame
 
             JOptionPane.showMessageDialog(gui.getFrame(), "Update 1/2  - Ingredient Info DB!!!");
 
-            if (updateIngredientShops_String!=null)
+            if (updateIngredientShops_String != null)
             {
                 if (!(db.uploadData_Batch(updateIngredientShops_String)))
                 {
@@ -989,7 +1031,7 @@ public class Add_Ingredients_Screen extends JFrame
                 //#####################################################
                 // Java Concept Of Precision
                 //#####################################################
-                if (valueScale==0 && valuePrecision > decimalPrecision) // the number is too big
+                if (valueScale == 0 && valuePrecision > decimalPrecision) // the number is too big
                 {
                     errorTxt += String.format("\n\n  ' %s 'on Row: %s, %s ", rowlabel, rowNumber, txt);
                 }
@@ -1161,7 +1203,7 @@ public class Add_Ingredients_Screen extends JFrame
                     }
 
                     // if a JComboBox is being created Centre JComboBox Items & Set Selected Item to 0
-                    if (jcomboxBeingCreated && comboBox!=null)
+                    if (jcomboxBeingCreated && comboBox != null)
                     {
                         // Centre JComboBox Item
                         DefaultListCellRenderer listRenderer = new DefaultListCellRenderer();
@@ -1214,7 +1256,7 @@ public class Add_Ingredients_Screen extends JFrame
 
             protected boolean validate_IngredientsForm(boolean checkIfItemIsInDB)// HELLO Modify
             {
-                if (temp_PlanID==null && planID==null && planName==null)
+                if (temp_PlanID == null && planID == null && planName == null)
                 {
                     JOptionPane.showMessageDialog(gui.getFrame(), "Please Select A Plan First!");
                     return false;
@@ -1235,7 +1277,7 @@ public class Add_Ingredients_Screen extends JFrame
                     {
                         JComboBox comboBox = (JComboBox) comp;
 
-                        if (comboBox.getSelectedIndex()==-1) // if no item has been selected by JComboBox
+                        if (comboBox.getSelectedIndex() == -1) // if no item has been selected by JComboBox
                         {
                             errorTxt += String.format("\n\n  ' %s ' on Row: %s, an option inside the dropdown menu must be selected", labels[row], row + 1);
                         }
@@ -1261,7 +1303,7 @@ public class Add_Ingredients_Screen extends JFrame
                         //Decimal eval Below
                         //#########################################*
 
-                        if (row==ingredientNameObjectIndex)
+                        if (row == ingredientNameObjectIndex)
                         {
                             continue;
                         }
@@ -1285,7 +1327,7 @@ public class Add_Ingredients_Screen extends JFrame
                     {
                         String query = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Name = '%s';", ingredientName_Txt);
 
-                        if (db.getSingleColumnQuery(query)!=null)
+                        if (db.getSingleColumnQuery(query) != null)
                         {
                             errorTxt += String.format("\n\n  Ingredient named %s already exists within the database!", ingredientName_Txt);
                         }
@@ -1296,7 +1338,7 @@ public class Add_Ingredients_Screen extends JFrame
                 //Check if any error were found & Process it
                 //####################################################
 
-                if (errorTxt.length()==0)
+                if (errorTxt.length() == 0)
                 {
                     return true;
                 }
@@ -1312,7 +1354,7 @@ public class Add_Ingredients_Screen extends JFrame
                 // Get New ID
                 //####################################
                 Integer newIngredientsID2 = getNewIngredientID();
-                if (newIngredientsID2==null)
+                if (newIngredientsID2 == null)
                 {
                     return null;
                 }
@@ -1615,7 +1657,7 @@ public class Add_Ingredients_Screen extends JFrame
                 {
                     return null;
                 }
-                else if (prices.size()==0)
+                else if (prices.size() == 0)
                 {
                     updateShops = true;
                     return null;
@@ -1625,7 +1667,7 @@ public class Add_Ingredients_Screen extends JFrame
                 // Get new Ingredient ID
                 //########################################
                 Integer newIngredientsID2 = getNewIngredientID();
-                if (newIngredientsID2==null)
+                if (newIngredientsID2 == null)
                 {
                     return null;
                 }
@@ -1649,7 +1691,7 @@ public class Add_Ingredients_Screen extends JFrame
                     pos++;
                     values += String.format("\n(%s, %s, %s, '%s')", newIngredientsID2, quantityPerPack.get(key).getText(), prices.get(key).getText(), shopJComboBoxes.get(key).getSelectedItem().toString());
 
-                    if (pos==listSize)
+                    if (pos == listSize)
                     {
                         values += ";";
                         continue;
@@ -1734,7 +1776,7 @@ public class Add_Ingredients_Screen extends JFrame
                         // West Side
                         //######################################################
 
-                        if (shopsInfo==null)
+                        if (shopsInfo == null)
                         {
                             JOptionPane.showMessageDialog(gui.getFrame(), "Unable To Get ShopNames From DB - Internal DB Error");
                             return;
@@ -1911,7 +1953,7 @@ public class Add_Ingredients_Screen extends JFrame
         int reply = JOptionPane.showConfirmDialog(gui, String.format("Are you sure you want to: %s?", process, process),
                 "Confirmation", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
-        if (reply==JOptionPane.NO_OPTION || reply==JOptionPane.CLOSED_OPTION)
+        if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
         {
             return false;
         }
@@ -1936,7 +1978,7 @@ public class Add_Ingredients_Screen extends JFrame
         edit_IngredientName_JComboBox.addItem("N/A");
         edit_IngredientName_JComboBox.setSelectedItem("N/A");
 
-        if (results!=null)
+        if (results != null)
         {
             for (String s : results)
             {
@@ -1953,7 +1995,7 @@ public class Add_Ingredients_Screen extends JFrame
     public String[] getIngredientNames()
     {
         String[] results = db.getSingleColumnQuery("Select Ingredient_Name from ingredients_info ORDER BY Ingredient_Name;");
-        if (results==null)
+        if (results == null)
         {
             JOptionPane.showMessageDialog(gui, "DB ERROR \n\nUnable to Retreive DB Ingredient Names!!");
             return null;
@@ -1965,7 +2007,7 @@ public class Add_Ingredients_Screen extends JFrame
     {
         String[] newID = db.getSingleColumnQuery("SELECT MAX(IngredientID) FROM ingredients_info;");
 
-        if (newID==null)
+        if (newID == null)
         {
             JOptionPane.showMessageDialog(null, "Unable to create new ingredient in table! \nUnable to generate ingredientsID!!");
             return null;
