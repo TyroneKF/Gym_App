@@ -49,7 +49,7 @@ public class MealPlanScreen extends JPanel
     private Integer
             tempPlanID = 1, planID;
     private int
-            pos = 0, mealNo = 0, frameHeight = 1400, frameWidth = 2000;
+            pos = 0, mealNo = 0, frameHeight = 1082, frameWidth = 1925;
 
     private boolean macroTargetsChanged = false;
 
