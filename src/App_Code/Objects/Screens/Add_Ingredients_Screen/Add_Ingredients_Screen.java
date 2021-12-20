@@ -226,19 +226,7 @@ public class Add_Ingredients_Screen extends JFrame
                     if (ie.getStateChange() == ItemEvent.SELECTED)
                     {
                         refreshInterface(false);
-                        //############################################################
-                        // Ingredient Name
-                        //############################################################
-                        String chosenItem = edit_IngredientName_JComboBox.getSelectedItem().toString();
 
-
-                        //############################################################
-                        // If Item "N/A" Selected
-                        //############################################################
-                        if (chosenItem.equals("N/A"))
-                        {
-                            return;
-                        }
                         //############################################################
                         // Ingredient ID
                         //############################################################
@@ -248,6 +236,14 @@ public class Add_Ingredients_Screen extends JFrame
                         if (selectedIngredientID == null || chosenItem == null)
                         {
                             JOptionPane.showMessageDialog(gui, "Unable to grab Ingredient INFO to edit it!!");
+                            return;
+                        }
+
+                        //############################################################
+                        // If Item "N/A" Selected
+                        //############################################################
+                        if (chosenItem.equals("N/A"))
+                        {
                             return;
                         }
 
