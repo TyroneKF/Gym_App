@@ -124,6 +124,11 @@ public class Add_Ingredients_Screen extends JFrame
         private EditIngredientsForm ingredientsForm;
         private EditShopForm shopForm;
 
+        private String selectedIngredientID;
+        String chosenItem;
+
+     private boolean ingredientEditable = true;
+
         public EditingCreateForm()
         {
             //###################################################################################
@@ -158,7 +163,7 @@ public class Add_Ingredients_Screen extends JFrame
             //############################################
             ArrayList<Component> componentArrayList = ingredientsForm.getIngredientsFormObjects();
             JTextField ingredientNameJTextField = (JTextField) componentArrayList.get(ingredientsForm.getIngredientNameObjectIndex());
-            ingredientNameJTextField.setEditable(false);
+            ingredientNameJTextField.setEditable(ingredientEditable);
 
             //###########################################
             // Delete BTN Icon Setup
@@ -226,6 +231,7 @@ public class Add_Ingredients_Screen extends JFrame
                         //############################################################
                         String chosenItem = edit_IngredientName_JComboBox.getSelectedItem().toString();
 
+
                         //############################################################
                         // If Item "N/A" Selected
                         //############################################################
@@ -233,18 +239,17 @@ public class Add_Ingredients_Screen extends JFrame
                         {
                             return;
                         }
-
                         //############################################################
                         // Ingredient ID
                         //############################################################
-                        String[] ingredientID_R = db.getSingleColumnQuery(String.format("SELECT IngredientID FROM ingredients_info WHERE Ingredient_Name = '%s';", chosenItem));
-                        if (ingredientID_R == null)
+                        selectedIngredientID = getSelectedIngredientID();
+                        chosenItem = getChosenItem();
+
+                       if (selectedIngredientID == null || chosenItem == null)
                         {
-                            JOptionPane.showMessageDialog(gui, "Unable to grab Ingredient INFO to delete it!!");
+                            JOptionPane.showMessageDialog(gui, "Unable to grab Ingredient INFO to edit it!!");
                             return;
                         }
-
-                        String ingredientID = ingredientID_R[0];
 
                         //############################################################
                         // Update IngredientsForm
@@ -289,27 +294,11 @@ public class Add_Ingredients_Screen extends JFrame
                             }
                         }
 
-                        /*
-                        //############################################################
-                        // Update ShopForm
-                        //############################################################
-
-                        //Delete previous Shop info
-                        Iterator<ShopForm.AddShopForm_Object> it = shopForm_objects.iterator();
-                        while (it.hasNext())
-                        {
-                            ShopForm.AddShopForm_Object i = it.next();
-                            i.removeFromParentContainer();
-                            it.remove();
-                        }
-
-                         */
-
                         //###########################
                         // Get New Ingredient Shop Info
                         //###########################
                         ArrayList<ArrayList<String>> ingredientShops_R = db.getMultiColumnQuery(String.format("""
-                                SELECT PDID, Store_Name, Cost_Per_Unit, Volume_Per_Unit FROM  ingredientInShops WHERE IngredientID = %s""", ingredientID));
+                                SELECT PDID, Store_Name, Cost_Per_Unit, Volume_Per_Unit FROM  ingredientInShops WHERE IngredientID = %s;""", selectedIngredientID));
 
                         if (ingredientShops_R == null)
                         {
@@ -358,7 +347,7 @@ public class Add_Ingredients_Screen extends JFrame
         {
             if (edit_IngredientName_JComboBox.getSelectedIndex() != -1)
             {
-                String chosenItem = edit_IngredientName_JComboBox.getSelectedItem().toString();
+
                 if (chosenItem.equals("N/A"))
                 {
                     JOptionPane.showMessageDialog(gui, "This item cannot be deleted from the list (its a placeholder) !");
@@ -368,18 +357,15 @@ public class Add_Ingredients_Screen extends JFrame
 
                 if (areYouSure(String.format("delete ingredient named '%s' from the database", chosenItem)))
                 {
-                    String[] ingredientID_R = db.getSingleColumnQuery(String.format("SELECT IngredientID FROM ingredients_info WHERE Ingredient_Name = '%s';", chosenItem));
-
-                    if (ingredientID_R == null)
+                    if (selectedIngredientID == null || chosenItem == null)
                     {
                         JOptionPane.showMessageDialog(gui, "Unable to grab Ingredient INFO to delete it!!");
                         return;
                     }
 
-                    String ingredientID = ingredientID_R[0];
-                    String query0 = String.format("DELETE FROM `ingredients_in_meal` WHERE IngredientID  = %s;", ingredientID);
-                    String query1 = String.format("DELETE FROM `ingredientInShops` WHERE IngredientID  = %s;", ingredientID);
-                    String query2 = String.format("DELETE FROM `ingredients_info` WHERE IngredientID  = %s;", ingredientID);
+                    String query0 = String.format("DELETE FROM `ingredients_in_meal` WHERE IngredientID  = %s;", selectedIngredientID);
+                    String query1 = String.format("DELETE FROM `ingredientInShops` WHERE IngredientID  = %s;", selectedIngredientID);
+                    String query2 = String.format("DELETE FROM `ingredients_info` WHERE IngredientID  = %s;", selectedIngredientID);
 
                     if (db.uploadData_Batch(new String[]{query0, query1, query2}))
                     {
@@ -427,6 +413,24 @@ public class Add_Ingredients_Screen extends JFrame
             return null;
         }
 
+        private String getChosenItem()
+        {
+            try
+            {
+                String x = edit_IngredientName_JComboBox.getSelectedItem().toString();
+
+                if(x.length() > 0)
+                {
+                    return x;
+                }
+            }
+            catch (Exception e)
+            {
+                System.out.printf("\n\ngetSelectedIngredientID() Error \n%s");
+            }
+            return null;
+        }
+
         protected void submissionBtnAction()
         {
             if (edit_IngredientName_JComboBox.getSelectedItem().equals("N/A"))
@@ -460,8 +464,7 @@ public class Add_Ingredients_Screen extends JFrame
                     //########################
                     // Get ingredient ID
                     //########################
-                    String ingredientID = getSelectedIngredientID();
-                    if (ingredientID == null)
+                    if (selectedIngredientID == null)
                     {
                         JOptionPane.showMessageDialog(gui, "\n\nUnable To Get Ingredient ID To Edit This Ingredient !!");
                         return;
@@ -471,7 +474,7 @@ public class Add_Ingredients_Screen extends JFrame
                     // Get Update Strings & Update
                     //#############################
 
-                    if (updateBothForms(ingredientsForm.get_IngredientsForm_UpdateString(ingredientID), shopForm.get_ShopForm_UpdateString(ingredientID)))
+                    if (updateBothForms(ingredientsForm.get_IngredientsForm_UpdateString(selectedIngredientID), shopForm.get_ShopForm_UpdateString(selectedIngredientID)))
                     {
                         //HELLO REMOVE COMMENTS
                         /*
@@ -798,13 +801,11 @@ public class Add_Ingredients_Screen extends JFrame
                         //################################################
                         // Get Ingredient ID
                         //################################################
-                        String ingredientID = getSelectedIngredientID();
-                        if (ingredientID == null)
+                        if (selectedIngredientID == null)
                         {
                             JOptionPane.showMessageDialog(gui, String.format("Unable to get selected ingredients information to delete the Supplier ' %s ' !", chosenShop));
                             return;
                         }
-
 
                         //###################################################
                         // Delete Supplier From ingredients_in_meal (PDID)
@@ -812,7 +813,7 @@ public class Add_Ingredients_Screen extends JFrame
                         String updateQuery = String.format("""
                                 UPDATE ingredients_in_meal
                                 SET  PDID = NULL
-                                WHERE PDID = %s; """, ingredientID, PDID);
+                                WHERE PDID = %s; """, selectedIngredientID, PDID);
 
                         System.out.printf("\n\n%s", updateQuery);
 
@@ -866,7 +867,7 @@ public class Add_Ingredients_Screen extends JFrame
         protected ArrayList<ShopForm.AddShopForm_Object> shopForm_objects = new ArrayList<>();
         protected int yPos = 0;
 
-        protected String ingredientID; // HELLO DELETE
+        //protected String ingredientID; // HELLO DELETE
 
         protected int totalNumbersAllowed = 7, decimalScale = 2, decimalPrecision = totalNumbersAllowed - decimalScale, charlimit = 8;
 
@@ -2017,9 +2018,9 @@ public class Add_Ingredients_Screen extends JFrame
 
     }
 
-    //##################################################################################################################
-    // Form Methods
-    //##################################################################################################################
+//##################################################################################################################
+// Form Methods
+//##################################################################################################################
     protected Boolean areYouSure(String process)
     {
         int reply = JOptionPane.showConfirmDialog(gui, String.format("Are you sure you want to: %s?", process, process),
