@@ -165,36 +165,10 @@ public class Add_Ingredients_Screen extends JFrame
             JTextField ingredientNameJTextField = (JTextField) componentArrayList.get(ingredientsForm.getIngredientNameObjectIndex());
             ingredientNameJTextField.setEditable(ingredientEditable);
 
-            //###########################################
-            // Delete BTN Icon Setup
-            //###########################################
-
-            JPanel iconArea = new JPanel(new GridBagLayout());
-            addToContainer(scrollPaneJPanel, iconArea, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
-
-            IconPanel iconPanel = new IconPanel(1, 10, "East");
-            JPanel iconPanelInsert = iconPanel.getIconJpanel();
-
-            addToContainer(iconArea, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0);
-
-            //###########################################
-            // DELETE Icon
-            //###########################################
-            int width = 35;
-            int height = 35;
-
-            IconButton delete_Icon_Btn = new IconButton("src/images/x/x.png", "", width, height, width, height,
-                    "centre", "right"); // btn text is useless here , refactor
-
-            JButton delete_Btn = delete_Icon_Btn.returnJButton();
-            delete_Icon_Btn.makeBTntransparent();
-
-            delete_Btn.addActionListener(ae -> {
-
-                deleteIngredientBTNAction();
-            });
-
-            iconPanelInsert.add(delete_Icon_Btn);
+            //##########################################
+            // Icon Setup
+            //#########################################
+            iconSetup();
 
             //###########################################
             // JCombo Title
@@ -240,6 +214,72 @@ public class Add_Ingredients_Screen extends JFrame
             createForms(ingredientsForm, shopForm);
         }
 
+        private void iconSetup()
+        {
+            //###########################################
+            // Icon Setup
+            //###########################################
+
+            JPanel iconArea = new JPanel(new GridBagLayout());
+            addToContainer(scrollPaneJPanel, iconArea, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+
+            IconPanel iconPanel = new IconPanel(2, 10, "East");
+            JPanel iconPanelInsert = iconPanel.getIconJpanel();
+
+            addToContainer(iconArea, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0);
+
+            //###########################################
+            // DELETE Icon
+            //###########################################
+            int width = 35;
+            int height = 35;
+
+            IconButton delete_Icon_Btn = new IconButton("src/images/x/x.png", "", width, height, width, height,
+                    "centre", "right"); // btn text is useless here , refactor
+
+            JButton delete_Btn = delete_Icon_Btn.returnJButton();
+            delete_Icon_Btn.makeBTntransparent();
+
+            delete_Btn.addActionListener(ae -> {
+
+                deleteIngredientBTNAction();
+            });
+
+            iconPanelInsert.add(delete_Icon_Btn);
+
+            //###########################################
+            // Refresh Icon
+            //###########################################
+            width = 35;
+            height = 40;
+
+            IconButton refresh_Icon_Btn = new IconButton("src/images/refresh/+++++refresh.png", "", width, height, width, height,
+                    "centre", "right"); // btn text is useless here , refactor
+
+            JButton refresh_Btn = refresh_Icon_Btn.returnJButton();
+            refresh_Icon_Btn.makeBTntransparent();
+
+            refresh_Btn.addActionListener(ae -> {
+
+                refreshFormBTNAction();
+            });
+
+            iconPanelInsert.add(refresh_Icon_Btn);
+        }
+
+        private void refreshFormBTNAction()
+        {
+            if (chosenItem == null || chosenItem.equals("N/A"))
+            {
+                return;
+            }
+
+            if (areYouSure("refresh this page, all data on the form will be reset \nhowever, this will not reset deleted Supplier Shop Info as this is permanently deleted"))
+            {
+                updateFormWithIngredientInfo();
+            }
+        }
+
         private void updateFormWithIngredientInfo()
         {
             refreshInterface(false);
@@ -250,17 +290,13 @@ public class Add_Ingredients_Screen extends JFrame
             selectedIngredientID = getSelectedIngredientID();
             chosenItem = getChosenItem();
 
-            if (selectedIngredientID == null || chosenItem == null)
+            if(chosenItem!= null && chosenItem.equals("N/A"))
             {
-                JOptionPane.showMessageDialog(gui, "Unable to grab Ingredient INFO to edit it!!");
                 return;
             }
-
-            //############################################################
-            // If Item "N/A" Selected
-            //############################################################
-            if (chosenItem.equals("N/A"))
+            else  if (selectedIngredientID == null || chosenItem == null)
             {
+                JOptionPane.showMessageDialog(gui, "Unable to grab Ingredient INFO to edit it!!");
                 return;
             }
 
@@ -404,8 +440,6 @@ public class Add_Ingredients_Screen extends JFrame
             {
                 return idResults[0];
             }
-
-            JOptionPane.showMessageDialog(gui, "Unable to get Ingredient ID to update database!");
             return null;
         }
 
@@ -1377,7 +1411,7 @@ public class Add_Ingredients_Screen extends JFrame
                 //#####################################################
                 // Exit Clause
                 //#####################################################
-                if(!(createIconBar))
+                if (!(createIconBar))
                 {
                     return;
                 }
