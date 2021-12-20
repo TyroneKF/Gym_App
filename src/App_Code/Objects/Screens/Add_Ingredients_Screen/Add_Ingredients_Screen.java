@@ -127,7 +127,7 @@ public class Add_Ingredients_Screen extends JFrame
         private String selectedIngredientID;
         String chosenItem;
 
-     private boolean ingredientEditable = true;
+        private boolean ingredientEditable = true;
 
         public EditingCreateForm()
         {
@@ -245,7 +245,7 @@ public class Add_Ingredients_Screen extends JFrame
                         selectedIngredientID = getSelectedIngredientID();
                         chosenItem = getChosenItem();
 
-                       if (selectedIngredientID == null || chosenItem == null)
+                        if (selectedIngredientID == null || chosenItem == null)
                         {
                             JOptionPane.showMessageDialog(gui, "Unable to grab Ingredient INFO to edit it!!");
                             return;
@@ -387,7 +387,7 @@ public class Add_Ingredients_Screen extends JFrame
         {
             ingredientsForm.refreshIngredientsForm();
             shopForm.refreshShopForm();
-            if(resetJCombo)
+            if (resetJCombo)
             {
                 edit_IngredientName_JComboBox.setSelectedItem("N/A");
             }
@@ -419,7 +419,7 @@ public class Add_Ingredients_Screen extends JFrame
             {
                 String x = edit_IngredientName_JComboBox.getSelectedItem().toString();
 
-                if(x.length() > 0)
+                if (x.length() > 0)
                 {
                     return x;
                 }
@@ -552,6 +552,100 @@ public class Add_Ingredients_Screen extends JFrame
                 super(parentContainer, btnText, btnWidth, btnHeight);
             }
 
+            @Override
+            protected boolean validate_IngredientsForm(boolean checkIfItemIsInDB)// HELLO Modify
+            {
+                if (temp_PlanID == null && planID == null && planName == null)
+                {
+                    JOptionPane.showMessageDialog(gui.getFrame(), "Please Select A Plan First!");
+                    return false;
+                }
+
+                String errorTxt = "";
+
+
+                //##############################
+                // Validation JTextFields
+                //##############################
+                for (int row = 0; row < ingredientsFormObjects.size(); row++)
+                {
+                    String value = "";
+                    Component comp = ingredientsFormObjects.get(row);
+
+                    if (comp instanceof JComboBox)
+                    {
+                        JComboBox comboBox = (JComboBox) comp;
+
+                        if (comboBox.getSelectedIndex() == -1) // if no item has been selected by JComboBox
+                        {
+                            errorTxt += String.format("\n\n  ' %s ' on Row: %s, an option inside the dropdown menu must be selected", labels[row], row + 1);
+                        }
+                        continue;
+                    }
+                    else if (comp instanceof JTextField)
+                    {
+                        JTextField jTextField = (JTextField) comp;
+                        value = jTextField.getText().trim();
+
+
+                        //#########################################
+                        // Check if JTextfield input is empty
+                        //#########################################
+                        if (value.equals(""))
+                        {
+                            errorTxt += String.format("\n\n  ' %s ' on Row: %s,  must have a value which is not ' NULL '!", labels[row], row + 1);
+                            continue;
+                        }
+
+                        //#######################################
+                        //If JTextField is Ingredient Name Skip
+                        //Decimal eval Below
+                        //#########################################*
+
+                        if (row == ingredientNameObjectIndex)
+                        {
+                            continue;
+                        }
+
+                        //#########################################
+                        // Do BigDecimal Processing
+                        //#########################################
+                        errorTxt = convertToBigDecimal(value, errorTxt, labels[row], row + 1, jTextField);
+                    }
+                }
+
+                //####################################################
+                //Check if IngredientName Already exists in DB
+                //####################################################
+
+                JTextField ingredientName_JTxtF = (JTextField) ingredientsFormObjects.get(ingredientNameObjectIndex);
+                String ingredientName_Txt = ingredientName_JTxtF.getText().trim();
+
+                if (!(ingredientName_Txt.equals("")))
+                {
+                    String query = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Name = '%s' AND IngredientID != %s;", ingredientName_Txt, selectedIngredientID);
+
+                    if (db.getSingleColumnQuery(query) != null)
+                    {
+                        errorTxt += String.format("\n\n  Ingredient named %s already exists within the database!", ingredientName_Txt);
+                    }
+                }
+
+
+                //####################################################
+                //Check if any error were found & Process it
+                //####################################################
+
+                if (errorTxt.length() == 0)
+                {
+                    return true;
+                }
+
+                JOptionPane.showMessageDialog(gui.getFrame(), String.format("\n\nPlease fix the following rows being; \n%s", errorTxt));
+
+                return false;
+            }
+
             private String get_IngredientsForm_UpdateString(String ingreientID) // HELLO needs further update methods created for gui
             {
                 //####################################
@@ -600,6 +694,7 @@ public class Add_Ingredients_Screen extends JFrame
                 updateIngredientsForm = true;
                 return updateTargets_Query;
             }
+
         }
 
         //########################################################################
@@ -1406,7 +1501,7 @@ public class Add_Ingredients_Screen extends JFrame
                 return false;
             }
 
-            protected String get_IngredientsForm_UpdateString() // HELLO needs further update methods created for gui
+            private String get_IngredientsForm_UpdateString() // HELLO needs further update methods created for gui
             {
                 //####################################
                 // Get New ID
@@ -2018,7 +2113,7 @@ public class Add_Ingredients_Screen extends JFrame
 
     }
 
-//##################################################################################################################
+    //##################################################################################################################
 // Form Methods
 //##################################################################################################################
     protected Boolean areYouSure(String process)
