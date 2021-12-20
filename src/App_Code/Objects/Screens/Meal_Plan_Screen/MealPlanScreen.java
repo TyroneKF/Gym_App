@@ -2,7 +2,7 @@ package App_Code.Objects.Screens.Meal_Plan_Screen;
 
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
-import App_Code.Objects.Database_Objects.MyJTable_JDBC.Ingredients_In_Meal_Table.MyJTable_JDBC5;
+import App_Code.Objects.Database_Objects.MyJTable_JDBC.Ingredients_In_Meal_Table.MyJTable_JDBC;
 
 import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 import App_Code.Objects.Gui_Objects.IconButton;
@@ -33,9 +33,9 @@ public class MealPlanScreen extends JPanel
     private App_Code.Objects.Screens.MacrosTargets_Screen.macrosTargets_Screen macrosTargets_Screen = null;
     private Add_Ingredients_Screen Add_Ingredients_Screen = null;
 
-    private MyJTable_JDBC5 macrosLeft_JTable, macros_Targets_Table;
-    private MyJTable_JDBC5 jTableBeingAdded;
-    private ArrayList<MyJTable_JDBC5> listOfJTables = new ArrayList<>();
+    private MyJTable_JDBC macrosLeft_JTable, macros_Targets_Table;
+    private MyJTable_JDBC jTableBeingAdded;
+    private ArrayList<MyJTable_JDBC> listOfJTables = new ArrayList<>();
 
     String databaseName = "gymapp3";
 
@@ -301,7 +301,7 @@ public class MealPlanScreen extends JPanel
             ArrayList<Integer> unEditableCells = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11));
             ArrayList<Integer> ingredients_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList());
 
-            macros_Targets_Table = new MyJTable_JDBC5(db, mainSouthPanel, planData, plan_columnNames, planID,
+            macros_Targets_Table = new MyJTable_JDBC(db, mainSouthPanel, planData, plan_columnNames, planID,
                     tableName, unEditableCells, ingredients_Table_Col_Avoid_Centering);
 
             macros_Targets_Table.setOpaque(true); //content panes must be opaque
@@ -325,7 +325,7 @@ public class MealPlanScreen extends JPanel
             unEditableCells = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11));
             ArrayList<Integer> macros_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList());
 
-            macrosLeft_JTable = new MyJTable_JDBC5(db, mainSouthPanel, macrosData, macros_columnNames, planID,
+            macrosLeft_JTable = new MyJTable_JDBC(db, mainSouthPanel, macrosData, macros_columnNames, planID,
                     tableName, unEditableCells, macros_Table_Col_Avoid_Centering);
 
             macrosLeft_JTable.setOpaque(true); //content panes must be opaque
@@ -431,7 +431,7 @@ public class MealPlanScreen extends JPanel
     }
 
     private CollapsibleJPanel create_CollapsibleJPanel(boolean mealInDB, Container container, Integer mealID, Integer temp_MealID, String mealName, int mealNo, String[] meal_total_columnNames,
-                                                       String[] ingredients_ColumnNames, ArrayList<String> ingredientsInDB, MyJTable_JDBC5 macrosLeft_JTable)
+                                                       String[] ingredients_ColumnNames, ArrayList<String> ingredientsInDB, MyJTable_JDBC macrosLeft_JTable)
     {
         CollapsibleJPanel collapsibleJpObj = new CollapsibleJPanel(container, String.format("   Meal   %s", mealNo), 150, 50);
         JPanel collapsibleJPanel = collapsibleJpObj.getCentreJPanel();
@@ -455,7 +455,7 @@ public class MealPlanScreen extends JPanel
             unEditableCells.add(i);
         }
 
-        MyJTable_JDBC5 total_Meal_View_Jtable = new MyJTable_JDBC5(db, collapsibleJpObj, databaseName, meal_Total_Data, meal_total_columnNames, planID, mealID, temp_MealID,
+        MyJTable_JDBC total_Meal_View_Jtable = new MyJTable_JDBC(db, collapsibleJpObj, databaseName, meal_Total_Data, meal_total_columnNames, planID, mealID, temp_MealID,
                 mealName, tableName, unEditableCells, null, false);
 
         total_Meal_View_Jtable.setOpaque(true); //content panes must be opaque
@@ -496,7 +496,7 @@ public class MealPlanScreen extends JPanel
         // Ingredients_In_Meal_Calculation  Creation
         //##############################################
 
-        MyJTable_JDBC5 ingredients_Calulation_Jtable = new MyJTable_JDBC5(db, collapsibleJpObj, databaseName, mealData, ingredients_ColumnNames, planID, mealID, temp_MealID, mealName,
+        MyJTable_JDBC ingredients_Calulation_Jtable = new MyJTable_JDBC(db, collapsibleJpObj, databaseName, mealData, ingredients_ColumnNames, planID, mealID, temp_MealID, mealName,
                 tableName, null, unEditableCells, ingredients_Table_Col_Avoid_Centering, true,
                 total_Meal_View_Jtable, macrosLeft_JTable);
 
@@ -843,10 +843,10 @@ public class MealPlanScreen extends JPanel
         //###############################################
         // Refresh ingredients meal table & total Tables
         //###############################################
-        Iterator<MyJTable_JDBC5> it = listOfJTables.iterator();
+        Iterator<MyJTable_JDBC> it = listOfJTables.iterator();
         while (it.hasNext())
         {
-            MyJTable_JDBC5 ingredientsJtable = it.next();
+            MyJTable_JDBC ingredientsJtable = it.next();
 
             // if meal is not saved in DB remove the meal
             if (!(ingredientsJtable.getMealInDB()))
@@ -889,10 +889,10 @@ public class MealPlanScreen extends JPanel
          * that are still in the database
          */
         //######################################
-        Iterator<MyJTable_JDBC5> it = listOfJTables.iterator();
+        Iterator<MyJTable_JDBC> it = listOfJTables.iterator();
         while (it.hasNext())
         {
-            MyJTable_JDBC5 table = it.next();
+            MyJTable_JDBC table = it.next();
             if (table.getObjectDeleted())
             {
                 table.completely_Deleted_JTables();
@@ -1139,10 +1139,10 @@ public class MealPlanScreen extends JPanel
         //###############################################
         // Refresh ingredients meal table & total Tables
         //###############################################
-        Iterator<MyJTable_JDBC5> it = listOfJTables.iterator();
+        Iterator<MyJTable_JDBC> it = listOfJTables.iterator();
         while (it.hasNext())
         {
-            MyJTable_JDBC5 ingredientsJtable = it.next();
+            MyJTable_JDBC ingredientsJtable = it.next();
 
             // if meal is not saved in DB remove the meal
             if (!(ingredientsJtable.getMealInDB()))
