@@ -297,7 +297,7 @@ public class MyJTable_JDBC extends JDBC_JTable
             ////######################################
 
             String queryStore = String.format("""
-                    SELECT  IFNULL(C.STORE, 'N/A') AS STORE
+                    SELECT  IFNULL(C.STORE_Name, 'N/A') AS STORE
                     FROM 
                     (
                     	SELECT i.IngredientID FROM ingredients_info i
@@ -306,20 +306,21 @@ public class MyJTable_JDBC extends JDBC_JTable
                                         
                     LEFT JOIN
                     (
-                       SELECT l.IngredientID, l.STORE FROM ingredientInShops l 
+                       SELECT l.IngredientID, l.Store_Name FROM ingredientInShops l 
                     	
                     )  AS C
                                         
-                    ON t.IngredientID = C.IngredientID;""", ingredientID);
+                    ON t.IngredientID = C.IngredientID
+                    ORDER BY STORE;""", ingredientID);
 
             ArrayList<String> storesResults = db.getSingleColumnQuery_ArrayList(queryStore);
 
             //HELLO REMOVE
-            /*
+/*
             String seperator = "#######################################################################";
             System.out.printf("\n\n%s \n\nQuery: \n%s \n\nList Of Available Shops:\n\n%s", seperator, queryStore, storesResults);
 
-             */
+ */
 
             if (storesResults!=null)
             {
@@ -479,7 +480,6 @@ public class MyJTable_JDBC extends JDBC_JTable
     public void setupDeleteBtnColumn(int deleteBtnColumn)
     {
         setDeleteBTNColumn(deleteBtnColumn);
-        System.out.printf("\n\nsetupDeleteBtnColumn() Column: %s", getDeleteBTN_Col());
 
         Action delete = new AbstractAction()
         {
@@ -505,7 +505,6 @@ public class MyJTable_JDBC extends JDBC_JTable
         Working_ButtonColumn2 workingButtonColumn = new Working_ButtonColumn2(jTable, delete, getDeleteBTN_Col());
         workingButtonColumn.setMnemonic(KeyEvent.VK_D);
     }
-
 
     @Override
     protected void tableModel_Setup(Object[][] data, String[] columnNames)
@@ -709,7 +708,7 @@ public class MyJTable_JDBC extends JDBC_JTable
                                         
                     		INNER JOIN
                     		(
-                    		  SELECT PDID AS _PDID, Store AS OLD_STORE FROM ingredientInShops
+                    		  SELECT PDID AS _PDID, Store_Name AS OLD_STORE FROM ingredientInShops
                     		 
                     		) AS c
                                         
@@ -717,7 +716,7 @@ public class MyJTable_JDBC extends JDBC_JTable
                                         
                     		INNER JOIN
                     		(
-                    			SELECT PDID _NEW_POSSIBLE_PDID, IngredientID, Store AS NEW_POSSIBLE_Supplier
+                    			SELECT PDID _NEW_POSSIBLE_PDID, IngredientID, Store_Name AS NEW_POSSIBLE_Supplier
                     			FROM ingredientInShops		
                     		) AS i
                                         
@@ -800,7 +799,7 @@ public class MyJTable_JDBC extends JDBC_JTable
                 String getPDIDQuery = String.format("""
                         SELECT PDID 
                         FROM ingredientInShops
-                        WHERE IngredientID = %s  AND Store = '%s';""", ingredientID, cellValue);
+                        WHERE IngredientID = %s  AND Store_Name = '%s';""", ingredientID, cellValue);
 
                 ArrayList<String> newPDIDResults = db.getSingleColumnQuery_ArrayList(getPDIDQuery);
                 if (newPDIDResults==null)
