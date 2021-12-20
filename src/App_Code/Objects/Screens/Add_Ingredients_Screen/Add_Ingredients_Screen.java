@@ -550,6 +550,12 @@ public class Add_Ingredients_Screen extends JFrame
             }
 
             @Override
+            protected void createIconBar()
+            {
+                createIconBarOnGUI(false);
+            }
+
+            @Override
             protected boolean validate_IngredientsForm(boolean checkIfItemIsInDB)// HELLO Modify
             {
                 if (temp_PlanID == null && planID == null && planName == null)
@@ -1235,6 +1241,8 @@ public class Add_Ingredients_Screen extends JFrame
             protected JComboBox ingredientsMeasure_JComboBox = new JComboBox(), ingredientsType_JComboBox = new JComboBox();
             protected ArrayList<Component> ingredientsFormObjects = new ArrayList<>();
 
+            private JPanel northPanel = new JPanel(new GridBagLayout());
+
             public IngredientsForm(Container parentContainer, String btnText, int btnWidth, int btnHeight)
             {
                 super(parentContainer, btnText, btnWidth, btnHeight);
@@ -1252,7 +1260,6 @@ public class Add_Ingredients_Screen extends JFrame
                 //###################################################################
 
                 // Creating North JPanel Area with 2 rows
-                JPanel northPanel = new JPanel(new GridBagLayout());
                 mainJPanel.add(northPanel, BorderLayout.NORTH);
 
                 //#####################################################
@@ -1269,36 +1276,10 @@ public class Add_Ingredients_Screen extends JFrame
                 // Add title JPanel to North Panel Area
                 addToContainer(northPanel, titlePanel, 0, 2, 1, 1, 0.25, 0.25, "both", 0, 0);
 
-                //#####################################################
-                // Creating area for North JPanel (Refresh Icon)
-                //#####################################################
-
-                JPanel iconArea = new JPanel(new GridBagLayout());
-                addToContainer(northPanel, iconArea, 0, 1, 1, 1, 0.25, 0.25, "both", 0, 0);
-
-                IconPanel iconPanel = new IconPanel(1, 10, "East");
-                JPanel iconPanelInsert = iconPanel.getIconJpanel();
-
-                addToContainer(iconArea, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0);
-
-                //##########################
-                // Refresh Icon
-                //##########################
-                int width = 30;
-                int height = 30;
-
-                IconButton refresh_Icon_Btn = new IconButton("src/images/refresh/++refresh.png", "", width, height, width, height,
-                        "centre", "right"); // btn text is useless here , refactor
-
-                JButton refresh_Btn = refresh_Icon_Btn.returnJButton();
-                refresh_Icon_Btn.makeBTntransparent();
-
-                refresh_Btn.addActionListener(ae -> {
-
-                    refreshIngredientsForm();
-                });
-
-                iconPanelInsert.add(refresh_Icon_Btn);
+                //#################################################################
+                // Create Icon Bar
+                //#################################################################
+                createIconBar();
 
                 //#################################################################
                 // Centre Frame
@@ -1385,6 +1366,54 @@ public class Add_Ingredients_Screen extends JFrame
                     inputArea.add(textField);
                 }
                 mainJPanel.add(inputArea, BorderLayout.CENTER);
+            }
+
+            protected void createIconBar()
+            {
+                createIconBarOnGUI(true);
+            }
+
+            protected void createIconBarOnGUI(boolean createIconBar)
+            {
+                //#####################################################
+                // Exit Clause
+                //#####################################################
+                if(!(createIconBar))
+                {
+                    return;
+                }
+
+                //#####################################################
+                // Creating area for North JPanel (Refresh Icon)
+                //#####################################################
+
+                JPanel iconArea = new JPanel(new GridBagLayout());
+                addToContainer(northPanel, iconArea, 0, 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+
+                IconPanel iconPanel = new IconPanel(1, 10, "East");
+                JPanel iconPanelInsert = iconPanel.getIconJpanel();
+
+                addToContainer(iconArea, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0);
+
+                //##########################
+                // Refresh Icon
+                //##########################
+                int width = 30;
+                int height = 30;
+
+                IconButton refresh_Icon_Btn = new IconButton("src/images/refresh/++refresh.png", "", width, height, width, height,
+                        "centre", "right"); // btn text is useless here , refactor
+
+                JButton refresh_Btn = refresh_Icon_Btn.returnJButton();
+                refresh_Icon_Btn.makeBTntransparent();
+
+                refresh_Btn.addActionListener(ae -> {
+
+                    refreshIngredientsForm();
+                });
+
+                iconPanelInsert.add(refresh_Icon_Btn);
+
             }
 
             protected void refreshIngredientsForm()
