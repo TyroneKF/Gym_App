@@ -223,106 +223,7 @@ public class Add_Ingredients_Screen extends JFrame
             {
                 public void itemStateChanged(ItemEvent ie)
                 {
-                    if (ie.getStateChange() == ItemEvent.SELECTED)
-                    {
-                        refreshInterface(false);
-
-                        //############################################################
-                        // Ingredient ID
-                        //############################################################
-                        selectedIngredientID = getSelectedIngredientID();
-                        chosenItem = getChosenItem();
-
-                        if (selectedIngredientID == null || chosenItem == null)
-                        {
-                            JOptionPane.showMessageDialog(gui, "Unable to grab Ingredient INFO to edit it!!");
-                            return;
-                        }
-
-                        //############################################################
-                        // If Item "N/A" Selected
-                        //############################################################
-                        if (chosenItem.equals("N/A"))
-                        {
-                            return;
-                        }
-
-                        //############################################################
-                        // Update IngredientsForm
-                        //############################################################
-                        ArrayList<Component> formObjects = ingredientsForm.getIngredientsFormObjects();
-
-                        //##############################
-                        // Get Ingredient Info
-                        //##############################
-                        ArrayList<ArrayList<String>> ingredientInfo_R = db.getMultiColumnQuery(String.format("""
-                                SELECT  Meassurement, Ingredient_Name, Ingredient_Type, Based_On_Quantity, 
-                                Protein, Carbohydrates, Sugars_Of_Carbs, Fibre, Fat, Saturated_Fat, Salt, 
-                                Water_Content, Calories
-                                                            
-                                from ingredients_info 
-                                WHERE Ingredient_Name = '%s';""", chosenItem));
-
-                        if (ingredientInfo_R == null)
-                        {
-                            JOptionPane.showMessageDialog(gui, "Unable to grab selected ingredient info!");
-                            return;
-                        }
-
-                        ArrayList<String> ingredientInfo = ingredientInfo_R.get(0);
-
-                        //##############################
-                        // Set Form With Ingredient Info
-                        //##############################
-
-                        for (int i = 0; i < ingredientInfo.size(); i++)
-                        {
-                            Component comp = formObjects.get(i);
-                            String value = ingredientInfo.get(i);
-
-                            if (comp instanceof JComboBox)
-                            {
-                                ((JComboBox<?>) comp).setSelectedItem(value);
-                            }
-                            else if (comp instanceof JTextField)
-                            {
-                                ((JTextField) comp).setText(value);
-                            }
-                        }
-
-                        //###########################
-                        // Get New Ingredient Shop Info
-                        //###########################
-                        ArrayList<ArrayList<String>> ingredientShops_R = db.getMultiColumnQuery(String.format("""
-                                SELECT PDID, Store_Name, Cost_Per_Unit, Volume_Per_Unit FROM  ingredientInShops WHERE IngredientID = %s;""", selectedIngredientID));
-
-                        if (ingredientShops_R == null)
-                        {
-                            JOptionPane.showMessageDialog(gui, "Unable to grab selected ingredient shop info! \nMaybe there isn't any suppliers created for this Ingredient!");
-                            return;
-                        }
-
-                        //###########################
-                        //Add Rows for shops onto form
-                        //###########################
-                        for (int i = 0; i < ingredientShops_R.size(); i++)
-                        {
-                            ArrayList<String> rowData = ingredientShops_R.get(i);
-
-                            // Set PDID & Add Row
-                            ShopForm.AddShopForm_Object row = shopForm.addShopForm_object(Integer.parseInt(rowData.get(0)));
-                            shopForm_objects.add(row);
-
-                            // Set ShopName
-                            row.getShops_JComboBox().setSelectedItem(rowData.get(1));
-
-                            // Set Cost Info
-                            row.getIngredientPrice_TxtField().setText(rowData.get(2));
-
-                            // Set Volume Info
-                            row.getQuantityPerPack_TxtField().setText(rowData.get(3));
-                        }
-                    }
+                    updateFormWithIngredientInfo();
                 }
             });
 
@@ -337,6 +238,107 @@ public class Add_Ingredients_Screen extends JFrame
             addToContainer(scrollPaneJPanel, new JPanel(), 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 10, 0);
 
             createForms(ingredientsForm, shopForm);
+        }
+
+        public void updateFormWithIngredientInfo()
+        {
+            refreshInterface(false);
+
+            //############################################################
+            // Ingredient ID
+            //############################################################
+            selectedIngredientID = getSelectedIngredientID();
+            chosenItem = getChosenItem();
+
+            if (selectedIngredientID == null || chosenItem == null)
+            {
+                JOptionPane.showMessageDialog(gui, "Unable to grab Ingredient INFO to edit it!!");
+                return;
+            }
+
+            //############################################################
+            // If Item "N/A" Selected
+            //############################################################
+            if (chosenItem.equals("N/A"))
+            {
+                return;
+            }
+
+            //############################################################
+            // Update IngredientsForm
+            //############################################################
+            ArrayList<Component> formObjects = ingredientsForm.getIngredientsFormObjects();
+
+            //##############################
+            // Get Ingredient Info
+            //##############################
+            ArrayList<ArrayList<String>> ingredientInfo_R = db.getMultiColumnQuery(String.format("""
+                    SELECT  Meassurement, Ingredient_Name, Ingredient_Type, Based_On_Quantity, 
+                    Protein, Carbohydrates, Sugars_Of_Carbs, Fibre, Fat, Saturated_Fat, Salt, 
+                    Water_Content, Calories
+                                                
+                    from ingredients_info 
+                    WHERE Ingredient_Name = '%s';""", chosenItem));
+
+            if (ingredientInfo_R == null)
+            {
+                JOptionPane.showMessageDialog(gui, "Unable to grab selected ingredient info!");
+                return;
+            }
+
+            ArrayList<String> ingredientInfo = ingredientInfo_R.get(0);
+
+            //##############################
+            // Set Form With Ingredient Info
+            //##############################
+
+            for (int i = 0; i < ingredientInfo.size(); i++)
+            {
+                Component comp = formObjects.get(i);
+                String value = ingredientInfo.get(i);
+
+                if (comp instanceof JComboBox)
+                {
+                    ((JComboBox<?>) comp).setSelectedItem(value);
+                }
+                else if (comp instanceof JTextField)
+                {
+                    ((JTextField) comp).setText(value);
+                }
+            }
+
+            //###########################
+            // Get New Ingredient Shop Info
+            //###########################
+            ArrayList<ArrayList<String>> ingredientShops_R = db.getMultiColumnQuery(String.format("""
+                    SELECT PDID, Store_Name, Cost_Per_Unit, Volume_Per_Unit FROM  ingredientInShops WHERE IngredientID = %s;""", selectedIngredientID));
+
+            if (ingredientShops_R == null)
+            {
+                JOptionPane.showMessageDialog(gui, "Unable to grab selected ingredient shop info! \nMaybe there isn't any suppliers created for this Ingredient!");
+                return;
+            }
+
+            //###########################
+            //Add Rows for shops onto form
+            //###########################
+            for (int i = 0; i < ingredientShops_R.size(); i++)
+            {
+                ArrayList<String> rowData = ingredientShops_R.get(i);
+
+                // Set PDID & Add Row
+                ShopForm.AddShopForm_Object row = shopForm.addShopForm_object(Integer.parseInt(rowData.get(0)));
+                shopForm_objects.add(row);
+
+                // Set ShopName
+                row.getShops_JComboBox().setSelectedItem(rowData.get(1));
+
+                // Set Cost Info
+                row.getIngredientPrice_TxtField().setText(rowData.get(2));
+
+                // Set Volume Info
+                row.getQuantityPerPack_TxtField().setText(rowData.get(3));
+            }
         }
 
         public void deleteIngredientBTNAction()
