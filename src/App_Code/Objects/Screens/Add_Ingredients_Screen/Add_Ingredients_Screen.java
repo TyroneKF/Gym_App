@@ -697,7 +697,6 @@ public class Add_Ingredients_Screen extends JFrame
                 updateIngredientsForm = true;
                 return updateTargets_Query;
             }
-
         }
 
         //########################################################################
