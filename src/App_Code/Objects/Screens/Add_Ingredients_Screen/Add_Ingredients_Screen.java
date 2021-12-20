@@ -150,8 +150,8 @@ public class Add_Ingredients_Screen extends JFrame
             // Needs to be created near this
             //##################################
 
-            ingredientsForm = new EditIngredientsForm(this, "Add!! Ingredinets Info", 250, 50);
-            shopForm = new EditShopForm(scrollPaneJPanel, "Add!! Ingredient Suppliers", 250, 50);
+            ingredientsForm = new EditIngredientsForm(this, "Edit Ingredinets Info", 250, 50);
+            shopForm = new EditShopForm(scrollPaneJPanel, "Edit Ingredient Suppliers", 250, 50);
 
             //###########################################
             // Set IngredientName in form to un-editable
@@ -463,6 +463,7 @@ public class Add_Ingredients_Screen extends JFrame
                     String ingredientID = getSelectedIngredientID();
                     if (ingredientID == null)
                     {
+                        JOptionPane.showMessageDialog(gui, "\n\nUnable To Get Ingredient ID To Edit This Ingredient !!");
                         return;
                     }
 
@@ -476,7 +477,6 @@ public class Add_Ingredients_Screen extends JFrame
                         /*
                         gui.updateInfo();
                         gui.macrosTargetsChanged(true);
-
                          */
 
                         refreshInterface(true);
