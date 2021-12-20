@@ -480,7 +480,6 @@ public class MyJTable_JDBC5 extends JDBC_JTable
     public void setupDeleteBtnColumn(int deleteBtnColumn)
     {
         setDeleteBTNColumn(deleteBtnColumn);
-        System.out.printf("\n\nsetupDeleteBtnColumn() Column: %s", getDeleteBTN_Col());
 
         Action delete = new AbstractAction()
         {
@@ -506,7 +505,6 @@ public class MyJTable_JDBC5 extends JDBC_JTable
         Working_ButtonColumn2 workingButtonColumn = new Working_ButtonColumn2(jTable, delete, getDeleteBTN_Col());
         workingButtonColumn.setMnemonic(KeyEvent.VK_D);
     }
-
 
     @Override
     protected void tableModel_Setup(Object[][] data, String[] columnNames)
