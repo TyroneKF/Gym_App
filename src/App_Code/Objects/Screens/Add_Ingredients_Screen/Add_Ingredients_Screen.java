@@ -240,7 +240,7 @@ public class Add_Ingredients_Screen extends JFrame
             createForms(ingredientsForm, shopForm);
         }
 
-        public void updateFormWithIngredientInfo()
+        private void updateFormWithIngredientInfo()
         {
             refreshInterface(false);
 
@@ -341,7 +341,7 @@ public class Add_Ingredients_Screen extends JFrame
             }
         }
 
-        public void deleteIngredientBTNAction()
+        private void deleteIngredientBTNAction()
         {
             if (edit_IngredientName_JComboBox.getSelectedIndex() != -1)
             {
@@ -393,8 +393,6 @@ public class Add_Ingredients_Screen extends JFrame
 
         private String getSelectedIngredientID()
         {
-
-
             //####################################
             // Get Current ID
             //####################################
@@ -429,6 +427,7 @@ public class Add_Ingredients_Screen extends JFrame
             return null;
         }
 
+        @Override
         protected void submissionBtnAction()
         {
             if (edit_IngredientName_JComboBox.getSelectedItem().equals("N/A"))
@@ -494,7 +493,7 @@ public class Add_Ingredients_Screen extends JFrame
 
         //EDITING NOW
         @Override
-        public boolean updateBothForms(String updateIngredients_String, String[] updateIngredientShops_String)
+        protected boolean updateBothForms(String updateIngredients_String, String[] updateIngredientShops_String)
         {
             //####################################
             // Error forming update String (exit)
