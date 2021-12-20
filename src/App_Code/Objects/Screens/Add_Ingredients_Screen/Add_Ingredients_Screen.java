@@ -33,10 +33,11 @@ public class Add_Ingredients_Screen extends JFrame
     private String planName;
     private MealPlanScreen gui;
 
-    private boolean update = false;
 
     private String[] ingredientNames;
     private JComboBox edit_IngredientName_JComboBox = new JComboBox();
+
+    private boolean jcomboUpdateStaus = false;
 
     //##################################################################################################################
     // Constructor
@@ -282,6 +283,11 @@ public class Add_Ingredients_Screen extends JFrame
 
         private void updateFormWithIngredientInfo()
         {
+            if(getJComboBoxUpdateStatus())
+            {
+                return;
+            }
+
             refreshInterface(false);
 
             //############################################################
@@ -290,11 +296,11 @@ public class Add_Ingredients_Screen extends JFrame
             selectedIngredientID = getSelectedIngredientID();
             chosenItem = getChosenItem();
 
-            if(chosenItem!= null && chosenItem.equals("N/A"))
+            if (chosenItem != null && chosenItem.equals("N/A"))
             {
                 return;
             }
-            else  if (selectedIngredientID == null || chosenItem == null)
+            else if (selectedIngredientID == null || chosenItem == null)
             {
                 JOptionPane.showMessageDialog(gui, "Unable to grab Ingredient INFO to edit it!!");
                 return;
@@ -419,12 +425,16 @@ public class Add_Ingredients_Screen extends JFrame
 
         private void refreshInterface(boolean resetJCombo) // only available to reset screen
         {
+            setJcomboUpdateStaus(true);
+
             ingredientsForm.refreshIngredientsForm();
             shopForm.refreshShopForm();
             if (resetJCombo)
             {
                 edit_IngredientName_JComboBox.setSelectedItem("N/A");
             }
+
+            setJcomboUpdateStaus(false);
         }
 
         private String getSelectedIngredientID()
@@ -432,13 +442,16 @@ public class Add_Ingredients_Screen extends JFrame
             //####################################
             // Get Current ID
             //####################################
-
-            String query = String.format("SELECT IngredientID FROM ingredients_info WHERE Ingredient_Name = '%s';", edit_IngredientName_JComboBox.getSelectedItem().toString());
-            String[] idResults = db.getSingleColumnQuery(query);
-
-            if (idResults != null)
+            Object selectedItem = edit_IngredientName_JComboBox.getSelectedItem();
+            if (selectedItem != null)
             {
-                return idResults[0];
+                String query = String.format("SELECT IngredientID FROM ingredients_info WHERE Ingredient_Name = '%s';", selectedItem.toString());
+                String[] idResults = db.getSingleColumnQuery(query);
+
+                if (idResults != null)
+                {
+                    return idResults[0];
+                }
             }
             return null;
         }
@@ -447,16 +460,21 @@ public class Add_Ingredients_Screen extends JFrame
         {
             try
             {
-                String x = edit_IngredientName_JComboBox.getSelectedItem().toString();
+                Object selectedItem = edit_IngredientName_JComboBox.getSelectedItem();
 
-                if (x.length() > 0)
+                if (selectedItem != null)
                 {
-                    return x;
+                    String x = selectedItem.toString();
+
+                    if (x.length() > 0)
+                    {
+                        return x;
+                    }
                 }
             }
             catch (Exception e)
             {
-                System.out.printf("\n\ngetSelectedIngredientID() Error \n%s");
+                return null;
             }
             return null;
         }
@@ -513,12 +531,8 @@ public class Add_Ingredients_Screen extends JFrame
                         gui.macrosTargetsChanged(true);
                          */
 
-                        refreshInterface(true);
-
-                        setUpdate(true);
-                        ingredientNames = getIngredientNames();
                         updateJComboBox();
-
+                        refreshInterface(true);
                         super.resize_GUI();
                     }
                 }
@@ -982,7 +996,7 @@ public class Add_Ingredients_Screen extends JFrame
         }
     }
 
-//############################# #####################################################################################
+//###################################################################################################################
 // Original Form Class
 //##################################################################################################################
 
@@ -1133,12 +1147,8 @@ public class Add_Ingredients_Screen extends JFrame
 
                          */
 
-                    refreshInterface();
-
-                    setUpdate(true);
-                    ingredientNames = getIngredientNames();
                     updateJComboBox();
-
+                    refreshInterface();
                     resize_GUI();
                 }
             }
@@ -1253,6 +1263,34 @@ public class Add_Ingredients_Screen extends JFrame
             }
 
             return errorTxt;
+        }
+
+
+        //##''
+        protected Boolean areYouSure(String process)
+        {
+            int reply = JOptionPane.showConfirmDialog(gui, String.format("Are you sure you want to: %s?", process, process),
+                    "Confirmation", JOptionPane.YES_NO_OPTION); //HELLO Edit
+
+            if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
+            {
+                return false;
+            }
+            return true;
+        }
+
+
+        protected Integer getNewIngredientID()
+        {
+            String[] newID = db.getSingleColumnQuery("SELECT MAX(IngredientID) FROM ingredients_info;");
+
+            if (newID == null)
+            {
+                JOptionPane.showMessageDialog(null, "Unable to create new ingredient in table! \nUnable to generate ingredientsID!!");
+                return null;
+            }
+
+            return Integer.parseInt(newID[0]) + 1;
         }
 
         //#################################################################################################################
@@ -2172,54 +2210,11 @@ public class Add_Ingredients_Screen extends JFrame
 
     }
 
-    //##################################################################################################################
+//##################################################################################################################
 // Form Methods
 //##################################################################################################################
-    protected Boolean areYouSure(String process)
-    {
-        int reply = JOptionPane.showConfirmDialog(gui, String.format("Are you sure you want to: %s?", process, process),
-                "Confirmation", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
-        if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
-        {
-            return false;
-        }
-        return true;
-    }
-
-    public boolean getUpdate()
-    {
-        return update;
-    }
-
-    public void setUpdate(boolean x)
-    {
-        update = x;
-    }
-
-    public void updateJComboBox()
-    {
-        edit_IngredientName_JComboBox.removeAllItems();
-        String[] results = getIngredientNames();
-
-        edit_IngredientName_JComboBox.addItem("N/A");
-        edit_IngredientName_JComboBox.setSelectedItem("N/A");
-
-        if (results != null)
-        {
-            for (String s : results)
-            {
-                if (!(s.equals("None Of The Above")))
-                {
-                    edit_IngredientName_JComboBox.addItem(s);
-                }
-            }
-        }
-
-        setUpdate(false);
-    }
-
-    public String[] getIngredientNames()
+    private String[] getIngredientNames()
     {
         String[] results = db.getSingleColumnQuery("Select Ingredient_Name from ingredients_info ORDER BY Ingredient_Name;");
         if (results == null)
@@ -2230,22 +2225,40 @@ public class Add_Ingredients_Screen extends JFrame
         return results;
     }
 
-    public Integer getNewIngredientID()
+    private void updateJComboBox()
     {
-        String[] newID = db.getSingleColumnQuery("SELECT MAX(IngredientID) FROM ingredients_info;");
+        setJcomboUpdateStaus(true);
 
-        if (newID == null)
+        edit_IngredientName_JComboBox.removeAllItems();
+        ingredientNames = getIngredientNames();
+
+        edit_IngredientName_JComboBox.addItem("N/A");
+        edit_IngredientName_JComboBox.setSelectedItem("N/A");
+
+        for (String s : ingredientNames)
         {
-            JOptionPane.showMessageDialog(null, "Unable to create new ingredient in table! \nUnable to generate ingredientsID!!");
-            return null;
+            if (!(s.equals("None Of The Above")))
+            {
+                edit_IngredientName_JComboBox.addItem(s);
+            }
         }
 
-        return Integer.parseInt(newID[0]) + 1;
+        setJcomboUpdateStaus(false);
+    }
+
+    public boolean getJComboBoxUpdateStatus()
+    {
+        return jcomboUpdateStaus;
+    }
+
+    public void setJcomboUpdateStaus(boolean x)
+    {
+        jcomboUpdateStaus = x;
     }
 
     //##################################################################################################################
-    // General Methods
-    //##################################################################################################################
+// General Methods
+//##################################################################################################################
     public void makeJframeVisible()
     {
         setExtendedState(JFrame.NORMAL);
@@ -2291,6 +2304,5 @@ public class Add_Ingredients_Screen extends JFrame
 
         container.add(addToContainer, gbc);
     }
-
 
 }
