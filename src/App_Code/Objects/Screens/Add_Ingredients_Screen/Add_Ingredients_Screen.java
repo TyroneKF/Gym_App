@@ -1295,7 +1295,6 @@ public class Add_Ingredients_Screen extends JFrame
             return true;
         }
 
-
         protected Integer getNewIngredientID()
         {
             String[] newID = db.getSingleColumnQuery("SELECT MAX(IngredientID) FROM ingredients_info;");
@@ -2228,7 +2227,6 @@ public class Add_Ingredients_Screen extends JFrame
 
             return panel;
         }
-
     }
 
 //##################################################################################################################
