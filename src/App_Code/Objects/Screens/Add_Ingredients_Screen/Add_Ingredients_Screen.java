@@ -1,6 +1,7 @@
 package App_Code.Objects.Screens.Add_Ingredients_Screen;
 
-
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Gui_Objects.*;
 import App_Code.Objects.Screens.Meal_Plan_Screen.MealPlanScreen;
@@ -672,7 +673,11 @@ public class Add_Ingredients_Screen extends JFrame
                 JTextField ingredientName_JTxtF = (JTextField) ingredientsFormObjects.get(ingredientNameObjectIndex);
                 String ingredientName_Txt = ingredientName_JTxtF.getText().trim();
 
-                if (!(ingredientName_Txt.equals("")))
+                if(doesStringContainCharacters(ingredientName_Txt))
+                {
+                    errorTxt += String.format("\n\n  Ingredient named %s can only contain alphabet character! Symbols, numbers aren't allowed in the ingredient name!", ingredientName_Txt);
+                }
+                else if (!(ingredientName_Txt.equals("")))
                 {
                     String query = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Name = '%s' AND IngredientID != %s;", ingredientName_Txt, selectedIngredientID);
 
@@ -681,7 +686,6 @@ public class Add_Ingredients_Screen extends JFrame
                         errorTxt += String.format("\n\n  Ingredient named %s already exists within the database!", ingredientName_Txt);
                     }
                 }
-
 
                 //####################################################
                 //Check if any error were found & Process it
@@ -1265,8 +1269,20 @@ public class Add_Ingredients_Screen extends JFrame
             return errorTxt;
         }
 
+        protected boolean doesStringContainCharacters(String input)
+        {
+            Pattern p = Pattern.compile("[^a-z]", Pattern.CASE_INSENSITIVE);
+            Matcher m = p.matcher(input);
+            boolean b = m.find();
 
-        //##''
+            if (b)
+            {
+                return  true;
+            }
+
+            return false;
+        }
+
         protected Boolean areYouSure(String process)
         {
             int reply = JOptionPane.showConfirmDialog(gui, String.format("Are you sure you want to: %s?", process, process),
@@ -1555,6 +1571,11 @@ public class Add_Ingredients_Screen extends JFrame
 
                         if (row == ingredientNameObjectIndex)
                         {
+                            String  ingredientName_Txt = ((JTextField) comp).getText().trim();
+                            if(doesStringContainCharacters(ingredientName_Txt))
+                            {
+                                errorTxt += String.format("\n\n  Ingredient named %s can only contain alphabet character! Symbols, numbers aren't allowed in the ingredient name!", ingredientName_Txt);
+                            }
                             continue;
                         }
 
