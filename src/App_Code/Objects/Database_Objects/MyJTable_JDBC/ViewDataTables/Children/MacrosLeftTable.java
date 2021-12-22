@@ -7,9 +7,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class MacroTargetsLeftJTable extends MyJTable_DisplayData
+public class MacrosLeftTable extends MyJTable_DisplayData
 {
-    public MacroTargetsLeftJTable(MyJDBC db, Container parentContainer, Object[][] data, String[] columnNames, int planID,
+    public MacrosLeftTable(MyJDBC db, Container parentContainer, Object[][] data, String[] columnNames, int planID,
                            String tableName, ArrayList<Integer> unEditableColumns, ArrayList<Integer> colAvoidCentering)
     {
         super(db, parentContainer, data, columnNames, planID, tableName, unEditableColumns, colAvoidCentering);
@@ -39,6 +39,12 @@ public class MacroTargetsLeftJTable extends MyJTable_DisplayData
         }
 
         return;
+    }
+
+    public void refreshData()
+    {
+        //tableSetup(getData(), getColumnNames());
+        tableModel_Setup(super.getData(), super.getColumnNames());
     }
 
 }

@@ -16,6 +16,8 @@ public class TotalMealTable extends MyJTable_DisplayData
     private CollapsibleJPanel collapsibleObj;
 
 
+
+
     public TotalMealTable(MyJDBC db, CollapsibleJPanel collapsibleObj, String databaseName, Object[][] data, String[] columnNames, int planID,
                           Integer mealID, Integer tempPlan_Meal_ID, String mealName, String tableName,
                           ArrayList<Integer> unEditableColumns, ArrayList<Integer> colAvoidCentering, boolean setIconsUp)

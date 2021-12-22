@@ -2,7 +2,7 @@ package App_Code.Objects.Screens.Meal_Plan_Screen;
 
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
-import App_Code.Objects.Database_Objects.MyJTable_JDBC.ViewDataTables.Children.MacroTargetsLeftJTable;
+import App_Code.Objects.Database_Objects.MyJTable_JDBC.ViewDataTables.Children.MacrosLeftTable;
 import App_Code.Objects.Database_Objects.MyJTable_JDBC.ViewDataTables.Children.MacrosTargetsTable;
 import App_Code.Objects.Database_Objects.MyJTable_JDBC.EditDataTable.IngredientsTable;
 
@@ -23,7 +23,7 @@ import java.util.LinkedHashMap;
 
 public class MealPlanScreen extends JPanel
 {
-    private MacroTargetsLeftJTable macrosLeft_JTable;
+    private MacrosLeftTable macrosLeft_JTable;
     private MacrosTargetsTable macros_Targets_Table;
 
 
@@ -342,7 +342,7 @@ public class MealPlanScreen extends JPanel
             unEditableCells = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11));
             ArrayList<Integer> macros_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList());
 
-            macrosLeft_JTable = new MacroTargetsLeftJTable(db, mainSouthPanel, macrosData, macros_columnNames, planID,
+            macrosLeft_JTable = new MacrosLeftTable(db, mainSouthPanel, macrosData, macros_columnNames, planID,
                     tableName, unEditableCells, macros_Table_Col_Avoid_Centering);
 
             macrosLeft_JTable.setOpaque(true); //content panes must be opaque
@@ -445,7 +445,7 @@ public class MealPlanScreen extends JPanel
     }
 
     private CollapsibleJPanel create_CollapsibleJPanel(boolean mealInDB, Container container, Integer mealID, Integer temp_MealID, String mealName, int mealNo, String[] meal_total_columnNames,
-                                                       String[] ingredients_ColumnNames, ArrayList<String> ingredientsInDB, MacroTargetsLeftJTable macrosLeft_JTable)
+                                                       String[] ingredients_ColumnNames, ArrayList<String> ingredientsInDB, MacrosLeftTable macrosLeft_JTable)
     {
         CollapsibleJPanel collapsibleJpObj = new CollapsibleJPanel(container, String.format("   Meal   %s", mealNo), 150, 50);
         JPanel collapsibleJPanel = collapsibleJpObj.getCentreJPanel();
@@ -862,6 +862,7 @@ public class MealPlanScreen extends JPanel
         while (it.hasNext())
         {
             IngredientsTable ingredientsJtable = it.next();
+            ingredientsJtable.refresh_Btn_Action(false);
 
             // if meal is not saved in DB remove the meal
             if (!(ingredientsJtable.getMealInDB()))
@@ -872,11 +873,9 @@ public class MealPlanScreen extends JPanel
             }
             if (!(it.hasNext()))
             {
-                ingredientsJtable.outside_Update_MacrosLeft_Table();
+                ingredientsJtable.update_MacrosLeft_Table();
                 continue;
             }
-
-            ingredientsJtable.refresh_Btn_Action(false);
         }
     }
 
@@ -1168,7 +1167,7 @@ public class MealPlanScreen extends JPanel
             }
             if (!(it.hasNext()))
             {
-                ingredientsJtable.outside_Update_MacrosLeft_Table();
+                ingredientsJtable.update_MacrosLeft_Table();
                 continue;
             }
 

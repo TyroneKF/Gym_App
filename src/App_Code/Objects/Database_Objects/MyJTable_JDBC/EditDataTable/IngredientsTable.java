@@ -3,7 +3,7 @@ package App_Code.Objects.Database_Objects.MyJTable_JDBC.EditDataTable;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.JTable_JDBC.JDBC_JTable;
-import App_Code.Objects.Database_Objects.MyJTable_JDBC.ViewDataTables.Children.MacroTargetsLeftJTable;
+import App_Code.Objects.Database_Objects.MyJTable_JDBC.ViewDataTables.Children.MacrosLeftTable;
 import App_Code.Objects.Database_Objects.MyJTable_JDBC.ViewDataTables.Children.TotalMealTable;
 import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 
@@ -22,18 +22,14 @@ import java.util.Arrays;
 
 public class IngredientsTable extends JDBC_JTable
 {
+    private MacrosLeftTable macrosLeft_Table;
+    private TotalMealTable total_Meal_Table;
 
-    MacroTargetsLeftJTable macrosLeft_Table;
-    TotalMealTable total_Meal_Table;
-
-
-    private IngredientsTable ingredientsTableCalculation;
     //####################################
     // Objects
     //####################################
     private JPanel spaceDivider;
     private CollapsibleJPanel collapsibleObj;
-
 
     //####################################
     // Other Variables
@@ -43,12 +39,14 @@ public class IngredientsTable extends JDBC_JTable
 
     private ArrayList<Integer> triggerColumns = null;
 
-    private boolean rowBeingEdited = false, setIconsUp = false, meal_In_DB = true, objectDeleted = false;
+    private boolean
+            rowBeingEdited = false,
+            setIconsUp = false,
+            meal_In_DB = true,
+            objectDeleted = false,
 
+    ingredientNameChanged = false;
 
-    //##################################################################
-    // Ingredients In Meal Table
-    //##################################################################
     private int
             ingredientsTable_Index_Col = 2,
             ingredientsTable_ID_Col = 3,
@@ -56,44 +54,25 @@ public class IngredientsTable extends JDBC_JTable
             ingredientsTable_IngredientsName_Col = 5,
             ingredientsTable_Supplier_Col = 7;
 
-    //SupplierName JComboBox Variables
-    Object previous_Supplier_JComboItem, selected_Supplier_JCombo_Item;
-    boolean supplierNameChanged = false;
-
-    //IngredientName JComboBox Variables
-    boolean ingredientNameChanged = false;
-    Object previous_IngredientName_JComboItem, selected_IngredientName_JCombo_Item;
-
-
-    private int ingredientsTable_Col_Update_Start = 6;
-
     final private int NoneOfTheAbove_PDID = 1;
 
+    //SupplierName JComboBox Variables
+    Object previous_Supplier_JComboItem, selected_Supplier_JCombo_Item;
 
-    //##################################################################
-    // Total Meal Table
-    //##################################################################
-    final private int total_Meal_Table_MealID_Col = 1;
-
-    final private int totalMealTable_Col_Update_Start = 3;
-
-    //##################################################################
-    // Macros Left Table
-    //##################################################################
-    final private int macrosLeft_Table_Col_Update_Start = 1;
+    //IngredientName JComboBox Variables
+    Object previous_IngredientName_JComboItem, selected_IngredientName_JCombo_Item;
 
     //##################################################################################################################
-    // Constructors
+    // Constructor
     //##################################################################################################################
 
     // Ingredients Table
     public IngredientsTable(MyJDBC db, CollapsibleJPanel collapsibleObj, String databaseName, Object[][] data, String[] columnNames, int planID,
                             Integer mealID, Integer tempPlan_Meal_ID, String mealName, String tableName, ArrayList<Integer> triggerColumns,
                             ArrayList<Integer> unEditableColumns, ArrayList<Integer> colAvoidCentering, boolean setIconsUp,
-                            TotalMealTable total_Meal_Table, MacroTargetsLeftJTable macrosLeft_Table)
+                            TotalMealTable total_Meal_Table, MacrosLeftTable macrosLeft_Table)
     {
         super.db = db;
-        ingredientsTableCalculation = this;
         super.data = data;
         super.columnNames = columnNames;
         this.databaseName = databaseName;
@@ -122,13 +101,12 @@ public class IngredientsTable extends JDBC_JTable
 
         this.total_Meal_Table = total_Meal_Table;
         this.macrosLeft_Table = macrosLeft_Table;
-        this.ingredientsTableCalculation = this;
 
         setUp();
     }
 
     //##################################################################################################################
-    // Experiments
+    // JCOMBO Methods
     //##################################################################################################################
     public void setUpSupplierColumn(int col)
     {
@@ -171,18 +149,12 @@ public class IngredientsTable extends JDBC_JTable
             comboBox = ((JComboBox) getComponent());
             comboBox.setEditable(true);
 
-            comboBox.addActionListener(ae -> {
-                supplierNameChanged = false;
-            });
-
             comboBox.addItemListener(new ItemListener()
             {
                 public void itemStateChanged(ItemEvent ie)
                 {
                     if (ie.getStateChange() == ItemEvent.SELECTED)
                     {
-                        supplierNameChanged = true;
-
                         if (previous_Supplier_JComboItem == null)
                         {
                             selected_Supplier_JCombo_Item = ie.getItem();
@@ -195,7 +167,6 @@ public class IngredientsTable extends JDBC_JTable
                         }
                     }
                 }
-
             });
 
 
@@ -383,6 +354,10 @@ public class IngredientsTable extends JDBC_JTable
         tableColumn.setCellRenderer(renderer);
     }
 
+    //##################################################################################################################
+    // Setup Methods
+    //##################################################################################################################
+
     @Override
     protected void tableModel_Setup(Object[][] data, String[] columnNames)
     {
@@ -442,10 +417,8 @@ public class IngredientsTable extends JDBC_JTable
                 setUpJComboColumn(key, "IngredientName", getJcomboMap().get(key));
             }
 
-            if (ingredientsTableCalculation != null)
-            {
-                setUpSupplierColumn(getIngredientsTable_Supplier_Col());
-            }
+            setUpSupplierColumn(getIngredientsTable_Supplier_Col());
+
         }
         else
         {
@@ -454,8 +427,509 @@ public class IngredientsTable extends JDBC_JTable
         resizeObject();
     }
 
-    //############################################
-    @Override //HELLO MOVE BACK TO ACTION METHODS SECTION
+    @Override
+    public void setupDeleteBtnColumn(int deleteBtnColumn)
+    {
+        setDeleteBTNColumn(deleteBtnColumn);
+
+        Action delete = new AbstractAction()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+
+                JTable table = (JTable) e.getSource();
+                Object ingredients_Index = table.getValueAt(table.getSelectedRow(), getIngredientsTable_Index_Col());
+
+                if (ingredients_Index != null)
+                {
+                    int modelRow = Integer.parseInt(e.getActionCommand());
+                    deleteRowAction(ingredients_Index, modelRow); // command to update db
+                }
+            }
+        };
+        Working_ButtonColumn2 workingButtonColumn = new Working_ButtonColumn2(jTable, delete, getDeleteBTN_Col());
+        workingButtonColumn.setMnemonic(KeyEvent.VK_D);
+    }
+
+    private void setUp()
+    {
+        setLayout(new GridBagLayout());
+        if (db.isDatabaseConnected())
+        {
+            if (data != null)
+            {
+
+                //###############################
+                // Table Data
+                //###############################
+                super.data = data;
+
+                super.columnNames = columnNames;
+                super.columnDataTypes = db.getColumnDataTypes(tableName); //Column Data Types
+
+                super.columnsInTable = columnNames.length;
+                super.rowsInTable = data.length;
+
+                //##############################
+                // Table Setup
+                //##############################
+                super.tableSetup(data, columnNames, setIconsUp);
+
+            }
+            else
+            {
+                super.tableSetup(new Object[0][0], columnNames, setIconsUp);
+            }
+        }
+    }
+
+    //##################################################################################################################
+    // Button Actions Events
+    //##################################################################################################################
+
+    @Override
+    public void deleteTableAction()
+    {
+        //##########################################
+        // Delete table from database
+        //##########################################
+
+        /*
+            Delete all ingredients from this meal (using mealID) from table "ingredients_in_meal"
+            Delete meal from meals database
+         */
+
+        String query2 = String.format(" DELETE FROM ingredients_in_meal WHERE MealID = %s;", tempPlan_Meal_ID);
+        String query4 = String.format(" DELETE FROM  meals WHERE MealID = %s;", tempPlan_Meal_ID);
+
+        String[] query = new String[]{query2, query4};
+
+        if (db.uploadData_Batch(query))
+        {
+            //##########################################
+            /**
+             * Hide JTable object & Collapsible OBJ
+             *
+             */
+            //##########################################
+
+            setVisibility(false); // hide collapsible Object
+
+
+            update_MacrosLeft_Table();// update macrosLeft table, due to number deductions from this meal
+
+            setObjectDeleted(true); // set this object as deleted
+
+            JOptionPane.showMessageDialog(null, "Table Successfully Deleted!");
+            return;
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(null, "Table Un-Successfully Deleted! ");
+            return;
+        }
+    }
+
+    @Override
+    protected void deleteRowAction(Object ingredientIndex, int modelRow)
+    {
+        //#################################################
+        // Remove From DB
+        //##################################################
+        if (ingredientIndex != null)
+        {
+            System.out.printf("\n\nIngredient Index To Delete: %s", ingredientIndex);
+            //#################################################
+            // Delete Ingredient From Temp Meal
+            //#################################################
+
+            System.out.printf("\n\ningredientIndex: %s \nMealPlanID: %s", ingredientIndex, tempPlan_Meal_ID);
+
+            String query = String.format("DELETE FROM ingredients_in_meal WHERE Ingredients_Index = %s AND PlanID = %s;", ingredientIndex, temp_PlanID);
+
+            String[] queryUpload = new String[]{query};
+
+            if (!(db.uploadData_Batch(queryUpload)))
+            {
+                JOptionPane.showMessageDialog(null, "Unable To delete Ingredient from Meal in Database");
+            }
+        }
+
+        //#################################################
+        // Remove From Table
+        //##################################################
+        ((DefaultTableModel) jTable.getModel()).removeRow(modelRow);
+
+        rowsInTable--; // -1 from row count number
+        resizeObject();
+        //#################################################
+        // Update Table Data
+        //##################################################
+
+        updateData();
+
+        //HELLO REMOVE
+        System.out.printf("\n\n#########################################################################");
+    }
+
+    public void completely_Deleted_JTables()
+    {
+        // parentContainer =  collapsibleObj
+        //#################################################
+        // Remove  Main Jtable from collapsible Object
+        //#################################################
+        parentContainer.setSize(new Dimension(0, 0)); // set collapsibleObj to size 0
+        parentContainer.remove(this); // remove jtables for collapsible Object
+
+        //##################################################
+        // Delete Meal Total Table From Collapsible Object
+        //##################################################
+        if (total_Meal_Table != null && collapsibleObj != null)
+        {
+            collapsibleObj.getParentContainer().remove(spaceDivider); // remove spaceDivider from GUI
+
+            JPanel collapsible_SouthPanel = collapsibleObj.getSouthJPanel();
+            collapsible_SouthPanel.remove(total_Meal_Table);
+            collapsibleObj.getSouthJPanel();
+        }
+
+        parentContainer.revalidate();
+
+        //##################################################
+        //  Notify GUI to delete collapsible Object
+        //##################################################
+        if (collapsibleObj != null)
+        {
+            collapsibleObj.removeCollapsibleJPanel(); // notifies GUI to delete collapsible Object
+        }
+    }
+
+    @Override
+    protected void add_btn_Action()
+    {
+        //#########################################################
+        // Check If There Is Already An Empty Row
+        //#########################################################
+
+        if (getNonOfTheAboveInTableStatus(null, "add a new row!"))
+        {
+            return;
+        }
+
+        //#########################################################
+        // Adding Row Data to Table Model
+        //#########################################################
+
+        Object[] rowData = new Object[columnsInTable];
+
+        tableModel.addRow(rowData);
+
+        //#########################################################
+        // Setting Variables
+        //#########################################################
+
+        int tableRow = rowsInTable == 0 ? 0 : rowsInTable;
+        int ingredientID = 1;
+        BigDecimal quantity = new BigDecimal("0.00");
+
+        //#########################################################
+        // Get Next Ingredients_Index For This Ingredient Addition
+        //#########################################################
+        String getNextIndexQuery = String.format("SELECT MAX(Ingredients_Index) FROM %s ;", "ingredients_in_meal");
+
+        String[] newIngredientsIndex = db.getSingleColumnQuery(getNextIndexQuery);
+
+        if (newIngredientsIndex == null)
+        {
+            JOptionPane.showMessageDialog(null, "Unable to create new ingredient in table! \nUnable to generate ingredients_Index!!");
+            return;
+        }
+
+        int newIngredientsIndex2 = Integer.parseInt(newIngredientsIndex[0]) + 1;
+        //#########################################################
+        // Insert into Database
+        //#########################################################
+
+        String query1 = String.format("""
+                        
+                INSERT INTO ingredients_in_meal
+                (Ingredients_Index, MealID, PlanID, IngredientID, Quantity, PDID)
+                                        
+                VALUES
+                (%s, %s, %s, %s, %s, %s); 
+                        """, newIngredientsIndex2, tempPlan_Meal_ID, temp_PlanID, ingredientID, quantity, NoneOfTheAbove_PDID);
+
+        if (!(db.uploadData_Batch(new String[]{query1})))
+        {
+            JOptionPane.showMessageDialog(null, "Un-able to Insert new row into the Database!");
+            return;
+        }
+
+        //####################################################################
+        //  Getting Row Data For New Ingredient Addition
+        //####################################################################
+
+        String query = String.format("""
+                SELECT *
+                FROM ingredients_in_meal_calculation
+                WHERE Ingredients_Index = %s AND PlanID = %s;
+                """, newIngredientsIndex2, temp_PlanID);
+
+
+        System.out.printf("\n\n%s", query); // HELLO REMOVE
+
+        ArrayList<ArrayList<Object>> results = db.get_Multi_ColumnQuery_Object(query);
+
+        System.out.printf("\n\n\n\n%s\n\n", results);  // HELLO REMOVE
+
+        if (results == null)
+        {
+            JOptionPane.showMessageDialog(null, "ERROR 2: Un-able to get Ingredient info for row in table!");
+            return;
+        }
+
+        //#########################################
+        //   Updating Ingredients In Meal Table
+        //########################################
+
+        setRowBeingEdited(); // stops endless loop being called for all cells being editted
+
+        ArrayList<Object> ingredientsTable_UpdateData = results.get(0);
+        super.updateTable(this, ingredientsTable_UpdateData, rowsInTable);
+
+        setRowBeingEdited(); // stops endless loop being called for all cells being editted
+
+        //##################################################################################
+        // Resize Jtable & GUI with new Data
+        //###################################################################################
+        rowsInTable++;
+        resizeObject();
+
+        //##################################################################################
+        // Update Table Data
+        //###################################################################################
+        updateData();
+    }
+
+    @Override
+    public void refresh_Btn_Action(boolean updateMacrosLeft)
+    {
+        //#######################################################
+        //If Meal is not deleted from the temp plan in database
+        //#######################################################
+        if (getObjectDeleted())
+        {
+
+            //##########################################################
+            // Re-Insert Meal Name Into Temp Meal
+            //##########################################################
+
+            String query1 = String.format("""
+                                        
+                    INSERT INTO meals (MealID, PlanID, Meal_Name) VALUES
+                    (%s, %s,'%s'); """, tempPlan_Meal_ID, temp_PlanID, mealName);
+
+            if (!(db.uploadData_Batch(new String[]{query1})))
+            {
+                JOptionPane.showMessageDialog(null, "Unable To re-insert deleted meals with action requested \nbeing refresh!");
+                return;
+            }
+
+            setVisibility(true);
+            setObjectDeleted(false);
+        }
+
+        //######################################
+        // Reset Temp Data For Meal in Database
+        //######################################
+
+        // delete all ingredients in tempMeal
+        String query1 = String.format("DELETE FROM ingredients_in_meal WHERE MealID = %s;", tempPlan_Meal_ID);
+
+        //####################################################
+        // Transferring this plans Ingredients to Temp-Plan
+        // Resetting the Database
+        //####################################################
+
+        //Copy the current data for this meal in the database
+        String query2 = String.format("DROP TABLE IF EXISTS temp_ingredients_in_meal;");
+        String query3 = String.format(""" 
+                CREATE table temp_ingredients_in_meal  AS
+                SELECT *
+                FROM ingredients_in_meal i                                                      
+                WHERE PlanID= %s AND MealID = %s; """, planID, mealID);
+
+        String query4 = String.format("UPDATE temp_ingredients_in_meal  SET PlanID = %s; ", temp_PlanID);
+        String query5 = String.format("UPDATE temp_ingredients_in_meal  SET MEALID = %s; ", tempPlan_Meal_ID);
+
+        String query8 = String.format("INSERT INTO ingredients_in_meal SELECT * FROM temp_ingredients_in_meal; ");
+        String query9 = String.format("DROP TABLE temp_ingredients_in_meal; ");
+
+        String[] query_Temp_Data = new String[]{query1, query2, query3,
+                //query3_2, query3_3,
+                query4, query5, query8, query9};
+
+        if (!(db.uploadData_Batch(query_Temp_Data)))
+        {
+            JOptionPane.showMessageDialog(null, "ERROR: \nCannot revert database to previous data!");
+            return;
+        }
+
+        //##############################
+        /** //HELLO
+         * Reset Ingredients Table Data
+         * However, the index changes everytime we delete and upload,
+         */
+        //##############################
+
+        //Reset this tables data (ingredients_in_meal table)
+        tableModel_Setup(getData(), getColumnNames());
+
+        //##############################
+        // Reset Meal Total  Table Data
+        //##############################
+        System.out.printf("\n\nReset Table Data:\n\n %s", Arrays.deepToString(total_Meal_Table.getData()));
+        refreshTotalMealTable();
+
+        //##############################
+        // Update Other Tables Data
+        //##############################
+
+        if (updateMacrosLeft)
+        {
+            update_MacrosLeft_Table();
+        }
+    }
+
+    @Override
+    public boolean saveDataAction()
+    {
+
+        if (!(getMealInDB()))     // If Meal Not In Original PlanID Add To PlanID
+        {
+            System.out.printf(String.format("\n\n\\Save Data Action() Meal Not in Original DB"));
+
+            //######################################################################
+            // Add Meal To Original Plan
+            //######################################################################
+            String uploadQuery = String.format(" INSERT INTO meals (PlanID, Meal_Name) VALUES (%s,'%s')", planID, mealName);
+
+            //#####################################
+            // If Upload Un-Successful
+            //#####################################
+            if (!(db.uploadData_Batch(new String[]{uploadQuery})))
+            {
+                JOptionPane.showMessageDialog(null, "\n\nUnable To Create Meal In Original Plan!!");
+                return false;
+            }
+
+            //######################################################################
+            // Set Meals MealID by Retrieving it from DB
+            //######################################################################
+            // Get MealID of meal in plan
+
+            System.out.printf(String.format("\n\nSelect MealID FROM Meals WHERE MealName ='%s' AND PlanID = %s;", mealName, planID));
+            String[] orginalMealID_Result = db.getSingleColumnQuery(String.format("Select MealID FROM Meals WHERE Meal_Name ='%s' AND PlanID = %s;",
+                    mealName, planID));
+
+
+            if (orginalMealID_Result == null)
+            {
+                JOptionPane.showMessageDialog(null, "\n\nUnable To Get MealID in Plan to Update Meal");
+                return false;
+            }
+
+            //tempPlan_Meal_ID = mealID;//HELLO What does this do?
+            mealID = Integer.valueOf(orginalMealID_Result[0]);
+
+            System.out.printf(String.format("\n\nPlanId: %s \nTempPlanID: %s \n\nMealID: %s  \nTempMealID: %s ",
+                    planID, temp_PlanID, mealID, tempPlan_Meal_ID));
+
+            //##########################################
+            // Meal Successfully Added TO DB
+            //##########################################
+            set_Meal_In_DB(true);
+        }
+
+        //HELLO FOR OPTIMISATION THIS STEP SHOULDNT BE DONE IF THE STEP ABOVE IS DONE
+        //##########################################
+        // Copying Temp-Plan Meal Data to Real Plan
+        //##########################################
+
+        // delete all ingredients in the real meal
+        String query1 = String.format("DELETE FROM ingredients_in_meal WHERE MealID = %s;", mealID);
+
+        //####################################################
+        // Transferring Data From Temp-Plan To Real Plan
+        //####################################################
+
+        String query2 = String.format("DROP TABLE IF EXISTS temp_ingredients_in_meal;");
+        String query3 = String.format(""" 
+                CREATE table temp_ingredients_in_meal  AS
+                SELECT *
+                FROM ingredients_in_meal i                                                      
+                WHERE PlanID= 1 AND MealID = %s; """, tempPlan_Meal_ID);
+
+        String query4 = String.format("UPDATE temp_ingredients_in_meal  SET PlanID = %s;", planID);
+        String query5 = String.format("UPDATE temp_ingredients_in_meal  SET MEALID = %s;", mealID);
+
+        String query8 = String.format(" INSERT INTO ingredients_in_meal SELECT * FROM temp_ingredients_in_meal;");
+        String query9 = String.format(" DROP TABLE temp_ingredients_in_meal;");
+
+        String[] query_Temp_Data = new String[]{query1, query2, query3, query4, query5, query8, query9};
+
+        //##########################################
+        // If Upload Un-Successful
+        //##########################################
+        if (!(db.uploadData_Batch(query_Temp_Data)))
+        {
+            JOptionPane.showMessageDialog(null, "ERROR: \nUnable to update table to Database!!");
+            return false;
+        }
+
+        //##########################################
+        // Changing Ingredients In Meal Table Model
+        //##########################################
+        String tableInQuery = "ingredients_in_meal_calculation";
+
+        String query = String.format("Select * from %s WHERE MealID = %s;", tableInQuery, tempPlan_Meal_ID);
+        Object[][] ingredients_Data = db.getTableDataObject(query, tableInQuery);
+
+        if (ingredients_Data != null)
+        {
+            setTableModelData(ingredients_Data);
+        }
+        else
+        {
+            return false;
+        }
+
+        //##########################################
+        // Changing Total  Ingredients Table Model
+        //##########################################
+
+        if (total_Meal_Table != null)
+        {
+            // Setting totals tables Data model to new data
+            String totalTableQuery = String.format("SELECT *  FROM total_meal_view WHERE MealID = %s;", tempPlan_Meal_ID);
+
+            Object[][] totalTableData = db.getTableDataObject(totalTableQuery, "total_meal_view");
+            if (totalTableData != null)
+            {
+                total_Meal_Table.setTableModelData(totalTableData);
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(null, "ERROR: \nUn-able to Update Totals Table!");
+                return false;
+            }
+        }
+
+        JOptionPane.showMessageDialog(null, "Table Successfully Updated!");
+        return true;
+    }
+
+    @Override
     protected void tableDataChange_Action()
     {
         int rowEdited = jTable.getEditingRow(), columnEdited = jTable.getEditingColumn();
@@ -515,7 +989,7 @@ public class IngredientsTable extends JDBC_JTable
 
             if (selected_IngredientName_JCombo_Item.equals("None Of The Above"))
             {
-                if (isNonOfTheABoveInTable(rowEdited, "change a current Ingredient in this meal to 'None Of The Above'"))
+                if (getNonOfTheAboveInTableStatus(rowEdited, "change a current Ingredient in this meal to 'None Of The Above'"))
                 {
                     jTable.setValueAt(previous_IngredientName_JComboItem, rowEdited, columnEdited);
                     setRowBeingEdited();
@@ -746,554 +1220,6 @@ public class IngredientsTable extends JDBC_JTable
 
     }
 
-    //##################################################################################################################
-
-    protected void setUp()
-    {
-        setLayout(new GridBagLayout());
-        if (db.isDatabaseConnected())
-        {
-            if (data != null)
-            {
-
-                //###############################
-                // Table Data
-                //###############################
-                super.data = data;
-
-                super.columnNames = columnNames;
-                super.columnDataTypes = db.getColumnDataTypes(tableName); //Column Data Types
-
-                super.columnsInTable = columnNames.length;
-                super.rowsInTable = data.length;
-
-                //##############################
-                // Table Setup
-                //##############################
-                super.tableSetup(data, columnNames, setIconsUp);
-
-            }
-            else
-            {
-                super.tableSetup(new Object[0][0], columnNames, setIconsUp);
-            }
-        }
-    }
-
-    public boolean isNonOfTheABoveInTable(Integer rowTriggeredAt, String attemptingTo)
-    {
-        if (rowsInTable > 0)
-        {
-            //Checking if the ingredient None Of the Above is already in the table
-            for (int row = 0; row < rowsInTable; row++)
-            {
-                // Currently, changing  ingredient to NONE OF the ABOVE
-                if (rowTriggeredAt != null && row == rowTriggeredAt && rowsInTable > 1)
-                {
-                    continue;
-                }
-
-                // if None Of  the above is found in the table return true
-                if (jTable.getValueAt(row, getIngredientsTable_ID_Col()).equals(1) || jTable.getValueAt(row, getIngredientsTable_ID_Col()).equals("1"))
-                {
-                    String message = String.format("""
-                            \n\nPlease change the Ingredient at: 
-                            \nRow: %s \nColumn: %s                             
-                            \nFrom the ingredient 'None Of The Above' to another ingredient! 
-                            \nBefore attempting to %s!
-                            """, row + 1, getIngredientsTable_IngredientsName_Col() + 1, attemptingTo);
-                    JOptionPane.showMessageDialog(null, message);
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    //##################################################################################################################
-    // Action Methods / ActionListener Events
-    //##################################################################################################################
-
-    @Override //HELLO FIX, doesnt reload with table
-    public void setupDeleteBtnColumn(int deleteBtnColumn)
-    {
-        setDeleteBTNColumn(deleteBtnColumn);
-
-        Action delete = new AbstractAction()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-
-                JTable table = (JTable) e.getSource();
-                Object ingredients_Index = table.getValueAt(table.getSelectedRow(), getIngredientsTable_Index_Col());
-
-                if (ingredients_Index != null)
-                {
-                    int modelRow = Integer.parseInt(e.getActionCommand());
-                    deleteRowAction(ingredients_Index, modelRow); // command to update db
-                }
-            }
-        };
-        Working_ButtonColumn2 workingButtonColumn = new Working_ButtonColumn2(jTable, delete, getDeleteBTN_Col());
-        workingButtonColumn.setMnemonic(KeyEvent.VK_D);
-    }
-
-    @Override
-    public void deleteTableAction() // Works
-    {
-        //##########################################
-        // Delete table from database
-        //##########################################
-
-        /*
-            Delete all ingredients from this meal (using mealID) from table "ingredients_in_meal"
-            Delete meal from meals database
-         */
-
-        String query2 = String.format(" DELETE FROM ingredients_in_meal WHERE MealID = %s;", tempPlan_Meal_ID);
-        String query4 = String.format(" DELETE FROM  meals WHERE MealID = %s;", tempPlan_Meal_ID);
-
-        String[] query = new String[]{query2, query4};
-
-        if (db.uploadData_Batch(query))
-        {
-            //##########################################
-            /**
-             * Hide JTable object & Collapsible OBJ
-             *
-             */
-            //##########################################
-
-            setVisibility(false); // hide collapsible Object
-
-
-            outside_Update_MacrosLeft_Table();// update macrosLeft table, due to number deductions from this meal
-
-            setObjectDeleted(true); // set this object as deleted
-
-            JOptionPane.showMessageDialog(null, "Table Successfully Deleted!");
-            return;
-        }
-        else
-        {
-            JOptionPane.showMessageDialog(null, "Table Un-Successfully Deleted! ");
-            return;
-        }
-    }
-
-    @Override
-    protected void deleteRowAction(Object ingredientIndex, int modelRow)
-    {
-        //#################################################
-        // Remove From DB
-        //##################################################
-        if(ingredientIndex != null)
-        {
-            System.out.printf("\n\nIngredient Index To Delete: %s", ingredientIndex);
-            //#################################################
-            // Delete Ingredient From Temp Meal
-            //#################################################
-
-            System.out.printf("\n\ningredientIndex: %s \nMealPlanID: %s", ingredientIndex, tempPlan_Meal_ID);
-
-            String query = String.format("DELETE FROM ingredients_in_meal WHERE Ingredients_Index = %s AND PlanID = %s;", ingredientIndex, temp_PlanID);
-
-            String[] queryUpload = new String[]{query};
-
-            if (!(db.uploadData_Batch(queryUpload)))
-            {
-                JOptionPane.showMessageDialog(null, "Unable To delete Ingredient from Meal in Database");
-            }
-        }
-
-        //#################################################
-        // Remove From Table
-        //##################################################
-        ((DefaultTableModel) jTable.getModel()).removeRow(modelRow);
-
-        rowsInTable--; // -1 from row count number
-        resizeObject();
-        //#################################################
-        // Update Table Data
-        //##################################################
-
-        updateData();
-
-        //HELLO REMOVE
-        System.out.printf("\n\n#########################################################################");
-    }
-
-
-    public void completely_Deleted_JTables() // Works
-    {
-        // parentContainer =  collapsibleObj
-        //#################################################
-        // Remove  Main Jtable from collapsible Object
-        //#################################################
-        parentContainer.setSize(new Dimension(0, 0)); // set collapsibleObj to size 0
-        parentContainer.remove(this); // remove jtables for collapsible Object
-
-        //##################################################
-        // Delete Meal Total Table From Collapsible Object
-        //##################################################
-        if (total_Meal_Table != null && collapsibleObj != null)
-        {
-            collapsibleObj.getParentContainer().remove(spaceDivider); // remove spaceDivider from GUI
-
-            JPanel collapsible_SouthPanel = collapsibleObj.getSouthJPanel();
-            collapsible_SouthPanel.remove(total_Meal_Table);
-            collapsibleObj.getSouthJPanel();
-        }
-
-        parentContainer.revalidate();
-
-        //##################################################
-        //  Notify GUI to delete collapsible Object
-        //##################################################
-        if (collapsibleObj != null)
-        {
-            collapsibleObj.removeCollapsibleJPanel(); // notifies GUI to delete collapsible Object
-        }
-    }
-
-    @Override
-    protected void add_btn_Action()
-    {
-        //#########################################################
-        // Check If There Is Already An Empty Row
-        //#########################################################
-
-        if (isNonOfTheABoveInTable(null, "add a new row!"))
-        {
-            return;
-        }
-
-        //#########################################################
-        // Adding Row Data to Table Model
-        //#########################################################
-
-        Object[] rowData = new Object[columnsInTable];
-
-        tableModel.addRow(rowData);
-
-        //#########################################################
-        // Setting Variables
-        //#########################################################
-
-        int tableRow = rowsInTable == 0 ? 0 : rowsInTable;
-        int ingredientID = 1;
-        BigDecimal quantity = new BigDecimal("0.00");
-
-        //#########################################################
-        // Get Next Ingredients_Index For This Ingredient Addition
-        //#########################################################
-        String getNextIndexQuery = String.format("SELECT MAX(Ingredients_Index) FROM %s ;", "ingredients_in_meal");
-
-        String[] newIngredientsIndex = db.getSingleColumnQuery(getNextIndexQuery);
-
-        if (newIngredientsIndex == null)
-        {
-            JOptionPane.showMessageDialog(null, "Unable to create new ingredient in table! \nUnable to generate ingredients_Index!!");
-            return;
-        }
-
-        int newIngredientsIndex2 = Integer.parseInt(newIngredientsIndex[0]) + 1;
-        //#########################################################
-        // Insert into Database
-        //#########################################################
-
-        String query1 = String.format("""
-                        
-                INSERT INTO ingredients_in_meal
-                (Ingredients_Index, MealID, PlanID, IngredientID, Quantity, PDID)
-                                        
-                VALUES
-                (%s, %s, %s, %s, %s, %s); 
-                        """, newIngredientsIndex2, tempPlan_Meal_ID, temp_PlanID, ingredientID, quantity, NoneOfTheAbove_PDID);
-
-        if (!(db.uploadData_Batch(new String[]{query1})))
-        {
-            JOptionPane.showMessageDialog(null, "Un-able to Insert new row into the Database!");
-            return;
-        }
-
-        //####################################################################
-        //  Getting Row Data For New Ingredient Addition
-        //####################################################################
-
-        String query = String.format("""
-                SELECT *
-                FROM ingredients_in_meal_calculation
-                WHERE Ingredients_Index = %s AND PlanID = %s;
-                """, newIngredientsIndex2, temp_PlanID);
-
-
-        System.out.printf("\n\n%s", query); // HELLO REMOVE
-
-        ArrayList<ArrayList<Object>> results = db.get_Multi_ColumnQuery_Object(query);
-
-        System.out.printf("\n\n\n\n%s\n\n", results);  // HELLO REMOVE
-
-        if (results == null)
-        {
-            JOptionPane.showMessageDialog(null, "ERROR 2: Un-able to get Ingredient info for row in table!");
-            return;
-        }
-
-        //#########################################
-        //   Updating Ingredients In Meal Table
-        //########################################
-
-        setRowBeingEdited(); // stops endless loop being called for all cells being editted
-
-        ArrayList<Object> ingredientsTable_UpdateData = results.get(0);
-        super.updateTable(this, ingredientsTable_UpdateData, rowsInTable);
-
-        setRowBeingEdited(); // stops endless loop being called for all cells being editted
-
-        //##################################################################################
-        // Resize Jtable & GUI with new Data
-        //###################################################################################
-        rowsInTable++;
-        resizeObject();
-
-        //##################################################################################
-        // Update Table Data
-        //###################################################################################
-        updateData();
-    }
-
-    @Override
-    public void refresh_Btn_Action(boolean updateTotalPlanTable)
-    {
-        //#######################################################
-        //If Meal is not deleted from the temp plan in database
-        //#######################################################
-        if (getObjectDeleted())
-        {
-
-            //##########################################################
-            // Re-Insert Meal Name Into Temp Meal
-            //##########################################################
-
-            String query1 = String.format("""
-                                        
-                    INSERT INTO meals (MealID, PlanID, Meal_Name) VALUES
-                    (%s, %s,'%s'); """, tempPlan_Meal_ID, temp_PlanID, mealName);
-
-            if (!(db.uploadData_Batch(new String[]{query1})))
-            {
-                JOptionPane.showMessageDialog(null, "Unable To re-insert deleted meals with action requested \nbeing refresh!");
-                return;
-            }
-
-            setVisibility(true);
-            setObjectDeleted(false);
-        }
-        //######################################
-        // Reset Temp Data For Meal in Database
-        //######################################
-
-        // delete all ingredients in tempMeal
-        String query1 = String.format("DELETE FROM ingredients_in_meal WHERE MealID = %s;", tempPlan_Meal_ID);
-
-        //####################################################
-        // Transferring this plans Ingredients to Temp-Plan
-        // Resetting the Database
-        //####################################################
-
-        //Copy the current data for this meal in the database
-        String query2 = String.format("DROP TABLE IF EXISTS temp_ingredients_in_meal;");
-        String query3 = String.format(""" 
-                CREATE table temp_ingredients_in_meal  AS
-                SELECT *
-                FROM ingredients_in_meal i                                                      
-                WHERE PlanID= %s AND MealID = %s; """, planID, mealID);
-
-        String query4 = String.format("UPDATE temp_ingredients_in_meal  SET PlanID = %s; ", temp_PlanID);
-        String query5 = String.format("UPDATE temp_ingredients_in_meal  SET MEALID = %s; ", tempPlan_Meal_ID);
-
-        String query8 = String.format("INSERT INTO ingredients_in_meal SELECT * FROM temp_ingredients_in_meal; ");
-        String query9 = String.format("DROP TABLE temp_ingredients_in_meal; ");
-
-        String[] query_Temp_Data = new String[]{query1, query2, query3,
-                //query3_2, query3_3,
-                query4, query5, query8, query9};
-
-        if (!(db.uploadData_Batch(query_Temp_Data)))
-        {
-            JOptionPane.showMessageDialog(null, "ERROR: \nCannot revert database to previous data!");
-            return;
-        }
-
-        //##############################
-        /** //HELLO
-         * Reset Ingredients Table Data
-         * However, the index changes everytime we delete and upload,
-         */
-        //##############################
-
-        //Reset this tables data (ingredients_in_meal table)
-        tableModel_Setup(getData(), getColumnNames());
-
-        //##############################
-        // Reset Meal Total  Table Data
-        //##############################
-
-        // Reset Total View Table
-        if (total_Meal_Table != null)
-        {
-            System.out.printf("\n\nReset Table Data:\n\n %s", Arrays.deepToString(total_Meal_Table.getData()));
-            total_Meal_Table.refreshData();
-        }
-
-        //##############################
-        // Update Other Tables Data
-        //##############################
-
-        if (updateTotalPlanTable)
-        {
-            outside_Update_MacrosLeft_Table();
-        }
-    }
-
-    @Override
-    public boolean saveDataAction()
-    {
-
-        if (!(getMealInDB()))     // If Meal Not In Original PlanID Add To PlanID
-        {
-            System.out.printf(String.format("\n\n\\Save Data Action() Meal Not in Original DB"));
-
-            //######################################################################
-            // Add Meal To Original Plan
-            //######################################################################
-            String uploadQuery = String.format(" INSERT INTO meals (PlanID, Meal_Name) VALUES (%s,'%s')", planID, mealName);
-
-            //#####################################
-            // If Upload Un-Successful
-            //#####################################
-            if (!(db.uploadData_Batch(new String[]{uploadQuery})))
-            {
-                JOptionPane.showMessageDialog(null, "\n\nUnable To Create Meal In Original Plan!!");
-                return false;
-            }
-
-            //######################################################################
-            // Set Meals MealID by Retrieving it from DB
-            //######################################################################
-            // Get MealID of meal in plan
-
-            System.out.printf(String.format("\n\nSelect MealID FROM Meals WHERE MealName ='%s' AND PlanID = %s;", mealName, planID));
-            String[] orginalMealID_Result = db.getSingleColumnQuery(String.format("Select MealID FROM Meals WHERE Meal_Name ='%s' AND PlanID = %s;",
-                    mealName, planID));
-
-
-            if (orginalMealID_Result == null)
-            {
-                JOptionPane.showMessageDialog(null, "\n\nUnable To Get MealID in Plan to Update Meal");
-                return false;
-            }
-
-            //tempPlan_Meal_ID = mealID;//HELLO What does this do?
-            mealID = Integer.valueOf(orginalMealID_Result[0]);
-
-            System.out.printf(String.format("\n\nPlanId: %s \nTempPlanID: %s \n\nMealID: %s  \nTempMealID: %s ",
-                    planID, temp_PlanID, mealID, tempPlan_Meal_ID));
-
-            //##########################################
-            // Meal Successfully Added TO DB
-            //##########################################
-            set_Meal_In_DB(true);
-        }
-
-        //HELLO FOR OPTIMISATION THIS STEP SHOULDNT BE DONE IF THE STEP ABOVE IS DONE
-        //##########################################
-        // Copying Temp-Plan Meal Data to Real Plan
-        //##########################################
-
-        // delete all ingredients in the real meal
-        String query1 = String.format("DELETE FROM ingredients_in_meal WHERE MealID = %s;", mealID);
-
-        //####################################################
-        // Transferring Data From Temp-Plan To Real Plan
-        //####################################################
-
-        String query2 = String.format("DROP TABLE IF EXISTS temp_ingredients_in_meal;");
-        String query3 = String.format(""" 
-                CREATE table temp_ingredients_in_meal  AS
-                SELECT *
-                FROM ingredients_in_meal i                                                      
-                WHERE PlanID= 1 AND MealID = %s; """, tempPlan_Meal_ID);
-
-        String query4 = String.format("UPDATE temp_ingredients_in_meal  SET PlanID = %s;", planID);
-        String query5 = String.format("UPDATE temp_ingredients_in_meal  SET MEALID = %s;", mealID);
-
-        String query8 = String.format(" INSERT INTO ingredients_in_meal SELECT * FROM temp_ingredients_in_meal;");
-        String query9 = String.format(" DROP TABLE temp_ingredients_in_meal;");
-
-        String[] query_Temp_Data = new String[]{query1, query2, query3, query4, query5, query8, query9};
-
-        //##########################################
-        // If Upload Un-Successful
-        //##########################################
-        if (!(db.uploadData_Batch(query_Temp_Data)))
-        {
-            JOptionPane.showMessageDialog(null, "ERROR: \nUnable to update table to Database!!");
-            return false;
-        }
-
-        //##########################################
-        // Changing Ingredients In Meal Table Model
-        //##########################################
-        String tableInQuery = "ingredients_in_meal_calculation";
-
-        String query = String.format("Select * from %s WHERE MealID = %s;", tableInQuery, tempPlan_Meal_ID);
-        Object[][] ingredients_Data = db.getTableDataObject(query, tableInQuery);
-
-        if (ingredients_Data != null)
-        {
-            setTableModelData(ingredients_Data);
-        }
-        else
-        {
-            return false;
-        }
-
-        //##########################################
-        // Changing Total  Ingredients Table Model
-        //##########################################
-
-        if (total_Meal_Table != null)
-        {
-            // Setting totals tables Data model to new data
-            String totalTableQuery = String.format("SELECT *  FROM total_meal_view WHERE MealID = %s;", tempPlan_Meal_ID);
-
-            Object[][] totalTableData = db.getTableDataObject(totalTableQuery, "total_meal_view");
-            if (totalTableData != null)
-            {
-                total_Meal_Table.setTableModelData(totalTableData);
-            }
-            else
-            {
-                JOptionPane.showMessageDialog(null, "ERROR: \nUn-able to Update Totals Table!");
-                return false;
-            }
-        }
-
-        JOptionPane.showMessageDialog(null, "Table Successfully Updated!");
-        return true;
-    }
-
-    //##################################################################################################################
-    // Update Table / Accessor Methods
-    //##################################################################################################################
-    public void updateData()
-    {
-        update_TotalMeal_Table();
-        outside_Update_MacrosLeft_Table();
-    }
-
     private void updateTableValuesByQuantity(int row, Object ingredients_Index, Object quantity)
     {
         setRowBeingEdited();
@@ -1362,27 +1288,46 @@ public class IngredientsTable extends JDBC_JTable
         updateData();
     }
 
+    //##################################################################################################################
+    // Update Table / Accessor Methods
+    //##################################################################################################################
+
+    private void updateData()
+    {
+        update_TotalMeal_Table();
+        update_MacrosLeft_Table();
+    }
+
     private void update_TotalMeal_Table()
     {
         total_Meal_Table.updateTotalMealTable();
     }
 
-    public void outside_Update_MacrosLeft_Table()
+    public void update_MacrosLeft_Table()
     {
         macrosLeft_Table.updateMacrosLeft();
     }
 
+    public void refreshTotalMealTable()
+    {
+        total_Meal_Table.refreshData();
+    }
+
+    public void refreshMacrosLeftTable()
+    {
+        macrosLeft_Table.refreshData();
+    }
 
     //##################################################################################################################
     // Mutator Methods
     //##################################################################################################################
 
-    public void setRowBeingEdited()
+    private void setRowBeingEdited()
     {
         rowBeingEdited = !rowBeingEdited; // flip it
     }
 
-    public void setObjectDeleted(boolean deleted)
+    private void setObjectDeleted(boolean deleted)
     {
         objectDeleted = deleted;
     }
@@ -1398,7 +1343,7 @@ public class IngredientsTable extends JDBC_JTable
         spaceDivider = jPanel;
     }
 
-    public void set_Meal_In_DB(boolean mealInDB)
+    private void set_Meal_In_DB(boolean mealInDB)
     {
         meal_In_DB = mealInDB;
     }
@@ -1415,28 +1360,28 @@ public class IngredientsTable extends JDBC_JTable
                 getIngredientsTable_Quantity_Col(), getIngredientsTable_IngredientsName_Col(), getIngredientsTable_Supplier_Col()));
     }
 
-    //###############################################################################
-    public void set_IngredientsTable_Index_Col(int value)
+    //#############################################################
+    private void set_IngredientsTable_Index_Col(int value)
     {
         ingredientsTable_Index_Col = value;
     }
 
-    public void set_IngredientsTable_ID_Col(int value)
+    private void set_IngredientsTable_ID_Col(int value)
     {
         ingredientsTable_ID_Col = value;
     }
 
-    public void set_IngredientsTable_Quantity_Col(int value)
+    private void set_IngredientsTable_Quantity_Col(int value)
     {
         ingredientsTable_Quantity_Col = value;
     }
 
-    public void set_IngredientsTable_IngredientsName_Col(int value)
+    private void set_IngredientsTable_IngredientsName_Col(int value)
     {
         ingredientsTable_IngredientsName_Col = value;
     }
 
-    public void set_IngredientsTable_Supplier_Col(int value)
+    private void set_IngredientsTable_Supplier_Col(int value)
     {
         ingredientsTable_Supplier_Col = value;
     }
@@ -1444,27 +1389,27 @@ public class IngredientsTable extends JDBC_JTable
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
-    public int getIngredientsTable_Index_Col()
+    private int getIngredientsTable_Index_Col()
     {
         return ingredientsTable_Index_Col;
     }
 
-    public int getIngredientsTable_ID_Col()
+    private int getIngredientsTable_ID_Col()
     {
         return ingredientsTable_ID_Col;
     }
 
-    public int getIngredientsTable_Quantity_Col()
+    private int getIngredientsTable_Quantity_Col()
     {
         return ingredientsTable_Quantity_Col;
     }
 
-    public int getIngredientsTable_IngredientsName_Col()
+    private int getIngredientsTable_IngredientsName_Col()
     {
         return ingredientsTable_IngredientsName_Col;
     }
 
-    public int getIngredientsTable_Supplier_Col()
+    private int getIngredientsTable_Supplier_Col()
     {
         return ingredientsTable_Supplier_Col;
     }
@@ -1489,5 +1434,36 @@ public class IngredientsTable extends JDBC_JTable
     {
         return objectDeleted;
     }
+
+    private boolean getNonOfTheAboveInTableStatus(Integer rowTriggeredAt, String attemptingTo)
+    {
+        if (rowsInTable > 0)
+        {
+            //Checking if the ingredient None Of the Above is already in the table
+            for (int row = 0; row < rowsInTable; row++)
+            {
+                // Currently, changing  ingredient to NONE OF the ABOVE
+                if (rowTriggeredAt != null && row == rowTriggeredAt && rowsInTable > 1)
+                {
+                    continue;
+                }
+
+                // if None Of  the above is found in the table return true
+                if (jTable.getValueAt(row, getIngredientsTable_ID_Col()).equals(1) || jTable.getValueAt(row, getIngredientsTable_ID_Col()).equals("1"))
+                {
+                    String message = String.format("""
+                            \n\nPlease change the Ingredient at: 
+                            \nRow: %s \nColumn: %s                             
+                            \nFrom the ingredient 'None Of The Above' to another ingredient! 
+                            \nBefore attempting to %s!
+                            """, row + 1, getIngredientsTable_IngredientsName_Col() + 1, attemptingTo);
+                    JOptionPane.showMessageDialog(null, message);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     //##################################################################################################################
 }
