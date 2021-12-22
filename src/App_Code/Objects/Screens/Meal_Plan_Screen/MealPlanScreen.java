@@ -4,7 +4,7 @@ package App_Code.Objects.Screens.Meal_Plan_Screen;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.MyJTable_JDBC.ViewDataTables.Children.MacroTargetsLeftJTable;
 import App_Code.Objects.Database_Objects.MyJTable_JDBC.ViewDataTables.Children.MacrosTargetsTable;
-import App_Code.Objects.Database_Objects.MyJTable_JDBC.MyJTable_JDBC;
+import App_Code.Objects.Database_Objects.MyJTable_JDBC.EditDataTable.IngredientsTable;
 
 import App_Code.Objects.Database_Objects.MyJTable_JDBC.ViewDataTables.Children.TotalMealTable;
 import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
@@ -51,8 +51,8 @@ public class MealPlanScreen extends JPanel
     private Add_Ingredients_Screen Add_Ingredients_Screen = null;
 
 
-    private MyJTable_JDBC jTableBeingAdded;
-    private ArrayList<MyJTable_JDBC> listOfJTables = new ArrayList<>();
+    private IngredientsTable jTableBeingAdded;
+    private ArrayList<IngredientsTable> listOfJTables = new ArrayList<>();
 
     String databaseName = "gymapp3";
 
@@ -511,7 +511,7 @@ public class MealPlanScreen extends JPanel
         //##############################################
 
 
-        MyJTable_JDBC ingredients_Calulation_Jtable = new MyJTable_JDBC( db, collapsibleJpObj, databaseName, mealData, ingredients_ColumnNames, planID, mealID, temp_MealID, mealName,
+        IngredientsTable ingredients_Calulation_Jtable = new IngredientsTable( db, collapsibleJpObj, databaseName, mealData, ingredients_ColumnNames, planID, mealID, temp_MealID, mealName,
                 tableName, null, unEditableCells, ingredients_Table_Col_Avoid_Centering, true,
                 total_Meal_View_Table, macrosLeft_JTable);
 
@@ -858,10 +858,10 @@ public class MealPlanScreen extends JPanel
         //###############################################
         // Refresh ingredients meal table & total Tables
         //###############################################
-        Iterator<MyJTable_JDBC> it = listOfJTables.iterator();
+        Iterator<IngredientsTable> it = listOfJTables.iterator();
         while (it.hasNext())
         {
-            MyJTable_JDBC ingredientsJtable = it.next();
+            IngredientsTable ingredientsJtable = it.next();
 
             // if meal is not saved in DB remove the meal
             if (!(ingredientsJtable.getMealInDB()))
@@ -904,10 +904,10 @@ public class MealPlanScreen extends JPanel
          * that are still in the database
          */
         //######################################
-        Iterator<MyJTable_JDBC> it = listOfJTables.iterator();
+        Iterator<IngredientsTable> it = listOfJTables.iterator();
         while (it.hasNext())
         {
-            MyJTable_JDBC table = it.next();
+            IngredientsTable table = it.next();
             if (table.getObjectDeleted())
             {
                 table.completely_Deleted_JTables();
@@ -1154,10 +1154,10 @@ public class MealPlanScreen extends JPanel
         //###############################################
         // Refresh ingredients meal table & total Tables
         //###############################################
-        Iterator<MyJTable_JDBC> it = listOfJTables.iterator();
+        Iterator<IngredientsTable> it = listOfJTables.iterator();
         while (it.hasNext())
         {
-            MyJTable_JDBC ingredientsJtable = it.next();
+            IngredientsTable ingredientsJtable = it.next();
 
             // if meal is not saved in DB remove the meal
             if (!(ingredientsJtable.getMealInDB()))
