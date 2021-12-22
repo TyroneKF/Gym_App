@@ -19,10 +19,10 @@ public class MacrosTargetsTable extends MyJTable_DisplayData
     public void updateTargets()
     {
         //##########################################################################
-        //   Updating MacrosLeft_Table
+        //   Updating MacroTargets_Table
         ///##########################################################################
 
-        String macrosLeftQuery = String.format("select * from planMacrosLeft WHERE PlanID = %s", temp_PlanID);
+        String macrosLeftQuery = String.format("SELECT * FROM plan_Macro_Target_Calculations WHERE PlanID = %s;", temp_PlanID);
 
         ArrayList<ArrayList<Object>> macrosLeftTableData = db.get_Multi_ColumnQuery_Object(macrosLeftQuery);
 
