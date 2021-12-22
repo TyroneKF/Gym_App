@@ -849,12 +849,6 @@ public class MealPlanScreen extends JPanel
         {
             return;
         }
-
-        //###############################################
-        // Refresh Macro-Targets Table
-        //###############################################
-        refreshMacroTargets();
-
         //###############################################
         // Refresh ingredients meal table & total Tables
         //###############################################
@@ -871,12 +865,40 @@ public class MealPlanScreen extends JPanel
                 it.remove(); // remove from list
                 continue;
             }
-            if (!(it.hasNext()))
+        }
+
+        //###############################################
+        // Refresh Macro-Targets Table
+        //###############################################
+        refreshMacroTargets();
+        refreshMacrosLeft();
+    }
+    public  void refreshMacroTargets()
+    {
+        // ##############################################
+        // If targets have changed, save them?
+        // ##############################################
+        if(getMacrosTargetsChanged())
+        {
+            int reply = JOptionPane.showConfirmDialog(frame, String.format("Would you like to refresh your MacroTargets Too?"),
+                    "Refresh Macro Targets", JOptionPane.YES_NO_OPTION); //HELLO Edit
+
+            if (reply==JOptionPane.YES_OPTION)
             {
-                ingredientsJtable.update_MacrosLeft_Table();
-                continue;
+                if(transferTargets(planID, tempPlanID, false))
+                {
+                    JOptionPane.showMessageDialog(frame, "\n\nMacro-Targets Successfully Refreshed!!");
+                    macrosTargetsChanged(false);
+
+                    macros_Targets_Table.refreshData();
+                }
             }
         }
+    }
+
+    public void refreshMacrosLeft()
+    {
+        macrosLeft_JTable.refreshData();
     }
 
     private void savePlanData()
@@ -1019,28 +1041,7 @@ public class MealPlanScreen extends JPanel
         }
     }
 
-    public  void refreshMacroTargets()
-    {
-        // ##############################################
-        // If targets have changed, save them?
-        // ##############################################
-        if(getMacrosTargetsChanged())
-        {
-            int reply = JOptionPane.showConfirmDialog(frame, String.format("Would you like to refresh your MacroTargets Too?"),
-                    "Refresh Macro Targets", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
-            if (reply==JOptionPane.YES_OPTION)
-            {
-                if(transferTargets(planID, tempPlanID, false))
-                {
-                    JOptionPane.showMessageDialog(frame, "\n\nMacro-Targets Successfully Refreshed!!");
-                    macrosTargetsChanged(false);
-                    updateTargetsAndMacrosLeft();
-                    return;
-                }
-            }
-        }
-    }
 
     public void open_MacrosTagets_Screen()
     {

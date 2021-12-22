@@ -66,4 +66,11 @@ public class MyJTable_DisplayData extends JDBC_JTable
             }
         }
     }
+
+
+    public void refreshData()
+    {
+        //tableSetup(getData(), getColumnNames());
+        tableModel_Setup(super.getData(), super.getColumnNames());
+    }
 }

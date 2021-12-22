@@ -69,8 +69,7 @@ public class TotalMealTable extends MyJTable_DisplayData
 
     public void refreshData()
     {
-        //tableSetup(getData(), getColumnNames());
-        tableModel_Setup(super.getData(), super.getColumnNames());
+        super.refreshData();
     }
 
     public void setTableModelData(Object[][] tableModelData)

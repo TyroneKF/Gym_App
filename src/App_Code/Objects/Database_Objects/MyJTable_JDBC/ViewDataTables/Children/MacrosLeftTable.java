@@ -43,8 +43,6 @@ public class MacrosLeftTable extends MyJTable_DisplayData
 
     public void refreshData()
     {
-        //tableSetup(getData(), getColumnNames());
-        tableModel_Setup(super.getData(), super.getColumnNames());
+        super.refreshData();
     }
-
 }
