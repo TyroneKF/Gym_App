@@ -153,7 +153,7 @@ public class MyJTable_JDBC extends JDBC_JTable
         this.databaseName = databaseName;
 
         this.mealID = mealID;
-        if (mealID==null)
+        if (mealID == null)
         {
             set_Meal_In_DB(false);
         }
@@ -233,11 +233,11 @@ public class MyJTable_JDBC extends JDBC_JTable
             {
                 public void itemStateChanged(ItemEvent ie)
                 {
-                    if (ie.getStateChange()==ItemEvent.SELECTED)
+                    if (ie.getStateChange() == ItemEvent.SELECTED)
                     {
                         supplierNameChanged = true;
 
-                        if (previous_Supplier_JComboItem==null)
+                        if (previous_Supplier_JComboItem == null)
                         {
                             selected_Supplier_JCombo_Item = ie.getItem();
                             previous_Supplier_JComboItem = ie.getItem();
@@ -322,7 +322,7 @@ public class MyJTable_JDBC extends JDBC_JTable
 
  */
 
-            if (storesResults!=null)
+            if (storesResults != null)
             {
                 boolean NA_in_List = false;
                 for (String store : storesResults)
@@ -355,11 +355,6 @@ public class MyJTable_JDBC extends JDBC_JTable
     @Override
     public void setUpJComboColumn(int col, String type, ArrayList<String> items)
     {
-        if ((type.equals("IngredientName") && (items==null || items.size()==0))
-                || (!type.equals("IngredientName") && !type.equals("SupplierName")))
-        {
-            return;
-        }
 
         TableColumn tableColumn = jTable.getColumnModel().getColumn(col);
 
@@ -369,59 +364,26 @@ public class MyJTable_JDBC extends JDBC_JTable
         comboBox.setEditable(true);
 
         comboBox.addActionListener(ae -> {
-
-            switch (type)
-            {
-                case "IngredientName":
-                    ingredientNameChanged = false;
-                    break;
-                case "SupplierName":
-                    supplierNameChanged = false;
-                    break;
-            }
+            ingredientNameChanged = false;
         });
 
         comboBox.addItemListener(new ItemListener()
         {
             public void itemStateChanged(ItemEvent ie)
             {
-                if (ie.getStateChange()==ItemEvent.SELECTED)
+                if (ie.getStateChange() == ItemEvent.SELECTED)
                 {
-                    switch (type)
-                    {
-                        case "IngredientName":
-                            ingredientNameChanged = true;
-                            break;
-                        case "SupplierName":
-                            supplierNameChanged = true;
-                            break;
-                    }
+                    ingredientNameChanged = true;
 
-                    if (type.equals("IngredientName"))
+                    if (previous_IngredientName_JComboItem == null)
                     {
-                        if (previous_IngredientName_JComboItem==null)
-                        {
-                            selected_IngredientName_JCombo_Item = ie.getItem();
-                            previous_IngredientName_JComboItem = ie.getItem();
-                        }
-                        else
-                        {
-                            previous_IngredientName_JComboItem = selected_IngredientName_JCombo_Item;
-                            selected_IngredientName_JCombo_Item = ie.getItem();
-                        }
+                        selected_IngredientName_JCombo_Item = ie.getItem();
+                        previous_IngredientName_JComboItem = ie.getItem();
                     }
-                    else if (type.equals("SupplierName"))
+                    else
                     {
-                        if (previous_Supplier_JComboItem==null)
-                        {
-                            selected_Supplier_JCombo_Item = ie.getItem();
-                            previous_Supplier_JComboItem = ie.getItem();
-                        }
-                        else
-                        {
-                            previous_Supplier_JComboItem = selected_Supplier_JCombo_Item;
-                            selected_Supplier_JCombo_Item = ie.getItem();
-                        }
+                        previous_IngredientName_JComboItem = selected_IngredientName_JCombo_Item;
+                        selected_IngredientName_JCombo_Item = ie.getItem();
                     }
                 }
             }
@@ -429,28 +391,27 @@ public class MyJTable_JDBC extends JDBC_JTable
 
 
         DefaultComboBoxModel model = new DefaultComboBoxModel();
-        if (type.equals("IngredientName"))
+
+        getJcomboMap().put(col, items);
+
+        for (int i = 0; i < items.size(); i++)
         {
-            getJcomboMap().put(col, items);
-
-            for (int i = 0; i < items.size(); i++)
-            {
-                model.addElement(items.get(i));
-            }
-
-            comboBox.setModel(model);
-            tableColumn.setCellEditor(new DefaultCellEditor(comboBox)); // sets column to a comboBox
-
-            //##############################################################################
-            // Not Sure why this step has to be repeated, but, it doesn't work otherwise//
-            //##############################################################################
-
-            model = new DefaultComboBoxModel();
-            for (int i = 0; i < items.size(); i++)
-            {
-                model.addElement(items.get(i));
-            }
+            model.addElement(items.get(i));
         }
+
+        comboBox.setModel(model);
+        tableColumn.setCellEditor(new DefaultCellEditor(comboBox)); // sets column to a comboBox
+
+        //##############################################################################
+        // Not Sure why this step has to be repeated, but, it doesn't work otherwise//
+        //##############################################################################
+
+        model = new DefaultComboBoxModel();
+        for (int i = 0; i < items.size(); i++)
+        {
+            model.addElement(items.get(i));
+        }
+
 
         //######################################################
         // Centre ComboBox Items
@@ -486,19 +447,13 @@ public class MyJTable_JDBC extends JDBC_JTable
             public void actionPerformed(ActionEvent e)
             {
 
-
                 JTable table = (JTable) e.getSource();
                 Object ingredients_Index = table.getValueAt(table.getSelectedRow(), getIngredientsTable_Index_Col());
 
-                if (ingredients_Index!=null)
+                if (ingredients_Index != null)
                 {
-                    deleteRowAction(ingredients_Index); // command to update db
-
                     int modelRow = Integer.parseInt(e.getActionCommand());
-                    ((DefaultTableModel) table.getModel()).removeRow(modelRow);
-
-                    rowsInTable--; // -1 from row count number
-                    resizeObject();
+                    deleteRowAction(ingredients_Index, modelRow); // command to update db
                 }
             }
         };
@@ -549,12 +504,12 @@ public class MyJTable_JDBC extends JDBC_JTable
 
         if (getTableInitilized())  //first time this method is called, special columns aren't defined
         {
-            if (getHideColumns()!=null)//Must be first
+            if (getHideColumns() != null)//Must be first
             {
                 SetUp_HiddenTableColumns(getHideColumns(), get_StartingUpdateColumn());
             }
 
-            if (getDeleteBTN_Col()!=null)
+            if (getDeleteBTN_Col() != null)
             {
                 setupDeleteBtnColumn(getDeleteBTN_Col()); // specifying delete column
             }
@@ -565,7 +520,7 @@ public class MyJTable_JDBC extends JDBC_JTable
                 setUpJComboColumn(key, "IngredientName", getJcomboMap().get(key));
             }
 
-            if (ingredientsTableCalculation!=null)
+            if (ingredientsTableCalculation != null)
             {
                 setUpSupplierColumn(getIngredientsTable_Supplier_Col());
             }
@@ -587,10 +542,10 @@ public class MyJTable_JDBC extends JDBC_JTable
         // Check if cell that triggered this event can execute
         //######################################################################
         // Avoids endless loop / if edited cell column, is supposed to a trigger an action
-        if (rowBeingEdited || triggerColumns==null || !(triggerColumns.contains(columnEdited)))
+        if (rowBeingEdited || triggerColumns == null || !(triggerColumns.contains(columnEdited)))
         {
             //HELLO REMOVE
-           // System.out.printf("\nExited tableDataChange_Action() Row: %s, Column: %s", rowEdited, columnEdited);
+            // System.out.printf("\nExited tableDataChange_Action() Row: %s, Column: %s", rowEdited, columnEdited);
             return;
         }
 
@@ -607,7 +562,7 @@ public class MyJTable_JDBC extends JDBC_JTable
         //######################################################################
         // If the Quantity Value on this Row Is Null Set it to 0 + Error MSG
         //######################################################################
-        if (columnEdited==getIngredientsTable_Quantity_Col() && jTable.getValueAt(rowEdited, columnEdited)==null)
+        if (columnEdited == getIngredientsTable_Quantity_Col() && jTable.getValueAt(rowEdited, columnEdited) == null)
         {
             JOptionPane.showMessageDialog(null, String.format("\n\nPlease insert a reasonable 'Quantity' value in the cell at: \n\nRow: %s \nColumn: %s", rowEdited + 1, columnEdited + 1));
 
@@ -620,7 +575,7 @@ public class MyJTable_JDBC extends JDBC_JTable
         //########################
 
         // Ingredients Name Column
-        else if (columnEdited==getIngredientsTable_IngredientsName_Col())
+        else if (columnEdited == getIngredientsTable_IngredientsName_Col())
         {
             //HELLO DELETE
             /*
@@ -655,7 +610,7 @@ public class MyJTable_JDBC extends JDBC_JTable
 
             ArrayList<ArrayList<Object>> results_Ingredient_ID = db.get_Multi_ColumnQuery_Object(query);
 
-            if (results_Ingredient_ID==null)
+            if (results_Ingredient_ID == null)
             {
                 JOptionPane.showMessageDialog(null, "Unable to retrieve chosen Ingredient ID from DB!");
 
@@ -731,7 +686,7 @@ public class MyJTable_JDBC extends JDBC_JTable
                     """, selected_Ingredient_ID, temp_PlanID, ingredientIndex);
 
             ArrayList<String> newPDIDResults = db.getSingleColumnQuery_ArrayList(query_PDID);
-            if (newPDIDResults==null)
+            if (newPDIDResults == null)
             {
                 JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nUnable to retrieve pricing info!");
                 // Change Jtable JComboBox Back To Original Value
@@ -781,7 +736,7 @@ public class MyJTable_JDBC extends JDBC_JTable
         }
 
         // Ingredients Supplier Column
-        else if (columnEdited==getIngredientsTable_Supplier_Col())
+        else if (columnEdited == getIngredientsTable_Supplier_Col())
         {
             String uploadQuery = "";
 
@@ -802,7 +757,7 @@ public class MyJTable_JDBC extends JDBC_JTable
                         WHERE IngredientID = %s  AND Store_Name = '%s';""", ingredientID, cellValue);
 
                 ArrayList<String> newPDIDResults = db.getSingleColumnQuery_ArrayList(getPDIDQuery);
-                if (newPDIDResults==null)
+                if (newPDIDResults == null)
                 {
                     JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nUnable to retrieve  Ingredient In Shop PDID info!");
 
@@ -858,7 +813,7 @@ public class MyJTable_JDBC extends JDBC_JTable
         }
 
         // Ingredients Quantity Column
-        else if (columnEdited==getIngredientsTable_Quantity_Col())
+        else if (columnEdited == getIngredientsTable_Quantity_Col())
         {
             System.out.printf("\ntableDataChange_Action() Quantity Being Changed");
             setRowBeingEdited();// HELLO
@@ -876,7 +831,7 @@ public class MyJTable_JDBC extends JDBC_JTable
         setLayout(new GridBagLayout());
         if (db.isDatabaseConnected())
         {
-            if (data!=null)
+            if (data != null)
             {
 
                 //###############################
@@ -911,7 +866,7 @@ public class MyJTable_JDBC extends JDBC_JTable
             for (int row = 0; row < rowsInTable; row++)
             {
                 // Currently, changing  ingredient to NONE OF the ABOVE
-                if (rowTriggeredAt!=null && row==rowTriggeredAt && rowsInTable > 1)
+                if (rowTriggeredAt != null && row == rowTriggeredAt && rowsInTable > 1)
                 {
                     continue;
                 }
@@ -981,24 +936,37 @@ public class MyJTable_JDBC extends JDBC_JTable
     }
 
     @Override
-    protected void deleteRowAction(Object ingredientIndex)
+    protected void deleteRowAction(Object ingredientIndex, int modelRow)
     {
-        System.out.printf("\n\nIngredient Index To Delete: %s", ingredientIndex);
         //#################################################
-        // Delete Ingredient From Temp Meal
-        //#################################################
-
-        System.out.printf("\n\ningredientIndex: %s \nMealPlanID: %s", ingredientIndex, tempPlan_Meal_ID);
-
-        String query = String.format("DELETE FROM ingredients_in_meal WHERE Ingredients_Index = %s AND PlanID = %s;", ingredientIndex, temp_PlanID);
-
-        String[] queryUpload = new String[]{query};
-
-        if (!(db.uploadData_Batch(queryUpload)))
+        // Remove From DB
+        //##################################################
+        if(ingredientIndex != null)
         {
-            JOptionPane.showMessageDialog(null, "Unable To delete Ingredient from Meal in Database");
+            System.out.printf("\n\nIngredient Index To Delete: %s", ingredientIndex);
+            //#################################################
+            // Delete Ingredient From Temp Meal
+            //#################################################
+
+            System.out.printf("\n\ningredientIndex: %s \nMealPlanID: %s", ingredientIndex, tempPlan_Meal_ID);
+
+            String query = String.format("DELETE FROM ingredients_in_meal WHERE Ingredients_Index = %s AND PlanID = %s;", ingredientIndex, temp_PlanID);
+
+            String[] queryUpload = new String[]{query};
+
+            if (!(db.uploadData_Batch(queryUpload)))
+            {
+                JOptionPane.showMessageDialog(null, "Unable To delete Ingredient from Meal in Database");
+            }
         }
 
+        //#################################################
+        // Remove From Table
+        //##################################################
+        ((DefaultTableModel) jTable.getModel()).removeRow(modelRow);
+
+        rowsInTable--; // -1 from row count number
+        resizeObject();
         //#################################################
         // Update Table Data
         //##################################################
@@ -1021,7 +989,7 @@ public class MyJTable_JDBC extends JDBC_JTable
         //##################################################
         // Delete Meal Total Table From Collapsible Object
         //##################################################
-        if (total_Meal_Table!=null && collapsibleObj!=null)
+        if (total_Meal_Table != null && collapsibleObj != null)
         {
             collapsibleObj.getParentContainer().remove(spaceDivider); // remove spaceDivider from GUI
 
@@ -1035,7 +1003,7 @@ public class MyJTable_JDBC extends JDBC_JTable
         //##################################################
         //  Notify GUI to delete collapsible Object
         //##################################################
-        if (collapsibleObj!=null)
+        if (collapsibleObj != null)
         {
             collapsibleObj.removeCollapsibleJPanel(); // notifies GUI to delete collapsible Object
         }
@@ -1065,7 +1033,7 @@ public class MyJTable_JDBC extends JDBC_JTable
         // Setting Variables
         //#########################################################
 
-        int tableRow = rowsInTable==0 ? 0:rowsInTable;
+        int tableRow = rowsInTable == 0 ? 0 : rowsInTable;
         int ingredientID = 1;
         BigDecimal quantity = new BigDecimal("0.00");
 
@@ -1076,7 +1044,7 @@ public class MyJTable_JDBC extends JDBC_JTable
 
         String[] newIngredientsIndex = db.getSingleColumnQuery(getNextIndexQuery);
 
-        if (newIngredientsIndex==null)
+        if (newIngredientsIndex == null)
         {
             JOptionPane.showMessageDialog(null, "Unable to create new ingredient in table! \nUnable to generate ingredients_Index!!");
             return;
@@ -1119,7 +1087,7 @@ public class MyJTable_JDBC extends JDBC_JTable
 
         System.out.printf("\n\n\n\n%s\n\n", results);  // HELLO REMOVE
 
-        if (results==null)
+        if (results == null)
         {
             JOptionPane.showMessageDialog(null, "ERROR 2: Un-able to get Ingredient info for row in table!");
             return;
@@ -1226,7 +1194,7 @@ public class MyJTable_JDBC extends JDBC_JTable
         //##############################
 
         // Reset Total View Table
-        if (total_Meal_Table!=null)
+        if (total_Meal_Table != null)
         {
             System.out.printf("\n\nReset Table Data:\n\n %s", Arrays.deepToString(total_Meal_Table.getData()));
             total_Meal_Table.tableModel_Setup(total_Meal_Table.getData(), total_Meal_Table.getColumnNames());
@@ -1274,7 +1242,7 @@ public class MyJTable_JDBC extends JDBC_JTable
                     mealName, planID));
 
 
-            if (orginalMealID_Result==null)
+            if (orginalMealID_Result == null)
             {
                 JOptionPane.showMessageDialog(null, "\n\nUnable To Get MealID in Plan to Update Meal");
                 return false;
@@ -1336,7 +1304,7 @@ public class MyJTable_JDBC extends JDBC_JTable
         String query = String.format("Select * from %s WHERE MealID = %s;", tableInQuery, tempPlan_Meal_ID);
         Object[][] ingredients_Data = db.getTableDataObject(query, tableInQuery);
 
-        if (ingredients_Data!=null)
+        if (ingredients_Data != null)
         {
             setTableModelData(ingredients_Data);
         }
@@ -1349,13 +1317,13 @@ public class MyJTable_JDBC extends JDBC_JTable
         // Changing Total  Ingredients Table Model
         //##########################################
 
-        if (total_Meal_Table!=null)
+        if (total_Meal_Table != null)
         {
             // Setting totals tables Data model to new data
             String totalTableQuery = String.format("SELECT *  FROM total_meal_view WHERE MealID = %s;", tempPlan_Meal_ID);
 
             Object[][] totalTableData = db.getTableDataObject(totalTableQuery, "total_meal_view");
-            if (totalTableData!=null)
+            if (totalTableData != null)
             {
                 total_Meal_Table.setTableModelData(totalTableData);
             }
@@ -1419,7 +1387,7 @@ public class MyJTable_JDBC extends JDBC_JTable
 
         System.out.printf("\n\n\n\n%s\n\n", ingredientsUpdateData);  // HELLO REMOVE
 
-        if (ingredientsUpdateData==null)
+        if (ingredientsUpdateData == null)
         {
             JOptionPane.showMessageDialog(null, "ERROR 2: Un-able to Update Ingredient in table row!");
 
@@ -1452,7 +1420,7 @@ public class MyJTable_JDBC extends JDBC_JTable
         //##########################################################################
         //   Updating Total  Meal Table
         ///##########################################################################
-        if (total_Meal_Table!=null)
+        if (total_Meal_Table != null)
         {
             setRowBeingEdited();
 
@@ -1460,7 +1428,7 @@ public class MyJTable_JDBC extends JDBC_JTable
 
             ArrayList<ArrayList<Object>> totalMealData = db.get_Multi_ColumnQuery_Object(totalMealTableQuery);
 
-            if (totalMealData==null)
+            if (totalMealData == null)
             {
                 JOptionPane.showMessageDialog(null, "ERROR: \nUn-able to Update Totals Table!");
 
@@ -1483,7 +1451,7 @@ public class MyJTable_JDBC extends JDBC_JTable
         //##########################################################################
         //   Updating Total  Meal Table
         ///##########################################################################
-        if (macrosLeft_Table!=null)
+        if (macrosLeft_Table != null)
         {
             setRowBeingEdited();
 
@@ -1491,7 +1459,7 @@ public class MyJTable_JDBC extends JDBC_JTable
 
             ArrayList<ArrayList<Object>> macrosLeftTableData = db.get_Multi_ColumnQuery_Object(macrosLeftQuery);
 
-            if (macrosLeftTableData==null)
+            if (macrosLeftTableData == null)
             {
                 JOptionPane.showMessageDialog(null, "ERROR: \nUn-able to MacrosLeft Table!");
 
@@ -1520,7 +1488,7 @@ public class MyJTable_JDBC extends JDBC_JTable
 
         ArrayList<ArrayList<Object>> macrosLeftTableData = db.get_Multi_ColumnQuery_Object(macrosLeftQuery);
 
-        if (macrosLeftTableData==null)
+        if (macrosLeftTableData == null)
         {
             JOptionPane.showMessageDialog(null, "ERROR: \nUn-able to MacrosLeft Table!");
 

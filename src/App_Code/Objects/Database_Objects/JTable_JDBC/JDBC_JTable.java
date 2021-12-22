@@ -38,7 +38,7 @@ public class JDBC_JTable extends JPanel
     protected ArrayList<Integer> unEditableColumns = new ArrayList<>(), colAvoidCentering = new ArrayList<>();
     protected Integer deleteColumn = null;
     protected ArrayList<Integer> hideColumns = null;
-    protected  int hiddenCount =0, updateStartingColumn = 0;
+    protected int hiddenCount = 0, updateStartingColumn = 0;
 
     protected int rowsInTable = 0, columnsInTable = 0;
     protected String databaseName, tableName;
@@ -81,7 +81,7 @@ public class JDBC_JTable extends JPanel
             String query = String.format("select * from %s;", tableName);
             data = db.getTableDataObject(query, tableName);
 
-            if (data!=null)
+            if (data != null)
             {
                 //###############################
                 // Getting Column Names
@@ -299,11 +299,11 @@ public class JDBC_JTable extends JPanel
 
         if (tableInitilized)  //first time this method is called, special columns aren't defined
         {
-            if (deleteColumn!=null)
+            if (deleteColumn != null)
             {
                 setupDeleteBtnColumn(deleteColumn); // specifying delete column
             }
-            if (hideColumns!=null)
+            if (hideColumns != null)
             {
                 SetUp_HiddenTableColumns(hideColumns, get_StartingUpdateColumn());
             }
@@ -328,7 +328,7 @@ public class JDBC_JTable extends JPanel
         int reply = JOptionPane.showConfirmDialog(null, String.format("Are you sure you want to %s, \nany unsaved changes will be lost in this Table! \nDo you want to %s?", process, process),
                 "Restart Game", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
-        if (reply==JOptionPane.NO_OPTION || reply==JOptionPane.CLOSED_OPTION)
+        if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
         {
             return false;
         }
@@ -349,9 +349,9 @@ public class JDBC_JTable extends JPanel
         // Configuring Row ID
         //#######################################
 
-        int tableRow = rowsInTable==0 ? 0:rowsInTable;
+        int tableRow = rowsInTable == 0 ? 0 : rowsInTable;
 
-        if (rowsInTable==0)
+        if (rowsInTable == 0)
         {
             // Get max id of last item in DB and +1
             String[] queryResults = db.getSingleColumnQuery(String.format("SELECT MAX(%s) FROM %s;", columnNames[0], tableName));
@@ -370,7 +370,7 @@ public class JDBC_JTable extends JPanel
         //######################################
         for (int col = 1; col < columnsInTable; col++)
         {
-            if (col==deleteColumn)
+            if (col == deleteColumn)
             {
                 tableModel.setValueAt("Delete Row", tableRow, col);
                 continue;
@@ -444,7 +444,8 @@ public class JDBC_JTable extends JPanel
     // Overwirte Methods
     //##########################################
 
-    protected void refresh_Btn_Action(boolean updateTotalPlanTable)   {
+    protected void refresh_Btn_Action(boolean updateTotalPlanTable)
+    {
 
     }
 
@@ -469,9 +470,12 @@ public class JDBC_JTable extends JPanel
 
     }
 
-    protected void deleteRowAction(Object ingredients_MealID)
+    protected void deleteRowAction(Object ingredients_MealID, int modelRow)
     {
+        ((DefaultTableModel) jTable.getModel()).removeRow(modelRow);
 
+        rowsInTable--; // -1 from row count number
+        resizeObject();
     }
 
     protected void tableDataChange_Action()
@@ -522,9 +526,15 @@ public class JDBC_JTable extends JPanel
         return hideColumns;
     }
 
-    protected int getHiddenCount(){return hiddenCount;}
+    protected int getHiddenCount()
+    {
+        return hiddenCount;
+    }
 
-    protected int get_StartingUpdateColumn(){ return updateStartingColumn;}
+    protected int get_StartingUpdateColumn()
+    {
+        return updateStartingColumn;
+    }
 
     public void updateTable(JDBC_JTable myJtable, ArrayList<Object> updateData, int updateRow)
     {
@@ -538,14 +548,14 @@ public class JDBC_JTable extends JPanel
 
         for (int updateCol = 0; updateCol < noOfColumns; updateCol++)
         {
-            if(hiddenColumns.contains(updateCol+1))
+            if (hiddenColumns.contains(updateCol + 1))
             {
                 hiddenCount++;
                 //HELLO REMOVE
                 // System.out.printf("\nUpdate: Hidden Column Skipped %s\n",columnNames[updateCol]); //HELLO REMOVE
                 continue;
             }
-            else if(updateCol < updateColumnStart)
+            else if (updateCol < updateColumnStart)
             {
                 //HELLO REMOVE
                 //System.out.printf("\nUpdate: Skipped  Column %s, Value: %s\n",columnNames[updateCol], updateData.get(updateCol));//HELLO REMOVE
@@ -554,7 +564,7 @@ public class JDBC_JTable extends JPanel
 
             //HELLO REMOVE
             //System.out.printf("\nUpdate:  %s Value: %s Column: %s ",columnNames[updateCol], updateData.get(updateCol), updateCol );
-            table.setValueAt(updateData.get(updateCol), updateRow, updateCol-hiddenCount);
+            table.setValueAt(updateData.get(updateCol), updateRow, updateCol - hiddenCount);
         }
     }
 
@@ -598,16 +608,10 @@ public class JDBC_JTable extends JPanel
                 JTable table = (JTable) e.getSource();
                 Object ingredients_Index = table.getValueAt(table.getSelectedRow(), ingredientsTable_Index_Col);
 
-                if (ingredients_Index!=null)
+                if (ingredients_Index != null)
                 {
-
-                    deleteRowAction(ingredients_Index); // command to update db
-
                     int modelRow = Integer.parseInt(e.getActionCommand());
-                    ((DefaultTableModel) table.getModel()).removeRow(modelRow);
-
-                    rowsInTable--; // -1 from row count number
-                    resizeObject();
+                    deleteRowAction(ingredients_Index, modelRow); // command to update db
                 }
             }
         };
@@ -619,7 +623,7 @@ public class JDBC_JTable extends JPanel
     {
         jcomboMap.put(col, items);
 
-        if (items!=null && items.size() > 0)
+        if (items != null && items.size() > 0)
         {
             TableColumn sportColumn = jTable.getColumnModel().getColumn(col);
 
@@ -633,9 +637,9 @@ public class JDBC_JTable extends JPanel
             {
                 public void itemStateChanged(ItemEvent ie)
                 {
-                    if (ie.getStateChange()==ItemEvent.SELECTED)
+                    if (ie.getStateChange() == ItemEvent.SELECTED)
                     {
-                        if (previousJComboItem==null)
+                        if (previousJComboItem == null)
                         {
                             selected_Jcombo_Item = ie.getItem();
                             previousJComboItem = selected_Jcombo_Item;
@@ -829,7 +833,7 @@ public class JDBC_JTable extends JPanel
         public Component getTableCellEditorComponent(
                 JTable table, Object value, boolean isSelected, int row, int column)
         {
-            if (value==null)
+            if (value == null)
             {
                 editButton.setText("");
                 editButton.setIcon(null);
@@ -882,7 +886,7 @@ public class JDBC_JTable extends JPanel
             }
 
             //		renderButton.setText( (value == null) ? "" : value.toString() );
-            if (value==null)
+            if (value == null)
             {
                 renderButton.setText("");
                 renderButton.setIcon(null);
@@ -934,7 +938,7 @@ public class JDBC_JTable extends JPanel
         public void mousePressed(MouseEvent e)
         {
             if (table.isEditing()
-                    && table.getCellEditor()==this)
+                    && table.getCellEditor() == this)
             {
                 isButtonColumnEditor = true;
             }
@@ -977,7 +981,7 @@ public class JDBC_JTable extends JPanel
         scrollPane.revalidate(); // reshapes scrollpane
         revalidate();
 
-        if (parentContainer!=null)
+        if (parentContainer != null)
         {
             parentContainer.revalidate();
         }
@@ -1037,7 +1041,7 @@ public class JDBC_JTable extends JPanel
 
         for (int columnIndex = 0; columnIndex < tableModel.getColumnCount(); columnIndex++)
         {
-            if (skipRows!=null && skipRows.contains(columnIndex))
+            if (skipRows != null && skipRows.contains(columnIndex))
             {
                 continue;
             }
