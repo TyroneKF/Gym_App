@@ -420,6 +420,9 @@ public class MealPlanScreen extends JPanel
                 }
             }
         });
+
+        //HELLO REMOVE
+        open_AddIngredients_Screen();
     }
 
     public static void main(String[] args)
