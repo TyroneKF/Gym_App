@@ -1,4 +1,4 @@
-package App_Code.Objects.Database_Objects.MyJTable_JDBC.Ingredients_In_Meal_Table;
+package App_Code.Objects.Database_Objects.MyJTable_JDBC;
 
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
