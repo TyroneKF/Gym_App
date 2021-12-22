@@ -1,4 +1,4 @@
-package App_Code.Objects.Database_Objects.MyJTable_JDBC;
+package App_Code.Objects.Database_Objects.MyJTable_JDBC.EditDataTable;
 
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
@@ -20,14 +20,14 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class MyJTable_JDBC extends JDBC_JTable
+public class IngredientsTable extends JDBC_JTable
 {
 
     MacroTargetsLeftJTable macrosLeft_Table;
     TotalMealTable total_Meal_Table;
 
 
-    private MyJTable_JDBC  ingredientsTableCalculation;
+    private IngredientsTable ingredientsTableCalculation;
     //####################################
     // Objects
     //####################################
@@ -87,10 +87,10 @@ public class MyJTable_JDBC extends JDBC_JTable
     //##################################################################################################################
 
     // Ingredients Table
-    public MyJTable_JDBC(MyJDBC db, CollapsibleJPanel collapsibleObj, String databaseName, Object[][] data, String[] columnNames, int planID,
-                         Integer mealID, Integer tempPlan_Meal_ID, String mealName, String tableName, ArrayList<Integer> triggerColumns,
-                         ArrayList<Integer> unEditableColumns, ArrayList<Integer> colAvoidCentering, boolean setIconsUp,
-                         TotalMealTable total_Meal_Table, MacroTargetsLeftJTable macrosLeft_Table)
+    public IngredientsTable(MyJDBC db, CollapsibleJPanel collapsibleObj, String databaseName, Object[][] data, String[] columnNames, int planID,
+                            Integer mealID, Integer tempPlan_Meal_ID, String mealName, String tableName, ArrayList<Integer> triggerColumns,
+                            ArrayList<Integer> unEditableColumns, ArrayList<Integer> colAvoidCentering, boolean setIconsUp,
+                            TotalMealTable total_Meal_Table, MacroTargetsLeftJTable macrosLeft_Table)
     {
         super.db = db;
         ingredientsTableCalculation = this;
@@ -382,8 +382,6 @@ public class MyJTable_JDBC extends JDBC_JTable
         renderer.setModel(model);
         tableColumn.setCellRenderer(renderer);
     }
-
-
 
     @Override
     protected void tableModel_Setup(Object[][] data, String[] columnNames)
@@ -1147,9 +1145,6 @@ public class MyJTable_JDBC extends JDBC_JTable
         {
             System.out.printf("\n\nReset Table Data:\n\n %s", Arrays.deepToString(total_Meal_Table.getData()));
             total_Meal_Table.refreshData();
-           //total_Meal_Table.tableModel_Setup(total_Meal_Table.getData(), total_Meal_Table2.getColumnNames());
-
-
         }
 
         //##############################
