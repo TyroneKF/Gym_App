@@ -6,6 +6,7 @@ import App_Code.Objects.Database_Objects.MyJTable_JDBC.ViewDataTables.Children.M
 import App_Code.Objects.Database_Objects.MyJTable_JDBC.ViewDataTables.Children.MacrosTargetsTable;
 import App_Code.Objects.Database_Objects.MyJTable_JDBC.MyJTable_JDBC;
 
+import App_Code.Objects.Database_Objects.MyJTable_JDBC.ViewDataTables.Children.TotalMealTable;
 import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
@@ -36,11 +37,6 @@ public class MealPlanScreen extends JPanel
 
 
 
-
-
-
-
-
     private String name = "MyJTable_JDBC511_05";
     //########################################################
     // Objects
@@ -53,13 +49,6 @@ public class MealPlanScreen extends JPanel
     private MyJDBC db;
     private App_Code.Objects.Screens.MacrosTargets_Screen.macrosTargets_Screen macrosTargets_Screen = null;
     private Add_Ingredients_Screen Add_Ingredients_Screen = null;
-
-
-
-
-
-
-
 
 
     private MyJTable_JDBC jTableBeingAdded;
@@ -480,12 +469,12 @@ public class MealPlanScreen extends JPanel
             unEditableCells.add(i);
         }
 
-        MyJTable_JDBC total_Meal_View_Jtable = new MyJTable_JDBC(db, collapsibleJpObj, databaseName, meal_Total_Data, meal_total_columnNames, planID, mealID, temp_MealID,
-                mealName, tableName, unEditableCells, null, false);
+        TotalMealTable total_Meal_View_Table = new TotalMealTable(db, collapsibleJpObj, databaseName, meal_Total_Data, meal_total_columnNames, planID,
+                mealID, temp_MealID, mealName, tableName, unEditableCells, null, false);
 
-        total_Meal_View_Jtable.setOpaque(true); //content panes must be opaque
-        total_Meal_View_Jtable.SetUp_HiddenTableColumns(TotalMeal_Table_Hidden_Columns, totalMealTable_StartCol);
-        total_Meal_View_Jtable.setTableHeaderFont(new Font("Dialog", Font.BOLD, 12));
+        total_Meal_View_Table.setOpaque(true); //content panes must be opaque
+        total_Meal_View_Table.SetUp_HiddenTableColumns(TotalMeal_Table_Hidden_Columns, totalMealTable_StartCol);
+        total_Meal_View_Table.setTableHeaderFont(new Font("Dialog", Font.BOLD, 12));
 
         //########################################################################
         //  Ingredients_In_Meal_Calculation JTable
@@ -522,9 +511,9 @@ public class MealPlanScreen extends JPanel
         //##############################################
 
 
-        MyJTable_JDBC ingredients_Calulation_Jtable = new MyJTable_JDBC(db, collapsibleJpObj, databaseName, mealData, ingredients_ColumnNames, planID, mealID, temp_MealID, mealName,
+        MyJTable_JDBC ingredients_Calulation_Jtable = new MyJTable_JDBC( db, collapsibleJpObj, databaseName, mealData, ingredients_ColumnNames, planID, mealID, temp_MealID, mealName,
                 tableName, null, unEditableCells, ingredients_Table_Col_Avoid_Centering, true,
-                total_Meal_View_Jtable, macrosLeft_JTable);
+                total_Meal_View_Table, macrosLeft_JTable);
 
         ingredients_Calulation_Jtable.setOpaque(true); //content panes must be opaque
         jTableBeingAdded = ingredients_Calulation_Jtable;
@@ -556,7 +545,7 @@ public class MealPlanScreen extends JPanel
         addToContainer(southPanel, new JPanel(), 0, 1, 1, 1, 0.25, 0.25, "both", 50, 0);
 
         // Adding total table to CollapsibleOBJ
-        addToContainer(southPanel, total_Meal_View_Jtable, 0, 2, 1, 1, 0.25, 0.25, "both", 0, 0);
+        addToContainer(southPanel, total_Meal_View_Table, 0, 2, 1, 1, 0.25, 0.25, "both", 0, 0);
 
         return collapsibleJpObj;
     }
