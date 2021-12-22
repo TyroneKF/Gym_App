@@ -536,6 +536,7 @@ public class JDBC_JTable extends JPanel
         return updateStartingColumn;
     }
 
+    // EDIT REMOVE myJTable  Param
     public void updateTable(JDBC_JTable myJtable, ArrayList<Object> updateData, int updateRow)
     {
         int hiddenCount = 0;

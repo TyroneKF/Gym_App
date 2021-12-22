@@ -2,7 +2,9 @@ package App_Code.Objects.Screens.Meal_Plan_Screen;
 
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
-import App_Code.Objects.Database_Objects.MyJTable_JDBC.Ingredients_In_Meal_Table.MyJTable_JDBC;
+import App_Code.Objects.Database_Objects.MyJTable_JDBC.ViewDataTables.Children.MacroTargetsLeftJTable;
+import App_Code.Objects.Database_Objects.MyJTable_JDBC.ViewDataTables.Children.MacrosTargetsTable;
+import App_Code.Objects.Database_Objects.MyJTable_JDBC.MyJTable_JDBC;
 
 import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 import App_Code.Objects.Gui_Objects.IconButton;
@@ -20,6 +22,25 @@ import java.util.LinkedHashMap;
 
 public class MealPlanScreen extends JPanel
 {
+    private MacroTargetsLeftJTable macrosLeft_JTable;
+    private MacrosTargetsTable macros_Targets_Table;
+
+
+
+
+
+
+
+
+    //#################################################################################################################
+
+
+
+
+
+
+
+
     private String name = "MyJTable_JDBC511_05";
     //########################################################
     // Objects
@@ -33,7 +54,14 @@ public class MealPlanScreen extends JPanel
     private App_Code.Objects.Screens.MacrosTargets_Screen.macrosTargets_Screen macrosTargets_Screen = null;
     private Add_Ingredients_Screen Add_Ingredients_Screen = null;
 
-    private MyJTable_JDBC macrosLeft_JTable, macros_Targets_Table;
+
+
+
+
+
+
+
+
     private MyJTable_JDBC jTableBeingAdded;
     private ArrayList<MyJTable_JDBC> listOfJTables = new ArrayList<>();
 
@@ -301,7 +329,7 @@ public class MealPlanScreen extends JPanel
             ArrayList<Integer> unEditableCells = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11));
             ArrayList<Integer> ingredients_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList());
 
-            macros_Targets_Table = new MyJTable_JDBC(db, mainSouthPanel, planData, plan_columnNames, planID,
+            macros_Targets_Table = new MacrosTargetsTable(db, mainSouthPanel, planData, plan_columnNames, planID,
                     tableName, unEditableCells, ingredients_Table_Col_Avoid_Centering);
 
             macros_Targets_Table.setOpaque(true); //content panes must be opaque
@@ -325,7 +353,7 @@ public class MealPlanScreen extends JPanel
             unEditableCells = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11));
             ArrayList<Integer> macros_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList());
 
-            macrosLeft_JTable = new MyJTable_JDBC(db, mainSouthPanel, macrosData, macros_columnNames, planID,
+            macrosLeft_JTable = new MacroTargetsLeftJTable(db, mainSouthPanel, macrosData, macros_columnNames, planID,
                     tableName, unEditableCells, macros_Table_Col_Avoid_Centering);
 
             macrosLeft_JTable.setOpaque(true); //content panes must be opaque
@@ -428,7 +456,7 @@ public class MealPlanScreen extends JPanel
     }
 
     private CollapsibleJPanel create_CollapsibleJPanel(boolean mealInDB, Container container, Integer mealID, Integer temp_MealID, String mealName, int mealNo, String[] meal_total_columnNames,
-                                                       String[] ingredients_ColumnNames, ArrayList<String> ingredientsInDB, MyJTable_JDBC macrosLeft_JTable)
+                                                       String[] ingredients_ColumnNames, ArrayList<String> ingredientsInDB, MacroTargetsLeftJTable macrosLeft_JTable)
     {
         CollapsibleJPanel collapsibleJpObj = new CollapsibleJPanel(container, String.format("   Meal   %s", mealNo), 150, 50);
         JPanel collapsibleJPanel = collapsibleJpObj.getCentreJPanel();
@@ -493,6 +521,7 @@ public class MealPlanScreen extends JPanel
         // Ingredients_In_Meal_Calculation  Creation
         //##############################################
 
+
         MyJTable_JDBC ingredients_Calulation_Jtable = new MyJTable_JDBC(db, collapsibleJpObj, databaseName, mealData, ingredients_ColumnNames, planID, mealID, temp_MealID, mealName,
                 tableName, null, unEditableCells, ingredients_Table_Col_Avoid_Centering, true,
                 total_Meal_View_Jtable, macrosLeft_JTable);
@@ -510,7 +539,7 @@ public class MealPlanScreen extends JPanel
         ingredients_Calulation_Jtable.setTableHeaderFont(new Font("Dialog", Font.BOLD, 12));
 
         ingredients_Calulation_Jtable.SetUp_HiddenTableColumns(ingredientsTable_Hidden_Columns, ingredientsTable_StartingCol);
-        ingredients_Calulation_Jtable.set_TriggerColumns(new Integer[]{0, 1, 2, 3, 5});
+        ingredients_Calulation_Jtable.set_TriggerColumns(new Integer[]{0, 1, 2, 3, 5}); // HELLO 0,1 must be an error
 
         ingredients_Calulation_Jtable.setUpJComboColumn(3, "IngredientName", ingredientsInDB);
         ingredients_Calulation_Jtable.setUpSupplierColumn(5);

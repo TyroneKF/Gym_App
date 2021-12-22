@@ -3,6 +3,7 @@ package App_Code.Objects.Database_Objects.MyJTable_JDBC;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.JTable_JDBC.JDBC_JTable;
+import App_Code.Objects.Database_Objects.MyJTable_JDBC.ViewDataTables.Children.MacroTargetsLeftJTable;
 import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 
 import javax.swing.*;
@@ -20,13 +21,18 @@ import java.util.Arrays;
 
 public class MyJTable_JDBC extends JDBC_JTable
 {
+
+    MacroTargetsLeftJTable macrosLeft_Table;
+
+
+
+
     //####################################
     // Objects
     //####################################
     private JPanel spaceDivider;
     private CollapsibleJPanel collapsibleObj;
-    private MyJTable_JDBC total_Meal_Table, macrosLeft_Table, ingredientsTableCalculation;
-
+    private MyJTable_JDBC total_Meal_Table, macrosLeft_Table2, ingredientsTableCalculation;
 
     //####################################
     // Other Variables
@@ -36,8 +42,8 @@ public class MyJTable_JDBC extends JDBC_JTable
 
     private ArrayList<Integer> triggerColumns = null;
 
-    private boolean rowBeingEdited = false, setIconsUp = false, meal_In_DB = true, objectDeleted = false,
-            isTable_A_Plan_TotalTable = false;
+    private boolean rowBeingEdited = false, setIconsUp = false, meal_In_DB = true, objectDeleted = false;
+
 
     //##################################################################
     // Ingredients In Meal Table
@@ -79,6 +85,11 @@ public class MyJTable_JDBC extends JDBC_JTable
     // Constructors
     //##################################################################################################################
 
+    public MyJTable_JDBC()
+    {
+
+    }
+
     // Inherited Constructor From JDBC_JTable
     public MyJTable_JDBC(MyJDBC db, Container parentContainer, String databaseName, String tableName,
                          ArrayList<Integer> unEditableColumns, ArrayList<Integer> colAvoidCentering)
@@ -86,31 +97,6 @@ public class MyJTable_JDBC extends JDBC_JTable
         super(db, parentContainer, databaseName, tableName, unEditableColumns, colAvoidCentering);
     }
 
-    // Total Plan Table
-    public MyJTable_JDBC(MyJDBC db, Container parentContainer, Object[][] data, String[] columnNames, int planID,
-                         String tableName, ArrayList<Integer> unEditableColumns, ArrayList<Integer> colAvoidCentering)
-    {
-        super.db = db;
-
-        super.data = data;
-        super.columnNames = columnNames;
-
-
-        this.planID = planID;
-
-        super.parentContainer = parentContainer;
-        super.tableName = tableName;
-
-
-        super.unEditableColumns = unEditableColumns;
-        super.colAvoidCentering = colAvoidCentering;
-
-        this.setIconsUp = false;
-
-        isTable_A_Plan_TotalTable = true;
-
-        setUp();
-    }
 
     // Total Meal Table
     public MyJTable_JDBC(MyJDBC db, CollapsibleJPanel collapsibleObj, String databaseName, Object[][] data, String[] columnNames, int planID,
@@ -175,7 +161,47 @@ public class MyJTable_JDBC extends JDBC_JTable
         this.setIconsUp = setIconsUp;
 
         this.total_Meal_Table = total_Meal_Table;
-        this.macrosLeft_Table = macrosLeft_Table;
+        this.macrosLeft_Table2 = macrosLeft_Table;
+        this.ingredientsTableCalculation = this;
+
+        setUp();
+    }
+
+    public MyJTable_JDBC(MyJDBC db, CollapsibleJPanel collapsibleObj, String databaseName, Object[][] data, String[] columnNames, int planID,
+                         Integer mealID, Integer tempPlan_Meal_ID, String mealName, String tableName, ArrayList<Integer> triggerColumns,
+                         ArrayList<Integer> unEditableColumns, ArrayList<Integer> colAvoidCentering, boolean setIconsUp,
+                         MyJTable_JDBC total_Meal_Table, MacroTargetsLeftJTable macrosLeft_Table)
+    {
+        super.db = db;
+        ingredientsTableCalculation = this;
+        super.data = data;
+        super.columnNames = columnNames;
+        this.databaseName = databaseName;
+
+        this.mealID = mealID;
+        if (mealID == null)
+        {
+            set_Meal_In_DB(false);
+        }
+
+        this.tempPlan_Meal_ID = tempPlan_Meal_ID;
+        this.mealName = mealName;
+        this.planID = planID;
+
+
+        this.collapsibleObj = collapsibleObj;
+
+        super.parentContainer = collapsibleObj.getCentreJPanel();
+        super.tableName = tableName;
+
+
+        super.unEditableColumns = unEditableColumns;
+        super.colAvoidCentering = colAvoidCentering;
+        this.triggerColumns = triggerColumns;
+        this.setIconsUp = setIconsUp;
+
+        this.total_Meal_Table = total_Meal_Table;
+        this.macrosLeft_Table2 = macrosLeft_Table2;
         this.ingredientsTableCalculation = this;
 
         setUp();
@@ -804,7 +830,7 @@ public class MyJTable_JDBC extends JDBC_JTable
 
     //##################################################################################################################
 
-    private void setUp()
+    protected void setUp()
     {
         setLayout(new GridBagLayout());
         if (db.isDatabaseConnected())
@@ -1454,7 +1480,7 @@ public class MyJTable_JDBC extends JDBC_JTable
         //##########################################################################
         //   Updating Total  Meal Table
         ///##########################################################################
-        if (macrosLeft_Table != null)
+        if (macrosLeft_Table2 != null)
         {
             setRowBeingEdited();
 
@@ -1472,69 +1498,13 @@ public class MyJTable_JDBC extends JDBC_JTable
             else
             {
                 ArrayList<Object> macrosLeft_UpdateData = macrosLeftTableData.get(0);
-                super.updateTable(macrosLeft_Table, macrosLeft_UpdateData, 0);
+                super.updateTable(macrosLeft_Table2, macrosLeft_UpdateData, 0);
             }
             setRowBeingEdited();
             return;
         }
     }
 
-    public void internal_Update_MacrosLeft_Table()
-    {
-        //##########################################################################
-        //   Updating MacrosLeft_Table
-        ///##########################################################################
-
-        setRowBeingEdited();
-
-        String macrosLeftQuery = String.format("select * from planMacrosLeft WHERE PlanID = %s", temp_PlanID);
-
-        ArrayList<ArrayList<Object>> macrosLeftTableData = db.get_Multi_ColumnQuery_Object(macrosLeftQuery);
-
-        if (macrosLeftTableData == null)
-        {
-            JOptionPane.showMessageDialog(null, "ERROR: \nUn-able to MacrosLeft Table!");
-
-            setRowBeingEdited();
-            return;
-        }
-        else
-        {
-            ArrayList<Object> macrosLeft_UpdateData = macrosLeftTableData.get(0);
-            super.updateTable(this, macrosLeft_UpdateData, 0);
-        }
-        setRowBeingEdited();
-        return;
-
-    }
-
-    public void internal_Update_MacroTargets()
-    {
-        //##########################################################################
-        //  Update MacrosLeft Table Data
-        ///##########################################################################
-
-        setRowBeingEdited();
-
-        String macrosTargetQuery = String.format("select * from plan_Macro_Target_Calculations WHERE PlanID = %s", temp_PlanID);
-
-        ArrayList<ArrayList<Object>> macroTargetsData = db.get_Multi_ColumnQuery_Object(macrosTargetQuery);
-
-        if (macroTargetsData == null)
-        {
-            JOptionPane.showMessageDialog(null, "ERROR: \nUn-able to MacrosLeft Table!");
-
-            setRowBeingEdited();
-            return;
-        }
-        else
-        {
-            ArrayList<Object> macrosTarget_UpdateData = macroTargetsData.get(0);
-            updateTable(this, macrosTarget_UpdateData, 0);
-        }
-        setRowBeingEdited();
-        return;
-    }
 
     //##################################################################################################################
     // Mutator Methods
