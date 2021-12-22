@@ -45,16 +45,12 @@ public class JDBC_JTable extends JPanel
     protected String[] columnDataTypes, columnNames;
     protected Object[][] data;
 
-    protected int numberOfIcons = 4;
-
     protected Object previousJComboItem;
     protected Object selected_Jcombo_Item;
 
     //###########################################
     // Ingredients In Table Columns
     //###########################################
-    int ingredientsTable_Index_Col = 2;
-
 
     //##################################################################################################################
     public JDBC_JTable()

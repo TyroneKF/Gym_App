@@ -590,7 +590,7 @@ public class MealPlanScreen extends JPanel
     //################################################################################################################
     //  Icon Methods & ActionListener Events
     //################################################################################################################
-    protected Boolean areYouSure(String process)
+    private Boolean areYouSure(String process)
     {
         int reply = JOptionPane.showConfirmDialog(frame, String.format("Are you sure you want to %s, \nany unsaved changes will be lost in this Table! \nDo you want to %s?", process, process),
                 "Restart Game", JOptionPane.YES_NO_OPTION); //HELLO Edit
@@ -873,7 +873,8 @@ public class MealPlanScreen extends JPanel
         refreshMacroTargets();
         refreshMacrosLeft();
     }
-    public  void refreshMacroTargets()
+
+    private  void refreshMacroTargets()
     {
         // ##############################################
         // If targets have changed, save them?
@@ -896,7 +897,7 @@ public class MealPlanScreen extends JPanel
         }
     }
 
-    public void refreshMacrosLeft()
+    private void refreshMacrosLeft()
     {
         macrosLeft_JTable.refreshData();
     }
@@ -987,7 +988,7 @@ public class MealPlanScreen extends JPanel
     //  Add Ingredients  Screen Methods
     //#####################################
 
-    public void open_AddIngredients_Screen()
+    private void open_AddIngredients_Screen()
     {
         if (!(get_IsPlanSelected()))
         {
@@ -1010,7 +1011,7 @@ public class MealPlanScreen extends JPanel
     //#####################################
     //  Macro Targets  Screen Methods
     //#####################################
-    public  void saveMacroTargets(boolean showUpdateMsg)
+    private   void saveMacroTargets(boolean showUpdateMsg)
     {
         // ##############################################
         // If targets have changed, save them?
@@ -1043,7 +1044,7 @@ public class MealPlanScreen extends JPanel
 
 
 
-    public void open_MacrosTagets_Screen()
+    private void open_MacrosTagets_Screen()
     {
         if (!(get_IsPlanSelected()))
         {
@@ -1069,7 +1070,7 @@ public class MealPlanScreen extends JPanel
         macrosLeft_JTable.updateMacrosLeft();
     }
 
-    public boolean transferTargets(int fromPlan, int toPlan, boolean  showConfirmMsg)
+    private boolean transferTargets(int fromPlan, int toPlan, boolean  showConfirmMsg)
     {
         String query000 = String.format("DELETE FROM macros_Per_Pound_And_Limits WHERE PLANID =%s;", toPlan);
         String query01 = String.format("DROP TABLE IF EXISTS temp_Macros;");
@@ -1128,52 +1129,6 @@ public class MealPlanScreen extends JPanel
     public boolean getMacrosTargetsChanged()
     {
         return macroTargetsChanged;
-    }
-
-    //################################################################################################################
-    // Mutator Methods
-    //################################################################################################################
-
-    private void updatePlan()
-    {
-        if (!(get_IsPlanSelected()))
-        {
-            return;
-        }
-
-        if (!(areYouSure("Refresh Data")))
-        {
-            return;
-        }
-
-        //###############################################
-        // Refresh Macro-Targets Table
-        //###############################################
-        refreshMacroTargets();
-
-        //###############################################
-        // Refresh ingredients meal table & total Tables
-        //###############################################
-        Iterator<IngredientsTable> it = listOfJTables.iterator();
-        while (it.hasNext())
-        {
-            IngredientsTable ingredientsJtable = it.next();
-
-            // if meal is not saved in DB remove the meal
-            if (!(ingredientsJtable.getMealInDB()))
-            {
-                ingredientsJtable.deleteTableAction(); // delete table from db
-                it.remove(); // remove from list
-                continue;
-            }
-            if (!(it.hasNext()))
-            {
-                ingredientsJtable.update_MacrosLeft_Table();
-                continue;
-            }
-
-            ingredientsJtable.refresh_Btn_Action(false);
-        }
     }
 
 }

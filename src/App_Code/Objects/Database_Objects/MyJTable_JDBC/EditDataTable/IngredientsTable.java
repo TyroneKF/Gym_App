@@ -54,13 +54,13 @@ public class IngredientsTable extends JDBC_JTable
             ingredientsTable_IngredientsName_Col = 5,
             ingredientsTable_Supplier_Col = 7;
 
-    final private int NoneOfTheAbove_PDID = 1;
+    private final int NoneOfTheAbove_PDID = 1;
 
     //SupplierName JComboBox Variables
-    Object previous_Supplier_JComboItem, selected_Supplier_JCombo_Item;
+    private Object previous_Supplier_JComboItem, selected_Supplier_JCombo_Item;
 
     //IngredientName JComboBox Variables
-    Object previous_IngredientName_JComboItem, selected_IngredientName_JCombo_Item;
+    private Object previous_IngredientName_JComboItem, selected_IngredientName_JCombo_Item;
 
     //##################################################################################################################
     // Constructor
