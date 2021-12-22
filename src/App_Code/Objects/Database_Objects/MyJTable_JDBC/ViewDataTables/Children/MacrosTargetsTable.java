@@ -39,9 +39,4 @@ public class MacrosTargetsTable extends MyJTable_DisplayData
         }
         return;
     }
-
-    public void refreshData()
-    {
-        super.refreshData();
-    }
 }

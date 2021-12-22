@@ -143,6 +143,5 @@ public class TotalMealTable extends MyJTable_DisplayData
         resizeObject();
     }
 
-
 }
 

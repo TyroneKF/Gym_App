@@ -40,9 +40,4 @@ public class MacrosLeftTable extends MyJTable_DisplayData
 
         return;
     }
-
-    public void refreshData()
-    {
-        super.refreshData();
-    }
 }
