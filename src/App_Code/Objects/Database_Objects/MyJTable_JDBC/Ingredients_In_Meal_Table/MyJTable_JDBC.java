@@ -437,29 +437,7 @@ public class MyJTable_JDBC extends JDBC_JTable
         tableColumn.setCellRenderer(renderer);
     }
 
-    @Override //HELLO FIX, doesnt reload with table
-    public void setupDeleteBtnColumn(int deleteBtnColumn)
-    {
-        setDeleteBTNColumn(deleteBtnColumn);
 
-        Action delete = new AbstractAction()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-
-                JTable table = (JTable) e.getSource();
-                Object ingredients_Index = table.getValueAt(table.getSelectedRow(), getIngredientsTable_Index_Col());
-
-                if (ingredients_Index != null)
-                {
-                    int modelRow = Integer.parseInt(e.getActionCommand());
-                    deleteRowAction(ingredients_Index, modelRow); // command to update db
-                }
-            }
-        };
-        Working_ButtonColumn2 workingButtonColumn = new Working_ButtonColumn2(jTable, delete, getDeleteBTN_Col());
-        workingButtonColumn.setMnemonic(KeyEvent.VK_D);
-    }
 
     @Override
     protected void tableModel_Setup(Object[][] data, String[] columnNames)
@@ -892,6 +870,30 @@ public class MyJTable_JDBC extends JDBC_JTable
     // Action Methods / ActionListener Events
     //##################################################################################################################
 
+    @Override //HELLO FIX, doesnt reload with table
+    public void setupDeleteBtnColumn(int deleteBtnColumn)
+    {
+        setDeleteBTNColumn(deleteBtnColumn);
+
+        Action delete = new AbstractAction()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+
+                JTable table = (JTable) e.getSource();
+                Object ingredients_Index = table.getValueAt(table.getSelectedRow(), getIngredientsTable_Index_Col());
+
+                if (ingredients_Index != null)
+                {
+                    int modelRow = Integer.parseInt(e.getActionCommand());
+                    deleteRowAction(ingredients_Index, modelRow); // command to update db
+                }
+            }
+        };
+        Working_ButtonColumn2 workingButtonColumn = new Working_ButtonColumn2(jTable, delete, getDeleteBTN_Col());
+        workingButtonColumn.setMnemonic(KeyEvent.VK_D);
+    }
+
     @Override
     public void deleteTableAction() // Works
     {
@@ -976,6 +978,7 @@ public class MyJTable_JDBC extends JDBC_JTable
         //HELLO REMOVE
         System.out.printf("\n\n#########################################################################");
     }
+
 
     public void completely_Deleted_JTables() // Works
     {

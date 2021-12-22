@@ -603,16 +603,8 @@ public class JDBC_JTable extends JPanel
         {
             public void actionPerformed(ActionEvent e)
             {
-
-
-                JTable table = (JTable) e.getSource();
-                Object ingredients_Index = table.getValueAt(table.getSelectedRow(), ingredientsTable_Index_Col);
-
-                if (ingredients_Index != null)
-                {
-                    int modelRow = Integer.parseInt(e.getActionCommand());
-                    deleteRowAction(ingredients_Index, modelRow); // command to update db
-                }
+                int modelRow = Integer.parseInt(e.getActionCommand());
+                deleteRowAction(null, modelRow); // command to update db
             }
         };
         Working_ButtonColumn2 workingButtonColumn = new Working_ButtonColumn2(jTable, delete, deleteBtnColumn);
