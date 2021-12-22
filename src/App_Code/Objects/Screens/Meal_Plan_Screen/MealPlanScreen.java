@@ -1065,8 +1065,8 @@ public class MealPlanScreen extends JPanel
 
     public void updateTargetsAndMacrosLeft()
     {
-        macros_Targets_Table.internal_Update_MacroTargets();
-        macrosLeft_JTable.internal_Update_MacrosLeft_Table();
+        macros_Targets_Table.updateTargets();
+        macrosLeft_JTable.updateMacrosLeft();
     }
 
     public boolean transferTargets(int fromPlan, int toPlan, boolean  showConfirmMsg)

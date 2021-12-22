@@ -5,6 +5,7 @@ import App_Code.Objects.Database_Objects.MyJTable_JDBC.ViewDataTables.Parent.MyJ
 import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -31,7 +32,7 @@ public class TotalMealTable extends MyJTable_DisplayData
         this.collapsibleObj = collapsibleObj;
     }
 
-    private void update_TotalMeal_Table()
+    public void updateTotalMealTable()
     {
         //##########################################################################
         //   Updating Total  Meal Table
@@ -53,5 +54,94 @@ public class TotalMealTable extends MyJTable_DisplayData
             super.updateTable(this, totalMeal_UpdateData, 0);
         }
     }
+
+    public boolean getIconSetupStatus()
+    {
+        return setIconsUp;
+    }
+
+    public Object[][] getData()
+    {
+        return  super.getData();
+    }
+
+    public void refreshData()
+    {
+        //tableSetup(getData(), getColumnNames());
+        tableModel_Setup(super.getData(), super.getColumnNames());
+    }
+
+    public void setTableModelData(Object[][] tableModelData)
+    {
+        super.setTableModelData(tableModelData);
+    }
+
+    @Override
+    public  void tableModel_Setup(Object[][] data, String[] columnNames)
+    {
+        tableModel = new DefaultTableModel(data, columnNames)
+        {
+            @Override
+            public boolean isCellEditable(int row, int col)
+            {
+                //Note that the data/cell address is constant,
+                //no matter where the cell appears onscreen.
+                if (unEditableColumns.contains(col))
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+
+            @Override
+            public Class getColumnClass(int c)
+            {
+                return getValueAt(0, c).getClass();
+            }
+        };
+
+        tableModel.addTableModelListener(
+                evt -> tableDataChange_Action());
+
+        jTable.setModel(tableModel);
+
+        rowsInTable = data.length;
+
+        //#################################################################################
+        // Table Personalisation
+        //#################################################################################
+
+        //initColumnSizes();
+        setCellsAlignment(0, colAvoidCentering);
+
+        if (getTableInitilized())  //first time this method is called, special columns aren't defined
+        {
+            if (getHideColumns() != null)//Must be first
+            {
+                SetUp_HiddenTableColumns(getHideColumns(), get_StartingUpdateColumn());
+            }
+
+            if (getDeleteBTN_Col() != null)
+            {
+                setupDeleteBtnColumn(getDeleteBTN_Col()); // specifying delete column
+            }
+
+            // Setting up JcomboBox Field
+            for (Integer key : getJcomboMap().keySet())
+            {
+                setUpJComboColumn(key, "IngredientName", getJcomboMap().get(key));
+            }
+        }
+        else
+        {
+            setTableInitilized();
+        }
+        resizeObject();
+    }
+
+
 }
 

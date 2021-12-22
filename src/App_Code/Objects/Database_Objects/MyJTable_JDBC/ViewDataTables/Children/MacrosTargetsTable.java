@@ -16,7 +16,7 @@ public class MacrosTargetsTable extends MyJTable_DisplayData
         super(db, parentContainer, data, columnNames, planID, tableName, unEditableColumns, colAvoidCentering);
     }
 
-    public void internal_Update_MacroTargets()
+    public void updateTargets()
     {
         //##########################################################################
         //   Updating MacrosLeft_Table

@@ -27,7 +27,7 @@ public class MyJTable_JDBC extends JDBC_JTable
     TotalMealTable total_Meal_Table;
 
 
-    private MyJTable_JDBC total_Meal_Table2, macrosLeft_Table2, ingredientsTableCalculation;
+    private MyJTable_JDBC  ingredientsTableCalculation;
     //####################################
     // Objects
     //####################################
@@ -938,12 +938,12 @@ public class MyJTable_JDBC extends JDBC_JTable
         //##################################################
         // Delete Meal Total Table From Collapsible Object
         //##################################################
-        if (total_Meal_Table2 != null && collapsibleObj != null)
+        if (total_Meal_Table != null && collapsibleObj != null)
         {
             collapsibleObj.getParentContainer().remove(spaceDivider); // remove spaceDivider from GUI
 
             JPanel collapsible_SouthPanel = collapsibleObj.getSouthJPanel();
-            collapsible_SouthPanel.remove(total_Meal_Table2);
+            collapsible_SouthPanel.remove(total_Meal_Table);
             collapsibleObj.getSouthJPanel();
         }
 
@@ -1143,10 +1143,13 @@ public class MyJTable_JDBC extends JDBC_JTable
         //##############################
 
         // Reset Total View Table
-        if (total_Meal_Table2 != null)
+        if (total_Meal_Table != null)
         {
-            System.out.printf("\n\nReset Table Data:\n\n %s", Arrays.deepToString(total_Meal_Table2.getData()));
-            total_Meal_Table2.tableModel_Setup(total_Meal_Table2.getData(), total_Meal_Table2.getColumnNames());
+            System.out.printf("\n\nReset Table Data:\n\n %s", Arrays.deepToString(total_Meal_Table.getData()));
+            total_Meal_Table.refreshData();
+           //total_Meal_Table.tableModel_Setup(total_Meal_Table.getData(), total_Meal_Table2.getColumnNames());
+
+
         }
 
         //##############################
@@ -1266,7 +1269,7 @@ public class MyJTable_JDBC extends JDBC_JTable
         // Changing Total  Ingredients Table Model
         //##########################################
 
-        if (total_Meal_Table2 != null)
+        if (total_Meal_Table != null)
         {
             // Setting totals tables Data model to new data
             String totalTableQuery = String.format("SELECT *  FROM total_meal_view WHERE MealID = %s;", tempPlan_Meal_ID);
@@ -1274,7 +1277,7 @@ public class MyJTable_JDBC extends JDBC_JTable
             Object[][] totalTableData = db.getTableDataObject(totalTableQuery, "total_meal_view");
             if (totalTableData != null)
             {
-                total_Meal_Table2.setTableModelData(totalTableData);
+                total_Meal_Table.setTableModelData(totalTableData);
             }
             else
             {
@@ -1366,63 +1369,12 @@ public class MyJTable_JDBC extends JDBC_JTable
 
     private void update_TotalMeal_Table()
     {
-        //##########################################################################
-        //   Updating Total  Meal Table
-        ///##########################################################################
-        if (total_Meal_Table2 != null)
-        {
-            setRowBeingEdited();
-
-            String totalMealTableQuery = String.format("SELECT  * FROM total_meal_view   WHERE  MealID = %s; ", tempPlan_Meal_ID);
-
-            ArrayList<ArrayList<Object>> totalMealData = db.get_Multi_ColumnQuery_Object(totalMealTableQuery);
-
-            if (totalMealData == null)
-            {
-                JOptionPane.showMessageDialog(null, "ERROR: \nUn-able to Update Totals Table!");
-
-                setRowBeingEdited();
-                return;
-            }
-            else
-            {
-                ArrayList<Object> totalMeal_UpdateData = totalMealData.get(0);
-                super.updateTable(total_Meal_Table2, totalMeal_UpdateData, 0);
-            }
-
-            setRowBeingEdited();
-        }
+        total_Meal_Table.updateTotalMealTable();
     }
 
     public void outside_Update_MacrosLeft_Table()
     {
-
-        //##########################################################################
-        //   Updating Total  Meal Table
-        ///##########################################################################
-        if (macrosLeft_Table2 != null)
-        {
-            setRowBeingEdited();
-
-            String macrosLeftQuery = String.format("select * from planMacrosLeft WHERE PlanID = %s", temp_PlanID);
-
-            ArrayList<ArrayList<Object>> macrosLeftTableData = db.get_Multi_ColumnQuery_Object(macrosLeftQuery);
-
-            if (macrosLeftTableData == null)
-            {
-                JOptionPane.showMessageDialog(null, "ERROR: \nUn-able to MacrosLeft Table!");
-
-                setRowBeingEdited();
-                return;
-            }
-            else
-            {
-                ArrayList<Object> macrosLeft_UpdateData = macrosLeftTableData.get(0);
-                super.updateTable(macrosLeft_Table2, macrosLeft_UpdateData, 0);
-            }
-            setRowBeingEdited();
-            return;
-        }
+        macrosLeft_Table.updateMacrosLeft();
     }
 
 
