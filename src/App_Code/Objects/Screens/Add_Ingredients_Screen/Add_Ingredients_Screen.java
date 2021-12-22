@@ -962,7 +962,7 @@ public class Add_Ingredients_Screen extends JFrame
                         String updateQuery = String.format("""
                                 UPDATE ingredients_in_meal
                                 SET  PDID = NULL
-                                WHERE PDID = %s; """, selectedIngredientID, PDID);
+                                WHERE PDID = %s; """, PDID);
 
                         System.out.printf("\n\n%s", updateQuery);
 
