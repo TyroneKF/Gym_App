@@ -27,14 +27,7 @@ public class MealPlanScreen extends JPanel
     private MacrosTargetsTable macros_Targets_Table;
 
 
-
-
-
-
-
-
     //#################################################################################################################
-
 
 
     private String name = "MyJTable_JDBC511_05";
@@ -74,10 +67,26 @@ public class MealPlanScreen extends JPanel
     // Ingredients Table Columns
     //########################################################
 
-    private int ingredientsTable_Quantity_Col = 4, ingredientsTable_IngredientsName_Col = 5,
-            ingredientsTable_Supplier_Col = 7;
+    private final Integer
+            original_IngredientsTable_Quantity_Col = 4,
+            original_IngredientsTable_IngredientsName_Col = 5,
+            original_IngredientsTable_Supplier_Col = 7,
+            original_ingredientsTable_DeleteBTN_Col = 17,
 
-    private Integer ingredientsTable_DeleteBTN_Col = 17;
+            afterHiding_IngredTable_IngredientIndexCol = 0,
+            afterHiding_IngredTable_IngredientID = 1,
+            afterHiding_IngredTable_Quantity_Col = 2,
+            afterHiding_IngredTable_IngredientsName_Col = 3,
+            afterHiding_IngredTable_Supplier_Col = 5,
+            afterHiding_IngredTable_DeleteBTN_Col = 15;
+
+    private final Integer[]
+            triggerColumns = new Integer[]{afterHiding_IngredTable_IngredientIndexCol, afterHiding_IngredTable_IngredientID, afterHiding_IngredTable_Quantity_Col, afterHiding_IngredTable_IngredientsName_Col, afterHiding_IngredTable_Supplier_Col},
+            actionListenerColumns = new Integer[]{afterHiding_IngredTable_IngredientsName_Col, afterHiding_IngredTable_Supplier_Col, afterHiding_IngredTable_DeleteBTN_Col};
+
+
+    private final Integer ingredientsTable_StartingCol = 2, totalMealTable_StartCol = 3,
+            macroTargets_StartCol = 2, macrosLeftTable_StartCol = 2;
 
     //########################################################
     // Table Customisations
@@ -89,12 +98,9 @@ public class MealPlanScreen extends JPanel
             macrosLeft_Table_Hidden_Col = new ArrayList<Integer>(Arrays.asList(1, 2));
 
     private final ArrayList<Integer>
-            editable_IngredientsTable_Columns = new ArrayList<Integer>(Arrays.asList(ingredientsTable_Quantity_Col, ingredientsTable_IngredientsName_Col, ingredientsTable_Supplier_Col)),
-            ingredients_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList(ingredientsTable_IngredientsName_Col, ingredientsTable_Supplier_Col, ingredientsTable_DeleteBTN_Col));
+            editable_IngredientsTable_Columns = new ArrayList<Integer>(Arrays.asList(original_IngredientsTable_Quantity_Col, original_IngredientsTable_IngredientsName_Col, original_IngredientsTable_Supplier_Col)),
+            ingredients_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList(original_IngredientsTable_IngredientsName_Col, original_IngredientsTable_Supplier_Col, original_ingredientsTable_DeleteBTN_Col));
 
-
-    private final Integer ingredientsTable_StartingCol = 2, totalMealTable_StartCol = 3,
-            macroTargets_StartCol = 2, totalPlanTable_StartCol = 2, macrosLeftTable_StartCol = 2;
     //########################################################
 
     public MealPlanScreen()
@@ -171,7 +177,7 @@ public class MealPlanScreen extends JPanel
         // Getting selected plan ID
         //##############################################################################################################
         String[] results = db.getSingleColumnQuery("SELECT PlanID FROM plans WHERE SelectedPlan = 1;");
-        planID = results!=null ? Integer.parseInt(results[0]):null;
+        planID = results != null ? Integer.parseInt(results[0]) : null;
 
 
         //HELLO REMOVE
@@ -179,12 +185,12 @@ public class MealPlanScreen extends JPanel
         System.out.println("\n\n###############################################################################");
 
 
-        if (planID!=null)
+        if (planID != null)
         {
             //####################################################
             // Transferring Targets From Chosen PLan to Temp
             //####################################################
-            if(!transferTargets(planID, tempPlanID, false))
+            if (!transferTargets(planID, tempPlanID, false))
             {
                 return;
             }
@@ -264,7 +270,7 @@ public class MealPlanScreen extends JPanel
 
             String query18 = String.format("INSERT INTO ingredients_in_meal SELECT * FROM temp;");
 
-            String[] query_Temp_Data = new String[]{ query0, query1, query2, query3, query4, query5, query6, query7, query8, query9, query10, query11, query12,
+            String[] query_Temp_Data = new String[]{query0, query1, query2, query3, query4, query5, query6, query7, query8, query9, query10, query11, query12,
                     query13, query14, query15, query16, query17, query18, query10, query11};
 
             if (!(db.uploadData_Batch(query_Temp_Data)))
@@ -278,7 +284,7 @@ public class MealPlanScreen extends JPanel
             //##############################
 
             String[] planNameResults = db.getSingleColumnQuery("SELECT Plan_Name FROM plans WHERE planID = 1;");
-            planName = planNameResults!=null ? planNameResults[0]:null;
+            planName = planNameResults != null ? planNameResults[0] : null;
 
             System.out.printf("\n\nChosen Plan Name: %s", planName);
             System.out.println("\n\n###############################################################################");
@@ -293,7 +299,7 @@ public class MealPlanScreen extends JPanel
             String query = String.format("SELECT MealID, Meal_Name FROM meals WHERE PlanID = %s ORDER BY MealID;", planID);
 
             ArrayList<ArrayList<String>> plan_Meal_IDs_And_Name = db.getMultiColumnQuery(query);
-            plan_Meal_IDs_And_Name = plan_Meal_IDs_And_Name!=null ? plan_Meal_IDs_And_Name:new ArrayList<>();
+            plan_Meal_IDs_And_Name = plan_Meal_IDs_And_Name != null ? plan_Meal_IDs_And_Name : new ArrayList<>();
 
             int no_of_meals = plan_Meal_IDs_And_Name.size();
 
@@ -303,7 +309,7 @@ public class MealPlanScreen extends JPanel
             String queryGetTempMealsID = String.format("SELECT MealID FROM meals WHERE PlanID = %s ORDER BY MealID;", tempPlanID);
 
             ArrayList<String> temp_Plan_meal_IDs = db.getSingleColumnQuery_ArrayList(queryGetTempMealsID);
-            temp_Plan_meal_IDs = temp_Plan_meal_IDs!=null ? temp_Plan_meal_IDs:new ArrayList<>();
+            temp_Plan_meal_IDs = temp_Plan_meal_IDs != null ? temp_Plan_meal_IDs : new ArrayList<>();
 
 
             //######################################################################
@@ -312,8 +318,8 @@ public class MealPlanScreen extends JPanel
             String tableName = "plan_Macro_Target_Calculations";
             String planCalcQuery = String.format("SELECT * from %s  WHERE PlanID = %s;", tableName, tempPlanID);
 
-            Object[][] planData = db.getTableDataObject(planCalcQuery, tableName)!=null ? db.getTableDataObject(planCalcQuery, tableName):new Object[0][0];
-            String[] plan_columnNames = db.getColumnNames(tableName)!=null ? db.getColumnNames(tableName):new String[0];
+            Object[][] planData = db.getTableDataObject(planCalcQuery, tableName) != null ? db.getTableDataObject(planCalcQuery, tableName) : new Object[0][0];
+            String[] plan_columnNames = db.getColumnNames(tableName) != null ? db.getColumnNames(tableName) : new String[0];
 
             ArrayList<Integer> unEditableCells = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11));
             ArrayList<Integer> ingredients_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList());
@@ -336,8 +342,8 @@ public class MealPlanScreen extends JPanel
             tableName = "planMacrosLeft";
             String macrosQuery = String.format("SELECT * from %s  WHERE PlanID = %s;", tableName, tempPlanID);
 
-            Object[][] macrosData = db.getTableDataObject(macrosQuery, tableName)!=null ? db.getTableDataObject(macrosQuery, tableName):new Object[0][0];
-            String[] macros_columnNames = db.getColumnNames(tableName)!=null ? db.getColumnNames(tableName):new String[0];
+            Object[][] macrosData = db.getTableDataObject(macrosQuery, tableName) != null ? db.getTableDataObject(macrosQuery, tableName) : new Object[0][0];
+            String[] macros_columnNames = db.getColumnNames(tableName) != null ? db.getColumnNames(tableName) : new String[0];
 
             unEditableCells = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11));
             ArrayList<Integer> macros_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList());
@@ -365,13 +371,13 @@ public class MealPlanScreen extends JPanel
             //###################################
 
             tableName = "total_meal_view";
-            meal_total_columnNames = db.getColumnNames(tableName)!=null ? db.getColumnNames(tableName):new String[0];
+            meal_total_columnNames = db.getColumnNames(tableName) != null ? db.getColumnNames(tableName) : new String[0];
 
             tableName = "ingredients_in_meal_calculation";
-            ingredients_ColumnNames = db.getColumnNames(tableName)!=null ? db.getColumnNames(tableName):new String[0];
+            ingredients_ColumnNames = db.getColumnNames(tableName) != null ? db.getColumnNames(tableName) : new String[0];
 
             ingredientsInDB = db.getSingleColumnQuery_ArrayList("Select ingredient_Name from ingredients_info;");
-            ingredientsInDB = ingredientsInDB!=null ? ingredientsInDB:new ArrayList<String>();
+            ingredientsInDB = ingredientsInDB != null ? ingredientsInDB : new ArrayList<String>();
 
             for (int i = 0; i < no_of_meals; i++)
             {
@@ -386,7 +392,7 @@ public class MealPlanScreen extends JPanel
                 // Create Collapsible Panel
                 //#########################################
                 CollapsibleJPanel collapsibleJTable = create_CollapsibleJPanel(true, scrollPaneJPanel, mealID, temp_MealID, mealName, mealNo, meal_total_columnNames, ingredients_ColumnNames,
-                        ingredientsInDB,  macrosLeft_JTable);
+                        ingredientsInDB, macrosLeft_JTable);
 
                 //##################################################################################################
                 // Adding Collapsible Objects && JTables To GUI
@@ -431,7 +437,7 @@ public class MealPlanScreen extends JPanel
                 // If targets have changed, save them?
                 // ##############################################
                 saveMacroTargets(true);
-                if (macrosTargets_Screen!=null)
+                if (macrosTargets_Screen != null)
                 {
                     macrosTargets_Screen.closeeWindow();
                 }
@@ -460,7 +466,7 @@ public class MealPlanScreen extends JPanel
 
         String query = String.format("SELECT *  FROM total_meal_view WHERE MealID = %s ", temp_MealID);
 
-        Object[][] meal_Total_Data = db.getTableDataObject(query, tableName)!=null ? db.getTableDataObject(query, tableName):new Object[0][0];
+        Object[][] meal_Total_Data = db.getTableDataObject(query, tableName) != null ? db.getTableDataObject(query, tableName) : new Object[0][0];
 
         int columnsInTotalTable = meal_total_columnNames.length;
         ArrayList<Integer> unEditableCells = new ArrayList<Integer>(columnsInTotalTable);
@@ -482,7 +488,7 @@ public class MealPlanScreen extends JPanel
         int columnsInIngredientsTable = ingredients_ColumnNames.length;
         int ingredientsNotEditableColSize = columnsInIngredientsTable - editable_IngredientsTable_Columns.size();
 
-        ingredientsNotEditableColSize = ingredientsTable_DeleteBTN_Col==null ? ingredientsNotEditableColSize:ingredientsNotEditableColSize - 1;
+        ingredientsNotEditableColSize = original_ingredientsTable_DeleteBTN_Col == null ? ingredientsNotEditableColSize : ingredientsNotEditableColSize - 1;
 
         unEditableCells = new ArrayList<Integer>(ingredientsNotEditableColSize);
 
@@ -492,7 +498,7 @@ public class MealPlanScreen extends JPanel
             {
                 continue;
             }
-            else if (i==ingredientsTable_DeleteBTN_Col)
+            else if (i == original_ingredientsTable_DeleteBTN_Col)
             {
                 continue;
             }
@@ -504,16 +510,15 @@ public class MealPlanScreen extends JPanel
         //###########################################
         query = String.format("SELECT *  FROM ingredients_in_meal_calculation WHERE MealID = %s ORDER BY Ingredients_Index;", temp_MealID);
         tableName = "ingredients_in_meal_calculation";
-        Object[][] mealData = db.getTableDataObject(query, tableName)!=null ? db.getTableDataObject(query, tableName):new Object[0][0];
+        Object[][] mealData = db.getTableDataObject(query, tableName) != null ? db.getTableDataObject(query, tableName) : new Object[0][0];
 
         //##############################################
         // Ingredients_In_Meal_Calculation  Creation
         //##############################################
 
 
-        IngredientsTable ingredients_Calulation_Jtable = new IngredientsTable( db, collapsibleJpObj, databaseName, mealData, ingredients_ColumnNames, planID, mealID, temp_MealID, mealName,
-                tableName, null, unEditableCells, ingredients_Table_Col_Avoid_Centering, true,
-                total_Meal_View_Table, macrosLeft_JTable);
+        IngredientsTable ingredients_Calulation_Jtable = new IngredientsTable(db, collapsibleJpObj, databaseName, mealData, ingredients_ColumnNames, planID, mealID, temp_MealID, mealName,
+                tableName, unEditableCells, ingredients_Table_Col_Avoid_Centering, total_Meal_View_Table, macrosLeft_JTable);
 
         ingredients_Calulation_Jtable.setOpaque(true); //content panes must be opaque
         jTableBeingAdded = ingredients_Calulation_Jtable;
@@ -526,13 +531,8 @@ public class MealPlanScreen extends JPanel
         // Customisation
         //#############################################
         ingredients_Calulation_Jtable.setTableHeaderFont(new Font("Dialog", Font.BOLD, 12));
-
         ingredients_Calulation_Jtable.SetUp_HiddenTableColumns(ingredientsTable_Hidden_Columns, ingredientsTable_StartingCol);
-        ingredients_Calulation_Jtable.set_TriggerColumns(new Integer[]{0, 1, 2, 3, 5}); // HELLO 0,1 must be an error
-
-        ingredients_Calulation_Jtable.setUpJComboColumn(3, "IngredientName", ingredientsInDB);
-        ingredients_Calulation_Jtable.setUpSupplierColumn(5);
-        ingredients_Calulation_Jtable.setupDeleteBtnColumn(15);
+        ingredients_Calulation_Jtable.setUpIngredientsTableActionCells(triggerColumns, actionListenerColumns, ingredientsInDB); //EDIT NOW
 
         //##################################################################################################
         // Adding Collapsible Objects && JTables To GUI
@@ -595,7 +595,7 @@ public class MealPlanScreen extends JPanel
         int reply = JOptionPane.showConfirmDialog(frame, String.format("Are you sure you want to %s, \nany unsaved changes will be lost in this Table! \nDo you want to %s?", process, process),
                 "Restart Game", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
-        if (reply==JOptionPane.NO_OPTION || reply==JOptionPane.CLOSED_OPTION)
+        if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
         {
             return false;
         }
@@ -729,7 +729,7 @@ public class MealPlanScreen extends JPanel
         }
 
         // If No Plan Is Selected
-        if (planID==null)
+        if (planID == null)
         {
             JOptionPane.showMessageDialog(null, "\n\nCannot Add A  Meal As A Plan Is Not Selected! \nPlease Select A Plan First!!");
             return;
@@ -740,7 +740,7 @@ public class MealPlanScreen extends JPanel
         //#################################
         String newMealName = JOptionPane.showInputDialog("Input Meal Name?");
 
-        if (newMealName.length()==0)
+        if (newMealName.length() == 0)
         {
             JOptionPane.showMessageDialog(null, "\n\nPlease Input A Valid Name With 1+ Characters!");
             return;
@@ -753,7 +753,7 @@ public class MealPlanScreen extends JPanel
         // Does Meal Exist Within Temp Plan
         String mealInTempPlan = String.format("Select Meal_Name FROM Meals WHERE Meal_Name = '%s' AND PlanID = %s;", newMealName, tempPlanID);
 
-        if (!(db.getSingleColumnQuery(mealInTempPlan)==null))
+        if (!(db.getSingleColumnQuery(mealInTempPlan) == null))
         {
             JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nMeal Name Already Exists Within This Plan!!");
             return;
@@ -762,7 +762,7 @@ public class MealPlanScreen extends JPanel
         // Does meal exist in original unsaved plan
         String mealInPlan = String.format("Select Meal_Name FROM Meals WHERE Meal_Name = '%s' AND PlanID = %s;", newMealName, planID);
 
-        if (!(db.getSingleColumnQuery(mealInPlan)==null))
+        if (!(db.getSingleColumnQuery(mealInPlan) == null))
         {
             JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nMeal Name Already Exists Within The Original Meal Plan\n " +
                     "Please Save This Plan Before Attempting To Create A Meal With This Name! ");
@@ -787,7 +787,7 @@ public class MealPlanScreen extends JPanel
         String query = String.format("Select MealID from meals WHERE PlanID = %s AND  Meal_Name = '%s';", tempPlanID, newMealName);
         String[] results = db.getSingleColumnQuery(query);
 
-        if (results==null)
+        if (results == null)
         {
             JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nCannot Get Created Meals ID!!");
 
@@ -809,7 +809,7 @@ public class MealPlanScreen extends JPanel
         //##############################################
 
         CollapsibleJPanel collapsibleJTable = create_CollapsibleJPanel(false, scrollPaneJPanel, null, tempMealID, newMealName, mealNo, meal_total_columnNames, ingredients_ColumnNames,
-                ingredientsInDB,  macrosLeft_JTable);
+                ingredientsInDB, macrosLeft_JTable);
 
 
         //###############################################
@@ -874,19 +874,19 @@ public class MealPlanScreen extends JPanel
         refreshMacrosLeft();
     }
 
-    private  void refreshMacroTargets()
+    private void refreshMacroTargets()
     {
         // ##############################################
         // If targets have changed, save them?
         // ##############################################
-        if(getMacrosTargetsChanged())
+        if (getMacrosTargetsChanged())
         {
             int reply = JOptionPane.showConfirmDialog(frame, String.format("Would you like to refresh your MacroTargets Too?"),
                     "Refresh Macro Targets", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
-            if (reply==JOptionPane.YES_OPTION)
+            if (reply == JOptionPane.YES_OPTION)
             {
-                if(transferTargets(planID, tempPlanID, false))
+                if (transferTargets(planID, tempPlanID, false))
                 {
                     JOptionPane.showMessageDialog(frame, "\n\nMacro-Targets Successfully Refreshed!!");
                     macrosTargetsChanged(false);
@@ -962,7 +962,7 @@ public class MealPlanScreen extends JPanel
                 exceptConditions += String.format(" AND ");
             }
             exceptConditions += String.format("%s!='%s'", condition, mealsInPlanList.get(i));
-            if (i==size - 1)
+            if (i == size - 1)
             {
                 exceptConditions += ")";
             }
@@ -995,7 +995,7 @@ public class MealPlanScreen extends JPanel
             return;
         }
 
-        if (Add_Ingredients_Screen!=null)
+        if (Add_Ingredients_Screen != null)
         {
             Add_Ingredients_Screen.makeJframeVisible();
             return;
@@ -1011,19 +1011,19 @@ public class MealPlanScreen extends JPanel
     //#####################################
     //  Macro Targets  Screen Methods
     //#####################################
-    private   void saveMacroTargets(boolean showUpdateMsg)
+    private void saveMacroTargets(boolean showUpdateMsg)
     {
         // ##############################################
         // If targets have changed, save them?
         // ##############################################
-        if(getMacrosTargetsChanged())
+        if (getMacrosTargetsChanged())
         {
             int reply = JOptionPane.showConfirmDialog(frame, String.format("Would you like to save your MacroTarget  Changes Too?"),
                     "Save Macro Targets", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
-            if (reply==JOptionPane.NO_OPTION || reply==JOptionPane.CLOSED_OPTION)
+            if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
             {
-                if(transferTargets(planID, tempPlanID, showUpdateMsg))
+                if (transferTargets(planID, tempPlanID, showUpdateMsg))
                 {
                     macrosTargetsChanged(false);
                     updateTargetsAndMacrosLeft();
@@ -1032,7 +1032,7 @@ public class MealPlanScreen extends JPanel
             }
             else
             {
-                if(transferTargets(tempPlanID, planID, showUpdateMsg))
+                if (transferTargets(tempPlanID, planID, showUpdateMsg))
                 {
                     macrosTargetsChanged(false);
                     updateTargetsAndMacrosLeft();
@@ -1042,8 +1042,6 @@ public class MealPlanScreen extends JPanel
         }
     }
 
-
-
     private void open_MacrosTagets_Screen()
     {
         if (!(get_IsPlanSelected()))
@@ -1051,7 +1049,7 @@ public class MealPlanScreen extends JPanel
             return;
         }
 
-        if (macrosTargets_Screen!=null)
+        if (macrosTargets_Screen != null)
         {
             macrosTargets_Screen.makeJframeVisible();
             return;
@@ -1070,7 +1068,7 @@ public class MealPlanScreen extends JPanel
         macrosLeft_JTable.updateMacrosLeft();
     }
 
-    private boolean transferTargets(int fromPlan, int toPlan, boolean  showConfirmMsg)
+    private boolean transferTargets(int fromPlan, int toPlan, boolean showConfirmMsg)
     {
         String query000 = String.format("DELETE FROM macros_Per_Pound_And_Limits WHERE PLANID =%s;", toPlan);
         String query01 = String.format("DROP TABLE IF EXISTS temp_Macros;");
@@ -1078,20 +1076,20 @@ public class MealPlanScreen extends JPanel
         String query03 = String.format(" ALTER TABLE temp_Macros DROP COLUMN current_Weight_In_Pounds;");
         String query04 = String.format("UPDATE temp_Macros SET PlanID = %s;", toPlan);
         String query05 = String.format("""
-                     INSERT INTO macros_Per_Pound_And_Limits
-                    (planID, current_Weight_KG, BodyFatPercentage, Protein_PerPound, Carbohydrates_PerPound, Fibre, Fats_PerPound, Saturated_Fat_Limit,
-                    Salt_LIMIT, Water_Target, Additional_Calories)
-                                        
-                    SELECT * FROM temp_Macros;""");
+                 INSERT INTO macros_Per_Pound_And_Limits
+                (planID, current_Weight_KG, BodyFatPercentage, Protein_PerPound, Carbohydrates_PerPound, Fibre, Fats_PerPound, Saturated_Fat_Limit,
+                Salt_LIMIT, Water_Target, Additional_Calories)
+                                    
+                SELECT * FROM temp_Macros;""");
 
         String query06 = String.format(" DROP TABLE IF EXISTS temp_Macros;");
 
-        if (!(db.uploadData_Batch( new String[]{query000, query01, query02, query03, query04, query05, query06})))
+        if (!(db.uploadData_Batch(new String[]{query000, query01, query02, query03, query04, query05, query06})))
         {
             JOptionPane.showMessageDialog(null, "\n\nCannot Transfer Targets");
             return false;
         }
-        else if(showConfirmMsg)
+        else if (showConfirmMsg)
         {
             JOptionPane.showMessageDialog(null, "\n\nTargets Successfully Saved");
         }
@@ -1118,7 +1116,7 @@ public class MealPlanScreen extends JPanel
 
     public boolean get_IsPlanSelected()
     {
-        if (planID==null)
+        if (planID == null)
         {
             JOptionPane.showMessageDialog(frame, "Please Select A Plan First!");
             return false;

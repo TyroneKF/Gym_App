@@ -68,8 +68,8 @@ public class IngredientsTable extends JDBC_JTable
 
     // Ingredients Table
     public IngredientsTable(MyJDBC db, CollapsibleJPanel collapsibleObj, String databaseName, Object[][] data, String[] columnNames, int planID,
-                            Integer mealID, Integer tempPlan_Meal_ID, String mealName, String tableName, ArrayList<Integer> triggerColumns,
-                            ArrayList<Integer> unEditableColumns, ArrayList<Integer> colAvoidCentering, boolean setIconsUp,
+                            Integer mealID, Integer tempPlan_Meal_ID, String mealName, String tableName,
+                            ArrayList<Integer> unEditableColumns, ArrayList<Integer> colAvoidCentering,
                             TotalMealTable total_Meal_Table, MacrosLeftTable macrosLeft_Table)
     {
         super.db = db;
@@ -96,8 +96,7 @@ public class IngredientsTable extends JDBC_JTable
 
         super.unEditableColumns = unEditableColumns;
         super.colAvoidCentering = colAvoidCentering;
-        this.triggerColumns = triggerColumns;
-        this.setIconsUp = setIconsUp;
+        this.setIconsUp = true;
 
         this.total_Meal_Table = total_Meal_Table;
         this.macrosLeft_Table = macrosLeft_Table;
@@ -352,6 +351,33 @@ public class IngredientsTable extends JDBC_JTable
 
         renderer.setModel(model);
         tableColumn.setCellRenderer(renderer);
+    }
+
+
+    public void setUpIngredientsTableActionCells(Integer[] triggerColumns,  Integer[] actionListenerColumns,ArrayList<String> ingredientsInDB )
+    {
+        set_TriggerColumns(triggerColumns);
+
+        setUpJComboColumn(actionListenerColumns[0], "IngredientName", ingredientsInDB);
+        setUpSupplierColumn(actionListenerColumns[1]);
+        setupDeleteBtnColumn(actionListenerColumns[2]);
+    }
+
+    /*
+      Method used to set:
+      ingredientsIndex, IngredientID, Quantity, ingredientName, Supplier
+      from inputs after the hide columns methods has been called.
+    */
+    private void set_TriggerColumns(Integer[] columns)
+    {
+        set_IngredientsTable_Index_Col(columns[0]);
+        set_IngredientsTable_ID_Col(columns[1]);
+        set_IngredientsTable_Quantity_Col(columns[2]);
+        set_IngredientsTable_IngredientsName_Col(columns[3]);
+        set_IngredientsTable_Supplier_Col(columns[4]);
+
+        triggerColumns = new ArrayList(Arrays.asList(getIngredientsTable_Index_Col(), getIngredientsTable_ID_Col(),
+                getIngredientsTable_Quantity_Col(), getIngredientsTable_IngredientsName_Col(), getIngredientsTable_Supplier_Col()));
     }
 
     //##################################################################################################################
@@ -956,8 +982,10 @@ public class IngredientsTable extends JDBC_JTable
 
 
         //######################################################################
-        // If the Quantity Value on this Row Is Null Set it to 0 + Error MSG
+        // Trigger Columns
         //######################################################################
+
+        // Ingredients Quantity Column
         if (columnEdited == getIngredientsTable_Quantity_Col() && jTable.getValueAt(rowEdited, columnEdited) == null)
         {
             JOptionPane.showMessageDialog(null, String.format("\n\nPlease insert a reasonable 'Quantity' value in the cell at: \n\nRow: %s \nColumn: %s", rowEdited + 1, columnEdited + 1));
@@ -966,9 +994,14 @@ public class IngredientsTable extends JDBC_JTable
             jTable.setValueAt(cellValue, rowEdited, columnEdited);
         }
 
-        //########################
-        //Other Trigger Columns
-        //########################
+        else if (columnEdited == getIngredientsTable_Quantity_Col())
+        {
+            System.out.printf("\ntableDataChange_Action() Quantity Being Changed");
+            setRowBeingEdited();// HELLO
+
+            updateTableValuesByQuantity(rowEdited, ingredientIndex, cellValue);
+            return;
+        }
 
         // Ingredients Name Column
         else if (columnEdited == getIngredientsTable_IngredientsName_Col())
@@ -1207,17 +1240,6 @@ public class IngredientsTable extends JDBC_JTable
             updateTableValuesByQuantity(rowEdited, ingredientIndex, jTable.getValueAt(rowEdited, getIngredientsTable_Quantity_Col()));
             return;
         }
-
-        // Ingredients Quantity Column
-        else if (columnEdited == getIngredientsTable_Quantity_Col())
-        {
-            System.out.printf("\ntableDataChange_Action() Quantity Being Changed");
-            setRowBeingEdited();// HELLO
-
-            updateTableValuesByQuantity(rowEdited, ingredientIndex, cellValue);
-            return;
-        }
-
     }
 
     private void updateTableValuesByQuantity(int row, Object ingredients_Index, Object quantity)
@@ -1348,17 +1370,15 @@ public class IngredientsTable extends JDBC_JTable
         meal_In_DB = mealInDB;
     }
 
-    public void set_TriggerColumns(Integer[] columns)
-    {
-        set_IngredientsTable_Index_Col(columns[0]);
-        set_IngredientsTable_ID_Col(columns[1]);
-        set_IngredientsTable_Quantity_Col(columns[2]);
-        set_IngredientsTable_IngredientsName_Col(columns[3]);
-        set_IngredientsTable_Supplier_Col(columns[4]);
 
-        triggerColumns = new ArrayList(Arrays.asList(getIngredientsTable_Index_Col(), getIngredientsTable_ID_Col(),
-                getIngredientsTable_Quantity_Col(), getIngredientsTable_IngredientsName_Col(), getIngredientsTable_Supplier_Col()));
-    }
+
+
+
+
+
+
+
+
 
     //#############################################################
     private void set_IngredientsTable_Index_Col(int value)
