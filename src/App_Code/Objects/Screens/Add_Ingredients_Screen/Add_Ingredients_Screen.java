@@ -1271,7 +1271,7 @@ public class Add_Ingredients_Screen extends JFrame
 
         protected boolean doesStringContainCharacters(String input)
         {
-            Pattern p = Pattern.compile("[^a-z]", Pattern.CASE_INSENSITIVE);
+            Pattern p = Pattern.compile("[^a-z] /^\\S/", Pattern.CASE_INSENSITIVE);
             Matcher m = p.matcher(input);
             boolean b = m.find();
 
