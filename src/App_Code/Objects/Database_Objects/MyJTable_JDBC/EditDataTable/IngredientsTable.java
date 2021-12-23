@@ -105,110 +105,104 @@ public class IngredientsTable extends JDBC_JTable
         setUp();
     }
 
-    //##################################################################################################################
-    // JCOMBO Methods
-    //##################################################################################################################
-    public void setUpSupplierColumn(int col)
+    public class SetupSupplierColumn
     {
-        TableColumn tableColumn = jTable.getColumnModel().getColumn(col);
-
-        //Set up the editor for the sport cells.
-        tableColumn.setCellEditor(new ComboEditor());
-
-        //Set up tool tips for the sport cells.
-        DefaultTableCellRenderer renderer = new DefaultTableCellRenderer()
+        public SetupSupplierColumn(int col)
         {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value,
-                                                           boolean isSelected, boolean hasFocus, int row, int column)
+            TableColumn tableColumn = jTable.getColumnModel().getColumn(col);
+
+            //Set up the editor for the sport cells.
+            tableColumn.setCellEditor(new ComboEditor());
+
+            //Set up tool tips for the sport cells.
+            DefaultTableCellRenderer renderer = new DefaultTableCellRenderer()
             {
-                JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                label.setIcon(UIManager.getIcon("Table.descendingSortIcon"));
-                return label;
-            }
-        };
-
-        renderer.setToolTipText("Click for combo box");
-        tableColumn.setCellRenderer(renderer);
-    }
-
-    /**
-     * Custom editor that changes the combo choices based
-     * on the "Vegetarian" column value
-     */
-    class ComboEditor extends DefaultCellEditor
-    {
-        DefaultComboBoxModel model1;
-        JComboBox comboBox;
-
-        public ComboEditor()
-        {
-            super(new JComboBox());
-            model1 = (DefaultComboBoxModel) ((JComboBox) getComponent()).getModel();
-
-            comboBox = ((JComboBox) getComponent());
-            comboBox.setEditable(true);
-
-            comboBox.addItemListener(new ItemListener()
-            {
-                public void itemStateChanged(ItemEvent ie)
+                @Override
+                public Component getTableCellRendererComponent(JTable table, Object value,
+                                                               boolean isSelected, boolean hasFocus, int row, int column)
                 {
-                    if (ie.getStateChange() == ItemEvent.DESELECTED)
-                    {
-                        previous_Supplier_JComboItem = ie.getItem();
-                    }
-                    if (ie.getStateChange() == ItemEvent.SELECTED)
-                    {
-                        selected_Supplier_JCombo_Item = ie.getItem();
-                    }
+                    JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                    label.setIcon(UIManager.getIcon("Table.descendingSortIcon"));
+                    return label;
                 }
-            });
+            };
 
-
-            //######################################################
-            // Centre ComboBox Items
-            //######################################################
-            ((JLabel) comboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
-
-            //######################################################
-            // Make JComboBox Visible
-            //######################################################
-
-            ComboBoxTableCellRenderer renderer = new ComboBoxTableCellRenderer();
-
-            renderer.setModel(model1);
-
-            TableColumn tableColumn = jTable.getColumnModel().getColumn(getIngredientsTable_Supplier_Col());
+            renderer.setToolTipText("Click for combo box");
             tableColumn.setCellRenderer(renderer);
         }
-
-
-        //First time the cell is created
-        @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column)
+        class ComboEditor extends DefaultCellEditor
         {
-            // HELLO
+            DefaultComboBoxModel model1;
+            JComboBox comboBox;
+
+            public ComboEditor()
+            {
+                super(new JComboBox());
+                model1 = (DefaultComboBoxModel) ((JComboBox) getComponent()).getModel();
+
+                comboBox = ((JComboBox) getComponent());
+                comboBox.setEditable(true);
+
+                comboBox.addItemListener(new ItemListener()
+                {
+                    public void itemStateChanged(ItemEvent ie)
+                    {
+                        if (ie.getStateChange() == ItemEvent.DESELECTED)
+                        {
+                            previous_Supplier_JComboItem = ie.getItem();
+                        }
+                        if (ie.getStateChange() == ItemEvent.SELECTED)
+                        {
+                            selected_Supplier_JCombo_Item = ie.getItem();
+                        }
+                    }
+                });
+
+
+                //######################################################
+                // Centre ComboBox Items
+                //######################################################
+                ((JLabel) comboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
+
+                //######################################################
+                // Make JComboBox Visible
+                //######################################################
+
+                ComboBoxTableCellRenderer renderer = new ComboBoxTableCellRenderer();
+
+                renderer.setModel(model1);
+
+                TableColumn tableColumn = jTable.getColumnModel().getColumn(getIngredientsTable_Supplier_Col());
+                tableColumn.setCellRenderer(renderer);
+            }
+
+
+            //First time the cell is created
+            @Override
+            public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column)
+            {
+                // HELLO
             /*
                save previous option then set it to it if it exists in list
              */
-            //########################################
-            // Get Previous Stored Item
-            ////######################################
+                //########################################
+                // Get Previous Stored Item
+                ////######################################
 
-            model1.removeAllElements();
+                model1.removeAllElements();
 
-            String keyColumnValue = jTable.getValueAt(row, getIngredientsTable_ID_Col()).toString(); // HELLO Not Sure what this does
-            Object ingredientID = jTable.getValueAt(row, getIngredientsTable_ID_Col());
-            Object ingredientIndex = jTable.getValueAt(row, getIngredientsTable_Index_Col());
-            Object ingrdientName = table.getValueAt(row, getIngredientsTable_IngredientsName_Col());
+                String keyColumnValue = jTable.getValueAt(row, getIngredientsTable_ID_Col()).toString(); // HELLO Not Sure what this does
+                Object ingredientID = jTable.getValueAt(row, getIngredientsTable_ID_Col());
+                Object ingredientIndex = jTable.getValueAt(row, getIngredientsTable_Index_Col());
+                Object ingrdientName = table.getValueAt(row, getIngredientsTable_IngredientsName_Col());
 
-            TableColumn tableColumn = jTable.getColumnModel().getColumn(column);
+                TableColumn tableColumn = jTable.getColumnModel().getColumn(column);
 
-            //########################################
-            // Get Supplier Based on ingredientIndex
-            ////######################################
+                //########################################
+                // Get Supplier Based on ingredientIndex
+                ////######################################
 
-            String queryStore = String.format("""
+                String queryStore = String.format("""
                     SELECT  IFNULL(C.STORE_Name, 'N/A') AS STORE
                     FROM 
                     (
@@ -225,42 +219,44 @@ public class IngredientsTable extends JDBC_JTable
                     ON t.IngredientID = C.IngredientID
                     ORDER BY STORE;""", ingredientID);
 
-            ArrayList<String> storesResults = db.getSingleColumnQuery_ArrayList(queryStore);
+                ArrayList<String> storesResults = db.getSingleColumnQuery_ArrayList(queryStore);
 
-            //HELLO REMOVE
+                //HELLO REMOVE
 /*
             String seperator = "#######################################################################";
             System.out.printf("\n\n%s \n\nQuery: \n%s \n\nList Of Available Shops:\n\n%s", seperator, queryStore, storesResults);
 
  */
 
-            if (storesResults != null)
-            {
-                boolean NA_in_List = false;
-                for (String store : storesResults)
+                if (storesResults != null)
                 {
-                    model1.addElement(store);
-                    if (store.equals("N/A"))
+                    boolean NA_in_List = false;
+                    for (String store : storesResults)
                     {
-                        NA_in_List = true;
+                        model1.addElement(store);
+                        if (store.equals("N/A"))
+                        {
+                            NA_in_List = true;
+                        }
+                        //System.out.printf("\n\n%s", store); //HELLO Remove
                     }
-                    //System.out.printf("\n\n%s", store); //HELLO Remove
-                }
 
-                if (!(ingrdientName.equals("None Of The Above")) && !NA_in_List)
+                    if (!(ingrdientName.equals("None Of The Above")) && !NA_in_List)
+                    {
+                        model1.addElement("N/A");
+                    }
+                }
+                else
                 {
-                    model1.addElement("N/A");
+                    //HELLO FIX WILL SOMEHOW CAUSE ERROR
+                    JOptionPane.showMessageDialog(null, "\n\nError \nSetting Available Stores for Ingredient!");
                 }
-            }
-            else
-            {
-                //HELLO FIX WILL SOMEHOW CAUSE ERROR
-                JOptionPane.showMessageDialog(null, "\n\nError \nSetting Available Stores for Ingredient!");
-            }
 
-            return super.getTableCellEditorComponent(table, value, isSelected, row, column);
+                return super.getTableCellEditorComponent(table, value, isSelected, row, column);
+            }
         }
     }
+
 
     public void setupIngredientTypeColumn(int col)
     {
@@ -357,7 +353,7 @@ public class IngredientsTable extends JDBC_JTable
 
         setupIngredientTypeColumn(actionListenerColumns[0]);
         setUpJComboColumn(actionListenerColumns[1], "IngredientName", ingredientsInDB);
-        setUpSupplierColumn(actionListenerColumns[2]);
+        new SetupSupplierColumn(actionListenerColumns[2]);
         setupDeleteBtnColumn(actionListenerColumns[3]);
     }
 
@@ -442,8 +438,7 @@ public class IngredientsTable extends JDBC_JTable
                 setUpJComboColumn(key, "IngredientName", getJcomboMap().get(key));
             }
 
-            setUpSupplierColumn(getIngredientsTable_Supplier_Col());
-
+           new  SetupSupplierColumn(getIngredientsTable_Supplier_Col());
         }
         else
         {
