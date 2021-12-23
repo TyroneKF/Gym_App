@@ -890,13 +890,6 @@ public class IngredientsTable extends JDBC_JTable
             updateTableValuesByQuantity(rowEdited, ingredientIndex, jTable.getValueAt(rowEdited, getIngredientsTable_Quantity_Col()));
             return;
         }
-
-        if (getRowsBeingEdited())
-        {
-            System.out.printf("\n\n@tableDataChange_Action() Uncaught Exception \nRow: %s, Column: %s", rowEdited, columnEdited);
-            setRowBeingEdited();
-        }
-
     }
 
     private void updateTableValuesByQuantity(int row, Object ingredients_Index, Object quantity)
