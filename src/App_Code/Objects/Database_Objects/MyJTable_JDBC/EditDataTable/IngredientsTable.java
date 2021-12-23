@@ -415,16 +415,22 @@ public class IngredientsTable extends JDBC_JTable
                 comboBox = ((JComboBox) getComponent());
                 comboBox.setEditable(true);
 
+                comboBox.addActionListener(ae -> {
+                    ingredientNameChanged = false;
+                });
+
                 comboBox.addItemListener(new ItemListener()
                 {
                     public void itemStateChanged(ItemEvent ie)
                     {
+                        ingredientNameChanged = true;
                         if (ie.getStateChange() == ItemEvent.DESELECTED)
                         {
                             previous_IngredientName_JComboItem = ie.getItem();
                         }
                         if (ie.getStateChange() == ItemEvent.SELECTED)
                         {
+
                             selected_IngredientName_JCombo_Item = ie.getItem();
                         }
                     }
@@ -601,7 +607,7 @@ public class IngredientsTable extends JDBC_JTable
         if (rowBeingEdited || triggerColumns == null || !(triggerColumns.contains(columnEdited)))
         {
             //HELLO REMOVE
-            System.out.printf("\nExited tableDataChange_Action() Row: %s, Column: %s", rowEdited, columnEdited);
+           // System.out.printf("\nExited tableDataChange_Action() Row: %s, Column: %s", rowEdited, columnEdited);
             return;
         }
 
@@ -622,11 +628,10 @@ public class IngredientsTable extends JDBC_JTable
 
         if(columnEdited == getIngredientsTable_Type_Col())
         {
+            System.out.printf("\n\n@tableDataChange_Action() Ingredient Type Changed");
             setRowBeingEdited();
             return;
         }
-
-
 
         // Ingredients Quantity Column
         if (columnEdited == getIngredientsTable_Quantity_Col() && jTable.getValueAt(rowEdited, columnEdited) == null)
@@ -650,6 +655,7 @@ public class IngredientsTable extends JDBC_JTable
         // Ingredients Name Column
         else if (columnEdited == getIngredientsTable_IngredientsName_Col())
         {
+            System.out.printf("\n\n@tableDataChange_Action() Ingredient Name Changed");
             //HELLO DELETE
             /*
             System.out.printf("\n\ningredientsTable_IngredientsName Row %s, Column %s \nPrevious Item %s \nCurrent Item %s",
@@ -661,6 +667,7 @@ public class IngredientsTable extends JDBC_JTable
             if (!(ingredientNameChanged))
             {
                 setRowBeingEdited();
+                System.out.printf("\n\nExit No Update Ingredient Name Changed");
                 return;
             }
 
