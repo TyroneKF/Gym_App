@@ -48,7 +48,7 @@ public class IngredientsTable extends JDBC_JTable
     ingredientNameChanged = false;
 
     private int
-            ingredientsTable_Index_Col ,
+            ingredientsTable_Index_Col,
             ingredientsTable_ID_Col,
             ingredientsTable_Quantity_Col,
             ingredientsTable_Type_Col,
@@ -153,18 +153,13 @@ public class IngredientsTable extends JDBC_JTable
             {
                 public void itemStateChanged(ItemEvent ie)
                 {
+                    if (ie.getStateChange() == ItemEvent.DESELECTED)
+                    {
+                        previous_Supplier_JComboItem = ie.getItem();
+                    }
                     if (ie.getStateChange() == ItemEvent.SELECTED)
                     {
-                        if (previous_Supplier_JComboItem == null)
-                        {
-                            selected_Supplier_JCombo_Item = ie.getItem();
-                            previous_Supplier_JComboItem = ie.getItem();
-                        }
-                        else
-                        {
-                            previous_Supplier_JComboItem = selected_Supplier_JCombo_Item;
-                            selected_Supplier_JCombo_Item = ie.getItem();
-                        }
+                        selected_Supplier_JCombo_Item = ie.getItem();
                     }
                 }
             });
@@ -294,24 +289,15 @@ public class IngredientsTable extends JDBC_JTable
         {
             public void itemStateChanged(ItemEvent ie)
             {
-                if(ie.getStateChange() == ItemEvent.DESELECTED) //edit: bracket was missing
+                if (ie.getStateChange() == ItemEvent.DESELECTED) //edit: bracket was missing
                 {
-
+                    previous_IngredientName_JComboItem = ie.getItem();
                 }
                 else if (ie.getStateChange() == ItemEvent.SELECTED)
                 {
                     ingredientNameChanged = true;
 
-                    if (previous_IngredientName_JComboItem == null)
-                    {
-                        selected_IngredientName_JCombo_Item = ie.getItem();
-                        previous_IngredientName_JComboItem = ie.getItem();
-                    }
-                    else
-                    {
-                        previous_IngredientName_JComboItem = selected_IngredientName_JCombo_Item;
-                        selected_IngredientName_JCombo_Item = ie.getItem();
-                    }
+                    selected_IngredientName_JCombo_Item = ie.getItem();
                 }
             }
         });
@@ -365,7 +351,7 @@ public class IngredientsTable extends JDBC_JTable
     }
 
 
-    public void setUpIngredientsTableActionCells(Integer[] triggerColumns,  Integer[] actionListenerColumns,ArrayList<String> ingredientsInDB )
+    public void setUpIngredientsTableActionCells(Integer[] triggerColumns, Integer[] actionListenerColumns, ArrayList<String> ingredientsInDB)
     {
         set_TriggerColumns(triggerColumns);
 
