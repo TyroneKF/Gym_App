@@ -1008,14 +1008,13 @@ public class IngredientsTable extends JDBC_JTable
                 SetUp_HiddenTableColumns(getHideColumns(), get_StartingUpdateColumn());
             }
 
-            if (getDeleteBTN_Col() != null)
-            {
-                setupDeleteBtnColumn(getDeleteBTN_Col()); // specifying delete column
-            }
-
             //EDITING
-             supplierColumn = new SetupSupplierColumn(getIngredientsTable_Supplier_Col());
-             ingredientTypeColumn = new SetupIngredientTypeColumn(getIngredientsTable_Type_Col());
+            ingredientTypeColumn = new SetupIngredientTypeColumn(getIngredientsTable_Type_Col());
+            ingredientNameColumn = new SetupIngredientNameColumn(getIngredientsTable_IngredientsName_Col());
+            supplierColumn = new SetupSupplierColumn(getIngredientsTable_Supplier_Col());
+
+            setupDeleteBtnColumn(getDeleteBTN_Col()); // specifying delete column
+
         }
         else
         {
@@ -1366,9 +1365,7 @@ public class IngredientsTable extends JDBC_JTable
         String query8 = String.format("INSERT INTO ingredients_in_meal SELECT * FROM temp_ingredients_in_meal; ");
         String query9 = String.format("DROP TABLE temp_ingredients_in_meal; ");
 
-        String[] query_Temp_Data = new String[]{query1, query2, query3,
-                //query3_2, query3_3,
-                query4, query5, query8, query9};
+        String[] query_Temp_Data = new String[]{query1, query2, query3,query4, query5, query8, query9};
 
         if (!(db.uploadData_Batch(query_Temp_Data)))
         {
