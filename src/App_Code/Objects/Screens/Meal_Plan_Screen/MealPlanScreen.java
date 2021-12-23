@@ -47,7 +47,7 @@ public class MealPlanScreen extends JPanel
     private IngredientsTable jTableBeingAdded;
     private ArrayList<IngredientsTable> listOfJTables = new ArrayList<>();
 
-    String databaseName = "gymapp3";
+    String databaseName = "gymapp4";
 
     //########################################################
     // Variables
