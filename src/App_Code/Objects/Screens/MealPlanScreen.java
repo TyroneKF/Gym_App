@@ -1,4 +1,4 @@
-package App_Code.Objects.Screens.Meal_Plan_Screen;
+package App_Code.Objects.Screens;
 
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
@@ -11,8 +11,6 @@ import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
-import App_Code.Objects.Screens.Add_Ingredients_Screen.Add_Ingredients_Screen;
-import App_Code.Objects.Screens.MacrosTargets_Screen.macrosTargets_Screen;
 
 import javax.swing.*;
 import java.awt.*;
@@ -40,8 +38,8 @@ public class MealPlanScreen extends JPanel
     private Container contentPane;
 
     private MyJDBC db;
-    private App_Code.Objects.Screens.MacrosTargets_Screen.macrosTargets_Screen macrosTargets_Screen = null;
-    private Add_Ingredients_Screen Add_Ingredients_Screen = null;
+    private App_Code.Objects.Screens.macrosTargets_Screen macrosTargets_Screen = null;
+    private Add_Ingredients_Screen addIngredientsScreen = null;
 
 
     private IngredientsTable jTableBeingAdded;
@@ -441,7 +439,14 @@ public class MealPlanScreen extends JPanel
                 saveMacroTargets(true);
                 if (macrosTargets_Screen != null)
                 {
-                    macrosTargets_Screen.closeeWindow();
+                    if(macrosTargets_Screen != null)
+                    {
+                        macrosTargets_Screen.closeeWindow();
+                    }
+                    if(addIngredientsScreen != null)
+                    {
+                        addIngredientsScreen.closeeWindow();
+                    }
                 }
             }
         });
@@ -997,17 +1002,17 @@ public class MealPlanScreen extends JPanel
             return;
         }
 
-        if (Add_Ingredients_Screen != null)
+        if (addIngredientsScreen != null)
         {
-            Add_Ingredients_Screen.makeJframeVisible();
+            addIngredientsScreen.makeJframeVisible();
             return;
         }
-        Add_Ingredients_Screen = new Add_Ingredients_Screen(db, this, planID, tempPlanID, planName);
+        addIngredientsScreen = new Add_Ingredients_Screen(db, this, planID, tempPlanID, planName);
     }
 
     public void remove_addIngredients_Screen()
     {
-        Add_Ingredients_Screen = null;
+        addIngredientsScreen = null;
     }
 
     //#####################################

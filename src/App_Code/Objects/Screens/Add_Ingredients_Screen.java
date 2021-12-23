@@ -1,10 +1,10 @@
-package App_Code.Objects.Screens.Add_Ingredients_Screen;
+package App_Code.Objects.Screens;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Gui_Objects.*;
-import App_Code.Objects.Screens.Meal_Plan_Screen.MealPlanScreen;
+import App_Code.Objects.Screens.MealPlanScreen;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -2292,6 +2292,11 @@ public class Add_Ingredients_Screen extends JFrame
     public void closeWindowEvent()
     {
         gui.remove_addIngredients_Screen();
+    }
+
+    public void closeeWindow()
+    {
+        this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }
 
     private void addToContainer(Container container, Component addToContainer, int gridx, int gridy, int gridwidth,
