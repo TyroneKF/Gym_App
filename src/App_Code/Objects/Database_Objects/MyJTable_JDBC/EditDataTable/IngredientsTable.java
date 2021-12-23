@@ -48,11 +48,12 @@ public class IngredientsTable extends JDBC_JTable
     ingredientNameChanged = false;
 
     private int
-            ingredientsTable_Index_Col = 2,
-            ingredientsTable_ID_Col = 3,
-            ingredientsTable_Quantity_Col = 4,
-            ingredientsTable_IngredientsName_Col = 5,
-            ingredientsTable_Supplier_Col = 7;
+            ingredientsTable_Index_Col ,
+            ingredientsTable_ID_Col,
+            ingredientsTable_Quantity_Col,
+            ingredientsTable_Type_Col,
+            ingredientsTable_IngredientsName_Col,
+            ingredientsTable_Supplier_Col;
 
     private final int NoneOfTheAbove_PDID = 1;
 
@@ -266,6 +267,12 @@ public class IngredientsTable extends JDBC_JTable
         }
     }
 
+    public void setupIngredientTypeColumn(int col)
+    {
+
+    }
+
+
     //############################################
 
     @Override
@@ -287,7 +294,11 @@ public class IngredientsTable extends JDBC_JTable
         {
             public void itemStateChanged(ItemEvent ie)
             {
-                if (ie.getStateChange() == ItemEvent.SELECTED)
+                if(ie.getStateChange() == ItemEvent.DESELECTED) //edit: bracket was missing
+                {
+
+                }
+                else if (ie.getStateChange() == ItemEvent.SELECTED)
                 {
                     ingredientNameChanged = true;
 
@@ -358,9 +369,10 @@ public class IngredientsTable extends JDBC_JTable
     {
         set_TriggerColumns(triggerColumns);
 
-        setUpJComboColumn(actionListenerColumns[0], "IngredientName", ingredientsInDB);
-        setUpSupplierColumn(actionListenerColumns[1]);
-        setupDeleteBtnColumn(actionListenerColumns[2]);
+        setupIngredientTypeColumn(actionListenerColumns[0]);
+        setUpJComboColumn(actionListenerColumns[1], "IngredientName", ingredientsInDB);
+        setUpSupplierColumn(actionListenerColumns[2]);
+        setupDeleteBtnColumn(actionListenerColumns[3]);
     }
 
     /*
@@ -373,11 +385,12 @@ public class IngredientsTable extends JDBC_JTable
         set_IngredientsTable_Index_Col(columns[0]);
         set_IngredientsTable_ID_Col(columns[1]);
         set_IngredientsTable_Quantity_Col(columns[2]);
-        set_IngredientsTable_IngredientsName_Col(columns[3]);
-        set_IngredientsTable_Supplier_Col(columns[4]);
+        set_IngredientsTable_IngredientType_Col(columns[3]);
+        set_IngredientsTable_IngredientsName_Col(columns[4]);
+        set_IngredientsTable_Supplier_Col(columns[5]);
 
         triggerColumns = new ArrayList(Arrays.asList(getIngredientsTable_Index_Col(), getIngredientsTable_ID_Col(),
-                getIngredientsTable_Quantity_Col(), getIngredientsTable_IngredientsName_Col(), getIngredientsTable_Supplier_Col()));
+                getIngredientsTable_Quantity_Col(), getIngredientsTable_Type_Col(), getIngredientsTable_IngredientsName_Col(), getIngredientsTable_Supplier_Col()));
     }
 
     //##################################################################################################################
@@ -1371,15 +1384,6 @@ public class IngredientsTable extends JDBC_JTable
     }
 
 
-
-
-
-
-
-
-
-
-
     //#############################################################
     private void set_IngredientsTable_Index_Col(int value)
     {
@@ -1394,6 +1398,11 @@ public class IngredientsTable extends JDBC_JTable
     private void set_IngredientsTable_Quantity_Col(int value)
     {
         ingredientsTable_Quantity_Col = value;
+    }
+
+    private void set_IngredientsTable_IngredientType_Col(int value)
+    {
+        ingredientsTable_Type_Col = value;
     }
 
     private void set_IngredientsTable_IngredientsName_Col(int value)
@@ -1422,6 +1431,11 @@ public class IngredientsTable extends JDBC_JTable
     private int getIngredientsTable_Quantity_Col()
     {
         return ingredientsTable_Quantity_Col;
+    }
+
+    private int getIngredientsTable_Type_Col()
+    {
+        return ingredientsTable_Type_Col;
     }
 
     private int getIngredientsTable_IngredientsName_Col()

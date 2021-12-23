@@ -69,21 +69,26 @@ public class MealPlanScreen extends JPanel
 
     private final Integer
             original_IngredientsTable_Quantity_Col = 4,
-            original_IngredientsTable_IngredientsName_Col = 5,
-            original_IngredientsTable_Supplier_Col = 7,
-            original_ingredientsTable_DeleteBTN_Col = 17,
+            original_IngredTable_Type_Col = 5,
+            original_IngredientsTable_IngredientsName_Col = 6,
+            original_IngredientsTable_Supplier_Col = 8,
+            original_ingredientsTable_DeleteBTN_Col = 18,
 
             afterHiding_IngredTable_IngredientIndexCol = 0,
             afterHiding_IngredTable_IngredientID = 1,
             afterHiding_IngredTable_Quantity_Col = 2,
-            afterHiding_IngredTable_IngredientsName_Col = 3,
-            afterHiding_IngredTable_Supplier_Col = 5,
-            afterHiding_IngredTable_DeleteBTN_Col = 15;
+            afterHiding_IngredTable_Type_Col = 3,
+            afterHiding_IngredTable_IngredientsName_Col = 4,
+            afterHiding_IngredTable_Supplier_Col = 6,
+            afterHiding_IngredTable_DeleteBTN_Col = 16;
 
     private final Integer[]
-            triggerColumns = new Integer[]{afterHiding_IngredTable_IngredientIndexCol, afterHiding_IngredTable_IngredientID, afterHiding_IngredTable_Quantity_Col, afterHiding_IngredTable_IngredientsName_Col, afterHiding_IngredTable_Supplier_Col},
-            actionListenerColumns = new Integer[]{afterHiding_IngredTable_IngredientsName_Col, afterHiding_IngredTable_Supplier_Col, afterHiding_IngredTable_DeleteBTN_Col};
+            triggerColumns = new Integer[]{afterHiding_IngredTable_IngredientIndexCol, afterHiding_IngredTable_IngredientID, afterHiding_IngredTable_Quantity_Col, afterHiding_IngredTable_Type_Col, afterHiding_IngredTable_IngredientsName_Col, afterHiding_IngredTable_Supplier_Col},
+            actionListenerColumns = new Integer[]{afterHiding_IngredTable_Type_Col, afterHiding_IngredTable_IngredientsName_Col, afterHiding_IngredTable_Supplier_Col, afterHiding_IngredTable_DeleteBTN_Col};
 
+    private final ArrayList<Integer>
+            editable_IngredientsTable_Columns = new ArrayList<Integer>(Arrays.asList(original_IngredientsTable_Quantity_Col, original_IngredTable_Type_Col,  original_IngredientsTable_IngredientsName_Col, original_IngredientsTable_Supplier_Col)),
+            ingredients_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList(original_IngredTable_Type_Col, original_IngredientsTable_IngredientsName_Col, original_IngredientsTable_Supplier_Col, original_ingredientsTable_DeleteBTN_Col));
 
     private final Integer ingredientsTable_StartingCol = 2, totalMealTable_StartCol = 3,
             macroTargets_StartCol = 2, macrosLeftTable_StartCol = 2;
@@ -97,9 +102,6 @@ public class MealPlanScreen extends JPanel
             macros_Targets_Table_Hidden_Col = new ArrayList<Integer>(Arrays.asList(1, 2)),
             macrosLeft_Table_Hidden_Col = new ArrayList<Integer>(Arrays.asList(1, 2));
 
-    private final ArrayList<Integer>
-            editable_IngredientsTable_Columns = new ArrayList<Integer>(Arrays.asList(original_IngredientsTable_Quantity_Col, original_IngredientsTable_IngredientsName_Col, original_IngredientsTable_Supplier_Col)),
-            ingredients_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList(original_IngredientsTable_IngredientsName_Col, original_IngredientsTable_Supplier_Col, original_ingredientsTable_DeleteBTN_Col));
 
     //########################################################
 
