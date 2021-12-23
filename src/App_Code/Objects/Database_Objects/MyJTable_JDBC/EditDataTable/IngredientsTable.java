@@ -19,15 +19,16 @@ import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class IngredientsTable extends JDBC_JTable
 {
-    private MacrosLeftTable macrosLeft_Table;
-    private TotalMealTable total_Meal_Table;
-
     //####################################
     // Objects
     //####################################
+    private MacrosLeftTable macrosLeft_Table;
+    private TotalMealTable total_Meal_Table;
+
     private JPanel spaceDivider;
     private CollapsibleJPanel collapsibleObj;
 
@@ -41,11 +42,19 @@ public class IngredientsTable extends JDBC_JTable
 
     private boolean
             rowBeingEdited = false,
-            setIconsUp = false,
+            setIconsUp = true,
             meal_In_DB = true,
             objectDeleted = false,
+            ingredientNameChanged = false,
 
-    ingredientNameChanged = false;
+            updateIngredientsType = true,
+            updateIngredientsName = true;
+
+    private HashMap<String, ArrayList<String>> map_ingredientTypesToIngredientNames = new HashMap<>();
+
+    private SetupSupplierColumn supplierColumn;
+    private SetupIngredientTypeColumn ingredientTypeColumn;
+    private SetupIngredientNameColumn ingredientNameColumn;
 
     private int
             ingredientsTable_Index_Col,
@@ -58,10 +67,10 @@ public class IngredientsTable extends JDBC_JTable
     private final int NoneOfTheAbove_PDID = 1;
 
     //SupplierName JComboBox Variables
-    private Object previous_Supplier_JComboItem, selected_Supplier_JCombo_Item;
-
-    //IngredientName JComboBox Variables
-    private Object previous_IngredientName_JComboItem, selected_IngredientName_JCombo_Item;
+    private Object
+            previous_Supplier_JComboItem, selected_Supplier_JCombo_Item,
+            previous_IngredientName_JComboItem, selected_IngredientName_JCombo_Item,
+            previous_IngredientType_JComboItem, selected_IngredientType_JComboItem;
 
     //##################################################################################################################
     // Constructor
@@ -97,14 +106,14 @@ public class IngredientsTable extends JDBC_JTable
 
         super.unEditableColumns = unEditableColumns;
         super.colAvoidCentering = colAvoidCentering;
-        this.setIconsUp = true;
 
         this.total_Meal_Table = total_Meal_Table;
         this.macrosLeft_Table = macrosLeft_Table;
 
         setUp();
     }
-
+    //##################################################################################################################
+    //##################################################################################################################
     public class SetupSupplierColumn
     {
         public SetupSupplierColumn(int col)
@@ -257,111 +266,303 @@ public class IngredientsTable extends JDBC_JTable
         }
     }
 
-
-    public void setupIngredientTypeColumn(int col)
+    public class SetupIngredientTypeColumn
     {
+        DefaultComboBoxModel model1;
+        JComboBox comboBox;
 
-    }
-
-
-    //############################################
-
-    @Override
-    public void setUpJComboColumn(int col, String type, ArrayList<String> items)
-    {
-
-        TableColumn tableColumn = jTable.getColumnModel().getColumn(col);
-
-        //Set up the editor for the sport cells.
-
-        JComboBox comboBox = new JComboBox();
-        comboBox.setEditable(true);
-
-        comboBox.addActionListener(ae -> {
-            ingredientNameChanged = false;
-        });
-
-        comboBox.addItemListener(new ItemListener()
+        public SetupIngredientTypeColumn(int col)
         {
-            public void itemStateChanged(ItemEvent ie)
+            TableColumn tableColumn = jTable.getColumnModel().getColumn(col);
+
+            //Set up the editor for the sport cells.
+            tableColumn.setCellEditor(new ComboEditor());
+
+            //Set up tool tips for the sport cells.
+            DefaultTableCellRenderer renderer = new DefaultTableCellRenderer()
             {
-                if (ie.getStateChange() == ItemEvent.DESELECTED) //edit: bracket was missing
+                @Override
+                public Component getTableCellRendererComponent(JTable table, Object value,
+                                                               boolean isSelected, boolean hasFocus, int row, int column)
                 {
-                    previous_IngredientName_JComboItem = ie.getItem();
+                    JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                    label.setIcon(UIManager.getIcon("Table.descendingSortIcon"));
+                    return label;
                 }
-                else if (ie.getStateChange() == ItemEvent.SELECTED)
-                {
-                    ingredientNameChanged = true;
+            };
 
-                    selected_IngredientName_JCombo_Item = ie.getItem();
-                }
+            renderer.setToolTipText("Click for combo box");
+            tableColumn.setCellRenderer(renderer);
+        }
+
+        class ComboEditor extends DefaultCellEditor
+        {
+           public ComboEditor()
+            {
+                super(new JComboBox());
+                model1 = (DefaultComboBoxModel) ((JComboBox) getComponent()).getModel();
+
+                comboBox = ((JComboBox) getComponent());
+                comboBox.setEditable(true);
+
+                comboBox.addItemListener(new ItemListener()
+                {
+                    public void itemStateChanged(ItemEvent ie)
+                    {
+                        if (ie.getStateChange() == ItemEvent.DESELECTED)
+                        {
+                            previous_IngredientType_JComboItem = ie.getItem();
+                        }
+                        if (ie.getStateChange() == ItemEvent.SELECTED)
+                        {
+                            selected_IngredientType_JComboItem = ie.getItem();
+                        }
+                    }
+                });
+
+
+                //######################################################
+                // Centre ComboBox Items
+                //######################################################
+                ((JLabel) comboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
+
+                //######################################################
+                // Make JComboBox Visible
+                //######################################################
+
+                ComboBoxTableCellRenderer renderer = new ComboBoxTableCellRenderer();
+
+                renderer.setModel(model1);
+
+                TableColumn tableColumn = jTable.getColumnModel().getColumn(getIngredientsTable_Supplier_Col());
+                tableColumn.setCellRenderer(renderer);
             }
-        });
 
 
-        DefaultComboBoxModel model = new DefaultComboBoxModel();
-
-        getJcomboMap().put(col, items);
-
-        for (int i = 0; i < items.size(); i++)
-        {
-            model.addElement(items.get(i));
-        }
-
-        comboBox.setModel(model);
-        tableColumn.setCellEditor(new DefaultCellEditor(comboBox)); // sets column to a comboBox
-
-        //##############################################################################
-        // Not Sure why this step has to be repeated, but, it doesn't work otherwise//
-        //##############################################################################
-
-        model = new DefaultComboBoxModel();
-        for (int i = 0; i < items.size(); i++)
-        {
-            model.addElement(items.get(i));
-        }
-
-
-        //######################################################
-        // Centre ComboBox Items
-        //######################################################
-
-        ((JLabel) comboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
-
-        //######################################################
-        // Make JComboBox Visible
-        //######################################################
-
-        ComboBoxTableCellRenderer renderer = new ComboBoxTableCellRenderer()
-        {
+            //First time the cell is created
             @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
+            public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column)
             {
-                setSelectedItem(value);
-                return this;
-            }
-        };
+                //########################################
+                // Get Previous Stored Item
+                ////######################################
 
-        renderer.setModel(model);
-        tableColumn.setCellRenderer(renderer);
+                model1.removeAllElements();
+
+                String keyColumnValue = jTable.getValueAt(row, getIngredientsTable_ID_Col()).toString(); // HELLO Not Sure what this does
+                Object ingredientID = jTable.getValueAt(row, getIngredientsTable_ID_Col());
+                Object ingredientIndex = jTable.getValueAt(row, getIngredientsTable_Index_Col());
+                Object ingrdientName = table.getValueAt(row, getIngredientsTable_IngredientsName_Col());
+
+                TableColumn tableColumn = jTable.getColumnModel().getColumn(column);
+
+                for (String key : map_ingredientTypesToIngredientNames.keySet())
+                {
+                   model1.addElement(key);
+                }
+
+                return super.getTableCellEditorComponent(table, value, isSelected, row, column);
+            }
+        }
+
+        public DefaultComboBoxModel getModel()
+        {
+            return model1;
+        }
+
+        public JComboBox getComboBox()
+        {
+            return comboBox;
+        }
     }
 
-
-    public void setUpIngredientsTableActionCells(Integer[] triggerColumns, Integer[] actionListenerColumns, ArrayList<String> ingredientsInDB)
+    public class SetupIngredientNameColumn
     {
-        set_TriggerColumns(triggerColumns);
+        DefaultComboBoxModel model1;
+        JComboBox comboBox;
 
-        setupIngredientTypeColumn(actionListenerColumns[0]);
-        setUpJComboColumn(actionListenerColumns[1], "IngredientName", ingredientsInDB);
-        new SetupSupplierColumn(actionListenerColumns[2]);
-        setupDeleteBtnColumn(actionListenerColumns[3]);
+        public SetupIngredientNameColumn(int col)
+        {
+            TableColumn tableColumn = jTable.getColumnModel().getColumn(col);
+
+            //Set up the editor for the sport cells.
+            tableColumn.setCellEditor(new ComboEditor());
+
+            //Set up tool tips for the sport cells.
+            DefaultTableCellRenderer renderer = new DefaultTableCellRenderer()
+            {
+                @Override
+                public Component getTableCellRendererComponent(JTable table, Object value,
+                                                               boolean isSelected, boolean hasFocus, int row, int column)
+                {
+                    JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                    label.setIcon(UIManager.getIcon("Table.descendingSortIcon"));
+                    return label;
+                }
+            };
+
+            renderer.setToolTipText("Click for combo box");
+            tableColumn.setCellRenderer(renderer);
+        }
+
+        class ComboEditor extends DefaultCellEditor
+        {
+            public ComboEditor()
+            {
+                super(new JComboBox());
+                model1 = (DefaultComboBoxModel) ((JComboBox) getComponent()).getModel();
+
+                comboBox = ((JComboBox) getComponent());
+                comboBox.setEditable(true);
+
+                comboBox.addItemListener(new ItemListener()
+                {
+                    public void itemStateChanged(ItemEvent ie)
+                    {
+                        if (ie.getStateChange() == ItemEvent.DESELECTED)
+                        {
+                            previous_IngredientName_JComboItem = ie.getItem();
+                        }
+                        if (ie.getStateChange() == ItemEvent.SELECTED)
+                        {
+                            selected_IngredientName_JCombo_Item = ie.getItem();
+                        }
+                    }
+                });
+
+
+                //######################################################
+                // Centre ComboBox Items
+                //######################################################
+                ((JLabel) comboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
+
+                //######################################################
+                // Make JComboBox Visible
+                //######################################################
+
+                ComboBoxTableCellRenderer renderer = new ComboBoxTableCellRenderer();
+
+                renderer.setModel(model1);
+
+                TableColumn tableColumn = jTable.getColumnModel().getColumn(getIngredientsTable_Supplier_Col());
+                tableColumn.setCellRenderer(renderer);
+            }
+
+
+            //First time the cell is created
+            @Override
+            public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column)
+            {
+                //########################################
+                // Get Previous Stored Item
+                ////######################################
+
+                model1.removeAllElements();
+
+                String keyColumnValue = jTable.getValueAt(row, getIngredientsTable_ID_Col()).toString(); // HELLO Not Sure what this does
+                Object ingredientID = jTable.getValueAt(row, getIngredientsTable_ID_Col());
+                Object ingredientIndex = jTable.getValueAt(row, getIngredientsTable_Index_Col());
+                Object ingrdientName = table.getValueAt(row, getIngredientsTable_IngredientsName_Col());
+
+                TableColumn tableColumn = jTable.getColumnModel().getColumn(column);
+
+                String ingredientType = table.getValueAt(row, getIngredientsTable_Type_Col()).toString();
+
+                for (String item : map_ingredientTypesToIngredientNames.get(ingredientType))
+                {
+                    model1.addElement(item);
+                }
+
+                return super.getTableCellEditorComponent(table, value, isSelected, row, column);
+            }
+        }
+
+        public DefaultComboBoxModel getModel()
+        {
+            return model1;
+        }
+
+        public JComboBox getComboBox()
+        {
+            return comboBox;
+        }
+    }
+
+    public void setUpdateIngredientsType(boolean x)
+    {
+        updateIngredientsType = x;
+    }
+
+    public boolean getUpdateIngredientsType()
+    {
+        return updateIngredientsType;
+    }
+
+    public void setUpdateIngredientsName(boolean x)
+    {
+        updateIngredientsName = x;
+    }
+
+    public boolean getUpdateIngredientsName()
+    {
+        return updateIngredientsName;
+    }
+
+    public void updateMapIngredientsTypesAndNames()
+    {
+        //##################################
+        // Clear List
+        //##################################
+        map_ingredientTypesToIngredientNames.clear();
+
+        //##################################
+        // Store all ingredientTypes Names
+        //##################################
+        String queryIngredientsType = String.format("SELECT DISTINCT Ingredient_Type  FROM ingredients_info;");
+        ArrayList<String> ingredientTypesResults = db.getSingleColumnQuery_ArrayList(queryIngredientsType);
+
+        if(ingredientTypesResults == null)
+        {
+            JOptionPane.showMessageDialog(null,"\n\nUnable to update Ingredient Type Info");
+        }
+        //######################################
+        // Store all ingredient types & names
+        //######################################
+        String errorTxt = "";
+
+        for(String ingredientType: ingredientTypesResults)
+        {
+            //########################################
+            // Get IngredientNames for Type
+            //########################################
+            String queryTypeIngredientNames = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Type = '%s';", ingredientType);
+            ArrayList<String>  ingredientNames = db.getSingleColumnQuery_ArrayList(queryTypeIngredientNames);
+
+            if(ingredientNames == null)
+            {
+                errorTxt += String.format("\nUnable to grab ingredient names for Type '%s'!", ingredientType);
+                continue;
+            }
+
+            //########################################
+            // Mapping Ingredient Type to Names
+            //########################################
+            map_ingredientTypesToIngredientNames.put(ingredientType, ingredientNames);
+
+            //System.out.printf("\n\nType %s\n%s",ingredientType, ingredientNames);
+        }
+
+        if(errorTxt.length()>0)
+        {
+            JOptionPane.showMessageDialog(null, String.format("Had Errors Trying to map ingredientTypes to IngredientNames: \n\n%s",errorTxt));
+        }
     }
 
     /*
-      Method used to set:
-      ingredientsIndex, IngredientID, Quantity, ingredientName, Supplier
-      from inputs after the hide columns methods has been called.
-    */
+         Method used to set:
+         ingredientsIndex, IngredientID, Quantity, ingredientName, Supplier
+         from inputs after the hide columns methods has been called.
+       */
     private void set_TriggerColumns(Integer[] columns)
     {
         set_IngredientsTable_Index_Col(columns[0]);
@@ -375,9 +576,388 @@ public class IngredientsTable extends JDBC_JTable
                 getIngredientsTable_Quantity_Col(), getIngredientsTable_Type_Col(), getIngredientsTable_IngredientsName_Col(), getIngredientsTable_Supplier_Col()));
     }
 
-    //##################################################################################################################
-    // Setup Methods
-    //##################################################################################################################
+    public void setUpIngredientsTableActionCells(Integer[] triggerColumns, Integer[] actionListenerColumns, ArrayList<String> ingredientsInDB)
+    {
+        set_TriggerColumns(triggerColumns);
+
+        updateMapIngredientsTypesAndNames();
+
+        ingredientTypeColumn = new  SetupIngredientTypeColumn(getIngredientsTable_Type_Col());
+        ingredientNameColumn = new SetupIngredientNameColumn(getIngredientsTable_IngredientsName_Col());
+
+        supplierColumn = new SetupSupplierColumn(getIngredientsTable_Supplier_Col());
+        setupDeleteBtnColumn(actionListenerColumns[3]);
+    }
+
+    @Override
+    protected void tableDataChange_Action()
+    {
+        int rowEdited = jTable.getEditingRow(), columnEdited = jTable.getEditingColumn();
+
+        //######################################################################
+        // Check if cell that triggered this event can execute
+        //######################################################################
+        // Avoids endless loop / if edited cell column, is supposed to a trigger an action
+        if (rowBeingEdited || triggerColumns == null || !(triggerColumns.contains(columnEdited)))
+        {
+            //HELLO REMOVE
+            System.out.printf("\nExited tableDataChange_Action() Row: %s, Column: %s", rowEdited, columnEdited);
+            return;
+        }
+
+        System.out.printf("\n\ntableDataChange_Action()");
+        setRowBeingEdited();
+
+        Object ingredientID = jTable.getValueAt(rowEdited, getIngredientsTable_ID_Col());
+
+        Object ingredientIndex = jTable.getValueAt(rowEdited, getIngredientsTable_Index_Col());
+
+        Object cellValue = jTable.getValueAt(rowEdited, columnEdited);
+
+
+        //######################################################################
+        // Trigger Columns
+        //######################################################################
+
+
+        if(columnEdited == getIngredientsTable_Type_Col())
+        {
+            setRowBeingEdited();
+            return;
+        }
+
+
+
+        // Ingredients Quantity Column
+        if (columnEdited == getIngredientsTable_Quantity_Col() && jTable.getValueAt(rowEdited, columnEdited) == null)
+        {
+            JOptionPane.showMessageDialog(null, String.format("\n\nPlease insert a reasonable 'Quantity' value in the cell at: \n\nRow: %s \nColumn: %s", rowEdited + 1, columnEdited + 1));
+
+            cellValue = 0.00;
+            setRowBeingEdited();
+            jTable.setValueAt(cellValue, rowEdited, columnEdited);
+        }
+
+        else if (columnEdited == getIngredientsTable_Quantity_Col())
+        {
+            System.out.printf("\ntableDataChange_Action() Quantity Being Changed");
+            setRowBeingEdited();// HELLO
+
+            updateTableValuesByQuantity(rowEdited, ingredientIndex, cellValue);
+            return;
+        }
+
+        // Ingredients Name Column
+        else if (columnEdited == getIngredientsTable_IngredientsName_Col())
+        {
+            //HELLO DELETE
+            /*
+            System.out.printf("\n\ningredientsTable_IngredientsName Row %s, Column %s \nPrevious Item %s \nCurrent Item %s",
+                    rowEdited, columnEdited, previous_IngredientName_JComboItem, selected_IngredientName_JCombo_Item); //HELLO REMOVE
+
+             */
+
+            // if the same item is selected avoid processing
+            if (!(ingredientNameChanged))
+            {
+                setRowBeingEdited();
+                return;
+            }
+
+            if (selected_IngredientName_JCombo_Item.equals("None Of The Above"))
+            {
+                if (getNonOfTheAboveInTableStatus(rowEdited, "change a current Ingredient in this meal to 'None Of The Above'"))
+                {
+                    jTable.setValueAt(previous_IngredientName_JComboItem, rowEdited, columnEdited);
+                    setRowBeingEdited();
+                    return;
+                }
+            }
+
+            //##################################################################################################
+            // Get Chosen Ingredient ID For Chosen Item (Ingredient Name)
+            //##################################################################################################
+
+            String query = String.format("Select IngredientID From ingredients_info WHERE Ingredient_Name = '%s';", selected_IngredientName_JCombo_Item);
+            System.out.printf("\n\n Query:\n\n %s", query);
+
+            ArrayList<ArrayList<Object>> results_Ingredient_ID = db.get_Multi_ColumnQuery_Object(query);
+
+            if (results_Ingredient_ID == null)
+            {
+                JOptionPane.showMessageDialog(null, "Unable to retrieve chosen Ingredient ID from DB!");
+
+                // Change Jtable JComboBox Back To Original Value
+                jTable.setValueAt(previous_IngredientName_JComboItem, rowEdited, columnEdited);
+                setRowBeingEdited();
+                return;
+            }
+
+            Object selected_Ingredient_ID = results_Ingredient_ID.get(0).get(0);
+
+            System.out.printf("\nPrevious JCombo Value: %s \nPrevious JCombo  ID: %s \n\nSelected JCombo Value: %s\nSelected JCombo ID: %s" +
+                            "\n\nRow  Selected: %s \nColumn Selected: %s",
+                    previous_IngredientName_JComboItem, ingredientID, selected_IngredientName_JCombo_Item, selected_Ingredient_ID, rowEdited, columnEdited);
+            System.out.println("\n\n#########################################################################");
+
+            //##################################################################################################
+            // Create Update Statements
+            //##################################################################################################
+
+            //#######################################
+            //Create IngredientID  Update Statement
+            //#######################################
+            String uploadQuery = String.format("""
+                    UPDATE  ingredients_in_meal
+                    SET IngredientID = %s
+                    WHERE Ingredients_Index = %s AND PlanID = %s;
+
+                        """, selected_Ingredient_ID, ingredientIndex, temp_PlanID);
+
+            //#######################################
+            //Create PDID Update Statement
+            //#######################################
+
+            //Get new PDID for New Ingredient which matches previously Selected Store
+            String query_PDID = String.format("""
+                                        
+                    SELECT IFNULL
+                    (
+                    	(
+                    		SELECT   i._NEW_POSSIBLE_PDID
+                    		FROM 
+                    		(       SELECT  n.IngredientID AS _NEW_IngredientID , i.PDID AS OLD_PDID
+                    				
+                    				FROM ingredients_in_meal i, ingredients_info n
+                    				
+                    				WHERE n.IngredientID = %s
+                    				AND i.PlanID = %s AND i.Ingredients_Index = %s
+                    		) AS t
+                                        
+                    		INNER JOIN
+                    		(
+                    		  SELECT PDID AS _PDID, Store_Name AS OLD_STORE FROM ingredientInShops
+                    		 
+                    		) AS c
+                                        
+                    		ON c._PDID = t.OLD_PDID
+                                        
+                    		INNER JOIN
+                    		(
+                    			SELECT PDID _NEW_POSSIBLE_PDID, IngredientID, Store_Name AS NEW_POSSIBLE_Supplier
+                    			FROM ingredientInShops		
+                    		) AS i
+                                        
+                    		ON
+                    		i.IngredientID = t._NEW_IngredientID
+                    		AND
+                    		c.OLD_STORE = i.NEW_POSSIBLE_Supplier
+                    		
+                    	)
+                    	
+                    , NULL);
+                    """, selected_Ingredient_ID, temp_PlanID, ingredientIndex);
+
+            ArrayList<String> newPDIDResults = db.getSingleColumnQuery_ArrayList(query_PDID);
+            if (newPDIDResults == null)
+            {
+                JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nUnable to retrieve pricing info!");
+                // Change Jtable JComboBox Back To Original Value
+                jTable.setValueAt(previous_IngredientName_JComboItem, rowEdited, columnEdited);
+
+                setRowBeingEdited();
+                return;
+            }
+
+            // Create  Statement for changing PDID (Ingredient_Index)
+            String uploadQuery2 = String.format("""
+                    UPDATE  ingredients_in_meal
+                    SET PDID = %s
+                    WHERE Ingredients_Index = %s AND PlanID = %s;
+
+                        """, newPDIDResults.get(0), ingredientIndex, temp_PlanID);
+
+            //  System.out.printf("\n\nQUERY PDID: \n'''%s''' \n\nPDID = %s \n\nUpload Query \n'''%s'''", query_PDID, newPDIDResults.get(0), uploadQuery2);
+
+            //##################################################################################################
+            // Upload IngredientName & NEW PDID
+            //##################################################################################################
+            if (!(db.uploadData_Batch(new String[]{uploadQuery, uploadQuery2})))
+            {
+                JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nUnable to update Ingredient In DB!");
+
+                // Change Jtable JComboBox Back To Original Value
+                jTable.setValueAt(previous_IngredientName_JComboItem, rowEdited, columnEdited);
+
+                setRowBeingEdited();
+                return;
+            }
+
+            //###################################
+            // Update IngredientName In JTable
+            //###################################
+            //HELLO if updateTableValuesByQuantity() updates this column remove this line of code
+            jTable.setValueAt(selected_Ingredient_ID, rowEdited, getIngredientsTable_ID_Col());
+
+            //###################################
+            // Update  Other Table Values
+            //###################################
+            setRowBeingEdited(); //HELLO
+
+            updateTableValuesByQuantity(rowEdited, ingredientIndex, jTable.getValueAt(rowEdited, getIngredientsTable_Quantity_Col()));
+            return;
+        }
+
+        // Ingredients Supplier Column
+        else if (columnEdited == getIngredientsTable_Supplier_Col())
+        {
+            String uploadQuery = "";
+
+            if (cellValue.equals("No Shop"))
+            {
+                setRowBeingEdited();
+                return;
+            }
+
+            if (!(cellValue.equals("N/A")))
+            {
+                //######################################################
+                // Get PDID For Chosen Store For Ingredient Statement
+                //######################################################
+                String getPDIDQuery = String.format("""
+                        SELECT PDID 
+                        FROM ingredientInShops
+                        WHERE IngredientID = %s  AND Store_Name = '%s';""", ingredientID, cellValue);
+
+                ArrayList<String> newPDIDResults = db.getSingleColumnQuery_ArrayList(getPDIDQuery);
+                if (newPDIDResults == null)
+                {
+                    JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nUnable to retrieve  Ingredient In Shop PDID info!");
+
+                    // HELLO Create Previous value for supplier column
+                    jTable.setValueAt(previous_Supplier_JComboItem, rowEdited, columnEdited);
+
+                    setRowBeingEdited();
+                    return;
+                }
+
+                //######################################################
+                // Create PDID Upload Statement
+                //######################################################
+
+                // Create  Statement for changing PDID (Ingredient_Index)
+                uploadQuery = String.format("""
+                        UPDATE  ingredients_in_meal
+                        SET PDID = %s
+                        WHERE Ingredients_Index = %s AND PlanID = %s;
+
+                            """, newPDIDResults.get(0), ingredientIndex, temp_PlanID);
+
+                System.out.printf("\n\nQUERY PDID: \n'''%s''' \n\nPDID = %s \n\nUpload Query \n'''%s'''", getPDIDQuery, newPDIDResults.get(0), uploadQuery);
+            }
+            else
+            {
+                // Create  Statement for changing PDID (Ingredient_Index)
+                uploadQuery = String.format("""
+                        UPDATE  ingredients_in_meal
+                        SET PDID = NULL
+                        WHERE Ingredients_Index = %s AND PlanID = %s;
+
+                            """, ingredientIndex, temp_PlanID);
+            }
+
+            //##################################################################################################
+            // Upload IngredientName & NEW PDID
+            //##################################################################################################
+            if (!(db.uploadData_Batch(new String[]{uploadQuery})))
+            {
+                JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nUnable to update Ingredient Store In DB!");
+
+                // HELLO Create Previous value for supplier column
+                jTable.setValueAt(previous_Supplier_JComboItem, rowEdited, columnEdited);
+
+                setRowBeingEdited();
+                return;
+            }
+
+            setRowBeingEdited();
+            updateTableValuesByQuantity(rowEdited, ingredientIndex, jTable.getValueAt(rowEdited, getIngredientsTable_Quantity_Col()));
+            return;
+        }
+
+        if(getRowsBeingEdited())
+        {
+            setRowBeingEdited();
+        };
+    }
+
+    private void updateTableValuesByQuantity(int row, Object ingredients_Index, Object quantity)
+    {
+        setRowBeingEdited();
+
+        //#######################################
+        // Updating Quantity Value in temp plan
+        //########################################
+
+        String query1 = String.format("""
+                UPDATE  ingredients_in_meal
+                SET Quantity = %s 
+                WHERE PlanID = %s  AND Ingredients_Index = %s;
+                """, quantity, temp_PlanID, ingredients_Index);
+
+        //HELLO DELETE
+        // System.out.printf("\n\nupdateTableValuesByQuantity() \nQuery: \n\n%s", query1);
+
+        if (!(db.uploadData_Batch(new String[]{query1})))
+        {
+            JOptionPane.showMessageDialog(null, "Un-able to Update row based on cell value!");
+
+            setRowBeingEdited();
+            return;
+        }
+
+
+        //####################################################################
+        //  Update Ingredients table based on DB
+        //####################################################################
+
+        String query = String.format("SELECT  * FROM ingredients_in_meal_calculation WHERE  ingredients_Index = %s AND PlanID = %s;",
+                ingredients_Index, temp_PlanID);
+
+        // HELLO REMOVE
+        // System.out.printf("\n\n%s", query);
+
+        ArrayList<ArrayList<Object>> ingredientsUpdateData = db.get_Multi_ColumnQuery_Object(query);
+
+        System.out.printf("\n\n\n\n%s\n\n", ingredientsUpdateData);  // HELLO REMOVE
+
+        if (ingredientsUpdateData == null)
+        {
+            JOptionPane.showMessageDialog(null, "ERROR 2: Un-able to Update Ingredient in table row!");
+
+            setRowBeingEdited();
+            return;
+        }
+
+        //##########################################################################
+        //   Updating Ingredients In Meal Table
+        //##########################################################################
+
+        ArrayList<Object> ingredientsTable_UpdateData = ingredientsUpdateData.get(0);
+        super.updateTable(this, ingredientsTable_UpdateData, row);
+
+        if (jTable.getValueAt(row, getIngredientsTable_IngredientsName_Col()).equals("None Of The Above"))
+        {
+            jTable.setValueAt("No Shop", row, getIngredientsTable_Supplier_Col());
+        }
+
+        //##########################################################################
+        //   Updating Total  Meal Table
+        ///##########################################################################
+        setRowBeingEdited();
+
+        updateData();
+    }
 
     @Override
     protected void tableModel_Setup(Object[][] data, String[] columnNames)
@@ -432,13 +1012,8 @@ public class IngredientsTable extends JDBC_JTable
                 setupDeleteBtnColumn(getDeleteBTN_Col()); // specifying delete column
             }
 
-            // Setting up JcomboBox Field
-            for (Integer key : getJcomboMap().keySet())
-            {
-                setUpJComboColumn(key, "IngredientName", getJcomboMap().get(key));
-            }
-
-           new  SetupSupplierColumn(getIngredientsTable_Supplier_Col());
+            supplierColumn =  new  SetupSupplierColumn(getIngredientsTable_Supplier_Col());
+            ingredientTypeColumn = new SetupIngredientTypeColumn(getIngredientsTable_Type_Col());
         }
         else
         {
@@ -446,6 +1021,10 @@ public class IngredientsTable extends JDBC_JTable
         }
         resizeObject();
     }
+
+    //##################################################################################################################
+    // Setup Methods
+    //##################################################################################################################
 
     @Override
     public void setupDeleteBtnColumn(int deleteBtnColumn)
@@ -949,361 +1528,6 @@ public class IngredientsTable extends JDBC_JTable
         return true;
     }
 
-    @Override
-    protected void tableDataChange_Action()
-    {
-        int rowEdited = jTable.getEditingRow(), columnEdited = jTable.getEditingColumn();
-
-        //######################################################################
-        // Check if cell that triggered this event can execute
-        //######################################################################
-        // Avoids endless loop / if edited cell column, is supposed to a trigger an action
-        if (rowBeingEdited || triggerColumns == null || !(triggerColumns.contains(columnEdited)))
-        {
-            //HELLO REMOVE
-            // System.out.printf("\nExited tableDataChange_Action() Row: %s, Column: %s", rowEdited, columnEdited);
-            return;
-        }
-
-        System.out.printf("\n\ntableDataChange_Action()");
-        setRowBeingEdited();
-
-        Object ingredientID = jTable.getValueAt(rowEdited, getIngredientsTable_ID_Col());
-
-        Object ingredientIndex = jTable.getValueAt(rowEdited, getIngredientsTable_Index_Col());
-
-        Object cellValue = jTable.getValueAt(rowEdited, columnEdited);
-
-
-        //######################################################################
-        // Trigger Columns
-        //######################################################################
-
-        // Ingredients Quantity Column
-        if (columnEdited == getIngredientsTable_Quantity_Col() && jTable.getValueAt(rowEdited, columnEdited) == null)
-        {
-            JOptionPane.showMessageDialog(null, String.format("\n\nPlease insert a reasonable 'Quantity' value in the cell at: \n\nRow: %s \nColumn: %s", rowEdited + 1, columnEdited + 1));
-
-            cellValue = 0.00;
-            jTable.setValueAt(cellValue, rowEdited, columnEdited);
-        }
-
-        else if (columnEdited == getIngredientsTable_Quantity_Col())
-        {
-            System.out.printf("\ntableDataChange_Action() Quantity Being Changed");
-            setRowBeingEdited();// HELLO
-
-            updateTableValuesByQuantity(rowEdited, ingredientIndex, cellValue);
-            return;
-        }
-
-        // Ingredients Name Column
-        else if (columnEdited == getIngredientsTable_IngredientsName_Col())
-        {
-            //HELLO DELETE
-            /*
-            System.out.printf("\n\ningredientsTable_IngredientsName Row %s, Column %s \nPrevious Item %s \nCurrent Item %s",
-                    rowEdited, columnEdited, previous_IngredientName_JComboItem, selected_IngredientName_JCombo_Item); //HELLO REMOVE
-
-             */
-
-            // if the same item is selected avoid processing
-            if (!(ingredientNameChanged))
-            {
-                setRowBeingEdited();
-                return;
-            }
-
-            if (selected_IngredientName_JCombo_Item.equals("None Of The Above"))
-            {
-                if (getNonOfTheAboveInTableStatus(rowEdited, "change a current Ingredient in this meal to 'None Of The Above'"))
-                {
-                    jTable.setValueAt(previous_IngredientName_JComboItem, rowEdited, columnEdited);
-                    setRowBeingEdited();
-                    return;
-                }
-            }
-
-            //##################################################################################################
-            // Get Chosen Ingredient ID For Chosen Item (Ingredient Name)
-            //##################################################################################################
-
-            String query = String.format("Select IngredientID From ingredients_info WHERE Ingredient_Name = '%s';", selected_IngredientName_JCombo_Item);
-            System.out.printf("\n\n Query:\n\n %s", query);
-
-            ArrayList<ArrayList<Object>> results_Ingredient_ID = db.get_Multi_ColumnQuery_Object(query);
-
-            if (results_Ingredient_ID == null)
-            {
-                JOptionPane.showMessageDialog(null, "Unable to retrieve chosen Ingredient ID from DB!");
-
-                // Change Jtable JComboBox Back To Original Value
-                jTable.setValueAt(previous_IngredientName_JComboItem, rowEdited, columnEdited);
-                setRowBeingEdited();
-                return;
-            }
-
-            Object selected_Ingredient_ID = results_Ingredient_ID.get(0).get(0);
-
-            System.out.printf("\nPrevious JCombo Value: %s \nPrevious JCombo  ID: %s \n\nSelected JCombo Value: %s\nSelected JCombo ID: %s" +
-                            "\n\nRow  Selected: %s \nColumn Selected: %s",
-                    previous_IngredientName_JComboItem, ingredientID, selected_IngredientName_JCombo_Item, selected_Ingredient_ID, rowEdited, columnEdited);
-            System.out.println("\n\n#########################################################################");
-
-            //##################################################################################################
-            // Create Update Statements
-            //##################################################################################################
-
-            //#######################################
-            //Create IngredientID  Update Statement
-            //#######################################
-            String uploadQuery = String.format("""
-                    UPDATE  ingredients_in_meal
-                    SET IngredientID = %s
-                    WHERE Ingredients_Index = %s AND PlanID = %s;
-
-                        """, selected_Ingredient_ID, ingredientIndex, temp_PlanID);
-
-            //#######################################
-            //Create PDID Update Statement
-            //#######################################
-
-            //Get new PDID for New Ingredient which matches previously Selected Store
-            String query_PDID = String.format("""
-                                        
-                    SELECT IFNULL
-                    (
-                    	(
-                    		SELECT   i._NEW_POSSIBLE_PDID
-                    		FROM 
-                    		(       SELECT  n.IngredientID AS _NEW_IngredientID , i.PDID AS OLD_PDID
-                    				
-                    				FROM ingredients_in_meal i, ingredients_info n
-                    				
-                    				WHERE n.IngredientID = %s
-                    				AND i.PlanID = %s AND i.Ingredients_Index = %s
-                    		) AS t
-                                        
-                    		INNER JOIN
-                    		(
-                    		  SELECT PDID AS _PDID, Store_Name AS OLD_STORE FROM ingredientInShops
-                    		 
-                    		) AS c
-                                        
-                    		ON c._PDID = t.OLD_PDID
-                                        
-                    		INNER JOIN
-                    		(
-                    			SELECT PDID _NEW_POSSIBLE_PDID, IngredientID, Store_Name AS NEW_POSSIBLE_Supplier
-                    			FROM ingredientInShops		
-                    		) AS i
-                                        
-                    		ON
-                    		i.IngredientID = t._NEW_IngredientID
-                    		AND
-                    		c.OLD_STORE = i.NEW_POSSIBLE_Supplier
-                    		
-                    	)
-                    	
-                    , NULL);
-                    """, selected_Ingredient_ID, temp_PlanID, ingredientIndex);
-
-            ArrayList<String> newPDIDResults = db.getSingleColumnQuery_ArrayList(query_PDID);
-            if (newPDIDResults == null)
-            {
-                JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nUnable to retrieve pricing info!");
-                // Change Jtable JComboBox Back To Original Value
-                jTable.setValueAt(previous_IngredientName_JComboItem, rowEdited, columnEdited);
-
-                setRowBeingEdited();
-                return;
-            }
-
-            // Create  Statement for changing PDID (Ingredient_Index)
-            String uploadQuery2 = String.format("""
-                    UPDATE  ingredients_in_meal
-                    SET PDID = %s
-                    WHERE Ingredients_Index = %s AND PlanID = %s;
-
-                        """, newPDIDResults.get(0), ingredientIndex, temp_PlanID);
-
-            //  System.out.printf("\n\nQUERY PDID: \n'''%s''' \n\nPDID = %s \n\nUpload Query \n'''%s'''", query_PDID, newPDIDResults.get(0), uploadQuery2);
-
-            //##################################################################################################
-            // Upload IngredientName & NEW PDID
-            //##################################################################################################
-            if (!(db.uploadData_Batch(new String[]{uploadQuery, uploadQuery2})))
-            {
-                JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nUnable to update Ingredient In DB!");
-
-                // Change Jtable JComboBox Back To Original Value
-                jTable.setValueAt(previous_IngredientName_JComboItem, rowEdited, columnEdited);
-
-                setRowBeingEdited();
-                return;
-            }
-
-            //###################################
-            // Update IngredientName In JTable
-            //###################################
-            //HELLO if updateTableValuesByQuantity() updates this column remove this line of code
-            jTable.setValueAt(selected_Ingredient_ID, rowEdited, getIngredientsTable_ID_Col());
-
-            //###################################
-            // Update  Other Table Values
-            //###################################
-            setRowBeingEdited(); //HELLO
-
-            updateTableValuesByQuantity(rowEdited, ingredientIndex, jTable.getValueAt(rowEdited, getIngredientsTable_Quantity_Col()));
-            return;
-        }
-
-        // Ingredients Supplier Column
-        else if (columnEdited == getIngredientsTable_Supplier_Col())
-        {
-            String uploadQuery = "";
-
-            if (cellValue.equals("No Shop"))
-            {
-                setRowBeingEdited();
-                return;
-            }
-
-            if (!(cellValue.equals("N/A")))
-            {
-                //######################################################
-                // Get PDID For Chosen Store For Ingredient Statement
-                //######################################################
-                String getPDIDQuery = String.format("""
-                        SELECT PDID 
-                        FROM ingredientInShops
-                        WHERE IngredientID = %s  AND Store_Name = '%s';""", ingredientID, cellValue);
-
-                ArrayList<String> newPDIDResults = db.getSingleColumnQuery_ArrayList(getPDIDQuery);
-                if (newPDIDResults == null)
-                {
-                    JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nUnable to retrieve  Ingredient In Shop PDID info!");
-
-                    // HELLO Create Previous value for supplier column
-                    jTable.setValueAt(previous_Supplier_JComboItem, rowEdited, columnEdited);
-
-                    setRowBeingEdited();
-                    return;
-                }
-
-                //######################################################
-                // Create PDID Upload Statement
-                //######################################################
-
-                // Create  Statement for changing PDID (Ingredient_Index)
-                uploadQuery = String.format("""
-                        UPDATE  ingredients_in_meal
-                        SET PDID = %s
-                        WHERE Ingredients_Index = %s AND PlanID = %s;
-
-                            """, newPDIDResults.get(0), ingredientIndex, temp_PlanID);
-
-                System.out.printf("\n\nQUERY PDID: \n'''%s''' \n\nPDID = %s \n\nUpload Query \n'''%s'''", getPDIDQuery, newPDIDResults.get(0), uploadQuery);
-            }
-            else
-            {
-                // Create  Statement for changing PDID (Ingredient_Index)
-                uploadQuery = String.format("""
-                        UPDATE  ingredients_in_meal
-                        SET PDID = NULL
-                        WHERE Ingredients_Index = %s AND PlanID = %s;
-
-                            """, ingredientIndex, temp_PlanID);
-            }
-
-            //##################################################################################################
-            // Upload IngredientName & NEW PDID
-            //##################################################################################################
-            if (!(db.uploadData_Batch(new String[]{uploadQuery})))
-            {
-                JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nUnable to update Ingredient Store In DB!");
-
-                // HELLO Create Previous value for supplier column
-                jTable.setValueAt(previous_Supplier_JComboItem, rowEdited, columnEdited);
-
-                setRowBeingEdited();
-                return;
-            }
-
-            setRowBeingEdited();
-            updateTableValuesByQuantity(rowEdited, ingredientIndex, jTable.getValueAt(rowEdited, getIngredientsTable_Quantity_Col()));
-            return;
-        }
-    }
-
-    private void updateTableValuesByQuantity(int row, Object ingredients_Index, Object quantity)
-    {
-        setRowBeingEdited();
-
-        //#######################################
-        // Updating Quantity Value in temp plan
-        //########################################
-
-        String query1 = String.format("""
-                UPDATE  ingredients_in_meal
-                SET Quantity = %s 
-                WHERE PlanID = %s  AND Ingredients_Index = %s;
-                """, quantity, temp_PlanID, ingredients_Index);
-
-        //HELLO DELETE
-        // System.out.printf("\n\nupdateTableValuesByQuantity() \nQuery: \n\n%s", query1);
-
-        if (!(db.uploadData_Batch(new String[]{query1})))
-        {
-            JOptionPane.showMessageDialog(null, "Un-able to Update row based on cell value!");
-
-            setRowBeingEdited();
-            return;
-        }
-
-
-        //####################################################################
-        //  Update Ingredients table based on DB
-        //####################################################################
-
-        String query = String.format("SELECT  * FROM ingredients_in_meal_calculation WHERE  ingredients_Index = %s AND PlanID = %s;",
-                ingredients_Index, temp_PlanID);
-
-        // HELLO REMOVE
-        // System.out.printf("\n\n%s", query);
-
-        ArrayList<ArrayList<Object>> ingredientsUpdateData = db.get_Multi_ColumnQuery_Object(query);
-
-        System.out.printf("\n\n\n\n%s\n\n", ingredientsUpdateData);  // HELLO REMOVE
-
-        if (ingredientsUpdateData == null)
-        {
-            JOptionPane.showMessageDialog(null, "ERROR 2: Un-able to Update Ingredient in table row!");
-
-            setRowBeingEdited();
-            return;
-        }
-
-        //##########################################################################
-        //   Updating Ingredients In Meal Table
-        //##########################################################################
-
-        ArrayList<Object> ingredientsTable_UpdateData = ingredientsUpdateData.get(0);
-        super.updateTable(this, ingredientsTable_UpdateData, row);
-
-        if (jTable.getValueAt(row, getIngredientsTable_IngredientsName_Col()).equals("None Of The Above"))
-        {
-            jTable.setValueAt("No Shop", row, getIngredientsTable_Supplier_Col());
-        }
-
-        //##########################################################################
-        //   Updating Total  Meal Table
-        ///##########################################################################
-        setRowBeingEdited();
-
-        updateData();
-    }
-
     //##################################################################################################################
     // Update Table / Accessor Methods
     //##################################################################################################################
@@ -1341,6 +1565,11 @@ public class IngredientsTable extends JDBC_JTable
     private void setRowBeingEdited()
     {
         rowBeingEdited = !rowBeingEdited; // flip it
+    }
+
+    private boolean getRowsBeingEdited()
+    {
+        return rowBeingEdited;
     }
 
     private void setObjectDeleted(boolean deleted)
