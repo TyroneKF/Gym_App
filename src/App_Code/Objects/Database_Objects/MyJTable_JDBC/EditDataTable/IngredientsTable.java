@@ -47,7 +47,7 @@ public class IngredientsTable extends JDBC_JTable
             objectDeleted = false,
             ingredientNameChanged = false,
 
-            updateIngredientsType = true,
+    updateIngredientsType = true,
             updateIngredientsName = true;
 
     private HashMap<String, ArrayList<String>> map_ingredientTypesToIngredientNames = new HashMap<>();
@@ -112,6 +112,7 @@ public class IngredientsTable extends JDBC_JTable
 
         setUp();
     }
+
     //##################################################################################################################
     //##################################################################################################################
     public class SetupSupplierColumn
@@ -139,6 +140,7 @@ public class IngredientsTable extends JDBC_JTable
             renderer.setToolTipText("Click for combo box");
             tableColumn.setCellRenderer(renderer);
         }
+
         class ComboEditor extends DefaultCellEditor
         {
             DefaultComboBoxModel model1;
@@ -212,21 +214,21 @@ public class IngredientsTable extends JDBC_JTable
                 ////######################################
 
                 String queryStore = String.format("""
-                    SELECT  IFNULL(C.STORE_Name, 'N/A') AS STORE
-                    FROM 
-                    (
-                    	SELECT i.IngredientID FROM ingredients_info i
-                    	WHERE i.IngredientID = %s
-                    ) AS t 
-                                        
-                    LEFT JOIN
-                    (
-                       SELECT l.IngredientID, l.Store_Name FROM ingredientInShops l 
-                    	
-                    )  AS C
-                                        
-                    ON t.IngredientID = C.IngredientID
-                    ORDER BY STORE;""", ingredientID);
+                        SELECT  IFNULL(C.STORE_Name, 'N/A') AS STORE
+                        FROM 
+                        (
+                        	SELECT i.IngredientID FROM ingredients_info i
+                        	WHERE i.IngredientID = %s
+                        ) AS t 
+                                            
+                        LEFT JOIN
+                        (
+                           SELECT l.IngredientID, l.Store_Name FROM ingredientInShops l 
+                        	
+                        )  AS C
+                                            
+                        ON t.IngredientID = C.IngredientID
+                        ORDER BY STORE;""", ingredientID);
 
                 ArrayList<String> storesResults = db.getSingleColumnQuery_ArrayList(queryStore);
 
@@ -297,7 +299,7 @@ public class IngredientsTable extends JDBC_JTable
 
         class ComboEditor extends DefaultCellEditor
         {
-           public ComboEditor()
+            public ComboEditor()
             {
                 super(new JComboBox());
                 model1 = (DefaultComboBoxModel) ((JComboBox) getComponent()).getModel();
@@ -358,7 +360,7 @@ public class IngredientsTable extends JDBC_JTable
 
                 for (String key : map_ingredientTypesToIngredientNames.keySet())
                 {
-                   model1.addElement(key);
+                    model1.addElement(key);
                 }
 
                 return super.getTableCellEditorComponent(table, value, isSelected, row, column);
@@ -415,22 +417,18 @@ public class IngredientsTable extends JDBC_JTable
                 comboBox = ((JComboBox) getComponent());
                 comboBox.setEditable(true);
 
-                comboBox.addActionListener(ae -> {
-                    ingredientNameChanged = false;
-                });
-
                 comboBox.addItemListener(new ItemListener()
                 {
                     public void itemStateChanged(ItemEvent ie)
                     {
-                        ingredientNameChanged = true;
                         if (ie.getStateChange() == ItemEvent.DESELECTED)
                         {
                             previous_IngredientName_JComboItem = ie.getItem();
                         }
                         if (ie.getStateChange() == ItemEvent.SELECTED)
                         {
-
+                            ingredientNameChanged = true;
+                            System.out.printf("\n\nIngredientName itemStateChanged() Item Selected \ningredientNameChanged: %s", ingredientNameChanged);
                             selected_IngredientName_JCombo_Item = ie.getItem();
                         }
                     }
@@ -527,24 +525,24 @@ public class IngredientsTable extends JDBC_JTable
         String queryIngredientsType = String.format("SELECT DISTINCT Ingredient_Type  FROM ingredients_info;");
         ArrayList<String> ingredientTypesResults = db.getSingleColumnQuery_ArrayList(queryIngredientsType);
 
-        if(ingredientTypesResults == null)
+        if (ingredientTypesResults == null)
         {
-            JOptionPane.showMessageDialog(null,"\n\nUnable to update Ingredient Type Info");
+            JOptionPane.showMessageDialog(null, "\n\nUnable to update Ingredient Type Info");
         }
         //######################################
         // Store all ingredient types & names
         //######################################
         String errorTxt = "";
 
-        for(String ingredientType: ingredientTypesResults)
+        for (String ingredientType : ingredientTypesResults)
         {
             //########################################
             // Get IngredientNames for Type
             //########################################
             String queryTypeIngredientNames = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Type = '%s';", ingredientType);
-            ArrayList<String>  ingredientNames = db.getSingleColumnQuery_ArrayList(queryTypeIngredientNames);
+            ArrayList<String> ingredientNames = db.getSingleColumnQuery_ArrayList(queryTypeIngredientNames);
 
-            if(ingredientNames == null)
+            if (ingredientNames == null)
             {
                 errorTxt += String.format("\nUnable to grab ingredient names for Type '%s'!", ingredientType);
                 continue;
@@ -558,9 +556,9 @@ public class IngredientsTable extends JDBC_JTable
             //System.out.printf("\n\nType %s\n%s",ingredientType, ingredientNames);
         }
 
-        if(errorTxt.length()>0)
+        if (errorTxt.length() > 0)
         {
-            JOptionPane.showMessageDialog(null, String.format("Had Errors Trying to map ingredientTypes to IngredientNames: \n\n%s",errorTxt));
+            JOptionPane.showMessageDialog(null, String.format("Had Errors Trying to map ingredientTypes to IngredientNames: \n\n%s", errorTxt));
         }
     }
 
@@ -607,7 +605,7 @@ public class IngredientsTable extends JDBC_JTable
         if (rowBeingEdited || triggerColumns == null || !(triggerColumns.contains(columnEdited)))
         {
             //HELLO REMOVE
-           // System.out.printf("\nExited tableDataChange_Action() Row: %s, Column: %s", rowEdited, columnEdited);
+            // System.out.printf("\nExited tableDataChange_Action() Row: %s, Column: %s", rowEdited, columnEdited);
             return;
         }
 
@@ -626,7 +624,7 @@ public class IngredientsTable extends JDBC_JTable
         //######################################################################
 
 
-        if(columnEdited == getIngredientsTable_Type_Col())
+        if (columnEdited == getIngredientsTable_Type_Col())
         {
             System.out.printf("\n\n@tableDataChange_Action() Ingredient Type Changed");
             setRowBeingEdited();
@@ -666,8 +664,9 @@ public class IngredientsTable extends JDBC_JTable
             // if the same item is selected avoid processing
             if (!(ingredientNameChanged))
             {
+
+                System.out.printf("\n\nExit No Update Ingredient Name Changed \ningredientNameChanged: %s", ingredientNameChanged);
                 setRowBeingEdited();
-                System.out.printf("\n\nExit No Update Ingredient Name Changed");
                 return;
             }
 
@@ -892,10 +891,12 @@ public class IngredientsTable extends JDBC_JTable
             return;
         }
 
-        if(getRowsBeingEdited())
+        if (getRowsBeingEdited())
         {
+            System.out.printf("\n\n@tableDataChange_Action() Uncaught Exception \nRow: %s, Column: %s", rowEdited, columnEdited);
             setRowBeingEdited();
-        };
+        }
+
     }
 
     private void updateTableValuesByQuantity(int row, Object ingredients_Index, Object quantity)
@@ -1019,8 +1020,9 @@ public class IngredientsTable extends JDBC_JTable
                 setupDeleteBtnColumn(getDeleteBTN_Col()); // specifying delete column
             }
 
-            supplierColumn =  new  SetupSupplierColumn(getIngredientsTable_Supplier_Col());
-            ingredientTypeColumn = new SetupIngredientTypeColumn(getIngredientsTable_Type_Col());
+            //EDITING
+             supplierColumn = new SetupSupplierColumn(getIngredientsTable_Supplier_Col());
+             ingredientTypeColumn = new SetupIngredientTypeColumn(getIngredientsTable_Type_Col());
         }
         else
         {
