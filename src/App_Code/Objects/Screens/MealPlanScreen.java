@@ -893,12 +893,13 @@ public class MealPlanScreen extends JPanel
         {
             return;
         }
-
-        // ##############################################
-        // If targets have changed, save them?
-        // ##############################################
-        saveMacroTargets(true);
-
+        if(askPermission)
+        {
+            // ##############################################
+            // If targets have changed, save them?
+            // ##############################################
+            saveMacroTargets(true);
+        }
         // ##############################################
 
         ArrayList<Integer> mealsInPlanList = new ArrayList<>();
