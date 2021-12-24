@@ -72,7 +72,7 @@ public class MealPlanScreen extends JPanel
             original_IngredientsTable_Supplier_Col = 8,
             original_ingredientsTable_DeleteBTN_Col = 18,
 
-            afterHiding_IngredTable_IngredientIndexCol = 0,
+    afterHiding_IngredTable_IngredientIndexCol = 0,
             afterHiding_IngredTable_IngredientID = 1,
             afterHiding_IngredTable_Quantity_Col = 2,
             afterHiding_IngredTable_Type_Col = 3,
@@ -85,7 +85,7 @@ public class MealPlanScreen extends JPanel
             actionListenerColumns = new Integer[]{afterHiding_IngredTable_Type_Col, afterHiding_IngredTable_IngredientsName_Col, afterHiding_IngredTable_Supplier_Col, afterHiding_IngredTable_DeleteBTN_Col};
 
     private final ArrayList<Integer>
-            editable_IngredientsTable_Columns = new ArrayList<Integer>(Arrays.asList(original_IngredientsTable_Quantity_Col, original_IngredTable_Type_Col,  original_IngredientsTable_IngredientsName_Col, original_IngredientsTable_Supplier_Col)),
+            editable_IngredientsTable_Columns = new ArrayList<Integer>(Arrays.asList(original_IngredientsTable_Quantity_Col, original_IngredTable_Type_Col, original_IngredientsTable_IngredientsName_Col, original_IngredientsTable_Supplier_Col)),
             ingredients_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList(original_IngredTable_Type_Col, original_IngredientsTable_IngredientsName_Col, original_IngredientsTable_Supplier_Col, original_ingredientsTable_DeleteBTN_Col));
 
     private final Integer ingredientsTable_StartingCol = 2, totalMealTable_StartCol = 3,
@@ -439,11 +439,11 @@ public class MealPlanScreen extends JPanel
                 saveMacroTargets(true);
                 if (macrosTargets_Screen != null)
                 {
-                    if(macrosTargets_Screen != null)
+                    if (macrosTargets_Screen != null)
                     {
                         macrosTargets_Screen.closeeWindow();
                     }
-                    if(addIngredientsScreen != null)
+                    if (addIngredientsScreen != null)
                     {
                         addIngredientsScreen.closeeWindow();
                     }
@@ -635,7 +635,7 @@ public class MealPlanScreen extends JPanel
         refresh_Icon_Btn.makeBTntransparent();
 
         refresh_Btn.addActionListener(ae -> {
-            refreshPlan();
+            refreshPlan(true);
         });
 
         iconPanelInsert.add(refresh_Icon_Btn);
@@ -677,7 +677,7 @@ public class MealPlanScreen extends JPanel
 
         save_btn.addActionListener(ae -> {
 
-            savePlanData();
+            savePlanData(true, true);
         });
 
         iconPanelInsert.add(save_btn);
@@ -845,17 +845,18 @@ public class MealPlanScreen extends JPanel
         resizeGUi();
     }
 
-    private void refreshPlan()
+    private void refreshPlan(boolean askPermission)
     {
         if (!(get_IsPlanSelected()))
         {
             return;
         }
 
-        if (!(areYouSure("Refresh Data")))
+        if (askPermission &&! (areYouSure("Refresh Data")) )
         {
             return;
         }
+
         //###############################################
         // Refresh ingredients meal table & total Tables
         //###############################################
@@ -881,37 +882,14 @@ public class MealPlanScreen extends JPanel
         refreshMacrosLeft();
     }
 
-    private void refreshMacroTargets()
-    {
-        // ##############################################
-        // If targets have changed, save them?
-        // ##############################################
-        if (getMacrosTargetsChanged())
-        {
-            int reply = JOptionPane.showConfirmDialog(frame, String.format("Would you like to refresh your MacroTargets Too?"),
-                    "Refresh Macro Targets", JOptionPane.YES_NO_OPTION); //HELLO Edit
-
-            if (reply == JOptionPane.YES_OPTION)
-            {
-                if (transferTargets(planID, tempPlanID, false))
-                {
-                    JOptionPane.showMessageDialog(frame, "\n\nMacro-Targets Successfully Refreshed!!");
-                    macrosTargetsChanged(false);
-
-                    macros_Targets_Table.refreshData();
-                }
-            }
-        }
-    }
-
-    private void refreshMacrosLeft()
-    {
-        macrosLeft_JTable.refreshData();
-    }
-
-    private void savePlanData()
+    private void savePlanData(boolean askPermission, boolean showMsg)
     {
         if (!(get_IsPlanSelected()))
+        {
+            return;
+        }
+
+        if (askPermission && !(areYouSure("Save Data")))
         {
             return;
         }
@@ -920,6 +898,7 @@ public class MealPlanScreen extends JPanel
         // If targets have changed, save them?
         // ##############################################
         saveMacroTargets(true);
+
         // ##############################################
 
         ArrayList<Integer> mealsInPlanList = new ArrayList<>();
@@ -934,6 +913,7 @@ public class MealPlanScreen extends JPanel
          */
         //######################################
         Iterator<IngredientsTable> it = listOfJTables.iterator();
+        boolean error = false;
         while (it.hasNext())
         {
             IngredientsTable table = it.next();
@@ -943,7 +923,10 @@ public class MealPlanScreen extends JPanel
                 it.remove();
                 continue;
             }
-            table.saveDataAction();
+            if (!(table.saveDataAction(false)))
+            {
+                error = true;
+            }
 
             mealsInPlanList.add(table.getTempMealID());
 
@@ -988,8 +971,73 @@ public class MealPlanScreen extends JPanel
             return;
         }
 
-        JOptionPane.showMessageDialog(frame, "Meals Successful Saved!!");
+        if(showMsg)
+        {
+            JOptionPane.showMessageDialog(frame, "Meals Successful Saved!!");
+        }
     }
+
+    public void updateIngredientsInfo(boolean ingredientsAddedOrRemove)
+    {
+        //#####################################
+        // Update ingredients Named if needed
+        //#####################################
+        if (ingredientsAddedOrRemove)
+        {
+            for (IngredientsTable ingredientsTable : listOfJTables)
+            {
+                ingredientsTable.updateMapIngredientsTypesAndNames();
+            }
+        }
+
+        //#####################################
+        // Notification Msg
+        //#####################################
+        //Notification Message
+        String msg = """
+                \n\nUpdating Ingredients Details in Meal Planner:\n\n
+                Deleted Ingredients will be removed from the meal Planner!
+                New ingredients will be added to the form!
+                Ingredient information will be updated!
+                Ingredient suppliers will be updated!""";
+
+        JOptionPane.showMessageDialog(frame, msg);
+
+        //#####################################
+        // Save Plan & Refresh Plan
+        //#####################################
+        savePlanData(false, false); // Save Plan
+        refreshPlan(false); // Refresh Plan
+    }
+
+    private void refreshMacroTargets()
+    {
+        // ##############################################
+        // If targets have changed, save them?
+        // ##############################################
+        if (getMacrosTargetsChanged())
+        {
+            int reply = JOptionPane.showConfirmDialog(frame, String.format("Would you like to refresh your MacroTargets Too?"),
+                    "Refresh Macro Targets", JOptionPane.YES_NO_OPTION); //HELLO Edit
+
+            if (reply == JOptionPane.YES_OPTION)
+            {
+                if (transferTargets(planID, tempPlanID, false))
+                {
+                    JOptionPane.showMessageDialog(frame, "\n\nMacro-Targets Successfully Refreshed!!");
+                    macrosTargetsChanged(false);
+
+                    macros_Targets_Table.refreshData();
+                }
+            }
+        }
+    }
+
+    private void refreshMacrosLeft()
+    {
+        macrosLeft_JTable.refreshData();
+    }
+
 
     //#####################################
     //  Add Ingredients  Screen Methods

@@ -2,9 +2,9 @@ package App_Code.Objects.Screens;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Gui_Objects.*;
-import App_Code.Objects.Screens.MealPlanScreen;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -32,22 +32,25 @@ public class Add_Ingredients_Screen extends JFrame
     private MyJDBC db;
     private Integer temp_PlanID, planID;
     private String planName;
-    private MealPlanScreen gui;
+    private MealPlanScreen mealPlanScreen;
 
 
     private String[] ingredientNames;
     private JComboBox edit_IngredientName_JComboBox = new JComboBox();
 
-    private boolean jcomboUpdateStaus = false;
+    private boolean
+            jcomboUpdateStaus = false,
+            ingredientsAddedOrDeleted = false,
+            ingredientsInfoChanged = false;
 
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
 
-    public Add_Ingredients_Screen(MyJDBC db, MealPlanScreen gui, int planID, int temp_PlanID, String planName)
+    public Add_Ingredients_Screen(MyJDBC db, MealPlanScreen mealPlanScreen, int planID, int temp_PlanID, String planName)
     {
         this.db = db;
-        this.gui = gui;
+        this.mealPlanScreen = mealPlanScreen;
 
         this.planID = planID;
         this.temp_PlanID = temp_PlanID;
@@ -77,6 +80,7 @@ public class Add_Ingredients_Screen extends JFrame
                     public void windowClosing(WindowEvent windowEvent)
                     {
                         closeWindowEvent();
+                        mealPlanScreen.updateIngredientsInfo(ingredientsAddedOrDeleted);
                     }
                 });
 
@@ -284,7 +288,7 @@ public class Add_Ingredients_Screen extends JFrame
 
         private void updateFormWithIngredientInfo()
         {
-            if(getJComboBoxUpdateStatus())
+            if (getJComboBoxUpdateStatus())
             {
                 return;
             }
@@ -303,7 +307,7 @@ public class Add_Ingredients_Screen extends JFrame
             }
             else if (selectedIngredientID == null || chosenItem == null)
             {
-                JOptionPane.showMessageDialog(gui, "Unable to grab Ingredient INFO to edit it!!");
+                JOptionPane.showMessageDialog(mealPlanScreen, "Unable to grab Ingredient INFO to edit it!!");
                 return;
             }
 
@@ -325,7 +329,7 @@ public class Add_Ingredients_Screen extends JFrame
 
             if (ingredientInfo_R == null)
             {
-                JOptionPane.showMessageDialog(gui, "Unable to grab selected ingredient info!");
+                JOptionPane.showMessageDialog(mealPlanScreen, "Unable to grab selected ingredient info!");
                 return;
             }
 
@@ -358,7 +362,7 @@ public class Add_Ingredients_Screen extends JFrame
 
             if (ingredientShops_R == null)
             {
-                JOptionPane.showMessageDialog(gui, "Unable to grab selected ingredient shop info! \nMaybe there isn't any suppliers created for this Ingredient!");
+                JOptionPane.showMessageDialog(mealPlanScreen, "Unable to grab selected ingredient shop info! \nMaybe there isn't any suppliers created for this Ingredient!");
                 return;
             }
 
@@ -391,7 +395,7 @@ public class Add_Ingredients_Screen extends JFrame
 
                 if (chosenItem.equals("N/A"))
                 {
-                    JOptionPane.showMessageDialog(gui, "This item cannot be deleted from the list (its a placeholder) !");
+                    JOptionPane.showMessageDialog(mealPlanScreen, "This item cannot be deleted from the list (its a placeholder) !");
                     refreshInterface(true);
                     return;
                 }
@@ -400,7 +404,7 @@ public class Add_Ingredients_Screen extends JFrame
                 {
                     if (selectedIngredientID == null || chosenItem == null)
                     {
-                        JOptionPane.showMessageDialog(gui, "Unable to grab Ingredient INFO to delete it!!");
+                        JOptionPane.showMessageDialog(mealPlanScreen, "Unable to grab Ingredient INFO to delete it!!");
                         return;
                     }
 
@@ -410,18 +414,19 @@ public class Add_Ingredients_Screen extends JFrame
 
                     if (db.uploadData_Batch(new String[]{query0, query1, query2}))
                     {
-                        JOptionPane.showMessageDialog(gui, String.format("Successfully Deleted '%s' From DB!", chosenItem));
+                        JOptionPane.showMessageDialog(mealPlanScreen, String.format("Successfully Deleted '%s' From DB!", chosenItem));
                         updateJComboBox();
                         refreshInterface(true);
+                        ingredientsAddedOrDeleted = true;
                     }
                     else
                     {
-                        JOptionPane.showMessageDialog(gui, "Unable to delete item From DB!");
+                        JOptionPane.showMessageDialog(mealPlanScreen, "Unable to delete item From DB!");
                     }
                 }
                 return;
             }
-            JOptionPane.showMessageDialog(gui, "Please select an item first before attempting to delete an ingredient!");
+            JOptionPane.showMessageDialog(mealPlanScreen, "Please select an item first before attempting to delete an ingredient!");
         }
 
         private void refreshInterface(boolean resetJCombo) // only available to reset screen
@@ -485,12 +490,12 @@ public class Add_Ingredients_Screen extends JFrame
         {
             if (edit_IngredientName_JComboBox.getSelectedItem().equals("N/A"))
             {
-                JOptionPane.showMessageDialog(gui, "The Store N/A cannot be edited, its a placeholder");
+                JOptionPane.showMessageDialog(mealPlanScreen, "The Store N/A cannot be edited, its a placeholder");
                 refreshInterface(true);
                 return;
             }
 
-            if (areYouSure("update this Ingredients information"))
+            if (areYouSure("update this Ingredients information - this will cause the mealPlan to save its data to the DB"))
             {
                 boolean errorFound = false;
 
@@ -516,7 +521,7 @@ public class Add_Ingredients_Screen extends JFrame
                     //########################
                     if (selectedIngredientID == null)
                     {
-                        JOptionPane.showMessageDialog(gui, "\n\nUnable To Get Ingredient ID To Edit This Ingredient !!");
+                        JOptionPane.showMessageDialog(mealPlanScreen, "\n\nUnable To Get Ingredient ID To Edit This Ingredient !!");
                         return;
                     }
 
@@ -526,11 +531,7 @@ public class Add_Ingredients_Screen extends JFrame
 
                     if (updateBothForms(ingredientsForm.get_IngredientsForm_UpdateString(selectedIngredientID), shopForm.get_ShopForm_UpdateString(selectedIngredientID)))
                     {
-                        //HELLO REMOVE COMMENTS
-                        /*
-                        gui.updateInfo();
-                        gui.macrosTargetsChanged(true);
-                         */
+                        ingredientsInfoChanged = true;
 
                         updateJComboBox();
                         refreshInterface(true);
@@ -558,11 +559,11 @@ public class Add_Ingredients_Screen extends JFrame
             //####################################
             if (!(db.uploadData_Batch(new String[]{updateIngredients_String})))
             {
-                JOptionPane.showMessageDialog(gui.getFrame(), "Failed Upload - Unable To Add Ingredient Info & Shop Info In DB!");
+                JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Failed Upload - Unable To Add Ingredient Info & Shop Info In DB!");
                 return false;
             }
 
-            JOptionPane.showMessageDialog(gui.getFrame(), "Updated  - Ingredient Info DB!!!");
+            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Updated  - Ingredient Info DB!!!");
 
             //####################################
             // Update Shop Info
@@ -575,13 +576,13 @@ public class Add_Ingredients_Screen extends JFrame
                 {
                     if (!(db.uploadData_Batch(new String[]{updateIngredientShops_String[x]})))
                     {
-                        JOptionPane.showMessageDialog(gui.getFrame(), String.format("Failed %s/%s Updates - Unable To Add Ingredient Supplier!",
+                        JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("Failed %s/%s Updates - Unable To Add Ingredient Supplier!",
                                 x + 1, noOfUpdateProcesses));
 
                         return false;
                     }
                 }
-                JOptionPane.showMessageDialog(gui.getFrame(), String.format("Update %s/%s -  Suppliers For Ingredient Updated In DB!!!",
+                JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("Update %s/%s -  Suppliers For Ingredient Updated In DB!!!",
                         noOfUpdateProcesses, noOfUpdateProcesses));
             }
 
@@ -609,7 +610,7 @@ public class Add_Ingredients_Screen extends JFrame
             {
                 if (temp_PlanID == null && planID == null && planName == null)
                 {
-                    JOptionPane.showMessageDialog(gui.getFrame(), "Please Select A Plan First!");
+                    JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Please Select A Plan First!");
                     return false;
                 }
 
@@ -673,7 +674,7 @@ public class Add_Ingredients_Screen extends JFrame
                 JTextField ingredientName_JTxtF = (JTextField) ingredientsFormObjects.get(ingredientNameObjectIndex);
                 String ingredientName_Txt = ingredientName_JTxtF.getText().trim();
 
-                if(doesStringContainCharacters(ingredientName_Txt))
+                if (doesStringContainCharacters(ingredientName_Txt))
                 {
                     errorTxt += String.format("\n\n  Ingredient named %s can only contain alphabet character! Symbols, numbers aren't allowed in the ingredient name!", ingredientName_Txt);
                 }
@@ -696,7 +697,7 @@ public class Add_Ingredients_Screen extends JFrame
                     return true;
                 }
 
-                JOptionPane.showMessageDialog(gui.getFrame(), String.format("\n\nPlease fix the following rows being; \n%s", errorTxt));
+                JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("\n\nPlease fix the following rows being; \n%s", errorTxt));
 
                 return false;
             }
@@ -952,7 +953,7 @@ public class Add_Ingredients_Screen extends JFrame
                         //################################################
                         if (selectedIngredientID == null)
                         {
-                            JOptionPane.showMessageDialog(gui, String.format("Unable to get selected ingredients information to delete the Supplier ' %s ' !", chosenShop));
+                            JOptionPane.showMessageDialog(mealPlanScreen, String.format("Unable to get selected ingredients information to delete the Supplier ' %s ' !", chosenShop));
                             return;
                         }
 
@@ -980,7 +981,7 @@ public class Add_Ingredients_Screen extends JFrame
                         //###################################################
                         if (!(db.uploadData_Batch(new String[]{updateQuery, updateQuery2})))
                         {
-                            JOptionPane.showMessageDialog(gui, String.format("Unable to remove the supplier ' %s ' from this ingredient!", chosenShop));
+                            JOptionPane.showMessageDialog(mealPlanScreen, String.format("Unable to remove the supplier ' %s ' from this ingredient!", chosenShop));
                             return;
                         }
                     }
@@ -994,7 +995,7 @@ public class Add_Ingredients_Screen extends JFrame
                     //################################################
                     // Remove Row Object
                     //################################################
-                    JOptionPane.showMessageDialog(gui, String.format("Successfully, remove the  supplier ' %s ' from this ingredient!", chosenShop));
+                    JOptionPane.showMessageDialog(mealPlanScreen, String.format("Successfully, remove the  supplier ' %s ' from this ingredient!", chosenShop));
                 }
             }
         }
@@ -1113,7 +1114,7 @@ public class Add_Ingredients_Screen extends JFrame
 
         protected void submissionBtnAction()
         {
-            if (!areYouSure("add this new Ingredient"))
+            if (!areYouSure("add this new Ingredient - this will cause the mealPlan to save its data to the DB"))
             {
                 return;
             }
@@ -1144,12 +1145,8 @@ public class Add_Ingredients_Screen extends JFrame
 
                 if (updateBothForms(ingredientsForm.get_IngredientsForm_UpdateString(), shopForm.get_ShopForm_UpdateString()))
                 {
-                    //HELLO REMOVE COMMENTS
-                        /*
-                        gui.updateInfo();
-                        gui.macrosTargetsChanged(true);
 
-                         */
+                    ingredientsAddedOrDeleted = true;
 
                     updateJComboBox();
                     refreshInterface();
@@ -1182,22 +1179,22 @@ public class Add_Ingredients_Screen extends JFrame
             //####################################
             if (!(db.uploadData_Batch(new String[]{updateIngredients_String})))
             {
-                JOptionPane.showMessageDialog(gui.getFrame(), "Failed 2/2 Updates - Unable To Add Ingredient Info In DB!");
+                JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Failed 2/2 Updates - Unable To Add Ingredient Info In DB!");
                 return false;
             }
 
-            JOptionPane.showMessageDialog(gui.getFrame(), "Update 1/2  - Ingredient Info DB!!!");
+            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Update 1/2  - Ingredient Info DB!!!");
 
             if (updateIngredientShops_String != null)
             {
                 if (!(db.uploadData_Batch(updateIngredientShops_String)))
                 {
-                    JOptionPane.showMessageDialog(gui.getFrame(), "Failed 1/2 Updates - Unable To Add Shop Supplier For Ingredient In DB!");
+                    JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Failed 1/2 Updates - Unable To Add Shop Supplier For Ingredient In DB!");
                     return false;
                 }
             }
 
-            JOptionPane.showMessageDialog(gui.getFrame(), "Update 2/2 Shop Info In DB In DB!!!");
+            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Update 2/2 Shop Info In DB In DB!!!");
 
             return true;
         }
@@ -1277,7 +1274,7 @@ public class Add_Ingredients_Screen extends JFrame
 
             if (b)
             {
-                return  true;
+                return true;
             }
 
             return false;
@@ -1285,7 +1282,7 @@ public class Add_Ingredients_Screen extends JFrame
 
         protected Boolean areYouSure(String process)
         {
-            int reply = JOptionPane.showConfirmDialog(gui, String.format("Are you sure you want to: %s?", process, process),
+            int reply = JOptionPane.showConfirmDialog(mealPlanScreen, String.format("Are you sure you want to: %s?", process, process),
                     "Confirmation", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
             if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
@@ -1523,7 +1520,7 @@ public class Add_Ingredients_Screen extends JFrame
             {
                 if (temp_PlanID == null && planID == null && planName == null)
                 {
-                    JOptionPane.showMessageDialog(gui.getFrame(), "Please Select A Plan First!");
+                    JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Please Select A Plan First!");
                     return false;
                 }
 
@@ -1570,8 +1567,8 @@ public class Add_Ingredients_Screen extends JFrame
 
                         if (row == ingredientNameObjectIndex)
                         {
-                            String  ingredientName_Txt = ((JTextField) comp).getText().trim();
-                            if(doesStringContainCharacters(ingredientName_Txt))
+                            String ingredientName_Txt = ((JTextField) comp).getText().trim();
+                            if (doesStringContainCharacters(ingredientName_Txt))
                             {
                                 errorTxt += String.format("\n\n  Ingredient named %s can only contain alphabet character! Symbols, numbers aren't allowed in the ingredient name!", ingredientName_Txt);
                             }
@@ -1613,7 +1610,7 @@ public class Add_Ingredients_Screen extends JFrame
                     return true;
                 }
 
-                JOptionPane.showMessageDialog(gui.getFrame(), String.format("\n\nPlease fix the following rows being; \n%s", errorTxt));
+                JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("\n\nPlease fix the following rows being; \n%s", errorTxt));
 
                 return false;
             }
@@ -1835,7 +1832,7 @@ public class Add_Ingredients_Screen extends JFrame
                     return true;
                 }
 
-                JOptionPane.showMessageDialog(gui.getFrame(), String.format("\n\nPlease fix the following rows being; \n%s", errorTxt));
+                JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("\n\nPlease fix the following rows being; \n%s", errorTxt));
                 return false;
             }
 
@@ -1874,7 +1871,7 @@ public class Add_Ingredients_Screen extends JFrame
                     return true;
                 }
 
-                JOptionPane.showMessageDialog(gui.getFrame(), String.format("\n\nPlease fix the following rows being; \n%s", errorTxt));
+                JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("\n\nPlease fix the following rows being; \n%s", errorTxt));
                 return false;
             }
 
@@ -1910,7 +1907,7 @@ public class Add_Ingredients_Screen extends JFrame
                     return true;
                 }
 
-                JOptionPane.showMessageDialog(gui.getFrame(), String.format("\n\nPlease fix the following rows being; \n%s", errorTxt));
+                JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("\n\nPlease fix the following rows being; \n%s", errorTxt));
                 return false;
             }
 
@@ -2062,7 +2059,7 @@ public class Add_Ingredients_Screen extends JFrame
 
                         if (shopsInfo == null)
                         {
-                            JOptionPane.showMessageDialog(gui.getFrame(), "Unable To Get ShopNames From DB - Internal DB Error");
+                            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Unable To Get ShopNames From DB - Internal DB Error");
                             return;
                         }
 
@@ -2238,7 +2235,7 @@ public class Add_Ingredients_Screen extends JFrame
         String[] results = db.getSingleColumnQuery("Select Ingredient_Name from ingredients_info ORDER BY Ingredient_Name;");
         if (results == null)
         {
-            JOptionPane.showMessageDialog(gui, "DB ERROR \n\nUnable to Retreive DB Ingredient Names!!");
+            JOptionPane.showMessageDialog(mealPlanScreen, "DB ERROR \n\nUnable to Retreive DB Ingredient Names!!");
             return null;
         }
         return results;
@@ -2291,7 +2288,7 @@ public class Add_Ingredients_Screen extends JFrame
 
     public void closeWindowEvent()
     {
-        gui.remove_addIngredients_Screen();
+        mealPlanScreen.remove_addIngredients_Screen();
     }
 
     public void closeeWindow()

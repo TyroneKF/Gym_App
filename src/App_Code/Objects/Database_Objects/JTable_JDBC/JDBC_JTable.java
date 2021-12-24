@@ -162,6 +162,10 @@ public class JDBC_JTable extends JPanel
 
         refresh_Btn.addActionListener(ae -> {
 
+            //#######################################################
+            // Ask For Permission
+            //#######################################################
+
             if (areYouSure("Refresh Data"))
             {
                 refresh_Btn_Action(true);
@@ -183,8 +187,10 @@ public class JDBC_JTable extends JPanel
 
 
         save_btn.addActionListener(ae -> {
-
-            save_Btn_Action();
+            if (areYouSure("Save Data"))
+            {
+               saveDataAction(true);
+            }
         });
 
         iconPanelInsert.add(save_btn);
@@ -208,7 +214,6 @@ public class JDBC_JTable extends JPanel
 
         iconPanelInsert.add(delete_btn);
     }
-
 
 
     protected void tableModel_Setup(Object[][] data, String[] columnNames)
@@ -380,8 +385,7 @@ public class JDBC_JTable extends JPanel
     {
         if (rowsInTable > 0)
         {
-
-            if (!(saveDataAction()))
+            if (!(saveDataAction(true)))
             {
                 JOptionPane.showMessageDialog(null, "Error, uploading  table data to Database!");
             }
@@ -403,7 +407,7 @@ public class JDBC_JTable extends JPanel
 
     }
 
-    protected boolean saveDataAction()
+    protected boolean saveDataAction(boolean showMessage)
     {
         return false;
     }
