@@ -47,7 +47,7 @@ public class IngredientsTable extends JDBC_JTable
             objectDeleted = false,
             ingredientNameChanged = false,
 
-    updateIngredientsType = true,
+            updateIngredientsType = true,
             updateIngredientsName = true;
 
     private HashMap<String, ArrayList<String>> map_ingredientTypesToIngredientNames = new HashMap<>();
@@ -137,7 +137,7 @@ public class IngredientsTable extends JDBC_JTable
                 }
             };
 
-            renderer.setToolTipText("Click for combo box");
+            renderer.setToolTipText("Click to see suppliers who sell this ingredient!");
             tableColumn.setCellRenderer(renderer);
         }
 
@@ -293,7 +293,7 @@ public class IngredientsTable extends JDBC_JTable
                 }
             };
 
-            renderer.setToolTipText("Click for combo box");
+            renderer.setToolTipText("Change ingredient type to search for new ingredients in the IngredientsName column!");
             tableColumn.setCellRenderer(renderer);
         }
 
@@ -403,7 +403,7 @@ public class IngredientsTable extends JDBC_JTable
                 }
             };
 
-            renderer.setToolTipText("Click for combo box");
+            renderer.setToolTipText("Click to select an ingredient!");
             tableColumn.setCellRenderer(renderer);
         }
 
