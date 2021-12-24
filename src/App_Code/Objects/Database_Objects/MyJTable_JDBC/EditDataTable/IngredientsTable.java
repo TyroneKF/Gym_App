@@ -47,7 +47,7 @@ public class IngredientsTable extends JDBC_JTable
             objectDeleted = false,
             ingredientNameChanged = false,
 
-            updateIngredientsType = true,
+    updateIngredientsType = true,
             updateIngredientsName = true;
 
     private HashMap<String, ArrayList<String>> map_ingredientTypesToIngredientNames = new HashMap<>();
@@ -663,7 +663,6 @@ public class IngredientsTable extends JDBC_JTable
             // if the same item is selected avoid processing
             if (!(ingredientNameChanged))
             {
-
                 System.out.printf("\n\nExit No Update Ingredient Name Changed \ningredientNameChanged: %s", ingredientNameChanged);
                 setRowBeingEdited();
                 return;
@@ -1234,7 +1233,7 @@ public class IngredientsTable extends JDBC_JTable
         //#########################################################
         // Get Next Ingredients_Index For This Ingredient Addition
         //#########################################################
-        String getNextIndexQuery = String.format("SELECT MAX(Ingredients_Index) FROM %s ;", "ingredients_in_meal");
+        String getNextIndexQuery = "SELECT IFNULL(MAX(`Ingredients_Index`),0) + 1 AS nextId FROM `ingredients_in_meal`;";
 
         String[] newIngredientsIndex = db.getSingleColumnQuery(getNextIndexQuery);
 
@@ -1687,7 +1686,7 @@ public class IngredientsTable extends JDBC_JTable
             for (int row = 0; row < rowsInTable; row++)
             {
                 // Currently, changing  ingredient to NONE OF the ABOVE
-                if (rowTriggeredAt != null && row == rowTriggeredAt && rowsInTable > 1)
+                if (rowTriggeredAt != null && row == rowTriggeredAt)
                 {
                     continue;
                 }
