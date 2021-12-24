@@ -1243,7 +1243,7 @@ public class IngredientsTable extends JDBC_JTable
             return;
         }
 
-        int newIngredientsIndex2 = Integer.parseInt(newIngredientsIndex[0]) + 1;
+        int newIngredientsIndex2 = Integer.parseInt(newIngredientsIndex[0]);
         //#########################################################
         // Insert into Database
         //#########################################################
