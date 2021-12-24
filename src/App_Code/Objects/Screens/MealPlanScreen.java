@@ -981,20 +981,6 @@ public class MealPlanScreen extends JPanel
     public void updateIngredientsInfo(boolean ingredientsAddedOrRemove)
     {
         //#####################################
-        // Notification Msg
-        //#####################################
-        //Notification Message
-        String msg = """
-                \n\nUpdating Ingredients Details in Meal Planner:
-                \n\nDeleted Ingredients will be removed from the meal Planner!
-                Deleted meals will be completely removed and won't be able to restore from refresh!
-                \n\nNew ingredients will be added to the form!
-                Ingredient information will be updated!
-                Ingredient suppliers will be updated!""";
-
-        JOptionPane.showMessageDialog(frame, msg);
-
-        //#####################################
         // Save Plan & Refresh Plan
         //#####################################
         savePlanData(false, false); // Save Plan

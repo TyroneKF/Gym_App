@@ -40,8 +40,8 @@ public class Add_Ingredients_Screen extends JFrame
 
     private boolean
             jcomboUpdateStaus = false,
-            ingredientsAddedOrDeleted = false,
-            ingredientsInfoChanged = false;
+            updateIngredientInfo = false;
+
 
     //##################################################################################################################
     // Constructor
@@ -80,7 +80,7 @@ public class Add_Ingredients_Screen extends JFrame
                     public void windowClosing(WindowEvent windowEvent)
                     {
                         closeWindowEvent();
-                        mealPlanScreen.updateIngredientsInfo(true);
+                        mealPlanScreen.updateIngredientsInfo(updateIngredientInfo);
                     }
                 });
 
@@ -130,8 +130,12 @@ public class Add_Ingredients_Screen extends JFrame
         private EditIngredientsForm ingredientsForm;
         private EditShopForm shopForm;
 
-        private String selectedIngredientID;
-        String chosenItem;
+        private String selectedIngredientID, chosenItem;
+
+        private final int  ingredientNameIndex = 1, ingredientTypeIndex = 2;
+        private String previousIngredientType, previousIngredientName;
+        private  ArrayList<Component> formObjects;
+
 
         private boolean ingredientEditable = true;
 
@@ -301,6 +305,7 @@ public class Add_Ingredients_Screen extends JFrame
             selectedIngredientID = getSelectedIngredientID();
             chosenItem = getChosenItem();
 
+
             if (chosenItem != null && chosenItem.equals("N/A"))
             {
                 return;
@@ -311,10 +316,13 @@ public class Add_Ingredients_Screen extends JFrame
                 return;
             }
 
+            chosenItem = chosenItem.trim();
+            previousIngredientName = chosenItem;
+
             //############################################################
             // Update IngredientsForm
             //############################################################
-            ArrayList<Component> formObjects = ingredientsForm.getIngredientsFormObjects();
+            formObjects = ingredientsForm.getIngredientsFormObjects();
 
             //##############################
             // Get Ingredient Info
@@ -342,7 +350,13 @@ public class Add_Ingredients_Screen extends JFrame
             for (int i = 0; i < ingredientInfo.size(); i++)
             {
                 Component comp = formObjects.get(i);
-                String value = ingredientInfo.get(i);
+                String value = ingredientInfo.get(i).trim();
+
+                // setting previous ingredient Type value
+                if(i == ingredientTypeIndex)
+                {
+                    previousIngredientType = value;
+                }
 
                 if (comp instanceof JComboBox)
                 {
@@ -417,7 +431,7 @@ public class Add_Ingredients_Screen extends JFrame
                         JOptionPane.showMessageDialog(mealPlanScreen, String.format("Successfully Deleted '%s' From DB!", chosenItem));
                         updateJComboBox();
                         refreshInterface(true);
-                        ingredientsAddedOrDeleted = true;
+                        updateIngredientInfo = true;
                     }
                     else
                     {
@@ -531,8 +545,22 @@ public class Add_Ingredients_Screen extends JFrame
 
                     if (updateBothForms(ingredientsForm.get_IngredientsForm_UpdateString(selectedIngredientID), shopForm.get_ShopForm_UpdateString(selectedIngredientID)))
                     {
-                        ingredientsInfoChanged = true;
+                        // Check if ingredientsName or IngredientType changed
+                        String currentIngredientName = ((JTextField) formObjects.get(ingredientNameIndex)).getText().trim();
+                        String currentIngredientType  = ((JComboBox) formObjects.get(ingredientTypeIndex)).getSelectedItem().toString();
 
+                        //HELLO REMOVE
+                        System.out.printf("\n\nIngredientName \nCurrent = '%s' \nPrevious = '%s' \n\nIngredientType \nCurrent = '%s' \nPrevious = '%s'",
+                                currentIngredientName, previousIngredientName, previousIngredientType, currentIngredientType);
+
+                        if( (!currentIngredientName.equals(previousIngredientName) || (!currentIngredientType.equals(previousIngredientType))))
+                        {
+                            updateIngredientInfo = true;
+
+                            System.out.printf("\n\nIngredientName or, IngredientType changed!");//HELLO REMOVE
+                        }
+
+                        JOptionPane.showMessageDialog(mealPlanScreen, "The ingredient updates won't appear on the mealPlan screen until this window is closed!");
                         updateJComboBox();
                         refreshInterface(true);
                         super.resize_GUI();
@@ -559,15 +587,15 @@ public class Add_Ingredients_Screen extends JFrame
             //####################################
             if (!(db.uploadData_Batch(new String[]{updateIngredients_String})))
             {
-                JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Failed Upload - Unable To Add Ingredient Info & Shop Info In DB!");
+                JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Failed Upload - Unable To Add Ingredient Info & Shop Info & Ingredient Suppliers In DB!");
                 return false;
             }
-
-            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Updated  - Ingredient Info DB!!!");
 
             //####################################
             // Update Shop Info
             //####################################
+            boolean errorUploading = false;
+
             if (updateIngredientShops_String != null)
             {
                 int noOfUpdateProcesses = updateIngredientShops_String.length;
@@ -579,13 +607,16 @@ public class Add_Ingredients_Screen extends JFrame
                         JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("Failed %s/%s Updates - Unable To Add Ingredient Supplier!",
                                 x + 1, noOfUpdateProcesses));
 
-                        return false;
+                        errorUploading = true;
                     }
                 }
-                JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("Update %s/%s -  Suppliers For Ingredient Updated In DB!!!",
-                        noOfUpdateProcesses, noOfUpdateProcesses));
-            }
 
+                if(!errorUploading)
+                {
+                    JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("\n\nUpdated Ingredient Info! \n\nAlso updated %s/%s -  Suppliers For Ingredient Updated In DB!!!",
+                            noOfUpdateProcesses, noOfUpdateProcesses));
+                }
+            }
             return true;
         }
 
@@ -795,8 +826,6 @@ public class Add_Ingredients_Screen extends JFrame
                     }
                 }
 
-                System.out.printf("\n\nList Size %s", rowsInTable.size()); // HELLO REMOVE
-
                 //###############################
                 // Creating Update List
                 //###############################
@@ -875,17 +904,6 @@ public class Add_Ingredients_Screen extends JFrame
                     // Adding Update String
                     //########################
                     updates[listPos] = query4_UpdateString;
-                }
-
-                //############################################################
-                // DELETE
-                //############################################################
-
-                //HELLO REMOVE
-                System.out.printf("\n\nUpdate Shop Info:");
-                for (String i : updates)
-                {
-                    System.out.printf("\n\n%s ", i);
                 }
 
                 //############################################################
@@ -1145,9 +1163,9 @@ public class Add_Ingredients_Screen extends JFrame
 
                 if (updateBothForms(ingredientsForm.get_IngredientsForm_UpdateString(), shopForm.get_ShopForm_UpdateString()))
                 {
+                    updateIngredientInfo = true;
 
-                    ingredientsAddedOrDeleted = true;
-
+                    JOptionPane.showMessageDialog(mealPlanScreen, "The ingredient updates won't appear on the mealPlan screen until this window is closed!");
                     updateJComboBox();
                     refreshInterface();
                     resize_GUI();
@@ -1183,8 +1201,6 @@ public class Add_Ingredients_Screen extends JFrame
                 return false;
             }
 
-            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Update 1/2  - Ingredient Info DB!!!");
-
             if (updateIngredientShops_String != null)
             {
                 if (!(db.uploadData_Batch(updateIngredientShops_String)))
@@ -1194,7 +1210,7 @@ public class Add_Ingredients_Screen extends JFrame
                 }
             }
 
-            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Update 2/2 Shop Info In DB In DB!!!");
+            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "\n\nUpdated Ingredient Info! \n\nAlso updated 2/2 Shop Info In DB In DB!!!");
 
             return true;
         }
@@ -1298,7 +1314,7 @@ public class Add_Ingredients_Screen extends JFrame
 
             if (newID == null)
             {
-                JOptionPane.showMessageDialog(null, "Unable to create new ingredient in table! \nUnable to generate ingredientsID!!");
+                JOptionPane.showMessageDialog(mealPlanScreen, "Unable to create new ingredient in table! \nUnable to generate ingredientsID!!");
                 return null;
             }
 

@@ -428,7 +428,7 @@ public class IngredientsTable extends JDBC_JTable
                         if (ie.getStateChange() == ItemEvent.SELECTED)
                         {
                             ingredientNameChanged = true;
-                            System.out.printf("\n\nIngredientName itemStateChanged() Item Selected \ningredientNameChanged: %s", ingredientNameChanged);
+                            //System.out.printf("\n\nIngredientName itemStateChanged() Item Selected \ningredientNameChanged: %s", ingredientNameChanged); //HELLO REMOVE
                             selected_IngredientName_JCombo_Item = ie.getItem();
                         }
                     }
@@ -609,7 +609,6 @@ public class IngredientsTable extends JDBC_JTable
             return;
         }
 
-        System.out.printf("\n\ntableDataChange_Action()");
         setRowBeingEdited();
 
         Object ingredientID = jTable.getValueAt(rowEdited, getIngredientsTable_ID_Col());
@@ -626,7 +625,7 @@ public class IngredientsTable extends JDBC_JTable
 
         if (columnEdited == getIngredientsTable_Type_Col())
         {
-            System.out.printf("\n\n@tableDataChange_Action() Ingredient Type Changed");
+            System.out.printf("\n\n@tableDataChange_Action() Ingredient Type Changed"); //HELLO REMOVE
             setRowBeingEdited();
             return;
         }
@@ -1386,7 +1385,7 @@ public class IngredientsTable extends JDBC_JTable
         //##############################
         // Reset Meal Total  Table Data
         //##############################
-        System.out.printf("\n\nReset Table Data:\n\n %s", Arrays.deepToString(total_Meal_Table.getData()));
+        //System.out.printf("\n\nReset Table Data:\n\n %s", Arrays.deepToString(total_Meal_Table.getData())); // HELLO REMOVE
         refreshTotalMealTable();
 
         //##############################

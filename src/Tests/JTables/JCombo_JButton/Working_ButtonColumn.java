@@ -1,4 +1,4 @@
-package Tests.JTables;
+package Tests.JTables.JCombo_JButton;
 
 import java.awt.*;
 import java.awt.event.*;

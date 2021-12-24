@@ -4,8 +4,6 @@ package Tests.JTables.JCombo_JButton;
 // https://stackoverflow.com/questions/10347983/making-a-jbutton-clickable-inside-a-jtable
 //http://tips4java.wordpress.com/2009/07/12/table-button-column/
 
-import Tests.JTables.Working_ButtonColumn;
-
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
