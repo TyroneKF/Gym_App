@@ -980,24 +980,14 @@ public class MealPlanScreen extends JPanel
     public void updateIngredientsInfo(boolean ingredientsAddedOrRemove)
     {
         //#####################################
-        // Update ingredients Named if needed
-        //#####################################
-        if (ingredientsAddedOrRemove)
-        {
-            for (IngredientsTable ingredientsTable : listOfJTables)
-            {
-                ingredientsTable.updateMapIngredientsTypesAndNames();
-            }
-        }
-
-        //#####################################
         // Notification Msg
         //#####################################
         //Notification Message
         String msg = """
-                \n\nUpdating Ingredients Details in Meal Planner:\n\n
-                Deleted Ingredients will be removed from the meal Planner!
-                New ingredients will be added to the form!
+                \n\nUpdating Ingredients Details in Meal Planner:
+                \n\nDeleted Ingredients will be removed from the meal Planner!
+                Deleted meals will be completely removed and won't be able to restore from refresh!
+                \n\nNew ingredients will be added to the form!
                 Ingredient information will be updated!
                 Ingredient suppliers will be updated!""";
 
@@ -1008,6 +998,19 @@ public class MealPlanScreen extends JPanel
         //#####################################
         savePlanData(false, false); // Save Plan
         refreshPlan(false); // Refresh Plan
+
+        //#####################################
+        // Update ingredients Named if needed
+        //#####################################
+        if (ingredientsAddedOrRemove)
+        {
+            System.out.printf("\n\nUpdating Ingredient Info");
+            for (IngredientsTable ingredientsTable : listOfJTables)
+            {
+                ingredientsTable.updateMapIngredientsTypesAndNames();
+            }
+        }
+
     }
 
     private void refreshMacroTargets()

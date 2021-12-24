@@ -80,7 +80,7 @@ public class Add_Ingredients_Screen extends JFrame
                     public void windowClosing(WindowEvent windowEvent)
                     {
                         closeWindowEvent();
-                        mealPlanScreen.updateIngredientsInfo(ingredientsAddedOrDeleted);
+                        mealPlanScreen.updateIngredientsInfo(true);
                     }
                 });
 
