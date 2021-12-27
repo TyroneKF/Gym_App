@@ -1,5 +1,6 @@
 package App_Code.Objects.Screens;
 
+import java.text.Collator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,6 +18,7 @@ import java.math.RoundingMode;
 import java.util.*;
 import java.util.HashMap;
 
+
 public class Add_Ingredients_Screen extends JFrame
 {
     //#######################################
@@ -25,7 +27,7 @@ public class Add_Ingredients_Screen extends JFrame
 
     private GridBagConstraints gbc = new GridBagConstraints();
 
-    private int jFramewidth = 710, jFrameheight = 750;
+    private int jFramewidth = 710, jFrameheight = 850;
     private Container contentPane;
     private JPanel addIngredientsFormJPanel, editIngredientsFormJPanel;
 
@@ -34,14 +36,26 @@ public class Add_Ingredients_Screen extends JFrame
     private String planName;
     private MealPlanScreen mealPlanScreen;
 
-
     private String[] ingredientNames;
-    private JComboBox edit_IngredientName_JComboBox = new JComboBox();
 
     private boolean
             jcomboUpdateStaus = false,
             updateIngredientInfo = false;
 
+    private DefaultComboBoxModel modelIngredientName, modelIngredientType;
+
+    private JComboBox
+            edit_IngredientName_JComboBox = new JComboBox(),
+            edit_IngredientTypeJComboBox = new JComboBox();
+
+    // Sorted Hashmap by key String
+    private TreeMap<String, Collection<String>> map_ingredientTypesToIngredientNames = new TreeMap<String, Collection<String>>(new Comparator<String>()
+    {
+        public int compare(String o1, String o2)
+        {
+            return o1.toLowerCase().compareTo(o2.toLowerCase());
+        }
+    });
 
     //##################################################################################################################
     // Constructor
@@ -60,12 +74,6 @@ public class Add_Ingredients_Screen extends JFrame
         {
             if (db.isDatabaseConnected())
             {
-                ingredientNames = getIngredientNames();
-                if (ingredientNames == null)
-                {
-                    return;
-                }
-
                 //###################################################################################
                 // Frame Set-Up
                 //###################################################################################
@@ -130,12 +138,11 @@ public class Add_Ingredients_Screen extends JFrame
         private EditIngredientsForm ingredientsForm;
         private EditShopForm shopForm;
 
-        private String selectedIngredientID, chosenItem;
+        private String selectedIngredientID, selectedIngredientName, selected_IngredientType_JComboItem;
 
-        private final int  ingredientNameIndex = 1, ingredientTypeIndex = 2;
+        private final int ingredientNameIndex = 1, ingredientTypeIndex = 2;
         private String previousIngredientType, previousIngredientName;
-        private  ArrayList<Component> formObjects;
-
+        private ArrayList<Component> formObjects;
 
         private boolean ingredientEditable = true;
 
@@ -180,10 +187,19 @@ public class Add_Ingredients_Screen extends JFrame
             //#########################################
             iconSetup();
 
-            //###########################################
+            //#########################################################################################################
+            // Ingredient Type & Name JcomboBox's
+            //#########################################################################################################
+
+            // Update  JCombos list with data
+            updateMapIngredientsTypesAndNames();
+
+            //#################################################################
+            // Ingredient Type Setup
+            //#################################################################
+
             // JCombo Title
-            //###########################################
-            JLabel titleLabel = new JLabel("Choose an Ingredient To Edit");
+            JLabel titleLabel = new JLabel("Select Ingredient Type");
             titleLabel.setFont(new Font("Verdana", Font.PLAIN, 24));
             titleLabel.setHorizontalAlignment(JLabel.CENTER);
 
@@ -195,11 +211,75 @@ public class Add_Ingredients_Screen extends JFrame
             addToContainer(scrollPaneJPanel, titlePanel, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
             //###########################################
-            // JComboBox
+            //  IngredientTypeJComboBox
             //###########################################
             JPanel jp = new JPanel(new GridLayout(1, 1));
 
-            updateJComboBox();
+            ((JLabel) edit_IngredientTypeJComboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER); // centre text
+
+            //###########################################
+            //  Insert into JCombobox
+            //###########################################
+
+            updateIngredientTypeJComboBox(); // add all the ingredientTypes to the IngredientTypes JComboBox
+            //################################################
+            //  Actionlistener
+            //#################################################
+
+            edit_IngredientTypeJComboBox.addItemListener(new ItemListener()
+            {
+                public void itemStateChanged(ItemEvent ie)
+                {
+                    if (ie.getStateChange() == ItemEvent.SELECTED)
+                    {
+                        // Get ingredientType
+                        selected_IngredientType_JComboItem = (String) ie.getItem().toString();
+
+                        // clear ingredientsNames JCombo
+                        refreshInterface(true, false);
+
+                        if (selected_IngredientType_JComboItem.equals(""))
+                        {
+                            return;
+                        }
+
+                        updateIngredientNameJComboBox();
+                    }
+                }
+            });
+
+            jp.add(edit_IngredientTypeJComboBox);
+            jp.setPreferredSize(new Dimension(650, 50));
+
+            addToContainer(scrollPaneJPanel, jp, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 10, 0);
+            //#################################################################
+            //  IngredientName Setup
+            //#################################################################
+
+            //###########################
+            //Space Divider
+            //###########################
+            addToContainer(scrollPaneJPanel, new JPanel(), 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 10, 0);
+
+            //###########################
+            // JCombo Title
+            //###########################
+            titleLabel = new JLabel("Select Ingredient To Edit");
+            titleLabel.setFont(new Font("Verdana", Font.PLAIN, 24));
+            titleLabel.setHorizontalAlignment(JLabel.CENTER);
+
+            titlePanel = new JPanel();
+            titlePanel.setBackground(Color.green);
+            titlePanel.add(titleLabel);
+
+            // Add title JPanel to scrollPanel Panel Area
+            addToContainer(scrollPaneJPanel, titlePanel, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+
+            //###########################
+            // IngredientName JComboBox
+            //###########################
+
+            jp = new JPanel(new GridLayout(1, 1));
 
             ((JLabel) edit_IngredientName_JComboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER); // centre text
 
@@ -207,7 +287,10 @@ public class Add_Ingredients_Screen extends JFrame
             {
                 public void itemStateChanged(ItemEvent ie)
                 {
-                    updateFormWithIngredientInfo();
+                    if (edit_IngredientName_JComboBox.getSelectedIndex() != -1)
+                    {
+                        updateFormWithIngredientInfo();
+                    }
                 }
             });
 
@@ -222,6 +305,130 @@ public class Add_Ingredients_Screen extends JFrame
             addToContainer(scrollPaneJPanel, new JPanel(), 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 10, 0);
 
             createForms(ingredientsForm, shopForm);
+        }
+
+        private void updateMapIngredientsTypesAndNames()
+        {
+            //##################################
+            // Clear List
+            //##################################
+            map_ingredientTypesToIngredientNames.clear();
+
+            //##################################
+            // Store all ingredientTypes Names
+            //##################################
+            String queryIngredientsType = String.format("SELECT DISTINCT Ingredient_Type  FROM ingredients_info ORDER BY Ingredient_Type;");
+            Collection<String> ingredientTypesResults = db.getSingleColumnQuery_AlphabeticallyOrderedTreeSet(queryIngredientsType);
+
+            if (ingredientTypesResults == null)
+            {
+                JOptionPane.showMessageDialog(null, "\n\nUnable to update Ingredient Type Info");
+                return;
+            }
+
+            //######################################
+            // Store all ingredient types & names
+            //######################################
+            String errorTxt = "";
+
+            for (String ingredientType : ingredientTypesResults)
+            {
+                //########################################
+                // Get IngredientNames for Type
+                //########################################
+                String queryTypeIngredientNames = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Type = '%s' ORDER BY Ingredient_Name;", ingredientType);
+                Collection<String> ingredientNames = db.getSingleColumnQuery_AlphabeticallyOrderedTreeSet(queryTypeIngredientNames);
+
+
+                if (ingredientNames == null)
+                {
+                    errorTxt += String.format("\nUnable to grab ingredient names for Type '%s'!", ingredientType);
+                    continue;
+                }
+
+                //########################################
+                // Mapping Ingredient Type to Names
+                //########################################
+                map_ingredientTypesToIngredientNames.put(ingredientType, ingredientNames);
+                //System.out.printf("\n\nType %s\n%s",ingredientType, ingredientNames);
+            }
+
+            if (errorTxt.length() > 0)
+            {
+                JOptionPane.showMessageDialog(null, String.format("Had Errors Trying to map ingredientTypes to IngredientNames: \n\n%s", errorTxt));
+            }
+        }
+
+        private boolean getUpdatingJComboBoxStatus()// can't be deleted, trust me
+        {
+            return jcomboUpdateStaus;
+        }
+
+        /*
+      When the variable its used to set is true the ingredientNames JComboBox is updating
+      this stops the ingredientNames JComboBox from triggering actionListener events!
+     */
+        private void setUpdatingJComboBoxStatus(boolean x) // can't be deleted, trust me
+        {
+            jcomboUpdateStaus = x;
+        }
+
+        private void updateIngredientTypeJComboBox()
+        {
+            for (String key : map_ingredientTypesToIngredientNames.keySet())
+            {
+                if (!key.equals("None Of The Above"))
+                {
+                    edit_IngredientTypeJComboBox.addItem(key);
+                }
+            }
+
+            setNothingSelectedIngredientTypeJCombo(); // set selected item to nothing
+        }
+
+        /*
+           Resets Ingredient Type JComboBox
+        */
+        private void setNothingSelectedIngredientTypeJCombo()
+        {
+            edit_IngredientTypeJComboBox.setSelectedIndex(-1);
+        }
+
+        private void clearIngredientTypeJCombo()
+        {
+            edit_IngredientTypeJComboBox.removeAllItems();
+        }
+
+        private void updateIngredientNameJComboBox()
+        {
+            //##################################
+            // Populating IngredientName JComBox
+            //##################################
+            setUpdatingJComboBoxStatus(true); // stops ingredientName JComboBox from triggering any  actionListener events
+
+            for (String item : map_ingredientTypesToIngredientNames.get(selected_IngredientType_JComboItem))
+            {
+                if (!item.equals("None Of The Above"))
+                {
+                    edit_IngredientName_JComboBox.addItem(item);
+                }
+            }
+
+            setUpdatingJComboBoxStatus(false);
+            setNothingSelectedIngredientNameJCombo();// set selected item to nothing
+        }
+
+        /*
+            Resets Ingredient Type JComboBox
+        */
+        private void setNothingSelectedIngredientNameJCombo()
+        {
+            edit_IngredientName_JComboBox.setSelectedIndex(-1);
+        }
+
+        private void clearIngredientNameJCombo()
+        {
+            edit_IngredientName_JComboBox.removeAllItems();
         }
 
         private void iconSetup()
@@ -279,7 +486,7 @@ public class Add_Ingredients_Screen extends JFrame
 
         private void refreshFormBTNAction()
         {
-            if (chosenItem == null || chosenItem.equals("N/A"))
+            if (selectedIngredientName == null)
             {
                 return;
             }
@@ -292,32 +499,29 @@ public class Add_Ingredients_Screen extends JFrame
 
         private void updateFormWithIngredientInfo()
         {
-            if (getJComboBoxUpdateStatus())
+            if (getUpdatingJComboBoxStatus())
             {
                 return;
             }
-
-            refreshInterface(false);
 
             //############################################################
             // Ingredient ID
             //############################################################
             selectedIngredientID = getSelectedIngredientID();
-            chosenItem = getChosenItem();
+            selectedIngredientName = getSelectedIngredientName();
 
-
-            if (chosenItem != null && chosenItem.equals("N/A"))
+            if (selectedIngredientName == null)
             {
                 return;
             }
-            else if (selectedIngredientID == null || chosenItem == null)
+            else if (selectedIngredientID == null)
             {
                 JOptionPane.showMessageDialog(mealPlanScreen, "Unable to grab Ingredient INFO to edit it!!");
                 return;
             }
 
-            chosenItem = chosenItem.trim();
-            previousIngredientName = chosenItem;
+            selectedIngredientName = selectedIngredientName.trim();
+            previousIngredientName = selectedIngredientName;
 
             //############################################################
             // Update IngredientsForm
@@ -333,7 +537,7 @@ public class Add_Ingredients_Screen extends JFrame
                     Water_Content, Calories
                                                 
                     from ingredients_info 
-                    WHERE Ingredient_Name = '%s';""", chosenItem));
+                    WHERE Ingredient_Name = '%s';""", selectedIngredientName));
 
             if (ingredientInfo_R == null)
             {
@@ -353,7 +557,7 @@ public class Add_Ingredients_Screen extends JFrame
                 String value = ingredientInfo.get(i).trim();
 
                 // setting previous ingredient Type value
-                if(i == ingredientTypeIndex)
+                if (i == ingredientTypeIndex)
                 {
                     previousIngredientType = value;
                 }
@@ -379,6 +583,11 @@ public class Add_Ingredients_Screen extends JFrame
                 JOptionPane.showMessageDialog(mealPlanScreen, "Unable to grab selected ingredient shop info! \nMaybe there isn't any suppliers created for this Ingredient!");
                 return;
             }
+
+            //###########################
+            // Clear Supplier Info
+            //###########################
+            shopForm.clearShopForm();
 
             //###########################
             //Add Rows for shops onto form
@@ -407,16 +616,16 @@ public class Add_Ingredients_Screen extends JFrame
             if (edit_IngredientName_JComboBox.getSelectedIndex() != -1)
             {
 
-                if (chosenItem.equals("N/A"))
+                if (selectedIngredientName.equals("N/A"))
                 {
                     JOptionPane.showMessageDialog(mealPlanScreen, "This item cannot be deleted from the list (its a placeholder) !");
-                    refreshInterface(true);
+                    refreshInterface(true, true);
                     return;
                 }
 
-                if (areYouSure(String.format("delete ingredient named '%s' from the database", chosenItem)))
+                if (areYouSure(String.format("delete ingredient named '%s' from the database", selectedIngredientName)))
                 {
-                    if (selectedIngredientID == null || chosenItem == null)
+                    if (selectedIngredientID == null || selectedIngredientName == null)
                     {
                         JOptionPane.showMessageDialog(mealPlanScreen, "Unable to grab Ingredient INFO to delete it!!");
                         return;
@@ -428,9 +637,9 @@ public class Add_Ingredients_Screen extends JFrame
 
                     if (db.uploadData_Batch(new String[]{query0, query1, query2}))
                     {
-                        JOptionPane.showMessageDialog(mealPlanScreen, String.format("Successfully Deleted '%s' From DB!", chosenItem));
-                        updateJComboBox();
-                        refreshInterface(true);
+                        JOptionPane.showMessageDialog(mealPlanScreen, String.format("Successfully Deleted '%s' From DB!", selectedIngredientName));
+                        addOrDeleteIngredientFromMap("delete", selected_IngredientType_JComboItem, selectedIngredientName); // delete ingredient
+                        refreshInterface(true, true);
                         updateIngredientInfo = true;
                     }
                     else
@@ -443,18 +652,27 @@ public class Add_Ingredients_Screen extends JFrame
             JOptionPane.showMessageDialog(mealPlanScreen, "Please select an item first before attempting to delete an ingredient!");
         }
 
-        private void refreshInterface(boolean resetJCombo) // only available to reset screen
+        private void refreshInterface(boolean resetIngredientNameJCombo, boolean resetIngredientTypeJComBox) // only available to reset screen
         {
-            setJcomboUpdateStaus(true);
+            //##################################
+            // Clear both forms of info
+            //##################################
+            ingredientsForm.clearIngredientsForm();
+            shopForm.clearShopForm();
 
-            ingredientsForm.refreshIngredientsForm();
-            shopForm.refreshShopForm();
-            if (resetJCombo)
+            //##################################
+            // Reset JComboBox's
+            //##################################
+            if (resetIngredientNameJCombo)
             {
-                edit_IngredientName_JComboBox.setSelectedItem("N/A");
+                clearIngredientNameJCombo();
+                setNothingSelectedIngredientNameJCombo();
             }
-
-            setJcomboUpdateStaus(false);
+            if (resetIngredientTypeJComBox)
+            {
+                clearIngredientNameJCombo();
+                setNothingSelectedIngredientTypeJCombo();
+            }
         }
 
         private String getSelectedIngredientID()
@@ -476,7 +694,7 @@ public class Add_Ingredients_Screen extends JFrame
             return null;
         }
 
-        private String getChosenItem()
+        private String getSelectedIngredientName()
         {
             try
             {
@@ -505,7 +723,7 @@ public class Add_Ingredients_Screen extends JFrame
             if (edit_IngredientName_JComboBox.getSelectedItem().equals("N/A"))
             {
                 JOptionPane.showMessageDialog(mealPlanScreen, "The Store N/A cannot be edited, its a placeholder");
-                refreshInterface(true);
+                refreshInterface(true, true);
                 return;
             }
 
@@ -547,22 +765,23 @@ public class Add_Ingredients_Screen extends JFrame
                     {
                         // Check if ingredientsName or IngredientType changed
                         String currentIngredientName = ((JTextField) formObjects.get(ingredientNameIndex)).getText().trim();
-                        String currentIngredientType  = ((JComboBox) formObjects.get(ingredientTypeIndex)).getSelectedItem().toString();
+                        String currentIngredientType = ((JComboBox) formObjects.get(ingredientTypeIndex)).getSelectedItem().toString();
 
                         //HELLO REMOVE
                         System.out.printf("\n\nIngredientName \nCurrent = '%s' \nPrevious = '%s' \n\nIngredientType \nCurrent = '%s' \nPrevious = '%s'",
                                 currentIngredientName, previousIngredientName, previousIngredientType, currentIngredientType);
 
-                        if( (!currentIngredientName.equals(previousIngredientName) || (!currentIngredientType.equals(previousIngredientType))))
+                        if ((!currentIngredientName.equals(previousIngredientName) || (!currentIngredientType.equals(previousIngredientType))))
                         {
                             updateIngredientInfo = true;
+                            addOrDeleteIngredientFromMap("add", currentIngredientType, currentIngredientName); // add new info ingredient
+                            addOrDeleteIngredientFromMap("delete", previousIngredientType, previousIngredientName); // remove old info ingredient
 
                             System.out.printf("\n\nIngredientName or, IngredientType changed!");//HELLO REMOVE
                         }
 
                         JOptionPane.showMessageDialog(mealPlanScreen, "The ingredient updates won't appear on the mealPlan screen until this window is closed!");
-                        updateJComboBox();
-                        refreshInterface(true);
+                        refreshInterface(true, true);
                         super.resize_GUI();
                     }
                 }
@@ -611,7 +830,7 @@ public class Add_Ingredients_Screen extends JFrame
                     }
                 }
 
-                if(!errorUploading)
+                if (!errorUploading)
                 {
                     JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("\n\nUpdated Ingredient Info! \n\nAlso updated %s/%s -  Suppliers For Ingredient Updated In DB!!!",
                             noOfUpdateProcesses, noOfUpdateProcesses));
@@ -1164,20 +1383,73 @@ public class Add_Ingredients_Screen extends JFrame
                 if (updateBothForms(ingredientsForm.get_IngredientsForm_UpdateString(), shopForm.get_ShopForm_UpdateString()))
                 {
                     updateIngredientInfo = true;
-
                     JOptionPane.showMessageDialog(mealPlanScreen, "The ingredient updates won't appear on the mealPlan screen until this window is closed!");
-                    updateJComboBox();
+
+                    //#####################################
+                    // Reset Ingredient Names/Types
+                    //####################################
+                    String ingredientName = ((JTextField) ingredientsForm.getIngredientsFormObjects().get(1)).getText();
+                    String ingredientType = (String) ((JComboBox) ingredientsForm.getIngredientsFormObjects().get(2)).getSelectedItem();
+
+                    addOrDeleteIngredientFromMap("add", ingredientType, ingredientName);
+
+                    //#####################################
+                    // Reset Form & Update GUI
+                    //####################################
                     refreshInterface();
                     resize_GUI();
                 }
             }
         }
 
+        //HELLO EDIT
+        protected void addOrDeleteIngredientFromMap(String process, String ingredientType, String ingredientName)
+        {
+            // Storing
+            Collection<String> ingredientTypeList = map_ingredientTypesToIngredientNames.get(ingredientType);
+            if (process.equals("add"))// if key exists add the ingredientName in
+            {
+
+                if(ingredientTypeList != null)
+                {
+                    // Add ingredientName to collection
+                    ingredientTypeList.add(ingredientName);
+                }
+                else // create the list for the new type and add ingredient in
+                {
+                    ingredientTypeList = new TreeSet<String>(Collator.getInstance());
+                    ingredientTypeList.add(ingredientName);
+                    map_ingredientTypesToIngredientNames.put(ingredientType,ingredientTypeList);
+                }
+            }
+            else if (process.equals("delete"))
+            {
+                ingredientTypeList.remove(ingredientName);
+
+                // Remove List as there is no items in it
+                if(ingredientTypeList.size() == 0)
+                {
+                    map_ingredientTypesToIngredientNames.remove(ingredientType);
+                }
+            }
+
+            // Redraw ingredientsTypes
+            edit_IngredientTypeJComboBox.removeAllItems(); // clearList
+            for (String key : map_ingredientTypesToIngredientNames.keySet())
+            {
+                if(key != "None Of The Above")
+                {
+                    edit_IngredientTypeJComboBox.addItem(key);
+                }
+            }
+        }
+
         private void refreshInterface() // only available to reset screen
         {
-            ingredientsForm.refreshIngredientsForm();
-            shopForm.refreshShopForm();
+            ingredientsForm.clearIngredientsForm();
+            shopForm.clearShopForm();
         }
+
 
         protected boolean updateBothForms(String updateIngredients_String, String[] updateIngredientShops_String)
         {
@@ -1508,14 +1780,14 @@ public class Add_Ingredients_Screen extends JFrame
 
                 refresh_Btn.addActionListener(ae -> {
 
-                    refreshIngredientsForm();
+                    clearIngredientsForm();
                 });
 
                 iconPanelInsert.add(refresh_Icon_Btn);
 
             }
 
-            protected void refreshIngredientsForm()
+            protected void clearIngredientsForm()
             {
                 for (int i = 0; i < ingredientsFormObjects.size(); i++)
                 {
@@ -1989,7 +2261,7 @@ public class Add_Ingredients_Screen extends JFrame
                 return new String[]{updateString};
             }
 
-            public void refreshShopForm()
+            public void clearShopForm()
             {
                 Iterator<AddShopForm_Object> it = rowsInTable.iterator();
                 while (it.hasNext())
@@ -2246,47 +2518,6 @@ public class Add_Ingredients_Screen extends JFrame
 // Form Methods
 //##################################################################################################################
 
-    private String[] getIngredientNames()
-    {
-        String[] results = db.getSingleColumnQuery("Select Ingredient_Name from ingredients_info ORDER BY Ingredient_Name;");
-        if (results == null)
-        {
-            JOptionPane.showMessageDialog(mealPlanScreen, "DB ERROR \n\nUnable to Retreive DB Ingredient Names!!");
-            return null;
-        }
-        return results;
-    }
-
-    private void updateJComboBox()
-    {
-        setJcomboUpdateStaus(true);
-
-        edit_IngredientName_JComboBox.removeAllItems();
-        ingredientNames = getIngredientNames();
-
-        edit_IngredientName_JComboBox.addItem("N/A");
-        edit_IngredientName_JComboBox.setSelectedItem("N/A");
-
-        for (String s : ingredientNames)
-        {
-            if (!(s.equals("None Of The Above")))
-            {
-                edit_IngredientName_JComboBox.addItem(s);
-            }
-        }
-
-        setJcomboUpdateStaus(false);
-    }
-
-    public boolean getJComboBoxUpdateStatus()
-    {
-        return jcomboUpdateStaus;
-    }
-
-    public void setJcomboUpdateStaus(boolean x)
-    {
-        jcomboUpdateStaus = x;
-    }
 
     //##################################################################################################################
 // General Methods

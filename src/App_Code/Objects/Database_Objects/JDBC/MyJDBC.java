@@ -5,9 +5,8 @@ import javax.swing.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
+import java.text.Collator;
+import java.util.*;
 import java.lang.Long;
 
 public class MyJDBC
@@ -475,6 +474,82 @@ public class MyJDBC
                         // Storing query data in String[]
                         //############################################
                         ArrayList<String> queryData = new ArrayList<>(); // storing  all the columns results of a record
+                        // System.out.printf("\nRow Count is %s", rowCount);
+
+                        // for each row of the query
+                        int i = 0;
+                        while (resultSet.next())
+                        {
+                            String result = resultSet.getString(1); // resultset is the row
+                            queryData.add(result);
+                            i++;
+                        }
+                        return queryData;
+                    }
+                }
+                connection.close();
+            }
+            catch (Exception e)
+            {
+                System.out.printf("\n\n  @getSingleColumnQuery() ERROR from query '%s' \n\n  %s", query, e);
+                JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
+                //System.exit(1);
+            }
+        }
+        else
+        {
+            System.out.printf("\n\n  @getSingleColumnQuery() DB couldn't successfully connect to DB %s", databaseName);
+        }
+        return null;
+    }
+
+    public Collection<String> getSingleColumnQuery_AlphabeticallyOrderedTreeSet(String query)
+    {
+        if (databaseExist)
+        {
+            try
+            {
+                //Query Setup
+                Connection connection = DriverManager.getConnection(databaseConnection, userName, password);
+                Statement statement = connection.createStatement();
+
+                //Fetching Query
+                String query2 = String.format("%s", query);
+                ResultSet resultSet = statement.executeQuery(query2);
+
+                // checks if any data was returned, otherwise  the code will eventually return null
+                if (resultSet.isBeforeFirst())
+                {
+                    //############################################
+                    // Get number of  Columns in each query row
+                    //############################################
+                    ResultSetMetaData rsmd = resultSet.getMetaData();
+                    int columnSize = rsmd.getColumnCount();
+
+                    // if query has multiple columnns this method cannot produce a 2d list results,
+                    if (columnSize > 1)
+                    {
+                        System.out.printf("\n\n!!! Query size bigger than one column, use multi-line query !!! \n\n");
+                        throw new Exception();
+                    }
+
+                    //############################################
+                    // Get the number of rows in the query
+                    //############################################
+
+                    /*
+                    remove last char ";" for getRowsInQuery() method
+                    sub-query cannot have a ";" in in the middle sub-query
+                     */
+
+                    Integer rowCount = getRowsInQuery(query); // get row count of query to this method "query"
+
+                    if (rowCount!=null)
+                    {
+                        //############################################
+                        // Storing query data in String[]
+                        //############################################
+                        Collection<String> queryData = new TreeSet<String>(Collator.getInstance());
                         // System.out.printf("\nRow Count is %s", rowCount);
 
                         // for each row of the query
