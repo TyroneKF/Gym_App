@@ -680,10 +680,11 @@ public class Add_Ingredients_Screen extends JFrame
             //####################################
             // Get Current ID
             //####################################
-            Object selectedItem = edit_IngredientName_JComboBox.getSelectedItem();
+            String selectedItem = ((String) edit_IngredientName_JComboBox.getSelectedItem()).trim();
             if (selectedItem != null)
             {
-                String query = String.format("SELECT IngredientID FROM ingredients_info WHERE Ingredient_Name = '%s';", selectedItem.toString());
+                String query = String.format("SELECT IngredientID FROM ingredients_info WHERE Ingredient_Name = '%s';", selectedItem);
+                System.out.printf("\n\nGet Query:\nselected Item: '%s' \n%s", selectedItem, query); // HELLO REMOVE
                 String[] idResults = db.getSingleColumnQuery(query);
 
                 if (idResults != null)
@@ -1860,6 +1861,8 @@ public class Add_Ingredients_Screen extends JFrame
                             {
                                 errorTxt += String.format("\n\n  Ingredient named %s can only contain alphabet character! Symbols, numbers aren't allowed in the ingredient name!", ingredientName_Txt);
                             }
+
+                            jTextField.setText(ingredientName_Txt);// remove spaces
                             continue;
                         }
 
