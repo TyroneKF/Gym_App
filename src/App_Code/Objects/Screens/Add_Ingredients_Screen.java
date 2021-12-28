@@ -670,7 +670,6 @@ public class Add_Ingredients_Screen extends JFrame
             }
             if (resetIngredientTypeJComBox)
             {
-                clearIngredientNameJCombo();
                 setNothingSelectedIngredientTypeJCombo();
             }
         }
@@ -902,12 +901,20 @@ public class Add_Ingredients_Screen extends JFrame
                         }
 
                         //#######################################
-                        //If JTextField is Ingredient Name Skip
-                        //Decimal eval Below
-                        //#########################################*
+		                /*
+		                   Check if the ingredientName contains any
+		                   numbers or, characters
+		                */
+                        //#########################################
 
                         if (row == ingredientNameObjectIndex)
                         {
+                            String ingredientName_Txt = ((JTextField) comp).getText();
+
+                            if (doesStringContainCharacters(ingredientName_Txt))
+                            {
+                                errorTxt += String.format("\n\n  Ingredient named %s can only contain alphabet character! Symbols, numbers aren't allowed in the ingredient name!", ingredientName_Txt);
+                            }
                             continue;
                         }
 
@@ -925,17 +932,21 @@ public class Add_Ingredients_Screen extends JFrame
                 JTextField ingredientName_JTxtF = (JTextField) ingredientsFormObjects.get(ingredientNameObjectIndex);
                 String ingredientName_Txt = ingredientName_JTxtF.getText().trim();
 
-                if (doesStringContainCharacters(ingredientName_Txt))
+                if (! (ingredientName_Txt.equals("")))
                 {
-                    errorTxt += String.format("\n\n  Ingredient named %s can only contain alphabet character! Symbols, numbers aren't allowed in the ingredient name!", ingredientName_Txt);
-                }
-                else if (!(ingredientName_Txt.equals("")))
-                {
-                    String query = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Name = '%s' AND IngredientID != %s;", ingredientName_Txt, selectedIngredientID);
-
-                    if (db.getSingleColumnQuery(query) != null)
+                    ingredientName_Txt = removeSpaceAndHiddenChars(ingredientName_Txt);
+                    if (doesStringContainCharacters(ingredientName_Txt))
                     {
-                        errorTxt += String.format("\n\n  Ingredient named %s already exists within the database!", ingredientName_Txt);
+                        errorTxt += String.format("\n\n  Ingredient named %s can only contain alphabet character! Symbols, numbers aren't allowed in the ingredient name!", ingredientName_Txt);
+                    }
+                    else
+                    {
+                        String query = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Name = '%s' AND IngredientID != %s;", ingredientName_Txt, selectedIngredientID);
+
+                        if (db.getSingleColumnQuery(query) != null)
+                        {
+                            errorTxt += String.format("\n\n  Ingredient named %s already exists within the database!", ingredientName_Txt);
+                        }
                     }
                 }
 
@@ -968,16 +979,23 @@ public class Add_Ingredients_Screen extends JFrame
                 ArrayList<String> formResults = new ArrayList<>();
                 ArrayList<Component> ingredientsFormObjects = super.getIngredientsFormObjects();
 
+                int pos = 0;
                 for (Component comp : ingredientsFormObjects)
                 {
                     if (comp instanceof JTextField)
                     {
-                        formResults.add(((JTextField) comp).getText());
+                        String fieldText = ((JTextField) comp).getText();
+                        if(pos == ingredientNameObjectIndex)
+                        {
+                            fieldText =  removeSpaceAndHiddenChars(fieldText);
+                        }
+                        formResults.add(fieldText);
                     }
                     else if (comp instanceof JComboBox)
                     {
                         formResults.add(((JComboBox) comp).getSelectedItem().toString());
                     }
+                    pos++;
                 }
 
                 //####################################
@@ -1607,7 +1625,9 @@ public class Add_Ingredients_Screen extends JFrame
                     "Based_On_Quantity:", "Protein:", "Carbohydrates:", "Sugars Of Carbs:", "Fibre:", "Fat:", "Saturated Fat:",
                     "Salt:", "Water_Content:", "Calories:"};
 
-            protected int getingredientNameObjectIndex = 1; //HELLO REMOVE, potentially
+            protected final String ingredientsType[] = {"Breads", "Cereals", "Cereal Bars", "Cheese", "Fish", "Frozen Fruit", "Frozen Vegetables", "Fruit",
+                    "Eggs", "Grains & Legumes", "Juice", "Milk", "Lean Meat", "Noodles", "Nuts & Seeds", "Meat", "Other Grains", "Pasta",
+                    "Potatoes", "Poultry", "Rice", "Smoothie", "Vegetables", "Yoghurt"};
 
             protected int ingredientNameObjectIndex = 1;
             protected JComboBox ingredientsMeasure_JComboBox = new JComboBox(), ingredientsType_JComboBox = new JComboBox();
@@ -1694,10 +1714,6 @@ public class Add_Ingredients_Screen extends JFrame
                     }
                     else if (labelTXT.equals("Ingredient_Type:"))
                     {
-                        String ingredientsType[] = {"Breads", "Cereals", "Cereal Bars", "Cheese", "Fish", "Frozen Fruit", "Frozen Vegetables", "Fruit",
-                                "Eggs", "Grains & Legumes", "Juice", "Milk", "Lean Meat", "Noodles", "Nuts", "Nuts & Seeds", "Meat", "Other Grains", "Pasta",
-                                "Potatoes", "Poultry", "Rice", "Smoothie", "Vegetables", "Yoghurt"};
-
                         ingredientsType_JComboBox = new JComboBox(ingredientsType);
                         inputArea.add(ingredientsType_JComboBox);
 
@@ -1850,19 +1866,20 @@ public class Add_Ingredients_Screen extends JFrame
                         }
 
                         //#######################################
-                        //If JTextField is Ingredient Name Skip
-                        //Decimal eval Below
-                        //#########################################*
+                        /*
+                         Check if the ingredientName contains any
+                         numbers or, characters
+                         */
+                        //#########################################
 
                         if (row == ingredientNameObjectIndex)
                         {
-                            String ingredientName_Txt = ((JTextField) comp).getText().trim();
+                            String ingredientName_Txt = ((JTextField) comp).getText();
+
                             if (doesStringContainCharacters(ingredientName_Txt))
                             {
                                 errorTxt += String.format("\n\n  Ingredient named %s can only contain alphabet character! Symbols, numbers aren't allowed in the ingredient name!", ingredientName_Txt);
                             }
-
-                            jTextField.setText(ingredientName_Txt);// remove spaces
                             continue;
                         }
 
@@ -1883,6 +1900,7 @@ public class Add_Ingredients_Screen extends JFrame
 
                     if (!(ingredientName_Txt.equals("")))
                     {
+                        ingredientName_Txt =  removeSpaceAndHiddenChars(ingredientName_Txt);
                         String query = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Name = '%s';", ingredientName_Txt);
 
                         if (db.getSingleColumnQuery(query) != null)
@@ -1921,16 +1939,23 @@ public class Add_Ingredients_Screen extends JFrame
                 // Gathering Form Txt Data
                 //####################################
                 ArrayList<String> formResults = new ArrayList<>();
+                int pos =0;
                 for (Component comp : ingredientsFormObjects)
                 {
                     if (comp instanceof JTextField)
                     {
-                        formResults.add(((JTextField) comp).getText());
+                        String fieldText = ((JTextField) comp).getText();
+                        if(pos == ingredientNameObjectIndex)
+                        {
+                            fieldText =  removeSpaceAndHiddenChars(fieldText);
+                        }
+                        formResults.add(fieldText);
                     }
                     else if (comp instanceof JComboBox)
                     {
                         formResults.add(((JComboBox) comp).getSelectedItem().toString());
                     }
+                    pos++;
                 }
 
                 //####################################
@@ -1950,6 +1975,11 @@ public class Add_Ingredients_Screen extends JFrame
                 //####################################
                 updateIngredientsForm = true;
                 return updateTargets_Query;
+            }
+
+            protected String removeSpaceAndHiddenChars(String stringToBeEdited)
+            {
+                return stringToBeEdited.trim().replaceAll("\\p{C}", ""); // remove all whitespace & hidden characters like \n
             }
 
             protected ArrayList<Component> getIngredientsFormObjects()
