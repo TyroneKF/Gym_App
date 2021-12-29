@@ -21,6 +21,8 @@ import java.util.HashMap;
 
 public class Add_Ingredients_Screen extends JFrame
 {
+
+    protected String ingredientsType[];
     //#######################################
     // General Variables
     //#######################################
@@ -74,6 +76,12 @@ public class Add_Ingredients_Screen extends JFrame
         {
             if (db.isDatabaseConnected())
             {
+                ingredientsType = db.getSingleColumnQuery("SELECT Ingredient_Type_Name FROM ingredientTypes;");
+                if(ingredientsType == null)
+                {
+                    JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "\n\nUnable to get IngredientTypes for form!");
+                    return;
+                }
                 //###################################################################################
                 // Frame Set-Up
                 //###################################################################################
@@ -1624,10 +1632,6 @@ public class Add_Ingredients_Screen extends JFrame
             protected final String[] labels = {"Ingredient Measurement In:", "Ingredient Name:", "Ingredient_Type:",
                     "Based_On_Quantity:", "Protein:", "Carbohydrates:", "Sugars Of Carbs:", "Fibre:", "Fat:", "Saturated Fat:",
                     "Salt:", "Water_Content:", "Calories:"};
-
-            protected final String ingredientsType[] = {"Breads", "Cereals", "Cereal Bars", "Cheese", "Fish", "Frozen Fruit", "Frozen Vegetables", "Fruit",
-                    "Eggs", "Grains & Legumes", "Juice", "Milk", "Lean Meat", "Noodles", "Nuts & Seeds", "Meat", "Other Grains", "Pasta",
-                    "Potatoes", "Poultry", "Rice", "Smoothie", "Vegetables", "Yoghurt"};
 
             protected int ingredientNameObjectIndex = 1;
             protected JComboBox ingredientsMeasure_JComboBox = new JComboBox(), ingredientsType_JComboBox = new JComboBox();

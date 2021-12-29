@@ -133,6 +133,21 @@ CREATE TABLE IF NOT EXISTS meals
 );
 
 --#####################################################################
+CREATE TABLE IF NOT EXISTS types
+(
+    IngredientTypeID INT  PRIMARY KEY AUTO_INCREMENT,
+	Ingredient_Type_Name VARCHAR(100) NOT NULL
+);
+
+--#####################################################################
+
+CREATE TABLE IF NOT EXISTS ingredientTypes
+(
+    IngredientTypeID INT  PRIMARY KEY AUTO_INCREMENT,
+	Ingredient_Type_Name VARCHAR(100) NOT NULL
+);
+
+--#####################################################################
 
 CREATE TABLE IF NOT EXISTS ingredients_info
  (
@@ -150,7 +165,7 @@ CREATE TABLE IF NOT EXISTS ingredients_info
 
 
 	CHECK(Ingredient_Type IN(“None Of The Above”, “Breads“, “Cereals”, ”Rice”, ”Pasta”, ”Noodles”, “Other Grains”, “Vegetables”,
-    “Grains & Legumes”, “Fruit”, “Milk”, "Potatoes", "Smoothie", ”Yoghurt”, ”Cheese”, “Lean Meat”, ” Fish”, ”Poultry”, ”Eggs”, ”Nuts”,
+    “Grains & Legumes”, “Fruit”, “Milk”, "Potatoes", "Smoothie", ”Yoghurt”, ”Cheese”, “Lean Meat”, ” Fish”, ”Poultry”, ”Eggs”,
      “Cereal Bars”, ”Frozen Fruit”, ”Frozen Vegetables” , ”Juice” , ”Meat” , ”Nuts & Seeds” , ”Pasta”)),
 
 	Protein DECIMAL(7,2) NOT NULL,
@@ -376,7 +391,13 @@ Salt_LIMIT, Water_Target, Additional_Calories) VALUES
 INSERT INTO meals (PlanID, Meal_Name) VALUES
 (2,'Full Meal');
 
-
+-- #####################################################
+-- ingredientTypes  Insert Statements
+-- #####################################################
+INSERT INTO ingredientTypes (Ingredient_Type_Name) VALUES
+('None Of The Above'), ('Breads'), ('Cereals'), ('Rice'), ('Pasta'), ('Noodles'), ('Other Grains'), ('Vegetables'),
+('Grains & Legumes'), ('Fruit'), ('Milk'), ('Potatoes'), '(Smoothie'), ('Yoghurt'), ('Cheese'), ('Lean Meat'), (' Fish'), ('Poultry'), ('Eggs'),
+('Cereal Bars'), ('Frozen Fruit'), ('Frozen Vegetables'), ('Juice'), ('Meat'), ('Nuts & Seeds'), ('Pasta'),('Fruit Juice'), ('Protein Poweder');
 
 -- #####################################################
 -- ingredients_info  Insert Statements
