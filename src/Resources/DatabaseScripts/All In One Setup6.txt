@@ -163,10 +163,8 @@ CREATE TABLE IF NOT EXISTS ingredients_info
 
 	Based_On_Quantity DECIMAL(7,2) NOT NULL,
 
-
-	CHECK(Ingredient_Type IN(“None Of The Above”, “Breads“, “Cereals”, ”Rice”, ”Pasta”, ”Noodles”, “Other Grains”, “Vegetables”,
-    “Grains & Legumes”, “Fruit”, “Milk”, "Potatoes", "Smoothie", ”Yoghurt”, ”Cheese”, “Lean Meat”, ” Fish”, ”Poultry”, ”Eggs”,
-     “Cereal Bars”, ”Frozen Fruit”, ”Frozen Vegetables” , ”Juice” , ”Meat” , ”Nuts & Seeds” , ”Pasta”)),
+	Ingredient_Type  VARCHAR(100) NOT NULL,
+	FOREIGN KEY (Ingredient_Type) REFERENCES ingredientTypes(Ingredient_Type_Name),
 
 	Protein DECIMAL(7,2) NOT NULL,
 	Carbohydrates DECIMAL(7,2) NOT NULL,
@@ -395,15 +393,16 @@ INSERT INTO meals (PlanID, Meal_Name) VALUES
 -- ingredientTypes  Insert Statements
 -- #####################################################
 INSERT INTO ingredientTypes (Ingredient_Type_Name) VALUES
+('Vegan Vitamin Powders'),('Sauce'),
 ('None Of The Above'), ('Breads'), ('Cereals'), ('Rice'), ('Pasta'), ('Noodles'), ('Other Grains'), ('Vegetables'),
 ('Grains & Legumes'), ('Fruit'), ('Milk'), ('Potatoes'), '(Smoothie'), ('Yoghurt'), ('Cheese'), ('Lean Meat'), (' Fish'), ('Poultry'), ('Eggs'),
-('Cereal Bars'), ('Frozen Fruit'), ('Frozen Vegetables'), ('Juice'), ('Meat'), ('Nuts & Seeds'), ('Pasta'),('Fruit Juice'), ('Protein Poweder');
+('Cereal Bars'), ('Frozen Fruit'), ('Frozen Vegetables'), ('Juice'), ('Meat'), ('Nuts & Seeds'), ('Pasta'),('Fruit Juice'), ('Protein Powder');
 
 -- #####################################################
 -- ingredients_info  Insert Statements
 -- #####################################################
 
-INSERT INTO ingredients_info
+INSERT INTO ingredients_info 
 (Meassurement, Ingredient_Name, Ingredient_Type, Based_On_Quantity,  Protein, Carbohydrates, 
 Sugars_Of_Carbs, Fibre, Fat, Saturated_Fat, Salt, Water_Content, Calories)
 
