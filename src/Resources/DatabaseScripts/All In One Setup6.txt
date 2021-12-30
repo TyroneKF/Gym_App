@@ -1,31 +1,8 @@
 --#####################################################################--#####################################################################
-DROP DATABASE IF EXISTS gymapp4;
-CREATE DATABASE IF NOT EXISTS gymapp4;
+DROP DATABASE IF EXISTS gymapp5;
+CREATE DATABASE IF NOT EXISTS gymapp5;
 
-use gymapp4;
-
-
---#####################################################################
-
-DROP VIEW IF EXISTS planMacrosLeft;
-DROP VIEW IF EXISTS plan_Macro_Target_Calculations;
-
-Drop TABLE IF EXISTS macros_Per_Pound_And_Limits;
-
-DROP VIEW IF EXISTS total_plan_view;
-
-DROP VIEW IF EXISTS total_meal_view;
-DROP TABLE IF EXISTS ingredientInShops;
-DROP TABLE IF EXISTS ingredients_in_meal;
-DROP TABLE IF EXISTS stores;
-
-DROP VIEW IF EXISTS total_meal_view;
-DROP VIEW IF EXISTS ingredients_in_meal_calculation;
-
-DROP TABLE IF EXISTS meals;
-DROP TABLE IF EXISTS plans;
-
-DROP TABLE IF EXISTS ingredients_info;
+use gymapp5;
 
 --#####################################################################
 
@@ -128,23 +105,17 @@ CREATE TABLE IF NOT EXISTS meals
 
    Meal_Name VARCHAR(100) NOT NULL,
    
-   UNIQUE KEY No_Repeat_Meal_Names_In_Plan(PlanID, Meal_Name)  
-
-);
-
---#####################################################################
-CREATE TABLE IF NOT EXISTS types
-(
-    IngredientTypeID INT  PRIMARY KEY AUTO_INCREMENT,
-	Ingredient_Type_Name VARCHAR(100) NOT NULL
+   UNIQUE KEY No_Repeat_Meal_Names_In_Plan(PlanID, Meal_Name)
 );
 
 --#####################################################################
 
 CREATE TABLE IF NOT EXISTS ingredientTypes
 (
-    IngredientTypeID INT  PRIMARY KEY AUTO_INCREMENT,
-	Ingredient_Type_Name VARCHAR(100) NOT NULL
+    Ingredient_Type_ID INT  PRIMARY KEY AUTO_INCREMENT,
+	
+	Ingredient_Type_Name VARCHAR(100) NOT NULL,
+	UNIQUE KEY unique_type_name (Ingredient_Type_Name)
 );
 
 --#####################################################################
@@ -159,12 +130,10 @@ CREATE TABLE IF NOT EXISTS ingredients_info
 
 	Ingredient_Name VARCHAR(100) NOT NULL,
 
-	Ingredient_Type VARCHAR(100) NOT NULL,
+	Ingredient_Type_ID  INT NOT NULL,
+	FOREIGN KEY (Ingredient_Type_ID) REFERENCES ingredientTypes(Ingredient_Type_ID),
 
 	Based_On_Quantity DECIMAL(7,2) NOT NULL,
-
-	Ingredient_Type  VARCHAR(100) NOT NULL,
-	FOREIGN KEY (Ingredient_Type) REFERENCES ingredientTypes(Ingredient_Type_Name),
 
 	Protein DECIMAL(7,2) NOT NULL,
 	Carbohydrates DECIMAL(7,2) NOT NULL,
@@ -176,7 +145,6 @@ CREATE TABLE IF NOT EXISTS ingredients_info
 	Water_Content DECIMAL(7,2) NOT NULL,
 
 	Calories DECIMAL(7,2) NOT NULL,
-
 
 	UNIQUE KEY unique_ingredient_info (Ingredient_Name)
 );
@@ -232,12 +200,14 @@ CREATE TABLE IF NOT EXISTS ingredients_in_meal
 );
 
 --#####################################################################
-
+DROP VIEW IF EXISTS ingredients_in_meal_calculation;
 CREATE VIEW ingredients_in_meal_calculation AS 
 
 SELECT
 
-i.PlanID, i.MealID, i.Ingredients_Index,  i.IngredientID, i.Quantity,  info.Ingredient_Type, 
+i.PlanID, i.MealID, i.Ingredients_Index,  i.IngredientID, i.Quantity,  
+(SELECT t.Ingredient_Type_Name FROM ingredientTypes t WHERE t.Ingredient_Type_ID = info.Ingredient_Type_ID)  AS Ingredient_Type, 
+
 info.Ingredient_Name, 
 
 IFNULL(ROUND((i.Quantity /p.Volume_Per_Unit)*p.Cost_Per_Unit,2),0) AS Ingredient_Cost,
@@ -257,7 +227,6 @@ IFNULL(ROUND((info.Calories /info.Based_On_Quantity)*i.Quantity,2),0) AS Calorie
 FROM ingredients_in_meal i 
 JOIN ingredients_info info ON  info.IngredientID = i.IngredientID 
 LEFT JOIN ingredientInShops p ON p.PDID = i.PDID;
-
 
 --#####################################################################
 
@@ -285,6 +254,7 @@ LEFT  JOIN ingredients_in_meal_calculation i
 ON m.MealID = i.MealID
 
 GROUP BY  m.MealID, m.PlanID; 
+
 -- ######################################################
 
 CREATE VIEW total_plan_view AS
@@ -358,6 +328,7 @@ ON C.PlanID = P.PlanID;
 
 -- ########################################################################################################################################
 -- ########################################################################################################################################
+
 delete FROM ingredientInShops;
 delete FROM ingredients_in_meal;
 delete FROM meals;
@@ -393,24 +364,25 @@ INSERT INTO meals (PlanID, Meal_Name) VALUES
 -- ingredientTypes  Insert Statements
 -- #####################################################
 INSERT INTO ingredientTypes (Ingredient_Type_Name) VALUES
-('Vegan Vitamin Powders'),('Sauce'),
-('None Of The Above'), ('Breads'), ('Cereals'), ('Rice'), ('Pasta'), ('Noodles'), ('Other Grains'), ('Vegetables'),
-('Grains & Legumes'), ('Fruit'), ('Milk'), ('Potatoes'), '(Smoothie'), ('Yoghurt'), ('Cheese'), ('Lean Meat'), (' Fish'), ('Poultry'), ('Eggs'),
-('Cereal Bars'), ('Frozen Fruit'), ('Frozen Vegetables'), ('Juice'), ('Meat'), ('Nuts & Seeds'), ('Pasta'),('Fruit Juice'), ('Protein Powder');
+
+('None Of The Above'),('Vegan Vitamin Powders'),('Sauce'),
+('Breads'), ('Cereals'), ('Rice'), ('Pasta'), ('Noodles'), ('Other Grains'), ('Vegetables'),
+('Grains & Legumes'), ('Fruit'), ('Milk'), ('Potatoes'), ('Smoothie'), ('Yoghurt'), ('Cheese'), ('Lean Meat'), (' Fish'), ('Poultry'), ('Eggs'),
+('Cereal Bars'), ('Frozen Fruit'), ('Frozen Vegetables'), ('Juice'), ('Meat'), ('Nuts & Seeds'), ('Fruit Juice'), ('Protein Powder');
 
 -- #####################################################
 -- ingredients_info  Insert Statements
 -- #####################################################
 
 INSERT INTO ingredients_info 
-(Meassurement, Ingredient_Name, Ingredient_Type, Based_On_Quantity,  Protein, Carbohydrates, 
+(Meassurement, Ingredient_Name, Ingredient_Type_ID, Based_On_Quantity,  Protein, Carbohydrates, 
 Sugars_Of_Carbs, Fibre, Fat, Saturated_Fat, Salt, Water_Content, Calories)
 
 VALUES
-('Grams', 'None Of The Above', 'None Of The Above', 0,0,0,0,0,0,0,0,0,0),
-( 'Grams', 'Carrot', 'Vegetables', 100, 0.90, 10.00, 4.70, 2.80, 0.20, 0.0, 69.00, 0.00, 41.00),
-( 'Grams', 'Sweet Potato', 'Potatoes', 100, 1.60, 20.00,4.20,3.00, 0.10, 0.0, 55.00, 0.00, 86.00),
-( 'Grams', 'Pasta', 'Pasta', 114, 14.8, 86.00,3.00,3.6, 1.7, 0.3, 6.80, 0.00, 422.00);
+('Grams', 'None Of The Above', 1, 0,0,0,0,0,0,0,0,0,0),
+( 'Grams', 'Carrot', 10, 100, 0.90, 10.00, 4.70, 2.80, 0.20, 0.0, 69.00, 0.00, 41.00),
+( 'Grams', 'Sweet Potato', 14, 100, 1.60, 20.00,4.20,3.00, 0.10, 0.0, 55.00, 0.00, 86.00),
+( 'Grams', 'Pasta', 7, 114, 14.8, 86.00,3.00,3.6, 1.7, 0.3, 6.80, 0.00, 422.00);
 
 
 -- #####################################################
@@ -421,7 +393,8 @@ INSERT INTO stores
 (Store_Name)
 
 VALUES
-('No Shop'),('ASDA'), ('Sainsbury'), ('Morisssons');
+('No Shop'),('ASDA'), ('Sainsbury'), ('Morisssons'), ('Aldi'), ('Amazon'), 
+('Iceland'), ('Lidl'), ('Muscle Food'), ('MyProtein'), ('Vivo Life');
 
 
 -- #####################################################
@@ -455,13 +428,6 @@ VALUES
 (1, 2, 1, 20.00, 1),
 (1, 2, 2, 20.00, 2);
 
-
-
-INSERT INTO stores
-(Store_Name)
-
-VALUES
-('Aldi'), ('Amazon'), ('Iceland'), ('Lidl'), ('Muscle Food'), ('MyProtein'), ('Vivo Life');
 
 --#################################################################################################
 --#################################################################################################

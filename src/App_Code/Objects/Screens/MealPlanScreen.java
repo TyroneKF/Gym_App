@@ -45,7 +45,7 @@ public class MealPlanScreen extends JPanel
     private IngredientsTable jTableBeingAdded;
     private ArrayList<IngredientsTable> listOfJTables = new ArrayList<>();
 
-    String databaseName = "gymapp4";
+    String databaseName = "gymapp5";
 
     //########################################################
     // Variables
@@ -439,14 +439,11 @@ public class MealPlanScreen extends JPanel
                 saveMacroTargets(true);
                 if (macrosTargets_Screen != null)
                 {
-                    if (macrosTargets_Screen != null)
-                    {
-                        macrosTargets_Screen.closeeWindow();
-                    }
-                    if (addIngredientsScreen != null)
-                    {
-                        addIngredientsScreen.closeeWindow();
-                    }
+                    macrosTargets_Screen.closeeWindow();
+                }
+                if (addIngredientsScreen != null)
+                {
+                    addIngredientsScreen.closeeWindow();
                 }
             }
         });

@@ -514,18 +514,28 @@ public class IngredientsTable extends JDBC_JTable
 
     public void updateMapIngredientsTypesAndNames()
     {
-        //##################################
+        //###########################################################
         // Clear List
-        //##################################
+        //###########################################################
         map_ingredientTypesToIngredientNames.clear();
 
-        //##################################
-        // Store all ingredientTypes Names
-        //##################################
-        String queryIngredientsType = String.format("SELECT DISTINCT Ingredient_Type  FROM ingredients_info;");
-        ArrayList<String> ingredientTypesResults = db.getSingleColumnQuery_ArrayList(queryIngredientsType);
+        //###########################################################
+        // Store ingredientTypes ID's & IngredientTypeName that occur
+        //###########################################################
+        String queryIngredientsType = String.format("""
+                SELECT I.Ingredient_Type_ID, n.Ingredient_Type_Name
+                FROM
+                (
+                  SELECT DISTINCT(Ingredient_Type_ID) FROM ingredients_info
+                ) I
+                INNER JOIN
+                (
+                  SELECT Ingredient_Type_ID, Ingredient_Type_Name FROM ingredientTypes
+                )n
+                ON i.Ingredient_Type_ID = n.Ingredient_Type_ID;""");
+        ArrayList<ArrayList<String>> ingredientTypesNameAndIDResults = db.getMultiColumnQuery(queryIngredientsType);
 
-        if (ingredientTypesResults == null)
+        if (ingredientTypesNameAndIDResults == null)
         {
             JOptionPane.showMessageDialog(null, "\n\nUnable to update Ingredient Type Info");
         }
@@ -533,13 +543,17 @@ public class IngredientsTable extends JDBC_JTable
         // Store all ingredient types & names
         //######################################
         String errorTxt = "";
-
-        for (String ingredientType : ingredientTypesResults)
+        int listSize = ingredientTypesNameAndIDResults.size();
+        for (int i = 0; i < listSize; i++)
         {
+            ArrayList<String> row = ingredientTypesNameAndIDResults.get(i);
+            String ID = row.get(0);
+            String ingredientType = row.get(1);
+
             //########################################
             // Get IngredientNames for Type
             //########################################
-            String queryTypeIngredientNames = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Type = '%s';", ingredientType);
+            String queryTypeIngredientNames = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Type_ID = %s;", ID);
             ArrayList<String> ingredientNames = db.getSingleColumnQuery_ArrayList(queryTypeIngredientNames);
 
             if (ingredientNames == null)
