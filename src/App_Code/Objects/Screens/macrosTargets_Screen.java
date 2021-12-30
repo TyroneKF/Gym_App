@@ -288,7 +288,7 @@ public class macrosTargets_Screen extends JFrame
 
         System.out.printf("\n\nQuery: \n\n%s", updateTargets_Query);
 
-        if (!(db.uploadData_Batch(new String[]{updateTargets_Query})))
+        if (!(db.uploadData_Batch_Altogether(new String[]{updateTargets_Query})))
         {
             JOptionPane.showMessageDialog(gui.getFrame(), "Un-able to Update Macro Targets In DB");
             return false;

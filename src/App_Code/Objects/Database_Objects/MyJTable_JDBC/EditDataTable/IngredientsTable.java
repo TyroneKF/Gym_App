@@ -800,7 +800,7 @@ public class IngredientsTable extends JDBC_JTable
             //##################################################################################################
             // Upload IngredientName & NEW PDID
             //##################################################################################################
-            if (!(db.uploadData_Batch(new String[]{uploadQuery, uploadQuery2})))
+            if (!(db.uploadData_Batch_Altogether(new String[]{uploadQuery, uploadQuery2})))
             {
                 JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nUnable to update Ingredient In DB!");
 
@@ -887,7 +887,7 @@ public class IngredientsTable extends JDBC_JTable
             //##################################################################################################
             // Upload IngredientName & NEW PDID
             //##################################################################################################
-            if (!(db.uploadData_Batch(new String[]{uploadQuery})))
+            if (!(db.uploadData_Batch_Altogether(new String[]{uploadQuery})))
             {
                 JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nUnable to update Ingredient Store In DB!");
 
@@ -921,7 +921,7 @@ public class IngredientsTable extends JDBC_JTable
         //HELLO DELETE
         // System.out.printf("\n\nupdateTableValuesByQuantity() \nQuery: \n\n%s", query1);
 
-        if (!(db.uploadData_Batch(new String[]{query1})))
+        if (!(db.uploadData_Batch_Altogether(new String[]{query1})))
         {
             JOptionPane.showMessageDialog(null, "Un-able to Update row based on cell value!");
 
@@ -1116,7 +1116,7 @@ public class IngredientsTable extends JDBC_JTable
 
         String[] query = new String[]{query2, query4};
 
-        if (db.uploadData_Batch(query))
+        if (db.uploadData_Batch_Altogether(query))
         {
             //##########################################
             /**
@@ -1161,7 +1161,7 @@ public class IngredientsTable extends JDBC_JTable
 
             String[] queryUpload = new String[]{query};
 
-            if (!(db.uploadData_Batch(queryUpload)))
+            if (!(db.uploadData_Batch_Altogether(queryUpload)))
             {
                 JOptionPane.showMessageDialog(null, "Unable To delete Ingredient from Meal in Database");
             }
@@ -1271,7 +1271,7 @@ public class IngredientsTable extends JDBC_JTable
                 (%s, %s, %s, %s, %s, %s); 
                         """, newIngredientsIndex2, tempPlan_Meal_ID, temp_PlanID, ingredientID, quantity, NoneOfTheAbove_PDID);
 
-        if (!(db.uploadData_Batch(new String[]{query1})))
+        if (!(db.uploadData_Batch_Altogether(new String[]{query1})))
         {
             JOptionPane.showMessageDialog(null, "Un-able to Insert new row into the Database!");
             return;
@@ -1341,7 +1341,7 @@ public class IngredientsTable extends JDBC_JTable
                     INSERT INTO meals (MealID, PlanID, Meal_Name) VALUES
                     (%s, %s,'%s'); """, tempPlan_Meal_ID, temp_PlanID, mealName);
 
-            if (!(db.uploadData_Batch(new String[]{query1})))
+            if (!(db.uploadData_Batch_Altogether(new String[]{query1})))
             {
                 JOptionPane.showMessageDialog(null, "Unable To re-insert deleted meals with action requested \nbeing refresh!");
                 return;
@@ -1379,7 +1379,7 @@ public class IngredientsTable extends JDBC_JTable
 
         String[] query_Temp_Data = new String[]{query1, query2, query3, query4, query5, query8, query9};
 
-        if (!(db.uploadData_Batch(query_Temp_Data)))
+        if (!(db.uploadData_Batch_Altogether(query_Temp_Data)))
         {
             JOptionPane.showMessageDialog(null, "ERROR: \nCannot revert database to previous data!");
             return;
@@ -1426,7 +1426,7 @@ public class IngredientsTable extends JDBC_JTable
             //#####################################
             // If Upload Un-Successful
             //#####################################
-            if (!(db.uploadData_Batch(new String[]{uploadQuery})))
+            if (!(db.uploadData_Batch_Altogether(new String[]{uploadQuery})))
             {
                 JOptionPane.showMessageDialog(null, "\n\nUnable To Create Meal In Original Plan!!");
                 return false;
@@ -1490,7 +1490,7 @@ public class IngredientsTable extends JDBC_JTable
         //##########################################
         // If Upload Un-Successful
         //##########################################
-        if (!(db.uploadData_Batch(query_Temp_Data)))
+        if (!(db.uploadData_Batch_Altogether(query_Temp_Data)))
         {
             JOptionPane.showMessageDialog(null, "ERROR: \nUnable to update table to Database!!");
             return false;

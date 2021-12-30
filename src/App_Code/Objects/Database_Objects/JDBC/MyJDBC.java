@@ -257,7 +257,11 @@ public class MyJDBC
         return false;
     }
 
-    public Boolean uploadData_Batch(String[] queries)
+    /*
+      if one query fails the whole queries fail
+      The changes made by a previous query in the list isn't visible to the query after it, the updates are made altogether
+     */
+    public Boolean uploadData_Batch_Altogether(String[] queries)
     {
         if (databaseExist)
         {
@@ -279,6 +283,58 @@ public class MyJDBC
 
                 //Executing the batch
                 statement.executeBatch();
+
+                //Saving the changes
+                connection.commit();
+                //################################
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                System.out.printf("\n\n @uploadData_Batch() \n\nQuery:\n ");
+                for (String query: queries)
+                {
+                    System.out.printf("\n\n%s",query);
+                }
+                System.out.printf("\n\n%s", e);
+
+                JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+        else
+        {
+            System.out.printf("\n\n @uploadData_Batch() DB couldn't successfully connect to DB %s", databaseName);
+        }
+        return false;
+    }
+
+    /*
+      Each query upload is executed separately and the query after, it can notice the changes
+     */
+    public Boolean uploadData_Batch_Independently(String[] queries)
+    {
+        if (databaseExist)
+        {
+            try
+            {
+                Connection connection =  DriverManager.getConnection(databaseConnection, userName, password);
+                Statement statement = connection.createStatement();
+
+                //Setting auto-commit false
+                connection.setAutoCommit(false);
+
+                //################################
+                // Creating Batch
+                //################################
+                for (String query: queries)
+                {
+                    //statement.addBatch(query);
+                    statement.executeUpdate(query);
+                }
+
+                //Executing the batch
+               // statement.executeBatch();
 
                 //Saving the changes
                 connection.commit();

@@ -273,7 +273,7 @@ public class MealPlanScreen extends JPanel
             String[] query_Temp_Data = new String[]{query0, query1, query2, query3, query4, query5, query6, query7, query8, query9, query10, query11, query12,
                     query13, query14, query15, query16, query17, query18, query10, query11};
 
-            if (!(db.uploadData_Batch(query_Temp_Data)))
+            if (!(db.uploadData_Batch_Altogether(query_Temp_Data)))
             {
                 JOptionPane.showMessageDialog(null, "\n\nCannot Create Temporary Plan In DB to Allow Editing");
                 return;
@@ -778,7 +778,7 @@ public class MealPlanScreen extends JPanel
         //#################################
         String uploadQuery = String.format(" INSERT INTO meals (PlanID, Meal_Name) VALUES (%s,'%s')", tempPlanID, newMealName);
 
-        if (!(db.uploadData_Batch(new String[]{uploadQuery})))
+        if (!(db.uploadData_Batch_Altogether(new String[]{uploadQuery})))
         {
             JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nCreating Meal In DB!");
             return;
@@ -796,7 +796,7 @@ public class MealPlanScreen extends JPanel
             JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nCannot Get Created Meals ID!!");
 
             String deleteQuery = String.format("DELETE FROM  meals WHERE planID = %s AND  MealName = '%s';)", tempPlanID, newMealName);
-            if (!(db.uploadData_Batch(new String[]{deleteQuery})))
+            if (!(db.uploadData_Batch_Altogether(new String[]{deleteQuery})))
             {
                 JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nUnable To Undo Errors Made!\n\nRecommendation Action: Refresh This Plan");
             }
@@ -963,7 +963,7 @@ public class MealPlanScreen extends JPanel
         // If Delete Statements Successful
         //###########################################################
 
-        if (!(db.uploadData_Batch(new String[]{deleteIngredients, deleteMeals})))
+        if (!(db.uploadData_Batch_Altogether(new String[]{deleteIngredients, deleteMeals})))
         {
             JOptionPane.showMessageDialog(frame, "Unable Save Plan To Database");
             return;
@@ -1126,7 +1126,7 @@ public class MealPlanScreen extends JPanel
 
         String query06 = String.format(" DROP TABLE IF EXISTS temp_Macros;");
 
-        if (!(db.uploadData_Batch(new String[]{query000, query01, query02, query03, query04, query05, query06})))
+        if (!(db.uploadData_Batch_Altogether(new String[]{query000, query01, query02, query03, query04, query05, query06})))
         {
             JOptionPane.showMessageDialog(null, "\n\nCannot Transfer Targets");
             return false;
