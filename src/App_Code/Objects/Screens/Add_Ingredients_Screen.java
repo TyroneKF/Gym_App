@@ -1464,7 +1464,7 @@ public class Add_Ingredients_Screen extends JFrame
             edit_IngredientTypeJComboBox.removeAllItems(); // clearList
             for (String key : map_ingredientTypesToIngredientNames.keySet())
             {
-                if(key != "None Of The Above")
+                if(! key.equals("None Of The Above"))
                 {
                     edit_IngredientTypeJComboBox.addItem(key);
                 }
