@@ -19,7 +19,7 @@ import java.util.*;
 import java.util.HashMap;
 
 
-public class Add_Ingredients_Screen extends JFrame
+public class Add_Or_Edit_Ingredients_Screen extends JFrame
 {
 
     protected String ingredientsType[];
@@ -63,7 +63,7 @@ public class Add_Ingredients_Screen extends JFrame
     // Constructor
     //##################################################################################################################
 
-    public Add_Ingredients_Screen(MyJDBC db, MealPlanScreen mealPlanScreen, int planID, int temp_PlanID, String planName)
+    public Add_Or_Edit_Ingredients_Screen(MyJDBC db, MealPlanScreen mealPlanScreen, int planID, int temp_PlanID, String planName)
     {
         this.db = db;
         this.mealPlanScreen = mealPlanScreen;
@@ -315,38 +315,49 @@ public class Add_Ingredients_Screen extends JFrame
             createForms(ingredientsForm, shopForm);
         }
 
-        private void updateMapIngredientsTypesAndNames()
+        public void updateMapIngredientsTypesAndNames()
         {
-            //##################################
+            //###########################################################
             // Clear List
-            //##################################
+            //###########################################################
             map_ingredientTypesToIngredientNames.clear();
 
-            //##################################
-            // Store all ingredientTypes Names
-            //##################################
-            String queryIngredientsType = String.format("SELECT DISTINCT Ingredient_Type  FROM ingredients_info ORDER BY Ingredient_Type;");
-            Collection<String> ingredientTypesResults = db.getSingleColumnQuery_AlphabeticallyOrderedTreeSet(queryIngredientsType);
+            //###########################################################
+            // Store ingredientTypes ID's & IngredientTypeName that occur
+            //###########################################################
+            String queryIngredientsType = String.format("""
+                SELECT I.Ingredient_Type_ID, n.Ingredient_Type_Name
+                FROM
+                (
+                  SELECT DISTINCT(Ingredient_Type_ID) FROM ingredients_info
+                ) I
+                INNER JOIN
+                (
+                  SELECT Ingredient_Type_ID, Ingredient_Type_Name FROM ingredientTypes
+                )n
+                ON i.Ingredient_Type_ID = n.Ingredient_Type_ID;""");
+            ArrayList<ArrayList<String>> ingredientTypesNameAndIDResults = db.getMultiColumnQuery(queryIngredientsType);
 
-            if (ingredientTypesResults == null)
+            if (ingredientTypesNameAndIDResults == null)
             {
                 JOptionPane.showMessageDialog(null, "\n\nUnable to update Ingredient Type Info");
-                return;
             }
-
             //######################################
             // Store all ingredient types & names
             //######################################
             String errorTxt = "";
-
-            for (String ingredientType : ingredientTypesResults)
+            int listSize = ingredientTypesNameAndIDResults.size();
+            for (int i = 0; i < listSize; i++)
             {
+                ArrayList<String> row = ingredientTypesNameAndIDResults.get(i);
+                String ID = row.get(0);
+                String ingredientType = row.get(1);
+
                 //########################################
                 // Get IngredientNames for Type
                 //########################################
-                String queryTypeIngredientNames = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Type = '%s' ORDER BY Ingredient_Name;", ingredientType);
-                Collection<String> ingredientNames = db.getSingleColumnQuery_AlphabeticallyOrderedTreeSet(queryTypeIngredientNames);
-
+                String queryTypeIngredientNames = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Type_ID = %s;", ID);
+                ArrayList<String> ingredientNames = db.getSingleColumnQuery_ArrayList(queryTypeIngredientNames);
 
                 if (ingredientNames == null)
                 {
@@ -358,6 +369,7 @@ public class Add_Ingredients_Screen extends JFrame
                 // Mapping Ingredient Type to Names
                 //########################################
                 map_ingredientTypesToIngredientNames.put(ingredientType, ingredientNames);
+
                 //System.out.printf("\n\nType %s\n%s",ingredientType, ingredientNames);
             }
 
@@ -540,12 +552,14 @@ public class Add_Ingredients_Screen extends JFrame
             // Get Ingredient Info
             //##############################
             ArrayList<ArrayList<String>> ingredientInfo_R = db.getMultiColumnQuery(String.format("""
-                    SELECT  Meassurement, Ingredient_Name, Ingredient_Type, Based_On_Quantity, 
-                    Protein, Carbohydrates, Sugars_Of_Carbs, Fibre, Fat, Saturated_Fat, Salt, 
-                    Water_Content, Calories
-                                                
-                    from ingredients_info 
-                    WHERE Ingredient_Name = '%s';""", selectedIngredientName));
+                    SELECT  info.Meassurement, info.Ingredient_Name,
+                    (SELECT t.Ingredient_Type_Name FROM ingredientTypes t WHERE t.Ingredient_Type_ID = info.Ingredient_Type_ID)  AS Ingredient_Type,
+                    info.Based_On_Quantity,
+                    info.Protein, info.Carbohydrates, info.Sugars_Of_Carbs, info.Fibre, info.Fat, info.Saturated_Fat, info.Salt,\s
+                    info.Water_Content, info.Calories
+                    							
+                    from ingredients_info info
+                    WHERE info.Ingredient_Name = '%s';""", selectedIngredientName));
 
             if (ingredientInfo_R == null)
             {
@@ -691,7 +705,7 @@ public class Add_Ingredients_Screen extends JFrame
             if (selectedItem != null)
             {
                 String query = String.format("SELECT IngredientID FROM ingredients_info WHERE Ingredient_Name = '%s';", selectedItem);
-                System.out.printf("\n\nGet Query:\nselected Item: '%s' \n%s", selectedItem, query); // HELLO REMOVE
+                //System.out.printf("\n\nGet Query:\nselected Item: '%s' \n%s", selectedItem, query); // HELLO REMOVE
                 String[] idResults = db.getSingleColumnQuery(query);
 
                 if (idResults != null)
@@ -1013,7 +1027,10 @@ public class Add_Ingredients_Screen extends JFrame
                 String updateTargets_Query = String.format("""
                                 UPDATE ingredients_info 
                                 SET  
-                                Meassurement = '%s', Ingredient_Name = '%s', Ingredient_Type = '%s', Based_On_Quantity = %s, 
+                                Meassurement = '%s', Ingredient_Name = '%s', 
+                                Ingredient_Type_ID = (SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = '%s'),                                
+                                
+                                Based_On_Quantity = %s, 
                                 Protein = %s, Carbohydrates = %s, Sugars_Of_Carbs = %s, Fibre = %s, Fat = %s, Saturated_Fat = %s,
                                 Salt = %s, Water_Content = %s, Calories = %s
                                 WHERE IngredientID = %s; """,
@@ -1931,15 +1948,6 @@ public class Add_Ingredients_Screen extends JFrame
             private String get_IngredientsForm_UpdateString() // HELLO needs further update methods created for gui
             {
                 //####################################
-                // Get New ID
-                //####################################
-                Integer newIngredientsID2 = getNewIngredientID();
-                if (newIngredientsID2 == null)
-                {
-                    return null;
-                }
-
-                //####################################
                 // Gathering Form Txt Data
                 //####################################
                 ArrayList<String> formResults = new ArrayList<>();
@@ -1966,11 +1974,35 @@ public class Add_Ingredients_Screen extends JFrame
                 // Creating Upload Query
                 //####################################
                 int i = 0;
+
+                 String ingredientTypeSet = "SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = '";
+
                 String updateTargets_Query = String.format("""
-                                INSERT INTO ingredients_info (IngredientID, Meassurement, Ingredient_Name, Ingredient_Type, Based_On_Quantity, 
-                                Protein, Carbohydrates, Sugars_Of_Carbs, Fibre, Fat, Saturated_Fat, Salt, Water_Content, Calories)                                                    
-                                Values (%s, '%s', '%s', '%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s); """, newIngredientsID2,
-                        formResults.get(i), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1),
+                                INSERT INTO ingredients_info
+                                (Meassurement, Ingredient_Name, Ingredient_Type_ID, Based_On_Quantity, 
+                                Protein, Carbohydrates, Sugars_Of_Carbs, Fibre, Fat, Saturated_Fat, Salt, Water_Content, Calories)   
+                                                                                 
+                                Values 
+                                (                                 
+                                  ('%s'), 
+                                  ('%s'), 
+                                  (%s), 
+                                  (%s), 
+                                  (%s), 
+                                  (%s), 
+                                  (%s), 
+                                  (%s), 
+                                  (%s), 
+                                  (%s), 
+                                  (%s), 
+                                  (%s), 
+                                  (%s)
+                                ); """,
+                        formResults.get(i), formResults.get(i += 1),
+
+                        ingredientTypeSet += formResults.get(i += 1)+ "'",
+
+                        formResults.get(i += 1), formResults.get(i += 1),
                         formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1),
                         formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1));
 
@@ -2257,6 +2289,7 @@ public class Add_Ingredients_Screen extends JFrame
                 Integer newIngredientsID2 = getNewIngredientID();
                 if (newIngredientsID2 == null)
                 {
+                    JOptionPane.showMessageDialog(null, "Unable to get new ingredientID");
                     return null;
                 }
 
@@ -2265,6 +2298,7 @@ public class Add_Ingredients_Screen extends JFrame
                 //############################################################
 
                 String updateString = String.format("""
+                        
                         INSERT INTO ingredientInShops (IngredientID, Volume_Per_Unit, Cost_Per_Unit, Store_Name)
                         VALUES""");
 

@@ -39,7 +39,7 @@ public class MealPlanScreen extends JPanel
 
     private MyJDBC db;
     private App_Code.Objects.Screens.macrosTargets_Screen macrosTargets_Screen = null;
-    private Add_Ingredients_Screen addIngredientsScreen = null;
+    private Add_Or_Edit_Ingredients_Screen addIngredientsScreen = null;
 
 
     private IngredientsTable jTableBeingAdded;
@@ -1042,7 +1042,7 @@ public class MealPlanScreen extends JPanel
             addIngredientsScreen.makeJframeVisible();
             return;
         }
-        addIngredientsScreen = new Add_Ingredients_Screen(db, this, planID, tempPlanID, planName);
+        addIngredientsScreen = new Add_Or_Edit_Ingredients_Screen(db, this, planID, tempPlanID, planName);
     }
 
     public void remove_addIngredients_Screen()
