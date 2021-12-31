@@ -60,7 +60,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-
     public Add_Or_Edit_Ingredients_Screen(MyJDBC db, MealPlanScreen mealPlanScreen, int planID, int temp_PlanID, String planName)
     {
         this.db = db;
@@ -2609,13 +2608,9 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
         }
     }
 
-//##################################################################################################################
-// Form Methods
-//##################################################################################################################
-
     //##################################################################################################################
-// General Methods
-//##################################################################################################################
+    // General Methods
+    //##################################################################################################################
     public void makeJframeVisible()
     {
         setExtendedState(JFrame.NORMAL);
@@ -2632,7 +2627,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
         mealPlanScreen.remove_addIngredients_Screen();
     }
 
-    public void closeeWindow()
+    public void closeWindow()
     {
         this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }
