@@ -572,11 +572,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             // Get Ingredient ID
             //##############################
             selectedIngredientID = ingredientInfo.get(0);
-            if (selectedIngredientID == null)
-            {
-                JOptionPane.showMessageDialog(mealPlanScreen, "Unable to grab Ingredient IDto edit it!!");
-                return;
-            }
 
             //##############################
             // Set Form With Ingredient Info
