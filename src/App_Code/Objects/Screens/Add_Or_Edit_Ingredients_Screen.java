@@ -22,7 +22,7 @@ import java.util.HashMap;
 public class Add_Or_Edit_Ingredients_Screen extends JFrame
 {
 
-    protected String ingredientsType[];
+    protected String everythingIngredientsTypeList[];
     //#######################################
     // General Variables
     //#######################################
@@ -74,8 +74,8 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
         {
             if (db.isDatabaseConnected())
             {
-                ingredientsType = db.getSingleColumnQuery("SELECT Ingredient_Type_Name FROM ingredientTypes;");
-                if(ingredientsType == null)
+                everythingIngredientsTypeList = db.getSingleColumnQuery("SELECT Ingredient_Type_Name FROM ingredientTypes;");
+                if(everythingIngredientsTypeList == null)
                 {
                     JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "\n\nUnable to get IngredientTypes for form!");
                     return;
@@ -106,9 +106,9 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 contentPane.setLayout(new GridLayout(1, 1));
                 contentPane.setVisible(true);
 
-                //#################################################
+                //##################################################################################
                 // Creating TabbedPane
-                //#################################################
+                //##################################################################################
                 JTabbedPane tp = new JTabbedPane();
                 contentPane.add(tp);
 
@@ -123,10 +123,26 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 //#################################################
                 // Creating Edit Ingredients Screen
                 //##################################################
-                editIngredientsFormJPanel = new JPanel(new GridBagLayout());
+                JPanel editIngredientsFormJPanel = new JPanel(new GridBagLayout());
                 tp.add("Edit Ingredients", editIngredientsFormJPanel);
 
                 addToContainer(editIngredientsFormJPanel, new EditingCreateForm(), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
+
+                //#################################################
+                // Creating Edit Ingredient Types Screen
+                //##################################################
+                JPanel editIngredientsTypesJPanel = new JPanel(new GridBagLayout());
+                tp.add("Edit Ingredient Types", editIngredientsTypesJPanel);
+
+                addToContainer(editIngredientsTypesJPanel, new EditIngredientsTypes(), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
+
+                //#################################################
+                // Creating Edit Ingredients Stores Screen
+                //##################################################
+                JPanel editIngredientsStoreJPanel = new JPanel(new GridBagLayout());
+                tp.add("Edit Ingredient Stores", editIngredientsStoreJPanel);
+
+                addToContainer(editIngredientsStoreJPanel, new EditIngredientStores(), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
             }
         }
         catch (Exception e)
@@ -135,9 +151,21 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
         }
     }
 
-    //##################################################################################################################
-    // Editing Form Class
-    //##################################################################################################################
+    public class EditIngredientsTypes extends JPanel
+    {
+        public EditIngredientsTypes()
+        {
+
+        }
+    }
+
+    public class EditIngredientStores extends JPanel
+    {
+        public EditIngredientStores()
+        {
+
+        }
+    }
 
     public class EditingCreateForm extends createForm
     {
@@ -146,7 +174,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
         private String selectedIngredientID, selectedIngredientName, selected_IngredientType_JComboItem;
 
-        private final int ingredientNameIndex = 1, ingredientTypeIndex = 2;
         private String previousIngredientType, previousIngredientName;
         private ArrayList<Component> formObjects;
 
@@ -583,7 +610,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 String value = ingredientInfo.get(i).trim();
 
                 // setting previous ingredient Type value
-                if (formObjectsIndex == ingredientTypeIndex) // accounting for id being added
+                if (formObjectsIndex == getIngredientTypeObjectIndex()) // accounting for id being added
                 {
                     previousIngredientType = value;
                 }
@@ -771,8 +798,8 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                     if (updateBothForms(ingredientsForm.get_IngredientsForm_UpdateString(selectedIngredientID), shopForm.get_ShopForm_UpdateString(selectedIngredientID)))
                     {
                         // Check if ingredientsName or IngredientType changed
-                        String currentIngredientName = ((JTextField) formObjects.get(ingredientNameIndex)).getText().trim();
-                        String currentIngredientType = ((JComboBox) formObjects.get(ingredientTypeIndex)).getSelectedItem().toString();
+                        String currentIngredientName = ((JTextField) formObjects.get(getIngredientNameObjectIndex())).getText().trim();
+                        String currentIngredientType = ((JComboBox) formObjects.get(getIngredientTypeObjectIndex())).getSelectedItem().toString();
 
                         //HELLO REMOVE
                         System.out.printf("\n\nIngredientName \nCurrent = '%s' \nPrevious = '%s' \n\nIngredientType \nCurrent = '%s' \nPrevious = '%s'",
@@ -918,7 +945,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 		                */
                         //#########################################
 
-                        if (row == ingredientNameObjectIndex)
+                        if (row == getIngredientNameObjectIndex())
                         {
                             String ingredientName_Txt = ((JTextField) comp).getText();
 
@@ -940,7 +967,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 //Check if IngredientName Already exists in DB
                 //####################################################
 
-                JTextField ingredientName_JTxtF = (JTextField) ingredientsFormObjects.get(ingredientNameObjectIndex);
+                JTextField ingredientName_JTxtF = (JTextField) ingredientsFormObjects.get(getIngredientNameObjectIndex());
                 String ingredientName_Txt = ingredientName_JTxtF.getText().trim();
 
                 if (! (ingredientName_Txt.equals("")))
@@ -981,7 +1008,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 // Get Current ID
                 //####################################
 
-                JTextField ingredientName_JTxtF = (JTextField) ingredientsFormObjects.get(ingredientNameObjectIndex);
+                JTextField ingredientName_JTxtF = (JTextField) ingredientsFormObjects.get(getIngredientNameObjectIndex());
                 String ingredientName_Txt = ingredientName_JTxtF.getText().trim();
 
                 //####################################
@@ -996,7 +1023,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                     if (comp instanceof JTextField)
                     {
                         String fieldText = ((JTextField) comp).getText();
-                        if(pos == ingredientNameObjectIndex)
+                        if(pos == getIngredientNameObjectIndex())
                         {
                             fieldText =  removeSpaceAndHiddenChars(fieldText);
                         }
@@ -1271,12 +1298,10 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
         }
     }
 
-//###################################################################################################################
-// Original Form Class
-//##################################################################################################################
-
     public class createForm extends JPanel
     {
+        private int ingredientNameObjectIndex = 1, ingredientTypeObjectIndex = 2, glycemicObjectIndex = 5;
+
         private IngredientsForm ingredientsForm;
         private ShopForm shopForm;
 
@@ -1434,6 +1459,16 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             }
         }
 
+        protected int getIngredientNameObjectIndex()
+        {
+            return ingredientNameObjectIndex;
+        }
+
+        protected int getIngredientTypeObjectIndex()
+        {
+            return ingredientTypeObjectIndex;
+        }
+
         //HELLO EDIT
         protected boolean addOrDeleteIngredientFromMap(String process, String ingredientType, String ingredientName)
         {
@@ -1483,7 +1518,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             shopForm.clearShopForm();
         }
 
-
         protected boolean updateBothForms(String updateIngredients_String, String[] updateIngredientShops_String)
         {
             System.out.printf("\n\n%s", updateIngredients_String, Arrays.toString(updateIngredientShops_String));
@@ -1506,12 +1540,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 return false;
             }
 
-            System.out.printf("\n\n###################################################");
-            for(String i: updateIngredientShops_String)
-            {
-                System.out.printf("\n\n%s", i);
-            }
-
             if (updateIngredientShops_String != null)
             {
                 if (! (db.uploadData_Batch_Independently(updateIngredientShops_String)) )
@@ -1530,8 +1558,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
         {
             contentPane.revalidate();
             scrollPaneJPanel.revalidate();
-            addIngredientsFormJPanel.revalidate();
-            addIngredientsFormJPanel.revalidate();
+            addIngredientsFormJPanel.revalidate();          
             revalidate();
         }
 
@@ -1632,7 +1659,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                     "Based_On_Quantity:", "Protein:", "Glycemic Index","Carbohydrates:", "Sugars Of Carbs:", "Fibre:", "Fat:", "Saturated Fat:",
                     "Salt:", "Water_Content:", "Calories:"};
 
-            protected int ingredientNameObjectIndex = 1;
             protected JComboBox ingredientsMeasure_JComboBox = new JComboBox(), ingredientsType_JComboBox = new JComboBox();
             protected ArrayList<Component> ingredientsFormObjects = new ArrayList<>();
 
@@ -1717,7 +1743,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                     }
                     else if (labelTXT.equals("Ingredient_Type:"))
                     {
-                        ingredientsType_JComboBox = new JComboBox(ingredientsType);
+                        ingredientsType_JComboBox = new JComboBox(everythingIngredientsTypeList);// CHECKA
                         inputArea.add(ingredientsType_JComboBox);
 
                         jcomboxBeingCreated = true;
@@ -1834,7 +1860,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
                 String errorTxt = "";
 
-
                 //##############################
                 // Validation JTextFields
                 //##############################
@@ -1881,7 +1906,18 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
                             if (doesStringContainCharacters(ingredientName_Txt))
                             {
-                                errorTxt += String.format("\n\n  Ingredient named %s can only contain alphabet character! Symbols, numbers aren't allowed in the ingredient name!", ingredientName_Txt);
+                                errorTxt += String.format("\n\n  ' %s ' on Row: %s,  can only contain alphabet character! Symbols, numbers aren't allowed in the ingredient name!", labels[row], row + 1, ingredientName_Txt);
+                            }
+                            continue;
+                        }
+
+                        if(row == glycemicObjectIndex)
+                        {
+                            Integer intValue = Integer.valueOf(value);
+
+                            if(intValue > 100 || intValue < 0)
+                            {
+                                errorTxt += String.format("\n\n  ' %s ' on Row: %s,  must be an Integer value which is: 0<= value <=100 !", labels[row], row + 1);
                             }
                             continue;
                         }
@@ -1938,11 +1974,12 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 {
                     if (comp instanceof JTextField)
                     {
-                        String fieldText = ((JTextField) comp).getText();
-                        if(pos == ingredientNameObjectIndex)
+                        String fieldText = ((JTextField) comp).getText(); // CHECKA
+                        if(pos == ingredientNameObjectIndex || pos == ingredientTypeObjectIndex)
                         {
                             fieldText =  removeSpaceAndHiddenChars(fieldText);
                         }
+
                         formResults.add(fieldText);
                     }
                     else if (comp instanceof JComboBox)
@@ -2562,7 +2599,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 // Form Methods
 //##################################################################################################################
 
-
     //##################################################################################################################
 // General Methods
 //##################################################################################################################
@@ -2616,5 +2652,4 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
         container.add(addToContainer, gbc);
     }
-
 }
