@@ -23,6 +23,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 {
 
     protected String everythingIngredientsTypeList[];
+
     //#######################################
     // General Variables
     //#######################################
@@ -46,7 +47,9 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
     private JComboBox
             edit_IngredientName_JComboBox = new JComboBox(),
-            edit_IngredientTypeJComboBox = new JComboBox();
+            edit_IngredientTypeJComboBox = new JComboBox(),
+
+            everythingType_JComboBox = new JComboBox();
 
     // Sorted Hashmap by key String
     private TreeMap<String, Collection<String>> map_ingredientTypesToIngredientNames = new TreeMap<String, Collection<String>>(new Comparator<String>()
@@ -73,12 +76,10 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
         {
             if (db.isDatabaseConnected())
             {
-                everythingIngredientsTypeList = db.getSingleColumnQuery("SELECT Ingredient_Type_Name FROM ingredientTypes;");
-                if (everythingIngredientsTypeList == null)
-                {
-                    JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "\n\nUnable to get IngredientTypes for form!");
-                    return;
-                }
+                //Update Generic  ingredientsType JComboBox which has all the ingredients Types
+                updateEverythingIngredientsTypeList(); // updates everythingIngredientsTypeList
+                everythingType_JComboBox = new JComboBox(everythingIngredientsTypeList);
+
                 //###################################################################################
                 // Frame Set-Up
                 //###################################################################################
@@ -152,10 +153,74 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
     public class EditIngredientsTypes extends JPanel
     {
+        JPanel scrollPaneJPanel;
+        int yPos =0;
+
         public EditIngredientsTypes()
         {
+            //###################################################################################
+            //   Create Screen for Interface
+            //###################################################################################
 
+            setLayout(new BorderLayout());
+
+            //###################################################################################
+            //   Create Main Centre Screen for Interface
+            //##################################################################################
+            JPanel mainCentreScreen = new JPanel(new GridBagLayout());
+            add(mainCentreScreen, BorderLayout.CENTER);
+
+            //##########################################################
+            // Create ScrollPane & add to Interface
+            //#########################################################
+            ScrollPaneCreator scrollPane = new ScrollPaneCreator();
+            scrollPaneJPanel = scrollPane.getJPanel();
+            scrollPaneJPanel.setLayout(new GridBagLayout());
+            addToContainer(mainCentreScreen, scrollPane, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
+
+
+            //##########################################
+            // Icon Setup
+            //#########################################
+            iconSetup();
+
+            //#########################################################################################################
+            // Ingredient Type & Name JcomboBox's
+            //#########################################################################################################
+
+            //#################################################################
+            // Ingredient Type Setup
+            //#################################################################
+
+            // JCombo Title
+            JLabel titleLabel = new JLabel("Select Ingredient Type");
+            titleLabel.setFont(new Font("Verdana", Font.PLAIN, 24));
+            titleLabel.setHorizontalAlignment(JLabel.CENTER);
+
+            JPanel titlePanel = new JPanel();
+            titlePanel.setBackground(Color.green);
+            titlePanel.add(titleLabel);
+
+            // Add title JPanel to scrollPanel Panel Area
+            addToContainer(scrollPaneJPanel, titlePanel, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+
+            //###########################################
+            //  IngredientTypeJComboBox
+            //###########################################
+            JPanel jp = new JPanel(new GridLayout(1, 1));
+
+            ((JLabel)  everythingType_JComboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER); // centre text
+
+            jp.add( everythingType_JComboBox);
+            jp.setPreferredSize(new Dimension(650, 50));
+
+            addToContainer(scrollPaneJPanel, jp, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 10, 0);
         }
+
+         private void iconSetup()
+         {
+
+         }
     }
 
     public class EditIngredientStores extends JPanel
@@ -2605,6 +2670,17 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             panel.add(eastSpaceFiller, BorderLayout.EAST);
 
             return panel;
+        }
+    }
+
+    // Updates everythingIngredientsTypeList
+    public void updateEverythingIngredientsTypeList()
+    {
+        everythingIngredientsTypeList = db.getSingleColumnQuery("SELECT Ingredient_Type_Name FROM ingredientTypes;");
+
+        if (everythingIngredientsTypeList == null)
+        {
+            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "\n\nUnable to get IngredientTypes for form!");
         }
     }
 
