@@ -45,7 +45,7 @@ public class MealPlanScreen extends JPanel
     private IngredientsTable jTableBeingAdded;
     private ArrayList<IngredientsTable> listOfJTables = new ArrayList<>();
 
-    String databaseName = "gymapp5";
+    String databaseName = "gymapp6";
 
     //########################################################
     // Variables
@@ -70,7 +70,7 @@ public class MealPlanScreen extends JPanel
             original_IngredTable_Type_Col = 5,
             original_IngredientsTable_IngredientsName_Col = 6,
             original_IngredientsTable_Supplier_Col = 8,
-            original_ingredientsTable_DeleteBTN_Col = 18,
+            original_ingredientsTable_DeleteBTN_Col = 19,
 
     afterHiding_IngredTable_IngredientIndexCol = 0,
             afterHiding_IngredTable_IngredientID = 1,
@@ -78,7 +78,7 @@ public class MealPlanScreen extends JPanel
             afterHiding_IngredTable_Type_Col = 3,
             afterHiding_IngredTable_IngredientsName_Col = 4,
             afterHiding_IngredTable_Supplier_Col = 6,
-            afterHiding_IngredTable_DeleteBTN_Col = 16;
+            afterHiding_IngredTable_DeleteBTN_Col = 17;
 
     private final Integer[]
             triggerColumns = new Integer[]{afterHiding_IngredTable_IngredientIndexCol, afterHiding_IngredTable_IngredientID, afterHiding_IngredTable_Quantity_Col, afterHiding_IngredTable_Type_Col, afterHiding_IngredTable_IngredientsName_Col, afterHiding_IngredTable_Supplier_Col},

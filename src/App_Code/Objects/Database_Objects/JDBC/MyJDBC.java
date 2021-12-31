@@ -414,7 +414,7 @@ public class MyJDBC
             }
             catch (Exception e)
             {
-                System.out.printf("\n\n  @getQueryResults() ERROR from query %s \n\n  %s", query, e);
+                System.out.printf("\n\n@getQueryResults()\n ERROR from query: \n\n'' %s '' \n\nException Msg: \n\n'' %s ''", query, e);
                 JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
                 //System.exit(1);
             }

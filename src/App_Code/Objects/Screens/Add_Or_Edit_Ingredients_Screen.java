@@ -38,8 +38,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
     private String planName;
     private MealPlanScreen mealPlanScreen;
 
-    private String[] ingredientNames;
-
     private boolean
             jcomboUpdateStaus = false,
             updateIngredientInfo = false;
@@ -554,7 +552,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                     
                     (SELECT t.Ingredient_Type_Name FROM ingredientTypes t WHERE t.Ingredient_Type_ID = info.Ingredient_Type_ID)  AS Ingredient_Type,
                     
-                    info.Based_On_Quantity, info.Protein, info.Carbohydrates, info.Sugars_Of_Carbs, info.Fibre, info.Fat, info.Saturated_Fat, info.Salt,
+                    info.Based_On_Quantity, info.Protein, info.Glycemtric_Index, info.Carbohydrates, info.Sugars_Of_Carbs, info.Fibre, info.Fat, info.Saturated_Fat, info.Salt,
                     info.Water_Content, info.Calories
                     							
                     FROM ingredients_info info
@@ -1022,11 +1020,11 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                                 Ingredient_Type_ID = (SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = '%s'),                                
                                 
                                 Based_On_Quantity = %s, 
-                                Protein = %s, Carbohydrates = %s, Sugars_Of_Carbs = %s, Fibre = %s, Fat = %s, Saturated_Fat = %s,
+                                Protein = %s, Glycemtric_Index = %s, Carbohydrates = %s, Sugars_Of_Carbs = %s, Fibre = %s, Fat = %s, Saturated_Fat = %s,
                                 Salt = %s, Water_Content = %s, Calories = %s
                                 WHERE IngredientID = %s; """,
                         formResults.get(i), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1),
-                        formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1),
+                        formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1),
                         formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), ingreientID);
 
                 //####################################
@@ -1631,7 +1629,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             //#######################################
 
             protected final String[] labels = {"Ingredient Measurement In:", "Ingredient Name:", "Ingredient_Type:",
-                    "Based_On_Quantity:", "Protein:", "Carbohydrates:", "Sugars Of Carbs:", "Fibre:", "Fat:", "Saturated Fat:",
+                    "Based_On_Quantity:", "Protein:", "Glycemic Index","Carbohydrates:", "Sugars Of Carbs:", "Fibre:", "Fat:", "Saturated Fat:",
                     "Salt:", "Water_Content:", "Calories:"};
 
             protected int ingredientNameObjectIndex = 1;
@@ -1964,13 +1962,14 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 String updateTargets_Query = String.format("""
                                 INSERT INTO ingredients_info
                                 (Meassurement, Ingredient_Name, Ingredient_Type_ID, Based_On_Quantity, 
-                                Protein, Carbohydrates, Sugars_Of_Carbs, Fibre, Fat, Saturated_Fat, Salt, Water_Content, Calories)   
+                                Protein, Glycemtric_Index, Carbohydrates, Sugars_Of_Carbs, Fibre, Fat, Saturated_Fat, Salt, Water_Content, Calories)   
                                                                                  
                                 Values 
                                 (                                 
                                   ('%s'), 
                                   ('%s'), 
                                   (%s), 
+                                  (%s),
                                   (%s), 
                                   (%s), 
                                   (%s), 
@@ -1986,7 +1985,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
                         ingredientTypeSet += formResults.get(i += 1)+ "'",
 
-                        formResults.get(i += 1), formResults.get(i += 1),
+                        formResults.get(i += 1), formResults.get(i += 1),formResults.get(i += 1),
                         formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1),
                         formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1));
 
