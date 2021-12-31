@@ -335,12 +335,14 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 (
                   SELECT Ingredient_Type_ID, Ingredient_Type_Name FROM ingredientTypes
                 )n
-                ON i.Ingredient_Type_ID = n.Ingredient_Type_ID;""");
+                ON i.Ingredient_Type_ID = n.Ingredient_Type_ID
+                ORDER BY n.Ingredient_Type_Name;""");
             ArrayList<ArrayList<String>> ingredientTypesNameAndIDResults = db.getMultiColumnQuery(queryIngredientsType);
 
             if (ingredientTypesNameAndIDResults == null)
             {
                 JOptionPane.showMessageDialog(null, "\n\nUnable to update Ingredient Type Info");
+                return;
             }
             //######################################
             // Store all ingredient types & names
@@ -356,8 +358,9 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 //########################################
                 // Get IngredientNames for Type
                 //########################################
-                String queryTypeIngredientNames = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Type_ID = %s;", ID);
-                ArrayList<String> ingredientNames = db.getSingleColumnQuery_ArrayList(queryTypeIngredientNames);
+                String queryTypeIngredientNames = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Type_ID = %s ORDER BY Ingredient_Name;", ID);
+                Collection<String> ingredientNames = db.getSingleColumnQuery_AlphabeticallyOrderedTreeSet(queryTypeIngredientNames);
+
 
                 if (ingredientNames == null)
                 {
@@ -527,12 +530,11 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             //############################################################
             // Ingredient ID
             //############################################################
-            selectedIngredientID = getSelectedIngredientID();
             selectedIngredientName = getSelectedIngredientName();
 
-             if (selectedIngredientName == null || selectedIngredientID == null)
+             if (selectedIngredientName == null)
             {
-                JOptionPane.showMessageDialog(mealPlanScreen, "Unable to grab Ingredient INFO to edit it!!");
+                JOptionPane.showMessageDialog(mealPlanScreen, "Unable to grab Ingredient Name to edit it!!");
                 return;
             }
 
@@ -548,13 +550,14 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             // Get Ingredient Info
             //##############################
             ArrayList<ArrayList<String>> ingredientInfo_R = db.getMultiColumnQuery(String.format("""
-                    SELECT  info.Meassurement, info.Ingredient_Name,
+                    SELECT  info.IngredientID, info.Meassurement, info.Ingredient_Name,
+                    
                     (SELECT t.Ingredient_Type_Name FROM ingredientTypes t WHERE t.Ingredient_Type_ID = info.Ingredient_Type_ID)  AS Ingredient_Type,
-                    info.Based_On_Quantity,
-                    info.Protein, info.Carbohydrates, info.Sugars_Of_Carbs, info.Fibre, info.Fat, info.Saturated_Fat, info.Salt,\s
+                    
+                    info.Based_On_Quantity, info.Protein, info.Carbohydrates, info.Sugars_Of_Carbs, info.Fibre, info.Fat, info.Saturated_Fat, info.Salt,
                     info.Water_Content, info.Calories
                     							
-                    from ingredients_info info
+                    FROM ingredients_info info
                     WHERE info.Ingredient_Name = '%s';""", selectedIngredientName));
 
             if (ingredientInfo_R == null)
@@ -566,28 +569,41 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             ArrayList<String> ingredientInfo = ingredientInfo_R.get(0);
 
             //##############################
+            // Get Ingredient ID
+            //##############################
+            selectedIngredientID = ingredientInfo.get(0);
+            if (selectedIngredientID == null)
+            {
+                JOptionPane.showMessageDialog(mealPlanScreen, "Unable to grab Ingredient IDto edit it!!");
+                return;
+            }
+
+            //##############################
             // Set Form With Ingredient Info
             //##############################
 
-            for (int i = 0; i < ingredientInfo.size(); i++)
+            int formObjectsIndex = 0;
+
+            for (int i = 1; i < ingredientInfo.size(); i++)
             {
-                Component comp = formObjects.get(i);
+                Component comp = formObjects.get(formObjectsIndex); // query size and form objects size arent at the same index
                 String value = ingredientInfo.get(i).trim();
 
                 // setting previous ingredient Type value
-                if (i == ingredientTypeIndex)
+                if (formObjectsIndex == ingredientTypeIndex) // accounting for id being added
                 {
                     previousIngredientType = value;
                 }
 
                 if (comp instanceof JComboBox)
                 {
-                    ((JComboBox<?>) comp).setSelectedItem(value);
+                    ((JComboBox<String>) comp).setSelectedItem(value);
                 }
                 else if (comp instanceof JTextField)
                 {
                     ((JTextField) comp).setText(value);
                 }
+                formObjectsIndex++;
             }
 
             //###########################
@@ -692,26 +708,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             }
         }
 
-        private String getSelectedIngredientID()
-        {
-            //####################################
-            // Get Current ID
-            //####################################
-            String selectedItem = ((String) edit_IngredientName_JComboBox.getSelectedItem()).trim();
-            if (selectedItem != null)
-            {
-                String query = String.format("SELECT IngredientID FROM ingredients_info WHERE Ingredient_Name = '%s';", selectedItem);
-                //System.out.printf("\n\nGet Query:\nselected Item: '%s' \n%s", selectedItem, query); // HELLO REMOVE
-                String[] idResults = db.getSingleColumnQuery(query);
-
-                if (idResults != null)
-                {
-                    return idResults[0];
-                }
-            }
-            return null;
-        }
-
         private String getSelectedIngredientName()
         {
             try
@@ -792,10 +788,14 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                         if ((!currentIngredientName.equals(previousIngredientName) || (!currentIngredientType.equals(previousIngredientType))))
                         {
                             updateIngredientInfo = true;
-                            addOrDeleteIngredientFromMap("add", currentIngredientType, currentIngredientName); // add new info ingredient
-                            addOrDeleteIngredientFromMap("delete", previousIngredientType, previousIngredientName); // remove old info ingredient
+                            // if there is an error trying to add or remove ingredientType throw an error
+                            if( ! addOrDeleteIngredientFromMap("add", currentIngredientType, currentIngredientName) // add new info ingredient
+                                ||   ! addOrDeleteIngredientFromMap("delete", previousIngredientType, previousIngredientName))  // remove old info ingredient
 
-                            System.out.printf("\n\nIngredientName or, IngredientType changed!");//HELLO REMOVE
+                            {
+                                JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "\n\nUnable to perform local update for ingredient Info");
+                                return;
+                            }
                         }
 
                         JOptionPane.showMessageDialog(mealPlanScreen, "The ingredient updates won't appear on the mealPlan screen until this window is closed!");
@@ -1298,7 +1298,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
         protected int totalNumbersAllowed = 7, decimalScale = 2, decimalPrecision = totalNumbersAllowed - decimalScale, charlimit = 8;
 
-
         //#################################################################################################################
         // Constructor
         //##################################################################################################################
@@ -1443,9 +1442,9 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
         }
 
         //HELLO EDIT
-        protected void addOrDeleteIngredientFromMap(String process, String ingredientType, String ingredientName)
+        protected boolean addOrDeleteIngredientFromMap(String process, String ingredientType, String ingredientName)
         {
-            // Storing
+           // Storing
             Collection<String> ingredientTypeList = map_ingredientTypesToIngredientNames.get(ingredientType);
             if (process.equals("add"))// if key exists add the ingredientName in
             {
@@ -1482,6 +1481,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                     edit_IngredientTypeJComboBox.addItem(key);
                 }
             }
+            return true;
         }
 
         private void refreshInterface() // only available to reset screen
