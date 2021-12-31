@@ -563,7 +563,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 return;
             }
 
-            selectedIngredientName = selectedIngredientName.trim();
+            selectedIngredientName = selectedIngredientName;
             previousIngredientName = selectedIngredientName;
 
             //############################################################
@@ -607,7 +607,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             for (int i = 1; i < ingredientInfo.size(); i++)
             {
                 Component comp = formObjects.get(formObjectsIndex); // query size and form objects size arent at the same index
-                String value = ingredientInfo.get(i).trim();
+                String value = ingredientInfo.get(i);
 
                 // setting previous ingredient Type value
                 if (formObjectsIndex == getIngredientTypeObjectIndex()) // accounting for id being added
@@ -646,6 +646,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             //###########################
             //Add Rows for shops onto form
             //###########################
+            ArrayList<ShopForm.AddShopForm_Object> shopForm_objects = getShopForm_objects();
             for (int i = 0; i < ingredientShops_R.size(); i++)
             {
                 ArrayList<String> rowData = ingredientShops_R.get(i);
@@ -809,9 +810,8 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                         {
                             updateIngredientInfo = true;
                             // if there is an error trying to add or remove ingredientType throw an error
-                            if( ! addOrDeleteIngredientFromMap("add", currentIngredientType, currentIngredientName) // add new info ingredient
-                                ||   ! addOrDeleteIngredientFromMap("delete", previousIngredientType, previousIngredientName))  // remove old info ingredient
-
+                            if( ! addOrDeleteIngredientFromMap("delete", previousIngredientType, previousIngredientName) // remove old info ingredient
+                                || ! addOrDeleteIngredientFromMap("add", currentIngredientType, currentIngredientName))// add new info ingredient
                             {
                                 JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "\n\nUnable to perform local update for ingredient Info");
                                 return;
@@ -834,7 +834,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             // Error forming update String (exit)
             //####################################
 
-            if (!updateShops || !updateIngredientsForm)
+            if (! isUpdateShops() || ! isUpdateIngredientsForm())
             {
                 return false;
             }
@@ -1057,7 +1057,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 //####################################
                 // Return results
                 //####################################
-                updateIngredientsForm = true;
+                setUpdateIngredientsForm(true);
                 return updateTargets_Query;
             }
         }
@@ -1080,7 +1080,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 //############################################################
                 if (rowsInTable.size() == 0)
                 {
-                    updateShops = true;
+                    setUpdateShops(true);
                     return null;
                 }
 
@@ -1188,7 +1188,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 //############################################################
                 // Return values
                 //############################################################
-                updateShops = true;
+                setUpdateShops(true);
                 return updates;
             }
 
@@ -1300,21 +1300,15 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
     public class createForm extends JPanel
     {
-        private int ingredientNameObjectIndex = 1, ingredientTypeObjectIndex = 2, glycemicObjectIndex = 5;
-
-        private IngredientsForm ingredientsForm;
-        private ShopForm shopForm;
-
+        protected int yPos = 0;
         protected JPanel scrollPaneJPanel;
 
-        protected boolean formEditable = false, updateIngredientsForm = false, updateShops = false;
-
-        protected ArrayList<ShopForm.AddShopForm_Object> shopForm_objects = new ArrayList<>();
-        protected int yPos = 0;
-
-        //protected String ingredientID; // HELLO DELETE
-
-        protected int totalNumbersAllowed = 7, decimalScale = 2, decimalPrecision = totalNumbersAllowed - decimalScale, charlimit = 8;
+        private int ingredientNameObjectIndex = 1, ingredientTypeObjectIndex = 2, glycemicObjectIndex = 5;
+        private IngredientsForm ingredientsForm;
+        private ShopForm shopForm;
+        private boolean formEditable = false, updateIngredientsForm = false, updateShops = false;
+        private ArrayList<ShopForm.AddShopForm_Object> shopForm_objects = new ArrayList<>();
+        private int totalNumbersAllowed = 7, decimalScale = 2, decimalPrecision = totalNumbersAllowed - decimalScale, charlimit = 8;
 
         //#################################################################################################################
         // Constructor
@@ -1457,6 +1451,31 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                     resize_GUI();
                 }
             }
+        }
+
+        protected boolean isUpdateIngredientsForm()
+        {
+            return updateIngredientsForm;
+        }
+
+        protected  void setUpdateIngredientsForm(boolean x)
+        {
+            updateIngredientsForm = x;
+        }
+
+        protected void setUpdateShops(boolean x)
+        {
+            updateShops = x;
+        }
+
+        protected boolean isUpdateShops()
+        {
+            return updateShops;
+        }
+
+        protected ArrayList<ShopForm.AddShopForm_Object> getShopForm_objects()
+        {
+            return shopForm_objects;
         }
 
         protected int getIngredientNameObjectIndex()
@@ -2056,7 +2075,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
         public class ShopForm extends CollapsibleJPanel
         {
             protected int objectID = 0;
-
 
             protected HashMap<Integer, JComboBox> shopJComboBoxes = new HashMap<>();
             protected HashMap<Integer, JTextField> prices = new HashMap<>();
