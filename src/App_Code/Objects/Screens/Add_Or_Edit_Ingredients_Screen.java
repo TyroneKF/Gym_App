@@ -75,7 +75,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             if (db.isDatabaseConnected())
             {
                 everythingIngredientsTypeList = db.getSingleColumnQuery("SELECT Ingredient_Type_Name FROM ingredientTypes;");
-                if(everythingIngredientsTypeList == null)
+                if (everythingIngredientsTypeList == null)
                 {
                     JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "\n\nUnable to get IngredientTypes for form!");
                     return;
@@ -351,17 +351,17 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             // Store ingredientTypes ID's & IngredientTypeName that occur
             //###########################################################
             String queryIngredientsType = String.format("""
-                SELECT I.Ingredient_Type_ID, n.Ingredient_Type_Name
-                FROM
-                (
-                  SELECT DISTINCT(Ingredient_Type_ID) FROM ingredients_info
-                ) I
-                INNER JOIN
-                (
-                  SELECT Ingredient_Type_ID, Ingredient_Type_Name FROM ingredientTypes
-                )n
-                ON i.Ingredient_Type_ID = n.Ingredient_Type_ID
-                ORDER BY n.Ingredient_Type_Name;""");
+                    SELECT I.Ingredient_Type_ID, n.Ingredient_Type_Name
+                    FROM
+                    (
+                      SELECT DISTINCT(Ingredient_Type_ID) FROM ingredients_info
+                    ) I
+                    INNER JOIN
+                    (
+                      SELECT Ingredient_Type_ID, Ingredient_Type_Name FROM ingredientTypes
+                    )n
+                    ON i.Ingredient_Type_ID = n.Ingredient_Type_ID
+                    ORDER BY n.Ingredient_Type_Name;""");
             ArrayList<ArrayList<String>> ingredientTypesNameAndIDResults = db.getMultiColumnQuery(queryIngredientsType);
 
             if (ingredientTypesNameAndIDResults == null)
@@ -557,7 +557,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             //############################################################
             selectedIngredientName = getSelectedIngredientName();
 
-             if (selectedIngredientName == null)
+            if (selectedIngredientName == null)
             {
                 JOptionPane.showMessageDialog(mealPlanScreen, "Unable to grab Ingredient Name to edit it!!");
                 return;
@@ -576,9 +576,9 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             //##############################
             ArrayList<ArrayList<String>> ingredientInfo_R = db.getMultiColumnQuery(String.format("""
                     SELECT  info.IngredientID, info.Meassurement, info.Ingredient_Name,
-                    
+                                        
                     (SELECT t.Ingredient_Type_Name FROM ingredientTypes t WHERE t.Ingredient_Type_ID = info.Ingredient_Type_ID)  AS Ingredient_Type,
-                    
+                                        
                     info.Based_On_Quantity, info.Protein, info.Glycemtric_Index, info.Carbohydrates, info.Sugars_Of_Carbs, info.Fibre, info.Fat, info.Saturated_Fat, info.Salt,
                     info.Water_Content, info.Calories
                     							
@@ -810,8 +810,8 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                         {
                             updateIngredientInfo = true;
                             // if there is an error trying to add or remove ingredientType throw an error
-                            if( ! addOrDeleteIngredientFromMap("delete", previousIngredientType, previousIngredientName) // remove old info ingredient
-                                || ! addOrDeleteIngredientFromMap("add", currentIngredientType, currentIngredientName))// add new info ingredient
+                            if (!addOrDeleteIngredientFromMap("delete", previousIngredientType, previousIngredientName) // remove old info ingredient
+                                    || !addOrDeleteIngredientFromMap("add", currentIngredientType, currentIngredientName))// add new info ingredient
                             {
                                 JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "\n\nUnable to perform local update for ingredient Info");
                                 return;
@@ -834,7 +834,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             // Error forming update String (exit)
             //####################################
 
-            if (! isUpdateShops() || ! isUpdateIngredientsForm())
+            if (!isUpdateShops() || !isUpdateIngredientsForm())
             {
                 return false;
             }
@@ -970,7 +970,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 JTextField ingredientName_JTxtF = (JTextField) ingredientsFormObjects.get(getIngredientNameObjectIndex());
                 String ingredientName_Txt = ingredientName_JTxtF.getText().trim();
 
-                if (! (ingredientName_Txt.equals("")))
+                if (!(ingredientName_Txt.equals("")))
                 {
                     ingredientName_Txt = removeSpaceAndHiddenChars(ingredientName_Txt);
                     if (doesStringContainCharacters(ingredientName_Txt))
@@ -1023,9 +1023,9 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                     if (comp instanceof JTextField)
                     {
                         String fieldText = ((JTextField) comp).getText();
-                        if(pos == getIngredientNameObjectIndex())
+                        if (pos == getIngredientNameObjectIndex())
                         {
-                            fieldText =  removeSpaceAndHiddenChars(fieldText);
+                            fieldText = removeSpaceAndHiddenChars(fieldText);
                         }
                         formResults.add(fieldText);
                     }
@@ -1045,7 +1045,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                                 SET  
                                 Meassurement = '%s', Ingredient_Name = '%s', 
                                 Ingredient_Type_ID = (SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = '%s'),                                
-                                
+                                                                
                                 Based_On_Quantity = %s, 
                                 Protein = %s, Glycemtric_Index = %s, Carbohydrates = %s, Sugars_Of_Carbs = %s, Fibre = %s, Fat = %s, Saturated_Fat = %s,
                                 Salt = %s, Water_Content = %s, Calories = %s
@@ -1458,7 +1458,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             return updateIngredientsForm;
         }
 
-        protected  void setUpdateIngredientsForm(boolean x)
+        protected void setUpdateIngredientsForm(boolean x)
         {
             updateIngredientsForm = x;
         }
@@ -1491,12 +1491,12 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
         //HELLO EDIT
         protected boolean addOrDeleteIngredientFromMap(String process, String ingredientType, String ingredientName)
         {
-           // Storing
+            // Storing
             Collection<String> ingredientTypeList = map_ingredientTypesToIngredientNames.get(ingredientType);
             if (process.equals("add"))// if key exists add the ingredientName in
             {
 
-                if(ingredientTypeList != null)
+                if (ingredientTypeList != null)
                 {
                     // Add ingredientName to collection
                     ingredientTypeList.add(ingredientName);
@@ -1505,7 +1505,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 {
                     ingredientTypeList = new TreeSet<String>(Collator.getInstance());
                     ingredientTypeList.add(ingredientName);
-                    map_ingredientTypesToIngredientNames.put(ingredientType,ingredientTypeList);
+                    map_ingredientTypesToIngredientNames.put(ingredientType, ingredientTypeList);
                 }
             }
             else if (process.equals("delete"))
@@ -1513,7 +1513,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 ingredientTypeList.remove(ingredientName);
 
                 // Remove List as there is no items in it
-                if(ingredientTypeList.size() == 0)
+                if (ingredientTypeList.size() == 0)
                 {
                     map_ingredientTypesToIngredientNames.remove(ingredientType);
                 }
@@ -1523,7 +1523,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             edit_IngredientTypeJComboBox.removeAllItems(); // clearList
             for (String key : map_ingredientTypesToIngredientNames.keySet())
             {
-                if(! key.equals("None Of The Above"))
+                if (!key.equals("None Of The Above"))
                 {
                     edit_IngredientTypeJComboBox.addItem(key);
                 }
@@ -1561,7 +1561,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
             if (updateIngredientShops_String != null)
             {
-                if (! (db.uploadData_Batch_Independently(updateIngredientShops_String)) )
+                if (!(db.uploadData_Batch_Independently(updateIngredientShops_String)))
                 {
                     JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Failed 1/2 Updates - Unable To Add Shop Supplier For Ingredient In DB!");
                     return false;
@@ -1577,7 +1577,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
         {
             contentPane.revalidate();
             scrollPaneJPanel.revalidate();
-            addIngredientsFormJPanel.revalidate();          
+            addIngredientsFormJPanel.revalidate();
             revalidate();
         }
 
@@ -1641,11 +1641,11 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
         protected boolean doesStringContainCharacters(String input)
         {
-            Pattern p = Pattern.compile("[^a-z] /^\\S/", Pattern.CASE_INSENSITIVE);
-            Matcher m = p.matcher(input);
-            boolean b = m.find();
+            Pattern p1 = Pattern.compile("[^a-zA-Z]", Pattern.CASE_INSENSITIVE);
+            Matcher m1 = p1.matcher(input.replaceAll("\\s+", ""));
+            boolean b1 = m1.find();
 
-            if (b)
+            if (b1)
             {
                 return true;
             }
@@ -1675,7 +1675,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             //#######################################
 
             protected final String[] labels = {"Ingredient Measurement In:", "Ingredient Name:", "Ingredient_Type:",
-                    "Based_On_Quantity:", "Protein:", "Glycemic Index","Carbohydrates:", "Sugars Of Carbs:", "Fibre:", "Fat:", "Saturated Fat:",
+                    "Based_On_Quantity:", "Protein:", "Glycemic Index", "Carbohydrates:", "Sugars Of Carbs:", "Fibre:", "Fat:", "Saturated Fat:",
                     "Salt:", "Water_Content:", "Calories:"};
 
             protected JComboBox ingredientsMeasure_JComboBox = new JComboBox(), ingredientsType_JComboBox = new JComboBox();
@@ -1882,7 +1882,10 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 //##############################
                 // Validation JTextFields
                 //##############################
-                for (int row = 0; row < ingredientsFormObjects.size(); row++)
+                String ingredientName_Txt = "";
+
+                int listSize = ingredientsFormObjects.size();
+                for (int row = 0; row < listSize; row++)
                 {
                     String value = "";
                     Component comp = ingredientsFormObjects.get(row);
@@ -1902,7 +1905,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                         JTextField jTextField = (JTextField) comp;
                         value = jTextField.getText().trim();
 
-
                         //#########################################
                         // Check if JTextfield input is empty
                         //#########################################
@@ -1921,20 +1923,20 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
                         if (row == ingredientNameObjectIndex)
                         {
-                            String ingredientName_Txt = ((JTextField) comp).getText();
-
-                            if (doesStringContainCharacters(ingredientName_Txt))
+                            System.out.printf("\n\nIngredientName value: ''%s''", value);
+                            ingredientName_Txt = value;
+                            if (doesStringContainCharacters(value))
                             {
-                                errorTxt += String.format("\n\n  ' %s ' on Row: %s,  can only contain alphabet character! Symbols, numbers aren't allowed in the ingredient name!", labels[row], row + 1, ingredientName_Txt);
+                                errorTxt += String.format("\n\n  ' %s ' on Row: %s,  can only contain alphabet character! Symbols, numbers aren't allowed in the ingredient name!", labels[row], row + 1, value);
                             }
                             continue;
                         }
 
-                        if(row == glycemicObjectIndex)
+                        if (row == glycemicObjectIndex)
                         {
                             Integer intValue = Integer.valueOf(value);
 
-                            if(intValue > 100 || intValue < 0)
+                            if (intValue > 100 || intValue < 0)
                             {
                                 errorTxt += String.format("\n\n  ' %s ' on Row: %s,  must be an Integer value which is: 0<= value <=100 !", labels[row], row + 1);
                             }
@@ -1951,20 +1953,14 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 //####################################################
                 //Check if IngredientName Already exists in DB
                 //####################################################
-                if (checkIfItemIsInDB)
+                if (checkIfItemIsInDB && !(ingredientName_Txt.equals("")))
                 {
-                    JTextField ingredientName_JTxtF = (JTextField) ingredientsFormObjects.get(ingredientNameObjectIndex);
-                    String ingredientName_Txt = ingredientName_JTxtF.getText().trim();
+                    ingredientName_Txt = removeSpaceAndHiddenChars(ingredientName_Txt);
+                    String query = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Name = '%s';", ingredientName_Txt);
 
-                    if (!(ingredientName_Txt.equals("")))
+                    if (db.getSingleColumnQuery(query) != null)
                     {
-                        ingredientName_Txt =  removeSpaceAndHiddenChars(ingredientName_Txt);
-                        String query = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Name = '%s';", ingredientName_Txt);
-
-                        if (db.getSingleColumnQuery(query) != null)
-                        {
-                            errorTxt += String.format("\n\n  Ingredient named %s already exists within the database!", ingredientName_Txt);
-                        }
+                        errorTxt += String.format("\n\n  Ingredient named %s already exists within the database!", ingredientName_Txt);
                     }
                 }
 
@@ -1988,15 +1984,15 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 // Gathering Form Txt Data
                 //####################################
                 ArrayList<String> formResults = new ArrayList<>();
-                int pos =0;
+                int pos = 0;
                 for (Component comp : ingredientsFormObjects)
                 {
                     if (comp instanceof JTextField)
                     {
                         String fieldText = ((JTextField) comp).getText(); // CHECKA
-                        if(pos == ingredientNameObjectIndex || pos == ingredientTypeObjectIndex)
+                        if (pos == ingredientNameObjectIndex || pos == ingredientTypeObjectIndex)
                         {
-                            fieldText =  removeSpaceAndHiddenChars(fieldText);
+                            fieldText = removeSpaceAndHiddenChars(fieldText);
                         }
 
                         formResults.add(fieldText);
@@ -2013,7 +2009,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 //####################################
                 int i = 0;
 
-                 String ingredientTypeSet = "SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = '";
+                String ingredientTypeSet = "SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = '";
 
                 String updateTargets_Query = String.format("""
                                 INSERT INTO ingredients_info
@@ -2039,9 +2035,9 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                                 ); """,
                         formResults.get(i), formResults.get(i += 1),
 
-                        ingredientTypeSet += formResults.get(i += 1)+ "'",
+                        ingredientTypeSet += formResults.get(i += 1) + "'",
 
-                        formResults.get(i += 1), formResults.get(i += 1),formResults.get(i += 1),
+                        formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1),
                         formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1),
                         formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1));
 
