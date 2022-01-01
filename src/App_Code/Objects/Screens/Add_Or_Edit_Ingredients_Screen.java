@@ -22,7 +22,7 @@ import java.util.HashMap;
 public class Add_Or_Edit_Ingredients_Screen extends JFrame
 {
 
-    protected String everythingIngredientsTypeList[];
+    private String all_IngredientsTypeNamesList[];
 
     //#######################################
     // General Variables
@@ -47,9 +47,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
     private JComboBox
             edit_IngredientName_JComboBox = new JComboBox(),
-            edit_IngredientTypeJComboBox = new JComboBox(),
-
-            everythingType_JComboBox = new JComboBox();
+            edit_IngredientTypeJComboBox = new JComboBox();
 
     // Sorted Hashmap by key String
     private TreeMap<String, Collection<String>> map_ingredientTypesToIngredientNames = new TreeMap<String, Collection<String>>(new Comparator<String>()
@@ -78,7 +76,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             {
                 //Update Generic  ingredientsType JComboBox which has all the ingredients Types
                 updateEverythingIngredientsTypeList(); // updates everythingIngredientsTypeList
-                everythingType_JComboBox = new JComboBox(everythingIngredientsTypeList);
 
                 //###################################################################################
                 // Frame Set-Up
@@ -112,6 +109,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 JTabbedPane tp = new JTabbedPane();
                 contentPane.add(tp);
 
+                /*
                 //#################################################
                 // Creating Add Ingredients Screen
                 //#################################################
@@ -128,13 +126,15 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
                 addToContainer(editIngredientsFormJPanel, new EditingCreateForm(), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
 
+                 */
+
                 //#################################################
                 // Creating Edit Ingredient Types Screen
                 //##################################################
                 JPanel editIngredientsTypesJPanel = new JPanel(new GridBagLayout());
                 tp.add("Edit Ingredient Types", editIngredientsTypesJPanel);
 
-                addToContainer(editIngredientsTypesJPanel, new EditIngredientsTypes(), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
+                addToContainer(editIngredientsTypesJPanel, new IngredientsTypesScreen(), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
 
                 //#################################################
                 // Creating Edit Ingredients Stores Screen
@@ -151,12 +151,18 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
         }
     }
 
-    public class EditIngredientsTypes extends JPanel
-    {
-        JPanel scrollPaneJPanel;
-        int yPos =0;
+    //##################################################################################################################
+    // Other Classes
+    //##################################################################################################################
 
-        public EditIngredientsTypes()
+    public class IngredientsTypesScreen extends JPanel
+    {
+        private JPanel scrollPaneJPanel;
+        private int yPos = 0;
+        private int charlimit = 55;
+        private JComboBox edit_All_IngredientTypes_JComboBox = new JComboBox();
+
+        public IngredientsTypesScreen()
         {
             //###################################################################################
             //   Create Screen for Interface
@@ -178,49 +184,205 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             scrollPaneJPanel.setLayout(new GridBagLayout());
             addToContainer(mainCentreScreen, scrollPane, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
 
+            //###########################
+            //Add Ingredients Type Form
+            //###########################
+            AddIngredientsTypeScreen addIngredientsTypeScreen = new AddIngredientsTypeScreen(this, "Add Ingredients Type", 250, 50);
+            addToContainer(scrollPaneJPanel, addIngredientsTypeScreen, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
-            //##########################################
-            // Icon Setup
-            //#########################################
-            iconSetup();
+            //###########################
+            //Space Divider
+            //###########################
+            JPanel jPanel = new JPanel();
+            jPanel.setBackground(Color.PINK);
+            addToContainer(scrollPaneJPanel,jPanel , 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 10, 0);
 
-            //#########################################################################################################
-            // Ingredient Type & Name JcomboBox's
-            //#########################################################################################################
-
-            //#################################################################
-            // Ingredient Type Setup
-            //#################################################################
-
-            // JCombo Title
-            JLabel titleLabel = new JLabel("Select Ingredient Type");
-            titleLabel.setFont(new Font("Verdana", Font.PLAIN, 24));
-            titleLabel.setHorizontalAlignment(JLabel.CENTER);
-
-            JPanel titlePanel = new JPanel();
-            titlePanel.setBackground(Color.green);
-            titlePanel.add(titleLabel);
-
-            // Add title JPanel to scrollPanel Panel Area
-            addToContainer(scrollPaneJPanel, titlePanel, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
-
-            //###########################################
-            //  IngredientTypeJComboBox
-            //###########################################
-            JPanel jp = new JPanel(new GridLayout(1, 1));
-
-            ((JLabel)  everythingType_JComboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER); // centre text
-
-            jp.add( everythingType_JComboBox);
-            jp.setPreferredSize(new Dimension(650, 50));
-
-            addToContainer(scrollPaneJPanel, jp, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 10, 0);
+            //###########################
+            //Edit Ingredients Type Form
+            //###########################
+            EditIngredientsTypeScreen editIngredientsTypeScreen = new EditIngredientsTypeScreen(this, "Edit Ingredients Type", 250, 50);
+            addToContainer(scrollPaneJPanel, editIngredientsTypeScreen, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
         }
 
-         private void iconSetup()
-         {
+        public class AddIngredientsTypeScreen extends CollapsibleJPanel
+        {
+            private JPanel northPanel = new JPanel(new GridBagLayout());
+            protected String labelTXT = "Ingredient Type Name:";
+            protected int ypos =0;
 
-         }
+            public AddIngredientsTypeScreen(Container parentContainer, String btnText, int btnWidth, int btnHeight)
+            {
+                super(parentContainer, btnText, btnWidth, btnHeight);
+                expandJPanel();
+                createAddTypeScreen();
+            }
+
+            private void createAddTypeScreen()
+            {
+                JPanel mainJPanel = getCentreJPanel();
+                //mainJPanel.setPreferredSize(new Dimension(jFramewidth,  50));
+                mainJPanel.setBackground(Color.PINK);
+                mainJPanel.setLayout(new GridBagLayout());
+
+                JPanel mainJPanel2 = new JPanel(new GridBagLayout());
+                mainJPanel2.setBackground(Color.black);
+                addToContainer(mainJPanel, mainJPanel2, 0, 0, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+
+                //###################################################################
+                // North Frame
+                //###################################################################
+
+                // Creating North JPanel Area with 2 rows
+                //mainJPanel2.add(northPanel, BorderLayout.NORTH);
+                addToContainer(mainJPanel2, northPanel, 0, ypos+=1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+
+                //#####################################################
+                // Creating area for North JPanel (title area)
+                //#####################################################
+                JLabel titleLabel = new JLabel("Add Ingredient Type Name");
+                titleLabel.setFont(new Font("Verdana", Font.PLAIN, 24));
+                titleLabel.setHorizontalAlignment(JLabel.CENTER);
+
+                JPanel titlePanel = new JPanel();
+                titlePanel.setBackground(Color.green);
+                titlePanel.add(titleLabel);
+
+                // Add title JPanel to North Panel Area
+                addToContainer(northPanel, titlePanel, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
+
+                //######################################
+                // Create Icon Bar
+                //######################################
+               // createIconBar();
+
+                /*
+                //#################################################################
+                //  Centre & Create Form
+                //#################################################################
+                JPanel inputArea = new JPanel(new GridLayout(1,2));
+                inputArea.setBackground(Color.red);
+                inputArea.setSize(new Dimension(50, 200));
+               // inputArea.setPreferredSize(new Dimension(100, 200));
+
+                mainJPanel2.add(inputArea, BorderLayout.CENTER);
+
+                 */
+
+                //#######################
+                // JLabel
+                //#######################
+
+                // Creating JPanel for JLabel
+                JPanel jLabelPanel = new JPanel(new FlowLayout());
+                jLabelPanel.setSize(new Dimension(200, 150));
+                jLabelPanel.setBackground(Color.lightGray);
+
+                // Creating & Adding JLabel
+                JLabel label = new JLabel("    " + labelTXT);
+                label.setHorizontalAlignment(JLabel.LEFT);
+                label.setFont(new Font("Verdana", Font.BOLD, 14));
+                jLabelPanel.add(label);
+
+                //inputArea.add(jLabelPanel, BorderLayout.WEST);
+                addToContainer(mainJPanel2, jLabelPanel, 0, ypos+=1, 1, 1, 0.25, 0.25, "vertical", 0, 0);
+
+
+
+/*
+                //#######################
+                // JLabel
+                //#######################
+
+                // Creating JPanel for JTextfield
+                JPanel jtextfieldJPanel = new JPanel(new GridLayout(1,1));
+
+                // Creating & Adding JTextfield
+                JTextField textField = new JTextField("");
+
+                jtextfieldJPanel.add(textField);
+               // inputArea.add(jtextfieldJPanel, BorderLayout.EAST);
+                addToContainer(mainJPanel2, jLabelPanel, 1, ypos, 1, 1, 0.25, 0.25, "vertical", 0, 0);
+
+
+                //###################################################################################
+                // South Screen for Interface
+                //###################################################################################
+
+                // Creating submit button
+                JButton submitButton = new JButton("Submit Form");
+                submitButton.setFont(new Font("Arial", Font.BOLD, 14)); // setting font
+                submitButton.setPreferredSize(new Dimension(50, 50)); // width, height
+
+                // creating commands for submit button to execute on
+                submitButton.addActionListener(ae -> {
+                    submissionBtnAction();
+                });
+
+                mainJPanel2.add(submitButton, BorderLayout.SOUTH);
+
+                 */
+
+                revalidate();
+                mainJPanel.revalidate();
+                mainJPanel2.revalidate();
+            }
+
+            private void createIconBar()
+            {
+                //#####################################################
+                // Creating area for North JPanel (Refresh Icon)
+                //#####################################################
+
+                JPanel iconArea = new JPanel(new GridBagLayout());
+                addToContainer(northPanel, iconArea, 0, ypos+=1, 1, 1, 0.25, 0.25, "both", 0, 0);
+
+                IconPanel iconPanel = new IconPanel(1, 10, "East");
+                JPanel iconPanelInsert = iconPanel.getIconJpanel();
+
+                addToContainer(iconArea, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0);
+
+                //##########################
+                // Refresh Icon
+                //##########################
+                int width = 30;
+                int height = 30;
+
+                IconButton refresh_Icon_Btn = new IconButton("src/images/refresh/++refresh.png", "", width, height, width, height,
+                        "centre", "right"); // btn text is useless here , refactor
+
+                JButton refresh_Btn = refresh_Icon_Btn.returnJButton();
+                refresh_Icon_Btn.makeBTntransparent();
+
+                refresh_Btn.addActionListener(ae -> {
+
+
+                });
+
+                iconPanelInsert.add(refresh_Icon_Btn);
+            }
+
+            private void submissionBtnAction()
+            {
+
+            }
+
+
+        }
+
+
+        public class EditIngredientsTypeScreen extends CollapsibleJPanel
+        {
+            //#######################################
+            // Ingredients form Variables
+            //#######################################
+
+            public EditIngredientsTypeScreen(Container parentContainer, String btnText, int btnWidth, int btnHeight)
+            {
+                super(parentContainer, btnText, btnWidth, btnHeight);
+                expandJPanel();
+            }
+
+        }
     }
 
     public class EditIngredientStores extends JPanel
@@ -1794,9 +1956,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 for (int i = 0; i < labels.length; i++)
                 {
                     boolean jcomboxBeingCreated = false;
-
-                    Object formObject = null;
-
                     JTextField textField = new JTextField("");
                     JComboBox comboBox = null;
 
@@ -1826,7 +1985,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                     }
                     else if (labelTXT.equals("Ingredient_Type:"))
                     {
-                        ingredientsType_JComboBox = new JComboBox(everythingIngredientsTypeList);// CHECKA
+                        ingredientsType_JComboBox = new JComboBox(all_IngredientsTypeNamesList);// CHECKA
                         inputArea.add(ingredientsType_JComboBox);
 
                         jcomboxBeingCreated = true;
@@ -2131,7 +2290,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
         //#################################################################################################################
         // ShopForm
         //##################################################################################################################
-
         public class ShopForm extends CollapsibleJPanel
         {
             protected int objectID = 0;
@@ -2673,12 +2831,16 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
         }
     }
 
+    //##################################################################################################################
+    //
+    //##################################################################################################################
+
     // Updates everythingIngredientsTypeList
     public void updateEverythingIngredientsTypeList()
     {
-        everythingIngredientsTypeList = db.getSingleColumnQuery("SELECT Ingredient_Type_Name FROM ingredientTypes;");
+        all_IngredientsTypeNamesList = db.getSingleColumnQuery("SELECT Ingredient_Type_Name FROM ingredientTypes;");
 
-        if (everythingIngredientsTypeList == null)
+        if (all_IngredientsTypeNamesList == null)
         {
             JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "\n\nUnable to get IngredientTypes for form!");
         }
