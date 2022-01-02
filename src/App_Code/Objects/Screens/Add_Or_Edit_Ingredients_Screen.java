@@ -206,8 +206,11 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
         public class AddIngredientsTypeScreen extends CollapsibleJPanel
         {
-            private JPanel northPanel = new JPanel(new GridBagLayout());
+            private JPanel northPanel;
             protected String labelTXT = "Ingredient Type Name:";
+            protected String submitBtnText = "Submit";
+
+            protected JTextField jTextField;
             protected int ypos =0;
 
             public AddIngredientsTypeScreen(Container parentContainer, String btnText, int btnWidth, int btnHeight)
@@ -229,18 +232,24 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 addToContainer(mainJPanel, mainJPanel2, 0, 0, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
                 //###################################################################
+                //Space Divider
+                //###################################################################
+                addToContainer(mainJPanel2, new JPanel(), 0, ypos+=1, 1, 1, 0.25, 0.25, "both", 10, 0);
+
+                //###################################################################
                 // North Frame
                 //###################################################################
 
-                // Creating North JPanel Area with 2 rows
-                //mainJPanel2.add(northPanel, BorderLayout.NORTH);
+                northPanel = new JPanel(new GridBagLayout());
                 addToContainer(mainJPanel2, northPanel, 0, ypos+=1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+
+
 
                 //#####################################################
                 // Creating area for North JPanel (title area)
                 //#####################################################
                 JLabel titleLabel = new JLabel("Add Ingredient Type Name");
-                titleLabel.setFont(new Font("Verdana", Font.PLAIN, 24));
+                titleLabel.setFont(new Font("Verdana", Font.BOLD, 24));
                 titleLabel.setHorizontalAlignment(JLabel.CENTER);
 
                 JPanel titlePanel = new JPanel();
@@ -250,67 +259,40 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 // Add title JPanel to North Panel Area
                 addToContainer(northPanel, titlePanel, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
 
-                //######################################
-                // Create Icon Bar
-                //######################################
-               // createIconBar();
-
-                /*
                 //#################################################################
                 //  Centre & Create Form
                 //#################################################################
-                JPanel inputArea = new JPanel(new GridLayout(1,2));
+                JPanel inputArea = new JPanel(new GridLayout());
+                inputArea.setPreferredSize(new Dimension(630, 50));
                 inputArea.setBackground(Color.red);
-                inputArea.setSize(new Dimension(50, 200));
-               // inputArea.setPreferredSize(new Dimension(100, 200));
 
-                mainJPanel2.add(inputArea, BorderLayout.CENTER);
+                //mainJPanel2.add(inputArea, BorderLayout.CENTER);
+                addToContainer(mainJPanel2, inputArea, 0, ypos+=1, 1, 1, 0.25, 0.25, "both", 0, 0);
 
+                //#######################
+                // JTextfield
+                //#######################
+
+                jTextField = new JTextField("");
+                jTextField.setFont(new Font("Verdana", Font.PLAIN, 15));
+                jTextField.setHorizontalAlignment(JTextField.CENTER);
+                inputArea.add(jTextField);
+
+                /*
+                //###################################################################
+                //Space Divider
+                //###################################################################
+                addToContainer(mainJPanel2, new JPanel(), 0, ypos+=1, 1, 1, 0.25, 0.25, "both", 5, 0);
                  */
 
-                //#######################
-                // JLabel
-                //#######################
 
-                // Creating JPanel for JLabel
-                JPanel jLabelPanel = new JPanel(new FlowLayout());
-                jLabelPanel.setSize(new Dimension(200, 150));
-                jLabelPanel.setBackground(Color.lightGray);
-
-                // Creating & Adding JLabel
-                JLabel label = new JLabel("    " + labelTXT);
-                label.setHorizontalAlignment(JLabel.LEFT);
-                label.setFont(new Font("Verdana", Font.BOLD, 14));
-                jLabelPanel.add(label);
-
-                //inputArea.add(jLabelPanel, BorderLayout.WEST);
-                addToContainer(mainJPanel2, jLabelPanel, 0, ypos+=1, 1, 1, 0.25, 0.25, "vertical", 0, 0);
-
-
-
-/*
-                //#######################
-                // JLabel
-                //#######################
-
-                // Creating JPanel for JTextfield
-                JPanel jtextfieldJPanel = new JPanel(new GridLayout(1,1));
-
-                // Creating & Adding JTextfield
-                JTextField textField = new JTextField("");
-
-                jtextfieldJPanel.add(textField);
-               // inputArea.add(jtextfieldJPanel, BorderLayout.EAST);
-                addToContainer(mainJPanel2, jLabelPanel, 1, ypos, 1, 1, 0.25, 0.25, "vertical", 0, 0);
-
-
-                //###################################################################################
+                //###################################################################
                 // South Screen for Interface
-                //###################################################################################
+                //####################################################################
 
                 // Creating submit button
-                JButton submitButton = new JButton("Submit Form");
-                submitButton.setFont(new Font("Arial", Font.BOLD, 14)); // setting font
+                JButton submitButton = new JButton(submitBtnText);
+                submitButton.setFont(new Font("Arial", Font.BOLD, 15)); // setting font
                 submitButton.setPreferredSize(new Dimension(50, 50)); // width, height
 
                 // creating commands for submit button to execute on
@@ -318,13 +300,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                     submissionBtnAction();
                 });
 
-                mainJPanel2.add(submitButton, BorderLayout.SOUTH);
-
-                 */
-
-                revalidate();
-                mainJPanel.revalidate();
-                mainJPanel2.revalidate();
+                addToContainer(mainJPanel2, submitButton, 0, ypos+=1, 1, 1, 0.25, 0.25, "both", 0, 0);
             }
 
             private void createIconBar()
