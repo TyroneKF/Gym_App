@@ -280,14 +280,10 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
                 northPanel = new JPanel(new GridBagLayout());
 
-
                 //###########################
                 // Creating Icons
                 //###########################
                 int northPos = 0;
-
-
-
 
                 //###########################
                 // Creating Label
