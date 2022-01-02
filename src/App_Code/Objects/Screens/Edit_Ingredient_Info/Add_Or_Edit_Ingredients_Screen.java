@@ -110,6 +110,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 JTabbedPane tp = new JTabbedPane();
                 contentPane.add(tp);
 
+
                 //#################################################
                 // Creating Add Ingredients Screen
                 //#################################################
@@ -118,6 +119,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
                 addToContainer(addIngredientsFormJPanel, new createForm(), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
 
+                /*
                 //#################################################
                 // Creating Edit Ingredients Screen
                 //##################################################
@@ -125,6 +127,8 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 tp.add("Edit Ingredients", editIngredientsFormJPanel);
 
                 addToContainer(editIngredientsFormJPanel, new EditingCreateForm(), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
+
+                 */
 
                 //#################################################
                 // Creating Edit Ingredient Types Screen
@@ -134,6 +138,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
                 addToContainer(editIngredientsTypesJPanel, new IngredientsTypesScreen(), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
 
+                /*
                 //#################################################
                 // Creating Edit Ingredients Stores Screen
                 //##################################################
@@ -141,6 +146,8 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 tp.add("Edit Ingredient Stores", editIngredientsStoreJPanel);
 
                 addToContainer(editIngredientsStoreJPanel, new EditIngredientStores(), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
+
+                 */
             }
         }
         catch (Exception e)
@@ -192,21 +199,23 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             JPanel jPanel = new JPanel();
             jPanel.setPreferredSize(new Dimension(630, 50));
             jPanel.setBackground(Color.PINK);
-            addToContainer(mainCentreScreen,jPanel , 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 10, 0);
+            addToContainer(mainCentreScreen, jPanel, 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 10, 0);
         }
 
         public class AddIngredientsTypeScreen extends CollapsibleJPanel
         {
-            protected int ypos =0;
+            protected int ypos = 0;
             protected int
                     ypos2 = 0,
-                    labelPos = ypos2+=1,
-                    jtextfieldPos = ypos2+=1,
-                    submitBTNPos = ypos2+=1;
+                    labelPos = ypos2 += 1,
+                    jtextfieldPos = ypos2 += 1,
+                    submitBTNPos = ypos2 += 1;
 
             protected JPanel mainTitlePanel, jtextfieldJPanel, mainJPanel, mainJPanel2;
             protected JTextField jTextField;
             protected JButton submitButton;
+
+            private JPanel northPanel = new JPanel(new GridBagLayout());
 
             public AddIngredientsTypeScreen(Container parentContainer, String btnText, int btnWidth, int btnHeight)
             {
@@ -222,7 +231,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 //#####################################################
 
                 JPanel iconArea = new JPanel(new GridBagLayout());
-                addToContainer(mainTitlePanel, iconArea, 0, ypos+=1, 1, 1, 0.25, 0.25, "both", 0, 0);
 
                 IconPanel iconPanel = new IconPanel(1, 10, "East");
                 JPanel iconPanelInsert = iconPanel.getIconJpanel();
@@ -243,27 +251,33 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
                 refresh_Btn.addActionListener(ae -> {
 
-
+                    refreshBtnAction();
                 });
 
                 iconPanelInsert.add(refresh_Icon_Btn);
+
+                addToContainer(mainJPanel2, iconArea, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+            }
+
+
+            protected void refreshBtnAction()
+            {
+
             }
 
             private void createAddTypeScreenObjects()
             {
                 mainJPanel = getCentreJPanel();
-                //mainJPanel.setPreferredSize(new Dimension(jFramewidth,  50));
-                mainJPanel.setBackground(Color.PINK);
                 mainJPanel.setLayout(new GridBagLayout());
 
                 mainJPanel2 = new JPanel(new GridBagLayout());
                 mainJPanel2.setBackground(Color.black);
                 addToContainer(mainJPanel, mainJPanel2, 0, 0, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
-                //###################################################################
-                //Space Divider
-                //###################################################################
-                addToContainer(mainJPanel2, new JPanel(), 0, ypos2+=1, 1, 1, 0.25, 0.25, "both", 10, 0);
+                //#######################
+                // Create Icon Bar
+                //#######################
+                createIconBar();
 
                 //#################################################################
                 //  Centre & Create Form
@@ -304,10 +318,10 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
             protected void addScreenObjects()
             {
-                addToContainer(mainJPanel2, createLabelPanel("Add Ingredient Type Name", new JLabel()), 0, ypos2+=1, 1, 1, 0.25, 0.25, "both", 0, 0);
-                addToContainer(mainJPanel2, jtextfieldJPanel, 0, ypos2+=1, 1, 1, 0.25, 0.25, "both", 0, 0);
+                addToContainer(mainJPanel2, createLabelPanel("Add Ingredient Type Name", new JLabel()), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+                addToContainer(mainJPanel2, jtextfieldJPanel, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
 
-                addToContainer(mainJPanel2, submitButton, 0, ypos2+=1, 1, 1, 0.25, 0.25, "both", 0, 0);
+                addToContainer(mainJPanel2, submitButton, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
 
                 mainJPanel.revalidate();
                 mainJPanel2.revalidate();
@@ -352,6 +366,39 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             {
 
             }
+
+            protected void createIconBarO()
+            {
+                //#####################################################
+                // Creating area for North JPanel (Refresh Icon)
+                //#####################################################
+
+                JPanel iconArea = new JPanel(new GridBagLayout());
+
+                IconPanel iconPanel = new IconPanel(1, 10, "East");
+                JPanel iconPanelInsert = iconPanel.getIconJpanel();
+
+                addToContainer(iconArea, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0);
+
+                //##########################
+                // Refresh Icon
+                //##########################
+                int width = 30;
+                int height = 30;
+
+                IconButton refresh_Icon_Btn = new IconButton("src/images/refresh/++refresh.png", "", width, height, width, height,
+                        "centre", "right"); // btn text is useless here , refactor
+
+                JButton refresh_Btn = refresh_Icon_Btn.returnJButton();
+                refresh_Icon_Btn.makeBTntransparent();
+
+                refresh_Btn.addActionListener(ae -> {
+
+                });
+
+                iconPanelInsert.add(refresh_Icon_Btn);
+            }
+
         }
 
         public class EditIngredientsTypeScreen extends AddIngredientsTypeScreen
@@ -398,14 +445,14 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             @Override
             protected void addScreenObjects()
             {
-                addToContainer(mainJPanel2, createLabelPanel("Select Ingredient Type Name To Edit", new JLabel()), 0, ypos2+=1, 1, 1, 0.25, 0.25, "both", 0, 0);
-                addToContainer(mainJPanel2, jcomboBoxJPanel, 0, ypos2+=1, 1, 1, 0.25, 0.25, "both", 0, 0);
+                addToContainer(mainJPanel2, createLabelPanel("Select Ingredient Type Name To Edit", new JLabel()), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+                addToContainer(mainJPanel2, jcomboBoxJPanel, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
 
-                addToContainer(mainJPanel2, new JPanel(), 0, ypos2+=1, 1, 1, 0.25, 0.25, "both", 10, 0);
+                addToContainer(mainJPanel2, new JPanel(), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 10, 0);
 
-                addToContainer(mainJPanel2, createLabelPanel("Change Ingredient Type Name", new JLabel()), 0, ypos2+=1, 1, 1, 0.25, 0.25, "both", 0, 0);
-                addToContainer(mainJPanel2, jtextfieldJPanel, 0, ypos2+=1, 1, 1, 0.25, 0.25, "both", 0, 0);
-                addToContainer(mainJPanel2, submitButton, 0, ypos2+=1, 1, 1, 0.25, 0.25, "both", 0, 0);
+                addToContainer(mainJPanel2, createLabelPanel("Change Ingredient Type Name", new JLabel()), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+                addToContainer(mainJPanel2, jtextfieldJPanel, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+                addToContainer(mainJPanel2, submitButton, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
 
                 mainJPanel.revalidate();
                 mainJPanel2.revalidate();
