@@ -181,19 +181,20 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             AddIngredientsTypeScreen addIngredientsTypeScreen = new AddIngredientsTypeScreen(this, "Add Ingredients Type", 250, 50);
             addToContainer(mainCentreScreen, addIngredientsTypeScreen, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
-
-            //###########################
-            //Space Divider
-            //###########################
-            JPanel jPanel = new JPanel();
-            jPanel.setBackground(Color.PINK);
-            addToContainer(mainCentreScreen,jPanel , 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 10, 0);
-
             //###########################
             //Edit Ingredients Type Form
             //###########################
             EditIngredientsTypeScreen editIngredientsTypeScreen = new EditIngredientsTypeScreen(this, "Edit Ingredients Type", 250, 50);
             addToContainer(mainCentreScreen, editIngredientsTypeScreen, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+
+
+            //###########################
+            //Space Divider
+            //###########################
+            JPanel jPanel = new JPanel();
+            jPanel.setPreferredSize(new Dimension(630, 200));
+            jPanel.setBackground(Color.PINK);
+            addToContainer(mainCentreScreen,jPanel , 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 10, 0);
         }
 
         public class AddIngredientsTypeScreen extends CollapsibleJPanel
