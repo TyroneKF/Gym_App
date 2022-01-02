@@ -215,8 +215,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             protected JTextField jTextField;
             protected JButton submitButton;
 
-            private JPanel northPanel = new JPanel(new GridBagLayout());
-
             public AddIngredientsTypeScreen(Container parentContainer, String btnText, int btnWidth, int btnHeight)
             {
                 super(parentContainer, btnText, btnWidth, btnHeight);
@@ -259,10 +257,9 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 addToContainer(mainJPanel2, iconArea, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
             }
 
-
             protected void refreshBtnAction()
             {
-
+                jTextField.setText("");
             }
 
             private void createAddTypeScreenObjects()
@@ -352,11 +349,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 return jpanel;
             }
 
-            protected void setSubmitBtnText(String text)
-            {
-                submitButton.setText(text);
-            }
-
             protected void creatingAdditionalObjects()
             {
 
@@ -366,44 +358,11 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             {
 
             }
-
-            protected void createIconBarO()
-            {
-                //#####################################################
-                // Creating area for North JPanel (Refresh Icon)
-                //#####################################################
-
-                JPanel iconArea = new JPanel(new GridBagLayout());
-
-                IconPanel iconPanel = new IconPanel(1, 10, "East");
-                JPanel iconPanelInsert = iconPanel.getIconJpanel();
-
-                addToContainer(iconArea, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0);
-
-                //##########################
-                // Refresh Icon
-                //##########################
-                int width = 30;
-                int height = 30;
-
-                IconButton refresh_Icon_Btn = new IconButton("src/images/refresh/++refresh.png", "", width, height, width, height,
-                        "centre", "right"); // btn text is useless here , refactor
-
-                JButton refresh_Btn = refresh_Icon_Btn.returnJButton();
-                refresh_Icon_Btn.makeBTntransparent();
-
-                refresh_Btn.addActionListener(ae -> {
-
-                });
-
-                iconPanelInsert.add(refresh_Icon_Btn);
-            }
-
         }
 
         public class EditIngredientsTypeScreen extends AddIngredientsTypeScreen
         {
-            private JComboBox ingredientTypes_JComboBox = new JComboBox();
+            private JComboBox ingredientTypes_JC;
             private JPanel jcomboBoxJPanel;
 
             public EditIngredientsTypeScreen(Container parentContainer, String btnText, int btnWidth, int btnHeight)
@@ -419,15 +378,16 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 //########################################################################################################
                 jcomboBoxJPanel = new JPanel(new GridLayout(1, 1));
 
-                ingredientTypes_JComboBox = new JComboBox(all_IngredientsTypeNamesList);
-                ingredientTypes_JComboBox.setFont(new Font("Arial", Font.PLAIN, 15)); // setting font
-                ((JLabel) ingredientTypes_JComboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER); // centre text
+                ingredientTypes_JC = new JComboBox(all_IngredientsTypeNamesList);
+                ingredientTypes_JC.setSelectedIndex(-1);
+                ingredientTypes_JC.setFont(new Font("Arial", Font.PLAIN, 15)); // setting font
+                ((JLabel) ingredientTypes_JC.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER); // centre text
 
                 //################################################
                 //  Actionlistener
                 //#################################################
 
-                ingredientTypes_JComboBox.addItemListener(new ItemListener()
+                ingredientTypes_JC.addItemListener(new ItemListener()
                 {
                     public void itemStateChanged(ItemEvent ie)
                     {
@@ -438,7 +398,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                     }
                 });
 
-                jcomboBoxJPanel.add(ingredientTypes_JComboBox);
+                jcomboBoxJPanel.add(ingredientTypes_JC);
                 jcomboBoxJPanel.setPreferredSize(new Dimension(650, 50));
             }
 
@@ -462,6 +422,20 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             protected void submissionBtnAction()
             {
 
+            }
+
+            @Override
+            protected void refreshBtnAction()
+            {
+                try
+                {
+                    jTextField.setText("");
+                    ingredientTypes_JC.setSelectedIndex(-1);
+                }
+                catch (Exception e)
+                {
+                    System.out.printf("\n\n%s", e);
+                }
             }
         }
     }
