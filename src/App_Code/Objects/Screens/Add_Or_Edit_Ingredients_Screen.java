@@ -212,7 +212,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                     jtextfieldPos = ypos2+=1,
                     submitBTNPos = ypos2+=1;
 
-            protected JPanel northPanel, jtextfieldJPanel, mainJPanel, mainJPanel2;
+            protected JPanel mainTitlePanel, jtextfieldJPanel, mainJPanel, mainJPanel2;
             protected JTextField jTextField;
             protected JButton submitButton;
             protected JLabel titleLabel;
@@ -231,7 +231,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 //#####################################################
 
                 JPanel iconArea = new JPanel(new GridBagLayout());
-                addToContainer(northPanel, iconArea, 0, ypos+=1, 1, 1, 0.25, 0.25, "both", 0, 0);
+                addToContainer(mainTitlePanel, iconArea, 0, ypos+=1, 1, 1, 0.25, 0.25, "both", 0, 0);
 
                 IconPanel iconPanel = new IconPanel(1, 10, "East");
                 JPanel iconPanelInsert = iconPanel.getIconJpanel();
@@ -278,28 +278,21 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 // Creating area for North JPanel (title area)
                 //###################################################################
 
-                northPanel = new JPanel(new GridBagLayout());
-
-                //###########################
-                // Creating Icons
-                //###########################
-                int northPos = 0;
+                mainTitlePanel = new JPanel(new GridBagLayout());
+                mainTitlePanel.setPreferredSize(new Dimension(630, 50));
+                mainTitlePanel.setBackground(Color.GREEN);
 
                 //###########################
                 // Creating Label
                 //###########################
-                JPanel titlePanel = new JPanel();
+
 
                 titleLabel = new JLabel("Add Ingredient Type Name");
                 titleLabel.setFont(new Font("Verdana", Font.BOLD, 24));
                 titleLabel.setHorizontalAlignment(JLabel.CENTER);
 
-
-                titlePanel.setBackground(Color.green);
-                titlePanel.add(titleLabel);
-
                 // Add title JPanel to North Panel Area
-                addToContainer(northPanel, titlePanel, 0, northPos+=1, 1, 1, 0.25, 0.25, "both", 0, 0);
+                addToContainer(mainTitlePanel, titleLabel, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
 
                 //#################################################################
                 //  Centre & Create Form
@@ -342,11 +335,11 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
             protected JPanel createLabelPanel(String labelTXT, JLabel jLabel)
             {
-                jLabel = new JLabel("Add Ingredient Type Name");
+                jLabel = new JLabel(labelTXT);
                 jLabel.setFont(new Font("Verdana", Font.BOLD, 24));
                 jLabel.setHorizontalAlignment(JLabel.CENTER);
 
-                JPanel titlePanel2 = new JPanel();
+                JPanel titlePanel2  = new JPanel(new GridBagLayout());
                 titlePanel2.setBackground(Color.green);
                 titlePanel2.add(jLabel);
 
@@ -370,7 +363,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
             protected void addScreenObjects()
             {
-                addToContainer(mainJPanel2, northPanel, 0, ypos2+=1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+                addToContainer(mainJPanel2, mainTitlePanel, 0, ypos2+=1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
                 addToContainer(mainJPanel2, jtextfieldJPanel, 0, ypos2+=1, 1, 1, 0.25, 0.25, "both", 0, 0);
                 addToContainer(mainJPanel2, submitButton, 0, ypos2+=1, 1, 1, 0.25, 0.25, "both", 0, 0);
 
@@ -436,7 +429,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             @Override
             protected void addScreenObjects()
             {
-                addToContainer(mainJPanel2, northPanel, 0, ypos2+=1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+                addToContainer(mainJPanel2, mainTitlePanel, 0, ypos2+=1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
                 addToContainer(mainJPanel2, jcomboBoxJPanel, 0, ypos2+=1, 1, 1, 0.25, 0.25, "both", 0, 0);
 
