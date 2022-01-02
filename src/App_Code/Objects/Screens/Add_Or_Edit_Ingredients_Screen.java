@@ -340,6 +340,19 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 addScreenObjects(); // adding all objects to the screen
             }
 
+            protected JPanel createLabelPanel(String labelTXT, JLabel jLabel)
+            {
+                jLabel = new JLabel("Add Ingredient Type Name");
+                jLabel.setFont(new Font("Verdana", Font.BOLD, 24));
+                jLabel.setHorizontalAlignment(JLabel.CENTER);
+
+                JPanel titlePanel2 = new JPanel();
+                titlePanel2.setBackground(Color.green);
+                titlePanel2.add(jLabel);
+
+                return titlePanel2;
+            }
+
             protected void setLabelTXT(String text)
             {
                 titleLabel.setText(text);
