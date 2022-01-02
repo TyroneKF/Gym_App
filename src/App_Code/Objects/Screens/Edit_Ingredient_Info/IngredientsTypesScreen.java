@@ -27,10 +27,14 @@ public class IngredientsTypesScreen extends JPanel
     private MyJDBC db;
     private JComboBox ingredientTypes_JC;
 
-    public IngredientsTypesScreen(MyJDBC db, Collection<String> all_IngredientsTypeNamesList)
+    private Add_Or_Edit_Ingredients_Screen add_or_edit_ingredients_screen;
+
+    public IngredientsTypesScreen(MyJDBC db, Add_Or_Edit_Ingredients_Screen add_or_edit_ingredients_screen)
     {
         this.db = db;
-        this.all_IngredientsTypeNamesList = all_IngredientsTypeNamesList;
+        this. add_or_edit_ingredients_screen =  add_or_edit_ingredients_screen;
+        this.all_IngredientsTypeNamesList = add_or_edit_ingredients_screen.getAll_IngredientsTypeNamesList();
+
         //###################################################################################
         //   Create Screen for Interface
         //###################################################################################
@@ -349,6 +353,8 @@ public class IngredientsTypesScreen extends JPanel
             {
                 all_IngredientsTypeNamesList.remove(ingredientType);
             }
+
+            add_or_edit_ingredients_screen.setAll_IngredientsTypeNamesList(all_IngredientsTypeNamesList);
         }
     }
 
@@ -435,21 +441,6 @@ public class IngredientsTypesScreen extends JPanel
             ingredientTypes_JC.setSelectedIndex(-1);
             ingredientTypes_JC.setFont(new Font("Arial", Font.PLAIN, 15)); // setting font
             ((JLabel) ingredientTypes_JC.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER); // centre text
-
-            //################################################
-            //  Actionlistener
-            //#################################################
-
-            ingredientTypes_JC.addItemListener(new ItemListener()
-            {
-                public void itemStateChanged(ItemEvent ie)
-                {
-                    if (ie.getStateChange() == ItemEvent.SELECTED)
-                    {
-
-                    }
-                }
-            });
 
             jcomboBoxJPanel.add(ingredientTypes_JC);
             jcomboBoxJPanel.setPreferredSize(new Dimension(650, 50));

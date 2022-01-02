@@ -48,7 +48,8 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
     private JComboBox
             edit_IngredientName_JComboBox = new JComboBox(),
-            edit_IngredientTypeJComboBox = new JComboBox();
+            edit_IngredientTypeJComboBox = new JComboBox(),
+            ingredientsType_JComboBox = new JComboBox();
 
     // Sorted Hashmap by key String
     private TreeMap<String, Collection<String>> map_ingredientTypesToIngredientNames = new TreeMap<String, Collection<String>>(new Comparator<String>()
@@ -119,7 +120,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
                 addToContainer(addIngredientsFormJPanel, new createForm(), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
 
-                /*
                 //#################################################
                 // Creating Edit Ingredients Screen
                 //##################################################
@@ -128,14 +128,12 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
                 addToContainer(editIngredientsFormJPanel, new EditingCreateForm(), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
 
-                 */
-
                 //#################################################
                 // Creating Edit Ingredient Types Screen
                 //##################################################
                 JPanel editIngredientsTypesJPanel = new JPanel(new GridBagLayout());
                 tp.add("Edit Ingredient Types", editIngredientsTypesJPanel);
-                addToContainer(editIngredientsTypesJPanel, new IngredientsTypesScreen(db,all_IngredientsTypeNamesList), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
+                addToContainer(editIngredientsTypesJPanel, new IngredientsTypesScreen(db, this), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
 
                 /*
                 //#################################################
@@ -1670,7 +1668,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                     "Based_On_Quantity:", "Protein:", "Glycemic Index", "Carbohydrates:", "Sugars Of Carbs:", "Fibre:", "Fat:", "Saturated Fat:",
                     "Salt:", "Water_Content:", "Calories:"};
 
-            protected JComboBox ingredientsMeasure_JComboBox = new JComboBox(), ingredientsType_JComboBox = new JComboBox();
+            protected JComboBox ingredientsMeasure_JComboBox = new JComboBox();
             protected ArrayList<Component> ingredientsFormObjects = new ArrayList<>();
 
             private JPanel northPanel = new JPanel(new GridBagLayout());
@@ -1792,20 +1790,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                     inputArea.add(textField);
                 }
                 mainJPanel.add(inputArea, BorderLayout.CENTER);
-            }
-
-            protected void loadJCOmboBox()
-            {
-                ingredientsType_JComboBox.removeAllItems();
-                for (String ingredientType : all_IngredientsTypeNamesList)
-                {
-                    if(ingredientType.equals("UnAssigned") || ingredientType.equals("None Of The Above"))
-                    {
-                        continue;
-                    }
-
-                    ingredientsType_JComboBox.addItem(ingredientType);
-                }
             }
 
             protected void createIconBar()
@@ -2615,6 +2599,33 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
     //##################################################################################################################
     //
     //##################################################################################################################
+    public Collection<String> getAll_IngredientsTypeNamesList()
+    {
+        return all_IngredientsTypeNamesList;
+    }
+
+    public void setAll_IngredientsTypeNamesList(Collection<String> all_IngredientsTypeNamesList)
+    {
+        this.all_IngredientsTypeNamesList = all_IngredientsTypeNamesList;
+
+        loadJCOmboBox();
+    }
+
+    private void loadJCOmboBox()
+    {
+        ingredientsType_JComboBox.removeAllItems();
+        for (String ingredientType : all_IngredientsTypeNamesList)
+        {
+            if (ingredientType.equals("UnAssigned") || ingredientType.equals("None Of The Above"))
+            {
+                continue;
+            }
+
+            ingredientsType_JComboBox.addItem(ingredientType);
+        }
+
+        ingredientsType_JComboBox.setSelectedIndex(-1);
+    }
 
     // Updates everythingIngredientsTypeList
     public void updateEverythingIngredientsTypeList()
