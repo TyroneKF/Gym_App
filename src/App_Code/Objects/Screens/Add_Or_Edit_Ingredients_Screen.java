@@ -157,7 +157,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
     public class IngredientsTypesScreen extends JPanel
     {
-        private JPanel scrollPaneJPanel;
         private int yPos = 0;
         private int charlimit = 55;
         private JComboBox edit_All_IngredientTypes_JComboBox = new JComboBox();
@@ -176,32 +175,25 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             JPanel mainCentreScreen = new JPanel(new GridBagLayout());
             add(mainCentreScreen, BorderLayout.CENTER);
 
-            //##########################################################
-            // Create ScrollPane & add to Interface
-            //#########################################################
-            ScrollPaneCreator scrollPane = new ScrollPaneCreator();
-            scrollPaneJPanel = scrollPane.getJPanel();
-            scrollPaneJPanel.setLayout(new GridBagLayout());
-            addToContainer(mainCentreScreen, scrollPane, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
-
             //###########################
             //Add Ingredients Type Form
             //###########################
             AddIngredientsTypeScreen addIngredientsTypeScreen = new AddIngredientsTypeScreen(this, "Add Ingredients Type", 250, 50);
-            addToContainer(scrollPaneJPanel, addIngredientsTypeScreen, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+            addToContainer(mainCentreScreen, addIngredientsTypeScreen, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+
 
             //###########################
             //Space Divider
             //###########################
             JPanel jPanel = new JPanel();
             jPanel.setBackground(Color.PINK);
-            addToContainer(scrollPaneJPanel,jPanel , 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 10, 0);
+            addToContainer(mainCentreScreen,jPanel , 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 10, 0);
 
             //###########################
             //Edit Ingredients Type Form
             //###########################
             EditIngredientsTypeScreen editIngredientsTypeScreen = new EditIngredientsTypeScreen(this, "Edit Ingredients Type", 250, 50);
-            addToContainer(scrollPaneJPanel, editIngredientsTypeScreen, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+            addToContainer(mainCentreScreen, editIngredientsTypeScreen, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
         }
 
         public class AddIngredientsTypeScreen extends CollapsibleJPanel
