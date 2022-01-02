@@ -1,4 +1,4 @@
-package App_Code.Objects.Screens;
+package App_Code.Objects.Screens.Edit_Ingredient_Info;
 
 import java.text.Collator;
 import java.util.regex.Matcher;
@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Gui_Objects.*;
+import App_Code.Objects.Screens.Others.MealPlanScreen;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

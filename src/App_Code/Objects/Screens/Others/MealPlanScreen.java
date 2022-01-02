@@ -1,4 +1,4 @@
-package App_Code.Objects.Screens;
+package App_Code.Objects.Screens.Others;
 
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
@@ -11,6 +11,7 @@ import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
+import App_Code.Objects.Screens.Edit_Ingredient_Info.Add_Or_Edit_Ingredients_Screen;
 
 import javax.swing.*;
 import java.awt.*;
@@ -38,7 +39,7 @@ public class MealPlanScreen extends JPanel
     private Container contentPane;
 
     private MyJDBC db;
-    private App_Code.Objects.Screens.macrosTargets_Screen macrosTargets_Screen = null;
+    private App_Code.Objects.Screens.Others.macrosTargets_Screen macrosTargets_Screen = null;
     private Add_Or_Edit_Ingredients_Screen addIngredientsScreen = null;
 
 
