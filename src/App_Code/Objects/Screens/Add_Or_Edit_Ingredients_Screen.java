@@ -157,9 +157,11 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
     public class IngredientsTypesScreen extends JPanel
     {
+        private GridBagConstraints gbc = new GridBagConstraints();
         private int yPos = 0;
         private int charlimit = 55;
-        private JComboBox edit_All_IngredientTypes_JComboBox = new JComboBox();
+
+        private JPanel jcomboBoxJPanel;
 
         public IngredientsTypesScreen()
         {
@@ -199,101 +201,27 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
         public class AddIngredientsTypeScreen extends CollapsibleJPanel
         {
-            private JPanel northPanel;
+
             protected String labelTXT = "Ingredient Type Name:";
             protected String submitBtnText = "Submit";
 
-            protected JTextField jTextField;
             protected int ypos =0;
+            protected int
+                    ypos2 = 0,
+                    labelPos = ypos2+=1,
+                    jtextfieldPos = ypos2+=1,
+                    submitBTNPos = ypos2+=1;
+
+            protected JPanel northPanel, jtextfieldJPanel, mainJPanel, mainJPanel2;
+            protected JTextField jTextField;
+            protected JButton submitButton;
+            protected JLabel titleLabel;
 
             public AddIngredientsTypeScreen(Container parentContainer, String btnText, int btnWidth, int btnHeight)
             {
                 super(parentContainer, btnText, btnWidth, btnHeight);
                 expandJPanel();
-                createAddTypeScreen();
-            }
-
-            private void createAddTypeScreen()
-            {
-                JPanel mainJPanel = getCentreJPanel();
-                //mainJPanel.setPreferredSize(new Dimension(jFramewidth,  50));
-                mainJPanel.setBackground(Color.PINK);
-                mainJPanel.setLayout(new GridBagLayout());
-
-                JPanel mainJPanel2 = new JPanel(new GridBagLayout());
-                mainJPanel2.setBackground(Color.black);
-                addToContainer(mainJPanel, mainJPanel2, 0, 0, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
-
-                //###################################################################
-                //Space Divider
-                //###################################################################
-                addToContainer(mainJPanel2, new JPanel(), 0, ypos+=1, 1, 1, 0.25, 0.25, "both", 10, 0);
-
-                //###################################################################
-                // North Frame
-                //###################################################################
-
-                northPanel = new JPanel(new GridBagLayout());
-                addToContainer(mainJPanel2, northPanel, 0, ypos+=1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
-
-
-
-                //#####################################################
-                // Creating area for North JPanel (title area)
-                //#####################################################
-                JLabel titleLabel = new JLabel("Add Ingredient Type Name");
-                titleLabel.setFont(new Font("Verdana", Font.BOLD, 24));
-                titleLabel.setHorizontalAlignment(JLabel.CENTER);
-
-                JPanel titlePanel = new JPanel();
-                titlePanel.setBackground(Color.green);
-                titlePanel.add(titleLabel);
-
-                // Add title JPanel to North Panel Area
-                addToContainer(northPanel, titlePanel, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
-
-                //#################################################################
-                //  Centre & Create Form
-                //#################################################################
-                JPanel inputArea = new JPanel(new GridLayout());
-                inputArea.setPreferredSize(new Dimension(630, 50));
-                inputArea.setBackground(Color.red);
-
-                //mainJPanel2.add(inputArea, BorderLayout.CENTER);
-                addToContainer(mainJPanel2, inputArea, 0, ypos+=1, 1, 1, 0.25, 0.25, "both", 0, 0);
-
-                //#######################
-                // JTextfield
-                //#######################
-
-                jTextField = new JTextField("");
-                jTextField.setFont(new Font("Verdana", Font.PLAIN, 15));
-                jTextField.setHorizontalAlignment(JTextField.CENTER);
-                inputArea.add(jTextField);
-
-                /*
-                //###################################################################
-                //Space Divider
-                //###################################################################
-                addToContainer(mainJPanel2, new JPanel(), 0, ypos+=1, 1, 1, 0.25, 0.25, "both", 5, 0);
-                 */
-
-
-                //###################################################################
-                // South Screen for Interface
-                //####################################################################
-
-                // Creating submit button
-                JButton submitButton = new JButton(submitBtnText);
-                submitButton.setFont(new Font("Arial", Font.BOLD, 15)); // setting font
-                submitButton.setPreferredSize(new Dimension(50, 50)); // width, height
-
-                // creating commands for submit button to execute on
-                submitButton.addActionListener(ae -> {
-                    submissionBtnAction();
-                });
-
-                addToContainer(mainJPanel2, submitButton, 0, ypos+=1, 1, 1, 0.25, 0.25, "both", 0, 0);
+                createAddTypeScreenObjects();
             }
 
             private void createIconBar()
@@ -330,29 +258,197 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 iconPanelInsert.add(refresh_Icon_Btn);
             }
 
-            private void submissionBtnAction()
+            private void createAddTypeScreenObjects()
+            {
+                mainJPanel = getCentreJPanel();
+                //mainJPanel.setPreferredSize(new Dimension(jFramewidth,  50));
+                mainJPanel.setBackground(Color.PINK);
+                mainJPanel.setLayout(new GridBagLayout());
+
+                mainJPanel2 = new JPanel(new GridBagLayout());
+                mainJPanel2.setBackground(Color.black);
+                addToContainer(mainJPanel, mainJPanel2, 0, 0, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+
+                //###################################################################
+                //Space Divider
+                //###################################################################
+                addToContainer(mainJPanel2, new JPanel(), 0, ypos2+=1, 1, 1, 0.25, 0.25, "both", 10, 0);
+
+                //###################################################################
+                // Creating area for North JPanel (title area)
+                //###################################################################
+
+                northPanel = new JPanel(new GridBagLayout());
+
+
+                //###########################
+                // Creating Icons
+                //###########################
+                int northPos = 0;
+
+
+
+
+                //###########################
+                // Creating Label
+                //###########################
+                JPanel titlePanel = new JPanel();
+
+                titleLabel = new JLabel("Add Ingredient Type Name");
+                titleLabel.setFont(new Font("Verdana", Font.BOLD, 24));
+                titleLabel.setHorizontalAlignment(JLabel.CENTER);
+
+
+                titlePanel.setBackground(Color.green);
+                titlePanel.add(titleLabel);
+
+                // Add title JPanel to North Panel Area
+                addToContainer(northPanel, titlePanel, 0, northPos+=1, 1, 1, 0.25, 0.25, "both", 0, 0);
+
+                //#################################################################
+                //  Centre & Create Form
+                //#################################################################
+                jtextfieldJPanel = new JPanel(new GridLayout());
+                jtextfieldJPanel.setPreferredSize(new Dimension(630, 50));
+                jtextfieldJPanel.setBackground(Color.red);
+
+                //#######################
+                // JTextfield
+                //#######################
+
+                jTextField = new JTextField("");
+                jTextField.setFont(new Font("Verdana", Font.PLAIN, 15));
+                jTextField.setHorizontalAlignment(JTextField.CENTER);
+                jtextfieldJPanel.add(jTextField);
+
+                //###################################################################
+                // South Screen for Interface
+                //####################################################################
+
+                // Creating submit button
+                submitButton = new JButton(submitBtnText);
+                submitButton.setFont(new Font("Arial", Font.BOLD, 15)); // setting font
+                submitButton.setPreferredSize(new Dimension(50, 50)); // width, height
+
+                // creating commands for submit button to execute on
+                submitButton.addActionListener(ae -> {
+                    submissionBtnAction();
+                });
+
+
+
+                //###################################################################
+                // Drawing interface
+                //####################################################################
+                creatingAdditionalObjects(); // for overwrite purposes
+                addScreenObjects(); // adding all objects to the screen
+            }
+
+            protected void setLabelTXT(String text)
+            {
+                titleLabel.setText(text);
+            }
+
+            protected void setSubmitBtnText(String text)
+            {
+                submitButton.setText(text);
+            }
+
+            protected void creatingAdditionalObjects()
             {
 
             }
 
+            protected void addScreenObjects()
+            {
+                addToContainer(mainJPanel2, northPanel, 0, ypos2+=1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+                addToContainer(mainJPanel2, jtextfieldJPanel, 0, ypos2+=1, 1, 1, 0.25, 0.25, "both", 0, 0);
+                addToContainer(mainJPanel2, submitButton, 0, ypos2+=1, 1, 1, 0.25, 0.25, "both", 0, 0);
 
+                mainJPanel.revalidate();
+                mainJPanel2.revalidate();
+            }
+
+            protected void submissionBtnAction()
+            {
+
+            }
         }
 
-
-        public class EditIngredientsTypeScreen extends CollapsibleJPanel
+        public class EditIngredientsTypeScreen extends AddIngredientsTypeScreen
         {
             //#######################################
             // Ingredients form Variables
             //#######################################
 
+            private String labelTXT = "Select Ingredient Type Name To Edit:";
+            private String submitBtnText = "Submit";
+
+            private JComboBox ingredientTypes_JComboBox = new JComboBox();
+
             public EditIngredientsTypeScreen(Container parentContainer, String btnText, int btnWidth, int btnHeight)
             {
                 super(parentContainer, btnText, btnWidth, btnHeight);
-                expandJPanel();
+
+                setLabelTXT(labelTXT);
+                setSubmitBtnText("Submit");
             }
 
+            @Override
+            protected void creatingAdditionalObjects()
+            {
+                //########################################################################################################
+                //  IngredientTypeJComboBox
+                //########################################################################################################
+                jcomboBoxJPanel = new JPanel(new GridLayout(1, 1));
+
+                ingredientTypes_JComboBox = new JComboBox(all_IngredientsTypeNamesList);
+                ((JLabel) ingredientTypes_JComboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER); // centre text
+
+                //################################################
+                //  Actionlistener
+                //#################################################
+
+                ingredientTypes_JComboBox.addItemListener(new ItemListener()
+                {
+                    public void itemStateChanged(ItemEvent ie)
+                    {
+                        if (ie.getStateChange() == ItemEvent.SELECTED)
+                        {
+
+                        }
+                    }
+                });
+
+                jcomboBoxJPanel.add(ingredientTypes_JComboBox);
+                jcomboBoxJPanel.setPreferredSize(new Dimension(650, 50));
+            }
+
+            @Override
+            protected void addScreenObjects()
+            {
+                addToContainer(mainJPanel2, northPanel, 0, ypos2+=1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+
+                addToContainer(mainJPanel2, jcomboBoxJPanel, 0, ypos2+=1, 1, 1, 0.25, 0.25, "both", 0, 0);
+
+                // Space Divider
+                addToContainer(mainJPanel2, new JPanel(), 0, ypos2+=1, 1, 1, 0.25, 0.25, "both", 10, 0);
+
+                addToContainer(mainJPanel2, jtextfieldJPanel, 0, ypos2+=1, 1, 1, 0.25, 0.25, "both", 0, 0);
+                addToContainer(mainJPanel2, submitButton, 0, ypos2+=1, 1, 1, 0.25, 0.25, "both", 0, 0);
+
+                mainJPanel.revalidate();
+                mainJPanel2.revalidate();
+            }
+
+            @Override
+            protected void submissionBtnAction()
+            {
+
+            }
         }
     }
+
 
     public class EditIngredientStores extends JPanel
     {
