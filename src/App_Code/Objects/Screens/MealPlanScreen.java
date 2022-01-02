@@ -67,26 +67,26 @@ public class MealPlanScreen extends JPanel
 
     private final Integer
             original_IngredientsTable_Quantity_Col = 4,
-            original_IngredTable_Type_Col = 5,
+            original_IngredientsTable_Type_Col = 5,
             original_IngredientsTable_IngredientsName_Col = 6,
             original_IngredientsTable_Supplier_Col = 8,
             original_ingredientsTable_DeleteBTN_Col = 19,
 
-    afterHiding_IngredTable_IngredientIndexCol = 0,
-            afterHiding_IngredTable_IngredientID = 1,
-            afterHiding_IngredTable_Quantity_Col = 2,
-            afterHiding_IngredTable_Type_Col = 3,
-            afterHiding_IngredTable_IngredientsName_Col = 4,
-            afterHiding_IngredTable_Supplier_Col = 6,
-            afterHiding_IngredTable_DeleteBTN_Col = 17;
+    afterHiding_IngredientsTable_IngredientIndexCol = 0,
+            afterHiding_IngredientsTable_IngredientID = 1,
+            afterHiding_IngredientsTable_Quantity_Col = 2,
+            afterHiding_IngredientsTable_Type_Col = 3,
+            afterHiding_IngredientsTable_IngredientsName_Col = 4,
+            afterHiding_IngredientsTable_Supplier_Col = 6,
+            afterHiding_IngredientsTable_DeleteBTN_Col = 17;
 
     private final Integer[]
-            triggerColumns = new Integer[]{afterHiding_IngredTable_IngredientIndexCol, afterHiding_IngredTable_IngredientID, afterHiding_IngredTable_Quantity_Col, afterHiding_IngredTable_Type_Col, afterHiding_IngredTable_IngredientsName_Col, afterHiding_IngredTable_Supplier_Col},
-            actionListenerColumns = new Integer[]{afterHiding_IngredTable_Type_Col, afterHiding_IngredTable_IngredientsName_Col, afterHiding_IngredTable_Supplier_Col, afterHiding_IngredTable_DeleteBTN_Col};
+            triggerColumns = new Integer[]{afterHiding_IngredientsTable_IngredientIndexCol, afterHiding_IngredientsTable_IngredientID, afterHiding_IngredientsTable_Quantity_Col, afterHiding_IngredientsTable_Type_Col, afterHiding_IngredientsTable_IngredientsName_Col, afterHiding_IngredientsTable_Supplier_Col},
+            actionListenerColumns = new Integer[]{afterHiding_IngredientsTable_Type_Col, afterHiding_IngredientsTable_IngredientsName_Col, afterHiding_IngredientsTable_Supplier_Col, afterHiding_IngredientsTable_DeleteBTN_Col};
 
     private final ArrayList<Integer>
-            editable_IngredientsTable_Columns = new ArrayList<Integer>(Arrays.asList(original_IngredientsTable_Quantity_Col, original_IngredTable_Type_Col, original_IngredientsTable_IngredientsName_Col, original_IngredientsTable_Supplier_Col)),
-            ingredients_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList(original_IngredTable_Type_Col, original_IngredientsTable_IngredientsName_Col, original_IngredientsTable_Supplier_Col, original_ingredientsTable_DeleteBTN_Col));
+            editable_IngredientsTable_Columns = new ArrayList<Integer>(Arrays.asList(original_IngredientsTable_Quantity_Col, original_IngredientsTable_Type_Col, original_IngredientsTable_IngredientsName_Col, original_IngredientsTable_Supplier_Col)),
+            ingredients_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList(original_IngredientsTable_Type_Col, original_IngredientsTable_IngredientsName_Col, original_IngredientsTable_Supplier_Col, original_ingredientsTable_DeleteBTN_Col));
 
     private final Integer ingredientsTable_StartingCol = 2, totalMealTable_StartCol = 3,
             macroTargets_StartCol = 2, macrosLeftTable_StartCol = 2;
@@ -183,8 +183,7 @@ public class MealPlanScreen extends JPanel
         //HELLO REMOVE
         System.out.printf("\n\nChosen Plan: %s", planID);
         System.out.println("\n\n###############################################################################");
-
-
+        /*
         if (planID != null)
         {
             //####################################################
@@ -447,6 +446,10 @@ public class MealPlanScreen extends JPanel
                 }
             }
         });
+
+         */
+
+        open_AddIngredients_Screen();
     }
 
     public static void main(String[] args)
@@ -1024,7 +1027,6 @@ public class MealPlanScreen extends JPanel
     {
         macrosLeft_JTable.refreshData();
     }
-
 
     //#####################################
     //  Add Ingredients  Screen Methods
