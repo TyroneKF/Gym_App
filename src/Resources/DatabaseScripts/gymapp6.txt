@@ -363,7 +363,7 @@ INSERT INTO meals (PlanID, Meal_Name) VALUES
 -- #####################################################
 INSERT INTO ingredientTypes (Ingredient_Type_Name) VALUES
 
-('None Of The Above'),('Vegan Vitamin Powders'),('Sauce'),
+('None Of The Above'),('UnAssigned'),('Vegan Vitamin Powders'),('Sauce'),
 ('Breads'), ('Cereals'), ('Rice'), ('Pasta'), ('Noodles'), ('Other Grains'), ('Vegetables'),
 ('Grains & Legumes'), ('Fruit'), ('Milk'), ('Potatoes'), ('Smoothie'), ('Yoghurt'), ('Cheese'), ('Lean Meat'), (' Fish'), ('Poultry'), ('Eggs'),
 ('Cereal Bars'), ('Frozen Fruit'), ('Frozen Vegetables'), ('Juice'), ('Meat'), ('Nuts & Seeds'), ('Fruit Juice'), ('Protein Powder');

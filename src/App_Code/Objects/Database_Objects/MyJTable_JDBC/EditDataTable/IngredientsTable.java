@@ -532,7 +532,8 @@ public class IngredientsTable extends JDBC_JTable
                 (
                   SELECT Ingredient_Type_ID, Ingredient_Type_Name FROM ingredientTypes
                 )n
-                ON i.Ingredient_Type_ID = n.Ingredient_Type_ID;""");
+                ON i.Ingredient_Type_ID = n.Ingredient_Type_ID 
+                ORDER BY Ingredient_Type_Name;""");
         ArrayList<ArrayList<String>> ingredientTypesNameAndIDResults = db.getMultiColumnQuery(queryIngredientsType);
 
         if (ingredientTypesNameAndIDResults == null)

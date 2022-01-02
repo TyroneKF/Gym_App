@@ -23,7 +23,7 @@ import java.util.HashMap;
 public class Add_Or_Edit_Ingredients_Screen extends JFrame
 {
 
-    private String[] all_IngredientsTypeNamesList;
+    private Collection<String> all_IngredientsTypeNamesList;
 
     //#######################################
     // General Variables
@@ -135,7 +135,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 //##################################################
                 JPanel editIngredientsTypesJPanel = new JPanel(new GridBagLayout());
                 tp.add("Edit Ingredient Types", editIngredientsTypesJPanel);
-                addToContainer(editIngredientsTypesJPanel, new IngredientsTypesScreen(all_IngredientsTypeNamesList), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
+                addToContainer(editIngredientsTypesJPanel, new IngredientsTypesScreen(db,all_IngredientsTypeNamesList), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
 
                 /*
                 //#################################################
@@ -158,7 +158,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
     //##################################################################################################################
     // Other Classes
     //##################################################################################################################
-
 
     public class EditingCreateForm extends createForm
     {
@@ -1752,7 +1751,8 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                     }
                     else if (labelTXT.equals("Ingredient_Type:"))
                     {
-                        ingredientsType_JComboBox = new JComboBox(all_IngredientsTypeNamesList);// CHECKA
+                        ingredientsType_JComboBox = new JComboBox();
+                        loadJCOmboBox();
                         inputArea.add(ingredientsType_JComboBox);
 
                         jcomboxBeingCreated = true;
@@ -1792,6 +1792,20 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                     inputArea.add(textField);
                 }
                 mainJPanel.add(inputArea, BorderLayout.CENTER);
+            }
+
+            protected void loadJCOmboBox()
+            {
+                ingredientsType_JComboBox.removeAllItems();
+                for (String ingredientType : all_IngredientsTypeNamesList)
+                {
+                    if(ingredientType.equals("UnAssigned") || ingredientType.equals("None Of The Above"))
+                    {
+                        continue;
+                    }
+
+                    ingredientsType_JComboBox.addItem(ingredientType);
+                }
             }
 
             protected void createIconBar()
@@ -2605,7 +2619,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
     // Updates everythingIngredientsTypeList
     public void updateEverythingIngredientsTypeList()
     {
-        all_IngredientsTypeNamesList = db.getSingleColumnQuery("SELECT Ingredient_Type_Name FROM ingredientTypes;");
+        all_IngredientsTypeNamesList = db.getSingleColumnQuery_AlphabeticallyOrderedTreeSet("SELECT Ingredient_Type_Name FROM ingredientTypes;");
 
         if (all_IngredientsTypeNamesList == null)
         {
