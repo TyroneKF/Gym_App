@@ -77,7 +77,13 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             if (db.isDatabaseConnected())
             {
                 //Update Generic  ingredientsType JComboBox which has all the ingredients Types
-                updateEverythingIngredientsTypeList(); // updates everythingIngredientsTypeList
+                all_IngredientsTypeNamesList = db.getSingleColumnQuery_AlphabeticallyOrderedTreeSet("SELECT Ingredient_Type_Name FROM ingredientTypes;");
+
+                if (all_IngredientsTypeNamesList == null)
+                {
+                    JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "\n\nUnable to get IngredientTypes for form!");
+                    return;
+                }
 
                 //###################################################################################
                 // Frame Set-Up
@@ -2625,17 +2631,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
         }
 
         ingredientsType_JComboBox.setSelectedIndex(-1);
-    }
-
-    // Updates everythingIngredientsTypeList
-    public void updateEverythingIngredientsTypeList()
-    {
-        all_IngredientsTypeNamesList = db.getSingleColumnQuery_AlphabeticallyOrderedTreeSet("SELECT Ingredient_Type_Name FROM ingredientTypes;");
-
-        if (all_IngredientsTypeNamesList == null)
-        {
-            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "\n\nUnable to get IngredientTypes for form!");
-        }
     }
 
     //##################################################################################################################
