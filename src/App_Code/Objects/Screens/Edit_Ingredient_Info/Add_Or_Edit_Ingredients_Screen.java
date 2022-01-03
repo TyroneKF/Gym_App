@@ -129,7 +129,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 tp.add("Edit Ingredients", editIngredientsFormJPanel);
 
                 editingCreateForm = new EditingCreateForm();
-                addToContainer(editIngredientsFormJPanel,editingCreateForm , 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
+                addToContainer(editIngredientsFormJPanel, editingCreateForm, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
 
                 //#################################################
                 // Creating Edit Ingredient Types Screen
@@ -340,6 +340,12 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
         public JComboBox<String> getEdit_IngredientTypes_InPlan_JComboBox()
         {
             return edit_IngredientTypes_InPlan_JComboBox;
+        }
+
+        @Override
+        protected void updateIngredientForm_Type_JComboBox()
+        {
+            ingredientsForm.loadJCOmboBox();
         }
 
         public void updateMapIngredientsTypesAndNames()
@@ -1306,12 +1312,13 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
         protected JPanel scrollPaneJPanel;
 
         private int ingredientNameObjectIndex = 1, ingredientTypeObjectIndex = 2, glycemicObjectIndex = 5;
-        private IngredientsForm ingredientsForm;
-        private ShopForm shopForm;
+
         private boolean formEditable = false, updateIngredientsForm = false, updateShops = false;
         private ArrayList<ShopForm.AddShopForm_Object> shopForm_objects = new ArrayList<>();
         private int totalNumbersAllowed = 7, decimalScale = 2, decimalPrecision = totalNumbersAllowed - decimalScale, charlimit = 8;
 
+        protected IngredientsForm ingredientsForm;
+        private ShopForm shopForm;
         //#################################################################################################################
         // Constructor
         //##################################################################################################################
@@ -1351,6 +1358,11 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
         //####################################################
         // Methods
         //###################################################
+
+        protected void updateIngredientForm_Type_JComboBox()
+        {
+            ingredientsForm.loadJCOmboBox();
+        }
 
         protected void createForms(IngredientsForm ingredientsForm, ShopForm shopForm)
         {
@@ -1685,7 +1697,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             protected ArrayList<Component> ingredientsFormObjects = new ArrayList<>();
 
             private JPanel northPanel = new JPanel(new GridBagLayout());
-            private  JComboBox<String> ingredientsType_JComboBox = new JComboBox();
+            private JComboBox<String> ingredientsType_JComboBox = new JComboBox();
 
             public IngredientsForm(Container parentContainer, String btnText, int btnWidth, int btnHeight)
             {
@@ -1806,7 +1818,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 mainJPanel.add(inputArea, BorderLayout.CENTER);
             }
 
-            private void loadJCOmboBox()
+            protected void loadJCOmboBox()
             {
                 ingredientsType_JComboBox.removeAllItems();
                 for (String ingredientType : all_IngredientsTypeNamesList)
@@ -2626,33 +2638,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     //##################################################################################################################
     //
     //##################################################################################################################
@@ -2664,37 +2649,19 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
     public void setAll_IngredientsTypeNamesList(Collection<String> all_IngredientsTypeNamesList)
     {
         this.all_IngredientsTypeNamesList = all_IngredientsTypeNamesList;
-
-        // loadJCOmboBox();
+        updateAllIngredientTypesJComboBoxes();
     }
 
     //FIX
     private JComboBox<String> getEdit_IngredientTypes_InPlan_JComboBox()
     {
-       return  editingCreateForm.getEdit_IngredientTypes_InPlan_JComboBox();
+        return editingCreateForm.getEdit_IngredientTypes_InPlan_JComboBox();
     }
 
     public void updateAllIngredientTypesJComboBoxes()
     {
-        /*
-        ingredientsType_JComboBox.removeAllItems();
-        //edit_IngredientTypeJComboBox.removeAllItems();
-
-        for (String ingredientType : all_IngredientsTypeNamesList)
-        {
-            if (ingredientType.equals("None Of The Above"))
-            {
-                continue;
-            }
-
-            ingredientsType_JComboBox.addItem(ingredientType);
-            edit_IngredientTypeJComboBox.addItem(ingredientType);
-        }
-
-        ingredientsType_JComboBox.setSelectedIndex(-1);
-        edit_IngredientTypeJComboBox.setSelectedIndex(-1);
-
-         */
+        createForm.updateIngredientForm_Type_JComboBox();
+        editingCreateForm.updateIngredientForm_Type_JComboBox();
     }
 
     //##################################################################################################################

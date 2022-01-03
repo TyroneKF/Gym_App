@@ -532,6 +532,7 @@ public class IngredientsTypesScreen extends JPanel
 
     private void updateOtherScreenIngredientTypes()
     {
+        add_or_edit_ingredients_screen.setAll_IngredientsTypeNamesList(all_IngredientsTypeNamesList);
         add_or_edit_ingredients_screen.updateAllIngredientTypesJComboBoxes();
     }
 
