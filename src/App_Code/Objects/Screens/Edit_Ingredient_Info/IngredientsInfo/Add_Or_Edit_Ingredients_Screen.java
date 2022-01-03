@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Gui_Objects.*;
 import App_Code.Objects.Screens.Edit_Ingredient_Info.Stores_And_Types.Types.IngredientsTypesScreen;
+import App_Code.Objects.Screens.Edit_Ingredient_Info.Stores_And_Types.Types.IngredientsTypesScreen2;
 import App_Code.Objects.Screens.Others.MealPlanScreen;
 
 import javax.swing.*;
@@ -137,7 +138,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 //##################################################
                 JPanel editIngredientsTypesJPanel = new JPanel(new GridBagLayout());
                 tp.add("Edit Ingredient Types", editIngredientsTypesJPanel);
-                addToContainer(editIngredientsTypesJPanel, new IngredientsTypesScreen(db, this), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
+                addToContainer(editIngredientsTypesJPanel, new IngredientsTypesScreen2(db, this, all_IngredientsTypeNamesList), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
 
                 /*
                 //#################################################

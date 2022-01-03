@@ -16,15 +16,19 @@ import java.util.regex.Pattern;
 
 public class ParentClass extends JPanel
 {
-    private GridBagConstraints gbc = new GridBagConstraints();
-    private int yPos = 0;
-    private int charlimit = 55;
+    protected GridBagConstraints gbc = new GridBagConstraints();
+    protected int yPos = 0;
+    protected int charlimit = 55;
 
 
-    private MyJDBC db;
-    private JComboBox jComboBox;
-    private Collection<String> jcomboBoxList;
-    private Add_Or_Edit_Ingredients_Screen add_or_edit_ingredients_screen;
+    protected MyJDBC db;
+    protected JComboBox jComboBox;
+    protected Collection<String> jcomboBoxList;
+    protected Add_Or_Edit_Ingredients_Screen add_or_edit_ingredients_screen;
+    protected String collapsibleBTNTXT1 = "", collapsibleBTNTXT2= "";
+
+    private  ParentClass()
+    {}
 
     public ParentClass(MyJDBC db, Add_Or_Edit_Ingredients_Screen add_or_edit_ingredients_screen, Collection<String> jcomboBoxList)
     {
@@ -32,6 +36,11 @@ public class ParentClass extends JPanel
         this. add_or_edit_ingredients_screen =  add_or_edit_ingredients_screen;
         this.jcomboBoxList = jcomboBoxList;
 
+       createInterface();
+    }
+
+    protected void createInterface()
+    {
         //###################################################################################
         //   Create Screen for Interface
         //###################################################################################
@@ -48,13 +57,13 @@ public class ParentClass extends JPanel
         //###########################
         //Add Ingredients Type Form
         //###########################
-        AddScreen addIngredientsTypeScreen = new AddScreen(this, "Add Ingredients Type", 250, 50);
+        AddScreen addIngredientsTypeScreen = new AddScreen(this, collapsibleBTNTXT1, 250, 50);
         addToContainer(mainCentreScreen, addIngredientsTypeScreen, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
         //###########################
         //Edit Ingredients Type Form
         //###########################
-        EditScreen editIngredientsTypeScreen = new EditScreen(this, "Edit Ingredients Type", 250, 50);
+        EditScreen editIngredientsTypeScreen = new EditScreen(this, collapsibleBTNTXT2, 250, 50);
         addToContainer(mainCentreScreen, editIngredientsTypeScreen, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
         //###########################
