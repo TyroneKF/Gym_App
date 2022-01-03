@@ -268,6 +268,7 @@ public class IngredientsTypesScreen extends JPanel
                 {
                     JOptionPane.showMessageDialog(null, "\n\nSuccessfully Added New Ingredient Type");
                     resetActions();
+                    updateOtherScreenIngredientTypes();
                 }
                 else
                 {
@@ -423,6 +424,7 @@ public class IngredientsTypesScreen extends JPanel
             addOrDeleteIngredientFromMap("delete", (String) ingredientTypes_JC.getSelectedItem());
             refreshBtnAction();
             loadJComboBox();
+            updateOtherScreenIngredientTypes();
 
             JOptionPane.showMessageDialog(null, String.format("\n\nSelected Item ''%s'' Has Successfully Been Deleted!!!", selectedItem));
         }
@@ -526,6 +528,11 @@ public class IngredientsTypesScreen extends JPanel
                 System.out.printf("\n\n%s", e);
             }
         }
+    }
+
+    private void updateOtherScreenIngredientTypes()
+    {
+        add_or_edit_ingredients_screen.updateAllIngredientTypesJComboBoxes();
     }
 
     private void addToContainer(Container container, Component addToContainer, int gridx, int gridy, int gridwidth,

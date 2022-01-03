@@ -46,10 +46,11 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
     private DefaultComboBoxModel modelIngredientName, modelIngredientType;
 
-    private JComboBox
-            edit_IngredientName_JComboBox = new JComboBox(),
-            edit_IngredientTypeJComboBox = new JComboBox(),
-            ingredientsType_JComboBox = new JComboBox();
+    private JComboBox<String>
+
+
+            edit_IngredientTypes_InPlan_JComboBox = new JComboBox();
+
 
     // Sorted Hashmap by key String
     private TreeMap<String, Collection<String>> map_ingredientTypesToIngredientNames = new TreeMap<String, Collection<String>>(new Comparator<String>()
@@ -175,6 +176,8 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
         private boolean ingredientEditable = true;
 
+        private JComboBox<String> edit_IngredientName_JComboBox = new JComboBox();
+
         public EditingCreateForm()
         {
             //###################################################################################
@@ -244,7 +247,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             //###########################################
             JPanel jp = new JPanel(new GridLayout(1, 1));
 
-            ((JLabel) edit_IngredientTypeJComboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER); // centre text
+            ((JLabel) edit_IngredientTypes_InPlan_JComboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER); // centre text
 
             //###########################################
             //  Insert into JCombobox
@@ -255,7 +258,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             //  Actionlistener
             //#################################################
 
-            edit_IngredientTypeJComboBox.addItemListener(new ItemListener()
+            edit_IngredientTypes_InPlan_JComboBox.addItemListener(new ItemListener()
             {
                 public void itemStateChanged(ItemEvent ie)
                 {
@@ -277,7 +280,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 }
             });
 
-            jp.add(edit_IngredientTypeJComboBox);
+            jp.add(edit_IngredientTypes_InPlan_JComboBox);
             jp.setPreferredSize(new Dimension(650, 50));
 
             addToContainer(scrollPaneJPanel, jp, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 10, 0);
@@ -423,7 +426,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             {
                 if (!key.equals("None Of The Above"))
                 {
-                    edit_IngredientTypeJComboBox.addItem(key);
+                    edit_IngredientTypes_InPlan_JComboBox.addItem(key);
                 }
             }
 
@@ -435,12 +438,12 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
         */
         private void setNothingSelectedIngredientTypeJCombo()
         {
-            edit_IngredientTypeJComboBox.setSelectedIndex(-1);
+            edit_IngredientTypes_InPlan_JComboBox.setSelectedIndex(-1);
         }
 
         private void clearIngredientTypeJCombo()
         {
-            edit_IngredientTypeJComboBox.removeAllItems();
+            edit_IngredientTypes_InPlan_JComboBox.removeAllItems();
         }
 
         private void updateIngredientNameJComboBox()
@@ -1516,12 +1519,12 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             }
 
             // Redraw ingredientsTypes
-            edit_IngredientTypeJComboBox.removeAllItems(); // clearList
+            edit_IngredientTypes_InPlan_JComboBox.removeAllItems(); // clearList
             for (String key : map_ingredientTypesToIngredientNames.keySet())
             {
                 if (!key.equals("None Of The Above"))
                 {
-                    edit_IngredientTypeJComboBox.addItem(key);
+                    edit_IngredientTypes_InPlan_JComboBox.addItem(key);
                 }
             }
             return true;
@@ -1678,6 +1681,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             protected ArrayList<Component> ingredientsFormObjects = new ArrayList<>();
 
             private JPanel northPanel = new JPanel(new GridBagLayout());
+            private  JComboBox<String> ingredientsType_JComboBox = new JComboBox();
 
             public IngredientsForm(Container parentContainer, String btnText, int btnWidth, int btnHeight)
             {
@@ -1796,6 +1800,22 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                     inputArea.add(textField);
                 }
                 mainJPanel.add(inputArea, BorderLayout.CENTER);
+            }
+
+            private void loadJCOmboBox()
+            {
+                ingredientsType_JComboBox.removeAllItems();
+                for (String ingredientType : all_IngredientsTypeNamesList)
+                {
+                    if (ingredientType.equals("UnAssigned") || ingredientType.equals("None Of The Above"))
+                    {
+                        continue;
+                    }
+
+                    ingredientsType_JComboBox.addItem(ingredientType);
+                }
+
+                ingredientsType_JComboBox.setSelectedIndex(-1);
             }
 
             protected void createIconBar()
@@ -2614,23 +2634,30 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
     {
         this.all_IngredientsTypeNamesList = all_IngredientsTypeNamesList;
 
-        loadJCOmboBox();
+        // loadJCOmboBox();
     }
 
-    private void loadJCOmboBox()
+    public void updateAllIngredientTypesJComboBoxes()
     {
+        /*
         ingredientsType_JComboBox.removeAllItems();
+        //edit_IngredientTypeJComboBox.removeAllItems();
+
         for (String ingredientType : all_IngredientsTypeNamesList)
         {
-            if (ingredientType.equals("UnAssigned") || ingredientType.equals("None Of The Above"))
+            if (ingredientType.equals("None Of The Above"))
             {
                 continue;
             }
 
             ingredientsType_JComboBox.addItem(ingredientType);
+            edit_IngredientTypeJComboBox.addItem(ingredientType);
         }
 
         ingredientsType_JComboBox.setSelectedIndex(-1);
+        edit_IngredientTypeJComboBox.setSelectedIndex(-1);
+
+         */
     }
 
     //##################################################################################################################
