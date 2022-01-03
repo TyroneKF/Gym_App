@@ -33,7 +33,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
     private int jFramewidth = 710, jFrameheight = 850;
     private Container contentPane;
-    private JPanel addIngredientsFormJPanel, editIngredientsFormJPanel;
 
     private MyJDBC db;
     private Integer temp_PlanID, planID;
@@ -118,7 +117,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 //#################################################
                 // Creating Add Ingredients Screen
                 //#################################################
-                addIngredientsFormJPanel = new JPanel(new GridBagLayout());
+                JPanel addIngredientsFormJPanel = new JPanel(new GridBagLayout());
                 tp.add("Add Ingredients", addIngredientsFormJPanel);
 
                 addToContainer(addIngredientsFormJPanel, new createForm(), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
@@ -1576,7 +1575,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
         {
             contentPane.revalidate();
             scrollPaneJPanel.revalidate();
-            addIngredientsFormJPanel.revalidate();
             revalidate();
         }
 
@@ -2637,6 +2635,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
         // loadJCOmboBox();
     }
 
+    //FIX
     private JComboBox<String> getEdit_IngredientTypes_InPlan_JComboBox()
     {
         return null;
