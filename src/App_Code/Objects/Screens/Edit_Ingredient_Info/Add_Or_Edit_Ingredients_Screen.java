@@ -52,6 +52,9 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
         }
     });
 
+    createForm createForm;
+    EditingCreateForm editingCreateForm;
+
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
@@ -116,7 +119,8 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 JPanel addIngredientsFormJPanel = new JPanel(new GridBagLayout());
                 tp.add("Add Ingredients", addIngredientsFormJPanel);
 
-                addToContainer(addIngredientsFormJPanel, new createForm(), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
+                createForm = new createForm();
+                addToContainer(addIngredientsFormJPanel, createForm, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
 
                 //#################################################
                 // Creating Edit Ingredients Screen
@@ -124,7 +128,8 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 JPanel editIngredientsFormJPanel = new JPanel(new GridBagLayout());
                 tp.add("Edit Ingredients", editIngredientsFormJPanel);
 
-                addToContainer(editIngredientsFormJPanel, new EditingCreateForm(), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
+                editingCreateForm = new EditingCreateForm();
+                addToContainer(editIngredientsFormJPanel,editingCreateForm , 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
 
                 //#################################################
                 // Creating Edit Ingredient Types Screen
@@ -330,6 +335,11 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             addToContainer(scrollPaneJPanel, new JPanel(), 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 10, 0);
 
             createForms(ingredientsForm, shopForm);
+        }
+
+        public JComboBox<String> getEdit_IngredientTypes_InPlan_JComboBox()
+        {
+            return edit_IngredientTypes_InPlan_JComboBox;
         }
 
         public void updateMapIngredientsTypesAndNames()
@@ -2616,6 +2626,33 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
         }
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     //##################################################################################################################
     //
     //##################################################################################################################
@@ -2634,7 +2671,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
     //FIX
     private JComboBox<String> getEdit_IngredientTypes_InPlan_JComboBox()
     {
-        return null;
+       return  editingCreateForm.getEdit_IngredientTypes_InPlan_JComboBox();
     }
 
     public void updateAllIngredientTypesJComboBoxes()
