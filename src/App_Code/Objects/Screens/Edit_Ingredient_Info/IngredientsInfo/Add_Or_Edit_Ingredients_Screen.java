@@ -138,6 +138,8 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 //##################################################
                 JPanel editIngredientsTypesJPanel = new JPanel(new GridBagLayout());
                 tp.add("Edit Ingredient Types", editIngredientsTypesJPanel);
+
+                //addToContainer(editIngredientsTypesJPanel, new IngredientsTypesScreen(db, this), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
                 addToContainer(editIngredientsTypesJPanel, new IngredientsTypesScreen2(db, this, all_IngredientsTypeNamesList), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
 
                 /*
