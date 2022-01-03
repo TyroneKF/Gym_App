@@ -27,7 +27,7 @@ public class ParentClass extends JPanel
     protected Add_Or_Edit_Ingredients_Screen add_or_edit_ingredients_screen;
     protected String collapsibleBTNTXT1 = "", collapsibleBTNTXT2= "";
 
-    private  ParentClass()
+    public   ParentClass()
     {}
 
     public ParentClass(MyJDBC db, Add_Or_Edit_Ingredients_Screen add_or_edit_ingredients_screen, Collection<String> jcomboBoxList)

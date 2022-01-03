@@ -70,6 +70,7 @@ public class CollapsibleJPanel extends JPanel
        collapseJPanel(); //HELLO Remove
     }
 
+
     public JPanel getCentreJPanel()
     {
         return collapsibleJPanel;
