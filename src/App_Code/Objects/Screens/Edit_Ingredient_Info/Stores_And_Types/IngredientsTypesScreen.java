@@ -1,10 +1,11 @@
-package App_Code.Objects.Screens.Edit_Ingredient_Info;
+package App_Code.Objects.Screens.Edit_Ingredient_Info.Stores_And_Types;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Gui_Objects.JTextFieldLimit;
+import App_Code.Objects.Screens.Edit_Ingredient_Info.Add_Or_Edit_Ingredients_Screen;
 
 import javax.swing.*;
 import java.awt.*;
