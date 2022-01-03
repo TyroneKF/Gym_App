@@ -43,10 +43,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             jcomboUpdateStaus = false,
             updateIngredientInfo = false;
 
-    private DefaultComboBoxModel modelIngredientName, modelIngredientType;
-
-
-
     // Sorted Hashmap by key String
     private TreeMap<String, Collection<String>> map_ingredientTypesToIngredientNames = new TreeMap<String, Collection<String>>(new Comparator<String>()
     {
