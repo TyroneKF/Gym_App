@@ -1807,7 +1807,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 ingredientsType_JComboBox.removeAllItems();
                 for (String ingredientType : all_IngredientsTypeNamesList)
                 {
-                    if (ingredientType.equals("UnAssigned") || ingredientType.equals("None Of The Above"))
+                    if (ingredientType.equals("None Of The Above"))
                     {
                         continue;
                     }
