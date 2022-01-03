@@ -11,7 +11,7 @@ import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
-import App_Code.Objects.Screens.Edit_Ingredient_Info.Add_Or_Edit_Ingredients_Screen;
+import App_Code.Objects.Screens.Edit_Ingredient_Info.IngredientsInfo.Add_Or_Edit_Ingredients_Screen;
 
 import javax.swing.*;
 import java.awt.*;

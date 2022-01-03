@@ -5,16 +5,11 @@ import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Gui_Objects.JTextFieldLimit;
-import App_Code.Objects.Screens.Edit_Ingredient_Info.Add_Or_Edit_Ingredients_Screen;
+import App_Code.Objects.Screens.Edit_Ingredient_Info.IngredientsInfo.Add_Or_Edit_Ingredients_Screen;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.text.Collator;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

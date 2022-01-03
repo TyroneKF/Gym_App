@@ -1,4 +1,4 @@
-package App_Code.Objects.Screens.Edit_Ingredient_Info;
+package App_Code.Objects.Screens.Edit_Ingredient_Info.IngredientsInfo;
 
 import java.text.Collator;
 import java.util.regex.Matcher;
