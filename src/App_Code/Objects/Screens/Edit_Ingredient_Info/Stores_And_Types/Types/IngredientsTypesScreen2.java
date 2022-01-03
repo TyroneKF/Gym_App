@@ -10,7 +10,8 @@ import java.util.Collection;
 
 public class IngredientsTypesScreen2 extends ParentClass
 {
-    protected String collapsibleBTNTXT1 = "Add Ingredients Type", collapsibleBTNTXT2 = "Edit Ingredddddients Type";
+    protected String collapsibleBTNTXT1 = "Add Ingredients Type", collapsibleBTNTXT2 = "Edit Ingredients Type";
+
 
     public IngredientsTypesScreen2(MyJDBC db, Add_Or_Edit_Ingredients_Screen add_or_edit_ingredients_screen, Collection<String> jcomboBoxList)
     {
@@ -18,13 +19,13 @@ public class IngredientsTypesScreen2 extends ParentClass
         this.add_or_edit_ingredients_screen = add_or_edit_ingredients_screen;
         this.jcomboBoxList = jcomboBoxList;
 
-
         createInterface();
     }
 
     @Override
     protected void createInterface()
     {
+        System.out.printf("\n\nHere1");
         //###################################################################################
         //   Create Screen for Interface
         //###################################################################################
@@ -41,7 +42,7 @@ public class IngredientsTypesScreen2 extends ParentClass
         //###########################
         //Add Ingredients Type Form
         //###########################
-        AddIngredientsType addIngredientsTypeScreen = new AddIngredientsType(this, collapsibleBTNTXT1, 250, 50, "Add Ingredient Type Name");
+        AddIngredientsType addIngredientsTypeScreen = new AddIngredientsType(this, collapsibleBTNTXT1, 250, 50);
         addToContainer(mainCentreScreen, addIngredientsTypeScreen, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
         //###########################
@@ -53,8 +54,8 @@ public class IngredientsTypesScreen2 extends ParentClass
 
          */
 
-        EditIngredientType editIngredientType = new EditIngredientType(this, collapsibleBTNTXT2, 250, 50, "22");
-        addToContainer(mainCentreScreen, new EditScreen(this, collapsibleBTNTXT2, 250, 50, "22"), 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+        EditIngredientType editIngredientType = new EditIngredientType(this, collapsibleBTNTXT2, 250, 50);
+        addToContainer(mainCentreScreen, editIngredientType, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
         //###########################
         //Space Divider
         //###########################
@@ -68,9 +69,9 @@ public class IngredientsTypesScreen2 extends ParentClass
 
     public class AddIngredientsType extends AddScreen
     {
-        public AddIngredientsType(Container parentContainer, String btnText, int btnWidth, int btnHeight, String mainLabel)
+        public AddIngredientsType(Container parentContainer, String btnText, int btnWidth, int btnHeight)
         {
-            super(parentContainer, btnText, btnWidth, btnHeight, mainLabel);
+            super(parentContainer, btnText, btnWidth, btnHeight);
         }
 
 
@@ -82,9 +83,9 @@ public class IngredientsTypesScreen2 extends ParentClass
                 lable1, lablel2,
                 idColumnName;
 
-        public EditIngredientType(Container parentContainer, String btnText, int btnWidth, int btnHeight, String mainLabel2)
+        public EditIngredientType(Container parentContainer, String btnText, int btnWidth, int btnHeight)
         {
-            super(parentContainer, btnText, btnWidth, btnHeight, mainLabel2);
+            super(parentContainer, btnText, btnWidth, btnHeight);
         }
 
         @Override

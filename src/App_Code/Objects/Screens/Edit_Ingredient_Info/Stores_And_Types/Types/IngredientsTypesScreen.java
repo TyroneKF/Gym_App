@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 
 public class IngredientsTypesScreen extends JPanel
 {
+    /*
     private GridBagConstraints gbc = new GridBagConstraints();
     private int yPos = 0;
     private int charlimit = 55;
@@ -563,4 +564,6 @@ public class IngredientsTypesScreen extends JPanel
 
         container.add(addToContainer, gbc);
     }
+
+     */
 }
