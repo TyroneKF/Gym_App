@@ -68,12 +68,24 @@ public class IngredientsTypesScreen2 extends ParentClass
             super(parentContainer, btnText, btnWidth, btnHeight);
         }
 
+        @Override
+        protected void createForm()
+        {
+            System.out.printf("\n\nHere2");
+            mainLabel = "Add Ingredient Type Name";
 
+            //###################################################################
+            // Drawing interface
+            //####################################################################
+            createAddScreenObjects();
+            creatingAdditionalAddScreenObjects(); // for overwrite purposes
+            addScreenObjects(); // adding all objects to the screen
+        }
     }
 
     public class EditIngredientType extends EditScreen
     {
-        protected  String
+        protected String
                 lable1, lablel2,
                 idColumnName;
 

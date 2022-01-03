@@ -187,7 +187,7 @@ public class ParentClass extends JPanel
             }
         }
 
-        private void createAddScreenObjects()
+        protected void createAddScreenObjects()
         {
             mainJPanel = getCentreJPanel();
             mainJPanel.setLayout(new GridBagLayout());
@@ -265,7 +265,7 @@ public class ParentClass extends JPanel
 
         protected void addScreenObjects()
         {
-            addToContainer(mainJPanel2, createLabelPanel(mainLabel, new JLabel()), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+            addToContainer(mainJPanel2, createLabelPanel(mainLabel, new JLabel(mainLabel)), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
             addToContainer(mainJPanel2, jtextfieldJPanel, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
 
             addToContainer(mainJPanel2, submitButton, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
