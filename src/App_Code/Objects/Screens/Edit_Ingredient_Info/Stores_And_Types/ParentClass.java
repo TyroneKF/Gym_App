@@ -98,9 +98,17 @@ public class ParentClass extends JPanel
         {
             super(parentContainer, btnText, btnWidth, btnHeight);
             expandJPanel();
+            createForm();
+        }
 
-            this.mainLabel = mainLabel;
+        protected void createForm()
+        {
+            //###################################################################
+            // Drawing interface
+            //####################################################################
             createAddScreenObjects();
+            creatingAdditionalAddScreenObjects(); // for overwrite purposes
+            addScreenObjects(); // adding all objects to the screen
         }
 
         private void createIconBar()
@@ -223,12 +231,6 @@ public class ParentClass extends JPanel
             submitButton.addActionListener(ae -> {
                 submissionBtnAction();
             });
-
-            //###################################################################
-            // Drawing interface
-            //####################################################################
-            creatingAdditionalAddScreenObjects(); // for overwrite purposes
-            addScreenObjects(); // adding all objects to the screen
         }
 
         protected void creatingAdditionalAddScreenObjects()

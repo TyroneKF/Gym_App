@@ -48,12 +48,6 @@ public class IngredientsTypesScreen2 extends ParentClass
         //###########################
         //Edit Ingredients Type Form
         //###########################
-        /*
-        EditIngredientType editIngredientsTypeScreen = new EditIngredientType(this, collapsibleBTNTXT2, 250, 50, "22");
-        addToContainer(mainCentreScreen, editIngredientsTypeScreen, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
-
-         */
-
         EditIngredientType editIngredientType = new EditIngredientType(this, collapsibleBTNTXT2, 250, 50);
         addToContainer(mainCentreScreen, editIngredientType, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
         //###########################
