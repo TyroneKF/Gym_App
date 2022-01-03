@@ -1,9 +1,8 @@
 package App_Code.Objects.Screens.Edit_Ingredient_Info.Stores_And_Types.Types;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
-import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
-import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Screens.Edit_Ingredient_Info.IngredientsInfo.Add_Or_Edit_Ingredients_Screen;
+import App_Code.Objects.Screens.Edit_Ingredient_Info.Stores_And_Types.ParentClass;
 
 import javax.swing.*;
 import java.awt.*;
