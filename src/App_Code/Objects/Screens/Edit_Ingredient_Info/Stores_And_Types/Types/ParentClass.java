@@ -396,7 +396,7 @@ public class ParentClass extends JPanel
     public class EditScreen extends AddScreen
     {
         private JPanel jcomboBoxJPanel;
-        String
+        protected  String
                 lable1, lablel2,
                 idColumnName;
 
