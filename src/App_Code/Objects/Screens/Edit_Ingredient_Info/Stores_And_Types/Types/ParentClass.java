@@ -1,4 +1,5 @@
-package App_Code.Objects.Screens.Edit_Ingredient_Info.Stores_And_Types;
+package App_Code.Objects.Screens.Edit_Ingredient_Info.Stores_And_Types.Types;
+
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
@@ -13,23 +14,23 @@ import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class IngredientsTypesScreen extends JPanel
+public class ParentClass extends JPanel
 {
     private GridBagConstraints gbc = new GridBagConstraints();
     private int yPos = 0;
     private int charlimit = 55;
-    private Collection<String> all_IngredientsTypeNamesList;
+
 
     private MyJDBC db;
-    private JComboBox ingredientTypes_JC;
-
+    private JComboBox jComboBox;
+    private Collection<String> jcomboBoxList;
     private Add_Or_Edit_Ingredients_Screen add_or_edit_ingredients_screen;
 
-    public IngredientsTypesScreen(MyJDBC db, Add_Or_Edit_Ingredients_Screen add_or_edit_ingredients_screen)
+    public ParentClass(MyJDBC db, Add_Or_Edit_Ingredients_Screen add_or_edit_ingredients_screen, Collection<String> jcomboBoxList)
     {
         this.db = db;
         this. add_or_edit_ingredients_screen =  add_or_edit_ingredients_screen;
-        this.all_IngredientsTypeNamesList = add_or_edit_ingredients_screen.getAll_IngredientsTypeNamesList();
+        this.jcomboBoxList = jcomboBoxList;
 
         //###################################################################################
         //   Create Screen for Interface
@@ -47,13 +48,13 @@ public class IngredientsTypesScreen extends JPanel
         //###########################
         //Add Ingredients Type Form
         //###########################
-        AddIngredientsTypeScreen addIngredientsTypeScreen = new AddIngredientsTypeScreen(this, "Add Ingredients Type", 250, 50);
+        AddScreen addIngredientsTypeScreen = new AddScreen(this, "Add Ingredients Type", 250, 50);
         addToContainer(mainCentreScreen, addIngredientsTypeScreen, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
         //###########################
         //Edit Ingredients Type Form
         //###########################
-        EditIngredientsTypeScreen editIngredientsTypeScreen = new EditIngredientsTypeScreen(this, "Edit Ingredients Type", 250, 50);
+        EditScreen editIngredientsTypeScreen = new EditScreen(this, "Edit Ingredients Type", 250, 50);
         addToContainer(mainCentreScreen, editIngredientsTypeScreen, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
         //###########################
@@ -67,21 +68,28 @@ public class IngredientsTypesScreen extends JPanel
         revalidate();
     }
 
-    public class AddIngredientsTypeScreen extends CollapsibleJPanel
+    public class AddScreen extends CollapsibleJPanel
     {
         protected int
                 ypos2 = 0;
 
-        protected JPanel mainTitlePanel, jtextfieldJPanel, mainJPanel, mainJPanel2;
+        protected JPanel jtextfieldJPanel, mainJPanel, mainJPanel2;
         protected JTextField jTextField;
         protected JButton submitButton;
-        protected String newIngredientTypeName;
+        protected String
+                jtextfieldTXT,
+                mainLabel,
 
-        public AddIngredientsTypeScreen(Container parentContainer, String btnText, int btnWidth, int btnHeight)
+                dataGatheringName,
+
+                dbColumnNameField,
+                dbTableName;
+
+        public AddScreen(Container parentContainer, String btnText, int btnWidth, int btnHeight)
         {
             super(parentContainer, btnText, btnWidth, btnHeight);
             expandJPanel();
-            createAddTypeScreenObjects();
+            createAddScreenObjects();
         }
 
         private void createIconBar()
@@ -130,7 +138,37 @@ public class IngredientsTypesScreen extends JPanel
             jTextField.setText("");
         }
 
-        private void createAddTypeScreenObjects()
+        protected  void successUploadMessage()
+        {
+            String text = "";
+            JOptionPane.showMessageDialog(null, text);
+        }
+
+        protected void failureMessage()
+        {
+            String text = "";
+            JOptionPane.showMessageDialog(null, text);
+        }
+
+        protected void submissionBtnAction()
+        {
+            if (validateForm())
+            {
+                if (uploadForm(true))
+                {
+                    successUploadMessage();
+
+                    resetActions();
+                    updateOtherScreens();
+                }
+                else
+                {
+                   failureMessage();
+                }
+            }
+        }
+
+        private void createAddScreenObjects()
         {
             mainJPanel = getCentreJPanel();
             mainJPanel.setLayout(new GridBagLayout());
@@ -178,38 +216,13 @@ public class IngredientsTypesScreen extends JPanel
             //###################################################################
             // Drawing interface
             //####################################################################
-            creatingAdditionalObjects(); // for overwrite purposes
+            creatingAdditionalAddScreenObjects(); // for overwrite purposes
             addScreenObjects(); // adding all objects to the screen
         }
 
-        protected boolean doesStringContainCharacters(String input)
+        protected void creatingAdditionalAddScreenObjects()
         {
-            Pattern p1 = Pattern.compile("[^a-zA-Z]", Pattern.CASE_INSENSITIVE);
-            Matcher m1 = p1.matcher(input.replaceAll("\\s+", ""));
-            boolean b1 = m1.find();
 
-            if (b1)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        protected String removeSpaceAndHiddenChars(String stringToBeEdited)
-        {
-            return stringToBeEdited.trim().replaceAll("\\p{C}", ""); // remove all whitespace & hidden characters like \n
-        }
-
-        protected void addScreenObjects()
-        {
-            addToContainer(mainJPanel2, createLabelPanel("Add Ingredient Type Name", new JLabel()), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
-            addToContainer(mainJPanel2, jtextfieldJPanel, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
-
-            addToContainer(mainJPanel2, submitButton, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
-
-            mainJPanel.revalidate();
-            mainJPanel2.revalidate();
         }
 
         protected JPanel createLabelPanel(String labelTXT, JLabel jLabel)
@@ -237,64 +250,68 @@ public class IngredientsTypesScreen extends JPanel
             return jpanel;
         }
 
-        protected void creatingAdditionalObjects()
+        protected void addScreenObjects()
         {
+            addToContainer(mainJPanel2, createLabelPanel(mainLabel, new JLabel()), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+            addToContainer(mainJPanel2, jtextfieldJPanel, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
 
+            addToContainer(mainJPanel2, submitButton, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+
+            mainJPanel.revalidate();
+            mainJPanel2.revalidate();
         }
 
         protected void loadJComboBox()
         {
-            ingredientTypes_JC.removeAllItems();
-            for (String ingredientType : all_IngredientsTypeNamesList)
-            {
-                if(ingredientType.equals("UnAssigned") || ingredientType.equals("None Of The Above"))
-                {
-                    continue;
-                }
-                ingredientTypes_JC.addItem(ingredientType);
+            jComboBox.removeAllItems();
+            for (String ingredientType : jcomboBoxList)
+            {                
+                jComboBox.addItem(ingredientType);
             }
-            ingredientTypes_JC.setSelectedIndex(-1);
+            jComboBox.setSelectedIndex(-1);
+            
+            removeJCombBoxItems();
+        }
+        
+        protected void removeJCombBoxItems()
+        {
+            
         }
 
-        protected void submissionBtnAction()
+        protected boolean doesStringContainCharacters(String input)
         {
-            if (validateForm())
+            Pattern p1 = Pattern.compile("[^a-zA-Z]", Pattern.CASE_INSENSITIVE);
+            Matcher m1 = p1.matcher(input.replaceAll("\\s+", ""));
+            boolean b1 = m1.find();
+
+            if (b1)
             {
-                if (uploadForm(true))
-                {
-                    JOptionPane.showMessageDialog(null, "\n\nSuccessfully Added New Ingredient Type");
-                    resetActions();
-                    updateOtherScreenIngredientTypes();
-                }
-                else
-                {
-                    JOptionPane.showMessageDialog(null, "\n\nFailed Upload - Couldn't Add New Ingredient Type");
-                }
+                return true;
             }
+
+            return false;
         }
 
-        protected void resetActions()
+        protected String removeSpaceAndHiddenChars(String stringToBeEdited)
         {
-            refreshBtnAction();
-            addOrDeleteIngredientFromMap("add", newIngredientTypeName);
-            loadJComboBox();
+            return stringToBeEdited.trim().replaceAll("\\p{C}", ""); // remove all whitespace & hidden characters like \n
         }
 
         protected boolean validateForm()
         {
-            newIngredientTypeName = jTextField.getText();
+            jtextfieldTXT = jTextField.getText();
 
-            if (newIngredientTypeName.equals(""))
+            if (jtextfieldTXT.equals(""))
             {
-                JOptionPane.showMessageDialog(null, "\n\nAn Ingredient Type Name Cannot Be Null!!");
+                JOptionPane.showMessageDialog(null, String.format("\n\nAn %s Cannot Be Null!!", dataGatheringName));
                 return false;
             }
 
-            newIngredientTypeName = removeSpaceAndHiddenChars(newIngredientTypeName);
+            jtextfieldTXT = removeSpaceAndHiddenChars(jtextfieldTXT);
 
-            if (doesStringContainCharacters(newIngredientTypeName))
+            if (doesStringContainCharacters(jtextfieldTXT))
             {
-                JOptionPane.showMessageDialog(null, "\n\nAn Ingredient Type Name Cannot Contain Any Symbols Or, Numbers!!");
+                JOptionPane.showMessageDialog(null, String.format("\n\nAn %s Cannot Contain Any Symbols Or, Numbers!!", dataGatheringName));
                 return false;
             }
 
@@ -315,21 +332,21 @@ public class IngredientsTypesScreen extends JPanel
         {
             if (checkDB)
             {
-                String query = String.format("SELECT  Ingredient_Type_Name  FROM ingredientTypes WHERE Ingredient_Type_Name = '%s';", newIngredientTypeName);
+                String query = String.format("SELECT  %s  FROM %ss WHERE %s = '%s';",dbColumnNameField, dbTableName, jtextfieldTXT);
 
                 System.out.printf("\n\n%s", query);
 
                 if (db.getSingleColumnQuery(query) != null)
                 {
-                    JOptionPane.showMessageDialog(null, String.format("\n\nIngredient Type Name '' %s '' Already Exists!", newIngredientTypeName));
+                    JOptionPane.showMessageDialog(null, String.format("\n\ns '' %s '' Already Exists!", dataGatheringName, jtextfieldTXT));
                     return false;
                 }
             }
 
             String uploadString = String.format("""
-                    INSERT INTO ingredientTypes (Ingredient_Type_Name) VALUES
+                    INSERT INTO %s (%s) VALUES
                     ('%s');
-                    """, newIngredientTypeName);
+                    """,dbTableName,dbColumnNameField, jtextfieldTXT);
 
             if (db.uploadData_Batch_Altogether(new String[]{uploadString}))
             {
@@ -339,27 +356,42 @@ public class IngredientsTypesScreen extends JPanel
             return false;
         }
 
-        //HELLO EDIT
         protected void addOrDeleteIngredientFromMap(String process, String ingredientType)
         {
             if (process.equals("add"))// if key exists add the ingredientName in
             {
-                all_IngredientsTypeNamesList.add(ingredientType);
+                jcomboBoxList.add(ingredientType);
             }
             else if (process.equals("delete"))
             {
-                all_IngredientsTypeNamesList.remove(ingredientType);
+                jcomboBoxList.remove(ingredientType);
             }
 
-            add_or_edit_ingredients_screen.setAll_IngredientsTypeNamesList(all_IngredientsTypeNamesList);
+            add_or_edit_ingredients_screen.setAll_IngredientsTypeNamesList(jcomboBoxList);
+        }
+
+        protected void resetActions()
+        {
+            refreshBtnAction();
+            addOrDeleteIngredientFromMap("add", jtextfieldTXT);
+            loadJComboBox();
+        }
+
+
+        protected void updateOtherScreens()
+        {
+
         }
     }
 
-    public class EditIngredientsTypeScreen extends AddIngredientsTypeScreen
+    public class EditScreen extends AddScreen
     {
         private JPanel jcomboBoxJPanel;
+        String
+                lable1, lablel2,
+                idColumnName;
 
-        public EditIngredientsTypeScreen(Container parentContainer, String btnText, int btnWidth, int btnHeight)
+        public EditScreen(Container parentContainer, String btnText, int btnWidth, int btnHeight)
         {
             super(parentContainer, btnText, btnWidth, btnHeight);
         }
@@ -389,67 +421,34 @@ public class IngredientsTypesScreen extends JPanel
 
         private void deleteIngredientBTNAction()
         {
-            String selectedItem = (String) ingredientTypes_JC.getSelectedItem();
 
-            if(selectedItem == null)
-            {
-                JOptionPane.showMessageDialog(null, "Select An Ingredient Type To Delete It!!!");
-                return;
-            }
-
-            String mysqlVariableReference1 = "@CurrentTypeID";
-            String createMysqlVariable1 = String.format("SET %s = (SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = '%s');", mysqlVariableReference1, selectedItem);
-
-
-            String query = String.format("""                  
-                    UPDATE ingredients_info
-                    SET Ingredient_Type_ID = (SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = 'UnAssigned')
-                    WHERE Ingredient_Type_ID = %s;""", mysqlVariableReference1, selectedItem );
-
-
-            String query2 = String.format("DELETE FROM ingredientTypes WHERE Ingredient_Type_ID = @CurrentTypeID;");
-
-            System.out.printf("\n\n%s \n\n%s \n\n%s",createMysqlVariable1, query, query2);
-
-            if(! db.uploadData_Batch_Independently(new String[]{createMysqlVariable1, query, query2}))
-            {
-                JOptionPane.showMessageDialog(null, String.format("\n\nFailed To Delete Selected Item ''%s'' !!"));
-                return;
-            }
-
-            addOrDeleteIngredientFromMap("delete", (String) ingredientTypes_JC.getSelectedItem());
-            refreshBtnAction();
-            loadJComboBox();
-            updateOtherScreenIngredientTypes();
-
-            JOptionPane.showMessageDialog(null, String.format("\n\nSelected Item ''%s'' Has Successfully Been Deleted!!!", selectedItem));
         }
 
         @Override
-        protected void creatingAdditionalObjects()
+        protected void creatingAdditionalAddScreenObjects()
         {
             //########################################################################################################
             //  IngredientTypeJComboBox
             //########################################################################################################
             jcomboBoxJPanel = new JPanel(new GridLayout(1, 1));
 
-            ingredientTypes_JC = new JComboBox();
+            jComboBox = new JComboBox();
             loadJComboBox();
 
-            ingredientTypes_JC.setSelectedIndex(-1);
-            ingredientTypes_JC.setFont(new Font("Arial", Font.PLAIN, 15)); // setting font
-            ((JLabel) ingredientTypes_JC.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER); // centre text
+            jComboBox.setSelectedIndex(-1);
+            jComboBox.setFont(new Font("Arial", Font.PLAIN, 15)); // setting font
+            ((JLabel) jComboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER); // centre text
 
-            jcomboBoxJPanel.add(ingredientTypes_JC);
+            jcomboBoxJPanel.add(jComboBox);
             jcomboBoxJPanel.setPreferredSize(new Dimension(650, 50));
         }
 
         @Override
         protected boolean additionalValidateForm()
         {
-            if (ingredientTypes_JC.getSelectedIndex() == -1)
+            if (jComboBox.getSelectedIndex() == -1)
             {
-                JOptionPane.showMessageDialog(null,"\n\nSelect An Ingredient Type To Edit!");
+                JOptionPane.showMessageDialog(null,String.format("\n\nSelect An %s To Edit!", dataGatheringName));
                 return false;
             }
 
@@ -461,25 +460,25 @@ public class IngredientsTypesScreen extends JPanel
         {
             if (checkDB)
             {
-                String query = String.format("SELECT  Ingredient_Type_Name  FROM ingredientTypes WHERE Ingredient_Type_Name = '%s';", newIngredientTypeName);
+                String query = String.format("SELECT  Ingredient_Type_Name  FROM ingredientTypes WHERE Ingredient_Type_Name = '%s';", jtextfieldTXT);
 
                 System.out.printf("\n\n%s", query);
 
                 if (db.getSingleColumnQuery(query) != null)
                 {
-                    JOptionPane.showMessageDialog(null, String.format("\n\nIngredient Type Name '' %s '' Already Exists!", newIngredientTypeName));
+                    JOptionPane.showMessageDialog(null, String.format("\n\nIngredient Type Name '' %s '' Already Exists!", jtextfieldTXT));
                     return false;
                 }
             }
 
-            String selectedItem = (String) ingredientTypes_JC.getSelectedItem();
+            String selectedItem = (String) jComboBox.getSelectedItem();
             String mysqlVariableReference1 = "@CurrentTypeID";
             String createMysqlVariable1 = String.format("SET %s = (SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = '%s');", mysqlVariableReference1, selectedItem);
 
             String uploadString = String.format("""                    
                     UPDATE ingredientTypes
                     SET Ingredient_Type_Name = '%s'
-                    WHERE Ingredient_Type_ID = %s;""", newIngredientTypeName, mysqlVariableReference1);
+                    WHERE Ingredient_Type_ID = %s;""", jtextfieldTXT, mysqlVariableReference1);
 
             System.out.printf("\n\n%s \n\n%s", createMysqlVariable1, uploadString);
 
@@ -494,8 +493,8 @@ public class IngredientsTypesScreen extends JPanel
         @Override
         protected void resetActions()
         {
-            addOrDeleteIngredientFromMap("add", newIngredientTypeName);
-            addOrDeleteIngredientFromMap("delete", (String) ingredientTypes_JC.getSelectedItem());
+            addOrDeleteIngredientFromMap("add", jtextfieldTXT);
+            addOrDeleteIngredientFromMap("delete", (String) jComboBox.getSelectedItem());
             refreshBtnAction();
             loadJComboBox();
         }
@@ -503,12 +502,12 @@ public class IngredientsTypesScreen extends JPanel
         @Override
         protected void addScreenObjects()
         {
-            addToContainer(mainJPanel2, createLabelPanel("Select Ingredient Type Name To Edit", new JLabel()), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+            addToContainer(mainJPanel2, createLabelPanel(lable1, new JLabel()), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
             addToContainer(mainJPanel2, jcomboBoxJPanel, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
 
             addToContainer(mainJPanel2, new JPanel(), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 10, 0);
 
-            addToContainer(mainJPanel2, createLabelPanel("Change Ingredient Type Name", new JLabel()), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+            addToContainer(mainJPanel2, createLabelPanel(lablel2, new JLabel()), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
             addToContainer(mainJPanel2, jtextfieldJPanel, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
             addToContainer(mainJPanel2, submitButton, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
 
@@ -522,7 +521,7 @@ public class IngredientsTypesScreen extends JPanel
             try
             {
                 jTextField.setText("");
-                ingredientTypes_JC.setSelectedIndex(-1);
+                jComboBox.setSelectedIndex(-1);
             }
             catch (Exception e)
             {
@@ -531,14 +530,8 @@ public class IngredientsTypesScreen extends JPanel
         }
     }
 
-    private void updateOtherScreenIngredientTypes()
-    {
-        add_or_edit_ingredients_screen.setAll_IngredientsTypeNamesList(all_IngredientsTypeNamesList);
-        add_or_edit_ingredients_screen.updateAllIngredientTypesJComboBoxes();
-    }
-
-    private void addToContainer(Container container, Component addToContainer, int gridx, int gridy, int gridwidth,
-                                int gridheight, double weightx, double weighty, String fill, int ipady, int ipadx)
+    protected void addToContainer(Container container, Component addToContainer, int gridx, int gridy, int gridwidth,
+                                  int gridheight, double weightx, double weighty, String fill, int ipady, int ipadx)
     {
         gbc.gridx = gridx;
         gbc.gridy = gridy;
