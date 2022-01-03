@@ -46,10 +46,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
     private DefaultComboBoxModel modelIngredientName, modelIngredientType;
 
-    private JComboBox<String>
-
-
-            edit_IngredientTypes_InPlan_JComboBox = new JComboBox();
 
 
     // Sorted Hashmap by key String
@@ -176,7 +172,9 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
         private boolean ingredientEditable = true;
 
-        private JComboBox<String> edit_IngredientName_JComboBox = new JComboBox();
+        private JComboBox<String>
+                edit_IngredientName_JComboBox = new JComboBox(),
+                edit_IngredientTypes_InPlan_JComboBox = new JComboBox();
 
         public EditingCreateForm()
         {
@@ -1519,6 +1517,8 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             }
 
             // Redraw ingredientsTypes
+            JComboBox<String> edit_IngredientTypes_InPlan_JComboBox = getEdit_IngredientTypes_InPlan_JComboBox();
+
             edit_IngredientTypes_InPlan_JComboBox.removeAllItems(); // clearList
             for (String key : map_ingredientTypesToIngredientNames.keySet())
             {
@@ -2635,6 +2635,11 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
         this.all_IngredientsTypeNamesList = all_IngredientsTypeNamesList;
 
         // loadJCOmboBox();
+    }
+
+    private JComboBox<String> getEdit_IngredientTypes_InPlan_JComboBox()
+    {
+        return null;
     }
 
     public void updateAllIngredientTypesJComboBoxes()
