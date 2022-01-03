@@ -57,13 +57,13 @@ public class ParentClass extends JPanel
         //###########################
         //Add Ingredients Type Form
         //###########################
-        AddScreen addIngredientsTypeScreen = new AddScreen(this, collapsibleBTNTXT1, 250, 50);
+        AddScreen addIngredientsTypeScreen = new AddScreen(this, collapsibleBTNTXT1, 250, 50, "");
         addToContainer(mainCentreScreen, addIngredientsTypeScreen, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
         //###########################
         //Edit Ingredients Type Form
         //###########################
-        EditScreen editIngredientsTypeScreen = new EditScreen(this, collapsibleBTNTXT2, 250, 50);
+        EditScreen editIngredientsTypeScreen = new EditScreen(this, collapsibleBTNTXT2, 250, 50, "");
         addToContainer(mainCentreScreen, editIngredientsTypeScreen, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
         //###########################
@@ -94,10 +94,12 @@ public class ParentClass extends JPanel
                 dbColumnNameField,
                 dbTableName;
 
-        public AddScreen(Container parentContainer, String btnText, int btnWidth, int btnHeight)
+        public AddScreen(Container parentContainer, String btnText, int btnWidth, int btnHeight, String mainLabel)
         {
             super(parentContainer, btnText, btnWidth, btnHeight);
             expandJPanel();
+
+            this.mainLabel = mainLabel;
             createAddScreenObjects();
         }
 
@@ -395,14 +397,14 @@ public class ParentClass extends JPanel
 
     public class EditScreen extends AddScreen
     {
-        private JPanel jcomboBoxJPanel;
+        protected JPanel jcomboBoxJPanel;
         protected  String
                 lable1, lablel2,
                 idColumnName;
 
-        public EditScreen(Container parentContainer, String btnText, int btnWidth, int btnHeight)
+        public EditScreen(Container parentContainer, String btnText, int btnWidth, int btnHeight, String mainLabel2)
         {
-            super(parentContainer, btnText, btnWidth, btnHeight);
+            super(parentContainer, btnText, btnWidth, btnHeight, mainLabel2);
         }
 
         @Override
@@ -511,12 +513,12 @@ public class ParentClass extends JPanel
         @Override
         protected void addScreenObjects()
         {
-            addToContainer(mainJPanel2, createLabelPanel(lable1, new JLabel()), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+            addToContainer(mainJPanel2, createLabelPanel(lable1, new JLabel("dddd")), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
             addToContainer(mainJPanel2, jcomboBoxJPanel, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
 
             addToContainer(mainJPanel2, new JPanel(), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 10, 0);
 
-            addToContainer(mainJPanel2, createLabelPanel(lablel2, new JLabel()), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+            addToContainer(mainJPanel2, createLabelPanel(lablel2, new JLabel("ssa")), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
             addToContainer(mainJPanel2, jtextfieldJPanel, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
             addToContainer(mainJPanel2, submitButton, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
 
