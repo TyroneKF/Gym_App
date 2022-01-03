@@ -1353,7 +1353,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             // Needs to be created near this
             //##################################
 
-            ingredientsForm = new IngredientsForm(this, "Add Ingredinets Info", 250, 50);
+            ingredientsForm = new IngredientsForm(this, "Add Ingredients Info", 250, 50);
             shopForm = new ShopForm(scrollPaneJPanel, "Add Ingredient Suppliers", 250, 50);
 
             createForms(ingredientsForm, shopForm);
