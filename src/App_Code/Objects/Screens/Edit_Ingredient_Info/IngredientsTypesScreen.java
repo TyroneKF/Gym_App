@@ -476,13 +476,18 @@ public class IngredientsTypesScreen extends JPanel
                 }
             }
 
+            String selectedItem = (String) ingredientTypes_JC.getSelectedItem();
+            String mysqlVariableReference1 = "@CurrentTypeID";
+            String createMysqlVariable1 = String.format("SET %s = (SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = '%s');", mysqlVariableReference1, selectedItem);
+
             String uploadString = String.format("""                    
                     UPDATE ingredientTypes
                     SET Ingredient_Type_Name = '%s'
-                    WHERE Ingredient_Type_Name = '%s';
-                    """, ingredientTypes_JC.getSelectedItem(), newIngredientTypeName);
+                    WHERE Ingredient_Type_ID = %s;""", newIngredientTypeName, mysqlVariableReference1);
 
-            if (db.uploadData_Batch_Altogether(new String[]{uploadString}))
+            System.out.printf("\n\n%s \n\n%s", createMysqlVariable1, uploadString);
+
+            if (db.uploadData_Batch_Independently(new String[]{createMysqlVariable1, uploadString}))
             {
                 return true;
             }
