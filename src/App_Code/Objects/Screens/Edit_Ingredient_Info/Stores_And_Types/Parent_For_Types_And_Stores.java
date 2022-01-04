@@ -180,9 +180,8 @@ public class Parent_For_Types_And_Stores extends JPanel
                 if (uploadForm())
                 {
                     successUploadMessage();
-                    updateOtherScreens();
-
                     resetActions();
+                    updateOtherScreens();
                 }
                 else
                 {
@@ -383,9 +382,9 @@ public class Parent_For_Types_And_Stores extends JPanel
             {
                 jcomboBoxList.remove(ingredientType);
             }
-
-            add_or_edit_ingredients_screen.setAll_IngredientsTypeNamesList(jcomboBoxList);
         }
+
+
 
         protected void resetActions()
         {
