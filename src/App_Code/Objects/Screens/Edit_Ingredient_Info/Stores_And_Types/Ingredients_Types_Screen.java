@@ -179,7 +179,7 @@ public class Ingredients_Types_Screen extends Parent_For_Types_And_Stores
             }
             else
             {
-                if (add_or_edit_ingredients_screen.changeKeyIngredientsTypesList("changeKey", jtextfieldTXT, selectedItem)) // change key
+                if (add_or_edit_ingredients_screen.changeKeyIngredientsTypesList("changeKeyName", jtextfieldTXT, selectedItem)) // change key
                 {
                     editingCreateForm.updateIngredientNamesToTypesJComboBox(); // update IngredientsTypeToNames JComboBox
                 }

@@ -2692,7 +2692,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             }
             return false;
         }
-        else if (process.equals("changeKey"))
+        else if (process.equals("changeKeyName"))
         {
             if (map_ingredientTypesToIngredientNames.containsKey(oldKey))
             {
