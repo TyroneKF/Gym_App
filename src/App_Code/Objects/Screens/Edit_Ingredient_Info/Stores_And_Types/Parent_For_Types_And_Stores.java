@@ -26,18 +26,19 @@ public class Parent_For_Types_And_Stores extends JPanel
     protected JComboBox jComboBox;
     protected Collection<String> jcomboBoxList;
     protected Add_Or_Edit_Ingredients_Screen add_or_edit_ingredients_screen;
-    protected String collapsibleBTNTXT1 = "", collapsibleBTNTXT2= "";
+    protected String collapsibleBTNTXT1 = "", collapsibleBTNTXT2 = "";
 
     public Parent_For_Types_And_Stores()
-    {}
+    {
+    }
 
     public Parent_For_Types_And_Stores(MyJDBC db, Add_Or_Edit_Ingredients_Screen add_or_edit_ingredients_screen, Collection<String> jcomboBoxList)
     {
         this.db = db;
-        this. add_or_edit_ingredients_screen =  add_or_edit_ingredients_screen;
+        this.add_or_edit_ingredients_screen = add_or_edit_ingredients_screen;
         this.jcomboBoxList = jcomboBoxList;
 
-       createInterface();
+        createInterface();
     }
 
     protected void createInterface()
@@ -90,9 +91,9 @@ public class Parent_For_Types_And_Stores extends JPanel
                 jtextfieldTXT,
                 mainLabel,
 
-                dataGatheringName,
+        dataGatheringName,
 
-                dbColumnNameField,
+        dbColumnNameField,
                 dbTableName;
 
         public AddScreen(Container parentContainer, String btnText, int btnWidth, int btnHeight)
@@ -158,7 +159,7 @@ public class Parent_For_Types_And_Stores extends JPanel
             jTextField.setText("");
         }
 
-        protected  void successUploadMessage()
+        protected void successUploadMessage()
         {
             String text = "";
             JOptionPane.showMessageDialog(null, text);
@@ -174,7 +175,7 @@ public class Parent_For_Types_And_Stores extends JPanel
         {
             if (validateForm())
             {
-                if (uploadForm(true))
+                if (uploadForm())
                 {
                     successUploadMessage();
 
@@ -183,7 +184,7 @@ public class Parent_For_Types_And_Stores extends JPanel
                 }
                 else
                 {
-                   failureMessage();
+                    failureMessage();
                 }
             }
         }
@@ -280,17 +281,17 @@ public class Parent_For_Types_And_Stores extends JPanel
         {
             jComboBox.removeAllItems();
             for (String ingredientType : jcomboBoxList)
-            {                
+            {
                 jComboBox.addItem(ingredientType);
             }
             jComboBox.setSelectedIndex(-1);
-            
+
             removeJCombBoxItems();
         }
-        
+
         protected void removeJCombBoxItems()
         {
-            
+
         }
 
         protected boolean doesStringContainCharacters(String input)
@@ -316,6 +317,11 @@ public class Parent_For_Types_And_Stores extends JPanel
         {
             jtextfieldTXT = jTextField.getText();
 
+            if (!additionalValidateForm())
+            {
+                return false;
+            }
+
             if (jtextfieldTXT.equals(""))
             {
                 JOptionPane.showMessageDialog(null, String.format("\n\nAn %s Cannot Be Null!!", dataGatheringName));
@@ -330,11 +336,6 @@ public class Parent_For_Types_And_Stores extends JPanel
                 return false;
             }
 
-            if (!additionalValidateForm())
-            {
-                return false;
-            }
-
             return true;
         }
 
@@ -343,25 +344,24 @@ public class Parent_For_Types_And_Stores extends JPanel
             return true;
         }
 
-        protected boolean uploadForm(boolean checkDB)
+        protected boolean uploadForm()
         {
-            if (checkDB)
+
+            String query = String.format("SELECT  %s  FROM %s WHERE %s = '%s';", dbColumnNameField, dbTableName, dbColumnNameField, jtextfieldTXT);
+
+            System.out.printf("\n\n%s", query);
+
+            if (db.getSingleColumnQuery(query) != null)
             {
-                String query = String.format("SELECT  %s  FROM %s WHERE %s = '%s';",dbColumnNameField, dbTableName, dbColumnNameField, jtextfieldTXT);
-
-                System.out.printf("\n\n%s", query);
-
-                if (db.getSingleColumnQuery(query) != null)
-                {
-                    JOptionPane.showMessageDialog(null, String.format("\n\n%s '' %s '' Already Exists!", dataGatheringName, jtextfieldTXT));
-                    return false;
-                }
+                JOptionPane.showMessageDialog(null, String.format("\n\n%s '' %s '' Already Exists!", dataGatheringName, jtextfieldTXT));
+                return false;
             }
+
 
             String uploadString = String.format("""
                     INSERT INTO %s (%s) VALUES
                     ('%s');
-                    """,dbTableName,dbColumnNameField, jtextfieldTXT);
+                    """, dbTableName, dbColumnNameField, jtextfieldTXT);
 
             if (db.uploadData_Batch_Altogether(new String[]{uploadString}))
             {
@@ -402,7 +402,7 @@ public class Parent_For_Types_And_Stores extends JPanel
     public class EditScreen extends AddScreen
     {
         protected JPanel jcomboBoxJPanel;
-        protected  String
+        protected String
                 lable1, label2,
                 idColumnName;
 
@@ -457,15 +457,39 @@ public class Parent_For_Types_And_Stores extends JPanel
 
             delete_Btn.addActionListener(ae -> {
 
-                deleteIngredientBTNAction();
+                deleteBTNActionListener();
             });
 
             iconPanelInsert.add(delete_Icon_Btn);
         }
 
-        private void deleteIngredientBTNAction()
+        private void deleteBTNActionListener()
         {
+            String selectedItem = (String) jComboBox.getSelectedItem();
+            if (selectedItem == null)
+            {
+                JOptionPane.showMessageDialog(null, String.format("Select An ' %s 'To Delete It !!!", dataGatheringName));
+                return;
+            }
 
+            if (deleteIngredientBTNAction())
+            {
+                addOrDeleteIngredientFromMap("delete", selectedItem);
+                refreshBtnAction();
+                loadJComboBox();
+                updateOtherScreens();
+
+                JOptionPane.showMessageDialog(null, String.format("\n\nSelected Item ''%s'' Has Successfully Been Deleted!!!", selectedItem));
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(null, String.format("\n\nFailed To Delete Selected Item ''%s'' !!", selectedItem));
+            }
+        }
+
+        protected boolean deleteIngredientBTNAction()
+        {
+            return false;
         }
 
         @Override
@@ -492,7 +516,7 @@ public class Parent_For_Types_And_Stores extends JPanel
         {
             if (jComboBox.getSelectedIndex() == -1)
             {
-                JOptionPane.showMessageDialog(null,String.format("\n\nSelect An %s To Edit!", dataGatheringName));
+                JOptionPane.showMessageDialog(null, String.format("\n\nSelect An %s To Edit!", dataGatheringName));
                 return false;
             }
 
@@ -500,20 +524,19 @@ public class Parent_For_Types_And_Stores extends JPanel
         }
 
         @Override
-        protected boolean uploadForm(boolean checkDB)
+        protected boolean uploadForm()
         {
-            if (checkDB)
+
+            String query = String.format("SELECT  Ingredient_Type_Name  FROM ingredientTypes WHERE Ingredient_Type_Name = '%s';", jtextfieldTXT);
+
+            System.out.printf("\n\n%s", query);
+
+            if (db.getSingleColumnQuery(query) != null)
             {
-                String query = String.format("SELECT  Ingredient_Type_Name  FROM ingredientTypes WHERE Ingredient_Type_Name = '%s';", jtextfieldTXT);
-
-                System.out.printf("\n\n%s", query);
-
-                if (db.getSingleColumnQuery(query) != null)
-                {
-                    JOptionPane.showMessageDialog(null, String.format("\n\nIngredient Type Name '' %s '' Already Exists!", jtextfieldTXT));
-                    return false;
-                }
+                JOptionPane.showMessageDialog(null, String.format("\n\nIngredient Type Name '' %s '' Already Exists!", jtextfieldTXT));
+                return false;
             }
+
 
             String selectedItem = (String) jComboBox.getSelectedItem();
             String mysqlVariableReference1 = "@CurrentTypeID";
