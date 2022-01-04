@@ -2,13 +2,13 @@ package App_Code.Objects.Screens.Edit_Ingredient_Info.Stores_And_Types.Types;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Screens.Edit_Ingredient_Info.IngredientsInfo.Add_Or_Edit_Ingredients_Screen;
-import App_Code.Objects.Screens.Edit_Ingredient_Info.Stores_And_Types.ParentClass;
+import App_Code.Objects.Screens.Edit_Ingredient_Info.Stores_And_Types.Parent_For_Types_And_Stores;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
 
-public class IngredientsTypesScreen2 extends ParentClass
+public class IngredientsTypesScreen2 extends Parent_For_Types_And_Stores
 {
     protected String collapsibleBTNTXT1 = "Add Ingredients Type", collapsibleBTNTXT2 = "Edit Ingredients Type";
 
@@ -72,7 +72,11 @@ public class IngredientsTypesScreen2 extends ParentClass
         protected void createForm()
         {
             System.out.printf("\n\nHere2");
-            mainLabel = "Add Ingredient Type Name";
+            super.mainLabel = "Add Ingredient Type Name";
+
+            super.dataGatheringName = "Ingredient Type Name";
+            super.dbColumnNameField ="Ingredient_Type_Name";
+            super.dbTableName = "ingredientTypes";
 
             //###################################################################
             // Drawing interface
@@ -81,6 +85,27 @@ public class IngredientsTypesScreen2 extends ParentClass
             creatingAdditionalAddScreenObjects(); // for overwrite purposes
             addScreenObjects(); // adding all objects to the screen
         }
+
+        @Override
+        protected void successUploadMessage()
+        {
+            String text = "\n\nSuccessfully Added New Ingredient Type";
+            JOptionPane.showMessageDialog(null, text);
+        }
+
+        @Override
+        protected void failureMessage()
+        {
+            String text = "\n\nFailed Upload - Couldn't Add New Ingredient Type";
+            JOptionPane.showMessageDialog(null, text);
+        }
+
+        @Override
+        protected void updateOtherScreens()
+        {
+            add_or_edit_ingredients_screen.updateAllIngredientTypesJComboBoxes();
+        }
+
     }
 
     public class EditIngredientType extends EditScreen

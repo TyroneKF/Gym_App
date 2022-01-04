@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ParentClass extends JPanel
+public class Parent_For_Types_And_Stores extends JPanel
 {
 
     protected GridBagConstraints gbc = new GridBagConstraints();
@@ -28,10 +28,10 @@ public class ParentClass extends JPanel
     protected Add_Or_Edit_Ingredients_Screen add_or_edit_ingredients_screen;
     protected String collapsibleBTNTXT1 = "", collapsibleBTNTXT2= "";
 
-    public   ParentClass()
+    public Parent_For_Types_And_Stores()
     {}
 
-    public ParentClass(MyJDBC db, Add_Or_Edit_Ingredients_Screen add_or_edit_ingredients_screen, Collection<String> jcomboBoxList)
+    public Parent_For_Types_And_Stores(MyJDBC db, Add_Or_Edit_Ingredients_Screen add_or_edit_ingredients_screen, Collection<String> jcomboBoxList)
     {
         this.db = db;
         this. add_or_edit_ingredients_screen =  add_or_edit_ingredients_screen;
@@ -347,13 +347,13 @@ public class ParentClass extends JPanel
         {
             if (checkDB)
             {
-                String query = String.format("SELECT  %s  FROM %ss WHERE %s = '%s';",dbColumnNameField, dbTableName, jtextfieldTXT);
+                String query = String.format("SELECT  %s  FROM %s WHERE %s = '%s';",dbColumnNameField, dbTableName, dbColumnNameField, jtextfieldTXT);
 
                 System.out.printf("\n\n%s", query);
 
                 if (db.getSingleColumnQuery(query) != null)
                 {
-                    JOptionPane.showMessageDialog(null, String.format("\n\ns '' %s '' Already Exists!", dataGatheringName, jtextfieldTXT));
+                    JOptionPane.showMessageDialog(null, String.format("\n\n%s '' %s '' Already Exists!", dataGatheringName, jtextfieldTXT));
                     return false;
                 }
             }
