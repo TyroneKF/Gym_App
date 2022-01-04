@@ -118,7 +118,6 @@ public class Edit_Ingredient_Stores extends Parent_For_Types_And_Stores
         @Override
         protected void createForm()
         {
-
             System.out.printf("\n\nHere4");
 
             super.lable1 = "Select Ingredient Type Name To Edit";
@@ -131,12 +130,6 @@ public class Edit_Ingredient_Stores extends Parent_For_Types_And_Stores
             super.idColumnName = "StoreID";
             super.fkTable = "ingredients_info";
             super.setToNull = true;
-
-            //
-
-
-
-
 
             //###################################################################
             // Drawing interface

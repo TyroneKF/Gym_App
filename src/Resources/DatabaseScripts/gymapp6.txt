@@ -183,7 +183,7 @@ CREATE TABLE IF NOT EXISTS ingredientInShops
 --#####################################################################
 CREATE TABLE IF NOT EXISTS ingredients_in_meal
 (   
-    Ingredients_Index INT  AUTO_INCREMENT,
+    Ingredients_Index INT  AUTO_INCREMENT, 
 	
     MealID INT NOT NULL,
 	FOREIGN KEY (MealID) REFERENCES meals(MealID),
@@ -363,8 +363,17 @@ INSERT INTO meals (PlanID, Meal_Name) VALUES
 -- #####################################################
 INSERT INTO ingredientTypes (Ingredient_Type_Name) VALUES
 
-('None Of The Above'),('UnAssigned'),('Vegan Vitamin Powders'),('Sauce'),
-('Breads'), ('Cereals'), ('Rice'), ('Pasta'), ('Noodles'), ('Other Grains'), ('Vegetables'),
+('None Of The Above'),
+('UnAssigned'),
+('Vegan Vitamin Powders'),
+('Sauce'),
+('Breads'), 
+('Cereals'), 
+('Rice'),
+('Pasta'), 
+('Noodles'), 
+('Vegetables'),
+('Other Grains'), 
 ('Grains & Legumes'), ('Fruit'), ('Milk'), ('Potatoes'), ('Smoothie'), ('Yoghurt'), ('Cheese'), ('Lean Meat'), (' Fish'), ('Poultry'), ('Eggs'),
 ('Cereal Bars'), ('Frozen Fruit'), ('Frozen Vegetables'), ('Juice'), ('Meat'), ('Nuts & Seeds'), ('Fruit Juice'), ('Protein Powder');
 
