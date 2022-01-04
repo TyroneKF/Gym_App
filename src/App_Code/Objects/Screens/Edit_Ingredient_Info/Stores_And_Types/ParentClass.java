@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 
 public class ParentClass extends JPanel
 {
+
     protected GridBagConstraints gbc = new GridBagConstraints();
     protected int yPos = 0;
     protected int charlimit = 55;
@@ -189,6 +190,7 @@ public class ParentClass extends JPanel
 
         protected void createAddScreenObjects()
         {
+
             mainJPanel = getCentreJPanel();
             mainJPanel.setLayout(new GridBagLayout());
 
@@ -401,12 +403,41 @@ public class ParentClass extends JPanel
     {
         protected JPanel jcomboBoxJPanel;
         protected  String
-                lable1, lablel2,
+                lable1, label2,
                 idColumnName;
 
         public EditScreen(Container parentContainer, String btnText, int btnWidth, int btnHeight)
         {
             super(parentContainer, btnText, btnWidth, btnHeight);
+        }
+
+
+        @Override
+        protected void createForm()
+        {
+            System.out.printf("\n\nHere3");
+            //###################################################################
+            // Drawing interface
+            //####################################################################
+            createAddScreenObjects();
+            creatingAdditionalAddScreenObjects(); // for overwrite purposes
+            addScreenObjects(); // adding all objects to the screen
+        }
+
+        protected void addScreenObjects()
+        {
+            System.out.printf("\n\nHere5");
+            addToContainer(mainJPanel2, createLabelPanel(lable1, new JLabel()), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+            addToContainer(mainJPanel2, jcomboBoxJPanel, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+
+            addToContainer(mainJPanel2, new JPanel(), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 10, 0);
+
+            addToContainer(mainJPanel2, createLabelPanel(label2, new JLabel()), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+            addToContainer(mainJPanel2, jtextfieldJPanel, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+            addToContainer(mainJPanel2, submitButton, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+
+            mainJPanel.revalidate();
+            mainJPanel2.revalidate();
         }
 
         @Override
@@ -510,22 +541,6 @@ public class ParentClass extends JPanel
             addOrDeleteIngredientFromMap("delete", (String) jComboBox.getSelectedItem());
             refreshBtnAction();
             loadJComboBox();
-        }
-
-        @Override
-        protected void addScreenObjects()
-        {
-            addToContainer(mainJPanel2, createLabelPanel(lable1, new JLabel("dddd")), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
-            addToContainer(mainJPanel2, jcomboBoxJPanel, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
-
-            addToContainer(mainJPanel2, new JPanel(), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 10, 0);
-
-            addToContainer(mainJPanel2, createLabelPanel(lablel2, new JLabel("ssa")), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
-            addToContainer(mainJPanel2, jtextfieldJPanel, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
-            addToContainer(mainJPanel2, submitButton, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
-
-            mainJPanel.revalidate();
-            mainJPanel2.revalidate();
         }
 
         @Override

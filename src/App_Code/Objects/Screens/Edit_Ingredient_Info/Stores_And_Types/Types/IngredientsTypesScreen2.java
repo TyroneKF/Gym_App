@@ -85,29 +85,24 @@ public class IngredientsTypesScreen2 extends ParentClass
 
     public class EditIngredientType extends EditScreen
     {
-        protected String
-                lable1, lablel2,
-                idColumnName;
-
         public EditIngredientType(Container parentContainer, String btnText, int btnWidth, int btnHeight)
         {
             super(parentContainer, btnText, btnWidth, btnHeight);
         }
 
         @Override
-        protected void addScreenObjects()
+        protected void createForm()
         {
-            addToContainer(mainJPanel2, createLabelPanel(lable1, new JLabel("ddd")), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
-            addToContainer(mainJPanel2, jcomboBoxJPanel, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+            System.out.printf("\n\nHere4");
+            super.lable1 = "Select Ingredient Type Name To Edit";
+            super.label2 = "Change Ingredient Type Name";
 
-            addToContainer(mainJPanel2, new JPanel(), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 10, 0);
-
-            addToContainer(mainJPanel2, createLabelPanel(lablel2, new JLabel("dddddddd")), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
-            addToContainer(mainJPanel2, jtextfieldJPanel, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
-            addToContainer(mainJPanel2, submitButton, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
-
-            mainJPanel.revalidate();
-            mainJPanel2.revalidate();
+            //###################################################################
+            // Drawing interface
+            //####################################################################
+            createAddScreenObjects();
+            creatingAdditionalAddScreenObjects(); // for overwrite purposes
+            addScreenObjects(); // adding all objects to the screen
         }
     }
 }
