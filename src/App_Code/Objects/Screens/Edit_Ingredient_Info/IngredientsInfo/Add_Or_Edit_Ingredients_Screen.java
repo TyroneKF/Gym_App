@@ -2686,7 +2686,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 unassignedKeyListData.addAll(oldKeyListData);
 
                 //  Add Unassigned list back to the map
-                map_ingredientTypesToIngredientNames.put("UnAssigned", unassignedKeyListData);
+                map_ingredientTypesToIngredientNames.put(unAssignedKey, unassignedKeyListData);
 
                 return true;
             }
