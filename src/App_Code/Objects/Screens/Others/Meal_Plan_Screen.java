@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
-public class MealPlanScreen extends JPanel
+public class Meal_Plan_Screen extends JPanel
 {
     private MacrosLeftTable macrosLeft_JTable;
     private MacrosTargetsTable macros_Targets_Table;
@@ -39,7 +39,7 @@ public class MealPlanScreen extends JPanel
     private Container contentPane;
 
     private MyJDBC db;
-    private App_Code.Objects.Screens.Others.macrosTargets_Screen macrosTargets_Screen = null;
+    private Macros_Targets_Screen macrosTargets_Screen = null;
     private Add_Or_Edit_Ingredients_Screen addIngredientsScreen = null;
 
 
@@ -104,7 +104,7 @@ public class MealPlanScreen extends JPanel
 
     //########################################################
 
-    public MealPlanScreen()
+    public Meal_Plan_Screen()
     {
         //############################################################################################################
         // Database Setup
@@ -455,7 +455,7 @@ public class MealPlanScreen extends JPanel
 
     public static void main(String[] args)
     {
-        new MealPlanScreen();
+        new Meal_Plan_Screen();
     }
 
     private CollapsibleJPanel create_CollapsibleJPanel(boolean mealInDB, Container container, Integer mealID, Integer temp_MealID, String mealName, int mealNo, String[] meal_total_columnNames,
@@ -1099,7 +1099,7 @@ public class MealPlanScreen extends JPanel
             macrosTargets_Screen.makeJframeVisible();
             return;
         }
-        macrosTargets_Screen = new macrosTargets_Screen(db, this, planID, tempPlanID, planName);
+        macrosTargets_Screen = new Macros_Targets_Screen(db, this, planID, tempPlanID, planName);
     }
 
     public void remove_macrosTargets_Screen()

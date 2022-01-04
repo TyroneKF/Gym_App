@@ -9,12 +9,12 @@ import java.awt.event.WindowEvent;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-public class macrosTargets_Screen extends JFrame
+public class Macros_Targets_Screen extends JFrame
 {
     private MyJDBC db;
     private Integer temp_PlanID, planID;
     private String planName;
-    private MealPlanScreen gui;
+    private Meal_Plan_Screen gui;
 
     private boolean formEditable = false;
 
@@ -23,7 +23,7 @@ public class macrosTargets_Screen extends JFrame
             "Protein Per Pound Target", "Carbohydrates Per Pound Target:", "Fibre Target:", "Fats Per Pound Target:",
             "Saturated Fat Limit:", "Salt Limit:", "Water Target:", "Additional Calories:"};
 
-    public macrosTargets_Screen(MyJDBC db, MealPlanScreen gui, int planID, int temp_PlanID, String planName)
+    public Macros_Targets_Screen(MyJDBC db, Meal_Plan_Screen gui, int planID, int temp_PlanID, String planName)
     {
         this.db = db;
         this.gui = gui;
