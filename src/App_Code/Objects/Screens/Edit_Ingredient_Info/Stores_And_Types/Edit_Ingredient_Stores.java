@@ -1,19 +1,18 @@
-package App_Code.Objects.Screens.Edit_Ingredient_Info.Stores_And_Types.Types;
+package App_Code.Objects.Screens.Edit_Ingredient_Info.Stores_And_Types;
+
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Screens.Edit_Ingredient_Info.IngredientsInfo.Add_Or_Edit_Ingredients_Screen;
-import App_Code.Objects.Screens.Edit_Ingredient_Info.Stores_And_Types.Parent_For_Types_And_Stores;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
 
-public class IngredientsTypesScreen2 extends Parent_For_Types_And_Stores
+public class Edit_Ingredient_Stores extends Parent_For_Types_And_Stores
 {
-    protected String collapsibleBTNTXT1 = "Add Ingredients Type", collapsibleBTNTXT2 = "Edit Ingredients Type";
+    protected String collapsibleBTNTXT1 = "Add Suppliers", collapsibleBTNTXT2 = "Edit Suppliers";
 
-
-    public IngredientsTypesScreen2(MyJDBC db, Add_Or_Edit_Ingredients_Screen add_or_edit_ingredients_screen, Collection<String> jcomboBoxList)
+    public Edit_Ingredient_Stores(MyJDBC db, Add_Or_Edit_Ingredients_Screen add_or_edit_ingredients_screen, Collection<String> jcomboBoxList)
     {
         this.db = db;
         this.add_or_edit_ingredients_screen = add_or_edit_ingredients_screen;
@@ -42,14 +41,14 @@ public class IngredientsTypesScreen2 extends Parent_For_Types_And_Stores
         //###########################
         //Add Ingredients Type Form
         //###########################
-        AddIngredientsType addIngredientsTypeScreen = new AddIngredientsType(this, collapsibleBTNTXT1, 250, 50);
-        addToContainer(mainCentreScreen, addIngredientsTypeScreen, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+        AddStores addStores = new AddStores(this, collapsibleBTNTXT1, 250, 50);
+        addToContainer(mainCentreScreen, addStores, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
         //###########################
         //Edit Ingredients Type Form
         //###########################
-        EditIngredientType editIngredientType = new EditIngredientType(this, collapsibleBTNTXT2, 250, 50);
-        addToContainer(mainCentreScreen, editIngredientType, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+        EditScreen editStores = new EditStores(this, collapsibleBTNTXT2, 250, 50);
+        addToContainer(mainCentreScreen, editStores, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
         //###########################
         //Space Divider
         //###########################
@@ -61,9 +60,10 @@ public class IngredientsTypesScreen2 extends Parent_For_Types_And_Stores
         revalidate();
     }
 
-    public class AddIngredientsType extends AddScreen
+    public class AddStores extends AddScreen
     {
-        public AddIngredientsType(Container parentContainer, String btnText, int btnWidth, int btnHeight)
+
+        public AddStores(Container parentContainer, String btnText, int btnWidth, int btnHeight)
         {
             super(parentContainer, btnText, btnWidth, btnHeight);
         }
@@ -72,11 +72,11 @@ public class IngredientsTypesScreen2 extends Parent_For_Types_And_Stores
         protected void createForm()
         {
             System.out.printf("\n\nHere2");
-            super.mainLabel = "Add Ingredient Type Name";
+            super.mainLabel = "Add Supplier Name";
 
-            super.dataGatheringName = "Ingredient Type Name";
-            super.dbColumnNameField = "Ingredient_Type_Name";
-            super.dbTableName = "ingredientTypes";
+            super.dataGatheringName = "Supplier Name";
+            super.dbColumnNameField = "Store_Name";
+            super.dbTableName = "stores";
 
 
             //###################################################################
@@ -90,27 +90,27 @@ public class IngredientsTypesScreen2 extends Parent_For_Types_And_Stores
         @Override
         protected void successUploadMessage()
         {
-            String text = "\n\nSuccessfully Added New Ingredient Type";
+            String text = "\n\nSuccessfully Added New Supplier!";
             JOptionPane.showMessageDialog(null, text);
         }
 
         @Override
         protected void failureMessage()
         {
-            String text = "\n\nFailed Upload - Couldn't Add New Ingredient Type";
+            String text = "\n\nFailed Upload - Couldn't Add Supplier";
             JOptionPane.showMessageDialog(null, text);
         }
 
         @Override
         protected void updateOtherScreens()
         {
-            add_or_edit_ingredients_screen.updateAllIngredientTypesJComboBoxes();
+            add_or_edit_ingredients_screen.updateAllSuppliers();
         }
     }
 
-    public class EditIngredientType extends EditScreen
+    public class EditStores extends  EditScreen
     {
-        public EditIngredientType(Container parentContainer, String btnText, int btnWidth, int btnHeight)
+        public EditStores(Container parentContainer, String btnText, int btnWidth, int btnHeight)
         {
             super(parentContainer, btnText, btnWidth, btnHeight);
         }
@@ -118,17 +118,24 @@ public class IngredientsTypesScreen2 extends Parent_For_Types_And_Stores
         @Override
         protected void createForm()
         {
+
             System.out.printf("\n\nHere4");
 
             super.lable1 = "Select Ingredient Type Name To Edit";
             super.label2 = "Change Ingredient Type Name";
 
-            super.dataGatheringName = "Ingredient Type Name";
-            super.dbColumnNameField = "Ingredient_Type_Name";
-            super.dbTableName = "ingredientTypes";
-            super.idColumnName = "Ingredient_Type_ID";
+            super.dataGatheringName = "Supplier Name";
+            super.dbColumnNameField = "Store_Name";
+            super.dbTableName = "stores";
+
+            super.idColumnName = "StoreID";
             super.fkTable = "ingredients_info";
-            super.setToNull = false;
+            super.setToNull = true;
+
+            //
+
+
+
 
 
             //###################################################################
@@ -152,6 +159,5 @@ public class IngredientsTypesScreen2 extends Parent_For_Types_And_Stores
             String text = "\n\nFailed Upload - Couldn't Add New Ingredient Type";
             JOptionPane.showMessageDialog(null, text);
         }
-
     }
 }

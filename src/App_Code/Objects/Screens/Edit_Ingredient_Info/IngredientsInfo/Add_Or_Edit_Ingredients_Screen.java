@@ -6,8 +6,8 @@ import java.util.regex.Pattern;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Gui_Objects.*;
-import App_Code.Objects.Screens.Edit_Ingredient_Info.Stores_And_Types.Types.IngredientsTypesScreen;
-import App_Code.Objects.Screens.Edit_Ingredient_Info.Stores_And_Types.Types.IngredientsTypesScreen2;
+import App_Code.Objects.Screens.Edit_Ingredient_Info.Stores_And_Types.Edit_Ingredient_Stores;
+import App_Code.Objects.Screens.Edit_Ingredient_Info.Stores_And_Types.Ingredients_Types_Screen;
 import App_Code.Objects.Screens.Others.MealPlanScreen;
 
 import javax.swing.*;
@@ -25,7 +25,7 @@ import java.util.HashMap;
 public class Add_Or_Edit_Ingredients_Screen extends JFrame
 {
 
-    private Collection<String> all_IngredientsTypeNamesList;
+    private Collection<String> all_IngredientsTypeNamesList, all_StoresNamesList;
 
     //#######################################
     // General Variables
@@ -81,6 +81,8 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                     JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "\n\nUnable to get IngredientTypes for form!");
                     return;
                 }
+
+                all_StoresNamesList = db.getSingleColumnQuery_AlphabeticallyOrderedTreeSet("SELECT Store_Name FROM stores;");
 
                 //###################################################################################
                 // Frame Set-Up
@@ -139,19 +141,17 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 JPanel editIngredientsTypesJPanel = new JPanel(new GridBagLayout());
                 tp.add("Edit Ingredient Types", editIngredientsTypesJPanel);
 
-                //addToContainer(editIngredientsTypesJPanel, new IngredientsTypesScreen(db, this), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
-                addToContainer(editIngredientsTypesJPanel, new IngredientsTypesScreen2(db, this, all_IngredientsTypeNamesList), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
+                addToContainer(editIngredientsTypesJPanel, new Ingredients_Types_Screen(db, this, all_IngredientsTypeNamesList), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
 
-                /*
                 //#################################################
                 // Creating Edit Ingredients Stores Screen
                 //##################################################
                 JPanel editIngredientsStoreJPanel = new JPanel(new GridBagLayout());
                 tp.add("Edit Ingredient Stores", editIngredientsStoreJPanel);
 
-                addToContainer(editIngredientsStoreJPanel, new EditIngredientStores(), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
 
-                 */
+                addToContainer(editIngredientsStoreJPanel, new Edit_Ingredient_Stores(db, this, all_StoresNamesList), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
+
             }
         }
         catch (Exception e)
@@ -255,7 +255,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             //  Insert into JCombobox
             //###########################################
 
-            updateIngredientTypeJComboBox(); // add all the ingredientTypes to the IngredientTypes JComboBox
+            updateIngredientNamesToTypesJComboBox(); // add all the ingredientTypes to the IngredientTypes JComboBox
             //################################################
             //  Actionlistener
             //#################################################
@@ -433,8 +433,10 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             jcomboUpdateStaus = x;
         }
 
-        private void updateIngredientTypeJComboBox()
+        public void updateIngredientNamesToTypesJComboBox()
         {
+            edit_IngredientTypes_InPlan_JComboBox.removeAllItems();
+
             for (String key : map_ingredientTypesToIngredientNames.keySet())
             {
                 if (!key.equals("None Of The Above"))
@@ -719,7 +721,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             JOptionPane.showMessageDialog(mealPlanScreen, "Please select an item first before attempting to delete an ingredient!");
         }
 
-        private void refreshInterface(boolean resetIngredientNameJCombo, boolean resetIngredientTypeJComBox) // only available to reset screen
+        public void refreshInterface(boolean resetIngredientNameJCombo, boolean resetIngredientTypeJComBox) // only available to reset screen
         {
             //##################################
             // Clear both forms of info
@@ -2653,7 +2655,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
     public void setAll_IngredientsTypeNamesList(Collection<String> all_IngredientsTypeNamesList)
     {
         this.all_IngredientsTypeNamesList = all_IngredientsTypeNamesList;
-        updateAllIngredientTypesJComboBoxes();
+        updateIngredientsFormTypeJComboBoxes();
     }
 
     //FIX
@@ -2662,10 +2664,60 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
         return editingCreateForm.getEdit_IngredientTypes_InPlan_JComboBox();
     }
 
-    public void updateAllIngredientTypesJComboBoxes()
+    public boolean changeKeyIngredientsTypesList(String process, String newKey, String oldKey)
+    {
+        if (process.equals("removeKey"))
+        {
+            if(map_ingredientTypesToIngredientNames.containsKey(oldKey)) // if the key had no ingredientNames attached to it, do nothing
+            {
+                String unAssignedKey = "UnAssigned";
+
+                Collection<String> oldKeyListData = map_ingredientTypesToIngredientNames.remove(oldKey); // get the old ingredientNames associated with the old key
+
+                if(! map_ingredientTypesToIngredientNames.containsKey(unAssignedKey)) // add UnAssigned as key if it doesn't exist
+                {
+                    map_ingredientTypesToIngredientNames.put(unAssignedKey, new TreeSet<String>(Collator.getInstance()));
+                }
+
+                // Get Unassigned List Data
+                Collection<String> unassignedKeyListData = map_ingredientTypesToIngredientNames.remove(unAssignedKey); // get ingredientNames assigned with the key unassigned
+
+                // Add OldKey IngredientNames to Unassigned List
+                unassignedKeyListData.addAll(oldKeyListData);
+
+                //  Add Unassigned list back to the map
+                map_ingredientTypesToIngredientNames.put("UnAssigned", unassignedKeyListData);
+
+                return true;
+            }
+            return false;
+        }
+        else if (process.equals("changeKey"))
+        {
+            if (map_ingredientTypesToIngredientNames.containsKey(oldKey))
+            {
+                System.out.printf("\n\nFound in List");
+                map_ingredientTypesToIngredientNames.put(newKey, map_ingredientTypesToIngredientNames.remove(oldKey));
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public EditingCreateForm getEditingCreateForm()
+    {
+        return editingCreateForm;
+    }
+
+    public void updateIngredientsFormTypeJComboBoxes()
     {
         createForm.updateIngredientForm_Type_JComboBox();
         editingCreateForm.updateIngredientForm_Type_JComboBox();
+    }
+
+    public void updateAllSuppliers()
+    {
+
     }
 
     //##################################################################################################################

@@ -180,9 +180,9 @@ public class Parent_For_Types_And_Stores extends JPanel
                 if (uploadForm())
                 {
                     successUploadMessage();
+                    updateOtherScreens();
 
                     resetActions();
-                    updateOtherScreens();
                 }
                 else
                 {
@@ -409,7 +409,7 @@ public class Parent_For_Types_And_Stores extends JPanel
                 idColumnName,
                 selectedItem = "",
                 fkTable;
-        protected boolean setToNull = false;
+        protected boolean setToNull = false, itemDeleted = false;
 
         public EditScreen(Container parentContainer, String btnText, int btnWidth, int btnHeight)
         {
@@ -476,14 +476,18 @@ public class Parent_For_Types_And_Stores extends JPanel
                 return;
             }
 
-            if (deleteIngredientBTNAction(setToNull))
+            if (deleteIngredientBTNAction())
             {
                 JOptionPane.showMessageDialog(null, String.format("\n\nSelected Item ''%s'' Has Successfully Been Deleted!!!", selectedItem));
 
                 addOrDeleteIngredientFromMap("delete", selectedItem);
+
+                itemDeleted = true;
+                updateOtherScreens();
                 refreshBtnAction();
                 loadJComboBox();
-                updateOtherScreens();
+
+                itemDeleted = false;
             }
             else
             {
@@ -491,7 +495,7 @@ public class Parent_For_Types_And_Stores extends JPanel
             }
         }
 
-        private boolean deleteIngredientBTNAction(boolean setToNull)
+        private boolean deleteIngredientBTNAction()
         {
             System.out.printf("\n\nHere 10");
             System.out.printf("\n#################################################################################");
@@ -499,26 +503,18 @@ public class Parent_For_Types_And_Stores extends JPanel
             String mysqlVariableReference1 = "@CurrentID";
             String createMysqlVariable1 = String.format("SET %s = (SELECT %s FROM %s WHERE %s = '%s');", mysqlVariableReference1, idColumnName, dbTableName, dbColumnNameField, selectedItem);
 
-            String changeToValue;
-            if(! setToNull)
-            {
-                changeToValue = String.format("(SELECT %s FROM %s WHERE %s = 'UnAssigned')", idColumnName, dbTableName, dbColumnNameField);
-            }
-            else
-            {
-                changeToValue = "NULL";
-            }
+            String changeToValue = String.format("(SELECT %s FROM %s WHERE %s = 'UnAssigned')", idColumnName, dbTableName, dbColumnNameField);
 
             String query = String.format("""                  
                     UPDATE %s
                     SET %s =  %s
-                    WHERE %s = %s;""",fkTable, idColumnName, changeToValue, idColumnName, mysqlVariableReference1);
+                    WHERE %s = %s;""", fkTable, idColumnName, changeToValue, idColumnName, mysqlVariableReference1);
 
             String query2 = String.format("DELETE FROM %s WHERE %s = %s;", dbTableName, idColumnName, mysqlVariableReference1);
 
-            System.out.printf("\n\n%s \n\n%s \n\n%s",createMysqlVariable1, query, query2);
+            System.out.printf("\n\n%s \n\n%s \n\n%s", createMysqlVariable1, query, query2);
 
-            if(! db.uploadData_Batch_Independently(new String[]{createMysqlVariable1, query, query2}))
+            if (!db.uploadData_Batch_Independently(new String[]{createMysqlVariable1, query, query2}))
             {
                 JOptionPane.showMessageDialog(null, String.format("\n\nFailed To Delete ' %s ' FROM %s !!", selectedItem, dataGatheringName));
                 return false;
@@ -572,23 +568,27 @@ public class Parent_For_Types_And_Stores extends JPanel
         @Override
         protected boolean uploadForm()
         {
-            String query = String.format("SELECT  Ingredient_Type_Name  FROM ingredientTypes WHERE Ingredient_Type_Name = '%s';", jtextfieldTXT);
+            String query = String.format("SELECT %s  FROM %s WHERE %s = '%s';", dbColumnNameField, dbTableName, dbColumnNameField, jtextfieldTXT);
 
-            System.out.printf("\n\n%s", query);
+            System.out.printf("\n\nChecking if %s  exists in DB\n%s", dataGatheringName, query);
 
             if (db.getSingleColumnQuery(query) != null)
             {
-                JOptionPane.showMessageDialog(null, String.format("\n\nIngredient Type Name '' %s '' Already Exists!", jtextfieldTXT));
+                JOptionPane.showMessageDialog(null, String.format("\n\n%s '' %s '' Already Exists!", dataGatheringName, jtextfieldTXT));
                 return false;
             }
 
-            String mysqlVariableReference1 = "@CurrentTypeID";
-            String createMysqlVariable1 = String.format("SET %s = (SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = '%s');", mysqlVariableReference1, selectedItem);
+            String mysqlVariableReference1 = "@CurrentID";
+            String createMysqlVariable1 = String.format("SET %s = (SELECT %s FROM %s WHERE %s = '%s');",
+
+                    mysqlVariableReference1, idColumnName, dbTableName, dbColumnNameField, selectedItem);
 
             String uploadString = String.format("""                    
-                    UPDATE ingredientTypes
-                    SET Ingredient_Type_Name = '%s'
-                    WHERE Ingredient_Type_ID = %s;""", jtextfieldTXT, mysqlVariableReference1);
+                            UPDATE %s 
+                            SET %s = '%s'
+                            WHERE %s = %s;""",
+
+                    dbTableName, dbColumnNameField, jtextfieldTXT, idColumnName, mysqlVariableReference1);
 
             System.out.printf("\n\n%s \n\n%s", createMysqlVariable1, uploadString);
 
