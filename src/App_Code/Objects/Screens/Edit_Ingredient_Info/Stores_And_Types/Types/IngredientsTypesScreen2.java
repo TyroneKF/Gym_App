@@ -78,6 +78,7 @@ public class IngredientsTypesScreen2 extends Parent_For_Types_And_Stores
             super.dbColumnNameField = "Ingredient_Type_Name";
             super.dbTableName = "ingredientTypes";
 
+
             //###################################################################
             // Drawing interface
             //####################################################################
@@ -118,9 +119,17 @@ public class IngredientsTypesScreen2 extends Parent_For_Types_And_Stores
         protected void createForm()
         {
             System.out.printf("\n\nHere4");
+
             super.lable1 = "Select Ingredient Type Name To Edit";
             super.label2 = "Change Ingredient Type Name";
+
             super.dataGatheringName = "Ingredient Type Name";
+            super.dbColumnNameField = "Ingredient_Type_Name";
+            super.dbTableName = "ingredientTypes";
+            super.idColumnName = "Ingredient_Type_ID";
+            super.fkTable = "ingredients_info";
+            super.setToNull = false;
+
 
             //###################################################################
             // Drawing interface
@@ -144,10 +153,5 @@ public class IngredientsTypesScreen2 extends Parent_For_Types_And_Stores
             JOptionPane.showMessageDialog(null, text);
         }
 
-        @Override
-        protected boolean deleteIngredientBTNAction()
-        {
-            return false;
-        }
     }
 }

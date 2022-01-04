@@ -407,7 +407,9 @@ public class Parent_For_Types_And_Stores extends JPanel
         protected String
                 lable1, label2,
                 idColumnName,
-                selectedItem = "";
+                selectedItem = "",
+                fkTable;
+        protected boolean setToNull = false;
 
         public EditScreen(Container parentContainer, String btnText, int btnWidth, int btnHeight)
         {
@@ -468,20 +470,20 @@ public class Parent_For_Types_And_Stores extends JPanel
 
         private void deleteBTNActionListener()
         {
-            if (selectedItem == null)
+            if (selectedItem.equals(""))
             {
                 JOptionPane.showMessageDialog(null, String.format("Select An ' %s 'To Delete It !!!", dataGatheringName));
                 return;
             }
 
-            if (deleteIngredientBTNAction())
+            if (deleteIngredientBTNAction(setToNull))
             {
+                JOptionPane.showMessageDialog(null, String.format("\n\nSelected Item ''%s'' Has Successfully Been Deleted!!!", selectedItem));
+
                 addOrDeleteIngredientFromMap("delete", selectedItem);
                 refreshBtnAction();
                 loadJComboBox();
                 updateOtherScreens();
-
-                JOptionPane.showMessageDialog(null, String.format("\n\nSelected Item ''%s'' Has Successfully Been Deleted!!!", selectedItem));
             }
             else
             {
@@ -489,13 +491,40 @@ public class Parent_For_Types_And_Stores extends JPanel
             }
         }
 
-        protected boolean deleteIngredientBTNAction()
+        private boolean deleteIngredientBTNAction(boolean setToNull)
         {
-            String mysqlVariableReference1 = "@CurrentTypeID";
-            String createMysqlVariable1 = String.format("SET %s = (SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = '%s');", mysqlVariableReference1, selectedItem);
+            System.out.printf("\n\nHere 10");
+            System.out.printf("\n#################################################################################");
 
+            String mysqlVariableReference1 = "@CurrentID";
+            String createMysqlVariable1 = String.format("SET %s = (SELECT %s FROM %s WHERE %s = '%s');", mysqlVariableReference1, idColumnName, dbTableName, dbColumnNameField, selectedItem);
 
-            return false;
+            String changeToValue;
+            if(! setToNull)
+            {
+                changeToValue = String.format("(SELECT %s FROM %s WHERE %s = 'UnAssigned')", idColumnName, dbTableName, dbColumnNameField);
+            }
+            else
+            {
+                changeToValue = "NULL";
+            }
+
+            String query = String.format("""                  
+                    UPDATE %s
+                    SET %s =  %s
+                    WHERE %s = %s;""",fkTable, idColumnName, changeToValue, idColumnName, mysqlVariableReference1);
+
+            String query2 = String.format("DELETE FROM %s WHERE %s = %s;", dbTableName, idColumnName, mysqlVariableReference1);
+
+            System.out.printf("\n\n%s \n\n%s \n\n%s",createMysqlVariable1, query, query2);
+
+            if(! db.uploadData_Batch_Independently(new String[]{createMysqlVariable1, query, query2}))
+            {
+                JOptionPane.showMessageDialog(null, String.format("\n\nFailed To Delete ' %s ' FROM %s !!", selectedItem, dataGatheringName));
+                return false;
+            }
+
+            return true;
         }
 
         @Override
@@ -587,6 +616,7 @@ public class Parent_For_Types_And_Stores extends JPanel
             {
                 jTextField.setText("");
                 jComboBox.setSelectedIndex(-1);
+                selectedItem = "";
             }
             catch (Exception e)
             {
