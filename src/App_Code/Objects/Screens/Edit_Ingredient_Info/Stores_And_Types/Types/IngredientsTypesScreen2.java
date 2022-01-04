@@ -133,7 +133,6 @@ public class IngredientsTypesScreen2 extends Parent_For_Types_And_Stores
         @Override
         protected void successUploadMessage()
         {
-            String selectedItem = (String) jComboBox.getSelectedItem();
             String text = String.format("\n\nSuccessfully Changed Ingredient Type From ' %s ' to ' %s ' !", selectedItem, jtextfieldTXT);
             JOptionPane.showMessageDialog(null, text);
         }

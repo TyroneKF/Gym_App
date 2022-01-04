@@ -10,6 +10,8 @@ import App_Code.Objects.Screens.Edit_Ingredient_Info.IngredientsInfo.Add_Or_Edit
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -404,7 +406,8 @@ public class Parent_For_Types_And_Stores extends JPanel
         protected JPanel jcomboBoxJPanel;
         protected String
                 lable1, label2,
-                idColumnName;
+                idColumnName,
+                selectedItem = "";
 
         public EditScreen(Container parentContainer, String btnText, int btnWidth, int btnHeight)
         {
@@ -465,7 +468,6 @@ public class Parent_For_Types_And_Stores extends JPanel
 
         private void deleteBTNActionListener()
         {
-            String selectedItem = (String) jComboBox.getSelectedItem();
             if (selectedItem == null)
             {
                 JOptionPane.showMessageDialog(null, String.format("Select An ' %s 'To Delete It !!!", dataGatheringName));
@@ -489,6 +491,10 @@ public class Parent_For_Types_And_Stores extends JPanel
 
         protected boolean deleteIngredientBTNAction()
         {
+            String mysqlVariableReference1 = "@CurrentTypeID";
+            String createMysqlVariable1 = String.format("SET %s = (SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = '%s');", mysqlVariableReference1, selectedItem);
+
+
             return false;
         }
 
@@ -506,6 +512,17 @@ public class Parent_For_Types_And_Stores extends JPanel
             jComboBox.setSelectedIndex(-1);
             jComboBox.setFont(new Font("Arial", Font.PLAIN, 15)); // setting font
             ((JLabel) jComboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER); // centre text
+
+            jComboBox.addItemListener(new ItemListener()
+            {
+                public void itemStateChanged(ItemEvent ie)
+                {
+                    if (ie.getStateChange() == ItemEvent.SELECTED)
+                    {
+                        selectedItem = (String) jComboBox.getSelectedItem();
+                    }
+                }
+            });
 
             jcomboBoxJPanel.add(jComboBox);
             jcomboBoxJPanel.setPreferredSize(new Dimension(650, 50));
@@ -526,7 +543,6 @@ public class Parent_For_Types_And_Stores extends JPanel
         @Override
         protected boolean uploadForm()
         {
-
             String query = String.format("SELECT  Ingredient_Type_Name  FROM ingredientTypes WHERE Ingredient_Type_Name = '%s';", jtextfieldTXT);
 
             System.out.printf("\n\n%s", query);
@@ -537,8 +553,6 @@ public class Parent_For_Types_And_Stores extends JPanel
                 return false;
             }
 
-
-            String selectedItem = (String) jComboBox.getSelectedItem();
             String mysqlVariableReference1 = "@CurrentTypeID";
             String createMysqlVariable1 = String.format("SET %s = (SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = '%s');", mysqlVariableReference1, selectedItem);
 
