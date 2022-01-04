@@ -184,7 +184,7 @@ public class MealPlanScreen extends JPanel
         //HELLO REMOVE
         System.out.printf("\n\nChosen Plan: %s", planID);
         System.out.println("\n\n###############################################################################");
-/*
+
         if (planID != null)
         {
             //####################################################
@@ -448,7 +448,7 @@ public class MealPlanScreen extends JPanel
             }
         });
 
- */
+
 
         open_AddIngredients_Screen();
     }
