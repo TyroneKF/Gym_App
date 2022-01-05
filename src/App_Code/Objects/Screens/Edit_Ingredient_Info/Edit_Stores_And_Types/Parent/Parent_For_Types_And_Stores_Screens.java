@@ -338,8 +338,6 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
 
             String query = String.format("SELECT  %s  FROM %s WHERE %s = '%s';", dbColumnNameField, dbTableName, dbColumnNameField, jtextfieldTXT);
 
-            System.out.printf("\n\n%s", query);
-
             if (db.getSingleColumnQuery(query) != null)
             {
                 JOptionPane.showMessageDialog(null, String.format("\n\n%s '' %s '' Already Exists!", dataGatheringName, jtextfieldTXT));
@@ -351,6 +349,8 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
                     INSERT INTO %s (%s) VALUES
                     ('%s');
                     """, dbTableName, dbColumnNameField, jtextfieldTXT);
+
+            System.out.printf("\n\n%s", uploadString);
 
             if (db.uploadData_Batch_Altogether(new String[]{uploadString}))
             {
@@ -384,7 +384,7 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
 
         protected void updateOtherScreens()
         {
-
+            System.out.printf("\n\nDefault updateOtherScreens()");
         }
     }
 

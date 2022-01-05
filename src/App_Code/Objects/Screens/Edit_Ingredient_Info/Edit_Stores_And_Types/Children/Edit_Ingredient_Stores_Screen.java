@@ -96,14 +96,14 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
         @Override
         protected void failureMessage()
         {
-            String text = "\n\nFailed Upload - Couldn't Add Supplier";
+            String text = "\n\nFailed To Upload - Couldn't Add Supplier";
             JOptionPane.showMessageDialog(null, text);
         }
 
         @Override
         protected void updateOtherScreens()
         {
-            add_or_edit_ingredients_screen.updateAllSuppliers();
+            add_or_edit_ingredients_screen.updateIngredientSuppliersJComboBoxes();
         }
     }
 
@@ -119,8 +119,8 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
         {
             System.out.printf("\n\nHere4");
 
-            super.lable1 = "Select Ingredient Type Name To Edit";
-            super.label2 = "Change Ingredient Type Name";
+            super.lable1 = "Select Supplier Name To Edit";
+            super.label2 = "Change Supplier Name";
 
             super.dataGatheringName = "Supplier Name";
             super.dbColumnNameField = "Store_Name";
@@ -151,6 +151,12 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
         {
             String text = "\n\nFailed Upload - Couldn't Add New Ingredient Type";
             JOptionPane.showMessageDialog(null, text);
+        }
+
+        @Override
+        protected void updateOtherScreens()
+        {
+            add_or_edit_ingredients_screen.updateIngredientSuppliersJComboBoxes();
         }
     }
 }

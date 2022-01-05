@@ -1,4 +1,4 @@
-package App_Code.Objects.Screens.Edit_Ingredient_Info.IngredientsInfo;
+package App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Ingredients_Info;
 
 import java.text.Collator;
 import java.util.regex.Matcher;
@@ -6,9 +6,9 @@ import java.util.regex.Pattern;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Gui_Objects.*;
-import App_Code.Objects.Screens.Edit_Ingredient_Info.Stores_And_Types.Edit_Ingredient_Stores;
-import App_Code.Objects.Screens.Edit_Ingredient_Info.Stores_And_Types.Ingredients_Types_Screen;
-import App_Code.Objects.Screens.Others.MealPlanScreen;
+import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types.Children.Edit_Ingredient_Stores_Screen;
+import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types.Children.Edit_Ingredients_Types_Screen;
+import App_Code.Objects.Screens.Others.Meal_Plan_Screen;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -22,7 +22,7 @@ import java.util.*;
 import java.util.HashMap;
 
 
-public class Add_Or_Edit_Ingredients_Screen extends JFrame
+public class Edit_Ingredients_Screen extends JFrame
 {
 
     private Collection<String> all_IngredientsTypeNamesList, all_StoresNamesList;
@@ -39,10 +39,9 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
     private MyJDBC db;
     private Integer temp_PlanID, planID;
     private String planName;
-    private MealPlanScreen mealPlanScreen;
+    private Meal_Plan_Screen mealPlanScreen;
 
     private boolean
-            jcomboUpdateStaus = false,
             updateIngredientInfo = false;
 
     // Sorted Hashmap by key String
@@ -60,7 +59,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Add_Or_Edit_Ingredients_Screen(MyJDBC db, MealPlanScreen mealPlanScreen, int planID, int temp_PlanID, String planName)
+    public Edit_Ingredients_Screen(MyJDBC db, Meal_Plan_Screen mealPlanScreen, int planID, int temp_PlanID, String planName)
     {
         this.db = db;
         this.mealPlanScreen = mealPlanScreen;
@@ -141,7 +140,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 JPanel editIngredientsTypesJPanel = new JPanel(new GridBagLayout());
                 tp.add("Edit Ingredient Types", editIngredientsTypesJPanel);
 
-                addToContainer(editIngredientsTypesJPanel, new Ingredients_Types_Screen(db, this, all_IngredientsTypeNamesList), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
+                addToContainer(editIngredientsTypesJPanel, new Edit_Ingredients_Types_Screen(db, this, all_IngredientsTypeNamesList), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
 
                 //#################################################
                 // Creating Edit Ingredients Stores Screen
@@ -150,7 +149,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 tp.add("Edit Ingredient Stores", editIngredientsStoreJPanel);
 
 
-                addToContainer(editIngredientsStoreJPanel, new Edit_Ingredient_Stores(db, this, all_StoresNamesList), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
+                addToContainer(editIngredientsStoreJPanel, new Edit_Ingredient_Stores_Screen(db, this, all_StoresNamesList), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
 
             }
         }
@@ -166,8 +165,10 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
     public class EditingCreateForm extends createForm
     {
+        private boolean jcomboUpdateStaus = false;
         private EditIngredientsForm ingredientsForm;
         private EditShopForm shopForm;
+        private ArrayList<ShopForm.AddShopForm_Object> shopForm_objects = new ArrayList<>();
 
         private String selectedIngredientID, selectedIngredientName, selected_IngredientType_JComboItem;
 
@@ -557,6 +558,11 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             {
                 updateFormWithIngredientInfo();
             }
+        }
+
+        protected ArrayList<ShopForm.AddShopForm_Object> getShopForm_objects()
+        {
+            return shopForm_objects;
         }
 
         private void updateFormWithIngredientInfo()
@@ -1320,7 +1326,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
         private int ingredientNameObjectIndex = 1, ingredientTypeObjectIndex = 2, glycemicObjectIndex = 5;
 
         private boolean formEditable = false, updateIngredientsForm = false, updateShops = false;
-        private ArrayList<ShopForm.AddShopForm_Object> shopForm_objects = new ArrayList<>();
+
         private int totalNumbersAllowed = 7, decimalScale = 2, decimalPrecision = totalNumbersAllowed - decimalScale, charlimit = 8;
 
         protected IngredientsForm ingredientsForm;
@@ -1420,6 +1426,16 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             resize_GUI();
         }
 
+        protected void clearShopForm()
+        {
+            shopForm.clearShopForm();
+        }
+
+        protected void clearIngredientsForm()
+        {
+            ingredientsForm.clearIngredientsForm();
+        }
+
         protected void submissionBtnAction()
         {
             if (!areYouSure("add this new Ingredient - this will cause the mealPlan to save its data to the DB"))
@@ -1493,11 +1509,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             return updateShops;
         }
 
-        protected ArrayList<ShopForm.AddShopForm_Object> getShopForm_objects()
-        {
-            return shopForm_objects;
-        }
-
         protected int getIngredientNameObjectIndex()
         {
             return ingredientNameObjectIndex;
@@ -1555,8 +1566,8 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
         private void refreshInterface() // only available to reset screen
         {
-            ingredientsForm.clearIngredientsForm();
-            shopForm.clearShopForm();
+            clearIngredientsForm();
+            clearShopForm();
         }
 
         protected boolean updateBothForms(String updateIngredients_String, String[] updateIngredientShops_String)
@@ -2113,7 +2124,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
 
             protected ArrayList<AddShopForm_Object> rowsInTable = new ArrayList<>();
 
-            protected String shopsInfo[];
             protected Container parentContainer;
             protected JPanel inputArea;
 
@@ -2121,10 +2131,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
             {
                 super(parentContainer, btnText, btnWidth, btnHeight);
                 this.parentContainer = parentContainer;
-
-                String query = "SELECT DISTINCT Store_Name FROM stores;";
-
-                shopsInfo = db.getSingleColumnQuery(query);
 
                 //##########################################################################################
                 // Creating Form
@@ -2410,7 +2416,7 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                 Integer PDID = null;  //EDIT NOW
 
                 Container parentContainer;
-                JComboBox shops_JComboBox;
+                JComboBox<String> shops_JComboBox;
                 JTextField ingredientPrice_TxtField, quantityPerPack_TxtField;
 
                 AddShopForm_Object(Container parentContainer, boolean addRow)
@@ -2475,17 +2481,17 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                         // West Side
                         //######################################################
 
-                        if (shopsInfo == null)
+                        if (all_StoresNamesList == null)
                         {
-                            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Unable To Get ShopNames From DB - Internal DB Error");
+                            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Unable To Get ShopNames From DB; \nEither No Shops Exist. \nOr, Internal DB Error");
                             return;
                         }
 
                         //########################
                         // create JComboBox
                         //########################
-                        shops_JComboBox = new JComboBox(shopsInfo);
-                        shops_JComboBox.setSelectedItem("No Shop");
+                        shops_JComboBox = new JComboBox<String>();
+                        loadJComboBox();
 
                         ((JLabel) shops_JComboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
                         westPanel.add(shops_JComboBox);
@@ -2584,7 +2590,17 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
                     rowsInTable.remove(this);
                 }
 
-                private JComboBox getShops_JComboBox()
+                protected void loadJComboBox()
+                {
+                    shops_JComboBox.removeAllItems();
+                    for (String storeName : all_StoresNamesList)
+                    {
+                        shops_JComboBox.addItem(storeName);
+                        shops_JComboBox.setSelectedItem("No Shop");
+                    }
+                }
+
+                private JComboBox<String> getShops_JComboBox()
                 {
                     return shops_JComboBox;
                 }
@@ -2644,20 +2660,6 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
         }
     }
 
-    //##################################################################################################################
-    //
-    //##################################################################################################################
-    public Collection<String> getAll_IngredientsTypeNamesList()
-    {
-        return all_IngredientsTypeNamesList;
-    }
-
-    public void setAll_IngredientsTypeNamesList(Collection<String> all_IngredientsTypeNamesList)
-    {
-        this.all_IngredientsTypeNamesList = all_IngredientsTypeNamesList;
-        updateIngredientsFormTypeJComboBoxes();
-    }
-
     //FIX
     private JComboBox<String> getEdit_IngredientTypes_InPlan_JComboBox()
     {
@@ -2668,13 +2670,13 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
     {
         if (process.equals("removeKey"))
         {
-            if(map_ingredientTypesToIngredientNames.containsKey(oldKey)) // if the key had no ingredientNames attached to it, do nothing
+            if (map_ingredientTypesToIngredientNames.containsKey(oldKey)) // if the key had no ingredientNames attached to it, do nothing
             {
                 String unAssignedKey = "UnAssigned";
 
                 Collection<String> oldKeyListData = map_ingredientTypesToIngredientNames.remove(oldKey); // get the old ingredientNames associated with the old key
 
-                if(! map_ingredientTypesToIngredientNames.containsKey(unAssignedKey)) // add UnAssigned as key if it doesn't exist
+                if (!map_ingredientTypesToIngredientNames.containsKey(unAssignedKey)) // add UnAssigned as key if it doesn't exist
                 {
                     map_ingredientTypesToIngredientNames.put(unAssignedKey, new TreeSet<String>(Collator.getInstance()));
                 }
@@ -2715,9 +2717,11 @@ public class Add_Or_Edit_Ingredients_Screen extends JFrame
         editingCreateForm.updateIngredientForm_Type_JComboBox();
     }
 
-    public void updateAllSuppliers()
+    public void updateIngredientSuppliersJComboBoxes()
     {
-
+        System.out.printf("\n\nUpdating GUI");
+        createForm.clearShopForm();
+        editingCreateForm.refreshInterface(true, true);
     }
 
     //##################################################################################################################

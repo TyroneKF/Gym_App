@@ -1,3 +1,34 @@
+
+
+refresh button on addIngredients suppliers
+make ingredientsForm and addShops not editable when an ingredient isnt selected.
+
+Make all variables in private class private and have accessor and mutator methods
+
+
+Pass IngredientsTypesToNames data between classes - saves processing
+Opening and closing editscreen without changing anything resets saves, table
+Save doesnt display message on empty tahble - saves no message
+
+
+ingredients_info - Ingredient_Type store ID
+ingredientInShops  - Store_Name make store ID
+
+
+
+IngredientType DB taBLE
+Add ingredient Type
+Add a way to add shops
+select ingredientsType in editIngredientInfo
+
+Only Update IngredientType where the previoustype and new type change.
+
+refactor trigger columns
+Repeated message on ingredient form with ingredient with no supplier info!
+
+Change tableForm how data is stored to make when the ingredient info is changed easier
+
+
 ingredientName column - auto update
 add ingredients screen
 shopping list group by store then by ingredient type
