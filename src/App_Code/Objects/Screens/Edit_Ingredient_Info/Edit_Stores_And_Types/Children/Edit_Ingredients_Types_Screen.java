@@ -8,12 +8,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
 
-public class Ingredients_Types_Screen extends Parent_For_Types_And_Stores_Screens
+public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_Screens
 {
     protected String collapsibleBTNTXT1 = "Add Ingredients Type", collapsibleBTNTXT2 = "Edit Ingredients Type";
 
 
-    public Ingredients_Types_Screen(MyJDBC db, Edit_Ingredients_Screen add_or_edit_ingredients_screen, Collection<String> jcomboBoxList)
+    public Edit_Ingredients_Types_Screen(MyJDBC db, Edit_Ingredients_Screen add_or_edit_ingredients_screen, Collection<String> jcomboBoxList)
     {
         this.db = db;
         this.add_or_edit_ingredients_screen = add_or_edit_ingredients_screen;
