@@ -1,8 +1,9 @@
-package App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types;
+package App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types.Children;
 
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Ingredients_Info.Add_Or_Edit_Ingredients_Screen;
+import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types.Parent.Parent_For_Types_And_Stores;
 
 import javax.swing.*;
 import java.awt.*;

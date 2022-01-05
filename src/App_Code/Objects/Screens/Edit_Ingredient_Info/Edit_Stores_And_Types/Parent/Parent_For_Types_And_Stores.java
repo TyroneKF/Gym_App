@@ -1,4 +1,4 @@
-package App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types;
+package App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types.Parent;
 
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
