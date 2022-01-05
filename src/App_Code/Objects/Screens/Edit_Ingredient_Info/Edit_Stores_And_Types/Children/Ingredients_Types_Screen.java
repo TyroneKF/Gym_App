@@ -1,7 +1,7 @@
 package App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types.Children;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
-import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Ingredients_Info.Add_Or_Edit_Ingredients_Screen;
+import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Ingredients_Info.Edit_Ingredients_Screen;
 import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types.Parent.Parent_For_Types_And_Stores;
 
 import javax.swing.*;
@@ -13,7 +13,7 @@ public class Ingredients_Types_Screen extends Parent_For_Types_And_Stores
     protected String collapsibleBTNTXT1 = "Add Ingredients Type", collapsibleBTNTXT2 = "Edit Ingredients Type";
 
 
-    public Ingredients_Types_Screen(MyJDBC db, Add_Or_Edit_Ingredients_Screen add_or_edit_ingredients_screen, Collection<String> jcomboBoxList)
+    public Ingredients_Types_Screen(MyJDBC db, Edit_Ingredients_Screen add_or_edit_ingredients_screen, Collection<String> jcomboBoxList)
     {
         this.db = db;
         this.add_or_edit_ingredients_screen = add_or_edit_ingredients_screen;
@@ -166,7 +166,7 @@ public class Ingredients_Types_Screen extends Parent_For_Types_And_Stores
             //#################################################################
             // Reset EditCreateForm
             //#################################################################
-            Add_Or_Edit_Ingredients_Screen.EditingCreateForm editingCreateForm = add_or_edit_ingredients_screen.getEditingCreateForm();
+            Edit_Ingredients_Screen.EditingCreateForm editingCreateForm = add_or_edit_ingredients_screen.getEditingCreateForm();
             editingCreateForm.refreshInterface(true, true);  // reset form`
 
             //###################################################################

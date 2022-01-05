@@ -2,7 +2,7 @@ package App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types.Chil
 
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
-import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Ingredients_Info.Add_Or_Edit_Ingredients_Screen;
+import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Ingredients_Info.Edit_Ingredients_Screen;
 import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types.Parent.Parent_For_Types_And_Stores;
 
 import javax.swing.*;
@@ -13,7 +13,7 @@ public class Edit_Ingredient_Stores extends Parent_For_Types_And_Stores
 {
     protected String collapsibleBTNTXT1 = "Add Suppliers", collapsibleBTNTXT2 = "Edit Suppliers";
 
-    public Edit_Ingredient_Stores(MyJDBC db, Add_Or_Edit_Ingredients_Screen add_or_edit_ingredients_screen, Collection<String> jcomboBoxList)
+    public Edit_Ingredient_Stores(MyJDBC db, Edit_Ingredients_Screen add_or_edit_ingredients_screen, Collection<String> jcomboBoxList)
     {
         this.db = db;
         this.add_or_edit_ingredients_screen = add_or_edit_ingredients_screen;
