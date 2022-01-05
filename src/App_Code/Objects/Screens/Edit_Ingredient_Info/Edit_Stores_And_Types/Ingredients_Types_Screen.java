@@ -129,6 +129,7 @@ public class Ingredients_Types_Screen extends Parent_For_Types_And_Stores
             super.idColumnName = "Ingredient_Type_ID";
             super.fkTable = "ingredients_info";
             super.setToNull = false;
+            super.removeJComboBoxItems = new String[]{"None Of The Above", "UnAssigned"};
 
 
             //###################################################################

@@ -41,14 +41,14 @@ public class Edit_Ingredient_Stores extends Parent_For_Types_And_Stores
         //###########################
         //Add Ingredients Type Form
         //###########################
-        AddStores addStores = new AddStores(this, collapsibleBTNTXT1, 250, 50);
-        addToContainer(mainCentreScreen, addStores, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+        super.addScreen = new AddStores(this, collapsibleBTNTXT1, 250, 50);
+        addToContainer(mainCentreScreen, addScreen, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
         //###########################
         //Edit Ingredients Type Form
         //###########################
-        EditScreen editStores = new EditStores(this, collapsibleBTNTXT2, 250, 50);
-        addToContainer(mainCentreScreen, editStores, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+        super.editScreen= new EditStores(this, collapsibleBTNTXT2, 250, 50);
+        addToContainer(mainCentreScreen, editScreen, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
         //###########################
         //Space Divider
         //###########################
@@ -77,8 +77,6 @@ public class Edit_Ingredient_Stores extends Parent_For_Types_And_Stores
             super.dataGatheringName = "Supplier Name";
             super.dbColumnNameField = "Store_Name";
             super.dbTableName = "stores";
-
-
             //###################################################################
             // Drawing interface
             //####################################################################
@@ -130,6 +128,7 @@ public class Edit_Ingredient_Stores extends Parent_For_Types_And_Stores
             super.idColumnName = "StoreID";
             super.fkTable = "ingredients_info";
             super.setToNull = true;
+            super.removeJComboBoxItems = new String[]{"No Shop"};
 
             //###################################################################
             // Drawing interface

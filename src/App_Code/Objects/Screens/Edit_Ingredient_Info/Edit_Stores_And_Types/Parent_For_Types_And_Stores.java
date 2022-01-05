@@ -30,6 +30,9 @@ public class Parent_For_Types_And_Stores extends JPanel
     protected Add_Or_Edit_Ingredients_Screen add_or_edit_ingredients_screen;
     protected String collapsibleBTNTXT1 = "", collapsibleBTNTXT2 = "";
 
+    protected   EditScreen editScreen ;
+    protected AddScreen addScreen;
+
     public Parent_For_Types_And_Stores()
     {
     }
@@ -59,16 +62,16 @@ public class Parent_For_Types_And_Stores extends JPanel
 
 
         //###########################
-        //Add Ingredients Type Form
+        //Add  Form
         //###########################
-        AddScreen addIngredientsTypeScreen = new AddScreen(this, collapsibleBTNTXT1, 250, 50);
-        addToContainer(mainCentreScreen, addIngredientsTypeScreen, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+        addScreen = new AddScreen(this, collapsibleBTNTXT1, 250, 50);
+        addToContainer(mainCentreScreen, addScreen, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
         //###########################
-        //Edit Ingredients Type Form
+        //Edit  Form
         //###########################
-        EditScreen editIngredientsTypeScreen = new EditScreen(this, collapsibleBTNTXT2, 250, 50);
-        addToContainer(mainCentreScreen, editIngredientsTypeScreen, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+         editScreen = new EditScreen(this, collapsibleBTNTXT2, 250, 50);
+        addToContainer(mainCentreScreen, editScreen, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
         //###########################
         //Space Divider
@@ -97,6 +100,8 @@ public class Parent_For_Types_And_Stores extends JPanel
 
         dbColumnNameField,
                 dbTableName;
+
+
 
         public AddScreen(Container parentContainer, String btnText, int btnWidth, int btnHeight)
         {
@@ -278,23 +283,6 @@ public class Parent_For_Types_And_Stores extends JPanel
             mainJPanel2.revalidate();
         }
 
-        protected void loadJComboBox()
-        {
-            jComboBox.removeAllItems();
-            for (String ingredientType : jcomboBoxList)
-            {
-                jComboBox.addItem(ingredientType);
-            }
-            jComboBox.setSelectedIndex(-1);
-
-            removeJCombBoxItems();
-        }
-
-        protected void removeJCombBoxItems()
-        {
-
-        }
-
         protected boolean doesStringContainCharacters(String input)
         {
             Pattern p1 = Pattern.compile("[^a-zA-Z]", Pattern.CASE_INSENSITIVE);
@@ -372,15 +360,15 @@ public class Parent_For_Types_And_Stores extends JPanel
             return false;
         }
 
-        protected void addOrDeleteIngredientFromMap(String process, String ingredientType)
+        protected void addOrDeleteObjectFromMap(String process, String object)
         {
-            if (process.equals("add"))// if key exists add the ingredientName in
+            if (process.equals("add"))// if key exists add the object in
             {
-                jcomboBoxList.add(ingredientType);
+                jcomboBoxList.add(object);
             }
             else if (process.equals("delete"))
             {
-                jcomboBoxList.remove(ingredientType);
+                jcomboBoxList.remove(object);
             }
         }
 
@@ -389,8 +377,8 @@ public class Parent_For_Types_And_Stores extends JPanel
         protected void resetActions()
         {
             refreshBtnAction();
-            addOrDeleteIngredientFromMap("add", jtextfieldTXT);
-            loadJComboBox();
+            addOrDeleteObjectFromMap("add", jtextfieldTXT);
+            editScreen.loadJComboBox();
         }
 
 
@@ -409,12 +397,33 @@ public class Parent_For_Types_And_Stores extends JPanel
                 selectedItem = "",
                 fkTable;
         protected boolean setToNull = false, itemDeleted = false;
+        protected String[] removeJComboBoxItems = new String[]{};
 
         public EditScreen(Container parentContainer, String btnText, int btnWidth, int btnHeight)
         {
             super(parentContainer, btnText, btnWidth, btnHeight);
         }
 
+
+        protected void removeJCombBoxItems()
+        {
+            for(String removeItem: removeJComboBoxItems)
+            {
+                jComboBox.removeItem(removeItem);
+            }
+        }
+
+        protected void loadJComboBox()
+        {
+            jComboBox.removeAllItems();
+            for (String object : jcomboBoxList)
+            {
+                jComboBox.addItem(object);
+            }
+            jComboBox.setSelectedIndex(-1);
+
+            removeJCombBoxItems();
+        }
 
         @Override
         protected void createForm()
@@ -475,11 +484,11 @@ public class Parent_For_Types_And_Stores extends JPanel
                 return;
             }
 
-            if (deleteIngredientBTNAction())
+            if (deleteBTNAction())
             {
                 JOptionPane.showMessageDialog(null, String.format("\n\nSelected Item ''%s'' Has Successfully Been Deleted!!!", selectedItem));
 
-                addOrDeleteIngredientFromMap("delete", selectedItem);
+                addOrDeleteObjectFromMap("delete", selectedItem);
 
                 itemDeleted = true;
                 updateOtherScreens();
@@ -494,7 +503,7 @@ public class Parent_For_Types_And_Stores extends JPanel
             }
         }
 
-        private boolean deleteIngredientBTNAction()
+        private boolean deleteBTNAction()
         {
             System.out.printf("\n\nHere 10");
             System.out.printf("\n#################################################################################");
@@ -526,7 +535,7 @@ public class Parent_For_Types_And_Stores extends JPanel
         protected void creatingAdditionalAddScreenObjects()
         {
             //########################################################################################################
-            //  IngredientTypeJComboBox
+            //  JComboBox
             //########################################################################################################
             jcomboBoxJPanel = new JPanel(new GridLayout(1, 1));
 
@@ -602,8 +611,8 @@ public class Parent_For_Types_And_Stores extends JPanel
         @Override
         protected void resetActions()
         {
-            addOrDeleteIngredientFromMap("add", jtextfieldTXT);
-            addOrDeleteIngredientFromMap("delete", (String) jComboBox.getSelectedItem());
+            addOrDeleteObjectFromMap("add", jtextfieldTXT);
+            addOrDeleteObjectFromMap("delete", (String) jComboBox.getSelectedItem());
             refreshBtnAction();
             loadJComboBox();
         }
