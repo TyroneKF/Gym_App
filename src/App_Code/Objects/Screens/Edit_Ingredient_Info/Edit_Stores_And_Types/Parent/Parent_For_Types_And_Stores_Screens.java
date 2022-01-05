@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Parent_For_Types_And_Stores extends JPanel
+public class Parent_For_Types_And_Stores_Screens extends JPanel
 {
 
     protected GridBagConstraints gbc = new GridBagConstraints();
@@ -33,11 +33,11 @@ public class Parent_For_Types_And_Stores extends JPanel
     protected   EditScreen editScreen ;
     protected AddScreen addScreen;
 
-    public Parent_For_Types_And_Stores()
+    public Parent_For_Types_And_Stores_Screens()
     {
     }
 
-    public Parent_For_Types_And_Stores(MyJDBC db, Edit_Ingredients_Screen _edit_ingredients_screen, Collection<String> jcomboBoxList)
+    public Parent_For_Types_And_Stores_Screens(MyJDBC db, Edit_Ingredients_Screen _edit_ingredients_screen, Collection<String> jcomboBoxList)
     {
         this.db = db;
         this.add_or_edit_ingredients_screen = _edit_ingredients_screen;

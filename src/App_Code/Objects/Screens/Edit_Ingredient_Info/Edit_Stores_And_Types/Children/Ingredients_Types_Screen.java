@@ -2,13 +2,13 @@ package App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types.Chil
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Ingredients_Info.Edit_Ingredients_Screen;
-import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types.Parent.Parent_For_Types_And_Stores;
+import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types.Parent.Parent_For_Types_And_Stores_Screens;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
 
-public class Ingredients_Types_Screen extends Parent_For_Types_And_Stores
+public class Ingredients_Types_Screen extends Parent_For_Types_And_Stores_Screens
 {
     protected String collapsibleBTNTXT1 = "Add Ingredients Type", collapsibleBTNTXT2 = "Edit Ingredients Type";
 
