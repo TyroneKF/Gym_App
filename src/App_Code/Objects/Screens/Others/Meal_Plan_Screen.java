@@ -28,8 +28,8 @@ public class Meal_Plan_Screen extends JPanel
 
     //#################################################################################################################
 
-
-    private String name = "MyJTable_JDBC511_05";
+    String databaseName = "gymapp7";
+    private String name = databaseName;
     //########################################################
     // Objects
     //########################################################
@@ -46,7 +46,7 @@ public class Meal_Plan_Screen extends JPanel
     private IngredientsTable jTableBeingAdded;
     private ArrayList<IngredientsTable> listOfJTables = new ArrayList<>();
 
-    String databaseName = "gymapp6";
+
 
     //########################################################
     // Variables
