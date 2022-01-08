@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 public class IngredientsTable extends JDBC_JTable
 {
@@ -237,11 +238,11 @@ public class IngredientsTable extends JDBC_JTable
                 ArrayList<String> storesResults = db.getSingleColumnQuery_ArrayList(queryStore);
 
                 //HELLO REMOVE
-/*
+
             String seperator = "#######################################################################";
             System.out.printf("\n\n%s \n\nQuery: \n%s \n\nList Of Available Shops:\n\n%s", seperator, queryStore, storesResults);
 
- */
+
 
                 if (storesResults != null)
                 {
@@ -727,20 +728,6 @@ public class IngredientsTable extends JDBC_JTable
             // Create Update Statements
             //##################################################################################################
 
-            //#######################################
-            //Create IngredientID  Update Statement
-            //#######################################
-            String uploadQuery = String.format("""
-                    UPDATE  ingredients_in_meal
-                    SET IngredientID = %s
-                    WHERE Ingredients_Index = %s AND PlanID = %s;
-
-                        """, selected_Ingredient_ID, ingredientIndex, temp_PlanID);
-
-            //#######################################
-            //Create PDID Update Statement
-            //#######################################
-
             //Get new PDID for New Ingredient which matches previously Selected Store
             String query_PDID = String.format("""
                     SELECT
@@ -783,37 +770,14 @@ public class IngredientsTable extends JDBC_JTable
                     ) AS NEW_PDID""", temp_PlanID, ingredientIndex, ingredientID, selected_Ingredient_ID);
 
 
-            ArrayList<String> newPDIDResults = db.getSingleColumnQuery_ArrayList(query_PDID+";");
-            System.out.printf("\n\nQuery1: \n\n%s \n\n\nQuery PDID Results: %s", query_PDID, newPDIDResults);
-            if (newPDIDResults == null)
-            {
-                System.out.printf("\n\nQuery1: \n\n%s \n\n\nResults: %s", query_PDID, newPDIDResults.get(0));
-                JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nUnable to retrieve pricing info!");
-                // Change Jtable JComboBox Back To Original Value
-                jTable.setValueAt(previous_IngredientName_JComboItem, rowEdited, columnEdited);
-
-                setRowBeingEdited();
-                return;
-            }
-
-            // Create  Statement for changing PDID (Ingredient_Index)
-            //String uploadQuery2 = String.format("""
-            //        UPDATE  ingredients_in_meal
-            //        SET PDID = %s
-            //       WHERE Ingredients_Index = %s AND PlanID = %s;
-            //          """, newPDIDResults.get(0), ingredientIndex, temp_PlanID);
-
-
-
-            //  System.out.printf("\n\nQUERY PDID: \n'''%s''' \n\nPDID = %s \n\nUpload Query \n'''%s'''", query_PDID, newPDIDResults.get(0), uploadQuery2);
-
-            // Create  Statement for changing PDID (Ingredient_Index)
-            String uploadQuery2 = String.format("""
+            //#######################################
+            //Create IngredientID  Update Statement
+            //#######################################
+            String uploadQuery = String.format("""
                     UPDATE  ingredients_in_meal
-                    SET PDID = %s
-                    WHERE Ingredients_Index = %s AND PlanID = %s;
-
-                        """, "NULL", ingredientIndex, temp_PlanID);
+                    SET IngredientID = %s, 
+                    PDID = (%s)
+                    WHERE Ingredients_Index = %s AND PlanID = %s; """, selected_Ingredient_ID, query_PDID, ingredientIndex, temp_PlanID);
 
             //  System.out.printf("\n\nQUERY PDID: \n'''%s''' \n\nPDID = %s \n\nUpload Query \n'''%s'''", query_PDID, newPDIDResults.get(0), uploadQuery2);
 
@@ -821,8 +785,8 @@ public class IngredientsTable extends JDBC_JTable
             // Upload IngredientName & NEW PDID
             //##################################################################################################
 
-            System.out.printf("\n\nQuery1 \n\n%s \n\nQuery2 \n\n%s", uploadQuery, uploadQuery2);
-            if (!(db.uploadData_Batch_Altogether(new String[]{uploadQuery, uploadQuery2})))
+            System.out.printf("\n\nQuery1 \n\n%s", uploadQuery);
+            if (!(db.uploadData_Batch_Altogether(new String[]{uploadQuery})))
             {
                 JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nUnable to update Ingredient In DB!");
 
@@ -951,7 +915,6 @@ public class IngredientsTable extends JDBC_JTable
             return;
         }
 
-
         //####################################################################
         //  Update Ingredients table based on DB
         //####################################################################
@@ -964,7 +927,7 @@ public class IngredientsTable extends JDBC_JTable
 
         ArrayList<ArrayList<Object>> ingredientsUpdateData = db.get_Multi_ColumnQuery_Object(query);
 
-        System.out.printf("\n\n\n\n%s\n\n", ingredientsUpdateData);  // HELLO REMOVE
+        System.out.printf("\n\n\n\nUpdate DATA: \n%s\n\n", ingredientsUpdateData);  // HELLO REMOVE
 
         if (ingredientsUpdateData == null)
         {

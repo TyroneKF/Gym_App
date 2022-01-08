@@ -447,8 +447,8 @@ SELECT * FROM meals;
 SELECT * FROM ingredients_in_meal;
 
 
-
-SELECT * FROM ingredients_in_meal_calculation WHERE PLANID =2;
+SELECT * FROM ingredients_in_meal WHERE PLANID =1;
+SELECT * FROM ingredients_in_meal_calculation WHERE PLANID =1;
 SELECT * FROM total_meal_view WHERE PLANID =2;
 
 SELECT * FROM macros_Per_Pound_And_Limits  WHERE PLANID =2;
