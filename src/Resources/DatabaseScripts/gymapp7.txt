@@ -229,9 +229,9 @@ IFNULL(ROUND((info.Calories /info.Based_On_Quantity)*i.Quantity,2),0) AS Calorie
 'Delete Row' AS `Delete Button`
 
 FROM ingredients_in_meal i 
-JOIN ingredients_info info ON  info.IngredientID = i.IngredientID 
+LEFT JOIN ingredients_info info ON  info.IngredientID = i.IngredientID 
 LEFT JOIN ingredientInShops p ON p.PDID = i.PDID
-JOIN stores s ON p.StoreID = s.StoreID;
+LEFT JOIN stores s ON p.StoreID = s.StoreID;
 
 --#####################################################################
 

@@ -6,8 +6,8 @@ import java.util.regex.Pattern;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Gui_Objects.*;
-import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types.Children.Edit_Ingredient_Stores_Screen;
-import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types.Children.Edit_Ingredients_Types_Screen;
+import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types.Edit_Ingredient_Stores_Screen;
+import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types.Edit_Ingredients_Types_Screen;
 import App_Code.Objects.Screens.Others.Meal_Plan_Screen;
 
 import javax.swing.*;

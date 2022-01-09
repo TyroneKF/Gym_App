@@ -1,4 +1,4 @@
-package App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types.Parent;
+package App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types;
 
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
@@ -503,7 +503,7 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
             }
         }
 
-        private boolean deleteBTNAction()
+        protected boolean deleteBTNAction()
         {
             System.out.printf("\n\nHere 10");
             System.out.printf("\n#################################################################################");

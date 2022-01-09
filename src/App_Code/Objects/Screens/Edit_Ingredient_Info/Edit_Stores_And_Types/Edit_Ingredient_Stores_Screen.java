@@ -1,9 +1,9 @@
-package App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types.Children;
+package App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types;
 
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Ingredients_Info.Edit_Ingredients_Screen;
-import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types.Parent.Parent_For_Types_And_Stores_Screens;
+import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types.Parent_For_Types_And_Stores_Screens;
 
 import javax.swing.*;
 import java.awt.*;
@@ -151,6 +151,39 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
         {
             String text = "\n\nFailed Upload - Couldn't Add New Ingredient Type";
             JOptionPane.showMessageDialog(null, text);
+        }
+
+        @Override
+        protected boolean deleteBTNAction()
+        {
+            //######################################
+            // Create Variable for storeID
+            //######################################
+            String mysqlVariableReference1 = "@CurrentID"; // StoreID
+            String createMysqlVariable1 = String.format("SET %s = (SELECT %s FROM %s WHERE %s = '%s');",
+                    mysqlVariableReference1, idColumnName, dbTableName, dbColumnNameField, selectedItem);
+
+            //######################################
+            // Update ingredients_in_meal
+            //######################################
+            String update1 = String.format("""
+                    UPDATE ingredients_in_meal
+                       SET PDID = NULL
+                    WHERE PDID IN (SELECT PDID FROM ingredientInShops WHERE StoreID = %s);""", mysqlVariableReference1);
+
+            //######################################
+            // Update  ingredientInShops & Stores
+            //######################################
+            String update2 = String.format("DELETE FROM ingredientInShops WHERE StoreID = %s;",mysqlVariableReference1);
+            String update3 = String.format("DELETE FROM stores WHERE StoreID = %s;", mysqlVariableReference1);
+
+            if (!db.uploadData_Batch_Independently(new String[]{createMysqlVariable1, update1, update2, update3}))
+            {
+                JOptionPane.showMessageDialog(null, String.format("\n\nFailed To Delete ' %s ' FROM %s !!", selectedItem, dataGatheringName));
+                return false;
+            }
+
+            return true;
         }
 
         @Override
