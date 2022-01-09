@@ -649,8 +649,15 @@ public class Edit_Ingredients_Screen extends JFrame
             //###########################
             // Get New Ingredient Shop Info
             //###########################
-            ArrayList<ArrayList<String>> ingredientShops_R = db.getMultiColumnQuery(String.format("""
-                    SELECT PDID, Store_Name, Cost_Per_Unit, Volume_Per_Unit FROM  ingredientInShops WHERE IngredientID = %s;""", selectedIngredientID));
+            ArrayList<ArrayList<String>> ingredientShops_R = db.getMultiColumnQuery(String.format("""                    
+                    SELECT i.PDID, s.Store_Name, i.Cost_Per_Unit, i.Volume_Per_Unit
+                    FROM  ingredientInShops i
+                    INNER JOIN
+                    (
+                      SELECT StoreID, Store_Name FROM stores
+                    ) s
+                    ON s.StoreID = i.StoreID
+                    AND  i.IngredientID = %s ;""", selectedIngredientID));
 
             if (ingredientShops_R == null)
             {
@@ -1150,11 +1157,12 @@ public class Edit_Ingredients_Screen extends JFrame
                         //Update String
                         String updateString = String.format("""
                                         UPDATE ingredientInShops
-                                        SET Volume_Per_Unit = %s, Cost_Per_Unit = %s, Store_Name = '%s'
-                                        WHERE PDID = %s;
-                                        """,
-                                supplierInDB.getQuantityPerPack_TxtField().getText(), supplierInDB.getIngredientPrice_TxtField().getText(),
-                                supplierInDB.getShops_JComboBox().getSelectedItem().toString(), PDID);
+                                        SET Volume_Per_Unit = %s, Cost_Per_Unit = %s, StoreID = (SELECT StoreID FROM stores WHERE Store_Name = '%s')
+                                        WHERE PDID = %s;""",
+                                supplierInDB.getQuantityPerPack_TxtField().getText(),
+                                supplierInDB.getIngredientPrice_TxtField().getText(),
+                                supplierInDB.getShops_JComboBox().getSelectedItem().toString(),
+                                PDID);
 
                         // Add to update List
                         updates[listPos] = updateString;
@@ -2364,7 +2372,7 @@ public class Edit_Ingredients_Screen extends JFrame
                 String mysqlVariableReference = "@newIngredientID";
                 String createMysqlVariable = String.format("SET %s = (SELECT MAX(IngredientID) FROM ingredients_info);", mysqlVariableReference);
                 String updateString = String.format("""
-                        INSERT INTO ingredientInShops (IngredientID, Volume_Per_Unit, Cost_Per_Unit, Store_Name)
+                        INSERT INTO ingredientInShops (IngredientID, Volume_Per_Unit, Cost_Per_Unit, StoreID)
                         VALUES """);
 
                 ///#################################
@@ -2376,7 +2384,8 @@ public class Edit_Ingredients_Screen extends JFrame
                 for (Integer key : prices.keySet())
                 {
                     pos++;
-                    values += String.format("(%s, %s, %s, '%s')", mysqlVariableReference, quantityPerPack.get(key).getText(), prices.get(key).getText(), shopJComboBoxes.get(key).getSelectedItem().toString());
+                    values += String.format("(%s, %s, %s, (SELECT StoreID FROM stores WHERE Store_Name = '%s'))",
+                            mysqlVariableReference, quantityPerPack.get(key).getText(), prices.get(key).getText(), shopJComboBoxes.get(key).getSelectedItem().toString());
 
                     if (pos == listSize)
                     {
@@ -2394,6 +2403,9 @@ public class Edit_Ingredients_Screen extends JFrame
                 //############################################################
 
                 updateShops = true;
+
+                System.out.printf("\n\n%s \n\n%s", createMysqlVariable, updateString);
+
                 return new String[]{createMysqlVariable, updateString};
             }
 
