@@ -1,4 +1,8 @@
 
+//######################################################################################################
+ComboBoxes that store, types, names, stores which are edited dont have to be fully refreshed the item
+that was edited can be singularly handled
+//######################################################################################################
 
 refresh button on addIngredients suppliers
 make ingredientsForm and addShops not editable when an ingredient isnt selected.
