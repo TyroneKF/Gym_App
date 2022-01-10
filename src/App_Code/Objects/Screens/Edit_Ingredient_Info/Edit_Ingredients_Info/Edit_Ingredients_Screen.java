@@ -53,7 +53,7 @@ public class Edit_Ingredients_Screen extends JFrame
         }
     });
 
-    createForm createForm;
+    CreateForm createForm;
     EditingCreateForm editingCreateForm;
 
     //##################################################################################################################
@@ -122,7 +122,7 @@ public class Edit_Ingredients_Screen extends JFrame
                 JPanel addIngredientsFormJPanel = new JPanel(new GridBagLayout());
                 tp.add("Add Ingredients", addIngredientsFormJPanel);
 
-                createForm = new createForm();
+                createForm = new CreateForm();
                 addToContainer(addIngredientsFormJPanel, createForm, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
 
                 //#################################################
@@ -160,10 +160,10 @@ public class Edit_Ingredients_Screen extends JFrame
     }
 
     //##################################################################################################################
-    // Other Classes
+    // Create Forms
     //##################################################################################################################
 
-    public class EditingCreateForm extends createForm
+    public class EditingCreateForm extends CreateForm
     {
         private boolean jcomboUpdateStaus = false;
         private EditIngredientsForm ingredientsForm;
@@ -1326,7 +1326,7 @@ public class Edit_Ingredients_Screen extends JFrame
         }
     }
 
-    public class createForm extends JPanel
+    public class CreateForm extends JPanel
     {
         protected int yPos = 0;
         protected JPanel scrollPaneJPanel;
@@ -1343,7 +1343,7 @@ public class Edit_Ingredients_Screen extends JFrame
         // Constructor
         //##################################################################################################################
 
-        createForm()
+        CreateForm()
         {
             //###################################################################################
             //   Create Screen for Interface
@@ -2672,6 +2672,37 @@ public class Edit_Ingredients_Screen extends JFrame
         }
     }
 
+    //############################################
+    // Return Forms
+    //############################################
+
+    public EditingCreateForm getEditingCreateForm()
+    {
+        return editingCreateForm;
+    }
+
+    public CreateForm getCreateForm()
+    {
+        return createForm;
+    }
+
+    //##################################################################################################################
+    // Other Classes
+    //##################################################################################################################
+
+    public void updateIngredientsFormTypeJComboBoxes()
+    {
+        createForm.updateIngredientForm_Type_JComboBox();
+        editingCreateForm.updateIngredientForm_Type_JComboBox();
+    }
+
+    public void updateIngredientSuppliersJComboBoxes()
+    {
+        System.out.printf("\n\nUpdating GUI");
+        createForm.clearShopForm();
+        editingCreateForm.refreshInterface(true, true);
+    }
+
     //FIX
     private JComboBox<String> getEdit_IngredientTypes_InPlan_JComboBox()
     {
@@ -2716,24 +2747,6 @@ public class Edit_Ingredients_Screen extends JFrame
             }
         }
         return false;
-    }
-
-    public EditingCreateForm getEditingCreateForm()
-    {
-        return editingCreateForm;
-    }
-
-    public void updateIngredientsFormTypeJComboBoxes()
-    {
-        createForm.updateIngredientForm_Type_JComboBox();
-        editingCreateForm.updateIngredientForm_Type_JComboBox();
-    }
-
-    public void updateIngredientSuppliersJComboBoxes()
-    {
-        System.out.printf("\n\nUpdating GUI");
-        createForm.clearShopForm();
-        editingCreateForm.refreshInterface(true, true);
     }
 
     //##################################################################################################################
