@@ -447,10 +447,6 @@ public class Meal_Plan_Screen extends JPanel
                 }
             }
         });
-
-
-
-        open_AddIngredients_Screen();
     }
 
     public static void main(String[] args)
