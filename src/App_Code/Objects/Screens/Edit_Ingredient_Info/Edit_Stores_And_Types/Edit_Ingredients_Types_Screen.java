@@ -12,20 +12,10 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
 {
     protected String collapsibleBTNTXT1 = "Add Ingredients Type", collapsibleBTNTXT2 = "Edit Ingredients Type";
 
-
-    public Edit_Ingredients_Types_Screen(MyJDBC db, Edit_Ingredients_Screen add_or_edit_ingredients_screen, Collection<String> jcomboBoxList)
-    {
-        this.db = db;
-        this.add_or_edit_ingredients_screen = add_or_edit_ingredients_screen;
-        this.jcomboBoxList = jcomboBoxList;
-
-        createInterface();
-    }
-
     @Override
     protected void createInterface()
     {
-        System.out.printf("\n\nHere1");
+        System.out.printf("\n\nEdit_Ingredients_Types_Screen() Here1");
         //###################################################################################
         //   Create Screen for Interface
         //###################################################################################
@@ -61,6 +51,11 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
         revalidate();
     }
 
+    public Edit_Ingredients_Types_Screen(MyJDBC db, Edit_Ingredients_Screen add_or_edit_ingredients_screen, Collection<String> jcomboBoxList)
+    {
+        super(db, add_or_edit_ingredients_screen, jcomboBoxList);
+    }
+
     public class AddIngredientsType extends AddScreen
     {
         public AddIngredientsType(Container parentContainer, String btnText, int btnWidth, int btnHeight)
@@ -71,7 +66,7 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
         @Override
         protected void createForm()
         {
-            System.out.printf("\n\nHere2");
+            System.out.printf("\n\nEdit_Ingredients_Types_Screen() Here2");
             super.mainLabel = "Add Ingredient Type Name";
 
             super.dataGatheringName = "Ingredient Type Name";
@@ -118,7 +113,7 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
         @Override
         protected void createForm()
         {
-            System.out.printf("\n\nHere4");
+            System.out.printf("\n\nEdit_Ingredients_Types_Screen() Here4");
 
             super.lable1 = "Select Ingredient Type Name To Edit";
             super.label2 = "Change Ingredient Type Name";
