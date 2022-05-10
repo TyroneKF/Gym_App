@@ -25,7 +25,7 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
     @Override
     protected void createInterface()
     {
-        System.out.printf("\n\nHere1");
+        System.out.printf("\n\nEdit_Ingredients_Types_Screen() Here1");
         //###################################################################################
         //   Create Screen for Interface
         //###################################################################################
@@ -71,7 +71,7 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
         @Override
         protected void createForm()
         {
-            System.out.printf("\n\nHere2");
+            System.out.printf("\n\nEdit_Ingredients_Types_Screen() Here2");
             super.mainLabel = "Add Ingredient Type Name";
 
             super.dataGatheringName = "Ingredient Type Name";
@@ -118,7 +118,7 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
         @Override
         protected void createForm()
         {
-            System.out.printf("\n\nHere4");
+            System.out.printf("\n\nEdit_Ingredients_Types_Screen() Here4");
 
             super.lable1 = "Select Ingredient Type Name To Edit";
             super.label2 = "Change Ingredient Type Name";
