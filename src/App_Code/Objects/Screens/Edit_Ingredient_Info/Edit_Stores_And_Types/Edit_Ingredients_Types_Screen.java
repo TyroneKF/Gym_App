@@ -2,7 +2,6 @@ package App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Ingredients_Info.Edit_Ingredients_Screen;
-import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types.Parent_For_Types_And_Stores_Screens;
 
 import javax.swing.*;
 import java.awt.*;
@@ -42,14 +41,15 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
         //###########################
         //Add Ingredients Type Form
         //###########################
-        AddIngredientsType addIngredientsTypeScreen = new AddIngredientsType(this, collapsibleBTNTXT1, 250, 50);
-        addToContainer(mainCentreScreen, addIngredientsTypeScreen, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+        super.addScreen = new AddIngredientsType(this, collapsibleBTNTXT1, 250, 50);
+        addToContainer(mainCentreScreen, addScreen, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
         //###########################
         //Edit Ingredients Type Form
         //###########################
-        EditIngredientType editIngredientType = new EditIngredientType(this, collapsibleBTNTXT2, 250, 50);
-        addToContainer(mainCentreScreen, editIngredientType, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+        super.editScreen = new EditIngredientType(this, collapsibleBTNTXT2, 250, 50);
+        addToContainer(mainCentreScreen, editScreen, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+
         //###########################
         //Space Divider
         //###########################

@@ -40,16 +40,17 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
 
 
         //###########################
-        //Add Ingredients Type Form
+        //Add Ingredients Stores Form
         //###########################
         super.addScreen = new AddStores(this, collapsibleBTNTXT1, 250, 50);
         addToContainer(mainCentreScreen, addScreen, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
         //###########################
-        //Edit Ingredients Type Form
+        //Edit Ingredients Stores Form
         //###########################
         super.editScreen= new EditStores(this, collapsibleBTNTXT2, 250, 50);
         addToContainer(mainCentreScreen, editScreen, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+
         //###########################
         //Space Divider
         //###########################

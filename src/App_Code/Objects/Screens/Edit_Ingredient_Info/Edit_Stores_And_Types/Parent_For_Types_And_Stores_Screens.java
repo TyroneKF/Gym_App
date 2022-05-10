@@ -30,7 +30,7 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
     protected Edit_Ingredients_Screen add_or_edit_ingredients_screen;
     protected String collapsibleBTNTXT1 = "", collapsibleBTNTXT2 = "";
 
-    protected   EditScreen editScreen ;
+    protected EditScreen editScreen ;
     protected AddScreen addScreen;
 
     public Parent_For_Types_And_Stores_Screens()
@@ -86,22 +86,13 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
 
     public class AddScreen extends CollapsibleJPanel
     {
-        protected int
-                ypos2 = 0;
+        protected int ypos2 = 0;
 
         protected JPanel jtextfieldJPanel, mainJPanel, mainJPanel2;
         protected JTextField jTextField;
         protected JButton submitButton;
-        protected String
-                jtextfieldTXT,
-                mainLabel,
 
-        dataGatheringName,
-
-        dbColumnNameField,
-                dbTableName;
-
-
+        protected String jtextfieldTXT, mainLabel,  dataGatheringName, dbColumnNameField, dbTableName;
 
         public AddScreen(Container parentContainer, String btnText, int btnWidth, int btnHeight)
         {
