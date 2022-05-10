@@ -372,8 +372,6 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
             }
         }
 
-
-
         protected void resetActions()
         {
             refreshBtnAction();

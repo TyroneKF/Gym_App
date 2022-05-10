@@ -13,15 +13,6 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
 {
     protected String collapsibleBTNTXT1 = "Add Suppliers", collapsibleBTNTXT2 = "Edit Suppliers";
 
-    public Edit_Ingredient_Stores_Screen(MyJDBC db, Edit_Ingredients_Screen add_or_edit_ingredients_screen, Collection<String> jcomboBoxList)
-    {
-        this.db = db;
-        this.add_or_edit_ingredients_screen = add_or_edit_ingredients_screen;
-        this.jcomboBoxList = jcomboBoxList;
-
-        createInterface();
-    }
-
     @Override
     protected void createInterface()
     {
@@ -59,6 +50,11 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
         addToContainer(mainCentreScreen, jPanel, 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 10, 0);
 
         revalidate();
+    }
+
+    public Edit_Ingredient_Stores_Screen(MyJDBC db, Edit_Ingredients_Screen add_or_edit_ingredients_screen, Collection<String> jcomboBoxList)
+    {
+        super(db, add_or_edit_ingredients_screen, jcomboBoxList);
     }
 
     public class AddStores extends AddScreen
