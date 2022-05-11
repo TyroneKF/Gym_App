@@ -324,7 +324,6 @@ public class Meal_Plan_Screen extends JPanel
             // Macro Targets & Macros Left Setup
             //########################################################################################
             JPanel macrosInfoJPanel = new JPanel(new GridBagLayout());
-            macrosInfoJPanel.setBorder(BorderFactory.createLineBorder(Color.red));
 
             addToContainer(scrollJPanelEnd, macrosInfoJPanel, 0, pos++, 1, 1, 0.25, 0.25, "horizontal", 0, 0, "end");
 
@@ -374,7 +373,7 @@ public class Meal_Plan_Screen extends JPanel
             macrosLeft_JTable.setTableHeaderFont(new Font("Dialog", Font.BOLD, 14));
             macrosLeft_JTable.setTableTextFont(new Font("Dialog", Font.PLAIN, 14));
 
-            addToContainer(macrosInfoJPanel, macrosLeft_JTable, 0, 2, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+            addToContainer(macrosInfoJPanel, macrosLeft_JTable, 0, 2, 1, 1, 0.25, 0.25, "both", 30, 0, null);
             resizeGUi();
 
             //######################################################################
