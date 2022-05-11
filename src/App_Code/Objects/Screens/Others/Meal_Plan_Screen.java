@@ -464,7 +464,7 @@ public class Meal_Plan_Screen extends JPanel
         });
     }
 
-    private CollapsibleJPanel create_CollapsibleJPanel(boolean mealInDB, Container container, Integer mealID, Integer temp_MealID, String mealName, int mealNo, String[] meal_total_columnNames,
+    private CollapsibleJPanel create_CollapsibleJPanel(boolean mealInDB,  Container container, Integer mealID, Integer temp_MealID, String mealName, int mealNo, String[] meal_total_columnNames,
                                                        String[] ingredients_ColumnNames, ArrayList<String> ingredientsInDB, MacrosLeftTable macrosLeft_JTable)
     {
         CollapsibleJPanel collapsibleJpObj = new CollapsibleJPanel(container, String.format("   Meal   %s", mealNo), 150, 50);
@@ -547,6 +547,14 @@ public class Meal_Plan_Screen extends JPanel
         ingredients_Calulation_Jtable.setTableHeaderFont(new Font("Dialog", Font.BOLD, 12));
         ingredients_Calulation_Jtable.SetUp_HiddenTableColumns(ingredientsTable_Hidden_Columns, ingredientsTable_StartingCol);
         ingredients_Calulation_Jtable.setUpIngredientsTableActionCells(triggerColumns, actionListenerColumns, ingredientsInDB); //EDIT NOW
+
+        //##############################################
+        // Add Ingredient If Meal Empty / Add New Meal
+        //#############################################
+        if(! mealInDB)
+        {
+            ingredients_Calulation_Jtable.addIngredient();
+        }
 
         //##################################################################################################
         // Adding Collapsible Objects && JTables To GUI
@@ -856,7 +864,7 @@ public class Meal_Plan_Screen extends JPanel
         addToContainer(scrollJPanelCenter, spaceDivider, 0, pos++, 1, 1, 0.25, 0.25, "both", 50, 0, null);
 
         //##############################################
-        // Updating Totals Plan Table
+        // Success Message
         //##############################################
 
         JOptionPane.showMessageDialog(null, "\n\n Meal Successfully Created!!");
