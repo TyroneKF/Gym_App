@@ -15,10 +15,7 @@ import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Ingredients_Info.Edit_
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.*;
 
 public class Meal_Plan_Screen extends JPanel
 {
@@ -35,18 +32,15 @@ public class Meal_Plan_Screen extends JPanel
     //########################################################
     private GridBagConstraints gbc = new GridBagConstraints();
     private JFrame frame = new JFrame(name);
-    private JPanel scrollPaneJPanel;
+    private JPanel scrollPaneJPanel, scrollJPanelCenter, scrollJPanelEnd;
     private Container contentPane;
 
     private MyJDBC db;
     private Macros_Targets_Screen macrosTargets_Screen = null;
     private Edit_Ingredients_Screen addIngredientsScreen = null;
 
-
     private IngredientsTable jTableBeingAdded;
     private ArrayList<IngredientsTable> listOfJTables = new ArrayList<>();
-
-
 
     //########################################################
     // Variables
@@ -103,6 +97,10 @@ public class Meal_Plan_Screen extends JPanel
 
 
     //########################################################
+    public static void main(String[] args)
+    {
+        new Meal_Plan_Screen();
+    }
 
     public Meal_Plan_Screen()
     {
@@ -149,20 +147,23 @@ public class Meal_Plan_Screen extends JPanel
         //#########################################################
         JPanel screenSectioned = new JPanel(new BorderLayout());
 
-        JPanel mainCenterPanel = new JPanel(new GridBagLayout());
         JPanel mainNorthPanel = new JPanel(new GridBagLayout());
-        JPanel mainSouthPanel = new JPanel(new GridBagLayout());
+        JPanel mainCenterPanel = new JPanel(new GridBagLayout());
+
+        //###########################################
+        // Icon Setup in mainNorthPanel
+        iconSetup(mainNorthPanel);
+
 
         //###########################################
         // Adding different section of interface to
 
         screenSectioned.add(mainNorthPanel, BorderLayout.NORTH);
         screenSectioned.add(mainCenterPanel, BorderLayout.CENTER);
-        screenSectioned.add(mainSouthPanel, BorderLayout.SOUTH);
 
-        iconSetup(mainNorthPanel);
 
-        addToContainer(contentPane, screenSectioned, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
+
+        addToContainer(contentPane, screenSectioned, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
 
         //##########################################################
         // Create ScrollPane & add to Interface
@@ -171,14 +172,21 @@ public class Meal_Plan_Screen extends JPanel
         scrollPaneJPanel = scrollPane.getJPanel();
         scrollPaneJPanel.setLayout(new GridBagLayout());
 
-        addToContainer(mainCenterPanel, scrollPane, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
+       scrollJPanelCenter = new JPanel(new GridBagLayout());
+       scrollJPanelEnd = new JPanel(new GridBagLayout());
+
+
+        addToContainer(scrollPaneJPanel, scrollJPanelCenter, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, "center");
+        addToContainer(scrollPaneJPanel, scrollJPanelEnd, 0, 1, 1, 1, 0.25, 0.25, "both", 0, 0, "end");
+
+        addToContainer(mainCenterPanel, scrollPane, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
 
 
         //##############################################################################################################
         // Getting selected plan ID
         //##############################################################################################################
         String[] results = db.getSingleColumnQuery("SELECT PlanID FROM plans WHERE SelectedPlan = 1;");
-        planID = results != null ? Integer.parseInt(results[0]) : null;
+        planID = results !=    null ? Integer.parseInt(results[0]) : null;
 
 
         //HELLO REMOVE
@@ -292,6 +300,7 @@ public class Meal_Plan_Screen extends JPanel
             //#############################################################################################
             // Table Setup
             //###########################################################################################
+            String tableName;
 
             //########################################
             // Getting ID's of Meals Of Chosen Plan
@@ -310,56 +319,6 @@ public class Meal_Plan_Screen extends JPanel
 
             ArrayList<String> temp_Plan_meal_IDs = db.getSingleColumnQuery_ArrayList(queryGetTempMealsID);
             temp_Plan_meal_IDs = temp_Plan_meal_IDs != null ? temp_Plan_meal_IDs : new ArrayList<>();
-
-
-            //######################################################################
-            // Macro Targets Setup
-            //######################################################################
-            String tableName = "plan_Macro_Target_Calculations";
-            String planCalcQuery = String.format("SELECT * from %s  WHERE PlanID = %s;", tableName, tempPlanID);
-
-            Object[][] planData = db.getTableDataObject(planCalcQuery, tableName) != null ? db.getTableDataObject(planCalcQuery, tableName) : new Object[0][0];
-            String[] plan_columnNames = db.getColumnNames(tableName) != null ? db.getColumnNames(tableName) : new String[0];
-
-            ArrayList<Integer> unEditableCells = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11));
-            ArrayList<Integer> ingredients_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList());
-
-            macros_Targets_Table = new MacrosTargetsTable(db, mainSouthPanel, planData, plan_columnNames, planID,
-                    tableName, unEditableCells, ingredients_Table_Col_Avoid_Centering);
-
-            macros_Targets_Table.setOpaque(true); //content panes must be opaque
-            macros_Targets_Table.SetUp_HiddenTableColumns(macros_Targets_Table_Hidden_Col, macroTargets_StartCol);
-
-            macros_Targets_Table.setTableHeaderFont(new Font("Dialog", Font.BOLD, 14));
-            macros_Targets_Table.setTableTextFont(new Font("Dialog", Font.PLAIN, 14));
-
-            addToContainer(mainSouthPanel, macros_Targets_Table, 0, 1, 1, 1, 0.25, 0.25, "both", 40, 0);
-            resizeGUi();
-
-            //######################################################################
-            // planMacrosLeft Table Setup
-            //######################################################################
-            tableName = "planMacrosLeft";
-            String macrosQuery = String.format("SELECT * from %s  WHERE PlanID = %s;", tableName, tempPlanID);
-
-            Object[][] macrosData = db.getTableDataObject(macrosQuery, tableName) != null ? db.getTableDataObject(macrosQuery, tableName) : new Object[0][0];
-            String[] macros_columnNames = db.getColumnNames(tableName) != null ? db.getColumnNames(tableName) : new String[0];
-
-            unEditableCells = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11));
-            ArrayList<Integer> macros_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList());
-
-            macrosLeft_JTable = new MacrosLeftTable(db, mainSouthPanel, macrosData, macros_columnNames, planID,
-                    tableName, unEditableCells, macros_Table_Col_Avoid_Centering);
-
-            macrosLeft_JTable.setOpaque(true); //content panes must be opaque
-
-            macrosLeft_JTable.SetUp_HiddenTableColumns(macrosLeft_Table_Hidden_Col, macrosLeftTable_StartCol);
-
-            macrosLeft_JTable.setTableHeaderFont(new Font("Dialog", Font.BOLD, 14));
-            macrosLeft_JTable.setTableTextFont(new Font("Dialog", Font.PLAIN, 14));
-
-            addToContainer(mainSouthPanel, macrosLeft_JTable, 0, 2, 1, 1, 0.25, 0.25, "both", 40, 0);
-            resizeGUi();
 
 
             //######################################################################
@@ -391,7 +350,7 @@ public class Meal_Plan_Screen extends JPanel
                 //#########################################
                 // Create Collapsible Panel
                 //#########################################
-                CollapsibleJPanel collapsibleJTable = create_CollapsibleJPanel(true, scrollPaneJPanel, mealID, temp_MealID, mealName, mealNo, meal_total_columnNames, ingredients_ColumnNames,
+                CollapsibleJPanel collapsibleJTable = create_CollapsibleJPanel(true, scrollJPanelCenter, mealID, temp_MealID, mealName, mealNo, meal_total_columnNames, ingredients_ColumnNames,
                         ingredientsInDB, macrosLeft_JTable);
 
                 //##################################################################################################
@@ -399,19 +358,76 @@ public class Meal_Plan_Screen extends JPanel
                 //##################################################################################################
 
                 // adding  CollapsibleOBJ to interface
-                addToContainer(scrollPaneJPanel, collapsibleJTable, 0, pos++, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+                addToContainer(scrollJPanelCenter, collapsibleJTable, 0, pos++, 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
 
                 //Space Divider between each CollapsibleObj
                 JPanel spaceDivider = new JPanel();
                 // spaceDivider.setBorder(BorderFactory.createLineBorder(Color.RED, 3));
                 jTableBeingAdded.setSpaceDivider(spaceDivider);
-                addToContainer(scrollPaneJPanel, spaceDivider, 0, pos++, 1, 1, 0.25, 0.25, "both", 50, 0);
+                addToContainer(scrollJPanelCenter, spaceDivider, 0, pos++, 1, 1, 0.25, 0.25, "both", 50, 0, null);
 
                 //##################################################################################################
                 // Resize & Update Containers
                 //##################################################################################################
                 resizeGUi();
             }
+
+            //#########################################################################################
+            // Macro Targets & Macros Left Setup
+            //########################################################################################
+            JPanel macrosInfoJPanel = new JPanel(new GridBagLayout());
+            macrosInfoJPanel.setBorder(BorderFactory.createLineBorder(Color.red));
+
+            addToContainer(scrollJPanelEnd, macrosInfoJPanel, 0, pos++, 1, 1, 0.25, 0.25, "horizontal", 0, 0, "end");
+
+            //#####################################
+            // Macro Targets Setup
+            //#####################################
+            tableName = "plan_Macro_Target_Calculations";
+            String planCalcQuery = String.format("SELECT * from %s  WHERE PlanID = %s;", tableName, tempPlanID);
+
+            Object[][] planData = db.getTableDataObject(planCalcQuery, tableName) != null ? db.getTableDataObject(planCalcQuery, tableName) : new Object[0][0];
+            String[] plan_columnNames = db.getColumnNames(tableName) != null ? db.getColumnNames(tableName) : new String[0];
+
+            ArrayList<Integer> unEditableCells = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11));
+            ArrayList<Integer> ingredients_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList());
+
+            macros_Targets_Table = new MacrosTargetsTable(db, macrosInfoJPanel, planData, plan_columnNames, planID,
+                    tableName, unEditableCells, ingredients_Table_Col_Avoid_Centering);
+
+            macros_Targets_Table.setOpaque(true); //content panes must be opaque
+            macros_Targets_Table.SetUp_HiddenTableColumns(macros_Targets_Table_Hidden_Col, macroTargets_StartCol);
+
+            macros_Targets_Table.setTableHeaderFont(new Font("Dialog", Font.BOLD, 14));
+            macros_Targets_Table.setTableTextFont(new Font("Dialog", Font.PLAIN, 14));
+
+            addToContainer(macrosInfoJPanel, macros_Targets_Table, 0, 1, 1, 1, 0.25, 0.25, "both", 40, 0, null);
+            resizeGUi();
+
+            //#######################################
+            // planMacrosLeft Table Setup
+            //#######################################
+            tableName = "planMacrosLeft";
+            String macrosQuery = String.format("SELECT * from %s  WHERE PlanID = %s;", tableName, tempPlanID);
+
+            Object[][] macrosData = db.getTableDataObject(macrosQuery, tableName) != null ? db.getTableDataObject(macrosQuery, tableName) : new Object[0][0];
+            String[] macros_columnNames = db.getColumnNames(tableName) != null ? db.getColumnNames(tableName) : new String[0];
+
+            unEditableCells = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11));
+            ArrayList<Integer> macros_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList());
+
+            macrosLeft_JTable = new MacrosLeftTable(db, macrosInfoJPanel, macrosData, macros_columnNames, planID,
+                    tableName, unEditableCells, macros_Table_Col_Avoid_Centering);
+
+            macrosLeft_JTable.setOpaque(true); //content panes must be opaque
+
+            macrosLeft_JTable.SetUp_HiddenTableColumns(macrosLeft_Table_Hidden_Col, macrosLeftTable_StartCol);
+
+            macrosLeft_JTable.setTableHeaderFont(new Font("Dialog", Font.BOLD, 14));
+            macrosLeft_JTable.setTableTextFont(new Font("Dialog", Font.PLAIN, 14));
+
+            addToContainer(macrosInfoJPanel, macrosLeft_JTable, 0, 2, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+            resizeGUi();
         }
         else
         {
@@ -447,11 +463,6 @@ public class Meal_Plan_Screen extends JPanel
                 }
             }
         });
-    }
-
-    public static void main(String[] args)
-    {
-        new Meal_Plan_Screen();
     }
 
     private CollapsibleJPanel create_CollapsibleJPanel(boolean mealInDB, Container container, Integer mealID, Integer temp_MealID, String mealName, int mealNo, String[] meal_total_columnNames,
@@ -543,13 +554,13 @@ public class Meal_Plan_Screen extends JPanel
         //##################################################################################################
 
         // addding Ingredients_In_Meal_Calculation to CollapsibleOBJ
-        addToContainer(collapsibleJPanel, ingredients_Calulation_Jtable, 0, 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+        addToContainer(collapsibleJPanel, ingredients_Calulation_Jtable, 0, 1, 1, 1, 0.25, 0.25, "both", 0, 0, null);
 
         // adds space between Ingredients_In_Meal_Calculation table and total_in_meal table
-        addToContainer(southPanel, new JPanel(), 0, 1, 1, 1, 0.25, 0.25, "both", 50, 0);
+        addToContainer(southPanel, new JPanel(), 0, 1, 1, 1, 0.25, 0.25, "both", 50, 0, null);
 
         // Adding total table to CollapsibleOBJ
-        addToContainer(southPanel, total_Meal_View_Table, 0, 2, 1, 1, 0.25, 0.25, "both", 0, 0);
+        addToContainer(southPanel, total_Meal_View_Table, 0, 2, 1, 1, 0.25, 0.25, "both", 0, 0, null);
 
         return collapsibleJpObj;
     }
@@ -560,11 +571,12 @@ public class Meal_Plan_Screen extends JPanel
         contentPane.revalidate();
     }
 
-    private void addToContainer(Container container, Component addToContainer, int gridx, int gridy, int gridwidth,
-                                int gridheight, double weightx, double weighty, String fill, int ipady, int ipadx)
+    private void addToContainer(Container container, Component addToContainer, Integer gridx, Integer gridy, Integer gridwidth,
+                                Integer gridheight, Double weightx, Double weighty, String fill, Integer ipady, Integer ipadx, String anchor )
     {
-        gbc.gridx = gridx;
-        gbc.gridy = gridy;
+        if(gridx != null) { gbc.gridx = gridx;}
+        if(gridy != null) { gbc.gridy = gridy;}
+
         gbc.gridwidth = gridwidth;
         gbc.gridheight = gridheight;
         gbc.weightx = weightx;
@@ -585,6 +597,20 @@ public class Meal_Plan_Screen extends JPanel
             case "both":
                 gbc.fill = GridBagConstraints.BOTH;
                 break;
+        }
+
+        if(anchor != null)
+        {
+            switch (anchor.toLowerCase())
+            {
+                case "start":
+                    gbc.anchor = GridBagConstraints.PAGE_START;
+                    break;
+
+                case "end":
+                    gbc.anchor = GridBagConstraints.PAGE_END;
+                    break;
+            }
         }
 
         container.add(addToContainer, gbc);
@@ -616,7 +642,7 @@ public class Meal_Plan_Screen extends JPanel
         IconPanel iconPanel = new IconPanel(5, 10, "East");
         JPanel iconPanelInsert = iconPanel.getIconJpanel();
 
-        addToContainer(mainNorthPanel, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0);
+        addToContainer(mainNorthPanel, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0, null);
 
 
         //##########################
@@ -812,7 +838,7 @@ public class Meal_Plan_Screen extends JPanel
         // Create New Meal Table In GUI
         //##############################################
 
-        CollapsibleJPanel collapsibleJTable = create_CollapsibleJPanel(false, scrollPaneJPanel, null, tempMealID, newMealName, mealNo, meal_total_columnNames, ingredients_ColumnNames,
+        CollapsibleJPanel collapsibleJTable = create_CollapsibleJPanel(false, scrollJPanelCenter, null, tempMealID, newMealName, mealNo, meal_total_columnNames, ingredients_ColumnNames,
                 ingredientsInDB, macrosLeft_JTable);
 
 
@@ -822,13 +848,13 @@ public class Meal_Plan_Screen extends JPanel
 
 
         // adding  CollapsibleOBJ to interface
-        addToContainer(scrollPaneJPanel, collapsibleJTable, 0, pos++, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+        addToContainer(scrollJPanelCenter, collapsibleJTable, 0, pos++, 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
 
         //Space Divider between each CollapsibleObj
         JPanel spaceDivider = new JPanel();
         //spaceDivider.setBorder(BorderFactory.createLineBorder(Color.RED, 3));
         jTableBeingAdded.setSpaceDivider(spaceDivider);
-        addToContainer(scrollPaneJPanel, spaceDivider, 0, pos++, 1, 1, 0.25, 0.25, "both", 50, 0);
+        addToContainer(scrollJPanelCenter, spaceDivider, 0, pos++, 1, 1, 0.25, 0.25, "both", 50, 0, null);
 
         //##############################################
         // Updating Totals Plan Table
