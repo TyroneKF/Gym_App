@@ -574,6 +574,7 @@ public class Meal_Plan_Screen extends JPanel
 
     private void resizeGUi()
     {
+        scrollJPanelCenter.revalidate();
         scrollPaneJPanel.revalidate();
         contentPane.revalidate();
     }
@@ -712,10 +713,6 @@ public class Meal_Plan_Screen extends JPanel
         add_Btn.addActionListener(ae -> {
 
             addMealToPlan();
-
-            // Set ScrollPane to the Bottom
-            scrollBarDown_BTN_Action();
-
         });
 
         iconPanelInsert.add(add_Icon_Btn);
@@ -790,13 +787,34 @@ public class Meal_Plan_Screen extends JPanel
     private void scrollBarDown_BTN_Action()
     {
         //##############################################
-        // Set ScrollPane to the Bottom
+        // Set ScrollPane to the Bottom Straight Away
         //##############################################
         JScrollBar vertical = scrollPane.getVerticalScrollBar();
         vertical.setValue(vertical.getMaximum());
+
+        //OR
+
+        /*
+        //##############################################
+        // Set ScrollPane to the Bottom Animated View
+        //##############################################
+        JScrollBar verticalBar = scrollPane.getVerticalScrollBar();
+
+        int currentScrollValue = verticalBar.getValue();
+        int previousScrollValue = -1;
+
+        while (currentScrollValue != previousScrollValue) {
+            // Scroll down a bit
+            int downDirection = 1;
+            int amountToScroll = verticalBar.getUnitIncrement(downDirection);
+            verticalBar.setValue(currentScrollValue + amountToScroll);
+
+            previousScrollValue = currentScrollValue;
+            currentScrollValue = verticalBar.getValue();
+        }
+        */
+
     }
-
-
 
     private void addMealToPlan()
     {
@@ -913,8 +931,9 @@ public class Meal_Plan_Screen extends JPanel
         // Resize & Update Containers
         //##############################################
         resizeGUi();
-    }
 
+        scrollBarDown_BTN_Action();
+    }
 
     private void refreshPlan(boolean askPermission)
     {
