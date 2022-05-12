@@ -15,6 +15,7 @@ import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Ingredients_Info.Edit_
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.AdjustmentListener;
 import java.util.*;
 
 public class Meal_Plan_Screen extends JPanel
@@ -25,7 +26,7 @@ public class Meal_Plan_Screen extends JPanel
 
     //#################################################################################################################
 
-    String databaseName = "gymapp7";
+    private String databaseName = "gymapp7";
     private String name = databaseName;
     //########################################################
     // Objects
@@ -34,6 +35,7 @@ public class Meal_Plan_Screen extends JPanel
     private JFrame frame = new JFrame(name);
     private JPanel scrollPaneJPanel, scrollJPanelCenter, scrollJPanelEnd;
     private Container contentPane;
+    private ScrollPaneCreator scrollPane;
 
     private MyJDBC db;
     private Macros_Targets_Screen macrosTargets_Screen = null;
@@ -162,18 +164,17 @@ public class Meal_Plan_Screen extends JPanel
         screenSectioned.add(mainCenterPanel, BorderLayout.CENTER);
 
 
-
         addToContainer(contentPane, screenSectioned, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
 
         //##########################################################
         // Create ScrollPane & add to Interface
         //#########################################################
-        ScrollPaneCreator scrollPane = new ScrollPaneCreator();
+        scrollPane = new ScrollPaneCreator();
         scrollPaneJPanel = scrollPane.getJPanel();
         scrollPaneJPanel.setLayout(new GridBagLayout());
 
-       scrollJPanelCenter = new JPanel(new GridBagLayout());
-       scrollJPanelEnd = new JPanel(new GridBagLayout());
+        scrollJPanelCenter = new JPanel(new GridBagLayout());
+        scrollJPanelEnd = new JPanel(new GridBagLayout());
 
 
         addToContainer(scrollPaneJPanel, scrollJPanelCenter, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, "center");
@@ -186,7 +187,7 @@ public class Meal_Plan_Screen extends JPanel
         // Getting selected plan ID
         //##############################################################################################################
         String[] results = db.getSingleColumnQuery("SELECT PlanID FROM plans WHERE SelectedPlan = 1;");
-        planID = results !=    null ? Integer.parseInt(results[0]) : null;
+        planID = results != null ? Integer.parseInt(results[0]) : null;
 
 
         //HELLO REMOVE
@@ -463,7 +464,7 @@ public class Meal_Plan_Screen extends JPanel
         });
     }
 
-    private CollapsibleJPanel create_CollapsibleJPanel(boolean mealInDB,  Container container, Integer mealID, Integer temp_MealID, String mealName, int mealNo, String[] meal_total_columnNames,
+    private CollapsibleJPanel create_CollapsibleJPanel(boolean mealInDB, Container container, Integer mealID, Integer temp_MealID, String mealName, int mealNo, String[] meal_total_columnNames,
                                                        String[] ingredients_ColumnNames, ArrayList<String> ingredientsInDB, MacrosLeftTable macrosLeft_JTable)
     {
         CollapsibleJPanel collapsibleJpObj = new CollapsibleJPanel(container, String.format("   Meal   %s", mealNo), 150, 50);
@@ -550,7 +551,7 @@ public class Meal_Plan_Screen extends JPanel
         //##############################################
         // Add Ingredient If Meal Empty / Add New Meal
         //#############################################
-        if(! mealInDB)
+        if (!mealInDB)
         {
             ingredients_Calulation_Jtable.addIngredient();
         }
@@ -578,10 +579,16 @@ public class Meal_Plan_Screen extends JPanel
     }
 
     private void addToContainer(Container container, Component addToContainer, Integer gridx, Integer gridy, Integer gridwidth,
-                                Integer gridheight, Double weightx, Double weighty, String fill, Integer ipady, Integer ipadx, String anchor )
+                                Integer gridheight, Double weightx, Double weighty, String fill, Integer ipady, Integer ipadx, String anchor)
     {
-        if(gridx != null) { gbc.gridx = gridx;}
-        if(gridy != null) { gbc.gridy = gridy;}
+        if (gridx != null)
+        {
+            gbc.gridx = gridx;
+        }
+        if (gridy != null)
+        {
+            gbc.gridy = gridy;
+        }
 
         gbc.gridwidth = gridwidth;
         gbc.gridheight = gridheight;
@@ -605,7 +612,7 @@ public class Meal_Plan_Screen extends JPanel
                 break;
         }
 
-        if(anchor != null)
+        if (anchor != null)
         {
             switch (anchor.toLowerCase())
             {
@@ -640,22 +647,43 @@ public class Meal_Plan_Screen extends JPanel
 
     private void iconSetup(Container mainNorthPanel)
     {
+        int width, height;
         //##############################################################################################################
         // Top Bar Icon AREA
         //##############################################################################################################
         //Creating JPanels for the area
 
-        IconPanel iconPanel = new IconPanel(5, 10, "East");
+        IconPanel iconPanel = new IconPanel(6, 10, "East");
         JPanel iconPanelInsert = iconPanel.getIconJpanel();
 
         addToContainer(mainNorthPanel, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0, null);
 
+        //##########################
+        //  ScrollBar Bottom
+        //##########################
+
+        width = 51;
+        height = 51;
+
+        IconButton down_ScrollBar_Icon_Btn = new IconButton("src/images/scrollBar_Down/scrollBar_Down5.png", "", width, height, width, height,
+                "centre", "right"); // btn text is useless here , refactor
+
+        down_ScrollBar_Icon_Btn.makeBTntransparent();
+
+        JButton down_ScrollBar_Btn = down_ScrollBar_Icon_Btn.returnJButton();
+
+        down_ScrollBar_Btn.addActionListener(ae -> {
+
+            scrollBarDown_BTN_Action();
+        });
+
+        iconPanelInsert.add(down_ScrollBar_Btn);
 
         //##########################
         // Refresh Icon
         //##########################
-        int width = 50;
-        int height = 50;
+        width = 50;
+        height = 50;
 
         IconButton refresh_Icon_Btn = new IconButton("src/images/refresh/++refresh.png", "", width, height, width, height,
                 "centre", "right"); // btn text is useless here , refactor
@@ -684,6 +712,9 @@ public class Meal_Plan_Screen extends JPanel
         add_Btn.addActionListener(ae -> {
 
             addMealToPlan();
+
+            // Set ScrollPane to the Bottom
+            scrollBarDown_BTN_Action();
 
         });
 
@@ -756,9 +787,19 @@ public class Meal_Plan_Screen extends JPanel
         iconPanelInsert.add(macro_Tagets_Btn);
     }
 
+    private void scrollBarDown_BTN_Action()
+    {
+        //##############################################
+        // Set ScrollPane to the Bottom
+        //##############################################
+        JScrollBar vertical = scrollPane.getVerticalScrollBar();
+        vertical.setValue(vertical.getMaximum());
+    }
+
+
+
     private void addMealToPlan()
     {
-
         if (!(get_IsPlanSelected()))
         {
             return;
@@ -874,6 +915,7 @@ public class Meal_Plan_Screen extends JPanel
         resizeGUi();
     }
 
+
     private void refreshPlan(boolean askPermission)
     {
         if (!(get_IsPlanSelected()))
@@ -881,7 +923,7 @@ public class Meal_Plan_Screen extends JPanel
             return;
         }
 
-        if (askPermission &&! (areYouSure("Refresh Data")) )
+        if (askPermission && !(areYouSure("Refresh Data")))
         {
             return;
         }
@@ -922,7 +964,7 @@ public class Meal_Plan_Screen extends JPanel
         {
             return;
         }
-        if(askPermission)
+        if (askPermission)
         {
             // ##############################################
             // If targets have changed, save them?
@@ -1001,7 +1043,7 @@ public class Meal_Plan_Screen extends JPanel
             return;
         }
 
-        if(showMsg)
+        if (showMsg)
         {
             JOptionPane.showMessageDialog(frame, "Meals Successful Saved!!");
         }
