@@ -17,9 +17,13 @@ public class HTTP
 {
     private String mainArrayName = "foods";
 
-    private String SecondArrayName = "full_nutrients";
+    // full_nutrients
+    private String secondArrayName = "full_nutrients";
     private String secondArrayKeyName = "attr_id";
     private String secondArrayValueKeyName = "value";
+
+    // photo
+    private String thirdArrayName = "photo";
 
     private ArrayList<String> desiredNutritionalFields = new ArrayList<>(Arrays.asList(
             "food_name",
@@ -46,7 +50,9 @@ public class HTTP
             "nix_item_name",
             "nix_item_id",
 
-            "photo"
+            "photo",
+            "thumb",
+            "highres"
     ));
 
     private LinkedHashMap<String, Object> foodNutritionalInfo = new LinkedHashMap<>();
@@ -137,13 +143,6 @@ public class HTTP
                     }
                 }
             }
-
-            System.out.printf("\n\n########################''");
-
-            foodNutritionalInfo.entrySet().forEach(entry -> {
-                System.out.printf("\n%s : %s", entry.getKey(), entry.getValue());
-            });
-
             return true;
         }
         catch (Exception e)
@@ -159,18 +158,45 @@ public class HTTP
         {
             System.out.printf("\n\n########################''");
 
-            //####################################
+            //#######################################################################
             // Parsing Full Nutrients
-            //####################################
-            JSONArray ar = (JSONArray) foodNutritionalInfo.get(SecondArrayName);
+            //#######################################################################
+            JSONArray ar2 = (JSONArray) foodNutritionalInfo.get(secondArrayName);
 
-            Iterator<Object> iterator = ar.iterator();
-            while (iterator.hasNext())
+            Iterator<Object> iterator2 = ar2.iterator();
+            while (iterator2.hasNext())
             {
-                JSONObject jsonObject = (JSONObject) iterator.next();
+                JSONObject jsonObject = (JSONObject) iterator2.next();
                 System.out.printf("\n%s : %s", jsonObject.get(secondArrayKeyName), jsonObject.get(secondArrayValueKeyName));
-
             }
+
+            //#######################################################################
+            // Parsing Photo Info
+            //#######################################################################
+            JSONObject jsonObject = (JSONObject) foodNutritionalInfo.get(thirdArrayName);
+
+            Set<String> keys = jsonObject.keySet();
+            for (String key : keys)
+            {
+                if (desiredNutritionalFields.contains(key))
+                {
+                    foodNutritionalInfo.put(key, jsonObject.get(key));
+                }
+            }
+
+            //#######################################################################
+            // Removing Old Data
+            //#######################################################################
+            foodNutritionalInfo.remove(secondArrayName);
+            foodNutritionalInfo.remove(thirdArrayName);
+
+            //#######################################################################
+            // Print
+            //#######################################################################
+            System.out.printf("\n\n########################''");
+            foodNutritionalInfo.entrySet().forEach(entry -> {
+                System.out.printf("\n%s : %s", entry.getKey(), entry.getValue());
+            });
             return true;
         }
         catch (Exception e)
@@ -178,7 +204,6 @@ public class HTTP
             System.out.printf("\n\nError  parseFurtherNutritionalInfo() \n'' %s ''", e);
             return false;
         }
-
     }
 
 
