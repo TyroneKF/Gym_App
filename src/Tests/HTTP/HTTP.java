@@ -4,9 +4,7 @@ package Tests.HTTP;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 
 import java.net.URL;
@@ -163,11 +161,33 @@ public class HTTP
             //#######################################################################
             JSONArray ar2 = (JSONArray) foodNutritionalInfo.get(secondArrayName);
 
+
+            //#####################################
+            // Parsing Full Nutrients
+            //#####################################
             Iterator<Object> iterator2 = ar2.iterator();
             while (iterator2.hasNext())
             {
+
                 JSONObject jsonObject = (JSONObject) iterator2.next();
-                System.out.printf("\n%s : %s", jsonObject.get(secondArrayKeyName), jsonObject.get(secondArrayValueKeyName));
+
+                String attr_id = jsonObject.get(secondArrayKeyName).toString();
+                String attr_Name = getAttr_ID_Name(attr_id);
+                Object attr_Value = jsonObject.get(secondArrayValueKeyName);
+
+                System.out.printf("\n%s : %s", attr_id, attr_Value );
+
+                if(attr_Name != null)
+                {
+
+                }
+                else
+                {
+                    System.out.printf("""
+                            \n\nError  parseFurtherNutritionalInfo() 
+                            \nIssues Extracting Attribute Name for attr_id = %s""", attr_id );
+                    return false;
+                }
             }
 
             //#######################################################################
@@ -205,6 +225,104 @@ public class HTTP
             return false;
         }
     }
+
+    public String getAttr_ID_Name(String attr_id)
+    {
+        try
+        {
+            return "";
+        }
+        catch (Exception e)
+        {
+            System.out.printf("\n\nError  getAttr_ID_Name() \n'' %s ''", e);
+            return null;
+        }
+    }
+
+/*    private boolean getCSVData(String pathToCsv)
+    {
+        //############################################################################################
+        // Get File From Path
+        //############################################################################################
+        BufferedReader csvReader = null;
+        try
+        {
+            csvReader = new BufferedReader(new FileReader(pathToCsv));
+        }
+        catch (FileNotFoundException e)
+        {
+            System.out.printf("\n\nFile Not Found Error!\n");
+            e.printStackTrace();
+            return false;
+        }
+
+        //############################################################################################
+        // Reading Lines From File From Path
+        //############################################################################################
+
+        //Creating Arraylists for the columns of the  CSV data we need for the GA
+        int noOfColumns = usefulColsInData.length;
+
+        //####################################
+        // Adding data from file to memory
+        //####################################
+        try
+        {
+            // skip the first line (column names)
+            csvReader.readLine();
+
+            String row;
+
+            // Reading through the rest of the file
+            int rowCount = 0;
+            while ((row = csvReader.readLine())!=null)
+            {
+                String[] rowData = row.split(","); // the whole row data col1,col2,col3.....
+                //System.out.printf("\n\nColumns In Row %d!", rowData.length);
+                //System.out.printf("\nRow Data: %s", Arrays.toString(rowData));
+
+                // System.out.printf("\nDouble Row Data:");
+
+                // For each column in the data get the useful columns data we need
+                int doubleDataPos = 0;
+                Double[] doubleData = new Double[usefulColsInData.length];// Row Data, storing the info we only need
+
+                for (int i : usefulColsInData)
+                {
+                    int index = i - 1;
+                    String columnData = rowData[index]; // a specific column in the row data of the CSV File
+
+                    Double conversionValue;
+                    if (columnData.equals("N/A"))
+                    {
+                        conversionValue = Double.NaN;
+                    }
+                    else
+                    {
+                        conversionValue = Double.valueOf(columnData);
+                    }
+
+                    doubleData[doubleDataPos] = conversionValue;
+                    //System.out.printf(" %s,", conversionValue);
+                    doubleDataPos++;
+                }
+
+                collectionOfColumnData.add(doubleData);
+
+                rowCount++;
+            }
+            csvReader.close();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+
+        // Set How many days are in the trading session
+        daysInTradingSession = collectionOfColumnData.size(); // number of days in Trading Session
+        return true;
+    }*/
 
 
 }
