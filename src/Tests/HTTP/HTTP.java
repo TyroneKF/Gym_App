@@ -148,28 +148,37 @@ public class HTTP
         }
         catch (Exception e)
         {
-            System.out.printf("\n\nError \n'' %s ''", e);
+            System.out.printf("\n\nError getNutritionalInfo() \n'' %s ''", e);
             return false;
         }
     }
 
     public boolean parseFurtherNutritionalInfo()
     {
-        System.out.printf("\n\n########################''");
-
-        //####################################
-        // Parsing Full Nutrients
-        //####################################
-        JSONArray ar = (JSONArray) foodNutritionalInfo.get(SecondArrayName);
-
-        Iterator<Object> iterator = ar.iterator();
-        while (iterator.hasNext())
+        try
         {
-            JSONObject jsonObject = (JSONObject) iterator.next();
-            System.out.printf("\n%s : %s", jsonObject.get(secondArrayKeyName), jsonObject.get(secondArrayValueKeyName));
+            System.out.printf("\n\n########################''");
 
+            //####################################
+            // Parsing Full Nutrients
+            //####################################
+            JSONArray ar = (JSONArray) foodNutritionalInfo.get(SecondArrayName);
+
+            Iterator<Object> iterator = ar.iterator();
+            while (iterator.hasNext())
+            {
+                JSONObject jsonObject = (JSONObject) iterator.next();
+                System.out.printf("\n%s : %s", jsonObject.get(secondArrayKeyName), jsonObject.get(secondArrayValueKeyName));
+
+            }
+            return true;
         }
-        return true;
+        catch (Exception e)
+        {
+            System.out.printf("\n\nError  parseFurtherNutritionalInfo() \n'' %s ''", e);
+            return false;
+        }
+
     }
 
 
