@@ -1,6 +1,7 @@
 package Tests.HTTP;
 
 
+import org.javatuples.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -54,6 +55,10 @@ public class HTTP
     ));
 
     private LinkedHashMap<String, Object> foodNutritionalInfo = new LinkedHashMap<>();
+
+    private String pathToNutrientsCSV = "src/Tests/HTTP/Resources/Nutritionix API v2 - Full Nutrient USDA .csv";
+    private int[] usefulColsInData = new int[]{4, 3, 5};
+    private BufferedReader csvReader = null;
 
     public static void main(String[] args)
     {
@@ -154,38 +159,38 @@ public class HTTP
     {
         try
         {
-            System.out.printf("\n\n########################''");
-
-            //#######################################################################
+            //##########################################################################################
             // Parsing Full Nutrients
-            //#######################################################################
+            //##########################################################################################
+            System.out.printf("\n\n########################''");
             JSONArray ar2 = (JSONArray) foodNutritionalInfo.get(secondArrayName);
 
-
-            //#####################################
-            // Parsing Full Nutrients
-            //#####################################
+            //#############################################
+            // Getting Info For attr_id in full_nutrients
+            //#############################################
             Iterator<Object> iterator2 = ar2.iterator();
             while (iterator2.hasNext())
             {
-
+                // Info From JSON Object
                 JSONObject jsonObject = (JSONObject) iterator2.next();
-
                 String attr_id = jsonObject.get(secondArrayKeyName).toString();
-                String attr_Name = getAttr_ID_Name(attr_id);
                 Object attr_Value = jsonObject.get(secondArrayValueKeyName);
+//                System.out.printf("\n%s : %s", attr_id, attr_Value);
 
-                System.out.printf("\n%s : %s", attr_id, attr_Value );
+                // Extract Extra Info From CSV File by Attr_ID
+                Pair<String, ArrayList<Object>> attr_Info = getAttr_Info_By_AttrID(String.format("%s", attr_id));
 
-                if(attr_Name != null)
+                if (attr_Info != null)
                 {
-
+                    System.out.printf("\n%s", attr_Info);
+                    foodNutritionalInfo.put((String) attr_Info.getValue(0), attr_Info.getValue(1));
                 }
                 else
                 {
                     System.out.printf("""
                             \n\nError  parseFurtherNutritionalInfo() 
-                            \nIssues Extracting Attribute Name for attr_id = %s""", attr_id );
+                            \nIssues Extracting Attribute Name for attr_id = %s""", attr_id);
+
                     return false;
                 }
             }
@@ -226,103 +231,73 @@ public class HTTP
         }
     }
 
-    public String getAttr_ID_Name(String attr_id)
+    public Pair<String, ArrayList<Object>> getAttr_Info_By_AttrID(String attr_id) throws IOException
     {
+        //#############################################
+        // Checking If  Path To CSV Exists
+        //#############################################
         try
         {
-            return "";
-        }
-        catch (Exception e)
-        {
-            System.out.printf("\n\nError  getAttr_ID_Name() \n'' %s ''", e);
-            return null;
-        }
-    }
-
-/*    private boolean getCSVData(String pathToCsv)
-    {
-        //############################################################################################
-        // Get File From Path
-        //############################################################################################
-        BufferedReader csvReader = null;
-        try
-        {
-            csvReader = new BufferedReader(new FileReader(pathToCsv));
+            csvReader = new BufferedReader(new FileReader(pathToNutrientsCSV));
         }
         catch (FileNotFoundException e)
         {
-            System.out.printf("\n\nFile Not Found Error!\n");
-            e.printStackTrace();
-            return false;
+            System.out.printf("\n\nparseFurtherNutritionalInfo() couldn't Read CSV file from Path:\n%s \n\nError: \ne", pathToNutrientsCSV, e);
+            return null;
         }
 
-        //############################################################################################
-        // Reading Lines From File From Path
-        //############################################################################################
-
-        //Creating Arraylists for the columns of the  CSV data we need for the GA
-        int noOfColumns = usefulColsInData.length;
-
-        //####################################
-        // Adding data from file to memory
-        //####################################
+        //########################################
+        // Reading Lines From File From CSV
+        //#######################################
         try
         {
             // skip the first line (column names)
             csvReader.readLine();
 
+            // Reading through the rest of the file
             String row;
 
-            // Reading through the rest of the file
-            int rowCount = 0;
-            while ((row = csvReader.readLine())!=null)
+            while ((row = csvReader.readLine()) != null)
             {
-                String[] rowData = row.split(","); // the whole row data col1,col2,col3.....
-                //System.out.printf("\n\nColumns In Row %d!", rowData.length);
-                //System.out.printf("\nRow Data: %s", Arrays.toString(rowData));
+                String[] csvRowData = row.split(","); // the whole row data col1,col2,col3.....
 
-                // System.out.printf("\nDouble Row Data:");
+                ArrayList<Object> rowData = new ArrayList<>(); //Storing RowData From Columns we want
 
-                // For each column in the data get the useful columns data we need
-                int doubleDataPos = 0;
-                Double[] doubleData = new Double[usefulColsInData.length];// Row Data, storing the info we only need
-
-                for (int i : usefulColsInData)
+                if (attr_id.equals(csvRowData[0]))
                 {
-                    int index = i - 1;
-                    String columnData = rowData[index]; // a specific column in the row data of the CSV File
+                    String attr_Name = "";
 
-                    Double conversionValue;
-                    if (columnData.equals("N/A"))
+                    // For each column in the data get the useful columns' data execute code below
+                    int pos = 0;
+                    for (int i : usefulColsInData)
                     {
-                        conversionValue = Double.NaN;
-                    }
-                    else
-                    {
-                        conversionValue = Double.valueOf(columnData);
+                        pos++;
+                        int index = i - 1;
+
+                        if (pos == 1)
+                        {
+                            attr_Name = csvRowData[index];
+                            continue;
+                        }
+                        rowData.add(csvRowData[index]);
                     }
 
-                    doubleData[doubleDataPos] = conversionValue;
-                    //System.out.printf(" %s,", conversionValue);
-                    doubleDataPos++;
+                    csvReader.close();
+                    return new Pair<String, ArrayList<Object>>(attr_Name, rowData);
                 }
-
-                collectionOfColumnData.add(doubleData);
-
-                rowCount++;
             }
+
+            System.out.printf("\n\ngetAttr_Info_By_AttrID() Error \nCouldn't get Nutritional Info For %s", attr_id);
             csvReader.close();
+            return null;
         }
         catch (Exception e)
         {
             e.printStackTrace();
-            return false;
+            csvReader.close();
+            return null;
         }
-
-        // Set How many days are in the trading session
-        daysInTradingSession = collectionOfColumnData.size(); // number of days in Trading Session
-        return true;
-    }*/
-
+        //###############################
+    }
 
 }
