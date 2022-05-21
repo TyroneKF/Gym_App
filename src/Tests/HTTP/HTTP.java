@@ -1,7 +1,6 @@
 package Tests.HTTP;
 
 
-import org.javatuples.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -57,7 +56,7 @@ public class HTTP
     private LinkedHashMap<String, Object> foodNutritionalInfo = new LinkedHashMap<>();
 
     private String pathToNutrientsCSV = "src/Tests/HTTP/Resources/Nutritionix API v2 - Full Nutrient USDA .csv";
-    private int[] usefulColsInData = new int[]{4, 3, 5};
+    private int attr_ID_Col = 1, attr_Name_Col = 4;
     private BufferedReader csvReader = null;
 
     public static void main(String[] args)
@@ -120,12 +119,12 @@ public class HTTP
                 {
                     response.append(responseLine.trim());
                 }
-                System.out.println("\n" + response);
             }
 
             //#####################################################################
             // Parsing Response & Storing Data
             //#####################################################################
+            System.out.printf("\n\n########################''");
             String jsonString = response.toString(); // convert stringBuilder object to string from  process above
             JSONObject jsonObjectFromString = new JSONObject(jsonString); // convert string to JSON Object
 
@@ -162,7 +161,7 @@ public class HTTP
             //##########################################################################################
             // Parsing Full Nutrients
             //##########################################################################################
-            System.out.printf("\n\n########################''");
+
             JSONArray ar2 = (JSONArray) foodNutritionalInfo.get(secondArrayName);
 
             //#############################################
@@ -175,22 +174,17 @@ public class HTTP
                 JSONObject jsonObject = (JSONObject) iterator2.next();
                 String attr_id = jsonObject.get(secondArrayKeyName).toString();
                 Object attr_Value = jsonObject.get(secondArrayValueKeyName);
-//                System.out.printf("\n%s : %s", attr_id, attr_Value);
 
-                // Extract Extra Info From CSV File by Attr_ID
-                Pair<String, ArrayList<Object>> attr_Info = getAttr_Info_By_AttrID(String.format("%s", attr_id));
+                // Extract Name From CSV File by Attr_ID
+                String attr_Name = getAttr_Name_By_AttrID(String.format("%s", attr_id));
 
-                if (attr_Info != null)
+                if (attr_Name != null)
                 {
-                    System.out.printf("\n%s", attr_Info);
-                    foodNutritionalInfo.put((String) attr_Info.getValue(0), attr_Info.getValue(1));
+                    foodNutritionalInfo.put(attr_Name, attr_Value);
                 }
                 else
                 {
-                    System.out.printf("""
-                            \n\nError  parseFurtherNutritionalInfo() 
-                            \nIssues Extracting Attribute Name for attr_id = %s""", attr_id);
-
+                    System.out.printf("\n\nError  parseFurtherNutritionalInfo() \nIssues Extracting Attribute Name for attr_id = %s", attr_id);
                     return false;
                 }
             }
@@ -231,7 +225,7 @@ public class HTTP
         }
     }
 
-    public Pair<String, ArrayList<Object>> getAttr_Info_By_AttrID(String attr_id) throws IOException
+    public String getAttr_Name_By_AttrID(String attr_id) throws IOException
     {
         //#############################################
         // Checking If  Path To CSV Exists
@@ -261,33 +255,14 @@ public class HTTP
             {
                 String[] csvRowData = row.split(","); // the whole row data col1,col2,col3.....
 
-                ArrayList<Object> rowData = new ArrayList<>(); //Storing RowData From Columns we want
-
-                if (attr_id.equals(csvRowData[0]))
+                if (attr_id.equals(csvRowData[attr_ID_Col-1]))
                 {
-                    String attr_Name = "";
-
-                    // For each column in the data get the useful columns' data execute code below
-                    int pos = 0;
-                    for (int i : usefulColsInData)
-                    {
-                        pos++;
-                        int index = i - 1;
-
-                        if (pos == 1)
-                        {
-                            attr_Name = csvRowData[index];
-                            continue;
-                        }
-                        rowData.add(csvRowData[index]);
-                    }
-
                     csvReader.close();
-                    return new Pair<String, ArrayList<Object>>(attr_Name, rowData);
+                    return csvRowData[attr_Name_Col-1];
                 }
             }
 
-            System.out.printf("\n\ngetAttr_Info_By_AttrID() Error \nCouldn't get Nutritional Info For %s", attr_id);
+            System.out.printf("\n\ngetAttr_Info_By_AttrID() Error \nCouldn't get Nutritional Name For %s", attr_id);
             csvReader.close();
             return null;
         }
