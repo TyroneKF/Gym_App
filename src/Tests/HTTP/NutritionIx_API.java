@@ -11,7 +11,7 @@ import java.net.URL;
 import java.util.*;
 
 
-public class HTTP
+public class NutritionIx_API
 {
     private String mainArrayName = "foods";
 
@@ -61,19 +61,29 @@ public class HTTP
 
     public static void main(String[] args)
     {
-        new HTTP();
+        new NutritionIx_API();
 
     }
 
-    HTTP()
+    NutritionIx_API()
     {
-        if (getNutritionalInfo("100g of chicken"))
-        {
-            parseFurtherNutritionalInfo();
-        }
+        getFoodNutritionalInfo("100g of Chicken");
     }
 
-    public boolean getNutritionalInfo(String food)
+    public LinkedHashMap<String, Object> getFoodNutritionalInfo(String food)
+    {
+
+        if (getNutritionalInfo(food))
+        {
+            if (parseFurtherNutritionalInfo())
+            {
+                return foodNutritionalInfo;
+            }
+        }
+        return null;
+    }
+
+    private boolean getNutritionalInfo(String food)
     {
         try
         {
@@ -127,7 +137,7 @@ public class HTTP
             //#####################################################################
             // Parsing Response & Storing Data
             //#####################################################################
-            System.out.printf("\n\n########################''");
+//            System.out.printf("\n\n########################''");
             String jsonString = response.toString(); // convert stringBuilder object to string from  process above
             JSONObject jsonObjectFromString = new JSONObject(jsonString); // convert string to JSON Object
 
@@ -141,7 +151,7 @@ public class HTTP
                 for (String key : jsonObject.keySet())
                 {
                     Object keyData = jsonObject.get(key);
-                    System.out.printf("\n%s : %s", key, keyData);
+//                    System.out.printf("\n%s : %s", key, keyData);
                     if (desiredNutritionalFields.contains(key))
                     {
                         foodNutritionalInfo.put(key, keyData);
@@ -157,57 +167,7 @@ public class HTTP
         }
     }
 
-    public String getAttr_Name_By_AttrID(String attr_id) throws IOException
-    {
-        //#############################################
-        // Checking If  Path To CSV Exists
-        //#############################################
-        try
-        {
-            csvReader = new BufferedReader(new FileReader(pathToNutrientsCSV));
-        }
-        catch (FileNotFoundException e)
-        {
-            System.out.printf("\n\nparseFurtherNutritionalInfo() couldn't Read CSV file from Path:\n%s \n\nError: \ne", pathToNutrientsCSV, e);
-            return null;
-        }
-
-        //########################################
-        // Reading Lines From File From CSV
-        //#######################################
-        try
-        {
-            // skip the first line (column names)
-            csvReader.readLine();
-
-            // Reading through the rest of the file
-            String row;
-
-            while ((row = csvReader.readLine()) != null)
-            {
-                String[] csvRowData = row.split(","); // the whole row data col1,col2,col3.....
-
-                if (attr_id.equals(csvRowData[attr_ID_Col-1]))
-                {
-                    csvReader.close();
-                    return csvRowData[attr_Name_Col-1];
-                }
-            }
-
-            System.out.printf("\n\ngetAttr_Info_By_AttrID() Error \nCouldn't get Nutritional Name For %s", attr_id);
-            csvReader.close();
-            return null;
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            csvReader.close();
-            return null;
-        }
-        //###############################
-    }
-
-    public boolean parseFurtherNutritionalInfo()
+    private boolean parseFurtherNutritionalInfo()
     {
         try
         {
@@ -277,5 +237,64 @@ public class HTTP
             return false;
         }
     }
+
+
+    private String getAttr_Name_By_AttrID(String attr_id)
+    {
+        //#############################################
+        // Checking If  Path To CSV Exists
+        //#############################################
+        try
+        {
+            csvReader = new BufferedReader(new FileReader(pathToNutrientsCSV));
+        }
+        catch (FileNotFoundException e)
+        {
+            System.out.printf("\n\nparseFurtherNutritionalInfo() couldn't Read CSV file from Path:\n%s \n\nError: \ne", pathToNutrientsCSV, e);
+            return null;
+        }
+
+        //########################################
+        // Reading Lines From File From CSV
+        //#######################################
+        try
+        {
+            // skip the first line (column names)
+            csvReader.readLine();
+
+            // Reading through the rest of the file
+            String row;
+
+            while ((row = csvReader.readLine()) != null)
+            {
+                String[] csvRowData = row.split(","); // the whole row data col1,col2,col3.....
+
+                if (attr_id.equals(csvRowData[attr_ID_Col - 1]))
+                {
+                    csvReader.close();
+                    return csvRowData[attr_Name_Col - 1];
+                }
+            }
+
+            System.out.printf("\n\ngetAttr_Info_By_AttrID() Error \nCouldn't get Nutritional Name For %s", attr_id);
+            csvReader.close();
+            return null;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            try
+            {
+                csvReader.close();
+            }
+            catch (IOException ex)
+            {
+                System.out.printf("\n\ngetAttr_Info_By_AttrID() Error \nError Closing Csv.Reader \nError:\n", ex);
+            }
+            return null;
+        }
+        //###############################
+    }
+
 
 }
