@@ -462,6 +462,8 @@ public class Meal_Plan_Screen extends JPanel
                 }
             }
         });
+
+        open_AddIngredients_Screen();// HELLO REMOVE LAter
     }
 
     private CollapsibleJPanel create_CollapsibleJPanel(boolean mealInDB, Container container, Integer mealID, Integer temp_MealID, String mealName, int mealNo, String[] meal_total_columnNames,

@@ -1,4 +1,4 @@
-package Tests.HTTP;
+package App_Code.Objects.API.Nutritionix;
 
 
 import org.json.JSONArray;
@@ -65,9 +65,9 @@ public class NutritionIx_API
 
     }
 
-    NutritionIx_API()
+    public NutritionIx_API()
     {
-        getFoodNutritionalInfo("100g of Chicken");
+       // getFoodNutritionalInfo("100g of Chicken");
     }
 
     public LinkedHashMap<String, Object> getFoodNutritionalInfo(String food)
