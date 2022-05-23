@@ -10,13 +10,16 @@ import java.util.LinkedHashMap;
 public class Find_Ingredients_Info_Screen extends CollapsibleJPanel
 {
     NutritionIx_API nutritionIx_api;
+    Edit_Ingredients_Screen.CreateForm.IngredientsForm ingredientsForm;
 
-    public Find_Ingredients_Info_Screen(Container parentContainer, String btnText, int btnWidth, int btnHeight)
+
+    public Find_Ingredients_Info_Screen(Container parentContainer, String btnText, int btnWidth, int btnHeight,  Edit_Ingredients_Screen.CreateForm.IngredientsForm ingredientsForm)
     {
         super(parentContainer, btnText, btnWidth, btnHeight);
-        expandJPanel();
-
+        this.ingredientsForm = ingredientsForm;
         nutritionIx_api = new NutritionIx_API();
+
+        expandJPanel();
     }
 
     public void findFoodInfo(String food)
