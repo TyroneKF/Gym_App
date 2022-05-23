@@ -77,6 +77,9 @@ public class HTTP
     {
         try
         {
+            //#####################################################################
+            // Getting Data From API End Point
+            //#####################################################################
             // API END Point Link
             URL url = new URL("https://trackapi.nutritionix.com/v2/natural/nutrients");
 
@@ -99,7 +102,7 @@ public class HTTP
             con.setDoOutput(true);
 
             // Create Request Body Json (Custom JSON String)
-            String jsonInputString = String.format("{\n  \"query\":\"%s\",\n  \"timezone\": \"US/Eastern\"\n}", food);
+            String jsonInputString = String.format("{\n  \"query\":\"%s\",\n  \"timezone\": \"UK\"\n}", food);
 
             try (OutputStream os = con.getOutputStream())
             {
@@ -152,6 +155,56 @@ public class HTTP
             System.out.printf("\n\nError getNutritionalInfo() \n'' %s ''", e);
             return false;
         }
+    }
+
+    public String getAttr_Name_By_AttrID(String attr_id) throws IOException
+    {
+        //#############################################
+        // Checking If  Path To CSV Exists
+        //#############################################
+        try
+        {
+            csvReader = new BufferedReader(new FileReader(pathToNutrientsCSV));
+        }
+        catch (FileNotFoundException e)
+        {
+            System.out.printf("\n\nparseFurtherNutritionalInfo() couldn't Read CSV file from Path:\n%s \n\nError: \ne", pathToNutrientsCSV, e);
+            return null;
+        }
+
+        //########################################
+        // Reading Lines From File From CSV
+        //#######################################
+        try
+        {
+            // skip the first line (column names)
+            csvReader.readLine();
+
+            // Reading through the rest of the file
+            String row;
+
+            while ((row = csvReader.readLine()) != null)
+            {
+                String[] csvRowData = row.split(","); // the whole row data col1,col2,col3.....
+
+                if (attr_id.equals(csvRowData[attr_ID_Col-1]))
+                {
+                    csvReader.close();
+                    return csvRowData[attr_Name_Col-1];
+                }
+            }
+
+            System.out.printf("\n\ngetAttr_Info_By_AttrID() Error \nCouldn't get Nutritional Name For %s", attr_id);
+            csvReader.close();
+            return null;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            csvReader.close();
+            return null;
+        }
+        //###############################
     }
 
     public boolean parseFurtherNutritionalInfo()
@@ -223,56 +276,6 @@ public class HTTP
             System.out.printf("\n\nError  parseFurtherNutritionalInfo() \n'' %s ''", e);
             return false;
         }
-    }
-
-    public String getAttr_Name_By_AttrID(String attr_id) throws IOException
-    {
-        //#############################################
-        // Checking If  Path To CSV Exists
-        //#############################################
-        try
-        {
-            csvReader = new BufferedReader(new FileReader(pathToNutrientsCSV));
-        }
-        catch (FileNotFoundException e)
-        {
-            System.out.printf("\n\nparseFurtherNutritionalInfo() couldn't Read CSV file from Path:\n%s \n\nError: \ne", pathToNutrientsCSV, e);
-            return null;
-        }
-
-        //########################################
-        // Reading Lines From File From CSV
-        //#######################################
-        try
-        {
-            // skip the first line (column names)
-            csvReader.readLine();
-
-            // Reading through the rest of the file
-            String row;
-
-            while ((row = csvReader.readLine()) != null)
-            {
-                String[] csvRowData = row.split(","); // the whole row data col1,col2,col3.....
-
-                if (attr_id.equals(csvRowData[attr_ID_Col-1]))
-                {
-                    csvReader.close();
-                    return csvRowData[attr_Name_Col-1];
-                }
-            }
-
-            System.out.printf("\n\ngetAttr_Info_By_AttrID() Error \nCouldn't get Nutritional Name For %s", attr_id);
-            csvReader.close();
-            return null;
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            csvReader.close();
-            return null;
-        }
-        //###############################
     }
 
 }
