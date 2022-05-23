@@ -55,19 +55,18 @@ public class NutritionIx_API
 
     private LinkedHashMap<String, Object> foodNutritionalInfo = new LinkedHashMap<>();
 
-    private String pathToNutrientsCSV = "src/Tests/HTTP/Resources/Nutritionix API v2 - Full Nutrient USDA .csv";
+    private String pathToNutrientsCSV = "src/App_Code/Objects/API/Nutritionix/Resources/Nutritionix API v2 - Full Nutrient USDA .csv";
     private int attr_ID_Col = 1, attr_Name_Col = 4;
     private BufferedReader csvReader = null;
 
     public static void main(String[] args)
     {
-        new NutritionIx_API();
-
+        new NutritionIx_API().getFoodNutritionalInfo("100g of chicken");
     }
 
     public NutritionIx_API()
     {
-       // getFoodNutritionalInfo("100g of Chicken");
+
     }
 
     public LinkedHashMap<String, Object> getFoodNutritionalInfo(String food)
@@ -238,7 +237,6 @@ public class NutritionIx_API
         }
     }
 
-
     private String getAttr_Name_By_AttrID(String attr_id)
     {
         //#############################################
@@ -295,6 +293,4 @@ public class NutritionIx_API
         }
         //###############################
     }
-
-
 }
