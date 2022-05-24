@@ -37,8 +37,8 @@ public class Find_Ingredients_Info_Screen extends JPanel
             searchBarButtonHeight = searchBarHeight,
             searchBarIconHeight = searchBarButtonHeight;
 
-
-    Container contentPane;
+    private Container contentPane;
+    private JPanel searchBarResults;
 
 
     public static void main(String[] args)
@@ -164,16 +164,16 @@ public class Find_Ingredients_Info_Screen extends JPanel
             String food = textField.getText().trim();
 
             // Check if JTextField is empty or, contains any characters
-            if(food.equals("") || doesStringContainCharacters(food))
+            if (food.equals("") || doesStringContainCharacters(food))
             {
-                JOptionPane.showMessageDialog(null,String.format("\n\nError \n\nInputted search string for an ingredient cannot be empty !  Or, the inputted  ingredient being \" %s \" contains characters !", food));
+                JOptionPane.showMessageDialog(null, String.format("\n\nError \n\nInputted search string for an ingredient cannot be empty !  Or, the inputted  ingredient being \" %s \" contains characters !", food));
                 return;
             }
 
             // Check if string is one ingredient
-            if(food.split("\\s+").length > 1)
+            if (food.split("\\s+").length > 1)
             {
-                JOptionPane.showMessageDialog(null,String.format("\n\nError \n\nInputted search string for an ingredient must be only one word:  \" %s \" !", food));
+                JOptionPane.showMessageDialog(null, String.format("\n\nError \n\nInputted search string for an ingredient must be only one word:  \" %s \" !", food));
                 return;
             }
 
@@ -191,6 +191,11 @@ public class Find_Ingredients_Info_Screen extends JPanel
             }
 
             //##################################
+            // Display Results
+            //##################################
+            displayResults(foodInfo);
+
+            //##################################
             // Successful Message
             //##################################
 
@@ -203,10 +208,10 @@ public class Find_Ingredients_Info_Screen extends JPanel
         //#################################################################
         // SearchBar Results
         //#################################################################
-        JPanel searchBarResults = new JPanel(new BorderLayout());
+        searchBarResults = new JPanel(new GridBagLayout());
         mainCenterPanel.add(searchBarResults, BorderLayout.CENTER);
-
         searchBarResults.setBackground(Color.RED);
+
 
         //##############################################################################################################
         //  Resizing GUI
@@ -215,7 +220,12 @@ public class Find_Ingredients_Info_Screen extends JPanel
         resizeGUI(); // Resize GUI
     }
 
-    public void resizeGUI()
+    private void displayResults(LinkedHashMap<String, Object> foodInfo )
+    {
+
+    }
+
+    private void resizeGUI()
     {
         contentPane.revalidate();
         screenSectioned.revalidate();
