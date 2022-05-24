@@ -120,19 +120,16 @@ public class Find_Ingredients_Info_Screen extends JPanel
         // Search Bar JPanel
         //#################################################################
         // Adding the main section of search Bar JPanel GUI to display
-        JPanel searchBarJPanel = new JPanel(new BorderLayout());
+        JPanel searchBarJPanel = new JPanel(new GridBagLayout());
         mainCenterPanel.add(searchBarJPanel, BorderLayout.NORTH);
-  /*
+
         //###########################################
         // Search Bar West Panel
         //##########################################
         // Creating JPanel for text input area for search bar
         JPanel searchBarWestJPanel = new JPanel(new GridLayout(1, 1));
-        searchBarWestJPanel.setPreferredSize(new Dimension(searchBarWidth , searchBarHeight));
+        searchBarWestJPanel.setPreferredSize(new Dimension(searchBarWidth , 45));
         searchBarWestJPanel.setBackground(Color.BLUE);
-
-        // adding JPanel for text input for search bar to GUI
-        searchBarJPanel.add(searchBarWestJPanel, BorderLayout.WEST);
 
         //####################
         // Text Field
@@ -147,21 +144,16 @@ public class Find_Ingredients_Info_Screen extends JPanel
 
         // Adding to GUI
         searchBarWestJPanel.add(textField); // adding textField to JPanel*/
+        addToContainer(searchBarJPanel, searchBarWestJPanel, 0, 0, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
         //#########################################
         // Search Bar East Panel
         //#########################################
-        // Creating JPanel for  search bar icon
-        JPanel searchBarEastJPanel = new JPanel(new GridBagLayout());
 
-        // adding JPanel for search bar Icon to GUI
-        searchBarJPanel.add(searchBarEastJPanel, BorderLayout.EAST);
-
-        // Create Search Icon BTN
         IconButton searchIcon = new IconButton("src/images/search/search2.png", "", 35, 35, 45, 45,
                 "centre", "right");
 
-        addToContainer(searchBarEastJPanel, searchIcon, 0, 2, 1, 1, 0.25, 0.25, "both", 0, 0);
+        addToContainer(searchBarJPanel, searchIcon, 1, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
 
 
         //##############################################################################################################
