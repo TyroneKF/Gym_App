@@ -37,24 +37,12 @@ public class Find_Ingredients_Info_Screen extends JPanel
             searchBarButtonHeight = searchBarHeight,
             searchBarIconHeight = searchBarButtonHeight;
 
-    private Container contentPane;
+   
     private JPanel searchBarResults;
+    private Container parentContainer;
 
 
     public static void main(String[] args)
-    {
-        new Find_Ingredients_Info_Screen(null, null);
-    }
-
-    public Find_Ingredients_Info_Screen(Container parentContainer, Edit_Ingredients_Screen.CreateForm.IngredientsForm ingredientsForm)
-    {
-        this.ingredientsForm = ingredientsForm;
-        nutritionIx_api = new NutritionIx_API();
-
-        createGUI();
-    }
-
-    public void createGUI()
     {
         //#############################################################################################################
         //   1. Create the frame.
@@ -63,14 +51,14 @@ public class Find_Ingredients_Info_Screen extends JPanel
         JFrame frame = new JFrame();
         frame.setVisible(true);
         frame.setResizable(false);
-        frame.setSize(frameWidth, frameHeight);
+        frame.setSize(710, 850);
         frame.setLocation(00, 0);
 
         //########################################################
         //  Contentpane
         //########################################################
 
-        contentPane = frame.getContentPane();
+        Container contentPane = frame.getContentPane();
         contentPane.setLayout(new GridLayout(1, 1));
         contentPane.setVisible(true);
 
@@ -80,13 +68,27 @@ public class Find_Ingredients_Info_Screen extends JPanel
         JTabbedPane tp = new JTabbedPane();
         contentPane.add(tp);
 
+        tp.add("Add Ingredients", new Find_Ingredients_Info_Screen(contentPane,null ));
+        
+                
+    }
+
+    public Find_Ingredients_Info_Screen(Container parentContainer, Edit_Ingredients_Screen.CreateForm.IngredientsForm ingredientsForm)
+    {
+        this.parentContainer = parentContainer;
+        this.ingredientsForm = ingredientsForm;
+        
+        nutritionIx_api = new NutritionIx_API();
+
+        createGUI();
+    }
+
+    public void createGUI()
+    { 
         //##############################################################################################################
         //  Creating JPanel Sections
         //##############################################################################################################
-
-        screenSectioned = new JPanel(new BorderLayout());
-        tp.add("Add Ingredients", screenSectioned);
-
+        super.setLayout(new BorderLayout());
 
         //##############################################################################################################
         //  Creating JPanel Sections
@@ -98,7 +100,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
         //#####################################################################
         JPanel mainNorthPanel = new JPanel(new BorderLayout());
         mainNorthPanel.setBackground(Color.RED);
-        screenSectioned.add(mainNorthPanel, BorderLayout.NORTH);
+        add(mainNorthPanel, BorderLayout.NORTH);
 
         //####################################
         // Label
@@ -119,7 +121,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
         //  Centre JPanel
         //##########################################################################################################
         JPanel mainCenterPanel = new JPanel(new BorderLayout());
-        screenSectioned.add(mainCenterPanel, BorderLayout.CENTER);
+        add(mainCenterPanel, BorderLayout.CENTER);
 
         //#################################################################
         // Search Bar JPanel
@@ -227,8 +229,8 @@ public class Find_Ingredients_Info_Screen extends JPanel
 
     private void resizeGUI()
     {
-        contentPane.revalidate();
-        screenSectioned.revalidate();
+        super.revalidate();
+        parentContainer.revalidate();
     }
 
     public LinkedHashMap<String, Object> findFoodInfo(String food)
