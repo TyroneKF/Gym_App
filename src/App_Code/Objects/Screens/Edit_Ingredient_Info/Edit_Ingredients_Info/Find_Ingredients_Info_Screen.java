@@ -156,6 +156,17 @@ public class Find_Ingredients_Info_Screen extends JPanel
         addToContainer(searchBarJPanel, searchIcon, 1, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
 
 
+        //#################################################################
+        // SearchBar Results
+        //#################################################################
+        JPanel searchBarResults = new JPanel(new BorderLayout());
+        mainCenterPanel.add(searchBarResults, BorderLayout.CENTER);
+
+        searchBarResults.setBackground(Color.RED);
+
+
+
+
         //##############################################################################################################
         //  Resizing GUI
         //##############################################################################################################
