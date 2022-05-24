@@ -7,6 +7,8 @@ import App_Code.Objects.Gui_Objects.JTextFieldLimit;
 import javax.swing.*;
 import java.awt.*;
 import java.util.LinkedHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Find_Ingredients_Info_Screen extends JPanel
 {
@@ -16,12 +18,15 @@ public class Find_Ingredients_Info_Screen extends JPanel
     private NutritionIx_API nutritionIx_api;
     private Edit_Ingredients_Screen.CreateForm.IngredientsForm ingredientsForm;
 
+    private JTextField textField;
+
+
     private int
             frameWidth = 710, frameHeight = 850,
 
     titleJPanelHeight = 45, titleFontSize = 16,
 
-    searchBarTxtInputSize = 13,
+    searchBarTxtInputSize = 15,
 
     searchBarHeight = titleJPanelHeight,
             searchBarButtonWidth = 70,
@@ -128,7 +133,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
         //##########################################
         // Creating JPanel for text input area for search bar
         JPanel searchBarWestJPanel = new JPanel(new GridLayout(1, 1));
-        searchBarWestJPanel.setPreferredSize(new Dimension(searchBarWidth , 45));
+        searchBarWestJPanel.setPreferredSize(new Dimension(searchBarWidth, 45));
         searchBarWestJPanel.setBackground(Color.BLUE);
 
         //####################
@@ -136,7 +141,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
         //####################
 
         // Creating Text input object for search bar
-        JTextField textField = new JTextField("");
+        textField = new JTextField("");
 
         textField.setFont(new Font("Verdana", Font.PLAIN, searchBarTxtInputSize)); // Changing font size
         textField.setDocument(new JTextFieldLimit(255));  // Setting charecter limit
@@ -153,8 +158,47 @@ public class Find_Ingredients_Info_Screen extends JPanel
         IconButton searchIcon = new IconButton("src/images/search/search2.png", "", 35, 35, 45, 45,
                 "centre", "right");
 
-        addToContainer(searchBarJPanel, searchIcon, 1, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
+        JButton searchIconBTN = searchIcon.returnJButton();
+        searchIconBTN.addActionListener(ae -> {
 
+            String food = textField.getText().trim();
+
+            // Check if JTextField is empty or, contains any characters
+            if(food.equals("") || doesStringContainCharacters(food))
+            {
+                JOptionPane.showMessageDialog(null,String.format("\n\nError \n\nInputted search string for an ingredient cannot be empty !  Or, the inputted  ingredient being \" %s \" contains characters !", food));
+                return;
+            }
+
+            // Check if string is one ingredient
+            if(food.split("\\s+").length > 1)
+            {
+                JOptionPane.showMessageDialog(null,String.format("\n\nError \n\nInputted search string for an ingredient must be only one word:  \" %s \" !", food));
+                return;
+            }
+
+
+            // Get Nutritional Info From API
+            LinkedHashMap<String, Object> foodInfo = findFoodInfo(String.format("100g of %s", food));
+
+            //##################################
+            // Error Message
+            //##################################
+            if (foodInfo == null)
+            {
+                JOptionPane.showMessageDialog(null, String.format("\n\nError \n\nUnable to get nutritional info for the requested food \" %s \" !", food));
+                return;
+            }
+
+            //##################################
+            // Successful Message
+            //##################################
+
+            JOptionPane.showMessageDialog(null, String.format("\n\nSuccessfully got the nutritional info for the food '%s'!", food));
+
+        });
+
+        addToContainer(searchBarJPanel, searchIcon, 1, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
 
         //#################################################################
         // SearchBar Results
@@ -163,9 +207,6 @@ public class Find_Ingredients_Info_Screen extends JPanel
         mainCenterPanel.add(searchBarResults, BorderLayout.CENTER);
 
         searchBarResults.setBackground(Color.RED);
-
-
-
 
         //##############################################################################################################
         //  Resizing GUI
@@ -180,23 +221,9 @@ public class Find_Ingredients_Info_Screen extends JPanel
         screenSectioned.revalidate();
     }
 
-    public void findFoodInfo(String food)
+    public LinkedHashMap<String, Object> findFoodInfo(String food)
     {
-        LinkedHashMap<String, Object> foodInfo = nutritionIx_api.getFoodNutritionalInfo(food);
-
-        if (foodInfo == null)
-        {
-            JOptionPane.showMessageDialog(null, String.format("\n\nError \n\nUnable to get nutritional info for the requested food '%s'!", food));
-            return;
-        }
-
-        //##################################
-        // Change T
-        //##################################
-
-        JOptionPane.showMessageDialog(null, String.format("\n\nSuccessfully got the nutritional info for the food '%s'!", food));
-
-
+        return nutritionIx_api.getFoodNutritionalInfo(food);
     }
 
     private void addToContainer(Container container, Component addToContainer, int gridx, int gridy, int gridwidth,
@@ -227,6 +254,20 @@ public class Find_Ingredients_Info_Screen extends JPanel
         }
 
         container.add(addToContainer, gbc);
+    }
+
+    private boolean doesStringContainCharacters(String input)
+    {
+        Pattern p1 = Pattern.compile("[^a-zA-Z]", Pattern.CASE_INSENSITIVE);
+        Matcher m1 = p1.matcher(input.replaceAll("\\s+", ""));
+        boolean b1 = m1.find();
+
+        if (b1)
+        {
+            return true;
+        }
+
+        return false;
     }
 
 
