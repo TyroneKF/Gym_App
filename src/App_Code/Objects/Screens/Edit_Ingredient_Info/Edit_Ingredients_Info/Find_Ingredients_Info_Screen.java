@@ -3,6 +3,7 @@ package App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Ingredients_Info;
 import App_Code.Objects.API.Nutritionix.NutritionIx_API;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.JTextFieldLimit;
+import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -25,7 +26,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
 
 
     private int
-            frameWidth = 710, frameHeight = 850,
+            frameWidth = 710-40, frameHeight = 850,
 
     titleJPanelHeight = 45, titleFontSize = 16,
 
@@ -38,10 +39,10 @@ public class Find_Ingredients_Info_Screen extends JPanel
 
     searchBarIconWidth = searchBarButtonWidth - 10,
             searchBarButtonHeight = 45,
-            searchBarIconHeight = searchBarButtonHeight -10 ;
+            searchBarIconHeight = searchBarButtonHeight - 10;
 
-   
-    private JPanel searchBarResults;
+
+    private JPanel searchBarResults, scrollPaneJPanel;
     private Container parentContainer;
 
     private int ypos = 1;
@@ -73,39 +74,46 @@ public class Find_Ingredients_Info_Screen extends JPanel
         JTabbedPane tp = new JTabbedPane();
         contentPane.add(tp);
 
-        tp.add("Add Ingredients", new Find_Ingredients_Info_Screen(contentPane,null ));
-        
-                
+        tp.add("Add Ingredients", new Find_Ingredients_Info_Screen(contentPane, null));
+
+
     }
 
     public Find_Ingredients_Info_Screen(Container parentContainer, Edit_Ingredients_Screen.CreateForm.IngredientsForm ingredientsForm)
     {
         this.parentContainer = parentContainer;
         this.ingredientsForm = ingredientsForm;
-        
+
         nutritionIx_api = new NutritionIx_API();
 
         createGUI();
     }
 
     public void createGUI()
-    { 
+    {
+        super.setLayout(new GridBagLayout());
+
         //##############################################################################################################
-        //  Creating JPanel Sections
+        // Create ScrollPane & add to Interface
         //##############################################################################################################
-        super.setLayout(new BorderLayout());
+        ScrollPaneCreator scrollPane = new ScrollPaneCreator();
+        addToContainer(this, scrollPane, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
+
+        scrollPaneJPanel = scrollPane.getJPanel();
+        scrollPaneJPanel.setLayout(new BorderLayout());
 
         //##############################################################################################################
         //  Creating JPanel Sections
         //##############################################################################################################
-        //   screenSectioned = new JPanel(new BorderLayout());
+
+
 
         //#####################################################################
         //  North JPanel
         //#####################################################################
         JPanel mainNorthPanel = new JPanel(new BorderLayout());
         mainNorthPanel.setBackground(Color.RED);
-        add(mainNorthPanel, BorderLayout.NORTH);
+        scrollPaneJPanel.add(mainNorthPanel, BorderLayout.NORTH);
 
         //####################################
         // Label
@@ -126,7 +134,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
         //  Centre JPanel
         //##########################################################################################################
         JPanel mainCenterPanel = new JPanel(new BorderLayout());
-        add(mainCenterPanel, BorderLayout.CENTER);
+        scrollPaneJPanel.add(mainCenterPanel, BorderLayout.CENTER);
 
         //#################################################################
         // Search Bar JPanel
@@ -227,28 +235,26 @@ public class Find_Ingredients_Info_Screen extends JPanel
         resizeGUI(); // Resize GUI
     }
 
-    private void displayResults(LinkedHashMap<String, Object> foodInfo )
+    private void displayResults(LinkedHashMap<String, Object> foodInfo)
     {
         try
         {
             JPanel resultsDisplay = new JPanel(new BorderLayout());
             resultsDisplay.setBackground(Color.BLUE);
 
-            /*//urlPath = address of your picture on internet
-            URL url = new URL("urlPath");
-            BufferedImage c = ImageIO.read(url);
-            ImageIcon image = new ImageIcon(c);
-
-            JLabel lbl = new JLabel();
-            lbl.setIcon(image);*/
-
             JPanel n = new JPanel();
-            n.setPreferredSize(new Dimension(frameWidth,200));
+            n.setPreferredSize(new Dimension(frameWidth, 200));
             n.setBackground(Color.ORANGE);
 
             resultsDisplay.add(n, BorderLayout.NORTH);
 
             addToContainer(searchBarResults, resultsDisplay, 1, ypos += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+
+
+            JPanel spaceDivider = new JPanel();
+            spaceDivider.setBackground(Color.PINK);
+            addToContainer(searchBarResults, spaceDivider, 1, ypos += 1, 1, 1, 0.25, 0.25, "horizontal", 50, 0);
+
         }
         catch (Exception e)
         {
