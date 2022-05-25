@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.regex.Matcher;
@@ -161,6 +162,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
         textField.setFont(new Font("Verdana", Font.PLAIN, searchBarTxtInputSize)); // Changing font size
         textField.setDocument(new JTextFieldLimit(255));  // Setting charecter limit
         textField.setHorizontalAlignment(JTextField.CENTER); // Centering JTextField Text
+        textField.setText("oats");// HELLO Remove
 
         // Adding to GUI
         searchBarWestJPanel.add(textField); // adding textField to JPanel*/
@@ -244,16 +246,24 @@ public class Find_Ingredients_Info_Screen extends JPanel
             //#####################################
             JPanel resultsDisplay = new JPanel(new BorderLayout());
             resultsDisplay.setBackground(Color.BLUE);
-            addToContainer(searchBarResults, resultsDisplay, 1, ypos += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+            addToContainer(searchBarResults, resultsDisplay, 1, ypos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
             //#####################################
             //
             //#####################################
-            JPanel n = new JPanel();
-            n.setLayout(new GridBagLayout());
-            n.setPreferredSize(new Dimension(frameWidth, 200));
-            n.setBackground(Color.ORANGE);
-            resultsDisplay.add(n, BorderLayout.NORTH);
+            JPanel picJPanel = new JPanel(new GridLayout(1,1));
+            picJPanel.setPreferredSize(new Dimension(400, 200));
+
+            BufferedImage img=ImageIO.read(new File("src/images/nature-image-for-website.jpg"));
+            ImageIcon icon=new ImageIcon(img);
+
+            JLabel lbl=new JLabel();
+            lbl.setIcon(icon);
+            lbl.setPreferredSize(new Dimension(250, 100));
+            picJPanel.add(lbl);
+
+
+            resultsDisplay.add(picJPanel, BorderLayout.WEST);
 
 
             //#####################################
