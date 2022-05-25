@@ -29,13 +29,13 @@ public class Find_Ingredients_Info_Screen extends JPanel
     searchBarTxtInputSize = 15,
 
     searchBarHeight = titleJPanelHeight,
-            searchBarButtonWidth = 70,
+            searchBarButtonWidth = 45,
 
-    searchBarWidth = frameWidth - (searchBarButtonWidth + 20),
+    searchBarWidth = frameWidth - 105,
 
     searchBarIconWidth = searchBarButtonWidth - 10,
-            searchBarButtonHeight = searchBarHeight,
-            searchBarIconHeight = searchBarButtonHeight;
+            searchBarButtonHeight = 45,
+            searchBarIconHeight = searchBarButtonHeight -10 ;
 
    
     private JPanel searchBarResults;
@@ -135,7 +135,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
         //##########################################
         // Creating JPanel for text input area for search bar
         JPanel searchBarWestJPanel = new JPanel(new GridLayout(1, 1));
-        searchBarWestJPanel.setPreferredSize(new Dimension(searchBarWidth, 45));
+        searchBarWestJPanel.setPreferredSize(new Dimension(searchBarWidth, searchBarHeight));
         searchBarWestJPanel.setBackground(Color.BLUE);
 
         //####################
@@ -157,7 +157,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
         // Search Bar East Panel
         //#########################################
 
-        IconButton searchIcon = new IconButton("src/images/search/search2.png", "", 35, 35, 45, 45,
+        IconButton searchIcon = new IconButton("src/images/search/search2.png", "", searchBarIconWidth, searchBarIconHeight, searchBarButtonWidth, searchBarButtonHeight,
                 "centre", "right");
 
         JButton searchIconBTN = searchIcon.returnJButton();
@@ -205,7 +205,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
 
         });
 
-        addToContainer(searchBarJPanel, searchIcon, 1, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
+        addToContainer(searchBarJPanel, searchIcon, 1, 0, 1, 1, 0.25, 0.25, "vertical", 0, 0);
 
         //#################################################################
         // SearchBar Results
