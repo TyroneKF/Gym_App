@@ -4,8 +4,11 @@ import App_Code.Objects.API.Nutritionix.NutritionIx_API;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.JTextFieldLimit;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,6 +43,8 @@ public class Find_Ingredients_Info_Screen extends JPanel
    
     private JPanel searchBarResults;
     private Container parentContainer;
+
+    private int ypos = 1;
 
 
     public static void main(String[] args)
@@ -224,11 +229,41 @@ public class Find_Ingredients_Info_Screen extends JPanel
 
     private void displayResults(LinkedHashMap<String, Object> foodInfo )
     {
+        try
+        {
+            JPanel resultsDisplay = new JPanel(new BorderLayout());
+            resultsDisplay.setBackground(Color.BLUE);
 
+            /*//urlPath = address of your picture on internet
+            URL url = new URL("urlPath");
+            BufferedImage c = ImageIO.read(url);
+            ImageIcon image = new ImageIcon(c);
+
+            JLabel lbl = new JLabel();
+            lbl.setIcon(image);*/
+
+            JPanel n = new JPanel();
+            n.setPreferredSize(new Dimension(frameWidth,200));
+            n.setBackground(Color.ORANGE);
+
+            resultsDisplay.add(n, BorderLayout.NORTH);
+
+            addToContainer(searchBarResults, resultsDisplay, 1, ypos += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+        }
+        catch (Exception e)
+        {
+            System.out.printf("\n\ndisplayResults() Error \n", e);
+        }
+
+        //##############################################################################################################
+        //  Resizing GUI
+        //#############################################################################################################
+        resizeGUI();
     }
 
     private void resizeGUI()
     {
+        searchBarResults.revalidate();
         super.revalidate();
         parentContainer.revalidate();
     }
