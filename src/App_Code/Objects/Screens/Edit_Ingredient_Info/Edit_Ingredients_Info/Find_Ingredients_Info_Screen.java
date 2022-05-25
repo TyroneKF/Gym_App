@@ -241,29 +241,21 @@ public class Find_Ingredients_Info_Screen extends JPanel
     {
         try
         {
-            //#####################################
-            // Space Divider
-            //#####################################
-            JPanel resultsDisplay = new JPanel(new BorderLayout());
-            resultsDisplay.setBackground(Color.BLUE);
-            addToContainer(searchBarResults, resultsDisplay, 1, ypos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
             //#####################################
             //
             //#####################################
             JPanel picJPanel = new JPanel(new GridLayout(1,1));
-            picJPanel.setPreferredSize(new Dimension(400, 200));
+            picJPanel.setPreferredSize(new Dimension(200, 200));
 
-            BufferedImage img=ImageIO.read(new File("src/images/nature-image-for-website.jpg"));
-            ImageIcon icon=new ImageIcon(img);
+            ImageIcon icon = new ImageIcon(new ImageIcon("src/images/nature-image-for-website.jpg").getImage().getScaledInstance(200, 200, Image.SCALE_DEFAULT));
 
             JLabel lbl=new JLabel();
             lbl.setIcon(icon);
-            lbl.setPreferredSize(new Dimension(250, 100));
+            lbl.setPreferredSize(new Dimension(200, 200));
             picJPanel.add(lbl);
 
-
-            resultsDisplay.add(picJPanel, BorderLayout.WEST);
+            addToContainer(searchBarResults, picJPanel, 1, ypos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
 
             //#####################################
