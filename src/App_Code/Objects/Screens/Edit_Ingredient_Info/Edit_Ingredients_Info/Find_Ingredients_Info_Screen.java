@@ -243,6 +243,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
             resultsDisplay.setBackground(Color.BLUE);
 
             JPanel n = new JPanel();
+            n.setLayout(new GridBagLayout());
             n.setPreferredSize(new Dimension(frameWidth, 200));
             n.setBackground(Color.ORANGE);
 
@@ -250,7 +251,9 @@ public class Find_Ingredients_Info_Screen extends JPanel
 
             addToContainer(searchBarResults, resultsDisplay, 1, ypos += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
 
-
+            //#####################################
+            // Space Divider
+            //#####################################
             JPanel spaceDivider = new JPanel();
             spaceDivider.setBackground(Color.PINK);
             addToContainer(searchBarResults, spaceDivider, 1, ypos += 1, 1, 1, 0.25, 0.25, "horizontal", 50, 0);
