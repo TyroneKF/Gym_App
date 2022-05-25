@@ -11,6 +11,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,6 +23,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
 
     private NutritionIx_API nutritionIx_api;
     private Edit_Ingredients_Screen.CreateForm.IngredientsForm ingredientsForm;
+    private ArrayList<JPanel> resultsJPanelDisplay = new ArrayList();
 
     private JTextField textField;
 
@@ -241,29 +243,53 @@ public class Find_Ingredients_Info_Screen extends JPanel
     {
         try
         {
+            JPanel displayJPanel = new JPanel(new GridBagLayout());
+            displayJPanel.setBorder(BorderFactory.createLineBorder(Color.blue, 3));
+            displayJPanel.setBackground(Color.BLACK);
+            addToContainer(searchBarResults, displayJPanel, 0, ypos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
             //#####################################
             //
             //#####################################
             JPanel picJPanel = new JPanel(new GridLayout(1,1));
+            picJPanel.setBackground(Color.BLUE);
             picJPanel.setPreferredSize(new Dimension(200, 200));
 
-            ImageIcon icon = new ImageIcon(new ImageIcon("src/images/nature-image-for-website.jpg").getImage().getScaledInstance(200, 200, Image.SCALE_DEFAULT));
+
+            ImageIcon icon = new ImageIcon(new ImageIcon("src/images/nature-image-for-website.jpg").getImage()
+                    .getScaledInstance(200, 200, Image.SCALE_DEFAULT));
 
             JLabel lbl=new JLabel();
             lbl.setIcon(icon);
-            lbl.setPreferredSize(new Dimension(200, 200));
             picJPanel.add(lbl);
 
-            addToContainer(searchBarResults, picJPanel, 1, ypos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
+            addToContainer(displayJPanel, picJPanel, 0, ypos+=1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+
+            //#####################################
+            //
+            //#####################################
+            JPanel picJPanel2 = new JPanel(new GridLayout(1,1));
+            picJPanel2.setBackground(Color.GREEN);
+            picJPanel2.setPreferredSize(new Dimension(300, 200));
+
+
+            ImageIcon icon2 = new ImageIcon(new ImageIcon("src/images/nature-image-for-website.jpg").getImage()
+                    .getScaledInstance(500, 200, Image.SCALE_DEFAULT));
+
+            JLabel lbl2=new JLabel();
+            lbl2.setIcon(icon2);
+            picJPanel2.add(lbl2);
+
+
+            addToContainer(displayJPanel, picJPanel2, 1, ypos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
             //#####################################
             // Space Divider
             //#####################################
             JPanel spaceDivider = new JPanel();
             spaceDivider.setBackground(Color.PINK);
-            addToContainer(searchBarResults, spaceDivider, 1, ypos += 1, 1, 1, 0.25, 0.25, "horizontal", 50, 0);
+            addToContainer(searchBarResults, spaceDivider, 0, ypos += 1, 1, 1, 0.25, 0.25, "horizontal", 50, 0);
 
         }
         catch (Exception e)
@@ -282,6 +308,11 @@ public class Find_Ingredients_Info_Screen extends JPanel
         searchBarResults.revalidate();
         super.revalidate();
         parentContainer.revalidate();
+    }
+
+    private void clearSearchResultsDisplay()
+    {
+
     }
 
     public LinkedHashMap<String, Object> findFoodInfo(String food)
