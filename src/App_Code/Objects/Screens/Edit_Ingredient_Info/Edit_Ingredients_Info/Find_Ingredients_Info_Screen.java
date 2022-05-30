@@ -251,40 +251,46 @@ public class Find_Ingredients_Info_Screen extends JPanel
 
             int gridX= -1;
 
-             //###############################################
-            // URL Image
-            //################################################
-            int imageWidth = 300, imageHeight = 200;
+            //##########################################################################
+            // Ingredient URL Image
+            //##########################################################################
+            int ingredientImageWidth = 350, ingredientImageHeight = 200;
 
+            //#############################
+            // Image JPanel
+            //#############################
             JPanel picJPanel2 = new JPanel(new GridLayout(1, 1));
             picJPanel2.setBackground(Color.GREEN);
-            picJPanel2.setPreferredSize(new Dimension(imageWidth, imageHeight));
+            picJPanel2.setPreferredSize(new Dimension(ingredientImageWidth, ingredientImageHeight));
 
+            // Adding URL Image to Display
+            addToContainer(displayJPanel, picJPanel2, gridX+=1, ypos, 1, 1, 0.25, 0.25, "", 0, 0);
+
+            //#############################
+            // Creating URL Image
             //#############################
             String urlLink = "https://images.unsplash.com/photo-1453728013993-6d66e9c9123a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8dmlld3xlbnwwfHwwfHw%3D&w=1000&q=80";
             URL url = new URL(urlLink);
             BufferedImage image = ImageIO.read(url);
-            ImageIcon icon2 = new ImageIcon(new ImageIcon(image).getImage().getScaledInstance(imageWidth, imageHeight, Image.SCALE_DEFAULT));
+            ImageIcon icon2 = new ImageIcon(new ImageIcon(image).getImage().getScaledInstance(ingredientImageWidth, ingredientImageHeight, Image.SCALE_DEFAULT));
 
             JLabel lbl2 = new JLabel();
             lbl2.setIcon(icon2);
             picJPanel2.add(lbl2);
 
-            addToContainer(displayJPanel, picJPanel2, gridX+=1, ypos, 1, 1, 0.25, 0.25, "", 0, 0);
-
-            //###############################################
+            //########################################################################
             // Space Divider
-            //################################################
+            //########################################################################
             JPanel spaceDividerInsideImageDisplay = new JPanel();
             spaceDividerInsideImageDisplay.setBackground(Color.CYAN);
-            spaceDividerInsideImageDisplay.setPreferredSize(new Dimension(100,imageHeight));
+            spaceDividerInsideImageDisplay.setPreferredSize(new Dimension(50, ingredientImageHeight));
 
 
-            addToContainer(displayJPanel, spaceDividerInsideImageDisplay, gridX+=1, ypos, 1, 1, 0.25, 0.25, "", 0, 0);
+            addToContainer(displayJPanel, spaceDividerInsideImageDisplay, gridX+=1, ypos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
-            //#########################################################################
+            //##########################################################################
             // Add Image Icon
-            //######################################################################
+            //##########################################################################
             int addIconJPanelWidth = 100, addIconJPanelHeight = 100, addIconHeight = 71, addIconWidth = 71;
 
             //####################################
