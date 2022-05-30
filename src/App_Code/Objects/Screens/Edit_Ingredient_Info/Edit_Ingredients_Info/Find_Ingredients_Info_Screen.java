@@ -249,19 +249,19 @@ public class Find_Ingredients_Info_Screen extends JPanel
 //            displayJPanel.setBackground(Color.BLACK);
             addToContainer(searchBarResults, displayJPanel, 0, ypos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
-            int gridX= -1;
+            int gridX= -1, height = 150;
 
             //##########################################################################
             // Ingredient URL Image
             //##########################################################################
-            int ingredientImageWidth = 350, ingredientImageHeight = 200;
+            int ingredientImageWidth = 425;
 
             //#############################
             // Image JPanel
             //#############################
             JPanel picJPanel2 = new JPanel(new GridLayout(1, 1));
             picJPanel2.setBackground(Color.GREEN);
-            picJPanel2.setPreferredSize(new Dimension(ingredientImageWidth, ingredientImageHeight));
+            picJPanel2.setPreferredSize(new Dimension(ingredientImageWidth, height));
 
             // Adding URL Image to Display
             addToContainer(displayJPanel, picJPanel2, gridX+=1, ypos, 1, 1, 0.25, 0.25, "", 0, 0);
@@ -272,18 +272,19 @@ public class Find_Ingredients_Info_Screen extends JPanel
             String urlLink = "https://images.unsplash.com/photo-1453728013993-6d66e9c9123a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8dmlld3xlbnwwfHwwfHw%3D&w=1000&q=80";
             URL url = new URL(urlLink);
             BufferedImage image = ImageIO.read(url);
-            ImageIcon icon2 = new ImageIcon(new ImageIcon(image).getImage().getScaledInstance(ingredientImageWidth, ingredientImageHeight, Image.SCALE_DEFAULT));
+            ImageIcon icon2 = new ImageIcon(new ImageIcon(image).getImage().getScaledInstance(ingredientImageWidth, height, Image.SCALE_DEFAULT));
 
             JLabel lbl2 = new JLabel();
             lbl2.setIcon(icon2);
             picJPanel2.add(lbl2);
 
+
             //########################################################################
             // Space Divider
             //########################################################################
             JPanel spaceDividerInsideImageDisplay = new JPanel();
-            spaceDividerInsideImageDisplay.setBackground(Color.CYAN);
-            spaceDividerInsideImageDisplay.setPreferredSize(new Dimension(50, ingredientImageHeight));
+//            spaceDividerInsideImageDisplay.setBackground(Color.CYAN);
+            spaceDividerInsideImageDisplay.setPreferredSize(new Dimension(50, height));
 
 
             addToContainer(displayJPanel, spaceDividerInsideImageDisplay, gridX+=1, ypos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
@@ -318,9 +319,20 @@ public class Find_Ingredients_Info_Screen extends JPanel
 
             addToContainer(iconJPanel, addIcon, 0, 0, 1, 1, 0.25, 0.25, "", 0, 0);
 
-            //#############################################################################
+            //########################################################################
             // Space Divider
-            //#############################################################################
+            //########################################################################
+            JPanel spaceDividerInsideImageDisplay2 = new JPanel();
+//            spaceDividerInsideImageDisplay2.setBackground(Color.CYAN);
+            spaceDividerInsideImageDisplay2.setPreferredSize(new Dimension(50, height));
+
+
+            addToContainer(displayJPanel, spaceDividerInsideImageDisplay2, gridX+=1, ypos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+
+
+            //#########################################################################################################
+            // Space Divider
+            //#########################################################################################################
             JPanel spaceDivider = new JPanel();
             spaceDivider.setBackground(Color.PINK);
             addToContainer(searchBarResults, spaceDivider, 0, ypos += 1, 1, 1, 0.25, 0.25, "horizontal", 50, 0);
