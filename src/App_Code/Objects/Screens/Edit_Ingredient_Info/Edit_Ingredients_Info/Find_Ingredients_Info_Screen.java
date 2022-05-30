@@ -287,7 +287,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
             //################################################
             int imageWidth2 = 200, imageHeight2 = 200;
 
-            JPanel iconJPanel = new JPanel(new GridLayout(1, 1));
+            JPanel iconJPanel = new JPanel(new GridBagLayout());
             iconJPanel.setBackground(Color.GREEN);
             iconJPanel.setPreferredSize(new Dimension(imageWidth, imageHeight));
 
@@ -299,8 +299,8 @@ public class Find_Ingredients_Info_Screen extends JPanel
 
                             });
 
-            iconJPanel.add(addIcon);
-//            addToContainer(iconJPanel, addIcon, 0, 0, 1, 1, 0.25, 0.25, "vertical", 0, 0);
+//            iconJPanel.add(addIcon);
+            addToContainer(iconJPanel, addIcon, 0, 0, 1, 1, 0.25, 0.25, "", 0, 0);
 
 
             addToContainer(displayJPanel, iconJPanel, gridX+=1, ypos, 1, 1, 0.25, 0.25, "", 0, 0);
