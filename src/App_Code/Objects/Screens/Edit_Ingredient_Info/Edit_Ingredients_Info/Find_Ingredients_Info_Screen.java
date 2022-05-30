@@ -9,7 +9,6 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -271,36 +270,40 @@ public class Find_Ingredients_Info_Screen extends JPanel
             lbl2.setIcon(icon2);
             picJPanel2.add(lbl2);
 
-            addToContainer(displayJPanel, picJPanel2, gridX+=1, ypos, 1, 1, 0.25, 0.25, "vertical", 0, 0);
+            addToContainer(displayJPanel, picJPanel2, gridX+=1, ypos, 1, 1, 0.25, 0.25, "", 0, 0);
 
             //###############################################
             // Space Divider
             //################################################
             JPanel spaceDividerInsideImageDisplay = new JPanel();
             spaceDividerInsideImageDisplay.setBackground(Color.CYAN);
-            spaceDividerInsideImageDisplay.setPreferredSize(new Dimension(100,200));
+            spaceDividerInsideImageDisplay.setPreferredSize(new Dimension(100,imageHeight));
 
 
-            addToContainer(displayJPanel, spaceDividerInsideImageDisplay, gridX+=1, ypos, 1, 1, 0.25, 0.25, "vertical", 0, 0);
+            addToContainer(displayJPanel, spaceDividerInsideImageDisplay, gridX+=1, ypos, 1, 1, 0.25, 0.25, "", 0, 0);
 
             //###############################################
             // Add Image Icon
             //################################################
             int imageWidth2 = 200, imageHeight2 = 200;
-            JPanel picJPanel = new JPanel(new GridLayout(1, 1));
-            picJPanel.setBackground(Color.BLUE);
-            picJPanel.setPreferredSize(new Dimension(imageWidth2, imageHeight2));
+
+            JPanel iconJPanel = new JPanel(new GridLayout(1, 1));
+            iconJPanel.setBackground(Color.GREEN);
+            iconJPanel.setPreferredSize(new Dimension(imageWidth, imageHeight));
+
+            IconButton addIcon = new IconButton("src/images/search/search2.png", "", searchBarIconWidth, searchBarIconHeight, searchBarButtonWidth, searchBarButtonHeight,
+                    "centre", "right");
+
+            JButton addButton = addIcon.returnJButton();
+            addButton.addActionListener(ae -> {
+
+                            });
+
+            iconJPanel.add(addIcon);
+//            addToContainer(iconJPanel, addIcon, 0, 0, 1, 1, 0.25, 0.25, "vertical", 0, 0);
 
 
-            ImageIcon icon = new ImageIcon(new ImageIcon("src/images/nature-image-for-website.jpg").getImage()
-                    .getScaledInstance(imageWidth2, imageHeight2, Image.SCALE_DEFAULT));
-
-            JLabel lbl = new JLabel();
-            lbl.setIcon(icon);
-            picJPanel.add(lbl);
-
-
-            addToContainer(displayJPanel, picJPanel, gridX+=1, ypos, 1, 1, 0.25, 0.25, "vertical", 0, 0);
+            addToContainer(displayJPanel, iconJPanel, gridX+=1, ypos, 1, 1, 0.25, 0.25, "", 0, 0);
 
             //#############################################################################
             // Space Divider
