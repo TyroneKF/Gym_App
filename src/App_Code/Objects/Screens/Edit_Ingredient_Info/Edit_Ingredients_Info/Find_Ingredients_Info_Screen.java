@@ -160,7 +160,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
         textField = new JTextField("");
 
         textField.setFont(new Font("Verdana", Font.PLAIN, searchBarTxtInputSize)); // Changing font size
-        textField.setDocument(new JTextFieldLimit(255));  // Setting charecter limit
+        textField.setDocument(new JTextFieldLimit(255));  // Setting character limit
         textField.setHorizontalAlignment(JTextField.CENTER); // Centering JTextField Text
         textField.setText("oats");// HELLO Remove
 
@@ -174,6 +174,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
 
         IconButton searchIcon = new IconButton("src/images/search/search2.png", "", searchBarIconWidth, searchBarIconHeight, searchBarButtonWidth, searchBarButtonHeight,
                 "centre", "right");
+//        searchIcon.makeBTntransparent();
 
         JButton searchIconBTN = searchIcon.returnJButton();
         searchIconBTN.addActionListener(ae -> {
@@ -245,7 +246,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
         {
             JPanel displayJPanel = new JPanel(new GridBagLayout());
             displayJPanel.setBorder(BorderFactory.createLineBorder(Color.blue, 3));
-            displayJPanel.setBackground(Color.BLACK);
+//            displayJPanel.setBackground(Color.BLACK);
             addToContainer(searchBarResults, displayJPanel, 0, ypos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
             int gridX= -1;
@@ -263,8 +264,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
             String urlLink = "https://images.unsplash.com/photo-1453728013993-6d66e9c9123a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8dmlld3xlbnwwfHwwfHw%3D&w=1000&q=80";
             URL url = new URL(urlLink);
             BufferedImage image = ImageIO.read(url);
-            ImageIcon icon2 = new ImageIcon(new ImageIcon(image).getImage()
-                    .getScaledInstance(imageWidth, imageHeight, Image.SCALE_DEFAULT));
+            ImageIcon icon2 = new ImageIcon(new ImageIcon(image).getImage().getScaledInstance(imageWidth, imageHeight, Image.SCALE_DEFAULT));
 
             JLabel lbl2 = new JLabel();
             lbl2.setIcon(icon2);
@@ -282,17 +282,24 @@ public class Find_Ingredients_Info_Screen extends JPanel
 
             addToContainer(displayJPanel, spaceDividerInsideImageDisplay, gridX+=1, ypos, 1, 1, 0.25, 0.25, "", 0, 0);
 
-            //###############################################
+            //#########################################################################
             // Add Image Icon
-            //################################################
-            int imageWidth2 = 200, imageHeight2 = 200;
+            //######################################################################
+            int addIconJPanelWidth = 100, addIconJPanelHeight = 100, addIconHeight = 71, addIconWidth = 71;
 
+            //####################################
+            // Add Icon JPanel
+            //####################################
             JPanel iconJPanel = new JPanel(new GridBagLayout());
-            iconJPanel.setBackground(Color.GREEN);
-            iconJPanel.setPreferredSize(new Dimension(imageWidth, imageHeight));
+//            iconJPanel.setBackground(Color.GREEN);
+            iconJPanel.setPreferredSize(new Dimension(addIconJPanelWidth, addIconJPanelHeight));
 
-            IconButton addIcon = new IconButton("src/images/search/search2.png", "", searchBarIconWidth, searchBarIconHeight, searchBarButtonWidth, searchBarButtonHeight,
-                    "centre", "right");
+            addToContainer(displayJPanel, iconJPanel, gridX+=1, ypos, 1, 1, 0.25, 0.25, "", 0, 0);
+
+            //####################################
+            // Add Icon BTN
+            //####################################
+            IconButton addIcon = new IconButton("src/images/add/++++add.png", "", addIconWidth, addIconHeight, addIconWidth, addIconHeight,"centre", "right");
 
             addIcon.makeBTntransparent();
 
@@ -302,10 +309,8 @@ public class Find_Ingredients_Info_Screen extends JPanel
                             });
 
 //            iconJPanel.add(addIcon);
+
             addToContainer(iconJPanel, addIcon, 0, 0, 1, 1, 0.25, 0.25, "", 0, 0);
-
-
-            addToContainer(displayJPanel, iconJPanel, gridX+=1, ypos, 1, 1, 0.25, 0.25, "", 0, 0);
 
             //#############################################################################
             // Space Divider
