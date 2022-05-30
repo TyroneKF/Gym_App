@@ -294,6 +294,8 @@ public class Find_Ingredients_Info_Screen extends JPanel
             IconButton addIcon = new IconButton("src/images/search/search2.png", "", searchBarIconWidth, searchBarIconHeight, searchBarButtonWidth, searchBarButtonHeight,
                     "centre", "right");
 
+            addIcon.makeBTntransparent();
+
             JButton addButton = addIcon.returnJButton();
             addButton.addActionListener(ae -> {
 
