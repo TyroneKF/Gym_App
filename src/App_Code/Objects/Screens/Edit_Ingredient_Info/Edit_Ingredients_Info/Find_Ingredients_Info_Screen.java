@@ -29,7 +29,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
 
 
     private int
-            frameWidth = 710-40, frameHeight = 850,
+            frameWidth = 710 - 40, frameHeight = 850,
 
     titleJPanelHeight = 45, titleFontSize = 16,
 
@@ -108,7 +108,6 @@ public class Find_Ingredients_Info_Screen extends JPanel
         //##############################################################################################################
         //  Creating JPanel Sections
         //##############################################################################################################
-
 
 
         //#####################################################################
@@ -198,21 +197,23 @@ public class Find_Ingredients_Info_Screen extends JPanel
 
 
             // Get Nutritional Info From API
-            LinkedHashMap<String, Object> foodInfo = findFoodInfo(String.format("100g of %s", food));
-
-            //##################################
-            // Error Message
-            //##################################
-            if (foodInfo == null)
-            {
-                JOptionPane.showMessageDialog(null, String.format("\n\nError \n\nUnable to get nutritional info for the requested food \" %s \" !", food));
-                return;
-            }
+            //HELLO  UNCOMMENT
+//            LinkedHashMap<String, Object> foodInfo = findFoodInfo(String.format("100g of %s", food));
+//
+//            //##################################
+//            // Error Message
+//            //##################################
+//            if (foodInfo == null)
+//            {
+//                JOptionPane.showMessageDialog(null, String.format("\n\nError \n\nUnable to get nutritional info for the requested food \" %s \" !", food));
+//                return;
+//            }
 
             //##################################
             // Display Results
             //##################################
-            displayResults(foodInfo);
+//            displayResults(foodInfo);
+            displayResults2();
 
             //##################################
             // Successful Message
@@ -239,6 +240,87 @@ public class Find_Ingredients_Info_Screen extends JPanel
         resizeGUI(); // Resize GUI
     }
 
+    private void displayResults2()
+    {
+        try
+        {
+            JPanel displayJPanel = new JPanel(new GridBagLayout());
+            displayJPanel.setBorder(BorderFactory.createLineBorder(Color.blue, 3));
+            displayJPanel.setBackground(Color.BLACK);
+            addToContainer(searchBarResults, displayJPanel, 0, ypos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+
+            int gridX= -1;
+
+             //###############################################
+            // URL Image
+            //################################################
+            int imageWidth = 300, imageHeight = 200;
+
+            JPanel picJPanel2 = new JPanel(new GridLayout(1, 1));
+            picJPanel2.setBackground(Color.GREEN);
+            picJPanel2.setPreferredSize(new Dimension(imageWidth, imageHeight));
+
+            //#############################
+            String urlLink = "https://images.unsplash.com/photo-1453728013993-6d66e9c9123a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8dmlld3xlbnwwfHwwfHw%3D&w=1000&q=80";
+            URL url = new URL(urlLink);
+            BufferedImage image = ImageIO.read(url);
+            ImageIcon icon2 = new ImageIcon(new ImageIcon(image).getImage()
+                    .getScaledInstance(imageWidth, imageHeight, Image.SCALE_DEFAULT));
+
+            JLabel lbl2 = new JLabel();
+            lbl2.setIcon(icon2);
+            picJPanel2.add(lbl2);
+
+            addToContainer(displayJPanel, picJPanel2, gridX+=1, ypos, 1, 1, 0.25, 0.25, "vertical", 0, 0);
+
+            //###############################################
+            // Space Divider
+            //################################################
+            JPanel spaceDividerInsideImageDisplay = new JPanel();
+            spaceDividerInsideImageDisplay.setBackground(Color.CYAN);
+            spaceDividerInsideImageDisplay.setPreferredSize(new Dimension(100,200));
+
+
+            addToContainer(displayJPanel, spaceDividerInsideImageDisplay, gridX+=1, ypos, 1, 1, 0.25, 0.25, "vertical", 0, 0);
+
+            //###############################################
+            // Add Image Icon
+            //################################################
+            int imageWidth2 = 200, imageHeight2 = 200;
+            JPanel picJPanel = new JPanel(new GridLayout(1, 1));
+            picJPanel.setBackground(Color.BLUE);
+            picJPanel.setPreferredSize(new Dimension(imageWidth2, imageHeight2));
+
+
+            ImageIcon icon = new ImageIcon(new ImageIcon("src/images/nature-image-for-website.jpg").getImage()
+                    .getScaledInstance(imageWidth2, imageHeight2, Image.SCALE_DEFAULT));
+
+            JLabel lbl = new JLabel();
+            lbl.setIcon(icon);
+            picJPanel.add(lbl);
+
+
+            addToContainer(displayJPanel, picJPanel, gridX+=1, ypos, 1, 1, 0.25, 0.25, "vertical", 0, 0);
+
+            //#############################################################################
+            // Space Divider
+            //#############################################################################
+            JPanel spaceDivider = new JPanel();
+            spaceDivider.setBackground(Color.PINK);
+            addToContainer(searchBarResults, spaceDivider, 0, ypos += 1, 1, 1, 0.25, 0.25, "horizontal", 50, 0);
+
+        }
+        catch (Exception e)
+        {
+            System.out.printf("\n\ndisplayResults() Error \n", e);
+        }
+
+        //##############################################################################################################
+        //  Resizing GUI
+        //#############################################################################################################
+        resizeGUI();
+    }
+
     private void displayResults(LinkedHashMap<String, Object> foodInfo)
     {
         try
@@ -251,7 +333,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
             //#####################################
             //
             //#####################################
-            JPanel picJPanel = new JPanel(new GridLayout(1,1));
+            JPanel picJPanel = new JPanel(new GridLayout(1, 1));
             picJPanel.setBackground(Color.BLUE);
             picJPanel.setPreferredSize(new Dimension(200, 200));
 
@@ -259,17 +341,17 @@ public class Find_Ingredients_Info_Screen extends JPanel
             ImageIcon icon = new ImageIcon(new ImageIcon("src/images/nature-image-for-website.jpg").getImage()
                     .getScaledInstance(200, 200, Image.SCALE_DEFAULT));
 
-            JLabel lbl=new JLabel();
+            JLabel lbl = new JLabel();
             lbl.setIcon(icon);
             picJPanel.add(lbl);
 
 
-            addToContainer(displayJPanel, picJPanel, 0, ypos+=1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+            addToContainer(displayJPanel, picJPanel, 0, ypos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
             //#####################################
             //
             //#####################################
-            JPanel picJPanel2 = new JPanel(new GridLayout(1,1));
+            JPanel picJPanel2 = new JPanel(new GridLayout(1, 1));
             picJPanel2.setBackground(Color.GREEN);
             picJPanel2.setPreferredSize(new Dimension(300, 200));
 
@@ -277,7 +359,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
             ImageIcon icon2 = new ImageIcon(new ImageIcon("src/images/nature-image-for-website.jpg").getImage()
                     .getScaledInstance(500, 200, Image.SCALE_DEFAULT));
 
-            JLabel lbl2=new JLabel();
+            JLabel lbl2 = new JLabel();
             lbl2.setIcon(icon2);
             picJPanel2.add(lbl2);
 
