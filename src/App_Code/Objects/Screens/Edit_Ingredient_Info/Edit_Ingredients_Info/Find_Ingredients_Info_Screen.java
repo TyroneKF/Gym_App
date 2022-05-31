@@ -29,7 +29,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
     private JTextField textField;
     private JComboBox jComboBox;
     private String chosenOption = "";
-
+    private ArrayList<JPanel> searchResultsJPanels = new ArrayList<>();
 
     private int
             frameWidth = 710 - 40, frameHeight = 850,
@@ -51,8 +51,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
     private JPanel searchBarResults, scrollPaneJPanel;
     private Container parentContainer;
 
-    private int ypos = 1;
-
+    private int yPos = 1;
 
     public static void main(String[] args)
     {
@@ -267,7 +266,10 @@ public class Find_Ingredients_Info_Screen extends JPanel
             JPanel displayJPanel = new JPanel(new GridBagLayout());
             displayJPanel.setBorder(BorderFactory.createLineBorder(Color.blue, 3));
 //            displayJPanel.setBackground(Color.BLACK);
-            addToContainer(searchBarResults, displayJPanel, 0, ypos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+
+            searchResultsJPanels.add(displayJPanel);
+
+            addToContainer(searchBarResults, displayJPanel, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
             int gridX = -1, height = 150;
 
@@ -284,7 +286,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
             picJPanel2.setPreferredSize(new Dimension(ingredientImageWidth, height));
 
             // Adding URL Image to Display
-            addToContainer(displayJPanel, picJPanel2, gridX += 1, ypos, 1, 1, 0.25, 0.25, "", 0, 0);
+            addToContainer(displayJPanel, picJPanel2, gridX += 1, yPos, 1, 1, 0.25, 0.25, "", 0, 0);
 
             //#############################
             // Creating URL Image
@@ -307,7 +309,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
             spaceDividerInsideImageDisplay.setPreferredSize(new Dimension(50, height));
 
 
-            addToContainer(displayJPanel, spaceDividerInsideImageDisplay, gridX += 1, ypos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+            addToContainer(displayJPanel, spaceDividerInsideImageDisplay, gridX += 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
             //##########################################################################
             // Add Image Icon
@@ -321,7 +323,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
 //            iconJPanel.setBackground(Color.GREEN);
             iconJPanel.setPreferredSize(new Dimension(addIconJPanelWidth, addIconJPanelHeight));
 
-            addToContainer(displayJPanel, iconJPanel, gridX += 1, ypos, 1, 1, 0.25, 0.25, "", 0, 0);
+            addToContainer(displayJPanel, iconJPanel, gridX += 1, yPos, 1, 1, 0.25, 0.25, "", 0, 0);
 
             //####################################
             // Add Icon BTN
@@ -347,7 +349,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
             spaceDividerInsideImageDisplay2.setPreferredSize(new Dimension(50, height));
 
 
-            addToContainer(displayJPanel, spaceDividerInsideImageDisplay2, gridX += 1, ypos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+            addToContainer(displayJPanel, spaceDividerInsideImageDisplay2, gridX += 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
 
             //#########################################################################################################
@@ -355,7 +357,8 @@ public class Find_Ingredients_Info_Screen extends JPanel
             //#########################################################################################################
             JPanel spaceDivider = new JPanel();
             spaceDivider.setBackground(Color.PINK);
-            addToContainer(searchBarResults, spaceDivider, 0, ypos += 1, 1, 1, 0.25, 0.25, "horizontal", 50, 0);
+            searchResultsJPanels.add(spaceDivider);
+            addToContainer(searchBarResults, spaceDivider, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 50, 0);
 
         }
         catch (Exception e)
@@ -376,7 +379,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
             JPanel displayJPanel = new JPanel(new GridBagLayout());
             displayJPanel.setBorder(BorderFactory.createLineBorder(Color.blue, 3));
 //            displayJPanel.setBackground(Color.BLACK);
-            addToContainer(searchBarResults, displayJPanel, 0, ypos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+            addToContainer(searchBarResults, displayJPanel, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
             int gridX = -1, height = 150;
 
@@ -393,7 +396,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
             picJPanel2.setPreferredSize(new Dimension(ingredientImageWidth, height));
 
             // Adding URL Image to Display
-            addToContainer(displayJPanel, picJPanel2, gridX += 1, ypos, 1, 1, 0.25, 0.25, "", 0, 0);
+            addToContainer(displayJPanel, picJPanel2, gridX += 1, yPos, 1, 1, 0.25, 0.25, "", 0, 0);
 
             //#############################
             // Creating URL Image
@@ -416,7 +419,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
             spaceDividerInsideImageDisplay.setPreferredSize(new Dimension(50, height));
 
 
-            addToContainer(displayJPanel, spaceDividerInsideImageDisplay, gridX += 1, ypos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+            addToContainer(displayJPanel, spaceDividerInsideImageDisplay, gridX += 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
             //##########################################################################
             // Add Image Icon
@@ -430,7 +433,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
 //            iconJPanel.setBackground(Color.GREEN);
             iconJPanel.setPreferredSize(new Dimension(addIconJPanelWidth, addIconJPanelHeight));
 
-            addToContainer(displayJPanel, iconJPanel, gridX += 1, ypos, 1, 1, 0.25, 0.25, "", 0, 0);
+            addToContainer(displayJPanel, iconJPanel, gridX += 1, yPos, 1, 1, 0.25, 0.25, "", 0, 0);
 
             //####################################
             // Add Icon BTN
@@ -456,7 +459,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
             spaceDividerInsideImageDisplay2.setPreferredSize(new Dimension(50, height));
 
 
-            addToContainer(displayJPanel, spaceDividerInsideImageDisplay2, gridX += 1, ypos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+            addToContainer(displayJPanel, spaceDividerInsideImageDisplay2, gridX += 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
 
             //#########################################################################################################
@@ -464,7 +467,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
             //#########################################################################################################
             JPanel spaceDivider = new JPanel();
             spaceDivider.setBackground(Color.PINK);
-            addToContainer(searchBarResults, spaceDivider, 0, ypos += 1, 1, 1, 0.25, 0.25, "horizontal", 50, 0);
+            addToContainer(searchBarResults, spaceDivider, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 50, 0);
 
         }
         catch (Exception e)
@@ -483,7 +486,6 @@ public class Find_Ingredients_Info_Screen extends JPanel
         String food = textField.getText().trim();
         int selectedIndex = jComboBox.getSelectedIndex();
 
-        System.out.printf("\n\nIndex: \"%s\" \nFood: \"%s\"", jComboBox.getItemAt(selectedIndex).toString(), food);//HELLO REMOVE
         //##########################################################
         // Choose an option ingredient or product
         //##########################################################
@@ -501,6 +503,11 @@ public class Find_Ingredients_Info_Screen extends JPanel
             JOptionPane.showMessageDialog(null, String.format("\n\nError \n\nInputted search string for an ingredient / food cannot be empty !  Or, the inputted  ingredient / food being \" %s \" contains characters !", food));
             return;
         }
+
+        //##########################################################
+        // Reset Results Display
+        //##########################################################
+        resetSearchDisplay();
 
         //##########################################################
         // If Ingredient Option do a check if not get info
@@ -545,11 +552,11 @@ public class Find_Ingredients_Info_Screen extends JPanel
             displayResults2(foodInfo);
         }
 
-        //########################################################
+      /*  //########################################################
         // Successful Message
         //########################################################
 
-        JOptionPane.showMessageDialog(null, String.format("\n\nSuccessfully got the nutritional info for the food '%s'!", food));
+        JOptionPane.showMessageDialog(null, String.format("\n\nSuccessfully got the nutritional info for the food '%s'!", food));*/
 
     }
 
@@ -560,11 +567,29 @@ public class Find_Ingredients_Info_Screen extends JPanel
         parentContainer.revalidate();
     }
 
-    private void resetDisplay()
+    private void resetFullDisplay()
     {
         jComboBox.setSelectedIndex(-1);
         textField.setText("");
         chosenOption = "";
+
+        resetSearchDisplay();
+    }
+
+    private void resetSearchDisplay()
+    {
+        //################################
+        // Removing Previous Results From
+        // JPanel
+        //################################
+        for(JPanel jp: searchResultsJPanels)
+        {
+            searchBarResults.remove(jp);
+        }
+
+        yPos = 0;
+
+        resizeGUI();
     }
 
     private void addToContainer(Container container, Component addToContainer, int gridx, int gridy, int gridwidth,
