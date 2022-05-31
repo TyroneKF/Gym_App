@@ -8,7 +8,6 @@ import java.io.*;
 import java.net.HttpURLConnection;
 
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 
@@ -374,30 +373,48 @@ public class NutritionIx_API
 
             ArrayList<LinkedHashMap<String, Object>> productResults = new ArrayList();
 
-            LinkedHashMap<String, Object> foodNutritionalInfo = new LinkedHashMap<>();
+
 
             String jsonString = response.toString(); // convert stringBuilder object to string from  process above
             JSONObject jsonObjectFromString = new JSONObject(jsonString); // convert string to JSON Object
 
-            JSONArray foods = jsonObjectFromString.getJSONArray(mainInstantArrayName); // getting main json array
+            JSONArray jsonArray = jsonObjectFromString.getJSONArray(mainInstantArrayName); // getting main json array
 
             // Looping through json Array and storing data
-            Iterator<Object> iterator = foods.iterator();
+            Iterator<Object> iterator = jsonArray.iterator();
             while (iterator.hasNext())
             {
-                System.out.printf("\n\n########################''");
                 JSONObject jsonObject = (JSONObject) iterator.next();
+
+                LinkedHashMap<String, Object> foodNutritionalInfo = new LinkedHashMap<>();
+
+                System.out.printf("\n\n########################''");
+
                 for (String key : jsonObject.keySet())
                 {
                     Object keyData = jsonObject.get(key);
-                    System.out.printf("\n%s : %s", key, keyData);
                     if (search_Instant_API_DesiredFields.contains(key))
                     {
+                        if(key.equals("photo"))
+                        {
+                            JSONObject picJSOnObj = (JSONObject) keyData;
+
+                            for (String picKey: picJSOnObj.keySet())
+                            {
+                                Object picKeyData = picJSOnObj.get(picKey);
+                                System.out.printf("\n%s : %s", picKey, picKeyData);
+                            }
+                            continue;
+                        }
+
+                        System.out.printf("\n%s : %s", key, keyData);
+
                         foodNutritionalInfo.put(key, keyData);
                     }
                 }
+                productResults.add(foodNutritionalInfo);
             }
-            return null;
+            return productResults;
         }
         catch (Exception e)
         {

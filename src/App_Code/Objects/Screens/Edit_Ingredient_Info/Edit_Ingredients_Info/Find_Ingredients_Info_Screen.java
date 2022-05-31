@@ -47,7 +47,6 @@ public class Find_Ingredients_Info_Screen extends JPanel
             searchBarButtonHeight = 45,
             searchBarIconHeight = searchBarButtonHeight - 10;
 
-
     private JPanel searchBarResults, scrollPaneJPanel;
     private Container parentContainer;
 
