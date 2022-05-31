@@ -156,9 +156,9 @@ public class Find_Ingredients_Info_Screen extends JPanel
         //#################################################################
         JPanel jp = new JPanel(new GridLayout(1, 1));
         jp.setBorder(BorderFactory.createLineBorder(Color.red, 3));
-        jp.setPreferredSize(new Dimension(frameWidth-50, 50));
+//        jp.setPreferredSize(new Dimension(frameWidth-50, 50));
 
-        addToContainer(searchBarJPanel, jp, searchBarJPanelXPos, 0, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+        addToContainer(searchBarJPanel, jp, searchBarJPanelXPos, 0, 1, 1, 1, 1, "both", 0, 0);
 
         String jComboBoxOptions[] = {"Single Ingredient", "Product"};
         jComboBox = new JComboBox(jComboBoxOptions);
