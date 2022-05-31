@@ -358,18 +358,19 @@ public class Find_Ingredients_Info_Screen extends JPanel
 
     private void displayResults2(ArrayList<LinkedHashMap<String, Object>> products)
     {
+        int  height = 150;
         for (LinkedHashMap<String, Object> foodInfo : products)
         {
             try
             {
-                int gridX = -1, height = 150;
+                int gridX = -1;
 
                 JPanel displayJPanel = new JPanel(new GridBagLayout());
                 displayJPanel.setBorder(BorderFactory.createLineBorder(Color.blue, 3));
 
                 searchResultsJPanels.add(displayJPanel);
 
-                addToContainer(searchBarResults, displayJPanel, gridX+=1, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+                addToContainer(searchBarResults, displayJPanel, gridX+=1, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 50, 0);
 
                 //##########################################################################
                 // Ingredient URL Image
@@ -380,7 +381,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
                 // Image JPanel
                 //#############################
                 JPanel picJPanel2 = new JPanel(new GridLayout(1, 1));
-                picJPanel2.setBackground(Color.GREEN);
+//                picJPanel2.setBackground(Color.GREEN);
                 picJPanel2.setPreferredSize(new Dimension(ingredientImageWidth, height));
 
                 // Adding URL Image to Display
@@ -447,14 +448,6 @@ public class Find_Ingredients_Info_Screen extends JPanel
                 spaceDividerInsideImageDisplay2.setPreferredSize(new Dimension(50, height));
 
                 addToContainer(displayJPanel, spaceDividerInsideImageDisplay2, gridX += 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
-
-                //#########################################################################################################
-                // Space Divider
-                //#########################################################################################################
-                JPanel spaceDivider = new JPanel();
-                spaceDivider.setBackground(Color.PINK);
-                searchResultsJPanels.add(spaceDivider);
-                addToContainer(searchBarResults, spaceDivider, gridX, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 50, 0);
 
             }
             catch (Exception e)
