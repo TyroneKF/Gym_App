@@ -8,6 +8,8 @@ import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.ArrayList;
@@ -25,6 +27,8 @@ public class Find_Ingredients_Info_Screen extends JPanel
     private ArrayList<JPanel> resultsJPanelDisplay = new ArrayList();
 
     private JTextField textField;
+    private JComboBox jComboBox;
+    private String chosenOption = "";
 
 
     private int
@@ -142,16 +146,47 @@ public class Find_Ingredients_Info_Screen extends JPanel
         //#################################################################
         // Adding the main section of search Bar JPanel GUI to display
         JPanel searchBarJPanel = new JPanel(new GridBagLayout());
+        searchBarJPanel.setBorder(BorderFactory.createLineBorder(Color.blue, 3));
         mainCenterPanel.add(searchBarJPanel, BorderLayout.NORTH);
 
+        int searchBarJPanelXPos =0, searchBarJPanelYPos =0;
+
+        //#################################################################
+        // Search Bar JComboBox
+        //#################################################################
+        JPanel jp = new JPanel(new GridLayout(1, 1));
+        jp.setBorder(BorderFactory.createLineBorder(Color.red, 3));
+        jp.setPreferredSize(new Dimension(frameWidth-50, 50));
+
+        addToContainer(searchBarJPanel, jp, searchBarJPanelXPos, 0, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+
+        String jComboBoxOptions[] = {"Single Ingredient", "Product"};
+        jComboBox = new JComboBox(jComboBoxOptions);
+        jComboBox.setFont(new Font("Verdana", Font.PLAIN, 15));
+        jp.add(jComboBox);
+
+        ((JLabel) jComboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER); // centre text
+        jComboBox.addItemListener(new ItemListener()
+        {
+            public void itemStateChanged(ItemEvent ie)
+            {
+                int selectedItemIndex = jComboBox.getSelectedIndex();
+
+                if (selectedItemIndex != -1)
+                {
+                   chosenOption = jComboBox.getItemAt(selectedItemIndex).toString();
+                }
+            }
+        });
+
         //###########################################
-        // Search Bar West Panel
+        // (West) TextField JPanel
         //##########################################
         // Creating JPanel for text input area for search bar
         JPanel searchBarWestJPanel = new JPanel(new GridLayout(1, 1));
         searchBarWestJPanel.setPreferredSize(new Dimension(searchBarWidth, searchBarHeight));
         searchBarWestJPanel.setBackground(Color.BLUE);
-        addToContainer(searchBarJPanel, searchBarWestJPanel, 0, 0, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+        addToContainer(searchBarJPanel, searchBarWestJPanel, searchBarJPanelXPos, searchBarJPanelYPos+=1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
         //####################
         // Text Field
@@ -169,7 +204,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
         searchBarWestJPanel.add(textField); // adding textField to JPanel*/
 
         //#########################################
-        // Search Bar East Panel
+        // (East) JPanel
         //#########################################
 
         IconButton searchIcon = new IconButton("src/images/search/search2.png", "", searchBarIconWidth, searchBarIconHeight, searchBarButtonWidth, searchBarButtonHeight,
@@ -223,7 +258,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
 
         });
 
-        addToContainer(searchBarJPanel, searchIcon, 1, 0, 1, 1, 0.25, 0.25, "vertical", 0, 0);
+        addToContainer(searchBarJPanel, searchIcon, searchBarJPanelXPos+=1, searchBarJPanelYPos, 1, 1, 0.25, 0.25, "vertical", 0, 0);
 
         //#################################################################
         // SearchBar Results
@@ -249,7 +284,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
 //            displayJPanel.setBackground(Color.BLACK);
             addToContainer(searchBarResults, displayJPanel, 0, ypos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
-            int gridX= -1, height = 150;
+            int gridX = -1, height = 150;
 
             //##########################################################################
             // Ingredient URL Image
@@ -264,7 +299,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
             picJPanel2.setPreferredSize(new Dimension(ingredientImageWidth, height));
 
             // Adding URL Image to Display
-            addToContainer(displayJPanel, picJPanel2, gridX+=1, ypos, 1, 1, 0.25, 0.25, "", 0, 0);
+            addToContainer(displayJPanel, picJPanel2, gridX += 1, ypos, 1, 1, 0.25, 0.25, "", 0, 0);
 
             //#############################
             // Creating URL Image
@@ -287,7 +322,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
             spaceDividerInsideImageDisplay.setPreferredSize(new Dimension(50, height));
 
 
-            addToContainer(displayJPanel, spaceDividerInsideImageDisplay, gridX+=1, ypos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+            addToContainer(displayJPanel, spaceDividerInsideImageDisplay, gridX += 1, ypos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
             //##########################################################################
             // Add Image Icon
@@ -301,19 +336,19 @@ public class Find_Ingredients_Info_Screen extends JPanel
 //            iconJPanel.setBackground(Color.GREEN);
             iconJPanel.setPreferredSize(new Dimension(addIconJPanelWidth, addIconJPanelHeight));
 
-            addToContainer(displayJPanel, iconJPanel, gridX+=1, ypos, 1, 1, 0.25, 0.25, "", 0, 0);
+            addToContainer(displayJPanel, iconJPanel, gridX += 1, ypos, 1, 1, 0.25, 0.25, "", 0, 0);
 
             //####################################
             // Add Icon BTN
             //####################################
-            IconButton addIcon = new IconButton("src/images/add/++++add.png", "", addIconWidth, addIconHeight, addIconWidth, addIconHeight,"centre", "right");
+            IconButton addIcon = new IconButton("src/images/add/++++add.png", "", addIconWidth, addIconHeight, addIconWidth, addIconHeight, "centre", "right");
 
             addIcon.makeBTntransparent();
 
             JButton addButton = addIcon.returnJButton();
             addButton.addActionListener(ae -> {
 
-                            });
+            });
 
 //            iconJPanel.add(addIcon);
 
@@ -327,7 +362,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
             spaceDividerInsideImageDisplay2.setPreferredSize(new Dimension(50, height));
 
 
-            addToContainer(displayJPanel, spaceDividerInsideImageDisplay2, gridX+=1, ypos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+            addToContainer(displayJPanel, spaceDividerInsideImageDisplay2, gridX += 1, ypos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
 
             //#########################################################################################################
