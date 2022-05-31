@@ -356,116 +356,117 @@ public class Find_Ingredients_Info_Screen extends JPanel
         resizeGUI();
     }
 
-    private void displayResults2(ArrayList<LinkedHashMap<String, Object>> foodInfo)
+    private void displayResults2(ArrayList<LinkedHashMap<String, Object>> products)
     {
-     /*   try
+        for (LinkedHashMap<String, Object> foodInfo : products)
         {
-            JPanel displayJPanel = new JPanel(new GridBagLayout());
-            displayJPanel.setBorder(BorderFactory.createLineBorder(Color.blue, 3));
-//            displayJPanel.setBackground(Color.BLACK);
+            try
+            {
+                int gridX = -1, height = 150;
 
-            searchResultsJPanels.add(displayJPanel);
+                JPanel displayJPanel = new JPanel(new GridBagLayout());
+                displayJPanel.setBorder(BorderFactory.createLineBorder(Color.blue, 3));
 
-            addToContainer(searchBarResults, displayJPanel, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+                searchResultsJPanels.add(displayJPanel);
 
-            int gridX = -1, height = 150;
+                addToContainer(searchBarResults, displayJPanel, gridX+=1, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
-            //##########################################################################
-            // Ingredient URL Image
-            //##########################################################################
-            int ingredientImageWidth = 425;
+                //##########################################################################
+                // Ingredient URL Image
+                //##########################################################################
+                int ingredientImageWidth = 425;
 
-            //#############################
-            // Image JPanel
-            //#############################
-            JPanel picJPanel2 = new JPanel(new GridLayout(1, 1));
-            picJPanel2.setBackground(Color.GREEN);
-            picJPanel2.setPreferredSize(new Dimension(ingredientImageWidth, height));
+                //#############################
+                // Image JPanel
+                //#############################
+                JPanel picJPanel2 = new JPanel(new GridLayout(1, 1));
+                picJPanel2.setBackground(Color.GREEN);
+                picJPanel2.setPreferredSize(new Dimension(ingredientImageWidth, height));
 
-            // Adding URL Image to Display
-            addToContainer(displayJPanel, picJPanel2, gridX += 1, yPos, 1, 1, 0.25, 0.25, "", 0, 0);
+                // Adding URL Image to Display
+                addToContainer(displayJPanel, picJPanel2, gridX += 1, yPos, 1, 1, 0.25, 0.25, "", 0, 0);
 
-            //#############################
-            // Creating URL Image
-            //#############################
-            String urlLink = (String) foodInfo.get("highres");
-            URL url = new URL(urlLink);
-            BufferedImage image = ImageIO.read(url);
-            ImageIcon icon2 = new ImageIcon(new ImageIcon(image).getImage().getScaledInstance(ingredientImageWidth, height, Image.SCALE_DEFAULT));
+                //#############################
+                // Creating URL Image
+                //#############################
+                String urlLink = (String) foodInfo.get("thumb");
+                URL url = new URL(urlLink);
+                BufferedImage image = ImageIO.read(url);
+                ImageIcon icon2 = new ImageIcon(new ImageIcon(image).getImage().getScaledInstance(ingredientImageWidth, height, Image.SCALE_DEFAULT));
 
-            JLabel lbl2 = new JLabel();
-            lbl2.setIcon(icon2);
-            picJPanel2.add(lbl2);
+                JLabel lbl2 = new JLabel();
+                lbl2.setIcon(icon2);
+                picJPanel2.add(lbl2);
 
 
-            //########################################################################
-            // Space Divider
-            //########################################################################
-            JPanel spaceDividerInsideImageDisplay = new JPanel();
+                //########################################################################
+                // Space Divider
+                //########################################################################
+                JPanel spaceDividerInsideImageDisplay = new JPanel();
 //            spaceDividerInsideImageDisplay.setBackground(Color.CYAN);
-            spaceDividerInsideImageDisplay.setPreferredSize(new Dimension(50, height));
+                spaceDividerInsideImageDisplay.setPreferredSize(new Dimension(50, height));
 
 
-            addToContainer(displayJPanel, spaceDividerInsideImageDisplay, gridX += 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+                addToContainer(displayJPanel, spaceDividerInsideImageDisplay, gridX += 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
-            //##########################################################################
-            // Add Image Icon
-            //##########################################################################
-            int addIconJPanelWidth = 100, addIconJPanelHeight = 100, addIconHeight = 71, addIconWidth = 71;
+                //##########################################################################
+                // Add Image Icon
+                //##########################################################################
+                int addIconJPanelWidth = 100, addIconJPanelHeight = 100, addIconHeight = 71, addIconWidth = 71;
 
-            //####################################
-            // Add Icon JPanel
-            //####################################
-            JPanel iconJPanel = new JPanel(new GridBagLayout());
+                //####################################
+                // Add Icon JPanel
+                //####################################
+                JPanel iconJPanel = new JPanel(new GridBagLayout());
 //            iconJPanel.setBackground(Color.GREEN);
-            iconJPanel.setPreferredSize(new Dimension(addIconJPanelWidth, addIconJPanelHeight));
+                iconJPanel.setPreferredSize(new Dimension(addIconJPanelWidth, addIconJPanelHeight));
 
-            addToContainer(displayJPanel, iconJPanel, gridX += 1, yPos, 1, 1, 0.25, 0.25, "", 0, 0);
+                addToContainer(displayJPanel, iconJPanel, gridX += 1, yPos, 1, 1, 0.25, 0.25, "", 0, 0);
 
-            //####################################
-            // Add Icon BTN
-            //####################################
-            IconButton addIcon = new IconButton("src/images/add/++++add.png", "", addIconWidth, addIconHeight, addIconWidth, addIconHeight, "centre", "right");
+                //####################################
+                // Add Icon BTN
+                //####################################
+                IconButton addIcon = new IconButton("src/images/add/++++add.png", "", addIconWidth, addIconHeight, addIconWidth, addIconHeight, "centre", "right");
 
-            addIcon.makeBTntransparent();
+                addIcon.makeBTntransparent();
 
-            JButton addButton = addIcon.returnJButton();
-            addButton.addActionListener(ae -> {
+                JButton addButton = addIcon.returnJButton();
+                addButton.addActionListener(ae -> {
 
-                addButtonAction(foodInfo);
-            });
+                    addButtonAction(foodInfo);
 
-            addToContainer(iconJPanel, addIcon, 0, 0, 1, 1, 0.25, 0.25, "", 0, 0);
+                });
 
-            //########################################################################
-            // Space Divider
-            //########################################################################
-            JPanel spaceDividerInsideImageDisplay2 = new JPanel();
+                addToContainer(iconJPanel, addIcon, 0, 0, 1, 1, 0.25, 0.25, "", 0, 0);
+
+                //########################################################################
+                // Space Divider
+                //########################################################################
+                JPanel spaceDividerInsideImageDisplay2 = new JPanel();
 //            spaceDividerInsideImageDisplay2.setBackground(Color.CYAN);
-            spaceDividerInsideImageDisplay2.setPreferredSize(new Dimension(50, height));
+                spaceDividerInsideImageDisplay2.setPreferredSize(new Dimension(50, height));
 
+                addToContainer(displayJPanel, spaceDividerInsideImageDisplay2, gridX += 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
-            addToContainer(displayJPanel, spaceDividerInsideImageDisplay2, gridX += 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+                //#########################################################################################################
+                // Space Divider
+                //#########################################################################################################
+                JPanel spaceDivider = new JPanel();
+                spaceDivider.setBackground(Color.PINK);
+                searchResultsJPanels.add(spaceDivider);
+                addToContainer(searchBarResults, spaceDivider, gridX, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 50, 0);
 
+            }
+            catch (Exception e)
+            {
+                System.out.printf("\n\ndisplayResults() Error \n", e);
+            }
 
-            //#########################################################################################################
-            // Space Divider
-            //#########################################################################################################
-            JPanel spaceDivider = new JPanel();
-            spaceDivider.setBackground(Color.PINK);
-            searchResultsJPanels.add(spaceDivider);
-            addToContainer(searchBarResults, spaceDivider, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 50, 0);
-
+            //##############################################################################################################
+            //  Resizing GUI
+            //#############################################################################################################
+            resizeGUI();
         }
-        catch (Exception e)
-        {
-            System.out.printf("\n\ndisplayResults() Error \n", e);
-        }
-*/
-        //##############################################################################################################
-        //  Resizing GUI
-        //#############################################################################################################
-        resizeGUI();
     }
 
     private void searchButtonAction()
@@ -501,7 +502,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
             }
 
             //  Get Nutritional Info From API
-            LinkedHashMap<String, Object>  foodInfo = get_API_V2NaturalNutrients(String.format("100g of %s", food));
+            LinkedHashMap<String, Object> foodInfo = get_API_V2NaturalNutrients(String.format("100g of %s", food));
 
             //##################################
             // Error Message
