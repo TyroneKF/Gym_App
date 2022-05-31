@@ -22,7 +22,7 @@ public class NutritionIx_API
 
     // photo
     private String thirdArrayName = "photo";
-    private String appID = "22210106" , appKey = "7e4f361cf3d659726c2e1ead771ec52e";
+    private String appID = "22210106", appKey = "7e4f361cf3d659726c2e1ead771ec52e";
 
     private ArrayList<String> desiredNutritionalFields = new ArrayList<>(Arrays.asList(
             "food_name",
@@ -54,15 +54,15 @@ public class NutritionIx_API
             "highres"
     ));
 
-    private LinkedHashMap<String, Object> foodNutritionalInfo = new LinkedHashMap<>();
-
     private String pathToNutrientsCSV = "src/App_Code/Objects/API/Nutritionix/Resources/Nutritionix API v2 - Full Nutrient USDA .csv";
     private int attr_ID_Col = 1, attr_Name_Col = 4;
     private BufferedReader csvReader = null;
 
     public static void main(String[] args)
     {
-        new NutritionIx_API().get_POST_V2NaturalNutrients("100g of chicken");
+        NutritionIx_API api = new NutritionIx_API();
+        api.get_POST_V2NaturalNutrients("100g of chicken");
+        api.get_GET_V2SearchInstant("Ben & Jerry's");
     }
 
     public NutritionIx_API()
@@ -72,18 +72,15 @@ public class NutritionIx_API
 
     public LinkedHashMap<String, Object> get_POST_V2NaturalNutrients(String food)
     {
-
-        if (getNutritionalInfo(food))
+        LinkedHashMap<String, Object> foodNutritionalInfo = parseFurtherNutritionalInfo(getNutritionalInfo(food));
+        if (foodNutritionalInfo != null)
         {
-            if (parseFurtherNutritionalInfo())
-            {
-                return foodNutritionalInfo;
-            }
+            return foodNutritionalInfo;
         }
         return null;
     }
 
-    private boolean getNutritionalInfo(String food)
+    private LinkedHashMap<String, Object> getNutritionalInfo(String food)
     {
         try
         {
@@ -138,6 +135,8 @@ public class NutritionIx_API
             // Parsing Response & Storing Data
             //#####################################################################
 //            System.out.printf("\n\n########################''");
+            LinkedHashMap<String, Object> foodNutritionalInfo = new LinkedHashMap<>();
+
             String jsonString = response.toString(); // convert stringBuilder object to string from  process above
             JSONObject jsonObjectFromString = new JSONObject(jsonString); // convert string to JSON Object
 
@@ -158,17 +157,22 @@ public class NutritionIx_API
                     }
                 }
             }
-            return true;
+            return foodNutritionalInfo;
         }
         catch (Exception e)
         {
             System.out.printf("\n\nError getNutritionalInfo() \n'' %s ''", e);
-            return false;
+            return null;
         }
     }
 
-    private boolean parseFurtherNutritionalInfo()
+    private LinkedHashMap<String, Object> parseFurtherNutritionalInfo(LinkedHashMap<String, Object> foodNutritionalInfo)
     {
+        if(foodNutritionalInfo == null)
+        {
+            return null;
+        }
+
         try
         {
             //##########################################################################################
@@ -198,7 +202,7 @@ public class NutritionIx_API
                 else
                 {
                     System.out.printf("\n\nError  parseFurtherNutritionalInfo() \nIssues Extracting Attribute Name for attr_id = %s", attr_id);
-                    return false;
+                    return null;
                 }
             }
 
@@ -231,12 +235,12 @@ public class NutritionIx_API
             });*/
 
 
-            return true;
+            return foodNutritionalInfo;
         }
         catch (Exception e)
         {
             System.out.printf("\n\nError  parseFurtherNutritionalInfo() \n'' %s ''", e);
-            return false;
+            return null;
         }
     }
 
@@ -296,4 +300,11 @@ public class NutritionIx_API
         }
         //###############################
     }
+
+    public LinkedHashMap<String, Object> get_GET_V2SearchInstant(String product)
+    {
+        return null;
+    }
+
+
 }

@@ -335,9 +335,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
             JButton addButton = addIcon.returnJButton();
             addButton.addActionListener(ae -> {
 
-                System.out.printf("\n\naddButton Clicked");
                 addButtonAction(foodInfo);
-
             });
 
             addToContainer(iconJPanel, addIcon, 0, 0, 1, 1, 0.25, 0.25, "", 0, 0);
@@ -380,6 +378,9 @@ public class Find_Ingredients_Info_Screen extends JPanel
             JPanel displayJPanel = new JPanel(new GridBagLayout());
             displayJPanel.setBorder(BorderFactory.createLineBorder(Color.blue, 3));
 //            displayJPanel.setBackground(Color.BLACK);
+
+            searchResultsJPanels.add(displayJPanel);
+
             addToContainer(searchBarResults, displayJPanel, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
             int gridX = -1, height = 150;
@@ -402,7 +403,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
             //#############################
             // Creating URL Image
             //#############################
-            String urlLink = "https://images.unsplash.com/photo-1453728013993-6d66e9c9123a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8dmlld3xlbnwwfHwwfHw%3D&w=1000&q=80";
+            String urlLink = (String) foodInfo.get("highres");
             URL url = new URL(urlLink);
             BufferedImage image = ImageIO.read(url);
             ImageIcon icon2 = new ImageIcon(new ImageIcon(image).getImage().getScaledInstance(ingredientImageWidth, height, Image.SCALE_DEFAULT));
@@ -446,9 +447,8 @@ public class Find_Ingredients_Info_Screen extends JPanel
             JButton addButton = addIcon.returnJButton();
             addButton.addActionListener(ae -> {
 
+                addButtonAction(foodInfo);
             });
-
-//            iconJPanel.add(addIcon);
 
             addToContainer(iconJPanel, addIcon, 0, 0, 1, 1, 0.25, 0.25, "", 0, 0);
 
@@ -468,6 +468,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
             //#########################################################################################################
             JPanel spaceDivider = new JPanel();
             spaceDivider.setBackground(Color.PINK);
+            searchResultsJPanels.add(spaceDivider);
             addToContainer(searchBarResults, spaceDivider, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 50, 0);
 
         }
