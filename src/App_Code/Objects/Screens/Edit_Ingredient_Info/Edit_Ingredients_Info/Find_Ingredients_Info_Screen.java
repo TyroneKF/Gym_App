@@ -149,7 +149,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
         searchBarJPanel.setBorder(BorderFactory.createLineBorder(Color.blue, 3));
         mainCenterPanel.add(searchBarJPanel, BorderLayout.NORTH);
 
-        int searchBarJPanelXPos =0, searchBarJPanelYPos =0;
+        int searchBarJPanelXPos = 0, searchBarJPanelYPos = 0;
 
         //#################################################################
         // Search Bar JComboBox
@@ -174,19 +174,21 @@ public class Find_Ingredients_Info_Screen extends JPanel
 
                 if (selectedItemIndex != -1)
                 {
-                   chosenOption = jComboBox.getItemAt(selectedItemIndex).toString();
+                    chosenOption = jComboBox.getItemAt(selectedItemIndex).toString();
                 }
             }
         });
 
-        //###########################################
+        jComboBox.setSelectedIndex(-1);
+
+        //########################################################################
         // (West) TextField JPanel
-        //##########################################
+        //########################################################################
         // Creating JPanel for text input area for search bar
         JPanel searchBarWestJPanel = new JPanel(new GridLayout(1, 1));
         searchBarWestJPanel.setPreferredSize(new Dimension(searchBarWidth, searchBarHeight));
         searchBarWestJPanel.setBackground(Color.BLUE);
-        addToContainer(searchBarJPanel, searchBarWestJPanel, searchBarJPanelXPos, searchBarJPanelYPos+=1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+        addToContainer(searchBarJPanel, searchBarWestJPanel, searchBarJPanelXPos, searchBarJPanelYPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
         //####################
         // Text Field
@@ -214,51 +216,10 @@ public class Find_Ingredients_Info_Screen extends JPanel
         JButton searchIconBTN = searchIcon.returnJButton();
         searchIconBTN.addActionListener(ae -> {
 
-            String food = textField.getText().trim();
-
-            // Check if JTextField is empty or, contains any characters
-            if (food.equals("") || doesStringContainCharacters(food))
-            {
-                JOptionPane.showMessageDialog(null, String.format("\n\nError \n\nInputted search string for an ingredient cannot be empty !  Or, the inputted  ingredient being \" %s \" contains characters !", food));
-                return;
-            }
-
-            // Check if string is one ingredient
-            if (food.split("\\s+").length > 1)
-            {
-                JOptionPane.showMessageDialog(null, String.format("\n\nError \n\nInputted search string for an ingredient must be only one word:  \" %s \" !", food));
-                return;
-            }
-
-
-            // Get Nutritional Info From API
-            //HELLO  UNCOMMENT
-//            LinkedHashMap<String, Object> foodInfo = findFoodInfo(String.format("100g of %s", food));
-//
-//            //##################################
-//            // Error Message
-//            //##################################
-//            if (foodInfo == null)
-//            {
-//                JOptionPane.showMessageDialog(null, String.format("\n\nError \n\nUnable to get nutritional info for the requested food \" %s \" !", food));
-//                return;
-//            }
-
-            //##################################
-            // Display Results
-            //##################################
-//            displayResults(foodInfo);
-            displayResults2();
-
-            //##################################
-            // Successful Message
-            //##################################
-
-            JOptionPane.showMessageDialog(null, String.format("\n\nSuccessfully got the nutritional info for the food '%s'!", food));
-
+            searchButtonAction();
         });
 
-        addToContainer(searchBarJPanel, searchIcon, searchBarJPanelXPos+=1, searchBarJPanelYPos, 1, 1, 0.25, 0.25, "vertical", 0, 0);
+        addToContainer(searchBarJPanel, searchIcon, searchBarJPanelXPos += 1, searchBarJPanelYPos, 1, 1, 0.25, 0.25, "vertical", 0, 0);
 
         //#################################################################
         // SearchBar Results
@@ -275,7 +236,140 @@ public class Find_Ingredients_Info_Screen extends JPanel
         resizeGUI(); // Resize GUI
     }
 
-    private void displayResults2()
+    public LinkedHashMap<String, Object> get_API_V2NaturalNutrients(String food)
+    {
+        return nutritionIx_api.get_POST_V2NaturalNutrients(food);
+    }
+
+    public LinkedHashMap<String, Object> get_API_V2Instant(String product)
+    {
+        return null;
+    }
+
+    private boolean doesStringContainCharacters(String input)
+    {
+        Pattern p1 = Pattern.compile("[^a-zA-Z]", Pattern.CASE_INSENSITIVE);
+        Matcher m1 = p1.matcher(input.replaceAll("\\s+", ""));
+        boolean b1 = m1.find();
+
+        if (b1)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    private void displayResults(LinkedHashMap<String, Object> foodInfo)
+    {
+        try
+        {
+            JPanel displayJPanel = new JPanel(new GridBagLayout());
+            displayJPanel.setBorder(BorderFactory.createLineBorder(Color.blue, 3));
+//            displayJPanel.setBackground(Color.BLACK);
+            addToContainer(searchBarResults, displayJPanel, 0, ypos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+
+            int gridX = -1, height = 150;
+
+            //##########################################################################
+            // Ingredient URL Image
+            //##########################################################################
+            int ingredientImageWidth = 425;
+
+            //#############################
+            // Image JPanel
+            //#############################
+            JPanel picJPanel2 = new JPanel(new GridLayout(1, 1));
+            picJPanel2.setBackground(Color.GREEN);
+            picJPanel2.setPreferredSize(new Dimension(ingredientImageWidth, height));
+
+            // Adding URL Image to Display
+            addToContainer(displayJPanel, picJPanel2, gridX += 1, ypos, 1, 1, 0.25, 0.25, "", 0, 0);
+
+            //#############################
+            // Creating URL Image
+            //#############################
+            String urlLink = (String) foodInfo.get("highres");
+            URL url = new URL(urlLink);
+            BufferedImage image = ImageIO.read(url);
+            ImageIcon icon2 = new ImageIcon(new ImageIcon(image).getImage().getScaledInstance(ingredientImageWidth, height, Image.SCALE_DEFAULT));
+
+            JLabel lbl2 = new JLabel();
+            lbl2.setIcon(icon2);
+            picJPanel2.add(lbl2);
+
+
+            //########################################################################
+            // Space Divider
+            //########################################################################
+            JPanel spaceDividerInsideImageDisplay = new JPanel();
+//            spaceDividerInsideImageDisplay.setBackground(Color.CYAN);
+            spaceDividerInsideImageDisplay.setPreferredSize(new Dimension(50, height));
+
+
+            addToContainer(displayJPanel, spaceDividerInsideImageDisplay, gridX += 1, ypos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+
+            //##########################################################################
+            // Add Image Icon
+            //##########################################################################
+            int addIconJPanelWidth = 100, addIconJPanelHeight = 100, addIconHeight = 71, addIconWidth = 71;
+
+            //####################################
+            // Add Icon JPanel
+            //####################################
+            JPanel iconJPanel = new JPanel(new GridBagLayout());
+//            iconJPanel.setBackground(Color.GREEN);
+            iconJPanel.setPreferredSize(new Dimension(addIconJPanelWidth, addIconJPanelHeight));
+
+            addToContainer(displayJPanel, iconJPanel, gridX += 1, ypos, 1, 1, 0.25, 0.25, "", 0, 0);
+
+            //####################################
+            // Add Icon BTN
+            //####################################
+            IconButton addIcon = new IconButton("src/images/add/++++add.png", "", addIconWidth, addIconHeight, addIconWidth, addIconHeight, "centre", "right");
+
+            addIcon.makeBTntransparent();
+
+            JButton addButton = addIcon.returnJButton();
+            addButton.addActionListener(ae -> {
+
+            });
+
+//            iconJPanel.add(addIcon);
+
+            addToContainer(iconJPanel, addIcon, 0, 0, 1, 1, 0.25, 0.25, "", 0, 0);
+
+            //########################################################################
+            // Space Divider
+            //########################################################################
+            JPanel spaceDividerInsideImageDisplay2 = new JPanel();
+//            spaceDividerInsideImageDisplay2.setBackground(Color.CYAN);
+            spaceDividerInsideImageDisplay2.setPreferredSize(new Dimension(50, height));
+
+
+            addToContainer(displayJPanel, spaceDividerInsideImageDisplay2, gridX += 1, ypos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+
+
+            //#########################################################################################################
+            // Space Divider
+            //#########################################################################################################
+            JPanel spaceDivider = new JPanel();
+            spaceDivider.setBackground(Color.PINK);
+            addToContainer(searchBarResults, spaceDivider, 0, ypos += 1, 1, 1, 0.25, 0.25, "horizontal", 50, 0);
+
+        }
+        catch (Exception e)
+        {
+            System.out.printf("\n\ndisplayResults() Error \n", e);
+        }
+
+        //##############################################################################################################
+        //  Resizing GUI
+        //#############################################################################################################
+        resizeGUI();
+    }
+
+    private void displayResults2(LinkedHashMap<String, Object> foodInfo)
     {
         try
         {
@@ -384,68 +478,79 @@ public class Find_Ingredients_Info_Screen extends JPanel
         resizeGUI();
     }
 
-    private void displayResults(LinkedHashMap<String, Object> foodInfo)
+    private void searchButtonAction()
     {
-        try
+        String food = textField.getText().trim();
+        int selectedIndex = jComboBox.getSelectedIndex();
+
+        System.out.printf("\n\nIndex: \"%s\" \nFood: \"%s\"", jComboBox.getItemAt(selectedIndex).toString(), food);//HELLO REMOVE
+        //##########################################################
+        // Choose an option ingredient or product
+        //##########################################################
+        if (selectedIndex == -1)
         {
-            JPanel displayJPanel = new JPanel(new GridBagLayout());
-            displayJPanel.setBorder(BorderFactory.createLineBorder(Color.blue, 3));
-            displayJPanel.setBackground(Color.BLACK);
-            addToContainer(searchBarResults, displayJPanel, 0, ypos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
-
-            //#####################################
-            //
-            //#####################################
-            JPanel picJPanel = new JPanel(new GridLayout(1, 1));
-            picJPanel.setBackground(Color.BLUE);
-            picJPanel.setPreferredSize(new Dimension(200, 200));
-
-
-            ImageIcon icon = new ImageIcon(new ImageIcon("src/images/nature-image-for-website.jpg").getImage()
-                    .getScaledInstance(200, 200, Image.SCALE_DEFAULT));
-
-            JLabel lbl = new JLabel();
-            lbl.setIcon(icon);
-            picJPanel.add(lbl);
-
-
-            addToContainer(displayJPanel, picJPanel, 0, ypos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
-
-            //#####################################
-            //
-            //#####################################
-            JPanel picJPanel2 = new JPanel(new GridLayout(1, 1));
-            picJPanel2.setBackground(Color.GREEN);
-            picJPanel2.setPreferredSize(new Dimension(300, 200));
-
-
-            ImageIcon icon2 = new ImageIcon(new ImageIcon("src/images/nature-image-for-website.jpg").getImage()
-                    .getScaledInstance(500, 200, Image.SCALE_DEFAULT));
-
-            JLabel lbl2 = new JLabel();
-            lbl2.setIcon(icon2);
-            picJPanel2.add(lbl2);
-
-
-            addToContainer(displayJPanel, picJPanel2, 1, ypos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
-
-            //#####################################
-            // Space Divider
-            //#####################################
-            JPanel spaceDivider = new JPanel();
-            spaceDivider.setBackground(Color.PINK);
-            addToContainer(searchBarResults, spaceDivider, 0, ypos += 1, 1, 1, 0.25, 0.25, "horizontal", 50, 0);
-
-        }
-        catch (Exception e)
-        {
-            System.out.printf("\n\ndisplayResults() Error \n", e);
+            JOptionPane.showMessageDialog(null, String.format("\n\nError \n\nPlease select an option inside the dropdown box for the food / ingredient ' %s '.", food));
+            return;
         }
 
-        //##############################################################################################################
-        //  Resizing GUI
-        //#############################################################################################################
-        resizeGUI();
+        //##########################################################
+        // Check if JTextField is empty or, contains any characters
+        //##########################################################
+        if (food.equals("") || doesStringContainCharacters(food))
+        {
+            JOptionPane.showMessageDialog(null, String.format("\n\nError \n\nInputted search string for an ingredient / food cannot be empty !  Or, the inputted  ingredient / food being \" %s \" contains characters !", food));
+            return;
+        }
+
+        //##########################################################
+        // If Ingredient Option do a check if not get info
+        //##########################################################
+        LinkedHashMap<String, Object> foodInfo = null;
+
+        if (selectedIndex == 0)
+        {
+            // Check if string is one ingredient
+            if (food.split("\\s+").length > 1)
+            {
+                JOptionPane.showMessageDialog(null, String.format("\n\nError \n\nInputted search string for an ingredient must be only one word:  \" %s \" !", food));
+                return;
+            }
+
+            //  Get Nutritional Info From API
+            foodInfo = get_API_V2NaturalNutrients(String.format("100g of %s", food));
+        }
+        else if (selectedIndex == 1)
+        {
+            foodInfo = get_API_V2Instant(food);
+        }
+
+        //##################################
+        // Error Message
+        //##################################
+        if (foodInfo == null)
+        {
+            JOptionPane.showMessageDialog(null, String.format("\n\nError \n\nUnable to get nutritional info for the requested food \" %s \" !", food));
+            return;
+        }
+
+        //##########################################################
+        // Display Results
+        //##########################################################
+        if (selectedIndex == 0)
+        {
+            displayResults(foodInfo);
+        }
+        else
+        {
+            displayResults2(foodInfo);
+        }
+
+        //########################################################
+        // Successful Message
+        //########################################################
+
+        JOptionPane.showMessageDialog(null, String.format("\n\nSuccessfully got the nutritional info for the food '%s'!", food));
+
     }
 
     private void resizeGUI()
@@ -455,14 +560,11 @@ public class Find_Ingredients_Info_Screen extends JPanel
         parentContainer.revalidate();
     }
 
-    private void clearSearchResultsDisplay()
+    private void resetDisplay()
     {
-
-    }
-
-    public LinkedHashMap<String, Object> findFoodInfo(String food)
-    {
-        return nutritionIx_api.getFoodNutritionalInfo(food);
+        jComboBox.setSelectedIndex(-1);
+        textField.setText("");
+        chosenOption = "";
     }
 
     private void addToContainer(Container container, Component addToContainer, int gridx, int gridy, int gridwidth,
@@ -493,20 +595,6 @@ public class Find_Ingredients_Info_Screen extends JPanel
         }
 
         container.add(addToContainer, gbc);
-    }
-
-    private boolean doesStringContainCharacters(String input)
-    {
-        Pattern p1 = Pattern.compile("[^a-zA-Z]", Pattern.CASE_INSENSITIVE);
-        Matcher m1 = p1.matcher(input.replaceAll("\\s+", ""));
-        boolean b1 = m1.find();
-
-        if (b1)
-        {
-            return true;
-        }
-
-        return false;
     }
 
 

@@ -22,6 +22,7 @@ public class NutritionIx_API
 
     // photo
     private String thirdArrayName = "photo";
+    private String appID = "22210106" , appKey = "7e4f361cf3d659726c2e1ead771ec52e";
 
     private ArrayList<String> desiredNutritionalFields = new ArrayList<>(Arrays.asList(
             "food_name",
@@ -61,7 +62,7 @@ public class NutritionIx_API
 
     public static void main(String[] args)
     {
-        new NutritionIx_API().getFoodNutritionalInfo("100g of chicken");
+        new NutritionIx_API().get_POST_V2NaturalNutrients("100g of chicken");
     }
 
     public NutritionIx_API()
@@ -69,7 +70,7 @@ public class NutritionIx_API
 
     }
 
-    public LinkedHashMap<String, Object> getFoodNutritionalInfo(String food)
+    public LinkedHashMap<String, Object> get_POST_V2NaturalNutrients(String food)
     {
 
         if (getNutritionalInfo(food))
@@ -103,8 +104,8 @@ public class NutritionIx_API
 
             // Headers JSon
             con.setRequestProperty("Content-Type", "application/json");   // Set Response Format Type
-            con.setRequestProperty("x-app-id", "22210106");
-            con.setRequestProperty("x-app-key", "7e4f361cf3d659726c2e1ead771ec52e");
+            con.setRequestProperty("x-app-id", appID);
+            con.setRequestProperty("x-app-key", appKey);
             con.setRequestProperty("x-remote-user-id", "0");
 
             // Ensure the Connection Will Be Used to Send Content
