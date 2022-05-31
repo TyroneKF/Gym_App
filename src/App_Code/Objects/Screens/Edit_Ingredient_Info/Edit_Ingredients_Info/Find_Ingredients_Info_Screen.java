@@ -632,6 +632,4 @@ public class Find_Ingredients_Info_Screen extends JPanel
 
         container.add(addToContainer, gbc);
     }
-
-
 }
