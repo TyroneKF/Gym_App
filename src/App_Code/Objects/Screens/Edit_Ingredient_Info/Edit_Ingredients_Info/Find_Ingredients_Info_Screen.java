@@ -204,7 +204,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
         searchBarWestJPanel.add(textField); // adding textField to JPanel*/
 
         //#########################################
-        // (East) JPanel
+        // (East)  Search Icon
         //#########################################
 
         IconButton searchIcon = new IconButton("src/images/search/search2.png", "", searchBarIconWidth, searchBarIconHeight, searchBarButtonWidth, searchBarButtonHeight,
