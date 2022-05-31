@@ -13,6 +13,12 @@ import java.util.*;
 
 public class NutritionIx_API
 {
+    private String pathToNutrientsCSV = "src/App_Code/Objects/API/Nutritionix/Resources/Nutritionix API v2 - Full Nutrient USDA .csv";
+    private int attr_ID_Col = 1, attr_Name_Col = 4;
+    private BufferedReader csvReader = null;
+
+    //######################################################
+
     private String mainArrayName = "foods";
 
     // full_nutrients
@@ -71,22 +77,19 @@ public class NutritionIx_API
             "nix_item_id"
     ));
 
-    private String pathToNutrientsCSV = "src/App_Code/Objects/API/Nutritionix/Resources/Nutritionix API v2 - Full Nutrient USDA .csv";
-    private int attr_ID_Col = 1, attr_Name_Col = 4;
-    private BufferedReader csvReader = null;
-
+    //######################################################
     public static void main(String[] args)
     {
         NutritionIx_API api = new NutritionIx_API();
 //        api.get_POST_V2NaturalNutrients("100g of chicken");
         api.get_GET_V2SearchInstant("Ben & Jerry's");
     }
-
+    //######################################################
     public NutritionIx_API()
     {
 
     }
-
+    //######################################################
     public LinkedHashMap<String, Object> get_POST_V2NaturalNutrients(String food)
     {
         LinkedHashMap<String, Object> foodNutritionalInfo = parseFurtherNutritionalInfo(getNutritionalInfo(food));
@@ -374,7 +377,6 @@ public class NutritionIx_API
             ArrayList<LinkedHashMap<String, Object>> productResults = new ArrayList();
 
 
-
             String jsonString = response.toString(); // convert stringBuilder object to string from  process above
             JSONObject jsonObjectFromString = new JSONObject(jsonString); // convert string to JSON Object
 
@@ -395,14 +397,16 @@ public class NutritionIx_API
                     Object keyData = jsonObject.get(key);
                     if (search_Instant_API_DesiredFields.contains(key))
                     {
-                        if(key.equals("photo"))
+                        if (key.equals("photo"))
                         {
                             JSONObject picJSOnObj = (JSONObject) keyData;
 
-                            for (String picKey: picJSOnObj.keySet())
+                            for (String picKey : picJSOnObj.keySet())
                             {
                                 Object picKeyData = picJSOnObj.get(picKey);
                                 System.out.printf("\n%s : %s", picKey, picKeyData);
+
+                                foodNutritionalInfo.put(picKey, picKeyData);
                             }
                             continue;
                         }
@@ -414,6 +418,7 @@ public class NutritionIx_API
                 }
                 productResults.add(foodNutritionalInfo);
             }
+
             return productResults;
         }
         catch (Exception e)

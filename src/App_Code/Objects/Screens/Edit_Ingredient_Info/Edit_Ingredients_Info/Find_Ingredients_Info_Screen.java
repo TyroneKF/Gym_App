@@ -239,23 +239,9 @@ public class Find_Ingredients_Info_Screen extends JPanel
         return nutritionIx_api.get_POST_V2NaturalNutrients(food);
     }
 
-    public LinkedHashMap<String, Object> get_API_V2Instant(String product)
+    public ArrayList<LinkedHashMap<String, Object>> get_API_V2Instant(String product)
     {
-        return null;
-    }
-
-    private boolean doesStringContainCharacters(String input)
-    {
-        Pattern p1 = Pattern.compile("[^a-zA-Z]", Pattern.CASE_INSENSITIVE);
-        Matcher m1 = p1.matcher(input.replaceAll("\\s+", ""));
-        boolean b1 = m1.find();
-
-        if (b1)
-        {
-            return true;
-        }
-
-        return false;
+        return nutritionIx_api.get_GET_V2SearchInstant(product);
     }
 
     private void displayResults(LinkedHashMap<String, Object> foodInfo)
@@ -370,9 +356,9 @@ public class Find_Ingredients_Info_Screen extends JPanel
         resizeGUI();
     }
 
-    private void displayResults2(LinkedHashMap<String, Object> foodInfo)
+    private void displayResults2(ArrayList<LinkedHashMap<String, Object>> foodInfo)
     {
-        try
+     /*   try
         {
             JPanel displayJPanel = new JPanel(new GridBagLayout());
             displayJPanel.setBorder(BorderFactory.createLineBorder(Color.blue, 3));
@@ -475,7 +461,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
         {
             System.out.printf("\n\ndisplayResults() Error \n", e);
         }
-
+*/
         //##############################################################################################################
         //  Resizing GUI
         //#############################################################################################################
@@ -497,15 +483,6 @@ public class Find_Ingredients_Info_Screen extends JPanel
         }
 
         //##########################################################
-        // Check if JTextField is empty or, contains any characters
-        //##########################################################
-        if (food.equals("") || doesStringContainCharacters(food))
-        {
-            JOptionPane.showMessageDialog(null, String.format("\n\nError \n\nInputted search string for an ingredient / food cannot be empty !  Or, the inputted  ingredient / food being \" %s \" contains characters !", food));
-            return;
-        }
-
-        //##########################################################
         // Reset Results Display
         //##########################################################
         resetSearchDisplay();
@@ -513,7 +490,6 @@ public class Find_Ingredients_Info_Screen extends JPanel
         //##########################################################
         // If Ingredient Option do a check if not get info
         //##########################################################
-        LinkedHashMap<String, Object> foodInfo = null;
 
         if (selectedIndex == 0)
         {
@@ -525,31 +501,30 @@ public class Find_Ingredients_Info_Screen extends JPanel
             }
 
             //  Get Nutritional Info From API
-            foodInfo = get_API_V2NaturalNutrients(String.format("100g of %s", food));
+            LinkedHashMap<String, Object>  foodInfo = get_API_V2NaturalNutrients(String.format("100g of %s", food));
+
+            //##################################
+            // Error Message
+            //##################################
+            if (foodInfo == null)
+            {
+                JOptionPane.showMessageDialog(null, String.format("\n\nError \n\nUnable to get nutritional info for the requested food \" %s \" !", food));
+                return;
+            }
+
+            displayResults(foodInfo);
+
         }
         else if (selectedIndex == 1)
         {
-            foodInfo = get_API_V2Instant(food);
-        }
+            ArrayList<LinkedHashMap<String, Object>> foodInfo = get_API_V2Instant(food);
 
-        //##################################
-        // Error Message
-        //##################################
-        if (foodInfo == null)
-        {
-            JOptionPane.showMessageDialog(null, String.format("\n\nError \n\nUnable to get nutritional info for the requested food \" %s \" !", food));
-            return;
-        }
+            if (foodInfo == null)
+            {
+                JOptionPane.showMessageDialog(null, String.format("\n\nError \n\nUnable to get nutritional info for the requested food \" %s \" !", food));
+                return;
+            }
 
-        //##########################################################
-        // Display Results
-        //##########################################################
-        if (selectedIndex == 0)
-        {
-            displayResults(foodInfo);
-        }
-        else
-        {
             displayResults2(foodInfo);
         }
 
