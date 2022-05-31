@@ -14,8 +14,6 @@ import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Find_Ingredients_Info_Screen extends JPanel
 {
@@ -358,7 +356,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
 
     private void displayResults2(ArrayList<LinkedHashMap<String, Object>> products)
     {
-        int  height = 150;
+        int height = 150;
         for (LinkedHashMap<String, Object> foodInfo : products)
         {
             try
@@ -370,22 +368,31 @@ public class Find_Ingredients_Info_Screen extends JPanel
 
                 searchResultsJPanels.add(displayJPanel);
 
-                addToContainer(searchBarResults, displayJPanel, gridX+=1, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 50, 0);
+                addToContainer(searchBarResults, displayJPanel, gridX += 1, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 50, 0);
 
                 //##########################################################################
-                // Ingredient URL Image
+                // Product Title & Picture
                 //##########################################################################
                 int ingredientImageWidth = 425;
-
-                //#############################
-                // Image JPanel
-                //#############################
-                JPanel picJPanel2 = new JPanel(new GridLayout(1, 1));
+                JPanel labelAndPicJPanel = new JPanel(new BorderLayout());
 //                picJPanel2.setBackground(Color.GREEN);
-                picJPanel2.setPreferredSize(new Dimension(ingredientImageWidth, height));
+                labelAndPicJPanel.setPreferredSize(new Dimension(ingredientImageWidth, height));
 
                 // Adding URL Image to Display
-                addToContainer(displayJPanel, picJPanel2, gridX += 1, yPos, 1, 1, 0.25, 0.25, "", 0, 0);
+                addToContainer(displayJPanel, labelAndPicJPanel, gridX += 1, yPos, 1, 1, 0.25, 0.25, "", 0, 0);
+
+                //#############################
+                // Creating JLabel
+                //#############################
+                JPanel labelJPanel = new JPanel(new GridLayout(1,1));
+                labelJPanel.setBackground(Color.GREEN);
+                labelAndPicJPanel.add(labelJPanel, BorderLayout.NORTH);
+
+                JLabel titleLabel = new JLabel(String.format("%s", (String) foodInfo.get("food_name")));
+                titleLabel.setFont(new Font("Verdana", Font.BOLD, 17));
+                titleLabel.setHorizontalAlignment(JLabel.CENTER);
+
+                labelJPanel.add(titleLabel);
 
                 //#############################
                 // Creating URL Image
@@ -397,8 +404,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
 
                 JLabel lbl2 = new JLabel();
                 lbl2.setIcon(icon2);
-                picJPanel2.add(lbl2);
-
+                labelAndPicJPanel.add(lbl2, BorderLayout.CENTER);
 
                 //########################################################################
                 // Space Divider
