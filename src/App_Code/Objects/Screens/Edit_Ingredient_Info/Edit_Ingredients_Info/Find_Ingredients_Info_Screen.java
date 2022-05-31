@@ -151,6 +151,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
         JPanel searchBarWestJPanel = new JPanel(new GridLayout(1, 1));
         searchBarWestJPanel.setPreferredSize(new Dimension(searchBarWidth, searchBarHeight));
         searchBarWestJPanel.setBackground(Color.BLUE);
+        addToContainer(searchBarJPanel, searchBarWestJPanel, 0, 0, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
         //####################
         // Text Field
@@ -166,7 +167,6 @@ public class Find_Ingredients_Info_Screen extends JPanel
 
         // Adding to GUI
         searchBarWestJPanel.add(textField); // adding textField to JPanel*/
-        addToContainer(searchBarJPanel, searchBarWestJPanel, 0, 0, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
         //#########################################
         // Search Bar East Panel
