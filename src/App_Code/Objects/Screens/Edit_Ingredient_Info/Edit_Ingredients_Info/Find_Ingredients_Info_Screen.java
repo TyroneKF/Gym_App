@@ -335,9 +335,10 @@ public class Find_Ingredients_Info_Screen extends JPanel
             JButton addButton = addIcon.returnJButton();
             addButton.addActionListener(ae -> {
 
-            });
+                System.out.printf("\n\naddButton Clicked");
+                addButtonAction(foodInfo);
 
-//            iconJPanel.add(addIcon);
+            });
 
             addToContainer(iconJPanel, addIcon, 0, 0, 1, 1, 0.25, 0.25, "", 0, 0);
 
@@ -560,20 +561,20 @@ public class Find_Ingredients_Info_Screen extends JPanel
 
     }
 
-    private void resizeGUI()
+    private void addButtonAction(LinkedHashMap<String, Object> foodInfo)
     {
-        searchBarResults.revalidate();
-        super.revalidate();
-        parentContainer.revalidate();
+        resetFullDisplay();
+
     }
 
     private void resetFullDisplay()
     {
+        resetSearchDisplay();
+
+
         jComboBox.setSelectedIndex(-1);
         textField.setText("");
         chosenOption = "";
-
-        resetSearchDisplay();
     }
 
     private void resetSearchDisplay()
@@ -582,14 +583,23 @@ public class Find_Ingredients_Info_Screen extends JPanel
         // Removing Previous Results From
         // JPanel
         //################################
-        for(JPanel jp: searchResultsJPanels)
+        for (JPanel jp : searchResultsJPanels)
         {
+            jp.setSize(new Dimension(0, 0));
             searchBarResults.remove(jp);
+            searchBarResults.revalidate();
         }
 
         yPos = 0;
 
         resizeGUI();
+    }
+
+    private void resizeGUI()
+    {
+        searchBarResults.revalidate();
+        super.revalidate();
+        parentContainer.revalidate();
     }
 
     private void addToContainer(Container container, Component addToContainer, int gridx, int gridy, int gridwidth,

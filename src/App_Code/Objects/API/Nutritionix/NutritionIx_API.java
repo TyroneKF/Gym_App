@@ -222,13 +222,15 @@ public class NutritionIx_API
             foodNutritionalInfo.remove(secondArrayName);
             foodNutritionalInfo.remove(thirdArrayName);
 
-            //#######################################################################
+         /*   //#######################################################################
             // Print
             //#######################################################################
             System.out.printf("\n\n########################''");
             foodNutritionalInfo.entrySet().forEach(entry -> {
-                System.out.printf("\n%s : %s", entry.getKey(), entry.getValue());
-            });
+//                System.out.printf("\n%s : %s", entry.getKey(), entry.getValue());
+            });*/
+
+
             return true;
         }
         catch (Exception e)
