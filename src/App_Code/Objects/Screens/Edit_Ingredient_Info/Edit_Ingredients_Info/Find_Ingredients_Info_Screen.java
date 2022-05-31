@@ -384,7 +384,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
                 //#############################
                 // Creating JLabel
                 //#############################
-                JPanel labelJPanel = new JPanel(new GridLayout(1,1));
+                JPanel labelJPanel = new JPanel(new GridLayout(1, 1));
                 labelJPanel.setBackground(Color.GREEN);
                 labelAndPicJPanel.add(labelJPanel, BorderLayout.NORTH);
 
@@ -538,8 +538,12 @@ public class Find_Ingredients_Info_Screen extends JPanel
 
     private void addButtonAction(LinkedHashMap<String, Object> foodInfo)
     {
-        resetFullDisplay();
+        System.out.printf("\n\n########################''");
+        foodInfo.entrySet().forEach(entry -> {
+            System.out.printf("\n%s : %s", entry.getKey(), entry.getValue());
+        });
 
+        resetFullDisplay();
     }
 
     private void resetFullDisplay()
