@@ -104,26 +104,20 @@ public class NutritionIx_API
             //#####################################################################
             // Getting Data From API End Point
             //#####################################################################
-            // API END Point Link
-            URL url = new URL("https://trackapi.nutritionix.com/v2/natural/nutrients");
 
-            // Create Connection
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-
-            // Set the Request Method
-            con.setRequestMethod("POST");
-
-            // Ensure the Connection Will Be Used to Send Content
-            con.setDoOutput(true);
+            String
+                    urlLink = "https://trackapi.nutritionix.com/v2/natural/nutrients",
+                    process = "POST",
+                    mainArrayName = "foods"
+            ;
 
             // Set the Request Content-Type Header Parameter
-            con.setRequestProperty("Content-Type", "application/json; utf-8");
-
-            // Headers JSon
-            con.setRequestProperty("Content-Type", "application/json");   // Set Response Format Type
-            con.setRequestProperty("x-app-id", appID);
-            con.setRequestProperty("x-app-key", appKey);
-            con.setRequestProperty("x-remote-user-id", "0");
+            ArrayList<Pair<String, String>> properties = new ArrayList<>(Arrays.asList(
+                    new Pair<>("Content-Type", "application/json"),
+                    new Pair<>("x-app-id", appID),
+                    new Pair<>("x-app-key", appKey),
+                    new Pair<>("x-remote-user-id", "0")
+            ));
 
             // Create Request Body Json (Custom JSON String)
             String jsonInputString = String.format("{\n  \"query\":\"%s\",\n  \"timezone\": \"UK\"\n}", food);
@@ -131,7 +125,8 @@ public class NutritionIx_API
             //#################################
             // Getting Parsed Json Results
             //#################################
-            ArrayList<LinkedHashMap<String, Object>> results = parseJsonResponse("POST", con, jsonInputString, "foods", natural_Nutrients_API_DesiredFields);
+            ArrayList<LinkedHashMap<String, Object>> results = parseJsonResponse2(process, urlLink,properties,jsonInputString,mainArrayName, natural_Nutrients_API_DesiredFields );
+//            ArrayList<LinkedHashMap<String, Object>> results = parseJsonResponse2("POST", con, jsonInputString, mainArrayName, natural_Nutrients_API_DesiredFields);
 
             if (results == null)
             {
@@ -302,7 +297,7 @@ public class NutritionIx_API
             //#################################
             // Getting Parsed Json Results
             //#################################
-            return parseJsonResponse("POST", con, jsonInputString,"branded" , search_Instant_API_DesiredFields);
+            return parseJsonResponse("POST", con, jsonInputString, "branded", search_Instant_API_DesiredFields);
 
         }
         catch (Exception e)
@@ -453,7 +448,7 @@ public class NutritionIx_API
         }
     }
 
-    private ArrayList<LinkedHashMap<String, Object>> parseJsonResponse2(String process, String urlLink, ArrayList< Pair<String, String> > properties, String jsonInputString, String mainArrayName, ArrayList<String> desiredFields)
+    private ArrayList<LinkedHashMap<String, Object>> parseJsonResponse2(String process, String urlLink, ArrayList<Pair<String, String>> properties, String jsonInputString, String mainArrayName, ArrayList<String> desiredFields)
     {
         try
         {
@@ -475,7 +470,7 @@ public class NutritionIx_API
 
 
             // Setting Header
-            for( Pair<String, String> property: properties)
+            for (Pair<String, String> property : properties)
             {
                 con.setRequestProperty(property.getValue0(), property.getValue1());
             }
