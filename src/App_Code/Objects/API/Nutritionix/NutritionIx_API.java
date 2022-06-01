@@ -14,23 +14,15 @@ import java.util.*;
 
 public class NutritionIx_API
 {
-    private String pathToNutrientsCSV = "src/App_Code/Objects/API/Nutritionix/Resources/Nutritionix API v2 - Full Nutrient USDA .csv";
-    private int attr_ID_Col = 1, attr_Name_Col = 4;
-    private BufferedReader csvReader = null;
+    private final String pathToNutrientsCSV = "src/App_Code/Objects/API/Nutritionix/Resources/Nutritionix API v2 - Full Nutrient USDA .csv";
+    private final int attr_ID_Col = 1, attr_Name_Col = 4;
 
     //######################################################
 
-    // full_nutrients
-    private String secondArrayName = "full_nutrients";
-    private String secondArrayKeyName = "attr_id";
-    private String secondArrayValueKeyName = "value";
-
-    // photo
-    private String thirdArrayName = "photo";
-    private String appID = "22210106", appKey = "7e4f361cf3d659726c2e1ead771ec52e";
+    private final String appID = "22210106", appKey = "7e4f361cf3d659726c2e1ead771ec52e";
 
 
-    private ArrayList<String> natural_Nutrients_API_DesiredFields = new ArrayList<>(Arrays.asList(
+    private final ArrayList<String> natural_Nutrients_API_DesiredFields = new ArrayList<>(Arrays.asList(
             "food_name",
             "brand_name",
             "serving_qty",
@@ -63,7 +55,7 @@ public class NutritionIx_API
 
     //######################################################
 
-    private ArrayList<String> search_Instant_API_DesiredFields = new ArrayList<>(Arrays.asList(
+    private final ArrayList<String> search_Instant_API_DesiredFields = new ArrayList<>(Arrays.asList(
             "branded",
             "food_name",
             "brand_name",
@@ -79,8 +71,8 @@ public class NutritionIx_API
     public static void main(String[] args)
     {
         NutritionIx_API api = new NutritionIx_API();
-//        api.get_POST_V2NaturalNutrients("100g of chicken");
-        api.get_POST_V2SearchInstant("Ben & Jerry's");
+        api.get_POST_V2NaturalNutrients("100g of chicken");
+//        api.get_POST_V2SearchInstant("Ben & Jerry's");
 //        api.get_GET_V2SearchItem("5f637ca24b187f7f76a08a0e");
 
     }
@@ -154,6 +146,8 @@ public class NutritionIx_API
             // Parsing Full Nutrients
             //##########################################################################################
 
+            // full_nutrients
+            String secondArrayName = "full_nutrients";
             JSONArray ar2 = (JSONArray) foodNutritionalInfo.get(secondArrayName);
 
             //#############################################
@@ -164,7 +158,9 @@ public class NutritionIx_API
             {
                 // Info From JSON Object
                 JSONObject jsonObject = (JSONObject) iterator2.next();
+                String secondArrayKeyName = "attr_id";
                 String attr_id = jsonObject.get(secondArrayKeyName).toString();
+                String secondArrayValueKeyName = "value";
                 Object attr_Value = jsonObject.get(secondArrayValueKeyName);
 
                 // Extract Name From CSV File by Attr_ID
@@ -185,7 +181,6 @@ public class NutritionIx_API
             // Removing Old Data
             //#######################################################################
             foodNutritionalInfo.remove(secondArrayName);
-            foodNutritionalInfo.remove(thirdArrayName);
 
             //#######################################################################
             // Print
@@ -209,6 +204,7 @@ public class NutritionIx_API
         //#############################################
         // Checking If  Path To CSV Exists
         //#############################################
+        BufferedReader csvReader = null;
         try
         {
             csvReader = new BufferedReader(new FileReader(pathToNutrientsCSV));
@@ -310,30 +306,23 @@ public class NutritionIx_API
             //#####################################################################
             // Getting Data From API End Point
             //#####################################################################
-            // API END Point Link
-            URL url = new URL(String.format("https://trackapi.nutritionix.com/v2/search/item?nix_item_id=%s", nix_item_id));
 
-            // Create Connection
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-
-            // Set the Request Method
-            con.setRequestMethod("GET");
+            String
+                    urlLink = String.format("https://trackapi.nutritionix.com/v2/search/item?nix_item_id=%s", nix_item_id),
+                    process = "GET",
+                    mainArrayName = "foods";
 
             // Set the Request Content-Type Header Parameter
-            con.setRequestProperty("Content-Type", "application/json; utf-8");
-
-            // Headers JSon
-//            con.setRequestProperty("Content-Type", "application/json");   // Set Response Format Type
-            con.setRequestProperty("x-app-id", appID);
-            con.setRequestProperty("x-app-key", appKey);
-
-            // Ensure the Connection Will Be Used to Send Content
-            con.setDoOutput(true);
+            ArrayList<Pair<String, String>> properties = new ArrayList<>(Arrays.asList(
+                    new Pair<>("Content-Type", "application/json; utf-8"),
+                    new Pair<>("x-app-id", appID),
+                    new Pair<>("x-app-key", appKey)
+            ));
 
             //#################################
             // Getting Parsed Json Results
             //#################################
-            ArrayList<LinkedHashMap<String, Object>> results = parseJsonResponse("GET", con, null, "foods", natural_Nutrients_API_DesiredFields);
+            ArrayList<LinkedHashMap<String, Object>> results = parseJsonResponse2(process, urlLink, properties,null,mainArrayName, natural_Nutrients_API_DesiredFields);
 
             if (results == null)
             {
