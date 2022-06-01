@@ -263,7 +263,17 @@ public class NutritionIx_API
     //#################################################################################################################
     public ArrayList<LinkedHashMap<String, Object>> get_POST_V2SearchInstant(String product)
     {
-        return get_POST_V2SearchInstantAction(product);
+        ArrayList<LinkedHashMap<String, Object>> productsInfo = get_POST_V2SearchInstantAction(product);
+
+        for(LinkedHashMap<String, Object> productInfo : productsInfo )
+        {
+            System.out.printf("\n\n########################''");
+            productInfo.entrySet().forEach(entry -> {
+                System.out.printf("\n%s : %s", entry.getKey(), entry.getValue());
+            });
+        }
+
+        return productsInfo;
     }
 
     private ArrayList<LinkedHashMap<String, Object>> get_POST_V2SearchInstantAction(String product)
