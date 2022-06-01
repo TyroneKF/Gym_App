@@ -298,76 +298,11 @@ public class NutritionIx_API
 
 //           / return parseJsonResponse("POST", con, jsonInputString,"branded" , search_Instant_API_DesiredFields);
 
-            try (OutputStream os = con.getOutputStream())
-            {
-                byte[] input = jsonInputString.getBytes("utf-8");
-                os.write(input, 0, input.length);
-            }
+            //#################################
+            // Getting Parsed Json Results
+            //#################################
+            return parseJsonResponse("POST", con, jsonInputString,"branded" , search_Instant_API_DesiredFields);
 
-            // Read the Response From Input Stream
-            StringBuilder response;
-            try (BufferedReader br = new BufferedReader(
-                    new InputStreamReader(con.getInputStream(), "utf-8")))
-            {
-                response = new StringBuilder();
-                String responseLine = null;
-
-                while ((responseLine = br.readLine()) != null)
-                {
-                    response.append(responseLine.trim());
-                }
-            }
-
-            //#####################################################################
-            // Parsing Response & Storing Data
-            //#####################################################################
-            System.out.printf("\n\n########################''");
-
-            ArrayList<LinkedHashMap<String, Object>> productResults = new ArrayList();
-
-
-            String jsonString = response.toString(); // convert stringBuilder object to string from  process above
-            JSONObject jsonObjectFromString = new JSONObject(jsonString); // convert string to JSON Object
-
-            JSONArray jsonArray = jsonObjectFromString.getJSONArray("branded"); // getting main json array
-
-            // Looping through json Array and storing data
-            Iterator<Object> iterator = jsonArray.iterator();
-            while (iterator.hasNext())
-            {
-                JSONObject jsonObject = (JSONObject) iterator.next();
-
-                LinkedHashMap<String, Object> foodNutritionalInfo = new LinkedHashMap<>();
-                System.out.printf("\n\n########################''");
-
-                for (String key : jsonObject.keySet())
-                {
-                    Object keyData = jsonObject.get(key);
-                    if (search_Instant_API_DesiredFields.contains(key))
-                    {
-                        if (key.equals("photo"))
-                        {
-                            JSONObject picJSOnObj = (JSONObject) keyData;
-
-                            for (String picKey : picJSOnObj.keySet())
-                            {
-                                Object picKeyData = picJSOnObj.get(picKey);
-                                System.out.printf("\n%s : %s", picKey, picKeyData);
-
-                                foodNutritionalInfo.put(picKey, picKeyData);
-                            }
-                            continue;
-                        }
-
-                        System.out.printf("\n%s : %s", key, keyData);
-
-                        foodNutritionalInfo.put(key, keyData);
-                    }
-                }
-                productResults.add(foodNutritionalInfo);
-            }
-
-            return productResults;
         }
         catch (Exception e)
         {
@@ -470,6 +405,8 @@ public class NutritionIx_API
             Iterator<Object> iterator = foods.iterator();
             while (iterator.hasNext())
             {
+                System.out.printf("\n\n#####################################");
+
                 JSONObject jsonObject = (JSONObject) iterator.next();
 
                 LinkedHashMap<String, Object> foodNutritionalInfo = new LinkedHashMap<>();
