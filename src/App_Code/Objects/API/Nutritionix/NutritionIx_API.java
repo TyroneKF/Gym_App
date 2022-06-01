@@ -125,7 +125,6 @@ public class NutritionIx_API
             // Create Request Body Json (Custom JSON String)
             String jsonInputString = String.format("{\n  \"query\":\"%s\",\n  \"timezone\": \"UK\"\n}", food);
 
-
             return parseJsonResponse(con, jsonInputString, "foods", natural_Nutrients_API_DesiredFields);
         }
         catch (Exception e)
