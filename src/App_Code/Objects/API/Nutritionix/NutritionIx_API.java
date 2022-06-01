@@ -61,7 +61,6 @@ public class NutritionIx_API
 
 
     //######################################################
-    private String mainInstantArrayName = "branded";
 
     private ArrayList<String> search_Instant_API_DesiredFields = new ArrayList<>(Arrays.asList(
             "branded",
@@ -75,20 +74,20 @@ public class NutritionIx_API
             "nix_item_id"
     ));
 
-    //######################################################
+    //#################################################################################################################
     public static void main(String[] args)
     {
         NutritionIx_API api = new NutritionIx_API();
 //        api.get_POST_V2NaturalNutrients("100g of chicken");
-        api.get_GET_V2SearchInstant("Ben & Jerry's");
-//        api.get_GET_V2SearchItem("5f637ca24b187f7f76a08a0e");
+//        api.get_GET_V2SearchInstant("Ben & Jerry's");
+        api.get_GET_V2SearchItem("5f637ca24b187f7f76a08a0e");
     }
-    //######################################################
+    //#################################################################################################################
     public NutritionIx_API()
     {
 
     }
-    //######################################################
+    //#################################################################################################################
     public LinkedHashMap<String, Object> get_POST_V2NaturalNutrients(String food)
     {
        return parseFurtherNutritionalInfo(get_POST_V2NaturalNutrientsAction(food));
@@ -134,6 +133,7 @@ public class NutritionIx_API
         }
     }
 
+    //#####################################################
     private LinkedHashMap<String, Object> parseFurtherNutritionalInfo(LinkedHashMap<String, Object> foodNutritionalInfo)
     {
         if (foodNutritionalInfo == null)
@@ -254,7 +254,7 @@ public class NutritionIx_API
         //###############################
     }
 
-    //######################################################
+    //#################################################################################################################
     public ArrayList<LinkedHashMap<String, Object>> get_GET_V2SearchInstant(String product)
     {
         try
@@ -282,6 +282,9 @@ public class NutritionIx_API
 
             // Create Request Body Json (Custom JSON String)
             String jsonInputString = String.format("{\n  \"query\":\"%s\",\n  \"common\":\"false\",\n  \"branded_region\": \"2\"\n}", product);
+
+
+//           / return parseJsonResponse("POST", con, jsonInputString,"branded" , search_Instant_API_DesiredFields);
 
             try (OutputStream os = con.getOutputStream())
             {
@@ -314,7 +317,7 @@ public class NutritionIx_API
             String jsonString = response.toString(); // convert stringBuilder object to string from  process above
             JSONObject jsonObjectFromString = new JSONObject(jsonString); // convert string to JSON Object
 
-            JSONArray jsonArray = jsonObjectFromString.getJSONArray(mainInstantArrayName); // getting main json array
+            JSONArray jsonArray = jsonObjectFromString.getJSONArray("branded"); // getting main json array
 
             // Looping through json Array and storing data
             Iterator<Object> iterator = jsonArray.iterator();
@@ -362,7 +365,7 @@ public class NutritionIx_API
         }
     }
 
-    //######################################################
+    //#################################################################################################################
     public LinkedHashMap<String, Object> get_GET_V2SearchItem(String nix_item_id)
     {
         return parseFurtherNutritionalInfo(get_GET_V2SearchItemAction(nix_item_id));
@@ -395,47 +398,7 @@ public class NutritionIx_API
             // Ensure the Connection Will Be Used to Send Content
             con.setDoOutput(true);
 
-            // Read the Response From Input Stream
-            StringBuilder response;
-            try (BufferedReader br = new BufferedReader(
-                    new InputStreamReader(con.getInputStream(), "utf-8")))
-            {
-                response = new StringBuilder();
-                String responseLine = null;
-
-                while ((responseLine = br.readLine()) != null)
-                {
-                    response.append(responseLine.trim());
-                }
-            }
-
-            //#####################################################################
-            // Parsing Response & Storing Data
-            //#####################################################################
-//            System.out.printf("\n\n########################''");
-            LinkedHashMap<String, Object> foodNutritionalInfo = new LinkedHashMap<>();
-
-            String jsonString = response.toString(); // convert stringBuilder object to string from  process above
-            JSONObject jsonObjectFromString = new JSONObject(jsonString); // convert string to JSON Object
-
-            JSONArray foods = jsonObjectFromString.getJSONArray("foods"); // getting main json array
-
-            // Looping through json Array and storing data
-            Iterator<Object> iterator = foods.iterator();
-            while (iterator.hasNext())
-            {
-                JSONObject jsonObject = (JSONObject) iterator.next();
-                for (String key : jsonObject.keySet())
-                {
-                    Object keyData = jsonObject.get(key);
-                    if (natural_Nutrients_API_DesiredFields.contains(key))
-                    {
-                        System.out.printf("\n%s : %s", key, keyData);
-                        foodNutritionalInfo.put(key, keyData);
-                    }
-                }
-            }
-            return foodNutritionalInfo;
+            return parseJsonResponse("GET", con,null,"foods", natural_Nutrients_API_DesiredFields );
         }
         catch (Exception e)
         {
@@ -443,7 +406,7 @@ public class NutritionIx_API
             return null;
         }
     }
-    //######################################################
+    //#################################################################################################################
 
     private LinkedHashMap<String, Object> parseJsonResponse (String process, HttpURLConnection con, String jsonInputString, String mainArrayName, ArrayList<String> desiredFields)
     {
