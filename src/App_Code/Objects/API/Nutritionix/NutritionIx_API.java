@@ -79,8 +79,8 @@ public class NutritionIx_API
     public static void main(String[] args)
     {
         NutritionIx_API api = new NutritionIx_API();
-//        api.get_POST_V2NaturalNutrients("100g of chicken");
-        api.get_GET_V2SearchInstant("Ben & Jerry's");
+        api.get_POST_V2NaturalNutrients("100g of chicken");
+//        api.get_GET_V2SearchInstant("Ben & Jerry's");
 //        api.get_GET_V2SearchItem("5f637ca24b187f7f76a08a0e");
     }
     //######################################################
@@ -171,20 +171,6 @@ public class NutritionIx_API
                 {
                     System.out.printf("\n\nError  parseFurtherNutritionalInfo() \nIssues Extracting Attribute Name for attr_id = %s", attr_id);
                     return null;
-                }
-            }
-
-            //#######################################################################
-            // Parsing Photo Info
-            //#######################################################################
-            JSONObject jsonObject = (JSONObject) foodNutritionalInfo.get(thirdArrayName);
-
-            Set<String> keys = jsonObject.keySet();
-            for (String key : keys)
-            {
-                if (natural_Nutrients_API_DesiredFields.contains(key))
-                {
-                    foodNutritionalInfo.put(key, jsonObject.get(key));
                 }
             }
 
@@ -505,6 +491,25 @@ public class NutritionIx_API
 //                    System.out.printf("\n%s : %s", key, keyData);
                     if (desiredFields.contains(key))
                     {
+                        if (key.equals("photo"))
+                        {
+                            JSONObject picJSOnObj = (JSONObject) keyData;
+
+                            for (String picKey : picJSOnObj.keySet())
+                            {
+                                if (desiredFields.contains(picKey))
+                                {
+                                    Object picKeyData = picJSOnObj.get(picKey);
+                                    System.out.printf("\n%s : %s", picKey, picKeyData);
+
+                                    foodNutritionalInfo.put(picKey, picKeyData);
+                                }
+                            }
+                            continue;
+                        }
+
+                        System.out.printf("\n%s : %s", key, keyData);
+
                         foodNutritionalInfo.put(key, keyData);
                     }
                 }
