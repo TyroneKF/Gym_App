@@ -79,7 +79,7 @@ public class NutritionIx_API
     {
         NutritionIx_API api = new NutritionIx_API();
 //        api.get_POST_V2NaturalNutrients("100g of chicken");
-//        api.get_GET_V2SearchInstant("Ben & Jerry's");
+        api.get_GET_V2SearchInstant("Ben & Jerry's");
 //        api.get_GET_V2SearchItem("5f637ca24b187f7f76a08a0e");
 
     }
@@ -460,7 +460,6 @@ public class NutritionIx_API
             //#####################################################################
 
             ArrayList<LinkedHashMap<String, Object>> productResults = new ArrayList();
-            LinkedHashMap<String, Object> foodNutritionalInfo = new LinkedHashMap<>();
 
             String jsonString = response.toString(); // convert stringBuilder object to string from  process above
             JSONObject jsonObjectFromString = new JSONObject(jsonString); // convert string to JSON Object
@@ -472,6 +471,9 @@ public class NutritionIx_API
             while (iterator.hasNext())
             {
                 JSONObject jsonObject = (JSONObject) iterator.next();
+
+                LinkedHashMap<String, Object> foodNutritionalInfo = new LinkedHashMap<>();
+
                 for (String key : jsonObject.keySet())
                 {
                     Object keyData = jsonObject.get(key);
@@ -500,9 +502,10 @@ public class NutritionIx_API
                         foodNutritionalInfo.put(key, keyData);
                     }
                 }
+
+                productResults.add(foodNutritionalInfo);
             }
 
-            productResults.add(foodNutritionalInfo);
             return productResults;
         }
         catch (Exception e)
