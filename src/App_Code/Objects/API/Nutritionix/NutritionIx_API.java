@@ -71,8 +71,8 @@ public class NutritionIx_API
     public static void main(String[] args)
     {
         NutritionIx_API api = new NutritionIx_API();
-        api.get_POST_V2NaturalNutrients("100g of chicken");
-//        api.get_POST_V2SearchInstant("Ben & Jerry's");
+//        api.get_POST_V2NaturalNutrients("100g of chicken");
+        api.get_POST_V2SearchInstant("Ben & Jerry's");
 //        api.get_GET_V2SearchItem("5f637ca24b187f7f76a08a0e");
 
     }
@@ -86,7 +86,14 @@ public class NutritionIx_API
     //#################################################################################################################
     public LinkedHashMap<String, Object> get_POST_V2NaturalNutrients(String food)
     {
-        return parseFurtherNutritionalInfo(get_POST_V2NaturalNutrientsAction(food));
+        LinkedHashMap<String, Object> foodInfo =  parseFurtherNutritionalInfo(get_POST_V2NaturalNutrientsAction(food));
+
+        System.out.printf("\n\n########################''");
+        foodInfo.entrySet().forEach(entry -> {
+            System.out.printf("\n%s : %s", entry.getKey(), entry.getValue());
+        });
+
+        return foodInfo;
     }
 
     private LinkedHashMap<String, Object> get_POST_V2NaturalNutrientsAction(String food)
@@ -185,10 +192,6 @@ public class NutritionIx_API
             //#######################################################################
             // Print
             //#######################################################################
-            System.out.printf("\n\n########################''");
-            foodNutritionalInfo.entrySet().forEach(entry -> {
-                System.out.printf("\n%s : %s", entry.getKey(), entry.getValue());
-            });
 
             return foodNutritionalInfo;
         }
@@ -260,6 +263,11 @@ public class NutritionIx_API
     //#################################################################################################################
     public ArrayList<LinkedHashMap<String, Object>> get_POST_V2SearchInstant(String product)
     {
+        return get_POST_V2SearchInstantAction(product);
+    }
+
+    private ArrayList<LinkedHashMap<String, Object>> get_POST_V2SearchInstantAction(String product)
+    {
         try
         {
             //#####################################################################
@@ -296,7 +304,14 @@ public class NutritionIx_API
     //#################################################################################################################
     public LinkedHashMap<String, Object> get_GET_V2SearchItem(String nix_item_id)
     {
-        return parseFurtherNutritionalInfo(get_GET_V2SearchItemAction(nix_item_id));
+        LinkedHashMap<String, Object> foodInfo =  parseFurtherNutritionalInfo(get_GET_V2SearchItemAction(nix_item_id));
+
+        System.out.printf("\n\n########################''");
+        foodInfo.entrySet().forEach(entry -> {
+            System.out.printf("\n%s : %s", entry.getKey(), entry.getValue());
+        });
+
+        return foodInfo;
     }
 
     private LinkedHashMap<String, Object> get_GET_V2SearchItemAction(String nix_item_id)
@@ -406,8 +421,6 @@ public class NutritionIx_API
             Iterator<Object> iterator = foods.iterator();
             while (iterator.hasNext())
             {
-                System.out.printf("\n\n#####################################");
-
                 JSONObject jsonObject = (JSONObject) iterator.next();
 
                 LinkedHashMap<String, Object> foodNutritionalInfo = new LinkedHashMap<>();
@@ -427,7 +440,7 @@ public class NutritionIx_API
                                 if (desiredFields.contains(picKey))
                                 {
                                     Object picKeyData = picJSOnObj.get(picKey);
-                                    System.out.printf("\n%s : %s", picKey, picKeyData);
+//                                    System.out.printf("\n%s : %s", picKey, picKeyData);
 
                                     foodNutritionalInfo.put(picKey, picKeyData);
                                 }
@@ -435,7 +448,7 @@ public class NutritionIx_API
                             continue;
                         }
 
-                        System.out.printf("\n%s : %s", key, keyData);
+//                        System.out.printf("\n%s : %s", key, keyData);
 
                         foodNutritionalInfo.put(key, keyData);
                     }
