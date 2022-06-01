@@ -79,8 +79,8 @@ public class NutritionIx_API
     public static void main(String[] args)
     {
         NutritionIx_API api = new NutritionIx_API();
-        api.get_POST_V2NaturalNutrients("100g of chicken");
-//        api.get_POST_V2SearchInstant("Ben & Jerry's");
+//        api.get_POST_V2NaturalNutrients("100g of chicken");
+        api.get_POST_V2SearchInstant("Ben & Jerry's");
 //        api.get_GET_V2SearchItem("5f637ca24b187f7f76a08a0e");
 
     }
@@ -269,35 +269,26 @@ public class NutritionIx_API
             //#####################################################################
             // Getting Data From API End Point
             //#####################################################################
-            // API END Point Link
-            URL url = new URL("https://trackapi.nutritionix.com/v2/search/instant");
 
-            // Create Connection
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-
-            // Set the Request Method
-            con.setRequestMethod("POST");
-
-            con.setDoOutput(true);
-
-            // Headers JSon
-            con.setRequestProperty("x-app-id", appID);
-            con.setRequestProperty("x-app-key", appKey);
+            String
+                    urlLink = "https://trackapi.nutritionix.com/v2/search/instant",
+                    process = "POST",
+                    mainArrayName = "branded";
 
             // Set the Request Content-Type Header Parameter
-            con.setRequestProperty("Content-Type", "application/json");
+            ArrayList<Pair<String, String>> properties = new ArrayList<>(Arrays.asList(
+                    new Pair<>("Content-Type", "application/json"),
+                    new Pair<>("x-app-id", appID),
+                    new Pair<>("x-app-key", appKey)
+            ));
 
             // Create Request Body Json (Custom JSON String)
             String jsonInputString = String.format("{\n  \"query\":\"%s\",\n  \"common\":\"false\",\n  \"branded_region\": \"2\"\n}", product);
 
-
-//           / return parseJsonResponse("POST", con, jsonInputString,"branded" , search_Instant_API_DesiredFields);
-
             //#################################
             // Getting Parsed Json Results
             //#################################
-            return parseJsonResponse("POST", con, jsonInputString, "branded", search_Instant_API_DesiredFields);
-
+            return parseJsonResponse2(process, urlLink,properties,jsonInputString,mainArrayName, search_Instant_API_DesiredFields);
         }
         catch (Exception e)
         {
