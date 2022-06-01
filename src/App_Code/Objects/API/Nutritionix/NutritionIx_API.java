@@ -79,7 +79,7 @@ public class NutritionIx_API
     {
         NutritionIx_API api = new NutritionIx_API();
 //        api.get_POST_V2NaturalNutrients("100g of chicken");
-        api.get_GET_V2SearchInstant("Ben & Jerry's");
+        api.get_POST_V2SearchInstant("Ben & Jerry's");
 //        api.get_GET_V2SearchItem("5f637ca24b187f7f76a08a0e");
 
     }
@@ -267,7 +267,7 @@ public class NutritionIx_API
     }
 
     //#################################################################################################################
-    public ArrayList<LinkedHashMap<String, Object>> get_GET_V2SearchInstant(String product)
+    public ArrayList<LinkedHashMap<String, Object>> get_POST_V2SearchInstant(String product)
     {
         try
         {

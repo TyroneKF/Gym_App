@@ -239,7 +239,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
 
     public ArrayList<LinkedHashMap<String, Object>> get_API_V2Instant(String product)
     {
-        return nutritionIx_api.get_GET_V2SearchInstant(product);
+        return nutritionIx_api.get_POST_V2SearchInstant(product);
     }
 
     private void displayResults(LinkedHashMap<String, Object> foodInfo)
