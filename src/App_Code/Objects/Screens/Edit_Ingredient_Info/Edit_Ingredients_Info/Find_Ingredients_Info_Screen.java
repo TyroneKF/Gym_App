@@ -440,8 +440,19 @@ public class Find_Ingredients_Info_Screen extends JPanel
                 JButton addButton = addIcon.returnJButton();
                 addButton.addActionListener(ae -> {
 
-                    addButtonAction(foodInfo);
+                    String nix_item_id = (String) foodInfo.get("nix_item_id");
 
+                    if(nix_item_id != null)
+                    {
+                        LinkedHashMap<String, Object> foodInfo2 = nutritionIx_api.get_GET_V2SearchItem(nix_item_id);
+
+                        if (foodInfo2 != null)
+                        {
+                            addButtonAction(foodInfo2);
+                            return;
+                        }
+                    }
+                    JOptionPane.showMessageDialog(null,"Error, Unable to gather product info!");
                 });
 
                 addToContainer(iconJPanel, addIcon, 0, 0, 1, 1, 0.25, 0.25, "", 0, 0);

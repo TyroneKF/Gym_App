@@ -82,7 +82,8 @@ public class NutritionIx_API
     {
         NutritionIx_API api = new NutritionIx_API();
 //        api.get_POST_V2NaturalNutrients("100g of chicken");
-        api.get_GET_V2SearchInstant("Ben & Jerry's");
+//        api.get_GET_V2SearchInstant("Ben & Jerry's");
+        api.get_GET_V2SearchItem("5f637ca24b187f7f76a08a0e");
     }
     //######################################################
     public NutritionIx_API()
@@ -92,15 +93,10 @@ public class NutritionIx_API
     //######################################################
     public LinkedHashMap<String, Object> get_POST_V2NaturalNutrients(String food)
     {
-        LinkedHashMap<String, Object> foodNutritionalInfo = parseFurtherNutritionalInfo(getNutritionalInfo(food));
-        if (foodNutritionalInfo != null)
-        {
-            return foodNutritionalInfo;
-        }
-        return null;
+       return parseFurtherNutritionalInfo(get_POST_V2NaturalNutrientsAction(food));
     }
 
-    private LinkedHashMap<String, Object> getNutritionalInfo(String food)
+    private LinkedHashMap<String, Object> get_POST_V2NaturalNutrientsAction(String food)
     {
         try
         {
@@ -246,14 +242,13 @@ public class NutritionIx_API
             foodNutritionalInfo.remove(secondArrayName);
             foodNutritionalInfo.remove(thirdArrayName);
 
-         /*   //#######################################################################
+            //#######################################################################
             // Print
             //#######################################################################
             System.out.printf("\n\n########################''");
             foodNutritionalInfo.entrySet().forEach(entry -> {
-//                System.out.printf("\n%s : %s", entry.getKey(), entry.getValue());
-            });*/
-
+                System.out.printf("\n%s : %s", entry.getKey(), entry.getValue());
+            });
 
             return foodNutritionalInfo;
         }
@@ -321,6 +316,7 @@ public class NutritionIx_API
         //###############################
     }
 
+    //######################################################
     public ArrayList<LinkedHashMap<String, Object>> get_GET_V2SearchInstant(String product)
     {
         try
@@ -427,4 +423,87 @@ public class NutritionIx_API
             return null;
         }
     }
+
+    //######################################################
+    public LinkedHashMap<String, Object> get_GET_V2SearchItem(String nix_item_id)
+    {
+        return parseFurtherNutritionalInfo(get_GET_V2SearchItemAction(nix_item_id));
+    }
+
+    private LinkedHashMap<String, Object> get_GET_V2SearchItemAction(String nix_item_id)
+    {
+        try
+        {
+            //#####################################################################
+            // Getting Data From API End Point
+            //#####################################################################
+            // API END Point Link
+            URL url = new URL(String.format("https://trackapi.nutritionix.com/v2/search/item?nix_item_id=%s", nix_item_id));
+
+            // Create Connection
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
+            // Set the Request Method
+            con.setRequestMethod("GET");
+
+            // Set the Request Content-Type Header Parameter
+            con.setRequestProperty("Content-Type", "application/json; utf-8");
+
+            // Headers JSon
+//            con.setRequestProperty("Content-Type", "application/json");   // Set Response Format Type
+            con.setRequestProperty("x-app-id", appID);
+            con.setRequestProperty("x-app-key", appKey);
+
+            // Ensure the Connection Will Be Used to Send Content
+            con.setDoOutput(true);
+
+            // Read the Response From Input Stream
+            StringBuilder response;
+            try (BufferedReader br = new BufferedReader(
+                    new InputStreamReader(con.getInputStream(), "utf-8")))
+            {
+                response = new StringBuilder();
+                String responseLine = null;
+
+                while ((responseLine = br.readLine()) != null)
+                {
+                    response.append(responseLine.trim());
+                }
+            }
+
+            //#####################################################################
+            // Parsing Response & Storing Data
+            //#####################################################################
+//            System.out.printf("\n\n########################''");
+            LinkedHashMap<String, Object> foodNutritionalInfo = new LinkedHashMap<>();
+
+            String jsonString = response.toString(); // convert stringBuilder object to string from  process above
+            JSONObject jsonObjectFromString = new JSONObject(jsonString); // convert string to JSON Object
+
+            JSONArray foods = jsonObjectFromString.getJSONArray(mainArrayName); // getting main json array
+
+            // Looping through json Array and storing data
+            Iterator<Object> iterator = foods.iterator();
+            while (iterator.hasNext())
+            {
+                JSONObject jsonObject = (JSONObject) iterator.next();
+                for (String key : jsonObject.keySet())
+                {
+                    Object keyData = jsonObject.get(key);
+                    if (natural_Nutrients_API_DesiredFields.contains(key))
+                    {
+                        System.out.printf("\n%s : %s", key, keyData);
+                        foodNutritionalInfo.put(key, keyData);
+                    }
+                }
+            }
+            return foodNutritionalInfo;
+        }
+        catch (Exception e)
+        {
+            System.out.printf("\n\nError getNutritionalInfo() \n'' %s ''", e);
+            return null;
+        }
+    }
+    //######################################################
 }
