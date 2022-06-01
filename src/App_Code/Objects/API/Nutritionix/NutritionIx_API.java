@@ -79,8 +79,8 @@ public class NutritionIx_API
     public static void main(String[] args)
     {
         NutritionIx_API api = new NutritionIx_API();
-        api.get_POST_V2NaturalNutrients("100g of chicken");
-//        api.get_GET_V2SearchInstant("Ben & Jerry's");
+//        api.get_POST_V2NaturalNutrients("100g of chicken");
+        api.get_GET_V2SearchInstant("Ben & Jerry's");
 //        api.get_GET_V2SearchItem("5f637ca24b187f7f76a08a0e");
     }
     //######################################################
@@ -125,7 +125,7 @@ public class NutritionIx_API
             // Create Request Body Json (Custom JSON String)
             String jsonInputString = String.format("{\n  \"query\":\"%s\",\n  \"timezone\": \"UK\"\n}", food);
 
-            return parseJsonResponse(con, jsonInputString, "foods", natural_Nutrients_API_DesiredFields);
+            return parseJsonResponse("POST", con, jsonInputString, "foods", natural_Nutrients_API_DesiredFields);
         }
         catch (Exception e)
         {
@@ -445,14 +445,17 @@ public class NutritionIx_API
     }
     //######################################################
 
-    private LinkedHashMap<String, Object> parseJsonResponse ( HttpURLConnection con, String jsonInputString, String mainArrayName, ArrayList<String> desiredFields)
+    private LinkedHashMap<String, Object> parseJsonResponse (String process, HttpURLConnection con, String jsonInputString, String mainArrayName, ArrayList<String> desiredFields)
     {
         try
         {
-            try (OutputStream os = con.getOutputStream())
+            if(process.equalsIgnoreCase("post"))
             {
-                byte[] input = jsonInputString.getBytes("utf-8");
-                os.write(input, 0, input.length);
+                try (OutputStream os = con.getOutputStream())
+                {
+                    byte[] input = jsonInputString.getBytes("utf-8");
+                    os.write(input, 0, input.length);
+                }
             }
 
             // Read the Response From Input Stream
