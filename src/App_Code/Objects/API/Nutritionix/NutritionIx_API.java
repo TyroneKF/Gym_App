@@ -19,8 +19,6 @@ public class NutritionIx_API
 
     //######################################################
 
-    private String mainArrayName = "foods";
-
     // full_nutrients
     private String secondArrayName = "full_nutrients";
     private String secondArrayKeyName = "attr_id";
@@ -82,8 +80,8 @@ public class NutritionIx_API
     {
         NutritionIx_API api = new NutritionIx_API();
 //        api.get_POST_V2NaturalNutrients("100g of chicken");
-//        api.get_GET_V2SearchInstant("Ben & Jerry's");
-        api.get_GET_V2SearchItem("5f637ca24b187f7f76a08a0e");
+        api.get_GET_V2SearchInstant("Ben & Jerry's");
+//        api.get_GET_V2SearchItem("5f637ca24b187f7f76a08a0e");
     }
     //######################################################
     public NutritionIx_API()
@@ -127,53 +125,8 @@ public class NutritionIx_API
             // Create Request Body Json (Custom JSON String)
             String jsonInputString = String.format("{\n  \"query\":\"%s\",\n  \"timezone\": \"UK\"\n}", food);
 
-            try (OutputStream os = con.getOutputStream())
-            {
-                byte[] input = jsonInputString.getBytes("utf-8");
-                os.write(input, 0, input.length);
-            }
 
-            // Read the Response From Input Stream
-            StringBuilder response;
-            try (BufferedReader br = new BufferedReader(
-                    new InputStreamReader(con.getInputStream(), "utf-8")))
-            {
-                response = new StringBuilder();
-                String responseLine = null;
-
-                while ((responseLine = br.readLine()) != null)
-                {
-                    response.append(responseLine.trim());
-                }
-            }
-
-            //#####################################################################
-            // Parsing Response & Storing Data
-            //#####################################################################
-//            System.out.printf("\n\n########################''");
-            LinkedHashMap<String, Object> foodNutritionalInfo = new LinkedHashMap<>();
-
-            String jsonString = response.toString(); // convert stringBuilder object to string from  process above
-            JSONObject jsonObjectFromString = new JSONObject(jsonString); // convert string to JSON Object
-
-            JSONArray foods = jsonObjectFromString.getJSONArray(mainArrayName); // getting main json array
-
-            // Looping through json Array and storing data
-            Iterator<Object> iterator = foods.iterator();
-            while (iterator.hasNext())
-            {
-                JSONObject jsonObject = (JSONObject) iterator.next();
-                for (String key : jsonObject.keySet())
-                {
-                    Object keyData = jsonObject.get(key);
-//                    System.out.printf("\n%s : %s", key, keyData);
-                    if (natural_Nutrients_API_DesiredFields.contains(key))
-                    {
-                        foodNutritionalInfo.put(key, keyData);
-                    }
-                }
-            }
-            return foodNutritionalInfo;
+            return parseJsonResponse(con, jsonInputString, "foods", natural_Nutrients_API_DesiredFields);
         }
         catch (Exception e)
         {
@@ -480,7 +433,7 @@ public class NutritionIx_API
             String jsonString = response.toString(); // convert stringBuilder object to string from  process above
             JSONObject jsonObjectFromString = new JSONObject(jsonString); // convert string to JSON Object
 
-            JSONArray foods = jsonObjectFromString.getJSONArray(mainArrayName); // getting main json array
+            JSONArray foods = jsonObjectFromString.getJSONArray("foods"); // getting main json array
 
             // Looping through json Array and storing data
             Iterator<Object> iterator = foods.iterator();
@@ -506,4 +459,63 @@ public class NutritionIx_API
         }
     }
     //######################################################
+
+    private LinkedHashMap<String, Object> parseJsonResponse ( HttpURLConnection con, String jsonInputString, String mainArrayName, ArrayList<String> desiredFields)
+    {
+        try
+        {
+            try (OutputStream os = con.getOutputStream())
+            {
+                byte[] input = jsonInputString.getBytes("utf-8");
+                os.write(input, 0, input.length);
+            }
+
+            // Read the Response From Input Stream
+            StringBuilder response;
+            try (BufferedReader br = new BufferedReader(
+                    new InputStreamReader(con.getInputStream(), "utf-8")))
+            {
+                response = new StringBuilder();
+                String responseLine = null;
+
+                while ((responseLine = br.readLine()) != null)
+                {
+                    response.append(responseLine.trim());
+                }
+            }
+
+            //#####################################################################
+            // Parsing Response & Storing Data
+            //#####################################################################
+//            System.out.printf("\n\n########################''");
+            LinkedHashMap<String, Object> foodNutritionalInfo = new LinkedHashMap<>();
+
+            String jsonString = response.toString(); // convert stringBuilder object to string from  process above
+            JSONObject jsonObjectFromString = new JSONObject(jsonString); // convert string to JSON Object
+
+            JSONArray foods = jsonObjectFromString.getJSONArray(mainArrayName); // getting main json array
+
+            // Looping through json Array and storing data
+            Iterator<Object> iterator = foods.iterator();
+            while (iterator.hasNext())
+            {
+                JSONObject jsonObject = (JSONObject) iterator.next();
+                for (String key : jsonObject.keySet())
+                {
+                    Object keyData = jsonObject.get(key);
+//                    System.out.printf("\n%s : %s", key, keyData);
+                    if (desiredFields.contains(key))
+                    {
+                        foodNutritionalInfo.put(key, keyData);
+                    }
+                }
+            }
+            return foodNutritionalInfo;
+        }
+        catch (Exception e)
+        {
+            System.out.printf("\n\nError parseJsonResponse() \n'' %s ''", e);
+            return null;
+        }
+    }
 }
