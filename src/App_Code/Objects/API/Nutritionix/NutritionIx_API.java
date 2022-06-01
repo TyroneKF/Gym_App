@@ -1,6 +1,7 @@
 package App_Code.Objects.API.Nutritionix;
 
 
+import org.javatuples.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -78,8 +79,8 @@ public class NutritionIx_API
     public static void main(String[] args)
     {
         NutritionIx_API api = new NutritionIx_API();
-//        api.get_POST_V2NaturalNutrients("100g of chicken");
-        api.get_POST_V2SearchInstant("Ben & Jerry's");
+        api.get_POST_V2NaturalNutrients("100g of chicken");
+//        api.get_POST_V2SearchInstant("Ben & Jerry's");
 //        api.get_GET_V2SearchItem("5f637ca24b187f7f76a08a0e");
 
     }
@@ -112,6 +113,9 @@ public class NutritionIx_API
             // Set the Request Method
             con.setRequestMethod("POST");
 
+            // Ensure the Connection Will Be Used to Send Content
+            con.setDoOutput(true);
+
             // Set the Request Content-Type Header Parameter
             con.setRequestProperty("Content-Type", "application/json; utf-8");
 
@@ -120,9 +124,6 @@ public class NutritionIx_API
             con.setRequestProperty("x-app-id", appID);
             con.setRequestProperty("x-app-key", appKey);
             con.setRequestProperty("x-remote-user-id", "0");
-
-            // Ensure the Connection Will Be Used to Send Content
-            con.setDoOutput(true);
 
             // Create Request Body Json (Custom JSON String)
             String jsonInputString = String.format("{\n  \"query\":\"%s\",\n  \"timezone\": \"UK\"\n}", food);
@@ -368,6 +369,121 @@ public class NutritionIx_API
         try
         {
             if (process.equalsIgnoreCase("post"))
+            {
+                try (OutputStream os = con.getOutputStream())
+                {
+                    byte[] input = jsonInputString.getBytes("utf-8");
+                    os.write(input, 0, input.length);
+                }
+            }
+
+            // Read the Response From Input Stream
+            StringBuilder response;
+            try (BufferedReader br = new BufferedReader(
+                    new InputStreamReader(con.getInputStream(), "utf-8")))
+            {
+                response = new StringBuilder();
+                String responseLine = null;
+
+                while ((responseLine = br.readLine()) != null)
+                {
+                    response.append(responseLine.trim());
+                }
+            }
+
+            //#####################################################################
+            // Parsing Response & Storing Data
+            //#####################################################################
+
+            ArrayList<LinkedHashMap<String, Object>> productResults = new ArrayList();
+
+            String jsonString = response.toString(); // convert stringBuilder object to string from  process above
+            JSONObject jsonObjectFromString = new JSONObject(jsonString); // convert string to JSON Object
+
+            JSONArray foods = jsonObjectFromString.getJSONArray(mainArrayName); // getting main json array
+
+            // Looping through json Array and storing data
+            Iterator<Object> iterator = foods.iterator();
+            while (iterator.hasNext())
+            {
+                System.out.printf("\n\n#####################################");
+
+                JSONObject jsonObject = (JSONObject) iterator.next();
+
+                LinkedHashMap<String, Object> foodNutritionalInfo = new LinkedHashMap<>();
+
+                for (String key : jsonObject.keySet())
+                {
+                    Object keyData = jsonObject.get(key);
+//                    System.out.printf("\n%s : %s", key, keyData);
+                    if (desiredFields.contains(key))
+                    {
+                        if (key.equals("photo"))
+                        {
+                            JSONObject picJSOnObj = (JSONObject) keyData;
+
+                            for (String picKey : picJSOnObj.keySet())
+                            {
+                                if (desiredFields.contains(picKey))
+                                {
+                                    Object picKeyData = picJSOnObj.get(picKey);
+                                    System.out.printf("\n%s : %s", picKey, picKeyData);
+
+                                    foodNutritionalInfo.put(picKey, picKeyData);
+                                }
+                            }
+                            continue;
+                        }
+
+                        System.out.printf("\n%s : %s", key, keyData);
+
+                        foodNutritionalInfo.put(key, keyData);
+                    }
+                }
+
+                productResults.add(foodNutritionalInfo);
+            }
+
+            return productResults;
+        }
+        catch (Exception e)
+        {
+            System.out.printf("\n\nError parseJsonResponse() \n'' %s ''", e);
+            return null;
+        }
+    }
+
+    private ArrayList<LinkedHashMap<String, Object>> parseJsonResponse2(String process, String urlLink, ArrayList< Pair<String, String> > properties, String jsonInputString, String mainArrayName, ArrayList<String> desiredFields)
+    {
+        try
+        {
+            //#####################################################################
+            // Getting Data From API End Point
+            //#####################################################################
+            // API END Point Link
+            URL url = new URL(urlLink);
+
+            // Create Connection
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
+            // Set the Request Method
+            process = process.toUpperCase();
+            con.setRequestMethod(process);
+
+            //
+            con.setDoOutput(true);
+
+
+            // Setting Header
+            for( Pair<String, String> property: properties)
+            {
+                con.setRequestProperty(property.getValue0(), property.getValue1());
+            }
+
+            //#####################################################################
+            // Reading JSON Data FROM API
+            //#####################################################################
+            if (process.equals("POST"))
             {
                 try (OutputStream os = con.getOutputStream())
                 {
