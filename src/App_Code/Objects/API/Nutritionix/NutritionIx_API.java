@@ -126,7 +126,6 @@ public class NutritionIx_API
             // Getting Parsed Json Results
             //#################################
             ArrayList<LinkedHashMap<String, Object>> results = parseJsonResponse2(process, urlLink,properties,jsonInputString,mainArrayName, natural_Nutrients_API_DesiredFields );
-//            ArrayList<LinkedHashMap<String, Object>> results = parseJsonResponse2("POST", con, jsonInputString, mainArrayName, natural_Nutrients_API_DesiredFields);
 
             if (results == null)
             {
