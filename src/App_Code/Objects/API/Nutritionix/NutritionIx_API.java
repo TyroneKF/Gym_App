@@ -80,17 +80,20 @@ public class NutritionIx_API
         NutritionIx_API api = new NutritionIx_API();
 //        api.get_POST_V2NaturalNutrients("100g of chicken");
 //        api.get_GET_V2SearchInstant("Ben & Jerry's");
-        api.get_GET_V2SearchItem("5f637ca24b187f7f76a08a0e");
+//        api.get_GET_V2SearchItem("5f637ca24b187f7f76a08a0e");
+
     }
+
     //#################################################################################################################
     public NutritionIx_API()
     {
 
     }
+
     //#################################################################################################################
     public LinkedHashMap<String, Object> get_POST_V2NaturalNutrients(String food)
     {
-       return parseFurtherNutritionalInfo(get_POST_V2NaturalNutrientsAction(food));
+        return parseFurtherNutritionalInfo(get_POST_V2NaturalNutrientsAction(food));
     }
 
     private LinkedHashMap<String, Object> get_POST_V2NaturalNutrientsAction(String food)
@@ -124,7 +127,16 @@ public class NutritionIx_API
             // Create Request Body Json (Custom JSON String)
             String jsonInputString = String.format("{\n  \"query\":\"%s\",\n  \"timezone\": \"UK\"\n}", food);
 
-            return parseJsonResponse("POST", con, jsonInputString, "foods", natural_Nutrients_API_DesiredFields);
+            //#################################
+            // Getting Parsed Json Results
+            //#################################
+            ArrayList<LinkedHashMap<String, Object>> results = parseJsonResponse("POST", con, jsonInputString, "foods", natural_Nutrients_API_DesiredFields);
+
+            if (results == null)
+            {
+                return null;
+            }
+            return results.get(0);
         }
         catch (Exception e)
         {
@@ -326,7 +338,6 @@ public class NutritionIx_API
                 JSONObject jsonObject = (JSONObject) iterator.next();
 
                 LinkedHashMap<String, Object> foodNutritionalInfo = new LinkedHashMap<>();
-
                 System.out.printf("\n\n########################''");
 
                 for (String key : jsonObject.keySet())
@@ -398,7 +409,16 @@ public class NutritionIx_API
             // Ensure the Connection Will Be Used to Send Content
             con.setDoOutput(true);
 
-            return parseJsonResponse("GET", con,null,"foods", natural_Nutrients_API_DesiredFields );
+            //#################################
+            // Getting Parsed Json Results
+            //#################################
+            ArrayList<LinkedHashMap<String, Object>> results = parseJsonResponse("GET", con, null, "foods", natural_Nutrients_API_DesiredFields);
+
+            if (results == null)
+            {
+                return null;
+            }
+            return results.get(0);
         }
         catch (Exception e)
         {
@@ -408,11 +428,11 @@ public class NutritionIx_API
     }
     //#################################################################################################################
 
-    private LinkedHashMap<String, Object> parseJsonResponse (String process, HttpURLConnection con, String jsonInputString, String mainArrayName, ArrayList<String> desiredFields)
+    private ArrayList<LinkedHashMap<String, Object>> parseJsonResponse(String process, HttpURLConnection con, String jsonInputString, String mainArrayName, ArrayList<String> desiredFields)
     {
         try
         {
-            if(process.equalsIgnoreCase("post"))
+            if (process.equalsIgnoreCase("post"))
             {
                 try (OutputStream os = con.getOutputStream())
                 {
@@ -438,7 +458,8 @@ public class NutritionIx_API
             //#####################################################################
             // Parsing Response & Storing Data
             //#####################################################################
-//            System.out.printf("\n\n########################''");
+
+            ArrayList<LinkedHashMap<String, Object>> productResults = new ArrayList();
             LinkedHashMap<String, Object> foodNutritionalInfo = new LinkedHashMap<>();
 
             String jsonString = response.toString(); // convert stringBuilder object to string from  process above
@@ -480,7 +501,9 @@ public class NutritionIx_API
                     }
                 }
             }
-            return foodNutritionalInfo;
+
+            productResults.add(foodNutritionalInfo);
+            return productResults;
         }
         catch (Exception e)
         {
