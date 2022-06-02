@@ -28,7 +28,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
     private JComboBox jComboBox;
     private ArrayList<JPanel> searchResultsJPanels = new ArrayList<>();
 
-    private static  int  frameWidth = 710 , frameHeight = 400;
+    private static  int  frameWidth = 690 , frameHeight = 400;
     private int
 
 
