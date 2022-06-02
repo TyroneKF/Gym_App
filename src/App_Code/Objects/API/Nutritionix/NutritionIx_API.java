@@ -88,11 +88,13 @@ public class NutritionIx_API
     {
         LinkedHashMap<String, Object> foodInfo =  parseFurtherNutritionalInfo(get_POST_V2NaturalNutrientsAction(food));
 
-        System.out.printf("\n\n########################''");
-        foodInfo.entrySet().forEach(entry -> {
-            System.out.printf("\n%s : %s", entry.getKey(), entry.getValue());
-        });
-
+        if(foodInfo != null)
+        {
+            System.out.printf("\n\n########################''");
+            foodInfo.entrySet().forEach(entry -> {
+                System.out.printf("\n%s : %s", entry.getKey(), entry.getValue());
+            });
+        }
         return foodInfo;
     }
 
@@ -265,12 +267,15 @@ public class NutritionIx_API
     {
         ArrayList<LinkedHashMap<String, Object>> productsInfo = get_POST_V2SearchInstantAction(product);
 
-        for(LinkedHashMap<String, Object> productInfo : productsInfo )
+        if( productsInfo != null)
         {
-            System.out.printf("\n\n########################''");
-            productInfo.entrySet().forEach(entry -> {
-                System.out.printf("\n%s : %s", entry.getKey(), entry.getValue());
-            });
+            for (LinkedHashMap<String, Object> productInfo : productsInfo)
+            {
+                System.out.printf("\n\n########################''");
+                productInfo.entrySet().forEach(entry -> {
+                    System.out.printf("\n%s : %s", entry.getKey(), entry.getValue());
+                });
+            }
         }
 
         return productsInfo;
@@ -316,10 +321,13 @@ public class NutritionIx_API
     {
         LinkedHashMap<String, Object> foodInfo =  parseFurtherNutritionalInfo(get_GET_V2SearchItemAction(nix_item_id));
 
-        System.out.printf("\n\n########################''");
-        foodInfo.entrySet().forEach(entry -> {
-            System.out.printf("\n%s : %s", entry.getKey(), entry.getValue());
-        });
+        if(foodInfo != null)
+        {
+            System.out.printf("\n\n########################''");
+            foodInfo.entrySet().forEach(entry -> {
+                System.out.printf("\n%s : %s", entry.getKey(), entry.getValue());
+            });
+        }
 
         return foodInfo;
     }
