@@ -125,7 +125,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
 
         JPanel titlePanel = new JPanel();
-        titlePanel.setPreferredSize(new Dimension(frameWidth, titleJPanelHeight));
+        titlePanel.setPreferredSize(new Dimension(frameWidth-50, titleJPanelHeight));
         titlePanel.setBackground(Color.green);
         titlePanel.add(titleLabel);
 
@@ -155,7 +155,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
         jp.setBorder(BorderFactory.createLineBorder(Color.red, 3));
 //        jp.setPreferredSize(new Dimension(frameWidth-50, 50));
 
-        addToContainer(searchBarJPanel, jp, searchBarJPanelXPos, 0, 1, 1, 1, 1, "both", 0, 0);
+        addToContainer(searchBarJPanel, jp, searchBarJPanelXPos, 0, 1, 1, 1, 1, "horizontal", 0, 0);
 
         String jComboBoxOptions[] = {"Single Ingredient", "Product"};
         jComboBox = new JComboBox(jComboBoxOptions);
@@ -204,7 +204,6 @@ public class Find_Ingredients_Info_Screen extends JPanel
         });
 
         addToContainer(searchBarJPanel, searchIcon, searchBarJPanelXPos += 1, searchBarJPanelYPos, 1, 1, 0.25, 0.25, "vertical", 0, 0);
-
         //#################################################################
         // SearchBar Results
         //#################################################################
@@ -318,9 +317,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
 //            spaceDividerInsideImageDisplay2.setBackground(Color.CYAN);
             spaceDividerInsideImageDisplay2.setPreferredSize(new Dimension(50, height));
 
-
             addToContainer(displayJPanel, spaceDividerInsideImageDisplay2, gridX += 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
-
 
             //#########################################################################################################
             // Space Divider
