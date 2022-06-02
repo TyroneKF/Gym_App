@@ -94,7 +94,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
     public void createGUI()
     {
         super.setLayout(new GridBagLayout());
-//        super.setPreferredSize(new Dimension(frameWidth, frameHeight));
+        super.setPreferredSize(new Dimension(frameWidth, frameHeight));
 
         //##############################################################################################################
         // Create ScrollPane & add to Interface
@@ -104,7 +104,6 @@ public class Find_Ingredients_Info_Screen extends JPanel
 
         scrollPaneJPanel = scrollPane.getJPanel();
         scrollPaneJPanel.setLayout(new BorderLayout());
-//        scrollPaneJPanel.setPreferredSize(new Dimension(frameWidth, frameHeight));
 
         //##############################################################################################################
         //  Creating JPanel Sections
