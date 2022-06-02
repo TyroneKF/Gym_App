@@ -209,7 +209,7 @@ public class Edit_Ingredients_Screen extends JFrame
 
             ingredientsForm = new EditIngredientsForm(this, "Edit Ingredients Info", 250, 50);
             shopForm = new EditShopForm(scrollPaneJPanel, "Edit Ingredient Suppliers", 250, 50);
-            SearchForFoodInfo searchForIngredientInfo = new SearchForFoodInfo(scrollPaneJPanel, ingredientsForm, "Search For Food Info", 250, 50);
+            searchForIngredientInfo = new SearchForFoodInfo(scrollPaneJPanel, ingredientsForm, "Search For Food Info", 250, 50);
 
             //###########################################
             // Set IngredientName in form to un-editable
@@ -1340,6 +1340,8 @@ public class Edit_Ingredients_Screen extends JFrame
 
         protected IngredientsForm ingredientsForm;
         private ShopForm shopForm;
+        protected SearchForFoodInfo searchForIngredientInfo;
+
         //#################################################################################################################
         // Constructor
         //##################################################################################################################
@@ -1374,7 +1376,7 @@ public class Edit_Ingredients_Screen extends JFrame
 
             shopForm = new ShopForm(scrollPaneJPanel, "Add Ingredient Suppliers", 250, 50);
 
-            SearchForFoodInfo searchForIngredientInfo = new SearchForFoodInfo(scrollPaneJPanel, ingredientsForm, "Search For Food Info", 250, 50);
+            searchForIngredientInfo = new SearchForFoodInfo(scrollPaneJPanel, ingredientsForm, "Search For Food Info", 250, 50);
 
             createForms(ingredientsForm, shopForm, searchForIngredientInfo);
         }
