@@ -1747,6 +1747,7 @@ public class Edit_Ingredients_Screen extends JFrame
                 //###################################################################
                 JPanel mainJPanel = getCentreJPanel();
                 mainJPanel.setLayout(new BorderLayout());
+//                mainJPanel.setSize(new Dimension(690, 410));
 
                 //###################################################################
                 //
@@ -1754,12 +1755,11 @@ public class Edit_Ingredients_Screen extends JFrame
 
 
                 //
-                find_ingredients_info_screen = new Find_Ingredients_Info_Screen(getCentreJPanel(), ingredientsForm);
+                find_ingredients_info_screen = new Find_Ingredients_Info_Screen(getCentreJPanel(),690, 410,  ingredientsForm);
                 find_ingredients_info_screen.setPreferredSize(new Dimension(430,350));
 
                 mainJPanel.add(find_ingredients_info_screen, BorderLayout.CENTER);
 //                addToContainer(jp, find_ingredients_info_screen, 0, 2, 1, 1, 0.25, 0.25, "both", 0, 0);
-
             }
         }
 

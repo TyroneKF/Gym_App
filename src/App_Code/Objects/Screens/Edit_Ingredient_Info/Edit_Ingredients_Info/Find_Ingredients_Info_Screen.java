@@ -28,11 +28,10 @@ public class Find_Ingredients_Info_Screen extends JPanel
     private JComboBox jComboBox;
     private ArrayList<JPanel> searchResultsJPanels = new ArrayList<>();
 
-    private static  int  frameWidth = 690 , frameHeight = 400;
     private int
+            frameWidth = 690 , frameHeight = 400,
 
-
-    titleJPanelHeight = 45, titleFontSize = 16,
+            titleJPanelHeight = 45, titleFontSize = 16,
 
     searchBarTxtInputSize = 15,
 
@@ -59,7 +58,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
         JFrame frame = new JFrame();
         frame.setVisible(true);
         frame.setResizable(false);
-        frame.setSize(frameWidth, frameHeight);
+        frame.setSize(690, 400);
         frame.setLocation(00, 0);
 
         //########################################################
@@ -76,15 +75,16 @@ public class Find_Ingredients_Info_Screen extends JPanel
         JTabbedPane tp = new JTabbedPane();
         contentPane.add(tp);
 
-        tp.add("Add Ingredients", new Find_Ingredients_Info_Screen(contentPane, null));
-
+        tp.add("Add Ingredients", new Find_Ingredients_Info_Screen(contentPane, 690, 400, null));
 
     }
 
-    public Find_Ingredients_Info_Screen(Container parentContainer, Edit_Ingredients_Screen.CreateForm.IngredientsForm ingredientsForm)
+    public Find_Ingredients_Info_Screen(Container parentContainer, int frameWidth, int frameHeight, Edit_Ingredients_Screen.CreateForm.IngredientsForm ingredientsForm)
     {
         this.parentContainer = parentContainer;
         this.ingredientsForm = ingredientsForm;
+        this.frameWidth = frameWidth;
+        this.frameHeight = frameHeight;
 
         nutritionIx_api = new NutritionIx_API();
 
@@ -94,6 +94,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
     public void createGUI()
     {
         super.setLayout(new GridBagLayout());
+//        super.setPreferredSize(new Dimension(frameWidth, frameHeight));
 
         //##############################################################################################################
         // Create ScrollPane & add to Interface
@@ -125,7 +126,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
 
         JPanel titlePanel = new JPanel();
-        titlePanel.setPreferredSize(new Dimension(frameWidth-50, titleJPanelHeight));
+        titlePanel.setPreferredSize(new Dimension(frameWidth - 50, titleJPanelHeight));
         titlePanel.setBackground(Color.green);
         titlePanel.add(titleLabel);
 
@@ -427,7 +428,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
 
                     String nix_item_id = (String) foodInfo.get("nix_item_id");
 
-                    if(nix_item_id != null)
+                    if (nix_item_id != null)
                     {
                         LinkedHashMap<String, Object> foodInfo2 = nutritionIx_api.get_GET_V2SearchItem(nix_item_id);
 
@@ -437,7 +438,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
                             return;
                         }
                     }
-                    JOptionPane.showMessageDialog(null,"Error, Unable to gather product info!");
+                    JOptionPane.showMessageDialog(null, "Error, Unable to gather product info!");
                 });
 
                 addToContainer(iconJPanel, addIcon, 0, 0, 1, 1, 0.25, 0.25, "", 0, 0);
