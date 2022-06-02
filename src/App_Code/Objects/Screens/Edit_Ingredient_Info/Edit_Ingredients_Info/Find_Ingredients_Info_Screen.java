@@ -103,7 +103,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
 
         scrollPaneJPanel = scrollPane.getJPanel();
         scrollPaneJPanel.setLayout(new BorderLayout());
-        scrollPaneJPanel.setPreferredSize(new Dimension(frameWidth, frameHeight));
+//        scrollPaneJPanel.setPreferredSize(new Dimension(frameWidth, frameHeight));
 
         //##############################################################################################################
         //  Creating JPanel Sections

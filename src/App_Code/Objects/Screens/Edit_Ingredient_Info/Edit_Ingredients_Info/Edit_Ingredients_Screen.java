@@ -209,7 +209,7 @@ public class Edit_Ingredients_Screen extends JFrame
 
             ingredientsForm = new EditIngredientsForm(this, "Edit Ingredients Info", 250, 50);
             shopForm = new EditShopForm(scrollPaneJPanel, "Edit Ingredient Suppliers", 250, 50);
-            SearchForIngredientsInfo searchForIngredientInfo = new SearchForIngredientsInfo(scrollPaneJPanel, ingredientsForm, "Search For Food Info", 250, 50);
+            SearchForFoodInfo searchForIngredientInfo = new SearchForFoodInfo(scrollPaneJPanel, ingredientsForm, "Search For Food Info", 250, 50);
 
             //###########################################
             // Set IngredientName in form to un-editable
@@ -1374,7 +1374,7 @@ public class Edit_Ingredients_Screen extends JFrame
 
             shopForm = new ShopForm(scrollPaneJPanel, "Add Ingredient Suppliers", 250, 50);
 
-            SearchForIngredientsInfo searchForIngredientInfo = new SearchForIngredientsInfo(scrollPaneJPanel, ingredientsForm, "Search For Food Info", 250, 50);
+            SearchForFoodInfo searchForIngredientInfo = new SearchForFoodInfo(scrollPaneJPanel, ingredientsForm, "Search For Food Info", 250, 50);
 
             createForms(ingredientsForm, shopForm, searchForIngredientInfo);
         }
@@ -1388,7 +1388,7 @@ public class Edit_Ingredients_Screen extends JFrame
             ingredientsForm.loadJCOmboBox();
         }
 
-        protected void createForms(IngredientsForm ingredientsForm, ShopForm shopForm, SearchForIngredientsInfo searchForIngredientsInfo)
+        protected void createForms(IngredientsForm ingredientsForm, ShopForm shopForm, SearchForFoodInfo searchForFoodInfo)
         {
             //##################################################################################
             // Creating Parts of screen & adding it to interface
@@ -1398,7 +1398,7 @@ public class Edit_Ingredients_Screen extends JFrame
             //Search For Ingredients form
             //###########################
 
-            addToContainer(scrollPaneJPanel, searchForIngredientsInfo, 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+            addToContainer(scrollPaneJPanel, searchForFoodInfo, 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
 
             //###########################
             //Space Divider
@@ -1724,13 +1724,40 @@ public class Edit_Ingredients_Screen extends JFrame
         // IngredientsForm
         //##################################################################################################################
 
-        public class SearchForIngredientsInfo extends CollapsibleJPanel
+        public class SearchForFoodInfo extends CollapsibleJPanel
         {
+            IngredientsForm ingredientsForm;
+            Find_Ingredients_Info_Screen find_ingredients_info_screen;
 
-            public SearchForIngredientsInfo(Container parentContainer, IngredientsForm ingredientsForm, String btnText, int btnWidth, int btnHeight)
+            public SearchForFoodInfo(Container parentContainer, IngredientsForm ingredientsForm, String btnText, int btnWidth, int btnHeight)
             {
                 super(parentContainer, btnText, btnWidth, btnHeight);
+                this.ingredientsForm = ingredientsForm;
+
+                createSearchForFoodInfo();
                 expandJPanel();
+            }
+
+            private void createSearchForFoodInfo()
+            {
+                //###################################################################
+                //
+                //###################################################################
+                JPanel mainJPanel = getCentreJPanel();
+                mainJPanel.setLayout(new BorderLayout());
+
+                //###################################################################
+                //
+                //###################################################################
+
+
+                //
+                find_ingredients_info_screen = new Find_Ingredients_Info_Screen(getCentreJPanel(), ingredientsForm);
+                find_ingredients_info_screen.setPreferredSize(new Dimension(500,350));
+
+                mainJPanel.add(find_ingredients_info_screen, BorderLayout.CENTER);
+//                addToContainer(jp, find_ingredients_info_screen, 0, 2, 1, 1, 0.25, 0.25, "both", 0, 0);
+
             }
         }
 
