@@ -209,6 +209,7 @@ public class Edit_Ingredients_Screen extends JFrame
 
             ingredientsForm = new EditIngredientsForm(this, "Edit Ingredients Info", 250, 50);
             shopForm = new EditShopForm(scrollPaneJPanel, "Edit Ingredient Suppliers", 250, 50);
+            SearchForIngredientsInfo searchForIngredientInfo = new SearchForIngredientsInfo(scrollPaneJPanel, ingredientsForm, "Search For Food Info", 250, 50);
 
             //###########################################
             // Set IngredientName in form to un-editable
@@ -339,7 +340,7 @@ public class Edit_Ingredients_Screen extends JFrame
             //###########################
             addToContainer(scrollPaneJPanel, new JPanel(), 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 10, 0);
 
-            createForms(ingredientsForm, shopForm);
+            createForms(ingredientsForm, shopForm, searchForIngredientInfo);
         }
 
         public JComboBox<String> getEdit_IngredientTypes_InPlan_JComboBox()
@@ -1368,11 +1369,14 @@ public class Edit_Ingredients_Screen extends JFrame
             //#################################
             // Needs to be created near this
             //##################################
+//            ingredientsForm = new IngredientsForm(this, "Add Ingredients Info", 250, 50);// HELLO REMOVE
+            ingredientsForm = new IngredientsForm(scrollPaneJPanel, "Add Ingredients Info", 250, 50);
 
-            ingredientsForm = new IngredientsForm(this, "Add Ingredients Info", 250, 50);
             shopForm = new ShopForm(scrollPaneJPanel, "Add Ingredient Suppliers", 250, 50);
 
-            createForms(ingredientsForm, shopForm);
+            SearchForIngredientsInfo searchForIngredientInfo = new SearchForIngredientsInfo(scrollPaneJPanel, ingredientsForm, "Search For Food Info", 250, 50);
+
+            createForms(ingredientsForm, shopForm, searchForIngredientInfo);
         }
 
         //####################################################
@@ -1384,12 +1388,22 @@ public class Edit_Ingredients_Screen extends JFrame
             ingredientsForm.loadJCOmboBox();
         }
 
-        protected void createForms(IngredientsForm ingredientsForm, ShopForm shopForm)
+        protected void createForms(IngredientsForm ingredientsForm, ShopForm shopForm, SearchForIngredientsInfo searchForIngredientsInfo)
         {
             //##################################################################################
             // Creating Parts of screen & adding it to interface
             //##################################################################################
 
+            //###########################
+            //Search For Ingredients form
+            //###########################
+
+            addToContainer(scrollPaneJPanel, searchForIngredientsInfo, 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+
+            //###########################
+            //Space Divider
+            //###########################
+            addToContainer(scrollPaneJPanel, new JPanel(), 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 10, 0);
 
             //###########################
             //Ingredients form
@@ -1703,6 +1717,21 @@ public class Edit_Ingredients_Screen extends JFrame
                 return false;
             }
             return true;
+        }
+
+
+        //#################################################################################################################
+        // IngredientsForm
+        //##################################################################################################################
+
+        public class SearchForIngredientsInfo extends CollapsibleJPanel
+        {
+
+            public SearchForIngredientsInfo(Container parentContainer, IngredientsForm ingredientsForm, String btnText, int btnWidth, int btnHeight)
+            {
+                super(parentContainer, btnText, btnWidth, btnHeight);
+                expandJPanel();
+            }
         }
 
         //#################################################################################################################
