@@ -28,8 +28,9 @@ public class Find_Ingredients_Info_Screen extends JPanel
     private JComboBox jComboBox;
     private ArrayList<JPanel> searchResultsJPanels = new ArrayList<>();
 
+    private static  int  frameWidth = 710 , frameHeight = 400;
     private int
-            frameWidth = 710 - 40, frameHeight = 400,
+
 
     titleJPanelHeight = 45, titleFontSize = 16,
 
@@ -38,7 +39,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
     searchBarHeight = titleJPanelHeight,
             searchBarButtonWidth = 45,
 
-    searchBarWidth = frameWidth - 105,
+    searchBarWidth = frameWidth - 160,
 
     searchBarIconWidth = searchBarButtonWidth - 10,
             searchBarButtonHeight = 45,
@@ -58,7 +59,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
         JFrame frame = new JFrame();
         frame.setVisible(true);
         frame.setResizable(false);
-        frame.setSize(710, 850);
+        frame.setSize(frameWidth, frameHeight);
         frame.setLocation(00, 0);
 
         //########################################################
@@ -102,6 +103,7 @@ public class Find_Ingredients_Info_Screen extends JPanel
 
         scrollPaneJPanel = scrollPane.getJPanel();
         scrollPaneJPanel.setLayout(new BorderLayout());
+        scrollPaneJPanel.setPreferredSize(new Dimension(frameWidth, frameHeight));
 
         //##############################################################################################################
         //  Creating JPanel Sections
