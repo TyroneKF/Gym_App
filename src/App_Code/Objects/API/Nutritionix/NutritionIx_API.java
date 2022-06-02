@@ -86,7 +86,7 @@ public class NutritionIx_API
     //#################################################################################################################
     public LinkedHashMap<String, Object> get_POST_V2NaturalNutrients(String food)
     {
-        LinkedHashMap<String, Object> foodInfo =  parseFurtherNutritionalInfo(get_POST_V2NaturalNutrientsAction(food));
+       /* LinkedHashMap<String, Object> foodInfo =  parseFurtherNutritionalInfo(get_POST_V2NaturalNutrientsAction(food));
 
         if(foodInfo != null)
         {
@@ -95,7 +95,8 @@ public class NutritionIx_API
                 System.out.printf("\n%s : %s", entry.getKey(), entry.getValue());
             });
         }
-        return foodInfo;
+        return foodInfo;*/
+        return parseFurtherNutritionalInfo(get_POST_V2NaturalNutrientsAction(food));
     }
 
     private LinkedHashMap<String, Object> get_POST_V2NaturalNutrientsAction(String food)
@@ -265,7 +266,7 @@ public class NutritionIx_API
     //#################################################################################################################
     public ArrayList<LinkedHashMap<String, Object>> get_POST_V2SearchInstant(String product)
     {
-        ArrayList<LinkedHashMap<String, Object>> productsInfo = get_POST_V2SearchInstantAction(product);
+/*        ArrayList<LinkedHashMap<String, Object>> productsInfo = get_POST_V2SearchInstantAction(product);
 
         if( productsInfo != null)
         {
@@ -278,7 +279,9 @@ public class NutritionIx_API
             }
         }
 
-        return productsInfo;
+        return productsInfo;*/
+
+        return  get_POST_V2SearchInstantAction(product);
     }
 
     private ArrayList<LinkedHashMap<String, Object>> get_POST_V2SearchInstantAction(String product)
@@ -319,7 +322,7 @@ public class NutritionIx_API
     //#################################################################################################################
     public LinkedHashMap<String, Object> get_GET_V2SearchItem(String nix_item_id)
     {
-        LinkedHashMap<String, Object> foodInfo =  parseFurtherNutritionalInfo(get_GET_V2SearchItemAction(nix_item_id));
+        /*LinkedHashMap<String, Object> foodInfo =  parseFurtherNutritionalInfo(get_GET_V2SearchItemAction(nix_item_id));
 
         if(foodInfo != null)
         {
@@ -329,7 +332,9 @@ public class NutritionIx_API
             });
         }
 
-        return foodInfo;
+        return foodInfo;*/
+
+        return parseFurtherNutritionalInfo(get_GET_V2SearchItemAction(nix_item_id));
     }
 
     private LinkedHashMap<String, Object> get_GET_V2SearchItemAction(String nix_item_id)
