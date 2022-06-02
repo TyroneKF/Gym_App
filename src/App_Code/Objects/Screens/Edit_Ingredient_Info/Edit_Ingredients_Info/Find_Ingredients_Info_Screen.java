@@ -26,11 +26,10 @@ public class Find_Ingredients_Info_Screen extends JPanel
 
     private JTextField textField;
     private JComboBox jComboBox;
-    private String chosenOption = "";
     private ArrayList<JPanel> searchResultsJPanels = new ArrayList<>();
 
     private int
-            frameWidth = 710 - 40, frameHeight = 850,
+            frameWidth = 710 - 40, frameHeight = 400,
 
     titleJPanelHeight = 45, titleFontSize = 16,
 
@@ -162,19 +161,6 @@ public class Find_Ingredients_Info_Screen extends JPanel
         jp.add(jComboBox);
 
         ((JLabel) jComboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER); // centre text
-        jComboBox.addItemListener(new ItemListener()
-        {
-            public void itemStateChanged(ItemEvent ie)
-            {
-                int selectedItemIndex = jComboBox.getSelectedIndex();
-
-                if (selectedItemIndex != -1)
-                {
-                    chosenOption = jComboBox.getItemAt(selectedItemIndex).toString();
-                }
-            }
-        });
-
         jComboBox.setSelectedIndex(-1);
 
         //########################################################################
@@ -564,7 +550,6 @@ public class Find_Ingredients_Info_Screen extends JPanel
 
         jComboBox.setSelectedIndex(-1);
         textField.setText("");
-        chosenOption = "";
     }
 
     private void resetSearchDisplay()
