@@ -23,6 +23,16 @@ public class NutritionIx_API
 
 
     private final ArrayList<String> natural_Nutrients_API_DesiredFields = new ArrayList<>(Arrays.asList(
+
+            "nix_brand_name",
+            "nix_brand_id",
+            "nix_item_name",
+            "nix_item_id",
+
+            "photo",
+            "thumb",
+            "highres",
+
             "food_name",
             "brand_name",
             "serving_qty",
@@ -40,17 +50,32 @@ public class NutritionIx_API
             "nf_potassium",
             "nf_p",
 
-            "full_nutrients",
-
-            "nix_brand_name",
-            "nix_brand_id",
-            "nix_item_name",
-            "nix_item_id",
-
-            "photo",
-            "thumb",
-            "highres"
-    ));
+            "full_nutrients"
+               /*  ,
+             "Calcium",
+            "Cholesterol",
+            "Iron",
+            "Vitamin D",
+            "Caffeine",
+            "Vitamin D3",
+            "Copper",
+            "Vitamin D2",
+            "Magnesium",
+            "Vitamin E",
+            "Vitamin B-12",
+            "Phosphorus",
+            "Phosphorus",
+            "Retinol",
+            "Riboflavin",
+            "Selenium",
+            "Vitamin E (alpha-tocopherol)",
+            "Vitamin B-12",
+            "Vitamin B-6",
+            "Vitamin C",
+            "Vitamin D (D2 + D3)",
+            "Vitamin K ",
+            "Zinc"*/
+            ));
 
 
     //######################################################
@@ -110,8 +135,7 @@ public class NutritionIx_API
             String
                     urlLink = "https://trackapi.nutritionix.com/v2/natural/nutrients",
                     process = "POST",
-                    mainArrayName = "foods"
-            ;
+                    mainArrayName = "foods";
 
             // Set the Request Content-Type Header Parameter
             ArrayList<Pair<String, String>> properties = new ArrayList<>(Arrays.asList(
@@ -127,7 +151,7 @@ public class NutritionIx_API
             //#################################
             // Getting Parsed Json Results
             //#################################
-            ArrayList<LinkedHashMap<String, Object>> results = parseJsonResponse2(process, urlLink,properties,jsonInputString,mainArrayName, natural_Nutrients_API_DesiredFields );
+            ArrayList<LinkedHashMap<String, Object>> results = parseJsonResponse2(process, urlLink, properties, jsonInputString, mainArrayName, natural_Nutrients_API_DesiredFields);
 
             if (results == null)
             {
@@ -178,7 +202,10 @@ public class NutritionIx_API
 
                 if (attr_Name != null)
                 {
-                    foodNutritionalInfo.put(attr_Name, attr_Value);
+                    if (natural_Nutrients_API_DesiredFields.contains(attr_Name))
+                    {
+                        foodNutritionalInfo.put(attr_Name, attr_Value);
+                    }
                 }
                 else
                 {
@@ -280,7 +307,7 @@ public class NutritionIx_API
 
         return productsInfo;*/
 
-        return  get_POST_V2SearchInstantAction(product);
+        return get_POST_V2SearchInstantAction(product);
     }
 
     private ArrayList<LinkedHashMap<String, Object>> get_POST_V2SearchInstantAction(String product)
@@ -309,7 +336,7 @@ public class NutritionIx_API
             //#################################
             // Getting Parsed Json Results
             //#################################
-            return parseJsonResponse2(process, urlLink,properties,jsonInputString,mainArrayName, search_Instant_API_DesiredFields);
+            return parseJsonResponse2(process, urlLink, properties, jsonInputString, mainArrayName, search_Instant_API_DesiredFields);
         }
         catch (Exception e)
         {
@@ -359,7 +386,7 @@ public class NutritionIx_API
             //#################################
             // Getting Parsed Json Results
             //#################################
-            ArrayList<LinkedHashMap<String, Object>> results = parseJsonResponse2(process, urlLink, properties,null,mainArrayName, natural_Nutrients_API_DesiredFields);
+            ArrayList<LinkedHashMap<String, Object>> results = parseJsonResponse2(process, urlLink, properties, null, mainArrayName, natural_Nutrients_API_DesiredFields);
 
             if (results == null)
             {

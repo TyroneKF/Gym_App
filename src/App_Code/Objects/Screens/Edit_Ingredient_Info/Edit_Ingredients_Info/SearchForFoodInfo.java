@@ -15,8 +15,6 @@ import App_Code.Objects.Gui_Objects.JTextFieldLimit;
 import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
 
 import java.awt.image.BufferedImage;
 import java.net.URL;
@@ -531,7 +529,7 @@ public class SearchForFoodInfo extends CollapsibleJPanel
 
         resetFullDisplay();
 
-        ingredientsForm.updateFoodNutritionalInfoFromSearch(foodInfo);
+        ingredientsForm.updateForm_FoodNutritionalInfoFromSearch(foodInfo);
     }
 
     private void resetFullDisplay()
