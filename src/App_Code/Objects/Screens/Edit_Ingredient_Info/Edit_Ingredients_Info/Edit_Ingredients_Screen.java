@@ -574,6 +574,7 @@ public class Edit_Ingredients_Screen extends JFrame
                 put("Protein", new Pair<String, String>("nf_protein", "Protein"));
                 put("Carbohydrates", new Pair<String, String>("nf_total_carbohydrate", "Carbohydrates"));
                 put("Sugars Of Carbs", new Pair<String, String>("nf_sugars", "Sugars_Of_Carbs"));
+                put("Glycemic Index", new Pair<String, String>(null, "Glycemic_Index"));
                 put("Fibre", new Pair<String, String>("nf_dietary_fiber", "Fibre"));
                 put("Fat", new Pair<String, String>("nf_total_fat", "Fat"));
                 put("Saturated Fat", new Pair<String, String>("nf_saturated_fat", "Saturated_Fat"));
@@ -993,6 +994,7 @@ public class Edit_Ingredients_Screen extends JFrame
                 // Gathering Form Txt Data
                 //####################################
                 ArrayList<String> formResults = new ArrayList<>();
+
                 int pos = 0;
                 for (Component comp : ingredientsFormObjects)
                 {
