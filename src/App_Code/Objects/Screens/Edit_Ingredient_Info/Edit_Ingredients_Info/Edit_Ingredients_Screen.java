@@ -568,19 +568,20 @@ public class Edit_Ingredients_Screen extends JFrame
             {{
                 // ingredientsFormLabel Key -> ( nutritionIx value, Mysql key Value)
 
-                put("Ingredient Measurement In", new Pair<String, String>("serving_unit", ""));
-                put("Ingredient Name", new Pair<String, String>("food_name", ""));
-                put("Based_On_Quantity", new Pair<String, String>("serving_weight_grams", ""));
-                put("Protein", new Pair<String, String>("nf_protein", ""));
-                put("Carbohydrates", new Pair<String, String>("nf_total_carbohydrate", ""));
-                put("Sugars Of Carbs", new Pair<String, String>("nf_sugars", ""));
-                put("Fibre", new Pair<String, String>("nf_dietary_fiber", ""));
-                put("Fat", new Pair<String, String>("nf_total_fat", ""));
-                put("Saturated Fat", new Pair<String, String>("nf_saturated_fa", ""));
-                put("Salt", new Pair<String, String>("nf_sodium", ""));
-                put("Cholesterol", new Pair<String, String>("nf_cholesterol", ""));
-                put("Calories", new Pair<String, String>("nf_calories", ""));
-                put("Potassium", new Pair<String, String>("nf_potassium", ""));
+                put("Ingredient Measurement In", new Pair<String, String>("serving_unit", "Meassurement"));
+                put("Ingredient Name", new Pair<String, String>("food_name", "Ingredient_Name"));
+                put("Based_On_Quantity", new Pair<String, String>("serving_weight_grams", "Based_On_Quantity"));
+                put("Protein", new Pair<String, String>("nf_protein", "Protein"));
+                put("Carbohydrates", new Pair<String, String>("nf_total_carbohydrate", "Carbohydrates"));
+                put("Sugars Of Carbs", new Pair<String, String>("nf_sugars", "Sugars_Of_Carbs"));
+                put("Fibre", new Pair<String, String>("nf_dietary_fiber", "Fibre"));
+                put("Fat", new Pair<String, String>("nf_total_fat", "Fat"));
+                put("Saturated Fat", new Pair<String, String>("nf_saturated_fat", "Saturated_Fat"));
+                put("Salt", new Pair<String, String>("nf_sodium", "Salt"));
+//                put("Cholesterol", new Pair<String, String>("nf_cholesterol", ""));
+                put("Water Content", new Pair<String, String>(null, "Water_Content"));
+                put("Calories", new Pair<String, String>("nf_calories", "Calories"));
+//                put("Potassium", new Pair<String, String>("nf_potassium", ""));
             }};
 
             protected JComboBox ingredientsMeasure_JComboBox = new JComboBox();
@@ -768,7 +769,16 @@ public class Edit_Ingredients_Screen extends JFrame
                         String formLabelName = info.getKey();
                         Pair<String, String> keyObject = info.getValue();
 
+                        //############################
+                        //
+                        //############################
                         String foodInfoEquivalentLabel = keyObject.getValue0();
+                        if(foodInfoEquivalentLabel == null)
+                        {
+                            continue;
+                        }
+
+                        //
                         Object foodInfoNutritionValue = foodInfo.get(foodInfoEquivalentLabel);
 
                         System.out.printf("\n\n#############################\n\nNutritionIx Label: %s  | NutritionIx value: %s | Form Label: %s  | Form Label pos: %s",
