@@ -15,7 +15,6 @@ import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Ingredients_Info.Edit_
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.AdjustmentListener;
 import java.util.*;
 
 public class Meal_Plan_Screen extends JPanel
@@ -1133,7 +1132,7 @@ public class Meal_Plan_Screen extends JPanel
 
         if (addIngredientsScreen != null)
         {
-            addIngredientsScreen.makeJframeVisible();
+            addIngredientsScreen.makeFrameVisible();
             return;
         }
         addIngredientsScreen = new Edit_Ingredients_Screen(db, this, planID, tempPlanID, planName);

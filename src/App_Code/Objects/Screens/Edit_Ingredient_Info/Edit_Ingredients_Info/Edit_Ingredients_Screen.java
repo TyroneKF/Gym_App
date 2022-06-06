@@ -88,7 +88,7 @@ public class Edit_Ingredients_Screen extends JFrame
                 //###################################################################################
 
                 setTitle("Add/Edit Ingredients Screen");
-                makeJframeVisible();
+                makeFrameVisible();
 
                 //Delete all temp data on close
                 addWindowListener(new java.awt.event.WindowAdapter()
@@ -351,7 +351,7 @@ public class Edit_Ingredients_Screen extends JFrame
         @Override
         protected void updateIngredientForm_Type_JComboBox()
         {
-            ingredientsForm.loadJCOmboBox();
+            ingredientsForm.loadJCComboBox();
         }
 
         public void updateMapIngredientsTypesAndNames()
@@ -947,7 +947,7 @@ public class Edit_Ingredients_Screen extends JFrame
 
                         if (comboBox.getSelectedIndex() == -1) // if no item has been selected by JComboBox
                         {
-                            errorTxt += String.format("\n\n  ' %s ' on Row: %s, an option inside the dropdown menu must be selected", labels[row], row + 1);
+                            errorTxt += String.format("\n\n  ' %s ' on Row: %s, an option inside the dropdown menu must be selected", ingredientsFormLabels.get(row), row + 1);
                         }
                         continue;
                     }
@@ -962,7 +962,7 @@ public class Edit_Ingredients_Screen extends JFrame
                         //#########################################
                         if (value.equals(""))
                         {
-                            errorTxt += String.format("\n\n  ' %s ' on Row: %s,  must have a value which is not ' NULL '!", labels[row], row + 1);
+                            errorTxt += String.format("\n\n  ' %s ' on Row: %s,  must have a value which is not ' NULL '!", ingredientsFormLabels.get(row), row + 1);
                             continue;
                         }
 
@@ -987,7 +987,7 @@ public class Edit_Ingredients_Screen extends JFrame
                         //#########################################
                         // Do BigDecimal Processing
                         //#########################################
-                        errorTxt = convertToBigDecimal(value, errorTxt, labels[row], row + 1, jTextField);
+                        errorTxt = convertToBigDecimal(value, errorTxt, ingredientsFormLabels.get(row), row + 1, jTextField);
                     }
                 }
 
@@ -1387,7 +1387,7 @@ public class Edit_Ingredients_Screen extends JFrame
 
         protected void updateIngredientForm_Type_JComboBox()
         {
-            ingredientsForm.loadJCOmboBox();
+            ingredientsForm.loadJCComboBox();
         }
 
         protected void createForms(IngredientsForm ingredientsForm, ShopForm shopForm, SearchForFoodInfo searchForFoodInfo)
@@ -1731,9 +1731,29 @@ public class Edit_Ingredients_Screen extends JFrame
             // Ingredients form Variables
             //#######################################
 
-            protected final String[] labels = {"Ingredient Measurement In:", "Ingredient Name:", "Ingredient_Type:",
-                    "Based_On_Quantity:", "Protein:", "Glycemic Index", "Carbohydrates:", "Sugars Of Carbs:", "Fibre:", "Fat:", "Saturated Fat:",
-                    "Salt:", "Water_Content:", "Calories:"};
+            protected final ArrayList<String> ingredientsFormLabels = new ArrayList<String>(Arrays.asList(
+                    "Ingredient Measurement In", "Ingredient Name", "Ingredient_Type", "Based_On_Quantity", 
+                    "Protein", "Glycemic Index", "Carbohydrates", "Sugars Of Carbs", "Fibre", "Fat", 
+                    "Saturated Fat", "Salt", "Cholesterol", "Potassium", "Water_Content", "Calories"
+            ));
+
+
+            protected Map<String, String> nutritionIxLabelsToFormLabels = new HashMap<String, String>()
+            {{
+                put("food_name", "Ingredient Name");
+                put("serving_unit", "Ingredient Measurement In");
+                put("serving_weight_grams", "Based_On_Quantity");
+                put("nf_calories", "Calories");
+                put("nf_total_fat", "Fat");
+                put("nf_saturated_fat", "Saturated Fat");
+                put("nf_cholesterol", "Cholesterol");
+                put("nf_sodium", "Salt");
+                put("nf_total_carbohydrate", "Carbohydrates");
+                put("nf_dietary_fiber", "Fibre");
+                put("nf_sugars", "Sugars Of Carbs");
+                put("nf_protein", "Protein");
+                put("nf_potassium", "Potassium");
+            }};
 
             protected JComboBox ingredientsMeasure_JComboBox = new JComboBox();
             protected ArrayList<Component> ingredientsFormObjects = new ArrayList<>();
@@ -1782,10 +1802,12 @@ public class Edit_Ingredients_Screen extends JFrame
                 //#################################################################
                 // Centre Frame
                 //#################################################################
-                JPanel inputArea = new JPanel(new GridLayout(labels.length, 2));
+                
+                int lblSize = ingredientsFormLabels.size();
+                JPanel inputArea = new JPanel(new GridLayout(lblSize, 2));
 
                 // for each label it is created into a JLabel
-                for (int i = 0; i < labels.length; i++)
+                for (int i = 0; i < lblSize; i++)
                 {
                     boolean jcomboxBeingCreated = false;
                     JTextField textField = new JTextField("");
@@ -1795,7 +1817,7 @@ public class Edit_Ingredients_Screen extends JFrame
                     // JLabel
                     //#########################################
 
-                    String labelTXT = labels[i];
+                    String labelTXT = ingredientsFormLabels.get(i) + ":";
 
                     JLabel label = new JLabel("    " + labelTXT);
                     label.setHorizontalAlignment(JLabel.LEFT);
@@ -1818,7 +1840,7 @@ public class Edit_Ingredients_Screen extends JFrame
                     else if (labelTXT.equals("Ingredient_Type:"))
                     {
                         ingredientsType_JComboBox = new JComboBox();
-                        loadJCOmboBox();
+                        loadJCComboBox();
                         inputArea.add(ingredientsType_JComboBox);
 
                         jcomboxBeingCreated = true;
@@ -1842,7 +1864,7 @@ public class Edit_Ingredients_Screen extends JFrame
                     }
 
                     //#########################################
-                    // JTextfields
+                    // JTextFields
                     //#########################################
                     if (labelTXT.equals("Ingredient Name:")) //Setting TextField limits
                     {
@@ -1860,7 +1882,7 @@ public class Edit_Ingredients_Screen extends JFrame
                 mainJPanel.add(inputArea, BorderLayout.CENTER);
             }
 
-            protected void loadJCOmboBox()
+            protected void loadJCComboBox()
             {
                 ingredientsType_JComboBox.removeAllItems();
                 for (String ingredientType : all_IngredientsTypeNamesList)
@@ -1874,6 +1896,31 @@ public class Edit_Ingredients_Screen extends JFrame
                 }
 
                 ingredientsType_JComboBox.setSelectedIndex(-1);
+            }
+
+            protected void updateFoodNutritionalInfoFromSearch(LinkedHashMap<String, Object> foodInfo)
+            {
+                if(foodInfo != null)
+                {
+                    for (Map.Entry<String, Object> info : foodInfo.entrySet())
+                    {
+                        // Get NutritionIx Label & its value
+                        String key = info.getKey();
+                        Object value = info.getValue();
+
+                        // Find the equivalent within our labels
+                        String equivalentLabel = nutritionIxLabelsToFormLabels.get(key);
+
+                        if (equivalentLabel != null)
+                        {
+                            // Find position of label within the form
+                            int findFormLabelPos = ingredientsFormLabels.indexOf(equivalentLabel);
+
+                            System.out.printf("\n\n#############################\nNutritionIx Label: %s \nNutritionIx value: %s \n\nForm Label: %s \nForm Label pos: %s", key, value, equivalentLabel, findFormLabelPos);
+
+                        }
+                    }
+                }
             }
 
             protected void createIconBar()
@@ -1968,7 +2015,7 @@ public class Edit_Ingredients_Screen extends JFrame
 
                         if (comboBox.getSelectedIndex() == -1) // if no item has been selected by JComboBox
                         {
-                            errorTxt += String.format("\n\n  ' %s ' on Row: %s, an option inside the dropdown menu must be selected", labels[row], row + 1);
+                            errorTxt += String.format("\n\n  ' %s ' on Row: %s, an option inside the dropdown menu must be selected", ingredientsFormLabels.get(row), row + 1);
                         }
                         continue;
                     }
@@ -1982,7 +2029,7 @@ public class Edit_Ingredients_Screen extends JFrame
                         //#########################################
                         if (value.equals(""))
                         {
-                            errorTxt += String.format("\n\n  ' %s ' on Row: %s,  must have a value which is not ' NULL '!", labels[row], row + 1);
+                            errorTxt += String.format("\n\n  ' %s ' on Row: %s,  must have a value which is not ' NULL '!", ingredientsFormLabels.get(row), row + 1);
                             continue;
                         }
 
@@ -1999,7 +2046,7 @@ public class Edit_Ingredients_Screen extends JFrame
                             ingredientName_Txt = value;
                             if (doesStringContainCharacters(value))
                             {
-                                errorTxt += String.format("\n\n  ' %s ' on Row: %s,  can only contain alphabet character! Symbols, numbers aren't allowed in the ingredient name!", labels[row], row + 1, value);
+                                errorTxt += String.format("\n\n  ' %s ' on Row: %s,  can only contain alphabet character! Symbols, numbers aren't allowed in the ingredient name!", ingredientsFormLabels.get(row), row + 1, value);
                             }
                             continue;
                         }
@@ -2010,7 +2057,7 @@ public class Edit_Ingredients_Screen extends JFrame
 
                             if (intValue > 100 || intValue < 0)
                             {
-                                errorTxt += String.format("\n\n  ' %s ' on Row: %s,  must be an Integer value which is: 0<= value <=100 !", labels[row], row + 1);
+                                errorTxt += String.format("\n\n  ' %s ' on Row: %s,  must be an Integer value which is: 0<= value <=100 !", ingredientsFormLabels.get(row), row + 1);
                             }
                             continue;
                         }
@@ -2018,7 +2065,7 @@ public class Edit_Ingredients_Screen extends JFrame
                         //#########################################
                         // Do BigDecimal Processing
                         //#########################################
-                        errorTxt = convertToBigDecimal(value, errorTxt, labels[row], row + 1, jTextField);
+                        errorTxt = convertToBigDecimal(value, errorTxt, ingredientsFormLabels.get(row), row + 1, jTextField);
                     }
                 }
 
@@ -2769,7 +2816,7 @@ public class Edit_Ingredients_Screen extends JFrame
     //##################################################################################################################
     // General Methods
     //##################################################################################################################
-    public void makeJframeVisible()
+    public void makeFrameVisible()
     {
         setExtendedState(JFrame.NORMAL);
         setSize(new Dimension(jFramewidth, jFrameheight));

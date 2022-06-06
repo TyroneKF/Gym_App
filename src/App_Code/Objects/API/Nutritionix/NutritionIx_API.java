@@ -183,7 +183,6 @@ public class NutritionIx_API
                 else
                 {
                     System.out.printf("\n\nError  parseFurtherNutritionalInfo() \nIssues Extracting Attribute Name for attr_id = %s", attr_id);
-                    return null;
                 }
             }
 

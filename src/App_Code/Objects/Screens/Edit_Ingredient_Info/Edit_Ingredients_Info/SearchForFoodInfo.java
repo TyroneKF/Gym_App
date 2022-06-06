@@ -530,6 +530,8 @@ public class SearchForFoodInfo extends CollapsibleJPanel
         });
 
         resetFullDisplay();
+
+        ingredientsForm.updateFoodNutritionalInfoFromSearch(foodInfo);
     }
 
     private void resetFullDisplay()
