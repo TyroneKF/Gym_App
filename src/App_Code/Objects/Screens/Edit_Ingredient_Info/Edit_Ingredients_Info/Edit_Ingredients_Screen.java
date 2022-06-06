@@ -1732,8 +1732,8 @@ public class Edit_Ingredients_Screen extends JFrame
             //#######################################
 
             protected final ArrayList<String> ingredientsFormLabels = new ArrayList<String>(Arrays.asList(
-                    "Ingredient Measurement In", "Ingredient Name", "Ingredient_Type", "Based_On_Quantity", 
-                    "Protein", "Glycemic Index", "Carbohydrates", "Sugars Of Carbs", "Fibre", "Fat", 
+                    "Ingredient Measurement In", "Ingredient Name", "Ingredient_Type", "Based_On_Quantity",
+                    "Protein", "Glycemic Index", "Carbohydrates", "Sugars Of Carbs", "Fibre", "Fat",
                     "Saturated Fat", "Salt", "Cholesterol", "Potassium", "Water_Content", "Calories"
             ));
 
@@ -1802,7 +1802,7 @@ public class Edit_Ingredients_Screen extends JFrame
                 //#################################################################
                 // Centre Frame
                 //#################################################################
-                
+
                 int lblSize = ingredientsFormLabels.size();
                 JPanel inputArea = new JPanel(new GridLayout(lblSize, 2));
 
@@ -1900,7 +1900,7 @@ public class Edit_Ingredients_Screen extends JFrame
 
             protected void updateFoodNutritionalInfoFromSearch(LinkedHashMap<String, Object> foodInfo)
             {
-                if(foodInfo != null)
+                if (foodInfo != null)
                 {
                     for (Map.Entry<String, Object> info : foodInfo.entrySet())
                     {
@@ -1918,6 +1918,29 @@ public class Edit_Ingredients_Screen extends JFrame
 
                             System.out.printf("\n\n#############################\nNutritionIx Label: %s \nNutritionIx value: %s \n\nForm Label: %s \nForm Label pos: %s", key, value, equivalentLabel, findFormLabelPos);
 
+                            if (value == null)
+                            {
+                                value = 0;
+                            }
+                            else if (equivalentLabel.equals("Ingredient Measurement In"))
+                            {
+                                value = value.toString().equals("g") ? "Grams" : "Litres";
+                            }
+
+
+                            Component comp = ingredientsFormObjects.get(findFormLabelPos);
+
+                            if (comp instanceof JTextField)
+                            {
+                                JTextField obj = (JTextField) comp;
+
+                                obj.setText(String.format("%s", value));
+                            }
+                            else if (comp instanceof JComboBox)
+                            {
+                                JComboBox obj = (JComboBox) comp;
+                                obj.setSelectedItem(value);
+                            }
                         }
                     }
                 }
