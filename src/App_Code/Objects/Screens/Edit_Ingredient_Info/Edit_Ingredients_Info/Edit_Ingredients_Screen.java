@@ -53,7 +53,7 @@ public class Edit_Ingredients_Screen extends JFrame
         }
     });
 
-    createForm createForm;
+    CreateForm createForm;
     EditingCreateForm editingCreateForm;
 
     //##################################################################################################################
@@ -122,7 +122,7 @@ public class Edit_Ingredients_Screen extends JFrame
                 JPanel addIngredientsFormJPanel = new JPanel(new GridBagLayout());
                 tp.add("Add Ingredients", addIngredientsFormJPanel);
 
-                createForm = new createForm();
+                createForm = new CreateForm();
                 addToContainer(addIngredientsFormJPanel, createForm, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
 
                 //#################################################
@@ -160,10 +160,10 @@ public class Edit_Ingredients_Screen extends JFrame
     }
 
     //##################################################################################################################
-    // Other Classes
+    // Create Forms
     //##################################################################################################################
 
-    public class EditingCreateForm extends createForm
+    public class EditingCreateForm extends CreateForm
     {
         private boolean jcomboUpdateStaus = false;
         private EditIngredientsForm ingredientsForm;
@@ -209,6 +209,7 @@ public class Edit_Ingredients_Screen extends JFrame
 
             ingredientsForm = new EditIngredientsForm(this, "Edit Ingredients Info", 250, 50);
             shopForm = new EditShopForm(scrollPaneJPanel, "Edit Ingredient Suppliers", 250, 50);
+            searchForIngredientInfo = new SearchForFoodInfo(scrollPaneJPanel, ingredientsForm, "Search For Food Info", 250, 50);
 
             //###########################################
             // Set IngredientName in form to un-editable
@@ -339,7 +340,7 @@ public class Edit_Ingredients_Screen extends JFrame
             //###########################
             addToContainer(scrollPaneJPanel, new JPanel(), 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 10, 0);
 
-            createForms(ingredientsForm, shopForm);
+            createForms(ingredientsForm, shopForm, searchForIngredientInfo);
         }
 
         public JComboBox<String> getEdit_IngredientTypes_InPlan_JComboBox()
@@ -1326,7 +1327,7 @@ public class Edit_Ingredients_Screen extends JFrame
         }
     }
 
-    public class createForm extends JPanel
+    public class CreateForm extends JPanel
     {
         protected int yPos = 0;
         protected JPanel scrollPaneJPanel;
@@ -1339,11 +1340,13 @@ public class Edit_Ingredients_Screen extends JFrame
 
         protected IngredientsForm ingredientsForm;
         private ShopForm shopForm;
+        protected SearchForFoodInfo searchForIngredientInfo;
+
         //#################################################################################################################
         // Constructor
         //##################################################################################################################
 
-        createForm()
+        CreateForm()
         {
             //###################################################################################
             //   Create Screen for Interface
@@ -1368,11 +1371,14 @@ public class Edit_Ingredients_Screen extends JFrame
             //#################################
             // Needs to be created near this
             //##################################
+//            ingredientsForm = new IngredientsForm(this, "Add Ingredients Info", 250, 50);// HELLO REMOVE
+            ingredientsForm = new IngredientsForm(scrollPaneJPanel, "Add Ingredients Info", 250, 50);
 
-            ingredientsForm = new IngredientsForm(this, "Add Ingredients Info", 250, 50);
             shopForm = new ShopForm(scrollPaneJPanel, "Add Ingredient Suppliers", 250, 50);
 
-            createForms(ingredientsForm, shopForm);
+            searchForIngredientInfo = new SearchForFoodInfo(scrollPaneJPanel, ingredientsForm, "Search For Food Info", 250, 50);
+
+            createForms(ingredientsForm, shopForm, searchForIngredientInfo);
         }
 
         //####################################################
@@ -1384,12 +1390,22 @@ public class Edit_Ingredients_Screen extends JFrame
             ingredientsForm.loadJCOmboBox();
         }
 
-        protected void createForms(IngredientsForm ingredientsForm, ShopForm shopForm)
+        protected void createForms(IngredientsForm ingredientsForm, ShopForm shopForm, SearchForFoodInfo searchForFoodInfo)
         {
             //##################################################################################
             // Creating Parts of screen & adding it to interface
             //##################################################################################
 
+            //###########################
+            //Search For Ingredients form
+            //###########################
+
+            addToContainer(scrollPaneJPanel, searchForFoodInfo, 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+
+            //###########################
+            //Space Divider
+            //###########################
+            addToContainer(scrollPaneJPanel, new JPanel(), 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 10, 0);
 
             //###########################
             //Ingredients form
@@ -1703,6 +1719,42 @@ public class Edit_Ingredients_Screen extends JFrame
                 return false;
             }
             return true;
+        }
+
+
+        //#################################################################################################################
+        //
+        //##################################################################################################################
+
+        public class SearchForFoodInfo extends CollapsibleJPanel
+        {
+            IngredientsForm ingredientsForm;
+            Find_Ingredients_Info_Screen find_ingredients_info_screen;
+
+            public SearchForFoodInfo(Container parentContainer, IngredientsForm ingredientsForm, String btnText, int btnWidth, int btnHeight)
+            {
+                super(parentContainer, btnText, btnWidth, btnHeight);
+                this.ingredientsForm = ingredientsForm;
+
+                createSearchForFoodInfo();
+                expandJPanel();
+            }
+
+            private void createSearchForFoodInfo()
+            {
+                //###################################################################
+                //
+                //###################################################################
+                JPanel mainJPanel = getCentreJPanel();
+                mainJPanel.setLayout(new BorderLayout());
+
+                //###################################################################
+                //
+                //###################################################################
+
+                find_ingredients_info_screen = new Find_Ingredients_Info_Screen(getCentreJPanel(),430, 350,  ingredientsForm);
+                mainJPanel.add(find_ingredients_info_screen, BorderLayout.CENTER);//
+            }
         }
 
         //#################################################################################################################
@@ -2672,6 +2724,37 @@ public class Edit_Ingredients_Screen extends JFrame
         }
     }
 
+    //############################################
+    // Return Forms
+    //############################################
+
+    public EditingCreateForm getEditingCreateForm()
+    {
+        return editingCreateForm;
+    }
+
+    public CreateForm getCreateForm()
+    {
+        return createForm;
+    }
+
+    //##################################################################################################################
+    // Other Classes
+    //##################################################################################################################
+
+    public void updateIngredientsFormTypeJComboBoxes()
+    {
+        createForm.updateIngredientForm_Type_JComboBox();
+        editingCreateForm.updateIngredientForm_Type_JComboBox();
+    }
+
+    public void updateIngredientSuppliersJComboBoxes()
+    {
+        System.out.printf("\n\nUpdating GUI");
+        createForm.clearShopForm();
+        editingCreateForm.refreshInterface(true, true);
+    }
+
     //FIX
     private JComboBox<String> getEdit_IngredientTypes_InPlan_JComboBox()
     {
@@ -2716,24 +2799,6 @@ public class Edit_Ingredients_Screen extends JFrame
             }
         }
         return false;
-    }
-
-    public EditingCreateForm getEditingCreateForm()
-    {
-        return editingCreateForm;
-    }
-
-    public void updateIngredientsFormTypeJComboBoxes()
-    {
-        createForm.updateIngredientForm_Type_JComboBox();
-        editingCreateForm.updateIngredientForm_Type_JComboBox();
-    }
-
-    public void updateIngredientSuppliersJComboBoxes()
-    {
-        System.out.printf("\n\nUpdating GUI");
-        createForm.clearShopForm();
-        editingCreateForm.refreshInterface(true, true);
     }
 
     //##################################################################################################################

@@ -1560,6 +1560,11 @@ public class IngredientsTable extends JDBC_JTable
     // Mutator Methods
     //##################################################################################################################
 
+    public void addIngredient()
+    {
+        add_btn_Action();
+    }
+
     private void setRowBeingEdited()
     {
         rowBeingEdited = !rowBeingEdited; // flip it
