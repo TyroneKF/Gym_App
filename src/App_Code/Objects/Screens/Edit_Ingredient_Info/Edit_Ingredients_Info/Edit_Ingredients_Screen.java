@@ -1902,6 +1902,30 @@ public class Edit_Ingredients_Screen extends JFrame
             {
                 if (foodInfo != null)
                 {
+                    //#######################################################################
+                    // Set Form Values to 0 in case no value match below
+                    //#######################################################################
+
+                    int labelSize = ingredientsFormLabels.size();
+
+                    for (int i = 0; i < labelSize; i ++)
+                    {
+                        Component comp = ingredientsFormObjects.get(i);
+
+                        if (comp instanceof JTextField)
+                        {
+                            JTextField obj = (JTextField) comp;
+
+                            if(obj.getText().equals(""))
+                            {
+                                obj.setText("0");
+                            }
+                        }
+                    }
+
+                    //#######################################################################
+                    // Set values in form based on equivalent labels form to nutritionIx
+                    //#######################################################################
                     for (Map.Entry<String, Object> info : foodInfo.entrySet())
                     {
                         // Get NutritionIx Label & its value
@@ -1918,20 +1942,20 @@ public class Edit_Ingredients_Screen extends JFrame
 
                             System.out.printf("\n\n#############################\nNutritionIx Label: %s \nNutritionIx value: %s \n\nForm Label: %s \nForm Label pos: %s", key, value, equivalentLabel, findFormLabelPos);
 
-                            if (value == null)
+                            if (value == null || value.toString().equals("null"))
                             {
-                                value = 0;
+                                continue;
                             }
-                            else if (equivalentLabel.equals("Ingredient Measurement In"))
-                            {
-                                value = value.toString().equals("g") ? "Grams" : "Litres";
-                            }
-
 
                             Component comp = ingredientsFormObjects.get(findFormLabelPos);
 
                             if (comp instanceof JTextField)
                             {
+                                if (equivalentLabel.equals("Ingredient Measurement In"))
+                                {
+                                    value = value.toString().equals("g") ? "Grams" : "Litres";
+                                }
+
                                 JTextField obj = (JTextField) comp;
 
                                 obj.setText(String.format("%s", value));
@@ -1943,6 +1967,8 @@ public class Edit_Ingredients_Screen extends JFrame
                             }
                         }
                     }
+
+
                 }
             }
 
