@@ -26,258 +26,364 @@ import java.util.LinkedHashMap;
 public class SearchForFoodInfo extends CollapsibleJPanel
 {
     Edit_Ingredients_Screen.CreateForm.IngredientsForm ingredientsForm;
-    Find_Ingredients_Info_Screen find_ingredients_info_screen;
+
+    private GridBagConstraints gbc = new GridBagConstraints();
+    private JPanel screenSectioned, centerJPanel;
+
+    private NutritionIx_API nutritionIx_api;
+    private ArrayList<JPanel> resultsJPanelDisplay = new ArrayList();
+
+    private JTextField textField;
+    private JComboBox jComboBox;
+    private ArrayList<JPanel> searchResultsJPanels = new ArrayList<>();
+
+    private int
+            frameWidth = 690, frameHeight = 400,
+
+    titleJPanelHeight = 45, titleFontSize = 16,
+
+    searchBarTxtInputSize = 15,
+
+    searchBarHeight = titleJPanelHeight,
+            searchBarButtonWidth = 45,
+
+    searchBarWidth = frameWidth - 160,
+
+    searchBarIconWidth = searchBarButtonWidth - 10,
+            searchBarButtonHeight = 45,
+            searchBarIconHeight = searchBarButtonHeight - 10;
+
+    private JPanel searchBarResults, scrollPaneJPanel;
+    private Container parentContainer;
+
+    private int yPos = 1;
+
+    JPanel centrePanel;
 
     public SearchForFoodInfo(Container parentContainer, Edit_Ingredients_Screen.CreateForm.IngredientsForm ingredientsForm, String btnText, int btnWidth, int btnHeight)
     {
         super(parentContainer, btnText, btnWidth, btnHeight);
+
+        this.parentContainer = parentContainer;
         this.ingredientsForm = ingredientsForm;
+        this.frameWidth = 430;
+        this.frameHeight = 350;
 
-        createSearchForFoodInfo();
+        nutritionIx_api = new NutritionIx_API();
         expandJPanel();
-    }
 
-    private void createSearchForFoodInfo()
-    {
         //###################################################################
         //
         //###################################################################
         JPanel mainJPanel = getCentreJPanel();
         mainJPanel.setLayout(new BorderLayout());
 
-        //###################################################################
-        //
-        //###################################################################
+        centrePanel = new JPanel(new GridBagLayout());
+        mainJPanel.add(centrePanel, BorderLayout.CENTER);//
 
-        find_ingredients_info_screen = new Find_Ingredients_Info_Screen(getCentreJPanel(), 430, 350, ingredientsForm);
-        mainJPanel.add(find_ingredients_info_screen, BorderLayout.CENTER);//
+        createGUI();
     }
 
-    private class Find_Ingredients_Info_Screen extends JPanel
+
+    public void createGUI()
     {
-        private GridBagConstraints gbc = new GridBagConstraints();
-        private JPanel screenSectioned, centerJPanel;
+        centrePanel.setLayout(new GridBagLayout());
+        centrePanel.setPreferredSize(new Dimension(frameWidth, frameHeight));
 
-        private NutritionIx_API nutritionIx_api;
-        private Edit_Ingredients_Screen.CreateForm.IngredientsForm ingredientsForm;
-        private ArrayList<JPanel> resultsJPanelDisplay = new ArrayList();
+        //##############################################################################################################
+        // Create ScrollPane & add to Interface
+        //##############################################################################################################
+        ScrollPaneCreator scrollPane = new ScrollPaneCreator();
+        addToContainer(centrePanel, scrollPane, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
 
-        private JTextField textField;
-        private JComboBox jComboBox;
-        private ArrayList<JPanel> searchResultsJPanels = new ArrayList<>();
+        scrollPaneJPanel = scrollPane.getJPanel();
+        scrollPaneJPanel.setLayout(new BorderLayout());
 
-        private int
-                frameWidth = 690, frameHeight = 400,
-
-        titleJPanelHeight = 45, titleFontSize = 16,
-
-        searchBarTxtInputSize = 15,
-
-        searchBarHeight = titleJPanelHeight,
-                searchBarButtonWidth = 45,
-
-        searchBarWidth = frameWidth - 160,
-
-        searchBarIconWidth = searchBarButtonWidth - 10,
-                searchBarButtonHeight = 45,
-                searchBarIconHeight = searchBarButtonHeight - 10;
-
-        private JPanel searchBarResults, scrollPaneJPanel;
-        private Container parentContainer;
-
-        private int yPos = 1;
-
-        public Find_Ingredients_Info_Screen(Container parentContainer, int frameWidth, int frameHeight, Edit_Ingredients_Screen.CreateForm.IngredientsForm ingredientsForm)
-        {
-            this.parentContainer = parentContainer;
-            this.ingredientsForm = ingredientsForm;
-            this.frameWidth = frameWidth;
-            this.frameHeight = frameHeight;
-
-            nutritionIx_api = new NutritionIx_API();
-
-            createGUI();
-        }
-
-        public void createGUI()
-        {
-            super.setLayout(new GridBagLayout());
-            super.setPreferredSize(new Dimension(frameWidth, frameHeight));
-
-            //##############################################################################################################
-            // Create ScrollPane & add to Interface
-            //##############################################################################################################
-            ScrollPaneCreator scrollPane = new ScrollPaneCreator();
-            addToContainer(this, scrollPane, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
-
-            scrollPaneJPanel = scrollPane.getJPanel();
-            scrollPaneJPanel.setLayout(new BorderLayout());
-
-            //##############################################################################################################
-            //  Creating JPanel Sections
-            //##############################################################################################################
+        //##############################################################################################################
+        //  Creating JPanel Sections
+        //##############################################################################################################
 
 
-            //#####################################################################
-            //  North JPanel
-            //#####################################################################
-            JPanel mainNorthPanel = new JPanel(new BorderLayout());
-            mainNorthPanel.setBackground(Color.RED);
-            scrollPaneJPanel.add(mainNorthPanel, BorderLayout.NORTH);
+        //#####################################################################
+        //  North JPanel
+        //#####################################################################
+        JPanel mainNorthPanel = new JPanel(new BorderLayout());
+        mainNorthPanel.setBackground(Color.RED);
+        scrollPaneJPanel.add(mainNorthPanel, BorderLayout.NORTH);
 
-            //####################################
-            // Label
-            //####################################
-            JLabel titleLabel = new JLabel("Search For Ingredient Info");
-            titleLabel.setFont(new Font("Verdana", Font.PLAIN, titleFontSize));
-            titleLabel.setHorizontalAlignment(JLabel.CENTER);
+        //####################################
+        // Label
+        //####################################
+        JLabel titleLabel = new JLabel("Search For Ingredient Info");
+        titleLabel.setFont(new Font("Verdana", Font.PLAIN, titleFontSize));
+        titleLabel.setHorizontalAlignment(JLabel.CENTER);
 
-            JPanel titlePanel = new JPanel();
-            titlePanel.setPreferredSize(new Dimension(frameWidth - 50, titleJPanelHeight));
-            titlePanel.setBackground(Color.green);
-            titlePanel.add(titleLabel);
+        JPanel titlePanel = new JPanel();
+        titlePanel.setPreferredSize(new Dimension(frameWidth - 50, titleJPanelHeight));
+        titlePanel.setBackground(Color.green);
+        titlePanel.add(titleLabel);
 
-            // Add title JPanel to North Panel Area
-            mainNorthPanel.add(titlePanel, BorderLayout.CENTER);
+        // Add title JPanel to North Panel Area
+        mainNorthPanel.add(titlePanel, BorderLayout.CENTER);
 
-            //#########################################################################################################
-            //  Centre JPanel
-            //##########################################################################################################
-            JPanel mainCenterPanel = new JPanel(new BorderLayout());
-            scrollPaneJPanel.add(mainCenterPanel, BorderLayout.CENTER);
+        //#########################################################################################################
+        //  Centre JPanel
+        //##########################################################################################################
+        JPanel mainCenterPanel = new JPanel(new BorderLayout());
+        scrollPaneJPanel.add(mainCenterPanel, BorderLayout.CENTER);
 
-            //#################################################################
-            // Search Bar JPanel
-            //#################################################################
-            // Adding the main section of search Bar JPanel GUI to display
-            JPanel searchBarJPanel = new JPanel(new GridBagLayout());
-            searchBarJPanel.setBorder(BorderFactory.createLineBorder(Color.blue, 3));
-            mainCenterPanel.add(searchBarJPanel, BorderLayout.NORTH);
+        //#################################################################
+        // Search Bar JPanel
+        //#################################################################
+        // Adding the main section of search Bar JPanel GUI to display
+        JPanel searchBarJPanel = new JPanel(new GridBagLayout());
+        searchBarJPanel.setBorder(BorderFactory.createLineBorder(Color.blue, 3));
+        mainCenterPanel.add(searchBarJPanel, BorderLayout.NORTH);
 
-            int searchBarJPanelXPos = 0, searchBarJPanelYPos = 0;
+        int searchBarJPanelXPos = 0, searchBarJPanelYPos = 0;
 
-            //#################################################################
-            // Search Bar JComboBox
-            //#################################################################
-            JPanel jp = new JPanel(new GridLayout(1, 1));
-            jp.setBorder(BorderFactory.createLineBorder(Color.red, 3));
+        //#################################################################
+        // Search Bar JComboBox
+        //#################################################################
+        JPanel jp = new JPanel(new GridLayout(1, 1));
+        jp.setBorder(BorderFactory.createLineBorder(Color.red, 3));
 //        jp.setPreferredSize(new Dimension(frameWidth-50, 50));
 
-            addToContainer(searchBarJPanel, jp, searchBarJPanelXPos, 0, 1, 1, 1, 1, "horizontal", 0, 0);
+        addToContainer(searchBarJPanel, jp, searchBarJPanelXPos, 0, 1, 1, 1, 1, "horizontal", 0, 0);
 
-            String jComboBoxOptions[] = {"Single Ingredient", "Product"};
-            jComboBox = new JComboBox(jComboBoxOptions);
-            jComboBox.setFont(new Font("Verdana", Font.PLAIN, 15));
-            jp.add(jComboBox);
+        String jComboBoxOptions[] = {"Single Ingredient", "Product"};
+        jComboBox = new JComboBox(jComboBoxOptions);
+        jComboBox.setFont(new Font("Verdana", Font.PLAIN, 15));
+        jp.add(jComboBox);
 
-            ((JLabel) jComboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER); // centre text
-            jComboBox.setSelectedIndex(-1);
+        ((JLabel) jComboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER); // centre text
+        jComboBox.setSelectedIndex(-1);
 
-            //########################################################################
-            // (West) TextField JPanel
-            //########################################################################
-            // Creating JPanel for text input area for search bar
-            JPanel searchBarWestJPanel = new JPanel(new GridLayout(1, 1));
-            searchBarWestJPanel.setPreferredSize(new Dimension(searchBarWidth, searchBarHeight));
-            searchBarWestJPanel.setBackground(Color.BLUE);
-            addToContainer(searchBarJPanel, searchBarWestJPanel, searchBarJPanelXPos, searchBarJPanelYPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+        //########################################################################
+        // (West) TextField JPanel
+        //########################################################################
+        // Creating JPanel for text input area for search bar
+        JPanel searchBarWestJPanel = new JPanel(new GridLayout(1, 1));
+        searchBarWestJPanel.setPreferredSize(new Dimension(searchBarWidth, searchBarHeight));
+        searchBarWestJPanel.setBackground(Color.BLUE);
+        addToContainer(searchBarJPanel, searchBarWestJPanel, searchBarJPanelXPos, searchBarJPanelYPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
-            //####################
-            // Text Field
-            //####################
+        //####################
+        // Text Field
+        //####################
 
-            // Creating Text input object for search bar
-            textField = new JTextField("");
+        // Creating Text input object for search bar
+        textField = new JTextField("");
 
-            textField.setFont(new Font("Verdana", Font.PLAIN, searchBarTxtInputSize)); // Changing font size
-            textField.setDocument(new JTextFieldLimit(255));  // Setting character limit
-            textField.setHorizontalAlignment(JTextField.CENTER); // Centering JTextField Text
-            textField.setText("oats");// HELLO Remove
+        textField.setFont(new Font("Verdana", Font.PLAIN, searchBarTxtInputSize)); // Changing font size
+        textField.setDocument(new JTextFieldLimit(255));  // Setting character limit
+        textField.setHorizontalAlignment(JTextField.CENTER); // Centering JTextField Text
+        textField.setText("oats");// HELLO Remove
 
-            // Adding to GUI
-            searchBarWestJPanel.add(textField); // adding textField to JPanel*/
+        // Adding to GUI
+        searchBarWestJPanel.add(textField); // adding textField to JPanel*/
 
-            //#########################################
-            // (East)  Search Icon
-            //#########################################
+        //#########################################
+        // (East)  Search Icon
+        //#########################################
 
-            IconButton searchIcon = new IconButton("src/images/search/search2.png", "", searchBarIconWidth, searchBarIconHeight, searchBarButtonWidth, searchBarButtonHeight,
-                    "centre", "right");
+        IconButton searchIcon = new IconButton("src/images/search/search2.png", "", searchBarIconWidth, searchBarIconHeight, searchBarButtonWidth, searchBarButtonHeight,
+                "centre", "right");
 //        searchIcon.makeBTntransparent();
 
-            JButton searchIconBTN = searchIcon.returnJButton();
-            searchIconBTN.addActionListener(ae -> {
+        JButton searchIconBTN = searchIcon.returnJButton();
+        searchIconBTN.addActionListener(ae -> {
 
-                searchButtonAction();
+            searchButtonAction();
+        });
+
+        addToContainer(searchBarJPanel, searchIcon, searchBarJPanelXPos += 1, searchBarJPanelYPos, 1, 1, 0.25, 0.25, "vertical", 0, 0);
+        //#################################################################
+        // SearchBar Results
+        //#################################################################
+        searchBarResults = new JPanel(new GridBagLayout());
+        mainCenterPanel.add(searchBarResults, BorderLayout.CENTER);
+        searchBarResults.setBackground(Color.RED);
+
+
+        //##############################################################################################################
+        //  Resizing GUI
+        //##############################################################################################################
+
+        resizeGUI(); // Resize GUI
+    }
+
+    public LinkedHashMap<String, Object> get_API_V2NaturalNutrients(String food)
+    {
+        return nutritionIx_api.get_POST_V2NaturalNutrients(food);
+    }
+
+    public ArrayList<LinkedHashMap<String, Object>> get_API_V2Instant(String product)
+    {
+        return nutritionIx_api.get_POST_V2SearchInstant(product);
+    }
+
+    private void displayResults(LinkedHashMap<String, Object> foodInfo)
+    {
+        try
+        {
+            JPanel displayJPanel = new JPanel(new GridBagLayout());
+            displayJPanel.setBorder(BorderFactory.createLineBorder(Color.blue, 3));
+//            displayJPanel.setBackground(Color.BLACK);
+
+            searchResultsJPanels.add(displayJPanel);
+
+            addToContainer(searchBarResults, displayJPanel, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+
+            int gridX = -1, height = 150;
+
+            //##########################################################################
+            // Ingredient URL Image
+            //##########################################################################
+            int ingredientImageWidth = 425;
+
+            //#############################
+            // Image JPanel
+            //#############################
+            JPanel picJPanel2 = new JPanel(new GridLayout(1, 1));
+            picJPanel2.setBackground(Color.GREEN);
+            picJPanel2.setPreferredSize(new Dimension(ingredientImageWidth, height));
+
+            // Adding URL Image to Display
+            addToContainer(displayJPanel, picJPanel2, gridX += 1, yPos, 1, 1, 0.25, 0.25, "", 0, 0);
+
+            //#############################
+            // Creating URL Image
+            //#############################
+            String urlLink = (String) foodInfo.get("highres");
+            URL url = new URL(urlLink);
+            BufferedImage image = ImageIO.read(url);
+            ImageIcon icon2 = new ImageIcon(new ImageIcon(image).getImage().getScaledInstance(ingredientImageWidth, height, Image.SCALE_DEFAULT));
+
+            JLabel lbl2 = new JLabel();
+            lbl2.setIcon(icon2);
+            picJPanel2.add(lbl2);
+
+
+            //########################################################################
+            // Space Divider
+            //########################################################################
+            JPanel spaceDividerInsideImageDisplay = new JPanel();
+//            spaceDividerInsideImageDisplay.setBackground(Color.CYAN);
+            spaceDividerInsideImageDisplay.setPreferredSize(new Dimension(50, height));
+
+
+            addToContainer(displayJPanel, spaceDividerInsideImageDisplay, gridX += 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+
+            //##########################################################################
+            // Add Image Icon
+            //##########################################################################
+            int addIconJPanelWidth = 100, addIconJPanelHeight = 100, addIconHeight = 71, addIconWidth = 71;
+
+            //####################################
+            // Add Icon JPanel
+            //####################################
+            JPanel iconJPanel = new JPanel(new GridBagLayout());
+//            iconJPanel.setBackground(Color.GREEN);
+            iconJPanel.setPreferredSize(new Dimension(addIconJPanelWidth, addIconJPanelHeight));
+
+            addToContainer(displayJPanel, iconJPanel, gridX += 1, yPos, 1, 1, 0.25, 0.25, "", 0, 0);
+
+            //####################################
+            // Add Icon BTN
+            //####################################
+            IconButton addIcon = new IconButton("src/images/add/++++add.png", "", addIconWidth, addIconHeight, addIconWidth, addIconHeight, "centre", "right");
+
+            addIcon.makeBTntransparent();
+
+            JButton addButton = addIcon.returnJButton();
+            addButton.addActionListener(ae -> {
+
+                addButtonAction(foodInfo);
             });
 
-            addToContainer(searchBarJPanel, searchIcon, searchBarJPanelXPos += 1, searchBarJPanelYPos, 1, 1, 0.25, 0.25, "vertical", 0, 0);
-            //#################################################################
-            // SearchBar Results
-            //#################################################################
-            searchBarResults = new JPanel(new GridBagLayout());
-            mainCenterPanel.add(searchBarResults, BorderLayout.CENTER);
-            searchBarResults.setBackground(Color.RED);
+            addToContainer(iconJPanel, addIcon, 0, 0, 1, 1, 0.25, 0.25, "", 0, 0);
 
+            //########################################################################
+            // Space Divider
+            //########################################################################
+            JPanel spaceDividerInsideImageDisplay2 = new JPanel();
+//            spaceDividerInsideImageDisplay2.setBackground(Color.CYAN);
+            spaceDividerInsideImageDisplay2.setPreferredSize(new Dimension(50, height));
 
-            //##############################################################################################################
-            //  Resizing GUI
-            //##############################################################################################################
+            addToContainer(displayJPanel, spaceDividerInsideImageDisplay2, gridX += 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
-            resizeGUI(); // Resize GUI
+            //#########################################################################################################
+            // Space Divider
+            //#########################################################################################################
+            JPanel spaceDivider = new JPanel();
+            spaceDivider.setBackground(Color.PINK);
+            searchResultsJPanels.add(spaceDivider);
+            addToContainer(searchBarResults, spaceDivider, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 50, 0);
+
         }
-
-        public LinkedHashMap<String, Object> get_API_V2NaturalNutrients(String food)
+        catch (Exception e)
         {
-            return nutritionIx_api.get_POST_V2NaturalNutrients(food);
+            System.out.printf("\n\ndisplayResults() Error \n", e);
         }
 
-        public ArrayList<LinkedHashMap<String, Object>> get_API_V2Instant(String product)
-        {
-            return nutritionIx_api.get_POST_V2SearchInstant(product);
-        }
+        //##############################################################################################################
+        //  Resizing GUI
+        //#############################################################################################################
+        resizeGUI();
+    }
 
-        private void displayResults(LinkedHashMap<String, Object> foodInfo)
+    private void displayResults2(ArrayList<LinkedHashMap<String, Object>> products)
+    {
+        int height = 150;
+        for (LinkedHashMap<String, Object> foodInfo : products)
         {
             try
             {
+                int gridX = -1;
+
                 JPanel displayJPanel = new JPanel(new GridBagLayout());
                 displayJPanel.setBorder(BorderFactory.createLineBorder(Color.blue, 3));
-//            displayJPanel.setBackground(Color.BLACK);
 
                 searchResultsJPanels.add(displayJPanel);
 
-                addToContainer(searchBarResults, displayJPanel, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
-
-                int gridX = -1, height = 150;
+                addToContainer(searchBarResults, displayJPanel, gridX += 1, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 50, 0);
 
                 //##########################################################################
-                // Ingredient URL Image
+                // Product Title & Picture
                 //##########################################################################
                 int ingredientImageWidth = 425;
-
-                //#############################
-                // Image JPanel
-                //#############################
-                JPanel picJPanel2 = new JPanel(new GridLayout(1, 1));
-                picJPanel2.setBackground(Color.GREEN);
-                picJPanel2.setPreferredSize(new Dimension(ingredientImageWidth, height));
+                JPanel labelAndPicJPanel = new JPanel(new BorderLayout());
+//                picJPanel2.setBackground(Color.GREEN);
+                labelAndPicJPanel.setPreferredSize(new Dimension(ingredientImageWidth, height));
 
                 // Adding URL Image to Display
-                addToContainer(displayJPanel, picJPanel2, gridX += 1, yPos, 1, 1, 0.25, 0.25, "", 0, 0);
+                addToContainer(displayJPanel, labelAndPicJPanel, gridX += 1, yPos, 1, 1, 0.25, 0.25, "", 0, 0);
+
+                //#############################
+                // Creating JLabel
+                //#############################
+                JPanel labelJPanel = new JPanel(new GridLayout(1, 1));
+                labelJPanel.setBackground(Color.GREEN);
+                labelAndPicJPanel.add(labelJPanel, BorderLayout.NORTH);
+
+                JLabel titleLabel = new JLabel(String.format("%s", (String) foodInfo.get("food_name")));
+                titleLabel.setFont(new Font("Verdana", Font.BOLD, 17));
+                titleLabel.setHorizontalAlignment(JLabel.CENTER);
+
+                labelJPanel.add(titleLabel);
 
                 //#############################
                 // Creating URL Image
                 //#############################
-                String urlLink = (String) foodInfo.get("highres");
+                String urlLink = (String) foodInfo.get("thumb");
                 URL url = new URL(urlLink);
                 BufferedImage image = ImageIO.read(url);
                 ImageIcon icon2 = new ImageIcon(new ImageIcon(image).getImage().getScaledInstance(ingredientImageWidth, height, Image.SCALE_DEFAULT));
 
                 JLabel lbl2 = new JLabel();
                 lbl2.setIcon(icon2);
-                picJPanel2.add(lbl2);
-
+                labelAndPicJPanel.add(lbl2, BorderLayout.CENTER);
 
                 //########################################################################
                 // Space Divider
@@ -313,7 +419,19 @@ public class SearchForFoodInfo extends CollapsibleJPanel
                 JButton addButton = addIcon.returnJButton();
                 addButton.addActionListener(ae -> {
 
-                    addButtonAction(foodInfo);
+                    String nix_item_id = (String) foodInfo.get("nix_item_id");
+
+                    if (nix_item_id != null)
+                    {
+                        LinkedHashMap<String, Object> foodInfo2 = nutritionIx_api.get_GET_V2SearchItem(nix_item_id);
+
+                        if (foodInfo2 != null)
+                        {
+                            addButtonAction(foodInfo2);
+                            return;
+                        }
+                    }
+                    JOptionPane.showMessageDialog(null, "Error, Unable to gather product info!");
                 });
 
                 addToContainer(iconJPanel, addIcon, 0, 0, 1, 1, 0.25, 0.25, "", 0, 0);
@@ -327,14 +445,6 @@ public class SearchForFoodInfo extends CollapsibleJPanel
 
                 addToContainer(displayJPanel, spaceDividerInsideImageDisplay2, gridX += 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
-                //#########################################################################################################
-                // Space Divider
-                //#########################################################################################################
-                JPanel spaceDivider = new JPanel();
-                spaceDivider.setBackground(Color.PINK);
-                searchResultsJPanels.add(spaceDivider);
-                addToContainer(searchBarResults, spaceDivider, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 50, 0);
-
             }
             catch (Exception e)
             {
@@ -346,191 +456,67 @@ public class SearchForFoodInfo extends CollapsibleJPanel
             //#############################################################################################################
             resizeGUI();
         }
+    }
 
-        private void displayResults2(ArrayList<LinkedHashMap<String, Object>> products)
+    private void searchButtonAction()
+    {
+        String food = textField.getText().trim();
+        int selectedIndex = jComboBox.getSelectedIndex();
+
+        //##########################################################
+        // Choose an option ingredient or product
+        //##########################################################
+        if (selectedIndex == -1)
         {
-            int height = 150;
-            for (LinkedHashMap<String, Object> foodInfo : products)
-            {
-                try
-                {
-                    int gridX = -1;
-
-                    JPanel displayJPanel = new JPanel(new GridBagLayout());
-                    displayJPanel.setBorder(BorderFactory.createLineBorder(Color.blue, 3));
-
-                    searchResultsJPanels.add(displayJPanel);
-
-                    addToContainer(searchBarResults, displayJPanel, gridX += 1, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 50, 0);
-
-                    //##########################################################################
-                    // Product Title & Picture
-                    //##########################################################################
-                    int ingredientImageWidth = 425;
-                    JPanel labelAndPicJPanel = new JPanel(new BorderLayout());
-//                picJPanel2.setBackground(Color.GREEN);
-                    labelAndPicJPanel.setPreferredSize(new Dimension(ingredientImageWidth, height));
-
-                    // Adding URL Image to Display
-                    addToContainer(displayJPanel, labelAndPicJPanel, gridX += 1, yPos, 1, 1, 0.25, 0.25, "", 0, 0);
-
-                    //#############################
-                    // Creating JLabel
-                    //#############################
-                    JPanel labelJPanel = new JPanel(new GridLayout(1, 1));
-                    labelJPanel.setBackground(Color.GREEN);
-                    labelAndPicJPanel.add(labelJPanel, BorderLayout.NORTH);
-
-                    JLabel titleLabel = new JLabel(String.format("%s", (String) foodInfo.get("food_name")));
-                    titleLabel.setFont(new Font("Verdana", Font.BOLD, 17));
-                    titleLabel.setHorizontalAlignment(JLabel.CENTER);
-
-                    labelJPanel.add(titleLabel);
-
-                    //#############################
-                    // Creating URL Image
-                    //#############################
-                    String urlLink = (String) foodInfo.get("thumb");
-                    URL url = new URL(urlLink);
-                    BufferedImage image = ImageIO.read(url);
-                    ImageIcon icon2 = new ImageIcon(new ImageIcon(image).getImage().getScaledInstance(ingredientImageWidth, height, Image.SCALE_DEFAULT));
-
-                    JLabel lbl2 = new JLabel();
-                    lbl2.setIcon(icon2);
-                    labelAndPicJPanel.add(lbl2, BorderLayout.CENTER);
-
-                    //########################################################################
-                    // Space Divider
-                    //########################################################################
-                    JPanel spaceDividerInsideImageDisplay = new JPanel();
-//            spaceDividerInsideImageDisplay.setBackground(Color.CYAN);
-                    spaceDividerInsideImageDisplay.setPreferredSize(new Dimension(50, height));
-
-
-                    addToContainer(displayJPanel, spaceDividerInsideImageDisplay, gridX += 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
-
-                    //##########################################################################
-                    // Add Image Icon
-                    //##########################################################################
-                    int addIconJPanelWidth = 100, addIconJPanelHeight = 100, addIconHeight = 71, addIconWidth = 71;
-
-                    //####################################
-                    // Add Icon JPanel
-                    //####################################
-                    JPanel iconJPanel = new JPanel(new GridBagLayout());
-//            iconJPanel.setBackground(Color.GREEN);
-                    iconJPanel.setPreferredSize(new Dimension(addIconJPanelWidth, addIconJPanelHeight));
-
-                    addToContainer(displayJPanel, iconJPanel, gridX += 1, yPos, 1, 1, 0.25, 0.25, "", 0, 0);
-
-                    //####################################
-                    // Add Icon BTN
-                    //####################################
-                    IconButton addIcon = new IconButton("src/images/add/++++add.png", "", addIconWidth, addIconHeight, addIconWidth, addIconHeight, "centre", "right");
-
-                    addIcon.makeBTntransparent();
-
-                    JButton addButton = addIcon.returnJButton();
-                    addButton.addActionListener(ae -> {
-
-                        String nix_item_id = (String) foodInfo.get("nix_item_id");
-
-                        if (nix_item_id != null)
-                        {
-                            LinkedHashMap<String, Object> foodInfo2 = nutritionIx_api.get_GET_V2SearchItem(nix_item_id);
-
-                            if (foodInfo2 != null)
-                            {
-                                addButtonAction(foodInfo2);
-                                return;
-                            }
-                        }
-                        JOptionPane.showMessageDialog(null, "Error, Unable to gather product info!");
-                    });
-
-                    addToContainer(iconJPanel, addIcon, 0, 0, 1, 1, 0.25, 0.25, "", 0, 0);
-
-                    //########################################################################
-                    // Space Divider
-                    //########################################################################
-                    JPanel spaceDividerInsideImageDisplay2 = new JPanel();
-//            spaceDividerInsideImageDisplay2.setBackground(Color.CYAN);
-                    spaceDividerInsideImageDisplay2.setPreferredSize(new Dimension(50, height));
-
-                    addToContainer(displayJPanel, spaceDividerInsideImageDisplay2, gridX += 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
-
-                }
-                catch (Exception e)
-                {
-                    System.out.printf("\n\ndisplayResults() Error \n", e);
-                }
-
-                //##############################################################################################################
-                //  Resizing GUI
-                //#############################################################################################################
-                resizeGUI();
-            }
+            JOptionPane.showMessageDialog(null, String.format("\n\nError \n\nPlease select an option inside the dropdown box for the food / ingredient ' %s '.", food));
+            return;
         }
 
-        private void searchButtonAction()
-        {
-            String food = textField.getText().trim();
-            int selectedIndex = jComboBox.getSelectedIndex();
+        //##########################################################
+        // Reset Results Display
+        //##########################################################
+        resetSearchDisplay();
 
-            //##########################################################
-            // Choose an option ingredient or product
-            //##########################################################
-            if (selectedIndex == -1)
+        //##########################################################
+        // If Ingredient Option do a check if not get info
+        //##########################################################
+
+        if (selectedIndex == 0)
+        {
+            // Check if string is one ingredient
+            if (food.split("\\s+").length > 1)
             {
-                JOptionPane.showMessageDialog(null, String.format("\n\nError \n\nPlease select an option inside the dropdown box for the food / ingredient ' %s '.", food));
+                JOptionPane.showMessageDialog(null, String.format("\n\nError \n\nInputted search string for an ingredient must be only one word:  \" %s \" !", food));
                 return;
             }
 
-            //##########################################################
-            // Reset Results Display
-            //##########################################################
-            resetSearchDisplay();
+            //  Get Nutritional Info From API
+            LinkedHashMap<String, Object> foodInfo = get_API_V2NaturalNutrients(String.format("100g of %s", food));
 
-            //##########################################################
-            // If Ingredient Option do a check if not get info
-            //##########################################################
-
-            if (selectedIndex == 0)
+            //##################################
+            // Error Message
+            //##################################
+            if (foodInfo == null)
             {
-                // Check if string is one ingredient
-                if (food.split("\\s+").length > 1)
-                {
-                    JOptionPane.showMessageDialog(null, String.format("\n\nError \n\nInputted search string for an ingredient must be only one word:  \" %s \" !", food));
-                    return;
-                }
-
-                //  Get Nutritional Info From API
-                LinkedHashMap<String, Object> foodInfo = get_API_V2NaturalNutrients(String.format("100g of %s", food));
-
-                //##################################
-                // Error Message
-                //##################################
-                if (foodInfo == null)
-                {
-                    JOptionPane.showMessageDialog(null, String.format("\n\nError \n\nUnable to get nutritional info for the requested food \" %s \" !", food));
-                    return;
-                }
-
-                displayResults(foodInfo);
-
+                JOptionPane.showMessageDialog(null, String.format("\n\nError \n\nUnable to get nutritional info for the requested food \" %s \" !", food));
+                return;
             }
-            else if (selectedIndex == 1)
+
+            displayResults(foodInfo);
+
+        }
+        else if (selectedIndex == 1)
+        {
+            ArrayList<LinkedHashMap<String, Object>> foodInfo = get_API_V2Instant(food);
+
+            if (foodInfo == null)
             {
-                ArrayList<LinkedHashMap<String, Object>> foodInfo = get_API_V2Instant(food);
-
-                if (foodInfo == null)
-                {
-                    JOptionPane.showMessageDialog(null, String.format("\n\nError \n\nUnable to get nutritional info for the requested food \" %s \" !", food));
-                    return;
-                }
-
-                displayResults2(foodInfo);
+                JOptionPane.showMessageDialog(null, String.format("\n\nError \n\nUnable to get nutritional info for the requested food \" %s \" !", food));
+                return;
             }
+
+            displayResults2(foodInfo);
+        }
 
       /*  //########################################################
         // Successful Message
@@ -538,80 +524,80 @@ public class SearchForFoodInfo extends CollapsibleJPanel
 
         JOptionPane.showMessageDialog(null, String.format("\n\nSuccessfully got the nutritional info for the food '%s'!", food));*/
 
-        }
-
-        private void addButtonAction(LinkedHashMap<String, Object> foodInfo)
-        {
-            System.out.printf("\n\n########################''");
-            foodInfo.entrySet().forEach(entry -> {
-                System.out.printf("\n%s : %s", entry.getKey(), entry.getValue());
-            });
-
-            resetFullDisplay();
-        }
-
-        private void resetFullDisplay()
-        {
-            resetSearchDisplay();
-
-
-            jComboBox.setSelectedIndex(-1);
-            textField.setText("");
-        }
-
-        private void resetSearchDisplay()
-        {
-            //################################
-            // Removing Previous Results From
-            // JPanel
-            //################################
-            for (JPanel jp : searchResultsJPanels)
-            {
-                jp.setSize(new Dimension(0, 0));
-                searchBarResults.remove(jp);
-                searchBarResults.revalidate();
-            }
-
-            yPos = 0;
-
-            resizeGUI();
-        }
-
-        private void resizeGUI()
-        {
-            searchBarResults.revalidate();
-            super.revalidate();
-            parentContainer.revalidate();
-        }
-
-        private void addToContainer(Container container, Component addToContainer, int gridx, int gridy, int gridwidth,
-                                    int gridheight, double weightx, double weighty, String fill, int ipady, int ipadx)
-        {
-            gbc.gridx = gridx;
-            gbc.gridy = gridy;
-            gbc.gridwidth = gridwidth;
-            gbc.gridheight = gridheight;
-            gbc.weightx = weightx;
-            gbc.weighty = weighty;
-
-            gbc.ipady = ipady;
-            gbc.ipadx = ipadx;
-
-            switch (fill.toLowerCase())
-            {
-                case "horizontal":
-                    gbc.fill = GridBagConstraints.HORIZONTAL;
-                    break;
-                case "vertical":
-                    gbc.fill = GridBagConstraints.VERTICAL;
-                    break;
-
-                case "both":
-                    gbc.fill = GridBagConstraints.BOTH;
-                    break;
-            }
-
-            container.add(addToContainer, gbc);
-        }
     }
+
+    private void addButtonAction(LinkedHashMap<String, Object> foodInfo)
+    {
+        System.out.printf("\n\n########################''");
+        foodInfo.entrySet().forEach(entry -> {
+            System.out.printf("\n%s : %s", entry.getKey(), entry.getValue());
+        });
+
+        resetFullDisplay();
+    }
+
+    private void resetFullDisplay()
+    {
+        resetSearchDisplay();
+
+
+        jComboBox.setSelectedIndex(-1);
+        textField.setText("");
+    }
+
+    private void resetSearchDisplay()
+    {
+        //################################
+        // Removing Previous Results From
+        // JPanel
+        //################################
+        for (JPanel jp : searchResultsJPanels)
+        {
+            jp.setSize(new Dimension(0, 0));
+            searchBarResults.remove(jp);
+            searchBarResults.revalidate();
+        }
+
+        yPos = 0;
+
+        resizeGUI();
+    }
+
+    private void resizeGUI()
+    {
+        searchBarResults.revalidate();
+        centrePanel.revalidate();
+        parentContainer.revalidate();
+    }
+
+    private void addToContainer(Container container, Component addToContainer, int gridx, int gridy, int gridwidth,
+                                int gridheight, double weightx, double weighty, String fill, int ipady, int ipadx)
+    {
+        gbc.gridx = gridx;
+        gbc.gridy = gridy;
+        gbc.gridwidth = gridwidth;
+        gbc.gridheight = gridheight;
+        gbc.weightx = weightx;
+        gbc.weighty = weighty;
+
+        gbc.ipady = ipady;
+        gbc.ipadx = ipadx;
+
+        switch (fill.toLowerCase())
+        {
+            case "horizontal":
+                gbc.fill = GridBagConstraints.HORIZONTAL;
+                break;
+            case "vertical":
+                gbc.fill = GridBagConstraints.VERTICAL;
+                break;
+
+            case "both":
+                gbc.fill = GridBagConstraints.BOTH;
+                break;
+        }
+
+        container.add(addToContainer, gbc);
+    }
+
 }
