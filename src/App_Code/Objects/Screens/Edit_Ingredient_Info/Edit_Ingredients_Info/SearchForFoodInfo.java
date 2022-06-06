@@ -25,10 +25,12 @@ import java.util.LinkedHashMap;
 
 public class SearchForFoodInfo extends CollapsibleJPanel
 {
-    Edit_Ingredients_Screen.CreateForm.IngredientsForm ingredientsForm;
+    private Edit_Ingredients_Screen.CreateForm.IngredientsForm ingredientsForm;
 
     private GridBagConstraints gbc = new GridBagConstraints();
-    private JPanel screenSectioned, centerJPanel;
+
+    private Container parentContainer;
+    private JPanel centrePanel, searchBarResults, scrollPaneJPanel;
 
     private NutritionIx_API nutritionIx_api;
     private ArrayList<JPanel> resultsJPanelDisplay = new ArrayList();
@@ -38,6 +40,7 @@ public class SearchForFoodInfo extends CollapsibleJPanel
     private ArrayList<JPanel> searchResultsJPanels = new ArrayList<>();
 
     private int
+            yPos = 1,
             frameWidth = 690, frameHeight = 400,
 
     titleJPanelHeight = 45, titleFontSize = 16,
@@ -52,13 +55,6 @@ public class SearchForFoodInfo extends CollapsibleJPanel
     searchBarIconWidth = searchBarButtonWidth - 10,
             searchBarButtonHeight = 45,
             searchBarIconHeight = searchBarButtonHeight - 10;
-
-    private JPanel searchBarResults, scrollPaneJPanel;
-    private Container parentContainer;
-
-    private int yPos = 1;
-
-    JPanel centrePanel;
 
     public SearchForFoodInfo(Container parentContainer, Edit_Ingredients_Screen.CreateForm.IngredientsForm ingredientsForm, String btnText, int btnWidth, int btnHeight)
     {
