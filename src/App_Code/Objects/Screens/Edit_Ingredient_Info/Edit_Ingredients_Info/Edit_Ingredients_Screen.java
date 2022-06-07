@@ -547,13 +547,16 @@ public class Edit_Ingredients_Screen extends JFrame
             return true;
         }
 
+        protected LinkedHashMap<String, Triplet<String, String, String>> get_ingredientsFormLabelsMapsToValues()
+        {
+            return ingredientsForm.get_ingredientsFormLabelsMapsToValues();
+        }
 
         //#################################################################################################################
         // IngredientsForm
         //##################################################################################################################
         public class IngredientsForm extends CollapsibleJPanel
         {
-            protected final DecimalFormat df = new DecimalFormat("0.00000");
             protected LinkedHashMap<String, Triplet<String, String, String>> ingredientsFormLabelsMapsToValues = new LinkedHashMap<>()
             {{
                 // ingredientsFormLabel Key -> ( nutritionIx value, Mysql key Value, mySql Field Datatype)
@@ -1032,6 +1035,11 @@ public class Edit_Ingredients_Screen extends JFrame
                 JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("\n\nPlease fix the following rows being; \n%s", errorTxt));
 
                 return false;
+            }
+
+            protected LinkedHashMap<String, Triplet<String, String, String>> get_ingredientsFormLabelsMapsToValues()
+            {
+                return ingredientsFormLabelsMapsToValues;
             }
 
             private String get_IngredientsForm_UpdateString() // HELLO needs further update methods created for gui
@@ -2124,17 +2132,16 @@ public class Edit_Ingredients_Screen extends JFrame
                 return;
             }
 
-            selectedIngredientName = selectedIngredientName;
+            selectedIngredientName = selectedIngredientName; //HELLO what is the use?
             previousIngredientName = selectedIngredientName;
 
-            //############################################################
-            // Update IngredientsForm
-            //############################################################
-            formObjects = ingredientsForm.getIngredientsFormObjects();
+            //###############################
+            //
+            //###############################
+            String getIngredientInfoString = ingredientsForm.mysqlGetIngredientInfo(selectedIngredientName);
+            System.out.printf("\n\n@@ \n%s", getIngredientInfoString);
 
-            //##############################
-            // Get Ingredient Info
-            //##############################
+
             ArrayList<ArrayList<String>> ingredientInfo_R = db.getMultiColumnQuery(String.format("""
                     SELECT  info.IngredientID, info.Measurement, info.Ingredient_Name,
                                         
@@ -2570,6 +2577,89 @@ public class Edit_Ingredients_Screen extends JFrame
                 JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("\n\nPlease fix the following rows being; \n%s", errorTxt));
 
                 return false;
+            }
+
+            private String mysqlGetIngredientInfo(String ingredientName)
+            {
+                try
+                {
+                    //############################################################
+                    // Update IngredientsForm
+                    //############################################################
+                    formObjects = ingredientsForm.getIngredientsFormObjects();
+
+                    //##############################
+                    // Get Ingredient Info
+                    //##############################
+
+
+                    String
+                            selectStatement = "SELECT",
+                            tableName = "ingredients_info info",
+                            sqlIngredientTypeNameCol = "Ingredient_Type_Name",
+                            sqlIngredientTypeTable = "ingredientTypes",
+                            tableReference = "info";
+
+
+                    int pos = -1, listSize = ingredientsFormLabelsMapsToValues.size();
+                    String mysqlIngredientNameKey = "";
+
+                    for (Map.Entry<String, Triplet<String, String, String>> entry : ingredientsFormLabelsMapsToValues.entrySet())
+                    {
+                        //####################################z
+                        //z
+                        //####################################z
+                        pos++;
+                        Triplet<String, String, String> value = entry.getValue();
+
+                        String formLabelName = entry.getKey();
+                        String sqlColumnName = value.getValue1();
+
+                        //####################################
+                        //
+                        //####################################
+                        String stringToAdd = "";
+                        stringToAdd = String.format("\n%s.%s", tableReference, sqlColumnName);
+
+                        //
+                        if(pos == ingredientTypeObjectIndex)
+                        {
+                            String ingredientTypeStatement = String.format("""
+                                    \n(SELECT t.%s FROM %s t  WHERE t.%s = %s.%s)  AS Ingredient_Type""",
+                                    sqlIngredientTypeNameCol, sqlIngredientTypeTable, sqlColumnName, tableReference, sqlColumnName);
+
+                            stringToAdd = ingredientTypeStatement;
+                        }
+
+                        selectStatement += stringToAdd;
+
+                        //
+                        if (pos == ingredientNameObjectIndex)
+                        {
+                            mysqlIngredientNameKey = sqlColumnName;
+                        }
+
+                        //
+                        if (pos == listSize - 1)
+                        {
+                            selectStatement += String.format("\n\nFROM %s %s", tableName, tableReference);
+
+                            String whereStatement = String.format("\nWHERE %s.%s = '%s';", tableReference, mysqlIngredientNameKey, ingredientName);
+
+                            selectStatement += whereStatement;
+                            break;
+                        }
+                        selectStatement += ",";
+                    }
+
+                    return selectStatement;
+                }
+                catch (Exception e)
+                {
+                    System.out.printf("\n\nError mysqlGetIngredientInfo() \n%s", e);
+                }
+
+                return null;
             }
 
             private String get_IngredientsForm_UpdateString(String ingredientID) // HELLO needs further update methods created for gui
