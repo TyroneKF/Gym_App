@@ -289,10 +289,12 @@ public class Edit_Ingredients_Screen extends JFrame
         {
             searchForIngredientInfo.resetFullDisplay();
         }
+
         protected void clearIngredientsForm()
         {
             ingredientsForm.clearIngredientsForm();
         }
+
         protected void clearShopForm()
         {
             shopForm.clearShopForm();
@@ -329,7 +331,7 @@ public class Edit_Ingredients_Screen extends JFrame
                     return;
                 }
 
-                if (updateBothForms(ingredientsForm.get_IngredientsForm_UpdateString(), shopForm.get_ShopForm_UpdateString()))
+                if (updateBothForms(ingredientsForm.get_IngredientsForm_UpdateString(null), shopForm.get_ShopForm_UpdateString()))
                 {
                     updateIngredientInfo = true;
                     JOptionPane.showMessageDialog(mealPlanScreen, "The ingredient updates won't appear on the mealPlan screen until this window is closed!");
@@ -1035,12 +1037,7 @@ public class Edit_Ingredients_Screen extends JFrame
                 return false;
             }
 
-            protected LinkedHashMap<String, Triplet<String, String, String>> get_ingredientsFormLabelsMapsToValues()
-            {
-                return ingredientsFormLabelsMapsToValues;
-            }
-
-            private String get_IngredientsForm_UpdateString() // HELLO needs further update methods created for gui
+            protected String get_IngredientsForm_UpdateString(String ingredientID) // HELLO needs further update methods created for gui
             {
 
                 //####################################
@@ -1067,7 +1064,6 @@ public class Edit_Ingredients_Screen extends JFrame
                     pos++;
                     Triplet<String, String, String> value = entry.getValue();
 
-                    String formLabelName = entry.getKey();
                     String sqlColumnName = value.getValue1();
                     String mysqlColumnDataType = value.getValue2();
 
@@ -1090,7 +1086,7 @@ public class Edit_Ingredients_Screen extends JFrame
                     //####################################
                     String fieldsQueryEx = "";
 
-                    if (formLabelName.equals("Ingredient Type"))
+                    if (pos == ingredientTypeObjectIndex)
                     {
                         fieldsQueryEx = String.format("\n\t(%s%s')", ingredientTypeSet, formFieldValue);
                     }
@@ -2137,8 +2133,6 @@ public class Edit_Ingredients_Screen extends JFrame
             //
             //###############################
             String getIngredientInfoString = ingredientsForm.mysqlGetIngredientInfo(selectedIngredientName);
-            System.out.printf("\n\n@@ \n%s", getIngredientInfoString);
-
 
             ArrayList<ArrayList<String>> ingredientInfo_R = db.getMultiColumnQuery(getIngredientInfoString);
 
@@ -2651,63 +2645,83 @@ public class Edit_Ingredients_Screen extends JFrame
                 return null;
             }
 
-            private String get_IngredientsForm_UpdateString(String ingredientID) // HELLO needs further update methods created for gui
+            protected String get_IngredientsForm_UpdateString(String ingredientID) // HELLO needs further update methods created for gui
             {
                 //####################################
-                // Get Current ID
+                //
                 //####################################
 
                 JTextField ingredientName_JTxtF = (JTextField) ingredientsFormObjects.get(getIngredientNameObjectIndex());
                 String ingredientName_Txt = ingredientName_JTxtF.getText().trim();
 
-                //####################################
-                // Gathering Form Txt Data
-                //####################################
-                ArrayList<String> formResults = new ArrayList<>();
-                ArrayList<Component> ingredientsFormObjects = super.getIngredientsFormObjects();
 
-                int pos = 0;
-                for (Component comp : ingredientsFormObjects)
+                String
+                        tableName = "ingredients_info",
+                        ingredientIDColName = "IngredientID",
+
+                        setQuery = String.format("UPDATE %s \nSET", tableName);
+                //####################################
+                //
+                //####################################
+                int pos = -1, listSize = ingredientsFormLabelsMapsToValues.size();
+                for (Map.Entry<String, Triplet<String, String, String>> entry : ingredientsFormLabelsMapsToValues.entrySet())
                 {
-                    if (comp instanceof JTextField)
-                    {
-                        String fieldText = ((JTextField) comp).getText();
-                        if (pos == getIngredientNameObjectIndex())
-                        {
-                            fieldText = removeSpaceAndHiddenChars(fieldText);
-                        }
-                        formResults.add(fieldText);
-                    }
-                    else if (comp instanceof JComboBox)
-                    {
-                        formResults.add(((JComboBox) comp).getSelectedItem().toString());
-                    }
                     pos++;
-                }
+                    Triplet<String, String, String> value = entry.getValue();
 
-                //####################################
-                // Creating Upload Query
-                //####################################
-                int i = 0;
-                String updateTargets_Query = String.format("""
-                                UPDATE ingredients_info 
-                                SET  
-                                Meassurement = '%s', Ingredient_Name = '%s', 
-                                Ingredient_Type_ID = (SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = '%s'),                                
-                                                                
-                                Based_On_Quantity = %s, 
-                                Protein = %s, Glycemtric_Index = %s, Carbohydrates = %s, Sugars_Of_Carbs = %s, Fibre = %s, Fat = %s, Saturated_Fat = %s,
-                                Salt = %s, Water_Content = %s, Calories = %s
-                                WHERE IngredientID = %s; """,
-                        formResults.get(i), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1),
-                        formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1),
-                        formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), ingredientID);
+                    String sqlColumnName = value.getValue1();
+                    String mysqlColumnDataType = value.getValue2();
+
+                    //####################################
+                    //
+                    //####################################
+                    Component formObject = ingredientsFormObjects.get(pos);
+                    String formFieldValue = "";
+
+                    if (formObject instanceof JTextField)
+                    {
+                        formFieldValue = ((JTextField) formObject).getText();
+                    }
+                    else if (formObject instanceof JComboBox)
+                    {
+                        formFieldValue = ((JComboBox) formObject).getSelectedItem().toString();
+                    }
+
+                    //####################################
+                    //
+                    //####################################
+
+                    if (pos == ingredientTypeObjectIndex)
+                    {
+                        String ingredientTypeSet = "SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = ";
+                        formFieldValue = String.format("(%s '%s')", ingredientTypeSet, formFieldValue);
+                    }
+                    else if (mysqlColumnDataType.equals("String"))
+                    {
+                        formFieldValue = String.format("'%s'", formFieldValue);
+                    }
+
+                    //####################################
+                    //
+                    //####################################
+
+                    if (pos == listSize - 1)
+                    {
+                        setQuery += String.format("\n%s = %s", sqlColumnName, formFieldValue);
+                        String whereStatement = String.format("\nWHERE %s = %s;", ingredientIDColName, ingredientID);
+                        setQuery += whereStatement;
+
+                        break;
+                    }
+
+                    setQuery += String.format("\n%s = %s,", sqlColumnName, formFieldValue);
+                }
 
                 //####################################
                 // Return results
                 //####################################
-                setUpdateIngredientsForm(true);
-                return updateTargets_Query;
+                setUpdateIngredientsForm(true); // HELLO EDIT
+                return setQuery;
             }
         }
 
