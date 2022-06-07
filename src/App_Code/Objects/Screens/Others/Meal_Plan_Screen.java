@@ -193,7 +193,7 @@ public class Meal_Plan_Screen extends JPanel
         System.out.printf("\n\nChosen Plan: %s", planID);
         System.out.println("\n\n###############################################################################");
 
-       /* if (planID != null)
+        if (planID != null)
         {
             //####################################################
             // Transferring Targets From Chosen PLan to Temp
@@ -460,7 +460,7 @@ public class Meal_Plan_Screen extends JPanel
                     addIngredientsScreen.closeWindow();
                 }
             }
-        });*/
+        });
 
         open_AddIngredients_Screen();// HELLO REMOVE LAter
     }
