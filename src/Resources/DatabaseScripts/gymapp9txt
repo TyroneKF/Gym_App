@@ -125,8 +125,8 @@ CREATE TABLE IF NOT EXISTS ingredients_info
     -- PRIMARY KEYS
     IngredientID INT  PRIMARY KEY AUTO_INCREMENT,
 
-	Meassurement VARCHAR(6) NOT NULL,
-	CHECK(Meassurement IN("Litres","Grams")),
+	Measurement VARCHAR(6) NOT NULL,
+	CHECK(Measurement IN("Litres","Grams")),
 
 	Ingredient_Name VARCHAR(100) NOT NULL,
 
@@ -137,7 +137,7 @@ CREATE TABLE IF NOT EXISTS ingredients_info
 
 	Protein DECIMAL(7,2) NOT NULL,
 	
-	Glycemtric_Index INT NOT NULL,
+	Glycemic_Index INT NOT NULL,
 	Carbohydrates DECIMAL(7,2) NOT NULL,
 	Sugars_Of_Carbs DECIMAL(7,2) NOT NULL,
 	Fibre DECIMAL(7,2) NOT NULL,
@@ -217,7 +217,7 @@ IFNULL(ROUND((i.Quantity /p.Volume_Per_Unit)*p.Cost_Per_Unit,2),0) AS Ingredient
 IFNULL(s.Store_Name,'N/A') AS  Supplier,
 
 IFNULL(ROUND((info.Protein /info.Based_On_Quantity)*i.Quantity,2),0) AS Protein,
-IFNULL(info.Glycemtric_Index, -0) AS GI, 
+IFNULL(info.Glycemic_Index, -0) AS GI, 
 IFNULL(ROUND((info.Carbohydrates /info.Based_On_Quantity)*i.Quantity,2),0) AS Carbohydrates,
 IFNULL(ROUND((info.Sugars_Of_Carbs /info.Based_On_Quantity)*i.Quantity,2),0) AS Sugars_Of_Carbs,
 IFNULL(ROUND((info.Fibre /info.Based_On_Quantity)*i.Quantity,2),0) AS Fibre,
@@ -383,7 +383,7 @@ INSERT INTO ingredientTypes (Ingredient_Type_Name) VALUES
 -- #####################################################
 
 INSERT INTO ingredients_info 
-(Meassurement, Ingredient_Name, Ingredient_Type_ID, Based_On_Quantity,  Protein, Glycemtric_Index, Carbohydrates, 
+(Measurement, Ingredient_Name, Ingredient_Type_ID, Based_On_Quantity,  Protein, Glycemic_Index, Carbohydrates, 
 Sugars_Of_Carbs, Fibre, Fat, Saturated_Fat, Salt, Water_Content, Calories)
 
 VALUES

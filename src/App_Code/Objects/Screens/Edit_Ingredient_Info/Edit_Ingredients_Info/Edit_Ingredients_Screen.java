@@ -1,6 +1,7 @@
 package App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Ingredients_Info;
 
 import java.text.Collator;
+import java.text.DecimalFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -552,6 +553,7 @@ public class Edit_Ingredients_Screen extends JFrame
         //##################################################################################################################
         public class IngredientsForm extends CollapsibleJPanel
         {
+            protected final DecimalFormat df = new DecimalFormat("0.00000");
             protected LinkedHashMap<String, Triplet<String, String, String>> ingredientsFormLabelsMapsToValues = new LinkedHashMap<>()
             {{
                 // ingredientsFormLabel Key -> ( nutritionIx value, Mysql key Value, mySql Field Datatype)
@@ -610,9 +612,9 @@ public class Edit_Ingredients_Screen extends JFrame
                         glycemicObjectIndex = pos;
                     }
 
-                    if(found == 3)
+                    if (found == 3)
                     {
-                       break;
+                        break;
                     }
                 }
 
@@ -768,6 +770,8 @@ public class Edit_Ingredients_Screen extends JFrame
 
                     int labelSize = ingredientsFormLabelsMapsToValues.size();
 
+                    clearIngredientsForm();
+
                     for (int i = 0; i < labelSize; i++)
                     {
                         Component comp = ingredientsFormObjects.get(i);
@@ -804,22 +808,39 @@ public class Edit_Ingredients_Screen extends JFrame
                             continue;
                         }
 
+                        //############################
                         //
+                        //############################
                         Object foodInfoNutritionValue = foodInfo.get(foodInfoEquivalentLabel);
 
-                      /*  System.out.printf("\n\n#############################\n\nNutritionIx Label: %s  | NutritionIx value: %s | Form Label: %s  | Form Label pos: %s",
-                                foodInfoEquivalentLabel, foodInfoNutritionValue, formLabelName, formLabelPos);*/
+                        System.out.printf("\n\n#############################\n\nNutritionIx Label: %s  | NutritionIx value: %s | Form Label: %s  | Form Label pos: %s",
+                                foodInfoEquivalentLabel, foodInfoNutritionValue, formLabelName, formLabelPos);
 
                         if (foodInfoNutritionValue == null || foodInfoNutritionValue.toString().equals("null"))
                         {
                             continue;
                         }
 
+                        //############################
+                        //
+                        //############################
+                        // HELLO MAY NEED TO CONSIDER ALL DATA TYPE CONVERSIONS
                         Component comp = ingredientsFormObjects.get(formLabelPos);
 
                         if (comp instanceof JTextField)
                         {
                             JTextField obj = (JTextField) comp;
+
+                            if (foodInfoNutritionValue instanceof BigDecimal)
+                            {
+                                BigDecimal bd1 = ((BigDecimal) foodInfoNutritionValue).setScale(2, RoundingMode.HALF_DOWN);
+
+                                System.out.printf("\nDouble Value %s", bd1);
+
+                                obj.setText(String.format("%s", bd1));
+
+                                continue;
+                            }
 
                             obj.setText(String.format("%s", foodInfoNutritionValue));
                         }
