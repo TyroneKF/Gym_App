@@ -1967,9 +1967,9 @@ public class Edit_Ingredients_Screen extends JFrame
         }
 
         /*
-      When the variable its used to set is true the ingredientNames JComboBox is updating
-      this stops the ingredientNames JComboBox from triggering actionListener events!
-     */
+         When the variable it's used to set is true the ingredientNames JComboBox is updating
+         this stops the ingredientNames JComboBox from triggering actionListener events!
+        */
         private void setUpdatingJComboBoxStatus(boolean x) // can't be deleted, trust me
         {
             jcomboUpdateStaus = x;
@@ -2136,11 +2136,11 @@ public class Edit_Ingredients_Screen extends JFrame
             // Get Ingredient Info
             //##############################
             ArrayList<ArrayList<String>> ingredientInfo_R = db.getMultiColumnQuery(String.format("""
-                    SELECT  info.IngredientID, info.Meassurement, info.Ingredient_Name,
+                    SELECT  info.IngredientID, info.Measurement, info.Ingredient_Name,
                                         
                     (SELECT t.Ingredient_Type_Name FROM ingredientTypes t WHERE t.Ingredient_Type_ID = info.Ingredient_Type_ID)  AS Ingredient_Type,
                                         
-                    info.Based_On_Quantity, info.Protein, info.Glycemtric_Index, info.Carbohydrates, info.Sugars_Of_Carbs, info.Fibre, info.Fat, info.Saturated_Fat, info.Salt,
+                    info.Based_On_Quantity, info.Protein, info.Glycemic_Index, info.Carbohydrates, info.Sugars_Of_Carbs, info.Fibre, info.Fat, info.Saturated_Fat, info.Salt,
                     info.Water_Content, info.Calories
                     							
                     FROM ingredients_info info
