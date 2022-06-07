@@ -2142,16 +2142,7 @@ public class Edit_Ingredients_Screen extends JFrame
             System.out.printf("\n\n@@ \n%s", getIngredientInfoString);
 
 
-            ArrayList<ArrayList<String>> ingredientInfo_R = db.getMultiColumnQuery(String.format("""
-                    SELECT  info.IngredientID, info.Measurement, info.Ingredient_Name,
-                                        
-                    (SELECT t.Ingredient_Type_Name FROM ingredientTypes t WHERE t.Ingredient_Type_ID = info.Ingredient_Type_ID)  AS Ingredient_Type,
-                                        
-                    info.Based_On_Quantity, info.Protein, info.Glycemic_Index, info.Carbohydrates, info.Sugars_Of_Carbs, info.Fibre, info.Fat, info.Saturated_Fat, info.Salt,
-                    info.Water_Content, info.Calories
-                    							
-                    FROM ingredients_info info
-                    WHERE info.Ingredient_Name = '%s';""", selectedIngredientName));
+            ArrayList<ArrayList<String>> ingredientInfo_R = db.getMultiColumnQuery(getIngredientInfoString);
 
             if (ingredientInfo_R == null)
             {
@@ -2592,13 +2583,13 @@ public class Edit_Ingredients_Screen extends JFrame
                     // Get Ingredient Info
                     //##############################
 
-
                     String
-                            selectStatement = "SELECT",
-                            tableName = "ingredients_info info",
+                            sqlIngredientIDNameCol = "IngredientID",
+                            tableName = "ingredients_info",
+                            tableReference = "info",
                             sqlIngredientTypeNameCol = "Ingredient_Type_Name",
                             sqlIngredientTypeTable = "ingredientTypes",
-                            tableReference = "info";
+                            selectStatement = String.format("SELECT \n%s.%s,", tableReference, sqlIngredientIDNameCol);
 
 
                     int pos = -1, listSize = ingredientsFormLabelsMapsToValues.size();
@@ -2622,10 +2613,10 @@ public class Edit_Ingredients_Screen extends JFrame
                         stringToAdd = String.format("\n%s.%s", tableReference, sqlColumnName);
 
                         //
-                        if(pos == ingredientTypeObjectIndex)
+                        if (pos == ingredientTypeObjectIndex)
                         {
                             String ingredientTypeStatement = String.format("""
-                                    \n(SELECT t.%s FROM %s t  WHERE t.%s = %s.%s)  AS Ingredient_Type""",
+                                            \n(SELECT t.%s FROM %s t  WHERE t.%s = %s.%s)  AS Ingredient_Type""",
                                     sqlIngredientTypeNameCol, sqlIngredientTypeTable, sqlColumnName, tableReference, sqlColumnName);
 
                             stringToAdd = ingredientTypeStatement;
