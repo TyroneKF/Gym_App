@@ -1,7 +1,6 @@
 package App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Ingredients_Info;
 
 import java.text.Collator;
-import java.text.DecimalFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -223,7 +222,7 @@ public class Edit_Ingredients_Screen extends JFrame
 
         protected void updateIngredientForm_Type_JComboBox()
         {
-            ingredientsForm.loadJCComboBox();
+            ingredientsForm.reloadIngredientTypeJComboBox();
         }
 
         protected void createForms(IngredientsForm ingredientsForm, ShopForm shopForm, SearchForFoodInfo searchForFoodInfo)
@@ -286,14 +285,17 @@ public class Edit_Ingredients_Screen extends JFrame
             resize_GUI();
         }
 
-        protected void clearShopForm()
+        protected void clearSearchForIngredientInfoForm()
         {
-            shopForm.clearShopForm();
+            searchForIngredientInfo.resetFullDisplay();
         }
-
         protected void clearIngredientsForm()
         {
             ingredientsForm.clearIngredientsForm();
+        }
+        protected void clearShopForm()
+        {
+            shopForm.clearShopForm();
         }
 
         protected void submissionBtnAction()
@@ -369,100 +371,6 @@ public class Edit_Ingredients_Screen extends JFrame
             return updateShops;
         }
 
-        //HELLO EDIT
-        protected boolean addOrDeleteIngredientFromMap(String process, String ingredientType, String ingredientName)
-        {
-            // Storing
-            Collection<String> ingredientTypeList = map_ingredientTypesToIngredientNames.get(ingredientType);
-            if (process.equals("add"))// if key exists add the ingredientName in
-            {
-
-                if (ingredientTypeList != null)
-                {
-                    // Add ingredientName to collection
-                    ingredientTypeList.add(ingredientName);
-                }
-                else // create the list for the new type and add ingredient in
-                {
-                    ingredientTypeList = new TreeSet<String>(Collator.getInstance());
-                    ingredientTypeList.add(ingredientName);
-                    map_ingredientTypesToIngredientNames.put(ingredientType, ingredientTypeList);
-                }
-            }
-            else if (process.equals("delete"))
-            {
-                ingredientTypeList.remove(ingredientName);
-
-                // Remove List as there is no items in it
-                if (ingredientTypeList.size() == 0)
-                {
-                    map_ingredientTypesToIngredientNames.remove(ingredientType);
-                }
-            }
-
-            // Redraw ingredientsTypes
-            JComboBox<String> edit_IngredientTypes_InPlan_JComboBox = getEdit_IngredientTypes_InPlan_JComboBox();
-
-            edit_IngredientTypes_InPlan_JComboBox.removeAllItems(); // clearList
-            for (String key : map_ingredientTypesToIngredientNames.keySet())
-            {
-                if (!key.equals("None Of The Above"))
-                {
-                    edit_IngredientTypes_InPlan_JComboBox.addItem(key);
-                }
-            }
-            return true;
-        }
-
-        private void refreshInterface() // only available to reset screen
-        {
-            clearIngredientsForm();
-            clearShopForm();
-        }
-
-        protected boolean updateBothForms(String updateIngredients_String, String[] updateIngredientShops_String)
-        {
-            System.out.printf("\n\n%s", updateIngredients_String, Arrays.toString(updateIngredientShops_String));
-
-            //####################################
-            // Error forming update String (exit)
-            //####################################
-
-            if (!updateShops || !updateIngredientsForm)
-            {
-                return false;
-            }
-
-            //####################################
-            // Uploading Query
-            //####################################
-            if (!(db.uploadData_Batch_Altogether(new String[]{updateIngredients_String})))
-            {
-                JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Failed 2/2 Updates - Unable To Add Ingredient Info In DB!");
-                return false;
-            }
-
-            if (updateIngredientShops_String != null)
-            {
-                if (!(db.uploadData_Batch_Independently(updateIngredientShops_String)))
-                {
-                    JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Failed 1/2 Updates - Unable To Add Shop Supplier For Ingredient In DB!");
-                    return false;
-                }
-            }
-
-            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "\n\nUpdated Ingredient Info! \n\nAlso updated 2/2 Shop Info In DB In DB!!!");
-
-            return true;
-        }
-
-        private void resize_GUI()
-        {
-            contentPane.revalidate();
-            scrollPaneJPanel.revalidate();
-            revalidate();
-        }
-
         protected String convertToBigDecimal(String value, String errorTxt, String rowLabel, int rowNumber, JTextField jTextField)
         {
             String txt = String.format("must be number which has %s numbers in it! Or, a decimal number (%s,%s) with a max of %s numbers before the decimal point and  a of max of  %s numbers after the decimal point!",
@@ -521,20 +429,6 @@ public class Edit_Ingredients_Screen extends JFrame
             return errorTxt;
         }
 
-        protected boolean doesStringContainCharacters(String input)
-        {
-            Pattern p1 = Pattern.compile("[^a-zA-Z]", Pattern.CASE_INSENSITIVE);
-            Matcher m1 = p1.matcher(input.replaceAll("\\s+", ""));
-            boolean b1 = m1.find();
-
-            if (b1)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
         protected Boolean areYouSure(String process)
         {
             int reply = JOptionPane.showConfirmDialog(mealPlanScreen, String.format("Are you sure you want to: %s?", process, process),
@@ -547,9 +441,99 @@ public class Edit_Ingredients_Screen extends JFrame
             return true;
         }
 
-        protected LinkedHashMap<String, Triplet<String, String, String>> get_ingredientsFormLabelsMapsToValues()
+        //HELLO EDIT
+        protected boolean addOrDeleteIngredientFromMap(String process, String ingredientType, String ingredientName)
         {
-            return ingredientsForm.get_ingredientsFormLabelsMapsToValues();
+            // Storing
+            Collection<String> ingredientTypeList = map_ingredientTypesToIngredientNames.get(ingredientType);
+            if (process.equals("add"))// if key exists add the ingredientName in
+            {
+
+                if (ingredientTypeList != null)
+                {
+                    // Add ingredientName to collection
+                    ingredientTypeList.add(ingredientName);
+                }
+                else // create the list for the new type and add ingredient in
+                {
+                    ingredientTypeList = new TreeSet<>(Collator.getInstance());
+                    ingredientTypeList.add(ingredientName);
+                    map_ingredientTypesToIngredientNames.put(ingredientType, ingredientTypeList);
+                }
+            }
+            else if (process.equals("delete"))
+            {
+                ingredientTypeList.remove(ingredientName);
+
+                // Remove List as there is no items in it
+                if (ingredientTypeList.size() == 0)
+                {
+                    map_ingredientTypesToIngredientNames.remove(ingredientType);
+                }
+            }
+
+            // Redraw ingredientsTypes
+            JComboBox<String> edit_IngredientTypes_InPlan_JComboBox = getEdit_IngredientTypes_InPlan_JComboBox();
+
+            edit_IngredientTypes_InPlan_JComboBox.removeAllItems(); // clearList
+            for (String key : map_ingredientTypesToIngredientNames.keySet())
+            {
+                if (!key.equals("None Of The Above"))
+                {
+                    edit_IngredientTypes_InPlan_JComboBox.addItem(key);
+                }
+            }
+            return true;
+        }
+
+        private void refreshInterface() // only available to reset screen
+        {
+            clearSearchForIngredientInfoForm();
+            clearIngredientsForm();
+            clearShopForm();
+        }
+
+        protected boolean updateBothForms(String updateIngredients_String, String[] updateIngredientShops_String)
+        {
+            System.out.printf("\n\n%s", updateIngredients_String, Arrays.toString(updateIngredientShops_String));
+
+            //####################################
+            // Error forming update String (exit)
+            //####################################
+
+            if (!updateShops || !updateIngredientsForm)
+            {
+                return false;
+            }
+
+            //####################################
+            // Uploading Query
+            //####################################
+            if (!(db.uploadData_Batch_Altogether(new String[]{updateIngredients_String})))
+            {
+                JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Failed 2/2 Updates - Unable To Add Ingredient Info In DB!");
+                return false;
+            }
+
+            if (updateIngredientShops_String != null)
+            {
+                if (!(db.uploadData_Batch_Independently(updateIngredientShops_String)))
+                {
+                    JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Failed 1/2 Updates - Unable To Add Shop Supplier For Ingredient In DB!");
+                    return false;
+                }
+            }
+
+            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "\n\nUpdated Ingredient Info! \n\nAlso updated 2/2 Shop Info In DB In DB!!!");
+
+            return true;
+        }
+
+        private void resize_GUI()
+        {
+            contentPane.revalidate();
+            scrollPaneJPanel.revalidate();
+            revalidate();
         }
 
         //#################################################################################################################
@@ -705,7 +689,7 @@ public class Edit_Ingredients_Screen extends JFrame
                     else if (labelTXT.equals("Ingredient Type:"))
                     {
                         ingredientsType_JComboBox = new JComboBox();
-                        loadJCComboBox();
+                        reloadIngredientTypeJComboBox();
                         inputArea.add(ingredientsType_JComboBox);
 
                         jcomboxBeingCreated = true;
@@ -747,7 +731,7 @@ public class Edit_Ingredients_Screen extends JFrame
                 mainJPanel.add(inputArea, BorderLayout.CENTER);
             }
 
-            protected void loadJCComboBox()
+            protected void reloadIngredientTypeJComboBox()
             {
                 ingredientsType_JComboBox.removeAllItems();
                 for (String ingredientType : all_IngredientsTypeNamesList)
@@ -761,6 +745,20 @@ public class Edit_Ingredients_Screen extends JFrame
                 }
 
                 ingredientsType_JComboBox.setSelectedIndex(-1);
+            }
+
+            protected boolean doesStringContainCharacters(String input)
+            {
+                Pattern p1 = Pattern.compile("[^a-zA-Z]", Pattern.CASE_INSENSITIVE);
+                Matcher m1 = p1.matcher(input.replaceAll("\\s+", ""));
+                boolean b1 = m1.find();
+
+                if (b1)
+                {
+                    return true;
+                }
+
+                return false;
             }
 
             protected void updateForm_FoodNutritionalInfoFromSearch(LinkedHashMap<String, Object> foodInfo)//HELLO EDITED NOW
@@ -1899,7 +1897,7 @@ public class Edit_Ingredients_Screen extends JFrame
         @Override
         protected void updateIngredientForm_Type_JComboBox()
         {
-            ingredientsForm.loadJCComboBox();
+            ingredientsForm.reloadIngredientTypeJComboBox();
         }
 
         public void updateMapIngredientsTypesAndNames()

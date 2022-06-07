@@ -172,7 +172,6 @@ public class SearchForFoodInfo extends CollapsibleJPanel
         textField.setFont(new Font("Verdana", Font.PLAIN, searchBarTxtInputSize)); // Changing font size
         textField.setDocument(new JTextFieldLimit(255));  // Setting character limit
         textField.setHorizontalAlignment(JTextField.CENTER); // Centering JTextField Text
-        textField.setText("oats");// HELLO Remove
 
         // Adding to GUI
         searchBarWestJPanel.add(textField); // adding textField to JPanel*/
@@ -458,13 +457,20 @@ public class SearchForFoodInfo extends CollapsibleJPanel
         int selectedIndex = jComboBox.getSelectedIndex();
 
         //##########################################################
-        // Choose an option ingredient or product
+        //
         //##########################################################
         if (selectedIndex == -1)
         {
             JOptionPane.showMessageDialog(null, String.format("\n\nError \n\nPlease select an option inside the dropdown box for the food / ingredient ' %s '.", food));
             return;
         }
+
+        if (food.equals(""))
+        {
+            JOptionPane.showMessageDialog(null, "\n\nError \n\nPlease input a food / ingredient name inside the text-box !");
+            return;
+        }
+
 
         //##########################################################
         // Reset Results Display
@@ -532,7 +538,7 @@ public class SearchForFoodInfo extends CollapsibleJPanel
         ingredientsForm.updateForm_FoodNutritionalInfoFromSearch(foodInfo);
     }
 
-    private void resetFullDisplay()
+    public void resetFullDisplay()
     {
         resetSearchDisplay();
 
