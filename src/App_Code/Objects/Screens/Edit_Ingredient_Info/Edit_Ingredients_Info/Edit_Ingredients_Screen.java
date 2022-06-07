@@ -10,6 +10,7 @@ import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types.Edit_
 import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types.Edit_Ingredients_Types_Screen;
 import App_Code.Objects.Screens.Others.Meal_Plan_Screen;
 import org.javatuples.Pair;
+import org.javatuples.Triplet;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -169,7 +170,7 @@ public class Edit_Ingredients_Screen extends JFrame
         protected int yPos = 0;
         protected JPanel scrollPaneJPanel;
 
-        private int ingredientNameObjectIndex = 1, ingredientTypeObjectIndex = 2, glycemicObjectIndex = 5; // HELLO EDIT NOW
+        private int ingredientNameObjectIndex = 1, ingredientTypeObjectIndex = 2, glycemicObjectIndex = 7; // HELLO EDIT NOW
 
         private boolean formEditable = false, updateIngredientsForm = false, updateShops = false;
 
@@ -474,7 +475,7 @@ public class Edit_Ingredients_Screen extends JFrame
             revalidate();
         }
 
-        protected String convertToBigDecimal(String value, String errorTxt, String rowlabel, int rowNumber, JTextField jTextField)
+        protected String convertToBigDecimal(String value, String errorTxt, String rowLabel, int rowNumber, JTextField jTextField)
         {
             String txt = String.format("must be number which has %s numbers in it! Or, a decimal number (%s,%s) with a max of %s numbers before the decimal point and  a of max of  %s numbers after the decimal point!",
                     decimalPrecision, decimalPrecision, decimalScale, decimalPrecision, decimalScale);
@@ -499,7 +500,7 @@ public class Edit_Ingredients_Screen extends JFrame
                 //#####################################################
                 if (valueScale == 0 && valuePrecision > decimalPrecision) // the number is too big
                 {
-                    errorTxt += String.format("\n\n  ' %s 'on Row: %s, %s ", rowlabel, rowNumber, txt);
+                    errorTxt += String.format("\n\n  ' %s 'on Row: %s, %s ", rowLabel, rowNumber, txt);
                 }
 
                 //#####################################################
@@ -507,7 +508,7 @@ public class Edit_Ingredients_Screen extends JFrame
                 //#####################################################
                 else if (valueScale > 0 && bdFromString.setScale(0, RoundingMode.FLOOR).precision() > decimalPrecision)
                 {
-                    errorTxt += String.format("\n\n  ' %s 'on Row: %s, %s ", rowlabel, rowNumber, txt);
+                    errorTxt += String.format("\n\n  ' %s 'on Row: %s, %s ", rowLabel, rowNumber, txt);
                 }
 
                 //#####################################################
@@ -521,12 +522,12 @@ public class Edit_Ingredients_Screen extends JFrame
 
                 if (bdFromString.compareTo(zero) < 0)// "<")
                 {
-                    errorTxt += String.format("\n\n  ' %s 'on Row: %s, must have a value which is bigger than 0 and %s", rowlabel, rowNumber, txt);
+                    errorTxt += String.format("\n\n  ' %s 'on Row: %s, must have a value which is bigger than 0 and %s", rowLabel, rowNumber, txt);
                 }
             }
             catch (Exception e)
             {
-                errorTxt += String.format("\n\n  ' %s 'on Row: %s, %s ", rowlabel, rowNumber, txt);
+                errorTxt += String.format("\n\n  ' %s 'on Row: %s, %s ", rowLabel, rowNumber, txt);
             }
 
             return errorTxt;
@@ -563,26 +564,28 @@ public class Edit_Ingredients_Screen extends JFrame
         // IngredientsForm
         //##################################################################################################################
         public class IngredientsForm extends CollapsibleJPanel
-        {        
-            protected LinkedHashMap<String, Pair<String, String>> ingredientsFormLabelsMapsToValues = new LinkedHashMap<>()
+        {
+            protected LinkedHashMap<String, Triplet<String, String, String>> ingredientsFormLabelsMapsToValues = new LinkedHashMap<>()
             {{
-                // ingredientsFormLabel Key -> ( nutritionIx value, Mysql key Value)
+                // ingredientsFormLabel Key -> ( nutritionIx value, Mysql key Value, mySql Field Datatype)
 
-                put("Ingredient Measurement In", new Pair<String, String>("serving_unit", "Meassurement"));
-                put("Ingredient Name", new Pair<String, String>("food_name", "Ingredient_Name"));
-                put("Based_On_Quantity", new Pair<String, String>("serving_weight_grams", "Based_On_Quantity"));
-                put("Protein", new Pair<String, String>("nf_protein", "Protein"));
-                put("Carbohydrates", new Pair<String, String>("nf_total_carbohydrate", "Carbohydrates"));
-                put("Sugars Of Carbs", new Pair<String, String>("nf_sugars", "Sugars_Of_Carbs"));
-                put("Glycemic Index", new Pair<String, String>(null, "Glycemic_Index"));
-                put("Fibre", new Pair<String, String>("nf_dietary_fiber", "Fibre"));
-                put("Fat", new Pair<String, String>("nf_total_fat", "Fat"));
-                put("Saturated Fat", new Pair<String, String>("nf_saturated_fat", "Saturated_Fat"));
-                put("Salt", new Pair<String, String>("nf_sodium", "Salt"));
-//                put("Cholesterol", new Pair<String, String>("nf_cholesterol", ""));
-                put("Water Content", new Pair<String, String>(null, "Water_Content"));
-                put("Calories", new Pair<String, String>("nf_calories", "Calories"));
-//                put("Potassium", new Pair<String, String>("nf_potassium", ""));
+                put("Ingredient Measurement In", new Triplet<String, String, String>("serving_unit", "Measurement", "String"));
+                put("Ingredient Name", new Triplet<String, String, String>("food_name", "Ingredient_Name", "String"));
+                put("Ingredient Type", new Triplet<String, String, String>(null, "Ingredient_Type_ID", "Integer"));
+                put("Based_On_Quantity", new Triplet<String, String, String>("serving_weight_grams", "Based_On_Quantity", "Double"));
+                put("Protein", new Triplet<String, String, String>("nf_protein", "Protein", "Double"));
+                put("Carbohydrates", new Triplet<String, String, String>("nf_total_carbohydrate", "Carbohydrates", "Double"));
+                put("Sugars Of Carbs", new Triplet<String, String, String>("nf_sugars", "Sugars_Of_Carbs", "Double"));
+                put("Glycemic Index", new Triplet<String, String, String>(null, "Glycemic_Index", "Double"));
+                put("Fibre", new Triplet<String, String, String>("nf_dietary_fiber", "Fibre", "Double"));
+                put("Fat", new Triplet<String, String, String>("nf_total_fat", "Fat", "Double"));
+                put("Saturated Fat", new Triplet<String, String, String>("nf_saturated_fat", "Saturated_Fat", "Double"));
+                put("Salt", new Triplet<String, String, String>("nf_sodium", "Salt", "Double"));
+//                put("Cholesterol",  new Triplet<String, String, String>("nf_cholesterol", "", "Double"));
+                put("Water Content", new Triplet<String, String, String>(null, "Water_Content", "Double"));
+                put("Calories", new Triplet<String, String, String>("nf_calories", "Calories", "Double"));
+//                put("Potassium",  new Triplet<String, String, String>("nf_potassium", "", "Double"));
+
             }};
 
             protected JComboBox ingredientsMeasure_JComboBox = new JComboBox();
@@ -672,7 +675,7 @@ public class Edit_Ingredients_Screen extends JFrame
                         jcomboxBeingCreated = true;
                         comboBox = ingredientsMeasure_JComboBox;
                     }
-                    else if (labelTXT.equals("Ingredient_Type:"))
+                    else if (labelTXT.equals("Ingredient Type:"))
                     {
                         ingredientsType_JComboBox = new JComboBox();
                         loadJCComboBox();
@@ -762,19 +765,19 @@ public class Edit_Ingredients_Screen extends JFrame
                     // Set values in form based on equivalent labels form to nutritionIx
                     //#######################################################################
                     int formLabelPos = -1;
-                    for (Map.Entry<String, Pair<String, String>> info : ingredientsFormLabelsMapsToValues.entrySet())
+                    for (Map.Entry<String, Triplet<String, String, String>> info : ingredientsFormLabelsMapsToValues.entrySet())
                     {
                         formLabelPos++;
 
                         // Get NutritionIx Label & its value
                         String formLabelName = info.getKey();
-                        Pair<String, String> keyObject = info.getValue();
+                        Triplet<String, String, String> keyObject = info.getValue();
 
                         //############################
                         //
                         //############################
                         String foodInfoEquivalentLabel = keyObject.getValue0();
-                        if(foodInfoEquivalentLabel == null)
+                        if (foodInfoEquivalentLabel == null)
                         {
                             continue;
                         }
@@ -893,7 +896,7 @@ public class Edit_Ingredients_Screen extends JFrame
                 String ingredientName_Txt = "";
 
                 int row = -1;
-                for (String ingredientFormLabel : ingredientsFormLabelsMapsToValues.keySet()) 
+                for (String ingredientFormLabel : ingredientsFormLabelsMapsToValues.keySet())
                 {
                     row++;
 
@@ -990,30 +993,6 @@ public class Edit_Ingredients_Screen extends JFrame
 
             private String get_IngredientsForm_UpdateString() // HELLO needs further update methods created for gui
             {
-                //####################################
-                // Gathering Form Txt Data
-                //####################################
-                ArrayList<String> formResults = new ArrayList<>();
-
-                int pos = 0;
-                for (Component comp : ingredientsFormObjects)
-                {
-                    if (comp instanceof JTextField)
-                    {
-                        String fieldText = ((JTextField) comp).getText(); // CHECK
-                        if (pos == ingredientNameObjectIndex || pos == ingredientTypeObjectIndex)
-                        {
-                            fieldText = removeSpaceAndHiddenChars(fieldText);
-                        }
-
-                        formResults.add(fieldText);
-                    }
-                    else if (comp instanceof JComboBox)
-                    {
-                        formResults.add(((JComboBox) comp).getSelectedItem().toString());
-                    }
-                    pos++;
-                }
 
                 //####################################
                 // Creating Upload Query
@@ -1021,42 +1000,90 @@ public class Edit_Ingredients_Screen extends JFrame
                 int i = 0;
 
                 String ingredientTypeSet = "SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = '";
+                String tableName = "ingredients_info";
 
-                String updateTargets_Query = String.format("""
-                                INSERT INTO ingredients_info
-                                (Meassurement, Ingredient_Name, Ingredient_Type_ID, Based_On_Quantity, 
-                                Protein, Glycemtric_Index, Carbohydrates, Sugars_Of_Carbs, Fibre, Fat, Saturated_Fat, Salt, Water_Content, Calories)   
-                                                                                 
-                                Values 
-                                (                                 
-                                  ('%s'), 
-                                  ('%s'), 
-                                  (%s), 
-                                  (%s),
-                                  (%s), 
-                                  (%s), 
-                                  (%s), 
-                                  (%s), 
-                                  (%s), 
-                                  (%s), 
-                                  (%s), 
-                                  (%s), 
-                                  (%s), 
-                                  (%s)
-                                ); """,
-                        formResults.get(i), formResults.get(i += 1),
 
-                        ingredientTypeSet += formResults.get(i += 1) + "'",
+                String insertQuery = String.format("""
+                        INSERT INTO %s
+                        (""", tableName);
 
-                        formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1),
-                        formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1),
-                        formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1));
+                String fieldsQuery = "\nValues \n(";
+
+                //####################################
+                //
+                //####################################
+                int pos = -1, listSize = ingredientsFormLabelsMapsToValues.size();
+                for (Map.Entry<String, Triplet<String, String, String>> entry : ingredientsFormLabelsMapsToValues.entrySet())
+                {
+                    pos++;
+                    Triplet<String, String, String> value = entry.getValue();
+
+                    String formLabelName = entry.getKey();
+                    String sqlColumnName = value.getValue1();
+                    String mysqlColumnDataType = value.getValue2();
+
+                    //####################################
+                    //
+                    //####################################
+                    Component formObject = ingredientsFormObjects.get(pos);
+                    String formFieldValue = "";
+                    if (formObject instanceof JTextField)
+                    {
+                        formFieldValue = ((JTextField) formObject).getText();
+                    }
+                    else if (formObject instanceof JComboBox)
+                    {
+                        formFieldValue = ((JComboBox) formObject).getSelectedItem().toString();
+                    }
+
+                    //####################################
+                    //
+                    //####################################
+                    String fieldsQueryEx = "";
+
+                    if (formLabelName.equals("Ingredient Type"))
+                    {
+                        fieldsQueryEx = String.format("\n\t(%s%s')", ingredientTypeSet, formFieldValue);
+                    }
+                    else
+                    {
+                        fieldsQueryEx = mysqlColumnDataType.equals("String")
+                                ?
+                                String.format("\n\t('%s')", formFieldValue)
+                                :
+                                String.format("\n\t(%s)", formFieldValue);
+                    }
+
+                    //####################################
+                    //
+                    //####################################
+
+                    if (pos == listSize - 1)
+                    {
+                        insertQuery += String.format("%s)", sqlColumnName);
+
+                        fieldsQuery += String.format("%s\n);", fieldsQueryEx);
+
+                        continue;
+                    }
+
+                    //####################################
+                    //
+                    //####################################
+                    insertQuery += String.format("%s, ", sqlColumnName);
+                    fieldsQuery += String.format("%s,", fieldsQueryEx);
+                }
+
+                //####################################
+                //
+                //####################################
+
+                updateIngredientsForm = true; //HELLO EDIT NOW
 
                 //####################################
                 // Return results
                 //####################################
-                updateIngredientsForm = true;
-                return updateTargets_Query;
+                return  (insertQuery += fieldsQuery);
             }
 
             protected String removeSpaceAndHiddenChars(String stringToBeEdited)
