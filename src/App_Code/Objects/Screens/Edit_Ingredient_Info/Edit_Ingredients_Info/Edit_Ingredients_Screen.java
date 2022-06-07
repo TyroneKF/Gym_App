@@ -2572,7 +2572,7 @@ public class Edit_Ingredients_Screen extends JFrame
                 return false;
             }
 
-            private String get_IngredientsForm_UpdateString(String ingreientID) // HELLO needs further update methods created for gui
+            private String get_IngredientsForm_UpdateString(String ingredientID) // HELLO needs further update methods created for gui
             {
                 //####################################
                 // Get Current ID
@@ -2622,7 +2622,7 @@ public class Edit_Ingredients_Screen extends JFrame
                                 WHERE IngredientID = %s; """,
                         formResults.get(i), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1),
                         formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1),
-                        formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), ingreientID);
+                        formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), formResults.get(i += 1), ingredientID);
 
                 //####################################
                 // Return results
