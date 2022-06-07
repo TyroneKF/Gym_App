@@ -9,7 +9,6 @@ import App_Code.Objects.Gui_Objects.*;
 import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types.Edit_Ingredient_Stores_Screen;
 import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types.Edit_Ingredients_Types_Screen;
 import App_Code.Objects.Screens.Others.Meal_Plan_Screen;
-import org.javatuples.Pair;
 import org.javatuples.Triplet;
 
 import javax.swing.*;
@@ -170,11 +169,9 @@ public class Edit_Ingredients_Screen extends JFrame
         protected int yPos = 0;
         protected JPanel scrollPaneJPanel;
 
-        private int ingredientNameObjectIndex = 1, ingredientTypeObjectIndex = 2, glycemicObjectIndex = 7; // HELLO EDIT NOW
-
         private boolean formEditable = false, updateIngredientsForm = false, updateShops = false;
 
-        private int totalNumbersAllowed = 7, decimalScale = 2, decimalPrecision = totalNumbersAllowed - decimalScale, charlimit = 8;
+        private final int totalNumbersAllowed = 7, decimalScale = 2, decimalPrecision = totalNumbersAllowed - decimalScale, charLimit = 8;
 
         protected IngredientsForm ingredientsForm;
         private ShopForm shopForm;
@@ -369,16 +366,6 @@ public class Edit_Ingredients_Screen extends JFrame
         protected boolean isUpdateShops()
         {
             return updateShops;
-        }
-
-        protected int getIngredientNameObjectIndex()
-        {
-            return ingredientNameObjectIndex;
-        }
-
-        protected int getIngredientTypeObjectIndex()
-        {
-            return ingredientTypeObjectIndex;
         }
 
         //HELLO EDIT
@@ -588,6 +575,8 @@ public class Edit_Ingredients_Screen extends JFrame
 
             }};
 
+            protected int ingredientNameObjectIndex, ingredientTypeObjectIndex, glycemicObjectIndex;
+
             protected JComboBox ingredientsMeasure_JComboBox = new JComboBox();
             protected ArrayList<Component> ingredientsFormObjects = new ArrayList<>();
 
@@ -597,6 +586,39 @@ public class Edit_Ingredients_Screen extends JFrame
             public IngredientsForm(Container parentContainer, String btnText, int btnWidth, int btnHeight)
             {
                 super(parentContainer, btnText, btnWidth, btnHeight);
+
+                //##################################################
+                //
+                //##################################################
+                int found = 0, pos = -1;
+                for (String key : ingredientsFormLabelsMapsToValues.keySet())
+                {
+                    pos++;
+                    if (key.equals("Ingredient Name"))
+                    {
+                        found++;
+                        ingredientNameObjectIndex = pos;
+                    }
+                    else if (key.equals("Ingredient Type"))
+                    {
+                        found++;
+                        ingredientTypeObjectIndex = pos;
+                    }
+                    else if (key.equals("Glycemic Index"))
+                    {
+                        found++;
+                        glycemicObjectIndex = pos;
+                    }
+
+                    if(found == 3)
+                    {
+                       break;
+                    }
+                }
+
+                //##################################################
+                //
+                //##################################################
                 createIngredientsForm();
                 expandJPanel();
             }
@@ -711,7 +733,7 @@ public class Edit_Ingredients_Screen extends JFrame
                     }
                     else
                     {
-                        textField.setDocument(new JTextFieldLimit(charlimit));
+                        textField.setDocument(new JTextFieldLimit(charLimit));
                     }
 
                     ingredientsFormObjects.add(textField);
@@ -785,8 +807,8 @@ public class Edit_Ingredients_Screen extends JFrame
                         //
                         Object foodInfoNutritionValue = foodInfo.get(foodInfoEquivalentLabel);
 
-                        System.out.printf("\n\n#############################\n\nNutritionIx Label: %s  | NutritionIx value: %s | Form Label: %s  | Form Label pos: %s",
-                                foodInfoEquivalentLabel, foodInfoNutritionValue, formLabelName, formLabelPos);
+                      /*  System.out.printf("\n\n#############################\n\nNutritionIx Label: %s  | NutritionIx value: %s | Form Label: %s  | Form Label pos: %s",
+                                foodInfoEquivalentLabel, foodInfoNutritionValue, formLabelName, formLabelPos);*/
 
                         if (foodInfoNutritionValue == null || foodInfoNutritionValue.toString().equals("null"))
                         {
@@ -797,17 +819,17 @@ public class Edit_Ingredients_Screen extends JFrame
 
                         if (comp instanceof JTextField)
                         {
-                            if (formLabelName.equals("Ingredient Measurement In"))
-                            {
-                                foodInfoNutritionValue = foodInfoNutritionValue.toString().equals("g") ? "Grams" : "Litres";
-                            }
-
                             JTextField obj = (JTextField) comp;
 
                             obj.setText(String.format("%s", foodInfoNutritionValue));
                         }
                         else if (comp instanceof JComboBox)
                         {
+                            if (formLabelName.equals("Ingredient Measurement In"))
+                            {
+                                foodInfoNutritionValue = foodInfoNutritionValue.toString().equals("g") ? "Grams" : "Litres";
+                            }
+
                             JComboBox obj = (JComboBox) comp;
                             obj.setSelectedItem(foodInfoNutritionValue);
                         }
@@ -1083,7 +1105,7 @@ public class Edit_Ingredients_Screen extends JFrame
                 //####################################
                 // Return results
                 //####################################
-                return  (insertQuery += fieldsQuery);
+                return (insertQuery += fieldsQuery);
             }
 
             protected String removeSpaceAndHiddenChars(String stringToBeEdited)
@@ -1099,6 +1121,11 @@ public class Edit_Ingredients_Screen extends JFrame
             protected int getIngredientNameObjectIndex()
             {
                 return ingredientNameObjectIndex;
+            }
+
+            protected int getIngredientTypeObjectIndex()
+            {
+                return ingredientTypeObjectIndex;
             }
         }
 
@@ -1496,13 +1523,13 @@ public class Edit_Ingredients_Screen extends JFrame
                         // Centre Side
                         //######################################################
                         ingredientPrice_TxtField = new JTextField();
-                        ingredientPrice_TxtField.setDocument(new JTextFieldLimit(charlimit));
+                        ingredientPrice_TxtField.setDocument(new JTextFieldLimit(charLimit));
                         ingredientPrice_TxtField.setText("0.00");
                         prices.put(id, ingredientPrice_TxtField);
                         centrePanel.add(ingredientPrice_TxtField);
 
                         quantityPerPack_TxtField = new JTextField();
-                        quantityPerPack_TxtField.setDocument(new JTextFieldLimit(charlimit));
+                        quantityPerPack_TxtField.setDocument(new JTextFieldLimit(charLimit));
                         quantityPerPack_TxtField.setText("0.00");
                         quantityPerPack.put(id, quantityPerPack_TxtField);
                         centrePanel.add(quantityPerPack_TxtField);
@@ -2123,7 +2150,7 @@ public class Edit_Ingredients_Screen extends JFrame
                 String value = ingredientInfo.get(i);
 
                 // setting previous ingredient Type value
-                if (formObjectsIndex == getIngredientTypeObjectIndex()) // accounting for id being added
+                if (formObjectsIndex == ingredientsForm.getIngredientTypeObjectIndex()) // accounting for id being added
                 {
                     previousIngredientType = value;
                 }
@@ -2319,8 +2346,8 @@ public class Edit_Ingredients_Screen extends JFrame
                     if (updateBothForms(ingredientsForm.get_IngredientsForm_UpdateString(selectedIngredientID), shopForm.get_ShopForm_UpdateString(selectedIngredientID)))
                     {
                         // Check if ingredientsName or IngredientType changed
-                        String currentIngredientName = ((JTextField) formObjects.get(getIngredientNameObjectIndex())).getText().trim();
-                        String currentIngredientType = ((JComboBox) formObjects.get(getIngredientTypeObjectIndex())).getSelectedItem().toString();
+                        String currentIngredientName = ((JTextField) formObjects.get(ingredientsForm.getIngredientNameObjectIndex())).getText().trim();
+                        String currentIngredientType = ((JComboBox) formObjects.get(ingredientsForm.getIngredientTypeObjectIndex())).getSelectedItem().toString();
 
                         //HELLO REMOVE
                         System.out.printf("\n\nIngredientName \nCurrent = '%s' \nPrevious = '%s' \n\nIngredientType \nCurrent = '%s' \nPrevious = '%s'",
