@@ -813,7 +813,7 @@ public class Edit_Ingredients_Screen extends JFrame
                         //############################
                         Object foodInfoNutritionValue = foodInfo.get(foodInfoEquivalentLabel);
 
-                        System.out.printf("\n\n#############################\n\nNutritionIx Label: %s  | NutritionIx value: %s | Form Label: %s  | Form Label pos: %s",
+                        System.out.printf("\n\n#############################\n\nNutritionIx Label: %s  = %s \nIngredient Form Label pos: %s | Ingredient Form Label: %s  ",
                                 foodInfoEquivalentLabel, foodInfoNutritionValue, formLabelName, formLabelPos);
 
                         if (foodInfoNutritionValue == null || foodInfoNutritionValue.toString().equals("null"))
