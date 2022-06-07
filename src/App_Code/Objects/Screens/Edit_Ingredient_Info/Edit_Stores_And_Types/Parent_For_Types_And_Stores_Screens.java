@@ -417,7 +417,6 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
         @Override
         protected void createForm()
         {
-            System.out.printf("\n\nParent_For_Types_And_Stores_Screens() here3");
             //###################################################################
             // Drawing interface
             //####################################################################
@@ -428,7 +427,6 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
 
         protected void addScreenObjects()
         {
-            System.out.printf("\n\nParent_For_Types_And_Stores_Screens() here5");
             addToContainer(mainJPanel2, createLabelPanel(lable1, new JLabel()), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
             addToContainer(mainJPanel2, jcomboBoxJPanel, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
 
@@ -494,7 +492,6 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
 
         protected boolean deleteBTNAction()
         {
-            System.out.printf("\n\nParent_For_Types_And_Stores_Screens() here 10");
             System.out.printf("\n#################################################################################");
 
             String mysqlVariableReference1 = "@CurrentID";
