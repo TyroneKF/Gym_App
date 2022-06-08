@@ -26,7 +26,7 @@ public class Meal_Plan_Screen extends JPanel
 
     //#################################################################################################################
 
-    private String databaseName = "gymapp9";
+    private String databaseName = "gymapp10";
     private String name = databaseName;
     //########################################################
     // Objects
@@ -67,7 +67,7 @@ public class Meal_Plan_Screen extends JPanel
             original_IngredientsTable_Type_Col = 5,
             original_IngredientsTable_IngredientsName_Col = 6,
             original_IngredientsTable_Supplier_Col = 8,
-            original_ingredientsTable_DeleteBTN_Col = 18,
+            original_ingredientsTable_DeleteBTN_Col = 20,
 
             afterHiding_IngredientsTable_IngredientIndexCol = 0,
             afterHiding_IngredientsTable_IngredientID = 1,
