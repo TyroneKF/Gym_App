@@ -1238,8 +1238,6 @@ public class Meal_Plan_Screen extends JPanel
             query05 = !colToAdd.equals("") ? String.format("%s %s,", query05, colToAdd) : query05;
         }
 
-        System.out.printf("\n#################### \n%s", query05);
-
         //####################################
 
         String query06 = String.format("DROP TABLE IF EXISTS temp_Macros;");
