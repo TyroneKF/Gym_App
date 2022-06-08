@@ -130,7 +130,7 @@ public class Meal_Plan_Screen extends JPanel
 
         if (!(db.isDatabaseConnected()))
         {
-            JOptionPane.showMessageDialog(null, "ERROR, Cannot Connect To Database!");
+            JOptionPane.showMessageDialog(null, "ERROR, Cannot Connect To Database!!");
             return;
         }
 
