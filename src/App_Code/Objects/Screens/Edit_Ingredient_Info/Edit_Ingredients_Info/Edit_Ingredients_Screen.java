@@ -2962,7 +2962,6 @@ public class Edit_Ingredients_Screen extends JFrame
         }
     }
 
-
     //############################################
     // Return Forms
     //############################################
@@ -2972,15 +2971,9 @@ public class Edit_Ingredients_Screen extends JFrame
         return editingCreateForm;
     }
 
-    public CreateForm getCreateForm()
-    {
-        return createForm;
-    }
-
     //##################################################################################################################
     // Other Classes
     //##################################################################################################################
-
     public void updateIngredientsFormTypeJComboBoxes()
     {
         createForm.updateIngredientForm_Type_JComboBox();
