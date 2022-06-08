@@ -561,6 +561,7 @@ public class Edit_Ingredients_Screen extends JFrame
                 put("Salt", new Triplet<String, String, String>("nf_sodium", "Salt", "Double"));
 //                put("Cholesterol",  new Triplet<String, String, String>("nf_cholesterol", "", "Double"));
                 put("Water Content", new Triplet<String, String, String>(null, "Water_Content", "Double"));
+                put("Liquid Content", new Triplet<String, String, String>(null, "Liquid_Content", "Double"));
                 put("Calories", new Triplet<String, String, String>("nf_calories", "Calories", "Double"));
 //                put("Potassium",  new Triplet<String, String, String>("nf_potassium", "", "Double"));
 

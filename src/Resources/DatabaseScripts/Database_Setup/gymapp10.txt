@@ -1,4 +1,5 @@
 --#####################################################################--#####################################################################
+--#####################################################################--#####################################################################
 DROP DATABASE IF EXISTS gymapp9;
 CREATE DATABASE IF NOT EXISTS gymapp9;
 
@@ -41,18 +42,20 @@ CREATE TABLE IF NOT EXISTS macros_Per_Pound_And_Limits
 	Salt_Limit DECIMAL(7,2) NOT NULL,	
 	
     Water_Target DECIMAL(7,2) NOT NULL,	
+	Liquid_Target DECIMAL(7,2) NOT NULL,	
 	
 	Additional_Calories DECIMAL(7,2) NOT NULL
 );
 
 --#####################################################################
 
-DROP VIEW IF EXISTS plan_Macro_Target_Calculations;
 CREATE  ViEW plan_Macro_Target_Calculations AS
 
 SELECT P.PlanID, P.Plan_Name,
 C.Expected_Protein_Grams, C.Expected_Carbohydrates_Grams, C.Expected_Fibre_Grams, C.Expected_Fats_Grams, 
-C.Saturated_Fat_Limit, C.Salt_LIMIT_Grams, C.Water_Content_Target, C.Calories_Target, C.Additional_Calories_Target
+C.Saturated_Fat_Limit, C.Salt_LIMIT_Grams, C.Water_Content_Target, C.Liquid_Content_Target, C.Calories_Target, 
+C.Additional_Calories_Target
+
 FROM  
 (       
 	SELECT  PlanID, Plan_Name FROM plans		
@@ -76,6 +79,7 @@ LEFT JOIN
     IFNULL(M.Salt_LIMIT, 0)  AS Salt_LIMIT_Grams,
 	
     IFNULL(M.Water_Target, 0) AS Water_Content_Target,
+	IFNULL(M.Liquid_Target, 0) AS Liquid_Content_Target,
 	
 	IFNULL(
 	    ROUND((M.current_Weight_In_Pounds * M.Protein_PerPound) * 4, 2) + 
@@ -146,6 +150,7 @@ CREATE TABLE IF NOT EXISTS ingredients_info
 	Saturated_Fat DECIMAL(7,2) NOT NULL,
 	Salt DECIMAL(7,2) NOT NULL,
 	Water_Content DECIMAL(7,2) NOT NULL,
+	Liquid_Content DECIMAL(7,2) NOT NULL,
 
 	Calories DECIMAL(7,2) NOT NULL,
 
@@ -203,7 +208,6 @@ CREATE TABLE IF NOT EXISTS ingredients_in_meal
 );
 
 --#####################################################################
-DROP VIEW IF EXISTS ingredients_in_meal_calculation;
 CREATE VIEW ingredients_in_meal_calculation AS 
 
 SELECT
@@ -225,6 +229,7 @@ IFNULL(ROUND((info.Fat /info.Based_On_Quantity)*i.Quantity,2),0) AS Fat,
 IFNULL(ROUND((info.Saturated_Fat /info.Based_On_Quantity)*i.Quantity,2),0) AS Saturated_Fat,
 IFNULL(ROUND((info.Salt /info.Based_On_Quantity)*i.Quantity,2),0) AS Salt,
 IFNULL(ROUND((info.Water_Content /info.Based_On_Quantity)*i.Quantity,2),0) AS Water_Content,
+IFNULL(ROUND((info.Liquid_Content /info.Based_On_Quantity)*i.Quantity,2),0) AS Liquid_Content,
 IFNULL(ROUND((info.Calories /info.Based_On_Quantity)*i.Quantity,2),0) AS Calories,
 'Delete Row' AS `Delete Button`
 
@@ -251,6 +256,7 @@ IFNULL(ROUND(SUM(Fat),2),0) as Total_Fats,
 IFNULL(ROUND(SUM(Saturated_Fat),2),0) as Total_Saturated_Fat, 
 IFNULL(ROUND(SUM(Salt),2),0) as Total_Salt, 
 IFNULL(ROUND(SUM(Water_Content),2),0) as Total_Water_Content, 
+IFNULL(ROUND(SUM(Liquid_Content),2),0) as Total_Liquid_Content, 
 IFNULL(ROUND(SUM(Calories),2),0) as Total_Calories
 
 FROM  meals m
@@ -280,6 +286,7 @@ IFNULL(ROUND(SUM(T.Total_Fats),2),0) AS Fats_In_Plan,
 IFNULL(ROUND(SUM(T.Total_Saturated_Fat),2),0) AS Saturated_Fat_In_Plan, 
 IFNULL(ROUND(SUM(T.Total_Salt),2),0) AS Salt_In_Plan, 
 IFNULL(ROUND(SUM(T.Total_Water_Content),2),0) AS Water_Content_In_Plan, 
+IFNULL(ROUND(SUM(T.Total_Liquid_Content),2),0) AS Liquid_Content_In_Plan, 
 IFNULL(ROUND(SUM(T.Total_Calories),2),0) AS Total_Calories_In_Plan
 
 FROM plans P
@@ -303,6 +310,7 @@ IFNULL(ROUND(C.Saturated_Fat_Limit - P.Saturated_Fat_In_Plan ,2),0) AS Potential
 
 IFNULL(ROUND(C.Salt_LIMIT_Grams - P.Salt_In_Plan ,2),0) AS Potential_Salt_Grams,
 IFNULL(ROUND(C.Water_Content_Target - P.Water_Content_In_Plan ,2),0) AS  Water_Left_To_Drink,
+IFNULL(ROUND(C.Liquid_Content_Target - P.Liquid_Content_In_Plan ,2),0) AS  Liquids_Left,
 
 IFNULL(ROUND(C.Calories_Target - P.Total_Calories_In_Plan ,2),0) AS Calories_Left,
 IFNULL(ROUND(C.Additional_Calories_Target - P.Total_Calories_In_Plan ,2),0) AS Added_Calories_Left
@@ -318,6 +326,7 @@ FROM
 	   IFNULL( Saturated_Fat_In_Plan,0) AS Saturated_Fat_In_Plan,
        IFNULL( Salt_In_Plan, 0) AS Salt_In_Plan,
 	   IFNULL( Water_Content_In_Plan, 0) AS Water_Content_In_Plan,
+	   IFNULL( Liquid_Content_In_Plan, 0) AS Liquid_Content_In_Plan,
 	   IFNULL( Total_Calories_In_Plan, 0) AS Total_Calories_In_Plan
 	   
   FROM total_plan_view
