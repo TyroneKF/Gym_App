@@ -61,7 +61,7 @@ public class Meal_Plan_Screen extends JPanel
     //########################################################
     // Ingredients Table Columns
     //########################################################
-
+String f = "";
     private final Integer
             original_IngredientsTable_Quantity_Col = 4,
             original_IngredientsTable_Type_Col = 5,
