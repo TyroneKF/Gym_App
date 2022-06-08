@@ -26,7 +26,7 @@ public class Meal_Plan_Screen extends JPanel
 
     //#################################################################################################################
 
-    private String databaseName = "gymapp10";
+    private String databaseName = "gymapp9";
     private String name = databaseName;
     //########################################################
     // Objects
@@ -67,15 +67,15 @@ public class Meal_Plan_Screen extends JPanel
             original_IngredientsTable_Type_Col = 5,
             original_IngredientsTable_IngredientsName_Col = 6,
             original_IngredientsTable_Supplier_Col = 8,
-            original_ingredientsTable_DeleteBTN_Col = 19,
+            original_ingredientsTable_DeleteBTN_Col = 18,
 
-    afterHiding_IngredientsTable_IngredientIndexCol = 0,
+            afterHiding_IngredientsTable_IngredientIndexCol = 0,
             afterHiding_IngredientsTable_IngredientID = 1,
             afterHiding_IngredientsTable_Quantity_Col = 2,
             afterHiding_IngredientsTable_Type_Col = 3,
             afterHiding_IngredientsTable_IngredientsName_Col = 4,
             afterHiding_IngredientsTable_Supplier_Col = 6,
-            afterHiding_IngredientsTable_DeleteBTN_Col = 17;
+            afterHiding_IngredientsTable_DeleteBTN_Col = 18;
 
     private final Integer[]
             triggerColumns = new Integer[]{afterHiding_IngredientsTable_IngredientIndexCol, afterHiding_IngredientsTable_IngredientID, afterHiding_IngredientsTable_Quantity_Col, afterHiding_IngredientsTable_Type_Col, afterHiding_IngredientsTable_IngredientsName_Col, afterHiding_IngredientsTable_Supplier_Col},
