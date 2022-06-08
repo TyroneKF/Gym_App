@@ -16,6 +16,7 @@ import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Ingredients_Info.Edit_
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class Meal_Plan_Screen extends JPanel
 {
@@ -122,10 +123,10 @@ public class Meal_Plan_Screen extends JPanel
                                                                   
                 """;
 
-        LinkedHashMap<String, String> tableInitilization = new LinkedHashMap<>();
-        tableInitilization.put("data", sql3);
+        LinkedHashMap<String, String> tableInitialization = new LinkedHashMap<>();
+        tableInitialization.put("data", sql3);
 
-        db = new MyJDBC("root", "password", databaseName, tableInitilization);
+        db = new MyJDBC("root", "password", databaseName, tableInitialization);
 
 
         if (!(db.isDatabaseConnected()))
@@ -273,7 +274,7 @@ public class Meal_Plan_Screen extends JPanel
                                          
                      """, tempPlanID);
 
-            String query16 = String.format(" ALTER TABLE temp DROP COLUMN Meal_Name, DROP COLUMN Meal_Name2;");
+            String query16 = String.format("ALTER TABLE temp DROP COLUMN Meal_Name, DROP COLUMN Meal_Name2;");
             String query17 = String.format("ALTER TABLE temp MODIFY MEALID INT AFTER Ingredients_Index;");
 
             String query18 = String.format("INSERT INTO ingredients_in_meal SELECT * FROM temp;");
@@ -1205,21 +1206,49 @@ public class Meal_Plan_Screen extends JPanel
 
     private boolean transferTargets(int fromPlan, int toPlan, boolean showConfirmMsg)
     {
-        String query000 = String.format("DELETE FROM macros_Per_Pound_And_Limits WHERE PLANID =%s;", toPlan);
+        //####################################
+        // Mysql Transferring Data
+        //####################################
+        String query00 = String.format("DELETE FROM macros_Per_Pound_And_Limits WHERE PlanID =%s;", toPlan);
         String query01 = String.format("DROP TABLE IF EXISTS temp_Macros;");
-        String query02 = String.format(" CREATE table temp_Macros AS SELECT * FROM macros_Per_Pound_And_Limits WHERE PLANID = %s;", fromPlan);
-        String query03 = String.format(" ALTER TABLE temp_Macros DROP COLUMN current_Weight_In_Pounds;");
+        String query02 = String.format("CREATE table temp_Macros AS SELECT * FROM macros_Per_Pound_And_Limits WHERE PlanID = %s;", fromPlan);
+        String query03 = String.format("ALTER TABLE temp_Macros DROP COLUMN current_Weight_In_Pounds;");
         String query04 = String.format("UPDATE temp_Macros SET PlanID = %s;", toPlan);
-        String query05 = String.format("""
-                 INSERT INTO macros_Per_Pound_And_Limits
-                (planID, current_Weight_KG, BodyFatPercentage, Protein_PerPound, Carbohydrates_PerPound, Fibre, Fats_PerPound, Saturated_Fat_Limit,
-                Salt_LIMIT, Water_Target, Additional_Calories)
-                                    
-                SELECT * FROM temp_Macros;""");
 
-        String query06 = String.format(" DROP TABLE IF EXISTS temp_Macros;");
+        //####################################
+        // Gathering Table Columns
+        //####################################
 
-        if (!(db.uploadData_Batch_Altogether(new String[]{query000, query01, query02, query03, query04, query05, query06})))
+        ArrayList<String> columnsToAvoid = new ArrayList<>(List.of("current_Weight_In_Pounds"));
+        String[] macrosColumns = db.getColumnNames("macros_Per_Pound_And_Limits");
+
+        String query05 = "INSERT INTO macros_Per_Pound_And_Limits \n(";
+        int listSize = macrosColumns.length;
+
+        for (int i = 0; i <= listSize - 1; i++)
+        {
+            String colToAdd = columnsToAvoid.contains(macrosColumns[i]) ? "" : String.format("\n\t%s", macrosColumns[i]);
+
+            if (i == listSize - 1)
+            {
+                query05 += String.format("%s \n) \nSELECT * FROM temp_Macros;", colToAdd);
+                break;
+            }
+
+            query05 = !colToAdd.equals("") ? String.format("%s %s,", query05, colToAdd) : query05;
+        }
+
+        System.out.printf("\n#################### \n%s", query05);
+
+        //####################################
+
+        String query06 = String.format("DROP TABLE IF EXISTS temp_Macros;");
+
+        //####################################
+        // Perform Upload
+        //####################################
+
+        if (!(db.uploadData_Batch_Altogether(new String[]{query00, query01, query02, query03, query04, query05, query06})))
         {
             JOptionPane.showMessageDialog(null, "\n\nCannot Transfer Targets");
             return false;
