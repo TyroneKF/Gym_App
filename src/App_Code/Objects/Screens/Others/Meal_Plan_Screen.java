@@ -25,7 +25,7 @@ public class Meal_Plan_Screen extends JPanel
 
     //#################################################################################################################
 
-    private String databaseName = "gymapp9 ";
+    private String databaseName = "gymapp10";
     private String name = databaseName;
     //########################################################
     // Objects
