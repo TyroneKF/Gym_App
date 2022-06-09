@@ -1000,7 +1000,8 @@ public class Edit_Ingredients_Screen extends JFrame
                             }
                             catch (Exception e)
                             {
-                                errorTxt += String.format("\n\n  ' %s ' on Row: %s,  must be an Integer value which is: 0<= value <=100 !", ingredientFormLabel, row + 1); errorTxt += String.format("\n\n  ' %s ' on Row: %s,  must be an Integer value which is: 0<= value <=100 !", ingredientFormLabel, row + 1);
+                                errorTxt += String.format("\n\n  ' %s ' on Row: %s,  must be an Integer value which is: 0<= value <=100 !", ingredientFormLabel, row + 1);
+                                errorTxt += String.format("\n\n  ' %s ' on Row: %s,  must be an Integer value which is: 0<= value <=100 !", ingredientFormLabel, row + 1);
                             }
                             continue;
                         }
@@ -2513,12 +2514,6 @@ public class Edit_Ingredients_Screen extends JFrame
 
                         if (pos == getIngredientNameObjectIndex())
                         {
-                            String ingredientName_Txt = ((JTextField) comp).getText();
-
-                            if (doesStringContainCharacters(ingredientName_Txt))
-                            {
-                                errorTxt += String.format("\n\n  Ingredient named %s can only contain alphabet character! Symbols, numbers aren't allowed in the ingredient name!", ingredientName_Txt);
-                            }
                             continue;
                         }
 
@@ -2538,20 +2533,13 @@ public class Edit_Ingredients_Screen extends JFrame
 
                 if (!(ingredientName_Txt.equals("")))
                 {
-                    ingredientName_Txt = removeSpaceAndHiddenChars(ingredientName_Txt);
-                    if (doesStringContainCharacters(ingredientName_Txt))
-                    {
-                        errorTxt += String.format("\n\n  Ingredient named %s can only contain alphabet character! Symbols, numbers aren't allowed in the ingredient name!", ingredientName_Txt);
-                    }
-                    else
-                    {
-                        String query = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Name = '%s' AND IngredientID != %s;", ingredientName_Txt, selectedIngredientID);
+                    String query = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Name = '%s' AND IngredientID != %s;", ingredientName_Txt, selectedIngredientID);
 
-                        if (db.getSingleColumnQuery(query) != null)
-                        {
-                            errorTxt += String.format("\n\n  Ingredient named %s already exists within the database!", ingredientName_Txt);
-                        }
+                    if (db.getSingleColumnQuery(query) != null)
+                    {
+                        errorTxt += String.format("\n\n  Ingredient named %s already exists within the database!", ingredientName_Txt);
                     }
+
                 }
 
                 //####################################################
