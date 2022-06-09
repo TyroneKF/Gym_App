@@ -551,10 +551,10 @@ public class Edit_Ingredients_Screen extends JFrame
                 put("Ingredient Name", new Triplet<String, String, String>("food_name", "Ingredient_Name", "String"));
                 put("Ingredient Type", new Triplet<String, String, String>(null, "Ingredient_Type_ID", "Integer"));
                 put("Based_On_Quantity", new Triplet<String, String, String>("serving_weight_grams", "Based_On_Quantity", "Double"));
+                put("Glycemic Index", new Triplet<String, String, String>(null, "Glycemic_Index", "Double"));
                 put("Protein", new Triplet<String, String, String>("nf_protein", "Protein", "Double"));
                 put("Carbohydrates", new Triplet<String, String, String>("nf_total_carbohydrate", "Carbohydrates", "Double"));
                 put("Sugars Of Carbs", new Triplet<String, String, String>("nf_sugars", "Sugars_Of_Carbs", "Double"));
-                put("Glycemic Index", new Triplet<String, String, String>(null, "Glycemic_Index", "Double"));
                 put("Fibre", new Triplet<String, String, String>("nf_dietary_fiber", "Fibre", "Double"));
                 put("Fat", new Triplet<String, String, String>("nf_total_fat", "Fat", "Double"));
                 put("Saturated Fat", new Triplet<String, String, String>("nf_saturated_fat", "Saturated_Fat", "Double"));
@@ -983,22 +983,24 @@ public class Edit_Ingredients_Screen extends JFrame
 
                         if (row == ingredientNameObjectIndex)
                         {
-                            System.out.printf("\n\nIngredientName value: ''%s''", value);
-                            ingredientName_Txt = value;
-                            if (doesStringContainCharacters(value))
-                            {
-                                errorTxt += String.format("\n\n  ' %s ' on Row: %s,  can only contain alphabet character! Symbols, numbers aren't allowed in the ingredient name!", ingredientFormLabel, row + 1, value);
-                            }
+
                             continue;
                         }
 
                         if (row == glycemicObjectIndex)
                         {
-                            Integer intValue = Integer.valueOf(value);
-
-                            if (intValue > 100 || intValue < 0)
+                            try
                             {
-                                errorTxt += String.format("\n\n  ' %s ' on Row: %s,  must be an Integer value which is: 0<= value <=100 !", ingredientFormLabel, row + 1);
+                                int intValue = Integer.valueOf(value);
+
+                                if (intValue > 100 || intValue < 0)
+                                {
+                                    errorTxt += String.format("\n\n  ' %s ' on Row: %s,  must be an Integer value which is: 0<= value <=100 !", ingredientFormLabel, row + 1);
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                errorTxt += String.format("\n\n  ' %s ' on Row: %s,  must be an Integer value which is: 0<= value <=100 !", ingredientFormLabel, row + 1); errorTxt += String.format("\n\n  ' %s ' on Row: %s,  must be an Integer value which is: 0<= value <=100 !", ingredientFormLabel, row + 1);
                             }
                             continue;
                         }
