@@ -362,14 +362,7 @@ INSERT INTO macros_Per_Pound_And_Limits
 (planID, current_Weight_KG, BodyFatPercentage, Protein_PerPound, Carbohydrates_PerPound, Fibre, Fats_PerPound, Saturated_Fat_Limit,
  Salt_LIMIT, Water_Target, Liquid_Target, Additional_Calories) VALUES
 
-(2, 102.5, 13, 1, 2, 30, 0.4, 30, 30, 5000, 0, 400 );
-
--- #####################################################
--- meals Database Insert Statements
--- #####################################################
-
-INSERT INTO meals (PlanID, Meal_Name) VALUES
-(2,'Full Meal');
+(2, 102.5, 13, 1, 2, 30, 0.4, 30, 30, 5000, 0, 400);
 
 -- #####################################################
 -- ingredientTypes  Insert Statements
@@ -378,17 +371,25 @@ INSERT INTO ingredientTypes (Ingredient_Type_Name) VALUES
 
 ('None Of The Above'),
 ('UnAssigned'),
-('Vegan Vitamin Powders'),
-('Sauce'),
+
 ('Breads'),
-('Cereals'),
-('Rice'),
-('Pasta'),
-('Noodles'),
-('Vegetables'),
+('Cake'), ('Cereals'), ('Cereal Bars'), ('Cheese'), ('Chocolate'),
+('Desserts'),
+('Eggs'),
+('Fish'), ('Frozen Fruit'), ('Frozen Vegetables'), ('Fruit'), ('Fruit Juice'),
+('Grains & Legumes'), 
+('Juice'), 
+('Lean Meat'), ('Liquids'),
+('Meat'), ('Milk'),
+('Noodles'), ('Nuts & Seeds'),
 ('Other Grains'),
-('Grains & Legumes'), ('Fruit'), ('Milk'), ('Potatoes'), ('Smoothie'), ('Yoghurt'), ('Cheese'), ('Lean Meat'), (' Fish'), ('Poultry'), ('Eggs'),
-('Cereal Bars'), ('Frozen Fruit'), ('Frozen Vegetables'), ('Juice'), ('Meat'), ('Nuts & Seeds'), ('Fruit Juice'), ('Protein Powder');
+('Pasta'), ('Plant Milk'), ('Poultry'), ('Potatoes'), ('Protein Powder'),
+('Rice'),
+('Sauce'), ('Smoothie'), 
+('Vegan Vitamin Powders'), ('Vegan Milk'), ('Vegetables'), ('Vitamins'),
+('Water'), ('Whole Wheat'),
+('Yoghurt');
+
 
 -- #####################################################
 -- ingredients_info  Insert Statements
@@ -400,10 +401,10 @@ Sugars_Of_Carbs, Fibre, Fat, Saturated_Fat, Salt, Water_Content, Liquid_Content,
 
 VALUES
 ('Grams', 'None Of The Above', 1, 0,0,0,0,0,0,0,0,0,0,0,0),
-( 'Grams', 'Carrot', 10, 100, 0.90,16, 10.00, 4.70, 2.80, 0.20, 0.0, 69.00, 0.00,0, 41.00),
-( 'Grams', 'Sweet Potato', 14, 100, 1.60, 54, 20.00,4.20,3.00, 0.10, 0.0, 55.00, 0.00,0, 86.00),
-( 'Grams', 'Pasta', 7, 114, 14.8, 55, 86.00,3.00,3.6, 1.7, 0.3, 6.80, 0.00, 0, 422.00);
-
+('Litres', 'Water', 35, 100,0,0,0,0,0,0,0,0,0,100,100),
+('Grams', 'Carrot', 33, 100, 71, 0.90, 10.00, 4.70, 2.80, 0.20, 0.0, 0.69, 0.00, 0, 41.00),
+('Grams', 'Sweet Potato', 26, 100, 54, 1.60, 20.00, 4.20, 3.00, 0.10, 0.0, 0.55, 0,0, 86.00),
+('Grams', 'Pasta', 23, 100, 52.5, 5, 25, 0, 0, 1.1, 0.2, 0.06, 0, 0 , 131);
 
 -- #####################################################
 -- stores Insert Statements
@@ -413,41 +414,14 @@ INSERT INTO stores
 (Store_Name)
 
 VALUES
-('No Shop'),('ASDA'), ('Sainsbury'), ('Morisssons'), ('Aldi'), ('Amazon'),
-('Iceland'), ('Lidl'), ('Muscle Food'), ('MyProtein'), ('Vivo Life');
 
+('No Shop'),
 
--- #####################################################
--- ingredientInShops  Insert Statements
--- #####################################################
-INSERT INTO ingredientInShops
-(IngredientID, Volume_Per_Unit, Cost_Per_Unit, StoreID)
-
-VALUES
-
-(1, 0.00, 0.00, 1),
-
-(2, 1000.00, 0.43, 2),
-(2, 1000.00, 0.5, 3),
-(2, 1000.00, 0.5, 4),
-
-(3, 1000.00, 0.92, 2),
-(3, 1000.00, 0.95, 3);
-
-
-
--- #####################################################
--- ingredients_in_meal  Insert Statements
--- #####################################################
-
-INSERT INTO ingredients_in_meal
-(MealID, PlanID, IngredientID, Quantity, PDID)
-
-VALUES
-
-(1, 2, 1, 20.00, 1),
-(1, 2, 2, 20.00, 2);
-
+('Aldi'), ('Amazon'), ('ASDA'), 
+('Iceland'), ('Lidl'),
+('Morisssons'), ('Muscle Food'), ('MyProtein'), 
+('Sainsbury'), 
+('Vivo Life');
 
 --#################################################################################################
 --#################################################################################################
