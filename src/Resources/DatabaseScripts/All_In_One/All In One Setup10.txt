@@ -396,15 +396,15 @@ INSERT INTO ingredientTypes (Ingredient_Type_Name) VALUES
 -- #####################################################
 
 INSERT INTO ingredients_info
-(Measurement, Ingredient_Name, Ingredient_Type_ID, Based_On_Quantity,  Protein, Glycemic_Index, Carbohydrates,
+(Measurement, Ingredient_Name, Ingredient_Type_ID, Based_On_Quantity, Glycemic_Index,  Protein, Carbohydrates,
 Sugars_Of_Carbs, Fibre, Fat, Saturated_Fat, Salt, Water_Content, Liquid_Content, Calories)
 
 VALUES
 ('Grams', 'None Of The Above', 1, 0,0,0,0,0,0,0,0,0,0,0,0),
-('Litres', 'Water', 35, 100,0,0,0,0,0,0,0,0,0,100,100),
-('Grams', 'Carrot', 33, 100, 71, 0.90, 10.00, 4.70, 2.80, 0.20, 0.0, 0.69, 0.00, 0, 41.00),
-('Grams', 'Sweet Potato', 26, 100, 54, 1.60, 20.00, 4.20, 3.00, 0.10, 0.0, 0.55, 0,0, 86.00),
-('Grams', 'Pasta', 23, 100, 52.5, 5, 25, 0, 0, 1.1, 0.2, 0.06, 0, 0 , 131);
+('Litres', 'Water', 37, 100,0,0,0,0,0,0,0,0,0,100,100),
+('Grams', 'Carrot', 35, 100, 71, 0.90, 10.00, 4.70, 2.80, 0.20, 0.0, 0.69, 0.00, 0, 41.00),
+('Grams', 'Sweet Potato', 28, 100, 54, 1.60, 20.00, 4.20, 3.00, 0.10, 0.0, 0.55, 0,0, 86.00),
+('Grams', 'Pasta', 25, 100, 52.5, 5, 25, 0, 0, 1.1, 0.2, 0.06, 0, 0 , 131);
 
 -- #####################################################
 -- stores Insert Statements
