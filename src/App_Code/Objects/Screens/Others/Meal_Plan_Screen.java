@@ -11,7 +11,7 @@ import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
-import App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Parent_Edit_Ingredients_Screen;
+import App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Parent_Ingredients_Info_Screen;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,7 +39,7 @@ public class Meal_Plan_Screen extends JPanel
 
     private MyJDBC db;
     private Macros_Targets_Screen macrosTargets_Screen = null;
-    private Parent_Edit_Ingredients_Screen addIngredientsScreen = null;
+    private Parent_Ingredients_Info_Screen ingredientsInfoScreen = null;
 
     private IngredientsTable jTableBeingAdded;
     private ArrayList<IngredientsTable> listOfJTables = new ArrayList<>();
@@ -456,9 +456,9 @@ public class Meal_Plan_Screen extends JPanel
                 {
                     macrosTargets_Screen.closeeWindow();
                 }
-                if (addIngredientsScreen != null)
+                if (ingredientsInfoScreen != null)
                 {
-                    addIngredientsScreen.closeWindow();
+                    ingredientsInfoScreen.closeWindow();
                 }
             }
         });
@@ -1144,17 +1144,17 @@ public class Meal_Plan_Screen extends JPanel
             return;
         }
 
-        if (addIngredientsScreen != null)
+        if (ingredientsInfoScreen != null)
         {
-            addIngredientsScreen.makeFrameVisible();
+            ingredientsInfoScreen.makeFrameVisible();
             return;
         }
-        addIngredientsScreen = new Parent_Edit_Ingredients_Screen(db, this, planID, tempPlanID, planName);
+        ingredientsInfoScreen = new Parent_Ingredients_Info_Screen(db, this, planID, tempPlanID, planName);
     }
 
     public void remove_addIngredients_Screen()
     {
-        addIngredientsScreen = null;
+        ingredientsInfoScreen = null;
     }
 
     //#####################################
