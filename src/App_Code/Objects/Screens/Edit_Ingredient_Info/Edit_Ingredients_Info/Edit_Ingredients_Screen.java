@@ -98,7 +98,7 @@ public class Edit_Ingredients_Screen extends JFrame
                     public void windowClosing(WindowEvent windowEvent)
                     {
                         closeWindowEvent();
-                        mealPlanScreen.updateIngredientsInfo(updateIngredientInfo);
+                        mealPlanScreen.updateIngredientsNameAndTypesInJTables(updateIngredientInfo);
                     }
                 });
 
@@ -333,7 +333,7 @@ public class Edit_Ingredients_Screen extends JFrame
 
                 if (updateBothForms(ingredientsForm.get_IngredientsForm_UpdateString(null), shopForm.get_ShopForm_UpdateString()))
                 {
-                    updateIngredientInfo = true;
+                    setUpdateIngredientInfo(true);
                     JOptionPane.showMessageDialog(mealPlanScreen, "The ingredient updates won't appear on the mealPlan screen until this window is closed!");
 
                     //#####################################
@@ -2258,7 +2258,7 @@ public class Edit_Ingredients_Screen extends JFrame
                         JOptionPane.showMessageDialog(mealPlanScreen, String.format("Successfully Deleted '%s' From DB!", selectedIngredientName));
                         addOrDeleteIngredientFromMap("delete", selected_IngredientType_JComboItem, selectedIngredientName); // delete ingredient
                         refreshInterface(true, true);
-                        updateIngredientInfo = true;
+                        setUpdateIngredientInfo(true);
                     }
                     else
                     {
@@ -2373,7 +2373,7 @@ public class Edit_Ingredients_Screen extends JFrame
 
                         if ((!currentIngredientName.equals(previousIngredientName) || (!currentIngredientType.equals(previousIngredientType))))
                         {
-                            updateIngredientInfo = true;
+                            setUpdateIngredientInfo(true);
                             // if there is an error trying to add or remove ingredientType throw an error
                             if (!addOrDeleteIngredientFromMap("delete", previousIngredientType, previousIngredientName) // remove old info ingredient
                                     || !addOrDeleteIngredientFromMap("add", currentIngredientType, currentIngredientName))// add new info ingredient
@@ -3026,6 +3026,12 @@ public class Edit_Ingredients_Screen extends JFrame
         }
         return false;
     }
+    
+    private void setUpdateIngredientInfo(boolean status)
+    {
+        updateIngredientInfo = status;
+    }
+        
 
     //##################################################################################################################
     // General Methods

@@ -1030,66 +1030,79 @@ public class Meal_Plan_Screen extends JPanel
             }
         }
 
-        //######################################
-        // Creating SQL Statements For Delete
-        //######################################
-        String exceptConditions = "(";
-        String condition = "MealID";
-
-        int size = mealsInPlanList.size();
-        // delete from mysql.user where (user!='1' AND user!='2');
-        for (int i = 0; i < size; i++)
+        if(mealsInPlanList.size() >0)
         {
-            if (i > 0)
+            //######################################
+            // Creating SQL Statements For Delete
+            //######################################
+            String exceptConditions = "(";
+            String condition = "MealID";
+
+            int size = mealsInPlanList.size();
+            // delete from mysql.user where (user!='1' AND user!='2');
+            for (int i = 0; i < size; i++)
             {
-                exceptConditions += String.format(" AND ");
+                if (i > 0)
+                {
+                    exceptConditions += String.format(" AND ");
+                }
+                exceptConditions += String.format("%s!='%s'", condition, mealsInPlanList.get(i));
+                if (i == size - 1)
+                {
+                    exceptConditions += ")";
+                }
             }
-            exceptConditions += String.format("%s!='%s'", condition, mealsInPlanList.get(i));
-            if (i == size - 1)
+
+            String deleteIngredients = String.format("DELETE FROM  ingredients_in_meal WHERE %s;", exceptConditions);
+            String deleteMeals = String.format("DELETE FROM  meals WHERE %s", exceptConditions);
+
+            System.out.printf("\n\n#################################################\n\n%s \n%s", deleteIngredients, deleteMeals);
+
+            //##########################################################
+            // If Delete Statements Successful
+            //###########################################################
+
+            if (!(db.uploadData_Batch_Altogether(new String[]{deleteIngredients, deleteMeals})))
             {
-                exceptConditions += ")";
+                JOptionPane.showMessageDialog(frame, "Unable Save Plan To Database");
+                return;
+            }
+
+            if (showMsg)
+            {
+                JOptionPane.showMessageDialog(frame, "Meals Successful Saved!!");
             }
         }
 
-        String deleteIngredients = String.format("DELETE FROM  ingredients_in_meal WHERE %s;", exceptConditions);
-        String deleteMeals = String.format("DELETE FROM  meals WHERE %s", exceptConditions);
+        //######################################
+        /**
+         * If Temp Plan has no meals delete all
+         * the meal in the real plan
+         */
+        //######################################
 
-        //##########################################################
-        // If Delete Statements Successful
-        //###########################################################
 
-        if (!(db.uploadData_Batch_Altogether(new String[]{deleteIngredients, deleteMeals})))
-        {
-            JOptionPane.showMessageDialog(frame, "Unable Save Plan To Database");
-            return;
-        }
-
-        if (showMsg)
-        {
-            JOptionPane.showMessageDialog(frame, "Meals Successful Saved!!");
-        }
     }
 
-    public void updateIngredientsInfo(boolean ingredientsAddedOrRemove)
+    public void updateIngredientsNameAndTypesInJTables(boolean ingredientsAddedOrRemove)
     {
-        //#####################################
-        // Save Plan & Refresh Plan
-        //#####################################
-        savePlanData(false, false); // Save Plan
-        refreshPlan(false); // Refresh Plan
-
-        //#####################################
-        // Update ingredients Named if needed
-        //#####################################
         if (ingredientsAddedOrRemove)
         {
+            //#####################################
+            // Save Plan & Refresh Plan
+            //#####################################
+            savePlanData(false, false); // Save Plan
+            refreshPlan(false); // Refresh Plan
+
+            //#####################################
+            // Update ingredients Named if needed
+            //#####################################
             System.out.printf("\n\nUpdating Ingredient Info");
             for (IngredientsTable ingredientsTable : listOfJTables)
             {
                 ingredientsTable.updateMapIngredientsTypesAndNames();
             }
         }
-
     }
 
     private void refreshMacroTargets()
