@@ -1,4 +1,4 @@
-package App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types;
+package App_Code.Objects.Screens.Ingredient_Info.Edit_Stores_And_Types;
 
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
@@ -6,7 +6,7 @@ import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Gui_Objects.JTextFieldLimit;
-import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Ingredients_Info.Edit_Ingredients_Screen;
+import App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Parent_Edit_Ingredients_Screen;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,7 +27,7 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
     protected MyJDBC db;
     protected JComboBox jComboBox;
     protected Collection<String> jcomboBoxList;
-    protected Edit_Ingredients_Screen add_or_edit_ingredients_screen;
+    protected Parent_Edit_Ingredients_Screen add_or_Parent_edit_ingredients_screen;
     protected String collapsibleBTNTXT1 = "", collapsibleBTNTXT2 = "";
 
     protected EditScreen editScreen ;
@@ -37,10 +37,10 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
     {
     }
 
-    public Parent_For_Types_And_Stores_Screens(MyJDBC db, Edit_Ingredients_Screen _edit_ingredients_screen, Collection<String> jcomboBoxList)
+    public Parent_For_Types_And_Stores_Screens(MyJDBC db, Parent_Edit_Ingredients_Screen _Parent_edit_ingredients_screen, Collection<String> jcomboBoxList)
     {
         this.db = db;
-        this.add_or_edit_ingredients_screen = _edit_ingredients_screen;
+        this.add_or_Parent_edit_ingredients_screen = _Parent_edit_ingredients_screen;
         this.jcomboBoxList = jcomboBoxList;
 
         createInterface();

@@ -1,7 +1,7 @@
-package App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types;
+package App_Code.Objects.Screens.Ingredient_Info.Edit_Stores_And_Types;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
-import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Ingredients_Info.Edit_Ingredients_Screen;
+import App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Parent_Edit_Ingredients_Screen;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,10 +12,10 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
     protected String collapsibleBTNTXT1 = "Add Ingredients Type", collapsibleBTNTXT2 = "Edit Ingredients Type";
 
 
-    public Edit_Ingredients_Types_Screen(MyJDBC db, Edit_Ingredients_Screen add_or_edit_ingredients_screen, Collection<String> jcomboBoxList)
+    public Edit_Ingredients_Types_Screen(MyJDBC db, Parent_Edit_Ingredients_Screen add_or_Parent_edit_ingredients_screen, Collection<String> jcomboBoxList)
     {
         this.db = db;
-        this.add_or_edit_ingredients_screen = add_or_edit_ingredients_screen;
+        this.add_or_Parent_edit_ingredients_screen = add_or_Parent_edit_ingredients_screen;
         this.jcomboBoxList = jcomboBoxList;
 
         createInterface();
@@ -102,7 +102,7 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
         @Override
         protected void updateOtherScreens()
         {
-            add_or_edit_ingredients_screen.updateIngredientsFormTypeJComboBoxes();
+            add_or_Parent_edit_ingredients_screen.updateIngredientsFormTypeJComboBoxes();
         }
     }
 
@@ -157,12 +157,12 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
             //#################################################################
             // Update CreateForm ingredientsForm  Type JComboBoxes
             //##################################################################
-            add_or_edit_ingredients_screen.updateIngredientsFormTypeJComboBoxes();
+            add_or_Parent_edit_ingredients_screen.updateIngredientsFormTypeJComboBoxes();
 
             //#################################################################
             // Reset EditCreateForm
             //#################################################################
-            Edit_Ingredients_Screen.EditingCreateForm editingCreateForm = add_or_edit_ingredients_screen.getEditingCreateForm();
+            Parent_Edit_Ingredients_Screen.EditingCreateForm editingCreateForm = add_or_Parent_edit_ingredients_screen.getEditingCreateForm();
             editingCreateForm.refreshInterface(true, true);  // reset form`
 
             //###################################################################
@@ -170,14 +170,14 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
             //###################################################################
             if (itemDeleted)
             {
-                if (add_or_edit_ingredients_screen.changeKeyIngredientsTypesList("removeKey", null,  selectedItem)) // change key
+                if (add_or_Parent_edit_ingredients_screen.changeKeyIngredientsTypesList("removeKey", null,  selectedItem)) // change key
                 {
                     editingCreateForm.updateIngredientNamesToTypesJComboBox(); // update IngredientsTypeToNames JComboBox
                 }
             }
             else
             {
-                if (add_or_edit_ingredients_screen.changeKeyIngredientsTypesList("changeKeyName", jtextfieldTXT, selectedItem)) // change key
+                if (add_or_Parent_edit_ingredients_screen.changeKeyIngredientsTypesList("changeKeyName", jtextfieldTXT, selectedItem)) // change key
                 {
                     editingCreateForm.updateIngredientNamesToTypesJComboBox(); // update IngredientsTypeToNames JComboBox
                 }

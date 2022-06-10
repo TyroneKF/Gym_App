@@ -11,7 +11,7 @@ import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
-import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Ingredients_Info.Edit_Ingredients_Screen;
+import App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Parent_Edit_Ingredients_Screen;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,7 +39,7 @@ public class Meal_Plan_Screen extends JPanel
 
     private MyJDBC db;
     private Macros_Targets_Screen macrosTargets_Screen = null;
-    private Edit_Ingredients_Screen addIngredientsScreen = null;
+    private Parent_Edit_Ingredients_Screen addIngredientsScreen = null;
 
     private IngredientsTable jTableBeingAdded;
     private ArrayList<IngredientsTable> listOfJTables = new ArrayList<>();
@@ -1149,7 +1149,7 @@ public class Meal_Plan_Screen extends JPanel
             addIngredientsScreen.makeFrameVisible();
             return;
         }
-        addIngredientsScreen = new Edit_Ingredients_Screen(db, this, planID, tempPlanID, planName);
+        addIngredientsScreen = new Parent_Edit_Ingredients_Screen(db, this, planID, tempPlanID, planName);
     }
 
     public void remove_addIngredients_Screen()

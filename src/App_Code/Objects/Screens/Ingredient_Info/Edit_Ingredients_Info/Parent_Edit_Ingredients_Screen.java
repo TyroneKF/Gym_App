@@ -1,4 +1,4 @@
-package App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Ingredients_Info;
+package App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info;
 
 import java.text.Collator;
 import java.util.regex.Matcher;
@@ -6,8 +6,9 @@ import java.util.regex.Pattern;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Gui_Objects.*;
-import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types.Edit_Ingredient_Stores_Screen;
-import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types.Edit_Ingredients_Types_Screen;
+import App_Code.Objects.Screens.Ingredient_Info.Edit_Stores_And_Types.Edit_Ingredient_Stores_Screen;
+import App_Code.Objects.Screens.Ingredient_Info.Edit_Stores_And_Types.Edit_Ingredients_Types_Screen;
+import App_Code.Objects.Screens.Ingredient_Info.SearchForFoodInfo;
 import App_Code.Objects.Screens.Others.Meal_Plan_Screen;
 import org.javatuples.Triplet;
 
@@ -23,7 +24,7 @@ import java.util.*;
 import java.util.HashMap;
 
 
-public class Edit_Ingredients_Screen extends JFrame
+public class Parent_Edit_Ingredients_Screen extends JFrame
 {
 
     private Collection<String> all_IngredientsTypeNamesList, all_StoresNamesList;
@@ -60,7 +61,7 @@ public class Edit_Ingredients_Screen extends JFrame
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Edit_Ingredients_Screen(MyJDBC db, Meal_Plan_Screen mealPlanScreen, int planID, int temp_PlanID, String planName)
+    public Parent_Edit_Ingredients_Screen(MyJDBC db, Meal_Plan_Screen mealPlanScreen, int planID, int temp_PlanID, String planName)
     {
         this.db = db;
         this.mealPlanScreen = mealPlanScreen;
@@ -764,7 +765,7 @@ public class Edit_Ingredients_Screen extends JFrame
                 return false;
             }
 
-            protected void updateForm_FoodNutritionalInfoFromSearch(LinkedHashMap<String, Object> foodInfo)//HELLO EDITED NOW
+            public void updateForm_FoodNutritionalInfoFromSearch(LinkedHashMap<String, Object> foodInfo)//HELLO EDITED NOW
             {
                 if (foodInfo != null)
                 {
