@@ -239,9 +239,8 @@ public class IngredientsTable extends JDBC_JTable
 
                 //HELLO REMOVE
 
-            String seperator = "#######################################################################";
-            System.out.printf("\n\n%s \n\nQuery: \n%s \n\nList Of Available Shops:\n\n%s", seperator, queryStore, storesResults);
-
+                String seperator = "#######################################################################";
+                System.out.printf("\n\n%s \n\nQuery: \n%s \n\nList Of Available Shops:\n\n%s", seperator, queryStore, storesResults);
 
 
                 if (storesResults != null)
@@ -1101,30 +1100,25 @@ public class IngredientsTable extends JDBC_JTable
 
         String[] query = new String[]{query2, query4};
 
-        if (db.uploadData_Batch_Altogether(query))
-        {
-            //##########################################
-            /**
-             * Hide JTable object & Collapsible OBJ
-             *
-             */
-            //##########################################
-
-            setVisibility(false); // hide collapsible Object
-
-
-            update_MacrosLeft_Table();// update macrosLeft table, due to number deductions from this meal
-
-            setObjectDeleted(true); // set this object as deleted
-
-            JOptionPane.showMessageDialog(null, "Table Successfully Deleted!");
-            return;
-        }
-        else
+        if (!db.uploadData_Batch_Altogether(query))
         {
             JOptionPane.showMessageDialog(null, "Table Un-Successfully Deleted! ");
-            return;
         }
+
+        //##########################################
+        // Hide JTable object & Collapsible OBJ
+        //##########################################
+
+        setVisibility(false); // hide collapsible Object
+
+
+        update_MacrosLeft_Table();// update macrosLeft table, due to number deductions from this meal
+
+        setObjectDeleted(true); // set this object as deleted
+
+        JOptionPane.showMessageDialog(null, "Table Successfully Deleted!");
+
+
     }
 
     @Override
@@ -1399,6 +1393,9 @@ public class IngredientsTable extends JDBC_JTable
     @Override
     public boolean saveDataAction(boolean showMessage)
     {
+        //######################################################################
+        // Add Meal To DB
+        //######################################################################
         if (!(getMealInDB()))     // If Meal Not In Original PlanID Add To PlanID
         {
             System.out.printf(String.format("\n\n\\Save Data Action() Meal Not in Original DB"));
@@ -1445,7 +1442,7 @@ public class IngredientsTable extends JDBC_JTable
             set_Meal_In_DB(true);
         }
 
-        //HELLO FOR OPTIMISATION THIS STEP SHOULDNT BE DONE IF THE STEP ABOVE IS DONE
+        //HELLO FOR OPTIMISATION THIS STEP SHOULDN'T BE DONE IF THE STEP ABOVE IS DONE
         //##########################################
         // Copying Temp-Plan Meal Data to Real Plan
         //##########################################
@@ -1482,43 +1479,20 @@ public class IngredientsTable extends JDBC_JTable
         }
 
         //##########################################
-        // Changing Ingredients In Meal Table Model
+        // Update Table Model
         //##########################################
-        String tableInQuery = "ingredients_in_meal_calculation";
-
-        String query = String.format("Select * from %s WHERE MealID = %s;", tableInQuery, tempPlan_Meal_ID);
-        Object[][] ingredients_Data = db.getTableDataObject(query, tableInQuery);
-
-        if (ingredients_Data != null)
+        if (!updateTableModelData())
         {
-            setTableModelData(ingredients_Data);
-        }
-        else
-        {
+            if (showMessage)
+            {
+                JOptionPane.showMessageDialog(null, "\n\nUnable to update table model!");
+            }
             return false;
         }
 
         //##########################################
-        // Changing Total  Ingredients Table Model
+        // Success Message
         //##########################################
-
-        if (total_Meal_Table != null)
-        {
-            // Setting totals tables Data model to new data
-            String totalTableQuery = String.format("SELECT *  FROM total_meal_view WHERE MealID = %s;", tempPlan_Meal_ID);
-
-            Object[][] totalTableData = db.getTableDataObject(totalTableQuery, "total_meal_view");
-            if (totalTableData != null)
-            {
-                total_Meal_Table.setTableModelData(totalTableData);
-            }
-            else
-            {
-                JOptionPane.showMessageDialog(null, "ERROR: \nUn-able to Update Totals Table!");
-                return false;
-            }
-        }
-
         if (showMessage)
         {
             JOptionPane.showMessageDialog(null, "Table Successfully Updated!");
@@ -1529,6 +1503,49 @@ public class IngredientsTable extends JDBC_JTable
     //##################################################################################################################
     // Update Table / Accessor Methods
     //##################################################################################################################
+
+    public boolean updateTableModelData()
+    {
+        //##########################################
+        // Changing Ingredients In Meal Table Model
+        //##########################################
+        String tableInQuery = "ingredients_in_meal_calculation";
+
+        String query = String.format("Select * from %s WHERE MealID = %s;", tableInQuery, tempPlan_Meal_ID);
+        Object[][] ingredients_Data = db.getTableDataObject(query, tableInQuery);
+
+        if (ingredients_Data == null)
+        {
+            System.out.printf("\n\nUnable to change table model: %s", getMealName());
+            return false;
+        }
+
+        setTableModelData(ingredients_Data);
+        //##########################################
+        // Changing Total  Ingredients Table Model
+        //##########################################
+
+        // Setting totals tables Data model to new data
+        String totalTableQuery = String.format("SELECT *  FROM total_meal_view WHERE MealID = %s;", tempPlan_Meal_ID);
+
+        Object[][] totalTableData = db.getTableDataObject(totalTableQuery, "total_meal_view");
+        if (totalTableData != null)
+        {
+            total_Meal_Table.setTableModelData(totalTableData);
+        }
+        else
+        {
+            System.out.printf("\n\nUnable to update total meal table for table: %s", getMealName());
+            return false;
+        }
+
+        return true;
+    }
+
+    public String getMealName()
+    {
+        return mealName;
+    }
 
     private void updateData()
     {

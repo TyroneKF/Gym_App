@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS macros_Per_Pound_And_Limits
 
 --#####################################################################
 
-CREATE  ViEW plan_Macro_Target_Calculations AS
+CREATE  VIEW plan_Macro_Target_Calculations AS
 
 SELECT P.PlanID, P.Plan_Name,
 C.Expected_Protein_Grams, C.Expected_Carbohydrates_Grams, C.Expected_Fibre_Grams, C.Expected_Fats_Grams, 
@@ -387,7 +387,7 @@ INSERT INTO ingredientTypes (Ingredient_Type_Name) VALUES
 ('Rice'),
 ('Sauce'), ('Smoothie'), 
 ('Vegan Vitamin Powders'), ('Vegan Milk'), ('Vegetables'), ('Vitamins'),
-('Water'), ('Whole Wheat'),
+('Whole Wheat'),
 ('Yoghurt');
 
 
@@ -396,15 +396,16 @@ INSERT INTO ingredientTypes (Ingredient_Type_Name) VALUES
 -- #####################################################
 
 INSERT INTO ingredients_info
-(Measurement, Ingredient_Name, Ingredient_Type_ID, Based_On_Quantity, Glycemic_Index,  Protein, Carbohydrates,
+(Measurement, Ingredient_Type_ID, Ingredient_Name,  Based_On_Quantity, Glycemic_Index,  Protein, Carbohydrates,
 Sugars_Of_Carbs, Fibre, Fat, Saturated_Fat, Salt, Water_Content, Liquid_Content, Calories)
 
 VALUES
-('Grams', 'None Of The Above', 1, 0,0,0,0,0,0,0,0,0,0,0,0),
-('Litres', 'Water', 37, 100,0,0,0,0,0,0,0,0,0,100,100),
-('Grams', 'Carrot', 35, 100, 71, 0.90, 10.00, 4.70, 2.80, 0.20, 0.0, 0.69, 0.00, 0, 41.00),
-('Grams', 'Sweet Potato', 28, 100, 54, 1.60, 20.00, 4.20, 3.00, 0.10, 0.0, 0.55, 0,0, 86.00),
-('Grams', 'Pasta', 25, 100, 52.5, 5, 25, 0, 0, 1.1, 0.2, 0.06, 0, 0 , 131);
+('Grams',  1,'None Of The Above', 0,0,0,0,0,0,0,0,0,0,0,0),
+('Litres', 19, 'Water', 100,0,0,0,0,0,0,0,0,100,100,0),
+
+('Grams',  35, 'Carrot',100, 71, 0.90, 10.00, 4.70, 2.80, 0.20, 0.0, 0.69, 0.00, 0, 41.00),
+('Grams', 28,'Sweet Potato',  100, 54, 1.60, 20.00, 4.20, 3.00, 0.10, 0.0, 0.55, 0,0, 86.00),
+('Grams', 25, 'Pasta', 100, 52.5, 5, 25, 0, 0, 1.1, 0.2, 0.06, 0, 0 , 131);
 
 -- #####################################################
 -- stores Insert Statements

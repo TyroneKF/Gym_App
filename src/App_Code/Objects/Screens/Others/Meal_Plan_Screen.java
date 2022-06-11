@@ -69,7 +69,7 @@ public class Meal_Plan_Screen extends JPanel
             original_IngredientsTable_Supplier_Col = 8,
             original_ingredientsTable_DeleteBTN_Col = 20,
 
-            afterHiding_IngredientsTable_IngredientIndexCol = 0,
+    afterHiding_IngredientsTable_IngredientIndexCol = 0,
             afterHiding_IngredientsTable_IngredientID = 1,
             afterHiding_IngredientsTable_Quantity_Col = 2,
             afterHiding_IngredientsTable_Type_Col = 3,
@@ -451,7 +451,9 @@ public class Meal_Plan_Screen extends JPanel
                 // ##############################################
                 // If targets have changed, save them?
                 // ##############################################
-                saveMacroTargets(true);
+                saveMacroTargets(false, false);
+
+                saveMealData(true, false);
                 if (macrosTargets_Screen != null)
                 {
                     macrosTargets_Screen.closeeWindow();
@@ -736,7 +738,7 @@ public class Meal_Plan_Screen extends JPanel
 
         save_btn.addActionListener(ae -> {
 
-            savePlanData(true, true);
+            saveMealData(true, true);
         });
 
         iconPanelInsert.add(save_btn);
@@ -780,7 +782,7 @@ public class Meal_Plan_Screen extends JPanel
 
         macro_Tagets_Btn.addActionListener(ae -> {
 
-            open_MacrosTagets_Screen();
+            open_MacrosTargets_Screen();
         });
 
         iconPanelInsert.add(macro_Tagets_Btn);
@@ -974,114 +976,170 @@ public class Meal_Plan_Screen extends JPanel
         refreshMacrosLeft();
     }
 
-    private void savePlanData(boolean askPermission, boolean showMsg)
+    private void saveMealData(boolean askPermission, boolean showMsg)
     {
+
+        // ##############################################################################
+        //
+        // ##############################################################################
+
+        // If no plan is selected exit
         if (!(get_IsPlanSelected()))
         {
             return;
         }
 
+        // if user rejects saving when asked  exit
         if (askPermission && !(areYouSure("Save Data")))
         {
             return;
         }
-        if (askPermission)
-        {
-            // ##############################################
-            // If targets have changed, save them?
-            // ##############################################
-            saveMacroTargets(true);
-        }
-        // ##############################################
 
-        ArrayList<Integer> mealsInPlanList = new ArrayList<>();
-
-        //######################################
-        /**
-         * Delete all from memory (list) that are
-         * self-recorded as deleted.
-         *
-         * And Collect All the Names of the meals
-         * that are still in the database
-         */
-        //######################################
+        // ###############################################################################
+        // Save Each Meal Table Model / Completely Delete Meal If meal already Deleted
+        // ##############################################################################
         Iterator<IngredientsTable> it = listOfJTables.iterator();
-        boolean error = false;
+
+        int listSize = listOfJTables.size(), errorCount = 0;
+
         while (it.hasNext())
         {
             IngredientsTable table = it.next();
+
+            // If objected is deleted, completely delete it then skip to next JTable
             if (table.getObjectDeleted())
             {
                 table.completely_Deleted_JTables();
                 it.remove();
                 continue;
             }
-            if (!(table.saveDataAction(false)))
-            {
-                error = true;
-            }
 
-            mealsInPlanList.add(table.getTempMealID());
-
-            // If Meal is not in DB,  it doesn't have a mealID so do not retrieve it as you cannot delete with an ID of NULL
-            if (table.getMealInDB())
+            if (!(table.updateTableModelData()))
             {
-                mealsInPlanList.add(table.getMealID());
+                errorCount++;
             }
         }
 
-        if(mealsInPlanList.size() >0)
+        // ##############################################################################
+        // If error occurred above exit
+        // ##############################################################################
+        if (errorCount > 0)
         {
-            //######################################
-            // Creating SQL Statements For Delete
-            //######################################
-            String exceptConditions = "(";
-            String condition = "MealID";
-
-            int size = mealsInPlanList.size();
-            // delete from mysql.user where (user!='1' AND user!='2');
-            for (int i = 0; i < size; i++)
+            if (showMsg)
             {
-                if (i > 0)
-                {
-                    exceptConditions += String.format(" AND ");
-                }
-                exceptConditions += String.format("%s!='%s'", condition, mealsInPlanList.get(i));
-                if (i == size - 1)
-                {
-                    exceptConditions += ")";
-                }
+                JOptionPane.showMessageDialog(frame, "\n\n Error \n1.) Unable to save meals in plan! Please retry again!");
             }
+            return;
+        }
 
-            String deleteIngredients = String.format("DELETE FROM  ingredients_in_meal WHERE %s;", exceptConditions);
-            String deleteMeals = String.format("DELETE FROM  meals WHERE %s", exceptConditions);
+        // ##############################################################################
+        // Save meal plan data in DB
+        // ##############################################################################
+        if (listSize == 0) // if there are no meals in the temp plan delete all meals / ingredients from original plan
+        {
+            System.out.println("\n1.)");
+            String query1 = String.format("DELETE FROM ingredients_in_meal  WHERE PlanID = %s;", planID);
+            String query2 = String.format("DELETE FROM meals  WHERE PlanID = %s;", planID);
+            String[] query_Temp_Data = new String[]{query1, query2};
 
-            System.out.printf("\n\n#################################################\n\n%s \n%s", deleteIngredients, deleteMeals);
-
-            //##########################################################
-            // If Delete Statements Successful
-            //###########################################################
-
-            if (!(db.uploadData_Batch_Altogether(new String[]{deleteIngredients, deleteMeals})))
+            if (db.uploadData_Batch_Altogether(query_Temp_Data))
             {
-                JOptionPane.showMessageDialog(frame, "Unable Save Plan To Database");
+                if (showMsg)
+                {
+                    JOptionPane.showMessageDialog(frame, "Meals Successful Saved!!");
+                }
                 return;
             }
-
+        }
+        else if ((transferMealIngredients(tempPlanID, planID))) // transfer meals and ingredients from temp plan to original plan
+        {
+            System.out.println("\n2.)");
             if (showMsg)
             {
                 JOptionPane.showMessageDialog(frame, "Meals Successful Saved!!");
             }
+            return;
         }
+        if (showMsg)
+        {
+            JOptionPane.showMessageDialog(frame, "\n\n Error \nUnable to save meals in plan! Please retry again!");
+        }
+    }
 
-        //######################################
-        /**
-         * If Temp Plan has no meals delete all
-         * the meal in the real plan
-         */
-        //######################################
+    private boolean transferMealIngredients(int fromPlanID, int toPlanID)
+    {
+        //####################################################
+        // Transferring this plans Meals  Info to Temp-Plan
+        //####################################################
+
+        // Delete Data from toPlanID
+        String query1 = String.format("DELETE FROM ingredients_in_meal  WHERE PlanID = %s;", toPlanID);
+        String query2 = String.format("DELETE FROM meals  WHERE PlanID = %s;", toPlanID);
 
 
+        // Create table to transfer meals from fromPlanID to toPlanID
+        String query3 = String.format("DROP TABLE IF EXISTS temp_meal;");
+        String query4 = String.format("CREATE table temp_meal AS SELECT * FROM meals WHERE PlanID = %s ORDER BY MealID;", fromPlanID);
+
+        String query5 = String.format("ALTER TABLE temp_meal MODIFY mealID INT;");
+        String query6 = String.format("UPDATE temp_meal SET MealID = NULL;");
+        String query7 = String.format("UPDATE temp_meal SET PlanID = %s;", toPlanID);
+        String query8 = String.format("INSERT INTO meals SELECT * FROM temp_meal;");
+        String query9 = String.format("DROP TABLE temp_meal;");
+
+        //####################################################
+        // Transferring this plans Ingredients to Temp-Plan
+        //####################################################
+
+        // Delete tables if they already exist
+        String query10 = String.format("DROP TABLE IF EXISTS temp_ingredients_in_meal;");
+        String query11 = String.format("DROP TABLE IF EXISTS temp;");
+
+        // Create Table to transfer ingredients from original plan to temp
+        String query12 = String.format(""" 
+                                    
+                CREATE table temp_ingredients_in_meal  AS
+                SELECT i.*, m.Meal_name
+                FROM ingredients_in_meal i, meals m                                                        
+                WHERE i.PlanID= %s AND i.mealID = m.mealID;
+                 
+                 """, fromPlanID);
+
+        String query13 = String.format("ALTER TABLE temp_ingredients_in_meal  DROP COLUMN mealID;");
+        String query14 = String.format("UPDATE temp_ingredients_in_meal  SET PlanID = %s;", toPlanID);
+        String query15 = String.format("""
+                CREATE table temp AS
+                                     
+                SELECT * FROM  temp_ingredients_in_meal temp
+                INNER JOIN
+                    (
+                      SELECT Meal_Name AS Meal_Name2, MealID
+                	  FROM meals
+                	  WHERE PlanID = %s
+                	  ORDER BY MEALID
+                	) as M
+                ON
+                    temp.Meal_Name = M.Meal_Name2;
+                                     
+                 """, toPlanID);
+
+        String query16 = String.format("ALTER TABLE temp DROP COLUMN Meal_Name, DROP COLUMN Meal_Name2;");
+        String query17 = String.format("ALTER TABLE temp MODIFY MealID INT AFTER Ingredients_Index;");
+
+        String query18 = String.format("INSERT INTO ingredients_in_meal SELECT * FROM temp;");
+
+        //####################################################
+        // Update
+        //####################################################
+        String[] query_Temp_Data = new String[]{query1, query2, query3, query4, query5, query6, query7, query8, query9, query10, query11, query12,
+                query13, query14, query15, query16, query17, query18, query10, query11};
+
+        if (!(db.uploadData_Batch_Altogether(query_Temp_Data)))
+        {
+            JOptionPane.showMessageDialog(null, "\n\nCannot Create Temporary Plan In DB to Allow Editing");
+            return false;
+        }
+        return true;
     }
 
     public void updateIngredientsNameAndTypesInJTables(boolean ingredientsAddedOrRemove)
@@ -1091,7 +1149,7 @@ public class Meal_Plan_Screen extends JPanel
             //#####################################
             // Save Plan & Refresh Plan
             //#####################################
-            savePlanData(false, false); // Save Plan
+            saveMealData(false, false); // Save Plan
             refreshPlan(false); // Refresh Plan
 
             //#####################################
@@ -1160,38 +1218,38 @@ public class Meal_Plan_Screen extends JPanel
     //#####################################
     //  Macro Targets  Screen Methods
     //#####################################
-    private void saveMacroTargets(boolean showUpdateMsg)
+    private void saveMacroTargets(boolean askPermission, boolean showUpdateMsg)
     {
         // ##############################################
-        // If targets have changed, save them?
+        // If targets haven't changed exit
         // ##############################################
-        if (getMacrosTargetsChanged())
+        if (!getMacrosTargetsChanged())
+        {
+            return;
+        }
+
+        // ################################################
+        // If askPermission as permission to save targets
+        // ################################################
+        if (askPermission)
         {
             int reply = JOptionPane.showConfirmDialog(frame, String.format("Would you like to save your MacroTarget  Changes Too?"),
                     "Save Macro Targets", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
             if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
             {
-                if (transferTargets(planID, tempPlanID, showUpdateMsg))
-                {
-                    macrosTargetsChanged(false);
-                    updateTargetsAndMacrosLeft();
-                    return;
-                }
+                return;
             }
-            else
-            {
-                if (transferTargets(tempPlanID, planID, showUpdateMsg))
-                {
-                    macrosTargetsChanged(false);
-                    updateTargetsAndMacrosLeft();
-                    return;
-                }
-            }
+        }
+
+        if (transferTargets(tempPlanID, planID, showUpdateMsg))
+        {
+            macrosTargetsChanged(false);
+            updateTargetsAndMacrosLeft();
         }
     }
 
-    private void open_MacrosTagets_Screen()
+    private void open_MacrosTargets_Screen()
     {
         if (!(get_IsPlanSelected()))
         {
@@ -1270,6 +1328,7 @@ public class Meal_Plan_Screen extends JPanel
         }
         return true;
     }
+
 
     //################################################################################################################
     //  Mutator Methods
