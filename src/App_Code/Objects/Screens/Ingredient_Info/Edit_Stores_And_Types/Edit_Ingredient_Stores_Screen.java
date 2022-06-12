@@ -1,9 +1,8 @@
-package App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types;
+package App_Code.Objects.Screens.Ingredient_Info.Edit_Stores_And_Types;
 
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
-import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Ingredients_Info.Edit_Ingredients_Screen;
-import App_Code.Objects.Screens.Edit_Ingredient_Info.Edit_Stores_And_Types.Parent_For_Types_And_Stores_Screens;
+import App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Parent_Ingredients_Info_Screen;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,10 +12,10 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
 {
     protected String collapsibleBTNTXT1 = "Add Suppliers", collapsibleBTNTXT2 = "Edit Suppliers";
 
-    public Edit_Ingredient_Stores_Screen(MyJDBC db, Edit_Ingredients_Screen add_or_edit_ingredients_screen, Collection<String> jcomboBoxList)
+    public Edit_Ingredient_Stores_Screen(MyJDBC db, Parent_Ingredients_Info_Screen add_or_Parent__ingredients_Info_screen, Collection<String> jcomboBoxList)
     {
         this.db = db;
-        this.add_or_edit_ingredients_screen = add_or_edit_ingredients_screen;
+        this.parentIngredientsScreen = add_or_Parent__ingredients_Info_screen;
         this.jcomboBoxList = jcomboBoxList;
 
         createInterface();
@@ -102,7 +101,7 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
         @Override
         protected void updateOtherScreens()
         {
-            add_or_edit_ingredients_screen.updateIngredientSuppliersJComboBoxes();
+            parentIngredientsScreen.updateIngredientSuppliersJComboBoxes();
         }
     }
 
@@ -186,7 +185,7 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
         @Override
         protected void updateOtherScreens()
         {
-            add_or_edit_ingredients_screen.updateIngredientSuppliersJComboBoxes();
+            parentIngredientsScreen.updateIngredientSuppliersJComboBoxes();
         }
     }
 }
