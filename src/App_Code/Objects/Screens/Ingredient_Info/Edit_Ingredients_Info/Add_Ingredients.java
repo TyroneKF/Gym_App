@@ -190,7 +190,7 @@ public class Add_Ingredients extends JPanel
         boolean errorFound = false;
 
         // ingredientsForm
-        if (!(ingredientsForm.validate_IngredientsForm(true)))
+        if (!(ingredientsForm.validate_IngredientsForm()))
         {
             errorFound = true;
         }
@@ -436,14 +436,16 @@ public class Add_Ingredients extends JPanel
 //                put("Potassium",  new Triplet<String, String, String>("nf_potassium", "", "Double"));
 
         }};
+        
+        protected int ingredientNameObjectIndex, ingredientTypeObjectIndex, glycemicObjectIndex, ingredientSaltObjectIndex, ingredientMeasurementObjectIndex;
 
-        protected int ingredientNameObjectIndex, ingredientTypeObjectIndex, glycemicObjectIndex;
+        protected JComboBox<String> ingredientsMeasure_JComboBox = new JComboBox(), ingredientsType_JComboBox = new JComboBox(), saltMeasurement_JComboBox = new JComboBox();
 
-        protected JComboBox ingredientsMeasure_JComboBox = new JComboBox();
+
         protected ArrayList<Component> ingredientsFormObjects = new ArrayList<>();
 
         private JPanel northPanel = new JPanel(new GridBagLayout());
-        private JComboBox<String> ingredientsType_JComboBox = new JComboBox();
+
 
         public IngredientsForm(Container parentContainer, String btnText, int btnWidth, int btnHeight)
         {
@@ -471,8 +473,19 @@ public class Add_Ingredients extends JPanel
                     found++;
                     glycemicObjectIndex = pos;
                 }
+                else if (key.equals("Ingredient Measurement In"))
+                {
+                    found++;
+                    ingredientMeasurementObjectIndex = pos;
+                }
 
-                if (found == 3)
+                else if (key.equals("Salt"))
+                {
+                    found++;
+                    ingredientSaltObjectIndex = pos;
+                }
+
+                if (found == 5)
                 {
                     break;
                 }
@@ -521,13 +534,14 @@ public class Add_Ingredients extends JPanel
             //#################################################################
 
             int lblSize = ingredientsFormLabelsMapsToValues.size();
-            JPanel inputArea = new JPanel(new GridLayout(lblSize, 2));
+            JPanel inputArea = new JPanel(new GridBagLayout());
 
             // for each label it is created into a JLabel
-            int pos = -1;
+            int xPos = -1, yPos = -1;
             for (String key : ingredientsFormLabelsMapsToValues.keySet())
             {
-                pos++;
+                yPos++;
+                xPos = -1;
                 //#########################################
                 //
                 //#########################################
@@ -536,7 +550,7 @@ public class Add_Ingredients extends JPanel
                 JComboBox comboBox = null;
 
                 //#########################################
-                // JLabel
+                // JLabel Column 1
                 //#########################################
 
                 String labelTXT = key + ":";
@@ -544,33 +558,59 @@ public class Add_Ingredients extends JPanel
                 JLabel label = new JLabel("    " + labelTXT);
                 label.setHorizontalAlignment(JLabel.LEFT);
                 label.setFont(new Font("Verdana", Font.BOLD, 14));
-                inputArea.add(label);
+
+                addToContainer(inputArea, label, xPos += 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+//                inputArea.add(label);
 
                 //#########################################
-                // JComboField
+                // JComboField Column 2
                 //#########################################
 
-                if (labelTXT.equals("Ingredient Measurement In:"))
+                if (yPos == ingredientMeasurementObjectIndex)
                 {
                     String ingredientMeassurements[] = {"Litres", "Grams"};
                     ingredientsMeasure_JComboBox = new JComboBox(ingredientMeassurements);
-                    inputArea.add(ingredientsMeasure_JComboBox);
+                    addToContainer(inputArea, ingredientsMeasure_JComboBox, xPos += 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
                     jcomboxBeingCreated = true;
                     comboBox = ingredientsMeasure_JComboBox;
+                    ingredientsFormObjects.add(comboBox);
                 }
-                else if (labelTXT.equals("Ingredient Type:"))
+                else if (yPos == ingredientTypeObjectIndex)
                 {
                     ingredientsType_JComboBox = new JComboBox();
                     reloadIngredientTypeJComboBox();
-                    inputArea.add(ingredientsType_JComboBox);
+                    addToContainer(inputArea, ingredientsType_JComboBox, xPos += 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
                     jcomboxBeingCreated = true;
                     comboBox = ingredientsType_JComboBox;
+                    ingredientsFormObjects.add(comboBox);
+                }
+                else if (yPos == ingredientSaltObjectIndex)
+                {
+                    // JPanel for salt JComboBox & JTextfield
+                    JPanel saltJPanelArea = new JPanel(new GridLayout(2, 1));
+
+                    // Creating & Adding JComboBox
+                    jcomboxBeingCreated = true;
+                    String[] saltMeasurements = {"mg", "g"};
+                    saltMeasurement_JComboBox = new JComboBox(saltMeasurements);
+                    saltJPanelArea.add(saltMeasurement_JComboBox);
+
+                    comboBox = saltMeasurement_JComboBox;
+//                    ingredientsFormObjects.add(comboBox);
+
+                    // Creating JTextfield & Adding JTextfield
+                    textField.setDocument(new JTextFieldLimit(charLimit));
+                    saltJPanelArea.add(textField);
+                    ingredientsFormObjects.add(textField);
+
+                    // Adding JPanel to GUI
+                    addToContainer(inputArea, saltJPanelArea, xPos += 1, yPos, 1, 1, 0.25, 0.25, "both", 0, 0);
                 }
 
                 // if a JComboBox is being created Centre JComboBox Items & Set Selected Item to 0
-                if (jcomboxBeingCreated && comboBox != null)
+                if (jcomboxBeingCreated)
                 {
                     // Centre JComboBox Item
                     DefaultListCellRenderer listRenderer = new DefaultListCellRenderer();
@@ -579,19 +619,16 @@ public class Add_Ingredients extends JPanel
 
                     // Set Selected Item To Nothing
                     comboBox.setSelectedIndex(-1);
-
-                    ingredientsFormObjects.add(comboBox);
-
                     continue;
                 }
 
                 //#########################################
-                // JTextFields
+                // JTextFields Column 2
                 //#########################################
                 if (labelTXT.equals("Ingredient Name:")) //Setting TextField limits
                 {
                     textField.setDocument(new JTextFieldLimit(255));
-                    ingredientNameObjectIndex = pos;
+                    ingredientNameObjectIndex = yPos;
                 }
                 else
                 {
@@ -599,7 +636,8 @@ public class Add_Ingredients extends JPanel
                 }
 
                 ingredientsFormObjects.add(textField);
-                inputArea.add(textField);
+//                inputArea.add(textField);
+                addToContainer(inputArea, textField, xPos += 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
             }
             mainJPanel.add(inputArea, BorderLayout.CENTER);
         }
@@ -634,7 +672,7 @@ public class Add_Ingredients extends JPanel
             return false;
         }
 
-        public void updateForm_FoodNutritionalInfoFromSearch(LinkedHashMap<String, Object> foodInfo)//HELLO EDITED NOW
+        public void update_IngredientForm_FromSearch(LinkedHashMap<String, Object> foodInfo)//HELLO EDITED NOW
         {
             if (foodInfo != null)
             {
@@ -795,9 +833,11 @@ public class Add_Ingredients extends JPanel
                     ((JTextField) comp).setText("");
                 }
             }
+
+            saltMeasurement_JComboBox.setSelectedIndex(-1);
         }
 
-        protected boolean validate_IngredientsForm(boolean checkIfItemIsInDB)//HELLO EDITED NOW
+        protected boolean validate_IngredientsForm()//HELLO EDITED NOW
         {
             if (tempPlanID == null && planID == null && planName == null)
             {
@@ -805,12 +845,11 @@ public class Add_Ingredients extends JPanel
                 return false;
             }
 
-            String errorTxt = "";
+            String errorTxt = "", ingredientName_Txt = "";
 
             //##############################
-            // Validation JTextFields
-            //##############################
-            String ingredientName_Txt = "";
+            // Validation Input Fields
+            //##############################            
 
             int row = -1;
             for (String ingredientFormLabel : ingredientsFormLabelsMapsToValues.keySet())
@@ -845,15 +884,12 @@ public class Add_Ingredients extends JPanel
                     }
 
                     //#######################################
-                        /*
-                         Check if the ingredientName contains any
-                         numbers or, characters
-                         */
+                    //
                     //#########################################
 
                     if (row == ingredientNameObjectIndex)
                     {
-
+                        ingredientName_Txt = value;
                         continue;
                     }
 
@@ -877,25 +913,45 @@ public class Add_Ingredients extends JPanel
                     }
 
                     //#########################################
+                    // Change salt value based on mg to g
+                    //#########################################
+                    else if (row == ingredientSaltObjectIndex)
+                    {
+
+                        if (saltMeasurement_JComboBox.getSelectedIndex() == -1)
+                        {
+                            errorTxt += String.format("\n\n  ' %s ' on Row: %s, an option for the measurement chosen for salt needs to be selected in the dropdown box!", ingredientFormLabel, row + 1);
+                            continue;
+                        }
+
+                        if (saltMeasurement_JComboBox.getSelectedItem().equals("mg"))
+                        {
+                            try
+                            {
+                                BigDecimal bdFromString = new BigDecimal(String.format("%s", value));
+                                BigDecimal result = bdFromString.divide(new BigDecimal("1000"), 2, RoundingMode.HALF_UP);
+
+                                value = String.format("%s", result);
+                            }
+                            catch (Exception e)
+                            {
+                                System.out.printf("\n\nError! \nConverting Salt mg to g!");
+                            }
+                        }
+                    }
+
+                    //#########################################
                     // Do BigDecimal Processing
                     //#########################################
-                    errorTxt = convertToBigDecimal(value, errorTxt, ingredientFormLabel, row + 1, jTextField);
+
+                    errorTxt = convertToBigDecimal(value, errorTxt, ingredientFormLabel, row + 1, jTextField); // HELLO SHouldnt this be +=
                 }
             }
 
             //####################################################
-            //Check if IngredientName Already exists in DB
+            //Check if ingredient name in DB
             //####################################################
-            if (checkIfItemIsInDB && !(ingredientName_Txt.equals("")))
-            {
-                ingredientName_Txt = removeSpaceAndHiddenChars(ingredientName_Txt);
-                String query = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Name = '%s';", ingredientName_Txt);
-
-                if (db.getSingleColumnQuery(query) != null)
-                {
-                    errorTxt += String.format("\n\n  Ingredient named %s already exists within the database!", ingredientName_Txt);
-                }
-            }
+            errorTxt = extra_Validation_IngredientName(errorTxt, ingredientName_Txt);
 
             //####################################################
             //Check if any error were found & Process it
@@ -908,6 +964,35 @@ public class Add_Ingredients extends JPanel
 
             JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("\n\nPlease fix the following rows being; \n%s", errorTxt));
 
+            return false;
+        }
+
+        protected String extra_Validation_IngredientName(String errorTxt, String ingredientName)
+        {
+            //####################################################
+            //Check if IngredientName Already exists in DB
+            //####################################################
+            if ( ingredientName != null || !(ingredientName.equals("")))
+            {
+                if(checkIfIngredientNameInDB(ingredientName))
+                {
+                    errorTxt += String.format("\n\n  Ingredient named %s already exists within the database!", ingredientName);
+                }
+            }
+            return errorTxt;
+        }
+        
+        protected boolean checkIfIngredientNameInDB(String ingredientName)
+        {
+            ingredientName = removeSpaceAndHiddenChars(ingredientName);
+            String query = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Name = '%s';", ingredientName);
+
+            System.out.printf("\n\n%s", query);
+
+            if (db.getSingleColumnQuery(query) != null)
+            {
+                return true;
+            }
             return false;
         }
 

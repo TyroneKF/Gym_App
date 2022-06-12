@@ -536,7 +536,7 @@ public class SearchForFoodInfo extends CollapsibleJPanel
 
         resetFullDisplay();
 
-        ingredientsForm.updateForm_FoodNutritionalInfoFromSearch(foodInfo);
+        ingredientsForm.update_IngredientForm_FromSearch(foodInfo);
     }
 
     public void resetFullDisplay()

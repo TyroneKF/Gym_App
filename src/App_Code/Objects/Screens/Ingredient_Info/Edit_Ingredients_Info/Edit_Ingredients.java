@@ -214,7 +214,7 @@ public class Edit_Ingredients extends Add_Ingredients
 
         createForms(ingredientsForm, shopForm, searchForIngredientInfo);
 
-      
+
     }
 
     //#########################################################################
@@ -222,7 +222,7 @@ public class Edit_Ingredients extends Add_Ingredients
     //#########################################################################
 
     public void updateIngredientsTypeJComboBox()
-    {        
+    {
         ingredientsTypesJComboBox.removeAllItems(); // clearList
 
         TreeMap<String, Collection<String>> mapIngredientTypesToNames = parent.getMapIngredientTypesToNames();
@@ -675,7 +675,7 @@ public class Edit_Ingredients extends Add_Ingredients
             boolean errorFound = false;
 
             // ingredientsForm
-            if (!(ingredientsForm.validate_IngredientsForm(false)))
+            if (!(ingredientsForm.validate_IngredientsForm()))
             {
                 errorFound = true;
             }
@@ -802,101 +802,24 @@ public class Edit_Ingredients extends Add_Ingredients
         }
 
         @Override
-        protected boolean validate_IngredientsForm(boolean checkIfItemIsInDB)// HELLO Modify
+        protected String extra_Validation_IngredientName(String errorTxt, String makeIngredientName)
         {
-            if (tempPlanID == null && planID == null && planName == null)
+            if ( makeIngredientName != null || !(makeIngredientName.equals("")))
             {
-                JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Please Select A Plan First!");
-                return false;
-            }
+                makeIngredientName = removeSpaceAndHiddenChars(makeIngredientName);
+                String previousIngredientName = removeSpaceAndHiddenChars(selectedIngredientName);
 
-            String errorTxt = "";
+                System.out.printf("\n\nName 1: %s || Name2: %s", makeIngredientName, previousIngredientName);
 
-
-            //##############################
-            // Validation JTextFields
-            //##############################
-            int pos = -1;
-            for (String ingredientFormLabel : ingredientsFormLabelsMapsToValues.keySet())
-            {
-                pos++;
-                String value = "";
-                Component comp = ingredientsFormObjects.get(pos);
-
-                if (comp instanceof JComboBox)
+                if( ! ( previousIngredientName.equals(makeIngredientName) ))
                 {
-                    JComboBox comboBox = (JComboBox) comp;
-
-                    if (comboBox.getSelectedIndex() == -1) // if no item has been selected by JComboBox
+                    if(checkIfIngredientNameInDB(makeIngredientName))
                     {
-                        errorTxt += String.format("\n\n  ' %s ' on Row: %s, an option inside the dropdown menu must be selected", ingredientFormLabel, pos + 1);
+                        errorTxt += String.format("\n\n@@  Ingredient named %s already exists within the database!", makeIngredientName);
                     }
-                    continue;
-                }
-                else if (comp instanceof JTextField)
-                {
-                    JTextField jTextField = (JTextField) comp;
-                    value = jTextField.getText().trim();
-
-
-                    //#########################################
-                    // Check if JTextfield input is empty
-                    //#########################################
-                    if (value.equals(""))
-                    {
-                        errorTxt += String.format("\n\n  ' %s ' on Row: %s,  must have a value which is not ' NULL '!", ingredientFormLabel, pos + 1);
-                        continue;
-                    }
-
-                    //#######################################
-		                /*
-		                   Check if the ingredientName contains any
-		                   numbers or, characters
-		                */
-                    //#########################################
-
-                    if (pos == getIngredientNameObjectIndex())
-                    {
-                        continue;
-                    }
-
-                    //#########################################
-                    // Do BigDecimal Processing
-                    //#########################################
-                    errorTxt = convertToBigDecimal(value, errorTxt, ingredientFormLabel, pos + 1, jTextField);
                 }
             }
-
-            //####################################################
-            //Check if IngredientName Already exists in DB
-            //####################################################
-
-            JTextField ingredientName_JTxtF = (JTextField) ingredientsFormObjects.get(getIngredientNameObjectIndex());
-            String ingredientName_Txt = ingredientName_JTxtF.getText().trim();
-
-            if (!(ingredientName_Txt.equals("")))
-            {
-                String query = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Name = '%s' AND IngredientID != %s;", ingredientName_Txt, selectedIngredientID);
-
-                if (db.getSingleColumnQuery(query) != null)
-                {
-                    errorTxt += String.format("\n\n  Ingredient named %s already exists within the database!", ingredientName_Txt);
-                }
-
-            }
-
-            //####################################################
-            //Check if any error were found & Process it
-            //####################################################
-
-            if (errorTxt.length() == 0)
-            {
-                return true;
-            }
-
-            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("\n\nPlease fix the following rows being; \n%s", errorTxt));
-
-            return false;
+            return errorTxt;
         }
 
         private String mysqlGetIngredientInfo(String ingredientName)
