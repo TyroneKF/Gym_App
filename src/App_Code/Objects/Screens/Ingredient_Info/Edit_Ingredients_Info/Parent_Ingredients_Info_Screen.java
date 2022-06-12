@@ -307,7 +307,7 @@ public class Parent_Ingredients_Info_Screen extends JFrame
 
     public void closeWindowEvent()
     {
-        mealPlanScreen.remove_addIngredients_Screen();
+        mealPlanScreen.remove_Ingredients_Info_Screen();
     }
 
     public void closeWindow()
