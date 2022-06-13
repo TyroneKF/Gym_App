@@ -1397,8 +1397,7 @@ public class IngredientsTable extends JDBC_JTable
         }
     }
 
-    @Override
-    public boolean saveDataAction(boolean showMessage)
+    public boolean addMealToOriginalPlan(boolean showMsg)
     {
         //######################################################################
         // Add Meal To DB
@@ -1417,7 +1416,10 @@ public class IngredientsTable extends JDBC_JTable
             //#####################################
             if (!(db.uploadData_Batch_Altogether(new String[]{uploadQuery})))
             {
-                JOptionPane.showMessageDialog(null, "\n\nUnable To Create Meal In Original Plan!!");
+                if(showMsg)
+                {
+                    JOptionPane.showMessageDialog(null, "\n\nUnable To Create Meal In Original Plan!!");
+                }
                 return false;
             }
 
@@ -1433,7 +1435,10 @@ public class IngredientsTable extends JDBC_JTable
 
             if (orginalMealID_Result == null)
             {
-                JOptionPane.showMessageDialog(null, "\n\nUnable To Get MealID in Plan to Update Meal");
+                if(showMsg)
+                {
+                    JOptionPane.showMessageDialog(null, "\n\nUnable To Get MealID in Plan to Update Meal");
+                }
                 return false;
             }
 
@@ -1447,6 +1452,19 @@ public class IngredientsTable extends JDBC_JTable
             // Meal Successfully Added TO DB
             //##########################################
             set_Meal_In_DB(true);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean saveDataAction(boolean showMessage)
+    {
+        //######################################################################
+        // Add Meal To DB
+        //######################################################################
+        if (!(getMealInDB()))     // If Meal Not In Original PlanID Add To PlanID
+        {
+            addMealToOriginalPlan(true);
         }
 
         //HELLO FOR OPTIMISATION THIS STEP SHOULDN'T BE DONE IF THE STEP ABOVE IS DONE
@@ -1519,6 +1537,8 @@ public class IngredientsTable extends JDBC_JTable
         String tableInQuery = "ingredients_in_meal_calculation";
 
         String query = String.format("Select * from %s WHERE MealID = %s;", tableInQuery, tempPlan_Meal_ID);
+        System.out.printf("\n\n################################################### \nupdateTableModelData() \n%s", query);
+
         Object[][] ingredients_Data = db.getTableDataObject(query, tableInQuery);
 
         if (ingredients_Data == null)

@@ -236,7 +236,7 @@ public class Parent_Ingredients_Info_Screen extends JFrame
     }
 
     //FIX
-  /*  public JComboBox<String> getEdit_IngredientTypes_InPlan_JComboBox()
+    /*  public JComboBox<String> getEdit_IngredientTypes_InPlan_JComboBox()
     {
         return editIngredientsInfo.getIngredientsTypesJComboBox();
     }*/

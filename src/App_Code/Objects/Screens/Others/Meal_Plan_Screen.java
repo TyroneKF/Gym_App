@@ -980,6 +980,13 @@ public class Meal_Plan_Screen extends JPanel
                 continue;
             }
 
+            // If Meal Not In Original PlanID Add To PlanID
+            if(! (table.getMealInDB()) && ! (table.addMealToOriginalPlan(false)))
+            {
+                errorCount++;
+                continue;
+            }
+
             if (!(table.updateTableModelData()))
             {
                 errorCount++;
@@ -991,7 +998,7 @@ public class Meal_Plan_Screen extends JPanel
         // ##############################################################################
         if (errorCount > 0)
         {
-            JOptionPane.showMessageDialog(frame, "\n\n Error \n1.) Unable to save meals in plan! Please retry again!");
+            JOptionPane.showMessageDialog(frame, "\n\n Error \n1.) Unable to save all meals in plan! \n\nPlease retry again!");
             return;
         }
 
@@ -1000,7 +1007,7 @@ public class Meal_Plan_Screen extends JPanel
         // ##############################################################################
         if (listSize == 0) // if there are no meals in the temp plan delete all meals / ingredients from original plan
         {
-            System.out.println("\n1.)");
+            System.out.println("\n\n#################################### \n1.) saveMealData() Empty Meal Plan Save");
             String query1 = String.format("DELETE FROM ingredients_in_meal  WHERE PlanID = %s;", planID);
             String query2 = String.format("DELETE FROM meals  WHERE PlanID = %s;", planID);
             String[] query_Temp_Data = new String[]{query1, query2};
@@ -1016,7 +1023,7 @@ public class Meal_Plan_Screen extends JPanel
         }
         else if ((transferMealIngredients(tempPlanID, planID))) // transfer meals and ingredients from temp plan to original plan
         {
-            System.out.println("\n2.)");
+            System.out.println("\n\n#################################### \n2.) saveMealData() Meals Transferred to Original Plan");
             if (showMsg)
             {
                 JOptionPane.showMessageDialog(frame, "Meals Successful Saved!!");
