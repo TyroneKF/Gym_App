@@ -17,10 +17,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
 
 public class IngredientsTable extends JDBC_JTable
 {
@@ -48,10 +45,16 @@ public class IngredientsTable extends JDBC_JTable
             objectDeleted = false,
             ingredientNameChanged = false,
 
-    updateIngredientsType = true,
+            updateIngredientsType = true,
             updateIngredientsName = true;
 
-    private HashMap<String, ArrayList<String>> map_ingredientTypesToIngredientNames = new HashMap<>();
+    private TreeMap<String, Collection<String>> map_ingredientTypesToNames = new TreeMap<String, Collection<String>>(new Comparator<String>()
+    {
+        public int compare(String o1, String o2)
+        {
+            return o1.toLowerCase().compareTo(o2.toLowerCase());
+        }
+    });
 
     private SetupSupplierColumn supplierColumn;
     private SetupIngredientTypeColumn ingredientTypeColumn;
@@ -362,7 +365,7 @@ public class IngredientsTable extends JDBC_JTable
 
                 TableColumn tableColumn = jTable.getColumnModel().getColumn(column);
 
-                for (String key : map_ingredientTypesToIngredientNames.keySet())
+                for (String key : map_ingredientTypesToNames.keySet())
                 {
                     model1.addElement(key);
                 }
@@ -476,7 +479,7 @@ public class IngredientsTable extends JDBC_JTable
 
                 String ingredientType = table.getValueAt(row, getIngredientsTable_Type_Col()).toString();
 
-                for (String item : map_ingredientTypesToIngredientNames.get(ingredientType))
+                for (String item : map_ingredientTypesToNames.get(ingredientType))
                 {
                     model1.addElement(item);
                 }
@@ -521,7 +524,7 @@ public class IngredientsTable extends JDBC_JTable
         //###########################################################
         // Clear List
         //###########################################################
-        map_ingredientTypesToIngredientNames.clear();
+        map_ingredientTypesToNames.clear();
 
         //###########################################################
         // Store ingredientTypes ID's & IngredientTypeName that occur
@@ -540,6 +543,7 @@ public class IngredientsTable extends JDBC_JTable
                 ORDER BY Ingredient_Type_Name;""");
         ArrayList<ArrayList<String>> ingredientTypesNameAndIDResults = db.getMultiColumnQuery(queryIngredientsType);
 
+
         if (ingredientTypesNameAndIDResults == null)
         {
             JOptionPane.showMessageDialog(null, "\n\nUnable to update Ingredient Type Info");
@@ -549,6 +553,7 @@ public class IngredientsTable extends JDBC_JTable
         //######################################
         String errorTxt = "";
         int listSize = ingredientTypesNameAndIDResults.size();
+
         for (int i = 0; i < listSize; i++)
         {
             ArrayList<String> row = ingredientTypesNameAndIDResults.get(i);
@@ -558,7 +563,7 @@ public class IngredientsTable extends JDBC_JTable
             //########################################
             // Get IngredientNames for Type
             //########################################
-            String queryTypeIngredientNames = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Type_ID = %s;", ID);
+            String queryTypeIngredientNames = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Type_ID = %s ORDER BY Ingredient_Name;", ID);
             ArrayList<String> ingredientNames = db.getSingleColumnQuery_ArrayList(queryTypeIngredientNames);
 
             if (ingredientNames == null)
@@ -570,7 +575,7 @@ public class IngredientsTable extends JDBC_JTable
             //########################################
             // Mapping Ingredient Type to Names
             //########################################
-            map_ingredientTypesToIngredientNames.put(ingredientType, ingredientNames);
+            map_ingredientTypesToNames.put(ingredientType, ingredientNames);
 
             //System.out.printf("\n\nType %s\n%s",ingredientType, ingredientNames);
         }
@@ -1083,43 +1088,6 @@ public class IngredientsTable extends JDBC_JTable
     // Button Actions Events
     //##################################################################################################################
 
-    @Override
-    public void deleteTableAction()
-    {
-        //##########################################
-        // Delete table from database
-        //##########################################
-
-        /*
-            Delete all ingredients from this meal (using mealID) from table "ingredients_in_meal"
-            Delete meal from meals database
-         */
-
-        String query2 = String.format(" DELETE FROM ingredients_in_meal WHERE MealID = %s;", tempPlan_Meal_ID);
-        String query4 = String.format(" DELETE FROM  meals WHERE MealID = %s;", tempPlan_Meal_ID);
-
-        String[] query = new String[]{query2, query4};
-
-        if (!db.uploadData_Batch_Altogether(query))
-        {
-            JOptionPane.showMessageDialog(null, "Table Un-Successfully Deleted! ");
-        }
-
-        //##########################################
-        // Hide JTable object & Collapsible OBJ
-        //##########################################
-
-        setVisibility(false); // hide collapsible Object
-
-
-        update_MacrosLeft_Table();// update macrosLeft table, due to number deductions from this meal
-
-        setObjectDeleted(true); // set this object as deleted
-
-        JOptionPane.showMessageDialog(null, "Table Successfully Deleted!");
-
-
-    }
 
     @Override
     protected void deleteRowAction(Object ingredientIndex, int modelRow)
@@ -1162,6 +1130,45 @@ public class IngredientsTable extends JDBC_JTable
         //HELLO REMOVE
         System.out.printf("\n\n#########################################################################");
     }
+
+    @Override
+    public void deleteTableAction()
+    {
+        //##########################################
+        // Delete table from database
+        //##########################################
+
+        /*
+            Delete all ingredients from this meal (using mealID) from table "ingredients_in_meal"
+            Delete meal from meals database
+         */
+
+        String query2 = String.format(" DELETE FROM ingredients_in_meal WHERE MealID = %s;", tempPlan_Meal_ID);
+        String query4 = String.format(" DELETE FROM  meals WHERE MealID = %s;", tempPlan_Meal_ID);
+
+        String[] query = new String[]{query2, query4};
+
+        if (!db.uploadData_Batch_Altogether(query))
+        {
+            JOptionPane.showMessageDialog(null, "Table Un-Successfully Deleted! ");
+        }
+
+        //##########################################
+        // Hide JTable object & Collapsible OBJ
+        //##########################################
+
+        setVisibility(false); // hide collapsible Object
+
+
+        update_MacrosLeft_Table();// update macrosLeft table, due to number deductions from this meal
+
+        setObjectDeleted(true); // set this object as deleted
+
+        JOptionPane.showMessageDialog(null, "Table Successfully Deleted!");
+
+
+    }
+
 
     public void completely_Deleted_JTables()
     {

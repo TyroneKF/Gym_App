@@ -924,15 +924,14 @@ public class Meal_Plan_Screen extends JPanel
         Iterator<IngredientsTable> it = listOfJTables.iterator();
         while (it.hasNext())
         {
-            IngredientsTable ingredientsJtable = it.next();
-            ingredientsJtable.refresh_Btn_Action(false);
+            IngredientsTable ingredientsTable = it.next();
+            ingredientsTable.refresh_Btn_Action(false);
 
             // if meal is not saved in DB remove the meal
-            if (!(ingredientsJtable.getMealInDB()))
+            if (!(ingredientsTable.getMealInDB()))
             {
-                ingredientsJtable.deleteTableAction(); // delete table from db
+                ingredientsTable.deleteTableAction(); // delete table from db
                 it.remove(); // remove from list
-                continue;
             }
         }
 
@@ -1027,10 +1026,9 @@ public class Meal_Plan_Screen extends JPanel
             }
             return;
         }
-        if (showMsg)
-        {
-            JOptionPane.showMessageDialog(frame, "\n\n Error \nUnable to save meals in plan! Please retry again!");
-        }
+
+        JOptionPane.showMessageDialog(frame, "\n\n Error \nUnable to save meals in plan! Please retry again!");
+
     }
 
     //##################################################################################################################
@@ -1221,7 +1219,7 @@ public class Meal_Plan_Screen extends JPanel
             //#####################################
             // Save Plan & Refresh Plan
             //#####################################
-            saveMealData(false, false); // Save Plan
+            saveMealData(true, false); // Save Plan
             refreshPlan(false); // Refresh Plan
 
             //#####################################
