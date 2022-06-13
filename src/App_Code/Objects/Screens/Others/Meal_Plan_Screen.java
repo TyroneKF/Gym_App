@@ -806,7 +806,7 @@ public class Meal_Plan_Screen extends JPanel
         //#################################
         String newMealName = JOptionPane.showInputDialog("Input Meal Name?");
 
-        if (newMealName.length() == 0)
+        if (newMealName == null || newMealName.length() == 0)
         {
             JOptionPane.showMessageDialog(null, "\n\nPlease Input A Valid Name With 1+ Characters!");
             return;
@@ -991,10 +991,7 @@ public class Meal_Plan_Screen extends JPanel
         // ##############################################################################
         if (errorCount > 0)
         {
-            if (showMsg)
-            {
-                JOptionPane.showMessageDialog(frame, "\n\n Error \n1.) Unable to save meals in plan! Please retry again!");
-            }
+            JOptionPane.showMessageDialog(frame, "\n\n Error \n1.) Unable to save meals in plan! Please retry again!");
             return;
         }
 
@@ -1220,7 +1217,7 @@ public class Meal_Plan_Screen extends JPanel
             // Save Plan & Refresh Plan
             //#####################################
             saveMealData(true, false); // Save Plan
-            refreshPlan(false); // Refresh Plan
+            //  refreshPlan(false); // Refresh Plan
 
             //#####################################
             // Update ingredients Named if needed
