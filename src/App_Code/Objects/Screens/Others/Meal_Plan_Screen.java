@@ -407,8 +407,6 @@ public class Meal_Plan_Screen extends JPanel
                 }
             }
         });
-
-        open_AddIngredients_Screen();// HELLO REMOVE LAter
     }
 
     //##################################################################################################################
@@ -520,6 +518,60 @@ public class Meal_Plan_Screen extends JPanel
         addToContainer(southPanel, total_Meal_View_Table, 0, 2, 1, 1, 0.25, 0.25, "both", 0, 0, null);
 
         return collapsibleJpObj;
+    }
+
+    private boolean transferTargets(int fromPlan, int toPlan, boolean showConfirmMsg)
+    {
+        //####################################
+        // Mysql Transferring Data
+        //####################################
+        String query00 = String.format("DELETE FROM macros_Per_Pound_And_Limits WHERE PlanID =%s;", toPlan);
+        String query01 = String.format("DROP TABLE IF EXISTS temp_Macros;");
+        String query02 = String.format("CREATE table temp_Macros AS SELECT * FROM macros_Per_Pound_And_Limits WHERE PlanID = %s;", fromPlan);
+        String query03 = String.format("ALTER TABLE temp_Macros DROP COLUMN current_Weight_In_Pounds;");
+        String query04 = String.format("UPDATE temp_Macros SET PlanID = %s;", toPlan);
+
+        //####################################
+        // Gathering Table Columns
+        //####################################
+
+        ArrayList<String> columnsToAvoid = new ArrayList<>(List.of("current_Weight_In_Pounds"));
+        String[] macrosColumns = db.getColumnNames("macros_Per_Pound_And_Limits");
+
+        String query05 = "INSERT INTO macros_Per_Pound_And_Limits \n(";
+        int listSize = macrosColumns.length;
+
+        for (int i = 0; i <= listSize - 1; i++)
+        {
+            String colToAdd = columnsToAvoid.contains(macrosColumns[i]) ? "" : String.format("\n\t%s", macrosColumns[i]);
+
+            if (i == listSize - 1)
+            {
+                query05 += String.format("%s \n) \nSELECT * FROM temp_Macros;", colToAdd);
+                break;
+            }
+
+            query05 = !colToAdd.equals("") ? String.format("%s %s,", query05, colToAdd) : query05;
+        }
+
+        //####################################
+
+        String query06 = String.format("DROP TABLE IF EXISTS temp_Macros;");
+
+        //####################################
+        // Perform Upload
+        //####################################
+
+        if (!(db.uploadData_Batch_Altogether(new String[]{query00, query01, query02, query03, query04, query05, query06})))
+        {
+            JOptionPane.showMessageDialog(null, "\n\nCannot Transfer Targets");
+            return false;
+        }
+        else if (showConfirmMsg)
+        {
+            JOptionPane.showMessageDialog(null, "\n\nTargets Successfully Saved");
+        }
+        return true;
     }
 
 
@@ -806,7 +858,7 @@ public class Meal_Plan_Screen extends JPanel
         //#################################
         String newMealName = JOptionPane.showInputDialog("Input Meal Name?");
 
-        if (newMealName.length() == 0)
+        if (newMealName == null || newMealName.length() == 0)
         {
             JOptionPane.showMessageDialog(null, "\n\nPlease Input A Valid Name With 1+ Characters!");
             return;
@@ -924,15 +976,14 @@ public class Meal_Plan_Screen extends JPanel
         Iterator<IngredientsTable> it = listOfJTables.iterator();
         while (it.hasNext())
         {
-            IngredientsTable ingredientsJtable = it.next();
-            ingredientsJtable.refresh_Btn_Action(false);
+            IngredientsTable ingredientsTable = it.next();
+            ingredientsTable.refresh_Btn_Action(false);
 
             // if meal is not saved in DB remove the meal
-            if (!(ingredientsJtable.getMealInDB()))
+            if (!(ingredientsTable.getMealInDB()))
             {
-                ingredientsJtable.deleteTableAction(); // delete table from db
+                ingredientsTable.deleteTableAction(); // delete table from db
                 it.remove(); // remove from list
-                continue;
             }
         }
 
@@ -981,6 +1032,13 @@ public class Meal_Plan_Screen extends JPanel
                 continue;
             }
 
+            // If Meal Not In Original PlanID Add To PlanID
+            if(! (table.getMealInDB()) && ! (table.addMealToOriginalPlan(false)))
+            {
+                errorCount++;
+                continue;
+            }
+
             if (!(table.updateTableModelData()))
             {
                 errorCount++;
@@ -992,10 +1050,7 @@ public class Meal_Plan_Screen extends JPanel
         // ##############################################################################
         if (errorCount > 0)
         {
-            if (showMsg)
-            {
-                JOptionPane.showMessageDialog(frame, "\n\n Error \n1.) Unable to save meals in plan! Please retry again!");
-            }
+            JOptionPane.showMessageDialog(frame, "\n\n Error \n1.) Unable to save all meals in plan! \n\nPlease retry again!");
             return;
         }
 
@@ -1004,7 +1059,7 @@ public class Meal_Plan_Screen extends JPanel
         // ##############################################################################
         if (listSize == 0) // if there are no meals in the temp plan delete all meals / ingredients from original plan
         {
-            System.out.println("\n1.)");
+            System.out.println("\n\n#################################### \n1.) saveMealData() Empty Meal Plan Save");
             String query1 = String.format("DELETE FROM ingredients_in_meal  WHERE PlanID = %s;", planID);
             String query2 = String.format("DELETE FROM meals  WHERE PlanID = %s;", planID);
             String[] query_Temp_Data = new String[]{query1, query2};
@@ -1020,17 +1075,16 @@ public class Meal_Plan_Screen extends JPanel
         }
         else if ((transferMealIngredients(tempPlanID, planID))) // transfer meals and ingredients from temp plan to original plan
         {
-            System.out.println("\n2.)");
+            System.out.println("\n\n#################################### \n2.) saveMealData() Meals Transferred to Original Plan");
             if (showMsg)
             {
                 JOptionPane.showMessageDialog(frame, "Meals Successful Saved!!");
             }
             return;
         }
-        if (showMsg)
-        {
-            JOptionPane.showMessageDialog(frame, "\n\n Error \nUnable to save meals in plan! Please retry again!");
-        }
+
+        JOptionPane.showMessageDialog(frame, "\n\n Error \nUnable to save meals in plan! Please retry again!");
+
     }
 
     //##################################################################################################################
@@ -1065,60 +1119,6 @@ public class Meal_Plan_Screen extends JPanel
             macrosTargetsChanged(false);
             updateTargetsAndMacrosLeft();
         }
-    }
-
-    private boolean transferTargets(int fromPlan, int toPlan, boolean showConfirmMsg)
-    {
-        //####################################
-        // Mysql Transferring Data
-        //####################################
-        String query00 = String.format("DELETE FROM macros_Per_Pound_And_Limits WHERE PlanID =%s;", toPlan);
-        String query01 = String.format("DROP TABLE IF EXISTS temp_Macros;");
-        String query02 = String.format("CREATE table temp_Macros AS SELECT * FROM macros_Per_Pound_And_Limits WHERE PlanID = %s;", fromPlan);
-        String query03 = String.format("ALTER TABLE temp_Macros DROP COLUMN current_Weight_In_Pounds;");
-        String query04 = String.format("UPDATE temp_Macros SET PlanID = %s;", toPlan);
-
-        //####################################
-        // Gathering Table Columns
-        //####################################
-
-        ArrayList<String> columnsToAvoid = new ArrayList<>(List.of("current_Weight_In_Pounds"));
-        String[] macrosColumns = db.getColumnNames("macros_Per_Pound_And_Limits");
-
-        String query05 = "INSERT INTO macros_Per_Pound_And_Limits \n(";
-        int listSize = macrosColumns.length;
-
-        for (int i = 0; i <= listSize - 1; i++)
-        {
-            String colToAdd = columnsToAvoid.contains(macrosColumns[i]) ? "" : String.format("\n\t%s", macrosColumns[i]);
-
-            if (i == listSize - 1)
-            {
-                query05 += String.format("%s \n) \nSELECT * FROM temp_Macros;", colToAdd);
-                break;
-            }
-
-            query05 = !colToAdd.equals("") ? String.format("%s %s,", query05, colToAdd) : query05;
-        }
-
-        //####################################
-
-        String query06 = String.format("DROP TABLE IF EXISTS temp_Macros;");
-
-        //####################################
-        // Perform Upload
-        //####################################
-
-        if (!(db.uploadData_Batch_Altogether(new String[]{query00, query01, query02, query03, query04, query05, query06})))
-        {
-            JOptionPane.showMessageDialog(null, "\n\nCannot Transfer Targets");
-            return false;
-        }
-        else if (showConfirmMsg)
-        {
-            JOptionPane.showMessageDialog(null, "\n\nTargets Successfully Saved");
-        }
-        return true;
     }
 
     public void updateTargetsAndMacrosLeft()
@@ -1221,8 +1221,8 @@ public class Meal_Plan_Screen extends JPanel
             //#####################################
             // Save Plan & Refresh Plan
             //#####################################
-            saveMealData(false, false); // Save Plan
-            refreshPlan(false); // Refresh Plan
+            saveMealData(true, false); // Save Plan
+            //  refreshPlan(false); // Refresh Plan
 
             //#####################################
             // Update ingredients Named if needed

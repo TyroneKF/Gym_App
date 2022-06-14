@@ -17,10 +17,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
 
 public class IngredientsTable extends JDBC_JTable
 {
@@ -51,7 +48,13 @@ public class IngredientsTable extends JDBC_JTable
     updateIngredientsType = true,
             updateIngredientsName = true;
 
-    private HashMap<String, ArrayList<String>> map_ingredientTypesToIngredientNames = new HashMap<>();
+    private TreeMap<String, Collection<String>> map_ingredientTypesToNames = new TreeMap<String, Collection<String>>(new Comparator<String>()
+    {
+        public int compare(String o1, String o2)
+        {
+            return o1.toLowerCase().compareTo(o2.toLowerCase());
+        }
+    });
 
     private SetupSupplierColumn supplierColumn;
     private SetupIngredientTypeColumn ingredientTypeColumn;
@@ -362,7 +365,7 @@ public class IngredientsTable extends JDBC_JTable
 
                 TableColumn tableColumn = jTable.getColumnModel().getColumn(column);
 
-                for (String key : map_ingredientTypesToIngredientNames.keySet())
+                for (String key : map_ingredientTypesToNames.keySet())
                 {
                     model1.addElement(key);
                 }
@@ -476,7 +479,7 @@ public class IngredientsTable extends JDBC_JTable
 
                 String ingredientType = table.getValueAt(row, getIngredientsTable_Type_Col()).toString();
 
-                for (String item : map_ingredientTypesToIngredientNames.get(ingredientType))
+                for (String item : map_ingredientTypesToNames.get(ingredientType))
                 {
                     model1.addElement(item);
                 }
@@ -521,7 +524,7 @@ public class IngredientsTable extends JDBC_JTable
         //###########################################################
         // Clear List
         //###########################################################
-        map_ingredientTypesToIngredientNames.clear();
+        map_ingredientTypesToNames.clear();
 
         //###########################################################
         // Store ingredientTypes ID's & IngredientTypeName that occur
@@ -540,6 +543,7 @@ public class IngredientsTable extends JDBC_JTable
                 ORDER BY Ingredient_Type_Name;""");
         ArrayList<ArrayList<String>> ingredientTypesNameAndIDResults = db.getMultiColumnQuery(queryIngredientsType);
 
+
         if (ingredientTypesNameAndIDResults == null)
         {
             JOptionPane.showMessageDialog(null, "\n\nUnable to update Ingredient Type Info");
@@ -549,6 +553,7 @@ public class IngredientsTable extends JDBC_JTable
         //######################################
         String errorTxt = "";
         int listSize = ingredientTypesNameAndIDResults.size();
+
         for (int i = 0; i < listSize; i++)
         {
             ArrayList<String> row = ingredientTypesNameAndIDResults.get(i);
@@ -558,7 +563,7 @@ public class IngredientsTable extends JDBC_JTable
             //########################################
             // Get IngredientNames for Type
             //########################################
-            String queryTypeIngredientNames = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Type_ID = %s;", ID);
+            String queryTypeIngredientNames = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Type_ID = %s ORDER BY Ingredient_Name;", ID);
             ArrayList<String> ingredientNames = db.getSingleColumnQuery_ArrayList(queryTypeIngredientNames);
 
             if (ingredientNames == null)
@@ -570,7 +575,7 @@ public class IngredientsTable extends JDBC_JTable
             //########################################
             // Mapping Ingredient Type to Names
             //########################################
-            map_ingredientTypesToIngredientNames.put(ingredientType, ingredientNames);
+            map_ingredientTypesToNames.put(ingredientType, ingredientNames);
 
             //System.out.printf("\n\nType %s\n%s",ingredientType, ingredientNames);
         }
@@ -1083,47 +1088,61 @@ public class IngredientsTable extends JDBC_JTable
     // Button Actions Events
     //##################################################################################################################
 
-    @Override
-    public void deleteTableAction()
-    {
-        //##########################################
-        // Delete table from database
-        //##########################################
-
-        /*
-            Delete all ingredients from this meal (using mealID) from table "ingredients_in_meal"
-            Delete meal from meals database
-         */
-
-        String query2 = String.format(" DELETE FROM ingredients_in_meal WHERE MealID = %s;", tempPlan_Meal_ID);
-        String query4 = String.format(" DELETE FROM  meals WHERE MealID = %s;", tempPlan_Meal_ID);
-
-        String[] query = new String[]{query2, query4};
-
-        if (!db.uploadData_Batch_Altogether(query))
-        {
-            JOptionPane.showMessageDialog(null, "Table Un-Successfully Deleted! ");
-        }
-
-        //##########################################
-        // Hide JTable object & Collapsible OBJ
-        //##########################################
-
-        setVisibility(false); // hide collapsible Object
-
-
-        update_MacrosLeft_Table();// update macrosLeft table, due to number deductions from this meal
-
-        setObjectDeleted(true); // set this object as deleted
-
-        JOptionPane.showMessageDialog(null, "Table Successfully Deleted!");
-
-
-    }
 
     @Override
     protected void deleteRowAction(Object ingredientIndex, int modelRow)
     {
+        //#################################################
+        // Can't have an empty Table
+        //##################################################
+        if (rowsInTable == 1)
+        {
+            String question = String.format("""
+                    \n\nThere is only 1 ingredient in this table (' %s '), 
+                    
+                    if you delete this ingredient, this table will also be deleted.
+                                       
+                    Would you like to delete this table?
+                     """, mealName);
+
+            int reply = JOptionPane.showConfirmDialog(null, question, "Delete Ingredients", JOptionPane.YES_NO_OPTION); //HELLO Edit
+
+            if (reply == JOptionPane.YES_OPTION)
+            {
+                deleteTableAction();
+            }
+            else if (reply == JOptionPane.NO_OPTION)
+            {
+                Object ingredients_Index = jTable.getValueAt(0, ingredientsTable_Index_Col);
+                Object ingredientID  = 1;
+
+                //#######################################
+                // Change Quantity & IngredientID
+                //########################################
+
+                // Update DB Values
+                String query1 = String.format("""
+                UPDATE  ingredients_in_meal
+                SET IngredientID = %s, Quantity = 0
+                WHERE PlanID = %s  AND Ingredients_Index = %s;""", ingredientID, temp_PlanID, ingredients_Index);
+
+                //HELLO DELETE
+                System.out.printf("\n\ndeleteRowAction() \nQuery: \n\n%s", query1);
+
+                if (!(db.uploadData_Batch_Altogether(new String[]{query1})))
+                {
+                    JOptionPane.showMessageDialog(null, "Un-able to change last row values!");
+
+                    setRowBeingEdited();
+                    return;
+                }
+
+                // Change Table
+                updateTableValuesByQuantity(0, ingredients_Index,0);
+            }
+
+            return;
+        }
         //#################################################
         // Remove From DB
         //##################################################
@@ -1162,6 +1181,45 @@ public class IngredientsTable extends JDBC_JTable
         //HELLO REMOVE
         System.out.printf("\n\n#########################################################################");
     }
+
+    @Override
+    public void deleteTableAction()
+    {
+        //##########################################
+        // Delete table from database
+        //##########################################
+
+        /*
+            Delete all ingredients from this meal (using mealID) from table "ingredients_in_meal"
+            Delete meal from meals database
+         */
+
+        String query2 = String.format(" DELETE FROM ingredients_in_meal WHERE MealID = %s;", tempPlan_Meal_ID);
+        String query4 = String.format(" DELETE FROM  meals WHERE MealID = %s;", tempPlan_Meal_ID);
+
+        String[] query = new String[]{query2, query4};
+
+        if (!db.uploadData_Batch_Altogether(query))
+        {
+            JOptionPane.showMessageDialog(null, "Table Un-Successfully Deleted! ");
+        }
+
+        //##########################################
+        // Hide JTable object & Collapsible OBJ
+        //##########################################
+
+        setVisibility(false); // hide collapsible Object
+
+
+        update_MacrosLeft_Table();// update macrosLeft table, due to number deductions from this meal
+
+        setObjectDeleted(true); // set this object as deleted
+
+        JOptionPane.showMessageDialog(null, "Table Successfully Deleted!");
+
+
+    }
+
 
     public void completely_Deleted_JTables()
     {
@@ -1390,8 +1448,7 @@ public class IngredientsTable extends JDBC_JTable
         }
     }
 
-    @Override
-    public boolean saveDataAction(boolean showMessage)
+    public boolean addMealToOriginalPlan(boolean showMsg)
     {
         //######################################################################
         // Add Meal To DB
@@ -1410,7 +1467,10 @@ public class IngredientsTable extends JDBC_JTable
             //#####################################
             if (!(db.uploadData_Batch_Altogether(new String[]{uploadQuery})))
             {
-                JOptionPane.showMessageDialog(null, "\n\nUnable To Create Meal In Original Plan!!");
+                if (showMsg)
+                {
+                    JOptionPane.showMessageDialog(null, "\n\nUnable To Create Meal In Original Plan!!");
+                }
                 return false;
             }
 
@@ -1426,7 +1486,10 @@ public class IngredientsTable extends JDBC_JTable
 
             if (orginalMealID_Result == null)
             {
-                JOptionPane.showMessageDialog(null, "\n\nUnable To Get MealID in Plan to Update Meal");
+                if (showMsg)
+                {
+                    JOptionPane.showMessageDialog(null, "\n\nUnable To Get MealID in Plan to Update Meal");
+                }
                 return false;
             }
 
@@ -1440,6 +1503,19 @@ public class IngredientsTable extends JDBC_JTable
             // Meal Successfully Added TO DB
             //##########################################
             set_Meal_In_DB(true);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean saveDataAction(boolean showMessage)
+    {
+        //######################################################################
+        // Add Meal To DB
+        //######################################################################
+        if (!(getMealInDB()))     // If Meal Not In Original PlanID Add To PlanID
+        {
+            addMealToOriginalPlan(true);
         }
 
         //HELLO FOR OPTIMISATION THIS STEP SHOULDN'T BE DONE IF THE STEP ABOVE IS DONE
@@ -1512,6 +1588,8 @@ public class IngredientsTable extends JDBC_JTable
         String tableInQuery = "ingredients_in_meal_calculation";
 
         String query = String.format("Select * from %s WHERE MealID = %s;", tableInQuery, tempPlan_Meal_ID);
+        System.out.printf("\n\n################################################### \nupdateTableModelData() \n%s", query);
+
         Object[][] ingredients_Data = db.getTableDataObject(query, tableInQuery);
 
         if (ingredients_Data == null)
