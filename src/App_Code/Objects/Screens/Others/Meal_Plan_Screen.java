@@ -407,8 +407,6 @@ public class Meal_Plan_Screen extends JPanel
                 }
             }
         });
-
-        open_AddIngredients_Screen();// HELLO REMOVE LAter
     }
 
     //##################################################################################################################
@@ -520,6 +518,60 @@ public class Meal_Plan_Screen extends JPanel
         addToContainer(southPanel, total_Meal_View_Table, 0, 2, 1, 1, 0.25, 0.25, "both", 0, 0, null);
 
         return collapsibleJpObj;
+    }
+
+    private boolean transferTargets(int fromPlan, int toPlan, boolean showConfirmMsg)
+    {
+        //####################################
+        // Mysql Transferring Data
+        //####################################
+        String query00 = String.format("DELETE FROM macros_Per_Pound_And_Limits WHERE PlanID =%s;", toPlan);
+        String query01 = String.format("DROP TABLE IF EXISTS temp_Macros;");
+        String query02 = String.format("CREATE table temp_Macros AS SELECT * FROM macros_Per_Pound_And_Limits WHERE PlanID = %s;", fromPlan);
+        String query03 = String.format("ALTER TABLE temp_Macros DROP COLUMN current_Weight_In_Pounds;");
+        String query04 = String.format("UPDATE temp_Macros SET PlanID = %s;", toPlan);
+
+        //####################################
+        // Gathering Table Columns
+        //####################################
+
+        ArrayList<String> columnsToAvoid = new ArrayList<>(List.of("current_Weight_In_Pounds"));
+        String[] macrosColumns = db.getColumnNames("macros_Per_Pound_And_Limits");
+
+        String query05 = "INSERT INTO macros_Per_Pound_And_Limits \n(";
+        int listSize = macrosColumns.length;
+
+        for (int i = 0; i <= listSize - 1; i++)
+        {
+            String colToAdd = columnsToAvoid.contains(macrosColumns[i]) ? "" : String.format("\n\t%s", macrosColumns[i]);
+
+            if (i == listSize - 1)
+            {
+                query05 += String.format("%s \n) \nSELECT * FROM temp_Macros;", colToAdd);
+                break;
+            }
+
+            query05 = !colToAdd.equals("") ? String.format("%s %s,", query05, colToAdd) : query05;
+        }
+
+        //####################################
+
+        String query06 = String.format("DROP TABLE IF EXISTS temp_Macros;");
+
+        //####################################
+        // Perform Upload
+        //####################################
+
+        if (!(db.uploadData_Batch_Altogether(new String[]{query00, query01, query02, query03, query04, query05, query06})))
+        {
+            JOptionPane.showMessageDialog(null, "\n\nCannot Transfer Targets");
+            return false;
+        }
+        else if (showConfirmMsg)
+        {
+            JOptionPane.showMessageDialog(null, "\n\nTargets Successfully Saved");
+        }
+        return true;
     }
 
 
@@ -1067,60 +1119,6 @@ public class Meal_Plan_Screen extends JPanel
             macrosTargetsChanged(false);
             updateTargetsAndMacrosLeft();
         }
-    }
-
-    private boolean transferTargets(int fromPlan, int toPlan, boolean showConfirmMsg)
-    {
-        //####################################
-        // Mysql Transferring Data
-        //####################################
-        String query00 = String.format("DELETE FROM macros_Per_Pound_And_Limits WHERE PlanID =%s;", toPlan);
-        String query01 = String.format("DROP TABLE IF EXISTS temp_Macros;");
-        String query02 = String.format("CREATE table temp_Macros AS SELECT * FROM macros_Per_Pound_And_Limits WHERE PlanID = %s;", fromPlan);
-        String query03 = String.format("ALTER TABLE temp_Macros DROP COLUMN current_Weight_In_Pounds;");
-        String query04 = String.format("UPDATE temp_Macros SET PlanID = %s;", toPlan);
-
-        //####################################
-        // Gathering Table Columns
-        //####################################
-
-        ArrayList<String> columnsToAvoid = new ArrayList<>(List.of("current_Weight_In_Pounds"));
-        String[] macrosColumns = db.getColumnNames("macros_Per_Pound_And_Limits");
-
-        String query05 = "INSERT INTO macros_Per_Pound_And_Limits \n(";
-        int listSize = macrosColumns.length;
-
-        for (int i = 0; i <= listSize - 1; i++)
-        {
-            String colToAdd = columnsToAvoid.contains(macrosColumns[i]) ? "" : String.format("\n\t%s", macrosColumns[i]);
-
-            if (i == listSize - 1)
-            {
-                query05 += String.format("%s \n) \nSELECT * FROM temp_Macros;", colToAdd);
-                break;
-            }
-
-            query05 = !colToAdd.equals("") ? String.format("%s %s,", query05, colToAdd) : query05;
-        }
-
-        //####################################
-
-        String query06 = String.format("DROP TABLE IF EXISTS temp_Macros;");
-
-        //####################################
-        // Perform Upload
-        //####################################
-
-        if (!(db.uploadData_Batch_Altogether(new String[]{query00, query01, query02, query03, query04, query05, query06})))
-        {
-            JOptionPane.showMessageDialog(null, "\n\nCannot Transfer Targets");
-            return false;
-        }
-        else if (showConfirmMsg)
-        {
-            JOptionPane.showMessageDialog(null, "\n\nTargets Successfully Saved");
-        }
-        return true;
     }
 
     public void updateTargetsAndMacrosLeft()

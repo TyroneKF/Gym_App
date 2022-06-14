@@ -45,7 +45,7 @@ public class IngredientsTable extends JDBC_JTable
             objectDeleted = false,
             ingredientNameChanged = false,
 
-            updateIngredientsType = true,
+    updateIngredientsType = true,
             updateIngredientsName = true;
 
     private TreeMap<String, Collection<String>> map_ingredientTypesToNames = new TreeMap<String, Collection<String>>(new Comparator<String>()
@@ -1093,6 +1093,57 @@ public class IngredientsTable extends JDBC_JTable
     protected void deleteRowAction(Object ingredientIndex, int modelRow)
     {
         //#################################################
+        // Can't have an empty Table
+        //##################################################
+        if (rowsInTable == 1)
+        {
+            String question = String.format("""
+                    \n\nThere is only 1 ingredient in this table (' %s '), 
+                    
+                    if you delete this ingredient, this table will also be deleted.
+                                       
+                    Would you like to delete this table?
+                     """, mealName);
+
+            int reply = JOptionPane.showConfirmDialog(null, question, "Delete Ingredients", JOptionPane.YES_NO_OPTION); //HELLO Edit
+
+            if (reply == JOptionPane.YES_OPTION)
+            {
+                deleteTableAction();
+            }
+            else if (reply == JOptionPane.NO_OPTION)
+            {
+                Object ingredients_Index = jTable.getValueAt(0, ingredientsTable_Index_Col);
+                Object ingredientID  = 1;
+
+                //#######################################
+                // Change Quantity & IngredientID
+                //########################################
+
+                // Update DB Values
+                String query1 = String.format("""
+                UPDATE  ingredients_in_meal
+                SET IngredientID = %s, Quantity = 0
+                WHERE PlanID = %s  AND Ingredients_Index = %s;""", ingredientID, temp_PlanID, ingredients_Index);
+
+                //HELLO DELETE
+                System.out.printf("\n\ndeleteRowAction() \nQuery: \n\n%s", query1);
+
+                if (!(db.uploadData_Batch_Altogether(new String[]{query1})))
+                {
+                    JOptionPane.showMessageDialog(null, "Un-able to change last row values!");
+
+                    setRowBeingEdited();
+                    return;
+                }
+
+                // Change Table
+                updateTableValuesByQuantity(0, ingredients_Index,0);
+            }
+
+            return;
+        }
+        //#################################################
         // Remove From DB
         //##################################################
         if (ingredientIndex != null)
@@ -1416,7 +1467,7 @@ public class IngredientsTable extends JDBC_JTable
             //#####################################
             if (!(db.uploadData_Batch_Altogether(new String[]{uploadQuery})))
             {
-                if(showMsg)
+                if (showMsg)
                 {
                     JOptionPane.showMessageDialog(null, "\n\nUnable To Create Meal In Original Plan!!");
                 }
@@ -1435,7 +1486,7 @@ public class IngredientsTable extends JDBC_JTable
 
             if (orginalMealID_Result == null)
             {
-                if(showMsg)
+                if (showMsg)
                 {
                     JOptionPane.showMessageDialog(null, "\n\nUnable To Get MealID in Plan to Update Meal");
                 }
