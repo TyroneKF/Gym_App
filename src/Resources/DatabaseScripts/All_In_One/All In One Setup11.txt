@@ -272,9 +272,9 @@ IFNULL(ROUND(SUM(Calories),2),0) as Total_Calories
 FROM  meals m
 
 LEFT  JOIN ingredients_in_meal_calculation i
-ON m.MealID = i.MealID
+ON m.MealID = i.MealID AND m.PlanID = i.PlanID
 
-GROUP BY  m.MealID, m.PlanID; 
+GROUP BY  i.MealID, i.PlanID; 
 
 -- ######################################################
 
