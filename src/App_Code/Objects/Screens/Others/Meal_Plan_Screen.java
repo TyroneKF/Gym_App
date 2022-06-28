@@ -387,7 +387,10 @@ public class Meal_Plan_Screen extends JPanel
                 // ##############################################
                 // If targets have changed, save them?
                 // ##############################################
-                saveMacroTargets(true, false);
+                if(macroTargetsChanged)
+                {
+                    saveMacroTargets(true, false);
+                }
 
                 saveMealData(true, false);
 
