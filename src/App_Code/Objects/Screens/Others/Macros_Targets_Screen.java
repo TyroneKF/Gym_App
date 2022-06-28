@@ -277,7 +277,7 @@ public class Macros_Targets_Screen extends JFrame
         String updateTargets_Query = String.format("""
                         UPDATE macros_Per_Pound_And_Limits
                                       
-                        SET current_Weight_KG = %s , BodyFatPercentage = %s, Protein_PerPound =%s, Carbohydrates_PerPound = %s,
+                        SET DateTime_Of_Creation = now(), current_Weight_KG = %s , BodyFatPercentage = %s, Protein_PerPound =%s, Carbohydrates_PerPound = %s,
                         Fibre =%s, Fats_PerPound = %s, Saturated_Fat_Limit = %s,  Salt_Limit = %s, Water_Target = %s,
                         Additional_Calories = %s
                                       

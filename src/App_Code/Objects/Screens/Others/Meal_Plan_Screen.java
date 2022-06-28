@@ -26,7 +26,7 @@ public class Meal_Plan_Screen extends JPanel
 
     //#################################################################################################################
 
-    private String databaseName = "gymapp11";
+    private static String databaseName = "gymapp11";
     private String name = databaseName;
     //########################################################
     // Objects
@@ -86,7 +86,7 @@ public class Meal_Plan_Screen extends JPanel
             ingredients_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList(original_IngredientsTable_Type_Col, original_IngredientsTable_IngredientsName_Col, original_IngredientsTable_Supplier_Col, original_ingredientsTable_DeleteBTN_Col));
 
     private final Integer ingredientsTable_StartingCol = 2, totalMealTable_StartCol = 3,
-            macroTargets_StartCol = 2, macrosLeftTable_StartCol = 2;
+            macroTargets_StartCol = 3, macrosLeftTable_StartCol = 2;
 
     //########################################################
     // Table Customisations
@@ -94,7 +94,7 @@ public class Meal_Plan_Screen extends JPanel
     private final ArrayList<Integer>
             TotalMeal_Table_Hidden_Columns = new ArrayList<Integer>(Arrays.asList(1, 2)),
             ingredientsTable_Hidden_Columns = new ArrayList<Integer>(Arrays.asList(1, 2)),
-            macros_Targets_Table_Hidden_Col = new ArrayList<Integer>(Arrays.asList(1, 2)),
+            macros_Targets_Table_Hidden_Col = new ArrayList<Integer>(Arrays.asList(1, 2, 3)),
             macrosLeft_Table_Hidden_Col = new ArrayList<Integer>(Arrays.asList(1, 2));
 
 
@@ -102,11 +102,6 @@ public class Meal_Plan_Screen extends JPanel
     // Constructor & Main
     //##################################################################################################################
     public static void main(String[] args)
-    {
-        new Meal_Plan_Screen();
-    }
-
-    public Meal_Plan_Screen()
     {
         //############################################################################################################
         // Database Setup
@@ -128,7 +123,7 @@ public class Meal_Plan_Screen extends JPanel
         LinkedHashMap<String, String> tableInitialization = new LinkedHashMap<>();
         tableInitialization.put("data", sql3);
 
-        db = new MyJDBC("root", "password", databaseName, tableInitialization);
+        MyJDBC db = new MyJDBC("root", "password", databaseName, tableInitialization);
 
 
         if (!(db.isDatabaseConnected()))
@@ -137,8 +132,15 @@ public class Meal_Plan_Screen extends JPanel
             return;
         }
 
+        new Meal_Plan_Screen(db);
+    }
+
+    public Meal_Plan_Screen(MyJDBC db)
+    {
+        this.db = db;
+
         //#############################################################################################################
-        //   1. Create the frame.
+        //   1. Create the  GUI framework
         //#############################################################################################################
 
         // Container (ContentPane)
@@ -156,15 +158,14 @@ public class Meal_Plan_Screen extends JPanel
 
         //###########################################
         // Icon Setup in mainNorthPanel
-        iconSetup(mainNorthPanel);
-
-
         //###########################################
+        iconSetup(mainNorthPanel);
+        //###########################################
+
         // Adding different section of interface to
 
         screenSectioned.add(mainNorthPanel, BorderLayout.NORTH);
         screenSectioned.add(mainCenterPanel, BorderLayout.CENTER);
-
 
         addToContainer(contentPane, screenSectioned, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
 
@@ -178,30 +179,32 @@ public class Meal_Plan_Screen extends JPanel
         scrollJPanelCenter = new JPanel(new GridBagLayout());
         scrollJPanelEnd = new JPanel(new GridBagLayout());
 
-
         addToContainer(scrollPaneJPanel, scrollJPanelCenter, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, "center");
         addToContainer(scrollPaneJPanel, scrollJPanelEnd, 0, 1, 1, 1, 0.25, 0.25, "both", 0, 0, "end");
 
         addToContainer(mainCenterPanel, scrollPane, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
 
-
         //##############################################################################################################
-        // Getting selected plan ID
+        // Getting selected plan Info
         //##############################################################################################################
-        String[] results = db.getSingleColumnQuery("SELECT PlanID FROM plans WHERE SelectedPlan = 1;");
-        planID = results != null ? Integer.parseInt(results[0]) : null;
+        ArrayList<ArrayList<String>> results1 = db.getMultiColumnQuery(String.format("SELECT PlanID, Plan_Name FROM plans WHERE SelectedPlan = %s;", tempPlanID));
+        ArrayList<String> results = results1 != null ? results1.get(0) : null;
 
-
-        //HELLO REMOVE
-        System.out.printf("\n\nChosen Plan: %s", planID);
-        System.out.println("\n\n###############################################################################");
+        planID = results != null ? Integer.parseInt(results.get(0)): null;
+        planName = results != null ? results.get(1) : null;
 
         if (planID != null)
         {
             //####################################################
+            // Printing PlanInfo  //HELLO REMOVE
+            //####################################################
+            String lineSeparator = "###############################################################################";
+            System.out.printf("\n\n%s \nChosen Plan: %s \n\n%s \nChosen Plan Name: %s \n\n%s", lineSeparator, planID, lineSeparator,  planName, lineSeparator);
+
+            //####################################################
             // Transferring Targets From Chosen PLan to Temp
             //####################################################
-            if (!transferTargets(planID, tempPlanID, false))
+            if (!transferTargets(planID, tempPlanID, true,false))
             {
                 return;
             }
@@ -230,16 +233,6 @@ public class Meal_Plan_Screen extends JPanel
                 JOptionPane.showMessageDialog(null, "\n\nCannot Create Temporary Plan In DB to Allow Editing");
                 return;
             }
-
-            //##############################
-            // Getting PlanName Results
-            //##############################
-
-            String[] planNameResults = db.getSingleColumnQuery("SELECT Plan_Name FROM plans WHERE planID = 1;");
-            planName = planNameResults != null ? planNameResults[0] : null;
-
-            System.out.printf("\n\nChosen Plan Name: %s", planName);
-            System.out.println("\n\n###############################################################################");
 
             //#############################################################################################################
             // Table Setup
@@ -394,9 +387,13 @@ public class Meal_Plan_Screen extends JPanel
                 // ##############################################
                 // If targets have changed, save them?
                 // ##############################################
-                saveMacroTargets(false, false);
+                saveMacroTargets(true, false);
 
                 saveMealData(true, false);
+
+                // ##############################################
+                // Close Other Windows If Open
+                // ##############################################
                 if (macrosTargets_Screen != null)
                 {
                     macrosTargets_Screen.closeeWindow();
@@ -412,6 +409,150 @@ public class Meal_Plan_Screen extends JPanel
     //##################################################################################################################
     // Frequently Used Methods
     //##################################################################################################################
+
+    private boolean transferTargets(int fromPlan, int toPlan, boolean deleteFromToPlan, boolean showConfirmMsg)
+    {
+        //####################################
+        // Mysql Transferring Data
+        //####################################
+        String query00 = String.format("DELETE FROM macros_Per_Pound_And_Limits WHERE PlanID = %s;", toPlan);
+        String query01 = String.format("DROP TABLE IF EXISTS temp_Macros;");
+        String query02 = String.format("""
+                CREATE table temp_Macros AS SELECT * FROM macros_Per_Pound_And_Limits 
+                WHERE PlanID = %s 
+                AND DateTime_Of_Creation = (SELECT MAX(DateTime_Of_Creation)  FROM macros_Per_Pound_And_Limits);""", fromPlan);
+        String query03 = String.format("ALTER TABLE temp_Macros DROP COLUMN current_Weight_In_Pounds;");
+        String query04 = String.format("UPDATE temp_Macros SET PlanID = %s;", toPlan);
+
+        //####################################
+        // Gathering Table Columns
+        //####################################
+
+        ArrayList<String> columnsToAvoid = new ArrayList<>(List.of("current_Weight_In_Pounds"));
+        String[] macrosColumns = db.getColumnNames("macros_Per_Pound_And_Limits");
+
+        String query05 = "INSERT INTO macros_Per_Pound_And_Limits \n(";
+        int listSize = macrosColumns.length;
+
+        for (int i = 0; i <= listSize - 1; i++)
+        {
+            String colToAdd = columnsToAvoid.contains(macrosColumns[i]) ? "" : String.format("\n\t%s", macrosColumns[i]);
+
+            if (i == listSize - 1)
+            {
+                query05 += String.format("%s \n) \nSELECT * FROM temp_Macros;", colToAdd);
+                break;
+            }
+
+            query05 = !colToAdd.equals("") ? String.format("%s %s,", query05, colToAdd) : query05;
+        }
+
+        //####################################
+
+        String query06 = String.format("DROP TABLE IF EXISTS temp_Macros;");
+
+        //####################################
+        // Perform Upload
+        //####################################
+        String[] uploadQueries = new String[0];
+
+        if(deleteFromToPlan)
+        {
+             uploadQueries = new String[]{query00, query01, query02, query03, query04, query05, query06};
+        }
+        else
+        {
+            uploadQueries = new String[]{query01, query02, query03, query04, query05, query06};
+        }
+
+        if (!(db.uploadData_Batch_Altogether(uploadQueries)))
+        {
+            JOptionPane.showMessageDialog(null, "\n\nCannot Transfer Targets");
+            return false;
+        }
+        else if (showConfirmMsg)
+        {
+            JOptionPane.showMessageDialog(null, "\n\nTargets Successfully Saved");
+        }
+        return true;
+    }
+
+    private boolean transferMealIngredients(int fromPlanID, int toPlanID)
+    {
+        //####################################################
+        // Transferring this plans Meals  Info to Temp-Plan
+        //####################################################
+
+        // Delete Data from toPlanID
+        String query1 = String.format("DELETE FROM ingredients_in_meal  WHERE PlanID = %s;", toPlanID);
+        String query2 = String.format("DELETE FROM meals  WHERE PlanID = %s;", toPlanID);
+
+
+        // Create table to transfer meals from fromPlanID to toPlanID
+        String query3 = String.format("DROP TABLE IF EXISTS temp_meal;");
+        String query4 = String.format("CREATE table temp_meal AS SELECT * FROM meals WHERE PlanID = %s ORDER BY MealID;", fromPlanID);
+
+        String query5 = String.format("ALTER TABLE temp_meal MODIFY mealID INT;");
+        String query6 = String.format("UPDATE temp_meal SET MealID = NULL;");
+        String query7 = String.format("UPDATE temp_meal SET PlanID = %s;", toPlanID);
+        String query8 = String.format("INSERT INTO meals SELECT * FROM temp_meal;");
+        String query9 = String.format("DROP TABLE temp_meal;");
+
+        //####################################################
+        // Transferring this plans Ingredients to Temp-Plan
+        //####################################################
+
+        // Delete tables if they already exist
+        String query10 = String.format("DROP TABLE IF EXISTS temp_ingredients_in_meal;");
+        String query11 = String.format("DROP TABLE IF EXISTS temp;");
+
+        // Create Table to transfer ingredients from original plan to temp
+        String query12 = String.format(""" 
+                                    
+                CREATE table temp_ingredients_in_meal  AS
+                SELECT i.*, m.Meal_name
+                FROM ingredients_in_meal i, meals m                                                        
+                WHERE i.PlanID= %s AND i.mealID = m.mealID;  
+                
+                """, fromPlanID);
+
+        String query13 = String.format("ALTER TABLE temp_ingredients_in_meal  DROP COLUMN mealID;");
+        String query14 = String.format("UPDATE temp_ingredients_in_meal  SET PlanID = %s;", toPlanID);
+        String query15 = String.format("""
+                CREATE table temp AS
+                                     
+                SELECT * FROM  temp_ingredients_in_meal temp
+                INNER JOIN
+                    (
+                      SELECT Meal_Name AS Meal_Name2, MealID
+                	  FROM meals
+                	  WHERE PlanID = %s
+                	  ORDER BY MEALID
+                	) as M
+                ON
+                    temp.Meal_Name = M.Meal_Name2;
+                                     
+                 """, toPlanID);
+
+        String query16 = String.format("ALTER TABLE temp DROP COLUMN Meal_Name, DROP COLUMN Meal_Name2;");
+        String query17 = String.format("ALTER TABLE temp MODIFY MealID INT AFTER Ingredients_Index;");
+
+        String query18 = String.format("INSERT INTO ingredients_in_meal SELECT * FROM temp;");
+
+        //####################################################
+        // Update
+        //####################################################
+        String[] query_Temp_Data = new String[]{query1, query2, query3, query4, query5, query6, query7, query8, query9, query10, query11, query12,
+                query13, query14, query15, query16, query17, query18, query10, query11};
+
+        if (!(db.uploadData_Batch_Altogether(query_Temp_Data)))
+        {
+            JOptionPane.showMessageDialog(null, "\n\ntransferMealIngredients() Cannot Create Temporary Plan In DB to Allow Editing");
+            return false;
+        }
+        return true;
+    }
+
     private CollapsibleJPanel create_CollapsibleJPanel(boolean mealInDB, Container container, Integer mealID, Integer temp_MealID, String mealName, int mealNo, String[] meal_total_columnNames,
                                                        String[] ingredients_ColumnNames, ArrayList<String> ingredientsInDB, MacrosLeftTable macrosLeft_JTable)
     {
@@ -518,137 +659,6 @@ public class Meal_Plan_Screen extends JPanel
         addToContainer(southPanel, total_Meal_View_Table, 0, 2, 1, 1, 0.25, 0.25, "both", 0, 0, null);
 
         return collapsibleJpObj;
-    }
-
-    private boolean transferTargets(int fromPlan, int toPlan, boolean showConfirmMsg)
-    {
-        //####################################
-        // Mysql Transferring Data
-        //####################################
-        String query00 = String.format("DELETE FROM macros_Per_Pound_And_Limits WHERE PlanID =%s;", toPlan);
-        String query01 = String.format("DROP TABLE IF EXISTS temp_Macros;");
-        String query02 = String.format("CREATE table temp_Macros AS SELECT * FROM macros_Per_Pound_And_Limits WHERE PlanID = %s;", fromPlan);
-        String query03 = String.format("ALTER TABLE temp_Macros DROP COLUMN current_Weight_In_Pounds;");
-        String query04 = String.format("UPDATE temp_Macros SET PlanID = %s;", toPlan);
-
-        //####################################
-        // Gathering Table Columns
-        //####################################
-
-        ArrayList<String> columnsToAvoid = new ArrayList<>(List.of("current_Weight_In_Pounds"));
-        String[] macrosColumns = db.getColumnNames("macros_Per_Pound_And_Limits");
-
-        String query05 = "INSERT INTO macros_Per_Pound_And_Limits \n(";
-        int listSize = macrosColumns.length;
-
-        for (int i = 0; i <= listSize - 1; i++)
-        {
-            String colToAdd = columnsToAvoid.contains(macrosColumns[i]) ? "" : String.format("\n\t%s", macrosColumns[i]);
-
-            if (i == listSize - 1)
-            {
-                query05 += String.format("%s \n) \nSELECT * FROM temp_Macros;", colToAdd);
-                break;
-            }
-
-            query05 = !colToAdd.equals("") ? String.format("%s %s,", query05, colToAdd) : query05;
-        }
-
-        //####################################
-
-        String query06 = String.format("DROP TABLE IF EXISTS temp_Macros;");
-
-        //####################################
-        // Perform Upload
-        //####################################
-
-        if (!(db.uploadData_Batch_Altogether(new String[]{query00, query01, query02, query03, query04, query05, query06})))
-        {
-            JOptionPane.showMessageDialog(null, "\n\nCannot Transfer Targets");
-            return false;
-        }
-        else if (showConfirmMsg)
-        {
-            JOptionPane.showMessageDialog(null, "\n\nTargets Successfully Saved");
-        }
-        return true;
-    }
-
-
-    private boolean transferMealIngredients(int fromPlanID, int toPlanID)
-    {
-        //####################################################
-        // Transferring this plans Meals  Info to Temp-Plan
-        //####################################################
-
-        // Delete Data from toPlanID
-        String query1 = String.format("DELETE FROM ingredients_in_meal  WHERE PlanID = %s;", toPlanID);
-        String query2 = String.format("DELETE FROM meals  WHERE PlanID = %s;", toPlanID);
-
-
-        // Create table to transfer meals from fromPlanID to toPlanID
-        String query3 = String.format("DROP TABLE IF EXISTS temp_meal;");
-        String query4 = String.format("CREATE table temp_meal AS SELECT * FROM meals WHERE PlanID = %s ORDER BY MealID;", fromPlanID);
-
-        String query5 = String.format("ALTER TABLE temp_meal MODIFY mealID INT;");
-        String query6 = String.format("UPDATE temp_meal SET MealID = NULL;");
-        String query7 = String.format("UPDATE temp_meal SET PlanID = %s;", toPlanID);
-        String query8 = String.format("INSERT INTO meals SELECT * FROM temp_meal;");
-        String query9 = String.format("DROP TABLE temp_meal;");
-
-        //####################################################
-        // Transferring this plans Ingredients to Temp-Plan
-        //####################################################
-
-        // Delete tables if they already exist
-        String query10 = String.format("DROP TABLE IF EXISTS temp_ingredients_in_meal;");
-        String query11 = String.format("DROP TABLE IF EXISTS temp;");
-
-        // Create Table to transfer ingredients from original plan to temp
-        String query12 = String.format(""" 
-                                    
-                CREATE table temp_ingredients_in_meal  AS
-                SELECT i.*, m.Meal_name
-                FROM ingredients_in_meal i, meals m                                                        
-                WHERE i.PlanID= %s AND i.mealID = m.mealID;
-                 
-                 """, fromPlanID);
-
-        String query13 = String.format("ALTER TABLE temp_ingredients_in_meal  DROP COLUMN mealID;");
-        String query14 = String.format("UPDATE temp_ingredients_in_meal  SET PlanID = %s;", toPlanID);
-        String query15 = String.format("""
-                CREATE table temp AS
-                                     
-                SELECT * FROM  temp_ingredients_in_meal temp
-                INNER JOIN
-                    (
-                      SELECT Meal_Name AS Meal_Name2, MealID
-                	  FROM meals
-                	  WHERE PlanID = %s
-                	  ORDER BY MEALID
-                	) as M
-                ON
-                    temp.Meal_Name = M.Meal_Name2;
-                                     
-                 """, toPlanID);
-
-        String query16 = String.format("ALTER TABLE temp DROP COLUMN Meal_Name, DROP COLUMN Meal_Name2;");
-        String query17 = String.format("ALTER TABLE temp MODIFY MealID INT AFTER Ingredients_Index;");
-
-        String query18 = String.format("INSERT INTO ingredients_in_meal SELECT * FROM temp;");
-
-        //####################################################
-        // Update
-        //####################################################
-        String[] query_Temp_Data = new String[]{query1, query2, query3, query4, query5, query6, query7, query8, query9, query10, query11, query12,
-                query13, query14, query15, query16, query17, query18, query10, query11};
-
-        if (!(db.uploadData_Batch_Altogether(query_Temp_Data)))
-        {
-            JOptionPane.showMessageDialog(null, "\n\nCannot Create Temporary Plan In DB to Allow Editing");
-            return false;
-        }
-        return true;
     }
 
     //################################################################################################################
@@ -1033,7 +1043,7 @@ public class Meal_Plan_Screen extends JPanel
             }
 
             // If Meal Not In Original PlanID Add To PlanID
-            if(! (table.getMealInDB()) && ! (table.addMealToOriginalPlan(false)))
+            if (!(table.getMealInDB()) && !(table.addMealToOriginalPlan(false)))
             {
                 errorCount++;
                 continue;
@@ -1114,7 +1124,7 @@ public class Meal_Plan_Screen extends JPanel
             }
         }
 
-        if (transferTargets(tempPlanID, planID, showUpdateMsg))
+        if (transferTargets(tempPlanID, planID,false, showUpdateMsg))
         {
             macrosTargetsChanged(false);
             updateTargetsAndMacrosLeft();
@@ -1143,7 +1153,7 @@ public class Meal_Plan_Screen extends JPanel
 
             if (reply == JOptionPane.YES_OPTION)
             {
-                if (transferTargets(planID, tempPlanID, false))
+                if (transferTargets(planID, tempPlanID, true, false))
                 {
                     JOptionPane.showMessageDialog(frame, "\n\nMacro-Targets Successfully Refreshed!!");
                     macrosTargetsChanged(false);

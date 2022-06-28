@@ -8,6 +8,8 @@ import java.sql.*;
 import java.text.Collator;
 import java.util.*;
 import java.lang.Long;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class MyJDBC
 {
@@ -23,6 +25,7 @@ public class MyJDBC
     boolean connectionStatus = false;
 
     boolean databaseExist = true;
+
     //################################################################
     public MyJDBC(String userName, String password, String databaseName, LinkedHashMap<String, String> tableNamesInDBMap)
     {
@@ -34,7 +37,7 @@ public class MyJDBC
         this.databaseName = databaseName.toLowerCase();
         this.tableNamesInDBMap = tableNamesInDBMap;
 
-        no_of_tables = tableNamesInDBMap!=null ? tableNamesInDBMap.size():0;
+        no_of_tables = tableNamesInDBMap != null ? tableNamesInDBMap.size() : 0;
         databaseConnection = initialConnection;
 
         String txtSeperated = "###############################################################################";
@@ -62,13 +65,14 @@ public class MyJDBC
                 connectionStatus = true;
                 break;
             }
-            else if (attemptsMade==connection_attempts)
+            else if (attemptsMade == connection_attempts)
             {
                 System.out.printf("Connection Failed!");
                 System.out.printf("\n\n%s", txtSeperated);
             }
         }
     }
+
     //################################################################
     public static void main(String[] args)
     {
@@ -94,6 +98,7 @@ public class MyJDBC
         Object[][] Data = db.getTableDataObject("select * from data;", "data");
         System.out.printf("\n\n\n\n%s\n\n", Arrays.deepToString(Data));
     }
+
     //################################################################
     public Boolean isDatabaseConnected()
     {
@@ -111,7 +116,7 @@ public class MyJDBC
 
         String sql = String.format("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '%s'", databaseName);
 
-        if (getMultiColumnQuery(sql)!=null) // database exists
+        if (getMultiColumnQuery(sql) != null) // database exists
         {
             System.out.printf("\n\nDB  '%s' EXISTS!", databaseName);
         }
@@ -136,7 +141,7 @@ public class MyJDBC
 
     public boolean establishTables()
     {
-        if (no_of_tables==0)
+        if (no_of_tables == 0)
         {
             return true;
         }
@@ -152,7 +157,7 @@ public class MyJDBC
         int index = 1;
         for (String key : tableNamesInDBMap.keySet())
         {
-            if (index==no_of_tables)
+            if (index == no_of_tables)
             {
                 tablesTXT += String.format("'%s'); ", key);
                 break;
@@ -175,10 +180,10 @@ public class MyJDBC
         ArrayList<ArrayList<String>> queryResults = getMultiColumnQuery(query);
 
         //processing results
-        if (queryResults!=null)
+        if (queryResults != null)
         {
             // if all of the tables don't exist
-            if (Integer.parseInt(queryResults.get(0).get(0))!=no_of_tables)
+            if (Integer.parseInt(queryResults.get(0).get(0)) != no_of_tables)
             {
                 System.out.printf("\n\nAttempting to create DB Tables for '%s' NOW!", databaseName);
                 boolean errorCreatingTables = false;
@@ -186,7 +191,7 @@ public class MyJDBC
                 {
                     System.out.printf("\n\nChecking if Table %s EXISTS!", key);
                     String query2 = String.format("show tables like '%s'", key);
-                    if (getMultiColumnQuery(query2)==null) // table doesn't exist
+                    if (getMultiColumnQuery(query2) == null) // table doesn't exist
                     {
                         if (!(uploadData(tableNamesInDBMap.get(key), false))) // if a table wasn't successfully created
                         {
@@ -235,7 +240,7 @@ public class MyJDBC
             {
                 //Query Setup
 
-                Connection connection = multipleQueries ? DriverManager.getConnection(databaseConnection+="?autoReconnect=true&amp;allowMultiQueries=true", userName, password)
+                Connection connection = multipleQueries ? DriverManager.getConnection(databaseConnection += "?autoReconnect=true&amp;allowMultiQueries=true", userName, password)
                         : DriverManager.getConnection(databaseConnection, userName, password);
 
                 Statement statement = connection.createStatement();
@@ -267,7 +272,7 @@ public class MyJDBC
         {
             try
             {
-                Connection connection =  DriverManager.getConnection(databaseConnection, userName, password);
+                Connection connection = DriverManager.getConnection(databaseConnection, userName, password);
                 Statement statement = connection.createStatement();
 
                 //Setting auto-commit false
@@ -276,7 +281,7 @@ public class MyJDBC
                 //################################
                 // Creating Batch
                 //################################
-                for (String query: queries)
+                for (String query : queries)
                 {
                     statement.addBatch(query);
                 }
@@ -293,9 +298,9 @@ public class MyJDBC
             catch (Exception e)
             {
                 System.out.printf("\n\n @uploadData_Batch() \n\nQuery:\n ");
-                for (String query: queries)
+                for (String query : queries)
                 {
-                    System.out.printf("\n\n%s",query);
+                    System.out.printf("\n\n%s", query);
                 }
                 System.out.printf("\n\n%s", e);
 
@@ -318,7 +323,7 @@ public class MyJDBC
         {
             try
             {
-                Connection connection =  DriverManager.getConnection(databaseConnection, userName, password);
+                Connection connection = DriverManager.getConnection(databaseConnection, userName, password);
                 Statement statement = connection.createStatement();
 
                 //Setting auto-commit false
@@ -327,14 +332,14 @@ public class MyJDBC
                 //################################
                 // Creating Batch
                 //################################
-                for (String query: queries)
+                for (String query : queries)
                 {
                     //statement.addBatch(query);
                     statement.executeUpdate(query);
                 }
 
                 //Executing the batch
-               // statement.executeBatch();
+                // statement.executeBatch();
 
                 //Saving the changes
                 connection.commit();
@@ -345,9 +350,9 @@ public class MyJDBC
             catch (Exception e)
             {
                 System.out.printf("\n\n @uploadData_Batch() \n\nQuery:\n ");
-                for (String query: queries)
+                for (String query : queries)
                 {
-                    System.out.printf("\n\n%s",query);
+                    System.out.printf("\n\n%s", query);
                 }
                 System.out.printf("\n\n%s", e);
 
@@ -524,7 +529,7 @@ public class MyJDBC
 
                     Integer rowCount = getRowsInQuery(query); // get row count of query to this method "query"
 
-                    if (rowCount!=null)
+                    if (rowCount != null)
                     {
                         //############################################
                         // Storing query data in String[]
@@ -600,7 +605,7 @@ public class MyJDBC
 
                     Integer rowCount = getRowsInQuery(query); // get row count of query to this method "query"
 
-                    if (rowCount!=null)
+                    if (rowCount != null)
                     {
                         //############################################
                         // Storing query data in String[]
@@ -677,7 +682,7 @@ public class MyJDBC
 
                     Integer rowCount = getRowsInQuery(query); // get row count of query to this method "query"
 
-                    if (rowCount!=null)
+                    if (rowCount != null)
                     {
                         //############################################
                         // Storing query data in String[]
@@ -775,7 +780,7 @@ public class MyJDBC
     {
         if (databaseExist)
         {
-           // System.out.printf("\n\n"+query);
+            // System.out.printf("\n\n"+query);
             try
             {
                 //Query Setup
@@ -796,7 +801,7 @@ public class MyJDBC
                     //##################################
 
                     String[] columnDataTypes = getColumnDataTypes(tableName);
-                   // System.out.println("\n\n"+Arrays.toString(columnDataTypes));
+                    // System.out.println("\n\n"+Arrays.toString(columnDataTypes));
 
                     int noOfColumns = columnDataTypes.length;
 
@@ -805,7 +810,7 @@ public class MyJDBC
                     //####################################################################
                     // Creating Data Object for JTable
                     //####################################################################
-                    if (rowsInQuery!=null)
+                    if (rowsInQuery != null)
                     {
                         Object[][] Data = new Object[rowsInQuery][noOfColumns];
 
@@ -828,7 +833,7 @@ public class MyJDBC
                                             Data[row][col] = colData;
                                             break;
                                         case "tinyint":
-                                            Data[row][col] = colData.equals("1") ? true:false;
+                                            Data[row][col] = colData.equals("1") ? true : false;
                                             break;
                                         case "int":
                                             Data[row][col] = Integer.valueOf(colData);
@@ -839,18 +844,25 @@ public class MyJDBC
                                         case "bigint":
                                             Data[row][col] = colData;
                                             break;
+
+                                        case "datetime":
+
+                                            DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                                            LocalDateTime result = LocalDateTime.parse(colData, format);
+
+                                            Data[row][col] = result.toString().replaceAll("T", " ");
+
+                                            break;
+
                                         default:
-                                            System.out.printf("\n\n '%s'", colDataType);
+                                            System.out.printf("\n\n@getTableDataObject() Error With DataType '%s' = ' %s ' !", colDataType, colData);
                                             throw new Exception();
-
-
                                     }
                                 }
                                 catch (Exception e)
                                 {
-                                    System.out.printf("\n@getTableDataObject() \nUn-Accounted table data type!");
+                                    System.out.printf("\n@getTableDataObject() \nUn-Accounted table data type! \n\n%s", e);
                                     JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
-                                    //System.exit(1);
                                     return null;
                                 }
                             }
