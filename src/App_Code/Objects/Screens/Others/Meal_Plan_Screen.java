@@ -187,42 +187,36 @@ public class Meal_Plan_Screen extends JPanel
         //##############################################################################################################
         // Getting selected plan Info
         //##############################################################################################################
+
         ArrayList<ArrayList<String>> results1 = db.getMultiColumnQuery(String.format("SELECT PlanID, Plan_Name FROM plans WHERE SelectedPlan = %s;", tempPlanID));
         ArrayList<String> results = results1 != null ? results1.get(0) : null;
 
-        planID = results != null ? Integer.parseInt(results.get(0)): null;
+        planID = results != null ? Integer.parseInt(results.get(0)) : null;
         planName = results != null ? results.get(1) : null;
 
         if (planID != null)
         {
             //####################################################
-            // Printing PlanInfo  //HELLO REMOVE
+            // Transferring PLan Data To Temp
             //####################################################
-            String lineSeparator = "###############################################################################";
-            System.out.printf("\n\n%s \nChosen Plan: %s \n\n%s \nChosen Plan Name: %s \n\n%s", lineSeparator, planID, lineSeparator,  planName, lineSeparator);
-
-            //####################################################
-            // Transferring Targets From Chosen PLan to Temp
-            //####################################################
-            if (!transferTargets(planID, tempPlanID, true,false))
+            if (!transferPlanData(planID, tempPlanID ))
             {
                 return;
             }
 
             //####################################################
-            // Update Temp PlanName Based On Selected PlanName
+            // Printing PlanInfo  //HELLO REMOVE
             //####################################################
+            String lineSeparator = "###############################################################################";
+            System.out.printf("\n\n%s \nChosen Plan: %s \n\n%s \nChosen Plan Name: %s \n\n%s", lineSeparator, planID, lineSeparator, planName, lineSeparator);
 
-            String query0 = String.format("""
-                    UPDATE `plans` AS `P`,
-                    (
-                    	SELECT Plan_Name, Vegan FROM Plans WHERE PlanID = %s
-                    ) AS `SRC`
-                                        
-                    SET
-                        `P`.`Plan_Name` = concat("(Temp) ",`SRC`.`Plan_Name`),`P`.`Vegan` = `SRC`.`Vegan`
-                    WHERE
-                        `P`.`PlanID` = %s; """, planID, tempPlanID);
+            //####################################################
+            // Transferring Targets From Chosen PLan to Temp
+            //####################################################
+            if (!transferTargets(planID, tempPlanID, true, false))
+            {
+                return;
+            }
 
             //####################################################
             // Transferring this plans Meals  Info to Temp-Plan
@@ -387,7 +381,7 @@ public class Meal_Plan_Screen extends JPanel
                 // ##############################################
                 // If targets have changed, save them?
                 // ##############################################
-                if(macroTargetsChanged)
+                if (macroTargetsChanged)
                 {
                     saveMacroTargets(true, false);
                 }
@@ -412,6 +406,28 @@ public class Meal_Plan_Screen extends JPanel
     //##################################################################################################################
     // Frequently Used Methods
     //##################################################################################################################
+
+    private boolean transferPlanData(int fromPlan, int toPlan)
+    {
+        String query0 = String.format("""
+                UPDATE `plans` AS `P`,
+                (
+                	SELECT Plan_Name, Vegan FROM Plans WHERE PlanID = %s
+                ) AS `SRC`
+                                    
+                SET
+                    `P`.`Plan_Name` = concat("(Temp) ",`SRC`.`Plan_Name`),`P`.`Vegan` = `SRC`.`Vegan`
+                WHERE
+                    `P`.`PlanID` = %s; """, fromPlan, toPlan);
+
+        if (!(db.uploadData_Batch_Altogether(new String[]{query0})))
+        {
+            JOptionPane.showMessageDialog(null, "\n\ntransferPlanData() Cannot Transfer Plan Data");
+            return false;
+        }
+
+        return true;
+    }
 
     private boolean transferTargets(int fromPlan, int toPlan, boolean deleteFromToPlan, boolean showConfirmMsg)
     {
@@ -459,9 +475,9 @@ public class Meal_Plan_Screen extends JPanel
         //####################################
         String[] uploadQueries = new String[0];
 
-        if(deleteFromToPlan)
+        if (deleteFromToPlan)
         {
-             uploadQueries = new String[]{query00, query01, query02, query03, query04, query05, query06};
+            uploadQueries = new String[]{query00, query01, query02, query03, query04, query05, query06};
         }
         else
         {
@@ -498,7 +514,6 @@ public class Meal_Plan_Screen extends JPanel
         String query7 = String.format("UPDATE temp_meal SET PlanID = %s;", toPlanID);
         String query8 = String.format("INSERT INTO meals SELECT * FROM temp_meal;");
 
-
         //####################################################
         // Transferring this plans Ingredients to Temp-Plan
         //####################################################
@@ -522,7 +537,7 @@ public class Meal_Plan_Screen extends JPanel
         //####################################################
         // Update
         //####################################################
-        String[] query_Temp_Data = new String[]{query1, query2, query3, query4, query7, query8, query10, query12,  query14, query18};
+        String[] query_Temp_Data = new String[]{query1, query2, query3, query4, query7, query8, query10, query12, query14, query18};
 
         if (!(db.uploadData_Batch_Altogether(query_Temp_Data)))
         {
@@ -1103,7 +1118,7 @@ public class Meal_Plan_Screen extends JPanel
             }
         }
 
-        if (transferTargets(tempPlanID, planID,false, showUpdateMsg))
+        if (transferTargets(tempPlanID, planID, false, showUpdateMsg))
         {
             macrosTargetsChanged(false);
             updateTargetsAndMacrosLeft();
