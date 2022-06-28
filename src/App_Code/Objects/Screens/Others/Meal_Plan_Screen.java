@@ -495,11 +495,9 @@ public class Meal_Plan_Screen extends JPanel
         String query3 = String.format("DROP TABLE IF EXISTS temp_meal;");
         String query4 = String.format("CREATE table temp_meal AS SELECT * FROM meals WHERE PlanID = %s ORDER BY MealID;", fromPlanID);
 
-        String query5 = String.format("ALTER TABLE temp_meal MODIFY mealID INT;");
-        String query6 = String.format("UPDATE temp_meal SET MealID = NULL;");
         String query7 = String.format("UPDATE temp_meal SET PlanID = %s;", toPlanID);
         String query8 = String.format("INSERT INTO meals SELECT * FROM temp_meal;");
-        String query9 = String.format("DROP TABLE temp_meal;");
+
 
         //####################################################
         // Transferring this plans Ingredients to Temp-Plan
@@ -507,46 +505,24 @@ public class Meal_Plan_Screen extends JPanel
 
         // Delete tables if they already exist
         String query10 = String.format("DROP TABLE IF EXISTS temp_ingredients_in_meal;");
-        String query11 = String.format("DROP TABLE IF EXISTS temp;");
 
         // Create Table to transfer ingredients from original plan to temp
         String query12 = String.format(""" 
                                     
                 CREATE table temp_ingredients_in_meal  AS
-                SELECT i.*, m.Meal_name
-                FROM ingredients_in_meal i, meals m                                                        
-                WHERE i.PlanID= %s AND i.mealID = m.mealID;  
-                
+                SELECT i.*
+                FROM ingredients_in_meal i                                                       
+                WHERE i.PlanID = %s;                  
                 """, fromPlanID);
 
-        String query13 = String.format("ALTER TABLE temp_ingredients_in_meal  DROP COLUMN mealID;");
         String query14 = String.format("UPDATE temp_ingredients_in_meal  SET PlanID = %s;", toPlanID);
-        String query15 = String.format("""
-                CREATE table temp AS
-                                     
-                SELECT * FROM  temp_ingredients_in_meal temp
-                INNER JOIN
-                    (
-                      SELECT Meal_Name AS Meal_Name2, MealID
-                	  FROM meals
-                	  WHERE PlanID = %s
-                	  ORDER BY MEALID
-                	) as M
-                ON
-                    temp.Meal_Name = M.Meal_Name2;
-                                     
-                 """, toPlanID);
 
-        String query16 = String.format("ALTER TABLE temp DROP COLUMN Meal_Name, DROP COLUMN Meal_Name2;");
-        String query17 = String.format("ALTER TABLE temp MODIFY MealID INT AFTER Ingredients_Index;");
-
-        String query18 = String.format("INSERT INTO ingredients_in_meal SELECT * FROM temp;");
+        String query18 = String.format("INSERT INTO ingredients_in_meal SELECT * FROM temp_ingredients_in_meal;");
 
         //####################################################
         // Update
         //####################################################
-        String[] query_Temp_Data = new String[]{query1, query2, query3, query4, query5, query6, query7, query8, query9, query10, query11, query12,
-                query13, query14, query15, query16, query17, query18, query10, query11};
+        String[] query_Temp_Data = new String[]{query1, query2, query3, query4, query7, query8, query10, query12,  query14, query18};
 
         if (!(db.uploadData_Batch_Altogether(query_Temp_Data)))
         {
