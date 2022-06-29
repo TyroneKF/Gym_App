@@ -1085,7 +1085,6 @@ public class IngredientsTable extends JDBC_JTable
     // Button Actions Events
     //##################################################################################################################
 
-
     @Override
     protected void deleteRowAction(Object ingredientIndex, int modelRow)
     {
@@ -1145,12 +1144,11 @@ public class IngredientsTable extends JDBC_JTable
         //##################################################
         if (ingredientIndex != null)
         {
-            System.out.printf("\n\nIngredient Index To Delete: %s", ingredientIndex);
             //#################################################
             // Delete Ingredient From Temp Meal
             //#################################################
 
-            System.out.printf("\n\ningredientIndex: %s \nMealID: %s", ingredientIndex, mealID);
+            System.out.printf("\n\nDeleting Row in table %s \ningredientIndex: %s | MealID: %s", mealName, ingredientIndex, mealID);
 
             String query = String.format("DELETE FROM ingredients_in_meal WHERE Ingredients_Index = %s AND PlanID = %s;", ingredientIndex, temp_PlanID);
 
@@ -1186,17 +1184,17 @@ public class IngredientsTable extends JDBC_JTable
         // Delete table from database
         //##########################################
 
-        /*
+         /*
             Delete all ingredients from this meal (using mealID) from table "ingredients_in_meal"
             Delete meal from meals database
          */
 
+        String query1 = "SET FOREIGN_KEY_CHECKS = 0;"; // Disable Foreign Key Checks
         String query2 = String.format(" DELETE FROM ingredients_in_meal WHERE MealID = %s AND PlanID = %s;", mealID, temp_PlanID);
         String query4 = String.format(" DELETE FROM  meals WHERE MealID = %s AND PlanID = %s;", mealID, temp_PlanID);
+        String query5 = "SET FOREIGN_KEY_CHECKS = 1;"; // Enable Foreign Key Checks
 
-        String[] query = new String[]{query2, query4};
-
-        if (!db.uploadData_Batch_Altogether(query))
+        if (!db.uploadData_Batch_Altogether(new String[]{query1, query2, query4, query5}))
         {
             JOptionPane.showMessageDialog(null, "Table Un-Successfully Deleted! ");
         }
@@ -1207,16 +1205,13 @@ public class IngredientsTable extends JDBC_JTable
 
         setVisibility(false); // hide collapsible Object
 
-
         update_MacrosLeft_Table();// update macrosLeft table, due to number deductions from this meal
 
         setObjectDeleted(true); // set this object as deleted
 
         JOptionPane.showMessageDialog(null, "Table Successfully Deleted!");
 
-
     }
-
 
     public void completely_Deleted_JTables()
     {
@@ -1444,65 +1439,6 @@ public class IngredientsTable extends JDBC_JTable
         }
     }
 
-    public boolean addMealToOriginalPlan(boolean showMsg)
-    {
-        //######################################################################
-        // Add Meal To DB
-        //######################################################################
-        if (!(getMealInDB()))     // If Meal Not In Original PlanID Add To PlanID
-        {
-            System.out.printf(String.format("\n\n\\Save Data Action() Meal Not in Original DB"));
-
-            //######################################################################
-            // Add Meal To Original Plan
-            //######################################################################
-            String uploadQuery = String.format(" INSERT INTO meals (PlanID, Meal_Name) VALUES (%s,'%s')", planID, mealName);
-
-            //#####################################
-            // If Upload Un-Successful
-            //#####################################
-            if (!(db.uploadData_Batch_Altogether(new String[]{uploadQuery})))
-            {
-                if (showMsg)
-                {
-                    JOptionPane.showMessageDialog(null, "\n\nUnable To Create Meal In Original Plan!!");
-                }
-                return false;
-            }
-
-            //######################################################################
-            // Set Meals MealID by Retrieving it from DB
-            //######################################################################
-            // Get MealID of meal in plan
-
-            System.out.printf(String.format("\n\nSelect MealID FROM Meals WHERE MealName = '%s' AND PlanID = %s;", mealName, planID));
-            String[] orginalMealID_Result = db.getSingleColumnQuery(String.format("Select MealID FROM Meals WHERE Meal_Name = '%s' AND PlanID = %s;",
-                    mealName, planID));
-
-
-            if (orginalMealID_Result == null)
-            {
-                if (showMsg)
-                {
-                    JOptionPane.showMessageDialog(null, "\n\nUnable To Get MealID in Plan to Update Meal");
-                }
-                return false;
-            }
-
-            //tempPlan_Meal_ID = mealID;//HELLO What does this do?
-            mealID = Integer.valueOf(orginalMealID_Result[0]);
-
-            System.out.printf(String.format("\n\nPlanId: %s \nTempPlanID: %s \n\nMealID: %s ",
-                    planID, temp_PlanID, mealID));
-
-            //##########################################
-            // Meal Successfully Added TO DB
-            //##########################################
-            set_Meal_In_DB(true);
-        }
-        return true;
-    }
-
     @Override
     public boolean saveDataAction(boolean showMessage)
     {
@@ -1570,6 +1506,71 @@ public class IngredientsTable extends JDBC_JTable
         }
         return true;
     }
+
+    public boolean transferMealDataToPlan(int fromPlan, int toPlan)
+    {
+        return true;
+    }
+
+    public boolean addMealToOriginalPlan(boolean showMsg)
+    {
+        //######################################################################
+        // Add Meal To DB
+        //######################################################################
+        if (!(getMealInDB()))     // If Meal Not In Original PlanID Add To PlanID
+        {
+            System.out.printf(String.format("\n\n\\Save Data Action() Meal Not in Original DB"));
+
+            //######################################################################
+            // Add Meal To Original Plan
+            //######################################################################
+            String uploadQuery = String.format(" INSERT INTO meals (PlanID, Meal_Name) VALUES (%s,'%s')", planID, mealName);
+
+            //#####################################
+            // If Upload Un-Successful
+            //#####################################
+            if (!(db.uploadData_Batch_Altogether(new String[]{uploadQuery})))
+            {
+                if (showMsg)
+                {
+                    JOptionPane.showMessageDialog(null, "\n\nUnable To Create Meal In Original Plan!!");
+                }
+                return false;
+            }
+
+            //######################################################################
+            // Set Meals MealID by Retrieving it from DB
+            //######################################################################
+            // Get MealID of meal in plan
+
+            System.out.printf(String.format("\n\nSelect MealID FROM Meals WHERE MealName = '%s' AND PlanID = %s;", mealName, planID));
+            String[] orginalMealID_Result = db.getSingleColumnQuery(String.format("Select MealID FROM Meals WHERE Meal_Name = '%s' AND PlanID = %s;",
+                    mealName, planID));
+
+
+            if (orginalMealID_Result == null)
+            {
+                if (showMsg)
+                {
+                    JOptionPane.showMessageDialog(null, "\n\nUnable To Get MealID in Plan to Update Meal");
+                }
+                return false;
+            }
+
+            //tempPlan_Meal_ID = mealID;//HELLO What does this do?
+            mealID = Integer.valueOf(orginalMealID_Result[0]);
+
+            System.out.printf(String.format("\n\nPlanId: %s \nTempPlanID: %s \n\nMealID: %s ",
+                    planID, temp_PlanID, mealID));
+
+            //##########################################
+            // Meal Successfully Added TO DB
+            //##########################################
+            set_Meal_In_DB(true);
+        }
+        return true;
+    }
+
 
     //##################################################################################################################
     // Update Table / Accessor Methods
