@@ -1398,7 +1398,7 @@ public class IngredientsTable extends JDBC_JTable
         //#############################################################################################
         if (updateMacrosLeft)
         {
-            update_MacrosLeft_Table();
+            refreshMacrosLeftTable();
         }
     }
 
