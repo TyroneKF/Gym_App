@@ -1357,84 +1357,37 @@ public class IngredientsTable extends JDBC_JTable
     @Override
     public void refresh_Btn_Action(boolean updateMacrosLeft)
     {
-        //#######################################################
-        // If Meal is not deleted from the temp plan in database
-        //#######################################################
+        //#############################################################################################
+        // Reset DB Data
+        //##############################################################################################
+        if(!(transferMealDataToPlan(planID, temp_PlanID)))
+        {
+            JOptionPane.showMessageDialog(null, "\n\nUnable to transfer ingredients data from  original plan to temp plan!!");
+            return;
+        }
+
+        //#############################################################################################
+        // If Meal was previously deleted reset variables & state
+        //##############################################################################################
         if (getObjectDeleted())
         {
-
-            //##########################################################
-            // Re-Insert Meal Name Into Temp Meal
-            //##########################################################
-
-            String query1 = String.format("""
-                                        
-                    INSERT INTO meals (MealID, PlanID, Meal_Name) VALUES
-                    (%s, %s,'%s'); """, mealID, temp_PlanID, mealName);
-
-            if (!(db.uploadData_Batch_Altogether(new String[]{query1})))
-            {
-                JOptionPane.showMessageDialog(null, "Unable To re-insert deleted meals with action requested \nbeing refresh!");
-                return;
-            }
-
             setVisibility(true);
             setObjectDeleted(false);
         }
 
-        //######################################
-        // Reset Temp Data For Meal in Database
-        //######################################
-
-        // delete all ingredients in tempMeal
-        String query1 = String.format("DELETE FROM ingredients_in_meal WHERE MealID = %s AND PlanID = %s;", mealID, temp_PlanID);
-
-        //####################################################
-        // Transferring this plans Ingredients to Temp-Plan
-        // Resetting the Database
-        //####################################################
-
-        //Copy the current data for this meal in the database
-        String query2 = String.format("DROP TABLE IF EXISTS temp_ingredients_in_meal;");
-        String query3 = String.format(""" 
-                CREATE table temp_ingredients_in_meal  AS
-                SELECT *
-                FROM ingredients_in_meal i                                                      
-                WHERE PlanID = %s AND MealID = %s; """, planID, mealID);
-
-        String query4 = String.format("UPDATE temp_ingredients_in_meal  SET PlanID = %s; ", temp_PlanID);
-
-        String query8 = String.format("INSERT INTO ingredients_in_meal SELECT * FROM temp_ingredients_in_meal; ");
-        String query9 = String.format("DROP TABLE temp_ingredients_in_meal; ");
-
-        String[] query_Temp_Data = new String[]{query1, query2, query3, query4, query8, query9};
-
-        if (!(db.uploadData_Batch_Altogether(query_Temp_Data)))
-        {
-            JOptionPane.showMessageDialog(null, "ERROR: \nCannot revert database to previous data!");
-            return;
-        }
-
-        //##############################
-        /** //HELLO
-         * Reset Ingredients Table Data
-         * However, the index changes everytime we delete and upload,
-         */
-        //##############################
-
-        //Reset this tables data (ingredients_in_meal table)
+        //##############################################################################################
+        // Reset Table Model data
+        ///#############################################################################################
         tableModel_Setup(getData(), getColumnNames());
 
-        //##############################
+        //#############################################################################################
         // Reset Meal Total  Table Data
-        //##############################
-        //System.out.printf("\n\nReset Table Data:\n\n %s", Arrays.deepToString(total_Meal_Table.getData())); // HELLO REMOVE
+        //#############################################################################################
         refreshTotalMealTable();
 
-        //##############################
+        //#############################################################################################
         // Update Other Tables Data
-        //##############################
-
+        //#############################################################################################
         if (updateMacrosLeft)
         {
             update_MacrosLeft_Table();
