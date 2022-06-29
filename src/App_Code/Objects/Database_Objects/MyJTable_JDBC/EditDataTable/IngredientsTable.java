@@ -1367,6 +1367,14 @@ public class IngredientsTable extends JDBC_JTable
         }
 
         //#############################################################################################
+        // Reset Table Info & Data
+        //##############################################################################################
+        refresh(updateMacrosLeft);
+    }
+
+    public void refresh(boolean updateMacrosLeft)
+    {
+        //#############################################################################################
         // If Meal was previously deleted reset variables & state
         //##############################################################################################
         if (getObjectDeleted())
