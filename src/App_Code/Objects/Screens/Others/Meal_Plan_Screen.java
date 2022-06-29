@@ -1006,7 +1006,7 @@ public class Meal_Plan_Screen extends JPanel
         //####################################################################
         // Refresh Macro-Targets Table
         //####################################################################
-        refreshMacroTargets();
+        refreshMacroTargets(); // if macroTargets changed ask the user if they would like to refresh this data
         refreshMacrosLeft();
     }
 
@@ -1018,13 +1018,13 @@ public class Meal_Plan_Screen extends JPanel
         // ##############################################################################
 
         // If no plan is selected exit Or,  if user rejects saving when asked  exit
-        if ( (!(get_IsPlanSelected())) || askPermission && !(areYouSure("Save Data")))
+        if ((!(get_IsPlanSelected())) || askPermission && !(areYouSure("Save Data")))
         {
             return;
         }
 
         // ###############################################################################
-        // Save Each Meal Table Model / Completely Delete Meal If meal already Deleted
+        // Removing Meals that have been deleted
         // ##############################################################################
         Iterator<IngredientsTable> it = listOfJTables.iterator();
 
@@ -1039,28 +1039,7 @@ public class Meal_Plan_Screen extends JPanel
             {
                 table.completely_Deleted_JTables();
                 it.remove();
-                continue;
             }
-
-            if (!(table.updateTableModelData()))
-            {
-                errorCount++;
-                continue;
-            }
-
-            if(! (table.getMealInDB()))
-            {
-                table.set_Meal_In_DB(true);
-            }
-        }
-
-        // #####################################
-        // If error occurred above exit
-        // #####################################
-        if (errorCount > 0)
-        {
-            JOptionPane.showMessageDialog(frame, "\n\n Error \n1.) Unable to save all meals in plan! \n\nPlease retry again!");
-            return;
         }
 
         // ##############################################################################
@@ -1075,26 +1054,62 @@ public class Meal_Plan_Screen extends JPanel
             String query2 = String.format("DELETE FROM meals  WHERE PlanID = %s;", planID);
             String query3 = "SET FOREIGN_KEY_CHECKS = 1;"; // Enable Foreign Key Checks
 
-            if (db.uploadData_Batch_Altogether(new String[]{query0, query1, query2, query3}))
+            if (!(db.uploadData_Batch_Altogether(new String[]{query0, query1, query2, query3})))
             {
-                if (showMsg)
-                {
-                    JOptionPane.showMessageDialog(frame, "Meals Successful Saved!!");
-                }
+                JOptionPane.showMessageDialog(frame, "\n\n1.)  Error \nUnable to save meals in plan!");
                 return;
             }
         }
-        else if ((transferMealIngredients(tempPlanID, planID))) // transfer meals and ingredients from temp plan to original plan
+        else if ((!(transferMealIngredients(tempPlanID, planID)))) // transfer meals and ingredients from temp plan to original plan
         {
             System.out.println("\n\n#################################### \n2.) saveMealData() Meals Transferred to Original Plan");
-            if (showMsg)
-            {
-                JOptionPane.showMessageDialog(frame, "Meals Successful Saved!!");
-            }
+
+            JOptionPane.showMessageDialog(frame, "\n\n2.)  Error \nUnable to save meals in plan!");
             return;
         }
 
-        JOptionPane.showMessageDialog(frame, "\n\n Error \nUnable to save meals in plan! Please retry again!");
+        // ##############################################################################
+        // Save IngredientsTable Data
+        // ##############################################################################
+
+        Iterator<IngredientsTable> it2 = listOfJTables.iterator();
+        while (it2.hasNext())
+        {
+            IngredientsTable table = it2.next();
+
+            if (!(table.getMealInDB()))
+            {
+                table.set_Meal_In_DB(true);
+            }
+
+            if (!(table.updateTableModelData()))
+            {
+                errorCount++;
+            }
+        }
+
+        // #####################################
+        // If error occurred above exit
+        // #####################################
+        if (errorCount > 0)
+        {
+            JOptionPane.showMessageDialog(frame, "\n\n Error \n3.) Unable to save all meals in plan! \n\nPlease retry again!");
+            return;
+        }
+
+        // ##############################################################################
+        // Update MacrosLeft Targets
+        // ##############################################################################
+        if(!(macrosLeft_JTable.updateTableModelData()))
+        {
+            JOptionPane.showMessageDialog(frame, "\n\n Error \n4.) Unable to save MacrosLeftTable! \n\nPlease retry again!");
+            return;
+        }
+
+        // ##############################################################################
+        // Successful Message
+        // ##############################################################################
+        JOptionPane.showMessageDialog(frame, "\n\nAll Meals Are Successfully Saved!");
 
     }
 
