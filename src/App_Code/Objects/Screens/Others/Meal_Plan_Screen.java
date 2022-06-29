@@ -1014,17 +1014,11 @@ public class Meal_Plan_Screen extends JPanel
     {
 
         // ##############################################################################
-        //
+        // Exit Clauses
         // ##############################################################################
 
-        // If no plan is selected exit
-        if (!(get_IsPlanSelected()))
-        {
-            return;
-        }
-
-        // if user rejects saving when asked  exit
-        if (askPermission && !(areYouSure("Save Data")))
+        // If no plan is selected exit Or,  if user rejects saving when asked  exit
+        if ( (!(get_IsPlanSelected())) || askPermission && !(areYouSure("Save Data")))
         {
             return;
         }
@@ -1048,23 +1042,15 @@ public class Meal_Plan_Screen extends JPanel
                 continue;
             }
 
-            // If Meal Not In Original PlanID Add To PlanID
-            // HELLO FIX
-        /*    if (!(table.getMealInDB()) && !(table.addMealToOriginalPlan(false)))
-            {
-                errorCount++;
-                continue;
-            }*/
-
             if (!(table.updateTableModelData()))
             {
                 errorCount++;
             }
         }
 
-        // ##############################################################################
+        // #####################################
         // If error occurred above exit
-        // ##############################################################################
+        // #####################################
         if (errorCount > 0)
         {
             JOptionPane.showMessageDialog(frame, "\n\n Error \n1.) Unable to save all meals in plan! \n\nPlease retry again!");
@@ -1077,11 +1063,13 @@ public class Meal_Plan_Screen extends JPanel
         if (listSize == 0) // if there are no meals in the temp plan delete all meals / ingredients from original plan
         {
             System.out.println("\n\n#################################### \n1.) saveMealData() Empty Meal Plan Save");
+
+            String query0 = "SET FOREIGN_KEY_CHECKS = 0;"; // Disable Foreign Key Checks
             String query1 = String.format("DELETE FROM ingredients_in_meal  WHERE PlanID = %s;", planID);
             String query2 = String.format("DELETE FROM meals  WHERE PlanID = %s;", planID);
-            String[] query_Temp_Data = new String[]{query1, query2};
+            String query3 = "SET FOREIGN_KEY_CHECKS = 1;"; // Enable Foreign Key Checks
 
-            if (db.uploadData_Batch_Altogether(query_Temp_Data))
+            if (db.uploadData_Batch_Altogether(new String[]{query0, query1, query2, query3}))
             {
                 if (showMsg)
                 {
