@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class TotalMealTable extends MyJTable_DisplayData
 {
-    private Integer planID, temp_PlanID = 1, mealID, tempPlan_Meal_ID;
+    private Integer planID, temp_PlanID = 1, mealID;
     private String mealName;
     private CollapsibleJPanel collapsibleObj;
 
@@ -19,7 +19,7 @@ public class TotalMealTable extends MyJTable_DisplayData
 
 
     public TotalMealTable(MyJDBC db, CollapsibleJPanel collapsibleObj, String databaseName, Object[][] data, String[] columnNames, int planID,
-                          Integer mealID, Integer tempPlan_Meal_ID, String mealName, String tableName,
+                          Integer mealID,  String mealName, String tableName,
                           ArrayList<Integer> unEditableColumns, ArrayList<Integer> colAvoidCentering, boolean setIconsUp)
     {
 
@@ -29,9 +29,31 @@ public class TotalMealTable extends MyJTable_DisplayData
         this.mealID = mealID;
         this.mealName = mealName;
         this.planID = planID;
-        this.tempPlan_Meal_ID = tempPlan_Meal_ID;
         this.setIconsUp = setIconsUp;
         this.collapsibleObj = collapsibleObj;
+    }
+
+    public boolean updateTableModelData()
+    {
+        //##########################################
+        // Changing Total  Ingredients Table Model
+        //##########################################
+
+        // Setting totals tables Data model to new data
+        String totalTableQuery = String.format("SELECT *  FROM total_meal_view WHERE MealID = %s AND PlanID = %s;", mealID, planID);
+
+        Object[][] totalTableData = db.getTableDataObject(totalTableQuery, "total_meal_view");
+        if (totalTableData != null)
+        {
+            setTableModelData(totalTableData);
+        }
+        else
+        {
+            System.out.printf("\n\nUnable to update total meal table for table: %s", getMealName());
+            return false;
+        }
+
+        return true;
     }
 
     public void updateTotalMealTable()
@@ -40,13 +62,13 @@ public class TotalMealTable extends MyJTable_DisplayData
         //   Updating Total  Meal Table
         ///##########################################################################
 
-        String totalMealTableQuery = String.format("SELECT  * FROM total_meal_view   WHERE  MealID = %s; ", tempPlan_Meal_ID);
+        String totalMealTableQuery = String.format("SELECT *  FROM total_meal_view WHERE MealID = %s AND PlanID = %s;", mealID, temp_PlanID);
 
         ArrayList<ArrayList<Object>> totalMealData = db.get_Multi_ColumnQuery_Object(totalMealTableQuery);
 
         if (totalMealData == null)
         {
-            JOptionPane.showMessageDialog(null, "ERROR: \nUn-able to Update Totals Table!");
+            JOptionPane.showMessageDialog(null, String.format("ERROR: \nUn-able to Update Totals Table for Table %s!", mealName));
 
             return;
         }
@@ -65,6 +87,11 @@ public class TotalMealTable extends MyJTable_DisplayData
     public Object[][] getData()
     {
         return  super.getData();
+    }
+
+    public String getMealName()
+    {
+        return mealName;
     }
 
     public void refreshData()

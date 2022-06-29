@@ -98,6 +98,11 @@ public class Meal_Plan_Screen extends JPanel
             macrosLeft_Table_Hidden_Col = new ArrayList<Integer>(Arrays.asList(1, 2));
 
 
+
+    //########################################################
+
+    String lineSeparator = "###############################################################################";
+
     //##################################################################################################################
     // Constructor & Main
     //##################################################################################################################
@@ -207,8 +212,8 @@ public class Meal_Plan_Screen extends JPanel
             //####################################################
             // Printing PlanInfo  //HELLO REMOVE
             //####################################################
-            String lineSeparator = "###############################################################################";
-            System.out.printf("\n\n%s \nChosen Plan: %s \n\n%s \nChosen Plan Name: %s \n\n%s", lineSeparator, planID, lineSeparator, planName, lineSeparator);
+
+            System.out.printf("\nChosen Plan: %s  & Chosen Plan Name: %s \n\n%s",  planID,  planName, lineSeparator);
 
             //####################################################
             // Transferring Targets From Chosen PLan to Temp
@@ -236,20 +241,12 @@ public class Meal_Plan_Screen extends JPanel
             //########################################
             // Getting ID's of Meals Of Chosen Plan
             //########################################
-            String query = String.format("SELECT MealID, Meal_Name FROM meals WHERE PlanID = %s ORDER BY MealID;", planID);
+            String query = String.format("SELECT MealID, Meal_Name FROM meals WHERE PlanID = %s ORDER BY MealID;", tempPlanID);
 
             ArrayList<ArrayList<String>> plan_Meal_IDs_And_Name = db.getMultiColumnQuery(query);
             plan_Meal_IDs_And_Name = plan_Meal_IDs_And_Name != null ? plan_Meal_IDs_And_Name : new ArrayList<>();
 
             int no_of_meals = plan_Meal_IDs_And_Name.size();
-
-            //#################################################
-            // Getting ID's Of Meals in Database In Temp Plan
-            //##################################################
-            String queryGetTempMealsID = String.format("SELECT MealID FROM meals WHERE PlanID = %s ORDER BY MealID;", tempPlanID);
-
-            ArrayList<String> temp_Plan_meal_IDs = db.getSingleColumnQuery_ArrayList(queryGetTempMealsID);
-            temp_Plan_meal_IDs = temp_Plan_meal_IDs != null ? temp_Plan_meal_IDs : new ArrayList<>();
 
             //#########################################################################################
             // Macro Targets & Macros Left Setup
@@ -327,7 +324,6 @@ public class Meal_Plan_Screen extends JPanel
             for (int i = 0; i < no_of_meals; i++)
             {
                 int mealID = Integer.parseInt(plan_Meal_IDs_And_Name.get(i).get(0)); // MealID's From Original Plan Not Temp
-                int temp_MealID = Integer.parseInt(temp_Plan_meal_IDs.get(i));
 
                 String mealName = plan_Meal_IDs_And_Name.get(i).get(1);
 
@@ -336,7 +332,7 @@ public class Meal_Plan_Screen extends JPanel
                 //#########################################
                 // Create Collapsible Panel
                 //#########################################
-                CollapsibleJPanel collapsibleJTable = create_CollapsibleJPanel(true, scrollJPanelCenter, mealID, temp_MealID, mealName, mealNo, meal_total_columnNames, ingredients_ColumnNames,
+                CollapsibleJPanel collapsibleJTable = create_CollapsibleJPanel(true, scrollJPanelCenter, mealID, mealName, mealNo, meal_total_columnNames, ingredients_ColumnNames,
                         ingredientsInDB, macrosLeft_JTable);
 
                 //##################################################################################################
@@ -426,6 +422,7 @@ public class Meal_Plan_Screen extends JPanel
             return false;
         }
 
+        System.out.printf("\nPlanData Successfully transferred! \n\n%s", lineSeparator);
         return true;
     }
 
@@ -493,6 +490,8 @@ public class Meal_Plan_Screen extends JPanel
         {
             JOptionPane.showMessageDialog(null, "\n\nTargets Successfully Saved");
         }
+
+        System.out.printf("\nTargets Successfully transferred! \n\n%s", lineSeparator);
         return true;
     }
 
@@ -502,13 +501,20 @@ public class Meal_Plan_Screen extends JPanel
         // Transferring this plans Meals  Info to Temp-Plan
         //####################################################
 
+        // Delete tables if they already exist
+        String query0 = String.format("DROP TABLE IF EXISTS temp_ingredients_in_meal;");
+        String query00 = String.format("DROP TABLE IF EXISTS temp_meal;");
+
+        String query01 = "SET FOREIGN_KEY_CHECKS = 0;"; // Disable Foreign Key Checks
+
         // Delete Data from toPlanID
         String query1 = String.format("DELETE FROM ingredients_in_meal  WHERE PlanID = %s;", toPlanID);
         String query2 = String.format("DELETE FROM meals  WHERE PlanID = %s;", toPlanID);
 
+        String query3 = "SET FOREIGN_KEY_CHECKS = 1;"; // Enable Foreign Key Checks
 
         // Create table to transfer meals from fromPlanID to toPlanID
-        String query3 = String.format("DROP TABLE IF EXISTS temp_meal;");
+
         String query4 = String.format("CREATE table temp_meal AS SELECT * FROM meals WHERE PlanID = %s ORDER BY MealID;", fromPlanID);
 
         String query7 = String.format("UPDATE temp_meal SET PlanID = %s;", toPlanID);
@@ -518,8 +524,7 @@ public class Meal_Plan_Screen extends JPanel
         // Transferring this plans Ingredients to Temp-Plan
         //####################################################
 
-        // Delete tables if they already exist
-        String query10 = String.format("DROP TABLE IF EXISTS temp_ingredients_in_meal;");
+
 
         // Create Table to transfer ingredients from original plan to temp
         String query12 = String.format(""" 
@@ -537,17 +542,19 @@ public class Meal_Plan_Screen extends JPanel
         //####################################################
         // Update
         //####################################################
-        String[] query_Temp_Data = new String[]{query1, query2, query3, query4, query7, query8, query10, query12, query14, query18};
+        String[] query_Temp_Data = new String[]{query0, query00, query01, query1, query2, query3, query4, query7, query8, query12, query14, query18};
 
         if (!(db.uploadData_Batch_Altogether(query_Temp_Data)))
         {
             JOptionPane.showMessageDialog(null, "\n\ntransferMealIngredients() Cannot Create Temporary Plan In DB to Allow Editing");
             return false;
         }
+
+        System.out.printf("\nMealIngredients Successfully Transferred! \n\n%s", lineSeparator);
         return true;
     }
 
-    private CollapsibleJPanel create_CollapsibleJPanel(boolean mealInDB, Container container, Integer mealID, Integer temp_MealID, String mealName, int mealNo, String[] meal_total_columnNames,
+    private CollapsibleJPanel create_CollapsibleJPanel(boolean mealInDB, Container container, Integer mealID,  String mealName, int mealNo, String[] meal_total_columnNames,
                                                        String[] ingredients_ColumnNames, ArrayList<String> ingredientsInDB, MacrosLeftTable macrosLeft_JTable)
     {
         CollapsibleJPanel collapsibleJpObj = new CollapsibleJPanel(container, String.format("   Meal   %s", mealNo), 150, 50);
@@ -561,9 +568,10 @@ public class Meal_Plan_Screen extends JPanel
 
         JPanel southPanel = collapsibleJpObj.getSouthJPanel();
 
-        String query = String.format("SELECT *  FROM total_meal_view WHERE MealID = %s ", temp_MealID);
+        String query = String.format("SELECT *  FROM total_meal_view WHERE MealID = %s AND PlanID = %s;", mealID, tempPlanID);
+        Object[][] result = db.getTableDataObject(query, tableName);
 
-        Object[][] meal_Total_Data = db.getTableDataObject(query, tableName) != null ? db.getTableDataObject(query, tableName) : new Object[0][0];
+        Object[][] meal_Total_Data = result != null ? result : new Object[0][0];
 
         int columnsInTotalTable = meal_total_columnNames.length;
         ArrayList<Integer> unEditableCells = new ArrayList<Integer>(columnsInTotalTable);
@@ -573,7 +581,7 @@ public class Meal_Plan_Screen extends JPanel
         }
 
         TotalMealTable total_Meal_View_Table = new TotalMealTable(db, collapsibleJpObj, databaseName, meal_Total_Data, meal_total_columnNames, planID,
-                mealID, temp_MealID, mealName, tableName, unEditableCells, null, false);
+                mealID,  mealName, tableName, unEditableCells, null, false);
 
         total_Meal_View_Table.setOpaque(true); //content panes must be opaque
         total_Meal_View_Table.SetUp_HiddenTableColumns(TotalMeal_Table_Hidden_Columns, totalMealTable_StartCol);
@@ -605,7 +613,7 @@ public class Meal_Plan_Screen extends JPanel
         //###########################################
         // Getting Ingredients In Meal
         //###########################################
-        query = String.format("SELECT *  FROM ingredients_in_meal_calculation WHERE MealID = %s ORDER BY Ingredients_Index;", temp_MealID);
+        query = String.format("SELECT *  FROM ingredients_in_meal_calculation WHERE MealID = %s AND PlanID = %s ORDER BY Ingredients_Index;", mealID, tempPlanID);
         tableName = "ingredients_in_meal_calculation";
         Object[][] mealData = db.getTableDataObject(query, tableName) != null ? db.getTableDataObject(query, tableName) : new Object[0][0];
 
@@ -614,7 +622,7 @@ public class Meal_Plan_Screen extends JPanel
         //##############################################
 
 
-        IngredientsTable ingredients_Calulation_Jtable = new IngredientsTable(db, collapsibleJpObj, databaseName, mealData, ingredients_ColumnNames, planID, mealID, temp_MealID, mealName,
+        IngredientsTable ingredients_Calulation_Jtable = new IngredientsTable(db, collapsibleJpObj, databaseName, mealData, ingredients_ColumnNames, planID, mealID, mealInDB, mealName,
                 tableName, unEditableCells, ingredients_Table_Col_Avoid_Centering, total_Meal_View_Table, macrosLeft_JTable);
 
         ingredients_Calulation_Jtable.setOpaque(true); //content panes must be opaque
@@ -922,17 +930,16 @@ public class Meal_Plan_Screen extends JPanel
             return;
         }
 
-        Integer tempMealID = Integer.valueOf(results[0]);
+        Integer mealID = Integer.valueOf(results[0]);
 
-        System.out.printf("\n\nTemp Meal ID: %s", tempMealID);
+        System.out.printf("\n\nTemp Meal ID: %s", mealID);
 
         //#############################################
         // Create New Meal Table In GUI
         //##############################################
 
-        CollapsibleJPanel collapsibleJTable = create_CollapsibleJPanel(false, scrollJPanelCenter, null, tempMealID, newMealName, mealNo, meal_total_columnNames, ingredients_ColumnNames,
+        CollapsibleJPanel collapsibleJTable = create_CollapsibleJPanel(false, scrollJPanelCenter, mealID,  newMealName, mealNo, meal_total_columnNames, ingredients_ColumnNames,
                 ingredientsInDB, macrosLeft_JTable);
-
 
         //###############################################
         // Adding Collapsible Objects && JTables To GUI

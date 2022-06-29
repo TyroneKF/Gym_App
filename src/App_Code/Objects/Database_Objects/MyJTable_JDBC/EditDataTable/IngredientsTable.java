@@ -33,7 +33,7 @@ public class IngredientsTable extends JDBC_JTable
     //####################################
     // Other Variables
     //####################################
-    private Integer planID, temp_PlanID = 1, mealID, tempPlan_Meal_ID;
+    private Integer planID, temp_PlanID = 1, mealID;
     private String mealName;
 
     private ArrayList<Integer> triggerColumns = null;
@@ -82,7 +82,7 @@ public class IngredientsTable extends JDBC_JTable
 
     // Ingredients Table
     public IngredientsTable(MyJDBC db, CollapsibleJPanel collapsibleObj, String databaseName, Object[][] data, String[] columnNames, int planID,
-                            Integer mealID, Integer tempPlan_Meal_ID, String mealName, String tableName,
+                            Integer mealID, boolean meal_In_DB, String mealName, String tableName,
                             ArrayList<Integer> unEditableColumns, ArrayList<Integer> colAvoidCentering,
                             TotalMealTable total_Meal_Table, MacrosLeftTable macrosLeft_Table)
     {
@@ -92,12 +92,9 @@ public class IngredientsTable extends JDBC_JTable
         this.databaseName = databaseName;
 
         this.mealID = mealID;
-        if (mealID == null)
-        {
-            set_Meal_In_DB(false);
-        }
 
-        this.tempPlan_Meal_ID = tempPlan_Meal_ID;
+        this.meal_In_DB = meal_In_DB;
+
         this.mealName = mealName;
         this.planID = planID;
 
@@ -1099,7 +1096,7 @@ public class IngredientsTable extends JDBC_JTable
         {
             String question = String.format("""
                     \n\nThere is only 1 ingredient in this table (' %s '), 
-                    
+                                        
                     if you delete this ingredient, this table will also be deleted.
                                        
                     Would you like to delete this table?
@@ -1114,7 +1111,7 @@ public class IngredientsTable extends JDBC_JTable
             else if (reply == JOptionPane.NO_OPTION)
             {
                 Object ingredients_Index = jTable.getValueAt(0, ingredientsTable_Index_Col);
-                Object ingredientID  = 1;
+                Object ingredientID = 1;
 
                 //#######################################
                 // Change Quantity & IngredientID
@@ -1122,9 +1119,9 @@ public class IngredientsTable extends JDBC_JTable
 
                 // Update DB Values
                 String query1 = String.format("""
-                UPDATE  ingredients_in_meal
-                SET IngredientID = %s, Quantity = 0
-                WHERE PlanID = %s  AND Ingredients_Index = %s;""", ingredientID, temp_PlanID, ingredients_Index);
+                        UPDATE  ingredients_in_meal
+                        SET IngredientID = %s, Quantity = 0
+                        WHERE PlanID = %s  AND Ingredients_Index = %s;""", ingredientID, temp_PlanID, ingredients_Index);
 
                 //HELLO DELETE
                 System.out.printf("\n\ndeleteRowAction() \nQuery: \n\n%s", query1);
@@ -1138,7 +1135,7 @@ public class IngredientsTable extends JDBC_JTable
                 }
 
                 // Change Table
-                updateTableValuesByQuantity(0, ingredients_Index,0);
+                updateTableValuesByQuantity(0, ingredients_Index, 0);
             }
 
             return;
@@ -1153,7 +1150,7 @@ public class IngredientsTable extends JDBC_JTable
             // Delete Ingredient From Temp Meal
             //#################################################
 
-            System.out.printf("\n\ningredientIndex: %s \nMealPlanID: %s", ingredientIndex, tempPlan_Meal_ID);
+            System.out.printf("\n\ningredientIndex: %s \nMealID: %s", ingredientIndex, mealID);
 
             String query = String.format("DELETE FROM ingredients_in_meal WHERE Ingredients_Index = %s AND PlanID = %s;", ingredientIndex, temp_PlanID);
 
@@ -1194,8 +1191,8 @@ public class IngredientsTable extends JDBC_JTable
             Delete meal from meals database
          */
 
-        String query2 = String.format(" DELETE FROM ingredients_in_meal WHERE MealID = %s;", tempPlan_Meal_ID);
-        String query4 = String.format(" DELETE FROM  meals WHERE MealID = %s;", tempPlan_Meal_ID);
+        String query2 = String.format(" DELETE FROM ingredients_in_meal WHERE MealID = %s AND PlanID = %s;", mealID, temp_PlanID);
+        String query4 = String.format(" DELETE FROM  meals WHERE MealID = %s AND PlanID = %s;", mealID, temp_PlanID);
 
         String[] query = new String[]{query2, query4};
 
@@ -1306,7 +1303,7 @@ public class IngredientsTable extends JDBC_JTable
                                         
                 VALUES
                 (%s, %s, %s, %s, %s, %s); 
-                        """, newIngredientsIndex2, tempPlan_Meal_ID, temp_PlanID, ingredientID, quantity, NoneOfTheAbove_PDID);
+                        """, newIngredientsIndex2, mealID, temp_PlanID, ingredientID, quantity, NoneOfTheAbove_PDID);
 
         if (!(db.uploadData_Batch_Altogether(new String[]{query1})))
         {
@@ -1376,7 +1373,7 @@ public class IngredientsTable extends JDBC_JTable
             String query1 = String.format("""
                                         
                     INSERT INTO meals (MealID, PlanID, Meal_Name) VALUES
-                    (%s, %s,'%s'); """, tempPlan_Meal_ID, temp_PlanID, mealName);
+                    (%s, %s,'%s'); """, mealID, temp_PlanID, mealName);
 
             if (!(db.uploadData_Batch_Altogether(new String[]{query1})))
             {
@@ -1393,7 +1390,7 @@ public class IngredientsTable extends JDBC_JTable
         //######################################
 
         // delete all ingredients in tempMeal
-        String query1 = String.format("DELETE FROM ingredients_in_meal WHERE MealID = %s;", tempPlan_Meal_ID);
+        String query1 = String.format("DELETE FROM ingredients_in_meal WHERE MealID = %s AND PlanID = %s;", mealID, temp_PlanID);
 
         //####################################################
         // Transferring this plans Ingredients to Temp-Plan
@@ -1406,15 +1403,14 @@ public class IngredientsTable extends JDBC_JTable
                 CREATE table temp_ingredients_in_meal  AS
                 SELECT *
                 FROM ingredients_in_meal i                                                      
-                WHERE PlanID= %s AND MealID = %s; """, planID, mealID);
+                WHERE PlanID = %s AND MealID = %s; """, planID, mealID);
 
         String query4 = String.format("UPDATE temp_ingredients_in_meal  SET PlanID = %s; ", temp_PlanID);
-        String query5 = String.format("UPDATE temp_ingredients_in_meal  SET MEALID = %s; ", tempPlan_Meal_ID);
 
         String query8 = String.format("INSERT INTO ingredients_in_meal SELECT * FROM temp_ingredients_in_meal; ");
         String query9 = String.format("DROP TABLE temp_ingredients_in_meal; ");
 
-        String[] query_Temp_Data = new String[]{query1, query2, query3, query4, query5, query8, query9};
+        String[] query_Temp_Data = new String[]{query1, query2, query3, query4, query8, query9};
 
         if (!(db.uploadData_Batch_Altogether(query_Temp_Data)))
         {
@@ -1479,8 +1475,8 @@ public class IngredientsTable extends JDBC_JTable
             //######################################################################
             // Get MealID of meal in plan
 
-            System.out.printf(String.format("\n\nSelect MealID FROM Meals WHERE MealName ='%s' AND PlanID = %s;", mealName, planID));
-            String[] orginalMealID_Result = db.getSingleColumnQuery(String.format("Select MealID FROM Meals WHERE Meal_Name ='%s' AND PlanID = %s;",
+            System.out.printf(String.format("\n\nSelect MealID FROM Meals WHERE MealName = '%s' AND PlanID = %s;", mealName, planID));
+            String[] orginalMealID_Result = db.getSingleColumnQuery(String.format("Select MealID FROM Meals WHERE Meal_Name = '%s' AND PlanID = %s;",
                     mealName, planID));
 
 
@@ -1496,8 +1492,8 @@ public class IngredientsTable extends JDBC_JTable
             //tempPlan_Meal_ID = mealID;//HELLO What does this do?
             mealID = Integer.valueOf(orginalMealID_Result[0]);
 
-            System.out.printf(String.format("\n\nPlanId: %s \nTempPlanID: %s \n\nMealID: %s  \nTempMealID: %s ",
-                    planID, temp_PlanID, mealID, tempPlan_Meal_ID));
+            System.out.printf(String.format("\n\nPlanId: %s \nTempPlanID: %s \n\nMealID: %s ",
+                    planID, temp_PlanID, mealID));
 
             //##########################################
             // Meal Successfully Added TO DB
@@ -1524,7 +1520,7 @@ public class IngredientsTable extends JDBC_JTable
         //##########################################
 
         // delete all ingredients in the real meal
-        String query1 = String.format("DELETE FROM ingredients_in_meal WHERE MealID = %s;", mealID);
+        String query1 = String.format("DELETE FROM ingredients_in_meal WHERE MealID = %s AND PlanID = %s;", mealID, planID);
 
         //####################################################
         // Transferring Data From Temp-Plan To Real Plan
@@ -1535,15 +1531,14 @@ public class IngredientsTable extends JDBC_JTable
                 CREATE table temp_ingredients_in_meal  AS
                 SELECT *
                 FROM ingredients_in_meal i                                                      
-                WHERE PlanID= 1 AND MealID = %s; """, tempPlan_Meal_ID);
+                WHERE PlanID = %s AND MealID = %s; """, temp_PlanID, mealID);
 
         String query4 = String.format("UPDATE temp_ingredients_in_meal  SET PlanID = %s;", planID);
-        String query5 = String.format("UPDATE temp_ingredients_in_meal  SET MEALID = %s;", mealID);
 
         String query8 = String.format(" INSERT INTO ingredients_in_meal SELECT * FROM temp_ingredients_in_meal;");
         String query9 = String.format(" DROP TABLE temp_ingredients_in_meal;");
 
-        String[] query_Temp_Data = new String[]{query1, query2, query3, query4, query5, query8, query9};
+        String[] query_Temp_Data = new String[]{query1, query2, query3, query4,  query8, query9};
 
         //##########################################
         // If Upload Un-Successful
@@ -1587,7 +1582,7 @@ public class IngredientsTable extends JDBC_JTable
         //##########################################
         String tableInQuery = "ingredients_in_meal_calculation";
 
-        String query = String.format("Select * from %s WHERE MealID = %s;", tableInQuery, tempPlan_Meal_ID);
+        String query = String.format("Select * from %s WHERE MealID = %s AND PlanID = %s;", tableInQuery, mealID, temp_PlanID);
         System.out.printf("\n\n################################################### \nupdateTableModelData() \n%s", query);
 
         Object[][] ingredients_Data = db.getTableDataObject(query, tableInQuery);
@@ -1599,21 +1594,13 @@ public class IngredientsTable extends JDBC_JTable
         }
 
         setTableModelData(ingredients_Data);
+
+
         //##########################################
         // Changing Total  Ingredients Table Model
         //##########################################
-
-        // Setting totals tables Data model to new data
-        String totalTableQuery = String.format("SELECT *  FROM total_meal_view WHERE MealID = %s;", tempPlan_Meal_ID);
-
-        Object[][] totalTableData = db.getTableDataObject(totalTableQuery, "total_meal_view");
-        if (totalTableData != null)
+        if(! (total_Meal_Table.updateTableModelData()))
         {
-            total_Meal_Table.setTableModelData(totalTableData);
-        }
-        else
-        {
-            System.out.printf("\n\nUnable to update total meal table for table: %s", getMealName());
             return false;
         }
 
@@ -1765,11 +1752,6 @@ public class IngredientsTable extends JDBC_JTable
     public Integer getMealID()
     {
         return mealID;
-    }
-
-    public Integer getTempMealID()
-    {
-        return tempPlan_Meal_ID;
     }
 
     public boolean getObjectDeleted()
