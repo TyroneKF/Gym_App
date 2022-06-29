@@ -1044,11 +1044,12 @@ public class Meal_Plan_Screen extends JPanel
             }
 
             // If Meal Not In Original PlanID Add To PlanID
-            if (!(table.getMealInDB()) && !(table.addMealToOriginalPlan(false)))
+            // HELLO FIX
+        /*    if (!(table.getMealInDB()) && !(table.addMealToOriginalPlan(false)))
             {
                 errorCount++;
                 continue;
-            }
+            }*/
 
             if (!(table.updateTableModelData()))
             {

@@ -76,6 +76,8 @@ public class IngredientsTable extends JDBC_JTable
             previous_IngredientName_JComboItem, selected_IngredientName_JCombo_Item,
             previous_IngredientType_JComboItem, selected_IngredientType_JComboItem;
 
+   private String lineSeparator = "###############################################################################";
+
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
@@ -1443,51 +1445,28 @@ public class IngredientsTable extends JDBC_JTable
     public boolean saveDataAction(boolean showMessage)
     {
         //######################################################################
-        // Add Meal To DB
+        // Transfer Data from temp plan to origin plan
         //######################################################################
-        if (!(getMealInDB()))     // If Meal Not In Original PlanID Add To PlanID
+        if (!(transferMealDataToPlan(temp_PlanID, planID)))     // If Meal Not In Original PlanID Add To PlanID
         {
-            addMealToOriginalPlan(true);
-        }
-
-        //HELLO FOR OPTIMISATION THIS STEP SHOULDN'T BE DONE IF THE STEP ABOVE IS DONE
-        //##########################################
-        // Copying Temp-Plan Meal Data to Real Plan
-        //##########################################
-
-        // delete all ingredients in the real meal
-        String query1 = String.format("DELETE FROM ingredients_in_meal WHERE MealID = %s AND PlanID = %s;", mealID, planID);
-
-        //####################################################
-        // Transferring Data From Temp-Plan To Real Plan
-        //####################################################
-
-        String query2 = String.format("DROP TABLE IF EXISTS temp_ingredients_in_meal;");
-        String query3 = String.format(""" 
-                CREATE table temp_ingredients_in_meal  AS
-                SELECT *
-                FROM ingredients_in_meal i                                                      
-                WHERE PlanID = %s AND MealID = %s; """, temp_PlanID, mealID);
-
-        String query4 = String.format("UPDATE temp_ingredients_in_meal  SET PlanID = %s;", planID);
-
-        String query8 = String.format(" INSERT INTO ingredients_in_meal SELECT * FROM temp_ingredients_in_meal;");
-        String query9 = String.format(" DROP TABLE temp_ingredients_in_meal;");
-
-        String[] query_Temp_Data = new String[]{query1, query2, query3, query4,  query8, query9};
-
-        //##########################################
-        // If Upload Un-Successful
-        //##########################################
-        if (!(db.uploadData_Batch_Altogether(query_Temp_Data)))
-        {
-            JOptionPane.showMessageDialog(null, "ERROR: \nUnable to update table to Database!!");
+            if (showMessage)
+            {
+                JOptionPane.showMessageDialog(null, "\n\nUnable to transfer ingredients data from temp to original plan ");
+            }
             return false;
         }
 
-        //##########################################
+        //######################################################################
+        // Change Setting
+        //######################################################################
+        if (!(getMealInDB()))     // If Meal Not In Original PlanID Add To PlanID
+        {
+            set_Meal_In_DB(true);
+        }
+
+        //######################################################################
         // Update Table Model
-        //##########################################
+        //######################################################################
         if (!updateTableModelData())
         {
             if (showMessage)
@@ -1497,9 +1476,9 @@ public class IngredientsTable extends JDBC_JTable
             return false;
         }
 
-        //##########################################
+        //######################################################################
         // Success Message
-        //##########################################
+        //######################################################################
         if (showMessage)
         {
             JOptionPane.showMessageDialog(null, "Table Successfully Updated!");
@@ -1507,70 +1486,61 @@ public class IngredientsTable extends JDBC_JTable
         return true;
     }
 
-    public boolean transferMealDataToPlan(int fromPlan, int toPlan)
+    public boolean transferMealDataToPlan(int fromPlanID, int toPlanID)
     {
-        return true;
-    }
+        //########################################################
+        // Transferring this Meals Info from one plan to another
+        //########################################################
 
-    public boolean addMealToOriginalPlan(boolean showMsg)
-    {
-        //######################################################################
-        // Add Meal To DB
-        //######################################################################
-        if (!(getMealInDB()))     // If Meal Not In Original PlanID Add To PlanID
+        // Delete tables if they already exist
+        String query0 = String.format("DROP TABLE IF EXISTS temp_ingredients_in_meal;");
+
+        String query1 = "SET FOREIGN_KEY_CHECKS = 0;"; // Disable Foreign Key Checks
+
+        // Delete ingredients in meal Data from original plan with this mealID
+        String query2 = String.format("DELETE FROM ingredients_in_meal  WHERE MealID = %s AND PlanID = %s;", mealID, toPlanID);
+
+        String query3 = "SET FOREIGN_KEY_CHECKS = 1;"; // Enable Foreign Key Checks
+
+        // insert meal if it does not exist inside toPlanID
+        String query4 = String.format("""
+                INSERT IGNORE INTO meals
+                (MealID, PlanID, Meal_Name)
+                
+                VALUES
+                (%s, %s, '%s');
+                  """, mealID, toPlanID, mealName);
+
+        //####################################################
+        // Transferring this plans Ingredients to Temp-Plan
+        //####################################################
+
+        // Create Table to transfer ingredients from original plan to temp
+        String query5 = String.format("""                                     
+                CREATE table temp_ingredients_in_meal  AS
+                SELECT i.*
+                FROM ingredients_in_meal i                                                       
+                WHERE i.MealID = %s AND i.PlanID = %s;          
+                """, mealID, fromPlanID);
+
+        String query6 = String.format("UPDATE temp_ingredients_in_meal  SET PlanID = %s;", toPlanID);
+
+        String query7 = String.format("INSERT INTO ingredients_in_meal SELECT * FROM temp_ingredients_in_meal;");
+
+        //####################################################
+        // Update
+        //####################################################
+        String[] query_Temp_Data = new String[]{query0, query1,query2, query3, query4, query5, query6, query7};
+
+        if (!(db.uploadData_Batch_Altogether(query_Temp_Data)))
         {
-            System.out.printf(String.format("\n\n\\Save Data Action() Meal Not in Original DB"));
-
-            //######################################################################
-            // Add Meal To Original Plan
-            //######################################################################
-            String uploadQuery = String.format(" INSERT INTO meals (PlanID, Meal_Name) VALUES (%s,'%s')", planID, mealName);
-
-            //#####################################
-            // If Upload Un-Successful
-            //#####################################
-            if (!(db.uploadData_Batch_Altogether(new String[]{uploadQuery})))
-            {
-                if (showMsg)
-                {
-                    JOptionPane.showMessageDialog(null, "\n\nUnable To Create Meal In Original Plan!!");
-                }
-                return false;
-            }
-
-            //######################################################################
-            // Set Meals MealID by Retrieving it from DB
-            //######################################################################
-            // Get MealID of meal in plan
-
-            System.out.printf(String.format("\n\nSelect MealID FROM Meals WHERE MealName = '%s' AND PlanID = %s;", mealName, planID));
-            String[] orginalMealID_Result = db.getSingleColumnQuery(String.format("Select MealID FROM Meals WHERE Meal_Name = '%s' AND PlanID = %s;",
-                    mealName, planID));
-
-
-            if (orginalMealID_Result == null)
-            {
-                if (showMsg)
-                {
-                    JOptionPane.showMessageDialog(null, "\n\nUnable To Get MealID in Plan to Update Meal");
-                }
-                return false;
-            }
-
-            //tempPlan_Meal_ID = mealID;//HELLO What does this do?
-            mealID = Integer.valueOf(orginalMealID_Result[0]);
-
-            System.out.printf(String.format("\n\nPlanId: %s \nTempPlanID: %s \n\nMealID: %s ",
-                    planID, temp_PlanID, mealID));
-
-            //##########################################
-            // Meal Successfully Added TO DB
-            //##########################################
-            set_Meal_In_DB(true);
+            JOptionPane.showMessageDialog(null, "\n\ntransferMealIngredients() Cannot Create Temporary Plan In DB to Allow Editing");
+            return false;
         }
+
+        System.out.printf("\nMealIngredients Successfully Transferred! \n\n%s", lineSeparator);
         return true;
     }
-
 
     //##################################################################################################################
     // Update Table / Accessor Methods
@@ -1600,7 +1570,7 @@ public class IngredientsTable extends JDBC_JTable
         //##########################################
         // Changing Total  Ingredients Table Model
         //##########################################
-        if(! (total_Meal_Table.updateTableModelData()))
+        if (!(total_Meal_Table.updateTableModelData()))
         {
             return false;
         }

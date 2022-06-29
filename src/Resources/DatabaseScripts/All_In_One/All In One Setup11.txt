@@ -107,22 +107,6 @@ LEFT JOIN
 ON P.PlanID = C.PlanID;
 
 --#####################################################################
-CREATE TABLE IF NOT EXISTS meals
-(
-
-
-   MealID INT  NOT NULL AUTO_INCREMENT,
-   PlanID INT NOT NULL,
-   FOREIGN KEY (PlanID) REFERENCES plans(PlanID),
-
-   Meal_Name VARCHAR(100) NOT NULL,
-   
-   PRIMARY KEY(MealID, PlanID),   
-   UNIQUE KEY No_Repeat_Meal_Names_In_Plan(PlanID, Meal_Name) -- can't have 2 of the same meal_names in a plan
-   
-);
-
---#####################################################################
 
 CREATE TABLE IF NOT EXISTS ingredientTypes
 (
@@ -193,6 +177,20 @@ CREATE TABLE IF NOT EXISTS ingredientInShops
 	FOREIGN KEY (StoreID) REFERENCES stores(StoreID),
 	
     UNIQUE KEY Ingredient_In_Store(StoreID, IngredientID)	
+);
+--#####################################################################
+
+CREATE TABLE IF NOT EXISTS meals
+(
+   MealID INT  NOT NULL AUTO_INCREMENT,
+   PlanID INT NOT NULL,
+   FOREIGN KEY (PlanID) REFERENCES plans(PlanID),
+
+   Meal_Name VARCHAR(100) NOT NULL,
+   
+   PRIMARY KEY(MealID, PlanID),   
+   UNIQUE KEY No_Repeat_Meal_Names_In_Plan(PlanID, Meal_Name) -- can't have 2 of the same meal_names in a plan
+   
 );
 
 --#####################################################################
@@ -441,24 +439,6 @@ INSERT INTO ingredientInShops
 VALUES
 
 (1, 0.00, 0.00, 1);
-
-
-
-INSERT INTO meals (PlanID, Meal_Name) VALUES
-(2,'Full Meal'),
-(2,'Next Meal');
-
-INSERT INTO ingredients_in_meal
-(MealID, PlanID, IngredientID, Quantity, PDID)
-
-VALUES
-
-(1, 2, 1, 10.00, NULL),
-(1, 2, 2, 20.00, NULL),
-
-(2, 2, 3, 30.00, NULL),
-(2, 2, 4, 40.00, NULL);
-
 
 
 --#################################################################################################
