@@ -98,7 +98,6 @@ public class Meal_Plan_Screen extends JPanel
             macrosLeft_Table_Hidden_Col = new ArrayList<Integer>(Arrays.asList(1, 2));
 
 
-
     //########################################################
 
     String lineSeparator = "###############################################################################";
@@ -204,7 +203,7 @@ public class Meal_Plan_Screen extends JPanel
             //####################################################
             // Transferring PLan Data To Temp
             //####################################################
-            if (!transferPlanData(planID, tempPlanID ))
+            if (!transferPlanData(planID, tempPlanID))
             {
                 return;
             }
@@ -213,7 +212,7 @@ public class Meal_Plan_Screen extends JPanel
             // Printing PlanInfo  //HELLO REMOVE
             //####################################################
 
-            System.out.printf("\nChosen Plan: %s  & Chosen Plan Name: %s \n\n%s",  planID,  planName, lineSeparator);
+            System.out.printf("\nChosen Plan: %s  & Chosen Plan Name: %s \n\n%s", planID, planName, lineSeparator);
 
             //####################################################
             // Transferring Targets From Chosen PLan to Temp
@@ -525,7 +524,6 @@ public class Meal_Plan_Screen extends JPanel
         //####################################################
 
 
-
         // Create Table to transfer ingredients from original plan to temp
         String query12 = String.format(""" 
                                     
@@ -554,7 +552,7 @@ public class Meal_Plan_Screen extends JPanel
         return true;
     }
 
-    private CollapsibleJPanel create_CollapsibleJPanel(boolean mealInDB, Container container, Integer mealID,  String mealName, int mealNo, String[] meal_total_columnNames,
+    private CollapsibleJPanel create_CollapsibleJPanel(boolean mealInDB, Container container, Integer mealID, String mealName, int mealNo, String[] meal_total_columnNames,
                                                        String[] ingredients_ColumnNames, ArrayList<String> ingredientsInDB, MacrosLeftTable macrosLeft_JTable)
     {
         CollapsibleJPanel collapsibleJpObj = new CollapsibleJPanel(container, String.format("   Meal   %s", mealNo), 150, 50);
@@ -581,7 +579,7 @@ public class Meal_Plan_Screen extends JPanel
         }
 
         TotalMealTable total_Meal_View_Table = new TotalMealTable(db, collapsibleJpObj, databaseName, meal_Total_Data, meal_total_columnNames, planID,
-                mealID,  mealName, tableName, unEditableCells, null, false);
+                mealID, mealName, tableName, unEditableCells, null, false);
 
         total_Meal_View_Table.setOpaque(true); //content panes must be opaque
         total_Meal_View_Table.SetUp_HiddenTableColumns(TotalMeal_Table_Hidden_Columns, totalMealTable_StartCol);
@@ -938,7 +936,7 @@ public class Meal_Plan_Screen extends JPanel
         // Create New Meal Table In GUI
         //##############################################
 
-        CollapsibleJPanel collapsibleJTable = create_CollapsibleJPanel(false, scrollJPanelCenter, mealID,  newMealName, mealNo, meal_total_columnNames, ingredients_ColumnNames,
+        CollapsibleJPanel collapsibleJTable = create_CollapsibleJPanel(false, scrollJPanelCenter, mealID, newMealName, mealNo, meal_total_columnNames, ingredients_ColumnNames,
                 ingredientsInDB, macrosLeft_JTable);
 
         //###############################################
@@ -971,36 +969,43 @@ public class Meal_Plan_Screen extends JPanel
 
     private void refreshPlan(boolean askPermission)
     {
-        if (!(get_IsPlanSelected()))
+        if ((!(get_IsPlanSelected())) || askPermission && !(areYouSure("Refresh Data")))
         {
             return;
         }
 
-        if (askPermission && !(areYouSure("Refresh Data")))
+        //####################################################################
+        // Refresh DB Data
+        //####################################################################
+        if (!(transferMealIngredients(planID, tempPlanID))) // transfer meals and ingredients from temp plan to original plan
         {
+            JOptionPane.showMessageDialog(frame, "`\n\nError couldn't transfer ingredients data from temp to real plan !!");
             return;
         }
 
-        //###############################################
-        // Refresh ingredients meal table & total Tables
-        //###############################################
+        //####################################################################
+        // Refresh ingredients meal table & total Tables Data
+        //####################################################################
         Iterator<IngredientsTable> it = listOfJTables.iterator();
         while (it.hasNext())
         {
             IngredientsTable ingredientsTable = it.next();
-            ingredientsTable.refresh_Btn_Action(false);
 
             // if meal is not saved in DB remove the meal
             if (!(ingredientsTable.getMealInDB()))
             {
                 ingredientsTable.deleteTableAction(); // delete table from db
                 it.remove(); // remove from list
+                continue;
             }
+
+            // Refresh Table data
+            ingredientsTable.refresh(false);
         }
 
-        //###############################################
+        //####################################################################
         // Refresh Macro-Targets Table
-        //###############################################
+        //####################################################################
         refreshMacroTargets();
         refreshMacrosLeft();
     }
