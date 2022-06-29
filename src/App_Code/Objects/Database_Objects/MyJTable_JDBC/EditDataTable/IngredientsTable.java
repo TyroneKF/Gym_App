@@ -1605,7 +1605,7 @@ public class IngredientsTable extends JDBC_JTable
         spaceDivider = jPanel;
     }
 
-    private void set_Meal_In_DB(boolean mealInDB)
+    public void set_Meal_In_DB(boolean mealInDB)
     {
         meal_In_DB = mealInDB;
     }

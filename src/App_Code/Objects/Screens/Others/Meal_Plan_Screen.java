@@ -1045,6 +1045,12 @@ public class Meal_Plan_Screen extends JPanel
             if (!(table.updateTableModelData()))
             {
                 errorCount++;
+                continue;
+            }
+
+            if(! (table.getMealInDB()))
+            {
+                table.set_Meal_In_DB(true);
             }
         }
 

@@ -16,10 +16,8 @@ public class TotalMealTable extends MyJTable_DisplayData
     private CollapsibleJPanel collapsibleObj;
 
 
-
-
     public TotalMealTable(MyJDBC db, CollapsibleJPanel collapsibleObj, String databaseName, Object[][] data, String[] columnNames, int planID,
-                          Integer mealID,  String mealName, String tableName,
+                          Integer mealID, String mealName, String tableName,
                           ArrayList<Integer> unEditableColumns, ArrayList<Integer> colAvoidCentering, boolean setIconsUp)
     {
 
@@ -40,7 +38,7 @@ public class TotalMealTable extends MyJTable_DisplayData
         //##########################################
 
         // Setting totals tables Data model to new data
-        String totalTableQuery = String.format("SELECT *  FROM total_meal_view WHERE MealID = %s AND PlanID = %s;", mealID, planID);
+        String totalTableQuery = String.format("SELECT *  FROM total_meal_view WHERE MealID = %s AND PlanID = %s;", mealID, temp_PlanID);
 
         Object[][] totalTableData = db.getTableDataObject(totalTableQuery, "total_meal_view");
         if (totalTableData != null)
@@ -72,11 +70,9 @@ public class TotalMealTable extends MyJTable_DisplayData
 
             return;
         }
-        else
-        {
-            ArrayList<Object> totalMeal_UpdateData = totalMealData.get(0);
-            super.updateTable(this, totalMeal_UpdateData, 0);
-        }
+
+        ArrayList<Object> totalMeal_UpdateData = totalMealData.get(0);
+        super.updateTable(this, totalMeal_UpdateData, 0);
     }
 
     public boolean getIconSetupStatus()
@@ -86,7 +82,7 @@ public class TotalMealTable extends MyJTable_DisplayData
 
     public Object[][] getData()
     {
-        return  super.getData();
+        return super.getData();
     }
 
     public String getMealName()
@@ -105,7 +101,7 @@ public class TotalMealTable extends MyJTable_DisplayData
     }
 
     @Override
-    public  void tableModel_Setup(Object[][] data, String[] columnNames)
+    public void tableModel_Setup(Object[][] data, String[] columnNames)
     {
         tableModel = new DefaultTableModel(data, columnNames)
         {
