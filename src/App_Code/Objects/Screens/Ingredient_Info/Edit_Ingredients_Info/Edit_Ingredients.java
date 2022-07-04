@@ -21,7 +21,6 @@ public class Edit_Ingredients extends Add_Ingredients
     private boolean jcomboUpdateStaus = false;
     private EditIngredientsForm ingredientsForm;
     private EditShopForm shopForm;
-    private ArrayList<ShopForm.AddShopForm_Object> shopForm_objects = new ArrayList<>();
 
     private String selectedIngredientID, selectedIngredientName, selected_IngredientType_JComboItem;
 
@@ -449,11 +448,6 @@ public class Edit_Ingredients extends Add_Ingredients
         {
             updateFormWithIngredientInfo();
         }
-    }
-
-    protected ArrayList<ShopForm.AddShopForm_Object> getShopForm_objects()
-    {
-        return shopForm_objects;
     }
 
     private void updateFormWithIngredientInfo()
@@ -996,14 +990,14 @@ public class Edit_Ingredients extends Add_Ingredients
             //###########################
             //Add Rows for shops onto form
             //###########################
-            ArrayList<ShopForm.AddShopForm_Object> shopForm_objects = getShopForm_objects();
+
             for (int i = 0; i < ingredientShops_R.size(); i++)
             {
                 ArrayList<String> rowData = ingredientShops_R.get(i);
 
                 // Set PDID & Add Row
                 ShopForm.AddShopForm_Object row = shopForm.addShopForm_object(Integer.parseInt(rowData.get(0)));
-                shopForm_objects.add(row);
+                addShopFormObjects.add(row);
 
                 // Set ShopName
                 row.getShops_JComboBox().setSelectedItem(rowData.get(1));// HELLO IDK WHAT I DID HERE in REFACTORING
@@ -1022,19 +1016,19 @@ public class Edit_Ingredients extends Add_Ingredients
             //#############################################################
             // Checks if there is anything to update before, updating
             //############################################################
-            if (rowsInTable.size() == 0)
+            if (addShopFormObjects.size() == 0)
             {
                 setUpdateShops(true);
                 return null;
             }
 
             //################################################################
-            // Adding Shops To Categories To Either Insert Or Update into DB
+            // Adding Shops To Category's To Either Insert Or Update into DB
             //################################################################
             ArrayList<AddShopForm_Object> suppliersInDBList = new ArrayList<>();
             ArrayList<AddShopForm_Object> suppliersNeedToBeAddedToDBList = new ArrayList<>();
 
-            for (AddShopForm_Object shopForm_object : rowsInTable)
+            for (AddShopForm_Object shopForm_object : addShopFormObjects)
             {
                 //  EditAddShopForm_Object obj = (EditAddShopForm_Object) shopForm_object;
                 AddShopForm_Object obj = shopForm_object;
@@ -1232,7 +1226,7 @@ public class Edit_Ingredients extends Add_Ingredients
                 // Remove Row Object
                 //################################################
                 removeFromParentContainer();
-                rowsInTable.remove(this);
+                addShopFormObjects.remove(this);
 
                 //################################################
                 // Remove Row Object

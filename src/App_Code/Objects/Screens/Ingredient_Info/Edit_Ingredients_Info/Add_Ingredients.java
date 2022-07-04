@@ -1130,7 +1130,7 @@ public class Add_Ingredients extends JPanel
         protected HashMap<Integer, JTextField> prices = new HashMap<>();
         protected HashMap<Integer, JTextField> quantityPerPack = new HashMap<>();
 
-        protected ArrayList<AddShopForm_Object> rowsInTable = new ArrayList<>();
+        protected ArrayList<AddShopForm_Object> addShopFormObjects = new ArrayList<>();
 
         protected Container parentContainer;
         protected JPanel inputArea;
@@ -1411,7 +1411,7 @@ public class Add_Ingredients extends JPanel
 
         public void clearShopForm()
         {
-            Iterator<AddShopForm_Object> it = rowsInTable.iterator();
+            Iterator<AddShopForm_Object> it = addShopFormObjects.iterator();
             while (it.hasNext())
             {
                 AddShopForm_Object i = it.next();
@@ -1542,7 +1542,7 @@ public class Add_Ingredients extends JPanel
                     //#####################################################
                     // Adding row to memory
                     //######################################################
-                    rowsInTable.add(this);
+                    addShopFormObjects.add(this);
                 }
                 else
                 {
@@ -1599,7 +1599,7 @@ public class Add_Ingredients extends JPanel
             protected void deleteRowAction()
             {
                 removeFromParentContainer();
-                rowsInTable.remove(this);
+                addShopFormObjects.remove(this);
             }
 
             protected void loadStoresInJComboBox()
