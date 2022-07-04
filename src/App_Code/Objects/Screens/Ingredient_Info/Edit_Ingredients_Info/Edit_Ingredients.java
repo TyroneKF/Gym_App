@@ -194,9 +194,12 @@ public class Edit_Ingredients extends Add_Ingredients
         {
             public void itemStateChanged(ItemEvent ie)
             {
-                if (ingredientsNameJComboBox.getSelectedIndex() != -1)
+                if(! (getUpdateStatusOfIngredientNames())) // only trigger event when the ingredientsName Jcombobox is not updating
                 {
-                    updateFormWithIngredientInfo();
+                    if (ingredientsNameJComboBox.getSelectedIndex() != -1)
+                    {
+                        updateFormWithIngredientInfo();
+                    }
                 }
             }
         });
@@ -212,8 +215,6 @@ public class Edit_Ingredients extends Add_Ingredients
         addToContainer(scrollPaneJPanel, new JPanel(), 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 10, 0);
 
         createForms(ingredientsForm, shopForm, searchForIngredientInfo);
-
-
     }
 
     //#########################################################################
@@ -308,18 +309,18 @@ public class Edit_Ingredients extends Add_Ingredients
         }
     }
 
-    private boolean getUpdatingJComboBoxStatus()// can't be deleted, trust me
-    {
-        return jcomboUpdateStaus;
-    }
-
     /*
      When the variable it's used to set is true the ingredientNames JComboBox is updating
      this stops the ingredientNames JComboBox from triggering actionListener events!
     */
-    private void setUpdatingJComboBoxStatus(boolean x) // can't be deleted, trust me
+    private void setUpdateStatusOfIngredientNames(boolean x) // can't be deleted, trust me
     {
         jcomboUpdateStaus = x;
+    }
+
+    private boolean getUpdateStatusOfIngredientNames()// can't be deleted, trust me
+    {
+        return jcomboUpdateStaus;
     }
 
     public void updateIngredientNamesToTypesJComboBox()
@@ -356,7 +357,7 @@ public class Edit_Ingredients extends Add_Ingredients
         //##################################
         // Populating IngredientName JComBox
         //##################################
-        setUpdatingJComboBoxStatus(true); // stops ingredientName JComboBox from triggering any  actionListener events
+        setUpdateStatusOfIngredientNames(true); // stops ingredientName JComboBox from triggering any  actionListener events
 
         TreeMap<String, Collection<String>> map_ingredientTypesToIngredientNames = parent.getMapIngredientTypesToNames();
         for (String item : map_ingredientTypesToIngredientNames.get(selected_IngredientType_JComboItem))
@@ -367,8 +368,8 @@ public class Edit_Ingredients extends Add_Ingredients
             }
         }
 
-        setUpdatingJComboBoxStatus(false);
         setNothingSelectedIngredientNameJCombo();// set selected item to nothing
+        setUpdateStatusOfIngredientNames(false);
     }
 
     /*
@@ -715,7 +716,7 @@ public class Edit_Ingredients extends Add_Ingredients
 
         private void updateIngredientsFormWithInfoFromDB()
         {
-            if (getUpdatingJComboBoxStatus())
+            if (getUpdateStatusOfIngredientNames())
             {
                 return;
             }
