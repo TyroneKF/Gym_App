@@ -439,7 +439,10 @@ public class Add_Ingredients extends JPanel
         
         protected int ingredientNameObjectIndex, ingredientTypeObjectIndex, glycemicObjectIndex, ingredientSaltObjectIndex, ingredientMeasurementObjectIndex;
 
-        protected JComboBox<String> ingredientsMeasure_JComboBox = new JComboBox(), ingredientsType_JComboBox = new JComboBox(), saltMeasurement_JComboBox = new JComboBox();
+        protected JComboBox<String>
+                ingredientsMeasure_JComboBox = new JComboBox(),
+                ingredientsType_JComboBox = new JComboBox(),
+                saltMeasurement_JComboBox = new JComboBox();
 
 
         protected ArrayList<Component> ingredientsFormObjects = new ArrayList<>();
@@ -1108,6 +1111,11 @@ public class Add_Ingredients extends JPanel
         protected int getIngredientTypeObjectIndex()
         {
             return ingredientTypeObjectIndex;
+        }
+
+        protected int getIngredientSaltObjectIndex()
+        {
+            return ingredientSaltObjectIndex;
         }
     }
 
