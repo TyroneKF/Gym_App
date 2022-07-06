@@ -21,18 +21,22 @@ import java.util.*;
 
 public class IngredientsTable extends JDBC_JTable
 {
-    //####################################
+
+    private TreeMap<String, Collection<String>> map_ingredientTypesToNames;
+
+
+    //#################################################################################################################
     // Objects
-    //####################################
+    //#################################################################################################################
     private MacrosLeftTable macrosLeft_Table;
     private TotalMealTable total_Meal_Table;
 
     private JPanel spaceDivider;
     private CollapsibleJPanel collapsibleObj;
 
-    //####################################
+    //#################################################################################################################
     // Other Variables
-    //####################################
+    //#################################################################################################################
     private Integer planID, temp_PlanID = 1, mealID;
     private String mealName;
 
@@ -48,13 +52,6 @@ public class IngredientsTable extends JDBC_JTable
     updateIngredientsType = true,
             updateIngredientsName = true;
 
-    private TreeMap<String, Collection<String>> map_ingredientTypesToNames = new TreeMap<String, Collection<String>>(new Comparator<String>()
-    {
-        public int compare(String o1, String o2)
-        {
-            return o1.toLowerCase().compareTo(o2.toLowerCase());
-        }
-    });
 
     private SetupSupplierColumn supplierColumn;
     private SetupIngredientTypeColumn ingredientTypeColumn;
@@ -83,7 +80,8 @@ public class IngredientsTable extends JDBC_JTable
     //##################################################################################################################
 
     // Ingredients Table
-    public IngredientsTable(MyJDBC db, CollapsibleJPanel collapsibleObj, String databaseName, Object[][] data, String[] columnNames, int planID,
+    public IngredientsTable(MyJDBC db, CollapsibleJPanel collapsibleObj, TreeMap<String, Collection<String>> map_ingredientTypesToNames,
+                            String databaseName, Object[][] data, String[] columnNames, int planID,
                             Integer mealID, boolean meal_In_DB, String mealName, String tableName,
                             ArrayList<Integer> unEditableColumns, ArrayList<Integer> colAvoidCentering,
                             TotalMealTable total_Meal_Table, MacrosLeftTable macrosLeft_Table)
@@ -112,6 +110,8 @@ public class IngredientsTable extends JDBC_JTable
 
         this.total_Meal_Table = total_Meal_Table;
         this.macrosLeft_Table = macrosLeft_Table;
+
+        this.map_ingredientTypesToNames = map_ingredientTypesToNames;
 
         setUp();
     }
@@ -521,11 +521,6 @@ public class IngredientsTable extends JDBC_JTable
     public void updateMapIngredientsTypesAndNames()
     {
         //###########################################################
-        // Clear List
-        //###########################################################
-        map_ingredientTypesToNames.clear();
-
-        //###########################################################
         // Store ingredientTypes ID's & IngredientTypeName that occur
         //###########################################################
         String queryIngredientsType = String.format("""
@@ -546,7 +541,15 @@ public class IngredientsTable extends JDBC_JTable
         if (ingredientTypesNameAndIDResults == null)
         {
             JOptionPane.showMessageDialog(null, "\n\nUnable to update Ingredient Type Info");
+            return;
         }
+
+        //###########################################################
+        // Clear List
+        //###########################################################
+        map_ingredientTypesToNames.clear();
+
+
         //######################################
         // Store all ingredient types & names
         //######################################
@@ -603,7 +606,7 @@ public class IngredientsTable extends JDBC_JTable
                 getIngredientsTable_Quantity_Col(), getIngredientsTable_Type_Col(), getIngredientsTable_IngredientsName_Col(), getIngredientsTable_Supplier_Col()));
     }
 
-    public void setUpIngredientsTableActionCells(Integer[] triggerColumns, Integer[] actionListenerColumns, ArrayList<String> ingredientsInDB)
+    public void setUpIngredientsTableActionCells(Integer[] triggerColumns, Integer[] actionListenerColumns)
     {
         set_TriggerColumns(triggerColumns);
 
@@ -957,7 +960,7 @@ public class IngredientsTable extends JDBC_JTable
         ///##########################################################################
         setRowBeingEdited();
 
-        updateData();
+        updateOtherTablesData();
     }
 
     @Override
@@ -1173,7 +1176,7 @@ public class IngredientsTable extends JDBC_JTable
         // Update Table Data
         //##################################################
 
-        updateData();
+        updateOtherTablesData();
 
         //HELLO REMOVE
         System.out.printf("\n\n#########################################################################");
@@ -1351,7 +1354,7 @@ public class IngredientsTable extends JDBC_JTable
         //##################################################################################
         // Update Table Data
         //###################################################################################
-        updateData();
+        updateOtherTablesData();
     }
 
     @Override
@@ -1544,7 +1547,7 @@ public class IngredientsTable extends JDBC_JTable
         return mealName;
     }
 
-    private void updateData()
+    private void updateOtherTablesData()
     {
         update_TotalMeal_Table();
         update_MacrosLeft_Table();

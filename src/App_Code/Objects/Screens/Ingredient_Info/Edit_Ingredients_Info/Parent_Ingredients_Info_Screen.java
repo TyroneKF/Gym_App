@@ -18,9 +18,22 @@ public class Parent_Ingredients_Info_Screen extends JFrame
 
     private Collection<String> ingredientsTypesList, storesNamesList;
 
+    // Sorted Hashmap by key String
+    private TreeMap<String, Collection<String>> map_ingredientTypesToNames = new TreeMap<String, Collection<String>>(new Comparator<String>()
+    {
+        public int compare(String o1, String o2)
+        {
+            return o1.toLowerCase().compareTo(o2.toLowerCase());
+        }
+    });
+
+
     //#######################################
     // General Variables
     //#######################################
+
+    private Add_Ingredients addIngredientsInfo;
+    private Edit_Ingredients editIngredientsInfo;
 
     private GridBagConstraints gbc = new GridBagConstraints();
 
@@ -35,22 +48,13 @@ public class Parent_Ingredients_Info_Screen extends JFrame
     private boolean
             updateIngredientInfo = false;
 
-    // Sorted Hashmap by key String
-    private TreeMap<String, Collection<String>> map_ingredientTypesToNames = new TreeMap<String, Collection<String>>(new Comparator<String>()
-    {
-        public int compare(String o1, String o2)
-        {
-            return o1.toLowerCase().compareTo(o2.toLowerCase());
-        }
-    });
-
-    Add_Ingredients addIngredients;
-    Edit_Ingredients editIngredientsInfo;
 
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Parent_Ingredients_Info_Screen(MyJDBC db, Meal_Plan_Screen mealPlanScreen, int planID, int tempPlanID, String planName)
+    public Parent_Ingredients_Info_Screen(MyJDBC db, Meal_Plan_Screen mealPlanScreen, int planID, int tempPlanID, String planName,
+                                          TreeMap<String, Collection<String>> map_ingredientTypesToNames,
+                                          Collection<String> ingredientsTypesList, Collection<String> storesNamesList)
     {
         System.out.printf("\n\nParent_Ingredients_Info_Screen");
         this.db = db;
@@ -59,22 +63,20 @@ public class Parent_Ingredients_Info_Screen extends JFrame
         this.tempPlanID = tempPlanID;
         this.planName = planName;
 
+        this.map_ingredientTypesToNames = map_ingredientTypesToNames;
+        this.ingredientsTypesList = ingredientsTypesList;
+        this.storesNamesList = storesNamesList;
 
         try
         {
+            if (ingredientsTypesList == null)
+            {
+                JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "\n\nUnable to get IngredientTypes for form!");
+                return;
+            }
+
             if (db.isDatabaseConnected())
             {
-                //Update Generic  ingredientsType JComboBox which has all the ingredients Types
-                ingredientsTypesList = db.getSingleColumnQuery_AlphabeticallyOrderedTreeSet("SELECT Ingredient_Type_Name FROM ingredientTypes;");
-
-                if (ingredientsTypesList == null)
-                {
-                    JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "\n\nUnable to get IngredientTypes for form!");
-                    return;
-                }
-
-                storesNamesList = db.getSingleColumnQuery_AlphabeticallyOrderedTreeSet("SELECT Store_Name FROM stores;");
-
                 //###################################################################################
                 // Frame Set-Up
                 //###################################################################################
@@ -101,7 +103,7 @@ public class Parent_Ingredients_Info_Screen extends JFrame
                 contentPane.setLayout(new GridLayout(1, 1));
                 contentPane.setVisible(true);
 
-               //##################################################################################
+                //##################################################################################
                 // Creating TabbedPane
                 //##################################################################################
                 JTabbedPane tp = new JTabbedPane();
@@ -114,8 +116,8 @@ public class Parent_Ingredients_Info_Screen extends JFrame
                 JPanel addIngredientsFormJPanel = new JPanel(new GridBagLayout());
                 tp.add("Add Ingredients", addIngredientsFormJPanel);
 
-                addIngredients = new Add_Ingredients(this, db);
-                addToContainer(addIngredientsFormJPanel, addIngredients, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
+                addIngredientsInfo = new Add_Ingredients(this, db);
+                addToContainer(addIngredientsFormJPanel, addIngredientsInfo, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
 
                 //#################################################
                 // Creating Edit Ingredients Screen
@@ -152,12 +154,12 @@ public class Parent_Ingredients_Info_Screen extends JFrame
         }
         catch (Exception e)
         {
-             System.out.printf("\n\nParent_Ingredients_Info_Screen() Error \n%s ",e );
+            System.out.printf("\n\nParent_Ingredients_Info_Screen() Error \n%s ", e);
         }
     }
 
     //#########################################################################
-    // New Additions
+    // Accessor Methods (Get) Methods
     //#########################################################################
     public Meal_Plan_Screen getMealPlanScreen()
     {
@@ -184,7 +186,7 @@ public class Parent_Ingredients_Info_Screen extends JFrame
         return storesNamesList;
     }
 
-    public void update_Edit_IngredientsTypes()
+    public void update_EditIngredientsInfo_IngredientsTypes()
     {
         editIngredientsInfo.updateIngredientsTypeJComboBox();
     }
@@ -209,29 +211,19 @@ public class Parent_Ingredients_Info_Screen extends JFrame
         return editIngredientsInfo;
     }
 
-    //#########################################################################
-
-
-
-
-
-    //############################################
-    // Return Forms
-    //############################################
-
     //##################################################################################################################
     // Other Classes
     //##################################################################################################################
     public void updateIngredientsFormTypeJComboBoxes()
     {
-        addIngredients.updateIngredientForm_Type_JComboBox();
+        addIngredientsInfo.updateIngredientForm_Type_JComboBox();
         editIngredientsInfo.updateIngredientForm_Type_JComboBox();
     }
 
     public void updateIngredientSuppliersJComboBoxes()
     {
         System.out.printf("\n\nUpdating GUI");
-        addIngredients.clearShopForm();
+        addIngredientsInfo.clearShopForm();
         editIngredientsInfo.refreshInterface(true, true);
     }
 

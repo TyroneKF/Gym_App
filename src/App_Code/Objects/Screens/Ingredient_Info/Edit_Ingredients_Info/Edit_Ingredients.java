@@ -238,7 +238,7 @@ public class Edit_Ingredients extends Add_Ingredients
     @Override
     protected void updateIngredientForm_Type_JComboBox()
     {
-        ingredientsForm.reloadIngredientTypeJComboBox();
+        ingredientsForm.loadIngredientsTypeJComboBox();
     }
 
     public void updateMapIngredientsTypesAndNames() // HELLO REFACTOR INTO PARENT
@@ -264,6 +264,7 @@ public class Edit_Ingredients extends Add_Ingredients
                 )n
                 ON i.Ingredient_Type_ID = n.Ingredient_Type_ID
                 ORDER BY n.Ingredient_Type_Name;""");
+
         ArrayList<ArrayList<String>> ingredientTypesNameAndIDResults = db.getMultiColumnQuery(queryIngredientsType);
 
         if (ingredientTypesNameAndIDResults == null)

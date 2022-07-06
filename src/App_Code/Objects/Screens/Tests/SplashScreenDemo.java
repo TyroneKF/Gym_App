@@ -21,6 +21,12 @@ public class SplashScreenDemo
     {
         this.endCount = endCount;
         this.mealPlanScreen = mealPlanScreen;
+        // #######################################################################
+        if(endCount == 0)
+        {
+            mealPlanScreen.setFrameVisibility(true);
+            return;
+        }
 
         // #######################################################################
 

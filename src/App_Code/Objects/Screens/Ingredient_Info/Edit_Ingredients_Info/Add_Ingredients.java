@@ -102,7 +102,7 @@ public class Add_Ingredients extends JPanel
 
     protected void updateIngredientForm_Type_JComboBox()
     {
-        ingredientsForm.reloadIngredientTypeJComboBox();
+        ingredientsForm.loadIngredientsTypeJComboBox();
     }
 
     protected void createForms(IngredientsForm ingredientsForm, ShopForm shopForm, SearchForFoodInfo searchForFoodInfo)
@@ -233,6 +233,41 @@ public class Add_Ingredients extends JPanel
         }
     }
 
+    //HELLO EDIT
+    protected boolean addOrDeleteIngredientFromMap(String process, String ingredientType, String ingredientName)
+    {
+        // Storing
+        Collection<String> ingredientTypeList = parent.getMapIngredientTypesToNames().get(ingredientType);
+        if (process.equals("add"))// if key exists add the ingredientName in
+        {
+            if (ingredientTypeList != null)
+            {
+                // Add ingredientName to collection
+                ingredientTypeList.add(ingredientName);
+            }
+            else // create the list for the new type and add ingredient in
+            {
+                ingredientTypeList = new TreeSet<>(Collator.getInstance());
+                ingredientTypeList.add(ingredientName);
+                parent.getMapIngredientTypesToNames().put(ingredientType, ingredientTypeList);
+            }
+        }
+        else if (process.equals("delete"))
+        {
+            ingredientTypeList.remove(ingredientName);
+
+            // Remove List as there is no items in it
+            if (ingredientTypeList.size() == 0)
+            {
+                parent.getMapIngredientTypesToNames().remove(ingredientType);
+            }
+        }
+
+        parent.update_EditIngredientsInfo_IngredientsTypes();
+        return true;
+    }
+
+
     protected boolean isUpdateIngredientsForm()
     {
         return updateIngredientsForm;
@@ -320,41 +355,6 @@ public class Add_Ingredients extends JPanel
         {
             return false;
         }
-        return true;
-    }
-
-    //HELLO EDIT
-    protected boolean addOrDeleteIngredientFromMap(String process, String ingredientType, String ingredientName)
-    {
-        // Storing
-        Collection<String> ingredientTypeList = parent.getMapIngredientTypesToNames().get(ingredientType);
-        if (process.equals("add"))// if key exists add the ingredientName in
-        {
-
-            if (ingredientTypeList != null)
-            {
-                // Add ingredientName to collection
-                ingredientTypeList.add(ingredientName);
-            }
-            else // create the list for the new type and add ingredient in
-            {
-                ingredientTypeList = new TreeSet<>(Collator.getInstance());
-                ingredientTypeList.add(ingredientName);
-                parent.getMapIngredientTypesToNames().put(ingredientType, ingredientTypeList);
-            }
-        }
-        else if (process.equals("delete"))
-        {
-            ingredientTypeList.remove(ingredientName);
-
-            // Remove List as there is no items in it
-            if (ingredientTypeList.size() == 0)
-            {
-                parent.getMapIngredientTypesToNames().remove(ingredientType);
-            }
-        }
-
-        parent.update_Edit_IngredientsTypes();
         return true;
     }
 
@@ -582,7 +582,7 @@ public class Add_Ingredients extends JPanel
                 else if (yPos == ingredientTypeObjectIndex)
                 {
                     ingredientsType_JComboBox = new JComboBox();
-                    reloadIngredientTypeJComboBox();
+                    loadIngredientsTypeJComboBox();
                     addToContainer(inputArea, ingredientsType_JComboBox, xPos += 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
                     jcomboxBeingCreated = true;
@@ -645,7 +645,7 @@ public class Add_Ingredients extends JPanel
             mainJPanel.add(inputArea, BorderLayout.CENTER);
         }
 
-        protected void reloadIngredientTypeJComboBox()
+        protected void loadIngredientsTypeJComboBox()
         {
             ingredientsType_JComboBox.removeAllItems();
             for (String ingredientType : parent.getIngredientsTypesList())
@@ -1459,142 +1459,142 @@ public class Add_Ingredients extends JPanel
 
             private void addRow(boolean addRowBool)
             {
-                //#########################################################################################################
-                //Creating JPanel
-                //#########################################################################################################
-                JPanel rowPanel = this;
+            //#########################################################################################################
+            //Creating JPanel
+            //#########################################################################################################
+            JPanel rowPanel = this;
                 rowPanel.setLayout(new BorderLayout());
 
-                //###############################
-                // Creating Sections for GUI
-                //###############################
+            //###############################
+            // Creating Sections for GUI
+            //###############################
 
-                JPanel eastPanel = new JPanel();
+            JPanel eastPanel = new JPanel();
                 eastPanel.setLayout(new GridLayout(1, 1));
                 eastPanel.setBorder(new EmptyBorder(0, 10, 0, 10));
                 eastPanel.setPreferredSize(new Dimension(120, 34)); // width, height
                 rowPanel.add(eastPanel, BorderLayout.EAST);
 
-                JPanel centrePanel = new JPanel();
-                GridLayout layout = new GridLayout(1, 2);
+            JPanel centrePanel = new JPanel();
+            GridLayout layout = new GridLayout(1, 2);
                 layout.setHgap(10);
                 centrePanel.setLayout(layout);
                 rowPanel.add(centrePanel, BorderLayout.CENTER);
 
-                JPanel westPanel = new JPanel();
+            JPanel westPanel = new JPanel();
                 westPanel.setLayout(new GridLayout(1, 1));
                 westPanel.setBorder(new EmptyBorder(0, 0, 0, 10));
                 westPanel.setPreferredSize(new Dimension(150, 25)); // width, height
                 rowPanel.add(westPanel, BorderLayout.WEST);
 
                 if (addRowBool)
+            {
+                //#####################################################
+                // West Side
+                //######################################################
+
+                if (parent.getStoresNamesList() == null)
                 {
-                    //#####################################################
-                    // West Side
-                    //######################################################
-
-                    if (parent.getStoresNamesList() == null)
-                    {
-                        JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Unable To Get ShopNames From DB; \nEither No Shops Exist. \nOr, Internal DB Error");
-                        return;
-                    }
-
-                    //########################
-                    // create JComboBox
-                    //########################
-                    shops_JComboBox = new JComboBox<String>();
-                    loadStoresInJComboBox();
-
-                    ((JLabel) shops_JComboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
-                    westPanel.add(shops_JComboBox);
-                    shopJComboBoxes.put(id, shops_JComboBox);
-
-                    //#####################################################
-                    // Centre Side
-                    //######################################################
-                    ingredientPrice_TxtField = new JTextField();
-                    ingredientPrice_TxtField.setDocument(new JTextFieldLimit(charLimit));
-                    ingredientPrice_TxtField.setText("0.00");
-                    prices.put(id, ingredientPrice_TxtField);
-                    centrePanel.add(ingredientPrice_TxtField);
-
-                    quantityPerPack_TxtField = new JTextField();
-                    quantityPerPack_TxtField.setDocument(new JTextFieldLimit(charLimit));
-                    quantityPerPack_TxtField.setText("0.00");
-                    quantityPerPack.put(id, quantityPerPack_TxtField);
-                    centrePanel.add(quantityPerPack_TxtField);
-
-                    //#####################################################
-                    // East Side
-                    //######################################################
-
-                    // Creating submit button
-                    JButton deleteRowBtn = new JButton("Delete Row");
-                    deleteRowBtn.setFont(new Font("Arial", Font.BOLD, 12)); // setting font
-
-                    // creating commands for submit button to execute on
-                    deleteRowBtn.addActionListener(ae -> {
-                        deleteRowAction();
-                    });
-
-                    eastPanel.add(deleteRowBtn);
-
-                    //#####################################################
-                    // Adding row to memory
-                    //######################################################
-                    addShopFormObjects.add(this);
-                }
-                else
-                {
-                    //#####################################################
-                    // West Panel
-                    //######################################################
-
-                    //panel
-                    westPanel.setBorder(new EmptyBorder(0, 10, 0, 10));
-                    westPanel.setBackground(Color.LIGHT_GRAY);
-
-                    //Label
-                    JLabel westLabel = new JLabel("Select A Store");
-                    westLabel.setFont(new Font("Arial", Font.BOLD, 16)); // setting font
-                    westPanel.add(westLabel);
-
-                    //#####################################################
-                    // Centre Panel
-                    //######################################################
-
-                    // centre panel
-                    centrePanel.setBackground(Color.LIGHT_GRAY);
-
-                    //Label
-                    JLabel setPriceLabel = new JLabel("Set Price (£)");
-                    setPriceLabel.setFont(new Font("Arial", Font.BOLD, 16)); // setting font
-                    centrePanel.add(panelWithSpace(setPriceLabel, Color.LIGHT_GRAY, 50, 50, 50, 50));
-                    // centrePanel.add(setPriceLabel, BorderLayout.CENTER);
-
-                    JLabel setQuantityLabel = new JLabel("Package Quantity (G,L)");
-                    setQuantityLabel.setFont(new Font("Arial", Font.BOLD, 14)); // setting font
-                    centrePanel.add(panelWithSpace(setQuantityLabel, Color.LIGHT_GRAY, 15, 50, 0, 50));
-
-                    //#####################################################
-                    // East Panel
-                    //######################################################
-
-                    //panel
-                    eastPanel.setBackground(Color.LIGHT_GRAY);
-
-                    //Label
-                    JLabel eastLabel = new JLabel("Delete Row");
-                    eastLabel.setFont(new Font("Arial", Font.BOLD, 16)); // setting font
-                    eastPanel.add(eastLabel);
+                    JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Unable To Get ShopNames From DB; \nEither No Shops Exist. \nOr, Internal DB Error");
+                    return;
                 }
 
-                //#########################################################################################################
-                // Adding Object To GUI
-                //#########################################################################################################
-                addToContainer(parentContainer, rowPanel, 0, posY += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
-                parentContainer.revalidate();
+                //########################
+                // create JComboBox
+                //########################
+                shops_JComboBox = new JComboBox<String>();
+                loadStoresInJComboBox();
+
+                ((JLabel) shops_JComboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
+                westPanel.add(shops_JComboBox);
+                shopJComboBoxes.put(id, shops_JComboBox);
+
+                //#####################################################
+                // Centre Side
+                //######################################################
+                ingredientPrice_TxtField = new JTextField();
+                ingredientPrice_TxtField.setDocument(new JTextFieldLimit(charLimit));
+                ingredientPrice_TxtField.setText("0.00");
+                prices.put(id, ingredientPrice_TxtField);
+                centrePanel.add(ingredientPrice_TxtField);
+
+                quantityPerPack_TxtField = new JTextField();
+                quantityPerPack_TxtField.setDocument(new JTextFieldLimit(charLimit));
+                quantityPerPack_TxtField.setText("0.00");
+                quantityPerPack.put(id, quantityPerPack_TxtField);
+                centrePanel.add(quantityPerPack_TxtField);
+
+                //#####################################################
+                // East Side
+                //######################################################
+
+                // Creating submit button
+                JButton deleteRowBtn = new JButton("Delete Row");
+                deleteRowBtn.setFont(new Font("Arial", Font.BOLD, 12)); // setting font
+
+                // creating commands for submit button to execute on
+                deleteRowBtn.addActionListener(ae -> {
+                    deleteRowAction();
+                });
+
+                eastPanel.add(deleteRowBtn);
+
+                //#####################################################
+                // Adding row to memory
+                //######################################################
+                addShopFormObjects.add(this);
             }
+                else
+            {
+                //#####################################################
+                // West Panel
+                //######################################################
+
+                //panel
+                westPanel.setBorder(new EmptyBorder(0, 10, 0, 10));
+                westPanel.setBackground(Color.LIGHT_GRAY);
+
+                //Label
+                JLabel westLabel = new JLabel("Select A Store");
+                westLabel.setFont(new Font("Arial", Font.BOLD, 16)); // setting font
+                westPanel.add(westLabel);
+
+                //#####################################################
+                // Centre Panel
+                //######################################################
+
+                // centre panel
+                centrePanel.setBackground(Color.LIGHT_GRAY);
+
+                //Label
+                JLabel setPriceLabel = new JLabel("Set Price (£)");
+                setPriceLabel.setFont(new Font("Arial", Font.BOLD, 16)); // setting font
+                centrePanel.add(panelWithSpace(setPriceLabel, Color.LIGHT_GRAY, 50, 50, 50, 50));
+                // centrePanel.add(setPriceLabel, BorderLayout.CENTER);
+
+                JLabel setQuantityLabel = new JLabel("Package Quantity (G,L)");
+                setQuantityLabel.setFont(new Font("Arial", Font.BOLD, 14)); // setting font
+                centrePanel.add(panelWithSpace(setQuantityLabel, Color.LIGHT_GRAY, 15, 50, 0, 50));
+
+                //#####################################################
+                // East Panel
+                //######################################################
+
+                //panel
+                eastPanel.setBackground(Color.LIGHT_GRAY);
+
+                //Label
+                JLabel eastLabel = new JLabel("Delete Row");
+                eastLabel.setFont(new Font("Arial", Font.BOLD, 16)); // setting font
+                eastPanel.add(eastLabel);
+            }
+
+            //#########################################################################################################
+            // Adding Object To GUI
+            //#########################################################################################################
+            addToContainer(parentContainer, rowPanel, 0, posY += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+                parentContainer.revalidate();
+        }
 
             protected void deleteRowAction()
             {
