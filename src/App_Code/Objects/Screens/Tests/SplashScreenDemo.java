@@ -8,8 +8,9 @@ import java.awt.*;
 
 public class SplashScreenDemo
 {
+    private GridBagConstraints gbc = new GridBagConstraints();
     Meal_Plan_Screen mealPlanScreen;
-    int endCount, currentCount = 0;
+    int endCount, currentCount = 0, posY=0;
 
     JFrame frame;
     JLabel text = new JLabel("Gym App Loading");
@@ -21,42 +22,50 @@ public class SplashScreenDemo
         this.endCount = endCount;
         this.mealPlanScreen = mealPlanScreen;
 
-        createGUI();
+        // #######################################################################
 
-
-        frame.revalidate();
-    }
-
-    public void createGUI()
-    {
         frame = new JFrame();
         frame.setResizable(false);
         frame.setVisible(true);
         frame.setSize(600, 600);
         frame.setLocationRelativeTo(null);
 
+        // #######################################################################
+
         Container container = frame.getContentPane();
-        container.setLayout(new GridLayout(2,1));
+        container.setLayout(new BorderLayout());
         container.setBackground(Color.magenta);
 
         // #######################################################################
 
-        container.add(new ImagePanel2());
+        JPanel mainJP = new JPanel(new GridBagLayout());
+        container.add(mainJP, BorderLayout.CENTER);
+
+        // #######################################################################
+
+        JPanel jp = new ImagePanel2();
+        jp.setPreferredSize(new Dimension(600, 450));
+        addToContainer(mainJP, jp,0, posY += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+
         // frame.add(iconLabel);
 
         // #######################################################################
 
+        progressBar.setPreferredSize(new Dimension(600, 35));
         progressBar.setBorderPainted(true);
         progressBar.setStringPainted(true);
         progressBar.setBackground(Color.WHITE);
         progressBar.setForeground(Color.BLACK);
         progressBar.setValue(0);
-        container.add(progressBar);
+
+        container.add(progressBar, BorderLayout.SOUTH);
+
+//        addToContainer(container, progressBar,0, posY += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
         // #######################################################################
 
+        frame.revalidate();
     }
-
 
     public void increaseBar()
     {
@@ -75,6 +84,7 @@ public class SplashScreenDemo
                 frame.dispose();
                 mealPlanScreen.setFrameVisibility(true);
                 mealPlanScreen.resizeGUI();
+                mealPlanScreen.scrollBarDown_BTN_Action();
             }
         }
         catch (Exception e)
@@ -83,14 +93,14 @@ public class SplashScreenDemo
         }
     }
 
-    public  class ImagePanel2 extends JPanel
+    public class ImagePanel2 extends JPanel
     {
 
         Image image;
 
         public ImagePanel2()
         {
-            super.setBackground(Color.magenta);
+            super.setBackground(Color.RED);
             image = Toolkit.getDefaultToolkit().createImage("C:/Users/DonTy/Dropbox/0.) Coding/Gym_App/src/App_Code/Objects/Screens/Tests/Running.gif");
         }
 
@@ -105,6 +115,36 @@ public class SplashScreenDemo
         }
     }
 
+    public void addToContainer(Container container, Component addToContainer, int gridx, int gridy, int gridwidth,
+                               int gridheight, double weightx, double weighty, String fill, int ipady, int ipadx)
+    {
+        gbc.gridx = gridx;
+        gbc.gridy = gridy;
+        gbc.gridwidth = gridwidth;
+        gbc.gridheight = gridheight;
+        gbc.weightx = weightx;
+        gbc.weighty = weighty;
+
+        gbc.ipady = ipady;
+        gbc.ipadx = ipadx;
+
+        switch (fill.toLowerCase())
+        {
+            case "horizontal":
+                gbc.fill = GridBagConstraints.HORIZONTAL;
+                break;
+            case "vertical":
+                gbc.fill = GridBagConstraints.VERTICAL;
+                break;
+
+            case "both":
+                gbc.fill = GridBagConstraints.BOTH;
+                break;
+        }
+
+        container.add(addToContainer, gbc);
+    }
+
     public static void main(String[] args)
     {
         SplashScreenDemo d = new SplashScreenDemo(250, null);
@@ -112,6 +152,5 @@ public class SplashScreenDemo
         d.increaseBar();
         d.increaseBar();
         d.increaseBar();
-
     }
 }
