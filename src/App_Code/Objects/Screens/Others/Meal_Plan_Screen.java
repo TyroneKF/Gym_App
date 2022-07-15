@@ -173,17 +173,28 @@ public class Meal_Plan_Screen extends JPanel
         if (planID != null)
         {
             //####################################################
+            // Number Of Meals
+            //####################################################
+            String query1 = String.format("SELECT COUNT(MealID) AS TotalMeals FROM meals WHERE PlanID = %s;", planID);
+            String[] mealsInPlan = db.getSingleColumnQuery(query1);
+
+            int
+                    no_of_meals = mealsInPlan == null ? 0 : Integer.parseInt(mealsInPlan[0]),
+                    totalProgress = no_of_meals + (4 * 10);
+
+            SplashScreenDemo splashScreenDemo = new SplashScreenDemo(totalProgress, this);
+
+
+            //####################################################
             // Transferring PLan Data To Temp
             //####################################################
             if (!transferPlanData(planID, tempPlanID))
             {
+                splashScreenDemo.closeWindow();
                 return;
             }
 
-            //####################################################
-            // Printing PlanInfo  //HELLO REMOVE
-            //####################################################
-
+            splashScreenDemo.increaseBar(10);
             System.out.printf("\nChosen Plan: %s  & Chosen Plan Name: %s \n\n%s", planID, planName, lineSeparator);
 
             //####################################################
@@ -191,8 +202,11 @@ public class Meal_Plan_Screen extends JPanel
             //####################################################
             if (!transferTargets(planID, tempPlanID, true, false))
             {
+                splashScreenDemo.closeWindow();
                 return;
             }
+
+            splashScreenDemo.increaseBar(10);
 
             //####################################################
             // Transferring this plans Meals  Info to Temp-Plan
@@ -200,29 +214,24 @@ public class Meal_Plan_Screen extends JPanel
 
             if (!(transferMealIngredients(planID, tempPlanID)))
             {
+                splashScreenDemo.closeWindow();
                 JOptionPane.showMessageDialog(null, "\n\nCannot Create Temporary Plan In DB to Allow Editing");
                 return;
             }
 
+            splashScreenDemo.increaseBar(10);
+
             //####################################################
-            //
+            // Get IngredientTypes & Store Data
             //####################################################
             if (!(getIngredientsTypesAndStoresData(true, true, true)))
             {
+                splashScreenDemo.closeWindow();
                 JOptionPane.showMessageDialog(null, "\n\nCannot Get IngredientsTypes & Stores Info \n\ngetIngredientsTypesAndStoresData()");
                 return;
             }
 
-            //####################################################
-            // Number Of Meals
-            //####################################################
-            String query1 = String.format("SELECT COUNT(MealID) AS TotalMeals FROM meals WHERE PlanID = %s;", planID);
-            String[] mealsInPlan = db.getSingleColumnQuery(query1);
-
-            int no_of_meals = mealsInPlan == null ? 0 : Integer.parseInt(mealsInPlan[0]);
-            int mealsCompleted = 0;
-
-            SplashScreenDemo splashScreenDemo = new SplashScreenDemo(no_of_meals, this);
+            splashScreenDemo.increaseBar(10);
 
             //#############################################################################################################
             //   1. Create the  GUI framework
@@ -415,8 +424,10 @@ public class Meal_Plan_Screen extends JPanel
                 jTableBeingAdded.setSpaceDivider(spaceDivider);
                 addToContainer(scrollJPanelCenter, spaceDivider, 0, pos++, 1, 1, 0.25, 0.25, "both", 50, 0, null);
 
-                splashScreenDemo.increaseBar();
+                splashScreenDemo.increaseBar(1);
             }
+
+            open_AddIngredients_Screen();
 
             frame.setVisible(true); // HELLO REMOVE
         }
@@ -1439,17 +1450,8 @@ public class Meal_Plan_Screen extends JPanel
             //#####################################
             // Save Plan & Refresh Plan
             //#####################################
-            saveMealData(true, false); // Save Plan
+            saveMealData(false, false); // Save Plan
             refreshPlan(false); // Refresh Plan
-
-            //#####################################
-            // Update ingredients Named if needed
-            //#####################################
-            System.out.printf("\n\nUpdating Ingredient Info");
-            /*for (IngredientsTable ingredientsTable : listOfJTables)
-            {
-                ingredientsTable.updateMapIngredientsTypesAndNames();
-            }*/
         }
     }
 

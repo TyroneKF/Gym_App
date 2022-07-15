@@ -233,11 +233,32 @@ public class Parent_Ingredients_Info_Screen extends JFrame
         return editIngredientsInfo.getIngredientsTypesJComboBox();
     }*/
 
-    public boolean changeKeyIngredientsTypesList(String process, String newKey, String oldKey)
+    public boolean addChangeOrRemoveIngredientsTypeName(String process, String newKey, String oldKey)// HELLO CHECKA
     {
-        if (process.equals("removeKey"))
+        /*//####################################################################
+        System.out.printf("\n\n##################################### \n\naddChangeOrRemoveIngredientsTypeName() \nprocess: %s \nnewKey: %s \noldKey: %s \n\nMap:",
+                process, newKey, oldKey);
+
+        for (String key : map_ingredientTypesToNames.keySet())
         {
-            if (map_ingredientTypesToNames.containsKey(oldKey)) // if the key had no ingredientNames attached to it, do nothing
+            System.out.printf("\n%s", key);
+        }
+
+        System.out.println("\n\nList:");
+        for (String key : ingredientsTypesList)
+        {
+            System.out.printf("\n%s", key);
+        }
+        //####################################################################
+*/
+
+        if (process.equals("addKey"))
+        {
+            return addOrRemoveIngredientsTypeNameFromList(process, newKey, oldKey);
+        }
+        else if (map_ingredientTypesToNames.containsKey(oldKey)) // if the key had no ingredientNames attached to it, do nothing
+        {
+            if (process.equals("removeKey"))
             {
                 String unAssignedKey = "UnAssigned";
 
@@ -256,21 +277,86 @@ public class Parent_Ingredients_Info_Screen extends JFrame
 
                 //  Add Unassigned list back to the map
                 map_ingredientTypesToNames.put(unAssignedKey, unassignedKeyListData);
-
-                return true;
             }
+            else if (process.equals("changeKeyName"))
+            {
+                if (map_ingredientTypesToNames.containsKey(oldKey))
+                {
+                    map_ingredientTypesToNames.put(newKey, map_ingredientTypesToNames.remove(oldKey));
+
+                }
+            }
+        }
+
+        return addOrRemoveIngredientsTypeNameFromList(process, newKey, oldKey);
+    }
+
+    private boolean addOrRemoveIngredientsTypeNameFromList(String process, String newKey, String oldKey)
+    {
+        //####################################################################
+        System.out.printf("\n\n##################################### \n\naddOrRemoveIngredientsTypeNameFromList() \nprocess: %s \nnewKey: %s \noldKey: %s \n\nMap:",
+                process, newKey, oldKey);
+
+        for (String key : map_ingredientTypesToNames.keySet())
+        {
+            System.out.printf("\n%s", key);
+        }
+
+        System.out.println("\n\nList:");
+        for (String key : ingredientsTypesList)
+        {
+            System.out.printf("\n%s", key);
+        }
+        //####################################################################
+
+        //#########################################
+        // addKey
+        //#########################################
+        if (process.equals("addKey"))
+        {
+            ingredientsTypesList.add(newKey);
+            return true;
+        }
+
+        //#########################################
+        // Check if oldKey exists if not error
+        //#########################################
+        if (oldKey == null || !(ingredientsTypesList.contains(oldKey)))
+        {
+            System.out.print("\n\nError1");
             return false;
+        }
+
+        //#########################################
+        // removeKey / changeKey
+        //#########################################
+        if (process.equals("removeKey"))
+        {
+            ingredientsTypesList.remove(oldKey);
         }
         else if (process.equals("changeKeyName"))
         {
-            if (map_ingredientTypesToNames.containsKey(oldKey))
-            {
-                System.out.printf("\n\nFound in List");
-                map_ingredientTypesToNames.put(newKey, map_ingredientTypesToNames.remove(oldKey));
-                return true;
-            }
+            ingredientsTypesList.remove(oldKey);
+            ingredientsTypesList.add(newKey);
         }
-        return false;
+
+        //####################################################################
+        System.out.printf("\n\n##################################### \n\naddOrRemoveIngredientsTypeNameFromList() \nprocess: %s \nnewKey: %s \noldKey: %s \n\nMap:",
+                process, newKey, oldKey);
+
+        for (String key : map_ingredientTypesToNames.keySet())
+        {
+            System.out.printf("\n%s", key);
+        }
+
+        System.out.println("\n\nList:");
+        for (String key : ingredientsTypesList)
+        {
+            System.out.printf("\n%s", key);
+        }
+        //####################################################################
+
+        return true;
     }
 
     public void setUpdateIngredientInfo(boolean status)

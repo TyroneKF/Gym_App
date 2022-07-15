@@ -103,6 +103,7 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
         @Override
         protected void updateOtherScreens()
         {
+            parentIngredientsScreen.addChangeOrRemoveIngredientsTypeName("addKey", jtextfieldTXT, null);
             parentIngredientsScreen.updateIngredientsFormTypeJComboBoxes();
         }
     }
@@ -126,7 +127,6 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
 
             super.idColumnName = "Ingredient_Type_ID";
             super.fkTable = "ingredients_info";
-            super.setToNull = false;
             super.removeJComboBoxItems = new String[]{"None Of The Above", "UnAssigned"};
 
 
@@ -141,7 +141,7 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
         @Override
         protected void successUploadMessage()
         {
-            String text = String.format("\n\nSuccessfully Changed Ingredient Type From ' %s ' to ' %s ' !", selectedItem, jtextfieldTXT);
+            String text = String.format("\n\nSuccessfully Changed Ingredient Type From ' %s ' to ' %s ' !", selectedJComboBoxItemTxt, jtextfieldTXT);
             JOptionPane.showMessageDialog(null, text);
         }
 
@@ -155,10 +155,8 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
         @Override
         protected void updateOtherScreens()
         {
-            //#################################################################
-            // Update CreateForm ingredientsForm  Type JComboBoxes
-            //##################################################################
-            parentIngredientsScreen.updateIngredientsFormTypeJComboBoxes();
+            System.out.printf("\n\n##############################################");
+            System.out.printf("\nupdateOtherScreens()  \nnewKey: %s \noldKey: %s", jtextfieldTXT, selectedJComboBoxItemTxt); // HELLO REMOVE
 
             //#################################################################
             // Reset EditCreateForm
@@ -171,18 +169,34 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
             //###################################################################
             if (itemDeleted)
             {
-                if (parentIngredientsScreen.changeKeyIngredientsTypesList("removeKey", null,  selectedItem)) // change key
+                if (parentIngredientsScreen.addChangeOrRemoveIngredientsTypeName("removeKey", null, selectedJComboBoxItemTxt)) // change key
                 {
                     editingIngredientsInfo.updateIngredientNamesToTypesJComboBox(); // update IngredientsTypeToNames JComboBox
+                }
+                else
+                {
+                    System.out.print("\n\nupdateOtherScreens() error deletingKey "); // HELLO REMOVE
+                    return;
                 }
             }
             else
             {
-                if (parentIngredientsScreen.changeKeyIngredientsTypesList("changeKeyName", jtextfieldTXT, selectedItem)) // change key
+                if (parentIngredientsScreen.addChangeOrRemoveIngredientsTypeName("changeKeyName", jtextfieldTXT, selectedJComboBoxItemTxt)) // change key
                 {
                     editingIngredientsInfo.updateIngredientNamesToTypesJComboBox(); // update IngredientsTypeToNames JComboBox
                 }
+                else
+                {
+                    System.out.println("\n\n################################# \nupdateOtherScreens() error changingKey \n#################################"); // HELLO REMOVE
+                    return;
+                }
             }
+
+            //#################################################################
+            // Update CreateForm ingredientsForm  Type JComboBoxes
+            //##################################################################
+            parentIngredientsScreen.updateIngredientsFormTypeJComboBoxes();
+            parentIngredientsScreen.setUpdateIngredientInfo(true);
         }
     }
 }

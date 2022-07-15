@@ -124,7 +124,6 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
 
             super.idColumnName = "StoreID";
             super.fkTable = "ingredients_info";
-            super.setToNull = true;
             super.removeJComboBoxItems = new String[]{"No Shop"};
 
             //###################################################################
@@ -138,7 +137,7 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
         @Override
         protected void successUploadMessage()
         {
-            String text = String.format("\n\nSuccessfully Changed Ingredient Type From ' %s ' to ' %s ' !", selectedItem, jtextfieldTXT);
+            String text = String.format("\n\nSuccessfully Changed Ingredient Type From ' %s ' to ' %s ' !", selectedJComboBoxItemTxt, jtextfieldTXT);
             JOptionPane.showMessageDialog(null, text);
         }
 
@@ -157,7 +156,7 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
             //######################################
             String mysqlVariableReference1 = "@CurrentID"; // StoreID
             String createMysqlVariable1 = String.format("SET %s = (SELECT %s FROM %s WHERE %s = '%s');",
-                    mysqlVariableReference1, idColumnName, dbTableName, dbColumnNameField, selectedItem);
+                    mysqlVariableReference1, idColumnName, dbTableName, dbColumnNameField, selectedJComboBoxItemTxt);
 
             //######################################
             // Update ingredients_in_meal
@@ -175,7 +174,7 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
 
             if (!db.uploadData_Batch_Independently(new String[]{createMysqlVariable1, update1, update2, update3}))
             {
-                JOptionPane.showMessageDialog(null, String.format("\n\nFailed To Delete ' %s ' FROM %s !!", selectedItem, dataGatheringName));
+                JOptionPane.showMessageDialog(null, String.format("\n\nFailed To Delete ' %s ' FROM %s !!", selectedJComboBoxItemTxt, dataGatheringName));
                 return false;
             }
 

@@ -73,11 +73,11 @@ public class SplashScreenDemo
         frame.revalidate();
     }
 
-    public void increaseBar()
+    public void increaseBar(int increaseBy)
     {
         try
         {
-            currentCount++;
+            currentCount += increaseBy;
             int percentage = (int) ((currentCount * 100.0f) / endCount);
 
             Thread.sleep(50);//Pausing execution for 50 milliseconds
@@ -87,7 +87,7 @@ public class SplashScreenDemo
 
             if (currentCount == endCount)
             {
-                frame.dispose();
+                closeWindow();
                 mealPlanScreen.setFrameVisibility(true);
                 mealPlanScreen.resizeGUI();
                 mealPlanScreen.scrollBarDown_BTN_Action();
@@ -97,6 +97,11 @@ public class SplashScreenDemo
         {
             e.printStackTrace();
         }
+    }
+
+    public void closeWindow()
+    {
+        frame.dispose();
     }
 
     public class ImagePanel2 extends JPanel
@@ -154,9 +159,9 @@ public class SplashScreenDemo
     public static void main(String[] args)
     {
         SplashScreenDemo d = new SplashScreenDemo(250, null);
-        d.increaseBar();
-        d.increaseBar();
-        d.increaseBar();
-        d.increaseBar();
+        d.increaseBar(1);
+        d.increaseBar(1);
+        d.increaseBar(1);
+        d.increaseBar(1);
     }
 }

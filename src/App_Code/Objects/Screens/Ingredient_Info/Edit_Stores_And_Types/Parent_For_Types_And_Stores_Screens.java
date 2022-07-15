@@ -25,12 +25,12 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
 
 
     protected MyJDBC db;
-    protected JComboBox jComboBox;
+    protected JComboBox jComboBoxObject;
     protected Collection<String> jcomboBoxList;
     protected Parent_Ingredients_Info_Screen parentIngredientsScreen;
     protected String collapsibleBTNTXT1 = "", collapsibleBTNTXT2 = "";
 
-    protected EditScreen editScreen ;
+    protected EditScreen editScreen;
     protected AddScreen addScreen;
 
     public Parent_For_Types_And_Stores_Screens()
@@ -70,7 +70,7 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
         //###########################
         //Edit  Form
         //###########################
-         editScreen = new EditScreen(this, collapsibleBTNTXT2, 250, 50);
+        editScreen = new EditScreen(this, collapsibleBTNTXT2, 250, 50);
         addToContainer(mainCentreScreen, editScreen, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
         //###########################
@@ -92,7 +92,7 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
         protected JTextField jTextField;
         protected JButton submitButton;
 
-        protected String jtextfieldTXT, mainLabel,  dataGatheringName, dbColumnNameField, dbTableName;
+        protected String jtextfieldTXT, mainLabel, dataGatheringName, dbColumnNameField, dbTableName;
 
         public AddScreen(Container parentContainer, String btnText, int btnWidth, int btnHeight)
         {
@@ -167,23 +167,6 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
         {
             String text = "";
             JOptionPane.showMessageDialog(null, text);
-        }
-
-        protected void submissionBtnAction()
-        {
-            if (validateForm())
-            {
-                if (uploadForm())
-                {
-                    successUploadMessage();
-                    resetActions();
-                    updateOtherScreens();
-                }
-                else
-                {
-                    failureMessage();
-                }
-            }
         }
 
         protected void createAddScreenObjects()
@@ -293,6 +276,23 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
             return stringToBeEdited.trim().replaceAll("\\p{C}", ""); // remove all whitespace & hidden characters like \n
         }
 
+        protected void submissionBtnAction()
+        {
+            if (validateForm())
+            {
+                if (uploadForm())
+                {
+                    updateOtherScreens();
+                    resetActions();
+                    successUploadMessage();
+                }
+                else
+                {
+                    failureMessage();
+                }
+            }
+        }
+
         protected boolean validateForm()
         {
             jtextfieldTXT = jTextField.getText();
@@ -326,8 +326,7 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
 
         protected boolean uploadForm()
         {
-
-            String query = String.format("SELECT  %s  FROM %s WHERE %s = '%s';", dbColumnNameField, dbTableName, dbColumnNameField, jtextfieldTXT);
+            String query = String.format("SELECT %s  FROM %s WHERE %s = '%s';", dbColumnNameField, dbTableName, dbColumnNameField, jtextfieldTXT);
 
             if (db.getSingleColumnQuery(query) != null)
             {
@@ -341,8 +340,6 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
                     ('%s');
                     """, dbTableName, dbColumnNameField, jtextfieldTXT);
 
-            System.out.printf("\n\n%s", uploadString);
-
             if (db.uploadData_Batch_Altogether(new String[]{uploadString}))
             {
                 return true;
@@ -351,29 +348,15 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
             return false;
         }
 
-        protected void addOrDeleteObjectFromMap(String process, String object)
+        protected void updateOtherScreens()
         {
-            if (process.equals("add"))// if key exists add the object in
-            {
-                jcomboBoxList.add(object);
-            }
-            else if (process.equals("delete"))
-            {
-                jcomboBoxList.remove(object);
-            }
+            System.out.printf("\n\nDefault updateOtherScreens()");
         }
 
         protected void resetActions()
         {
             refreshBtnAction();
-            addOrDeleteObjectFromMap("add", jtextfieldTXT);
             editScreen.loadJComboBox();
-        }
-
-
-        protected void updateOtherScreens()
-        {
-            System.out.printf("\n\nDefault updateOtherScreens()");
         }
     }
 
@@ -383,9 +366,9 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
         protected String
                 lable1, label2,
                 idColumnName,
-                selectedItem = "",
+                selectedJComboBoxItemTxt = "",
                 fkTable;
-        protected boolean setToNull = false, itemDeleted = false;
+        protected boolean itemDeleted = false;
         protected String[] removeJComboBoxItems = new String[]{};
 
         public EditScreen(Container parentContainer, String btnText, int btnWidth, int btnHeight)
@@ -393,25 +376,14 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
             super(parentContainer, btnText, btnWidth, btnHeight);
         }
 
-
-        protected void removeJCombBoxItems()
-        {
-            for(String removeItem: removeJComboBoxItems)
-            {
-                jComboBox.removeItem(removeItem);
-            }
-        }
-
         protected void loadJComboBox()
         {
-            jComboBox.removeAllItems();
+            jComboBoxObject.removeAllItems();
             for (String object : jcomboBoxList)
             {
-                jComboBox.addItem(object);
+                jComboBoxObject.addItem(object);
             }
-            jComboBox.setSelectedIndex(-1);
-
-            removeJCombBoxItems();
+            jComboBoxObject.setSelectedIndex(-1);
         }
 
         @Override
@@ -465,7 +437,7 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
 
         private void deleteBTNActionListener()
         {
-            if (selectedItem.equals(""))
+            if (selectedJComboBoxItemTxt.equals(""))
             {
                 JOptionPane.showMessageDialog(null, String.format("Select An ' %s 'To Delete It !!!", dataGatheringName));
                 return;
@@ -473,20 +445,14 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
 
             if (deleteBTNAction())
             {
-                JOptionPane.showMessageDialog(null, String.format("\n\nSelected Item ''%s'' Has Successfully Been Deleted!!!", selectedItem));
+                JOptionPane.showMessageDialog(null, String.format("\n\nSelected Item ''%s'' Has Successfully Been Deleted!!!", selectedJComboBoxItemTxt));
 
-                addOrDeleteObjectFromMap("delete", selectedItem);
-
-                itemDeleted = true;
                 updateOtherScreens();
-                refreshBtnAction();
-                loadJComboBox();
-
-                itemDeleted = false;
+                resetActions();
             }
             else
             {
-                JOptionPane.showMessageDialog(null, String.format("\n\nFailed To Delete Selected Item ''%s'' !!", selectedItem));
+                JOptionPane.showMessageDialog(null, String.format("\n\nFailed To Delete Selected Item ''%s'' !!", selectedJComboBoxItemTxt));
             }
         }
 
@@ -495,7 +461,7 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
             System.out.printf("\n#################################################################################");
 
             String mysqlVariableReference1 = "@CurrentID";
-            String createMysqlVariable1 = String.format("SET %s = (SELECT %s FROM %s WHERE %s = '%s');", mysqlVariableReference1, idColumnName, dbTableName, dbColumnNameField, selectedItem);
+            String createMysqlVariable1 = String.format("SET %s = (SELECT %s FROM %s WHERE %s = '%s');", mysqlVariableReference1, idColumnName, dbTableName, dbColumnNameField, selectedJComboBoxItemTxt);
 
             String changeToValue = String.format("(SELECT %s FROM %s WHERE %s = 'UnAssigned')", idColumnName, dbTableName, dbColumnNameField);
 
@@ -510,10 +476,11 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
 
             if (!db.uploadData_Batch_Independently(new String[]{createMysqlVariable1, query, query2}))
             {
-                JOptionPane.showMessageDialog(null, String.format("\n\nFailed To Delete ' %s ' FROM %s !!", selectedItem, dataGatheringName));
+                JOptionPane.showMessageDialog(null, String.format("\n\nFailed To Delete ' %s ' FROM %s !!", selectedJComboBoxItemTxt, dataGatheringName));
                 return false;
             }
 
+            itemDeleted = true;
             return true;
         }
 
@@ -525,37 +492,36 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
             //########################################################################################################
             jcomboBoxJPanel = new JPanel(new GridLayout(1, 1));
 
-            jComboBox = new JComboBox();
+            jComboBoxObject = new JComboBox();
             loadJComboBox();
 
-            jComboBox.setSelectedIndex(-1);
-            jComboBox.setFont(new Font("Arial", Font.PLAIN, 15)); // setting font
-            ((JLabel) jComboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER); // centre text
+            jComboBoxObject.setSelectedIndex(-1);
+            jComboBoxObject.setFont(new Font("Arial", Font.PLAIN, 15)); // setting font
+            ((JLabel) jComboBoxObject.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER); // centre text
 
-            jComboBox.addItemListener(new ItemListener()
+            jComboBoxObject.addItemListener(new ItemListener()
             {
                 public void itemStateChanged(ItemEvent ie)
                 {
                     if (ie.getStateChange() == ItemEvent.SELECTED)
                     {
-                        selectedItem = (String) jComboBox.getSelectedItem();
+                        selectedJComboBoxItemTxt = (String) jComboBoxObject.getSelectedItem();
                     }
                 }
             });
 
-            jcomboBoxJPanel.add(jComboBox);
+            jcomboBoxJPanel.add(jComboBoxObject);
             jcomboBoxJPanel.setPreferredSize(new Dimension(650, 50));
         }
 
         @Override
         protected boolean additionalValidateForm()
         {
-            if (jComboBox.getSelectedIndex() == -1)
+            if (jComboBoxObject.getSelectedIndex() == -1)
             {
                 JOptionPane.showMessageDialog(null, String.format("\n\nSelect An %s To Edit!", dataGatheringName));
                 return false;
             }
-
             return true;
         }
 
@@ -563,8 +529,6 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
         protected boolean uploadForm()
         {
             String query = String.format("SELECT %s  FROM %s WHERE %s = '%s';", dbColumnNameField, dbTableName, dbColumnNameField, jtextfieldTXT);
-
-            System.out.printf("\n\nChecking if %s  exists in DB\n%s", dataGatheringName, query);
 
             if (db.getSingleColumnQuery(query) != null)
             {
@@ -575,7 +539,7 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
             String mysqlVariableReference1 = "@CurrentID";
             String createMysqlVariable1 = String.format("SET %s = (SELECT %s FROM %s WHERE %s = '%s');",
 
-                    mysqlVariableReference1, idColumnName, dbTableName, dbColumnNameField, selectedItem);
+                    mysqlVariableReference1, idColumnName, dbTableName, dbColumnNameField, selectedJComboBoxItemTxt);
 
             String uploadString = String.format("""                    
                             UPDATE %s 
@@ -583,8 +547,6 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
                             WHERE %s = %s;""",
 
                     dbTableName, dbColumnNameField, jtextfieldTXT, idColumnName, mysqlVariableReference1);
-
-            System.out.printf("\n\n%s \n\n%s", createMysqlVariable1, uploadString);
 
             if (db.uploadData_Batch_Independently(new String[]{createMysqlVariable1, uploadString}))
             {
@@ -597,10 +559,9 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
         @Override
         protected void resetActions()
         {
-            addOrDeleteObjectFromMap("add", jtextfieldTXT);
-            addOrDeleteObjectFromMap("delete", (String) jComboBox.getSelectedItem());
             refreshBtnAction();
             loadJComboBox();
+            itemDeleted = false;
         }
 
         @Override
@@ -609,8 +570,8 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
             try
             {
                 jTextField.setText("");
-                jComboBox.setSelectedIndex(-1);
-                selectedItem = "";
+                jComboBoxObject.setSelectedIndex(-1);
+                selectedJComboBoxItemTxt = "";
             }
             catch (Exception e)
             {
