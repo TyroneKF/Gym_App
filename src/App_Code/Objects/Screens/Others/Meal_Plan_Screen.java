@@ -180,7 +180,14 @@ public class Meal_Plan_Screen extends JPanel
 
             int
                     no_of_meals = mealsInPlan == null ? 0 : Integer.parseInt(mealsInPlan[0]),
-                    totalProgress = no_of_meals + (4 * 10);
+                    totalProgress = no_of_meals + (5 * 10);
+            /**
+             *  1.) Transfer Plan Data
+             *  2.) Transfer Plan Targets
+             *  3.) Transferring Meals Data
+             *  4.) Get Ingredient Names & Types
+             *  5.) GUI Setup (excluding adding meals)
+             */
 
             SplashScreenDemo splashScreenDemo = new SplashScreenDemo(totalProgress, this);
 
@@ -427,9 +434,17 @@ public class Meal_Plan_Screen extends JPanel
                 splashScreenDemo.increaseBar(1);
             }
 
-            open_AddIngredients_Screen();
 
+            //##########################################
+            //  GUI Setup Complete
+            //##########################################
+            splashScreenDemo.increaseBar(10);
             frame.setVisible(true); // HELLO REMOVE
+
+            //##########################################
+            // HELLO REMOVE
+            //##########################################
+            open_AddIngredients_Screen();
         }
         else
         {
@@ -513,6 +528,7 @@ public class Meal_Plan_Screen extends JPanel
             return false;
         }
 
+        System.out.printf("\nIngredient Types & Names Successfully transferred! \n\n%s", lineSeparator);
         return true;
     }
 
