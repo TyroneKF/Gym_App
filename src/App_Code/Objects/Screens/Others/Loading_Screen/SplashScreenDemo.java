@@ -1,4 +1,4 @@
-package App_Code.Objects.Screens.Tests;
+package App_Code.Objects.Screens.Others.Loading_Screen;
 
 import App_Code.Objects.Screens.Others.Meal_Plan_Screen;
 

@@ -12,7 +12,7 @@ import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
 import App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Parent_Ingredients_Info_Screen;
-import App_Code.Objects.Screens.Tests.SplashScreenDemo;
+import App_Code.Objects.Screens.Others.Loading_Screen.SplashScreenDemo;
 
 import javax.swing.*;
 import java.awt.*;
