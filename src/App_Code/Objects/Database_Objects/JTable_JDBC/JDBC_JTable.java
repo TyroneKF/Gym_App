@@ -120,6 +120,7 @@ public class JDBC_JTable extends JPanel
     //##################################################################################################################
     // Set Up Methods
     //##################################################################################################################
+
     protected void iconSetup()
     {
         //###################################################################################
@@ -189,7 +190,7 @@ public class JDBC_JTable extends JPanel
         save_btn.addActionListener(ae -> {
             if (areYouSure("Save Data"))
             {
-               saveDataAction(true);
+                saveDataAction(true);
             }
         });
 
@@ -215,6 +216,48 @@ public class JDBC_JTable extends JPanel
         iconPanelInsert.add(delete_btn);
     }
 
+    protected void tableSetup(Object[][] data, String[] columnNames, boolean setIconsUp)
+    {
+        if (setIconsUp)
+        {
+            iconSetup();
+        }
+
+        //###################################################################################
+        // Table Setup
+        //###################################################################################
+        //Creating Table
+
+        jTable = new JTable();
+        //instance table model
+
+        tableModel_Setup(data, columnNames); // sets Jtable Model
+        jTable.setRowHeight(jTable.getRowHeight() + 15);
+        jTable.setFillsViewportHeight(true);
+
+        // setting text size
+        setTableHeaderFont(new Font("Dialog", Font.BOLD, 16));
+
+        // setting header size
+        jTable.getTableHeader().setPreferredSize(new Dimension(100, 50));
+
+        //################################################################################
+        // Adding Jtable to JscrollPane
+        //################################################################################
+
+        // Create the scroll pane and add the table to it, has to be added to a scrollpane as otherwise it doesnt work
+
+        scrollPane.setViewportView(jTable);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+
+        addToContainer(this, scrollPane, 0, 1, 1, 1, 0.25, 0.25, "both", "");
+
+        //#################################################################################
+        // Sizing
+        //#################################################################################
+        resizeObject();
+    }
 
     protected void tableModel_Setup(Object[][] data, String[] columnNames)
     {
@@ -272,7 +315,6 @@ public class JDBC_JTable extends JPanel
             {
                 setUpJComboColumn(key, "IngredientName", jcomboMap.get(key));
             }
-
         }
         else
         {
@@ -459,49 +501,7 @@ public class JDBC_JTable extends JPanel
         return deleteColumn;
     }
 
-    protected void tableSetup(Object[][] data, String[] columnNames, boolean setIconsUp)
-    {
 
-        if (setIconsUp)
-        {
-            iconSetup();
-        }
-
-        //###################################################################################
-        // Table Setup
-        //###################################################################################
-        //Creating Table
-
-        jTable = new JTable();
-        //instance table model
-
-        tableModel_Setup(data, columnNames); // sets Jtable Model
-        jTable.setRowHeight(jTable.getRowHeight() + 15);
-        jTable.setFillsViewportHeight(true);
-
-        // setting text size
-        setTableHeaderFont(new Font("Dialog", Font.BOLD, 16));
-
-        // setting header size
-        jTable.getTableHeader().setPreferredSize(new Dimension(100, 50));
-
-        //################################################################################
-        // Adding Jtable to JscrollPane
-        //################################################################################
-
-        // Create the scroll pane and add the table to it, has to be added to a scrollpane as otherwise it doesnt work
-
-        scrollPane.setViewportView(jTable);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-
-        addToContainer(this, scrollPane, 0, 1, 1, 1, 0.25, 0.25, "both", "");
-
-        //#################################################################################
-        // Sizing
-        //#################################################################################
-        resizeObject();
-    }
 
     protected Object[][] getData()
     {
