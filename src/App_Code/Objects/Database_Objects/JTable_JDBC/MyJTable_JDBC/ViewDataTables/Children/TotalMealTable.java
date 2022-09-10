@@ -1,12 +1,11 @@
-package App_Code.Objects.Database_Objects.MyJTable_JDBC.ViewDataTables.Children;
+package App_Code.Objects.Database_Objects.JTable_JDBC.MyJTable_JDBC.ViewDataTables.Children;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
-import App_Code.Objects.Database_Objects.MyJTable_JDBC.ViewDataTables.Parent.MyJTable_DisplayData;
+import App_Code.Objects.Database_Objects.JTable_JDBC.MyJTable_JDBC.ViewDataTables.Parent.MyJTable_DisplayData;
 import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
 import java.util.ArrayList;
 
 public class TotalMealTable extends MyJTable_DisplayData

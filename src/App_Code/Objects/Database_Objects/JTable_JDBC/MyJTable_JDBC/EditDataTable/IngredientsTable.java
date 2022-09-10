@@ -1,10 +1,10 @@
-package App_Code.Objects.Database_Objects.MyJTable_JDBC.EditDataTable;
+package App_Code.Objects.Database_Objects.JTable_JDBC.MyJTable_JDBC.EditDataTable;
 
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.JTable_JDBC.JDBC_JTable;
-import App_Code.Objects.Database_Objects.MyJTable_JDBC.ViewDataTables.Children.MacrosLeftTable;
-import App_Code.Objects.Database_Objects.MyJTable_JDBC.ViewDataTables.Children.TotalMealTable;
+import App_Code.Objects.Database_Objects.JTable_JDBC.MyJTable_JDBC.ViewDataTables.Children.MacrosLeftTable;
+import App_Code.Objects.Database_Objects.JTable_JDBC.MyJTable_JDBC.ViewDataTables.Children.TotalMealTable;
 import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 
 import javax.swing.*;
@@ -129,7 +129,7 @@ public class IngredientsTable extends JDBC_JTable
         super.columnNames = columnNames;
 
         //##############################################################
-        // Column Names & Positions
+        // Column Names & Their Original Positions
         //##############################################################
 
         // Adding column names and their original positions to the hashmap
@@ -172,6 +172,18 @@ public class IngredientsTable extends JDBC_JTable
         {
             super.tableSetup(new Object[0][0], columnNames, setIconsUp);
         }
+        //##############################################################
+        // Hide Columns
+        //##############################################################
+
+
+
+
+        //##############################################################
+        // Trigger Columns
+        //##############################################################
+
+
     }
 
     //##################################################################################################################

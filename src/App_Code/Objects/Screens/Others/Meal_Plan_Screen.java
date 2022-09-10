@@ -2,11 +2,11 @@ package App_Code.Objects.Screens.Others;
 
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
-import App_Code.Objects.Database_Objects.MyJTable_JDBC.ViewDataTables.Children.MacrosLeftTable;
-import App_Code.Objects.Database_Objects.MyJTable_JDBC.ViewDataTables.Children.MacrosTargetsTable;
-import App_Code.Objects.Database_Objects.MyJTable_JDBC.EditDataTable.IngredientsTable;
+import App_Code.Objects.Database_Objects.JTable_JDBC.MyJTable_JDBC.ViewDataTables.Children.MacrosLeftTable;
+import App_Code.Objects.Database_Objects.JTable_JDBC.MyJTable_JDBC.ViewDataTables.Children.MacrosTargetsTable;
+import App_Code.Objects.Database_Objects.JTable_JDBC.MyJTable_JDBC.EditDataTable.IngredientsTable;
 
-import App_Code.Objects.Database_Objects.MyJTable_JDBC.ViewDataTables.Children.TotalMealTable;
+import App_Code.Objects.Database_Objects.JTable_JDBC.MyJTable_JDBC.ViewDataTables.Children.TotalMealTable;
 import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
