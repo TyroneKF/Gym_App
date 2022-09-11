@@ -1,10 +1,10 @@
-package App_Code.Objects.Database_Objects.JTable_JDBC.MyJTable_JDBC.EditDataTable;
+package App_Code.Objects.Database_Objects.JTable_JDBC.Children.EditDataTable;
 
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
-import App_Code.Objects.Database_Objects.JTable_JDBC.JDBC_JTable;
-import App_Code.Objects.Database_Objects.JTable_JDBC.MyJTable_JDBC.ViewDataTables.Children.MacrosLeftTable;
-import App_Code.Objects.Database_Objects.JTable_JDBC.MyJTable_JDBC.ViewDataTables.Children.TotalMealTable;
+import App_Code.Objects.Database_Objects.JTable_JDBC.Parent.JDBC_JTable;
+import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Children.MacrosLeftTable;
+import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Children.TotalMealTable;
 import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 
 import javax.swing.*;
@@ -1070,7 +1070,7 @@ public class IngredientsTable extends JDBC_JTable
         {
             if (getHideColumns()!=null)//Must be first
             {
-                SetUp_HiddenTableColumns(getHideColumns(), get_StartingUpdateColumn());
+                SetUp_HiddenTableColumns(getHideColumns());
             }
 
             //EDITING

@@ -2,11 +2,11 @@ package App_Code.Objects.Screens.Others;
 
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
-import App_Code.Objects.Database_Objects.JTable_JDBC.MyJTable_JDBC.ViewDataTables.Children.MacrosLeftTable;
-import App_Code.Objects.Database_Objects.JTable_JDBC.MyJTable_JDBC.ViewDataTables.Children.MacrosTargetsTable;
-import App_Code.Objects.Database_Objects.JTable_JDBC.MyJTable_JDBC.EditDataTable.IngredientsTable;
+import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Children.MacrosLeftTable;
+import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Children.MacrosTargetsTable;
+import App_Code.Objects.Database_Objects.JTable_JDBC.Children.EditDataTable.IngredientsTable;
 
-import App_Code.Objects.Database_Objects.JTable_JDBC.MyJTable_JDBC.ViewDataTables.Children.TotalMealTable;
+import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Children.TotalMealTable;
 import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
@@ -367,7 +367,7 @@ public class Meal_Plan_Screen extends JPanel
                     tableName, unEditableCells, ingredients_Table_Col_Avoid_Centering);
 
             macros_Targets_Table.setOpaque(true); //content panes must be opaque
-            macros_Targets_Table.SetUp_HiddenTableColumns(macros_Targets_Table_Hidden_Col, macroTargets_StartCol);
+            macros_Targets_Table.SetUp_HiddenTableColumns(macros_Targets_Table_Hidden_Col);
 
             macros_Targets_Table.setTableHeaderFont(new Font("Dialog", Font.BOLD, 14));
             macros_Targets_Table.setTableTextFont(new Font("Dialog", Font.PLAIN, 14));
@@ -397,7 +397,7 @@ public class Meal_Plan_Screen extends JPanel
 
             macrosLeft_JTable.setOpaque(true); //content panes must be opaque
 
-            macrosLeft_JTable.SetUp_HiddenTableColumns(macrosLeft_Table_Hidden_Col, macrosLeftTable_StartCol);
+            macrosLeft_JTable.SetUp_HiddenTableColumns(macrosLeft_Table_Hidden_Col);
 
             macrosLeft_JTable.setTableHeaderFont(new Font("Dialog", Font.BOLD, 14));
             macrosLeft_JTable.setTableTextFont(new Font("Dialog", Font.PLAIN, 14));
@@ -665,7 +665,7 @@ public class Meal_Plan_Screen extends JPanel
                 mealID, mealName, tableName, unEditableCells, null, false);
 
         total_Meal_View_Table.setOpaque(true); //content panes must be opaque
-        total_Meal_View_Table.SetUp_HiddenTableColumns(TotalMeal_Table_Hidden_Columns, totalMealTable_StartCol);
+        total_Meal_View_Table.SetUp_HiddenTableColumns(TotalMeal_Table_Hidden_Columns);
         total_Meal_View_Table.setTableHeaderFont(new Font("Dialog", Font.BOLD, 12));
 
         //########################################################################
@@ -717,7 +717,7 @@ public class Meal_Plan_Screen extends JPanel
         // Customisation
         //#############################################
         ingredients_Calulation_Jtable.setTableHeaderFont(new Font("Dialog", Font.BOLD, 12));
-        ingredients_Calulation_Jtable.SetUp_HiddenTableColumns(ingredientsTable_Hidden_Columns, ingredientsTable_StartingCol);
+        ingredients_Calulation_Jtable.SetUp_HiddenTableColumns(ingredientsTable_Hidden_Columns);
         ingredients_Calulation_Jtable.setUpIngredientsTableActionCells(triggerColumns, actionListenerColumns); //EDIT NOW
 
         //##############################################

@@ -1,4 +1,4 @@
-package App_Code.Objects.Database_Objects.JTable_JDBC;
+package App_Code.Objects.Database_Objects.JTable_JDBC.Parent;
 
 // Packages to import
 // https://stackoverflow.com/questions/10347983/making-a-jbutton-clickable-inside-a-jtable
@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class JDBC_JTable extends JPanel
+public class  JDBC_JTable extends JPanel
 {
     protected MyJDBC db;
     protected JTable jTable = new JTable();
@@ -307,7 +307,7 @@ public class JDBC_JTable extends JPanel
             }
             if (hideColumns != null)
             {
-                SetUp_HiddenTableColumns(hideColumns, get_StartingUpdateColumn());
+                SetUp_HiddenTableColumns(hideColumns);
             }
 
             // Setting up JcomboBox Field
@@ -701,10 +701,9 @@ public class JDBC_JTable extends JPanel
     /*
        As columns are hidden the position changes by -1 for the next time its called
      */
-    public void SetUp_HiddenTableColumns(ArrayList<Integer> hideColumns, int updateStartingColumn)
+    public void SetUp_HiddenTableColumns(ArrayList<Integer> hideColumns)
     {
         this.hideColumns = hideColumns;
-        this.updateStartingColumn = updateStartingColumn;
         /*
          Then retrieve the data from the model.
          table.getModel().getValueAt(table.getSelectedRow(),rowNumber);

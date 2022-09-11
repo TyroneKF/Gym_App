@@ -1,8 +1,9 @@
-How to find index column without manually entering which is updated when columns are hidden
+.) How to find index column without manually entering which is updated when columns are hidden
 must have data index of column  and JTable index of column
 
+.) detect whether a meal has changed by comparing data with JTable results
 
-
+.) Recall original Jtable column position and changed position after hiding columns
 
 
 
