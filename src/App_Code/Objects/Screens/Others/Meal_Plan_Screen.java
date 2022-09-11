@@ -86,7 +86,7 @@ public class Meal_Plan_Screen extends JPanel
             original_IngredientsTable_Supplier_Col = 8,
             original_ingredientsTable_DeleteBTN_Col = 20,
 
-    afterHiding_IngredientsTable_IngredientIndexCol = 0,
+            afterHiding_IngredientsTable_IngredientIndexCol = 0,
             afterHiding_IngredientsTable_IngredientID = 1,
             afterHiding_IngredientsTable_Quantity_Col = 2,
             afterHiding_IngredientsTable_Type_Col = 3,
@@ -102,18 +102,17 @@ public class Meal_Plan_Screen extends JPanel
             editable_IngredientsTable_Columns = new ArrayList<Integer>(Arrays.asList(original_IngredientsTable_Quantity_Col, original_IngredientsTable_Type_Col, original_IngredientsTable_IngredientsName_Col, original_IngredientsTable_Supplier_Col)),
             ingredients_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList(original_IngredientsTable_Type_Col, original_IngredientsTable_IngredientsName_Col, original_IngredientsTable_Supplier_Col, original_ingredientsTable_DeleteBTN_Col));
 
-    private final Integer ingredientsTable_StartingCol = 2, totalMealTable_StartCol = 3,
-            macroTargets_StartCol = 3, macrosLeftTable_StartCol = 2;
-
     //#################################################################################################################
     // Table Customisations
     //#################################################################################################################
+/*
     private final ArrayList<Integer>
             TotalMeal_Table_Hidden_Columns = new ArrayList<Integer>(Arrays.asList(1, 2)),
             ingredientsTable_Hidden_Columns = new ArrayList<Integer>(Arrays.asList(1, 2)),
             macros_Targets_Table_Hidden_Col = new ArrayList<Integer>(Arrays.asList(1, 2, 3)),
             macrosLeft_Table_Hidden_Col = new ArrayList<Integer>(Arrays.asList(1, 2));
-
+*/
+    private final ArrayList<String> ingredientsInMeal_ColToHide = new ArrayList<String>(Arrays.asList("PlanID", "MealID"));
 
     //########################################################
 
@@ -367,7 +366,7 @@ public class Meal_Plan_Screen extends JPanel
                     tableName, unEditableCells, ingredients_Table_Col_Avoid_Centering);
 
             macros_Targets_Table.setOpaque(true); //content panes must be opaque
-            macros_Targets_Table.SetUp_HiddenTableColumns(macros_Targets_Table_Hidden_Col);
+//            macros_Targets_Table.SetUp_HiddenTableColumns(macros_Targets_Table_Hidden_Col); // NOW
 
             macros_Targets_Table.setTableHeaderFont(new Font("Dialog", Font.BOLD, 14));
             macros_Targets_Table.setTableTextFont(new Font("Dialog", Font.PLAIN, 14));
@@ -397,7 +396,7 @@ public class Meal_Plan_Screen extends JPanel
 
             macrosLeft_JTable.setOpaque(true); //content panes must be opaque
 
-            macrosLeft_JTable.SetUp_HiddenTableColumns(macrosLeft_Table_Hidden_Col);
+           // macrosLeft_JTable.SetUp_HiddenTableColumns(macrosLeft_Table_Hidden_Col); // NOW
 
             macrosLeft_JTable.setTableHeaderFont(new Font("Dialog", Font.BOLD, 14));
             macrosLeft_JTable.setTableTextFont(new Font("Dialog", Font.PLAIN, 14));
@@ -456,11 +455,6 @@ public class Meal_Plan_Screen extends JPanel
             // Make frame visible
             //##########################################
             frame.setVisible(true); // HELLO REMOVE
-
-            //##########################################
-            // HELLO REMOVE
-            //##########################################
-            open_AddIngredients_Screen();
         }
         else
         {
@@ -622,16 +616,6 @@ public class Meal_Plan_Screen extends JPanel
         return true;
     }
 
-    public Collection<String> getIngredientsTypesList()
-    {
-        return ingredientsTypesList;
-    }
-
-    public Collection<String> getStoresNamesList()
-    {
-        return storesNamesList;
-    }
-
     //##################################################################################################################
     // Frequently Used Methods
     //##################################################################################################################
@@ -665,7 +649,7 @@ public class Meal_Plan_Screen extends JPanel
                 mealID, mealName, tableName, unEditableCells, null, false);
 
         total_Meal_View_Table.setOpaque(true); //content panes must be opaque
-        total_Meal_View_Table.SetUp_HiddenTableColumns(TotalMeal_Table_Hidden_Columns);
+//        total_Meal_View_Table.SetUp_HiddenTableColumns(TotalMeal_Table_Hidden_Columns); // NOW
         total_Meal_View_Table.setTableHeaderFont(new Font("Dialog", Font.BOLD, 12));
 
         //########################################################################
@@ -704,7 +688,7 @@ public class Meal_Plan_Screen extends JPanel
 
 
         IngredientsTable ingredients_Calulation_Jtable = new IngredientsTable(db, collapsibleJpObj, map_ingredientTypesToNames, databaseName, mealData, ingredients_ColumnNames, planID, mealID, mealInDB, mealName,
-                tableName, unEditableCells, ingredients_Table_Col_Avoid_Centering, total_Meal_View_Table, macrosLeft_JTable);
+                tableName, unEditableCells, ingredients_Table_Col_Avoid_Centering, ingredientsInMeal_ColToHide, total_Meal_View_Table, macrosLeft_JTable);
 
         ingredients_Calulation_Jtable.setOpaque(true); //content panes must be opaque
         jTableBeingAdded = ingredients_Calulation_Jtable;
@@ -713,20 +697,9 @@ public class Meal_Plan_Screen extends JPanel
         listOfJTables.add(ingredients_Calulation_Jtable);
 
         //##############################################
-        // Ingredients_In_Meal_Calculation
-        // Customisation
+        // Ingredients_In_Meal_Calculation Customisation
         //#############################################
         ingredients_Calulation_Jtable.setTableHeaderFont(new Font("Dialog", Font.BOLD, 12));
-        ingredients_Calulation_Jtable.SetUp_HiddenTableColumns(ingredientsTable_Hidden_Columns);
-        ingredients_Calulation_Jtable.setUpIngredientsTableActionCells(triggerColumns, actionListenerColumns); //EDIT NOW
-
-        //##############################################
-        // Add Ingredient If Meal Empty / Add New Meal
-        //#############################################
-        if (!mealInDB)
-        {
-            ingredients_Calulation_Jtable.addIngredient();
-        }
 
         //##################################################################################################
         // Adding Collapsible Objects && JTables To GUI

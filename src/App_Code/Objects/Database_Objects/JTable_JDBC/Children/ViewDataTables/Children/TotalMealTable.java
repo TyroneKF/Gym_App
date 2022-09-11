@@ -141,9 +141,9 @@ public class TotalMealTable extends MyJTable_DisplayData
 
         if (getTableInitilized())  //first time this method is called, special columns aren't defined
         {
-            if (getHideColumns() != null)//Must be first
+            if (getColumnsToHide() != null)//Must be first
             {
-                SetUp_HiddenTableColumns(getHideColumns());
+                SetUp_HiddenTableColumns(getColumnsToHide());
             }
 
             if (getDeleteBTN_Col() != null)

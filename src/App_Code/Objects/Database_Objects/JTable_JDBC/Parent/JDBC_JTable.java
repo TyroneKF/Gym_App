@@ -15,12 +15,11 @@ import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
 
 
-public class  JDBC_JTable extends JPanel
+public class JDBC_JTable extends JPanel
 {
     protected MyJDBC db;
     protected JTable jTable = new JTable();
@@ -37,8 +36,8 @@ public class  JDBC_JTable extends JPanel
 
     protected ArrayList<Integer> unEditableColumns = new ArrayList<>(), colAvoidCentering = new ArrayList<>();
     protected Integer deleteColumn = null;
-    protected ArrayList<Integer> hideColumns = null;
-    protected int hiddenCount = 0, updateStartingColumn = 0;
+    protected ArrayList<String> columnsToHide = null;
+    protected int hiddenCount = 0;
 
     protected int rowsInTable = 0, columnsInTable = 0;
     protected String databaseName, tableName;
@@ -47,6 +46,13 @@ public class  JDBC_JTable extends JPanel
 
     protected Object previousJComboItem;
     protected Object selected_Jcombo_Item;
+
+    //##################################################################################################################
+    protected LinkedHashMap<String, Integer[]> columnNamesAndPositions = new LinkedHashMap<>();
+     /*
+        Array Pos 1 = Original Position in JTable Data
+        Array Pos 2 = Position after columns hidden
+     */
 
     //###########################################
     // Ingredients In Table Columns
@@ -77,7 +83,7 @@ public class  JDBC_JTable extends JPanel
             String query = String.format("select * from %s;", tableName);
             data = db.getTableDataObject(query, tableName);
 
-            if (data != null)
+            if (data!=null)
             {
                 //###############################
                 // Getting Column Names
@@ -301,13 +307,13 @@ public class  JDBC_JTable extends JPanel
 
         if (tableInitilized)  //first time this method is called, special columns aren't defined
         {
-            if (deleteColumn != null)
+            if (deleteColumn!=null)
             {
                 setupDeleteBtnColumn(deleteColumn); // specifying delete column
             }
-            if (hideColumns != null)
+            if (columnsToHide!=null)
             {
-                SetUp_HiddenTableColumns(hideColumns);
+                SetUp_HiddenTableColumns(columnsToHide);
             }
 
             // Setting up JcomboBox Field
@@ -329,7 +335,7 @@ public class  JDBC_JTable extends JPanel
         int reply = JOptionPane.showConfirmDialog(null, String.format("Are you sure you want to %s, \nany unsaved changes will be lost in this Table! \nDo you want to %s?", process, process),
                 "Restart Game", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
-        if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
+        if (reply==JOptionPane.NO_OPTION || reply==JOptionPane.CLOSED_OPTION)
         {
             return false;
         }
@@ -350,9 +356,9 @@ public class  JDBC_JTable extends JPanel
         // Configuring Row ID
         //#######################################
 
-        int tableRow = rowsInTable == 0 ? 0 : rowsInTable;
+        int tableRow = rowsInTable==0 ? 0:rowsInTable;
 
-        if (rowsInTable == 0)
+        if (rowsInTable==0)
         {
             // Get max id of last item in DB and +1
             String[] queryResults = db.getSingleColumnQuery(String.format("SELECT MAX(%s) FROM %s;", columnNames[0], tableName));
@@ -371,7 +377,7 @@ public class  JDBC_JTable extends JPanel
         //######################################
         for (int col = 1; col < columnsInTable; col++)
         {
-            if (col == deleteColumn)
+            if (col==deleteColumn)
             {
                 tableModel.setValueAt("Delete Row", tableRow, col);
                 continue;
@@ -502,7 +508,6 @@ public class  JDBC_JTable extends JPanel
     }
 
 
-
     protected Object[][] getData()
     {
         return data;
@@ -524,56 +529,93 @@ public class  JDBC_JTable extends JPanel
         return columnsInTable;
     }
 
-    protected ArrayList<Integer> getHideColumns()
+    protected ArrayList<String> getColumnsToHide()
     {
-        return hideColumns;
-    }
-
-    protected int getHiddenCount()
-    {
-        return hiddenCount;
-    }
-
-    protected int get_StartingUpdateColumn()
-    {
-        return updateStartingColumn;
+        return columnsToHide;
     }
 
     // EDIT REMOVE myJTable  Param
-    public void updateTable(JDBC_JTable myJtable, ArrayList<Object> updateData, int updateRow)
+    public void updateTable(JDBC_JTable myJTable, ArrayList<Object> updateData, int updateRow)
     {
-        int hiddenCount = 0;
-        //myJtable.getHiddenCount();
-        int updateColumnStart = myJtable.get_StartingUpdateColumn();
-        int noOfColumns = myJtable.getNoOfColumns();
-        String[] columnNames = myJtable.getColumnNames();
-        ArrayList<Integer> hiddenColumns = myJtable.getHideColumns();
-        JTable table = myJtable.getTable();
-
-        for (int updateCol = 0; updateCol < noOfColumns; updateCol++)
+        //########################################################################
+        // Updating Table Info
+        //#######################################################################
+        int pos =0;
+        for (Map.Entry<String, Integer[]> jTableColumn : columnNamesAndPositions.entrySet())
         {
-            if (hiddenColumns.contains(updateCol + 1))
+            //############################################
+            // Extracting Info
+            //############################################
+            String columnName = jTableColumn.getKey();
+
+            /*
+             Pos 1 column original position in JTable Data
+             Pos 2 column position in JTable after columns are hidden
+            */
+            Integer[] columnPositionsList = jTableColumn.getValue();
+            Integer columnPosAfterHidingColumns = columnPositionsList[1];
+
+            //############################################
+            // Update Table
+            //############################################
+            if(columnPosAfterHidingColumns != null) // this column isn't visible in the JTable Data
             {
-                hiddenCount++;
-                //HELLO REMOVE
-                // System.out.printf("\nUpdate: Hidden Column Skipped %s\n",columnNames[updateCol]); //HELLO REMOVE
-                continue;
-            }
-            else if (updateCol < updateColumnStart)
-            {
-                //HELLO REMOVE
-                //System.out.printf("\nUpdate: Skipped  Column %s, Value: %s\n",columnNames[updateCol], updateData.get(updateCol));//HELLO REMOVE
-                continue;
+                jTable.setValueAt(updateData.get(pos), updateRow, columnPosAfterHidingColumns);
             }
 
-            //HELLO REMOVE
-            //System.out.printf("\nUpdate:  %s Value: %s Column: %s ",columnNames[updateCol], updateData.get(updateCol), updateCol );
-            table.setValueAt(updateData.get(updateCol), updateRow, updateCol - hiddenCount);
+            //############################################
+            pos++;
+        }
+    }
+
+    /*
+     As columns are hidden the position changes by -1 for the next time its called
+   */
+    protected void SetUp_HiddenTableColumns(ArrayList<String> columnsToHide)
+    {
+        int pos = 0, numberOfColumnsHidden = 0, jTablePosAfterHiding = 0;
+
+        for (Map.Entry<String, Integer[]> jTableColumn : columnNamesAndPositions.entrySet())
+        {
+            jTablePosAfterHiding = pos - numberOfColumnsHidden;
+
+            //########################################################################
+            // Extracting Info
+            //#######################################################################
+            String columnName = jTableColumn.getKey();
+
+            /*
+             Pos 1 column original position in JTable Data
+             Pos 2 column position in JTable after columns are hidden
+            */
+            Integer[] columnPositionsList = jTableColumn.getValue();
+
+            //#######################################################################
+            // Hide Or Update Column Pos After Hiding
+            //#######################################################################
+
+            if (columnsToHide.contains(columnName)) // Hide Column In JTable
+            {
+                columnPositionsList[1] = null; // No Longer In The JTable so position is null
+                columnNamesAndPositions.replace(columnName, columnPositionsList); // Update position
+
+                jTable.removeColumn(jTable.getColumnModel().getColumn(jTablePosAfterHiding)); // Hide Column in JTable
+
+                numberOfColumnsHidden++;
+            }
+            else // Adjust current column position
+            {
+                columnPositionsList[1] = jTablePosAfterHiding;
+                columnNamesAndPositions.replace(columnName, columnPositionsList);
+            }
+            //#######################################################################
+
+            pos++;
         }
     }
 
     //##################################################################################################################
-    protected void setDeleteBTNColumn(int deleteColumn)
+    protected void set_IngredientsTable_DeleteBTN_Col(int deleteColumn)
     {
         this.deleteColumn = deleteColumn;
     }
@@ -619,7 +661,7 @@ public class  JDBC_JTable extends JPanel
     {
         jcomboMap.put(col, items);
 
-        if (items != null && items.size() > 0)
+        if (items!=null && items.size() > 0)
         {
             TableColumn sportColumn = jTable.getColumnModel().getColumn(col);
 
@@ -633,9 +675,9 @@ public class  JDBC_JTable extends JPanel
             {
                 public void itemStateChanged(ItemEvent ie)
                 {
-                    if (ie.getStateChange() == ItemEvent.SELECTED)
+                    if (ie.getStateChange()==ItemEvent.SELECTED)
                     {
-                        if (previousJComboItem == null)
+                        if (previousJComboItem==null)
                         {
                             selected_Jcombo_Item = ie.getItem();
                             previousJComboItem = selected_Jcombo_Item;
@@ -698,23 +740,6 @@ public class  JDBC_JTable extends JPanel
         }
     }
 
-    /*
-       As columns are hidden the position changes by -1 for the next time its called
-     */
-    public void SetUp_HiddenTableColumns(ArrayList<Integer> hideColumns)
-    {
-        this.hideColumns = hideColumns;
-        /*
-         Then retrieve the data from the model.
-         table.getModel().getValueAt(table.getSelectedRow(),rowNumber);
-         */
-        int hiddenColumns = 0;
-        for (int i = 0; i < hideColumns.size(); i++)
-        {
-            jTable.removeColumn(jTable.getColumnModel().getColumn((hideColumns.get(i) - 1) - hiddenColumns));
-            hiddenColumns++;
-        }
-    }
 
     //##################################################################################################################
     public class ComboBoxTableCellRenderer extends JComboBox implements TableCellRenderer
@@ -828,7 +853,7 @@ public class  JDBC_JTable extends JPanel
         public Component getTableCellEditorComponent(
                 JTable table, Object value, boolean isSelected, int row, int column)
         {
-            if (value == null)
+            if (value==null)
             {
                 editButton.setText("");
                 editButton.setIcon(null);
@@ -881,7 +906,7 @@ public class  JDBC_JTable extends JPanel
             }
 
             //		renderButton.setText( (value == null) ? "" : value.toString() );
-            if (value == null)
+            if (value==null)
             {
                 renderButton.setText("");
                 renderButton.setIcon(null);
@@ -933,7 +958,7 @@ public class  JDBC_JTable extends JPanel
         public void mousePressed(MouseEvent e)
         {
             if (table.isEditing()
-                    && table.getCellEditor() == this)
+                    && table.getCellEditor()==this)
             {
                 isButtonColumnEditor = true;
             }
@@ -976,7 +1001,7 @@ public class  JDBC_JTable extends JPanel
         scrollPane.revalidate(); // reshapes scrollpane
         revalidate();
 
-        if (parentContainer != null)
+        if (parentContainer!=null)
         {
             parentContainer.revalidate();
         }
@@ -1036,7 +1061,7 @@ public class  JDBC_JTable extends JPanel
 
         for (int columnIndex = 0; columnIndex < tableModel.getColumnCount(); columnIndex++)
         {
-            if (skipRows != null && skipRows.contains(columnIndex))
+            if (skipRows!=null && skipRows.contains(columnIndex))
             {
                 continue;
             }

@@ -63,7 +63,8 @@ public class IngredientsTable extends JDBC_JTable
             ingredientsTable_Quantity_Col,
             ingredientsTable_Type_Col,
             ingredientsTable_IngredientsName_Col,
-            ingredientsTable_Supplier_Col;
+            ingredientsTable_Supplier_Col,
+            ingredientsTable_Del_Col;
 
     private final int NoneOfTheAbove_PDID = 1;
 
@@ -75,12 +76,6 @@ public class IngredientsTable extends JDBC_JTable
 
     private String lineSeparator = "###############################################################################";
 
-    //##################################################################################################################
-    private HashMap<String, Integer[]> columnNamesAndPositions = new HashMap<String, Integer[]>();
-     /*
-        Array Pos 1 = Original Position in JTable Data
-        Array Pos 2 = Position after columns hidden
-     */
 
     //##################################################################################################################
     // Constructor
@@ -109,6 +104,7 @@ public class IngredientsTable extends JDBC_JTable
                             String databaseName, Object[][] data, String[] columnNames, int planID,
                             Integer mealID, boolean meal_In_DB, String mealName, String tableName,
                             ArrayList<Integer> unEditableColumns, ArrayList<Integer> colAvoidCentering,
+                            ArrayList<String> columnsToHide,
                             TotalMealTable total_Meal_Table, MacrosLeftTable macrosLeft_Table)
     {
 
@@ -127,15 +123,18 @@ public class IngredientsTable extends JDBC_JTable
         super.colAvoidCentering = colAvoidCentering;
 
         super.columnNames = columnNames;
+        super.columnsToHide = columnsToHide;
 
         //##############################################################
         // Column Names & Their Original Positions
         //##############################################################
 
         // Adding column names and their original positions to the hashmap
+        System.out.printf("\n\nConstructor IngredientsTable \nColumnNames: \n");
         for (int pos = 0; pos < columnNames.length; pos++)
         {
             columnNamesAndPositions.put(columnNames[pos], new Integer[]{pos, pos});
+            System.out.printf("\n%s",columnNames[pos]);
         }
 
         //##############################################################
@@ -175,15 +174,46 @@ public class IngredientsTable extends JDBC_JTable
         //##############################################################
         // Hide Columns
         //##############################################################
-
-
-
+        SetUp_HiddenTableColumns(columnsToHide);
 
         //##############################################################
-        // Trigger Columns
+        // Setting Trigger Columns
+        //##############################################################
+        set_IngredientsTable_Index_Col(columnNamesAndPositions.get("Ingredients_Index")[1]);
+        set_IngredientsTable_ID_Col(columnNamesAndPositions.get("IngredientID")[1]);
+        set_IngredientsTable_Quantity_Col(columnNamesAndPositions.get("Quantity")[1]);
+        set_IngredientsTable_IngredientType_Col(columnNamesAndPositions.get("Ingredient_Type")[1]);
+        set_IngredientsTable_IngredientsName_Col(columnNamesAndPositions.get("Ingredient_Name")[1]);
+        set_IngredientsTable_Supplier_Col(columnNamesAndPositions.get("Supplier")[1]);
+
+        set_IngredientsTable_DeleteBTN_Col(columnNamesAndPositions.get("Delete Button")[1]);
+
+        //##############################################################
+        // Setting Trigger Columns
         //##############################################################
 
+        this.triggerColumns = new ArrayList(Arrays.asList(getIngredientsTable_Index_Col(), getIngredientsTable_ID_Col(),
+                getIngredientsTable_Quantity_Col(), getIngredientsTable_Type_Col(), getIngredientsTable_IngredientsName_Col(), getIngredientsTable_Supplier_Col()));
 
+        //##############################################################
+        // Setting Up JComboBox Fields on Table
+        //##############################################################
+        ingredientTypeColumn = new SetupIngredientTypeColumn(getIngredientsTable_Type_Col());
+        ingredientNameColumn = new SetupIngredientNameColumn(getIngredientsTable_IngredientsName_Col());
+        supplierColumn = new SetupSupplierColumn(getIngredientsTable_Supplier_Col());
+
+        //##############################################################
+        // Setting Up Delete Button On JTable
+        //##############################################################
+        setupDeleteBtnColumn(columnNamesAndPositions.get("Delete Button")[1]);
+
+        //##############################################################
+        // Add Ingredient If Meal Empty / Add New Meal
+        //##############################################################
+        if (! (meal_In_DB))
+        {
+            addIngredient();
+        }
     }
 
     //##################################################################################################################
@@ -588,37 +618,6 @@ public class IngredientsTable extends JDBC_JTable
     public boolean getUpdateIngredientsName()
     {
         return updateIngredientsName;
-    }
-
-    /*
-         Method used to set:
-         ingredientsIndex, IngredientID, Quantity, ingredientName, Supplier
-         from inputs after the hide columns methods has been called.
-    */
-    //Editing Now
-    private void set_TriggerColumns(Integer[] columns)
-    {
-        set_IngredientsTable_Index_Col(columns[0]);
-        set_IngredientsTable_ID_Col(columns[1]);
-        set_IngredientsTable_Quantity_Col(columns[2]);
-        set_IngredientsTable_IngredientType_Col(columns[3]);
-        set_IngredientsTable_IngredientsName_Col(columns[4]);
-        set_IngredientsTable_Supplier_Col(columns[5]);
-
-        triggerColumns = new ArrayList(Arrays.asList(getIngredientsTable_Index_Col(), getIngredientsTable_ID_Col(),
-                getIngredientsTable_Quantity_Col(), getIngredientsTable_Type_Col(), getIngredientsTable_IngredientsName_Col(), getIngredientsTable_Supplier_Col()));
-    }
-
-    //Editing Now
-    public void setUpIngredientsTableActionCells(Integer[] triggerColumns, Integer[] actionListenerColumns)
-    {
-        set_TriggerColumns(triggerColumns);
-
-        ingredientTypeColumn = new SetupIngredientTypeColumn(getIngredientsTable_Type_Col());
-        ingredientNameColumn = new SetupIngredientNameColumn(getIngredientsTable_IngredientsName_Col());
-
-        supplierColumn = new SetupSupplierColumn(getIngredientsTable_Supplier_Col());
-        setupDeleteBtnColumn(actionListenerColumns[3]);
     }
 
     //Editing Now
@@ -1068,9 +1067,9 @@ public class IngredientsTable extends JDBC_JTable
 
         if (getTableInitilized())  //first time this method is called, special columns aren't defined
         {
-            if (getHideColumns()!=null)//Must be first
+            if (getColumnsToHide()!=null)//Must be first
             {
-                SetUp_HiddenTableColumns(getHideColumns());
+                SetUp_HiddenTableColumns(getColumnsToHide());
             }
 
             //EDITING
@@ -1095,8 +1094,6 @@ public class IngredientsTable extends JDBC_JTable
     @Override
     public void setupDeleteBtnColumn(int deleteBtnColumn)
     {
-        setDeleteBTNColumn(deleteBtnColumn);
-
         Action delete = new AbstractAction()
         {
             public void actionPerformed(ActionEvent e)
