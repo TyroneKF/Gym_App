@@ -82,8 +82,10 @@ public class Meal_Plan_Screen extends JPanel
             original_ingredientsTable_DeleteBTN_Col = 20;
 
     private final ArrayList<Integer>
-            editable_IngredientsTable_Columns = new ArrayList<Integer>(Arrays.asList(original_IngredientsTable_Quantity_Col, original_IngredientsTable_Type_Col, original_IngredientsTable_IngredientsName_Col, original_IngredientsTable_Supplier_Col)),
-            ingredients_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList(original_IngredientsTable_Type_Col, original_IngredientsTable_IngredientsName_Col, original_IngredientsTable_Supplier_Col, original_ingredientsTable_DeleteBTN_Col));
+            editable_IngredientsTable_Columns = new ArrayList<Integer>(Arrays.asList(original_IngredientsTable_Quantity_Col, original_IngredientsTable_Type_Col, original_IngredientsTable_IngredientsName_Col, original_IngredientsTable_Supplier_Col));
+
+    private final ArrayList<String>
+            ingredients_Table_Col_Avoid_Centering = new ArrayList<String>(Arrays.asList("Ingredient_Type","Ingredient_Name","Supplier"));
 
     //#################################################################################################################
     // Table Customisations
@@ -341,13 +343,11 @@ public class Meal_Plan_Screen extends JPanel
             String[] plan_columnNames = db.getColumnNames(tableName)!=null ? db.getColumnNames(tableName):new String[0];
 
             ArrayList<Integer> unEditableCells = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11));
-            ArrayList<Integer> ingredients_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList());
 
             macros_Targets_Table = new MacrosTargetsTable(db, macrosInfoJPanel, planData, plan_columnNames, planID,
-                    tableName, unEditableCells, ingredients_Table_Col_Avoid_Centering, macrosTargets_Table_ColToHide);
+                    tableName, unEditableCells, null, macrosTargets_Table_ColToHide);
 
             macros_Targets_Table.setOpaque(true); //content panes must be opaque
-            //            macros_Targets_Table.SetUp_HiddenTableColumns(macros_Targets_Table_Hidden_Col); // NOW
 
             macros_Targets_Table.setTableHeaderFont(new Font("Dialog", Font.BOLD, 14));
             macros_Targets_Table.setTableTextFont(new Font("Dialog", Font.PLAIN, 14));
@@ -370,10 +370,9 @@ public class Meal_Plan_Screen extends JPanel
             String[] macros_columnNames = db.getColumnNames(tableName)!=null ? db.getColumnNames(tableName):new String[0];
 
             unEditableCells = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11));
-            ArrayList<Integer> macros_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList());
 
             macrosLeft_JTable = new MacrosLeftTable(db, macrosInfoJPanel, macrosData, macros_columnNames, planID,
-                    tableName, unEditableCells, macros_Table_Col_Avoid_Centering, macrosLeft_Table_ColToHide);
+                    tableName, unEditableCells, null, macrosLeft_Table_ColToHide);
 
             macrosLeft_JTable.setOpaque(true); //content panes must be opaque
 

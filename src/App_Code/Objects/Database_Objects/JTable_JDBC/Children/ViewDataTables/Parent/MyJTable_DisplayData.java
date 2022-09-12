@@ -12,7 +12,7 @@ public class MyJTable_DisplayData extends JDBC_JTable
     protected boolean setIconsUp;
 
     public MyJTable_DisplayData(MyJDBC db, Container parentContainer, Object[][] data, String[] columnNames, int planID,
-                                String tableName, ArrayList<Integer> unEditableColumns, ArrayList<Integer> colAvoidCentering,
+                                String tableName, ArrayList<Integer> unEditableColumns, ArrayList<String> colAvoidCentering,
                                 ArrayList<String> columnsToHide)
     {
         setLayout(new GridBagLayout());

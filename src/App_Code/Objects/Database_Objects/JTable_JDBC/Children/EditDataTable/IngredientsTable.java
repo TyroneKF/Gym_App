@@ -103,7 +103,7 @@ public class IngredientsTable extends JDBC_JTable
     public IngredientsTable(MyJDBC db, CollapsibleJPanel collapsibleObj, TreeMap<String, Collection<String>> map_ingredientTypesToNames,
                             String databaseName, Object[][] data, String[] columnNames, int planID,
                             Integer mealID, boolean meal_In_DB, String mealName, String tableName,
-                            ArrayList<Integer> unEditableColumns, ArrayList<Integer> colAvoidCentering,
+                            ArrayList<Integer> unEditableColumns, ArrayList<String> colAvoidCentering,
                             ArrayList<String> columnsToHide,
                             TotalMealTable total_Meal_Table, MacrosLeftTable macrosLeft_Table)
     {

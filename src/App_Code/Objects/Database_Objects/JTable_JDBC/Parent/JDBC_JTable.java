@@ -16,7 +16,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.List;
 
 
 public class JDBC_JTable extends JPanel
@@ -34,7 +33,9 @@ public class JDBC_JTable extends JPanel
     protected boolean tableInitilized = false;
     protected HashMap<Integer, ArrayList<String>> jcomboMap = new HashMap<>();
 
-    protected ArrayList<Integer> unEditableColumns = new ArrayList<>(), colAvoidCentering = new ArrayList<>();
+    protected ArrayList<String>  colAvoidCentering = new ArrayList<>();
+    protected ArrayList<Integer> unEditableColumns = new ArrayList<>();
+
     protected Integer deleteColumn = null;
     protected ArrayList<String> columnsToHide = null;
 
@@ -63,7 +64,7 @@ public class JDBC_JTable extends JPanel
     }
 
     public JDBC_JTable(MyJDBC db, Container parentContainer, String databaseName,
-                       String tableName, ArrayList<Integer> unEditableColumns, ArrayList<Integer> colAvoidCentering)
+                       String tableName, ArrayList<Integer> unEditableColumns, ArrayList<String> colAvoidCentering)
     {
         this.db = db;
         this.parentContainer = parentContainer;
@@ -1048,9 +1049,14 @@ public class JDBC_JTable extends JPanel
         }
     }
 
-    protected void setCellsAlignment(int alignment, List<Integer> skipRows)
+    /**
+     * This needs to be done before hiding columns
+     * @param alignment
+     * @param columnByNameToSkipCentering
+     */
+    protected void setCellsAlignment(int alignment, ArrayList<String> columnByNameToSkipCentering)
     {
-        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        /*DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
         rightRenderer.setHorizontalAlignment(alignment);
 
         TableModel tableModel = jTable.getModel();
@@ -1063,6 +1069,23 @@ public class JDBC_JTable extends JPanel
             }
 
             jTable.getColumnModel().getColumn(columnIndex).setCellRenderer(rightRenderer);
+        }*/
+
+
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        rightRenderer.setHorizontalAlignment(alignment);
+
+        int pos = -1;
+        for(String columnName: columnNames)
+        {
+            pos++;
+
+            if (columnByNameToSkipCentering!= null && columnByNameToSkipCentering.contains(columnName))
+            {
+                continue;
+            }
+
+            jTable.getColumnModel().getColumn(pos).setCellRenderer(rightRenderer); // Center Column Data
         }
     }
 
