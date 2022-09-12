@@ -33,7 +33,7 @@ public class JDBC_JTable extends JPanel
     protected boolean tableInitilized = false;
     protected HashMap<Integer, ArrayList<String>> jcomboMap = new HashMap<>();
 
-    protected ArrayList<String>  colAvoidCentering = new ArrayList<>();
+    protected ArrayList<String> colAvoidCentering = new ArrayList<>();
     protected ArrayList<Integer> unEditableColumns = new ArrayList<>();
 
     protected Integer deleteColumn = null;
@@ -64,62 +64,79 @@ public class JDBC_JTable extends JPanel
     }
 
     public JDBC_JTable(MyJDBC db, Container parentContainer, String databaseName,
-                       String tableName, ArrayList<Integer> unEditableColumns, ArrayList<String> colAvoidCentering)
+                       String tableName, ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering)
     {
         this.db = db;
         this.parentContainer = parentContainer;
         this.tableName = tableName;
         this.databaseName = databaseName;
-        this.unEditableColumns = unEditableColumns;
+        this.unEditableColumns = getPosOfColumnsByNames(unEditableColumns);
+
         this.colAvoidCentering = colAvoidCentering;
 
         setLayout(new GridBagLayout());
-        if (db.isDatabaseConnected())
+
+        //###############################
+        // Getting Table Data
+        //###############################
+
+        String query = String.format("select * from %s;", tableName);
+        data = db.getTableDataObject(query, tableName);
+
+        if (data!=null)
         {
             //###############################
-            // Getting Table Data
+            // Getting Column Names
             //###############################
+            String columnNamesQuery = String.format("""                    
+                    select column_name
+                    from information_schema.columns
+                      where table_schema = '%s'
+                    and table_name = '%s'
+                    order by ordinal_position;                      
+                                           """, databaseName, tableName);
 
-            String query = String.format("select * from %s;", tableName);
-            data = db.getTableDataObject(query, tableName);
+            //###############################
+            // Table Data
+            //###############################
+            columnDataTypes = db.getColumnDataTypes(tableName); //Column Data Types
+            columnNames = db.getSingleColumnQuery(columnNamesQuery); // Collumn Names
 
-            if (data!=null)
-            {
-                //###############################
-                // Getting Column Names
-                //###############################
-                String columnNamesQuery = String.format("""                    
-                        select column_name
-                        from information_schema.columns
-                          where table_schema = '%s'
-                        and table_name = '%s'
-                        order by ordinal_position;                      
-                                               """, databaseName, tableName);
+            columnsInTable = columnNames.length;
+            rowsInTable = data.length;
 
-                //###############################
-                // Table Data
-                //###############################
-                columnDataTypes = db.getColumnDataTypes(tableName); //Column Data Types
-                columnNames = db.getSingleColumnQuery(columnNamesQuery); // Collumn Names
+            //##############################
+            // Table Setup
+            //##############################
 
-                columnsInTable = columnNames.length;
-                rowsInTable = data.length;
-
-                //##############################
-                // Table Setup
-                //##############################
-
-                tableSetup(data, columnNames, true);
-            }
-            else
-            {
-                System.out.printf("\n\nNo Data in Database!!");
-            }
+            tableSetup(data, columnNames, true);
         }
         else
         {
-            System.out.printf("\n\nDB Object not connected to Database!!");
+            tableSetup(new Object[0][0], columnNames, true);
         }
+    }
+
+
+    protected ArrayList<Integer> getPosOfColumnsByNames(ArrayList<String> xColumnNames)
+    {
+        ArrayList<Integer> columnPositions = new ArrayList<Integer>();
+
+        if (xColumnNames!=null)
+        {
+            int pos = 0;
+            for (String columnName : columnNames)
+            {
+                Integer columnNamePos = xColumnNames.indexOf(columnName);
+                if(columnNamePos != -1)
+                {
+                    columnPositions.add(pos);
+                }
+                pos++;
+            }
+        }
+
+        return columnPositions;
     }
 
 
@@ -537,7 +554,7 @@ public class JDBC_JTable extends JPanel
         //########################################################################
         // Updating Table Info
         //#######################################################################
-        int pos =0;
+        int pos = 0;
         for (Map.Entry<String, Integer[]> jTableColumn : columnNamesAndPositions.entrySet())
         {
             //############################################
@@ -555,7 +572,7 @@ public class JDBC_JTable extends JPanel
             //############################################
             // Update Table
             //############################################
-            if(columnPosAfterHidingColumns != null) // this column isn't visible in the JTable Data
+            if (columnPosAfterHidingColumns!=null) // this column isn't visible in the JTable Data
             {
                 jTable.setValueAt(updateData.get(pos), updateRow, columnPosAfterHidingColumns);
             }
@@ -1051,6 +1068,7 @@ public class JDBC_JTable extends JPanel
 
     /**
      * This needs to be done before hiding columns
+     *
      * @param alignment
      * @param columnByNameToSkipCentering
      */
@@ -1076,11 +1094,11 @@ public class JDBC_JTable extends JPanel
         rightRenderer.setHorizontalAlignment(alignment);
 
         int pos = -1;
-        for(String columnName: columnNames)
+        for (String columnName : columnNames)
         {
             pos++;
 
-            if (columnByNameToSkipCentering!= null && columnByNameToSkipCentering.contains(columnName))
+            if (columnByNameToSkipCentering!=null && columnByNameToSkipCentering.contains(columnName))
             {
                 continue;
             }

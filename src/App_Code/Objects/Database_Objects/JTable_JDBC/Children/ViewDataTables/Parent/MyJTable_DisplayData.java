@@ -12,7 +12,7 @@ public class MyJTable_DisplayData extends JDBC_JTable
     protected boolean setIconsUp;
 
     public MyJTable_DisplayData(MyJDBC db, Container parentContainer, Object[][] data, String[] columnNames, int planID,
-                                String tableName, ArrayList<Integer> unEditableColumns, ArrayList<String> colAvoidCentering,
+                                String tableName, ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering,
                                 ArrayList<String> columnsToHide)
     {
         setLayout(new GridBagLayout());
@@ -26,14 +26,16 @@ public class MyJTable_DisplayData extends JDBC_JTable
         super.parentContainer = parentContainer;
         super.tableName = tableName;
 
-        super.unEditableColumns = unEditableColumns;
-        super.colAvoidCentering = colAvoidCentering;
-
         super.columnDataTypes = db.getColumnDataTypes(tableName); //HELLO Is this needed for this class
         super.columnsInTable = columnNames.length; //HELLO Is this needed for this class
         super.rowsInTable = data.length; //HELLO Is this needed for this class
 
         super.columnNames = columnNames;
+        super.colAvoidCentering = colAvoidCentering;
+
+        System.out.printf("\n\nMyJTable_DisplayData() \n%s", unEditableColumns);
+        super.unEditableColumns = super.getPosOfColumnsByNames(unEditableColumns);
+
         super.columnsToHide = columnsToHide;
 
         //##############################################################

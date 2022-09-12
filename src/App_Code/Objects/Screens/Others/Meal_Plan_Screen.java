@@ -74,18 +74,10 @@ public class Meal_Plan_Screen extends JPanel
     // Ingredients Table Columns
     //#################################################################################################################
 
-    private final Integer
-            original_IngredientsTable_Quantity_Col = 4,
-            original_IngredientsTable_Type_Col = 5,
-            original_IngredientsTable_IngredientsName_Col = 6,
-            original_IngredientsTable_Supplier_Col = 8,
-            original_ingredientsTable_DeleteBTN_Col = 20;
-
-    private final ArrayList<Integer>
-            editable_IngredientsTable_Columns = new ArrayList<Integer>(Arrays.asList(original_IngredientsTable_Quantity_Col, original_IngredientsTable_Type_Col, original_IngredientsTable_IngredientsName_Col, original_IngredientsTable_Supplier_Col));
-
     private final ArrayList<String>
-            ingredients_Table_Col_Avoid_Centering = new ArrayList<String>(Arrays.asList("Ingredient_Type","Ingredient_Name","Supplier"));
+            ingredients_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList("Ingredient_Type","Ingredient_Name","Supplier")),
+            ingredientsTableUnEditableCells = new ArrayList<>(Arrays.asList(
+                    "Ingredients_Index","IngredientID", "Ingredient_Cost", "Protein","GI","Carbohydrates", "AS Sugars_Of_Carbs", "Fibre", "Fat", "Saturated_Fat", "Salt", "Water_Content", "Liquid_Content", "Calories"));
 
     //#################################################################################################################
     // Table Customisations
@@ -340,12 +332,10 @@ public class Meal_Plan_Screen extends JPanel
             String planCalcQuery = String.format("SELECT * from %s  WHERE PlanID = %s;", tableName, tempPlanID);
 
             Object[][] planData = db.getTableDataObject(planCalcQuery, tableName)!=null ? db.getTableDataObject(planCalcQuery, tableName):new Object[0][0];
-            String[] plan_columnNames = db.getColumnNames(tableName)!=null ? db.getColumnNames(tableName):new String[0];
+            String[] macroTargetsTable_ColumnNames = db.getColumnNames(tableName)!=null ? db.getColumnNames(tableName):new String[0];
 
-            ArrayList<Integer> unEditableCells = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11));
-
-            macros_Targets_Table = new MacrosTargetsTable(db, macrosInfoJPanel, planData, plan_columnNames, planID,
-                    tableName, unEditableCells, null, macrosTargets_Table_ColToHide);
+            macros_Targets_Table = new MacrosTargetsTable(db, macrosInfoJPanel, planData, macroTargetsTable_ColumnNames, planID,
+                    tableName, new ArrayList<>(Arrays.asList(macroTargetsTable_ColumnNames)), null, macrosTargets_Table_ColToHide);
 
             macros_Targets_Table.setOpaque(true); //content panes must be opaque
 
@@ -369,10 +359,8 @@ public class Meal_Plan_Screen extends JPanel
             Object[][] macrosData = db.getTableDataObject(macrosQuery, tableName)!=null ? db.getTableDataObject(macrosQuery, tableName):new Object[0][0];
             String[] macros_columnNames = db.getColumnNames(tableName)!=null ? db.getColumnNames(tableName):new String[0];
 
-            unEditableCells = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11));
-
             macrosLeft_JTable = new MacrosLeftTable(db, macrosInfoJPanel, macrosData, macros_columnNames, planID,
-                    tableName, unEditableCells, null, macrosLeft_Table_ColToHide);
+                    tableName, new ArrayList<>(Arrays.asList(macros_columnNames)), null, macrosLeft_Table_ColToHide);
 
             macrosLeft_JTable.setOpaque(true); //content panes must be opaque
 
@@ -598,7 +586,7 @@ public class Meal_Plan_Screen extends JPanel
     //##################################################################################################################
     // Frequently Used Methods
     //##################################################################################################################
-    private CollapsibleJPanel create_CollapsibleJPanel(boolean mealInDB, Container container, Integer mealID, String mealName, int mealNo, String[] meal_total_columnNames,
+    private CollapsibleJPanel create_CollapsibleJPanel(boolean mealInDB, Container container, Integer mealID, String mealName, int mealNo, String[] mealTotalTable_ColumnNames,
                                                        String[] ingredients_ColumnNames, MacrosLeftTable macrosLeft_JTable)
     {
         CollapsibleJPanel collapsibleJpObj = new CollapsibleJPanel(container, String.format("   Meal   %s", mealNo), 150, 50);
@@ -617,15 +605,8 @@ public class Meal_Plan_Screen extends JPanel
 
         Object[][] meal_Total_Data = result!=null ? result:new Object[0][0];
 
-        int columnsInTotalTable = meal_total_columnNames.length;
-        ArrayList<Integer> unEditableCells = new ArrayList<Integer>(columnsInTotalTable);
-        for (int i = 0; i < columnsInTotalTable; i++)
-        {
-            unEditableCells.add(i);
-        }
-
-        TotalMealTable total_Meal_View_Table = new TotalMealTable(db, collapsibleJpObj, databaseName, meal_Total_Data, meal_total_columnNames, planID,
-                mealID, mealName, tableName, unEditableCells, null, false, totalMeal_Table_ColToHide);
+        TotalMealTable total_Meal_View_Table = new TotalMealTable(db, collapsibleJpObj, databaseName, meal_Total_Data, mealTotalTable_ColumnNames, planID,
+                mealID, mealName, tableName, new ArrayList<>(Arrays.asList(mealTotalTable_ColumnNames)), null, false, totalMeal_Table_ColToHide);
 
         total_Meal_View_Table.setOpaque(true); //content panes must be opaque
         total_Meal_View_Table.setTableHeaderFont(new Font("Dialog", Font.BOLD, 12));
@@ -633,29 +614,8 @@ public class Meal_Plan_Screen extends JPanel
         //########################################################################
         //  Ingredients_In_Meal_Calculation JTable
         //########################################################################
-        int columnsInIngredientsTable = ingredients_ColumnNames.length;
-        int ingredientsNotEditableColSize = columnsInIngredientsTable - editable_IngredientsTable_Columns.size();
 
-        ingredientsNotEditableColSize = original_ingredientsTable_DeleteBTN_Col==null ? ingredientsNotEditableColSize:ingredientsNotEditableColSize - 1;
-
-        unEditableCells = new ArrayList<Integer>(ingredientsNotEditableColSize);
-
-        for (int i = 0; i < columnsInIngredientsTable; i++)
-        {
-            if (editable_IngredientsTable_Columns.contains(i))
-            {
-                continue;
-            }
-            else if (i==original_ingredientsTable_DeleteBTN_Col)
-            {
-                continue;
-            }
-            unEditableCells.add(i);
-        }
-
-        //###########################################
         // Getting Ingredients In Meal
-        //###########################################
         query = String.format("SELECT *  FROM ingredients_in_meal_calculation WHERE MealID = %s AND PlanID = %s ORDER BY Ingredients_Index;", mealID, tempPlanID);
         tableName = "ingredients_in_meal_calculation";
         Object[][] mealData = db.getTableDataObject(query, tableName)!=null ? db.getTableDataObject(query, tableName):new Object[0][0];
@@ -665,26 +625,26 @@ public class Meal_Plan_Screen extends JPanel
         //##############################################
 
 
-        IngredientsTable ingredients_Calulation_Jtable = new IngredientsTable(db, collapsibleJpObj, map_ingredientTypesToNames, databaseName, mealData, ingredients_ColumnNames, planID, mealID, mealInDB, mealName,
-                tableName, unEditableCells, ingredients_Table_Col_Avoid_Centering, ingredientsInMeal_Table_ColToHide, total_Meal_View_Table, macrosLeft_JTable);
+        IngredientsTable ingredients_Calculation_JTable = new IngredientsTable(db, collapsibleJpObj, map_ingredientTypesToNames, databaseName, mealData, ingredients_ColumnNames, planID, mealID, mealInDB, mealName,
+                tableName, ingredientsTableUnEditableCells, ingredients_Table_Col_Avoid_Centering, ingredientsInMeal_Table_ColToHide, total_Meal_View_Table, macrosLeft_JTable);
 
-        ingredients_Calulation_Jtable.setOpaque(true); //content panes must be opaque
-        jTableBeingAdded = ingredients_Calulation_Jtable;
+        ingredients_Calculation_JTable.setOpaque(true); //content panes must be opaque
+        jTableBeingAdded = ingredients_Calculation_JTable;
 
-        // add ingredients Jtable to list
-        listOfJTables.add(ingredients_Calulation_Jtable);
+        // add ingredients JTable to list
+        listOfJTables.add(ingredients_Calculation_JTable);
 
         //##############################################
         // Ingredients_In_Meal_Calculation Customisation
         //#############################################
-        ingredients_Calulation_Jtable.setTableHeaderFont(new Font("Dialog", Font.BOLD, 12));
+        ingredients_Calculation_JTable.setTableHeaderFont(new Font("Dialog", Font.BOLD, 12));
 
         //##################################################################################################
         // Adding Collapsible Objects && JTables To GUI
         //##################################################################################################
 
         // addding Ingredients_In_Meal_Calculation to CollapsibleOBJ
-        addToContainer(collapsibleJPanel, ingredients_Calulation_Jtable, 0, 1, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        addToContainer(collapsibleJPanel, ingredients_Calculation_JTable, 0, 1, 1, 1, 0.25, 0.25, "both", 0, 0, null);
 
         // adds space between Ingredients_In_Meal_Calculation table and total_in_meal table
         addToContainer(southPanel, new JPanel(), 0, 1, 1, 1, 0.25, 0.25, "both", 50, 0, null);

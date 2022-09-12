@@ -103,7 +103,7 @@ public class IngredientsTable extends JDBC_JTable
     public IngredientsTable(MyJDBC db, CollapsibleJPanel collapsibleObj, TreeMap<String, Collection<String>> map_ingredientTypesToNames,
                             String databaseName, Object[][] data, String[] columnNames, int planID,
                             Integer mealID, boolean meal_In_DB, String mealName, String tableName,
-                            ArrayList<Integer> unEditableColumns, ArrayList<String> colAvoidCentering,
+                            ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering,
                             ArrayList<String> columnsToHide,
                             TotalMealTable total_Meal_Table, MacrosLeftTable macrosLeft_Table)
     {
@@ -119,14 +119,13 @@ public class IngredientsTable extends JDBC_JTable
         super.parentContainer = collapsibleObj.getCentreJPanel();
         super.tableName = tableName;
 
-        super.unEditableColumns = unEditableColumns;
-        super.colAvoidCentering = colAvoidCentering;
-
         super.columnDataTypes = db.getColumnDataTypes(tableName); //Column Data Types
         super.columnsInTable = columnNames.length;
         super.rowsInTable = data != null ? data.length : 0;
 
         super.columnNames = columnNames;
+        super.unEditableColumns = super.getPosOfColumnsByNames(unEditableColumns);
+        super.colAvoidCentering = colAvoidCentering;
         super.columnsToHide = columnsToHide;
 
         //##############################################################
