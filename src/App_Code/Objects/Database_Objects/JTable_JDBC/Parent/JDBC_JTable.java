@@ -37,7 +37,6 @@ public class JDBC_JTable extends JPanel
     protected ArrayList<Integer> unEditableColumns = new ArrayList<>(), colAvoidCentering = new ArrayList<>();
     protected Integer deleteColumn = null;
     protected ArrayList<String> columnsToHide = null;
-    protected int hiddenCount = 0;
 
     protected int rowsInTable = 0, columnsInTable = 0;
     protected String databaseName, tableName;
@@ -424,8 +423,6 @@ public class JDBC_JTable extends JPanel
         //#######################################
         rowsInTable++;
         resizeObject();
-
-
     }
 
 

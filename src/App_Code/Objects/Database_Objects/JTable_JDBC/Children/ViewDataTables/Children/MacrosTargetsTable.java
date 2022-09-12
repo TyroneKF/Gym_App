@@ -11,9 +11,9 @@ public class MacrosTargetsTable extends MyJTable_DisplayData
 {
 
     public MacrosTargetsTable(MyJDBC db, Container parentContainer, Object[][] data, String[] columnNames, int planID,
-                              String tableName, ArrayList<Integer> unEditableColumns, ArrayList<Integer> colAvoidCentering)
+                              String tableName, ArrayList<Integer> unEditableColumns, ArrayList<Integer> colAvoidCentering,  ArrayList<String> columnsToHide)
     {
-        super(db, parentContainer, data, columnNames, planID, tableName, unEditableColumns, colAvoidCentering);
+        super(db, parentContainer, data, columnNames, planID, tableName, unEditableColumns, colAvoidCentering, columnsToHide);
     }
 
     public void updateTargets()

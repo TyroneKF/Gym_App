@@ -122,6 +122,10 @@ public class IngredientsTable extends JDBC_JTable
         super.unEditableColumns = unEditableColumns;
         super.colAvoidCentering = colAvoidCentering;
 
+        super.columnDataTypes = db.getColumnDataTypes(tableName); //Column Data Types
+        super.columnsInTable = columnNames.length;
+        super.rowsInTable = data != null ? data.length : 0;
+
         super.columnNames = columnNames;
         super.columnsToHide = columnsToHide;
 
@@ -130,13 +134,13 @@ public class IngredientsTable extends JDBC_JTable
         //##############################################################
 
         // Adding column names and their original positions to the hashmap
-        System.out.printf("\n\nConstructor IngredientsTable \nColumnNames: \n");
         for (int pos = 0; pos < columnNames.length; pos++)
         {
             columnNamesAndPositions.put(columnNames[pos], new Integer[]{pos, pos});
-            System.out.printf("\n%s",columnNames[pos]);
         }
 
+        //##############################################################
+        // Other Variables
         //##############################################################
         this.map_ingredientTypesToNames = map_ingredientTypesToNames;
 
@@ -154,15 +158,9 @@ public class IngredientsTable extends JDBC_JTable
         this.macrosLeft_Table = macrosLeft_Table;
 
         //##############################################################
-        //
-        //##############################################################
-        super.columnDataTypes = db.getColumnDataTypes(tableName); //Column Data Types
-        super.columnsInTable = columnNames.length;
-        super.rowsInTable = data != null ? data.length : 0;
-
-        //##############################
         // Table Setup
-        //##############################
+        //##############################################################
+
         if (data !=null)
         {
             super.tableSetup(data, columnNames, setIconsUp);
