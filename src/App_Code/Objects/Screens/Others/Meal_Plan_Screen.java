@@ -21,8 +21,7 @@ import java.util.List;
 
 public class Meal_Plan_Screen extends JPanel
 {
-    private Collection<String> ingredientsTypesList,
-            storesNamesList;
+    private Collection<String> ingredientsTypesList, storesNamesList;
 
     // Sorted Hashmap by key String
     private TreeMap<String, Collection<String>> map_ingredientTypesToNames = new TreeMap<String, Collection<String>>(new Comparator<String>()
@@ -37,19 +36,18 @@ public class Meal_Plan_Screen extends JPanel
     private MacrosLeftTable macrosLeft_JTable;
     private MacrosTargetsTable macros_Targets_Table;
 
-
     //#################################################################################################################
     //
     //#################################################################################################################
 
     private static String databaseName = "gymapp11";
-    private String name = databaseName;
+    private String JFrameName = databaseName;
 
     //#################################################################################################################
     // Objects
     //#################################################################################################################
     private GridBagConstraints gbc = new GridBagConstraints();
-    private JFrame frame = new JFrame(name);
+    private JFrame frame = new JFrame(JFrameName);
     private JPanel scrollPaneJPanel, scrollJPanelCenter, scrollJPanelEnd;
     private Container contentPane;
     private ScrollPaneCreator scrollPane;
@@ -64,14 +62,11 @@ public class Meal_Plan_Screen extends JPanel
     //#################################################################################################################
     // Variables
     //#################################################################################################################
-    private ArrayList<String> ingredientsInDB;
     private String[] meal_total_columnNames, ingredients_ColumnNames;
 
     private String planName;
-    private Integer
-            tempPlanID = 1, planID;
-    private int
-            pos = 0, mealNo = 0, frameHeight = 1082, frameWidth = 1925;
+    private Integer  tempPlanID = 1, planID;
+    private int  pos = 0, mealNo = 0, frameHeight = 1082, frameWidth = 1925;
 
     private boolean macroTargetsChanged = false;
 
@@ -85,9 +80,6 @@ public class Meal_Plan_Screen extends JPanel
             original_IngredientsTable_IngredientsName_Col = 6,
             original_IngredientsTable_Supplier_Col = 8,
             original_ingredientsTable_DeleteBTN_Col = 20;
-
-
-
 
     private final ArrayList<Integer>
             editable_IngredientsTable_Columns = new ArrayList<Integer>(Arrays.asList(original_IngredientsTable_Quantity_Col, original_IngredientsTable_Type_Col, original_IngredientsTable_IngredientsName_Col, original_IngredientsTable_Supplier_Col)),
@@ -381,7 +373,7 @@ public class Meal_Plan_Screen extends JPanel
             ArrayList<Integer> macros_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList());
 
             macrosLeft_JTable = new MacrosLeftTable(db, macrosInfoJPanel, macrosData, macros_columnNames, planID,
-                    tableName, unEditableCells, macros_Table_Col_Avoid_Centering, macrosTargets_Table_ColToHide);
+                    tableName, unEditableCells, macros_Table_Col_Avoid_Centering, macrosLeft_Table_ColToHide);
 
             macrosLeft_JTable.setOpaque(true); //content panes must be opaque
 
@@ -637,7 +629,6 @@ public class Meal_Plan_Screen extends JPanel
                 mealID, mealName, tableName, unEditableCells, null, false, totalMeal_Table_ColToHide);
 
         total_Meal_View_Table.setOpaque(true); //content panes must be opaque
-        //        total_Meal_View_Table.SetUp_HiddenTableColumns(TotalMeal_Table_Hidden_Columns); // NOW
         total_Meal_View_Table.setTableHeaderFont(new Font("Dialog", Font.BOLD, 12));
 
         //########################################################################

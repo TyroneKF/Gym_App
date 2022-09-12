@@ -425,7 +425,6 @@ public class JDBC_JTable extends JPanel
         resizeObject();
     }
 
-
     protected void save_Btn_Action()
     {
         if (rowsInTable > 0)
