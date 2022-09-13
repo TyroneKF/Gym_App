@@ -117,7 +117,7 @@ public class JDBC_JTable extends JPanel
         }
     }
 
-
+    // Can be replaced with Hashmap retreival of positions
     protected ArrayList<Integer> getPosOfColumnsByNames(ArrayList<String> xColumnNames)
     {
         ArrayList<Integer> columnPositions = new ArrayList<Integer>();
