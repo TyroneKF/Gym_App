@@ -90,23 +90,39 @@ public class JDBC_JTable extends JPanel
         this.columnsInTable = columnNames.length;
         this.rowsInTable = data != null ? data.length : 0;
 
-        this.columnNames = columnNames;
-        this.unEditableColumns = this.getPosOfColumnsByNames(unEditableColumns);
-        this.colAvoidCentering = colAvoidCentering;
-        this.columnsToHide = columnsToHide;
-        
         //##############################################################
         // Column Names & Their Original Positions
         //##############################################################
+
+        this.columnNames = columnNames;
 
         // Adding column names and their original positions to the hashmap
         for (int pos = 0; pos < columnNames.length; pos++)
         {
             columnNamesAndPositions.put(columnNames[pos], new Integer[]{pos, pos});
         }
+        //##############################################################
+
+        this.colAvoidCentering = colAvoidCentering;
+        this.columnsToHide = columnsToHide;
 
         //##############################################################
-        // Table Setup
+        // Get UnEditable Column Positions By Name
+        //##############################################################
+        ArrayList<Integer> columnPositions = new ArrayList<Integer>();
+
+        if (unEditableColumns != null)
+        {
+            for(String columnName: unEditableColumns)
+            {
+                columnPositions.add(columnNamesAndPositions.get(columnName)[0]);
+            }
+        }
+
+        this.unEditableColumns = columnPositions;
+
+        //##############################################################
+        // Table Setup With Table Data
         //##############################################################
         if (data !=null)
         {
@@ -123,29 +139,8 @@ public class JDBC_JTable extends JPanel
         SetUp_HiddenTableColumns(columnsToHide);
     }
 
-
-
     // Can be replaced with Hashmap retreival of positions
-    protected ArrayList<Integer> getPosOfColumnsByNames(ArrayList<String> xColumnNames)
-    {
-        ArrayList<Integer> columnPositions = new ArrayList<Integer>();
 
-        if (xColumnNames!=null)
-        {
-            int pos = 0;
-            for (String columnName : columnNames)
-            {
-                Integer columnNamePos = xColumnNames.indexOf(columnName);
-                if(columnNamePos != -1)
-                {
-                    columnPositions.add(pos);
-                }
-                pos++;
-            }
-        }
-
-        return columnPositions;
-    }
 
 
     //##################################################################################################################

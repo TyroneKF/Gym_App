@@ -77,7 +77,7 @@ public class Meal_Plan_Screen extends JPanel
     private final ArrayList<String>
             ingredients_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList("Ingredient_Type","Ingredient_Name","Supplier")),
             ingredientsTableUnEditableCells = new ArrayList<>(Arrays.asList(
-                    "Ingredients_Index","IngredientID", "Ingredient_Cost", "Protein","GI","Carbohydrates", "AS Sugars_Of_Carbs", "Fibre", "Fat", "Saturated_Fat", "Salt", "Water_Content", "Liquid_Content", "Calories"));
+                    "Ingredients_Index","IngredientID", "Ingredient_Cost", "Protein","GI","Carbohydrates", "Sugars_Of_Carbs", "Fibre", "Fat", "Saturated_Fat", "Salt", "Water_Content", "Liquid_Content", "Calories"));
 
     //#################################################################################################################
     // Table Customisations
