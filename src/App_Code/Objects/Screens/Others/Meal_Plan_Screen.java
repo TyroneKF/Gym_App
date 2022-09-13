@@ -334,7 +334,7 @@ public class Meal_Plan_Screen extends JPanel
             Object[][] planData = db.getTableDataObject(planCalcQuery, tableName)!=null ? db.getTableDataObject(planCalcQuery, tableName):new Object[0][0];
             String[] macroTargetsTable_ColumnNames = db.getColumnNames(tableName)!=null ? db.getColumnNames(tableName):new String[0];
 
-            macros_Targets_Table = new MacrosTargetsTable(db, macrosInfoJPanel, planData, macroTargetsTable_ColumnNames, planID,
+            macros_Targets_Table = new MacrosTargetsTable(db, macrosInfoJPanel, databaseName, planData, macroTargetsTable_ColumnNames, planID,
                     tableName, new ArrayList<>(Arrays.asList(macroTargetsTable_ColumnNames)), null, macrosTargets_Table_ColToHide);
 
             macros_Targets_Table.setOpaque(true); //content panes must be opaque
@@ -359,7 +359,7 @@ public class Meal_Plan_Screen extends JPanel
             Object[][] macrosData = db.getTableDataObject(macrosQuery, tableName)!=null ? db.getTableDataObject(macrosQuery, tableName):new Object[0][0];
             String[] macros_columnNames = db.getColumnNames(tableName)!=null ? db.getColumnNames(tableName):new String[0];
 
-            macrosLeft_JTable = new MacrosLeftTable(db, macrosInfoJPanel, macrosData, macros_columnNames, planID,
+            macrosLeft_JTable = new MacrosLeftTable(db, macrosInfoJPanel, databaseName, macrosData, macros_columnNames, planID,
                     tableName, new ArrayList<>(Arrays.asList(macros_columnNames)), null, macrosLeft_Table_ColToHide);
 
             macrosLeft_JTable.setOpaque(true); //content panes must be opaque

@@ -15,19 +15,17 @@ public class TotalMealTable extends MyJTable_DisplayData
     private CollapsibleJPanel collapsibleObj;
 
 
-    public TotalMealTable(MyJDBC db, CollapsibleJPanel collapsibleObj, String databaseName, Object[][] data, String[] columnNames, int planID,
+    public TotalMealTable(MyJDBC db, CollapsibleJPanel collapsibleObj,  String databaseName, Object[][] data, String[] columnNames, int planID,
                           Integer mealID, String mealName, String tableName,
                           ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering, boolean setIconsUp,
                           ArrayList<String> columnsToHide)
     {
 
-        super(db, collapsibleObj.getCentreJPanel(), data, columnNames, planID, tableName, unEditableColumns, colAvoidCentering, columnsToHide);
+        super(db, collapsibleObj.getCentreJPanel(), databaseName, data, columnNames, planID, tableName, unEditableColumns, colAvoidCentering, columnsToHide);
 
-        this.databaseName = databaseName;
         this.mealID = mealID;
         this.mealName = mealName;
         this.planID = planID;
-        this.setIconsUp = setIconsUp;
         this.collapsibleObj = collapsibleObj;
     }
 
@@ -72,11 +70,6 @@ public class TotalMealTable extends MyJTable_DisplayData
 
         ArrayList<Object> totalMeal_UpdateData = totalMealData.get(0);
         super.updateTable(this, totalMeal_UpdateData, 0);
-    }
-
-    public boolean getIconSetupStatus()
-    {
-        return setIconsUp;
     }
 
     public Object[][] getData()
@@ -140,7 +133,7 @@ public class TotalMealTable extends MyJTable_DisplayData
         //initColumnSizes();
         setCellsAlignment(0, colAvoidCentering);
 
-        if (getTableInitilized())  //first time this method is called, special columns aren't defined
+        if (getTableInitialised())  //first time this method is called, special columns aren't defined
         {
             if (getColumnsToHide() != null)//Must be first
             {

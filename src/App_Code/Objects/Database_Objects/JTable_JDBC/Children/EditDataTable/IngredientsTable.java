@@ -39,23 +39,14 @@ public class IngredientsTable extends JDBC_JTable
     private Integer planID, temp_PlanID = 1, mealID;
     private String mealName;
 
-    private ArrayList<Integer> triggerColumns = null;
+    private ArrayList<Integer> triggerColumns;
 
     private boolean
             dataChangedInTable = false,
-
-    rowBeingEdited = false,
-            setIconsUp = true,
+            rowBeingEdited = false,
             meal_In_DB = true,
             objectDeleted = false,
-            ingredientNameChanged = false,
-            updateIngredientsType = true,
-            updateIngredientsName = true;
-
-
-    private SetupSupplierColumn supplierColumn;
-    private SetupIngredientTypeColumn ingredientTypeColumn;
-    private SetupIngredientNameColumn ingredientNameColumn;
+            ingredientNameChanged = false;
 
     private int
             ingredientsTable_Index_Col,
@@ -63,8 +54,7 @@ public class IngredientsTable extends JDBC_JTable
             ingredientsTable_Quantity_Col,
             ingredientsTable_Type_Col,
             ingredientsTable_IngredientsName_Col,
-            ingredientsTable_Supplier_Col,
-            ingredientsTable_Del_Col;
+            ingredientsTable_Supplier_Col;
 
     private final int NoneOfTheAbove_PDID = 1;
 
@@ -107,71 +97,22 @@ public class IngredientsTable extends JDBC_JTable
                             ArrayList<String> columnsToHide,
                             TotalMealTable total_Meal_Table, MacrosLeftTable macrosLeft_Table)
     {
-
-        setLayout(new GridBagLayout());
-
-        //##############################################################
-        // Super Variables
-        //##############################################################
-        super.db = db;
-        super.data = data;
-
-        super.parentContainer = collapsibleObj.getCentreJPanel();
-        super.tableName = tableName;
-
-        super.columnDataTypes = db.getColumnDataTypes(tableName); //Column Data Types
-        super.columnsInTable = columnNames.length;
-        super.rowsInTable = data != null ? data.length : 0;
-
-        super.columnNames = columnNames;
-        super.unEditableColumns = super.getPosOfColumnsByNames(unEditableColumns);
-        super.colAvoidCentering = colAvoidCentering;
-        super.columnsToHide = columnsToHide;
-
-        //##############################################################
-        // Column Names & Their Original Positions
-        //##############################################################
-
-        // Adding column names and their original positions to the hashmap
-        for (int pos = 0; pos < columnNames.length; pos++)
-        {
-            columnNamesAndPositions.put(columnNames[pos], new Integer[]{pos, pos});
-        }
+        super(db, collapsibleObj.getCentreJPanel(), true, databaseName, tableName, data, columnNames, unEditableColumns, colAvoidCentering, columnsToHide);
 
         //##############################################################
         // Other Variables
         //##############################################################
-        this.map_ingredientTypesToNames = map_ingredientTypesToNames;
-
-        this.databaseName = databaseName;
-
         this.mealName = mealName;
         this.planID = planID;
         this.mealID = mealID;
 
+        this.map_ingredientTypesToNames = map_ingredientTypesToNames;
         this.meal_In_DB = meal_In_DB;
 
         this.collapsibleObj = collapsibleObj;
 
         this.total_Meal_Table = total_Meal_Table;
         this.macrosLeft_Table = macrosLeft_Table;
-
-        //##############################################################
-        // Table Setup
-        //##############################################################
-
-        if (data !=null)
-        {
-            super.tableSetup(data, columnNames, setIconsUp);
-        }
-        else
-        {
-            super.tableSetup(new Object[0][0], columnNames, setIconsUp);
-        }
-        //##############################################################
-        // Hide Columns
-        //##############################################################
-        SetUp_HiddenTableColumns(columnsToHide);
 
         //##############################################################
         // Setting Trigger Columns
@@ -195,9 +136,9 @@ public class IngredientsTable extends JDBC_JTable
         //##############################################################
         // Setting Up JComboBox Fields on Table
         //##############################################################
-        ingredientTypeColumn = new SetupIngredientTypeColumn(getIngredientsTable_Type_Col());
-        ingredientNameColumn = new SetupIngredientNameColumn(getIngredientsTable_IngredientsName_Col());
-        supplierColumn = new SetupSupplierColumn(getIngredientsTable_Supplier_Col());
+        new SetupIngredientTypeColumn(getIngredientsTable_Type_Col());
+        new SetupIngredientNameColumn(getIngredientsTable_IngredientsName_Col());
+        new SetupSupplierColumn(getIngredientsTable_Supplier_Col());
 
         //##############################################################
         // Setting Up Delete Button On JTable
@@ -595,26 +536,6 @@ public class IngredientsTable extends JDBC_JTable
         {
             return comboBox;
         }
-    }
-
-    public void setUpdateIngredientsType(boolean x)
-    {
-        updateIngredientsType = x;
-    }
-
-    public boolean getUpdateIngredientsType()
-    {
-        return updateIngredientsType;
-    }
-
-    public void setUpdateIngredientsName(boolean x)
-    {
-        updateIngredientsName = x;
-    }
-
-    public boolean getUpdateIngredientsName()
-    {
-        return updateIngredientsName;
     }
 
     //Editing Now
@@ -1062,7 +983,7 @@ public class IngredientsTable extends JDBC_JTable
         //initColumnSizes();
         setCellsAlignment(0, colAvoidCentering);
 
-        if (getTableInitilized())  //first time this method is called, special columns aren't defined
+        if (getTableInitialised())  //first time this method is called, special columns aren't defined
         {
             if (getColumnsToHide()!=null)//Must be first
             {
@@ -1070,9 +991,9 @@ public class IngredientsTable extends JDBC_JTable
             }
 
             //EDITING
-            ingredientTypeColumn = new SetupIngredientTypeColumn(getIngredientsTable_Type_Col());
-            ingredientNameColumn = new SetupIngredientNameColumn(getIngredientsTable_IngredientsName_Col());
-            supplierColumn = new SetupSupplierColumn(getIngredientsTable_Supplier_Col());
+            new SetupIngredientTypeColumn(getIngredientsTable_Type_Col());
+            new SetupIngredientNameColumn(getIngredientsTable_IngredientsName_Col());
+            new SetupSupplierColumn(getIngredientsTable_Supplier_Col());
 
             setupDeleteBtnColumn(getDeleteBTN_Col()); // specifying delete column
 

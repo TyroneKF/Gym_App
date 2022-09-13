@@ -20,32 +20,39 @@ import java.util.*;
 
 public class JDBC_JTable extends JPanel
 {
+    //##############################################
+    // Objects
+    //##############################################
     protected MyJDBC db;
-    protected JTable jTable = new JTable();
-    protected DefaultTableModel tableModel;
-
-    protected static GridBagConstraints gbc = new GridBagConstraints(); //HELLO DELETE
-    protected boolean DEBUG = false;
-
     protected Container parentContainer;
     protected JScrollPane scrollPane = new JScrollPane();
+    protected static GridBagConstraints gbc = new GridBagConstraints(); //HELLO DELETE
 
-    protected boolean tableInitilized = false;
-    protected HashMap<Integer, ArrayList<String>> jcomboMap = new HashMap<>();
-
-    protected ArrayList<String> colAvoidCentering = new ArrayList<>();
-    protected ArrayList<Integer> unEditableColumns = new ArrayList<>();
-
-    protected Integer deleteColumn = null;
-    protected ArrayList<String> columnsToHide = null;
-
+    //##############################################
+    // Table Customization Variables
+    //##############################################
+    protected JTable jTable = new JTable();
+    protected DefaultTableModel tableModel;
+    protected Object[][] data;
     protected int rowsInTable = 0, columnsInTable = 0;
     protected String databaseName, tableName;
     protected String[] columnDataTypes, columnNames;
-    protected Object[][] data;
 
+    protected ArrayList<String> colAvoidCentering = new ArrayList<>();
+    protected ArrayList<Integer> unEditableColumns = new ArrayList<>();
+    protected ArrayList<String> columnsToHide = new ArrayList<>();
+
+    //##############################################
+    protected boolean tableInitialised = false;
+
+    protected HashMap<Integer, ArrayList<String>> jcomboMap = new HashMap<>();
+
+
+
+    protected Integer deleteColumn = null;
     protected Object previousJComboItem;
     protected Object selected_Jcombo_Item;
+    //##############################################
 
     //##################################################################################################################
     protected LinkedHashMap<String, Integer[]> columnNamesAndPositions = new LinkedHashMap<>();
@@ -63,59 +70,60 @@ public class JDBC_JTable extends JPanel
     {
     }
 
-    public JDBC_JTable(MyJDBC db, Container parentContainer, String databaseName,
-                       String tableName, ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering)
+    public JDBC_JTable(MyJDBC db, Container parentContainer, boolean setIconsUp, String databaseName, String tableName, Object[][] data,
+                       String[] columnNames,
+                      ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering,  ArrayList<String> columnsToHide)
     {
-        this.db = db;
-        this.parentContainer = parentContainer;
-        this.tableName = tableName;
-        this.databaseName = databaseName;
-        this.unEditableColumns = getPosOfColumnsByNames(unEditableColumns);
-
-        this.colAvoidCentering = colAvoidCentering;
-
         setLayout(new GridBagLayout());
 
-        //###############################
-        // Getting Table Data
-        //###############################
+        //##############################################################
+        // Variables
+        //##############################################################
+        this.db = db;
+        this.data = data;
 
-        String query = String.format("select * from %s;", tableName);
-        data = db.getTableDataObject(query, tableName);
+        this.parentContainer = parentContainer;
+        this.databaseName = databaseName;
+        this.tableName = tableName;
 
-        if (data!=null)
+        this.columnDataTypes = db.getColumnDataTypes(tableName); //Column Data Types
+        this.columnsInTable = columnNames.length;
+        this.rowsInTable = data != null ? data.length : 0;
+
+        this.columnNames = columnNames;
+        this.unEditableColumns = this.getPosOfColumnsByNames(unEditableColumns);
+        this.colAvoidCentering = colAvoidCentering;
+        this.columnsToHide = columnsToHide;
+        
+        //##############################################################
+        // Column Names & Their Original Positions
+        //##############################################################
+
+        // Adding column names and their original positions to the hashmap
+        for (int pos = 0; pos < columnNames.length; pos++)
         {
-            //###############################
-            // Getting Column Names
-            //###############################
-            String columnNamesQuery = String.format("""                    
-                    select column_name
-                    from information_schema.columns
-                      where table_schema = '%s'
-                    and table_name = '%s'
-                    order by ordinal_position;                      
-                                           """, databaseName, tableName);
+            columnNamesAndPositions.put(columnNames[pos], new Integer[]{pos, pos});
+        }
 
-            //###############################
-            // Table Data
-            //###############################
-            columnDataTypes = db.getColumnDataTypes(tableName); //Column Data Types
-            columnNames = db.getSingleColumnQuery(columnNamesQuery); // Collumn Names
-
-            columnsInTable = columnNames.length;
-            rowsInTable = data.length;
-
-            //##############################
-            // Table Setup
-            //##############################
-
-            tableSetup(data, columnNames, true);
+        //##############################################################
+        // Table Setup
+        //##############################################################
+        if (data !=null)
+        {
+            tableSetup(data, columnNames, setIconsUp);
         }
         else
         {
-            tableSetup(new Object[0][0], columnNames, true);
+            tableSetup(new Object[0][0], columnNames, setIconsUp);
         }
+
+        //##############################################################
+        // Hide Columns
+        //##############################################################
+        SetUp_HiddenTableColumns(columnsToHide);
     }
+
+
 
     // Can be replaced with Hashmap retreival of positions
     protected ArrayList<Integer> getPosOfColumnsByNames(ArrayList<String> xColumnNames)
@@ -322,7 +330,7 @@ public class JDBC_JTable extends JPanel
         //initColumnSizes();
         setCellsAlignment(0, colAvoidCentering);
 
-        if (tableInitilized)  //first time this method is called, special columns aren't defined
+        if (tableInitialised)  //first time this method is called, special columns aren't defined
         {
             if (deleteColumn!=null)
             {
@@ -341,7 +349,7 @@ public class JDBC_JTable extends JPanel
         }
         else
         {
-            tableInitilized = true;
+            tableInitialised = true;
         }
         resizeObject();
     }
@@ -506,9 +514,9 @@ public class JDBC_JTable extends JPanel
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
-    protected boolean getTableInitilized()
+    protected boolean getTableInitialised()
     {
-        return tableInitilized;
+        return tableInitialised;
     }
 
     protected HashMap<Integer, ArrayList<String>> getJcomboMap()
@@ -636,7 +644,7 @@ public class JDBC_JTable extends JPanel
 
     protected void setTableInitilized()
     {
-        tableInitilized = true;
+        tableInitialised = true;
     }
 
     protected void setTableModelData(Object[][] tableModelData)
@@ -1018,51 +1026,6 @@ public class JDBC_JTable extends JPanel
         if (parentContainer!=null)
         {
             parentContainer.revalidate();
-        }
-    }
-
-    protected void initColumnSizes()
-    {
-        Object[] longValues = {"Jane", "Kathy",
-                "None of the above",
-                new Integer(20), Boolean.TRUE};
-
-        TableColumn column = null;
-        Component comp = null;
-        int headerWidth = 0;
-        int cellWidth = 0;
-
-        TableCellRenderer headerRenderer =
-                jTable.getTableHeader().getDefaultRenderer();
-
-        for (int i = 0; i < 5; i++)
-        {
-            column = jTable.getColumnModel().getColumn(i);
-
-            comp = headerRenderer.getTableCellRendererComponent(
-                    null, column.getHeaderValue(),
-                    false, false, 0, 0);
-            headerWidth = comp.getPreferredSize().width;
-
-
-            comp = jTable.getDefaultRenderer(tableModel.getColumnClass(i)).
-                    getTableCellRendererComponent(
-                            jTable, longValues[i],
-                            false, false, 0, i);
-            cellWidth = comp.getPreferredSize().width;
-
-            if (DEBUG)
-            {
-                System.out.println("Initializing width of column "
-                        + i + ". "
-                        + "headerWidth = " + headerWidth
-                        + "; cellWidth = " + cellWidth);
-
-
-            }
-
-            column.setPreferredWidth(Math.max(headerWidth + 20, cellWidth)); //HELLO I added 20
-
         }
     }
 

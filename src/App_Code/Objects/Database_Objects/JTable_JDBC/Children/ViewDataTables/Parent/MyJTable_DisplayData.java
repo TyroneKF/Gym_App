@@ -9,34 +9,12 @@ import java.util.ArrayList;
 public class MyJTable_DisplayData extends JDBC_JTable
 {
     protected Integer planID, temp_PlanID = 1;
-    protected boolean setIconsUp;
 
-    public MyJTable_DisplayData(MyJDBC db, Container parentContainer, Object[][] data, String[] columnNames, int planID,
+    public MyJTable_DisplayData(MyJDBC db, Container parentContainer, String databaseName, Object[][] data, String[] columnNames, int planID,
                                 String tableName, ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering,
                                 ArrayList<String> columnsToHide)
     {
-        setLayout(new GridBagLayout());
-
-        //##############################################################
-        // Super Variables
-        //##############################################################
-        super.db = db;
-        super.data = data;
-
-        super.parentContainer = parentContainer;
-        super.tableName = tableName;
-
-        super.columnDataTypes = db.getColumnDataTypes(tableName); //HELLO Is this needed for this class
-        super.columnsInTable = columnNames.length; //HELLO Is this needed for this class
-        super.rowsInTable = data.length; //HELLO Is this needed for this class
-
-        super.columnNames = columnNames;
-        super.colAvoidCentering = colAvoidCentering;
-
-        System.out.printf("\n\nMyJTable_DisplayData() \n%s", unEditableColumns);
-        super.unEditableColumns = super.getPosOfColumnsByNames(unEditableColumns);
-
-        super.columnsToHide = columnsToHide;
+        super(db, parentContainer, false, databaseName, tableName, data, columnNames, unEditableColumns, colAvoidCentering, columnsToHide);
 
         //##############################################################
         // Column Names & Their Original Positions
@@ -54,7 +32,7 @@ public class MyJTable_DisplayData extends JDBC_JTable
         // Other Variables
         //##############################################################
         this.planID = planID;
-        this.setIconsUp = false;
+
 
         //##############################################################
         // Table Setup
@@ -62,11 +40,11 @@ public class MyJTable_DisplayData extends JDBC_JTable
 
         if (data!=null)
         {
-            super.tableSetup(data, columnNames, setIconsUp);
+            super.tableSetup(data, columnNames, false);
         }
         else
         {
-            super.tableSetup(new Object[0][0], columnNames, setIconsUp);
+            super.tableSetup(new Object[0][0], columnNames, false);
         }
 
         //##############################################################
