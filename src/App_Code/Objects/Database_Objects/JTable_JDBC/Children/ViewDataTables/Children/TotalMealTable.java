@@ -139,12 +139,6 @@ public class TotalMealTable extends MyJTable_DisplayData
             {
                 SetUp_HiddenTableColumns(getColumnsToHide());
             }
-
-            // Setting up JcomboBox Field
-            for (Integer key : getJcomboMap().keySet())
-            {
-                setUpJComboColumn(key, "IngredientName", getJcomboMap().get(key));
-            }
         }
         else
         {
