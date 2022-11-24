@@ -278,11 +278,6 @@ public class JDBC_JTable extends JPanel
     // Overwirte Methods
     //##########################################
 
-    protected void refresh_Btn_Action(boolean updateTotalPlanTable)
-    {
-
-    }
-
     protected boolean saveDataAction(boolean showMessage)
     {
         return false;
