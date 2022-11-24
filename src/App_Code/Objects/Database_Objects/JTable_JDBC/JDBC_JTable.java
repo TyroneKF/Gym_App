@@ -1,4 +1,4 @@
-package App_Code.Objects.Database_Objects.JTable_JDBC.Parent;
+package App_Code.Objects.Database_Objects.JTable_JDBC;
 
 // Packages to import
 // https://stackoverflow.com/questions/10347983/making-a-jbutton-clickable-inside-a-jtable
@@ -147,107 +147,29 @@ public class JDBC_JTable extends JPanel
     // Set Up Methods
     //##################################################################################################################
 
-    protected void iconSetup()
+
+
+    protected Boolean areYouSure(String process)
     {
-        //###################################################################################
-        // Table Icon Setup
-        //###################################################################################
+        int reply = JOptionPane.showConfirmDialog(null, String.format("Are you sure you want to %s, \nany unsaved changes will be lost in this Table! \nDo you want to %s?", process, process),
+                "Restart Game", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
-
-        IconPanel iconPanel = new IconPanel(3, 10, "East");
-        JPanel iconPanelInsert = iconPanel.getIconJpanel();
-
-        addToContainer(this, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", "east");
-
-        //##########################
-        //Add BTN
-        //##########################
-        IconButton add_Icon_Btn = new IconButton("src/images/add/add.png", "", 40, 40, 40, 40, "centre", "right");
-        // add_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
-
-        JButton add_Btn = add_Icon_Btn.returnJButton();
-        add_Icon_Btn.makeBTntransparent();
-
-        add_Btn.addActionListener(ae -> {
-
-            add_btn_Action();
-        });
-
-        iconPanelInsert.add(add_Icon_Btn);
-
-        //##########################
-        // Refresh Icon
-        //##########################
-
-        IconButton refresh_Icon_Btn = new IconButton("src/images/refresh/+refresh.png", "", 40, 40, 40, 40,
-                "centre", "right"); // btn text is useless here , refactor
-        //refresh_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
-
-
-        JButton refresh_Btn = refresh_Icon_Btn.returnJButton();
-        refresh_Icon_Btn.makeBTntransparent();
-
-        refresh_Btn.addActionListener(ae -> {
-
-            //#######################################################
-            // Ask For Permission
-            //#######################################################
-
-            if (areYouSure("Refresh Data"))
-            {
-                refresh_Btn_Action(true);
-            }
-        });
-
-        iconPanelInsert.add(refresh_Icon_Btn);
-
-        //##########################
-        // Update Icon
-        //##########################
-
-        IconButton saveIcon_Icon_Btn = new IconButton("src/images/save/save.png", "", 40, 40, 40, 40,
-                "centre", "right"); // btn text is useless here , refactor
-        //saveIcon_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
-        saveIcon_Icon_Btn.makeBTntransparent();
-
-        JButton save_btn = saveIcon_Icon_Btn.returnJButton();
-
-
-        save_btn.addActionListener(ae -> {
-            if (areYouSure("Save Data"))
-            {
-                saveDataAction(true);
-            }
-        });
-
-        iconPanelInsert.add(save_btn);
-
-        //##########################
-        // Delete Icon
-        //##########################
-
-        IconButton deleteIcon_Icon_Btn = new IconButton("src/images/delete/+delete.png", "", 50, 40, 50, 40,
-                "centre", "right"); // btn text is useless here , refactor
-        //deleteIcon_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
-        deleteIcon_Icon_Btn.makeBTntransparent();
-
-        JButton delete_btn = deleteIcon_Icon_Btn.returnJButton();
-
-
-        delete_btn.addActionListener(ae -> {
-
-            delete_Btn_Action();
-        });
-
-        iconPanelInsert.add(delete_btn);
+        if (reply==JOptionPane.NO_OPTION || reply==JOptionPane.CLOSED_OPTION)
+        {
+            return false;
+        }
+        return true;
     }
+
+    protected void extraSetup()
+    {
+
+    }
+
 
     protected void tableSetup(Object[][] data, String[] columnNames, boolean setIconsUp)
     {
-        if (setIconsUp)
-        {
-            iconSetup();
-        }
+        extraSetup();
 
         //###################################################################################
         // Table Setup
@@ -350,118 +272,7 @@ public class JDBC_JTable extends JPanel
     }
 
     //##################################################################################################################
-    protected Boolean areYouSure(String process)
-    {
-        int reply = JOptionPane.showConfirmDialog(null, String.format("Are you sure you want to %s, \nany unsaved changes will be lost in this Table! \nDo you want to %s?", process, process),
-                "Restart Game", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
-        if (reply==JOptionPane.NO_OPTION || reply==JOptionPane.CLOSED_OPTION)
-        {
-            return false;
-        }
-        return true;
-    }
-
-    protected void add_btn_Action()
-    {
-        Object[] rowData = new Object[columnsInTable];
-
-        //#######################################
-        // Adding Row Data to Table
-        //#######################################
-
-        tableModel.addRow(rowData);
-
-        //#######################################
-        // Configuring Row ID
-        //#######################################
-
-        int tableRow = rowsInTable==0 ? 0:rowsInTable;
-
-        if (rowsInTable==0)
-        {
-            // Get max id of last item in DB and +1
-            String[] queryResults = db.getSingleColumnQuery(String.format("SELECT MAX(%s) FROM %s;", columnNames[0], tableName));
-            Integer id = Integer.parseInt(queryResults[0]) + 1;
-
-            tableModel.setValueAt(id, tableRow, 0);
-        }
-        else
-        {
-            int lastRowID = (Integer) jTable.getModel().getValueAt(tableModel.getRowCount() - 2, 0);
-            tableModel.setValueAt(lastRowID + 1, tableRow, 0);
-        }
-
-        //#######################################
-        // Adding blank data based on data type
-        //######################################
-        for (int col = 1; col < columnsInTable; col++)
-        {
-            if (col==deleteColumn)
-            {
-                tableModel.setValueAt("Delete Row", tableRow, col);
-                continue;
-            }
-            else if (jcomboMap.containsKey(col))
-            {
-                tableModel.setValueAt("None of the Above", tableRow, col);
-                continue;
-            }
-
-            String colDataType = columnDataTypes[col];
-            try
-            {
-                // Convert to appropriate datatype
-                switch (colDataType)
-                {
-                    case "varchar":
-                        tableModel.setValueAt("", tableRow, col);
-                        break;
-                    case "tinyint":
-                        tableModel.setValueAt(false, tableRow, col);
-                        break;
-                    case "int":
-                        tableModel.setValueAt(0, tableRow, col);
-                        break;
-                    case "decimal": // HELLO CHANGE
-                        tableModel.setValueAt(new BigDecimal(0.00), tableRow, col);
-                        //tableModel.setValueAt(0.00, tableRow, col);
-                        break;
-                    case "bigint":
-                        tableModel.setValueAt(Long.valueOf(0), tableRow, col);
-                    default:
-                        throw new Exception();
-                }
-            }
-            catch (Exception e)
-            {
-                System.out.printf("\n\nUn-accountable Data type JDBC_JTable(),add_Btn.addActionListener() \n%s", e);
-            }
-        }
-
-        //#######################################
-        // Resize Jtable & GUI with new Data
-        //#######################################
-        rowsInTable++;
-        resizeObject();
-    }
-
-    protected void save_Btn_Action()
-    {
-        if (rowsInTable > 0)
-        {
-            if (!(saveDataAction(true)))
-            {
-                JOptionPane.showMessageDialog(null, "Error, uploading  table data to Database!");
-            }
-
-        }
-        else
-        {
-            JOptionPane.showMessageDialog(null, " Table is empty! \n To save Table Data, please add rows to the table!");
-        }
-
-    }
 
     //##########################################
     // Overwirte Methods

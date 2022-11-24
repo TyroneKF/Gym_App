@@ -1,7 +1,7 @@
 package App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Parent;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
-import App_Code.Objects.Database_Objects.JTable_JDBC.Parent.JDBC_JTable;
+import App_Code.Objects.Database_Objects.JTable_JDBC.JDBC_JTable;
 
 import java.awt.*;
 import java.util.ArrayList;

@@ -2,10 +2,12 @@ package App_Code.Objects.Database_Objects.JTable_JDBC.Children.EditDataTable;
 
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
-import App_Code.Objects.Database_Objects.JTable_JDBC.Parent.JDBC_JTable;
+import App_Code.Objects.Database_Objects.JTable_JDBC.JDBC_JTable;
 import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Children.MacrosLeftTable;
 import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Children.TotalMealTable;
 import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
+import App_Code.Objects.Gui_Objects.IconButton;
+import App_Code.Objects.Gui_Objects.IconPanel;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -148,7 +150,7 @@ public class IngredientsTable extends JDBC_JTable
         //##############################################################
         // Add Ingredient If Meal Empty / Add New Meal
         //##############################################################
-        if (! (meal_In_DB))
+        if (!(meal_In_DB))
         {
             addIngredient();
         }
@@ -201,11 +203,11 @@ public class IngredientsTable extends JDBC_JTable
                 {
                     public void itemStateChanged(ItemEvent ie)
                     {
-                        if (ie.getStateChange() == ItemEvent.DESELECTED)
+                        if (ie.getStateChange()==ItemEvent.DESELECTED)
                         {
                             previous_Supplier_JComboItem = ie.getItem();
                         }
-                        if (ie.getStateChange() == ItemEvent.SELECTED)
+                        if (ie.getStateChange()==ItemEvent.SELECTED)
                         {
                             selected_Supplier_JCombo_Item = ie.getItem();
                         }
@@ -285,7 +287,7 @@ public class IngredientsTable extends JDBC_JTable
                 System.out.printf("\n\n%s \n\nQuery: \n%s \n\nList Of Available Shops:\n\n%s", seperator, queryStore, storesResults);
 
 
-                if (storesResults != null)
+                if (storesResults!=null)
                 {
                     boolean NA_in_List = false;
                     for (String store : storesResults)
@@ -357,11 +359,11 @@ public class IngredientsTable extends JDBC_JTable
                 {
                     public void itemStateChanged(ItemEvent ie)
                     {
-                        if (ie.getStateChange() == ItemEvent.DESELECTED)
+                        if (ie.getStateChange()==ItemEvent.DESELECTED)
                         {
                             previous_IngredientType_JComboItem = ie.getItem();
                         }
-                        if (ie.getStateChange() == ItemEvent.SELECTED)
+                        if (ie.getStateChange()==ItemEvent.SELECTED)
                         {
                             selected_IngredientType_JComboItem = ie.getItem();
                         }
@@ -467,11 +469,11 @@ public class IngredientsTable extends JDBC_JTable
                 {
                     public void itemStateChanged(ItemEvent ie)
                     {
-                        if (ie.getStateChange() == ItemEvent.DESELECTED)
+                        if (ie.getStateChange()==ItemEvent.DESELECTED)
                         {
                             previous_IngredientName_JComboItem = ie.getItem();
                         }
-                        if (ie.getStateChange() == ItemEvent.SELECTED)
+                        if (ie.getStateChange()==ItemEvent.SELECTED)
                         {
                             ingredientNameChanged = true;
                             //System.out.printf("\n\nIngredientName itemStateChanged() Item Selected \ningredientNameChanged: %s", ingredientNameChanged); //HELLO REMOVE
@@ -1198,6 +1200,106 @@ public class IngredientsTable extends JDBC_JTable
 
     //##################################################
     @Override
+    protected void extraSetup()
+    {
+        iconSetup();
+    }
+
+    protected void iconSetup()
+    {
+        //###################################################################################
+        // Table Icon Setup
+        //###################################################################################
+
+
+        IconPanel iconPanel = new IconPanel(3, 10, "East");
+        JPanel iconPanelInsert = iconPanel.getIconJpanel();
+
+        addToContainer(this, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", "east");
+
+        //##########################
+        //Add BTN
+        //##########################
+        IconButton add_Icon_Btn = new IconButton("src/images/add/add.png", "", 40, 40, 40, 40, "centre", "right");
+        // add_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
+
+        JButton add_Btn = add_Icon_Btn.returnJButton();
+        add_Icon_Btn.makeBTntransparent();
+
+        add_Btn.addActionListener(ae -> {
+
+            add_btn_Action();
+        });
+
+        iconPanelInsert.add(add_Icon_Btn);
+
+        //##########################
+        // Refresh Icon
+        //##########################
+
+        IconButton refresh_Icon_Btn = new IconButton("src/images/refresh/+refresh.png", "", 40, 40, 40, 40,
+                "centre", "right"); // btn text is useless here , refactor
+        //refresh_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
+
+
+        JButton refresh_Btn = refresh_Icon_Btn.returnJButton();
+        refresh_Icon_Btn.makeBTntransparent();
+
+        refresh_Btn.addActionListener(ae -> {
+
+            //#######################################################
+            // Ask For Permission
+            //#######################################################
+
+            if (areYouSure("Refresh Data"))
+            {
+                refresh_Btn_Action(true);
+            }
+        });
+
+        iconPanelInsert.add(refresh_Icon_Btn);
+
+        //##########################
+        // Update Icon
+        //##########################
+
+        IconButton saveIcon_Icon_Btn = new IconButton("src/images/save/save.png", "", 40, 40, 40, 40,
+                "centre", "right"); // btn text is useless here , refactor
+        //saveIcon_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
+        saveIcon_Icon_Btn.makeBTntransparent();
+
+        JButton save_btn = saveIcon_Icon_Btn.returnJButton();
+
+
+        save_btn.addActionListener(ae -> {
+            if (areYouSure("Save Data"))
+            {
+                saveDataAction(true);
+            }
+        });
+
+        iconPanelInsert.add(save_btn);
+
+        //##########################
+        // Delete Icon
+        //##########################
+
+        IconButton deleteIcon_Icon_Btn = new IconButton("src/images/delete/+delete.png", "", 50, 40, 50, 40,
+                "centre", "right"); // btn text is useless here , refactor
+        //deleteIcon_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
+        deleteIcon_Icon_Btn.makeBTntransparent();
+
+        JButton delete_btn = deleteIcon_Icon_Btn.returnJButton();
+
+
+        delete_btn.addActionListener(ae -> {
+
+            delete_Btn_Action();
+        });
+
+        iconPanelInsert.add(delete_btn);
+    }
+
     protected void add_btn_Action()
     {
         //#########################################################
