@@ -278,11 +278,6 @@ public class JDBC_JTable extends JPanel
     // Overwirte Methods
     //##########################################
 
-    protected boolean saveDataAction(boolean showMessage)
-    {
-        return false;
-    }
-
     protected void delete_Btn_Action()
     {
         if (areYouSure("Delete"))
