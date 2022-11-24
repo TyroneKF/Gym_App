@@ -929,7 +929,7 @@ public class IngredientsTable extends JDBC_JTable
         //##########################################################################
 
         ArrayList<Object> ingredientsTable_UpdateData = ingredientsUpdateData.get(0);
-        super.updateTable(this, ingredientsTable_UpdateData, row);
+        super.updateTable(ingredientsTable_UpdateData, row);
 
         if (jTable.getValueAt(row, getIngredientsTable_IngredientsName_Col()).equals("None Of The Above"))
         {
@@ -1011,7 +1011,6 @@ public class IngredientsTable extends JDBC_JTable
     // Setup Methods
     //##################################################################################################################
 
-    @Override
     public void setupDeleteBtnColumn(int deleteBtnColumn)
     {
         Action delete = new AbstractAction()
@@ -1038,7 +1037,6 @@ public class IngredientsTable extends JDBC_JTable
     // Button Actions Events
     //##################################################################################################################
 
-    @Override
     protected void deleteRowAction(Object ingredientIndex, int modelRow)
     {
         //#################################################
@@ -1130,7 +1128,6 @@ public class IngredientsTable extends JDBC_JTable
         System.out.printf("\n\n#########################################################################");
     }
 
-    @Override
     public void deleteTableAction()
     {
         //##########################################
@@ -1300,6 +1297,15 @@ public class IngredientsTable extends JDBC_JTable
         iconPanelInsert.add(delete_btn);
     }
 
+    protected void delete_Btn_Action()
+    {
+        if (areYouSure("Delete"))
+        {
+            deleteTableAction();
+        }
+    }
+
+
     protected void add_btn_Action()
     {
         //#########################################################
@@ -1390,7 +1396,7 @@ public class IngredientsTable extends JDBC_JTable
         setRowBeingEdited(); // stops endless loop being called for all cells being editted
 
         ArrayList<Object> ingredientsTable_UpdateData = results.get(0);
-        super.updateTable(this, ingredientsTable_UpdateData, rowsInTable);
+        super.updateTable(ingredientsTable_UpdateData, rowsInTable);
 
         setRowBeingEdited(); // stops endless loop being called for all cells being editted
 
@@ -1404,6 +1410,21 @@ public class IngredientsTable extends JDBC_JTable
         // Update Table Data
         //###################################################################################
         updateOtherTablesData();
+    }
+
+    @Override
+    protected void extraTableModel_Setup()
+    {
+        if (deleteColumn!=null)
+        {
+            setupDeleteBtnColumn(deleteColumn); // specifying delete column
+        }
+
+        // Setting up JcomboBox Field
+        for (Integer key : jcomboMap.keySet())
+        {
+            setUpJComboColumn(key, "IngredientName", jcomboMap.get(key));
+        }
     }
 
     //##################################################

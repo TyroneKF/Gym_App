@@ -35,7 +35,7 @@ public class MacrosLeftTable extends MyJTable_DisplayData
         }
 
         ArrayList<Object> macrosLeft_UpdateData = macrosLeftTableData.get(0);
-        super.updateTable(this, macrosLeft_UpdateData, 0);
+        super.updateTable(macrosLeft_UpdateData, 0);
     }
 
     public boolean updateTableModelData()

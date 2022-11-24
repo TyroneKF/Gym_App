@@ -147,8 +147,6 @@ public class JDBC_JTable extends JPanel
     // Set Up Methods
     //##################################################################################################################
 
-
-
     protected Boolean areYouSure(String process)
     {
         int reply = JOptionPane.showConfirmDialog(null, String.format("Are you sure you want to %s, \nany unsaved changes will be lost in this Table! \nDo you want to %s?", process, process),
@@ -165,7 +163,6 @@ public class JDBC_JTable extends JPanel
     {
 
     }
-
 
     protected void tableSetup(Object[][] data, String[] columnNames, boolean setIconsUp)
     {
@@ -249,19 +246,11 @@ public class JDBC_JTable extends JPanel
 
         if (tableInitialised)  //first time this method is called, special columns aren't defined
         {
-            if (deleteColumn!=null)
-            {
-                setupDeleteBtnColumn(deleteColumn); // specifying delete column
-            }
+            extraTableModel_Setup();
+
             if (columnsToHide!=null)
             {
                 SetUp_HiddenTableColumns(columnsToHide);
-            }
-
-            // Setting up JcomboBox Field
-            for (Integer key : jcomboMap.keySet())
-            {
-                setUpJComboColumn(key, "IngredientName", jcomboMap.get(key));
             }
         }
         else
@@ -271,6 +260,11 @@ public class JDBC_JTable extends JPanel
         resizeObject();
     }
 
+    protected void extraTableModel_Setup()
+    {
+
+    }
+
     //##################################################################################################################
 
 
@@ -278,29 +272,10 @@ public class JDBC_JTable extends JPanel
     // Overwirte Methods
     //##########################################
 
-    protected void delete_Btn_Action()
-    {
-        if (areYouSure("Delete"))
-        {
-            deleteTableAction();
-        }
-    }
 
     //##########################################
     // Overwirte Methods
     //##########################################
-    protected void deleteTableAction()
-    {
-
-    }
-
-    protected void deleteRowAction(Object ingredients_MealID, int modelRow)
-    {
-        ((DefaultTableModel) jTable.getModel()).removeRow(modelRow);
-
-        rowsInTable--; // -1 from row count number
-        resizeObject();
-    }
 
     protected void tableDataChange_Action()
     {
@@ -353,7 +328,7 @@ public class JDBC_JTable extends JPanel
     }
 
     // EDIT REMOVE myJTable  Param
-    public void updateTable(JDBC_JTable myJTable, ArrayList<Object> updateData, int updateRow)
+    public void updateTable(ArrayList<Object> updateData, int updateRow)
     {
         //########################################################################
         // Updating Table Info
@@ -459,21 +434,7 @@ public class JDBC_JTable extends JPanel
         jTable.setFont(font);
     }
 
-    public void setupDeleteBtnColumn(int deleteBtnColumn)
-    {
-        deleteColumn = deleteBtnColumn;
 
-        Action delete = new AbstractAction()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                int modelRow = Integer.parseInt(e.getActionCommand());
-                deleteRowAction(null, modelRow); // command to update db
-            }
-        };
-        Working_ButtonColumn2 workingButtonColumn = new Working_ButtonColumn2(jTable, delete, deleteBtnColumn);
-        workingButtonColumn.setMnemonic(KeyEvent.VK_D);
-    }
 
     public void setUpJComboColumn(int col, String type, ArrayList<String> items)
     {

@@ -69,7 +69,7 @@ public class TotalMealTable extends MyJTable_DisplayData
         }
 
         ArrayList<Object> totalMeal_UpdateData = totalMealData.get(0);
-        super.updateTable(this, totalMeal_UpdateData, 0);
+        super.updateTable(totalMeal_UpdateData, 0);
     }
 
     public Object[][] getData()
@@ -138,11 +138,6 @@ public class TotalMealTable extends MyJTable_DisplayData
             if (getColumnsToHide() != null)//Must be first
             {
                 SetUp_HiddenTableColumns(getColumnsToHide());
-            }
-
-            if (getDeleteBTN_Col() != null)
-            {
-                setupDeleteBtnColumn(getDeleteBTN_Col()); // specifying delete column
             }
 
             // Setting up JcomboBox Field
