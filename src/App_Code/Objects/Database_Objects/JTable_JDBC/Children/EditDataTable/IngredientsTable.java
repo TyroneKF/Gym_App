@@ -20,7 +20,6 @@ import java.util.*;
 
 public class IngredientsTable extends JDBC_JTable
 {
-
     private TreeMap<String, Collection<String>> map_ingredientTypesToNames;
 
     //#################################################################################################################
@@ -154,388 +153,191 @@ public class IngredientsTable extends JDBC_JTable
     }
 
     //##################################################################################################################
-
-
+    // Table Setup
     //##################################################################################################################
-    public class SetupSupplierColumn
+
+    @Override
+    protected void extraTableModel_Setup()
     {
-        public SetupSupplierColumn(int col)
+        if (deleteColumn!=null)
         {
-            TableColumn tableColumn = jTable.getColumnModel().getColumn(col);
-
-            //Set up the editor for the sport cells.
-            tableColumn.setCellEditor(new ComboEditor());
-
-            //Set up tool tips for the sport cells.
-            DefaultTableCellRenderer renderer = new DefaultTableCellRenderer()
-            {
-                @Override
-                public Component getTableCellRendererComponent(JTable table, Object value,
-                                                               boolean isSelected, boolean hasFocus, int row, int column)
-                {
-                    JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                    label.setIcon(UIManager.getIcon("Table.descendingSortIcon"));
-                    return label;
-                }
-            };
-
-            renderer.setToolTipText("Click to see suppliers who sell this ingredient!");
-            tableColumn.setCellRenderer(renderer);
+            setupDeleteBtnColumn(deleteColumn); // specifying delete column
         }
 
-        class ComboEditor extends DefaultCellEditor
+        // Setting up JcomboBox Field
+        for (Integer key : jComboMap.keySet())
         {
-            DefaultComboBoxModel model1;
-            JComboBox comboBox;
+            setUpJComboColumn(key, "IngredientName", jComboMap.get(key));
+        }
+    }
 
-            public ComboEditor()
-            {
-                super(new JComboBox());
-                model1 = (DefaultComboBoxModel) ((JComboBox) getComponent()).getModel();
-
-                comboBox = ((JComboBox) getComponent());
-                comboBox.setEditable(true);
-
-                comboBox.addItemListener(new ItemListener()
-                {
-                    public void itemStateChanged(ItemEvent ie)
-                    {
-                        if (ie.getStateChange()==ItemEvent.DESELECTED)
-                        {
-                            previous_Supplier_JComboItem = ie.getItem();
-                        }
-                        if (ie.getStateChange()==ItemEvent.SELECTED)
-                        {
-                            selected_Supplier_JCombo_Item = ie.getItem();
-                        }
-                    }
-                });
-
-
-                //######################################################
-                // Centre ComboBox Items
-                //######################################################
-                ((JLabel) comboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
-
-                //######################################################
-                // Make JComboBox Visible
-                //######################################################
-
-                ComboBoxTableCellRenderer renderer = new ComboBoxTableCellRenderer();
-
-                renderer.setModel(model1);
-
-                TableColumn tableColumn = jTable.getColumnModel().getColumn(getIngredientsTable_Supplier_Col());
-                tableColumn.setCellRenderer(renderer);
-            }
-
-
-            //First time the cell is created
+    @Override
+    protected void tableModel_Setup(Object[][] data, String[] columnNames)
+    {
+        tableModel = new DefaultTableModel(data, columnNames)
+        {
             @Override
-            public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column)
+            public boolean isCellEditable(int row, int col)
             {
-                // HELLO
-            /*
-               save previous option then set it to it if it exists in list
-             */
-                //########################################
-                // Get Previous Stored Item
-                ////######################################
-
-                model1.removeAllElements();
-
-                String keyColumnValue = jTable.getValueAt(row, getIngredientsTable_ID_Col()).toString(); // HELLO Not Sure what this does
-                Object ingredientID = jTable.getValueAt(row, getIngredientsTable_ID_Col());
-                Object ingredientIndex = jTable.getValueAt(row, getIngredientsTable_Index_Col());
-                Object ingrdientName = table.getValueAt(row, getIngredientsTable_IngredientsName_Col());
-
-                TableColumn tableColumn = jTable.getColumnModel().getColumn(column);
-
-                //########################################
-                // Get Supplier Based on ingredientIndex
-                ////######################################
-
-                String queryStore = String.format("""
-                        SELECT  IFNULL(D.STORE_Name, 'N/A') AS STORE
-                        FROM 
-                        (
-                        	SELECT i.IngredientID FROM ingredients_info i
-                        	WHERE i.IngredientID = %s
-                        ) AS t 
-                                            
-                        LEFT JOIN
-                        (
-                           SELECT l.IngredientID, l.StoreID FROM ingredientInShops l 
-                        	
-                        )  AS C
-                        ON t.IngredientID = C.IngredientID 
-                        LEFT JOIN
-                        (
-                          SELECT StoreID, Store_Name FROM stores
-                        ) D
-                        ON C.StoreID = D.StoreID
-                        ORDER BY STORE;""", ingredientID);
-
-                ArrayList<String> storesResults = db.getSingleColumnQuery_ArrayList(queryStore);
-
-                //HELLO REMOVE
-
-                String seperator = "#######################################################################";
-                System.out.printf("\n\n%s \n\nQuery: \n%s \n\nList Of Available Shops:\n\n%s", seperator, queryStore, storesResults);
-
-
-                if (storesResults!=null)
+                //Note that the data/cell address is constant,
+                //no matter where the cell appears onscreen.
+                if (unEditableColumns.contains(col))
                 {
-                    boolean NA_in_List = false;
-                    for (String store : storesResults)
-                    {
-                        model1.addElement(store);
-                        if (store.equals("N/A"))
-                        {
-                            NA_in_List = true;
-                        }
-                        //System.out.printf("\n\n%s", store); //HELLO Remove
-                    }
-
-                    if (!(ingrdientName.equals("None Of The Above")) && !NA_in_List)
-                    {
-                        model1.addElement("N/A");
-                    }
+                    return false;
                 }
                 else
                 {
-                    //HELLO FIX WILL SOMEHOW CAUSE ERROR
-                    JOptionPane.showMessageDialog(null, "\n\nError \nSetting Available Stores for Ingredient!");
+                    return true;
                 }
-
-                return super.getTableCellEditorComponent(table, value, isSelected, row, column);
-            }
-        }
-    }
-
-    public class SetupIngredientTypeColumn
-    {
-        DefaultComboBoxModel model1;
-        JComboBox comboBox;
-
-        public SetupIngredientTypeColumn(int col)
-        {
-            TableColumn tableColumn = jTable.getColumnModel().getColumn(col);
-
-            //Set up the editor for the sport cells.
-            tableColumn.setCellEditor(new ComboEditor());
-
-            //Set up tool tips for the sport cells.
-            DefaultTableCellRenderer renderer = new DefaultTableCellRenderer()
-            {
-                @Override
-                public Component getTableCellRendererComponent(JTable table, Object value,
-                                                               boolean isSelected, boolean hasFocus, int row, int column)
-                {
-                    JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                    label.setIcon(UIManager.getIcon("Table.descendingSortIcon"));
-                    return label;
-                }
-            };
-
-            renderer.setToolTipText("Change ingredient type to search for new ingredients in the IngredientsName column!");
-            tableColumn.setCellRenderer(renderer);
-        }
-
-        class ComboEditor extends DefaultCellEditor
-        {
-            public ComboEditor()
-            {
-                super(new JComboBox());
-                model1 = (DefaultComboBoxModel) ((JComboBox) getComponent()).getModel();
-
-                comboBox = ((JComboBox) getComponent());
-                comboBox.setEditable(true);
-
-                comboBox.addItemListener(new ItemListener()
-                {
-                    public void itemStateChanged(ItemEvent ie)
-                    {
-                        if (ie.getStateChange()==ItemEvent.DESELECTED)
-                        {
-                            previous_IngredientType_JComboItem = ie.getItem();
-                        }
-                        if (ie.getStateChange()==ItemEvent.SELECTED)
-                        {
-                            selected_IngredientType_JComboItem = ie.getItem();
-                        }
-                    }
-                });
-
-
-                //######################################################
-                // Centre ComboBox Items
-                //######################################################
-                ((JLabel) comboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
-
-                //######################################################
-                // Make JComboBox Visible
-                //######################################################
-
-                ComboBoxTableCellRenderer renderer = new ComboBoxTableCellRenderer();
-
-                renderer.setModel(model1);
-
-                TableColumn tableColumn = jTable.getColumnModel().getColumn(getIngredientsTable_Supplier_Col());
-                tableColumn.setCellRenderer(renderer);
             }
 
-
-            //First time the cell is created
             @Override
-            public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column)
+            public Class getColumnClass(int c)
             {
-                //########################################
-                // Get Previous Stored Item
-                ////######################################
-
-                model1.removeAllElements();
-
-                String keyColumnValue = jTable.getValueAt(row, getIngredientsTable_ID_Col()).toString(); // HELLO Not Sure what this does
-                Object ingredientID = jTable.getValueAt(row, getIngredientsTable_ID_Col());
-                Object ingredientIndex = jTable.getValueAt(row, getIngredientsTable_Index_Col());
-                Object ingrdientName = table.getValueAt(row, getIngredientsTable_IngredientsName_Col());
-
-                TableColumn tableColumn = jTable.getColumnModel().getColumn(column);
-
-                for (String key : map_ingredientTypesToNames.keySet())
-                {
-                    model1.addElement(key);
-                }
-
-                return super.getTableCellEditorComponent(table, value, isSelected, row, column);
+                return getValueAt(0, c).getClass();
             }
-        }
+        };
 
-        public DefaultComboBoxModel getModel()
-        {
-            return model1;
-        }
+        tableModel.addTableModelListener(
+                evt -> tableDataChange_Action());
 
-        public JComboBox getComboBox()
+        jTable.setModel(tableModel);
+
+        rowsInTable = data.length;
+
+        //#################################################################################
+        // Table Personalisation
+        //#################################################################################
+
+        //initColumnSizes();
+        setCellsAlignment(0, colAvoidCentering);
+
+        if (getTableInitialised())  //first time this method is called, special columns aren't defined
         {
-            return comboBox;
+            if (getColumnsToHide()!=null)//Must be first
+            {
+                SetUp_HiddenTableColumns(getColumnsToHide());
+            }
+
+            //EDITING
+            new SetupIngredientTypeColumn(getIngredientsTable_Type_Col());
+            new SetupIngredientNameColumn(getIngredientsTable_IngredientsName_Col());
+            new SetupSupplierColumn(getIngredientsTable_Supplier_Col());
+
+            setupDeleteBtnColumn(getDeleteBTN_Col()); // specifying delete column
+
         }
+        else
+        {
+            setTableInitialized();
+        }
+        resizeObject();
     }
 
-    public class SetupIngredientNameColumn
+    @Override
+    protected void extra_TableSetup()
     {
-        DefaultComboBoxModel model1;
-        JComboBox comboBox;
-
-        public SetupIngredientNameColumn(int col)
-        {
-            TableColumn tableColumn = jTable.getColumnModel().getColumn(col);
-
-            //Set up the editor for the sport cells.
-            tableColumn.setCellEditor(new ComboEditor());
-
-            //Set up tool tips for the sport cells.
-            DefaultTableCellRenderer renderer = new DefaultTableCellRenderer()
-            {
-                @Override
-                public Component getTableCellRendererComponent(JTable table, Object value,
-                                                               boolean isSelected, boolean hasFocus, int row, int column)
-                {
-                    JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                    label.setIcon(UIManager.getIcon("Table.descendingSortIcon"));
-                    return label;
-                }
-            };
-
-            renderer.setToolTipText("Click to select an ingredient!");
-            tableColumn.setCellRenderer(renderer);
-        }
-
-        class ComboEditor extends DefaultCellEditor
-        {
-            public ComboEditor()
-            {
-                super(new JComboBox());
-                model1 = (DefaultComboBoxModel) ((JComboBox) getComponent()).getModel();
-
-                comboBox = ((JComboBox) getComponent());
-                comboBox.setEditable(true);
-
-                comboBox.addItemListener(new ItemListener()
-                {
-                    public void itemStateChanged(ItemEvent ie)
-                    {
-                        if (ie.getStateChange()==ItemEvent.DESELECTED)
-                        {
-                            previous_IngredientName_JComboItem = ie.getItem();
-                        }
-                        if (ie.getStateChange()==ItemEvent.SELECTED)
-                        {
-                            ingredientNameChanged = true;
-                            //System.out.printf("\n\nIngredientName itemStateChanged() Item Selected \ningredientNameChanged: %s", ingredientNameChanged); //HELLO REMOVE
-                            selected_IngredientName_JCombo_Item = ie.getItem();
-                        }
-                    }
-                });
-
-
-                //######################################################
-                // Centre ComboBox Items
-                //######################################################
-                ((JLabel) comboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
-
-                //######################################################
-                // Make JComboBox Visible
-                //######################################################
-
-                ComboBoxTableCellRenderer renderer = new ComboBoxTableCellRenderer();
-
-                renderer.setModel(model1);
-
-                TableColumn tableColumn = jTable.getColumnModel().getColumn(getIngredientsTable_Supplier_Col());
-                tableColumn.setCellRenderer(renderer);
-            }
-
-
-            //First time the cell is created
-            @Override
-            public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column)
-            {
-                //########################################
-                // Get Previous Stored Item
-                ////######################################
-
-                model1.removeAllElements();
-
-                String keyColumnValue = jTable.getValueAt(row, getIngredientsTable_ID_Col()).toString(); // HELLO Not Sure what this does
-                Object ingredientID = jTable.getValueAt(row, getIngredientsTable_ID_Col());
-                Object ingredientIndex = jTable.getValueAt(row, getIngredientsTable_Index_Col());
-                Object ingrdientName = table.getValueAt(row, getIngredientsTable_IngredientsName_Col());
-
-                TableColumn tableColumn = jTable.getColumnModel().getColumn(column);
-
-                String ingredientType = table.getValueAt(row, getIngredientsTable_Type_Col()).toString();
-
-                for (String item : map_ingredientTypesToNames.get(ingredientType))
-                {
-                    model1.addElement(item);
-                }
-
-                return super.getTableCellEditorComponent(table, value, isSelected, row, column);
-            }
-        }
-
-        public DefaultComboBoxModel getModel()
-        {
-            return model1;
-        }
-
-        public JComboBox getComboBox()
-        {
-            return comboBox;
-        }
+        iconSetup();
     }
+
+    protected void iconSetup()
+    {
+        //###################################################################################
+        // Table Icon Setup
+        //###################################################################################
+
+
+        IconPanel iconPanel = new IconPanel(3, 10, "East");
+        JPanel iconPanelInsert = iconPanel.getIconJpanel();
+
+        addToContainer(this, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", "east");
+
+        //##########################
+        //Add BTN
+        //##########################
+        IconButton add_Icon_Btn = new IconButton("src/images/add/add.png", "", 40, 40, 40, 40, "centre", "right");
+        // add_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
+
+        JButton add_Btn = add_Icon_Btn.returnJButton();
+        add_Icon_Btn.makeBTntransparent();
+
+        add_Btn.addActionListener(ae -> {
+
+            add_btn_Action();
+        });
+
+        iconPanelInsert.add(add_Icon_Btn);
+
+        //##########################
+        // Refresh Icon
+        //##########################
+
+        IconButton refresh_Icon_Btn = new IconButton("src/images/refresh/+refresh.png", "", 40, 40, 40, 40,
+                "centre", "right"); // btn text is useless here , refactor
+        //refresh_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
+
+
+        JButton refresh_Btn = refresh_Icon_Btn.returnJButton();
+        refresh_Icon_Btn.makeBTntransparent();
+
+        refresh_Btn.addActionListener(ae -> {
+
+            //#######################################################
+            // Ask For Permission
+            //#######################################################
+
+            if (areYouSure("Refresh Data"))
+            {
+                refresh_Btn_Action(true);
+            }
+        });
+
+        iconPanelInsert.add(refresh_Icon_Btn);
+
+        //##########################
+        // Update Icon
+        //##########################
+
+        IconButton saveIcon_Icon_Btn = new IconButton("src/images/save/save.png", "", 40, 40, 40, 40,
+                "centre", "right"); // btn text is useless here , refactor
+        //saveIcon_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
+        saveIcon_Icon_Btn.makeBTntransparent();
+
+        JButton save_btn = saveIcon_Icon_Btn.returnJButton();
+
+
+        save_btn.addActionListener(ae -> {
+            if (areYouSure("Save Data"))
+            {
+                saveDataAction(true);
+            }
+        });
+
+        iconPanelInsert.add(save_btn);
+
+        //##########################
+        // Delete Icon
+        //##########################
+
+        IconButton deleteIcon_Icon_Btn = new IconButton("src/images/delete/+delete.png", "", 50, 40, 50, 40,
+                "centre", "right"); // btn text is useless here , refactor
+        //deleteIcon_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
+        deleteIcon_Icon_Btn.makeBTntransparent();
+
+        JButton delete_btn = deleteIcon_Icon_Btn.returnJButton();
+
+
+        delete_btn.addActionListener(ae -> {
+
+            delete_Btn_Action();
+        });
+
+        iconPanelInsert.add(delete_btn);
+    }
+
+    //##################################################################################################################
+    // Data Changing In Cells Action
+    //##################################################################################################################
 
     //Editing Now
     private boolean hasDataChangedInCell(int col, Object ingredientsIndex, Object cellValue)
@@ -941,71 +743,8 @@ public class IngredientsTable extends JDBC_JTable
         updateOtherTablesData();
     }
 
-    @Override
-    protected void tableModel_Setup(Object[][] data, String[] columnNames)
-    {
-        tableModel = new DefaultTableModel(data, columnNames)
-        {
-            @Override
-            public boolean isCellEditable(int row, int col)
-            {
-                //Note that the data/cell address is constant,
-                //no matter where the cell appears onscreen.
-                if (unEditableColumns.contains(col))
-                {
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-            }
-
-            @Override
-            public Class getColumnClass(int c)
-            {
-                return getValueAt(0, c).getClass();
-            }
-        };
-
-        tableModel.addTableModelListener(
-                evt -> tableDataChange_Action());
-
-        jTable.setModel(tableModel);
-
-        rowsInTable = data.length;
-
-        //#################################################################################
-        // Table Personalisation
-        //#################################################################################
-
-        //initColumnSizes();
-        setCellsAlignment(0, colAvoidCentering);
-
-        if (getTableInitialised())  //first time this method is called, special columns aren't defined
-        {
-            if (getColumnsToHide()!=null)//Must be first
-            {
-                SetUp_HiddenTableColumns(getColumnsToHide());
-            }
-
-            //EDITING
-            new SetupIngredientTypeColumn(getIngredientsTable_Type_Col());
-            new SetupIngredientNameColumn(getIngredientsTable_IngredientsName_Col());
-            new SetupSupplierColumn(getIngredientsTable_Supplier_Col());
-
-            setupDeleteBtnColumn(getDeleteBTN_Col()); // specifying delete column
-
-        }
-        else
-        {
-            setTableInitilized();
-        }
-        resizeObject();
-    }
-
     //##################################################################################################################
-    // Setup Methods
+    // Delete Button Methods
     //##################################################################################################################
 
     public void setupDeleteBtnColumn(int deleteBtnColumn)
@@ -1034,9 +773,13 @@ public class IngredientsTable extends JDBC_JTable
         this.deleteColumn = deleteColumn;
     }
 
-    //##################################################################################################################
-    // Button Actions Events
-    //##################################################################################################################
+    protected void delete_Btn_Action()
+    {
+        if (areYouSure("Delete"))
+        {
+            deleteTableAction();
+        }
+    }
 
     protected void deleteRowAction(Object ingredientIndex, int modelRow)
     {
@@ -1196,116 +939,15 @@ public class IngredientsTable extends JDBC_JTable
         }
     }
 
-    //##################################################
-    @Override
-    protected void extraSetup()
+    //##################################################################################################################
+    // Button Events
+    //##################################################################################################################
+
+    // Add Button
+    public void addIngredient()
     {
-        iconSetup();
+        add_btn_Action();
     }
-
-    protected void iconSetup()
-    {
-        //###################################################################################
-        // Table Icon Setup
-        //###################################################################################
-
-
-        IconPanel iconPanel = new IconPanel(3, 10, "East");
-        JPanel iconPanelInsert = iconPanel.getIconJpanel();
-
-        addToContainer(this, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", "east");
-
-        //##########################
-        //Add BTN
-        //##########################
-        IconButton add_Icon_Btn = new IconButton("src/images/add/add.png", "", 40, 40, 40, 40, "centre", "right");
-        // add_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
-
-        JButton add_Btn = add_Icon_Btn.returnJButton();
-        add_Icon_Btn.makeBTntransparent();
-
-        add_Btn.addActionListener(ae -> {
-
-            add_btn_Action();
-        });
-
-        iconPanelInsert.add(add_Icon_Btn);
-
-        //##########################
-        // Refresh Icon
-        //##########################
-
-        IconButton refresh_Icon_Btn = new IconButton("src/images/refresh/+refresh.png", "", 40, 40, 40, 40,
-                "centre", "right"); // btn text is useless here , refactor
-        //refresh_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
-
-
-        JButton refresh_Btn = refresh_Icon_Btn.returnJButton();
-        refresh_Icon_Btn.makeBTntransparent();
-
-        refresh_Btn.addActionListener(ae -> {
-
-            //#######################################################
-            // Ask For Permission
-            //#######################################################
-
-            if (areYouSure("Refresh Data"))
-            {
-                refresh_Btn_Action(true);
-            }
-        });
-
-        iconPanelInsert.add(refresh_Icon_Btn);
-
-        //##########################
-        // Update Icon
-        //##########################
-
-        IconButton saveIcon_Icon_Btn = new IconButton("src/images/save/save.png", "", 40, 40, 40, 40,
-                "centre", "right"); // btn text is useless here , refactor
-        //saveIcon_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
-        saveIcon_Icon_Btn.makeBTntransparent();
-
-        JButton save_btn = saveIcon_Icon_Btn.returnJButton();
-
-
-        save_btn.addActionListener(ae -> {
-            if (areYouSure("Save Data"))
-            {
-                saveDataAction(true);
-            }
-        });
-
-        iconPanelInsert.add(save_btn);
-
-        //##########################
-        // Delete Icon
-        //##########################
-
-        IconButton deleteIcon_Icon_Btn = new IconButton("src/images/delete/+delete.png", "", 50, 40, 50, 40,
-                "centre", "right"); // btn text is useless here , refactor
-        //deleteIcon_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
-        deleteIcon_Icon_Btn.makeBTntransparent();
-
-        JButton delete_btn = deleteIcon_Icon_Btn.returnJButton();
-
-
-        delete_btn.addActionListener(ae -> {
-
-            delete_Btn_Action();
-        });
-
-        iconPanelInsert.add(delete_btn);
-    }
-
-    protected void delete_Btn_Action()
-    {
-        if (areYouSure("Delete"))
-        {
-            deleteTableAction();
-        }
-    }
-
 
     protected void add_btn_Action()
     {
@@ -1413,26 +1055,587 @@ public class IngredientsTable extends JDBC_JTable
         updateOtherTablesData();
     }
 
-    @Override
-    protected void extraTableModel_Setup()
+    // Refresh Button
+    public void refresh_Btn_Action(boolean updateMacrosLeft)
     {
-        if (deleteColumn!=null)
+        //#############################################################################################
+        // Reset DB Data
+        //##############################################################################################
+        if (!(transferMealDataToPlan(planID, temp_PlanID)))
         {
-            setupDeleteBtnColumn(deleteColumn); // specifying delete column
+            JOptionPane.showMessageDialog(null, "\n\nUnable to transfer ingredients data from  original plan to temp plan!!");
+            return;
         }
 
-        // Setting up JcomboBox Field
-        for (Integer key : jcomboMap.keySet())
+        //#############################################################################################
+        // Reset Table Info & Data
+        //##############################################################################################
+        refresh(updateMacrosLeft);
+    }
+
+    public void refresh(boolean updateMacrosLeft)
+    {
+        //#############################################################################################
+        // If Meal was previously deleted reset variables & state
+        //##############################################################################################
+        if (getObjectDeleted())
         {
-            setUpJComboColumn(key, "IngredientName", jcomboMap.get(key));
+            setVisibility(true);
+            setObjectDeleted(false);
+        }
+
+        //##############################################################################################
+        // Reset Table Model data
+        ///#############################################################################################
+        tableModel_Setup(getData(), getColumnNames());
+
+        //#############################################################################################
+        // Reset Meal Total  Table Data
+        //#############################################################################################
+        refreshTotalMealTable();
+
+        //#############################################################################################
+        // Update Other Tables Data
+        //#############################################################################################
+        if (updateMacrosLeft)
+        {
+            refreshMacrosLeftTable();
+        }
+
+        //#############################################################################################
+        // Reset Variable
+        //#############################################################################################
+        dataChangedInTable = false;
+    }
+
+    // Save Button
+    public boolean saveDataAction(boolean showMessage)
+    {
+        //######################################################################
+        // Transfer Data from temp plan to origin plan
+        //######################################################################
+        if (!(transferMealDataToPlan(temp_PlanID, planID)))     // If Meal Not In Original PlanID Add To PlanID
+        {
+            if (showMessage)
+            {
+                JOptionPane.showMessageDialog(null, "\n\nUnable to transfer ingredients data from temp to original plan ");
+            }
+            return false;
+        }
+
+        //######################################################################
+        // Change Setting
+        //######################################################################
+        if (!(getMealInDB()))     // If Meal Not In Original PlanID Add To PlanID
+        {
+            set_Meal_In_DB(true);
+        }
+
+        //######################################################################
+        // Update Table Model
+        //######################################################################
+        if (!updateTableModelData())
+        {
+            if (showMessage)
+            {
+                JOptionPane.showMessageDialog(null, "\n\nUnable to update table model!");
+            }
+            return false;
+        }
+
+        //######################################################################
+        // Success Message
+        //######################################################################
+        if (showMessage)
+        {
+            JOptionPane.showMessageDialog(null, "Table Successfully Updated!");
+        }
+
+        //#############################################################################################
+        // Reset Variable
+        //#############################################################################################
+        dataChangedInTable = false;
+
+        return true;
+    }
+
+    //################################################
+    //
+    //################################################
+    public boolean transferMealDataToPlan(int fromPlanID, int toPlanID)
+    {
+        //########################################################
+        // Transferring this Meals Info from one plan to another
+        //########################################################
+
+        // Delete tables if they already exist
+        String query0 = String.format("DROP TABLE IF EXISTS temp_ingredients_in_meal;");
+
+        String query1 = "SET FOREIGN_KEY_CHECKS = 0;"; // Disable Foreign Key Checks
+
+        // Delete ingredients in meal Data from original plan with this mealID
+        String query2 = String.format("DELETE FROM ingredients_in_meal  WHERE MealID = %s AND PlanID = %s;", mealID, toPlanID);
+
+        String query3 = "SET FOREIGN_KEY_CHECKS = 1;"; // Enable Foreign Key Checks
+
+        // insert meal if it does not exist inside toPlanID
+        String query4 = String.format("""
+                INSERT IGNORE INTO meals
+                (MealID, PlanID, Meal_Name)
+                                
+                VALUES
+                (%s, %s, '%s');
+                  """, mealID, toPlanID, mealName);
+
+        //####################################################
+        // Transferring this plans Ingredients to Temp-Plan
+        //####################################################
+
+        // Create Table to transfer ingredients from original plan to temp
+        String query5 = String.format("""                                     
+                CREATE table temp_ingredients_in_meal  AS
+                SELECT i.*
+                FROM ingredients_in_meal i                                                       
+                WHERE i.MealID = %s AND i.PlanID = %s;          
+                """, mealID, fromPlanID);
+
+        String query6 = String.format("UPDATE temp_ingredients_in_meal  SET PlanID = %s;", toPlanID);
+
+        String query7 = String.format("INSERT INTO ingredients_in_meal SELECT * FROM temp_ingredients_in_meal;");
+
+        //####################################################
+        // Update
+        //####################################################
+        String[] query_Temp_Data = new String[]{query0, query1, query2, query3, query4, query5, query6, query7};
+
+        if (!(db.uploadData_Batch_Altogether(query_Temp_Data)))
+        {
+            JOptionPane.showMessageDialog(null, "\n\ntransferMealIngredients() Cannot Create Temporary Plan In DB to Allow Editing");
+            return false;
+        }
+
+        System.out.printf("\nMealIngredients Successfully Transferred! \n\n%s", lineSeparator);
+        return true;
+    }
+
+    public boolean updateTableModelData()
+    {
+        //##########################################
+        // Changing Ingredients In Meal Table Model
+        //##########################################
+        String tableInQuery = "ingredients_in_meal_calculation";
+
+        String query = String.format("Select * from %s WHERE MealID = %s AND PlanID = %s;", tableInQuery, mealID, temp_PlanID);
+        System.out.printf("\n\n################################################### \nupdateTableModelData() \n%s", query);
+
+        Object[][] ingredients_Data = db.getTableDataObject(query, tableInQuery);
+
+        if (ingredients_Data==null)
+        {
+            System.out.printf("\n\nUnable to change table model: %s", getMealName());
+            return false;
+        }
+
+        setTableModelData(ingredients_Data);
+
+
+        //##########################################
+        // Changing Total  Ingredients Table Model
+        //##########################################
+        if (!(total_Meal_Table.updateTableModelData()))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    //##################################################################################################################
+    // JCombo Boxes
+    //##################################################################################################################
+    public class SetupSupplierColumn
+    {
+        public SetupSupplierColumn(int col)
+        {
+            TableColumn tableColumn = jTable.getColumnModel().getColumn(col);
+
+            //Set up the editor for the sport cells.
+            tableColumn.setCellEditor(new ComboEditor());
+
+            //Set up tool tips for the sport cells.
+            DefaultTableCellRenderer renderer = new DefaultTableCellRenderer()
+            {
+                @Override
+                public Component getTableCellRendererComponent(JTable table, Object value,
+                                                               boolean isSelected, boolean hasFocus, int row, int column)
+                {
+                    JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                    label.setIcon(UIManager.getIcon("Table.descendingSortIcon"));
+                    return label;
+                }
+            };
+
+            renderer.setToolTipText("Click to see suppliers who sell this ingredient!");
+            tableColumn.setCellRenderer(renderer);
+        }
+
+        class ComboEditor extends DefaultCellEditor
+        {
+            DefaultComboBoxModel model1;
+            JComboBox comboBox;
+
+            public ComboEditor()
+            {
+                super(new JComboBox());
+                model1 = (DefaultComboBoxModel) ((JComboBox) getComponent()).getModel();
+
+                comboBox = ((JComboBox) getComponent());
+                comboBox.setEditable(true);
+
+                comboBox.addItemListener(new ItemListener()
+                {
+                    public void itemStateChanged(ItemEvent ie)
+                    {
+                        if (ie.getStateChange()==ItemEvent.DESELECTED)
+                        {
+                            previous_Supplier_JComboItem = ie.getItem();
+                        }
+                        if (ie.getStateChange()==ItemEvent.SELECTED)
+                        {
+                            selected_Supplier_JCombo_Item = ie.getItem();
+                        }
+                    }
+                });
+
+
+                //######################################################
+                // Centre ComboBox Items
+                //######################################################
+                ((JLabel) comboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
+
+                //######################################################
+                // Make JComboBox Visible
+                //######################################################
+
+                ComboBoxTableCellRenderer renderer = new ComboBoxTableCellRenderer();
+
+                renderer.setModel(model1);
+
+                TableColumn tableColumn = jTable.getColumnModel().getColumn(getIngredientsTable_Supplier_Col());
+                tableColumn.setCellRenderer(renderer);
+            }
+
+
+            //First time the cell is created
+            @Override
+            public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column)
+            {
+                // HELLO
+            /*
+               save previous option then set it to it if it exists in list
+             */
+                //########################################
+                // Get Previous Stored Item
+                ////######################################
+
+                model1.removeAllElements();
+
+                String keyColumnValue = jTable.getValueAt(row, getIngredientsTable_ID_Col()).toString(); // HELLO Not Sure what this does
+                Object ingredientID = jTable.getValueAt(row, getIngredientsTable_ID_Col());
+                Object ingredientIndex = jTable.getValueAt(row, getIngredientsTable_Index_Col());
+                Object ingrdientName = table.getValueAt(row, getIngredientsTable_IngredientsName_Col());
+
+                TableColumn tableColumn = jTable.getColumnModel().getColumn(column);
+
+                //########################################
+                // Get Supplier Based on ingredientIndex
+                ////######################################
+
+                String queryStore = String.format("""
+                        SELECT  IFNULL(D.STORE_Name, 'N/A') AS STORE
+                        FROM 
+                        (
+                        	SELECT i.IngredientID FROM ingredients_info i
+                        	WHERE i.IngredientID = %s
+                        ) AS t 
+                                            
+                        LEFT JOIN
+                        (
+                           SELECT l.IngredientID, l.StoreID FROM ingredientInShops l 
+                        	
+                        )  AS C
+                        ON t.IngredientID = C.IngredientID 
+                        LEFT JOIN
+                        (
+                          SELECT StoreID, Store_Name FROM stores
+                        ) D
+                        ON C.StoreID = D.StoreID
+                        ORDER BY STORE;""", ingredientID);
+
+                ArrayList<String> storesResults = db.getSingleColumnQuery_ArrayList(queryStore);
+
+                //HELLO REMOVE
+
+                String seperator = "#######################################################################";
+                System.out.printf("\n\n%s \n\nQuery: \n%s \n\nList Of Available Shops:\n\n%s", seperator, queryStore, storesResults);
+
+
+                if (storesResults!=null)
+                {
+                    boolean NA_in_List = false;
+                    for (String store : storesResults)
+                    {
+                        model1.addElement(store);
+                        if (store.equals("N/A"))
+                        {
+                            NA_in_List = true;
+                        }
+                        //System.out.printf("\n\n%s", store); //HELLO Remove
+                    }
+
+                    if (!(ingrdientName.equals("None Of The Above")) && !NA_in_List)
+                    {
+                        model1.addElement("N/A");
+                    }
+                }
+                else
+                {
+                    //HELLO FIX WILL SOMEHOW CAUSE ERROR
+                    JOptionPane.showMessageDialog(null, "\n\nError \nSetting Available Stores for Ingredient!");
+                }
+
+                return super.getTableCellEditorComponent(table, value, isSelected, row, column);
+            }
         }
     }
 
+    public class SetupIngredientTypeColumn
+    {
+        DefaultComboBoxModel model1;
+        JComboBox comboBox;
 
+        public SetupIngredientTypeColumn(int col)
+        {
+            TableColumn tableColumn = jTable.getColumnModel().getColumn(col);
+
+            //Set up the editor for the sport cells.
+            tableColumn.setCellEditor(new ComboEditor());
+
+            //Set up tool tips for the sport cells.
+            DefaultTableCellRenderer renderer = new DefaultTableCellRenderer()
+            {
+                @Override
+                public Component getTableCellRendererComponent(JTable table, Object value,
+                                                               boolean isSelected, boolean hasFocus, int row, int column)
+                {
+                    JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                    label.setIcon(UIManager.getIcon("Table.descendingSortIcon"));
+                    return label;
+                }
+            };
+
+            renderer.setToolTipText("Change ingredient type to search for new ingredients in the IngredientsName column!");
+            tableColumn.setCellRenderer(renderer);
+        }
+
+        class ComboEditor extends DefaultCellEditor
+        {
+            public ComboEditor()
+            {
+                super(new JComboBox());
+                model1 = (DefaultComboBoxModel) ((JComboBox) getComponent()).getModel();
+
+                comboBox = ((JComboBox) getComponent());
+                comboBox.setEditable(true);
+
+                comboBox.addItemListener(new ItemListener()
+                {
+                    public void itemStateChanged(ItemEvent ie)
+                    {
+                        if (ie.getStateChange()==ItemEvent.DESELECTED)
+                        {
+                            previous_IngredientType_JComboItem = ie.getItem();
+                        }
+                        if (ie.getStateChange()==ItemEvent.SELECTED)
+                        {
+                            selected_IngredientType_JComboItem = ie.getItem();
+                        }
+                    }
+                });
+
+
+                //######################################################
+                // Centre ComboBox Items
+                //######################################################
+                ((JLabel) comboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
+
+                //######################################################
+                // Make JComboBox Visible
+                //######################################################
+
+                ComboBoxTableCellRenderer renderer = new ComboBoxTableCellRenderer();
+
+                renderer.setModel(model1);
+
+                TableColumn tableColumn = jTable.getColumnModel().getColumn(getIngredientsTable_Supplier_Col());
+                tableColumn.setCellRenderer(renderer);
+            }
+
+
+            //First time the cell is created
+            @Override
+            public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column)
+            {
+                //########################################
+                // Get Previous Stored Item
+                ////######################################
+
+                model1.removeAllElements();
+
+                String keyColumnValue = jTable.getValueAt(row, getIngredientsTable_ID_Col()).toString(); // HELLO Not Sure what this does
+                Object ingredientID = jTable.getValueAt(row, getIngredientsTable_ID_Col());
+                Object ingredientIndex = jTable.getValueAt(row, getIngredientsTable_Index_Col());
+                Object ingrdientName = table.getValueAt(row, getIngredientsTable_IngredientsName_Col());
+
+                TableColumn tableColumn = jTable.getColumnModel().getColumn(column);
+
+                for (String key : map_ingredientTypesToNames.keySet())
+                {
+                    model1.addElement(key);
+                }
+
+                return super.getTableCellEditorComponent(table, value, isSelected, row, column);
+            }
+        }
+
+        public DefaultComboBoxModel getModel()
+        {
+            return model1;
+        }
+
+        public JComboBox getComboBox()
+        {
+            return comboBox;
+        }
+    }
+
+    public class SetupIngredientNameColumn
+    {
+        DefaultComboBoxModel model1;
+        JComboBox comboBox;
+
+        public SetupIngredientNameColumn(int col)
+        {
+            TableColumn tableColumn = jTable.getColumnModel().getColumn(col);
+
+            //Set up the editor for the sport cells.
+            tableColumn.setCellEditor(new ComboEditor());
+
+            //Set up tool tips for the sport cells.
+            DefaultTableCellRenderer renderer = new DefaultTableCellRenderer()
+            {
+                @Override
+                public Component getTableCellRendererComponent(JTable table, Object value,
+                                                               boolean isSelected, boolean hasFocus, int row, int column)
+                {
+                    JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                    label.setIcon(UIManager.getIcon("Table.descendingSortIcon"));
+                    return label;
+                }
+            };
+
+            renderer.setToolTipText("Click to select an ingredient!");
+            tableColumn.setCellRenderer(renderer);
+        }
+
+        class ComboEditor extends DefaultCellEditor
+        {
+            public ComboEditor()
+            {
+                super(new JComboBox());
+                model1 = (DefaultComboBoxModel) ((JComboBox) getComponent()).getModel();
+
+                comboBox = ((JComboBox) getComponent());
+                comboBox.setEditable(true);
+
+                comboBox.addItemListener(new ItemListener()
+                {
+                    public void itemStateChanged(ItemEvent ie)
+                    {
+                        if (ie.getStateChange()==ItemEvent.DESELECTED)
+                        {
+                            previous_IngredientName_JComboItem = ie.getItem();
+                        }
+                        if (ie.getStateChange()==ItemEvent.SELECTED)
+                        {
+                            ingredientNameChanged = true;
+                            //System.out.printf("\n\nIngredientName itemStateChanged() Item Selected \ningredientNameChanged: %s", ingredientNameChanged); //HELLO REMOVE
+                            selected_IngredientName_JCombo_Item = ie.getItem();
+                        }
+                    }
+                });
+
+
+                //######################################################
+                // Centre ComboBox Items
+                //######################################################
+                ((JLabel) comboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
+
+                //######################################################
+                // Make JComboBox Visible
+                //######################################################
+
+                ComboBoxTableCellRenderer renderer = new ComboBoxTableCellRenderer();
+
+                renderer.setModel(model1);
+
+                TableColumn tableColumn = jTable.getColumnModel().getColumn(getIngredientsTable_Supplier_Col());
+                tableColumn.setCellRenderer(renderer);
+            }
+
+
+            //First time the cell is created
+            @Override
+            public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column)
+            {
+                //########################################
+                // Get Previous Stored Item
+                ////######################################
+
+                model1.removeAllElements();
+
+                String keyColumnValue = jTable.getValueAt(row, getIngredientsTable_ID_Col()).toString(); // HELLO Not Sure what this does
+                Object ingredientID = jTable.getValueAt(row, getIngredientsTable_ID_Col());
+                Object ingredientIndex = jTable.getValueAt(row, getIngredientsTable_Index_Col());
+                Object ingrdientName = table.getValueAt(row, getIngredientsTable_IngredientsName_Col());
+
+                TableColumn tableColumn = jTable.getColumnModel().getColumn(column);
+
+                String ingredientType = table.getValueAt(row, getIngredientsTable_Type_Col()).toString();
+
+                for (String item : map_ingredientTypesToNames.get(ingredientType))
+                {
+                    model1.addElement(item);
+                }
+
+                return super.getTableCellEditorComponent(table, value, isSelected, row, column);
+            }
+        }
+
+        public DefaultComboBoxModel getModel()
+        {
+            return model1;
+        }
+
+        public JComboBox getComboBox()
+        {
+            return comboBox;
+        }
+    }
 
     public void setUpJComboColumn(int col, String type, ArrayList<String> items)
     {
-        jcomboMap.put(col, items);
+        jComboMap.put(col, items);
 
         if (items!=null && items.size() > 0)
         {
@@ -1452,13 +1655,13 @@ public class IngredientsTable extends JDBC_JTable
                     {
                         if (previousJComboItem==null)
                         {
-                            selected_Jcombo_Item = ie.getItem();
-                            previousJComboItem = selected_Jcombo_Item;
+                            selected_JCombo_Item = ie.getItem();
+                            previousJComboItem = selected_JCombo_Item;
                         }
                         else
                         {
-                            previousJComboItem = selected_Jcombo_Item;
-                            selected_Jcombo_Item = ie.getItem();
+                            previousJComboItem = selected_JCombo_Item;
+                            selected_JCombo_Item = ie.getItem();
                         }
                     }
                 }
@@ -1513,8 +1716,7 @@ public class IngredientsTable extends JDBC_JTable
         }
     }
 
-
-    //##################################################################################################################
+    //#######################################################################################
     public class ComboBoxTableCellRenderer extends JComboBox implements TableCellRenderer
     {
 
@@ -1526,7 +1728,7 @@ public class IngredientsTable extends JDBC_JTable
         }
 
     }
-    //##################################################################################################################
+    //#######################################################################################
 
     /**
      * http://www.camick.com/java/source/ButtonColumn.java
@@ -1762,211 +1964,8 @@ public class IngredientsTable extends JDBC_JTable
     }
 
     //##################################################################################################################
-
-    //##################################################
-
-    public void refresh_Btn_Action(boolean updateMacrosLeft)
-    {
-        //#############################################################################################
-        // Reset DB Data
-        //##############################################################################################
-        if (!(transferMealDataToPlan(planID, temp_PlanID)))
-        {
-            JOptionPane.showMessageDialog(null, "\n\nUnable to transfer ingredients data from  original plan to temp plan!!");
-            return;
-        }
-
-        //#############################################################################################
-        // Reset Table Info & Data
-        //##############################################################################################
-        refresh(updateMacrosLeft);
-    }
-
-    public void refresh(boolean updateMacrosLeft)
-    {
-        //#############################################################################################
-        // If Meal was previously deleted reset variables & state
-        //##############################################################################################
-        if (getObjectDeleted())
-        {
-            setVisibility(true);
-            setObjectDeleted(false);
-        }
-
-        //##############################################################################################
-        // Reset Table Model data
-        ///#############################################################################################
-        tableModel_Setup(getData(), getColumnNames());
-
-        //#############################################################################################
-        // Reset Meal Total  Table Data
-        //#############################################################################################
-        refreshTotalMealTable();
-
-        //#############################################################################################
-        // Update Other Tables Data
-        //#############################################################################################
-        if (updateMacrosLeft)
-        {
-            refreshMacrosLeftTable();
-        }
-
-        //#############################################################################################
-        // Reset Variable
-        //#############################################################################################
-        dataChangedInTable = false;
-    }
-
-    //##################################################
-
-    public boolean saveDataAction(boolean showMessage)
-    {
-        //######################################################################
-        // Transfer Data from temp plan to origin plan
-        //######################################################################
-        if (!(transferMealDataToPlan(temp_PlanID, planID)))     // If Meal Not In Original PlanID Add To PlanID
-        {
-            if (showMessage)
-            {
-                JOptionPane.showMessageDialog(null, "\n\nUnable to transfer ingredients data from temp to original plan ");
-            }
-            return false;
-        }
-
-        //######################################################################
-        // Change Setting
-        //######################################################################
-        if (!(getMealInDB()))     // If Meal Not In Original PlanID Add To PlanID
-        {
-            set_Meal_In_DB(true);
-        }
-
-        //######################################################################
-        // Update Table Model
-        //######################################################################
-        if (!updateTableModelData())
-        {
-            if (showMessage)
-            {
-                JOptionPane.showMessageDialog(null, "\n\nUnable to update table model!");
-            }
-            return false;
-        }
-
-        //######################################################################
-        // Success Message
-        //######################################################################
-        if (showMessage)
-        {
-            JOptionPane.showMessageDialog(null, "Table Successfully Updated!");
-        }
-
-        //#############################################################################################
-        // Reset Variable
-        //#############################################################################################
-        dataChangedInTable = false;
-
-        return true;
-    }
-
-    //##################################################
-
-    public boolean transferMealDataToPlan(int fromPlanID, int toPlanID)
-    {
-        //########################################################
-        // Transferring this Meals Info from one plan to another
-        //########################################################
-
-        // Delete tables if they already exist
-        String query0 = String.format("DROP TABLE IF EXISTS temp_ingredients_in_meal;");
-
-        String query1 = "SET FOREIGN_KEY_CHECKS = 0;"; // Disable Foreign Key Checks
-
-        // Delete ingredients in meal Data from original plan with this mealID
-        String query2 = String.format("DELETE FROM ingredients_in_meal  WHERE MealID = %s AND PlanID = %s;", mealID, toPlanID);
-
-        String query3 = "SET FOREIGN_KEY_CHECKS = 1;"; // Enable Foreign Key Checks
-
-        // insert meal if it does not exist inside toPlanID
-        String query4 = String.format("""
-                INSERT IGNORE INTO meals
-                (MealID, PlanID, Meal_Name)
-                                
-                VALUES
-                (%s, %s, '%s');
-                  """, mealID, toPlanID, mealName);
-
-        //####################################################
-        // Transferring this plans Ingredients to Temp-Plan
-        //####################################################
-
-        // Create Table to transfer ingredients from original plan to temp
-        String query5 = String.format("""                                     
-                CREATE table temp_ingredients_in_meal  AS
-                SELECT i.*
-                FROM ingredients_in_meal i                                                       
-                WHERE i.MealID = %s AND i.PlanID = %s;          
-                """, mealID, fromPlanID);
-
-        String query6 = String.format("UPDATE temp_ingredients_in_meal  SET PlanID = %s;", toPlanID);
-
-        String query7 = String.format("INSERT INTO ingredients_in_meal SELECT * FROM temp_ingredients_in_meal;");
-
-        //####################################################
-        // Update
-        //####################################################
-        String[] query_Temp_Data = new String[]{query0, query1, query2, query3, query4, query5, query6, query7};
-
-        if (!(db.uploadData_Batch_Altogether(query_Temp_Data)))
-        {
-            JOptionPane.showMessageDialog(null, "\n\ntransferMealIngredients() Cannot Create Temporary Plan In DB to Allow Editing");
-            return false;
-        }
-
-        System.out.printf("\nMealIngredients Successfully Transferred! \n\n%s", lineSeparator);
-        return true;
-    }
-
-    //##################################################################################################################
     // Update Table / Accessor Methods
     //##################################################################################################################
-
-    public boolean updateTableModelData()
-    {
-        //##########################################
-        // Changing Ingredients In Meal Table Model
-        //##########################################
-        String tableInQuery = "ingredients_in_meal_calculation";
-
-        String query = String.format("Select * from %s WHERE MealID = %s AND PlanID = %s;", tableInQuery, mealID, temp_PlanID);
-        System.out.printf("\n\n################################################### \nupdateTableModelData() \n%s", query);
-
-        Object[][] ingredients_Data = db.getTableDataObject(query, tableInQuery);
-
-        if (ingredients_Data==null)
-        {
-            System.out.printf("\n\nUnable to change table model: %s", getMealName());
-            return false;
-        }
-
-        setTableModelData(ingredients_Data);
-
-
-        //##########################################
-        // Changing Total  Ingredients Table Model
-        //##########################################
-        if (!(total_Meal_Table.updateTableModelData()))
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    public String getMealName()
-    {
-        return mealName;
-    }
 
     private void updateOtherTablesData()
     {
@@ -1974,6 +1973,7 @@ public class IngredientsTable extends JDBC_JTable
         update_MacrosLeft_Table();
     }
 
+    // Update Table Methods
     private void update_TotalMeal_Table()
     {
         total_Meal_Table.updateTotalMealTable();
@@ -1984,6 +1984,7 @@ public class IngredientsTable extends JDBC_JTable
         macrosLeft_Table.updateMacrosLeft();
     }
 
+    // Refresh Table Methods
     public void refreshTotalMealTable()
     {
         total_Meal_Table.refreshData();
@@ -1998,19 +1999,9 @@ public class IngredientsTable extends JDBC_JTable
     // Mutator Methods
     //##################################################################################################################
 
-    public void addIngredient()
-    {
-        add_btn_Action();
-    }
-
     private void setRowBeingEdited()
     {
         rowBeingEdited = !rowBeingEdited; // flip it
-    }
-
-    private boolean getRowsBeingEdited()
-    {
-        return rowBeingEdited;
     }
 
     private void setObjectDeleted(boolean deleted)
@@ -2034,7 +2025,8 @@ public class IngredientsTable extends JDBC_JTable
         meal_In_DB = mealInDB;
     }
 
-
+    //#############################################################
+    // Mutator (Set) For Table Column Positions
     //#############################################################
     private void set_IngredientsTable_Index_Col(int value)
     {
@@ -2069,37 +2061,12 @@ public class IngredientsTable extends JDBC_JTable
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
-    private int getIngredientsTable_Index_Col()
+
+    public String getMealName()
     {
-        return ingredientsTable_Index_Col;
+        return mealName;
     }
 
-    private int getIngredientsTable_ID_Col()
-    {
-        return ingredientsTable_ID_Col;
-    }
-
-    private int getIngredientsTable_Quantity_Col()
-    {
-        return ingredientsTable_Quantity_Col;
-    }
-
-    private int getIngredientsTable_Type_Col()
-    {
-        return ingredientsTable_Type_Col;
-    }
-
-    private int getIngredientsTable_IngredientsName_Col()
-    {
-        return ingredientsTable_IngredientsName_Col;
-    }
-
-    private int getIngredientsTable_Supplier_Col()
-    {
-        return ingredientsTable_Supplier_Col;
-    }
-
-    //###############################################################################
     public boolean getMealInDB()
     {
         return meal_In_DB;
@@ -2143,6 +2110,39 @@ public class IngredientsTable extends JDBC_JTable
             }
         }
         return false;
+    }
+
+    //#############################################################
+    // Accessor For Table Column Positions
+    //#############################################################
+    private int getIngredientsTable_Index_Col()
+    {
+        return ingredientsTable_Index_Col;
+    }
+
+    private int getIngredientsTable_ID_Col()
+    {
+        return ingredientsTable_ID_Col;
+    }
+
+    private int getIngredientsTable_Quantity_Col()
+    {
+        return ingredientsTable_Quantity_Col;
+    }
+
+    private int getIngredientsTable_Type_Col()
+    {
+        return ingredientsTable_Type_Col;
+    }
+
+    private int getIngredientsTable_IngredientsName_Col()
+    {
+        return ingredientsTable_IngredientsName_Col;
+    }
+
+    private int getIngredientsTable_Supplier_Col()
+    {
+        return ingredientsTable_Supplier_Col;
     }
 
     //##################################################################################################################

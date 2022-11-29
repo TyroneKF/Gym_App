@@ -72,19 +72,10 @@ public class TotalMealTable extends MyJTable_DisplayData
         super.updateTable(totalMeal_UpdateData, 0);
     }
 
-    public Object[][] getData()
-    {
-        return super.getData();
-    }
-
+    //HELLO Can this be refactored into parent class somewhere
     public String getMealName()
     {
         return mealName;
-    }
-
-    public void refreshData()
-    {
-        super.refreshData();
     }
 
     public void setTableModelData(Object[][] tableModelData)
@@ -142,7 +133,7 @@ public class TotalMealTable extends MyJTable_DisplayData
         }
         else
         {
-            setTableInitilized();
+            setTableInitialized();
         }
         resizeObject();
     }

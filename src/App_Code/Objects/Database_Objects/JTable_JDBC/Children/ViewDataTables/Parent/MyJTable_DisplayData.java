@@ -19,8 +19,5 @@ public class MyJTable_DisplayData extends JDBC_JTable
         this.planID = planID;
     }
 
-    public void refreshData()
-    {
-        tableModel_Setup(super.getData(), super.getColumnNames());
-    }
+
 }
