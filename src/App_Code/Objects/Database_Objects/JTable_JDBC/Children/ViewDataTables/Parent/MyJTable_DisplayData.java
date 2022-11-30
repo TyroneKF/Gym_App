@@ -18,6 +18,4 @@ public class MyJTable_DisplayData extends JDBC_JTable
 
         this.planID = planID;
     }
-
-
 }

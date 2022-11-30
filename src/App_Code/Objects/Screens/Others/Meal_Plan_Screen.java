@@ -606,7 +606,7 @@ public class Meal_Plan_Screen extends JPanel
         Object[][] meal_Total_Data = result!=null ? result:new Object[0][0];
 
         TotalMealTable total_Meal_View_Table = new TotalMealTable(db, collapsibleJpObj, databaseName, meal_Total_Data, mealTotalTable_ColumnNames, planID,
-                mealID, mealName, tableName, new ArrayList<>(Arrays.asList(mealTotalTable_ColumnNames)), null, false, totalMeal_Table_ColToHide);
+                mealID, mealName, tableName, new ArrayList<>(Arrays.asList(mealTotalTable_ColumnNames)), null,  totalMeal_Table_ColToHide);
 
         total_Meal_View_Table.setOpaque(true); //content panes must be opaque
         total_Meal_View_Table.setTableHeaderFont(new Font("Dialog", Font.BOLD, 12));

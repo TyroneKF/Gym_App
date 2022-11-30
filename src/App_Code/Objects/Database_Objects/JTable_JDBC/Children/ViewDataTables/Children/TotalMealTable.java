@@ -17,8 +17,7 @@ public class TotalMealTable extends MyJTable_DisplayData
 
     public TotalMealTable(MyJDBC db, CollapsibleJPanel collapsibleObj,  String databaseName, Object[][] data, String[] columnNames, int planID,
                           Integer mealID, String mealName, String tableName,
-                          ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering, boolean setIconsUp,
-                          ArrayList<String> columnsToHide)
+                          ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering, ArrayList<String> columnsToHide)
     {
 
         super(db, collapsibleObj.getCentreJPanel(), databaseName, data, columnNames, planID, tableName, unEditableColumns, colAvoidCentering, columnsToHide);
@@ -72,7 +71,6 @@ public class TotalMealTable extends MyJTable_DisplayData
         super.updateTable(totalMeal_UpdateData, 0);
     }
 
-    //HELLO Can this be refactored into parent class somewhere
     public String getMealName()
     {
         return mealName;
