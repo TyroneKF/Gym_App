@@ -1,4 +1,4 @@
-package App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Parent;
+package App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.JTable_JDBC.JDBC_JTable;

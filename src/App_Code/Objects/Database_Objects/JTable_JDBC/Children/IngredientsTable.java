@@ -1,4 +1,4 @@
-package App_Code.Objects.Database_Objects.JTable_JDBC.Children.EditDataTable;
+package App_Code.Objects.Database_Objects.JTable_JDBC.Children;
 
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;

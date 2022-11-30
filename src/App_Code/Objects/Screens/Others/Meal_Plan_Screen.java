@@ -4,7 +4,7 @@ package App_Code.Objects.Screens.Others;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Children.MacrosLeftTable;
 import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Children.MacrosTargetsTable;
-import App_Code.Objects.Database_Objects.JTable_JDBC.Children.EditDataTable.IngredientsTable;
+import App_Code.Objects.Database_Objects.JTable_JDBC.Children.IngredientsTable;
 
 import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Children.TotalMealTable;
 import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
