@@ -943,7 +943,9 @@ public class IngredientsTable extends JDBC_JTable
     // Button Events
     //##################################################################################################################
 
+    //###################################################
     // Add Button
+    //###################################################
     public void addIngredient()
     {
         add_btn_Action();
@@ -1055,7 +1057,9 @@ public class IngredientsTable extends JDBC_JTable
         updateOtherTablesData();
     }
 
+    //###################################################
     // Refresh Button
+    //###################################################
     public void refresh_Btn_Action(boolean updateMacrosLeft)
     {
         //#############################################################################################
@@ -1108,7 +1112,9 @@ public class IngredientsTable extends JDBC_JTable
         dataChangedInTable = false;
     }
 
+    //###################################################
     // Save Button
+    //###################################################
     public boolean saveDataAction(boolean showMessage)
     {
         //######################################################################
@@ -1159,8 +1165,40 @@ public class IngredientsTable extends JDBC_JTable
         return true;
     }
 
+    public boolean updateTableModelData()
+    {
+        //##########################################
+        // Changing Ingredients In Meal Table Model
+        //##########################################
+        String tableInQuery = "ingredients_in_meal_calculation";
+
+        String query = String.format("Select * from %s WHERE MealID = %s AND PlanID = %s;", tableInQuery, mealID, temp_PlanID);
+        System.out.printf("\n\n################################################### \nupdateTableModelData() \n%s", query);
+
+        Object[][] ingredients_Data = db.getTableDataObject(query, tableInQuery);
+
+        if (ingredients_Data==null)
+        {
+            System.out.printf("\n\nUnable to change table model: %s", getMealName());
+            return false;
+        }
+
+        setTableModelData(ingredients_Data);
+
+
+        //##########################################
+        // Changing Total  Ingredients Table Model
+        //##########################################
+        if (!(total_Meal_Table.updateTableModelData()))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
     //################################################
-    //
+    // Events For Refresh & Save
     //################################################
     public boolean transferMealDataToPlan(int fromPlanID, int toPlanID)
     {
@@ -1215,38 +1253,6 @@ public class IngredientsTable extends JDBC_JTable
         }
 
         System.out.printf("\nMealIngredients Successfully Transferred! \n\n%s", lineSeparator);
-        return true;
-    }
-
-    public boolean updateTableModelData()
-    {
-        //##########################################
-        // Changing Ingredients In Meal Table Model
-        //##########################################
-        String tableInQuery = "ingredients_in_meal_calculation";
-
-        String query = String.format("Select * from %s WHERE MealID = %s AND PlanID = %s;", tableInQuery, mealID, temp_PlanID);
-        System.out.printf("\n\n################################################### \nupdateTableModelData() \n%s", query);
-
-        Object[][] ingredients_Data = db.getTableDataObject(query, tableInQuery);
-
-        if (ingredients_Data==null)
-        {
-            System.out.printf("\n\nUnable to change table model: %s", getMealName());
-            return false;
-        }
-
-        setTableModelData(ingredients_Data);
-
-
-        //##########################################
-        // Changing Total  Ingredients Table Model
-        //##########################################
-        if (!(total_Meal_Table.updateTableModelData()))
-        {
-            return false;
-        }
-
         return true;
     }
 
@@ -1964,8 +1970,12 @@ public class IngredientsTable extends JDBC_JTable
     }
 
     //##################################################################################################################
-    // Update Table / Accessor Methods
+    // Update Table & Refresh Tables
     //##################################################################################################################
+
+    //##################################################
+    // Update Table Methods
+    //##################################################
 
     private void updateOtherTablesData()
     {
@@ -1973,7 +1983,6 @@ public class IngredientsTable extends JDBC_JTable
         update_MacrosLeft_Table();
     }
 
-    // Update Table Methods
     private void update_TotalMeal_Table()
     {
         total_Meal_Table.updateTotalMealTable();
@@ -1984,7 +1993,9 @@ public class IngredientsTable extends JDBC_JTable
         macrosLeft_Table.updateMacrosLeft();
     }
 
+    //##################################################
     // Refresh Table Methods
+    //##################################################
     public void refreshTotalMealTable()
     {
         total_Meal_Table.refreshData();
@@ -2115,6 +2126,11 @@ public class IngredientsTable extends JDBC_JTable
     //#############################################################
     // Accessor For Table Column Positions
     //#############################################################
+    private Integer getDeleteBTN_Col()
+    {
+        return deleteColumn;
+    }
+
     private int getIngredientsTable_Index_Col()
     {
         return ingredientsTable_Index_Col;

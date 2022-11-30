@@ -319,12 +319,6 @@ public class JDBC_JTable extends JPanel
         return tableInitialised;
     }
 
-    protected Integer getDeleteBTN_Col()
-    {
-        return deleteColumn;
-    }
-
-
     protected Object[][] getData()
     {
         return data;
@@ -334,7 +328,6 @@ public class JDBC_JTable extends JPanel
     {
         return columnNames;
     }
-
 
     protected JTable getTable()
     {
