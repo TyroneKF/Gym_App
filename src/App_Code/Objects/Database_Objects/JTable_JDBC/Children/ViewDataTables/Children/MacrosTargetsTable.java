@@ -17,8 +17,6 @@ public class MacrosTargetsTable extends MyJTable_DisplayData
         super(db, parentContainer, databaseName, data, columnNames, planID, tableName, unEditableColumns, colAvoidCentering, columnsToHide);
     }
 
-
-
     public void updateMacrosTargetsTable()
     {
         String query = String.format("SELECT * FROM plan_Macro_Target_Calculations WHERE PlanID = %s;", temp_PlanID);
