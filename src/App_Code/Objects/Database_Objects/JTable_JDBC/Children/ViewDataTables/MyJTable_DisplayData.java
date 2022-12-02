@@ -39,6 +39,4 @@ public class MyJTable_DisplayData extends JDBC_JTable
         super.updateTable(tableData, updateRow);
     }
 
-
-
 }
