@@ -1990,7 +1990,7 @@ public class IngredientsTable extends JDBC_JTable
 
     public void update_MacrosLeft_Table()
     {
-        macrosLeft_Table.updateMacrosLeft();
+        macrosLeft_Table.updateMacrosLeftTable();
     }
 
     //##################################################

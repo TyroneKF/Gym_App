@@ -1293,8 +1293,8 @@ public class Meal_Plan_Screen extends JPanel
 
     public void updateTargetsAndMacrosLeft()
     {
-        macros_Targets_Table.updateTargets();
-        macrosLeft_JTable.updateMacrosLeft();
+        macros_Targets_Table.updateMacrosTargetsTable();
+        macrosLeft_JTable.updateMacrosLeftTable();
     }
 
     //##########################################

@@ -17,27 +17,11 @@ public class MacrosTargetsTable extends MyJTable_DisplayData
         super(db, parentContainer, databaseName, data, columnNames, planID, tableName, unEditableColumns, colAvoidCentering, columnsToHide);
     }
 
-    public void updateTargets()
+
+
+    public void updateMacrosTargetsTable()
     {
-        //##########################################################################
-        //   Updating MacroTargets_Table
-        ///##########################################################################
-
-        String macrosLeftQuery = String.format("SELECT * FROM plan_Macro_Target_Calculations WHERE PlanID = %s;", temp_PlanID);
-
-        ArrayList<ArrayList<Object>> macrosLeftTableData = db.get_Multi_ColumnQuery_Object(macrosLeftQuery);
-
-        if (macrosLeftTableData == null)
-        {
-            JOptionPane.showMessageDialog(null, "ERROR: \nUn-able to MacrosLeft Table!");
-
-            return;
-        }
-        else
-        {
-            ArrayList<Object> macrosLeft_UpdateData = macrosLeftTableData.get(0);
-            super.updateTable(macrosLeft_UpdateData, 0);
-        }
-        return;
+        String query = String.format("SELECT * FROM plan_Macro_Target_Calculations WHERE PlanID = %s;", temp_PlanID);
+        super.updateTable("MacrosTargetsTable", query, 0);
     }
 }
