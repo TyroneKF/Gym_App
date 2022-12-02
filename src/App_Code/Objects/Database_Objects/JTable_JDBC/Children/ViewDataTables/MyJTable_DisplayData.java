@@ -30,13 +30,31 @@ public class MyJTable_DisplayData extends JDBC_JTable
 
         if (tableDataObject== null)
         {
-            JOptionPane.showMessageDialog(null, String.format("ERROR: \nUn-able to update %s Table!", tableName));
+            JOptionPane.showMessageDialog(null, String.format("ERROR updateTable(): \nUn-able to update %s Table!", tableName));
 
             return;
         }
 
         ArrayList<Object> tableData = tableDataObject.get(0);
         super.updateTable(tableData, updateRow);
+    }
+
+    protected  boolean updateTableModelData(String tableName, String query)
+    {
+        //##########################################
+        // Changing Table Model
+        //##########################################
+
+        Object[][] data = db.getTableDataObject(query, tableName);
+
+        if (data == null)
+        {
+            System.out.printf("\n\nupdateTableModelData() Unable to update %s model data!", tableName);
+            return false;
+        }
+
+        setTableModelData(data);
+        return true;
     }
 
 }

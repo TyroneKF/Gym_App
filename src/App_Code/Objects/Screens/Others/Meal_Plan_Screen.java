@@ -1244,7 +1244,7 @@ public class Meal_Plan_Screen extends JPanel
         // ##############################################################################
         // Update MacrosLeft Targets
         // ##############################################################################
-        if (!(macrosLeft_JTable.updateTableModelData()))
+        if (!(macrosLeft_JTable.updateMacrosLeftTableModelData()))
         {
             JOptionPane.showMessageDialog(frame, "\n\n Error \n4.) Unable to save MacrosLeftTable! \n\nPlease retry again!");
             return;

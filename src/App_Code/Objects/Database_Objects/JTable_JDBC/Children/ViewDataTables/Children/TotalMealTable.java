@@ -28,46 +28,6 @@ public class TotalMealTable extends MyJTable_DisplayData
         this.collapsibleObj = collapsibleObj;
     }
 
-
-    public void updateTotalMealTable()
-    {
-        String query = String.format("SELECT *  FROM total_meal_view WHERE MealID = %s AND PlanID = %s;", mealID, temp_PlanID);
-        super.updateTable("TotalMealTable", query, 0);
-    }
-
-
-    public boolean updateTableModelData()
-    {
-        //##########################################
-        // Changing Total  Ingredients Table Model
-        //##########################################
-
-        // Setting totals tables Data model to new data
-        String totalTableQuery = String.format("SELECT *  FROM total_meal_view WHERE MealID = %s AND PlanID = %s;", mealID, temp_PlanID);
-
-        Object[][] totalTableData = db.getTableDataObject(totalTableQuery, "total_meal_view");
-
-        if (totalTableData == null)
-        {
-            System.out.printf("\n\nUnable to update total meal table for table: %s", getMealName());
-            return false;
-        }
-
-        setTableModelData(totalTableData);
-
-        return true;
-    }
-
-    public String getMealName()
-    {
-        return mealName;
-    }
-
-    public void setTableModelData(Object[][] tableModelData)
-    {
-        super.setTableModelData(tableModelData);
-    }
-
     @Override
     public void tableModel_Setup(Object[][] data, String[] columnNames)
     {
@@ -122,6 +82,32 @@ public class TotalMealTable extends MyJTable_DisplayData
         }
         resizeObject();
     }
+
+    public void updateTotalMealTable()
+    {
+        String query = String.format("SELECT *  FROM total_meal_view WHERE MealID = %s AND PlanID = %s;", mealID, temp_PlanID);
+        super.updateTable("TotalMealTable", query, 0);
+    }
+
+
+    public boolean updateTotalMealTableModelData()
+    {
+        String query = String.format("SELECT *  FROM total_meal_view WHERE MealID = %s AND PlanID = %s;",
+                mealID, temp_PlanID);
+
+        return super.updateTableModelData("total_meal_view", query);
+    }
+
+    public String getMealName()
+    {
+        return mealName;
+    }
+
+    public void setTableModelData(Object[][] tableModelData)
+    {
+        super.setTableModelData(tableModelData);
+    }
+
 
 }
 

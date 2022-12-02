@@ -22,26 +22,11 @@ public class MacrosLeftTable extends MyJTable_DisplayData
         super.updateTable("MacrosLeftTable", query, 0);
     }
 
-    public boolean updateTableModelData()
+    public boolean updateMacrosLeftTableModelData()
     {
-        //##########################################
-        // Changing Total  Ingredients Table Model
-        //##########################################
+        String query = String.format("select * from planMacrosLeft WHERE PlanID = %s;", temp_PlanID);
 
-        // Setting totals tables Data model to new data
-        String macrosLeftQuery = String.format("select * from planMacrosLeft WHERE PlanID = %s;", temp_PlanID);
-        System.out.printf("\n\n#################################@@ \n\n%s", macrosLeftQuery);
-
-        Object[][] macrosLeftData = db.getTableDataObject(macrosLeftQuery, "planMacrosLeft");
-
-        if (macrosLeftData == null)
-        {
-            System.out.printf("\n\nUnable to update macrosLeftData");
-            return false;
-        }
-
-        setTableModelData(macrosLeftData);
-        return true;
+        return super.updateTableModelData("planMacrosLeft", query);
     }
 
 }
