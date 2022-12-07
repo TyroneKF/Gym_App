@@ -40,7 +40,7 @@ public class Meal_Plan_Screen extends JPanel
     //
     //#################################################################################################################
 
-    private static String databaseName = "gymapp11";
+    private static String databaseName = "gymapp12";
     private String JFrameName = databaseName;
 
     //#################################################################################################################
@@ -589,9 +589,38 @@ public class Meal_Plan_Screen extends JPanel
     private CollapsibleJPanel create_CollapsibleJPanel(boolean mealInDB, Container container, Integer mealID, String mealName, int mealNo, String[] mealTotalTable_ColumnNames,
                                                        String[] ingredients_ColumnNames, MacrosLeftTable macrosLeft_JTable)
     {
+        //########################################################################
+        //
+        //########################################################################
         CollapsibleJPanel collapsibleJpObj = new CollapsibleJPanel(container, String.format("   Meal   %s", mealNo), 150, 50);
         JPanel collapsibleJPanel = collapsibleJpObj.getCentreJPanel();
         collapsibleJPanel.setBackground(Color.YELLOW);
+
+        //########################################################################
+        //
+        //########################################################################
+        JPanel eastJPanel = collapsibleJpObj.getEastJPanel();
+        eastJPanel.setLayout(new GridBagLayout());
+
+        IconPanel iconPanel = new IconPanel(1, 10, "East");
+        JPanel iconPanelInsert = iconPanel.getIconJpanel();
+
+        addToContainer(eastJPanel, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0, null);
+
+        //##########################
+        //Add BTN
+        //##########################
+        IconButton add_Icon_Btn = new IconButton("src/images/add/add.png", "", 40, 40, 40, 40, "centre", "right");
+        // add_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
+
+        JButton add_Btn = add_Icon_Btn.returnJButton();
+        add_Icon_Btn.makeBTntransparent();
+
+        add_Btn.addActionListener(ae -> {
+
+        });
+
+        iconPanelInsert.add(add_Icon_Btn);
 
         //########################################################################
         //  Total Meal Calculation JTable

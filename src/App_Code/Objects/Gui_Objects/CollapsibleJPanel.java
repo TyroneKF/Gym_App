@@ -9,7 +9,7 @@ public class CollapsibleJPanel extends JPanel
 
     boolean isCollapsed = false;
     String btnText;
-    JPanel collapsibleJPanel, southPanel;
+    JPanel collapsibleJPanel, southPanel, eastJPanel;
     JButton iconBtn;
     IconButton collapse_And_Expand_Btn;
     Container parentContainer;
@@ -52,6 +52,10 @@ public class CollapsibleJPanel extends JPanel
         });
 
         //####################################################
+        eastJPanel = new JPanel();
+        topJPanel.add(eastJPanel, BorderLayout.EAST);
+
+        //####################################################
         // ScrollPanel
         //####################################################
 
@@ -67,9 +71,13 @@ public class CollapsibleJPanel extends JPanel
         //####################################################
         // Collapsing JPanel
 
-       collapseJPanel(); //HELLO Remove
+        collapseJPanel(); //HELLO Remove
     }
 
+    public JPanel getEastJPanel()
+    {
+        return eastJPanel;
+    }
 
     public JPanel getCentreJPanel()
     {
@@ -121,6 +129,4 @@ public class CollapsibleJPanel extends JPanel
     {
         return parentContainer;
     }
-
-
 }
