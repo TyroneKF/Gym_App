@@ -89,7 +89,6 @@ public class TotalMealTable extends MyJTable_DisplayData
         super.updateTable("TotalMealTable", query, 0);
     }
 
-
     public boolean updateTotalMealTableModelData()
     {
         String query = String.format("SELECT *  FROM total_meal_view WHERE MealID = %s AND PlanID = %s;",
@@ -102,12 +101,6 @@ public class TotalMealTable extends MyJTable_DisplayData
     {
         return mealName;
     }
-
-    public void setTableModelData(Object[][] tableModelData)
-    {
-        super.setTableModelData(tableModelData);
-    }
-
 
 }
 

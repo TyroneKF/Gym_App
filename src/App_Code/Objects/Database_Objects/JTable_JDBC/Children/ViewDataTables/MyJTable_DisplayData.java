@@ -57,4 +57,8 @@ public class MyJTable_DisplayData extends JDBC_JTable
         return true;
     }
 
+    protected void setTableModelData(Object[][] tableModelData)
+    {
+        super.setTableModelData(tableModelData);
+    }
 }
