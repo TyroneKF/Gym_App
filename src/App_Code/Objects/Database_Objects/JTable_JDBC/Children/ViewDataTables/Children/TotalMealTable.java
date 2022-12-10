@@ -85,7 +85,7 @@ public class TotalMealTable extends MyJTable_DisplayData
 
     public void updateTotalMealTable()
     {
-        String query = String.format("SELECT *  FROM total_meal_view WHERE MealID = %s AND PlanID = %s;", mealID, temp_PlanID);
+        String query = String.format("SELECT *  FROM total_meal_view WHERE MealInPlanID = %s AND PlanID = %s;", mealID, temp_PlanID);
         super.updateTable("TotalMealTable", query, 0);
     }
 
