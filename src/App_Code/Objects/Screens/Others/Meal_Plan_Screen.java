@@ -149,7 +149,7 @@ public class Meal_Plan_Screen extends JPanel
             //####################################################
             // Number Of Meals
             //####################################################
-            String query1 = String.format("SELECT COUNT(MealID) AS TotalMeals FROM meals WHERE PlanID = %s;", planID);
+            String query1 = String.format("SELECT COUNT(MealInPlanID) AS TotalMeals FROM mealsInPlan WHERE PlanID = %s;", planID);
             String[] mealsInPlan = db.getSingleColumnQuery(query1);
 
             int
@@ -778,55 +778,62 @@ public class Meal_Plan_Screen extends JPanel
 
     private boolean transferMealIngredients(int fromPlanID, int toPlanID)
     {
-        //####################################################
-        // Transferring this plans Meals  Info to Temp-Plan
-        //####################################################
+        //################################################################
+        // Delete temp tables if they already exist
+        //################################################################
+        String query0 = String.format("DROP TABLE IF EXISTS temp_ingredients_in_sections_of_meal;");
+        String query1 = String.format("DROP TABLE IF EXISTS temp_dividedMealSections;");
+        String query2 = String.format("DROP TABLE IF EXISTS temp_mealsInPlan;");
 
-        // Delete tables if they already exist
-        String query0 = String.format("DROP TABLE IF EXISTS temp_ingredients_in_meal;");
-        String query00 = String.format("DROP TABLE IF EXISTS temp_meal;");
+        String query3 = "SET FOREIGN_KEY_CHECKS = 0;"; // Disable Foreign Key Checks
 
-        String query01 = "SET FOREIGN_KEY_CHECKS = 0;"; // Disable Foreign Key Checks
+        //################################################################
+        // Delete Meal & Ingredient Data from toPlanID
+        //################################################################
+        String query4 = String.format("DELETE FROM ingredients_in_sections_of_meal WHERE PlanID = %s;", toPlanID);
+        String query5 = String.format("DELETE FROM dividedMealSections WHERE PlanID = %s;", toPlanID);
+        String query6 = String.format("DELETE FROM mealsInPlan WHERE PlanID = %s;", toPlanID);
 
-        // Delete Data from toPlanID
-        String query1 = String.format("DELETE FROM ingredients_in_meal  WHERE PlanID = %s;", toPlanID);
-        String query2 = String.format("DELETE FROM meals  WHERE PlanID = %s;", toPlanID);
+        String query7 = "SET FOREIGN_KEY_CHECKS = 1;"; // Enable Foreign Key Checks
 
-        String query3 = "SET FOREIGN_KEY_CHECKS = 1;"; // Enable Foreign Key Checks
+        //################################################################
+        // Transferring Meals From One Plan To Another
+        //################################################################
+        String query8 = String.format("CREATE table temp_mealsInPlan AS SELECT * FROM mealsInPlan WHERE PlanID = %s ORDER BY MealInPlanID;", fromPlanID);
+        String query9 = String.format("UPDATE temp_mealsInPlan SET PlanID = %s;", toPlanID);
+        String query10 = String.format("INSERT INTO mealsInPlan SELECT * FROM temp_mealsInPlan;");
 
-        // Create table to transfer meals from fromPlanID to toPlanID
+        //################################################################
+        // Transferring Sections Of Meals From One Plan To Another
+        //################################################################
+        String query11 = String.format("CREATE table temp_dividedMealSections AS SELECT * FROM dividedMealSections WHERE PlanID = %s ORDER BY DivMealSectionsID;", fromPlanID);
+        String query12 = String.format("UPDATE temp_dividedMealSections SET PlanID = %s;", toPlanID);
+        String query13 = String.format("INSERT INTO dividedMealSections SELECT * FROM temp_dividedMealSections;");
 
-        String query4 = String.format("CREATE table temp_meal AS SELECT * FROM meals WHERE PlanID = %s ORDER BY MealID;", fromPlanID);
-
-        String query7 = String.format("UPDATE temp_meal SET PlanID = %s;", toPlanID);
-        String query8 = String.format("INSERT INTO meals SELECT * FROM temp_meal;");
-
-        //####################################################
+        //################################################################
         // Transferring this plans Ingredients to Temp-Plan
-        //####################################################
-
-
+        //################################################################
         // Create Table to transfer ingredients from original plan to temp
-        String query12 = String.format(""" 
+        String query14 = String.format(""" 
                                     
-                CREATE table temp_ingredients_in_meal  AS
+                CREATE table temp_ingredients_in_sections_of_meal AS
                 SELECT i.*
-                FROM ingredients_in_meal i                                                       
+                FROM ingredients_in_sections_of_meal i                                                       
                 WHERE i.PlanID = %s;                  
                 """, fromPlanID);
 
-        String query14 = String.format("UPDATE temp_ingredients_in_meal  SET PlanID = %s;", toPlanID);
-
-        String query18 = String.format("INSERT INTO ingredients_in_meal SELECT * FROM temp_ingredients_in_meal;");
+        String query15 = String.format("UPDATE temp_ingredients_in_sections_of_meal SET PlanID = %s;", toPlanID);
+        String query16 = String.format("INSERT INTO ingredients_in_sections_of_meal SELECT * FROM temp_ingredients_in_sections_of_meal;");
 
         //####################################################
         // Update
         //####################################################
-        String[] query_Temp_Data = new String[]{query0, query00, query01, query1, query2, query3, query4, query7, query8, query12, query14, query18};
+       String[] query_Temp_Data = new String[]{query0,query1,query2,query3,query4,query5,query6,query7,query8,query9,query10,query11,query12,
+               query13,query14,query15,query16};
 
         if (!(db.uploadData_Batch_Altogether(query_Temp_Data)))
         {
-            JOptionPane.showMessageDialog(null, "\n\ntransferMealIngredients() Cannot Create Temporary Plan In DB to Allow Editing");
+            JOptionPane.showMessageDialog(null, "\n\nError, transferMealIngredients() cannot transfer meal Ingredients");
             return false;
         }
 
