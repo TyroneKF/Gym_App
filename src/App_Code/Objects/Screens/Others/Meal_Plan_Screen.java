@@ -313,7 +313,7 @@ public class Meal_Plan_Screen extends JPanel
             //########################################
             // Getting ID's of Meals Of Chosen Plan
             //########################################
-            String query = String.format("SELECT MealID, Meal_Name FROM meals WHERE PlanID = %s ORDER BY MealID;", tempPlanID);
+            String query = String.format("SELECT MealInPlanID, Meal_Name FROM mealsInPlan WHERE PlanID = %s ORDER BY MealInPlanID;", tempPlanID);
 
             ArrayList<ArrayList<String>> plan_Meal_IDs_And_Name = db.getMultiColumnQuery(query);
             plan_Meal_IDs_And_Name = plan_Meal_IDs_And_Name!=null ? plan_Meal_IDs_And_Name:new ArrayList<>();
@@ -385,10 +385,10 @@ public class Meal_Plan_Screen extends JPanel
             tableName = "total_meal_view";
             meal_total_columnNames = db.getColumnNames(tableName)!=null ? db.getColumnNames(tableName):new String[0];
 
-            tableName = "ingredients_in_meal_calculation";
+            tableName = "ingredients_in_sections_of_meal_calculation";
             ingredients_ColumnNames = db.getColumnNames(tableName)!=null ? db.getColumnNames(tableName):new String[0];
 
-            for (int i = 0; i < no_of_meals; i++)
+           /* for (int i = 0; i < no_of_meals; i++)
             {
                 int mealID = Integer.parseInt(plan_Meal_IDs_And_Name.get(i).get(0)); // MealID's From Original Plan Not Temp
 
@@ -416,7 +416,7 @@ public class Meal_Plan_Screen extends JPanel
                 addToContainer(scrollJPanelCenter, spaceDivider, 0, pos++, 1, 1, 0.25, 0.25, "both", 50, 0, null);
 
                 splashScreenDemo.increaseBar(1);
-            }
+            }*/
 
             //##########################################
             // Make frame visible
