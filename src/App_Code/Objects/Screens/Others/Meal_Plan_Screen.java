@@ -147,14 +147,21 @@ public class Meal_Plan_Screen extends JPanel
         if (planID!=null)
         {
             //####################################################
-            // Number Of Meals
+            // Getting Number Of Meals & Subsections of meals
             //####################################################
             String query1 = String.format("SELECT COUNT(MealInPlanID) AS TotalMeals FROM mealsInPlan WHERE PlanID = %s;", planID);
-            String[] mealsInPlan = db.getSingleColumnQuery(query1);
+            String[] mealsInPlanCount = db.getSingleColumnQuery(query1);
 
+            String query2 = String.format("SELECT COUNT(DivMealSectionsID) AS TotalSubMeals FROM dividedMealSections WHERE PlanID = %s;", planID);
+            String[] dividedMealSectionsCount = db.getSingleColumnQuery(query2);
+
+            //####################################################
+            // Setting Up Loading Screen
+            //####################################################
             int
-                    no_of_meals = mealsInPlan==null ? 0:Integer.parseInt(mealsInPlan[0]),
-                    totalProgress = no_of_meals + (7 * 10);
+                    no_of_meals = mealsInPlanCount==null ? 0:Integer.parseInt(mealsInPlanCount[0]),
+                    no_of_sub_meals = dividedMealSectionsCount==null ? 0:Integer.parseInt(dividedMealSectionsCount[0]),
+                    totalProgress = no_of_meals + no_of_sub_meals + (7 * 10);
             /**
              *  1.) Transfer Plan Data
              *  2.) Transfer Plan Targets
@@ -388,21 +395,41 @@ public class Meal_Plan_Screen extends JPanel
             tableName = "ingredients_in_sections_of_meal_calculation";
             ingredients_ColumnNames = db.getColumnNames(tableName)!=null ? db.getColumnNames(tableName):new String[0];
 
-           /* for (int i = 0; i < no_of_meals; i++)
+            boolean errorFound = false;
+            for (int i = 0; i < no_of_meals; i++)
             {
-                int mealID = Integer.parseInt(plan_Meal_IDs_And_Name.get(i).get(0)); // MealID's From Original Plan Not Temp
-
+                //#####################################################
+                // Get MealID  & Name For Meal
+                //#####################################################
+                int mealInPlanID = Integer.parseInt(plan_Meal_IDs_And_Name.get(i).get(0)); // MealID's From Original Plan Not Temp
                 String mealName = plan_Meal_IDs_And_Name.get(i).get(1);
 
-                mealNo++;
+                //#####################################################
+                // Get MealID's Of SubMeals
+                //#####################################################
+                ArrayList<ArrayList<String>> subMealsInMealArrayList = db.getMultiColumnQuery(String.format("SELECT DivMealSectionsID FROM dividedMealSections WHERE MealInPlanID = %s;", mealInPlanID));
+
+                if(subMealsInMealArrayList == null)
+                {
+                    String message = "\n\nError, gathering sub-meals ID for meal named ' %s ' ! \nA meal must have 1 sub-meal minimum!";
+
+                    System.out.printf(message);
+                    JOptionPane.showMessageDialog(null, message);
+
+                    errorFound = true;
+                    break;
+                }
+
+                ArrayList<String> subMealsArrayList = subMealsInMealArrayList.get(0);
 
                 //#####################################################
                 // Create Collapsible Panel
                 //#####################################################
-                CollapsibleJPanel collapsibleJTable = create_CollapsibleJPanel(true, scrollJPanelCenter, mealID, mealName, mealNo, meal_total_columnNames, ingredients_ColumnNames,
+                mealNo++;
+                CollapsibleJPanel collapsibleJTable = create_CollapsibleJPanel(true, scrollJPanelCenter, mealInPlanID, mealName, mealNo, subMealsArrayList, meal_total_columnNames, ingredients_ColumnNames,
                         macrosLeft_JTable);
 
-                //#####################################################
+                //######################################################
                 // Adding Collapsible Objects && JTables To GUI
                 //######################################################
 
@@ -411,17 +438,22 @@ public class Meal_Plan_Screen extends JPanel
 
                 //Space Divider between each CollapsibleObj
                 JPanel spaceDivider = new JPanel();
-                // spaceDivider.setBorder(BorderFactory.createLineBorder(Color.RED, 3));
                 jTableBeingAdded.setSpaceDivider(spaceDivider);
                 addToContainer(scrollJPanelCenter, spaceDivider, 0, pos++, 1, 1, 0.25, 0.25, "both", 50, 0, null);
 
-                splashScreenDemo.increaseBar(1);
-            }*/
+                //######################################################
+                // Update Progress
+                //######################################################
+                splashScreenDemo.increaseBar(1 + subMealsInMealArrayList.size()); // + original meal + the sub-meal
+            }
 
             //##########################################
             // Make frame visible
             //##########################################
-            frame.setVisible(true); // HELLO REMOVE
+            if(! errorFound)
+            {
+                frame.setVisible(true); // HELLO REMOVE
+            }
         }
         else
         {
@@ -586,18 +618,18 @@ public class Meal_Plan_Screen extends JPanel
     //##################################################################################################################
     // Frequently Used Methods
     //##################################################################################################################
-    private CollapsibleJPanel create_CollapsibleJPanel(boolean mealInDB, Container container, Integer mealID, String mealName, int mealNo, String[] mealTotalTable_ColumnNames,
+    private CollapsibleJPanel create_CollapsibleJPanel(boolean mealInDB, Container container, Integer mealID, String mealName, int mealNo, ArrayList<String> subMealIDs, String[] mealTotalTable_ColumnNames,
                                                        String[] ingredients_ColumnNames, MacrosLeftTable macrosLeft_JTable)
     {
         //########################################################################
-        //
+        // Collapsible JPanel Button Title
         //########################################################################
         CollapsibleJPanel collapsibleJpObj = new CollapsibleJPanel(container, String.format("   Meal   %s", mealNo), 150, 50);
         JPanel collapsibleJPanel = collapsibleJpObj.getCentreJPanel();
         collapsibleJPanel.setBackground(Color.YELLOW);
 
         //########################################################################
-        //
+        // Icons Top RIGHT
         //########################################################################
         JPanel eastJPanel = collapsibleJpObj.getEastJPanel();
         eastJPanel.setLayout(new GridBagLayout());
@@ -629,7 +661,7 @@ public class Meal_Plan_Screen extends JPanel
 
         JPanel southPanel = collapsibleJpObj.getSouthJPanel();
 
-        String query = String.format("SELECT *  FROM total_meal_view WHERE MealID = %s AND PlanID = %s;", mealID, tempPlanID);
+        String query = String.format("SELECT *  FROM total_meal_view WHERE MealInPlanID = %s AND PlanID = %s;", mealID, tempPlanID);
         Object[][] result = db.getTableDataObject(query, tableName);
 
         Object[][] meal_Total_Data = result!=null ? result:new Object[0][0];
@@ -643,7 +675,7 @@ public class Meal_Plan_Screen extends JPanel
         //########################################################################
         //  Ingredients_In_Meal_Calculation JTable
         //########################################################################
-
+/*
         // Getting Ingredients In Meal
         query = String.format("SELECT *  FROM ingredients_in_meal_calculation WHERE MealID = %s AND PlanID = %s ORDER BY Ingredients_Index;", mealID, tempPlanID);
         tableName = "ingredients_in_meal_calculation";
@@ -666,14 +698,45 @@ public class Meal_Plan_Screen extends JPanel
         //##############################################
         // Ingredients_In_Meal_Calculation Customisation
         //#############################################
-        ingredients_Calculation_JTable.setTableHeaderFont(new Font("Dialog", Font.BOLD, 12));
+        ingredients_Calculation_JTable.setTableHeaderFont(new Font("Dialog", Font.BOLD, 12));*/
+
+        int yPos =1;
+        for (String subMeal: subMealIDs)
+        {
+
+            // Getting Ingredients In Meal
+            query = String.format("SELECT *  FROM ingredients_in_sections_of_meal_calculation WHERE DivMealSectionsID = %s AND PlanID = %s ORDER BY Ingredients_Index;", subMeal, tempPlanID);
+
+            System.out.printf("\n\n%s", query);
+
+            tableName = "ingredients_in_sections_of_meal_calculation";
+            Object[][] mealData = db.getTableDataObject(query, tableName)!=null ? db.getTableDataObject(query, tableName):new Object[0][0];
+
+            //##############################################
+            // Ingredients_In_Meal_Calculation  Creation
+            //##############################################
+
+            IngredientsTable ingredients_Calculation_JTable = new IngredientsTable(db, collapsibleJpObj, map_ingredientTypesToNames, databaseName, mealData, ingredients_ColumnNames, planID, mealID, mealInDB, mealName,
+                    tableName, ingredientsTableUnEditableCells, ingredients_Table_Col_Avoid_Centering, ingredientsInMeal_Table_ColToHide, total_Meal_View_Table, macrosLeft_JTable);
+
+            ingredients_Calculation_JTable.setOpaque(true); //content panes must be opaque
+            jTableBeingAdded = ingredients_Calculation_JTable;
+
+            // add ingredients JTable to list
+            listOfJTables.add(ingredients_Calculation_JTable);
+
+            //##############################################
+            // Ingredients_In_Meal_Calculation Customisation
+            //#############################################
+            ingredients_Calculation_JTable.setTableHeaderFont(new Font("Dialog", Font.BOLD, 12));
+
+            // Adding Ingredients_In_Meal_Calculation to CollapsibleOBJ
+            addToContainer(collapsibleJPanel, ingredients_Calculation_JTable, 0, yPos++, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        }
 
         //##################################################################################################
         // Adding Collapsible Objects && JTables To GUI
         //##################################################################################################
-
-        // addding Ingredients_In_Meal_Calculation to CollapsibleOBJ
-        addToContainer(collapsibleJPanel, ingredients_Calculation_JTable, 0, 1, 1, 1, 0.25, 0.25, "both", 0, 0, null);
 
         // adds space between Ingredients_In_Meal_Calculation table and total_in_meal table
         addToContainer(southPanel, new JPanel(), 0, 1, 1, 1, 0.25, 0.25, "both", 50, 0, null);
@@ -1116,7 +1179,7 @@ public class Meal_Plan_Screen extends JPanel
         // Create New Meal Table In GUI
         //##############################################
 
-        CollapsibleJPanel collapsibleJTable = create_CollapsibleJPanel(false, scrollJPanelCenter, mealID, newMealName, mealNo, meal_total_columnNames, ingredients_ColumnNames,
+        CollapsibleJPanel collapsibleJTable = create_CollapsibleJPanel(false, scrollJPanelCenter, mealID, newMealName, mealNo, null, meal_total_columnNames, ingredients_ColumnNames,
                 macrosLeft_JTable);
 
         //###############################################

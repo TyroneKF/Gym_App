@@ -267,7 +267,7 @@ LEFT JOIN stores s ON p.StoreID = s.StoreID;
 
 CREATE VIEW total_meal_view AS
 
-SELECT m.PlanID, m.MealInPlanID, m.Meal_Name, 
+SELECT m.PlanID, m., m.Meal_Name, 
 
 COUNT(i.IngredientID) as No_Of_Ingredients,
 IFNULL(ROUND(SUM(Quantity),2),0) as Weight_OF_Meal, 
@@ -470,7 +470,6 @@ INSERT INTO mealsInPlan
 VALUES
 (1, "Plan 1 Meal 1 "),
 (1, "Plan 1 Meal 2 "),
-(1, "Plan 1 Meal 3 "),
 
 (2, "Plan 2 Meal 1");
 
@@ -485,7 +484,7 @@ VALUES
 (1, 1),
 (1, 2),
 
-(2, 4);
+(2, 3);
 
 -- #####################################################
 -- ingredients_in_sections_of_meal Insert Statements
@@ -502,8 +501,8 @@ VALUES
 (1, 2, 3, 40),
 (1, 2, 4, 50), 
 
-(2, 3, 4, 50), 
-(2, 3, 4, 50);
+(1, 3, 4, 50), 
+(1, 3, 4, 50);
 
 -- ########################################################################################################################################
 -- ########################################################################################################################################
