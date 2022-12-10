@@ -1,4 +1,4 @@
---##########################################################################################################################################
+ --##########################################################################################################################################
 --##########################################################################################################################################
 DROP DATABASE IF EXISTS gymapp12;
 CREATE DATABASE IF NOT EXISTS gymapp12;
@@ -267,7 +267,7 @@ LEFT JOIN stores s ON p.StoreID = s.StoreID;
 
 CREATE VIEW total_meal_view AS
 
-SELECT m.PlanID, m., m.Meal_Name, 
+SELECT m.PlanID, m.MealInPlanID, m.Meal_Name, 
 
 COUNT(i.IngredientID) as No_Of_Ingredients,
 IFNULL(ROUND(SUM(Quantity),2),0) as Weight_OF_Meal, 
