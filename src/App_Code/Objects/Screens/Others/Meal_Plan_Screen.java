@@ -706,10 +706,10 @@ public class Meal_Plan_Screen extends JPanel
         //#############################################
         ingredients_Calculation_JTable.setTableHeaderFont(new Font("Dialog", Font.BOLD, 12));*/
 
-        int yPos =1;
-        for (ArrayList<String> subMeals: subMealIDs)
+        int yPos =1, no_Of_SubMealID = subMealIDs.size();
+        for (int i = 0; i < no_Of_SubMealID; i++)
         {
-            String subMealID = subMeals.get(0);
+            String subMealID = subMealIDs.get(i).get(0);
 
             // Getting Ingredients In Meal
             query = String.format("SELECT *  FROM ingredients_in_sections_of_meal_calculation WHERE DivMealSectionsID = %s AND PlanID = %s ORDER BY Ingredients_Index;", subMealID, tempPlanID);
@@ -743,8 +743,12 @@ public class Meal_Plan_Screen extends JPanel
             //#############################################
             // Space Divider
             //#############################################
-            // adds space between Ingredients_In_Meal_Calculation table and total_in_meal table
-            addToContainer(collapsibleJPanel, new JPanel(), 0, yPos++, 1, 1, 0.25, 0.25, "both", 50, 0, null);
+            // Don't add space divider on last sub-meal
+            if(i < no_Of_SubMealID-1)
+            {
+                // adds space between Ingredients_In_Meal_Calculation table and total_in_meal table
+                addToContainer(collapsibleJPanel, new JPanel(), 0, yPos++, 1, 1, 0.25, 0.25, "both", 20, 0, null);
+            }
         }
 
         //##################################################################################################
