@@ -155,6 +155,8 @@ public class Meal_Plan_Screen extends JPanel
             String query2 = String.format("SELECT COUNT(DivMealSectionsID) AS TotalSubMeals FROM dividedMealSections WHERE PlanID = %s;", planID);
             String[] dividedMealSectionsCount = db.getSingleColumnQuery(query2);
 
+            System.out.printf("\n\n%s \nMeals In Plan: %s\nSub-Meals In Plan: %s", lineSeparator, mealsInPlanCount[0],dividedMealSectionsCount[0]);
+
             //####################################################
             // Setting Up Loading Screen
             //####################################################
@@ -853,7 +855,7 @@ public class Meal_Plan_Screen extends JPanel
         //################################################################
         // Delete Meal & Ingredient Data from toPlanID
         //################################################################
-        String query4 = String.format("DELETE FROM ingredients_in_sections_of_meal WHERE PlanID = %s;", toPlanID);
+        String query4 =  String.format("DELETE FROM ingredients_in_sections_of_meal WHERE PlanID = %s;", toPlanID);
         String query5 = String.format("DELETE FROM dividedMealSections WHERE PlanID = %s;", toPlanID);
         String query6 = String.format("DELETE FROM mealsInPlan WHERE PlanID = %s;", toPlanID);
 
