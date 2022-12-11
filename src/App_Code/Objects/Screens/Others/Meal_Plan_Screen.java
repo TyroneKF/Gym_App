@@ -744,7 +744,7 @@ public class Meal_Plan_Screen extends JPanel
             // Space Divider
             //#############################################
             // adds space between Ingredients_In_Meal_Calculation table and total_in_meal table
-            addToContainer(collapsibleJPanel, new JPanel(), 0, 1, 1, 1, 0.25, 0.25, "both", 50, 0, null);
+            addToContainer(collapsibleJPanel, new JPanel(), 0, yPos++, 1, 1, 0.25, 0.25, "both", 50, 0, null);
         }
 
         //##################################################################################################
