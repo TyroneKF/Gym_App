@@ -681,31 +681,6 @@ public class Meal_Plan_Screen extends JPanel
         //########################################################################
         //  Ingredients_In_Meal_Calculation JTable
         //########################################################################
-/*
-        // Getting Ingredients In Meal
-        query = String.format("SELECT *  FROM ingredients_in_meal_calculation WHERE MealID = %s AND PlanID = %s ORDER BY Ingredients_Index;", mealID, tempPlanID);
-        tableName = "ingredients_in_meal_calculation";
-        Object[][] mealData = db.getTableDataObject(query, tableName)!=null ? db.getTableDataObject(query, tableName):new Object[0][0];
-
-        //##############################################
-        // Ingredients_In_Meal_Calculation  Creation
-        //##############################################
-
-
-        IngredientsTable ingredients_Calculation_JTable = new IngredientsTable(db, collapsibleJpObj, map_ingredientTypesToNames, databaseName, mealData, ingredients_ColumnNames, planID, mealID, mealInDB, mealName,
-                tableName, ingredientsTableUnEditableCells, ingredients_Table_Col_Avoid_Centering, ingredientsInMeal_Table_ColToHide, total_Meal_View_Table, macrosLeft_JTable);
-
-        ingredients_Calculation_JTable.setOpaque(true); //content panes must be opaque
-        jTableBeingAdded = ingredients_Calculation_JTable;
-
-        // add ingredients JTable to list
-        listOfJTables.add(ingredients_Calculation_JTable);
-
-        //##############################################
-        // Ingredients_In_Meal_Calculation Customisation
-        //#############################################
-        ingredients_Calculation_JTable.setTableHeaderFont(new Font("Dialog", Font.BOLD, 12));*/
-
         int yPos =1, no_Of_SubMealID = subMealIDs.size();
         for (int i = 0; i < no_Of_SubMealID; i++)
         {
