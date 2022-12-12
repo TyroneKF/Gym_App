@@ -245,7 +245,7 @@ public class IngredientsTable extends JDBC_JTable
         //###################################################################################
         // Table Icon Setup
         //###################################################################################
-
+        int iconSize = 20;
 
         IconPanel iconPanel = new IconPanel(3, 10, "East");
         JPanel iconPanelInsert = iconPanel.getIconJpanel();
@@ -255,7 +255,7 @@ public class IngredientsTable extends JDBC_JTable
         //##########################
         //Add BTN
         //##########################
-        IconButton add_Icon_Btn = new IconButton("src/images/add/add.png", "", 40, 40, 40, 40, "centre", "right");
+                IconButton add_Icon_Btn = new IconButton("src/images/add/add.png", "", iconSize, iconSize, iconSize, iconSize, "centre", "right");
         // add_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
 
         JButton add_Btn = add_Icon_Btn.returnJButton();
@@ -272,7 +272,7 @@ public class IngredientsTable extends JDBC_JTable
         // Refresh Icon
         //##########################
 
-        IconButton refresh_Icon_Btn = new IconButton("src/images/refresh/+refresh.png", "", 40, 40, 40, 40,
+        IconButton refresh_Icon_Btn = new IconButton("src/images/refresh/+refresh.png", "", iconSize, iconSize, iconSize, iconSize,
                 "centre", "right"); // btn text is useless here , refactor
         //refresh_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
 
@@ -298,7 +298,7 @@ public class IngredientsTable extends JDBC_JTable
         // Update Icon
         //##########################
 
-        IconButton saveIcon_Icon_Btn = new IconButton("src/images/save/save.png", "", 40, 40, 40, 40,
+        IconButton saveIcon_Icon_Btn = new IconButton("src/images/save/save.png", "", iconSize, iconSize, iconSize, iconSize,
                 "centre", "right"); // btn text is useless here , refactor
         //saveIcon_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
         saveIcon_Icon_Btn.makeBTntransparent();
@@ -319,7 +319,7 @@ public class IngredientsTable extends JDBC_JTable
         // Delete Icon
         //##########################
 
-        IconButton deleteIcon_Icon_Btn = new IconButton("src/images/delete/+delete.png", "", 50, 40, 50, 40,
+        IconButton deleteIcon_Icon_Btn = new IconButton("src/images/delete/+delete.png", "", iconSize, iconSize, iconSize+10, iconSize,
                 "centre", "right"); // btn text is useless here , refactor
         //deleteIcon_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
         deleteIcon_Icon_Btn.makeBTntransparent();
