@@ -265,11 +265,13 @@ LEFT JOIN stores s ON p.StoreID = s.StoreID;
 
 --#####################################################################
 
-CREATE VIEW total_meal_view AS
+CREATE VIEW divided_meal_sections_calculations AS
 
-SELECT m.PlanID, m.MealInPlanID, m.Meal_Name, 
+SELECT 
 
-COUNT(i.IngredientID) as No_Of_Ingredients,
+PlanID, DivMealSectionsID,
+COUNT(IngredientID) as No_Of_Ingredients,
+
 IFNULL(ROUND(SUM(Quantity),2),0) as Weight_OF_Meal, 
 IFNULL(ROUND(SUM(Ingredient_Cost),2),0) as Total_Cost, 
 
@@ -284,14 +286,39 @@ IFNULL(ROUND(SUM(Water_Content),2),0) as Total_Water_Content,
 IFNULL(ROUND(SUM(Liquid_Content),2),0) as Total_Liquid_Content, 
 IFNULL(ROUND(SUM(Calories),2),0) as Total_Calories
 
+FROM  ingredients_in_sections_of_meal_calculation 
+GROUP BY DivMealSectionsID, PlanID;
+
+--#####################################################################
+
+CREATE VIEW total_meal_view AS
+
+SELECT m.PlanID, m.MealInPlanID, m.Meal_Name, 
+
+COUNT(di.No_Of_Ingredients) as No_Of_Ingredients,
+IFNULL(ROUND(SUM(di.Weight_OF_Meal),2),0) as Weight_OF_Meal, 
+IFNULL(ROUND(SUM(di.Total_Cost),2),0) as Total_Cost, 
+
+IFNULL(ROUND(SUM(di.Total_Protein),2),0) as Total_Protein, 
+IFNULL(ROUND(SUM(di.Total_Carbohydrates),2),0) as Total_Carbohydrates, 
+IFNULL(ROUND(SUM(di.Total_Sugars_Of_Carbs),2),0) as Total_Sugars_Of_Carbs, 
+IFNULL(ROUND(SUM(di.Total_Fibre),2),0) as Total_Fibre, 
+IFNULL(ROUND(SUM(di.Total_Fats),2),0) as Total_Fats, 
+IFNULL(ROUND(SUM(di.Total_Saturated_Fat),2),0) as Total_Saturated_Fat, 
+IFNULL(ROUND(SUM(di.Total_Salt),2),0) as Total_Salt, 
+IFNULL(ROUND(SUM(di.Total_Water_Content),2),0) as Total_Water_Content, 
+IFNULL(ROUND(SUM(di.Total_Liquid_Content),2),0) as Total_Liquid_Content, 
+IFNULL(ROUND(SUM(di.Total_Calories),2),0) as Total_Calories
+
 FROM  mealsInPlan m
-LEFT JOIN dividedMealSections d
+
+LEFT JOIN dividedMealSections d 
 ON m.MealInPlanID = d.MealInPlanID AND m.PlanID = d.PlanID
 
-LEFT  JOIN ingredients_in_sections_of_meal_calculation i
-ON d.DivMealSectionsID = i.DivMealSectionsID AND d.PlanID = i.PlanID
+LEFT JOIN divided_meal_sections_calculations di
+ON di.DivMealSectionsID = d.DivMealSectionsID AND di.PlanID = d.PlanID;
 
-GROUP BY  d.MealInPlanID, d.PlanID;
+
 
 -- ######################################################
 
