@@ -1163,7 +1163,7 @@ public class Meal_Plan_Screen extends JPanel
         //#############################################
         // Create New Meal Table In GUI
         //##############################################
-
+        //HELLO WILL CAUSE ERROR null
         CollapsibleJPanel collapsibleJTable = create_CollapsibleJPanel(false, scrollJPanelCenter, mealID, newMealName, mealNo, null, meal_total_columnNames, ingredients_ColumnNames,
                 macrosLeft_JTable);
 
@@ -1179,6 +1179,7 @@ public class Meal_Plan_Screen extends JPanel
         JPanel spaceDivider = new JPanel();
         //spaceDivider.setBorder(BorderFactory.createLineBorder(Color.RED, 3));
         jTableBeingAdded.setSpaceDivider(spaceDivider);
+
         addToContainer(scrollJPanelCenter, spaceDivider, 0, pos++, 1, 1, 0.25, 0.25, "both", 50, 0, null);
 
         //##############################################
