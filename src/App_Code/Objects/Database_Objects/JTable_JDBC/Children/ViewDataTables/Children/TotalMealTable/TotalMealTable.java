@@ -1,4 +1,4 @@
-package App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Children;
+package App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Children.TotalMealTable;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.MyJTable_DisplayData;
