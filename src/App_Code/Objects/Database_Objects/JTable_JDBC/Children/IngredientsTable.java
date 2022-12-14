@@ -34,7 +34,7 @@ public class IngredientsTable extends JDBC_JTable
     //#################################################################################################################
     // Other Variables
     //#################################################################################################################
-    private Integer planID, temp_PlanID = 1, mealID;
+    private Integer planID, temp_PlanID = 1, mealID, divMealSectionsID;
     private String mealName;
 
     private ArrayList<Integer> triggerColumns;
@@ -87,10 +87,11 @@ public class IngredientsTable extends JDBC_JTable
      * @param colAvoidCentering
      * @param total_Meal_Table
      * @param macrosLeft_Table
+     *
      */
     public IngredientsTable(MyJDBC db, CollapsibleJPanel collapsibleObj, TreeMap<String, Collection<String>> map_ingredientTypesToNames,
                             String databaseName, Object[][] data, String[] columnNames, int planID,
-                            Integer mealID, boolean meal_In_DB, String mealName, String tableName,
+                            Integer mealID, Integer divMealSectionsID, boolean meal_In_DB, String mealName, String tableName,
                             ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering,
                             ArrayList<String> columnsToHide,
                             TotalMealTable total_Meal_Table, MacrosLeftTable macrosLeft_Table)
@@ -103,6 +104,7 @@ public class IngredientsTable extends JDBC_JTable
         this.mealName = mealName;
         this.planID = planID;
         this.mealID = mealID;
+        this.divMealSectionsID = divMealSectionsID;
 
         this.map_ingredientTypesToNames = map_ingredientTypesToNames;
         this.meal_In_DB = meal_In_DB;
@@ -981,7 +983,7 @@ public class IngredientsTable extends JDBC_JTable
         //#########################################################
         // Get Next Ingredients_Index For This Ingredient Addition
         //#########################################################
-        String getNextIndexQuery = "SELECT IFNULL(MAX(`Ingredients_Index`),0) + 1 AS nextId FROM `ingredients_in_meal`;";
+        String getNextIndexQuery = "SELECT IFNULL(MAX(`Ingredients_Index`),0) + 1 AS nextId FROM `ingredients_in_sections_of_meal`;";
 
         String[] newIngredientsIndex = db.getSingleColumnQuery(getNextIndexQuery);
 
@@ -998,12 +1000,12 @@ public class IngredientsTable extends JDBC_JTable
 
         String query1 = String.format("""
                         
-                INSERT INTO ingredients_in_meal
-                (Ingredients_Index, MealID, PlanID, IngredientID, Quantity, PDID)
+                INSERT INTO ingredients_in_sections_of_meal
+                (Ingredients_Index, divMealSectionsID, PlanID, IngredientID, Quantity, PDID)
                                         
                 VALUES
                 (%s, %s, %s, %s, %s, %s); 
-                        """, newIngredientsIndex2, mealID, temp_PlanID, ingredientID, quantity, NoneOfTheAbove_PDID);
+                        """, newIngredientsIndex2, divMealSectionsID, temp_PlanID, ingredientID, quantity, NoneOfTheAbove_PDID);
 
         if (!(db.uploadData_Batch_Altogether(new String[]{query1})))
         {
@@ -1017,7 +1019,7 @@ public class IngredientsTable extends JDBC_JTable
 
         String query = String.format("""
                 SELECT *
-                FROM ingredients_in_meal_calculation
+                FROM ingredients_in_sections_of_meal_calculation
                 WHERE Ingredients_Index = %s AND PlanID = %s;
                 """, newIngredientsIndex2, temp_PlanID);
 
@@ -2081,6 +2083,11 @@ public class IngredientsTable extends JDBC_JTable
     public boolean getMealInDB()
     {
         return meal_In_DB;
+    }
+
+    public Integer getDivMealSectionsID()
+    {
+        return divMealSectionsID;
     }
 
     public Integer getMealID()

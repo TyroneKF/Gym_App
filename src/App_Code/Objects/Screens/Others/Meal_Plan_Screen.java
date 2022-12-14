@@ -684,10 +684,11 @@ public class Meal_Plan_Screen extends JPanel
         int yPos =1, no_Of_SubMealID = subMealIDs.size();
         for (int i = 0; i < no_Of_SubMealID; i++)
         {
-            String subMealID = subMealIDs.get(i).get(0);
+            int divMealSectionsID = Integer.parseInt(subMealIDs.get(i).get(0));
+
 
             // Getting Ingredients In Meal
-            query = String.format("SELECT *  FROM ingredients_in_sections_of_meal_calculation WHERE DivMealSectionsID = %s AND PlanID = %s ORDER BY Ingredients_Index;", subMealID, tempPlanID);
+            query = String.format("SELECT *  FROM ingredients_in_sections_of_meal_calculation WHERE DivMealSectionsID = %s AND PlanID = %s ORDER BY Ingredients_Index;", divMealSectionsID, tempPlanID);
 
             System.out.printf("\n\n%s", query);
 
@@ -698,7 +699,7 @@ public class Meal_Plan_Screen extends JPanel
             // Ingredients_In_Meal_Calculation  Creation
             //##############################################
 
-            IngredientsTable ingredients_Calculation_JTable = new IngredientsTable(db, collapsibleJpObj, map_ingredientTypesToNames, databaseName, mealData, ingredients_ColumnNames, planID, mealID, mealInDB, mealName,
+            IngredientsTable ingredients_Calculation_JTable = new IngredientsTable(db, collapsibleJpObj, map_ingredientTypesToNames, databaseName, mealData, ingredients_ColumnNames, planID, mealID,divMealSectionsID, mealInDB, mealName,
                     tableName, ingredientsTableUnEditableCells, ingredients_Table_Col_Avoid_Centering, ingredientsInMeal_Table_ColToHide, total_Meal_View_Table, macrosLeft_JTable);
 
             ingredients_Calculation_JTable.setOpaque(true); //content panes must be opaque
