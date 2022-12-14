@@ -34,7 +34,7 @@ public class IngredientsTable extends JDBC_JTable
     //#################################################################################################################
     // Other Variables
     //#################################################################################################################
-    private Integer planID, temp_PlanID = 1, mealID, divMealSectionsID;
+    private Integer planID, temp_PlanID = 1, mealInPlanID, divMealSectionsID;
     private String mealName;
 
     private ArrayList<Integer> triggerColumns;
@@ -79,7 +79,7 @@ public class IngredientsTable extends JDBC_JTable
      * @param data
      * @param columnNames
      * @param planID
-     * @param mealID
+     * @param mealInPlanID
      * @param meal_In_DB
      * @param mealName
      * @param tableName
@@ -91,7 +91,7 @@ public class IngredientsTable extends JDBC_JTable
      */
     public IngredientsTable(MyJDBC db, CollapsibleJPanel collapsibleObj, TreeMap<String, Collection<String>> map_ingredientTypesToNames,
                             String databaseName, Object[][] data, String[] columnNames, int planID,
-                            Integer mealID, Integer divMealSectionsID, boolean meal_In_DB, String mealName, String tableName,
+                            Integer mealInPlanID, Integer divMealSectionsID, boolean meal_In_DB, String mealName, String tableName,
                             ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering,
                             ArrayList<String> columnsToHide,
                             TotalMealTable total_Meal_Table, MacrosLeftTable macrosLeft_Table)
@@ -103,7 +103,7 @@ public class IngredientsTable extends JDBC_JTable
         //##############################################################
         this.mealName = mealName;
         this.planID = planID;
-        this.mealID = mealID;
+        this.mealInPlanID = mealInPlanID;
         this.divMealSectionsID = divMealSectionsID;
 
         this.map_ingredientTypesToNames = map_ingredientTypesToNames;
@@ -673,7 +673,6 @@ public class IngredientsTable extends JDBC_JTable
         }
     }
 
-    //Editing Now
     private void updateTableValuesByQuantity(int row, Object ingredients_Index, Object quantity)
     {
         setRowBeingEdited();
@@ -815,7 +814,7 @@ public class IngredientsTable extends JDBC_JTable
 
                 // Update DB Values
                 String query1 = String.format("""
-                        UPDATE  ingredients_in_meal
+                        UPDATE  ingredients_in_sections_of_meal
                         SET IngredientID = %s, Quantity = 0
                         WHERE PlanID = %s  AND Ingredients_Index = %s;""", ingredientID, temp_PlanID, ingredients_Index);
 
@@ -845,9 +844,9 @@ public class IngredientsTable extends JDBC_JTable
             // Delete Ingredient From Temp Meal
             //#################################################
 
-            System.out.printf("\n\nDeleting Row in table %s \ningredientIndex: %s | MealID: %s", mealName, ingredientIndex, mealID);
+            System.out.printf("\n\nDeleting Row in table %s \ningredientIndex: %s | mealInPlanID: %s", mealName, ingredientIndex, mealInPlanID);
 
-            String query = String.format("DELETE FROM ingredients_in_meal WHERE Ingredients_Index = %s AND PlanID = %s;", ingredientIndex, temp_PlanID);
+            String query = String.format("DELETE FROM ingredients_in_sections_of_meal WHERE Ingredients_Index = %s AND PlanID = %s;", ingredientIndex, temp_PlanID);
 
             String[] queryUpload = new String[]{query};
 
@@ -886,8 +885,8 @@ public class IngredientsTable extends JDBC_JTable
          */
 
         String query1 = "SET FOREIGN_KEY_CHECKS = 0;"; // Disable Foreign Key Checks
-        String query2 = String.format(" DELETE FROM ingredients_in_meal WHERE MealID = %s AND PlanID = %s;", mealID, temp_PlanID);
-        String query4 = String.format(" DELETE FROM  meals WHERE MealID = %s AND PlanID = %s;", mealID, temp_PlanID);
+        String query2 = String.format(" DELETE FROM ingredients_in_sections_of_meal WHERE DivMealSectionsID = %s AND PlanID = %s;", divMealSectionsID, temp_PlanID);
+        String query4 = String.format(" DELETE FROM  meals WHERE DivMealSectionsID = %s AND PlanID = %s;", divMealSectionsID, temp_PlanID);
         String query5 = "SET FOREIGN_KEY_CHECKS = 1;"; // Enable Foreign Key Checks
 
         if (!db.uploadData_Batch_Altogether(new String[]{query1, query2, query4, query5}))
@@ -1174,7 +1173,7 @@ public class IngredientsTable extends JDBC_JTable
         //##########################################
         String tableInQuery = "ingredients_in_meal_calculation";
 
-        String query = String.format("Select * from %s WHERE MealID = %s AND PlanID = %s;", tableInQuery, mealID, temp_PlanID);
+        String query = String.format("Select * from %s WHERE MealID = %s AND PlanID = %s;", tableInQuery, mealInPlanID, temp_PlanID);
         System.out.printf("\n\n################################################### \nupdateTableModelData() \n%s", query);
 
         Object[][] ingredients_Data = db.getTableDataObject(query, tableInQuery);
@@ -1204,8 +1203,10 @@ public class IngredientsTable extends JDBC_JTable
     //################################################
     public boolean transferMealDataToPlan(int fromPlanID, int toPlanID)
     {
-        //########################################################
         // Transferring this Meals Info from one plan to another
+
+        //########################################################
+        // Clear Old Data from toPlan and & Temp Tables
         //########################################################
 
         // Delete tables if they already exist
@@ -1214,39 +1215,50 @@ public class IngredientsTable extends JDBC_JTable
         String query1 = "SET FOREIGN_KEY_CHECKS = 0;"; // Disable Foreign Key Checks
 
         // Delete ingredients in meal Data from original plan with this mealID
-        String query2 = String.format("DELETE FROM ingredients_in_meal  WHERE MealID = %s AND PlanID = %s;", mealID, toPlanID);
+        String query2 = String.format("DELETE FROM ingredients_in_sections_of_meal WHERE DivMealSectionsID = %s AND PlanID = %s;", divMealSectionsID, toPlanID);
 
         String query3 = "SET FOREIGN_KEY_CHECKS = 1;"; // Enable Foreign Key Checks
 
+        //########################################################
+        // Insert Meal & dividedMealSections If Not in DB In toPlan
+        //########################################################
         // insert meal if it does not exist inside toPlanID
         String query4 = String.format("""
-                INSERT IGNORE INTO meals
-                (MealID, PlanID, Meal_Name)
+                INSERT IGNORE INTO mealsInPlan
+                (MealInPlanID, PlanID, Meal_Name)
                                 
                 VALUES
                 (%s, %s, '%s');
-                  """, mealID, toPlanID, mealName);
+                  """, mealInPlanID, toPlanID, mealName);
+
+        String query5 = String.format("""
+                INSERT IGNORE INTO dividedMealSections
+                (DivMealSectionsID, MealInPlanID, PlanID)
+                                
+                VALUES
+                (%s, %s, '%s');
+                  """, divMealSectionsID,  mealInPlanID, toPlanID);
 
         //####################################################
         // Transferring this plans Ingredients to Temp-Plan
         //####################################################
 
         // Create Table to transfer ingredients from original plan to temp
-        String query5 = String.format("""                                     
+        String query6 = String.format("""                                     
                 CREATE table temp_ingredients_in_meal  AS
                 SELECT i.*
-                FROM ingredients_in_meal i                                                       
-                WHERE i.MealID = %s AND i.PlanID = %s;          
-                """, mealID, fromPlanID);
+                FROM ingredients_in_sections_of_meal i                                                       
+                WHERE i.DivMealSectionsID = %s AND i.PlanID = %s;          
+                """, divMealSectionsID, fromPlanID);
 
-        String query6 = String.format("UPDATE temp_ingredients_in_meal  SET PlanID = %s;", toPlanID);
+        String query7 = String.format("UPDATE temp_ingredients_in_meal  SET PlanID = %s;", toPlanID);
 
-        String query7 = String.format("INSERT INTO ingredients_in_meal SELECT * FROM temp_ingredients_in_meal;");
+        String query8 = String.format("INSERT INTO ingredients_in_sections_of_meal SELECT * FROM temp_ingredients_in_meal;");
 
         //####################################################
         // Update
         //####################################################
-        String[] query_Temp_Data = new String[]{query0, query1, query2, query3, query4, query5, query6, query7};
+        String[] query_Temp_Data = new String[]{query0, query1, query2, query3, query4, query5, query6, query7, query8};
 
         if (!(db.uploadData_Batch_Altogether(query_Temp_Data)))
         {
@@ -2090,9 +2102,9 @@ public class IngredientsTable extends JDBC_JTable
         return divMealSectionsID;
     }
 
-    public Integer getMealID()
+    public Integer getMealInPlanID()
     {
-        return mealID;
+        return mealInPlanID;
     }
 
     public boolean getObjectDeleted()
