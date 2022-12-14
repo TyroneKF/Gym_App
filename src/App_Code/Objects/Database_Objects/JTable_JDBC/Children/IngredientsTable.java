@@ -886,7 +886,7 @@ public class IngredientsTable extends JDBC_JTable
 
         String query1 = "SET FOREIGN_KEY_CHECKS = 0;"; // Disable Foreign Key Checks
         String query2 = String.format(" DELETE FROM ingredients_in_sections_of_meal WHERE DivMealSectionsID = %s AND PlanID = %s;", divMealSectionsID, temp_PlanID);
-        String query4 = String.format(" DELETE FROM  meals WHERE DivMealSectionsID = %s AND PlanID = %s;", divMealSectionsID, temp_PlanID);
+        String query4 = String.format(" DELETE FROM  mealsInPlan WHERE mealInPlanID = %s AND PlanID = %s;", mealInPlanID, temp_PlanID);
         String query5 = "SET FOREIGN_KEY_CHECKS = 1;"; // Enable Foreign Key Checks
 
         if (!db.uploadData_Batch_Altogether(new String[]{query1, query2, query4, query5}))
