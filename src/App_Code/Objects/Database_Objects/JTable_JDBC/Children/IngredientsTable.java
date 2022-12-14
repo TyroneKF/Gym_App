@@ -892,6 +892,7 @@ public class IngredientsTable extends JDBC_JTable
         if (!db.uploadData_Batch_Altogether(new String[]{query1, query2, query4, query5}))
         {
             JOptionPane.showMessageDialog(null, "Table Un-Successfully Deleted! ");
+            return;
         }
 
         //##########################################
