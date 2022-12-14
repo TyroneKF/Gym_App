@@ -406,15 +406,12 @@ public class Meal_Plan_Screen extends JPanel
                 int mealInPlanID = Integer.parseInt(plan_Meal_IDs_And_Name.get(i).get(0)); // MealID's From Original Plan Not Temp
                 String mealName = plan_Meal_IDs_And_Name.get(i).get(1);
 
-                System.out.printf("\n\nMealInPlanID: %s \nMealName: %s", mealInPlanID,mealName);
-
                 //#####################################################
                 // Get MealID's Of SubMeals
                 //#####################################################
                 String subDivQuery = String.format("\nSELECT DivMealSectionsID FROM dividedMealSections WHERE MealInPlanID = %s AND PlanID = %s;", mealInPlanID, tempPlanID);
                 ArrayList<ArrayList<String>> subMealsInMealArrayList = db.getMultiColumnQuery(subDivQuery);
 
-                System.out.printf("\n%s", subDivQuery);
                 if(subMealsInMealArrayList == null)
                 {
                     String message = "\n\nError, gathering sub-meals ID for meal named ' %s ' ! \nA meal must have 1 sub-meal minimum!";
@@ -425,8 +422,6 @@ public class Meal_Plan_Screen extends JPanel
                     errorFound = true;
                     break;
                 }
-
-                System.out.printf("\nSubMealID's: %s", Arrays.toString(subMealsInMealArrayList.toArray()));
 
                 //#####################################################
                 // Create Collapsible Panel
@@ -686,11 +681,8 @@ public class Meal_Plan_Screen extends JPanel
         {
             int divMealSectionsID = Integer.parseInt(subMealIDs.get(i).get(0));
 
-
             // Getting Ingredients In Meal
             query = String.format("SELECT *  FROM ingredients_in_sections_of_meal_calculation WHERE DivMealSectionsID = %s AND PlanID = %s ORDER BY Ingredients_Index;", divMealSectionsID, tempPlanID);
-
-            System.out.printf("\n\n%s", query);
 
             tableName = "ingredients_in_sections_of_meal_calculation";
             Object[][] mealData = db.getTableDataObject(query, tableName)!=null ? db.getTableDataObject(query, tableName):new Object[0][0];
