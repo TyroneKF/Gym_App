@@ -10,19 +10,19 @@ import java.util.ArrayList;
 
 public class TotalMealTable extends MyJTable_DisplayData
 {
-    private Integer planID, temp_PlanID = 1, mealID;
+    private Integer planID, temp_PlanID = 1, MealInPlanID;
     private String mealName;
     private CollapsibleJPanel collapsibleObj;
 
 
     public TotalMealTable(MyJDBC db, CollapsibleJPanel collapsibleObj,  String databaseName, Object[][] data, String[] columnNames, int planID,
-                          Integer mealID, String mealName, String tableName,
+                          Integer MealInPlanID, String mealName, String tableName,
                           ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering, ArrayList<String> columnsToHide)
     {
 
         super(db, collapsibleObj.getCentreJPanel(), databaseName, data, columnNames, planID, tableName, unEditableColumns, colAvoidCentering, columnsToHide);
 
-        this.mealID = mealID;
+        this.MealInPlanID = MealInPlanID;
         this.mealName = mealName;
         this.planID = planID;
         this.collapsibleObj = collapsibleObj;
@@ -85,14 +85,14 @@ public class TotalMealTable extends MyJTable_DisplayData
 
     public void updateTotalMealTable()
     {
-        String query = String.format("SELECT *  FROM total_meal_view WHERE MealInPlanID = %s AND PlanID = %s;", mealID, temp_PlanID);
+        String query = String.format("SELECT *  FROM total_meal_view WHERE MealInPlanID = %s AND PlanID = %s;", MealInPlanID, temp_PlanID);
         super.updateTable("TotalMealTable", query, 0);
     }
 
     public boolean updateTotalMealTableModelData()
     {
-        String query = String.format("SELECT *  FROM total_meal_view WHERE MealID = %s AND PlanID = %s;",
-                mealID, temp_PlanID);
+        String query = String.format("SELECT * FROM total_meal_view WHERE MealInPlanID = %s AND PlanID = %s;",
+                MealInPlanID, temp_PlanID);
 
         return super.updateTableModelData("total_meal_view", query);
     }

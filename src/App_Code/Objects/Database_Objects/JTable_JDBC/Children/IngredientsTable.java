@@ -1166,9 +1166,9 @@ public class IngredientsTable extends JDBC_JTable
         //##########################################
         // Changing Ingredients In Meal Table Model
         //##########################################
-        String tableInQuery = "ingredients_in_meal_calculation";
+        String tableInQuery = "ingredients_in_sections_of_meal_calculation";
 
-        String query = String.format("Select * from %s WHERE MealID = %s AND PlanID = %s;", tableInQuery, mealInPlanID, temp_PlanID);
+        String query = String.format("Select * from %s WHERE DivMealSectionsID = %s AND PlanID = %s;", tableInQuery, divMealSectionsID, temp_PlanID);
         System.out.printf("\n\n################################################### \nupdateTableModelData() \n%s", query);
 
         Object[][] ingredients_Data = db.getTableDataObject(query, tableInQuery);
