@@ -341,7 +341,7 @@ public class IngredientsTable extends JDBC_JTable
     // Data Changing In Cells Action
     //##################################################################################################################
 
-    //Editing Now
+    //HELLO!! FIX Editing Now
     private boolean hasDataChangedInCell(int col, Object ingredientsIndex, Object cellValue)
     {
         //######################################################
@@ -453,12 +453,6 @@ public class IngredientsTable extends JDBC_JTable
         else if (columnEdited==getIngredientsTable_IngredientsName_Col())
         {
             System.out.printf("\n\n@tableDataChange_Action() Ingredient Name Changed");
-            //HELLO DELETE
-            /*
-            System.out.printf("\n\ningredientsTable_IngredientsName Row %s, Column %s \nPrevious Item %s \nCurrent Item %s",
-                    rowEdited, columnEdited, previous_IngredientName_JComboItem, selected_IngredientName_JCombo_Item); //HELLO REMOVE
-
-             */
 
             // if the same item is selected avoid processing
             if (!(ingredientNameChanged))
@@ -520,7 +514,7 @@ public class IngredientsTable extends JDBC_JTable
                     		(
                     		   -- OLD PDID
                     		   SELECT IngredientID AS Old_IngredientID, PDID AS OLD_PDID
-                    		   FROM ingredients_in_meal
+                    		   FROM ingredients_in_sections_of_meal
                     		   WHERE PlanID = %s AND Ingredients_Index = %s AND IngredientID = %s
                                        
                     		) AS B
@@ -554,7 +548,7 @@ public class IngredientsTable extends JDBC_JTable
             //Create IngredientID  Update Statement
             //#######################################
             String uploadQuery = String.format("""
-                    UPDATE  ingredients_in_meal
+                    UPDATE  ingredients_in_sections_of_meal
                     SET IngredientID = %s, 
                     PDID = (%s)
                     WHERE Ingredients_Index = %s AND PlanID = %s; """, selected_Ingredient_ID, query_PDID, ingredientIndex, temp_PlanID);
@@ -638,7 +632,7 @@ public class IngredientsTable extends JDBC_JTable
 
                 // Create  Statement for changing PDID (Ingredient_Index)
                 uploadQuery = String.format("""
-                        UPDATE  ingredients_in_meal
+                        UPDATE  ingredients_in_sections_of_meal
                         SET PDID = %s
                         WHERE Ingredients_Index = %s AND PlanID = %s;""", newPDIDResults.get(0), ingredientIndex, temp_PlanID);
 
@@ -648,7 +642,7 @@ public class IngredientsTable extends JDBC_JTable
             {
                 // Create  Statement for changing PDID (Ingredient_Index)
                 uploadQuery = String.format("""
-                        UPDATE  ingredients_in_meal
+                        UPDATE  ingredients_in_sections_of_meal
                         SET PDID = NULL
                         WHERE Ingredients_Index = %s AND PlanID = %s;""", ingredientIndex, temp_PlanID);
             }
@@ -682,7 +676,7 @@ public class IngredientsTable extends JDBC_JTable
         //####################################################################
 
         String query1 = String.format("""
-                UPDATE  ingredients_in_meal
+                UPDATE  ingredients_in_sections_of_meal
                 SET Quantity = %s 
                 WHERE PlanID = %s  AND Ingredients_Index = %s;""", quantity, temp_PlanID, ingredients_Index);
 
@@ -706,7 +700,7 @@ public class IngredientsTable extends JDBC_JTable
         //  Getting DB data to update Ingredients Table In GUI
         //####################################################################
 
-        String query = String.format("SELECT  * FROM ingredients_in_meal_calculation WHERE  ingredients_Index = %s AND PlanID = %s;",
+        String query = String.format("SELECT  * FROM ingredients_in_sections_of_meal_calculation WHERE  ingredients_Index = %s AND PlanID = %s;",
                 ingredients_Index, temp_PlanID);
 
         // HELLO REMOVE
