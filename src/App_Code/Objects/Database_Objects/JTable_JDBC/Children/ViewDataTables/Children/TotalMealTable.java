@@ -10,9 +10,9 @@ import java.util.ArrayList;
 
 public class TotalMealTable extends MyJTable_DisplayData
 {
-    private Integer planID, temp_PlanID = 1, MealInPlanID;
-    private String mealName;
-    private CollapsibleJPanel collapsibleObj;
+    protected Integer planID, temp_PlanID = 1, MealInPlanID;
+    protected String mealName;
+    protected CollapsibleJPanel collapsibleObj;
 
 
     public TotalMealTable(MyJDBC db, CollapsibleJPanel collapsibleObj,  String databaseName, Object[][] data, String[] columnNames, int planID,
