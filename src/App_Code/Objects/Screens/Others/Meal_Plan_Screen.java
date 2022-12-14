@@ -6,7 +6,7 @@ import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Chi
 import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Children.MacrosTargetsTable;
 import App_Code.Objects.Database_Objects.JTable_JDBC.Children.IngredientsTable;
 
-import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Children.TotalMealTable;
+import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Children.TotalMealTable.TotalMealTable;
 import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;

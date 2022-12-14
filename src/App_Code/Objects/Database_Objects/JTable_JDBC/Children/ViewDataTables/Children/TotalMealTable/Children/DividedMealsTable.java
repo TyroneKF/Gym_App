@@ -1,6 +1,7 @@
-package App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Children;
+package App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Children.TotalMealTable.Children;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
+import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Children.TotalMealTable.TotalMealTable;
 import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 
 import java.util.ArrayList;
