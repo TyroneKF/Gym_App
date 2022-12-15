@@ -40,7 +40,7 @@ public class MealManager
     private CollapsibleJPanel collapsibleJpObj;
 
     //##################################################################################################################
-    public MealManager(Meal_Plan_Screen meal_plan_screen, int mealInPlanID, int mealNo, String mealName, Container container)
+    public MealManager(Meal_Plan_Screen meal_plan_screen, Container container,  int mealInPlanID, int mealNo, String mealName,   ArrayList<ArrayList<String>> subMealsInMealArrayList)
     {
         //##############################################################################################################
         // Global Variables
@@ -77,21 +77,6 @@ public class MealManager
         ///############################
         this.databaseName = meal_plan_screen.getDatabaseName();
 
-        //##############################################################################################################
-        // Get MealID's Of SubMeals
-        //##############################################################################################################
-        String subDivQuery = String.format("\nSELECT DivMealSectionsID FROM dividedMealSections WHERE MealInPlanID = %s AND PlanID = %s;", mealInPlanID, tempPlanID);
-        ArrayList<ArrayList<String>> subMealsInMealArrayList = db.getMultiColumnQuery(subDivQuery);
-
-        if(subMealsInMealArrayList == null)
-        {
-            String message = "\n\nError, gathering sub-meals ID for meal named ' %s ' ! \nA meal must have 1 sub-meal minimum!";
-
-            System.out.printf("%s",message);
-            JOptionPane.showMessageDialog(null, message);
-
-            return;
-        }
 
         //##############################################################################################################
         // Create Collapsible Object
