@@ -162,7 +162,6 @@ public class MealManager
 
         iconPanelInsert.add(add_Icon_Btn);
 
-
         //##########################
         // Delete Icon
         //##########################
