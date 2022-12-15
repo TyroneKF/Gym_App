@@ -22,7 +22,7 @@ public class MealManager
     // Variables
     //##################################################################################################################
 
-    private Integer   mealInPlanID, tempPlanID, planID, yPoInternally = 0, containerYPos;
+    private Integer   mealInPlanID, tempPlanID, planID, yPoInternally = 0;
     private String mealName, databaseName;
     private String[] mealTotalTable_ColumnNames, ingredientsTable_ColumnNames;
     private ArrayList<String> totalMeal_Table_ColToHide, ingredientsTableUnEditableCells, ingredients_Table_Col_Avoid_Centering, ingredientsInMeal_Table_ColToHide;
@@ -71,7 +71,6 @@ public class MealManager
         ///############################
         this.tempPlanID = meal_plan_screen.getTempPlanID();
         this.planID = meal_plan_screen.getPlanID();
-        this.containerYPos = meal_plan_screen.getContainerYPos();
 
         ///############################
         // String
@@ -100,7 +99,8 @@ public class MealManager
         collapsibleJpObj = new CollapsibleJPanel(container, String.format("   Meal   %s", mealNo), 150, 50);
         collapsibleJPanel = collapsibleJpObj.getCentreJPanel();
         collapsibleJPanel.setBackground(Color.YELLOW);
-        addToContainer(container, collapsibleJpObj, 0, containerYPos++, 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
+        meal_plan_screen.increaseContainerYPos();
+        addToContainer(container, collapsibleJpObj, 0,meal_plan_screen.getContainerYPos() , 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
 
         //##############################################################################################################
         // Icon Setup in Collapsible Object
