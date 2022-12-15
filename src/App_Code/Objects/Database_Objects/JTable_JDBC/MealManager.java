@@ -135,13 +135,14 @@ public class MealManager
 
     private void iconSetup()
     {
+        int iconSize = 40;
         //########################################################################
         // Icons Top RIGHT
         //########################################################################
         JPanel eastJPanel = collapsibleJpObj.getEastJPanel();
         eastJPanel.setLayout(new GridBagLayout());
 
-        IconPanel iconPanel = new IconPanel(1, 10, "East");
+        IconPanel iconPanel = new IconPanel(2, 10, "East");
         JPanel iconPanelInsert = iconPanel.getIconJpanel();
 
         addToContainer(eastJPanel, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0, null);
@@ -149,7 +150,7 @@ public class MealManager
         //##########################
         //Add BTN
         //##########################
-        IconButton add_Icon_Btn = new IconButton("src/images/add/add.png", "", 40, 40, 40, 40, "centre", "right");
+        IconButton add_Icon_Btn = new IconButton("src/images/add/add.png", "", iconSize, iconSize, iconSize,  iconSize, "centre", "right");
         // add_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
 
         JButton add_Btn = add_Icon_Btn.returnJButton();
@@ -160,6 +161,51 @@ public class MealManager
         });
 
         iconPanelInsert.add(add_Icon_Btn);
+
+
+        //##########################
+        // Delete Icon
+        //##########################
+
+        IconButton deleteIcon_Icon_Btn = new IconButton("src/images/delete/+delete.png", "", iconSize+10, iconSize, iconSize+10, iconSize,
+                "centre", "right"); // btn text is useless here , refactor
+        //deleteIcon_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
+        deleteIcon_Icon_Btn.makeBTntransparent();
+
+        JButton delete_btn = deleteIcon_Icon_Btn.returnJButton();
+
+
+        delete_btn.addActionListener(ae -> {
+
+            delete_Btn_Action();
+        });
+
+        iconPanelInsert.add(delete_btn);
+    }
+
+    private void delete_Btn_Action()
+    {
+        if (areYouSure("Delete"))
+        {
+            deleteTableAction();
+        }
+    }
+
+    public void deleteTableAction()
+    {
+
+    }
+
+    private Boolean areYouSure(String process)
+    {
+        int reply = JOptionPane.showConfirmDialog(null, String.format("Are you sure you want to %s, \nany unsaved changes will be lost in this Table! \nDo you want to %s?", process, process),
+                "Restart Game", JOptionPane.YES_NO_OPTION); //HELLO Edit
+
+        if (reply==JOptionPane.NO_OPTION || reply==JOptionPane.CLOSED_OPTION)
+        {
+            return false;
+        }
+        return true;
     }
 
     private void add_IngredientsTableToGUI(boolean mealInDB, Container container,  ArrayList<ArrayList<String>> subMealIDs)
