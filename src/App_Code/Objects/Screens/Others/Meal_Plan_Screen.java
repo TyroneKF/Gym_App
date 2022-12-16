@@ -430,7 +430,7 @@ public class Meal_Plan_Screen extends JPanel
                 //#####################################################
                 mealNo++;
 
-                MealManager meal = new MealManager(this, scrollJPanelCenter, mealInPlanID, mealNo, mealName, subMealsInMealArrayList);
+                MealManager meal = new MealManager(this, scrollJPanelCenter, true,  mealInPlanID, mealNo, mealName, subMealsInMealArrayList);
                 mealManagerArrayList.add(meal);
 
                 //######################################################
