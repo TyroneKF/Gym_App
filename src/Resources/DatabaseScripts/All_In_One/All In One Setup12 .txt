@@ -293,7 +293,7 @@ GROUP BY DivMealSectionsID, PlanID;
 
 CREATE VIEW total_meal_view AS
 
-SELECT m.PlanID, m.MealInPlanID, m.Meal_Name, 
+SELECT m.PlanID, m.MealInPlanID, m.Meal_Name,
 
 IFNULL(ROUND(SUM(di.No_Of_Ingredients),2),0) as No_Of_Ingredients,
 IFNULL(ROUND(SUM(di.Weight_OF_Meal),2),0) as Weight_OF_Meal, 
@@ -318,9 +318,7 @@ ON m.MealInPlanID = d.MealInPlanID AND m.PlanID = d.PlanID
 LEFT JOIN divided_meal_sections_calculations di
 ON di.DivMealSectionsID = d.DivMealSectionsID AND di.PlanID = d.PlanID
 
-GROUP BY PlanID;
-
-
+GROUP BY m.MealInPlanID, di.PlanID;
 
 -- ######################################################
 
@@ -538,7 +536,11 @@ VALUES
 
 (2, 4, 2, 110),
 (2, 4, 3, 120),
-(2, 4, 4, 130);
+(2, 4, 4, 130), 
+
+(2, 5, 2, 140),
+(2, 5, 3, 150),
+(2, 5, 4, 160);
 
 -- ########################################################################################################################################
 -- ########################################################################################################################################
@@ -553,6 +555,3 @@ SELECT PlanID, DivMealSectionsID, No_Of_Ingredients, Weight_OF_Meal, Total_Calor
 
 SELECT PlanID, MealInPlanID, Meal_Name, No_Of_Ingredients, Weight_OF_Meal, Total_Calories  FROM total_meal_view;
 SELECT PlanID, Plan_Name, No_Of_Meals, Ingredients_In_Plan, Weight_In_Plan, Total_Calories_In_Plan FROM total_plan_view;
-
-
-SELECT * FROM planMacrosLeft;
