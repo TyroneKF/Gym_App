@@ -337,11 +337,6 @@ public class MealManager
 
     }
 
-    public void update_MacrosLeft_Table()
-    {
-        macrosLeft_JTable.updateMacrosLeftTable();
-    }
-
     public void setVisibility(boolean condition)
     {
         collapsibleJpObj.setVisible(condition);
@@ -382,6 +377,14 @@ public class MealManager
         {
             collapsibleObj.removeCollapsibleJPanel(); // notifies GUI to delete collapsible Object
         }*/
+    }
+
+    //##################################################################################################################
+    //
+    //##################################################################################################################
+    public void update_MacrosLeft_Table()
+    {
+        macrosLeft_JTable.updateMacrosLeftTable();
     }
 
     //##################################################################################################################
