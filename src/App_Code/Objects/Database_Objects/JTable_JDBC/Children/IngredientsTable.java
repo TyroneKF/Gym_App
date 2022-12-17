@@ -330,8 +330,10 @@ public class IngredientsTable extends JDBC_JTable
 
 
         delete_btn.addActionListener(ae -> {
-
-            delete_Btn_Action();
+            if (areYouSure("Delete"))
+            {
+                deleteTableAction();
+            }
         });
 
         iconPanelInsert.add(delete_btn);
@@ -766,14 +768,6 @@ public class IngredientsTable extends JDBC_JTable
     protected void set_IngredientsTable_DeleteBTN_Col(int deleteColumn)
     {
         this.deleteColumn = deleteColumn;
-    }
-
-    protected void delete_Btn_Action()
-    {
-        if (areYouSure("Delete"))
-        {
-            deleteTableAction();
-        }
     }
 
     protected void deleteRowAction(Object ingredientIndex, int modelRow)
