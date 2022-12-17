@@ -43,6 +43,8 @@ public class MealManager
     private TotalMealTable total_Meal_View_Table;
 
     //##################################################################################################################
+    //
+    //##################################################################################################################
     public MealManager(Meal_Plan_Screen meal_plan_screen, Container container, boolean mealInDB, int mealInPlanID, int mealNo, String mealName, ArrayList<ArrayList<String>> subMealsInMealArrayList)
     {
         //##############################################################################################################
@@ -140,6 +142,9 @@ public class MealManager
         addToContainer(container, spaceDivider, 0, meal_plan_screen.getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 50, 0, null);
     }
 
+    //##################################################################################################################
+    //
+    //##################################################################################################################
     private void iconSetup()
     {
         int iconSize = 40;
@@ -230,23 +235,59 @@ public class MealManager
 
         delete_btn.addActionListener(ae -> {
 
-            delete_Btn_Action();
+            if (areYouSure("Delete"))
+            {
+                deleteTableAction();
+            }
         });
 
         iconPanelInsert.add(delete_btn);
     }
 
-    //##################################################################################################################
-    //
-    //##################################################################################################################
-    private void delete_Btn_Action()
+    private void add_IngredientsTableToGUI(boolean mealInDB, Container container, ArrayList<ArrayList<String>> subMealIDs)
     {
-        if (areYouSure("Delete"))
+        ///##############################################################################################################
+        //  Ingredients_In_Meal_Calculation JTable
+        //##############################################################################################################
+        int no_Of_SubMealID = subMealIDs.size();
+        for (int i = 0; i < no_Of_SubMealID; i++)
         {
-            deleteTableAction();
+            int divMealSectionsID = Integer.parseInt(subMealIDs.get(i).get(0));
+
+            // Getting Ingredients In Meal
+            String query = String.format("SELECT *  FROM ingredients_in_sections_of_meal_calculation WHERE DivMealSectionsID = %s AND PlanID = %s ORDER BY Ingredients_Index;", divMealSectionsID, tempPlanID);
+
+            String tableName = "ingredients_in_sections_of_meal_calculation";
+            Object[][] mealData = db.getTableDataObject(query, tableName) != null ? db.getTableDataObject(query, tableName) : new Object[0][0];
+
+            //##############################################
+            // Ingredients_In_Meal_Calculation  Creation
+            //##############################################
+
+            IngredientsTable ingredients_Calculation_JTable = new IngredientsTable(db, collapsibleJpObj, map_ingredientTypesToNames, databaseName, mealData, ingredientsTable_ColumnNames, planID, mealInPlanID, divMealSectionsID, mealInDB, mealName,
+                    tableName, ingredientsTableUnEditableCells, ingredients_Table_Col_Avoid_Centering, ingredientsInMeal_Table_ColToHide, total_Meal_View_Table, macrosLeft_JTable);
+
+            ingredients_Calculation_JTable.setOpaque(true); //content panes must be opaque
+            ingredients_Calculation_JTable.setTableHeaderFont(new Font("Dialog", Font.BOLD, 12)); // Ingredients_In_Meal_Calculation Customisation
+            ingredientsTables.add(ingredients_Calculation_JTable);
+
+            //################################################
+            // Ingredients_In_Meal_Calculation Customisation
+            //################################################
+
+            // Adding Ingredients_In_Meal_Calculation to CollapsibleOBJ
+            addToContainer(collapsibleCenterJPanel, ingredients_Calculation_JTable, 0, yPoInternally++, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+
+            //Space Divider between each CollapsibleObj
+            JPanel spaceDivider = new JPanel();
+            ingredients_Calculation_JTable.setSpaceDivider(spaceDivider);
+            addToContainer(collapsibleCenterJPanel, spaceDivider, 0, yPoInternally++, 1, 1, 0.25, 0.25, "both", 50, 0, null);
         }
     }
 
+    //##################################################################################################################
+    //
+    //##################################################################################################################
     private void setObjectDeleted(boolean deleted)
     {
         objectDeleted = deleted;
@@ -308,10 +349,43 @@ public class MealManager
     }
 
     public void completely_Deleted_JTables()
-    {
+    {/*
+        if(! objectDeleted)
+        {
+            return;
+        }
 
+        //#################################################
+        // Remove  Main Jtable from collapsible Object
+        //#################################################
+        container.remove(collapsibleJpObj);
+        container.remove()
+
+        //##################################################
+        // Delete Meal Total Table From Collapsible Object
+        //##################################################
+        if (total_Meal_Table!=null && collapsibleObj!=null)
+        {
+            collapsibleObj.getParentContainer().remove(spaceDivider); // remove spaceDivider from GUI
+
+            JPanel collapsible_SouthPanel = collapsibleObj.getSouthJPanel();
+            collapsible_SouthPanel.remove(total_Meal_Table);
+            collapsibleObj.getSouthJPanel();
+        }
+
+        parentContainer.revalidate();
+
+        //##################################################
+        //  Notify GUI to delete collapsible Object
+        //##################################################
+        if (collapsibleObj!=null)
+        {
+            collapsibleObj.removeCollapsibleJPanel(); // notifies GUI to delete collapsible Object
+        }*/
     }
 
+    //##################################################################################################################
+    //
     //##################################################################################################################
     private Boolean areYouSure(String process)
     {
@@ -325,47 +399,10 @@ public class MealManager
         return true;
     }
 
-    private void add_IngredientsTableToGUI(boolean mealInDB, Container container, ArrayList<ArrayList<String>> subMealIDs)
-    {
-        ///##############################################################################################################
-        //  Ingredients_In_Meal_Calculation JTable
-        //##############################################################################################################
-        int no_Of_SubMealID = subMealIDs.size();
-        for (int i = 0; i < no_Of_SubMealID; i++)
-        {
-            int divMealSectionsID = Integer.parseInt(subMealIDs.get(i).get(0));
 
-            // Getting Ingredients In Meal
-            String query = String.format("SELECT *  FROM ingredients_in_sections_of_meal_calculation WHERE DivMealSectionsID = %s AND PlanID = %s ORDER BY Ingredients_Index;", divMealSectionsID, tempPlanID);
-
-            String tableName = "ingredients_in_sections_of_meal_calculation";
-            Object[][] mealData = db.getTableDataObject(query, tableName) != null ? db.getTableDataObject(query, tableName) : new Object[0][0];
-
-            //##############################################
-            // Ingredients_In_Meal_Calculation  Creation
-            //##############################################
-
-            IngredientsTable ingredients_Calculation_JTable = new IngredientsTable(db, collapsibleJpObj, map_ingredientTypesToNames, databaseName, mealData, ingredientsTable_ColumnNames, planID, mealInPlanID, divMealSectionsID, mealInDB, mealName,
-                    tableName, ingredientsTableUnEditableCells, ingredients_Table_Col_Avoid_Centering, ingredientsInMeal_Table_ColToHide, total_Meal_View_Table, macrosLeft_JTable);
-
-            ingredients_Calculation_JTable.setOpaque(true); //content panes must be opaque
-            ingredients_Calculation_JTable.setTableHeaderFont(new Font("Dialog", Font.BOLD, 12)); // Ingredients_In_Meal_Calculation Customisation
-            ingredientsTables.add(ingredients_Calculation_JTable);
-
-            //################################################
-            // Ingredients_In_Meal_Calculation Customisation
-            //################################################
-
-            // Adding Ingredients_In_Meal_Calculation to CollapsibleOBJ
-            addToContainer(collapsibleCenterJPanel, ingredients_Calculation_JTable, 0, yPoInternally++, 1, 1, 0.25, 0.25, "both", 0, 0, null);
-
-            //Space Divider between each CollapsibleObj
-            JPanel spaceDivider = new JPanel();
-            ingredients_Calculation_JTable.setSpaceDivider(spaceDivider);
-            addToContainer(collapsibleCenterJPanel, spaceDivider, 0, yPoInternally++, 1, 1, 0.25, 0.25, "both", 50, 0, null);
-        }
-    }
-
+    //##################################################################################################################
+    //
+    //##################################################################################################################
     private void addToContainer(Container container, Component addToContainer, Integer gridx, Integer gridy, Integer gridwidth,
                                 Integer gridheight, Double weightx, Double weighty, String fill, Integer ipady, Integer ipadx, String anchor)
     {
