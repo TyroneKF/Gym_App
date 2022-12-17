@@ -267,8 +267,6 @@ public class MealManager
             IngredientsTable ingredients_Calculation_JTable = new IngredientsTable(db, collapsibleJpObj, map_ingredientTypesToNames, databaseName, mealData, ingredientsTable_ColumnNames, planID, mealInPlanID, divMealSectionsID, mealInDB, mealName,
                     tableName, ingredientsTableUnEditableCells, ingredients_Table_Col_Avoid_Centering, ingredientsInMeal_Table_ColToHide, total_Meal_View_Table, macrosLeft_JTable);
 
-            ingredients_Calculation_JTable.setOpaque(true); //content panes must be opaque
-            ingredients_Calculation_JTable.setTableHeaderFont(new Font("Dialog", Font.BOLD, 12)); // Ingredients_In_Meal_Calculation Customisation
             ingredientsTables.add(ingredients_Calculation_JTable);
 
             //################################################
@@ -319,6 +317,7 @@ public class MealManager
         //##########################################
         // Add Meal To GUI
         //##########################################
+
 
 
 

@@ -146,6 +146,12 @@ public class IngredientsTable extends JDBC_JTable
         setupDeleteBtnColumn(columnNamesAndPositions.get("Delete Button")[1]);
 
         //##############################################################
+        // Table Customization
+        //##############################################################
+        setOpaque(true); //content panes must be opaque
+        setTableHeaderFont(new Font("Dialog", Font.BOLD, 12)); // Ingredients_In_Meal_Calculation Customisation
+
+        //##############################################################
         // Add Ingredient If Meal Empty / Add New Meal
         //##############################################################
         if (!(meal_In_DB))
