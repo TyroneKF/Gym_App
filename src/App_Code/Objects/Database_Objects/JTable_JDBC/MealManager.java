@@ -169,7 +169,7 @@ public class MealManager
         add_Icon_Btn.makeBTntransparent();
 
         add_Btn.addActionListener(ae -> {
-
+              addButtonAction();
         });
 
         iconPanelInsert.add(add_Icon_Btn);
@@ -288,6 +288,45 @@ public class MealManager
     //##################################################################################################################
     //
     //##################################################################################################################
+
+    public void addButtonAction()
+    {
+        //##########################################
+        // Get New ID For SubMeal
+        //##########################################
+        String getNextIndexQuery = "SELECT IFNULL(MAX(`DivMealSectionsID`),0) + 1 AS nextId FROM `dividedMealSections`;";
+
+        String[] divMealSectionsID = db.getSingleColumnQuery(getNextIndexQuery);
+
+        if (divMealSectionsID == null)
+        {
+            JOptionPane.showMessageDialog(null, "Unable to create new sub meal in table! \nUnable to generate new DivMealSectionsID !!");
+            return;
+        }
+
+        //##########################################
+        // Insert Into Database Table
+        //##########################################
+        String uploadQuery = String.format(" INSERT INTO dividedMealSections (DivMealSectionsID, MealInPlanID, PlanID) VALUES (%s, %s, %s)",
+                divMealSectionsID, mealInPlanID, tempPlanID);
+
+        if (!db.uploadData_Batch_Altogether(new String[]{uploadQuery}))
+        {
+            JOptionPane.showMessageDialog(null, "Unable to successfully add subMeal to meal! ");
+            return;
+        }
+
+        //##########################################
+        // Add Meal To GUI
+        //##########################################
+
+
+
+    }
+
+    //######################################
+    // Delete
+    //######################################
     private void setObjectDeleted(boolean deleted)
     {
         objectDeleted = deleted;
