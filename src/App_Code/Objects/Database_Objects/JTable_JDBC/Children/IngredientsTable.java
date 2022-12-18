@@ -94,7 +94,7 @@ public class IngredientsTable extends JDBC_JTable
                             Integer mealInPlanID, Integer divMealSectionsID, boolean meal_In_DB, String mealName, String tableName,
                             ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering,
                             ArrayList<String> columnsToHide,
-                            TotalMealTable total_Meal_Table, MacrosLeftTable macrosLeft_Table)
+                            TotalMealTable total_Meal_Table, MacrosLeftTable macrosLeft_Table, JPanel spaceDivider)
     {
         super(db, collapsibleObj.getCentreJPanel(), true, databaseName, tableName, data, columnNames, unEditableColumns, colAvoidCentering, columnsToHide);
 
@@ -113,6 +113,7 @@ public class IngredientsTable extends JDBC_JTable
 
         this.total_Meal_Table = total_Meal_Table;
         this.macrosLeft_Table = macrosLeft_Table;
+        this.spaceDivider = spaceDivider;
 
         //##############################################################
         // Setting Trigger Columns
@@ -895,12 +896,11 @@ public class IngredientsTable extends JDBC_JTable
 
         setVisibility(false); // hide collapsible Object
 
-        update_MacrosLeft_Table();// update macrosLeft table, due to number deductions from this meal
-
         setObjectDeleted(true); // set this object as deleted
 
-        JOptionPane.showMessageDialog(null, "Table Successfully Deleted!");
+        update_MacrosLeft_Table();// update macrosLeft table, due to number deductions from this meal
 
+        JOptionPane.showMessageDialog(null, "Table Successfully Deleted!");
     }
 
     public void completely_Deleted_JTables()
