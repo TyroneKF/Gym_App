@@ -263,22 +263,16 @@ public class MealManager
             //##############################################
             // Ingredients_In_Meal_Calculation  Creation
             //##############################################
-
+            JPanel spaceDivider = new JPanel();
             IngredientsTable ingredients_Calculation_JTable = new IngredientsTable(db, collapsibleJpObj, map_ingredientTypesToNames, databaseName, mealData, ingredientsTable_ColumnNames, planID, mealInPlanID, divMealSectionsID, mealInDB, mealName,
-                    tableName, ingredientsTableUnEditableCells, ingredients_Table_Col_Avoid_Centering, ingredientsInMeal_Table_ColToHide, total_Meal_View_Table, macrosLeft_JTable);
+                    tableName, ingredientsTableUnEditableCells, ingredients_Table_Col_Avoid_Centering, ingredientsInMeal_Table_ColToHide, total_Meal_View_Table, macrosLeft_JTable, spaceDivider);
 
             ingredientsTables.add(ingredients_Calculation_JTable);
 
             //################################################
             // Ingredients_In_Meal_Calculation Customisation
             //################################################
-
-            // Adding Ingredients_In_Meal_Calculation to CollapsibleOBJ
             addToContainer(collapsibleCenterJPanel, ingredients_Calculation_JTable, 0, yPoInternally++, 1, 1, 0.25, 0.25, "both", 0, 0, null);
-
-            //Space Divider between each CollapsibleObj
-            JPanel spaceDivider = new JPanel();
-            ingredients_Calculation_JTable.setSpaceDivider(spaceDivider);
             addToContainer(collapsibleCenterJPanel, spaceDivider, 0, yPoInternally++, 1, 1, 0.25, 0.25, "both", 50, 0, null);
         }
     }
