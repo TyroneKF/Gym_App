@@ -10,14 +10,14 @@ public class DividedMealsTable extends TotalMealTable
 {
     Integer divMealSectionsID;
 
-    private DividedMealsTable(MyJDBC db, CollapsibleJPanel collapsibleObj, String databaseName, Object[][] data, String[] columnNames, int planID, Integer MealInPlanID, String mealName, String tableName, ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering, ArrayList<String> columnsToHide)
+    private DividedMealsTable(MyJDBC db, CollapsibleJPanel collapsibleObj, Object[][] data, String[] columnNames, int planID, Integer MealInPlanID, String mealName, String tableName, ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering, ArrayList<String> columnsToHide)
     {
-        super(db, collapsibleObj, databaseName, data, columnNames, planID, MealInPlanID, mealName, tableName, unEditableColumns, colAvoidCentering, columnsToHide);
+        super(db, collapsibleObj,  data, columnNames, planID, MealInPlanID, mealName, tableName, unEditableColumns, colAvoidCentering, columnsToHide);
     }
 
-    public DividedMealsTable(MyJDBC db, CollapsibleJPanel collapsibleObj, String databaseName, Object[][] data, String[] columnNames, int planID, Integer MealInPlanID, Integer divMealSectionsID, String mealName, String tableName, ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering, ArrayList<String> columnsToHide)
+    public DividedMealsTable(MyJDBC db, CollapsibleJPanel collapsibleObj,  Object[][] data, String[] columnNames, int planID, Integer MealInPlanID, Integer divMealSectionsID, String mealName, String tableName, ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering, ArrayList<String> columnsToHide)
     {
-        super(db, collapsibleObj, databaseName, data, columnNames, planID, MealInPlanID, mealName, tableName, unEditableColumns, colAvoidCentering, columnsToHide);
+        super(db, collapsibleObj,  data, columnNames, planID, MealInPlanID, mealName, tableName, unEditableColumns, colAvoidCentering, columnsToHide);
         this.divMealSectionsID = divMealSectionsID;
     }
 

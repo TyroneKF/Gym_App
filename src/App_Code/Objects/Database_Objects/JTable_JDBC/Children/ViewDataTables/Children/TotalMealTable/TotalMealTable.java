@@ -15,12 +15,12 @@ public class TotalMealTable extends MyJTable_DisplayData
     protected CollapsibleJPanel collapsibleObj;
 
 
-    public TotalMealTable(MyJDBC db, CollapsibleJPanel collapsibleObj,  String databaseName, Object[][] data, String[] columnNames, int planID,
+    public TotalMealTable(MyJDBC db, CollapsibleJPanel collapsibleObj,  Object[][] data, String[] columnNames, int planID,
                           Integer MealInPlanID, String mealName, String tableName,
                           ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering, ArrayList<String> columnsToHide)
     {
 
-        super(db, collapsibleObj.getCentreJPanel(), databaseName, data, columnNames, planID, tableName, unEditableColumns, colAvoidCentering, columnsToHide);
+        super(db, collapsibleObj.getCentreJPanel(),  data, columnNames, planID, tableName, unEditableColumns, colAvoidCentering, columnsToHide);
 
         this.MealInPlanID = MealInPlanID;
         this.mealName = mealName;

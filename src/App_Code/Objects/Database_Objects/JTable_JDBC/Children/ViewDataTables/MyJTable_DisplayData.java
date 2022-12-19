@@ -11,11 +11,11 @@ public class MyJTable_DisplayData extends JDBC_JTable
 {
     protected Integer planID, temp_PlanID = 1;
 
-    public MyJTable_DisplayData(MyJDBC db, Container parentContainer, String databaseName, Object[][] data, String[] columnNames, int planID,
+    public MyJTable_DisplayData(MyJDBC db, Container parentContainer, Object[][] data, String[] columnNames, int planID,
                                 String tableName, ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering,
                                 ArrayList<String> columnsToHide)
     {
-        super(db, parentContainer, false, databaseName, tableName, data, columnNames, unEditableColumns, colAvoidCentering, columnsToHide);
+        super(db, parentContainer, false,  tableName, data, columnNames, unEditableColumns, colAvoidCentering, columnsToHide);
 
         this.planID = planID;
     }
