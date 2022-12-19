@@ -10,11 +10,11 @@ import java.util.ArrayList;
 public class MacrosTargetsTable extends MyJTable_DisplayData
 {
 
-    public MacrosTargetsTable(MyJDBC db, Container parentContainer, String databaseName, Object[][] data, String[] columnNames, int planID,
+    public MacrosTargetsTable(MyJDBC db, Container parentContainer,  Object[][] data, String[] columnNames, int planID,
                               String tableName, ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering,
                               ArrayList<String> columnsToHide)
     {
-        super(db, parentContainer, databaseName, data, columnNames, planID, tableName, unEditableColumns, colAvoidCentering, columnsToHide);
+        super(db, parentContainer,  data, columnNames, planID, tableName, unEditableColumns, colAvoidCentering, columnsToHide);
     }
 
     public void updateMacrosTargetsTable()

@@ -29,7 +29,7 @@ public class JDBC_JTable extends JPanel
     protected DefaultTableModel tableModel;
     protected Object[][] data;
     protected int rowsInTable = 0, columnsInTable = 0;
-    protected String databaseName, tableName;
+    protected String  tableName;
     protected String[] columnDataTypes, columnNames;
 
     protected ArrayList<String> colAvoidCentering = new ArrayList<>();
@@ -59,7 +59,7 @@ public class JDBC_JTable extends JPanel
     {
     }
 
-    public JDBC_JTable(MyJDBC db, Container parentContainer, boolean setIconsUp, String databaseName, String tableName, Object[][] data,
+    public JDBC_JTable(MyJDBC db, Container parentContainer, boolean setIconsUp, String tableName, Object[][] data,
                        String[] columnNames,
                       ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering,  ArrayList<String> columnsToHide)
     {
@@ -72,7 +72,6 @@ public class JDBC_JTable extends JPanel
         this.data = data;
 
         this.parentContainer = parentContainer;
-        this.databaseName = databaseName;
         this.tableName = tableName;
 
         this.columnDataTypes = db.getColumnDataTypes(tableName); //Column Data Types
