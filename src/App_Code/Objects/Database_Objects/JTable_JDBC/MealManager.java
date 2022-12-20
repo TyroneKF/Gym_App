@@ -528,12 +528,12 @@ public class MealManager
         //##############################################################################################
 
         // Refresh TotalMeal
-        refreshTotalMealTable();
+        update_TotalMeal_Table();
 
         // Refresh MacrosLeft
         if (refreshMacrosLeft)
         {
-            refreshMacrosLeftTable();
+            update_MacrosLeft_Table();
         }
     }
 
@@ -625,29 +625,9 @@ public class MealManager
         total_Meal_View_Table.updateTotalMealTable();
     }
 
-    public void refreshMacrosLeftTable()
-    {
-        macrosLeft_JTable.refreshData();
-    }
-
-    public void refreshTotalMealTable()
-    {
-        total_Meal_View_Table.refreshData();
-    }
-
     //##################################################################################################################
     //
     //##################################################################################################################
-
-    public TotalMealTable getTotal_Meal_View_Table()
-    {
-        return total_Meal_View_Table;
-    }
-
-    public MacrosLeftTable getMacrosLeft_JTable()
-    {
-        return macrosLeft_JTable;
-    }
 
     public JPanel getCollapsibleCenterJPanel()
     {

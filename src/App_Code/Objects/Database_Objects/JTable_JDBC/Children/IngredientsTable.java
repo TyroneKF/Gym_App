@@ -25,11 +25,9 @@ public class IngredientsTable extends JDBC_JTable
     //#################################################################################################################
     // Objects
     //#################################################################################################################
-    private MacrosLeftTable macrosLeft_Table;
-    private TotalMealTable total_Meal_Table;
-
     private JPanel spaceDivider;
     private MealManager mealManager;
+    private Frame frame;
 
     //#################################################################################################################
     // Other Variables
@@ -101,11 +99,11 @@ public class IngredientsTable extends JDBC_JTable
 
         this.mealManager = mealManager;
         this.parentContainer = mealManager.getCollapsibleCenterJPanel();
-        this.total_Meal_Table = mealManager.getTotal_Meal_View_Table();
-        this.macrosLeft_Table = mealManager.getMacrosLeft_JTable();
+    
         this.spaceDivider = spaceDivider;
 
         this.map_ingredientTypesToNames = mealManager.getMap_ingredientTypesToNames();
+        this.frame = mealManager.getFrame();
 
         //##############################################################
         // Setting Trigger Columns
@@ -147,11 +145,6 @@ public class IngredientsTable extends JDBC_JTable
         //##############################################################
         // Add Ingredient If Meal Empty / Add New Meal
         //##############################################################
-       /* if (!(meal_In_DB))
-        {
-            addIngredient();
-        }*/
-
         if (data.length == 0)
         {
             addIngredient();
@@ -436,7 +429,7 @@ public class IngredientsTable extends JDBC_JTable
         // ###############################
         if (columnEdited == getIngredientsTable_Quantity_Col() && jTable.getValueAt(rowEdited, columnEdited) == null)
         {
-            JOptionPane.showMessageDialog(null, String.format("\n\nPlease insert a reasonable 'Quantity' value in the cell at: \n\nRow: %s \nColumn: %s", rowEdited + 1, columnEdited + 1));
+            JOptionPane.showMessageDialog(frame, String.format("\n\nPlease insert a reasonable 'Quantity' value in the cell at: \n\nRow: %s \nColumn: %s", rowEdited + 1, columnEdited + 1));
 
             cellValue = 0.00;
             setRowBeingEdited(); // re-triggers this method on quantity changed
@@ -489,7 +482,7 @@ public class IngredientsTable extends JDBC_JTable
 
             if (results_Ingredient_ID == null)
             {
-                JOptionPane.showMessageDialog(null, "Unable to retrieve chosen Ingredient ID from DB!");
+                JOptionPane.showMessageDialog(frame, "Unable to retrieve chosen Ingredient ID from DB!");
 
                 // Change Jtable JComboBox Back To Original Value
                 jTable.setValueAt(previous_IngredientName_JComboItem, rowEdited, columnEdited);
@@ -568,7 +561,7 @@ public class IngredientsTable extends JDBC_JTable
             System.out.printf("\n\nQuery1 \n\n%s", uploadQuery);
             if (!(db.uploadData_Batch_Altogether(new String[]{uploadQuery})))
             {
-                JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nUnable to update Ingredient In DB!");
+                JOptionPane.showMessageDialog(frame, "\n\n ERROR:\n\nUnable to update Ingredient In DB!");
 
                 // Change Jtable JComboBox Back To Original Value
                 jTable.setValueAt(previous_IngredientName_JComboItem, rowEdited, columnEdited);
@@ -623,7 +616,7 @@ public class IngredientsTable extends JDBC_JTable
                 ArrayList<String> newPDIDResults = db.getSingleColumnQuery_ArrayList(getPDIDQuery);
                 if (newPDIDResults == null)
                 {
-                    JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nUnable to retrieve  Ingredient In Shop PDID info!");
+                    JOptionPane.showMessageDialog(frame, "\n\n ERROR:\n\nUnable to retrieve  Ingredient In Shop PDID info!");
 
                     // HELLO Create Previous value for supplier column
                     jTable.setValueAt(previous_Supplier_JComboItem, rowEdited, columnEdited);
@@ -658,7 +651,7 @@ public class IngredientsTable extends JDBC_JTable
             //##################################################################################################
             if (!(db.uploadData_Batch_Altogether(new String[]{uploadQuery})))
             {
-                JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nUnable to update Ingredient Store In DB!");
+                JOptionPane.showMessageDialog(frame, "\n\n ERROR:\n\nUnable to update Ingredient Store In DB!");
 
                 // HELLO Create Previous value for supplier column
                 jTable.setValueAt(previous_Supplier_JComboItem, rowEdited, columnEdited);
@@ -691,7 +684,7 @@ public class IngredientsTable extends JDBC_JTable
 
         if (!(db.uploadData_Batch_Altogether(new String[]{query1})))
         {
-            JOptionPane.showMessageDialog(null, "Un-able to Update row based on cell value!");
+            JOptionPane.showMessageDialog(frame, "Un-able to Update row based on cell value!");
 
             setRowBeingEdited();
             return;
@@ -718,7 +711,7 @@ public class IngredientsTable extends JDBC_JTable
 
         if (ingredientsUpdateData == null)
         {
-            JOptionPane.showMessageDialog(null, "ERROR updateTableValuesByQuantity(): Un-able to Update Ingredient in table row!");
+            JOptionPane.showMessageDialog(frame, "ERROR updateTableValuesByQuantity(): Un-able to Update Ingredient in table row!");
 
             setRowBeingEdited();
             return;
@@ -815,7 +808,7 @@ public class IngredientsTable extends JDBC_JTable
 
                 if (!(db.uploadData_Batch_Altogether(new String[]{query1})))
                 {
-                    JOptionPane.showMessageDialog(null, "Un-able to change last row values!");
+                    JOptionPane.showMessageDialog(frame, "Un-able to change last row values!");
 
                     setRowBeingEdited();
                     return;
@@ -844,7 +837,7 @@ public class IngredientsTable extends JDBC_JTable
 
             if (!(db.uploadData_Batch_Altogether(queryUpload)))
             {
-                JOptionPane.showMessageDialog(null, "Unable To delete Ingredient from Meal in Database");
+                JOptionPane.showMessageDialog(frame, "Unable To delete Ingredient from Meal in Database");
             }
         }
 
@@ -883,7 +876,7 @@ public class IngredientsTable extends JDBC_JTable
 
         if (!db.uploadData_Batch_Altogether(new String[]{query1, query2, query4, query5}))
         {
-            JOptionPane.showMessageDialog(null, "Table Un-Successfully Deleted! ");
+            JOptionPane.showMessageDialog(frame, "Table Un-Successfully Deleted! ");
             return;
         }
 
@@ -897,7 +890,7 @@ public class IngredientsTable extends JDBC_JTable
 
         updateAllTablesData(); // Update MacrosLeft Table & TotalMeal Table
 
-        JOptionPane.showMessageDialog(null, "Table Successfully Deleted!");
+        JOptionPane.showMessageDialog(frame, "Table Successfully Deleted!");
     }
 
     public void completely_Deleted_JTables()
@@ -963,7 +956,7 @@ public class IngredientsTable extends JDBC_JTable
 
         if (newIngredientsIndex == null)
         {
-            JOptionPane.showMessageDialog(null, "Unable to create new ingredient in table! \nUnable to generate ingredients_Index!!");
+            JOptionPane.showMessageDialog(frame, "Unable to create new ingredient in table! \nUnable to generate ingredients_Index!!");
             return;
         }
 
@@ -983,7 +976,7 @@ public class IngredientsTable extends JDBC_JTable
 
         if (!(db.uploadData_Batch_Altogether(new String[]{query1})))
         {
-            JOptionPane.showMessageDialog(null, "Un-able to Insert new row into the Database!");
+            JOptionPane.showMessageDialog(frame, "Un-able to Insert new row into the Database!");
             return;
         }
 
@@ -1006,7 +999,7 @@ public class IngredientsTable extends JDBC_JTable
 
         if (results == null)
         {
-            JOptionPane.showMessageDialog(null, "ERROR add_btn_Action(): Un-able to get Ingredient info for row in table!");
+            JOptionPane.showMessageDialog(frame, "ERROR add_btn_Action(): Un-able to get Ingredient info for row in table!");
             return;
         }
 
@@ -1043,7 +1036,7 @@ public class IngredientsTable extends JDBC_JTable
         //##############################################################################################
         if (!(transferMealDataToPlan(planID, temp_PlanID)))
         {
-            JOptionPane.showMessageDialog(null, "\n\nUnable to transfer ingredients data from  original plan to temp plan!!");
+            JOptionPane.showMessageDialog(frame, "\n\nUnable to transfer ingredients data from  original plan to temp plan!!");
             return;
         }
 
@@ -1074,7 +1067,7 @@ public class IngredientsTable extends JDBC_JTable
         //#############################################################################################
         if (updateTotalMealTable)
         {
-            update_TotalMeal_Table();
+            mealManager.update_TotalMeal_Table();
         }
 
         //#############################################################################################
@@ -1082,7 +1075,7 @@ public class IngredientsTable extends JDBC_JTable
         //#############################################################################################
         if (updateMacrosLeftTable)
         {
-            update_MacrosLeft_Table();
+            mealManager.update_MacrosLeft_Table();
         }
 
         //#############################################################################################
@@ -1103,7 +1096,7 @@ public class IngredientsTable extends JDBC_JTable
         {
             if (showMessage)
             {
-                JOptionPane.showMessageDialog(null, "\n\nUnable to transfer ingredients data from temp to original plan ");
+                JOptionPane.showMessageDialog(frame, "\n\nUnable to transfer ingredients data from temp to original plan ");
             }
             return false;
         }
@@ -1115,7 +1108,7 @@ public class IngredientsTable extends JDBC_JTable
         {
             if (showMessage)
             {
-                JOptionPane.showMessageDialog(null, "\n\nUnable to update table model!");
+                JOptionPane.showMessageDialog(frame, "\n\nUnable to update table model!");
             }
             return false;
         }
@@ -1125,7 +1118,7 @@ public class IngredientsTable extends JDBC_JTable
         //######################################################################
         if (showMessage)
         {
-            JOptionPane.showMessageDialog(null, "Table Successfully Updated!");
+            JOptionPane.showMessageDialog(frame, "Table Successfully Updated!");
         }
 
         //#############################################################################################
@@ -1226,7 +1219,7 @@ public class IngredientsTable extends JDBC_JTable
 
         if (!(db.uploadData_Batch_Altogether(query_Temp_Data)))
         {
-            JOptionPane.showMessageDialog(null, "\n\ntransferMealIngredients() Cannot Create Temporary Plan In DB to Allow Editing");
+            JOptionPane.showMessageDialog(frame, "\n\ntransferMealIngredients() Cannot Create Temporary Plan In DB to Allow Editing");
             return false;
         }
 
@@ -1385,7 +1378,7 @@ public class IngredientsTable extends JDBC_JTable
                 else
                 {
                     //HELLO FIX WILL SOMEHOW CAUSE ERROR
-                    JOptionPane.showMessageDialog(null, "\n\nError \nSetting Available Stores for Ingredient!");
+                    JOptionPane.showMessageDialog(frame, "\n\nError \nSetting Available Stores for Ingredient!");
                 }
 
                 return super.getTableCellEditorComponent(table, value, isSelected, row, column);
@@ -1957,18 +1950,8 @@ public class IngredientsTable extends JDBC_JTable
 
     private void updateAllTablesData()
     {
-        update_TotalMeal_Table();
-        update_MacrosLeft_Table();
-    }
-
-    private void update_TotalMeal_Table()
-    {
-        total_Meal_Table.updateTotalMealTable();
-    }
-
-    public void update_MacrosLeft_Table()
-    {
-        macrosLeft_Table.updateMacrosLeftTable();
+        mealManager.update_TotalMeal_Table();
+        mealManager.update_MacrosLeft_Table();        
     }
 
     //##################################################################################################################
@@ -2078,7 +2061,7 @@ public class IngredientsTable extends JDBC_JTable
                             \nFrom the ingredient 'None Of The Above' to another ingredient! 
                             \nBefore attempting to %s!
                             """, row + 1, getIngredientsTable_IngredientsName_Col() + 1, attemptingTo);
-                    JOptionPane.showMessageDialog(null, message);
+                    JOptionPane.showMessageDialog(frame, message);
                     return true;
                 }
             }
