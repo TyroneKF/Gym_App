@@ -902,7 +902,6 @@ public class IngredientsTable extends JDBC_JTable
 
     public void completely_Deleted_JTables()
     {
-
         // remove JTable from GUI
         parentContainer.remove(this);
 
