@@ -315,7 +315,7 @@ public class IngredientsTable extends JDBC_JTable
         save_btn.addActionListener(ae -> {
             if (areYouSure("Save Data"))
             {
-                saveDataAction(true);
+                save_Btn_Action(true);
             }
         });
 
@@ -1095,7 +1095,7 @@ public class IngredientsTable extends JDBC_JTable
     //###################################################
     // Save Button
     //###################################################
-    public boolean saveDataAction(boolean showMessage)
+    public boolean save_Btn_Action(boolean showMessage)
     {
         //######################################################################
         // Transfer Data from temp plan to origin plan
@@ -1107,14 +1107,6 @@ public class IngredientsTable extends JDBC_JTable
                 JOptionPane.showMessageDialog(null, "\n\nUnable to transfer ingredients data from temp to original plan ");
             }
             return false;
-        }
-
-        //######################################################################
-        // Change Setting
-        //######################################################################
-        if (!(getMealInDB()))     // If Meal Not In Original PlanID Add To PlanID
-        {
-            set_Meal_In_DB(true);
         }
 
         //######################################################################
@@ -1140,7 +1132,10 @@ public class IngredientsTable extends JDBC_JTable
         //#############################################################################################
         // Reset Variable
         //#############################################################################################
+        meal_In_DB = true;
         dataChangedInTable = false;
+
+        //#############################################################################################
 
         return true;
     }
@@ -1977,23 +1972,9 @@ public class IngredientsTable extends JDBC_JTable
         macrosLeft_Table.updateMacrosLeftTable();
     }
 
-    //##################################################
-    // Refresh Table Methods
-    //##################################################
-    public void refreshTotalMealTable()
-    {
-        total_Meal_Table.refreshData();
-    }
-
-    public void refreshMacrosLeftTable()
-    {
-        macrosLeft_Table.refreshData();
-    }
-
     //##################################################################################################################
     // Mutator Methods
     //##################################################################################################################
-
     private void setRowBeingEdited()
     {
         rowBeingEdited = !rowBeingEdited; // flip it
