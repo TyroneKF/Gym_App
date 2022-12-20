@@ -40,6 +40,7 @@ public class MealManager
     private CollapsibleJPanel collapsibleJpObj;
     private MacrosLeftTable macrosLeft_JTable;
     private TotalMealTable total_Meal_View_Table;
+    private Frame frame;
 
     //##################################################################################################################
     //
@@ -60,6 +61,7 @@ public class MealManager
         this.db = meal_plan_screen.getDb();
         this.gbc = meal_plan_screen.getGbc();
         this.macrosLeft_JTable = meal_plan_screen.getMacrosLeft_JTable();
+        this.frame = meal_plan_screen.getFrame();
 
         ///############################
         //Lists & Arraylists & Maps
@@ -103,7 +105,7 @@ public class MealManager
 
         Object[][] meal_Total_Data = result != null ? result : new Object[0][0];
 
-        total_Meal_View_Table = new TotalMealTable(db, collapsibleJpObj,  meal_Total_Data, mealTotalTable_ColumnNames, planID,
+        total_Meal_View_Table = new TotalMealTable(db, collapsibleJpObj, meal_Total_Data, mealTotalTable_ColumnNames, planID,
                 mealInPlanID, mealName, tableName, new ArrayList<>(Arrays.asList(mealTotalTable_ColumnNames)), null, totalMeal_Table_ColToHide);
 
         total_Meal_View_Table.setOpaque(true); //content panes must be opaque
@@ -265,7 +267,7 @@ public class MealManager
         // Ingredients_In_Meal_Calculation  Creation
         //##############################################
         JPanel spaceDivider = new JPanel();
-        IngredientsTable ingredients_Calculation_JTable = new IngredientsTable(db, this,  mealData, ingredientsTable_ColumnNames, planID, mealInPlanID, divMealSectionsID, subMealInDB, mealName,
+        IngredientsTable ingredients_Calculation_JTable = new IngredientsTable(db, this, mealData, ingredientsTable_ColumnNames, planID, mealInPlanID, divMealSectionsID, subMealInDB, mealName,
                 tableName, ingredientsTableUnEditableCells, ingredients_Table_Col_Avoid_Centering, ingredientsInMeal_Table_ColToHide, spaceDivider);
 
         ingredientsTables.add(ingredients_Calculation_JTable);
@@ -278,7 +280,7 @@ public class MealManager
     }
 
     //##################################################################################################################
-    //
+    // Button Actions
     //##################################################################################################################
 
     //HELLO Needs to scroll down to the bottom of the MealManager
@@ -411,55 +413,9 @@ public class MealManager
         }*/
     }
 
-    //######################################
-    // Refresh
-    //######################################
-
-    public void refresh_Btn_Action(boolean refreshMacrosLeft)
-    {
-        //#############################################################################################
-        // Reset DB Data
-        //##############################################################################################
-        if (!(transferMealDataToPlan("Refresh", planID, tempPlanID)))
-        {
-            JOptionPane.showMessageDialog(null, "\n\nUnable to transfer mealData toS!!");
-            return;
-        }
-
-        //##############################################################################################
-        // Refresh ingredients meal table & total Tables Data
-        //##############################################################################################
-        Iterator<IngredientsTable> it = ingredientsTables.iterator();
-        while (it.hasNext())
-        {
-            IngredientsTable ingredientsTable = it.next();
-
-            // if meal is not saved in DB remove the meal
-            if (!(ingredientsTable.getMealInDB()))
-            {
-                ingredientsTable.deleteTableAction(); // delete table from db
-                it.remove(); // remove from list
-                continue;
-            }
-
-            // Refresh Table data
-            ingredientsTable.reloadingDataFromRefresh(false, false);
-        }
-
-        //#############################################################################################
-        // Refresh Other Tables
-        //##############################################################################################
-
-        // Refresh TotalMeal
-        refreshTotalMealTable();
-
-        // Refresh MacrosLeft
-        if(refreshMacrosLeft)
-        {
-            refreshMacrosLeftTable();
-        }
-    }
-
+    //#################################################################################
+    // Save & Refresh
+    //#################################################################################
     public boolean transferMealDataToPlan(String process, int fromPlanID, int toPlanID)
     {
         //########################################################
@@ -522,7 +478,7 @@ public class MealManager
         //####################################################
         // Update
         //####################################################
-        String[] query_Temp_Data = new String[]{query0,query1,query2,query3,query4,query5,query6,query7,query8,query9,query10,query11};
+        String[] query_Temp_Data = new String[]{query0, query1, query2, query3, query4, query5, query6, query7, query8, query9, query10, query11};
 
         if (!(db.uploadData_Batch_Altogether(query_Temp_Data)))
         {
@@ -534,21 +490,62 @@ public class MealManager
     }
 
     //######################################
+    // Refresh
+    //######################################
+    public void refresh_Btn_Action(boolean refreshMacrosLeft)
+    {
+        //#############################################################################################
+        // Reset DB Data
+        //##############################################################################################
+        if (!(transferMealDataToPlan("Refresh", planID, tempPlanID)))
+        {
+            JOptionPane.showMessageDialog(null, "\n\nUnable to transfer mealData toS!!");
+            return;
+        }
+
+        //##############################################################################################
+        // Refresh ingredients meal table & total Tables Data
+        //##############################################################################################
+        Iterator<IngredientsTable> it = ingredientsTables.iterator();
+        while (it.hasNext())
+        {
+            IngredientsTable ingredientsTable = it.next();
+
+            // if meal is not saved in DB remove the meal
+            if (!(ingredientsTable.getMealInDB()))
+            {
+                ingredientsTable.deleteTableAction(); // delete table from db
+                it.remove(); // remove from list
+                continue;
+            }
+
+            // Refresh Table data
+            ingredientsTable.reloadingDataFromRefresh(false, false);
+        }
+
+        //#############################################################################################
+        // Refresh Other Tables
+        //##############################################################################################
+
+        // Refresh TotalMeal
+        refreshTotalMealTable();
+
+        // Refresh MacrosLeft
+        if (refreshMacrosLeft)
+        {
+            refreshMacrosLeftTable();
+        }
+    }
+
+    //######################################
     // Save
     //######################################
-
-    /**
-     * Meal if deleted ++
-     * @param x
-     */
-    public void save_Btn_Action(boolean x)
-    {/*
+    public void save_Btn_Action(boolean showUpdateMessage)
+    {
         // ###############################################################################
-        // Removing Meals that have been deleted
+        // Removing Sub-Meals that have been deleted
         // ##############################################################################
         Iterator<IngredientsTable> it = ingredientsTables.iterator();
-
-        int listSize = ingredientsTables.size(), errorCount = 0;
 
         while (it.hasNext())
         {
@@ -562,49 +559,32 @@ public class MealManager
             }
         }
 
+        // ###############################################################################
+        // Transferring Meals & Ingredients from FromPlan to toPlan
         // ##############################################################################
-        // Save meal plan data in DB
-        // ##############################################################################
-        if (listSize==0) // if there are no meals in the temp plan delete all meals / ingredients from original plan
+        if (!(transferMealDataToPlan("Saving", tempPlanID, planID))) // transfer meals and ingredients from temp plan to original plan
         {
-            System.out.println("\n\n#################################### \n1.) saveMealData() Empty Meal Plan Save");
+            System.out.println("\n\n#################################### \nError MealManager saveMealData()");
 
-            String query0 = "SET FOREIGN_KEY_CHECKS = 0;"; // Disable Foreign Key Checks
-            String query1 = String.format("DELETE FROM ingredients_in_meal  WHERE PlanID = %s;", planID);
-            String query2 = String.format("DELETE FROM meals  WHERE PlanID = %s;", planID);
-            String query3 = "SET FOREIGN_KEY_CHECKS = 1;"; // Enable Foreign Key Checks
-
-            if (!(db.uploadData_Batch_Altogether(new String[]{query0, query1, query2, query3})))
-            {
-                JOptionPane.showMessageDialog(frame, "\n\n1.)  Error \nUnable to save meals in plan!");
-                return;
-            }
-        }
-        else if ((!(transferMealIngredients(tempPlanID, planID)))) // transfer meals and ingredients from temp plan to original plan
-        {
-            System.out.println("\n\n#################################### \n2.) MealManager saveMealData() Meals Transferred to Original Plan");
-
-            JOptionPane.showMessageDialog(frame, "\n\n2.)  Error \nUnable to save meals in plan!");
+            JOptionPane.showMessageDialog(frame, "\n\n1.)  Error \nUnable to save this Meal and its sub-meals");
             return;
         }
 
         // ##############################################################################
         // Save IngredientsTable Data
         // ##############################################################################
-
-        Iterator<IngredientsTable> it2 = listOfJTables.iterator();
+        int errorCount = 0;
+        Iterator<IngredientsTable> it2 = ingredientsTables.iterator();
         while (it2.hasNext())
         {
             IngredientsTable table = it2.next();
 
-            if (!(table.getMealInDB()))
-            {
-                table.set_Meal_In_DB(true);
-            }
+            table.set_Meal_In_DB(true);
 
             if (!(table.updateTableModelData()))
             {
                 errorCount++;
+
             }
         }
 
@@ -613,23 +593,22 @@ public class MealManager
         // #####################################
         if (errorCount > 0)
         {
-            JOptionPane.showMessageDialog(frame, "\n\n Error \n3.) Unable to save all meals in plan! \n\nPlease retry again!");
+            JOptionPane.showMessageDialog(frame, "\n\n Error \n2.) Unable to updateTableModelData() all sub-meals in meal! \n\nPlease retry again!");
             return;
         }
 
         // ##############################################################################
-        // Update MacrosLeft Targets
+        // Save TotalMealTable
         // ##############################################################################
-        if (!(macrosLeft_JTable.updateMacrosLeftTableModelData()))
-        {
-            JOptionPane.showMessageDialog(frame, "\n\n Error \n4.) Unable to save MacrosLeftTable! \n\nPlease retry again!");
-            return;
-        }
+        total_Meal_View_Table.updateTotalMealTableModelData();
 
         // ##############################################################################
         // Successful Message
         // ##############################################################################
-        JOptionPane.showMessageDialog(frame, "\n\nAll Meals Are Successfully Saved!");*/
+        if(showUpdateMessage)
+        {
+            JOptionPane.showMessageDialog(frame, "\n\nAll SubMeals Within Meal Have Successfully Saved!");
+        }
     }
 
 
@@ -678,6 +657,11 @@ public class MealManager
     public TreeMap<String, Collection<String>> getMap_ingredientTypesToNames()
     {
         return map_ingredientTypesToNames;
+    }
+
+    public Frame getFrame()
+    {
+        return frame;
     }
 
     //##################################################################################################################
