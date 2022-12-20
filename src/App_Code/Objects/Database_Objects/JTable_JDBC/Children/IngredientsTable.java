@@ -1165,15 +1165,6 @@ public class IngredientsTable extends JDBC_JTable
 
         setTableModelData(ingredients_Data);
 
-
-        //##########################################
-        // Changing Total  Ingredients Table Model
-        //##########################################
-        if (!(total_Meal_Table.updateTotalMealTableModelData()))
-        {
-            return false;
-        }
-
         return true;
     }
 
