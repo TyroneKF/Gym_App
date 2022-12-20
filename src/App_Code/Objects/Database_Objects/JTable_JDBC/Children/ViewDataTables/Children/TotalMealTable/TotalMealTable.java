@@ -96,11 +96,5 @@ public class TotalMealTable extends MyJTable_DisplayData
 
         return super.updateTableModelData("total_meal_view", query);
     }
-
-    public String getMealName()
-    {
-        return mealName;
-    }
-
 }
 
