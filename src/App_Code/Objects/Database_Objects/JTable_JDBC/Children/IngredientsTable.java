@@ -1054,7 +1054,7 @@ public class IngredientsTable extends JDBC_JTable
         reloadingDataFromRefresh(updateMacrosLeft, true);
     }
 
-    public void reloadingDataFromRefresh(boolean refreshMacrosLeftTable, boolean refreshTotalMealTable)
+    public void reloadingDataFromRefresh(boolean updateMacrosLeftTable, boolean updateTotalMealTable)
     {
         //#############################################################################################
         // If Meal was previously deleted reset variables & state
@@ -1073,17 +1073,17 @@ public class IngredientsTable extends JDBC_JTable
         //#############################################################################################
         // Reset Meal Total  Table Data
         //#############################################################################################
-        if (refreshTotalMealTable)
+        if (updateTotalMealTable)
         {
-            refreshTotalMealTable();
+            update_TotalMeal_Table();
         }
 
         //#############################################################################################
         // Update Other Tables Data
         //#############################################################################################
-        if (refreshMacrosLeftTable)
+        if (updateMacrosLeftTable)
         {
-            refreshMacrosLeftTable();
+            update_MacrosLeft_Table();
         }
 
         //#############################################################################################
