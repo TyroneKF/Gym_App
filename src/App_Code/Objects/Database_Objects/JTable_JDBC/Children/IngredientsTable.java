@@ -99,7 +99,7 @@ public class IngredientsTable extends JDBC_JTable
 
         this.mealManager = mealManager;
         this.parentContainer = mealManager.getCollapsibleCenterJPanel();
-    
+
         this.spaceDivider = spaceDivider;
 
         this.map_ingredientTypesToNames = mealManager.getMap_ingredientTypesToNames();
@@ -147,7 +147,7 @@ public class IngredientsTable extends JDBC_JTable
         //##############################################################
         if (data.length == 0)
         {
-            addIngredient();
+            add_btn_Action();// Add Ingredient to JTable
         }
     }
 
@@ -287,7 +287,7 @@ public class IngredientsTable extends JDBC_JTable
 
             if (areYouSure("Refresh Data"))
             {
-                refresh_Btn_Action(true);
+                refresh_Btn_Action();
             }
         });
 
@@ -915,10 +915,6 @@ public class IngredientsTable extends JDBC_JTable
     //###################################################
     // Add Button
     //###################################################
-    public void addIngredient()
-    {
-        add_btn_Action();
-    }
 
     protected void add_btn_Action()
     {
@@ -1023,13 +1019,13 @@ public class IngredientsTable extends JDBC_JTable
         //##################################################################################
         // Update Table Data
         //###################################################################################
-        updateAllTablesData();
+        mealManager.update_TotalMeal_Table();
     }
 
     //###################################################
     // Refresh Button
     //###################################################
-    public void refresh_Btn_Action(boolean updateMacrosLeft)
+    public void refresh_Btn_Action()
     {
         //#############################################################################################
         // Reset DB Data
@@ -1043,15 +1039,17 @@ public class IngredientsTable extends JDBC_JTable
         //#############################################################################################
         // Reset Table Info & Data
         //##############################################################################################
-        reloadingDataFromRefresh(updateMacrosLeft, true);
+        reloadingDataFromRefresh(true, true);
     }
 
     public void reloadingDataFromRefresh(boolean updateMacrosLeftTable, boolean updateTotalMealTable)
     {
         //#############################################################################################
-        // If Meal was previously deleted reset variables & state
-        //##############################################################################################
-        if (getObjectDeleted())
+        // Reset Variable
+        //#############################################################################################
+        dataChangedInTable = false;
+
+        if (getObjectDeleted())  // If Meal was previously deleted reset variables & state
         {
             setVisibility(true);
             setObjectDeleted(false);
@@ -1077,11 +1075,6 @@ public class IngredientsTable extends JDBC_JTable
         {
             mealManager.update_MacrosLeft_Table();
         }
-
-        //#############################################################################################
-        // Reset Variable
-        //#############################################################################################
-        dataChangedInTable = false;
     }
 
     //###################################################
@@ -1941,17 +1934,13 @@ public class IngredientsTable extends JDBC_JTable
     }
 
     //##################################################################################################################
-    // Update Table & Refresh Tables
-    //##################################################################################################################
-
-    //##################################################
     // Update Table Methods
-    //##################################################
+    //##################################################################################################################
 
     private void updateAllTablesData()
     {
         mealManager.update_TotalMeal_Table();
-        mealManager.update_MacrosLeft_Table();        
+        mealManager.update_MacrosLeft_Table();
     }
 
     //##################################################################################################################
@@ -1965,11 +1954,6 @@ public class IngredientsTable extends JDBC_JTable
     private void setObjectDeleted(boolean deleted)
     {
         objectDeleted = deleted;
-    }
-
-    public void setSpaceDivider(JPanel jPanel)
-    {
-        spaceDivider = jPanel;
     }
 
     public void set_Meal_In_DB(boolean mealInDB)
