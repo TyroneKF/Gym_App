@@ -38,7 +38,6 @@ public class Meal_Plan_Screen extends JPanel
     //##################################################################################################################
     //
     //##################################################################################################################
-
     private static String databaseName = "gymapp12";
     private String JFrameName = databaseName;
 
@@ -72,7 +71,6 @@ public class Meal_Plan_Screen extends JPanel
     //##################################################################################################################
     // Ingredients Table Columns
     //##################################################################################################################
-
     private final ArrayList<String>
             ingredients_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList("Ingredient_Type", "Ingredient_Name", "Supplier")),
             ingredientsTableUnEditableCells = new ArrayList<>(Arrays.asList(
@@ -81,7 +79,6 @@ public class Meal_Plan_Screen extends JPanel
     //##################################################################################################################
     // Table Customisations
     //##################################################################################################################
-
     private final ArrayList<String>
             ingredientsInMeal_Table_ColToHide = new ArrayList<String>(Arrays.asList("PlanID", "MealID")),
             totalMeal_Table_ColToHide = new ArrayList<String>(Arrays.asList("PlanID", "MealID")),
@@ -606,7 +603,6 @@ public class Meal_Plan_Screen extends JPanel
     //##################################################################################################################
     // Frequently Used Methods
     //##################################################################################################################
-
     private boolean transferPlanData(int fromPlan, int toPlan)
     {
         String query0 = String.format("""
@@ -1003,21 +999,11 @@ public class Meal_Plan_Screen extends JPanel
         //####################################################################
         // Refresh ingredients meal table & total Tables Data
         //####################################################################
-        Iterator<IngredientsTable> it = listOfJTables.iterator();
+        Iterator<MealManager> it = mealManagerArrayList.iterator();
         while (it.hasNext())
         {
-            IngredientsTable ingredientsTable = it.next();
-
-            // if meal is not saved in DB remove the meal
-            if (!(ingredientsTable.getMealInDB()))
-            {
-                ingredientsTable.deleteTableAction(); // delete table from db
-                it.remove(); // remove from list
-                continue;
-            }
-
-            // Refresh Table data
-            ingredientsTable.reloadingDataFromRefresh(false, false);
+            MealManager mealManager = it.next();
+            mealManager.reloadingIngredientsTableDataFromRefresh(false);
         }
 
         //####################################################################
@@ -1173,7 +1159,6 @@ public class Meal_Plan_Screen extends JPanel
     //##########################################
     // Refresh macrosLeft & macroTargets Table
     //#########################################
-
     private void refreshMacroTargets()
     {
         // ##############################################
@@ -1205,7 +1190,6 @@ public class Meal_Plan_Screen extends JPanel
     //###############################################################################################################
     //  Opening & Closing External Screen
     //###############################################################################################################
-
     // Macro Targets Screen
     private void open_MacrosTargets_Screen()
     {
@@ -1253,7 +1237,6 @@ public class Meal_Plan_Screen extends JPanel
     //################################################################################################################
     //  Mutator Methods
     //################################################################################################################
-
     public void macrosTargetsChanged(boolean bool)
     {
         macroTargetsChanged = bool;
@@ -1274,7 +1257,6 @@ public class Meal_Plan_Screen extends JPanel
     //################################################################################################################
     //  Accessor Methods
     //################################################################################################################
-
     public boolean get_IsPlanSelected()
     {
         if (planID==null)

@@ -860,9 +860,9 @@ public class IngredientsTable extends JDBC_JTable
 
     public void deleteTableAction()
     {
-        //##########################################
+        //################################################
         // Delete table from database
-        //##########################################
+        //################################################
 
          /*
             Delete all ingredients from this meal (using mealID) from table "ingredients_in_meal"
@@ -880,16 +880,26 @@ public class IngredientsTable extends JDBC_JTable
             return;
         }
 
-        //##########################################
+        //################################################
         // Hide JTable object & Collapsible OBJ
-        //##########################################
-
+        //################################################
         setVisibility(false); // hide this component from the GUI
 
         setObjectDeleted(true); // set this object as deleted
 
-        updateAllTablesData(); // Update MacrosLeft Table & TotalMeal Table
+        //################################################
+        // Update MacrosLeft Table & TotalMeal Table
+        //################################################
+        updateAllTablesData();
 
+        //################################################
+        // Tell MealManager This Table Has Been Deleted
+        //################################################
+        mealManager.ingredientsTableHasBeenDeleted();
+
+        //################################################
+        // Progress Message
+        //################################################
         JOptionPane.showMessageDialog(frame, "Table Successfully Deleted!");
     }
 

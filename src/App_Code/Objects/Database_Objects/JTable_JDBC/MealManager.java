@@ -169,7 +169,6 @@ public class MealManager
     //##################################################################################################################
     //
     //##################################################################################################################
-
     private void setup()
     {
         ///############################
@@ -402,7 +401,6 @@ public class MealManager
     //##################################################################################################################
     // Button Actions
     //##################################################################################################################
-
     //HELLO Needs to scroll down to the bottom of the MealManager
     public void addButtonAction()
     {
@@ -447,6 +445,25 @@ public class MealManager
         objectDeleted = deleted;
     }
 
+    public void ingredientsTableHasBeenDeleted()
+    {
+        //##########################################
+        // IF there are no meals, delete table
+        //##########################################
+        for(IngredientsTable ingredientsTable: ingredientsTables)
+        {
+            if( ! (ingredientsTable.getObjectDeleted())) // if a meal hasn't been deleted, exit method
+            {
+                return;
+            }
+        }
+
+        //##########################################
+        // If there are no meals, delete table
+        //##########################################
+        deleteTableAction();
+    }
+
     public void deleteTableAction()
     {
         //##########################################
@@ -483,12 +500,14 @@ public class MealManager
 
         setVisibility(false); // hide collapsible Object
 
-        update_MacrosLeft_Table();// update macrosLeft table, due to number deductions from this meal
-
         setObjectDeleted(true); // set this object as deleted
 
-        JOptionPane.showMessageDialog(null, "Table Successfully Deleted! nmn");
+        //##########################################
+        // Hide JTable object & Collapsible OBJ
+        //##########################################
+        update_MacrosLeft_Table();// update macrosLeft table, due to number deductions from this meal
 
+        JOptionPane.showMessageDialog(null, "Table Successfully Deleted! nmn");
     }
 
     public void setVisibility(boolean condition)
@@ -623,6 +642,14 @@ public class MealManager
             return;
         }
 
+        //#############################################################################################
+        // Reset IngredientsTable Data
+        //##############################################################################################
+        reloadingIngredientsTableDataFromRefresh(refreshMacrosLeft);
+    }
+
+    public void reloadingIngredientsTableDataFromRefresh(boolean updateMacrosLeft)
+    {
         //##############################################################################################
         // Refresh ingredients meal table & total Tables Data
         //##############################################################################################
@@ -643,15 +670,21 @@ public class MealManager
             ingredientsTable.reloadingDataFromRefresh(false, false);
         }
 
-        //#############################################################################################
-        // Refresh Other Tables
         //##############################################################################################
+        // Make This MealManager Visible
+        //##############################################################################################
+        setVisibility(true); // hide collapsible Object
+        setObjectDeleted(false); // set this object as deleted
 
+        //##############################################################################################
         // Refresh TotalMeal
-        update_TotalMeal_Table();
+        //##############################################################################################
+        update_TotalMeal_Table(); // this has to be done
 
+        //##############################################################################################
         // Refresh MacrosLeft
-        if (refreshMacrosLeft)
+        //##############################################################################################
+        if (updateMacrosLeft) // this is optional
         {
             update_MacrosLeft_Table();
         }
