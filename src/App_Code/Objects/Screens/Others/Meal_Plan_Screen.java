@@ -55,7 +55,6 @@ public class Meal_Plan_Screen extends JPanel
     private Macros_Targets_Screen macrosTargets_Screen = null;
     private Parent_Ingredients_Info_Screen ingredientsInfoScreen = null;
 
-    private IngredientsTable jTableBeingAdded;
     private ArrayList<IngredientsTable> listOfJTables = new ArrayList<>();
     private ArrayList<MealManager> mealManagerArrayList = new ArrayList<>();
 
@@ -137,7 +136,6 @@ public class Meal_Plan_Screen extends JPanel
         //##############################################################################################################
         // Getting selected plan Info
         //##############################################################################################################
-
         ArrayList<ArrayList<String>> results1 = db.getMultiColumnQuery(String.format("SELECT PlanID, Plan_Name FROM plans WHERE SelectedPlan = %s;", tempPlanID));
         ArrayList<String> results = results1!=null ? results1.get(0):null;
 
@@ -956,7 +954,10 @@ public class Meal_Plan_Screen extends JPanel
 
     private void addMealToPlan()
     {
-        /*if (!(get_IsPlanSelected()))
+        //##############################################################################################################
+        //
+        //##############################################################################################################
+        if (!(get_IsPlanSelected()))
         {
             return;
         }
@@ -967,110 +968,20 @@ public class Meal_Plan_Screen extends JPanel
             JOptionPane.showMessageDialog(null, "\n\nCannot Add A  Meal As A Plan Is Not Selected! \nPlease Select A Plan First!!");
             return;
         }
+        //##############################################################################################################
+        //
+        //##############################################################################################################
+        new MealManager(this, scrollJPanelCenter);
 
-        //##################################
-        //Getting user input for Meal Name
-        //#################################
-        String newMealName = JOptionPane.showInputDialog("Input Meal Name?");
-
-        if (newMealName==null || newMealName.length()==0)
-        {
-            JOptionPane.showMessageDialog(null, "\n\nPlease Input A Valid Name With 1+ Characters!");
-            return;
-        }
-
-        //##################################
-        // Error Un-Unique Name //HELLO  THis process Could be simplified
-        //#################################
-
-        // Does Meal Exist Within Temp Plan
-        String mealInTempPlan = String.format("Select Meal_Name FROM Meals WHERE Meal_Name = '%s' AND PlanID = %s;", newMealName, tempPlanID);
-
-        if (!(db.getSingleColumnQuery(mealInTempPlan)==null))
-        {
-            JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nMeal Name Already Exists Within This Plan!!");
-            return;
-        }
-
-        // Does meal exist in original unsaved plan
-        String mealInPlan = String.format("Select Meal_Name FROM Meals WHERE Meal_Name = '%s' AND PlanID = %s;", newMealName, planID);
-
-        if (!(db.getSingleColumnQuery(mealInPlan)==null))
-        {
-            JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nMeal Name Already Exists Within The Original Meal Plan\n " +
-                    "Please Save This Plan Before Attempting To Create A Meal With This Name! ");
-            return;
-        }
-
-        //##################################
-        // Upload Meal To Temp Plan
-        //#################################
-        String uploadQuery = String.format(" INSERT INTO meals (PlanID, Meal_Name) VALUES (%s,'%s')", tempPlanID, newMealName);
-
-        if (!(db.uploadData_Batch_Altogether(new String[]{uploadQuery})))
-        {
-            JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nCreating Meal In DB!");
-            return;
-        }
-
-        //##################################
-        // Get Meal ID
-        //##################################
-
-        String query = String.format("Select MealID from meals WHERE PlanID = %s AND  Meal_Name = '%s';", tempPlanID, newMealName);
-        String[] results = db.getSingleColumnQuery(query);
-
-        if (results==null)
-        {
-            JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nCannot Get Created Meals ID!!");
-
-            String deleteQuery = String.format("DELETE FROM  meals WHERE planID = %s AND  MealName = '%s';)", tempPlanID, newMealName);
-            if (!(db.uploadData_Batch_Altogether(new String[]{deleteQuery})))
-            {
-                JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nUnable To Undo Errors Made!\n\nRecommendation Action: Refresh This Plan");
-            }
-
-            return;
-        }
-
-        Integer mealID = Integer.valueOf(results[0]);
-
-        System.out.printf("\n\nTemp Meal ID: %s", mealID);
-
-        //#############################################
-        // Create New Meal Table In GUI
-        //##############################################
-        //HELLO WILL CAUSE ERROR null
-        CollapsibleJPanel collapsibleJTable = create_CollapsibleJPanel(false, scrollJPanelCenter, mealID, newMealName, mealNo, null, meal_total_columnNames, ingredients_ColumnNames,
-                macrosLeft_JTable);
-
-        //###############################################
-        // Adding Collapsible Objects && JTables To GUI
-        //################################################
-
-
-        // adding  CollapsibleOBJ to interface
-        addToContainer(scrollJPanelCenter, collapsibleJTable, 0, containerYPos++, 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
-
-        //Space Divider between each CollapsibleObj
-        JPanel spaceDivider = new JPanel();
-        //spaceDivider.setBorder(BorderFactory.createLineBorder(Color.RED, 3));
-        jTableBeingAdded.setSpaceDivider(spaceDivider);
-
-        addToContainer(scrollJPanelCenter, spaceDivider, 0, containerYPos++, 1, 1, 0.25, 0.25, "both", 50, 0, null);
-
-        //##############################################
-        // Success Message
-        //##############################################
-
-        JOptionPane.showMessageDialog(null, "\n\n Meal Successfully Created!!");
-
-        //##############################################
+        //##############################################################################################################
         // Resize & Update Containers
-        //##############################################
+        //##############################################################################################################
         resizeGUI();
 
-        scrollBarDown_BTN_Action();*/
+        //##############################################################################################################
+        // Set Display to the bottom of the screen
+        //##############################################################################################################
+        scrollBarDown_BTN_Action();
     }
 
     private void refreshPlan(boolean askPermission)
@@ -1424,6 +1335,21 @@ public class Meal_Plan_Screen extends JPanel
     {
         containerYPos ++;
         return containerYPos;
+    }
+
+    public int getCurrentMealNo()
+    {
+        return mealNo;
+    }
+
+    public void increaseMealNo()
+    {
+        mealNo++;
+    }
+
+    public void addMealManger(MealManager mealManager)
+    {
+        mealManagerArrayList.add(mealManager);
     }
 
     //###########################################

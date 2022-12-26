@@ -18,9 +18,8 @@ public class MealManager
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-
     private boolean mealInDB = false, objectDeleted = false;
-    private Integer mealInPlanID, tempPlanID, planID, yPoInternally = 0;
+    private Integer mealInPlanID, tempPlanID, planID, yPoInternally = 0, mealNo;
     private String mealName;
     private String[] mealTotalTable_ColumnNames, ingredientsTable_ColumnNames;
     private ArrayList<String> totalMeal_Table_ColToHide, ingredientsTableUnEditableCells, ingredients_Table_Col_Avoid_Centering, ingredientsInMeal_Table_ColToHide;
@@ -41,6 +40,7 @@ public class MealManager
     private MacrosLeftTable macrosLeft_JTable;
     private TotalMealTable total_Meal_View_Table;
     private Frame frame;
+    Meal_Plan_Screen meal_plan_screen;
 
     //##################################################################################################################
     //
@@ -51,10 +51,127 @@ public class MealManager
         // Global Variables
         //##############################################################################################################
         this.mealInPlanID = mealInPlanID;
+        this.mealNo = mealNo;
         this.mealName = mealName;
         this.container = container;
         this.mealInDB = mealInDB;
+        this.meal_plan_screen = meal_plan_screen;
 
+        //##############################################################################################################
+        // SetUP
+        //##############################################################################################################
+        setup();
+
+        //##############################################################################################################
+        // Add Sub-Meal to GUI
+        //##############################################################################################################
+        add_MultipleSubMealsToGUI(subMealsInMealArrayList);
+    }
+
+    //
+    public MealManager(Meal_Plan_Screen meal_plan_screen, Container container)
+    {
+        //##############################################################################################################
+        // Global Variables
+        //##############################################################################################################
+        this.meal_plan_screen = meal_plan_screen;
+        this.container = container;
+        this.mealInDB = false;
+        this.mealNo = meal_plan_screen.getCurrentMealNo()+1;
+
+
+        ///############################
+        //
+        ///############################
+        this.tempPlanID = meal_plan_screen.getTempPlanID();
+        this.planID = meal_plan_screen.getPlanID();
+        this.db = meal_plan_screen.getDb();
+
+        //##############################################################################################################
+        // Getting user input for Meal Name
+        //##############################################################################################################
+        String newMealName = JOptionPane.showInputDialog("Input Meal Name?");
+
+        if (newMealName == null || newMealName.length() == 0)
+        {
+            JOptionPane.showMessageDialog(null, "\n\nPlease Input A Valid Name With 1+ Characters!");
+            return;
+        }
+
+        //##############################################################################################################
+        // Does The Chosen Meal Name Exist Within Temp Plan Or Original Plan
+        //##############################################################################################################
+
+        String mealInTempPlan = String.format("""
+                SELECT Meal_Name FROM mealsInPlan
+                WHERE
+                	Meal_Name = '%s' AND PlanID = %s
+                OR
+                    Meal_Name = '%s' AND PlanID = %s
+                	
+                LIMIT 1;""", newMealName, tempPlanID, newMealName, planID);
+
+        if (!(db.getSingleColumnQuery(mealInTempPlan) == null))
+        {
+            JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nMeal Name Already Exists Within This Plan!!");
+            return;
+        }
+
+        //##############################################################################################################
+        // Upload Meal To Temp Plan
+        //##############################################################################################################
+        String uploadQuery = String.format(" INSERT INTO mealsInPlan (PlanID, Meal_Name) VALUES (%s,'%s')", tempPlanID, newMealName);
+
+        if (!(db.uploadData_Batch_Altogether(new String[]{uploadQuery})))
+        {
+            JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nCreating Meal In DB!");
+            return;
+        }
+
+        //##############################################################################################################
+        // Get mealInPlanID
+        //##############################################################################################################
+        String query = String.format("Select MealInPlanID from mealsInPlan WHERE PlanID = %s AND  Meal_Name = '%s';", tempPlanID, newMealName);
+        String[] results = db.getSingleColumnQuery(query);
+
+        if (results == null)
+        {
+            JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nCannot Get Created Meals ID!!");
+
+            String deleteQuery = String.format("DELETE FROM  mealsInPlan WHERE planID = %s AND  MealName = '%s';)", tempPlanID, newMealName);
+            if (!(db.uploadData_Batch_Altogether(new String[]{deleteQuery})))
+            {
+                JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nUnable To Undo Errors Made!\n\nRecommendation Action: Refresh This Plan");
+            }
+
+            return;
+        }
+
+        mealInPlanID = Integer.valueOf(results[0]);
+
+        //##############################################################################################################
+        // SetUP
+        //##############################################################################################################
+        setup();
+
+        //##############################################################################################################
+        // Add SubMeal To Meal
+        //##############################################################################################################
+        addButtonAction();
+
+        //##############################################################################################################
+        // Add SubMeal To Meal & MealManger Processes
+        //##############################################################################################################
+        meal_plan_screen.addMealManger(this);
+        meal_plan_screen.increaseMealNo();
+    }
+
+    //##################################################################################################################
+    //
+    //##################################################################################################################
+
+    private void setup()
+    {
         ///############################
         // Objects
         ///############################
@@ -64,7 +181,7 @@ public class MealManager
         this.frame = meal_plan_screen.getFrame();
 
         ///############################
-        //Lists & Arraylists & Maps
+        // Lists & Arraylists & Maps
         ///############################
         this.mealTotalTable_ColumnNames = meal_plan_screen.getMeal_total_columnNames();
         this.totalMeal_Table_ColToHide = meal_plan_screen.getTotalMeal_Table_ColToHide();
@@ -127,20 +244,11 @@ public class MealManager
         addToContainer(collapsibleCenterJPanel, new JPanel(), 0, yPoInternally++, 1, 1, 0.25, 0.25, "both", 10, 0, null);
 
         //##############################################################################################################
-        // Add Sub-Meal to GUI
-        //##############################################################################################################
-        add_MultipleSubMealsToGUI(subMealsInMealArrayList);
-
-        //##############################################################################################################
         // Add Space Divider At the End Of The Meal Manager
         //##############################################################################################################
-
         addToContainer(container, spaceDivider, 0, meal_plan_screen.getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 50, 0, null);
     }
 
-    //##################################################################################################################
-    //
-    //##################################################################################################################
     private void iconSetup()
     {
         int iconSize = 40;
@@ -236,6 +344,18 @@ public class MealManager
         });
 
         iconPanelInsert.add(delete_btn);
+    }
+
+    private Boolean areYouSure(String process)
+    {
+        int reply = JOptionPane.showConfirmDialog(null, String.format("Are you sure you want to %s, \nany unsaved changes will be lost in this Table! \nDo you want to %s?", process, process),
+                "Restart Game", JOptionPane.YES_NO_OPTION); //HELLO Edit
+
+        if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
+        {
+            return false;
+        }
+        return true;
     }
 
     private void add_MultipleSubMealsToGUI(ArrayList<ArrayList<String>> subMealIDs)
@@ -605,15 +725,14 @@ public class MealManager
         // ##############################################################################
         // Successful Message
         // ##############################################################################
-        if(showUpdateMessage)
+        if (showUpdateMessage)
         {
             JOptionPane.showMessageDialog(frame, "\n\nAll SubMeals Within Meal Have Successfully Saved!");
         }
     }
 
-
     //##################################################################################################################
-    //
+    // Updating Other Tables
     //##################################################################################################################
     public void update_MacrosLeft_Table()
     {
@@ -626,9 +745,8 @@ public class MealManager
     }
 
     //##################################################################################################################
-    //
+    // Accessor Methods
     //##################################################################################################################
-
     public JPanel getCollapsibleCenterJPanel()
     {
         return collapsibleCenterJPanel;
@@ -642,21 +760,6 @@ public class MealManager
     public Frame getFrame()
     {
         return frame;
-    }
-
-    //##################################################################################################################
-    //
-    //##################################################################################################################
-    private Boolean areYouSure(String process)
-    {
-        int reply = JOptionPane.showConfirmDialog(null, String.format("Are you sure you want to %s, \nany unsaved changes will be lost in this Table! \nDo you want to %s?", process, process),
-                "Restart Game", JOptionPane.YES_NO_OPTION); //HELLO Edit
-
-        if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
-        {
-            return false;
-        }
-        return true;
     }
 
     //##################################################################################################################
