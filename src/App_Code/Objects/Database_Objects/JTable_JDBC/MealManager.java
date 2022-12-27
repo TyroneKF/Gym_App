@@ -18,7 +18,7 @@ public class MealManager
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    private boolean mealInDB = false, objectDeleted = false;
+    private boolean mealManagerInDB = false, hasMealPlannerBeenDeleted = false;
     private Integer mealInPlanID, tempPlanID, planID, yPoInternally = 0, mealNo;
     private String mealName;
     private String[] mealTotalTable_ColumnNames, ingredientsTable_ColumnNames;
@@ -45,7 +45,7 @@ public class MealManager
     //##################################################################################################################
     //
     //##################################################################################################################
-    public MealManager(Meal_Plan_Screen meal_plan_screen, Container container, boolean mealInDB, int mealInPlanID, int mealNo, String mealName, ArrayList<ArrayList<String>> subMealsInMealArrayList)
+    public MealManager(Meal_Plan_Screen meal_plan_screen, Container container, boolean mealManagerInDB, int mealInPlanID, int mealNo, String mealName, ArrayList<ArrayList<String>> subMealsInMealArrayList)
     {
         //##############################################################################################################
         // Global Variables
@@ -54,7 +54,7 @@ public class MealManager
         this.mealNo = mealNo;
         this.mealName = mealName;
         this.container = container;
-        this.mealInDB = mealInDB;
+        this.mealManagerInDB = mealManagerInDB;
         this.meal_plan_screen = meal_plan_screen;
 
         //##############################################################################################################
@@ -76,8 +76,8 @@ public class MealManager
         //##############################################################################################################
         this.meal_plan_screen = meal_plan_screen;
         this.container = container;
-        this.mealInDB = false;
-        this.mealNo = meal_plan_screen.getCurrentMealNo()+1;
+        this.mealManagerInDB = false;
+        this.mealNo = meal_plan_screen.getCurrentMealNo() + 1;
 
 
         ///############################
@@ -316,7 +316,7 @@ public class MealManager
         save_btn.addActionListener(ae -> {
             if (areYouSure("Save Data"))
             {
-                save_Btn_Action(true);
+                save_Btn_Action();
             }
         });
 
@@ -440,28 +440,62 @@ public class MealManager
     //######################################
     // Delete
     //######################################
-    private void setObjectDeleted(boolean deleted)
+    private void setHasMealPlannerBeenDeleted(boolean x)
     {
-        objectDeleted = deleted;
+        hasMealPlannerBeenDeleted = x;
+    }
+
+    public boolean getHasMealPlannerBeenDeleted()
+    {
+        return hasMealPlannerBeenDeleted;
+    }
+
+    public void setVisibility(boolean condition)
+    {
+        collapsibleJpObj.setVisible(condition);
+        spaceDivider.setVisible(condition);
+    }
+
+    public boolean areAllTableBeenDeleted()
+    {
+        //##########################################
+        // IF there are no meals, delete table
+        //##########################################
+        for (IngredientsTable ingredientsTable : ingredientsTables)
+        {
+            if (!(ingredientsTable.getObjectDeleted())) // if a meal hasn't been deleted, exit method
+            {
+                return false;
+            }
+        }
+
+        //##########################################
+        return true;
     }
 
     public void ingredientsTableHasBeenDeleted()
     {
         //##########################################
-        // IF there are no meals, delete table
+        // Delete Meal From DB
         //##########################################
-        for(IngredientsTable ingredientsTable: ingredientsTables)
+        String query1 = "SET FOREIGN_KEY_CHECKS = 0;"; // Disable Foreign Key Checks
+        String query2 = String.format("DELETE FROM mealsInPlan WHERE MealInPlanID = %s AND PlanID = %s;", mealInPlanID, tempPlanID);
+        String query3 = "SET FOREIGN_KEY_CHECKS = 1;"; // Enable Foreign Key Checks
+
+        if (!(db.uploadData_Batch_Altogether(new String[]{query1, query2, query3})))
         {
-            if( ! (ingredientsTable.getObjectDeleted())) // if a meal hasn't been deleted, exit method
-            {
-                return;
-            }
+            JOptionPane.showMessageDialog(frame, "\n\n1.)  Error MealManager.ingredientsTableHasBeenDeleted() \nUnable to Delete Selected Meal From DB!");
+            return;
         }
 
         //##########################################
         // If there are no meals, delete table
         //##########################################
-        deleteTableAction();
+        if (areAllTableBeenDeleted())
+        {
+            setVisibility(false); // hide collapsible Object
+            setHasMealPlannerBeenDeleted(true); // set this object as deleted
+        }
     }
 
     public void deleteTableAction()
@@ -500,7 +534,7 @@ public class MealManager
 
         setVisibility(false); // hide collapsible Object
 
-        setObjectDeleted(true); // set this object as deleted
+        setHasMealPlannerBeenDeleted(true); // set this object as deleted
 
         //##########################################
         // Hide JTable object & Collapsible OBJ
@@ -510,46 +544,10 @@ public class MealManager
         JOptionPane.showMessageDialog(null, "Table Successfully Deleted! nmn");
     }
 
-    public void setVisibility(boolean condition)
+    public void completely_Delete_MealManager()
     {
-        collapsibleJpObj.setVisible(condition);
-        spaceDivider.setVisible(condition);
-    }
-
-    public void completely_Deleted_JTables()
-    {/*
-        if(! objectDeleted)
-        {
-            return;
-        }
-
-        //#################################################
-        // Remove  Main Jtable from collapsible Object
-        //#################################################
-        container.remove(collapsibleJpObj);
-        container.remove()
-
-        //##################################################
-        // Delete Meal Total Table From Collapsible Object
-        //##################################################
-        if (total_Meal_Table!=null && collapsibleObj!=null)
-        {
-            collapsibleObj.getParentContainer().remove(spaceDivider); // remove spaceDivider from GUI
-
-            JPanel collapsible_SouthPanel = collapsibleObj.getSouthJPanel();
-            collapsible_SouthPanel.remove(total_Meal_Table);
-            collapsibleObj.getSouthJPanel();
-        }
-
-        parentContainer.revalidate();
-
-        //##################################################
-        //  Notify GUI to delete collapsible Object
-        //##################################################
-        if (collapsibleObj!=null)
-        {
-            collapsibleObj.removeCollapsibleJPanel(); // notifies GUI to delete collapsible Object
-        }*/
+        container.remove(collapsibleJpObj); // remove the GUI elements from GUI
+        container.remove(spaceDivider);    // remove space divider from GUI
     }
 
     //#################################################################################
@@ -633,6 +631,12 @@ public class MealManager
     //######################################
     public void refresh_Btn_Action(boolean refreshMacrosLeft)
     {
+        if (!(mealManagerInDB))
+        {
+            completely_Delete_MealManager();
+            return;
+        }
+
         //#############################################################################################
         // Reset DB Data
         //##############################################################################################
@@ -674,7 +678,7 @@ public class MealManager
         // Make This MealManager Visible
         //##############################################################################################
         setVisibility(true); // hide collapsible Object
-        setObjectDeleted(false); // set this object as deleted
+        setHasMealPlannerBeenDeleted(false); // set this object as deleted
 
         //##############################################################################################
         // Refresh TotalMeal
@@ -693,25 +697,13 @@ public class MealManager
     //######################################
     // Save
     //######################################
-    public void save_Btn_Action(boolean showUpdateMessage)
+    public void setMealManagerInDB(boolean mealManagerInDB)
     {
-        // ###############################################################################
-        // Removing Sub-Meals that have been deleted
-        // ##############################################################################
-        Iterator<IngredientsTable> it = ingredientsTables.iterator();
+        this.mealManagerInDB = mealManagerInDB;
+    }
 
-        while (it.hasNext())
-        {
-            IngredientsTable table = it.next();
-
-            // If objected is deleted, completely delete it then skip to next JTable
-            if (table.getObjectDeleted())
-            {
-                table.completely_Deleted_JTables();
-                it.remove();
-            }
-        }
-
+    public void save_Btn_Action()
+    {
         // ###############################################################################
         // Transferring Meals & Ingredients from FromPlan to toPlan
         // ##############################################################################
@@ -723,21 +715,38 @@ public class MealManager
             return;
         }
 
-        // ##############################################################################
-        // Save IngredientsTable Data
-        // ##############################################################################
-        int errorCount = 0;
-        Iterator<IngredientsTable> it2 = ingredientsTables.iterator();
-        while (it2.hasNext())
-        {
-            IngredientsTable table = it2.next();
+        saveData(true);
+    }
 
+    public void saveData(boolean showUpdateMessage)
+    {
+        // ###############################################################################
+        // Removing Sub-Meals that have been deleted & Saving The Other Tables
+        // ##############################################################################
+        Iterator<IngredientsTable> it = ingredientsTables.iterator();
+        int errorCount = 0;
+        while (it.hasNext())
+        {
+            IngredientsTable table = it.next();
+
+            // #####################################
+            // Remove Deleted Ingredients Table
+            // #####################################
+            if (table.getObjectDeleted())   // If objected is deleted, completely delete it then skip to next JTable
+            {
+                table.completely_Deleted_JTables();
+                it.remove();
+                continue;
+            }
+
+            // #####################################
+            // If error occurred above exit
+            // #####################################
             table.set_Meal_In_DB(true);
 
             if (!(table.updateTableModelData()))
             {
                 errorCount++;
-
             }
         }
 
@@ -746,9 +755,14 @@ public class MealManager
         // #####################################
         if (errorCount > 0)
         {
-            JOptionPane.showMessageDialog(frame, "\n\n Error \n2.) Unable to updateTableModelData() all sub-meals in meal! \n\nPlease retry again!");
+            JOptionPane.showMessageDialog(frame, "\n\n Error \n1.) Unable to updateTableModelData() all sub-meals in meal! \n\nPlease retry again!");
             return;
         }
+
+        // ##############################################################################
+        //
+        // ##############################################################################
+        setMealManagerInDB(true);
 
         // ##############################################################################
         // Save TotalMealTable
