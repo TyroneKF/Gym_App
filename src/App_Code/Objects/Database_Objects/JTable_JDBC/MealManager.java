@@ -295,7 +295,7 @@ public class MealManager
 
             if (areYouSure("Refresh Data"))
             {
-                refresh_Btn_Action(true);
+                refresh_Btn_Action();
             }
         });
 
@@ -338,7 +338,7 @@ public class MealManager
 
             if (areYouSure("Delete"))
             {
-                deleteTableAction();
+                deleteMealManagerAction();
             }
         });
 
@@ -463,7 +463,7 @@ public class MealManager
         //##########################################
         for (IngredientsTable ingredientsTable : ingredientsTables)
         {
-            if (!(ingredientsTable.getObjectDeleted())) // if a meal hasn't been deleted, exit method
+            if (!(ingredientsTable.hasIngredientsTableBeenDeleted())) // if a meal hasn't been deleted, exit method
             {
                 return false;
             }
@@ -475,6 +475,15 @@ public class MealManager
 
     public void ingredientsTableHasBeenDeleted()
     {
+        //##########################################
+        // If there are no meals, delete table
+        //##########################################
+        if ( ! (areAllTableBeenDeleted()))
+        {
+
+            return;
+        }
+
         //##########################################
         // Delete Meal From DB
         //##########################################
@@ -488,17 +497,10 @@ public class MealManager
             return;
         }
 
-        //##########################################
-        // If there are no meals, delete table
-        //##########################################
-        if (areAllTableBeenDeleted())
-        {
-            setVisibility(false); // hide collapsible Object
-            setHasMealPlannerBeenDeleted(true); // set this object as deleted
-        }
+        hideMealManager();
     }
 
-    public void deleteTableAction()
+    public void deleteMealManagerAction()
     {
         //##########################################
         // Delete Meal from database
@@ -531,23 +533,41 @@ public class MealManager
         //##########################################
         // Hide JTable object & Collapsible OBJ
         //##########################################
-
-        setVisibility(false); // hide collapsible Object
-
-        setHasMealPlannerBeenDeleted(true); // set this object as deleted
+        hideMealManager();
 
         //##########################################
-        // Hide JTable object & Collapsible OBJ
+        // Update MacrosLeftTable
         //##########################################
         update_MacrosLeft_Table();// update macrosLeft table, due to number deductions from this meal
 
+        //##########################################
+        // Update Message
+        //##########################################
         JOptionPane.showMessageDialog(null, "Table Successfully Deleted! nmn");
+    }
+
+    private void hideMealManager()
+    {
+        setVisibility(false); // hide collapsible Object
+        setHasMealPlannerBeenDeleted(true); // set this object as deleted
+    }
+
+    private void unHideMealManager()
+    {
+        setVisibility(true); // hide collapsible Object
+        setHasMealPlannerBeenDeleted(false); // set this object as deleted
     }
 
     public void completely_Delete_MealManager()
     {
+        hideMealManager();
         container.remove(collapsibleJpObj); // remove the GUI elements from GUI
         container.remove(spaceDivider);    // remove space divider from GUI
+    }
+
+    public void removeIngredientsTable(IngredientsTable ingredientsTable)
+    {
+        ingredientsTables.remove(ingredientsTable);
     }
 
     //#################################################################################
@@ -629,14 +649,8 @@ public class MealManager
     //######################################
     // Refresh
     //######################################
-    public void refresh_Btn_Action(boolean refreshMacrosLeft)
+    public void refresh_Btn_Action()
     {
-        if (!(mealManagerInDB))
-        {
-            completely_Delete_MealManager();
-            return;
-        }
-
         //#############################################################################################
         // Reset DB Data
         //##############################################################################################
@@ -649,7 +663,7 @@ public class MealManager
         //#############################################################################################
         // Reset IngredientsTable Data
         //##############################################################################################
-        reloadingIngredientsTableDataFromRefresh(refreshMacrosLeft);
+        reloadingIngredientsTableDataFromRefresh(true);
     }
 
     public void reloadingIngredientsTableDataFromRefresh(boolean updateMacrosLeft)
@@ -662,23 +676,24 @@ public class MealManager
         {
             IngredientsTable ingredientsTable = it.next();
 
-            // if meal is not saved in DB remove the meal
-            if (!(ingredientsTable.getMealInDB()))
+            // If ingredientsTable is in DB  then refresh
+            if (ingredientsTable.getMealInDB())
             {
-                ingredientsTable.deleteTableAction(); // delete table from db
-                it.remove(); // remove from list
+                ingredientsTable.reloadingDataFromRefresh(false, false);
                 continue;
             }
 
-            // Refresh Table data
-            ingredientsTable.reloadingDataFromRefresh(false, false);
+            // Because mealManager has been deleted remove it
+            ingredientsTable.completely_Delete_IngredientsJTable(); // delete table from db
+
+            // Because mealManager has been deleted remove it
+            it.remove(); // remove from list
         }
 
         //##############################################################################################
         // Make This MealManager Visible
         //##############################################################################################
-        setVisibility(true); // hide collapsible Object
-        setHasMealPlannerBeenDeleted(false); // set this object as deleted
+        unHideMealManager();
 
         //##############################################################################################
         // Refresh TotalMeal
@@ -700,6 +715,11 @@ public class MealManager
     public void setMealManagerInDB(boolean mealManagerInDB)
     {
         this.mealManagerInDB = mealManagerInDB;
+    }
+
+    public boolean isMealManagerInDB()
+    {
+        return mealManagerInDB;
     }
 
     public void save_Btn_Action()
@@ -732,9 +752,9 @@ public class MealManager
             // #####################################
             // Remove Deleted Ingredients Table
             // #####################################
-            if (table.getObjectDeleted())   // If objected is deleted, completely delete it then skip to next JTable
+            if (table.hasIngredientsTableBeenDeleted())   // If objected is deleted, completely delete it then skip to next JTable
             {
-                table.completely_Deleted_JTables();
+                table.completely_Delete_IngredientsJTable();
                 it.remove();
                 continue;
             }

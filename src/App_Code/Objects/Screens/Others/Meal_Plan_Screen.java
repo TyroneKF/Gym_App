@@ -998,7 +998,19 @@ public class Meal_Plan_Screen extends JPanel
         while (it.hasNext())
         {
             MealManager mealManager = it.next();
-            mealManager.reloadingIngredientsTableDataFromRefresh(false);
+
+            // If mealManager is in DB  then refresh
+            if(mealManager.isMealManagerInDB())
+            {
+                mealManager.reloadingIngredientsTableDataFromRefresh(false);
+                continue;
+            }
+
+            // Because mealManager is not in the DB erase it from the GUI
+            mealManager.completely_Delete_MealManager();
+
+            // Remove mealManager from memory
+            it.remove();
         }
 
         //####################################################################

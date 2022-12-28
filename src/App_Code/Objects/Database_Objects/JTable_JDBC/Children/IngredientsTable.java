@@ -282,11 +282,29 @@ public class IngredientsTable extends JDBC_JTable
             //#######################################################
             // Ask For Permission
             //#######################################################
-
-            if (areYouSure("Refresh Data"))
+            if ( ! (areYouSure("Refresh Data")))
             {
-                refresh_Btn_Action();
+                return;
             }
+
+            //#######################################################
+            //  Delete meal if not in DB
+            //#######################################################
+            if( ! (getMealInDB())) // Delete Meal if not in DB
+            {
+                if(areYouSure(" ' Refresh Data' this meal isn't saved and will result in this meal being deleted "))
+                {
+                    deleteTableAction();
+                    completely_Delete_IngredientsJTable();
+                    mealManager.removeIngredientsTable(this); // Remove Ingredients Table from memory
+                }
+                return;
+            }
+
+            //#######################################################
+            //  Refresh Meal
+            //#######################################################
+            refresh_Btn_Action();
         });
 
         iconPanelInsert.add(refresh_Icon_Btn);
@@ -738,7 +756,6 @@ public class IngredientsTable extends JDBC_JTable
     //##################################################################################################################
     // Delete Button Methods
     //##################################################################################################################
-
     public void setupDeleteBtnColumn(int deleteBtnColumn)
     {
         Action delete = new AbstractAction()
@@ -772,13 +789,13 @@ public class IngredientsTable extends JDBC_JTable
         //##################################################
         if (rowsInTable == 1)
         {
-            String question = String.format("""
-                    \n\nThere is only 1 ingredient in this table (' %s '), 
+            String question = """
+                    \n\nThere is only 1  ingredient in this subMeal!
                                         
-                    if you delete this ingredient, this table will also be deleted.
+                    If you delete this ingredient, this table will also be deleted.
                                        
-                    Would you like to delete this table?
-                     """, mealName);
+                    Would you still like to proceed?
+                     """;
 
             int reply = JOptionPane.showConfirmDialog(null, question, "Delete Ingredients", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
@@ -786,7 +803,7 @@ public class IngredientsTable extends JDBC_JTable
             {
                 deleteTableAction();
             }
-            else if (reply == JOptionPane.NO_OPTION)
+            else if (reply == JOptionPane.NO_OPTION) // instead of delete last ingredient, replace with ingredient None Of Above
             {
                 Object ingredients_Index = jTable.getValueAt(0, ingredientsTable_Index_Col);
                 Object ingredientID = 1;
@@ -819,7 +836,7 @@ public class IngredientsTable extends JDBC_JTable
             return;
         }
         //#################################################
-        // Remove From DB
+        // Remove From Row From DB
         //##################################################
         if (ingredientIndex != null)
         {
@@ -836,6 +853,7 @@ public class IngredientsTable extends JDBC_JTable
             if (!(db.uploadData_Batch_Altogether(queryUpload)))
             {
                 JOptionPane.showMessageDialog(frame, "Unable To delete Ingredient from Meal in Database");
+                return;
             }
         }
 
@@ -849,11 +867,7 @@ public class IngredientsTable extends JDBC_JTable
         //#################################################
         // Update Table Data
         //##################################################
-
         updateAllTablesData();
-
-        //HELLO REMOVE
-        System.out.printf("\n\n#########################################################################");
     }
 
     public void deleteTableAction()
@@ -881,9 +895,7 @@ public class IngredientsTable extends JDBC_JTable
         //################################################
         // Hide JTable object & Collapsible OBJ
         //################################################
-        setVisibility(false); // hide this component from the GUI
-
-        setObjectDeleted(true); // set this object as deleted
+        hideIngredientsTable();
 
         //################################################
         // Update MacrosLeft Table & TotalMeal Table
@@ -901,10 +913,16 @@ public class IngredientsTable extends JDBC_JTable
         JOptionPane.showMessageDialog(frame, "Table Successfully Deleted!");
     }
 
-    public void completely_Deleted_JTables()
+    public void completely_Delete_IngredientsJTable()
     {
+        // Hide Ingredients Table
+        hideIngredientsTable();
+
         // remove JTable from GUI
         parentContainer.remove(this);
+
+        // remove Space Divider
+        parentContainer.remove(spaceDivider);
 
         // Tell Parent container to resize
         parentContainer.revalidate();
@@ -916,14 +934,23 @@ public class IngredientsTable extends JDBC_JTable
         spaceDivider.setVisible(condition);
     }
 
+    private void hideIngredientsTable()
+    {
+        setVisibility(false); // hide collapsible Object
+        setObjectDeleted(true);
+    }
+
+    private void unHideIngredientsTable()
+    {
+        setVisibility(true); // hide collapsible Object
+        setObjectDeleted(false); // set this object as deleted
+    }
+
     //##################################################################################################################
     // Button Events
     //##################################################################################################################
 
-    //###################################################
     // Add Button
-    //###################################################
-
     protected void add_btn_Action()
     {
         //#########################################################
@@ -1035,18 +1062,18 @@ public class IngredientsTable extends JDBC_JTable
     //###################################################
     public void refresh_Btn_Action()
     {
-        //#############################################################################################
+        //#############################
         // Reset DB Data
-        //##############################################################################################
+        //#############################
         if (!(transferMealDataToPlan(planID, temp_PlanID)))
         {
             JOptionPane.showMessageDialog(frame, "\n\nUnable to transfer ingredients data from  original plan to temp plan!!");
             return;
         }
 
-        //#############################################################################################
+        //#############################
         // Reset Table Info & Data
-        //##############################################################################################
+        //#############################
         reloadingDataFromRefresh(true, true);
     }
 
@@ -1057,10 +1084,9 @@ public class IngredientsTable extends JDBC_JTable
         //#############################################################################################
         dataChangedInTable = false;
 
-        if (getObjectDeleted())  // If Meal was previously deleted reset variables & state
+        if (hasIngredientsTableBeenDeleted())  // If Meal was previously deleted reset variables & state
         {
-            setVisibility(true);
-            setObjectDeleted(false);
+            unHideIngredientsTable();
         }
 
         //##############################################################################################
@@ -1942,9 +1968,8 @@ public class IngredientsTable extends JDBC_JTable
     }
 
     //##################################################################################################################
-    // Update Table Methods
+    // Update Other Table Methods
     //##################################################################################################################
-
     private void updateAllTablesData()
     {
         mealManager.update_TotalMeal_Table();
@@ -2005,7 +2030,6 @@ public class IngredientsTable extends JDBC_JTable
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
-
     public String getMealName()
     {
         return mealName;
@@ -2026,7 +2050,7 @@ public class IngredientsTable extends JDBC_JTable
         return mealInPlanID;
     }
 
-    public boolean getObjectDeleted()
+    public boolean hasIngredientsTableBeenDeleted()
     {
         return objectDeleted;
     }
