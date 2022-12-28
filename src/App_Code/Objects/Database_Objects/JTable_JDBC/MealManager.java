@@ -480,7 +480,6 @@ public class MealManager
         //##########################################
         if ( ! (areAllTableBeenDeleted()))
         {
-
             return;
         }
 
