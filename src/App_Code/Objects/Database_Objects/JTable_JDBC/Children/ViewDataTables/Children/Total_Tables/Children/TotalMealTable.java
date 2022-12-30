@@ -1,31 +1,23 @@
-package App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Children.TotalMealTable;
+package App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Children.Total_Tables.Children;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
+import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Children.Total_Tables.Parent_Totals_Table;
 import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.MyJTable_DisplayData;
 import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 
-import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
 
-public class TotalMealTable extends MyJTable_DisplayData
+public class TotalMealTable extends Parent_Totals_Table
 {
-    protected Integer planID, temp_PlanID = 1, MealInPlanID;
-    protected String mealName;
-    protected CollapsibleJPanel collapsibleObj;
+    private String databaseTableName = "total_meal_view", tableName = "TotalMealTable";
 
-
-    public TotalMealTable(MyJDBC db, CollapsibleJPanel collapsibleObj,  Object[][] data, String[] columnNames, int planID,
+    public TotalMealTable(MyJDBC db, CollapsibleJPanel collapsibleObj, Object[][] data, String[] columnNames, int planID, int temp_PlanID,
                           Integer MealInPlanID, String mealName, String tableName,
                           ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering, ArrayList<String> columnsToHide)
     {
 
-        super(db, collapsibleObj.getCentreJPanel(),  data, columnNames, planID, tableName, unEditableColumns, colAvoidCentering, columnsToHide);
-
-        this.MealInPlanID = MealInPlanID;
-        this.mealName = mealName;
-        this.planID = planID;
-        this.collapsibleObj = collapsibleObj;
+        super(db, collapsibleObj.getCentreJPanel(), data, columnNames, planID, temp_PlanID, MealInPlanID, mealName, tableName, unEditableColumns, colAvoidCentering, columnsToHide);
     }
 
     @Override
@@ -86,15 +78,13 @@ public class TotalMealTable extends MyJTable_DisplayData
     public void updateTotalMealTable()
     {
         String query = String.format("SELECT *  FROM total_meal_view WHERE MealInPlanID = %s AND PlanID = %s;", MealInPlanID, temp_PlanID);
-        super.updateTable("TotalMealTable", query, 0);
+        super.updateTable(0, query, tableName);
     }
 
     public boolean updateTotalMealTableModelData()
     {
-        String query = String.format("SELECT * FROM total_meal_view WHERE MealInPlanID = %s AND PlanID = %s;",
-                MealInPlanID, temp_PlanID);
-
-        return super.updateTableModelData("total_meal_view", query);
+        String query = String.format("SELECT * FROM total_meal_view WHERE MealInPlanID = %s AND PlanID = %s;",  MealInPlanID, temp_PlanID);
+        return super.updateTableModelData(databaseTableName, query);
     }
 }
 
