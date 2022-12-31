@@ -23,7 +23,7 @@ public class Add_Ingredients extends JPanel
     protected JPanel scrollPaneJPanel;
     protected GridBagConstraints gbc = new GridBagConstraints();
 
-    protected boolean formEditable = false, updateIngredientsForm = false, updateShops = false;
+    protected boolean formEditable = false;
 
     private final int totalNumbersAllowed = 7, decimalScale = 2, decimalPrecision = totalNumbersAllowed - decimalScale, charLimit = 8;
 
@@ -203,9 +203,6 @@ public class Add_Ingredients extends JPanel
 
         if (!errorFound)
         {
-            updateShops = false;
-            updateIngredientsForm = false; // reset values
-
             if (!areYouSure("upload these values as they may have been changed / adapted to fit our data type format"))
             {
                 return;
@@ -265,27 +262,6 @@ public class Add_Ingredients extends JPanel
 
         parent.update_EditIngredientsInfo_IngredientsTypes();
         return true;
-    }
-
-
-    protected boolean isUpdateIngredientsForm()
-    {
-        return updateIngredientsForm;
-    }
-
-    protected void setUpdateIngredientsForm(boolean x)
-    {
-        updateIngredientsForm = x;
-    }
-
-    protected void setUpdateShops(boolean x)
-    {
-        updateShops = x;
-    }
-
-    protected boolean isUpdateShops()
-    {
-        return updateShops;
     }
 
     protected String convertToBigDecimal(String value, String errorTxt, String rowLabel, int rowNumber, JTextField jTextField)
@@ -370,15 +346,6 @@ public class Add_Ingredients extends JPanel
         System.out.printf("\n\n%s", updateIngredients_String, Arrays.toString(updateIngredientShops_String));
 
         //####################################
-        // Error forming update String (exit)
-        //####################################
-
-        if (!updateShops || !updateIngredientsForm)
-        {
-            return false;
-        }
-
-        //####################################
         // Uploading Query
         //####################################
         if (!(db.uploadData_Batch_Altogether(new String[]{updateIngredients_String})))
@@ -436,7 +403,7 @@ public class Add_Ingredients extends JPanel
 //                put("Potassium",  new Triplet<String, String, String>("nf_potassium", "", "Double"));
 
         }};
-        
+
         protected int ingredientNameObjectIndex, ingredientTypeObjectIndex, glycemicObjectIndex, ingredientSaltObjectIndex, ingredientMeasurementObjectIndex;
 
         protected JComboBox<String>
@@ -852,7 +819,7 @@ public class Add_Ingredients extends JPanel
 
             //##############################
             // Validation Input Fields
-            //##############################            
+            //##############################
 
             int row = -1;
             for (String ingredientFormLabel : ingredientsFormLabelsMapsToValues.keySet())
@@ -984,7 +951,7 @@ public class Add_Ingredients extends JPanel
             }
             return errorTxt;
         }
-        
+
         protected boolean checkIfIngredientNameInDB(String ingredientName)
         {
             ingredientName = removeSpaceAndHiddenChars(ingredientName);
@@ -1001,7 +968,6 @@ public class Add_Ingredients extends JPanel
 
         protected String get_IngredientsForm_UpdateString(String ingredientID) // HELLO needs further update methods created for gui
         {
-
             //####################################
             // Creating Upload Query
             //####################################
@@ -1071,15 +1037,11 @@ public class Add_Ingredients extends JPanel
             }
 
             //####################################
-            //
-            //####################################
-            updateIngredientsForm = true; //HELLO EDIT NOW
-
-            //####################################
             // Return results
             //####################################
             return (insertQuery += fieldsQuery);
         }
+
         protected String removeSpaceAndHiddenChars(String stringToBeEdited)
         {
             return stringToBeEdited.trim().replaceAll("\\p{C}", ""); // remove all whitespace & hidden characters like \n
@@ -1343,13 +1305,8 @@ public class Add_Ingredients extends JPanel
             //########################################
             // Nothing to Update
             //########################################
-            if (!updateIngredientsForm)
+            if (prices.size() == 0) // prices is just used but, could be any list stored by the shop object
             {
-                return null;
-            }
-            else if (prices.size() == 0)
-            {
-                updateShops = true;
                 return null;
             }
 
@@ -1372,7 +1329,8 @@ public class Add_Ingredients extends JPanel
             {
                 pos++;
                 values += String.format("(%s, %s, %s, (SELECT StoreID FROM stores WHERE Store_Name = '%s'))",
-                        mysqlVariableReference, quantityPerPack.get(key).getText(), prices.get(key).getText(), shopJComboBoxes.get(key).getSelectedItem().toString());
+                        mysqlVariableReference, quantityPerPack.get(key).getText(), prices.get(key).getText(),
+                        shopJComboBoxes.get(key).getSelectedItem().toString());
 
                 if (pos == listSize)
                 {
@@ -1388,9 +1346,6 @@ public class Add_Ingredients extends JPanel
             //############################################################
             // Return values
             //############################################################
-
-            updateShops = true;
-
             System.out.printf("\n\n%s \n\n%s", createMysqlVariable, updateString);
 
             return new String[]{createMysqlVariable, updateString};
