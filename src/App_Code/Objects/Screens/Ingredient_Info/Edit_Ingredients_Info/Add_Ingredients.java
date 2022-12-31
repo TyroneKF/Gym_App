@@ -1005,28 +1005,20 @@ public class Add_Ingredients extends JPanel
             //####################################
             // Creating Upload Query
             //####################################
-            int i = 0;
-
-            String ingredientTypeSet = "SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = '";
-            String tableName = "ingredients_info";
-
-
-            String insertQuery = String.format("""
-                    INSERT INTO %s
-                    (""", tableName);
-
-            String fieldsQuery = "\nValues \n(";
+            String
+                    ingredientTypeSet = "SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = '",
+                    insertQuery = "INSERT INTO ingredients_info",
+                    fieldsQuery = "\nValues \n(NULL,";
 
             //####################################
             //
             //####################################
-            int pos = -1, listSize = ingredientsFormLabelsMapsToValues.size();
+            int pos = -1, listSize = ingredientsFormLabelsMapsToValues.size(), endPos = listSize-1;
             for (Map.Entry<String, Triplet<String, String, String>> entry : ingredientsFormLabelsMapsToValues.entrySet())
             {
                 pos++;
                 Triplet<String, String, String> value = entry.getValue();
 
-                String sqlColumnName = value.getValue1();
                 String mysqlColumnDataType = value.getValue2();
 
                 //####################################
@@ -1034,6 +1026,7 @@ public class Add_Ingredients extends JPanel
                 //####################################
                 Component formObject = ingredientsFormObjects.get(pos);
                 String formFieldValue = "";
+
                 if (formObject instanceof JTextField)
                 {
                     formFieldValue = ((JTextField) formObject).getText();
@@ -1050,41 +1043,36 @@ public class Add_Ingredients extends JPanel
 
                 if (pos == ingredientTypeObjectIndex)
                 {
-                    fieldsQueryEx = String.format("\n\t(%s%s')", ingredientTypeSet, formFieldValue);
+                    fieldsQueryEx = String.format("(%s%s')", ingredientTypeSet, formFieldValue);
                 }
                 else
                 {
                     fieldsQueryEx = mysqlColumnDataType.equals("String")
                             ?
-                            String.format("\n\t('%s')", formFieldValue)
+                            String.format("('%s')", formFieldValue)
                             :
-                            String.format("\n\t(%s)", formFieldValue);
+                            String.format("(%s)", formFieldValue);
                 }
 
                 //####################################
                 //
                 //####################################
 
-                if (pos == listSize - 1)
+                if (pos == endPos)
                 {
-                    insertQuery += String.format("%s)", sqlColumnName);
-
-                    fieldsQuery += String.format("%s\n);", fieldsQueryEx);
-
+                    fieldsQuery += String.format("%s);", fieldsQueryEx);
                     continue;
                 }
 
                 //####################################
                 //
                 //####################################
-                insertQuery += String.format("%s, ", sqlColumnName);
                 fieldsQuery += String.format("%s,", fieldsQueryEx);
             }
 
             //####################################
             //
             //####################################
-
             updateIngredientsForm = true; //HELLO EDIT NOW
 
             //####################################
@@ -1092,7 +1080,6 @@ public class Add_Ingredients extends JPanel
             //####################################
             return (insertQuery += fieldsQuery);
         }
-
         protected String removeSpaceAndHiddenChars(String stringToBeEdited)
         {
             return stringToBeEdited.trim().replaceAll("\\p{C}", ""); // remove all whitespace & hidden characters like \n
