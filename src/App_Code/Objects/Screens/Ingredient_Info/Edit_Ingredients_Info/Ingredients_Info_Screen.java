@@ -13,7 +13,7 @@ import java.awt.event.WindowEvent;
 import java.util.*;
 
 
-public class Parent_Ingredients_Info_Screen extends JFrame
+public class Ingredients_Info_Screen extends JFrame
 {
 
     private Collection<String> ingredientsTypesList, storesNamesList;
@@ -52,9 +52,9 @@ public class Parent_Ingredients_Info_Screen extends JFrame
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Parent_Ingredients_Info_Screen(MyJDBC db, Meal_Plan_Screen mealPlanScreen, int planID, int tempPlanID, String planName,
-                                          TreeMap<String, Collection<String>> map_ingredientTypesToNames,
-                                          Collection<String> ingredientsTypesList, Collection<String> storesNamesList)
+    public Ingredients_Info_Screen(MyJDBC db, Meal_Plan_Screen mealPlanScreen, int planID, int tempPlanID, String planName,
+                                   TreeMap<String, Collection<String>> map_ingredientTypesToNames,
+                                   Collection<String> ingredientsTypesList, Collection<String> storesNamesList)
     {
         System.out.printf("\n\nParent_Ingredients_Info_Screen");
         this.db = db;

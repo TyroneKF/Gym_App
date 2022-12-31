@@ -35,7 +35,7 @@ public class Add_Ingredients extends JPanel
     //##############################################################
     // NEW SHIT
     //##############################################################
-    protected Parent_Ingredients_Info_Screen parent;
+    protected Ingredients_Info_Screen parent;
     protected Meal_Plan_Screen mealPlanScreen;
     protected MyJDBC db;
     protected Integer planID, tempPlanID;
@@ -46,7 +46,7 @@ public class Add_Ingredients extends JPanel
     // Constructor
     //##################################################################################################################
 
-    Add_Ingredients(Parent_Ingredients_Info_Screen parent, MyJDBC db)
+    Add_Ingredients(Ingredients_Info_Screen parent, MyJDBC db)
     {
         //###################################################################################
         //   Parent Stuff
