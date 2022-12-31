@@ -581,9 +581,6 @@ public class Edit_Ingredients extends Add_Ingredients
 
             if (!errorFound)
             {
-                super.updateShops = false;
-                super.updateIngredientsForm = false; // reset values
-
                 //########################
                 // Get ingredient ID
                 //########################
@@ -631,15 +628,6 @@ public class Edit_Ingredients extends Add_Ingredients
     @Override
     protected boolean updateBothForms(String updateIngredients_String, String[] updateIngredientShops_String)
     {
-        //####################################
-        // Error forming update String (exit)
-        //####################################
-
-        if (!isUpdateShops() || !isUpdateIngredientsForm())
-        {
-            return false;
-        }
-
         //####################################
         // Uploading Ingredient Info Query
         //####################################
@@ -878,7 +866,6 @@ public class Edit_Ingredients extends Add_Ingredients
             //####################################
             //
             //####################################
-
             JTextField ingredientName_JTxtF = (JTextField) ingredientsFormObjects.get(getIngredientNameObjectIndex());
             String ingredientName_Txt = ingredientName_JTxtF.getText().trim();
 
@@ -948,7 +935,6 @@ public class Edit_Ingredients extends Add_Ingredients
             //####################################
             // Return results
             //####################################
-            setUpdateIngredientsForm(true); // HELLO EDIT
             return setQuery;
         }
     }
@@ -1013,14 +999,13 @@ public class Edit_Ingredients extends Add_Ingredients
         }
 
         //EDITING NOW
-        public String[] get_ShopForm_UpdateString(String IngredientIDIn) // Not an override method
+        public String[] get_ShopForm_UpdateString(String ingredientIDIn) // Not an override method
         {
             //#############################################################
             // Checks if there is anything to update before, updating
             //############################################################
             if (addShopFormObjects.size() == 0)
             {
-                setUpdateShops(true);
                 return null;
             }
 
@@ -1097,14 +1082,15 @@ public class Edit_Ingredients extends Add_Ingredients
                 int pos = 0;
 
                 // Insert String
-                query4_UpdateString = "INSERT INTO ingredientInShops (IngredientID, Volume_Per_Unit, Cost_Per_Unit, Store_Name) VALUES";
+                query4_UpdateString = "INSERT INTO ingredientInShops (IngredientID, Volume_Per_Unit, Cost_Per_Unit, StoreID) VALUES";
 
                 // Creating String Of Add Values
                 for (AddShopForm_Object supplierAddToDB : suppliersNeedToBeAddedToDBList)
                 {
                     int objectID = supplierAddToDB.getObjectID();
 
-                    values += String.format("\n(%s, %s, %s, '%s')", IngredientIDIn, quantityPerPack.get(objectID).getText(),
+                    values += String.format("\n(%s, %s, %s, (SELECT StoreID FROM stores WHERE Store_Name = '%s'))",
+                            ingredientIDIn, quantityPerPack.get(objectID).getText(),
                             prices.get(objectID).getText(), shopJComboBoxes.get(objectID).getSelectedItem().toString());
 
                     if (pos == suppliersNotInDBSize - 1)
@@ -1129,7 +1115,6 @@ public class Edit_Ingredients extends Add_Ingredients
             //############################################################
             // Return values
             //############################################################
-            setUpdateShops(true);
             return updates;
         }
 
