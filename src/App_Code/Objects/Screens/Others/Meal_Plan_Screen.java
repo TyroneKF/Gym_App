@@ -7,7 +7,7 @@ import App_Code.Objects.Database_Objects.JTable_JDBC.MealManager;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
-import App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Parent_Ingredients_Info_Screen;
+import App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Ingredients_Info_Screen;
 import App_Code.Objects.Screens.Others.Loading_Screen.SplashScreenDemo;
 
 import javax.swing.*;
@@ -49,7 +49,7 @@ public class Meal_Plan_Screen extends JPanel
 
     private MyJDBC db;
     private Macros_Targets_Screen macrosTargets_Screen = null;
-    private Parent_Ingredients_Info_Screen ingredientsInfoScreen = null;
+    private Ingredients_Info_Screen ingredientsInfoScreen = null;
     private ArrayList<MealManager> mealManagerArrayList = new ArrayList<>();
 
     //##################################################################################################################
@@ -1215,7 +1215,7 @@ public class Meal_Plan_Screen extends JPanel
             return;
         }
 
-        ingredientsInfoScreen = new Parent_Ingredients_Info_Screen(db, this, planID, tempPlanID, planName,
+        ingredientsInfoScreen = new Ingredients_Info_Screen(db, this, planID, tempPlanID, planName,
                 map_ingredientTypesToNames, ingredientsTypesList, storesNamesList);
     }
 

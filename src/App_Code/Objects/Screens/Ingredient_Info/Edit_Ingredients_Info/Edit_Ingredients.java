@@ -34,7 +34,7 @@ public class Edit_Ingredients extends Add_Ingredients
             ingredientsTypesJComboBox = new JComboBox();
 
 
-    Edit_Ingredients(Parent_Ingredients_Info_Screen parent, MyJDBC db)
+    Edit_Ingredients(Ingredients_Info_Screen parent, MyJDBC db)
     {
         super(parent, db);
 
