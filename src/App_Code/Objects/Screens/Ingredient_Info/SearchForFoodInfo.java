@@ -13,8 +13,7 @@ import App_Code.Objects.API.Nutritionix.NutritionIx_API;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.JTextFieldLimit;
 import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
-import App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Add_Ingredients;
-import App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.IngredientsForm;
+import App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Add_IngredientsForm;
 
 import javax.imageio.ImageIO;
 
@@ -25,7 +24,7 @@ import java.util.LinkedHashMap;
 
 public class SearchForFoodInfo extends CollapsibleJPanel
 {
-    private IngredientsForm ingredientsForm;
+    private Add_IngredientsForm addIngredientsForm;
 
     private GridBagConstraints gbc = new GridBagConstraints();
 
@@ -56,12 +55,12 @@ public class SearchForFoodInfo extends CollapsibleJPanel
             searchBarButtonHeight = 45,
             searchBarIconHeight = searchBarButtonHeight - 10;
 
-    public SearchForFoodInfo(Container parentContainer, IngredientsForm ingredientsForm, String btnText, int btnWidth, int btnHeight)
+    public SearchForFoodInfo(Container parentContainer, Add_IngredientsForm addIngredientsForm, String btnText, int btnWidth, int btnHeight)
     {
         super(parentContainer, btnText, btnWidth, btnHeight);
 
         this.parentContainer = parentContainer;
-        this.ingredientsForm = ingredientsForm;
+        this.addIngredientsForm = addIngredientsForm;
         this.frameWidth = 430;
         this.frameHeight = 350;
 
@@ -537,7 +536,7 @@ public class SearchForFoodInfo extends CollapsibleJPanel
 
         resetFullDisplay();
 
-        ingredientsForm.update_IngredientForm_FromSearch(foodInfo);
+        addIngredientsForm.update_IngredientForm_FromSearch(foodInfo);
     }
 
     public void resetFullDisplay()

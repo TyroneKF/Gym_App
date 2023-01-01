@@ -32,8 +32,8 @@ public class Ingredients_Info_Screen extends JFrame
     // General Variables
     //#######################################
 
-    private Add_Ingredients addIngredientsInfo;
-    private Edit_Ingredients editIngredientsInfo;
+    private Add_Ingredients_Screen addIngredientsInfo;
+    private Edit_IngredientsScreen editIngredientsInfo;
 
     private GridBagConstraints gbc = new GridBagConstraints();
 
@@ -116,7 +116,7 @@ public class Ingredients_Info_Screen extends JFrame
                 JPanel addIngredientsFormJPanel = new JPanel(new GridBagLayout());
                 tp.add("Add Ingredients", addIngredientsFormJPanel);
 
-                addIngredientsInfo = new Add_Ingredients(this, db);
+                addIngredientsInfo = new Add_Ingredients_Screen(this, db);
                 addToContainer(addIngredientsFormJPanel, addIngredientsInfo, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
 
                 //#################################################
@@ -125,7 +125,7 @@ public class Ingredients_Info_Screen extends JFrame
                 JPanel editIngredientsFormJPanel = new JPanel(new GridBagLayout());
                 tp.add("Edit Ingredients", editIngredientsFormJPanel);
 
-                editIngredientsInfo = new Edit_Ingredients(this, db);
+                editIngredientsInfo = new Edit_IngredientsScreen(this, db);
                 addToContainer(editIngredientsFormJPanel, editIngredientsInfo, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
                 //#################################################
                 // Creating Edit Ingredient Types Screen
@@ -205,7 +205,7 @@ public class Ingredients_Info_Screen extends JFrame
         return planName;
     }
 
-    public Edit_Ingredients getEditIngredientsForm()
+    public Edit_IngredientsScreen getEditIngredientsForm()
     {
         return editIngredientsInfo;
     }

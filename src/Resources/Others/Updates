@@ -14,7 +14,7 @@ that was edited can be singularly handled
 //######################################################################################################
 
 refresh button on addIngredients suppliers
-make ingredientsForm and addShops not editable when an ingredient isnt selected.
+make addIngredientsForm and addShops not editable when an ingredient isnt selected.
 
 Make all variables in private class private and have accessor and mutator methods
 
