@@ -54,6 +54,8 @@ public class Add_IngredientsForm extends Parent_Ingredients_And_Shop
 
     protected ArrayList<Component> ingredientsFormObjects = new ArrayList<>();
 
+    protected String ingredientsValuesBeingAdded = "";
+
     //##################################################
     //
     //##################################################
@@ -428,7 +430,6 @@ public class Add_IngredientsForm extends Parent_Ingredients_And_Shop
         });
 
         iconPanelInsert.add(refresh_Icon_Btn);
-
     }
 
     protected void clearIngredientsForm()
@@ -619,6 +620,7 @@ public class Add_IngredientsForm extends Parent_Ingredients_And_Shop
                 insertQuery = "INSERT INTO ingredients_info",
                 fieldsQuery = "\nValues \n(NULL,";
 
+        ingredientsValuesBeingAdded = "\n";
         //####################################
         //
         //####################################
@@ -670,6 +672,7 @@ public class Add_IngredientsForm extends Parent_Ingredients_And_Shop
             if (pos == endPos)
             {
                 fieldsQuery += String.format("%s);", fieldsQueryEx);
+                ingredientsValuesBeingAdded += String.format("%s)", fieldsQueryEx);
                 continue;
             }
 
@@ -677,6 +680,7 @@ public class Add_IngredientsForm extends Parent_Ingredients_And_Shop
             //
             //####################################
             fieldsQuery += String.format("%s,", fieldsQueryEx);
+            ingredientsValuesBeingAdded += String.format("%s,", fieldsQueryEx);
         }
 
         //####################################
@@ -708,5 +712,10 @@ public class Add_IngredientsForm extends Parent_Ingredients_And_Shop
     protected int getIngredientSaltObjectIndex()
     {
         return ingredientSaltObjectIndex;
+    }
+
+    protected String getIngredientsValuesBeingAdded()
+    {
+        return ingredientsValuesBeingAdded;
     }
 }

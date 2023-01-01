@@ -1,0 +1,3 @@
+
+('Grams'),('chickenffff233'),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = 'Cake'),(100),(0),(23.96),(0.05),(0),(0),(13.07),(3.66),(0.00),(0),(0),(220))
+('Grams'),('chickenlplp'),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = 'Cake'),(100),(0),(23.96),(0.05),(0),(0),(13.07),(3.66),(71),(0),(0),(220))

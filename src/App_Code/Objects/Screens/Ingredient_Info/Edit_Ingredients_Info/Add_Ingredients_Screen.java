@@ -7,12 +7,22 @@ import App_Code.Objects.Screens.Others.Meal_Plan_Screen;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.text.Collator;
 import java.util.*;
 
 
 public class Add_Ingredients_Screen extends JPanel
 {
+    //##############################################################
+    // NEW SHIT
+    //##############################################################
     protected int yPos = 0;
     protected JPanel scrollPaneJPanel;
     protected GridBagConstraints gbc = new GridBagConstraints();
@@ -23,7 +33,6 @@ public class Add_Ingredients_Screen extends JPanel
     private Add_ShopForm addShopForm;
     protected SearchForFoodInfo searchForIngredientInfo;
 
-
     //##############################################################
     // NEW SHIT
     //##############################################################
@@ -33,11 +42,9 @@ public class Add_Ingredients_Screen extends JPanel
     protected Integer planID, tempPlanID;
     protected String planName;
 
-
     //#################################################################################################################
     // Constructor
     //##################################################################################################################
-
     Add_Ingredients_Screen(Ingredients_Info_Screen ingredients_info_screen, MyJDBC db)
     {
         //###################################################################################
@@ -89,14 +96,8 @@ public class Add_Ingredients_Screen extends JPanel
     }
 
     //####################################################
-    // Methods
-    //###################################################
-
-    protected void updateIngredientForm_Type_JComboBox()
-    {
-        addIngredientsForm.loadIngredientsTypeJComboBox();
-    }
-
+    // Clearing GUI Methods
+    //####################################################
     protected void createForms(Add_IngredientsForm addIngredientsForm, Add_ShopForm addShopForm, SearchForFoodInfo searchForFoodInfo)
     {
         //##################################################################################
@@ -157,6 +158,16 @@ public class Add_Ingredients_Screen extends JPanel
         resize_GUI();
     }
 
+    //####################################################
+    // Clearing GUI Methods
+    //####################################################
+    private void refreshInterface() // only available to reset screen
+    {
+        clearSearchForIngredientInfoForm();
+        clearIngredientsForm();
+        clearShopForm();
+    }
+
     protected void clearSearchForIngredientInfoForm()
     {
         searchForIngredientInfo.resetFullDisplay();
@@ -172,57 +183,108 @@ public class Add_Ingredients_Screen extends JPanel
         addShopForm.clearShopForm();
     }
 
+    //####################################################
+    // Update Methods
+    //####################################################
+    protected void updateIngredientForm_Type_JComboBox()
+    {
+        addIngredientsForm.loadIngredientsTypeJComboBox();
+    }
+
+    //####################################################
+    // Submission Button Actions
+    //####################################################
     protected void submissionBtnAction()
     {
+        //###############################
+        //
+        //###############################
         if (!areYouSure("add this new Ingredient - this will cause the mealPlan to save its data to the DB"))
         {
             return;
         }
 
-        boolean errorFound = false;
-
-        // ingredientsForm
+        //###############################
+        // IngredientsForm
+        //###############################
         if (!(addIngredientsForm.validate_IngredientsForm()))
         {
-            errorFound = true;
+            return;
         }
 
+        //###############################
         // ShopForm
+        //###############################
         if (!(addShopForm.validateForm()))
         {
-            errorFound = true;
+            return;
         }
 
-        if (!errorFound)
+        //###############################
+        // Data Formatting
+        //###############################
+        if (!areYouSure("upload these values as they may have been changed / adapted to fit our data type format"))
         {
-            if (!areYouSure("upload these values as they may have been changed / adapted to fit our data type format"))
-            {
-                return;
-            }
-
-            if (updateBothForms(addIngredientsForm.get_IngredientsForm_UpdateString(null), addShopForm.get_ShopForm_UpdateString()))
-            {
-                ingredients_info_screen.setUpdateIngredientInfo(true);
-                JOptionPane.showMessageDialog(mealPlanScreen, "The ingredient updates won't appear on the mealPlan screen until this window is closed!");
-
-                //#####################################
-                // Reset Ingredient Names/Types
-                //####################################
-                String ingredientName = ((JTextField) addIngredientsForm.getIngredientsFormObjects().get(1)).getText();
-                String ingredientType = (String) ((JComboBox) addIngredientsForm.getIngredientsFormObjects().get(2)).getSelectedItem();
-
-                addOrDeleteIngredientFromMap("add", ingredientType, ingredientName);
-
-                //#####################################
-                // Reset Form & Update GUI
-                //####################################
-                refreshInterface();
-                resize_GUI();
-            }
+            return;
         }
+
+        //###############################
+        // ShopForm
+        //###############################
+        if (updateBothForms(addIngredientsForm.get_IngredientsForm_UpdateString(null), addShopForm.get_ShopForm_UpdateString()))
+        {
+            ingredients_info_screen.setUpdateIngredientInfo(true);
+            JOptionPane.showMessageDialog(mealPlanScreen, "The ingredient updates won't appear on the mealPlan screen until this window is closed!");
+
+            //#####################################
+            // Reset Ingredient Names/Types
+            //####################################
+            String ingredientName = ((JTextField) addIngredientsForm.getIngredientsFormObjects().get(1)).getText();
+            String ingredientType = (String) ((JComboBox) addIngredientsForm.getIngredientsFormObjects().get(2)).getSelectedItem();
+
+            addOrDeleteIngredientFromMap("add", ingredientType, ingredientName);
+
+            //#####################################
+            // Write Ingredients Value To File
+            //####################################
+            writeIngredientsValuesToFile(addIngredientsForm.getIngredientsValuesBeingAdded());
+
+            //#####################################
+            // Reset Form & Update GUI
+            //####################################
+            refreshInterface();
+            resize_GUI();
+        }
+
     }
 
-    //HELLO EDIT
+    protected boolean updateBothForms(String updateIngredients_String, String[] updateIngredientShops_String)
+    {
+        System.out.printf("\n\nIngredientValues: \n%s \n\nShopping Info: \n%s", updateIngredients_String, Arrays.toString(updateIngredientShops_String));
+
+        //####################################
+        // Uploading Query
+        //####################################
+        if (!(db.uploadData_Batch_Altogether(new String[]{updateIngredients_String})))
+        {
+            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Failed 2/2 Updates - Unable To Add Ingredient Info In DB!");
+            return false;
+        }
+
+        if (updateIngredientShops_String != null)
+        {
+            if (!(db.uploadData_Batch_Independently(updateIngredientShops_String)))
+            {
+                JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Failed 1/2 Updates - Unable To Add Shop Supplier For Ingredient In DB!");
+                return false;
+            }
+        }
+
+        JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "\n\nUpdated Ingredient Info! \n\nAlso updated 2/2 Shop Info In DB In DB!!!");
+
+        return true;
+    }
+
     protected boolean addOrDeleteIngredientFromMap(String process, String ingredientType, String ingredientName)
     {
         // Storing
@@ -268,51 +330,40 @@ public class Add_Ingredients_Screen extends JPanel
         return true;
     }
 
-    private void refreshInterface() // only available to reset screen
+    protected void writeIngredientsValuesToFile(String ingredientsValuesBeingAdded)
     {
-        clearSearchForIngredientInfoForm();
-        clearIngredientsForm();
-        clearShopForm();
-    }
+        String stringPath = "C:/Users/DonTy/Dropbox/0.) Coding/Gym_App/src/Backups/IngredientsInDBTxtBackUp.txt";
 
-    protected boolean updateBothForms(String updateIngredients_String, String[] updateIngredientShops_String)
-    {
-        System.out.printf("\n\n%s", updateIngredients_String, Arrays.toString(updateIngredientShops_String));
-
-        //####################################
-        // Uploading Query
-        //####################################
-        if (!(db.uploadData_Batch_Altogether(new String[]{updateIngredients_String})))
+        //#################################################
+        // Create BackUpFile if it doesn't exist
+        //#################################################
+        try
         {
-            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Failed 2/2 Updates - Unable To Add Ingredient Info In DB!");
-            return false;
+            // Create File if it doesn't exist
+            new FileOutputStream(stringPath, true).close();
+        }
+        catch (Exception e)
+        {
+            System.out.printf("\n\nAdd_Ingredients_Screen.writeIngredientsValuesToFile() Error 1 \n%s", e);
         }
 
-        if (updateIngredientShops_String != null)
+        //#################################################
+        // Appending Values To File
+        //#################################################
+        try
         {
-            if (!(db.uploadData_Batch_Independently(updateIngredientShops_String)))
-            {
-                JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Failed 1/2 Updates - Unable To Add Shop Supplier For Ingredient In DB!");
-                return false;
-            }
+            Path path = Paths.get(stringPath);
+            Files.write(path, ingredientsValuesBeingAdded.getBytes(), StandardOpenOption.APPEND);
         }
-
-        JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "\n\nUpdated Ingredient Info! \n\nAlso updated 2/2 Shop Info In DB In DB!!!");
-
-        return true;
-    }
-
-    protected void resize_GUI()
-    {
-        ingredients_info_screen.resize_GUI();
-        scrollPaneJPanel.revalidate();
-        revalidate();
+        catch (Exception e)
+        {
+            System.out.printf("\n\nAdd_Ingredients_Screen.writeIngredientsValuesToFile() Error 2 \n%s", e);
+        }
     }
 
     //#################################################################################################################
-    // Other Methods
+    // Adding & Resizing Objects in GUI
     //##################################################################################################################
-
     public void addToContainer(Container container, Component addToContainer, int gridx, int gridy, int gridwidth,
                                int gridheight, double weightx, double weighty, String fill, int ipady, int ipadx)
     {
@@ -343,6 +394,12 @@ public class Add_Ingredients_Screen extends JPanel
         container.add(addToContainer, gbc);
     }
 
+    protected void resize_GUI()
+    {
+        ingredients_info_screen.resize_GUI();
+        scrollPaneJPanel.revalidate();
+        revalidate();
+    }
 }
 
 
