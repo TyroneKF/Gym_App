@@ -431,5 +431,4 @@ public class Ingredients_Info_Screen extends JFrame
     {
         getContentPane().revalidate();
     }
-
 }
