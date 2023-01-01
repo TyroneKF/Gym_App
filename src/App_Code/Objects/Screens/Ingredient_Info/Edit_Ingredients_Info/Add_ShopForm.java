@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
-public class Add_ShopForm extends Parent_Form_Class
+public class Add_ShopForm extends Parent_Ingredients_And_Shop
 {
     //#######################################################
     //
