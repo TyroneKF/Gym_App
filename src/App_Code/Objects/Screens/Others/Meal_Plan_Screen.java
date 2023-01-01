@@ -1263,6 +1263,14 @@ public class Meal_Plan_Screen extends JPanel
     }
 
     //###########################################
+    // String
+    //###########################################
+    public String getPlanName()
+    {
+        return planName;
+    }
+
+    //###########################################
     // Objects
     //###########################################
     public MyJDBC getDb()

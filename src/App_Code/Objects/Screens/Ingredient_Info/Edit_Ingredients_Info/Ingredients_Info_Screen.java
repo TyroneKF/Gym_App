@@ -127,7 +127,6 @@ public class Ingredients_Info_Screen extends JFrame
 
                 editIngredientsInfo = new Edit_Ingredients(this, db);
                 addToContainer(editIngredientsFormJPanel, editIngredientsInfo, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
-
                 //#################################################
                 // Creating Edit Ingredient Types Screen
                 //##################################################
@@ -420,5 +419,12 @@ public class Ingredients_Info_Screen extends JFrame
         container.add(addToContainer, gbc);
     }
 
+    //#################################################################################################################
+    //
+    //#################################################################################################################
+    public MyJDBC getDb()
+    {
+        return db;
+    }
 
 }
