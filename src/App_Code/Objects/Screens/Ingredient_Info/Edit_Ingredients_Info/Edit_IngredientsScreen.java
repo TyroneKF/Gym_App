@@ -670,8 +670,6 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         return true;
     }
 
-
-
     //########################################################################
     // Shop Form
     //########################################################################
