@@ -42,6 +42,7 @@ public class Parent_Ingredients_And_Shop extends CollapsibleJPanel
         this.planID = ingredients_info_screen.getPlanID();
         this.tempPlanID = ingredients_info_screen.getTempPlanID();
         this.planName = ingredients_info_screen.getPlanName();
+        this.mealPlanScreen = ingredients_info_screen.getMealPlanScreen();
     }
 
     protected String convertToBigDecimal(String value, String errorTxt, String rowLabel, int rowNumber, JTextField jTextField)
