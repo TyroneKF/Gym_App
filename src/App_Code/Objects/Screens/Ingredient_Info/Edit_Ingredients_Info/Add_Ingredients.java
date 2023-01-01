@@ -25,8 +25,6 @@ public class Add_Ingredients extends JPanel
 
     protected boolean formEditable = false;
 
-    private final int totalNumbersAllowed = 7, decimalScale = 2, decimalPrecision = totalNumbersAllowed - decimalScale, charLimit = 8;
-
     protected IngredientsForm ingredientsForm;
     private ShopForm shopForm;
     protected SearchForFoodInfo searchForIngredientInfo;
@@ -262,64 +260,6 @@ public class Add_Ingredients extends JPanel
 
         ingredients_info_screen.update_EditIngredientsInfo_IngredientsTypes();
         return true;
-    }
-
-    protected String convertToBigDecimal(String value, String errorTxt, String rowLabel, int rowNumber, JTextField jTextField)
-    {
-        String txt = String.format("must be number which has %s numbers in it! Or, a decimal number (%s,%s) with a max of %s numbers before the decimal point and  a of max of  %s numbers after the decimal point!",
-                decimalPrecision, decimalPrecision, decimalScale, decimalPrecision, decimalScale);
-        try
-        {
-            BigDecimal zero = new BigDecimal(0);
-
-            //#####################################################
-            // Convert Numbers Using Precision & Scale point Values
-            //#####################################################
-            BigDecimal bdFromString = new BigDecimal(String.format("%s", value));
-            int valueScale = bdFromString.scale();
-            int valuePrecision = bdFromString.precision();
-
-            if (valueScale > decimalScale) // only round to scale, if needed as otherwise whole numbers get lost etc 5566 = nothing
-            {
-                bdFromString = bdFromString.setScale(decimalScale, RoundingMode.DOWN); // round the number
-            }
-
-            //#####################################################
-            // Java Concept Of Precision
-            //#####################################################
-            if (valueScale == 0 && valuePrecision > decimalPrecision) // the number is too big
-            {
-                errorTxt += String.format("\n\n  ' %s 'on Row: %s, %s ", rowLabel, rowNumber, txt);
-            }
-
-            //#####################################################
-            // MySQL Concept Of Precision
-            //#####################################################
-            else if (valueScale > 0 && bdFromString.setScale(0, RoundingMode.FLOOR).precision() > decimalPrecision)
-            {
-                errorTxt += String.format("\n\n  ' %s 'on Row: %s, %s ", rowLabel, rowNumber, txt);
-            }
-
-            //#####################################################
-            // Format Data in Cell
-            //#####################################################
-            jTextField.setText(String.format("%s", bdFromString));
-
-            //#####################################################
-            // Check if the value is bigger than 0
-            //#####################################################
-
-            if (bdFromString.compareTo(zero) < 0)// "<")
-            {
-                errorTxt += String.format("\n\n  ' %s 'on Row: %s, must have a value which is bigger than 0 and %s", rowLabel, rowNumber, txt);
-            }
-        }
-        catch (Exception e)
-        {
-            errorTxt += String.format("\n\n  ' %s 'on Row: %s, %s ", rowLabel, rowNumber, txt);
-        }
-
-        return errorTxt;
     }
 
     protected Boolean areYouSure(String process)
