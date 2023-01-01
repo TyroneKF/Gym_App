@@ -1,6 +1,5 @@
 package App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info;
 
-import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Gui_Objects.JTextFieldLimit;
@@ -14,12 +13,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
-public class ShopForm extends Parent_Form_Class
+public class Add_ShopForm extends Parent_Form_Class
 {
     //#######################################################
     //
     //#######################################################
-    Add_Ingredients add_ingredients;
+    Add_Ingredients_Screen add_ingredientsScreen;
 
 
 
@@ -35,11 +34,11 @@ public class ShopForm extends Parent_Form_Class
     protected Container parentContainer;
     protected JPanel inputArea;
 
-    public ShopForm(Container parentContainer, Ingredients_Info_Screen ingredients_info_screen, Add_Ingredients add_ingredients, String btnText, int btnWidth, int btnHeight)
+    public Add_ShopForm(Container parentContainer, Ingredients_Info_Screen ingredients_info_screen, Add_Ingredients_Screen add_ingredientsScreen, String btnText, int btnWidth, int btnHeight)
     {
         super(parentContainer, ingredients_info_screen, btnText, btnWidth, btnHeight);
         this.parentContainer = parentContainer;
-        this.add_ingredients = add_ingredients;
+        this.add_ingredientsScreen = add_ingredientsScreen;
 
         //##########################################################################################
         // Creating Form
@@ -538,7 +537,7 @@ public class ShopForm extends Parent_Form_Class
             parentContainer.revalidate();
 
             //Resizing Form
-            add_ingredients.resize_GUI();
+            add_ingredientsScreen.resize_GUI();
         }
 
         public JPanel panelWithSpace(Component addObjectToPanel, Color backgroundColour, int westWidth, int westHeight, int eastWidth, int eastHeight)

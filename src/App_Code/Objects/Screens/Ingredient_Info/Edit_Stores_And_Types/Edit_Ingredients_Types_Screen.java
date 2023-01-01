@@ -1,7 +1,7 @@
 package App_Code.Objects.Screens.Ingredient_Info.Edit_Stores_And_Types;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
-import App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Edit_Ingredients;
+import App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Edit_IngredientsScreen;
 import App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Ingredients_Info_Screen;
 
 import javax.swing.*;
@@ -161,7 +161,7 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
             //#################################################################
             // Reset EditCreateForm
             //#################################################################
-            Edit_Ingredients editingIngredientsInfo = parentIngredientsScreen.getEditIngredientsForm();
+            Edit_IngredientsScreen editingIngredientsInfo = parentIngredientsScreen.getEditIngredientsForm();
             editingIngredientsInfo.refreshInterface(true, true);  // reset form`
 
             //###################################################################

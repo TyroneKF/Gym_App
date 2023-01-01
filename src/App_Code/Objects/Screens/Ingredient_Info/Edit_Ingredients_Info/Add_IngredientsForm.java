@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class IngredientsForm extends Parent_Form_Class
+public class Add_IngredientsForm extends Parent_Form_Class
 {
     
     //##################################################
@@ -60,8 +60,7 @@ public class IngredientsForm extends Parent_Form_Class
     //##################################################
     //
     //##################################################
-
-    public IngredientsForm(Container parentContainer, Ingredients_Info_Screen ingredients_info_screen, String btnText, int btnWidth, int btnHeight)
+    public Add_IngredientsForm(Container parentContainer, Ingredients_Info_Screen ingredients_info_screen, String btnText, int btnWidth, int btnHeight)
     {
         //##################################################
         //

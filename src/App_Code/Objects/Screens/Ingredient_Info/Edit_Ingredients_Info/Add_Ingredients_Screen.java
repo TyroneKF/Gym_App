@@ -4,20 +4,14 @@ import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Gui_Objects.*;
 import App_Code.Objects.Screens.Ingredient_Info.SearchForFoodInfo;
 import App_Code.Objects.Screens.Others.Meal_Plan_Screen;
-import org.javatuples.Triplet;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.text.Collator;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
-public class Add_Ingredients extends JPanel
+public class Add_Ingredients_Screen extends JPanel
 {
     protected int yPos = 0;
     protected JPanel scrollPaneJPanel;
@@ -25,8 +19,8 @@ public class Add_Ingredients extends JPanel
 
     protected boolean formEditable = false;
 
-    protected IngredientsForm ingredientsForm;
-    private ShopForm shopForm;
+    protected Add_IngredientsForm addIngredientsForm;
+    private Add_ShopForm addShopForm;
     protected SearchForFoodInfo searchForIngredientInfo;
 
 
@@ -44,7 +38,7 @@ public class Add_Ingredients extends JPanel
     // Constructor
     //##################################################################################################################
 
-    Add_Ingredients(Ingredients_Info_Screen ingredients_info_screen, MyJDBC db)
+    Add_Ingredients_Screen(Ingredients_Info_Screen ingredients_info_screen, MyJDBC db)
     {
         //###################################################################################
         //   Parent Stuff
@@ -85,13 +79,13 @@ public class Add_Ingredients extends JPanel
         // Needs to be created near this
         //##################################
 //            ingredientsForm = new IngredientsForm(this, "Add Ingredients Info", 250, 50);// HELLO REMOVE
-        ingredientsForm = new IngredientsForm(scrollPaneJPanel, ingredients_info_screen, "Add Ingredients Info", 250, 50);
+        addIngredientsForm = new Add_IngredientsForm(scrollPaneJPanel, ingredients_info_screen, "Add Ingredients Info", 250, 50);
 
-        shopForm = new ShopForm(scrollPaneJPanel, ingredients_info_screen, this, "Add Ingredient Suppliers", 250, 50);
+        addShopForm = new Add_ShopForm(scrollPaneJPanel, ingredients_info_screen, this, "Add Ingredient Suppliers", 250, 50);
 
-        searchForIngredientInfo = new SearchForFoodInfo(scrollPaneJPanel, ingredientsForm, "Search For Food Info", 250, 50);
+        searchForIngredientInfo = new SearchForFoodInfo(scrollPaneJPanel, addIngredientsForm, "Search For Food Info", 250, 50);
 
-        createForms(ingredientsForm, shopForm, searchForIngredientInfo);
+        createForms(addIngredientsForm, addShopForm, searchForIngredientInfo);
     }
 
     //####################################################
@@ -100,10 +94,10 @@ public class Add_Ingredients extends JPanel
 
     protected void updateIngredientForm_Type_JComboBox()
     {
-        ingredientsForm.loadIngredientsTypeJComboBox();
+        addIngredientsForm.loadIngredientsTypeJComboBox();
     }
 
-    protected void createForms(IngredientsForm ingredientsForm, ShopForm shopForm, SearchForFoodInfo searchForFoodInfo)
+    protected void createForms(Add_IngredientsForm addIngredientsForm, Add_ShopForm addShopForm, SearchForFoodInfo searchForFoodInfo)
     {
         //##################################################################################
         // Creating Parts of screen & adding it to interface
@@ -124,7 +118,7 @@ public class Add_Ingredients extends JPanel
         //Ingredients form
         //###########################
 
-        addToContainer(scrollPaneJPanel, ingredientsForm, 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+        addToContainer(scrollPaneJPanel, addIngredientsForm, 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
 
         //###########################
         //Space Divider
@@ -134,7 +128,7 @@ public class Add_Ingredients extends JPanel
         //###########################
         // Add shop
         //###########################
-        addToContainer(scrollPaneJPanel, shopForm, 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+        addToContainer(scrollPaneJPanel, addShopForm, 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
 
         //###########################
         //Space Divider
@@ -170,12 +164,12 @@ public class Add_Ingredients extends JPanel
 
     protected void clearIngredientsForm()
     {
-        ingredientsForm.clearIngredientsForm();
+        addIngredientsForm.clearIngredientsForm();
     }
 
     protected void clearShopForm()
     {
-        shopForm.clearShopForm();
+        addShopForm.clearShopForm();
     }
 
     protected void submissionBtnAction()
@@ -188,13 +182,13 @@ public class Add_Ingredients extends JPanel
         boolean errorFound = false;
 
         // ingredientsForm
-        if (!(ingredientsForm.validate_IngredientsForm()))
+        if (!(addIngredientsForm.validate_IngredientsForm()))
         {
             errorFound = true;
         }
 
         // ShopForm
-        if (!(shopForm.validateForm()))
+        if (!(addShopForm.validateForm()))
         {
             errorFound = true;
         }
@@ -206,7 +200,7 @@ public class Add_Ingredients extends JPanel
                 return;
             }
 
-            if (updateBothForms(ingredientsForm.get_IngredientsForm_UpdateString(null), shopForm.get_ShopForm_UpdateString()))
+            if (updateBothForms(addIngredientsForm.get_IngredientsForm_UpdateString(null), addShopForm.get_ShopForm_UpdateString()))
             {
                 ingredients_info_screen.setUpdateIngredientInfo(true);
                 JOptionPane.showMessageDialog(mealPlanScreen, "The ingredient updates won't appear on the mealPlan screen until this window is closed!");
@@ -214,8 +208,8 @@ public class Add_Ingredients extends JPanel
                 //#####################################
                 // Reset Ingredient Names/Types
                 //####################################
-                String ingredientName = ((JTextField) ingredientsForm.getIngredientsFormObjects().get(1)).getText();
-                String ingredientType = (String) ((JComboBox) ingredientsForm.getIngredientsFormObjects().get(2)).getSelectedItem();
+                String ingredientName = ((JTextField) addIngredientsForm.getIngredientsFormObjects().get(1)).getText();
+                String ingredientType = (String) ((JComboBox) addIngredientsForm.getIngredientsFormObjects().get(2)).getSelectedItem();
 
                 addOrDeleteIngredientFromMap("add", ingredientType, ingredientName);
 

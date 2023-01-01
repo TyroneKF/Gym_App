@@ -131,5 +131,4 @@ public class Parent_Form_Class extends CollapsibleJPanel
 
         container.add(addToContainer, gbc);
     }
-
 }
