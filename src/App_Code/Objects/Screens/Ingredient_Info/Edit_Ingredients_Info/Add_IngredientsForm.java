@@ -1,11 +1,8 @@
 package App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info;
 
-import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
-import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Gui_Objects.JTextFieldLimit;
-import App_Code.Objects.Screens.Others.Meal_Plan_Screen;
 import org.javatuples.Triplet;
 
 import javax.swing.*;
@@ -18,7 +15,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Add_IngredientsForm extends Parent_Form_Class
+public class Add_IngredientsForm extends Parent_Ingredients_And_Shop
 {
     
     //##################################################
