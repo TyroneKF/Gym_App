@@ -77,7 +77,7 @@ public class Edit_Ingredients extends Add_Ingredients
         // Needs to be created near this
         //##################################
 
-        ingredientsForm = new EditIngredientsForm(this, "Edit Ingredients Info", 250, 50);
+        ingredientsForm = new EditIngredientsForm(this, ingredients_info_screen, "Edit Ingredients Info", 250, 50);
         shopForm = new EditShopForm(scrollPaneJPanel, "Edit Ingredient Suppliers", 250, 50);
         searchForIngredientInfo = new SearchForFoodInfo(scrollPaneJPanel, ingredientsForm, "Search For Food Info", 250, 50);
         searchForIngredientInfo.collapseJPanel();
@@ -225,7 +225,7 @@ public class Edit_Ingredients extends Add_Ingredients
     {
         ingredientsTypesJComboBox.removeAllItems(); // clearList
 
-        TreeMap<String, Collection<String>> mapIngredientTypesToNames = parent.getMapIngredientTypesToNames();
+        TreeMap<String, Collection<String>> mapIngredientTypesToNames = ingredients_info_screen.getMapIngredientTypesToNames();
         for (String key : mapIngredientTypesToNames.keySet())
         {
             if (!key.equals("None Of The Above"))
@@ -246,7 +246,7 @@ public class Edit_Ingredients extends Add_Ingredients
         //###########################################################
         // Clear List
         //###########################################################
-        TreeMap<String, Collection<String>> map_ingredientTypesToIngredientNames = parent.getMapIngredientTypesToNames();
+        TreeMap<String, Collection<String>> map_ingredientTypesToIngredientNames = ingredients_info_screen.getMapIngredientTypesToNames();
         map_ingredientTypesToIngredientNames.clear();
 
         //###########################################################
@@ -327,7 +327,7 @@ public class Edit_Ingredients extends Add_Ingredients
     public void updateIngredientNamesToTypesJComboBox()
     {
         ingredientsTypesJComboBox.removeAllItems();
-        TreeMap<String, Collection<String>> map_ingredientTypesToIngredientNames = parent.getMapIngredientTypesToNames();
+        TreeMap<String, Collection<String>> map_ingredientTypesToIngredientNames = ingredients_info_screen.getMapIngredientTypesToNames();
 
         for (String key : map_ingredientTypesToIngredientNames.keySet())
         {
@@ -360,7 +360,7 @@ public class Edit_Ingredients extends Add_Ingredients
         //##################################
         setUpdateStatusOfIngredientNames(true); // stops ingredientName JComboBox from triggering any  actionListener events
 
-        TreeMap<String, Collection<String>> map_ingredientTypesToIngredientNames = parent.getMapIngredientTypesToNames();
+        TreeMap<String, Collection<String>> map_ingredientTypesToIngredientNames = ingredients_info_screen.getMapIngredientTypesToNames();
         for (String item : map_ingredientTypesToIngredientNames.get(selected_IngredientType_JComboItem))
         {
             if (!item.equals("None Of The Above"))
@@ -494,7 +494,7 @@ public class Edit_Ingredients extends Add_Ingredients
                     JOptionPane.showMessageDialog(mealPlanScreen, String.format("Successfully Deleted '%s' From DB!", selectedIngredientName));
                     addOrDeleteIngredientFromMap("delete", selected_IngredientType_JComboItem, selectedIngredientName); // delete ingredient
                     refreshInterface(true, true);
-                    parent.setUpdateIngredientInfo(true);
+                    ingredients_info_screen.setUpdateIngredientInfo(true);
                 }
                 else
                 {
@@ -606,7 +606,7 @@ public class Edit_Ingredients extends Add_Ingredients
 
                     if ((!currentIngredientName.equals(previousIngredientName) || (!currentIngredientType.equals(previousIngredientType))))
                     {
-                        parent.setUpdateIngredientInfo(true);
+                        ingredients_info_screen.setUpdateIngredientInfo(true);
                         // if there is an error trying to add or remove ingredientType throw an error
                         if (!addOrDeleteIngredientFromMap("delete", previousIngredientType, previousIngredientName) // remove old info ingredient
                                 || !addOrDeleteIngredientFromMap("add", currentIngredientType, currentIngredientName))// add new info ingredient
@@ -671,9 +671,9 @@ public class Edit_Ingredients extends Add_Ingredients
     //########################################################################
     public class EditIngredientsForm extends IngredientsForm
     {
-        public EditIngredientsForm(Container parentContainer, String btnText, int btnWidth, int btnHeight)
+        public EditIngredientsForm(Container parentContainer, Ingredients_Info_Screen ingredients_info_screen, String btnText, int btnWidth, int btnHeight)
         {
-            super(parentContainer, btnText, btnWidth, btnHeight);
+            super(parentContainer, ingredients_info_screen, btnText, btnWidth, btnHeight);
         }
 
         @Override
