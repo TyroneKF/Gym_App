@@ -427,4 +427,9 @@ public class Ingredients_Info_Screen extends JFrame
         return db;
     }
 
+    public void resize_GUI()
+    {
+        getContentPane().revalidate();
+    }
+
 }

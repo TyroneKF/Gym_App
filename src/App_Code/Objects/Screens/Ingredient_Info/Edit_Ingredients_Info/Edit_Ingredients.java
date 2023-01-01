@@ -78,7 +78,7 @@ public class Edit_Ingredients extends Add_Ingredients
         //##################################
 
         ingredientsForm = new EditIngredientsForm(this, ingredients_info_screen, "Edit Ingredients Info", 250, 50);
-        shopForm = new EditShopForm(scrollPaneJPanel, "Edit Ingredient Suppliers", 250, 50);
+        shopForm = new EditShopForm(scrollPaneJPanel, ingredients_info_screen, this, "Edit Ingredient Suppliers", 250, 50);
         searchForIngredientInfo = new SearchForFoodInfo(scrollPaneJPanel, ingredientsForm, "Search For Food Info", 250, 50);
         searchForIngredientInfo.collapseJPanel();
 
@@ -944,9 +944,9 @@ public class Edit_Ingredients extends Add_Ingredients
     //########################################################################
     public class EditShopForm extends ShopForm
     {
-        public EditShopForm(Container parentContainer, String btnText, int btnWidth, int btnHeight)
+        public EditShopForm(Container parentContainer, Ingredients_Info_Screen ingredients_info_screen, Edit_Ingredients edit_ingredients, String btnText, int btnWidth, int btnHeight)
         {
-            super(parentContainer, btnText, btnWidth, btnHeight);
+            super(parentContainer, ingredients_info_screen, edit_ingredients, btnText, btnWidth, btnHeight);
         }
 
         private void updateShopFormWithInfoFromDB()
