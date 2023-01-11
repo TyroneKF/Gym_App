@@ -854,6 +854,17 @@ public class MyJDBC
 
                                             break;
 
+                                        case "time":
+
+                                            // Remove :00 the seconds from the time
+                                            String time = String.format("%s", colData)
+                                                    .replaceFirst(".$","")
+                                                    .replaceFirst(".$","")
+                                                    .replaceFirst(".$","");
+
+                                            Data[row][col] = time;
+                                            break;
+
                                         default:
                                             System.out.printf("\n\n@getTableDataObject() Error With DataType '%s' = ' %s ' !", colDataType, colData);
                                             throw new Exception();

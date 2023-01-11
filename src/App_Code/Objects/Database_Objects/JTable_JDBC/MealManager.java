@@ -11,6 +11,9 @@ import App_Code.Objects.Screens.Others.Meal_Plan_Screen;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.ResolverStyle;
 import java.util.*;
 
 public class MealManager
@@ -66,6 +69,11 @@ public class MealManager
         // Add Sub-Meal to GUI
         //##############################################################################################################
         add_MultipleSubMealsToGUI(subMealsInMealArrayList);
+
+        //##############################################################################################################
+        // Sort MealPlan GUI Out
+        //##############################################################################################################
+        end();
     }
 
     //
@@ -98,6 +106,26 @@ public class MealManager
             return;
         }
 
+        //#############################################
+        // Input Time
+        //#############################################
+        String newMealTime = JOptionPane.showInputDialog("Input Meal Time etc \"09:00\"?");
+
+        try
+        {
+            DateTimeFormatter strictTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+                    .withResolverStyle(ResolverStyle.STRICT);
+
+            LocalTime.parse(newMealTime, strictTimeFormatter);
+
+            newMealTime += ":00";
+        }
+        catch (Exception e)
+        {
+            JOptionPane.showMessageDialog(null, "\n\nPlease Input A Valid Time etc \"09:00\"?");
+            return;
+        }
+
         //##############################################################################################################
         // Does The Chosen Meal Name Exist Within Temp Plan Or Original Plan
         //##############################################################################################################
@@ -108,19 +136,24 @@ public class MealManager
                 	Meal_Name = '%s' AND PlanID = %s
                 OR
                     Meal_Name = '%s' AND PlanID = %s
+                    
+                OR  Meal_Time = '%s' AND PlanID = %s
+                
+                OR  Meal_Time = '%s' AND PlanID = %s
                 	
-                LIMIT 1;""", newMealName, tempPlanID, newMealName, planID);
+                LIMIT 1;""", newMealName, tempPlanID, newMealName, planID,
+                newMealTime, tempPlanID, newMealTime, planID);
 
         if (!(db.getSingleColumnQuery(mealInTempPlan) == null))
         {
-            JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nMeal Name Already Exists Within This Plan!!");
+            JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nMeal Name / Time Already Exists Within This Plan!!");
             return;
         }
 
         //##############################################################################################################
         // Upload Meal To Temp Plan
         //##############################################################################################################
-        String uploadQuery = String.format(" INSERT INTO mealsInPlan (PlanID, Meal_Name) VALUES (%s,'%s')", tempPlanID, newMealName);
+        String uploadQuery = String.format(" INSERT INTO mealsInPlan (PlanID, Meal_Name, Meal_Time) VALUES (%s,'%s','%s')", tempPlanID, newMealName, newMealTime);
 
         if (!(db.uploadData_Batch_Altogether(new String[]{uploadQuery})))
         {
@@ -164,6 +197,11 @@ public class MealManager
         //##############################################################################################################
         meal_plan_screen.addMealManger(this);
         meal_plan_screen.increaseMealNo();
+
+        //##############################################################################################################
+        // Sort MealPlan GUI Out
+        //##############################################################################################################
+        end();
     }
 
     //##################################################################################################################
@@ -246,6 +284,19 @@ public class MealManager
         // Add Space Divider At the End Of The Meal Manager
         //##############################################################################################################
         addToContainer(container, spaceDivider, 0, meal_plan_screen.getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 50, 0, null);
+    }
+    
+    private void end()
+    {
+        //##############################################################################################################
+        // Resize & Update Containers
+        //##############################################################################################################
+        meal_plan_screen.resizeGUI();
+
+        //##############################################################################################################
+        // Set Display to the bottom of the screen
+        //##############################################################################################################
+        meal_plan_screen.scrollBarDown_BTN_Action();
     }
 
     private void iconSetup()
