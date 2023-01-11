@@ -133,20 +133,20 @@ public class MealManager
         String mealInTempPlan = String.format("""
                 SELECT Meal_Name FROM mealsInPlan
                 WHERE
-                	Meal_Name = '%s' AND PlanID = %s
-                OR
-                    Meal_Name = '%s' AND PlanID = %s
-                    
-                OR  Meal_Time = '%s' AND PlanID = %s
-                
-                OR  Meal_Time = '%s' AND PlanID = %s
-                	
-                LIMIT 1;""", newMealName, tempPlanID, newMealName, planID,
-                newMealTime, tempPlanID, newMealTime, planID);
+                	Meal_Name = '%s' AND (PlanID = %s OR PlanID = %s)
+                OR  
+                    Meal_Time = '%s' AND (PlanID = %s OR PlanID = %s)                                 
+                OR 
+                    `Meal_Time` > '%s' AND (PlanID = %s OR PlanID = %s)
+                                    	
+                LIMIT 1;""",
+                newMealName, tempPlanID,  planID,
+                newMealTime, tempPlanID, planID,
+                newMealTime, tempPlanID, planID);
 
         if (!(db.getSingleColumnQuery(mealInTempPlan) == null))
         {
-            JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nMeal Name / Time Already Exists Within This Plan!!");
+            JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nMeal Name / Time Already Exists Within This Plan!! \nOr, Meal Time is lower than previously entered meals!");
             return;
         }
 
