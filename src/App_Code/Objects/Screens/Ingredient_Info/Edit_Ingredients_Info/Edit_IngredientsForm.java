@@ -193,7 +193,7 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
                 {
                     selectStatement += String.format("\n\nFROM %s %s", tableName, tableReference);
 
-                    String whereStatement = String.format("\nWHERE %s.%s = '%s';", tableReference, mysqlIngredientNameKey, ingredientName);
+                    String whereStatement = String.format("\nWHERE %s.%s = \"%s\";", tableReference, mysqlIngredientNameKey, ingredientName);
 
                     selectStatement += whereStatement;
                     break;
@@ -259,11 +259,11 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
             if (pos == ingredientTypeObjectIndex)
             {
                 String ingredientTypeSet = "SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = ";
-                formFieldValue = String.format("(%s '%s')", ingredientTypeSet, formFieldValue);
+                formFieldValue = String.format("(%s \"%s\")", ingredientTypeSet, formFieldValue);
             }
             else if (mysqlColumnDataType.equals("String"))
             {
-                formFieldValue = String.format("'%s'", formFieldValue);
+                formFieldValue = String.format("\"%s\"", formFieldValue);
             }
 
             //####################################

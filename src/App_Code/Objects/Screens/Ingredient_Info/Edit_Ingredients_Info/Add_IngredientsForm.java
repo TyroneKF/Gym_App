@@ -599,7 +599,7 @@ public class Add_IngredientsForm extends Parent_Ingredients_And_Shop
     protected boolean checkIfIngredientNameInDB(String ingredientName)
     {
         ingredientName = removeSpaceAndHiddenChars(ingredientName);
-        String query = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Name = '%s';", ingredientName);
+        String query = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Name = \"%s\";", ingredientName);
 
         System.out.printf("\n\n%s", query);
 
@@ -660,7 +660,7 @@ public class Add_IngredientsForm extends Parent_Ingredients_And_Shop
             {
                 fieldsQueryEx = mysqlColumnDataType.equals("String")
                         ?
-                        String.format("('%s')", formFieldValue)
+                        String.format("(\"%s\")", formFieldValue)
                         :
                         String.format("(%s)", formFieldValue);
             }

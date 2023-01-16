@@ -482,7 +482,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
                     return;
                 }
 
-                String query0 = String.format("DELETE FROM `ingredients_in_meal` WHERE IngredientID  = %s;", selectedIngredientID);
+                String query0 = String.format("DELETE FROM `ingredients_in_sections_of_meal` WHERE IngredientID  = %s;", selectedIngredientID);
                 String query1 = String.format("DELETE FROM `ingredientInShops` WHERE IngredientID  = %s;", selectedIngredientID);
                 String query2 = String.format("DELETE FROM `ingredients_info` WHERE IngredientID  = %s;", selectedIngredientID);
 
