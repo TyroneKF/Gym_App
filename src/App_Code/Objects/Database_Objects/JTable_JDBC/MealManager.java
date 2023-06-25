@@ -46,7 +46,7 @@ public class MealManager
     private Meal_Plan_Screen meal_plan_screen;
 
     //##################################################################################################################
-    //
+    // Constructors
     //##################################################################################################################
     public MealManager(Meal_Plan_Screen meal_plan_screen, Container container, boolean mealManagerInDB, int mealInPlanID, int mealNo, String mealName, ArrayList<ArrayList<String>> subMealsInMealArrayList)
     {
@@ -73,7 +73,7 @@ public class MealManager
         //##############################################################################################################
         // Sort MealPlan GUI Out
         //##############################################################################################################
-        end();
+        scroll_To_The_End();
     }
 
     //
@@ -201,11 +201,11 @@ public class MealManager
         //##############################################################################################################
         // Sort MealPlan GUI Out
         //##############################################################################################################
-        end();
+        scroll_To_The_End();
     }
 
     //##################################################################################################################
-    //
+    // Setup
     //##################################################################################################################
     private void setup()
     {
@@ -285,19 +285,6 @@ public class MealManager
         //##############################################################################################################
         addToContainer(container, spaceDivider, 0, meal_plan_screen.getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 50, 0, null);
     }
-    
-    private void end()
-    {
-        //##############################################################################################################
-        // Resize & Update Containers
-        //##############################################################################################################
-        meal_plan_screen.resizeGUI();
-
-        //##############################################################################################################
-        // Set Display to the bottom of the screen
-        //##############################################################################################################
-        meal_plan_screen.scrollBarDown_BTN_Action();
-    }
 
     private void iconSetup()
     {
@@ -312,6 +299,21 @@ public class MealManager
         JPanel iconPanelInsert = iconPanel.getIconJpanel();
 
         addToContainer(eastJPanel, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0, null);
+
+        //##########################
+        // Edit BTN
+        //##########################
+        IconButton edit_Icon_Btn = new IconButton("src/images/edit/edit.png", "", iconSize, iconSize, iconSize, iconSize, "centre", "right");
+        // add_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
+
+        JButton edit_Btn = edit_Icon_Btn.returnJButton();
+        edit_Icon_Btn.makeBTntransparent();
+
+        edit_Btn.addActionListener(ae -> {
+            edit_BTN_Action();
+        });
+
+        iconPanelInsert.add(edit_Icon_Btn);
 
         //##########################
         //Add BTN
@@ -396,18 +398,6 @@ public class MealManager
         iconPanelInsert.add(delete_btn);
     }
 
-    private Boolean areYouSure(String process)
-    {
-        int reply = JOptionPane.showConfirmDialog(null, String.format("Are you sure you want to %s, \nany unsaved changes will be lost in this Table! \nDo you want to %s?", process, process),
-                "Restart Game", JOptionPane.YES_NO_OPTION); //HELLO Edit
-
-        if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
-        {
-            return false;
-        }
-        return true;
-    }
-
     private void add_MultipleSubMealsToGUI(ArrayList<ArrayList<String>> subMealIDs)
     {
         ///##############################################################################################################
@@ -448,11 +438,52 @@ public class MealManager
         addToContainer(collapsibleCenterJPanel, ingredients_Calculation_JTable, 0, yPoInternally++, 1, 1, 0.25, 0.25, "both", 0, 0, null);
         addToContainer(collapsibleCenterJPanel, spaceDivider, 0, yPoInternally++, 1, 1, 0.25, 0.25, "both", 50, 0, null);
     }
+    
+    //##################################################################################################################
+    // Actions
+    //##################################################################################################################
+
+    private void scroll_To_The_End()
+    {
+        //##############################################################################################################
+        // Resize & Update Containers
+        //##############################################################################################################
+        meal_plan_screen.resizeGUI();
+
+        //##############################################################################################################
+        // Set Display to the bottom of the screen
+        //##############################################################################################################
+        meal_plan_screen.scrollBarDown_BTN_Action();
+    }
 
     //##################################################################################################################
     // Button Actions
     //##################################################################################################################
-    //HELLO Needs to scroll down to the bottom of the MealManager
+
+    private Boolean areYouSure(String process)
+    {
+        int reply = JOptionPane.showConfirmDialog(null, String.format("Are you sure you want to %s, \nany unsaved changes will be lost in this Table! \nDo you want to %s?", process, process),
+                "Restart Game", JOptionPane.YES_NO_OPTION); //HELLO Edit
+
+        if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    //#################################################################################
+    // Edit BTN
+    //#################################################################################
+    public void edit_BTN_Action()
+    {
+
+    }
+
+    //#################################################################################
+    // Add BTN
+    //#################################################################################
+    // HELLO, Needs to scroll down to the bottom of the MealManager
     public void addButtonAction()
     {
         //##########################################
@@ -488,12 +519,24 @@ public class MealManager
         add_SubMealToGUi(false, divMealSectionsID);
     }
 
-    //######################################
+    //#################################################################################
     // Delete
-    //######################################
+    //#################################################################################
     private void setHasMealPlannerBeenDeleted(boolean x)
     {
         hasMealPlannerBeenDeleted = x;
+    }
+
+    private void hideMealManager()
+    {
+        setVisibility(false); // hide collapsible Object
+        setHasMealPlannerBeenDeleted(true); // set this object as deleted
+    }
+
+    private void unHideMealManager()
+    {
+        setVisibility(true); // hide collapsible Object
+        setHasMealPlannerBeenDeleted(false); // set this object as deleted
     }
 
     public boolean getHasMealPlannerBeenDeleted()
@@ -594,18 +637,6 @@ public class MealManager
         // Update Message
         //##########################################
         JOptionPane.showMessageDialog(null, "Table Successfully Deleted! nmn");
-    }
-
-    private void hideMealManager()
-    {
-        setVisibility(false); // hide collapsible Object
-        setHasMealPlannerBeenDeleted(true); // set this object as deleted
-    }
-
-    private void unHideMealManager()
-    {
-        setVisibility(true); // hide collapsible Object
-        setHasMealPlannerBeenDeleted(false); // set this object as deleted
     }
 
     public void completely_Delete_MealManager()
@@ -880,7 +911,7 @@ public class MealManager
     }
 
     //##################################################################################################################
-    //
+    // Resizing GUI
     //##################################################################################################################
     private void addToContainer(Container container, Component addToContainer, Integer gridx, Integer gridy, Integer gridwidth,
                                 Integer gridheight, Double weightx, Double weighty, String fill, Integer ipady, Integer ipadx, String anchor)
@@ -924,7 +955,7 @@ public class MealManager
                     gbc.anchor = GridBagConstraints.PAGE_START;
                     break;
 
-                case "end":
+                case "scroll_To_The_End":
                     gbc.anchor = GridBagConstraints.PAGE_END;
                     break;
             }
