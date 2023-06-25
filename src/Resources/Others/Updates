@@ -1,8 +1,11 @@
-.) How to find index column without manually entering which is updated when columns are hidden
-must have data index of column  and JTable index of column
+.) Find ingredients in mealplan
+.) Efficient way of saving plan whereby only meals that are changed processed.
+.) Initialize db if missing on setup
+.) backup and restore ingredients / ingredients types, meals
+.) autosize column widths in jtables
+
 
 .) detect whether a meal has changed by comparing data with JTable results
-
 .) Recall original Jtable column position and changed position after hiding columns
 
 
@@ -65,6 +68,39 @@ clear ingredients form and target form
 
 Add ingredients screen bordelayout() for icon
 integrate shop database into app
+
+#################################################
+## 
+#################################################
+
+ingredientName column - auto update
+add ingredients screen
+shopping list group by store then by ingredient type
+tableModelSetup jcombo resset
+
+incorrect number inside quantity should revert the quantity to previous number
+liquids, powder, updates, excluded from total weight in meal
+
+total no of ingredients
+total weight of meal
+
+Refresh  meal supplier column error
+
+save action when the program is closed
+
+refreshing and saving all tables
+
+creating ingredients, can mysql get check constraints on IngredientsType as otherwise when this updates the DB and the code will need to be manually both changed
+
+clear ingredients form and target form
+
+Add ingredients screen bordelayout() for icon
+
+integrate shops database table into other tables and app
+add ingredients shop delete row, doesnt work error msg appearing when no rows are there
+addd ingredients lowercase check on ingredientName in DB
+refresh ingredeientsName, storeNames columns
+
 #################################################
 
 

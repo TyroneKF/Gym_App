@@ -43,7 +43,7 @@ public class MealManager
     private MacrosLeftTable macrosLeft_JTable;
     private TotalMealTable total_Meal_View_Table;
     private Frame frame;
-    Meal_Plan_Screen meal_plan_screen;
+    private Meal_Plan_Screen meal_plan_screen;
 
     //##################################################################################################################
     //
