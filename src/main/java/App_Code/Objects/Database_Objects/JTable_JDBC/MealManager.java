@@ -303,7 +303,7 @@ public class MealManager
         //##########################
         // Edit BTN
         //##########################
-        IconButton edit_Icon_Btn = new IconButton("src/images/edit/edit.png", "", iconSize, iconSize, iconSize, iconSize, "centre", "right");
+        IconButton edit_Icon_Btn = new IconButton("src/main/java/images/edit/edit.png", "", iconSize, iconSize, iconSize, iconSize, "centre", "right");
         // add_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
 
         JButton edit_Btn = edit_Icon_Btn.returnJButton();
@@ -318,7 +318,7 @@ public class MealManager
         //##########################
         //Add BTN
         //##########################
-        IconButton add_Icon_Btn = new IconButton("src/images/add/add.png", "", iconSize, iconSize, iconSize, iconSize, "centre", "right");
+        IconButton add_Icon_Btn = new IconButton("src/main/java/images/add/add.png", "", iconSize, iconSize, iconSize, iconSize, "centre", "right");
         // add_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
 
         JButton add_Btn = add_Icon_Btn.returnJButton();
@@ -334,7 +334,7 @@ public class MealManager
         // Refresh Icon
         //##########################
 
-        IconButton refresh_Icon_Btn = new IconButton("src/images/refresh/+refresh.png", "", iconSize, iconSize, iconSize, iconSize,
+        IconButton refresh_Icon_Btn = new IconButton("src/main/java/images/refresh/+refresh.png", "", iconSize, iconSize, iconSize, iconSize,
                 "centre", "right"); // btn text is useless here , refactor
 
         JButton refresh_Btn = refresh_Icon_Btn.returnJButton();
@@ -358,7 +358,7 @@ public class MealManager
         // Update Icon
         //##########################
 
-        IconButton saveIcon_Icon_Btn = new IconButton("src/images/save/save.png", "", iconSize, iconSize, iconSize, iconSize,
+        IconButton saveIcon_Icon_Btn = new IconButton("src/main/java/images/save/save.png", "", iconSize, iconSize, iconSize, iconSize,
                 "centre", "right"); // btn text is useless here , refactor
         //saveIcon_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
         saveIcon_Icon_Btn.makeBTntransparent();
@@ -379,7 +379,7 @@ public class MealManager
         // Delete Icon
         //##########################
 
-        IconButton deleteIcon_Icon_Btn = new IconButton("src/images/delete/+delete.png", "", iconSize, iconSize, iconSize + 10, iconSize,
+        IconButton deleteIcon_Icon_Btn = new IconButton("src/main/java/images/delete/+delete.png", "", iconSize, iconSize, iconSize + 10, iconSize,
                 "centre", "right"); // btn text is useless here , refactor
         //deleteIcon_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
         deleteIcon_Icon_Btn.makeBTntransparent();
