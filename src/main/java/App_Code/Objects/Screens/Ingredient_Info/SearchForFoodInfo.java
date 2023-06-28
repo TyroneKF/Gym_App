@@ -294,7 +294,7 @@ public class SearchForFoodInfo extends CollapsibleJPanel
             //####################################
             // Add Icon BTN
             //####################################
-            IconButton addIcon = new IconButton("src/images/add/++++add.png", "", addIconWidth, addIconHeight, addIconWidth, addIconHeight, "centre", "right");
+            IconButton addIcon = new IconButton("src/main/java/images/add/++++add.png", "", addIconWidth, addIconHeight, addIconWidth, addIconHeight, "centre", "right");
 
             addIcon.makeBTntransparent();
 
@@ -414,7 +414,7 @@ public class SearchForFoodInfo extends CollapsibleJPanel
                 //####################################
                 // Add Icon BTN
                 //####################################
-                IconButton addIcon = new IconButton("src/images/add/++++add.png", "", addIconWidth, addIconHeight, addIconWidth, addIconHeight, "centre", "right");
+                IconButton addIcon = new IconButton("src/main/java/images/add/++++add.png", "", addIconWidth, addIconHeight, addIconWidth, addIconHeight, "centre", "right");
 
                 addIcon.makeBTntransparent();
 
