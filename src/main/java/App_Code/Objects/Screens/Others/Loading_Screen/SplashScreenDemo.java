@@ -112,7 +112,7 @@ public class SplashScreenDemo
         public ImagePanel2()
         {
             super.setBackground(Color.RED);
-            image = Toolkit.getDefaultToolkit().createImage("C:/Users/DonTy/Dropbox/0.) Coding/Gym_App/src/App_Code/Objects/Screens/Tests/Running.gif");
+            image = Toolkit.getDefaultToolkit().createImage("src/main/java/App_Code/Objects/Screens/Others/Loading_Screen/Running.gif");
         }
 
         @Override
