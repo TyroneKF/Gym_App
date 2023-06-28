@@ -34,7 +34,7 @@ public class Macros_Targets_Screen extends JFrame
         this.planName = planName;
         try
         {
-            if (db.isDatabaseConnected())
+            if (db.get_DB_Connection_Status())
             {
                 //###########################################################
                 // Get Current Targets For This Plan DB Info

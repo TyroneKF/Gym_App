@@ -75,7 +75,7 @@ public class Ingredients_Info_Screen extends JFrame
                 return;
             }
 
-            if (db.isDatabaseConnected())
+            if (db.get_DB_Connection_Status())
             {
                 //###################################################################################
                 // Frame Set-Up

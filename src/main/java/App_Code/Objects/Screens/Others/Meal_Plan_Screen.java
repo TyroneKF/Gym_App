@@ -35,7 +35,10 @@ public class Meal_Plan_Screen extends JPanel
     //##################################################################################################################
     //
     //##################################################################################################################
-    private static String databaseName = "gymapp13";
+    private final static String
+            databaseName = "gymapp16",
+            db_Script_Address = "C:\\Users\\DonTy\\Dropbox\\0.) Coding\\Gym_App\\src\\main\\java\\Resources\\Database_Scripts\\DB_Scripts\\GymApp.sql";
+
     private String JFrameName = databaseName;
 
     //##################################################################################################################
@@ -93,33 +96,17 @@ public class Meal_Plan_Screen extends JPanel
         // Database Setup
         //#############################################################################################################
 
-        String sql3 = """                                
-                                 CREATE TABLE IF NOT EXISTS data
-                                 (
-                                    FirstName VARCHAR(32) PRIMARY KEY,
-                                    LastName VARCHAR(30) NOT NULL,
-                                    Sport    CHAR(32)   CHECK(Sport IN('Snowboarding', 'Rowing', 'Knitting', 'Speed Reading', 'Pool', 'None of the above')),
-                                    Years  INT NOT NULL,
-                                    Vegetarian BOOLEAN NOT NULL,
-                                    DeleteRow CHAR(10) CHECK(DeleteRow IN('Delete Row'))
-                                 ) 
-                                                                  
-                """;
+        MyJDBC db = new MyJDBC("root", "password", databaseName, db_Script_Address);
 
-        LinkedHashMap<String, String> tableInitialization = new LinkedHashMap<>();
-        tableInitialization.put("data", sql3);
-
-        MyJDBC db = new MyJDBC("root", "password", databaseName, tableInitialization);
-
-
-        if (!(db.isDatabaseConnected()))
+        if (db.get_DB_Connection_Status())
+        {
+            new Meal_Plan_Screen(db);
+        }
+        else
         {
             JOptionPane.showMessageDialog(null, "ERROR, Cannot Connect To Database!");
-            return;
         }
-        new Meal_Plan_Screen(db);
     }
-
 
     public Meal_Plan_Screen(MyJDBC db)
     {
@@ -755,9 +742,9 @@ public class Meal_Plan_Screen extends JPanel
         return true;
     }
 
-    //################################################################################################################
+    //##################################################################################################################
     //  Icon Methods & ActionListener Events
-    //################################################################################################################
+    //##################################################################################################################
     private void iconSetup(Container mainNorthPanel)
     {
         int width, height;
@@ -990,7 +977,7 @@ public class Meal_Plan_Screen extends JPanel
             MealManager mealManager = it.next();
 
             // If mealManager is in DB  then refresh
-            if(mealManager.isMealManagerInDB())
+            if (mealManager.isMealManagerInDB())
             {
                 mealManager.reloadingIngredientsTableDataFromRefresh(false);
                 continue;
@@ -1167,9 +1154,9 @@ public class Meal_Plan_Screen extends JPanel
         macrosLeft_JTable.refreshData();
     }
 
-    //###############################################################################################################
+    //##################################################################################################################
     //  Opening & Closing External Screen
-    //###############################################################################################################
+    //##################################################################################################################
     // Macro Targets Screen
     private void open_MacrosTargets_Screen()
     {
@@ -1214,9 +1201,9 @@ public class Meal_Plan_Screen extends JPanel
         ingredientsInfoScreen = null;
     }
 
-    //################################################################################################################
+    //##################################################################################################################
     //  Mutator Methods
-    //################################################################################################################
+    //##################################################################################################################
     public void macrosTargetsChanged(boolean bool)
     {
         macroTargetsChanged = bool;
@@ -1234,9 +1221,9 @@ public class Meal_Plan_Screen extends JPanel
         }
     }
 
-    //################################################################################################################
+    //##################################################################################################################
     //  Accessor Methods
-    //################################################################################################################
+    //##################################################################################################################
     public boolean get_IsPlanSelected()
     {
         if (planID == null)

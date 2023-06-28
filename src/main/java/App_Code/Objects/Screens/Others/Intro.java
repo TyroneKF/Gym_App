@@ -4,7 +4,6 @@ import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.LinkedHashMap;
 
 public class Intro extends JFrame
 {
@@ -56,7 +55,7 @@ public class Intro extends JFrame
     public void checkIfTablesExist()
     {
         db = new MyJDBC("root", "password", databaseName, null);
-        if (!(db.isDatabaseConnected()))
+        if (!(db.get_DB_Connection_Status()))
         {
             JOptionPane.showMessageDialog(null, "ERROR, Cannot Connect To Database!");
             return;

@@ -1,3 +1,6 @@
+.) Auto create DB, if it doesnt exist
+
+
 .) Find ingredients in mealplan
 .) Efficient way of saving plan whereby only meals that are changed processed.
 .) Initialize db if missing on setup
@@ -8,7 +11,8 @@
 .) detect whether a meal has changed by comparing data with JTable results
 .) Recall original Jtable column position and changed position after hiding columns
 
-
+https://www.jetbrains.com/idea/guide/tutorials/marco-codes-maven/pom-xml/
+https://www.tutorialspoint.com/how-to-run-sql-script-using-jdbc#
 
 
 //######################################################################################################
@@ -70,7 +74,7 @@ Add ingredients screen bordelayout() for icon
 integrate shop database into app
 
 #################################################
-## 
+##
 #################################################
 
 ingredientName column - auto update
