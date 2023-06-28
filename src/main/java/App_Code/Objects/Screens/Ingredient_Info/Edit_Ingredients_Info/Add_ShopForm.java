@@ -20,8 +20,6 @@ public class Add_ShopForm extends Parent_Ingredients_And_Shop
     //#######################################################
     Add_Ingredients_Screen add_ingredientsScreen;
 
-
-
     //#######################################################
     protected int objectID = 0;
 
@@ -84,7 +82,7 @@ public class Add_ShopForm extends Parent_Ingredients_And_Shop
         int width = 30;
         int height = 30;
 
-        IconButton add_Icon_Btn = new IconButton("src/images/add/++add.png", "", width, height, width, height,
+        IconButton add_Icon_Btn = new IconButton("src/main/java/images/add/++add.png", "", width, height, width, height,
                 "centre", "right"); // btn text is useless here , refactor
 
         JButton add_Btn = add_Icon_Btn.returnJButton();

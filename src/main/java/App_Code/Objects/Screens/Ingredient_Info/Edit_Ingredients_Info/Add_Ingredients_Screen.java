@@ -332,7 +332,7 @@ public class Add_Ingredients_Screen extends JPanel
 
     protected void writeIngredientsValuesToFile(String ingredientsValuesBeingAdded)
     {
-        String stringPath = "C:/Users/DonTy/Dropbox/0.) Coding/Gym_App/src/Backups/IngredientsInDBTxtBackUp.txt";
+        String stringPath = "src/main/java/Backups/IngredientsInDBTxtBackUp.txt";
 
         //#################################################
         // Create BackUpFile if it doesn't exist

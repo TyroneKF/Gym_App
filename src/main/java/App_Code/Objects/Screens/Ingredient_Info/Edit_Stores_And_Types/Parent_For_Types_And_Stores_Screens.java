@@ -130,7 +130,7 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
             int width = 35;
             int height = 35;
 
-            IconButton refresh_Icon_Btn = new IconButton("src/images/refresh/++refresh.png", "", width, height, width, height,
+            IconButton refresh_Icon_Btn = new IconButton("src/main/java/images/refresh/++refresh.png", "", width, height, width, height,
                     "centre", "right"); // btn text is useless here , refactor
 
             JButton refresh_Btn = refresh_Icon_Btn.returnJButton();
@@ -421,7 +421,7 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
             int width = 35;
             int height = 35;
 
-            IconButton delete_Icon_Btn = new IconButton("src/images/x/x.png", "", width, height, width, height,
+            IconButton delete_Icon_Btn = new IconButton("src/main/java/images/x/x.png", "", width, height, width, height,
                     "centre", "right"); // btn text is useless here , refactor
 
             JButton delete_Btn = delete_Icon_Btn.returnJButton();
