@@ -12,6 +12,11 @@ import App_Code.Objects.Screens.Others.Loading_Screen.SplashScreenDemo;
 
 import javax.swing.*;
 import java.awt.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 
@@ -36,7 +41,8 @@ public class Meal_Plan_Screen extends JPanel
     //
     //##################################################################################################################
     private final static String
-            databaseName = "gymapp16",
+            version_no = "1",
+            databaseName = "gymapp" + version_no,
             db_Script_Address = "C:\\Users\\DonTy\\Dropbox\\0.) Coding\\Gym_App\\src\\main\\java\\Resources\\Database_Scripts\\DB_Scripts\\GymApp.sql";
 
     private String JFrameName = databaseName;
@@ -96,15 +102,36 @@ public class Meal_Plan_Screen extends JPanel
         // Database Setup
         //#############################################################################################################
 
-        MyJDBC db = new MyJDBC("root", "password", databaseName, db_Script_Address);
+        try
+        {
+            //##############################################
+            // Update current Gym Version no in SQL File
+            //##############################################
+            Path path = Paths.get(db_Script_Address);
+            Charset charset = StandardCharsets.UTF_8;
 
-        if (db.get_DB_Connection_Status())
-        {
-            new Meal_Plan_Screen(db);
+            String content = new String(Files.readAllBytes(path), charset);
+            content = content.replaceAll("(gymapp)...?", databaseName+";"); // replace gymapp?? with gymapp(Current Version no)
+
+            Files.write(path, content.getBytes(charset));
+
+            //##############################################
+            // Create DB Object & run SQL Script
+            //##############################################
+            MyJDBC db = new MyJDBC("root", "password", databaseName, db_Script_Address);
+
+            if (db.get_DB_Connection_Status())
+            {
+                new Meal_Plan_Screen(db);
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(null, "ERROR, Cannot Connect To Database!");
+            }
         }
-        else
+        catch (Exception e)
         {
-            JOptionPane.showMessageDialog(null, "ERROR, Cannot Connect To Database!");
+            System.out.printf("\n\n%s", e);
         }
     }
 

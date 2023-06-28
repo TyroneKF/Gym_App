@@ -1,7 +1,7 @@
 --#####################################################################
-DROP DATABASE IF EXISTS gymapp16;
-CREATE DATABASE gymapp16;
-use gymapp16;
+DROP DATABASE IF EXISTS gymapp1;
+CREATE DATABASE gymapp1;
+use gymapp1;
 
 --#####################################################################
 CREATE TABLE IF NOT EXISTS plans
