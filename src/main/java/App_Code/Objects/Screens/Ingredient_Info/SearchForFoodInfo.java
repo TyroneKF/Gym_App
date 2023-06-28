@@ -29,7 +29,7 @@ public class SearchForFoodInfo extends CollapsibleJPanel
     private GridBagConstraints gbc = new GridBagConstraints();
 
     private Container parentContainer;
-    private JPanel centrePanel, searchBarResults, scrollPaneJPanel;
+    private JPanel centrePanel, searchBarResults, scrollPaneJPanel, searchBarJPanel;
 
     private NutritionIx_API nutritionIx_api;
     private ArrayList<JPanel> resultsJPanelDisplay = new ArrayList();
@@ -53,7 +53,8 @@ public class SearchForFoodInfo extends CollapsibleJPanel
 
     searchBarIconWidth = searchBarButtonWidth - 10,
             searchBarButtonHeight = 45,
-            searchBarIconHeight = searchBarButtonHeight - 10;
+            searchBarIconHeight = searchBarButtonHeight - 10,
+            searchBarJPanelXPos = 0, searchBarJPanelYPos = 0;
 
     public SearchForFoodInfo(Container parentContainer, Add_IngredientsForm addIngredientsForm, String btnText, int btnWidth, int btnHeight)
     {
@@ -131,11 +132,9 @@ public class SearchForFoodInfo extends CollapsibleJPanel
         // Search Bar JPanel
         //#################################################################
         // Adding the main section of search Bar JPanel GUI to display
-        JPanel searchBarJPanel = new JPanel(new GridBagLayout());
+        searchBarJPanel = new JPanel(new GridBagLayout());
         searchBarJPanel.setBorder(BorderFactory.createLineBorder(Color.blue, 3));
         mainCenterPanel.add(searchBarJPanel, BorderLayout.NORTH);
-
-        int searchBarJPanelXPos = 0, searchBarJPanelYPos = 0;
 
         //#################################################################
         // Search Bar JComboBox
@@ -178,20 +177,10 @@ public class SearchForFoodInfo extends CollapsibleJPanel
         searchBarWestJPanel.add(textField); // adding textField to JPanel*/
 
         //#########################################
-        // (East)  Search Icon
+        // Search Icon Setup
         //#########################################
+        iconSetup();
 
-        IconButton searchIcon = new IconButton("src/images/search/search2.png", "", searchBarIconWidth, searchBarIconHeight, searchBarButtonWidth, searchBarButtonHeight,
-                "centre", "right");
-//        searchIcon.makeBTntransparent();
-
-        JButton searchIconBTN = searchIcon.returnJButton();
-        searchIconBTN.addActionListener(ae -> {
-
-            searchButtonAction();
-        });
-
-        addToContainer(searchBarJPanel, searchIcon, searchBarJPanelXPos += 1, searchBarJPanelYPos, 1, 1, 0.25, 0.25, "vertical", 0, 0);
         //#################################################################
         // SearchBar Results
         //#################################################################
@@ -205,6 +194,25 @@ public class SearchForFoodInfo extends CollapsibleJPanel
         //##############################################################################################################
 
         resizeGUI(); // Resize GUI
+    }
+
+    private void iconSetup()
+    {
+        //#########################################
+        // (East)  Search Icon
+        //#########################################
+
+        IconButton searchIcon = new IconButton("src/main/java/images/search/search2.png", "", searchBarIconWidth, searchBarIconHeight, searchBarButtonWidth, searchBarButtonHeight,
+                "centre", "right");
+//        searchIcon.makeBTntransparent();
+
+        JButton searchIconBTN = searchIcon.returnJButton();
+        searchIconBTN.addActionListener(ae -> {
+
+            searchButtonAction();
+        });
+
+        addToContainer(searchBarJPanel, searchIcon, searchBarJPanelXPos += 1, searchBarJPanelYPos, 1, 1, 0.25, 0.25, "vertical", 0, 0);
     }
 
     public LinkedHashMap<String, Object> get_API_V2NaturalNutrients(String food)
