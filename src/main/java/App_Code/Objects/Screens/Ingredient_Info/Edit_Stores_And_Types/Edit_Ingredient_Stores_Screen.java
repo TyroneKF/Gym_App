@@ -199,5 +199,18 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
         {
             parentIngredientsScreen.updateIngredientSuppliersJComboBoxes();
         }
+
+        @Override
+        protected boolean updateSQLBackUpFile()
+        {
+            String sqlFilePath = "src/main/java/Resources/Database_Scripts/DB_Scripts/5.) Stores.sql";
+
+            if( ! (db.replaceTxtInSQLFile(sqlFilePath,selectedJComboBoxItemTxt,jTextfieldTXT)))
+            {
+                JOptionPane.showMessageDialog(null, "Error, changing back-up of ingredient Store in SQL file!");
+                return false;
+            }
+            return  true;
+        }
     }
 }

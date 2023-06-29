@@ -584,6 +584,12 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
                 System.out.printf("\n\n%s", e);
             }
         }
+
+        @Override
+        protected boolean updateSQLBackUpFile()
+        {
+            return false;
+        }
     }
 
     protected void addToContainer(Container container, Component addToContainer, int gridx, int gridy, int gridwidth,

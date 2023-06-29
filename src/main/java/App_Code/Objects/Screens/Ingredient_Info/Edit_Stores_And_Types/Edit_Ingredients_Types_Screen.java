@@ -120,7 +120,6 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
             }
             return  true;
         }
-
     }
 
     public class EditIngredientType extends EditScreen
@@ -212,6 +211,19 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
             //##################################################################
             parentIngredientsScreen.updateIngredientsFormTypeJComboBoxes();
             parentIngredientsScreen.setUpdateIngredientInfo(true);
+        }
+
+        @Override
+        protected boolean updateSQLBackUpFile()
+        {
+            String sqlFilePath = "src/main/java/Resources/Database_Scripts/DB_Scripts/3.) IngredientTypes.sql";
+
+            if( ! (db.replaceTxtInSQLFile(sqlFilePath,selectedJComboBoxItemTxt,jTextfieldTXT)))
+            {
+                JOptionPane.showMessageDialog(null, "Error, changing back-up of ingredient Type in SQL file!");
+                return false;
+            }
+            return  true;
         }
     }
 }

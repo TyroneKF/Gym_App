@@ -18,6 +18,4 @@ INSERT INTO stores (Store_Name) VALUES
 ('Sainsbury'), 
 ('Tesco'),
 ('Vivo Life'),
-('Waitrose'),
-('newStore'),
-('newStoreTwo');;
+('Waitrose');;

@@ -220,6 +220,31 @@ public class MyJDBC
         }
     }
 
+    public boolean replaceTxtInSQLFile(String sqlFilePath, String txt_To_Replace, String txt_Replacement)
+    {
+         //#################################################
+        // Changing file
+        //#################################################
+        try
+        {
+            // Configurations
+            Path path = Paths.get(sqlFilePath);
+            Charset charset = StandardCharsets.UTF_8;
+
+            // Replace txt in SQL Script
+            String content = new String(Files.readAllBytes(path), charset);
+            content = content.replaceFirst(txt_To_Replace, txt_Replacement);
+            Files.write(path, content.getBytes(charset));
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            System.out.printf("\n\nreplaceTxtInSQLFile() Error 2 \n%s", e);
+            return false;
+        }
+    }
+
     //##################################################################################################################
     //  Get Methods
     //##################################################################################################################
