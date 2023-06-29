@@ -1,5 +1,5 @@
 .) Auto create DB, if it doesnt exist
-
+.) DB maybe created but, not all tables - check if all tables are created
 
 .) Find ingredients in mealplan
 .) Efficient way of saving plan whereby only meals that are changed processed.

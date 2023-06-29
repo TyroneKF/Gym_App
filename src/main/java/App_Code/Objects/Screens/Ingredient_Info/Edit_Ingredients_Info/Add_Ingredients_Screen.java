@@ -10,6 +10,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -332,28 +334,38 @@ public class Add_Ingredients_Screen extends JPanel
 
     protected void writeIngredientsValuesToFile(String ingredientsValuesBeingAdded)
     {
-        String stringPath = "src/main/java/Backups/IngredientsInDBTxtBackUp.txt";
+        String stringPath = "src/main/java/Resources/Database_Scripts/DB_Scripts/5.) Ingredients_Info.sql";
+        /*
 
         //#################################################
         // Create BackUpFile if it doesn't exist
         //#################################################
         try
         {
-            // Create File if it doesn't exist
-            new FileOutputStream(stringPath, true).close();
+           new FileOutputStream(stringPath, true).close(); // Create File if it doesn't exist
         }
         catch (Exception e)
         {
             System.out.printf("\n\nAdd_Ingredients_Screen.writeIngredientsValuesToFile() Error 1 \n%s", e);
         }
+*/
 
         //#################################################
-        // Appending Values To File
+        // Changing file
         //#################################################
         try
         {
+            // Configurations
             Path path = Paths.get(stringPath);
-            Files.write(path, ingredientsValuesBeingAdded.getBytes(), StandardOpenOption.APPEND);
+            Charset charset = StandardCharsets.UTF_8;
+
+            // Replace ';;' with ',' which allows us to add a comma to add another line of code in sql script
+            String content = new String(Files.readAllBytes(path), charset);
+            content = content.replaceFirst(";;", ",");
+            Files.write(path, content.getBytes(charset));
+
+            //Append new ingredients' info to file
+            Files.write(path, String.format("%s;",ingredientsValuesBeingAdded).getBytes(), StandardOpenOption.APPEND);
         }
         catch (Exception e)
         {

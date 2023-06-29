@@ -40,7 +40,5 @@ INSERT INTO ingredientTypes (Ingredient_Type_Name) VALUES
 ('Vegetables'),
 ('Vitamins'),
 ('Whole Wheat'),
-('Yoghurt')
-
-;
+('Yoghurt');;
 

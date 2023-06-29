@@ -118,7 +118,7 @@ public class MyJDBC
                         Charset charset = StandardCharsets.UTF_8;
 
                         String content = new String(Files.readAllBytes(path), charset);
-                        content = content.replaceAll("(gymapp)......?", databaseName + ";"); // replace gymapp?? with gymapp(Current Version no)
+                        content = content.replaceAll("(gymapp)......?", databaseName + ";"); // replace gymapp????? with gymapp(Current Version no)
 
                         Files.write(path, content.getBytes(charset));
                     }

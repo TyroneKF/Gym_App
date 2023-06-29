@@ -617,10 +617,9 @@ public class Add_IngredientsForm extends Parent_Ingredients_And_Shop
         //####################################
         String
                 ingredientTypeSet = "SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = '",
-                insertQuery = "INSERT INTO ingredients_info",
-                fieldsQuery = "\nValues \n(NULL,";
+                insertQuery = "INSERT INTO ingredients_info VALUES";
 
-        ingredientsValuesBeingAdded = "\n";
+        ingredientsValuesBeingAdded = "\n(NULL,";
         //####################################
         //
         //####################################
@@ -671,22 +670,20 @@ public class Add_IngredientsForm extends Parent_Ingredients_And_Shop
 
             if (pos == endPos)
             {
-                fieldsQuery += String.format("%s);", fieldsQueryEx);
-                ingredientsValuesBeingAdded += String.format("%s)", fieldsQueryEx);
+                ingredientsValuesBeingAdded += String.format("%s);", fieldsQueryEx);
                 continue;
             }
 
             //####################################
             //
             //####################################
-            fieldsQuery += String.format("%s,", fieldsQueryEx);
             ingredientsValuesBeingAdded += String.format("%s,", fieldsQueryEx);
         }
 
         //####################################
         // Return results
         //####################################
-        return (insertQuery += fieldsQuery);
+        return (insertQuery += ingredientsValuesBeingAdded);
     }
 
     protected String removeSpaceAndHiddenChars(String stringToBeEdited)
