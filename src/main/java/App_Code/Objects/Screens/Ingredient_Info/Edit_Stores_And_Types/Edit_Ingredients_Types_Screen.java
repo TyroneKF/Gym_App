@@ -103,9 +103,24 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
         @Override
         protected void updateOtherScreens()
         {
-            parentIngredientsScreen.addChangeOrRemoveIngredientsTypeName("addKey", jtextfieldTXT, null);
+            parentIngredientsScreen.addChangeOrRemoveIngredientsTypeName("addKey", jTextfieldTXT, null);
             parentIngredientsScreen.updateIngredientsFormTypeJComboBoxes();
         }
+
+        @Override
+        protected boolean updateSQLBackUpFile()
+        {
+            String sqlFilePath = "src/main/java/Resources/Database_Scripts/DB_Scripts/3.) IngredientTypes.sql";
+            String txtToAdd =  String.format("\n('%s');", jTextfieldTXT);
+
+            if( ! (db.writeTxtToSQLFile(sqlFilePath,txtToAdd)))
+            {
+                JOptionPane.showMessageDialog(null, "Error, backing up new ingredient Types to SQL file!");
+                return false;
+            }
+            return  true;
+        }
+
     }
 
     public class EditIngredientType extends EditScreen
@@ -141,7 +156,7 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
         @Override
         protected void successUploadMessage()
         {
-            String text = String.format("\n\nSuccessfully Changed Ingredient Type From ' %s ' to ' %s ' !", selectedJComboBoxItemTxt, jtextfieldTXT);
+            String text = String.format("\n\nSuccessfully Changed Ingredient Type From ' %s ' to ' %s ' !", selectedJComboBoxItemTxt, jTextfieldTXT);
             JOptionPane.showMessageDialog(null, text);
         }
 
@@ -156,7 +171,7 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
         protected void updateOtherScreens()
         {
             System.out.printf("\n\n##############################################");
-            System.out.printf("\nupdateOtherScreens()  \nnewKey: %s \noldKey: %s", jtextfieldTXT, selectedJComboBoxItemTxt); // HELLO REMOVE
+            System.out.printf("\nupdateOtherScreens()  \nnewKey: %s \noldKey: %s", jTextfieldTXT, selectedJComboBoxItemTxt); // HELLO REMOVE
 
             //#################################################################
             // Reset EditCreateForm
@@ -181,7 +196,7 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
             }
             else
             {
-                if (parentIngredientsScreen.addChangeOrRemoveIngredientsTypeName("changeKeyName", jtextfieldTXT, selectedJComboBoxItemTxt)) // change key
+                if (parentIngredientsScreen.addChangeOrRemoveIngredientsTypeName("changeKeyName", jTextfieldTXT, selectedJComboBoxItemTxt)) // change key
                 {
                     editingIngredientsInfo.updateIngredientNamesToTypesJComboBox(); // update IngredientsTypeToNames JComboBox
                 }

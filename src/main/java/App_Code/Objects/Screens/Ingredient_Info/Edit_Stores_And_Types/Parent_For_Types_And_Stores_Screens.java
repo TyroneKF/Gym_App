@@ -92,7 +92,7 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
         protected JTextField jTextField;
         protected JButton submitButton;
 
-        protected String jtextfieldTXT, mainLabel, dataGatheringName, dbColumnNameField, dbTableName;
+        protected String jTextfieldTXT, mainLabel, dataGatheringName, dbColumnNameField, dbTableName;
 
         public AddScreen(Container parentContainer, String btnText, int btnWidth, int btnHeight)
         {
@@ -276,6 +276,11 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
             return stringToBeEdited.trim().replaceAll("\\p{C}", ""); // remove all whitespace & hidden characters like \n
         }
 
+        protected boolean updateSQLBackUpFile()
+        {
+            return false;
+        }
+
         protected void submissionBtnAction()
         {
             if (validateForm())
@@ -283,6 +288,7 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
                 if (uploadForm())
                 {
                     updateOtherScreens();
+                    updateSQLBackUpFile();
                     resetActions();
                     successUploadMessage();
                 }
@@ -295,22 +301,22 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
 
         protected boolean validateForm()
         {
-            jtextfieldTXT = jTextField.getText();
+            jTextfieldTXT = jTextField.getText();
 
             if (!additionalValidateForm())
             {
                 return false;
             }
 
-            if (jtextfieldTXT.equals(""))
+            if (jTextfieldTXT.equals(""))
             {
                 JOptionPane.showMessageDialog(null, String.format("\n\nAn %s Cannot Be Null!!", dataGatheringName));
                 return false;
             }
 
-            jtextfieldTXT = removeSpaceAndHiddenChars(jtextfieldTXT);
+            jTextfieldTXT = removeSpaceAndHiddenChars(jTextfieldTXT);
 
-            if (doesStringContainCharacters(jtextfieldTXT))
+            if (doesStringContainCharacters(jTextfieldTXT))
             {
                 JOptionPane.showMessageDialog(null, String.format("\n\nAn %s Cannot Contain Any Symbols Or, Numbers!!", dataGatheringName));
                 return false;
@@ -326,11 +332,11 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
 
         protected boolean uploadForm()
         {
-            String query = String.format("SELECT %s  FROM %s WHERE %s = '%s';", dbColumnNameField, dbTableName, dbColumnNameField, jtextfieldTXT);
+            String query = String.format("SELECT %s  FROM %s WHERE %s = '%s';", dbColumnNameField, dbTableName, dbColumnNameField, jTextfieldTXT);
 
             if (db.getSingleColumnQuery(query) != null)
             {
-                JOptionPane.showMessageDialog(null, String.format("\n\n%s '' %s '' Already Exists!", dataGatheringName, jtextfieldTXT));
+                JOptionPane.showMessageDialog(null, String.format("\n\n%s '' %s '' Already Exists!", dataGatheringName, jTextfieldTXT));
                 return false;
             }
 
@@ -338,7 +344,7 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
             String uploadString = String.format("""
                     INSERT INTO %s (%s) VALUES
                     ('%s');
-                    """, dbTableName, dbColumnNameField, jtextfieldTXT);
+                    """, dbTableName, dbColumnNameField, jTextfieldTXT);
 
             if (db.uploadData_Batch_Altogether(new String[]{uploadString}))
             {
@@ -528,11 +534,11 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
         @Override
         protected boolean uploadForm()
         {
-            String query = String.format("SELECT %s  FROM %s WHERE %s = '%s';", dbColumnNameField, dbTableName, dbColumnNameField, jtextfieldTXT);
+            String query = String.format("SELECT %s  FROM %s WHERE %s = '%s';", dbColumnNameField, dbTableName, dbColumnNameField, jTextfieldTXT);
 
             if (db.getSingleColumnQuery(query) != null)
             {
-                JOptionPane.showMessageDialog(null, String.format("\n\n%s '' %s '' Already Exists!", dataGatheringName, jtextfieldTXT));
+                JOptionPane.showMessageDialog(null, String.format("\n\n%s '' %s '' Already Exists!", dataGatheringName, jTextfieldTXT));
                 return false;
             }
 
@@ -546,7 +552,7 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
                             SET %s = '%s'
                             WHERE %s = %s;""",
 
-                    dbTableName, dbColumnNameField, jtextfieldTXT, idColumnName, mysqlVariableReference1);
+                    dbTableName, dbColumnNameField, jTextfieldTXT, idColumnName, mysqlVariableReference1);
 
             if (db.uploadData_Batch_Independently(new String[]{createMysqlVariable1, uploadString}))
             {

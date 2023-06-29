@@ -208,7 +208,7 @@ public class MyJDBC
             content = content.replaceFirst(";;", ",");
             Files.write(path, content.getBytes(charset));
 
-            //Append new ingredients' info to file
+            //Append new ingredients' info to file and add an extra ';' which indicates to this method where the ending colon is for next time
             Files.write(path, String.format("%s;",txt_To_Write_To_SQL_File).getBytes(), StandardOpenOption.APPEND);
 
             return true;

@@ -337,7 +337,7 @@ public class Add_Ingredients_Screen extends JPanel
 
     protected boolean writeIngredientsValuesToFile(String ingredientsValuesBeingAdded)
     {
-        String stringPath = "src/main/java/Resources/Database_Scripts/DB_Scripts/5.) Ingredients_Info.sql";
+        String stringPath = "src/main/java/Resources/Database_Scripts/DB_Scripts/4.) Ingredients_Info.sql";
         if(!(db.writeTxtToSQLFile(stringPath, ingredientsValuesBeingAdded)))
         {
             return false;

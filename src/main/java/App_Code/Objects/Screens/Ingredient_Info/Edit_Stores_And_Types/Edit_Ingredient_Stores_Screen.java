@@ -62,7 +62,6 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
 
     public class AddStores extends AddScreen
     {
-
         public AddStores(Container parentContainer, String btnText, int btnWidth, int btnHeight)
         {
             super(parentContainer, btnText, btnWidth, btnHeight);
@@ -103,6 +102,20 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
         {
             parentIngredientsScreen.updateIngredientSuppliersJComboBoxes();
         }
+
+        @Override
+        protected boolean updateSQLBackUpFile()
+        {
+            String sqlFilePath = "src/main/java/Resources/Database_Scripts/DB_Scripts/5.) Stores.sql";
+            String txtToAdd =  String.format("\n('%s');", jTextfieldTXT);
+
+            if( ! (db.writeTxtToSQLFile(sqlFilePath,txtToAdd)))
+            {
+                JOptionPane.showMessageDialog(null, "Error, backing up new stores to SQL file!");
+                return false;
+            }
+            return  true;
+        }
     }
 
     public class EditStores extends  EditScreen
@@ -137,7 +150,7 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
         @Override
         protected void successUploadMessage()
         {
-            String text = String.format("\n\nSuccessfully Changed Ingredient Type From ' %s ' to ' %s ' !", selectedJComboBoxItemTxt, jtextfieldTXT);
+            String text = String.format("\n\nSuccessfully Changed Ingredient Type From ' %s ' to ' %s ' !", selectedJComboBoxItemTxt, jTextfieldTXT);
             JOptionPane.showMessageDialog(null, text);
         }
 
