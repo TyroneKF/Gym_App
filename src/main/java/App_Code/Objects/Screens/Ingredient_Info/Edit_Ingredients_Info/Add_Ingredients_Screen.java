@@ -249,7 +249,10 @@ public class Add_Ingredients_Screen extends JPanel
             //#####################################
             // Write Ingredients Value To File
             //####################################
-            writeIngredientsValuesToFile(addIngredientsForm.getIngredientsValuesBeingAdded());
+            if( ! (writeIngredientsValuesToFile(addIngredientsForm.getIngredientsValuesBeingAdded())))
+            {
+                JOptionPane.showMessageDialog(null, "Error, backing up new ingredients info to SQL file!");
+            }
 
             //#####################################
             // Reset Form & Update GUI
@@ -332,45 +335,14 @@ public class Add_Ingredients_Screen extends JPanel
         return true;
     }
 
-    protected void writeIngredientsValuesToFile(String ingredientsValuesBeingAdded)
+    protected boolean writeIngredientsValuesToFile(String ingredientsValuesBeingAdded)
     {
         String stringPath = "src/main/java/Resources/Database_Scripts/DB_Scripts/5.) Ingredients_Info.sql";
-        /*
-
-        //#################################################
-        // Create BackUpFile if it doesn't exist
-        //#################################################
-        try
+        if(!(db.writeTxtToSQLFile(stringPath, ingredientsValuesBeingAdded)))
         {
-           new FileOutputStream(stringPath, true).close(); // Create File if it doesn't exist
+            return false;
         }
-        catch (Exception e)
-        {
-            System.out.printf("\n\nAdd_Ingredients_Screen.writeIngredientsValuesToFile() Error 1 \n%s", e);
-        }
-*/
-
-        //#################################################
-        // Changing file
-        //#################################################
-        try
-        {
-            // Configurations
-            Path path = Paths.get(stringPath);
-            Charset charset = StandardCharsets.UTF_8;
-
-            // Replace ';;' with ',' which allows us to add a comma to add another line of code in sql script
-            String content = new String(Files.readAllBytes(path), charset);
-            content = content.replaceFirst(";;", ",");
-            Files.write(path, content.getBytes(charset));
-
-            //Append new ingredients' info to file
-            Files.write(path, String.format("%s;",ingredientsValuesBeingAdded).getBytes(), StandardOpenOption.APPEND);
-        }
-        catch (Exception e)
-        {
-            System.out.printf("\n\nAdd_Ingredients_Screen.writeIngredientsValuesToFile() Error 2 \n%s", e);
-        }
+        return true;
     }
 
     //#################################################################################################################

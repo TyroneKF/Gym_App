@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.sql.*;
 import java.text.Collator;
 import java.util.*;
@@ -171,6 +172,52 @@ public class MyJDBC
         }
 
         return false;
+    }
+
+    //##################################################################################################################
+    // Write Methods
+    //##################################################################################################################
+    public boolean writeTxtToSQLFile(String sqlFilePath, String txt_To_Write_To_SQL_File)
+    {
+        /*
+
+        //#################################################
+        // Create BackUpFile if it doesn't exist
+        //#################################################
+        try
+        {
+           new FileOutputStream(stringPath, true).close(); // Create File if it doesn't exist
+        }
+        catch (Exception e)
+        {
+            System.out.printf("\n\nAdd_Ingredients_Screen.writeIngredientsValuesToFile() Error 1 \n%s", e);
+        }
+*/
+
+        //#################################################
+        // Changing file
+        //#################################################
+        try
+        {
+            // Configurations
+            Path path = Paths.get(sqlFilePath);
+            Charset charset = StandardCharsets.UTF_8;
+
+            // Replace ';;' with ',' which allows us to add a comma to add another line of code in sql script
+            String content = new String(Files.readAllBytes(path), charset);
+            content = content.replaceFirst(";;", ",");
+            Files.write(path, content.getBytes(charset));
+
+            //Append new ingredients' info to file
+            Files.write(path, String.format("%s;",txt_To_Write_To_SQL_File).getBytes(), StandardOpenOption.APPEND);
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            System.out.printf("\n\nwriteTxtToSQLFile() Error 2 \n%s", e);
+            return false;
+        }
     }
 
     //##################################################################################################################
