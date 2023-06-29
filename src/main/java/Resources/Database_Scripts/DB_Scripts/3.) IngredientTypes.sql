@@ -1,3 +1,5 @@
+use gymapp00001;
+INSERT INTO ingredientTypes (Ingredient_Type_Name) VALUES
 ('None Of The Above'),
 ('UnAssigned'),
 ('Breads'),
@@ -20,9 +22,10 @@
 ('Meat'),
 ('Milk'),
 ('Noodles'),
+('Nut Powder'),
 ('Nuts & Seeds'),
 ('Other Grains'),
-('Pasta'), ¬¬
+('Pasta'), 
 ('Plant Milk'),
 ('Poultry'),
 ('Potatoes'),
@@ -30,10 +33,14 @@
 ('Rice'),
 ('Sauce'),
 ('Smoothie'),
+('Spices And Herb Packs'),
+('Syrup And Spreads'),
 ('Vegan Vitamin Powders'),
 ('Vegan Milk'),
 ('Vegetables'),
 ('Vitamins'),
 ('Whole Wheat'),
-('Yoghurt');
+('Yoghurt')
+
+;
 

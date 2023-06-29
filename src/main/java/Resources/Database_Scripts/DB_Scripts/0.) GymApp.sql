@@ -1,9 +1,9 @@
---#####################################################################
-DROP DATABASE IF EXISTS gymapp1;
-CREATE DATABASE gymapp1;
-use gymapp1;
+--######################################
+DROP DATABASE IF EXISTS gymapp00001;
+CREATE DATABASE gymapp00001;
+use gymapp00001;
 
---#####################################################################
+--######################################
 CREATE TABLE IF NOT EXISTS plans
  (
     PlanID INT  PRIMARY KEY AUTO_INCREMENT,
@@ -18,8 +18,7 @@ CREATE TABLE IF NOT EXISTS plans
     UNIQUE KEY chosen_plan (selectedPlan)
 );
 
-
---#####################################################################
+--######################################
 
 CREATE TABLE IF NOT EXISTS macros_Per_Pound_And_Limits
 (
@@ -49,7 +48,7 @@ CREATE TABLE IF NOT EXISTS macros_Per_Pound_And_Limits
 	PRIMARY KEY (PlanID, DateTime_Of_Creation)
 );
 
---#####################################################################
+--######################################
 
 CREATE  VIEW plan_Macro_Target_Calculations AS
 
@@ -103,7 +102,7 @@ LEFT JOIN
 ) AS C
 ON P.PlanID = C.PlanID;
 
---#####################################################################
+--######################################
 
 CREATE TABLE IF NOT EXISTS ingredientTypes
 (
@@ -113,7 +112,7 @@ CREATE TABLE IF NOT EXISTS ingredientTypes
 	UNIQUE KEY unique_type_name (Ingredient_Type_Name)
 );
 
---#####################################################################
+--######################################
 
 CREATE TABLE IF NOT EXISTS ingredients_info
  (
@@ -148,7 +147,7 @@ CREATE TABLE IF NOT EXISTS ingredients_info
 	UNIQUE KEY unique_ingredient_info (Ingredient_Name)
 );
 
---#####################################################################
+--######################################
 CREATE TABLE IF NOT EXISTS stores
 (
     -- PRIMARY KEYS
@@ -157,7 +156,7 @@ CREATE TABLE IF NOT EXISTS stores
 	UNIQUE KEY unique_store_name (Store_Name)
  
 );
---#####################################################################
+--######################################
 
 CREATE TABLE IF NOT EXISTS ingredientInShops
 (   
@@ -175,7 +174,7 @@ CREATE TABLE IF NOT EXISTS ingredientInShops
 	
     UNIQUE KEY Ingredient_In_Store(StoreID, IngredientID)	
 );
---#####################################################################
+--######################################
 
 CREATE TABLE IF NOT EXISTS mealsInPlan
 (   
@@ -193,7 +192,7 @@ CREATE TABLE IF NOT EXISTS mealsInPlan
 
 );
 
---#####################################################################
+--######################################
 
 CREATE TABLE IF NOT EXISTS dividedMealSections
 (
@@ -208,7 +207,7 @@ CREATE TABLE IF NOT EXISTS dividedMealSections
    PRIMARY KEY(DivMealSectionsID, MealInPlanID, PlanID)   
 );
 
---#####################################################################
+--######################################
 CREATE TABLE IF NOT EXISTS ingredients_in_sections_of_meal
 (   
     Ingredients_Index INT  AUTO_INCREMENT, 
@@ -231,7 +230,7 @@ CREATE TABLE IF NOT EXISTS ingredients_in_sections_of_meal
 	UNIQUE KEY No_Repeat_Meals (Ingredients_Index, DivMealSectionsID, PlanID)	
 );
 
---#####################################################################
+--######################################
 CREATE VIEW ingredients_in_sections_of_meal_calculation AS 
 
 SELECT
@@ -262,7 +261,7 @@ LEFT JOIN ingredients_info info ON  info.IngredientID = i.IngredientID
 LEFT JOIN ingredientInShops p ON p.PDID = i.PDID
 LEFT JOIN stores s ON p.StoreID = s.StoreID;
 
---#####################################################################
+--######################################
 
 CREATE VIEW divided_meal_sections_calculations AS
 
@@ -288,7 +287,7 @@ IFNULL(ROUND(SUM(Calories),2),0) as Total_Calories
 FROM  ingredients_in_sections_of_meal_calculation 
 GROUP BY DivMealSectionsID, PlanID;
 
---#####################################################################
+--######################################
 CREATE VIEW total_meal_view AS
 
 SELECT m.PlanID, m.MealInPlanID, m.Meal_Time,  m.Meal_Name,
@@ -318,7 +317,7 @@ ON di.DivMealSectionsID = d.DivMealSectionsID AND di.PlanID = d.PlanID
 
 GROUP BY m.MealInPlanID, di.PlanID;
 
--- ######################################################
+--######################################
 
 CREATE VIEW total_plan_view AS
 
@@ -348,7 +347,7 @@ ON P.PlanID = T.PlanID
 
 GROUP BY  PlanID; 
 
--- ######################################################
+--######################################
 
 CREATE VIEW  planMacrosLeft AS
 
@@ -390,99 +389,3 @@ LEFT JOIN
 ) AS C 
 
 ON C.PlanID = P.PlanID;
-
-
--- ########################################################################################################################################
--- ########################################################################################################################################
-
-
--- ######################################################
--- plans Database Insert Statements
--- ######################################################
-
-INSERT INTO plans  (SelectedPlan, PlanID, Plan_Name, Vegan) VALUES
-(NULL, 1, 'Temp_Plan', FALSE),
-(true, 2,  'Non-Vegan Plan 1', FALSE);
-
--- ######################################################
--- macros_Per_Pound_And_Limits Database Insert Statements
--- ######################################################
-
--- Table columns have to be inserted here as current_Weight_In_Pounds is autogenerated
-
-INSERT INTO macros_Per_Pound_And_Limits
-(planID ,DateTime_Of_Creation, current_Weight_KG, BodyFatPercentage, Protein_PerPound, Carbohydrates_PerPound, Fibre, Fats_PerPound, Saturated_Fat_Limit,
- Salt_LIMIT, Water_Target, Liquid_Target, Additional_Calories) VALUES
-
-(2, now(), 102.5, 13, 1, 2, 30, 0.4, 30, 30, 5000, 0, 400);
-
-
--- #####################################################
--- ingredientTypes  Insert Statements
--- #####################################################
-INSERT INTO ingredientTypes (Ingredient_Type_Name) VALUES
-
-('None Of The Above'),
-('UnAssigned'),
-
-('Breads'),
-('Cake'), ('Cereals'), ('Cereal Bars'), ('Cheese'), ('Chocolate'),
-('Desserts'),
-('Eggs'),
-('Fish'), ('Frozen Fruit'), ('Frozen Vegetables'), ('Fruit'), ('Fruit Juice'),
-('Grains & Legumes'), 
-('Juice'), 
-('Lean Meat'), ('Liquids'),
-('Meat'), ('Milk'),
-('Noodles'), ('Nuts & Seeds'),
-('Other Grains'),
-('Pasta'), ('Plant Milk'), ('Poultry'), ('Potatoes'), ('Protein Powder'),
-('Rice'),
-('Sauce'), ('Smoothie'), 
-('Vegan Vitamin Powders'), ('Vegan Milk'), ('Vegetables'), ('Vitamins'),
-('Whole Wheat'),
-('Yoghurt');
-
-
--- #####################################################
--- ingredients_info  Insert Statements
--- #####################################################
-
-INSERT INTO ingredients_info
-(Measurement, Ingredient_Type_ID, Ingredient_Name,  Based_On_Quantity, Glycemic_Index,  Protein, Carbohydrates,
-Sugars_Of_Carbs, Fibre, Fat, Saturated_Fat, Salt, Water_Content, Liquid_Content, Calories)
-
-VALUES
-('Grams',  1,'None Of The Above', 0,0,0,0,0,0,0,0,0,0,0,0),
-('Litres', 19, 'Water', 100,0,0,0,0,0,0,0,0,100,100,0),
-
-('Grams',  35, 'Carrot',100, 71, 0.90, 10.00, 4.70, 2.80, 0.20, 0.0, 0.69, 0.00, 0, 41.00),
-('Grams', 28,'Sweet Potato',  100, 54, 1.60, 20.00, 4.20, 3.00, 0.10, 0.0, 0.55, 0,0, 86.00),
-('Grams', 25, 'Pasta', 100, 52.5, 5, 25, 0, 0, 1.1, 0.2, 0.06, 0, 0 , 131);
-
--- #####################################################
--- stores Insert Statements
--- #####################################################
-
-INSERT INTO stores
-(Store_Name)
-
-VALUES
-
-('No Shop'),
-
-('Aldi'), ('Amazon'), ('ASDA'), 
-('Iceland'), ('Lidl'),
-('Morisssons'), ('Muscle Food'), ('MyProtein'), 
-('Sainsbury'), 
-('Vivo Life');
-
--- #####################################################
--- ingredientInShops Insert Statements
--- #####################################################
-INSERT INTO ingredientInShops
-(IngredientID, Volume_Per_Unit, Cost_Per_Unit, StoreID)
-
-VALUES
-
-(1, 0.00, 0.00, 1);

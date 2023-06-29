@@ -5,9 +5,15 @@ import org.apache.ibatis.jdbc.ScriptRunner;
 
 import javax.swing.*;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.Reader;
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.text.Collator;
 import java.util.*;
@@ -32,7 +38,6 @@ public class MyJDBC
             line_Separator = "############################################################################################################################",
             middle_line_Separator = "###########################################################################################";
 
-
     private boolean
             db_Connection_Status = false, override = true; // ERROR surrounding this
 
@@ -42,7 +47,7 @@ public class MyJDBC
     //##################################################################################################################
     //
     //##################################################################################################################
-    public MyJDBC(String userName, String password, String databaseName, String db_Script_Address)
+    public MyJDBC(String userName, String password, String databaseName, String db_Script_Folder_Address)
     {
         this.userName = userName;
         this.password = password;
@@ -73,7 +78,7 @@ public class MyJDBC
             // Setup Database data
             //##############################################
             System.out.printf("\n\n%s \nCreating DB tables! \n%s", middle_line_Separator, middle_line_Separator);
-            if (run_SQL_Script(db_Script_Address))
+            if (run_SQL_Script_Folder(db_Script_Folder_Address, true))
             {
                 success = true;
                 System.out.printf("\n\n%s \nSuccessfully, created DB & Initialized Data! \n%s", line_Separator, line_Separator);
@@ -91,8 +96,57 @@ public class MyJDBC
     //##################################################################################################################
     // Setup Methods
     //##################################################################################################################
+    public boolean run_SQL_Script_Folder(String folder_Address, boolean updateDBVersionInFile)
+    {
+        File[] files = new File(folder_Address).listFiles();
 
-    public boolean run_SQL_Script(String sql_Script_Address)
+        // Traversing through the files array
+        for (File file : files)
+        {
+            if (file.isFile())
+            {
+                String filePath = file.getPath();
+
+                if(updateDBVersionInFile)
+                {
+                    try
+                    {
+                        //##############################################
+                        // Update current Gym Version no in SQL File
+                        //##############################################
+                        Path path = Paths.get(filePath);
+                        Charset charset = StandardCharsets.UTF_8;
+
+                        String content = new String(Files.readAllBytes(path), charset);
+                        content = content.replaceAll("(gymapp)......?", databaseName + ";"); // replace gymapp?? with gymapp(Current Version no)
+
+                        Files.write(path, content.getBytes(charset));
+                    }
+                    catch (Exception e)
+                    {
+                        System.out.printf("\n\n%s run_SQL_Script_Folder() Error, replacing version number  in file '%s'!  \n\n%s \n%s", line_Separator, file.getName(),e, line_Separator);
+                        return false;
+                    }
+                }
+                if (!(run_SQL_Script(filePath)))
+                {
+                    System.out.printf("\n\n%s run_SQL_Script_Folder() Error, executing sql script '%s'! \n%s", line_Separator, file.getName(), line_Separator);
+                    return false;
+                }
+            }
+            System.out.printf("\n\n%s \nSuccessfully executed file '%s'! \n%s", line_Separator, file.getName(), line_Separator);
+
+            /*else if (file.isDirectory()) // If a subdirectory is found, print the name of the sub directory
+            {
+                System.out.println("Directory: " + file.getName());
+
+                run_SQL_Script_Folder(file.getPath()); // recursively call the function on the files in this new folder
+            }*/
+        }
+        return true;
+    }
+
+    private boolean run_SQL_Script(String sql_Script_Address)
     {
         try
         {

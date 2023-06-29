@@ -41,9 +41,10 @@ public class Meal_Plan_Screen extends JPanel
     //
     //##################################################################################################################
     private final static String
-            version_no = "1",
+            version_no = "00001",
             databaseName = "gymapp" + version_no,
-            db_Script_Address = "src/main/java/Resources/Database_Scripts/DB_Scripts/GymApp.sql";
+            db_Script_Folder_Address = "src/main/java/Resources/Database_Scripts/DB_Scripts",
+            db_Script_Address = "src/main/java/Resources/Database_Scripts/DB_Scripts/0.) GymApp.sql";
 
     private String JFrameName = databaseName;
 
@@ -105,20 +106,9 @@ public class Meal_Plan_Screen extends JPanel
         try
         {
             //##############################################
-            // Update current Gym Version no in SQL File
-            //##############################################
-            Path path = Paths.get(db_Script_Address);
-            Charset charset = StandardCharsets.UTF_8;
-
-            String content = new String(Files.readAllBytes(path), charset);
-            content = content.replaceAll("(gymapp)...?", databaseName+";"); // replace gymapp?? with gymapp(Current Version no)
-
-            Files.write(path, content.getBytes(charset));
-
-            //##############################################
             // Create DB Object & run SQL Script
             //##############################################
-            MyJDBC db = new MyJDBC("root", "password", databaseName, db_Script_Address);
+            MyJDBC db = new MyJDBC("root", "password", databaseName, db_Script_Folder_Address);
 
             if (db.get_DB_Connection_Status())
             {
