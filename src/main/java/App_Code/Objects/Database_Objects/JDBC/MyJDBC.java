@@ -1,6 +1,7 @@
 package App_Code.Objects.Database_Objects.JDBC;
 
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.jdbc.ScriptRunner;
 
 import javax.swing.*;
@@ -284,20 +285,51 @@ public class MyJDBC
             BufferedReader my_reader = new BufferedReader(new FileReader(input_file));
             BufferedWriter my_writer = new BufferedWriter(new FileWriter(temp_file));
 
-            String current_line;
-            while ((current_line = my_reader.readLine()) != null)
+            //########################################
+            //
+            //########################################
+            String currentLine = my_reader.readLine(), nextLine = my_reader.readLine(), nextNextLine = my_reader.readLine();
+            boolean deletionMade = false;
+
+            while (currentLine != null)
             {
-                String trimmedLine = current_line.trim();
-                if (txtToDelete.contains(trimmedLine))
+                System.out.printf("\n\n%s \ncurrentLine: %s \nnextLine: %s", line_Separator, currentLine, nextLine);
+
+                // Processing next lines
+                String trimmedLine = currentLine.trim(); // trim  current line
+
+                // Processing next lines
+                if (!(deletionMade))
                 {
-                    continue;
+                    if (txtToDelete.contains(trimmedLine)) // check if current line is the line to be deleted
+                    {
+                        deletionMade = true;
+                        currentLine = nextLine;
+                        nextLine = nextNextLine;
+                        nextNextLine = my_reader.readLine();
+
+                        System.out.printf("\n\nDeletion made: %s", currentLine);
+
+                        continue;
+                    }
+                    // Check if the next line being is being deleted and is the next line below the last line in the file
+                    else if (nextLine != null && !(trimmedLine.equals("VALUES")) && txtToDelete.contains(nextLine.trim()) && nextNextLine == null)
+                    {
+                        //This currentLine is about to be the new last line in file as the next line is being deleted
+                        currentLine = StringUtils.chop(currentLine); // remove comma at the end
+                        currentLine += ";;"; // replace with ';;' because it's the last line
+                    }
                 }
 
-                my_writer.write(current_line + System.getProperty("line.separator"));
+                //
+                my_writer.write(currentLine + System.getProperty("line.separator"));
 
-                //HELLO Last line issue
-
+                //
+                currentLine = nextLine;
+                nextLine = nextNextLine;
+                nextNextLine = my_reader.readLine();
             }
+
             my_writer.close();
             my_reader.close();
 
@@ -308,22 +340,22 @@ public class MyJDBC
             {
                 System.out.printf("\n\nError, deleteTxtInFile() couldn't delete the source file!");
 
-                for(int i= 0; i < 2; i++)
+                for (int i = 0; i < 2; i++)
                 {
-                    if(temp_file.delete())
+                    if (temp_file.delete())
                     {
                         return false;
                     }
                 }
 
                 System.out.printf("\nError, couldn't delete temp file either!");
-                return  false;
+                return false;
             }
 
             //########################################
             // Rename Temp file to original file
             //########################################
-            if (! (temp_file.renameTo(input_file)))
+            if (!(temp_file.renameTo(input_file)))
             {
                 System.out.printf("\n\n! Error, deleteTxtInFile() renaming temporary file!");
                 return false;
@@ -338,8 +370,6 @@ public class MyJDBC
         //########################################
         //
         //########################################
-        System.out.printf("\n\nHere");
-
         return true;
     }
 
@@ -1037,11 +1067,14 @@ public class MyJDBC
     public static void main(String[] args)
     {
         String filePath = "src/main/java/Resources/Database_Scripts/Test/Test Ingredients_Info.sql";
-        String txtToDelete = "(NULL,(\"Grams\"),(\"test3\"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = 'Cake'),(100),(1),(2),(3),(34),(5),(6),(7),(8),(9),(10),(11))";
+
+        String txtToDelete = "(1, 'Grams','None Of The Above',1, 0,0,0,0,0,0,0,0,0,0,0,0)";
+//        String txtToDelete = "(NULL,(\"Grams\"),(\"test1\"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = 'Cake'),(1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12))";
+//        String txtToDelete = "(NULL,(\"Grams\"),(\"test3\"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = 'Cake'),(100),(1),(2),(3),(34),(5),(6),(7),(8),(9),(10),(11))";
 
         MyJDBC db = new MyJDBC("root", "password", "gymapp00001", "src/main/java/Resources/Database_Scripts/DB_Scripts");
 
-        if(db.deleteTxtInFile(filePath, new ArrayList<>(Arrays.asList(String.format("%s,",txtToDelete), String.format("%s;;",txtToDelete)))))
+        if (db.deleteTxtInFile(filePath, new ArrayList<>(Arrays.asList(String.format("%s,", txtToDelete), String.format("%s;;", txtToDelete)))))
         {
             System.out.println("\n\nSuccessful");
         }
