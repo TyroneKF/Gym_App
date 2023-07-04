@@ -310,7 +310,14 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
             it.remove();
         }
 
+        extraClearShopsForm();
+
         parentContainer.revalidate();
+    }
+
+    protected void extraClearShopsForm()
+    {
+
     }
 
     class AddShopForm_Object extends JPanel

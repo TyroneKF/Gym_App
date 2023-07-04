@@ -449,6 +449,13 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
         }
 
         saltMeasurement_JComboBox.setSelectedIndex(-1);
+
+        extraClearIngredientsForm();
+    }
+
+    protected void extraClearIngredientsForm()
+    {
+
     }
 
     protected boolean validate_IngredientsForm()//HELLO EDITED NOW

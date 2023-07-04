@@ -11,7 +11,6 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.TreeMap;
 
@@ -444,7 +443,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
 
         if (areYouSure("refresh this page, all data on the form will be reset \nhowever, this will not reset deleted Supplier Shop Info as this is permanently deleted"))
         {
-            updateFormWithIngredientInfo();
+            reloadFormWithIngredientInfo();
         }
     }
 
@@ -459,6 +458,20 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         // Update ShopForm
         //####################################
         shopForm.updateShopFormWithInfoFromDB();
+    }
+
+    // HELLO changed shop method
+    private void reloadFormWithIngredientInfo()
+    {
+        //#####################################
+        // Update IngredientsForms
+        //####################################
+        ingredientsForm.loadIngredientsFormData();
+
+        //#####################################
+        // Update ShopForm
+        //####################################
+        shopForm.loadShopFormData();
     }
 
     private void deleteIngredientBTNAction()

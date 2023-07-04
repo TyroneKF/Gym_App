@@ -7,6 +7,7 @@ import java.util.ArrayList;
 public class Edit_ShopForm extends Add_ShopForm
 {
     private Edit_IngredientsForm ingredientsForm;
+    private ArrayList<ArrayList<String>> shopsFormDBData = new ArrayList<>();
 
     public Edit_ShopForm(Container parentContainer, Ingredients_Info_Screen ingredients_info_screen, Edit_IngredientsScreen edit_ingredients, String btnText, int btnWidth, int btnHeight)
     {
@@ -24,7 +25,7 @@ public class Edit_ShopForm extends Add_ShopForm
         //###########################
         // Get New Ingredient Shop Info
         //###########################
-        ArrayList<ArrayList<String>> ingredientShops_R = db.getMultiColumnQuery(String.format("""                    
+        ArrayList<ArrayList<String>> temp_ShopsFormDBData = db.getMultiColumnQuery(String.format("""                    
                 SELECT i.PDID, s.Store_Name, i.Cost_Per_Unit, i.Volume_Per_Unit
                 FROM  ingredientInShops i
                 INNER JOIN
@@ -34,11 +35,13 @@ public class Edit_ShopForm extends Add_ShopForm
                 ON s.StoreID = i.StoreID
                 AND  i.IngredientID = %s ;""", selectedIngredientID));
 
-        if (ingredientShops_R == null)
+        if (temp_ShopsFormDBData == null)
         {
             JOptionPane.showMessageDialog(mealPlanScreen, "Unable to grab selected ingredient shop info! \nMaybe there isn't any suppliers created for this Ingredient!");
             return;
         }
+
+        shopsFormDBData = temp_ShopsFormDBData;
 
         //###########################
         // Clear Supplier Info
@@ -48,10 +51,14 @@ public class Edit_ShopForm extends Add_ShopForm
         //###########################
         //Add Rows for shops onto form
         //###########################
+        loadShopFormData();
+    }
 
-        for (int i = 0; i < ingredientShops_R.size(); i++)
+    public void loadShopFormData()
+    {
+        for (int i = 0; i < shopsFormDBData.size(); i++)
         {
-            ArrayList<String> rowData = ingredientShops_R.get(i);
+            ArrayList<String> rowData = shopsFormDBData.get(i);
 
             // Set PDID & Add Row
             Add_ShopForm.AddShopForm_Object row = addShopForm_object(Integer.parseInt(rowData.get(0)));
@@ -66,6 +73,17 @@ public class Edit_ShopForm extends Add_ShopForm
             // Set Volume Info
             row.getQuantityPerPack_TxtField().setText(rowData.get(3));// HELLO IDK WHAT I DID HERE  in REFACTORING
         }
+    }
+
+    @Override
+    protected void extraClearShopsForm()
+    {
+        shopsFormDBData.clear();
+    }
+
+    public ArrayList<ArrayList<String>> getShopsFormDBData()
+    {
+        return shopsFormDBData;
     }
 
     //EDITING NOW
@@ -124,9 +142,9 @@ public class Edit_ShopForm extends Add_ShopForm
 
                 //Update String
                 String updateString = String.format("""
-                                    UPDATE ingredientInShops
-                                    SET Volume_Per_Unit = %s, Cost_Per_Unit = %s, StoreID = (SELECT StoreID FROM stores WHERE Store_Name = '%s')
-                                    WHERE PDID = %s;""",
+                                UPDATE ingredientInShops
+                                SET Volume_Per_Unit = %s, Cost_Per_Unit = %s, StoreID = (SELECT StoreID FROM stores WHERE Store_Name = '%s')
+                                WHERE PDID = %s;""",
                         supplierInDB.getQuantityPerPack_TxtField().getText(),
                         supplierInDB.getIngredientPrice_TxtField().getText(),
                         supplierInDB.getShops_JComboBox().getSelectedItem().toString(),
@@ -256,9 +274,9 @@ public class Edit_ShopForm extends Add_ShopForm
                 // Delete Supplier From ingredients_in_meal (PDID)
                 //###################################################
                 String updateQuery = String.format("""
-                            UPDATE ingredients_in_meal
-                            SET  PDID = NULL
-                            WHERE PDID = %s; """, PDID);
+                        UPDATE ingredients_in_meal
+                        SET  PDID = NULL
+                        WHERE PDID = %s; """, PDID);
 
                 System.out.printf("\n\n%s", updateQuery);
 
@@ -266,8 +284,8 @@ public class Edit_ShopForm extends Add_ShopForm
                 // Delete Supplier From ingredientInShops
                 //###################################################
                 String updateQuery2 = String.format("""
-                            DELETE FROM ingredientInShops
-                            WHERE PDID = %s; """, PDID);
+                        DELETE FROM ingredientInShops
+                        WHERE PDID = %s; """, PDID);
 
                 System.out.printf("\n\n%s", updateQuery2);
 
