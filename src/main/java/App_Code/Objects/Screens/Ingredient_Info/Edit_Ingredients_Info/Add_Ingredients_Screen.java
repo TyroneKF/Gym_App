@@ -241,7 +241,7 @@ public class Add_Ingredients_Screen extends JPanel
             //#####################################
             // Write Ingredients Value To File
             //####################################
-            if( ! (backupDataInSQLFile(addIngredientsForm.getIngredientsValuesBeingAdded())))
+            if( ! (backupDataInSQLFile()))
             {
                 JOptionPane.showMessageDialog(null, "Error, backing up new ingredients info to SQL file!");
             }
@@ -327,8 +327,9 @@ public class Add_Ingredients_Screen extends JPanel
         return true;
     }
 
-    protected boolean backupDataInSQLFile(String ingredientsValuesBeingAdded)
+    protected boolean backupDataInSQLFile()
     {
+        String ingredientsValuesBeingAdded = addIngredientsForm.getIngredientsValuesBeingAdded();
         if(!(db.writeTxtToSQLFile(sqlBackUpPath, ingredientsValuesBeingAdded)))
         {
             return false;

@@ -702,6 +702,10 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
 
         JOptionPane.showMessageDialog(mealPlanScreen, "The ingredient updates won't appear on the mealPlan screen until this window is closed!");
 
+        //##############################################################################################################
+        //
+        //##############################################################################################################
+
 
         //##############################################################################################################
         //

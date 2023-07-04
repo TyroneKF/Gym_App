@@ -20,7 +20,10 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
     private Edit_IngredientsScreen edit_ingredientsScreen;
     private ArrayList<Component> formObjects;
 
-    private ArrayList<String> selectedIngredientDBData = new ArrayList<>();
+    private ArrayList<String>
+            dbFormData = new ArrayList<>(),
+            currentFormData = new ArrayList<>();
+
 
 
     public Edit_IngredientsForm(Container parentContainer, Ingredients_Info_Screen ingredients_info_screen, Edit_IngredientsScreen edit_ingredientsScreen, String btnText, int btnWidth, int btnHeight)
@@ -59,12 +62,18 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
     @Override
     protected void extraClearIngredientsForm()
     {
-        selectedIngredientDBData.clear();
+        dbFormData.clear();
+        currentFormData.clear();
     }
 
-    public ArrayList<String> getSelectedIngredientDBData()
+    public ArrayList<String> getDbFormData()
     {
-        return selectedIngredientDBData;
+        return dbFormData;
+    }
+
+    public ArrayList<String> getCurrentFormData()
+    {
+        return currentFormData;
     }
 
     public void updateIngredientsFormWithInfoFromDB()
@@ -101,12 +110,12 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
             return;
         }
 
-        selectedIngredientDBData = ingredientInfo_R.get(0);
+        dbFormData = ingredientInfo_R.get(0);
 
         //##############################
         // Get Ingredient ID
         //##############################
-        selectedIngredientID = selectedIngredientDBData.get(0);
+        selectedIngredientID = dbFormData.get(0);
 
         //##############################################################################################################
         // Get Ingredient ID
@@ -122,10 +131,10 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
 
         int formObjectsIndex = 0;
 
-        for (int i = 1; i < selectedIngredientDBData.size(); i++)
+        for (int i = 1; i < dbFormData.size(); i++)
         {
             Component comp = formObjects.get(formObjectsIndex); // query size and form objects size arent at the same index
-            String value = selectedIngredientDBData.get(i);
+            String value = dbFormData.get(i);
 
             // setting previous ingredient Type value
             if (formObjectsIndex == getIngredientTypeObjectIndex()) // accounting for id being added
@@ -277,7 +286,6 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
             //####################################
             //
             //####################################
-
             if (pos == ingredientTypeObjectIndex)
             {
                 String ingredientTypeSet = "SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = ";
@@ -287,6 +295,11 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
             {
                 formFieldValue = String.format("\"%s\"", formFieldValue);
             }
+
+            //####################################
+            //
+            //####################################
+            currentFormData.add(formFieldValue);
 
             //####################################
             //
@@ -307,6 +320,7 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
         //####################################
         // Return results
         //####################################
+        System.out.printf("\n\n\nFieldValues: %s ", currentFormData);
         return setQuery;
     }
 
