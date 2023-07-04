@@ -6,6 +6,8 @@ import App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Ingredient
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_Screens
@@ -14,6 +16,15 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
 
     public Edit_Ingredient_Stores_Screen(MyJDBC db, Ingredients_Info_Screen add_or_Parent__ingredients_Info_screen, Collection<String> jcomboBoxList)
     {
+        //######################################
+        //
+        //######################################
+        super.sqlFilePath = "src/main/java/Resources/Database_Scripts/Editable_DB_Scripts/5.) Stores.sql";
+        super.process = "ingredients stores";
+
+        //######################################
+        //
+        //######################################
         this.db = db;
         this.parentIngredientsScreen = add_or_Parent__ingredients_Info_screen;
         this.jcomboBoxList = jcomboBoxList;
@@ -46,7 +57,7 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
         //###########################
         //Edit Ingredients Stores Form
         //###########################
-        super.editScreen= new EditStores(this, collapsibleBTNTXT2, 250, 50);
+        super.editScreen = new EditStores(this, collapsibleBTNTXT2, 250, 50);
         addToContainer(mainCentreScreen, editScreen, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
         //###########################
@@ -102,23 +113,9 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
         {
             parentIngredientsScreen.updateIngredientSuppliersJComboBoxes();
         }
-
-        @Override
-        protected boolean updateSQLBackUpFile()
-        {
-            String sqlFilePath = "src/main/java/Resources/Database_Scripts/DB_Scripts/5.) Stores.sql";
-            String txtToAdd =  String.format("\n('%s');", jTextfieldTXT);
-
-            if( ! (db.writeTxtToSQLFile(sqlFilePath,txtToAdd)))
-            {
-                JOptionPane.showMessageDialog(null, "Error, backing up new stores to SQL file!");
-                return false;
-            }
-            return  true;
-        }
     }
 
-    public class EditStores extends  EditScreen
+    public class EditStores extends EditScreen
     {
         public EditStores(Container parentContainer, String btnText, int btnWidth, int btnHeight)
         {
@@ -162,55 +159,39 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
         }
 
         @Override
-        protected boolean deleteBTNAction()
-        {
-            //######################################
-            // Create Variable for storeID
-            //######################################
-            String mysqlVariableReference1 = "@CurrentID"; // StoreID
-            String createMysqlVariable1 = String.format("SET %s = (SELECT %s FROM %s WHERE %s = '%s');",
-                    mysqlVariableReference1, idColumnName, dbTableName, dbColumnNameField, selectedJComboBoxItemTxt);
-
-            //######################################
-            // Update ingredients_in_meal
-            //######################################
-            String update1 = String.format("""
-                    UPDATE ingredients_in_meal
-                       SET PDID = NULL
-                    WHERE PDID IN (SELECT PDID FROM ingredientInShops WHERE StoreID = %s);""", mysqlVariableReference1);
-
-            //######################################
-            // Update  ingredientInShops & Stores
-            //######################################
-            String update2 = String.format("DELETE FROM ingredientInShops WHERE StoreID = %s;",mysqlVariableReference1);
-            String update3 = String.format("DELETE FROM stores WHERE StoreID = %s;", mysqlVariableReference1);
-
-            if (!db.uploadData_Batch_Independently(new String[]{createMysqlVariable1, update1, update2, update3}))
-            {
-                JOptionPane.showMessageDialog(null, String.format("\n\nFailed To Delete ' %s ' FROM %s !!", selectedJComboBoxItemTxt, dataGatheringName));
-                return false;
-            }
-
-            return true;
-        }
-
-        @Override
         protected void updateOtherScreens()
         {
             parentIngredientsScreen.updateIngredientSuppliersJComboBoxes();
         }
 
         @Override
-        protected boolean updateSQLBackUpFile()
+        protected ArrayList<String> deleteBTNQueries(String mysqlVariableReference1, ArrayList<String> queries)
         {
-            String sqlFilePath = "src/main/java/Resources/Database_Scripts/DB_Scripts/5.) Stores.sql";
+            //######################################
+            // Update ingredients_in_meal
+            //######################################
+            String query1 = String.format("""
+                    UPDATE ingredients_in_sections_of_meal
+                       SET PDID = NULL
+                    WHERE PDID IN (SELECT PDID FROM ingredientInShops WHERE StoreID = %s);""", mysqlVariableReference1);
 
-            if( ! (db.replaceTxtInSQLFile(sqlFilePath,selectedJComboBoxItemTxt,jTextfieldTXT)))
-            {
-                JOptionPane.showMessageDialog(null, "Error, changing back-up of ingredient Store in SQL file!");
-                return false;
-            }
-            return  true;
+            //######################################
+            // Update  ingredientInShops & Stores
+            //######################################
+            String query2 = String.format("DELETE FROM ingredientInShops WHERE StoreID = %s;", mysqlVariableReference1);
+            String query3 = String.format("DELETE FROM stores WHERE StoreID = %s;", mysqlVariableReference1);
+
+            //#############################################
+            //
+            //#############################################
+            queries.add(query1);
+            queries.add(query2);
+            queries.add(query3);
+
+            //#############################################
+            //
+            //#############################################
+            return queries;
         }
     }
 }

@@ -263,7 +263,7 @@ public class MyJDBC
                 // Create File if it doesn't exist
                 new FileOutputStream(tempFilePath, true).close();
 
-                // Clear file if it exists
+                // Clear file
                 new FileWriter(tempFilePath, false).close();
             }
             catch (Exception e)
@@ -293,7 +293,7 @@ public class MyJDBC
 
             while (currentLine != null)
             {
-                System.out.printf("\n\n%s \ncurrentLine: %s \nnextLine: %s", line_Separator, currentLine, nextLine);
+              //  System.out.printf("\n\n%s \ncurrentLine: %s \nnextLine: %s", line_Separator, currentLine, nextLine);
 
                 // Processing next lines
                 String trimmedLine = currentLine.trim(); // trim  current line
@@ -312,7 +312,7 @@ public class MyJDBC
 
                         continue;
                     }
-                    // Check if the next line being is being deleted and is the next line below the last line in the file
+                    // Check if the next line  is being deleted and if it is the currentLine is the new lastline
                     else if (nextLine != null && !(trimmedLine.equals("VALUES")) && txtToDelete.contains(nextLine.trim()) && nextNextLine == null)
                     {
                         //This currentLine is about to be the new last line in file as the next line is being deleted
@@ -527,6 +527,54 @@ public class MyJDBC
         }
         return false;
     }
+
+    public Boolean uploadData_Batch_Independently(ArrayList<String> queries)
+    {
+        if (!(get_DB_Connection_Status()))
+        {
+            System.out.printf("\n\n  uploadData_Batch_Independently() DB couldn't successfully connect to DB '%s'!", databaseName);
+            return false;
+        }
+        try
+        {
+            Connection connection = DriverManager.getConnection(db_Connection_Address, userName, password);
+            Statement statement = connection.createStatement();
+
+            //Setting auto-commit false
+            connection.setAutoCommit(false);
+
+            //################################
+            // Creating Batch
+            //################################
+            for (String query : queries)
+            {
+                //statement.addBatch(query);
+                statement.executeUpdate(query);
+            }
+
+            //Executing the batch
+            // statement.executeBatch();
+
+            //Saving the changes
+            connection.commit();
+            //################################
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            System.out.printf("\n\n @uploadData_Batch() \n\nQuery:\n ");
+            for (String query : queries)
+            {
+                System.out.printf("\n\n%s", query);
+            }
+            System.out.printf("\n\n%s", e);
+
+            JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
+        }
+        return false;
+    }
+
 
     //##################################################################################################################
     // DB Get Methods
@@ -1066,10 +1114,10 @@ public class MyJDBC
 
     public static void main(String[] args)
     {
-        String filePath = "src/main/java/Resources/Database_Scripts/Test/Test Ingredients_Info.sql";
+        String filePath = "src/main/java/Resources/Database_Scripts/Editable_DB_Scripts/4.) Ingredients_Info.sql";
 
-        String txtToDelete = "(1, 'Grams','None Of The Above',1, 0,0,0,0,0,0,0,0,0,0,0,0)";
-//        String txtToDelete = "(NULL,(\"Grams\"),(\"test1\"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = 'Cake'),(1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12))";
+//        String txtToDelete = "(1, 'Grams','None Of The Above',1, 0,0,0,0,0,0,0,0,0,0,0,0)";
+        String txtToDelete = "(NULL,(\"Grams\"),(\"test1\"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = 'Cake'),(1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12))";
 //        String txtToDelete = "(NULL,(\"Grams\"),(\"test3\"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = 'Cake'),(100),(1),(2),(3),(34),(5),(6),(7),(8),(9),(10),(11))";
 
         MyJDBC db = new MyJDBC("root", "password", "gymapp00001", "src/main/java/Resources/Database_Scripts/DB_Scripts");

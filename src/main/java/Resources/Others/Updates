@@ -1,4 +1,4 @@
-.) Auto create DB, if it doesnt exist
+.) SQLFILE backups create editable files on initialization
 .) WTF is this filename "Parent_Ingredients_And_Shop"
 .) DB maybe created but, not all tables - check if all tables are created
 

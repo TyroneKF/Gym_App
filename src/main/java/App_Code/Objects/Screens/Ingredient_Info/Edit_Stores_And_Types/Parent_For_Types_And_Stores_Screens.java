@@ -12,6 +12,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,7 +31,7 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
     protected JComboBox jComboBoxObject;
     protected Collection<String> jcomboBoxList;
     protected Ingredients_Info_Screen parentIngredientsScreen;
-    protected String collapsibleBTNTXT1 = "", collapsibleBTNTXT2 = "";
+    protected String collapsibleBTNTXT1 = "", collapsibleBTNTXT2 = "", sqlFilePath, process;
 
     protected EditScreen editScreen;
     protected AddScreen addScreen;
@@ -276,11 +279,6 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
             return stringToBeEdited.trim().replaceAll("\\p{C}", ""); // remove all whitespace & hidden characters like \n
         }
 
-        protected boolean updateSQLBackUpFile()
-        {
-            return false;
-        }
-
         protected void submissionBtnAction()
         {
             if (validateForm())
@@ -288,7 +286,7 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
                 if (uploadForm())
                 {
                     updateOtherScreens();
-                    updateSQLBackUpFile();
+                    backupDataInSQLFile();
                     resetActions();
                     successUploadMessage();
                 }
@@ -363,6 +361,18 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
         {
             refreshBtnAction();
             editScreen.loadJComboBox();
+        }
+
+        protected boolean backupDataInSQLFile()
+        {
+            String txtToAdd = String.format("\n('%s');", jTextfieldTXT);
+
+            if (!(db.writeTxtToSQLFile(sqlFilePath, txtToAdd)))
+            {
+                JOptionPane.showMessageDialog(null, String.format("Error, backing up new %s to SQL file!", process));
+                return false;
+            }
+            return true;
         }
     }
 
@@ -439,55 +449,6 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
             });
 
             iconPanelInsert.add(delete_Icon_Btn);
-        }
-
-        private void deleteBTNActionListener()
-        {
-            if (selectedJComboBoxItemTxt.equals(""))
-            {
-                JOptionPane.showMessageDialog(null, String.format("Select An ' %s 'To Delete It !!!", dataGatheringName));
-                return;
-            }
-
-            if (deleteBTNAction())
-            {
-                JOptionPane.showMessageDialog(null, String.format("\n\nSelected Item ''%s'' Has Successfully Been Deleted!!!", selectedJComboBoxItemTxt));
-
-                updateOtherScreens();
-                resetActions();
-            }
-            else
-            {
-                JOptionPane.showMessageDialog(null, String.format("\n\nFailed To Delete Selected Item ''%s'' !!", selectedJComboBoxItemTxt));
-            }
-        }
-
-        protected boolean deleteBTNAction()
-        {
-            System.out.printf("\n#################################################################################");
-
-            String mysqlVariableReference1 = "@CurrentID";
-            String createMysqlVariable1 = String.format("SET %s = (SELECT %s FROM %s WHERE %s = '%s');", mysqlVariableReference1, idColumnName, dbTableName, dbColumnNameField, selectedJComboBoxItemTxt);
-
-            String changeToValue = String.format("(SELECT %s FROM %s WHERE %s = 'UnAssigned')", idColumnName, dbTableName, dbColumnNameField);
-
-            String query = String.format("""                  
-                    UPDATE %s
-                    SET %s =  %s
-                    WHERE %s = %s;""", fkTable, idColumnName, changeToValue, idColumnName, mysqlVariableReference1);
-
-            String query2 = String.format("DELETE FROM %s WHERE %s = %s;", dbTableName, idColumnName, mysqlVariableReference1);
-
-            System.out.printf("\n\n%s \n\n%s \n\n%s", createMysqlVariable1, query, query2);
-
-            if (!db.uploadData_Batch_Independently(new String[]{createMysqlVariable1, query, query2}))
-            {
-                JOptionPane.showMessageDialog(null, String.format("\n\nFailed To Delete ' %s ' FROM %s !!", selectedJComboBoxItemTxt, dataGatheringName));
-                return false;
-            }
-
-            itemDeleted = true;
-            return true;
         }
 
         @Override
@@ -585,10 +546,85 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
             }
         }
 
-        @Override
-        protected boolean updateSQLBackUpFile()
+        private void deleteBTNActionListener()
         {
-            return false;
+            if (selectedJComboBoxItemTxt.equals(""))
+            {
+                JOptionPane.showMessageDialog(null, String.format("Select An ' %s 'To Delete It !!!", dataGatheringName));
+                return;
+            }
+
+            if (deleteBTNAction())
+            {
+                JOptionPane.showMessageDialog(null, String.format("\n\nSelected Item ''%s'' Has Successfully Been Deleted!!!", selectedJComboBoxItemTxt));
+
+                updateOtherScreens();
+                resetActions();
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(null, String.format("\n\nFailed To Delete Selected Item ''%s'' !!", selectedJComboBoxItemTxt));
+            }
+        }
+
+        protected  ArrayList<String> deleteBTNQueries(String mysqlVariableReference1, ArrayList<String> queries)
+        {
+            return queries;
+        }
+
+        protected boolean deleteBTNAction()
+        {
+
+            //##########################################################################################################
+            // Delete From SQL Database
+            //##########################################################################################################
+            System.out.printf("\n#################################################################################");
+
+            String mysqlVariableReference1 = "@CurrentID";
+            String createMysqlVariable1 = String.format("SET %s = (SELECT %s FROM %s WHERE %s = '%s');",
+                    mysqlVariableReference1, idColumnName, dbTableName, dbColumnNameField, selectedJComboBoxItemTxt);
+
+            ArrayList<String> queries = deleteBTNQueries(mysqlVariableReference1, new ArrayList<>(Arrays.asList(createMysqlVariable1)));
+
+            //##########################################################################################################
+            //
+            //##########################################################################################################
+            if (!db.uploadData_Batch_Independently(queries))
+            {
+                JOptionPane.showMessageDialog(null, String.format("\n\nFailed To Delete ' %s ' FROM %s !!", selectedJComboBoxItemTxt, dataGatheringName));
+                return false;
+            }
+
+            itemDeleted = true;
+
+            //##########################################################################################################
+            // Delete From BackUp SQL File
+            //##########################################################################################################
+
+            ArrayList<String> txtToDeleteList = new ArrayList<>(Arrays.asList(String.format("('%s'),", selectedJComboBoxItemTxt), String.format("('%s');;", selectedJComboBoxItemTxt)));
+
+            if (!(db.deleteTxtInFile(sqlFilePath, txtToDeleteList)))
+            {
+                JOptionPane.showMessageDialog(null, String.format("\n\nError, deleteBTNAction() deleting ingredient type '%s' from backup files!", selectedJComboBoxItemTxt));
+            }
+
+            //##########################################################################################################
+            //
+            //##########################################################################################################
+            return true;
+        }
+
+        @Override
+        protected boolean backupDataInSQLFile()
+        {
+            System.out.printf("\n\nSql File Path: %s \nSelectedJComboBox: %s \nJTextfield: %s", sqlFilePath,selectedJComboBoxItemTxt,jTextfieldTXT);
+
+            if( ! (db.replaceTxtInSQLFile(sqlFilePath,selectedJComboBoxItemTxt,jTextfieldTXT)))
+            {
+                JOptionPane.showMessageDialog(null, String.format("Error, changing back-up of %s in SQL file!", process));
+                return false;
+            }
+            return  true;
         }
     }
 

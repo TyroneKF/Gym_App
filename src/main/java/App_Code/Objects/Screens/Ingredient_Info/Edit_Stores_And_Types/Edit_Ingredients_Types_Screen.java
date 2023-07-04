@@ -6,15 +6,19 @@ import App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Ingredient
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_Screens
 {
     protected String collapsibleBTNTXT1 = "Add Ingredients Type", collapsibleBTNTXT2 = "Edit Ingredients Type";
 
-
     public Edit_Ingredients_Types_Screen(MyJDBC db, Ingredients_Info_Screen ingredientsInfoScreen, Collection<String> jcomboBoxList)
     {
+        super.sqlFilePath = "src/main/java/Resources/Database_Scripts/Editable_DB_Scripts/3.) IngredientTypes.sql";
+        super.process = "ingredients types";
+
         this.db = db;
         this.parentIngredientsScreen = ingredientsInfoScreen;
         this.jcomboBoxList = jcomboBoxList;
@@ -105,20 +109,6 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
         {
             parentIngredientsScreen.addChangeOrRemoveIngredientsTypeName("addKey", jTextfieldTXT, null);
             parentIngredientsScreen.updateIngredientsFormTypeJComboBoxes();
-        }
-
-        @Override
-        protected boolean updateSQLBackUpFile()
-        {
-            String sqlFilePath = "src/main/java/Resources/Database_Scripts/DB_Scripts/3.) IngredientTypes.sql";
-            String txtToAdd =  String.format("\n('%s');", jTextfieldTXT);
-
-            if( ! (db.writeTxtToSQLFile(sqlFilePath,txtToAdd)))
-            {
-                JOptionPane.showMessageDialog(null, "Error, backing up new ingredient Types to SQL file!");
-                return false;
-            }
-            return  true;
         }
     }
 
@@ -214,16 +204,31 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
         }
 
         @Override
-        protected boolean updateSQLBackUpFile()
+        protected ArrayList<String> deleteBTNQueries(String mysqlVariableReference1, ArrayList<String> queries)
         {
-            String sqlFilePath = "src/main/java/Resources/Database_Scripts/DB_Scripts/3.) IngredientTypes.sql";
+            //#############################################
+            //
+            //#############################################
+            String changeToValue = String.format("(SELECT %s FROM %s WHERE %s = 'UnAssigned')", idColumnName, dbTableName, dbColumnNameField);
 
-            if( ! (db.replaceTxtInSQLFile(sqlFilePath,selectedJComboBoxItemTxt,jTextfieldTXT)))
-            {
-                JOptionPane.showMessageDialog(null, "Error, changing back-up of ingredient Type in SQL file!");
-                return false;
-            }
-            return  true;
+            String query1 = String.format("""                  
+                    UPDATE %s
+                    SET %s =  %s
+                    WHERE %s = %s;""", fkTable, idColumnName, changeToValue, idColumnName, mysqlVariableReference1);
+
+            String query2 = String.format("DELETE FROM %s WHERE %s = %s;", dbTableName, idColumnName, mysqlVariableReference1);
+
+            //#############################################
+            //
+            //#############################################
+            queries.add(query1);
+            queries.add(query2);
+
+            //#############################################
+            //
+            //#############################################
+            return queries;
         }
+
     }
 }

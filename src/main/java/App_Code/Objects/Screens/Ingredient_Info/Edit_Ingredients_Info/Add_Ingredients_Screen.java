@@ -7,15 +7,6 @@ import App_Code.Objects.Screens.Others.Meal_Plan_Screen;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.text.Collator;
 import java.util.*;
 
@@ -43,6 +34,7 @@ public class Add_Ingredients_Screen extends JPanel
     protected MyJDBC db;
     protected Integer planID, tempPlanID;
     protected String planName;
+    protected  String sqlBackUpPath = "src/main/java/Resources/Database_Scripts/Editable_DB_Scripts/4.) Ingredients_Info.sql";
 
     //#################################################################################################################
     // Constructor
@@ -337,8 +329,7 @@ public class Add_Ingredients_Screen extends JPanel
 
     protected boolean writeIngredientsValuesToFile(String ingredientsValuesBeingAdded)
     {
-        String stringPath = "src/main/java/Resources/Database_Scripts/DB_Scripts/4.) Ingredients_Info.sql";
-        if(!(db.writeTxtToSQLFile(stringPath, ingredientsValuesBeingAdded)))
+        if(!(db.writeTxtToSQLFile(sqlBackUpPath, ingredientsValuesBeingAdded)))
         {
             return false;
         }
