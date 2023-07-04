@@ -20,6 +20,7 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
     private Edit_IngredientsScreen edit_ingredientsScreen;
     private ArrayList<Component> formObjects;
 
+
     public Edit_IngredientsForm(Container parentContainer, Ingredients_Info_Screen ingredients_info_screen, Edit_IngredientsScreen edit_ingredientsScreen, String btnText, int btnWidth, int btnHeight)
     {
         super(parentContainer, ingredients_info_screen, btnText, btnWidth, btnHeight);

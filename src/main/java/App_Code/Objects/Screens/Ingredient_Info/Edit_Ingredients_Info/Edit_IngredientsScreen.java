@@ -11,6 +11,7 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.TreeMap;
 
@@ -189,7 +190,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         {
             public void itemStateChanged(ItemEvent ie)
             {
-                if(! (getUpdateStatusOfIngredientNames())) // only trigger event when the ingredientsName Jcombobox is not updating
+                if (!(getUpdateStatusOfIngredientNames())) // only trigger event when the ingredientsName Jcombobox is not updating
                 {
                     if (ingredientsNameJComboBox.getSelectedIndex() != -1)
                     {
@@ -462,45 +463,81 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
 
     private void deleteIngredientBTNAction()
     {
-        if (ingredientsNameJComboBox.getSelectedIndex() != -1)
+        //##############################################################################################################
+        //
+        //##############################################################################################################
+        if (ingredientsNameJComboBox.getSelectedIndex() == -1)
         {
-            String selectedIngredientID = ingredientsForm.getSelectedIngredientID();
-            String selectedIngredientName = ingredientsForm.getSelectedIngredientName();
-
-            if (selectedIngredientName.equals("N/A"))
-            {
-                JOptionPane.showMessageDialog(mealPlanScreen, "This item cannot be deleted from the list (its a placeholder) !");
-                refreshInterface(true, true);
-                return;
-            }
-
-            if (areYouSure(String.format("delete ingredient named '%s' from the database", selectedIngredientName)))
-            {
-                if (selectedIngredientID == null || selectedIngredientName == null)
-                {
-                    JOptionPane.showMessageDialog(mealPlanScreen, "Unable to grab Ingredient INFO to delete it!!");
-                    return;
-                }
-
-                String query0 = String.format("DELETE FROM `ingredients_in_sections_of_meal` WHERE IngredientID  = %s;", selectedIngredientID);
-                String query1 = String.format("DELETE FROM `ingredientInShops` WHERE IngredientID  = %s;", selectedIngredientID);
-                String query2 = String.format("DELETE FROM `ingredients_info` WHERE IngredientID  = %s;", selectedIngredientID);
-
-                if (db.uploadData_Batch_Altogether(new String[]{query0, query1, query2}))
-                {
-                    JOptionPane.showMessageDialog(mealPlanScreen, String.format("Successfully Deleted '%s' From DB!", selectedIngredientName));
-                    addOrDeleteIngredientFromMap("delete", selected_IngredientType_JComboItem, selectedIngredientName); // delete ingredient
-                    refreshInterface(true, true);
-                    ingredients_info_screen.setUpdateIngredientInfo(true);
-                }
-                else
-                {
-                    JOptionPane.showMessageDialog(mealPlanScreen, "Unable to delete item From DB!");
-                }
-            }
+            JOptionPane.showMessageDialog(mealPlanScreen, "Please select an item first before attempting to delete an ingredient!");
             return;
         }
-        JOptionPane.showMessageDialog(mealPlanScreen, "Please select an item first before attempting to delete an ingredient!");
+
+        //##############################################################################################################
+        //
+        //##############################################################################################################
+        String selectedIngredientID = ingredientsForm.getSelectedIngredientID();
+        String selectedIngredientName = ingredientsForm.getSelectedIngredientName();
+
+
+        //HELLO should be removed as N/A is never in the JComboBox
+        if (selectedIngredientName.equals("N/A"))
+        {
+            JOptionPane.showMessageDialog(mealPlanScreen, "This item cannot be deleted from the list (its a placeholder) !");
+            refreshInterface(true, true);
+            return;
+        }
+
+        //##############################################################################################################
+        //
+        //##############################################################################################################
+        if (!(areYouSure(String.format("delete ingredient named '%s' from the database", selectedIngredientName))))
+        {
+            return;
+        }
+
+        //##############################################################################################################
+        //
+        //##############################################################################################################
+        if (selectedIngredientID == null || selectedIngredientName == null)
+        {
+            JOptionPane.showMessageDialog(mealPlanScreen, "Unable to grab Ingredient INFO to delete it!!");
+            return;
+        }
+
+        //##############################################################################################################
+        //
+        //##############################################################################################################
+        String query0 = String.format("DELETE FROM `ingredients_in_sections_of_meal` WHERE IngredientID  = %s;", selectedIngredientID);
+        String query1 = String.format("DELETE FROM `ingredientInShops` WHERE IngredientID  = %s;", selectedIngredientID);
+        String query2 = String.format("DELETE FROM `ingredients_info` WHERE IngredientID  = %s;", selectedIngredientID);
+
+        if (db.uploadData_Batch_Altogether(new String[]{query0, query1, query2}))
+        {
+            JOptionPane.showMessageDialog(mealPlanScreen, String.format("Successfully Deleted '%s' From DB!", selectedIngredientName));
+            addOrDeleteIngredientFromMap("delete", selected_IngredientType_JComboItem, selectedIngredientName); // delete ingredient
+            refreshInterface(true, true);
+            ingredients_info_screen.setUpdateIngredientInfo(true);
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(mealPlanScreen, "Unable to delete item From DB!");
+            return;
+        }
+
+        //##############################################################################################################
+        // Delete From BackUp SQL File
+        //##############################################################################################################
+/*
+        ArrayList<String> txtToDeleteList = new ArrayList<String>(Arrays.asList(String.format("('%s'),", selectedJComboBoxItemTxt), String.format("('%s');;", selectedJComboBoxItemTxt)));
+
+        if (!(db.deleteTxtInFile(super.sqlBackUpPath, txtToDeleteList)))
+        {
+            JOptionPane.showMessageDialog(null, String.format("\n\nError, deleteBTNAction() deleting ingredient '%s' from backup files!", selectedIngredientName));
+        }*/
+
+        //##########################################################################################################
+        //
+        //##########################################################################################################
     }
 
     public void refreshInterface(boolean resetIngredientNameJCombo, boolean resetIngredientTypeJComBox) // only available to reset screen
@@ -558,6 +595,9 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
     @Override
     protected void submissionBtnAction()
     {
+        //##############################################################################################################
+        //
+        //##############################################################################################################
         if (ingredientsNameJComboBox.getSelectedItem().equals("N/A"))
         {
             JOptionPane.showMessageDialog(mealPlanScreen, "The Store N/A cannot be edited, its a placeholder");
@@ -565,72 +605,97 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
             return;
         }
 
-        if (areYouSure("update this Ingredients information - this will cause the mealPlan to save its data to the DB"))
+        //##############################################################################################################
+        //
+        //##############################################################################################################
+        if (!(areYouSure("update this Ingredients information - this will cause the mealPlan to save its data to the DB")))
         {
-            boolean errorFound = false;
+            return;
+        }
 
-            // ingredientsForm
-            if (!(ingredientsForm.validate_IngredientsForm()))
+        //##############################################################################################################
+        //
+        //##############################################################################################################
+        boolean errorFound = false;
+
+        // ingredientsForm
+        if (!(ingredientsForm.validate_IngredientsForm()))
+        {
+            errorFound = true;
+        }
+
+        // ShopForm
+        if (!(shopForm.validateForm()))
+        {
+            errorFound = true;
+        }
+
+        //##############################################################################################################
+        //
+        //##############################################################################################################
+        if (errorFound)
+        {
+            return;
+        }
+
+        //##############################################################################################################
+        //
+        //##############################################################################################################
+
+        String selectedIngredientID = ingredientsForm.getSelectedIngredientID();
+        String previousIngredientName = ingredientsForm.getPreviousIngredientName();
+        String previousIngredientType = ingredientsForm.getPreviousIngredientType();
+
+        //########################
+        // Get ingredient ID
+        //########################
+        if (selectedIngredientID == null)
+        {
+            JOptionPane.showMessageDialog(mealPlanScreen, "\n\nUnable To Get Ingredient ID To Edit This Ingredient !!");
+            return;
+        }
+
+        //#############################
+        // Get Update Strings & Update
+        //#############################
+
+        if (!(updateBothForms(ingredientsForm.get_IngredientsForm_UpdateString(selectedIngredientID), shopForm.get_ShopForm_UpdateString(selectedIngredientID))))
+        {
+            JOptionPane.showMessageDialog(mealPlanScreen, "\n\nUnable To Update Ingredient Info !!");
+            return;
+        }
+
+        //##############################################################################################################
+        //
+        //##############################################################################################################
+        // Check if ingredientsName or IngredientType changed
+        String currentIngredientName = ((JTextField) ingredientsForm.getFormObjects().get(ingredientsForm.getIngredientNameObjectIndex())).getText().trim();
+        String currentIngredientType = ((JComboBox) ingredientsForm.getFormObjects().get(ingredientsForm.getIngredientTypeObjectIndex())).getSelectedItem().toString();
+
+        //HELLO REMOVE
+        System.out.printf("\n\nIngredientName \nCurrent = '%s' \nPrevious = '%s' \n\nIngredientType \nCurrent = '%s' \nPrevious = '%s'",
+                currentIngredientName, previousIngredientName, previousIngredientType, currentIngredientType);
+
+        if ((!currentIngredientName.equals(previousIngredientName) || (!currentIngredientType.equals(previousIngredientType))))
+        {
+            ingredients_info_screen.setUpdateIngredientInfo(true);
+            // if there is an error trying to add or remove ingredientType throw an error
+            if (!addOrDeleteIngredientFromMap("delete", previousIngredientType, previousIngredientName) // remove old info ingredient
+                    || !addOrDeleteIngredientFromMap("add", currentIngredientType, currentIngredientName))// add new info ingredient
             {
-                errorFound = true;
-            }
-
-            // ShopForm
-            if (!(shopForm.validateForm()))
-            {
-                errorFound = true;
-            }
-
-            if (!errorFound)
-            {
-                //########################
-                //
-                //########################
-                String selectedIngredientID = ingredientsForm.getSelectedIngredientID();
-                String previousIngredientName = ingredientsForm.getPreviousIngredientName();
-                String previousIngredientType = ingredientsForm.getPreviousIngredientType();
-
-                //########################
-                // Get ingredient ID
-                //########################
-                if (selectedIngredientID == null)
-                {
-                    JOptionPane.showMessageDialog(mealPlanScreen, "\n\nUnable To Get Ingredient ID To Edit This Ingredient !!");
-                    return;
-                }
-
-                //#############################
-                // Get Update Strings & Update
-                //#############################
-
-                if (updateBothForms(ingredientsForm.get_IngredientsForm_UpdateString(selectedIngredientID), shopForm.get_ShopForm_UpdateString(selectedIngredientID)))
-                {
-                    // Check if ingredientsName or IngredientType changed
-                    String currentIngredientName = ((JTextField) ingredientsForm.getFormObjects().get(ingredientsForm.getIngredientNameObjectIndex())).getText().trim();
-                    String currentIngredientType = ((JComboBox) ingredientsForm.getFormObjects().get(ingredientsForm.getIngredientTypeObjectIndex())).getSelectedItem().toString();
-
-                    //HELLO REMOVE
-                    System.out.printf("\n\nIngredientName \nCurrent = '%s' \nPrevious = '%s' \n\nIngredientType \nCurrent = '%s' \nPrevious = '%s'",
-                            currentIngredientName, previousIngredientName, previousIngredientType, currentIngredientType);
-
-                    if ((!currentIngredientName.equals(previousIngredientName) || (!currentIngredientType.equals(previousIngredientType))))
-                    {
-                        ingredients_info_screen.setUpdateIngredientInfo(true);
-                        // if there is an error trying to add or remove ingredientType throw an error
-                        if (!addOrDeleteIngredientFromMap("delete", previousIngredientType, previousIngredientName) // remove old info ingredient
-                                || !addOrDeleteIngredientFromMap("add", currentIngredientType, currentIngredientName))// add new info ingredient
-                        {
-                            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "\n\nUnable to perform local update for ingredient Info");
-                            return;
-                        }
-                    }
-
-                    JOptionPane.showMessageDialog(mealPlanScreen, "The ingredient updates won't appear on the mealPlan screen until this window is closed!");
-                    refreshInterface(true, true);
-                    super.resize_GUI();
-                }
+                JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "\n\nUnable to perform local update for ingredient Info");
+                return;
             }
         }
+
+        JOptionPane.showMessageDialog(mealPlanScreen, "The ingredient updates won't appear on the mealPlan screen until this window is closed!");
+
+
+        //##############################################################################################################
+        //
+        //##############################################################################################################
+        refreshInterface(true, true);
+        super.resize_GUI();
     }
 
     //EDITING NOW
