@@ -36,7 +36,7 @@ public class Add_Ingredients_Screen extends JPanel
     protected String planName;
     protected  String sqlBackUpPath = "src/main/java/Resources/Database_Scripts/Editable_DB_Scripts/4.) Ingredients_Info.sql";
 
-    //#################################################################################################################
+    //##################################################################################################################
     // Constructor
     //##################################################################################################################
     Add_Ingredients_Screen(Ingredients_Info_Screen ingredients_info_screen, MyJDBC db)
@@ -241,7 +241,7 @@ public class Add_Ingredients_Screen extends JPanel
             //#####################################
             // Write Ingredients Value To File
             //####################################
-            if( ! (writeIngredientsValuesToFile(addIngredientsForm.getIngredientsValuesBeingAdded())))
+            if( ! (backupDataInSQLFile(addIngredientsForm.getIngredientsValuesBeingAdded())))
             {
                 JOptionPane.showMessageDialog(null, "Error, backing up new ingredients info to SQL file!");
             }
@@ -327,7 +327,7 @@ public class Add_Ingredients_Screen extends JPanel
         return true;
     }
 
-    protected boolean writeIngredientsValuesToFile(String ingredientsValuesBeingAdded)
+    protected boolean backupDataInSQLFile(String ingredientsValuesBeingAdded)
     {
         if(!(db.writeTxtToSQLFile(sqlBackUpPath, ingredientsValuesBeingAdded)))
         {
@@ -336,7 +336,7 @@ public class Add_Ingredients_Screen extends JPanel
         return true;
     }
 
-    //#################################################################################################################
+    //##################################################################################################################
     // Adding & Resizing Objects in GUI
     //##################################################################################################################
     public void addToContainer(Container container, Component addToContainer, int gridx, int gridy, int gridwidth,

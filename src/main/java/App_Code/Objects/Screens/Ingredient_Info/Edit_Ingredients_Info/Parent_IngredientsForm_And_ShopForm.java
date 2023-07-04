@@ -11,7 +11,7 @@ import java.math.RoundingMode;
 
 
 // Shop Form and Ingredients Form
-public class Parent_Ingredients_And_Shop extends CollapsibleJPanel
+public class Parent_IngredientsForm_And_ShopForm extends CollapsibleJPanel
 {
     //##################################################
     //
@@ -30,7 +30,7 @@ public class Parent_Ingredients_And_Shop extends CollapsibleJPanel
     //##################################################
     protected final int totalNumbersAllowed = 7, decimalScale = 2, decimalPrecision = totalNumbersAllowed - decimalScale, charLimit = 8;
 
-    public Parent_Ingredients_And_Shop(Container parentContainer, Ingredients_Info_Screen ingredients_info_screen, String btnText, int btnWidth, int btnHeight)
+    public Parent_IngredientsForm_And_ShopForm(Container parentContainer, Ingredients_Info_Screen ingredients_info_screen, String btnText, int btnWidth, int btnHeight)
     {
         super(parentContainer, btnText, btnWidth, btnHeight);
 

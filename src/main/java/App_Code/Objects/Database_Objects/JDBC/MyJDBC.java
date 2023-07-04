@@ -188,7 +188,7 @@ public class MyJDBC
         }
         catch (Exception e)
         {
-            System.out.printf("\n\nAdd_Ingredients_Screen.writeIngredientsValuesToFile() Error 1 \n%s", e);
+            System.out.printf("\n\nAdd_Ingredients_Screen.backupDataInSQLFile() Error 1 \n%s", e);
         }
 */
 

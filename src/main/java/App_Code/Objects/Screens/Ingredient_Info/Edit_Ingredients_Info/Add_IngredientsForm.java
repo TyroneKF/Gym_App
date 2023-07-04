@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Add_IngredientsForm extends Parent_Ingredients_And_Shop
+public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
 {
     
     //##################################################
