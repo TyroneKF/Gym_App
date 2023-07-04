@@ -460,7 +460,6 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         shopForm.updateShopFormWithInfoFromDB();
     }
 
-    // HELLO changed shop method
     private void reloadFormWithIngredientInfo()
     {
         //#####################################
