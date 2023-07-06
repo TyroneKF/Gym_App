@@ -661,15 +661,23 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         }
 
         //##############################################################################################################
+        // Write Ingredients Value To File
+        //##############################################################################################################
+        if (!(backupDataInSQLFile()))
+        {
+            JOptionPane.showMessageDialog(null, "Error, replacing ingredients info to SQL file!");
+        }
+
+        //##############################################################################################################
         //
         //##############################################################################################################
         // Check if ingredientsName or IngredientType changed
         String currentIngredientName = ((JTextField) ingredientsForm.getFormObjects().get(ingredientsForm.getIngredientNameObjectIndex())).getText().trim();
         String currentIngredientType = ((JComboBox) ingredientsForm.getFormObjects().get(ingredientsForm.getIngredientTypeObjectIndex())).getSelectedItem().toString();
 
-        //HELLO REMOVE
+        /*//HELLO REMOVE
         System.out.printf("\n\nIngredientName \nCurrent = '%s' \nPrevious = '%s' \n\nIngredientType \nCurrent = '%s' \nPrevious = '%s'",
-                currentIngredientName, previousIngredientName, previousIngredientType, currentIngredientType);
+                currentIngredientName, previousIngredientName, previousIngredientType, currentIngredientType);*/
 
         if ((!currentIngredientName.equals(previousIngredientName) || (!currentIngredientType.equals(previousIngredientType))))
         {
@@ -683,19 +691,10 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
             }
         }
 
-        JOptionPane.showMessageDialog(mealPlanScreen, "The ingredient updates won't appear on the mealPlan screen until this window is closed!");
-
-        //##############################################################################################################
-        // Write Ingredients Value To File
-        //##############################################################################################################
-        if (!(backupDataInSQLFile()))
-        {
-            JOptionPane.showMessageDialog(null, "Error, replacing ingredients info to SQL file!");
-        }
-
         //##############################################################################################################
         //
         //##############################################################################################################
+        JOptionPane.showMessageDialog(mealPlanScreen, "The ingredient updates won't appear on the mealPlan screen until this window is closed!");
         refreshInterface(true, true);
         super.resize_GUI();
     }
@@ -707,6 +706,12 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         // Form data of selected ingredient
         //##############################################################################################################
         ArrayList<String> currentFormData = ingredientsForm.getCurrentFormData();
+
+        if(currentFormData.size() == 0) //HELLO Remove this problem should be fixed without this code block needed
+        {
+            JOptionPane.showMessageDialog(null, String.format("Error, getting form data for backup!", getSelectedIngredientName()));
+            return false;
+        }
 
         //##################################
         //
