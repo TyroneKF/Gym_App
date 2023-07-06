@@ -82,11 +82,6 @@ public class Parent_IngredientsForm_And_ShopForm extends CollapsibleJPanel
             }
 
             //#####################################################
-            // Format Data in Cell
-            //#####################################################
-            jTextField.setText(String.format("%s", bdFromString));
-
-            //#####################################################
             // Check if the value is bigger than 0
             //#####################################################
 
@@ -94,6 +89,17 @@ public class Parent_IngredientsForm_And_ShopForm extends CollapsibleJPanel
             {
                 errorTxt += String.format("\n\n  ' %s 'on Row: %s, must have a value which is bigger than 0 and %s", rowLabel, rowNumber, txt);
             }
+
+            //#####################################################
+            // Format Data in Cell
+            //#####################################################
+            // Add decimal point if the number doesn't have it
+            String bdStringValue = String.format("%s", bdFromString);
+            if(!(bdStringValue.contains(".")))
+            {
+                bdStringValue+=".00";
+            }
+            jTextField.setText(bdStringValue);
         }
         catch (Exception e)
         {

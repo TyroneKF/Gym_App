@@ -12,6 +12,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.TreeMap;
 
 public class Edit_IngredientsScreen extends Add_Ingredients_Screen
@@ -26,7 +27,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
             ingredientsNameJComboBox = new JComboBox(),
             ingredientsTypesJComboBox = new JComboBox();
 
-    private String selected_IngredientType_JComboItem;
+    private String selected_IngredientType_JComboItem = "", selected_IngredientName = "";
 
 
     Edit_IngredientsScreen(Ingredients_Info_Screen parent, MyJDBC db)
@@ -46,7 +47,6 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         this.planName = parent.getPlanName();
 
         this.mealPlanScreen = parent.getMealPlanScreen();
-
 
         //###################################################################################
         //   Create Screen for Interface
@@ -193,6 +193,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
                 {
                     if (ingredientsNameJComboBox.getSelectedIndex() != -1)
                     {
+                        selected_IngredientName = (String) ie.getItem().toString();
                         updateFormWithIngredientInfo();
                     }
                 }
@@ -578,25 +579,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
 
     public String getSelectedIngredientName()
     {
-        try
-        {
-            Object selectedItem = ingredientsNameJComboBox.getSelectedItem();
-
-            if (selectedItem != null)
-            {
-                String x = selectedItem.toString();
-
-                if (x.length() > 0)
-                {
-                    return x;
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            return null;
-        }
-        return null;
+        return selected_IngredientName;
     }
 
     public Edit_IngredientsForm getIngredientsForm()
@@ -703,15 +686,58 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         JOptionPane.showMessageDialog(mealPlanScreen, "The ingredient updates won't appear on the mealPlan screen until this window is closed!");
 
         //##############################################################################################################
-        //
+        // Write Ingredients Value To File
         //##############################################################################################################
-
+        if (!(backupDataInSQLFile()))
+        {
+            JOptionPane.showMessageDialog(null, "Error, replacing ingredients info to SQL file!");
+        }
 
         //##############################################################################################################
         //
         //##############################################################################################################
         refreshInterface(true, true);
         super.resize_GUI();
+    }
+
+    @Override
+    protected boolean backupDataInSQLFile()
+    {
+        //##############################################################################################################
+        // Form data of selected ingredient
+        //##############################################################################################################
+        ArrayList<String> currentFormData = ingredientsForm.getCurrentFormData();
+
+        //##################################
+        //
+        //##################################
+        String newData = "(null";
+        int size = currentFormData.size();
+
+        for (int i = 0; i < size; i++)
+        {
+            if (i == ingredientsForm.getIngredientTypeObjectIndex())
+            {
+                newData += String.format(",%s", currentFormData.get(i));
+                continue;
+            }
+            newData += String.format(",(%s)", currentFormData.get(i));
+        }
+        newData += ")";
+
+        //##############################################################################################################
+        //
+        //##############################################################################################################
+        String name =String.format("(\"%s\")", getSelectedIngredientName().trim());
+        System.out.printf("\n\nNew Data: \n%s \ningredient name: %s", newData, name);
+
+        if( ! (db.replaceTxtInSQLFileV2(sqlBackUpPath,name,newData)))
+        {
+            JOptionPane.showMessageDialog(null, String.format("Error, changing back-up of %s in SQL file of ingredient info!", getSelectedIngredientName()));
+            return false;
+        }
+
+        return true;
     }
 
     //EDITING NOW

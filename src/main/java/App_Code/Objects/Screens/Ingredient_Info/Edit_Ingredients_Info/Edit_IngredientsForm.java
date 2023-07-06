@@ -62,7 +62,14 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
     @Override
     protected void extraClearIngredientsForm()
     {
+        //#########################
+        //
+        //#########################
         dbFormData.clear();
+
+        //#########################
+        //
+        //#########################
         currentFormData.clear();
     }
 
@@ -131,7 +138,7 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
 
         int formObjectsIndex = 0;
 
-        for (int i = 1; i < dbFormData.size(); i++)
+        for (int i = 1; i < dbFormData.size(); i++) // starts at one to skip ingredientID column
         {
             Component comp = formObjects.get(formObjectsIndex); // query size and form objects size arent at the same index
             String value = dbFormData.get(i);
@@ -288,8 +295,8 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
             //####################################
             if (pos == ingredientTypeObjectIndex)
             {
-                String ingredientTypeSet = "SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = ";
-                formFieldValue = String.format("(%s \"%s\")", ingredientTypeSet, formFieldValue);
+                String  ingredientTypeSet = "SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = \"";
+                formFieldValue = String.format("(%s%s\")", ingredientTypeSet, formFieldValue);
             }
             else if (mysqlColumnDataType.equals("String"))
             {
@@ -320,7 +327,6 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
         //####################################
         // Return results
         //####################################
-        System.out.printf("\n\n\nFieldValues: %s ", currentFormData);
         return setQuery;
     }
 

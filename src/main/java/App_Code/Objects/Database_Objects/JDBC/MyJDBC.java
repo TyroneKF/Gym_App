@@ -243,6 +243,131 @@ public class MyJDBC
         }
     }
 
+    public boolean replaceTxtInSQLFileV2(String sqlFilePath, String txt_To_Find, String txt_Replacement)
+    {
+        try
+        {
+            //########################################
+            // Creating Temp File Path
+            //########################################
+            String[] filenameAndExt = sqlFilePath.split("\\.(?=[^\\.]+$)");
+
+            String tempFilePath = sqlFilePath;
+            tempFilePath = String.format("%sTmp.%s", filenameAndExt[0], filenameAndExt[1]);
+
+            //########################################
+            // Creating Temp File
+            //########################################
+            try
+            {
+                // Create File if it doesn't exist
+                new FileOutputStream(tempFilePath, true).close();
+
+                // Clear file
+                new FileWriter(tempFilePath, false).close();
+            }
+            catch (Exception e)
+            {
+                System.out.printf("\n\nError, deleteTxtInFile() creating Temp File! \n%s", e);
+                return false;
+            }
+
+            //########################################
+            // Creating File / Temp File
+            //########################################
+            File input_file = new File(sqlFilePath);
+            File temp_file = new File(tempFilePath);
+
+            //########################################
+            // Copying contents from old to new
+            // whilst removing the selected line
+            //########################################
+            BufferedReader my_reader = new BufferedReader(new FileReader(input_file));
+            BufferedWriter my_writer = new BufferedWriter(new FileWriter(temp_file));
+
+            //########################################
+            //
+            //########################################
+
+            boolean replacementMade = false;
+            String currentLine;
+            while ((currentLine = my_reader.readLine()) != null)
+            {
+//                System.out.printf("\n\n%s \ncurrentLine: %s ", line_Separator, currentLine);
+
+                // Processing next lines
+                String trimmedLine = currentLine.trim(); // trim  current line
+
+                // Processing next lines
+                if (!(replacementMade))
+                {
+                    if (trimmedLine.contains(txt_To_Find)) // check if current line is the line to be deleted
+                    {
+                        replacementMade = true;
+                        System.out.printf("\n\nReplacement made: %s", currentLine);
+
+                        txt_Replacement = currentLine.contains(";;") ? txt_Replacement+";;" : txt_Replacement+",";
+
+                        currentLine = txt_Replacement;
+                    }
+                }
+
+                //
+                my_writer.write(currentLine + System.getProperty("line.separator"));
+            }
+
+            my_writer.close();
+            my_reader.close();
+
+            //########################################
+            // Delete Original File
+            //########################################
+            if (!input_file.delete()) // has to be deleted in order for temp file to be named this file
+            {
+                System.out.printf("\n\nError, deleteTxtInFile() couldn't delete the source file!");
+
+                for (int i = 0; i < 2; i++)
+                {
+                    if (temp_file.delete())
+                    {
+                        return false;
+                    }
+                }
+
+                System.out.printf("\nError, couldn't delete temp file either!");
+                return false;
+            }
+
+            //########################################
+            // Rename Temp file to original file
+            //########################################
+            if (!(temp_file.renameTo(input_file)))
+            {
+                System.out.printf("\n\n! Error, deleteTxtInFile() renaming temporary file!");
+                return false;
+            }
+
+            //########################################
+            //
+            //########################################
+            if(! (replacementMade))
+            {
+                System.out.printf("\n\n%s \nNo replacements Found", line_Separator);
+                return false;
+            }
+
+            //########################################
+            //
+            //########################################
+            return true;
+        }
+        catch (Exception e)
+        {
+            System.out.printf("\n\nError deleteTxtInFile() \n%s!", e);
+            return false;
+        }
+    }
+
     public boolean deleteTxtInFile(String filePath, ArrayList txtToDelete)
     {
         try
@@ -372,6 +497,8 @@ public class MyJDBC
         //########################################
         return true;
     }
+
+
 
     //##################################################################################################################
     //  Get Methods

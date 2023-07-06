@@ -504,16 +504,18 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
                     continue;
                 }
 
-                //#######################################
+                //#########################################
                 //
                 //#########################################
-
                 if (row == ingredientNameObjectIndex)
                 {
                     ingredientName_Txt = value;
                     continue;
                 }
 
+                //#########################################
+                //
+                //#########################################
                 if (row == glycemicObjectIndex)
                 {
                     try
@@ -565,7 +567,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
                 // Do BigDecimal Processing
                 //#########################################
 
-                errorTxt = convertToBigDecimal(value, errorTxt, ingredientFormLabel, row + 1, jTextField); // HELLO SHouldnt this be +=
+                errorTxt = convertToBigDecimal(value, errorTxt, ingredientFormLabel, row + 1, jTextField); // HELLO Shouldn't this be +=
             }
         }
 
@@ -623,10 +625,10 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
         // Creating Upload Query
         //####################################
         String
-                ingredientTypeSet = "SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = '",
+                ingredientTypeSet = "SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = \"",
                 insertQuery = "INSERT INTO ingredients_info VALUES";
 
-        ingredientsValuesBeingAdded = "\n(NULL,";
+        ingredientsValuesBeingAdded = "\n(null,";
         //####################################
         //
         //####################################
@@ -660,7 +662,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
 
             if (pos == ingredientTypeObjectIndex)
             {
-                fieldsQueryEx = String.format("(%s%s')", ingredientTypeSet, formFieldValue);
+                fieldsQueryEx = String.format("(%s%s\")", ingredientTypeSet, formFieldValue);
             }
             else
             {
