@@ -16,6 +16,22 @@ https://www.jetbrains.com/idea/guide/tutorials/marco-codes-maven/pom-xml/
 https://www.tutorialspoint.com/how-to-run-sql-script-using-jdbc#
 
 
+.) Change replaceTxtInSQLFileV for replaceTxtInSQLFileV2
+.) uploadData_Batch_Altogether(String[] queries) & uploadData_Batch_Altogether(ArrayList<> queries) in MYJDBC class can be refactored into the same method
+
+
+//######################################################################################################
+// Extra Features
+//######################################################################################################
+. Posture Correction (Video Analysis )
+. Inventory stock management
+. Shopping list
+
+
+
+
+
+
 //######################################################################################################
 ComboBoxes that store, types, names, stores which are edited dont have to be fully refreshed the item
 that was edited can be singularly handled
