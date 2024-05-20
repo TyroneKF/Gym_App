@@ -648,7 +648,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
 
             if (formObject instanceof JTextField)
             {
-                formFieldValue = ((JTextField) formObject).getText();
+                formFieldValue = ((JTextField) formObject).getText().trim();
             }
             else if (formObject instanceof JComboBox)
             {

@@ -593,6 +593,13 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //##############################################################################################################
         //
         //##############################################################################################################
+        if (ingredientsNameJComboBox.getSelectedItem() == null)
+        {
+            JOptionPane.showMessageDialog(mealPlanScreen, "Please select an ingredient please to edit it!");
+            refreshInterface(true, true);
+            return;
+        }
+
         if (ingredientsNameJComboBox.getSelectedItem().equals("N/A"))
         {
             JOptionPane.showMessageDialog(mealPlanScreen, "The Store N/A cannot be edited, its a placeholder");

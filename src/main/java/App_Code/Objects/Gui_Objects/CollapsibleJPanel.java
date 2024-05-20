@@ -5,8 +5,6 @@ import java.awt.*;
 
 public class CollapsibleJPanel extends JPanel
 {
-
-
     boolean isCollapsed = false;
     String btnText;
     JPanel collapsibleJPanel, southPanel, eastJPanel;
@@ -93,9 +91,16 @@ public class CollapsibleJPanel extends JPanel
     {
         if (txt!=null || txt.length() > 0)
         {
-            iconBtn.setText(txt);
+            btnText = txt;
+            iconBtn.setText(btnText);
         }
     }
+
+    public String getBtnText()
+    {
+        return btnText;
+    }
+
 
     public void expandJPanel()
     {

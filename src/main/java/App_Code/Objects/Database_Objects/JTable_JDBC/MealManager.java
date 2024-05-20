@@ -8,6 +8,8 @@ import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Screens.Others.Meal_Plan_Screen;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,7 +23,7 @@ public class MealManager
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    private boolean mealManagerInDB = false, hasMealPlannerBeenDeleted = false;
+    private boolean mealManagerInDB = false, hasMealPlannerBeenDeleted = false, hasMealNameBeenChanged = false;
     private Integer mealInPlanID, tempPlanID, planID, yPoInternally = 0, mealNo;
     private String mealName;
     private String[] mealTotalTable_ColumnNames, ingredientsTable_ColumnNames;
@@ -237,7 +239,7 @@ public class MealManager
         //##############################################################################################################
         // Create Collapsible Object
         //##############################################################################################################
-        collapsibleJpObj = new CollapsibleJPanel(container, String.format("   Meal   %s", mealNo), 150, 50);
+        collapsibleJpObj = new CollapsibleJPanel(container, mealName, 150, 50);
         collapsibleCenterJPanel = collapsibleJpObj.getCentreJPanel();
         collapsibleCenterJPanel.setBackground(Color.YELLOW);
         addToContainer(container, collapsibleJpObj, 0, meal_plan_screen.getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
@@ -475,9 +477,48 @@ public class MealManager
     //#################################################################################
     // Edit BTN
     //#################################################################################
-    public void edit_BTN_Action()
+    public void edit_BTN_Action()// Update method to update time aswell
     {
+        String newMealName = RandomStringUtils.randomAlphabetic(10);
+        newMealName = StringUtils.capitalize(newMealName); // Capitalize meal name by capsizing every separate word
 
+        //##########################################
+        // Change Variable internally and on DB
+        //##########################################
+        if (!changeMealName(newMealName))
+        {
+            JOptionPane.showMessageDialog(null, "Unable to successfully change this  meals name! \n\nMaybe he selected timeframe  meal name already exists within this meal plan!!");
+            return;
+        }
+    }
+
+    public boolean changeMealName(String newMealName) // Needs to be able to update the time also at some point
+    {
+        newMealName = StringUtils.capitalize(newMealName); // Capitalize meal name by capsizing every separate word
+
+        String uploadQuery = String.format(""" 
+        UPDATE mealsInPlan
+        SET Meal_Name = '%s'
+        WHERE PlanID = %s AND  MealInPlanID = %s; """, newMealName, tempPlanID, mealInPlanID);
+
+        //##########################################
+        // Upload Into Database Table
+        //##########################################
+        if (!db.uploadData(uploadQuery, false))
+        {
+            JOptionPane.showMessageDialog(null, "\n\nUnable to successfully change this  meals name! \n\nMaybe he selected timeframe  meal name already exists within this meal plan!!");
+            return false;
+        }
+
+        //##########################################
+        // Change Button Text & Related Variables
+        //##########################################
+        collapsibleJpObj.setIconBtnText(newMealName);
+        hasMealNameBeenChanged = true;
+
+        //##########################################
+
+        return true;
     }
 
     //#################################################################################
@@ -656,6 +697,7 @@ public class MealManager
     //#################################################################################
     public boolean transferMealDataToPlan(String process, int fromPlanID, int toPlanID)
     {
+        System.out.printf("\n\n%s transferMealDataToPlan()  %s %s %s", lineSeparator,  process, fromPlanID, toPlanID);
         //########################################################
         // Drop Temp Tables
         //########################################################
@@ -688,7 +730,7 @@ public class MealManager
 
         // Create Table to transfer ingredients from original plan to temp
         String query6 = String.format("""
-                CREATE table temp_dividedMealSections  AS
+                CREATE TABLE temp_dividedMealSections  AS
                 SELECT i.*
                 FROM dividedMealSections i
                 WHERE i.MealInPlanID = %s AND i.PlanID = %s;
@@ -713,15 +755,85 @@ public class MealManager
 
         String query11 = String.format("INSERT INTO ingredients_in_sections_of_meal SELECT * FROM temp_ingredients_in_meal;");
 
+        //#####################################################
+        // Meal Name & Time Updates If Changed
+        //#####################################################
+        String[] query_Temp_Data;
+        String updateMealName = "";
+
+        if (!hasMealNameBeenChanged)
+        {
+            query_Temp_Data = new String[]{query0, query1, query2, query3, query4, query5, query6, query7, query8, query9, query10, query11};
+        }
+        else
+        {
+            /*String priorQuery0 = "DROP TABLE IF EXISTS temp_mealsInPlan";
+
+            String priorQuery1 = "SET FOREIGN_KEY_CHECKS = 0";
+
+            String priorQuery2 = String.format("DELETE FROM mealsInPlan WHERE MealInPlanID = %s AND PlanID = %s",mealInPlanID, toPlanID );
+
+            String priorQuery3 = String.format("""
+                    CREATE TABLE temp_mealsInPlan AS
+                    SELECT i.*
+                    FROM mealsInPlan i
+                    WHERE i.MealInPlanID = %s AND i.PlanID = %s;""", mealInPlanID, fromPlanID);
+
+
+            String priorQuery4 = String.format("UPDATE temp_mealsInPlan SET PlanID = %s",toPlanID);
+
+            String priorQuery5 = "INSERT INTO mealsInPlan SELECT * FROM temp_mealsInPlan";
+
+            query_Temp_Data = new String[]{ priorQuery0, priorQuery1, priorQuery2, priorQuery3, priorQuery4,priorQuery5,
+                    query0, query1, query2, query3, query4, query5, query6, query7, query8, query9, query10, query11};*/
+
+            if(process.equals("refresh"))
+            {
+                updateMealName = mealName;
+            }
+            else // save
+            {
+                updateMealName = collapsibleJpObj.getBtnText();
+
+            }
+
+            String uploadQuery = String.format("UPDATE mealsInPlan SET Meal_Name = '%s' WHERE PlanID = %s AND  MealInPlanID = %s;", updateMealName, toPlanID, mealInPlanID);
+
+            System.out.printf("\n\n Here  3 \n\n %s", uploadQuery);
+
+            query_Temp_Data = new String[]{uploadQuery, query0, query1, query2, query3, query4, query5, query6, query7, query8, query9, query10, query11};
+        }
+
         //####################################################
         // Update
         //####################################################
-        String[] query_Temp_Data = new String[]{query0, query1, query2, query3, query4, query5, query6, query7, query8, query9, query10, query11};
-
         if (!(db.uploadData_Batch_Altogether(query_Temp_Data)))
         {
             JOptionPane.showMessageDialog(null, "\n\ntransferMealDataToPlan() Error");
             return false;
+        }
+
+        //#############################################################################################
+        //
+        //##############################################################################################
+        if (! hasMealNameBeenChanged) //
+        {
+           return true;
+        }
+
+        //##############################################################################################
+        //
+        //##############################################################################################
+        hasMealNameBeenChanged = false; // save or refreshing result in this variable being reset to its original condition which is false
+
+        if (process.equals("refresh")) //
+        {
+            collapsibleJpObj.setIconBtnText(mealName);
+        }
+        else // save
+        {
+            mealName = updateMealName;
+            String.format("\n\n Here  2 %s", mealName);
         }
 
         return true;
@@ -735,7 +847,7 @@ public class MealManager
         //#############################################################################################
         // Reset DB Data
         //##############################################################################################
-        if (!(transferMealDataToPlan("Refresh", planID, tempPlanID)))
+        if (!(transferMealDataToPlan("refresh", planID, tempPlanID)))
         {
             JOptionPane.showMessageDialog(null, "\n\nUnable to transfer mealData toS!!");
             return;
@@ -808,7 +920,7 @@ public class MealManager
         // ###############################################################################
         // Transferring Meals & Ingredients from FromPlan to toPlan
         // ##############################################################################
-        if (!(transferMealDataToPlan("Saving", tempPlanID, planID))) // transfer meals and ingredients from temp plan to original plan
+        if (!(transferMealDataToPlan("saving", tempPlanID, planID))) // transfer meals and ingredients from temp plan to original plan
         {
             System.out.println("\n\n#################################### \nError MealManager saveMealData()");
 

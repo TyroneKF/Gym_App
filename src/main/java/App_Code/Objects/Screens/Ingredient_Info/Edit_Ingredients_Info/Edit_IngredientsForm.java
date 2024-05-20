@@ -284,7 +284,7 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
 
             if (formObject instanceof JTextField)
             {
-                formFieldValue = ((JTextField) formObject).getText();
+                formFieldValue = ((JTextField) formObject).getText().trim();
             }
             else if (formObject instanceof JComboBox)
             {

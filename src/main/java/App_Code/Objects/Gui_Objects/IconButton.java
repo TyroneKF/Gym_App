@@ -23,7 +23,6 @@ public class IconButton extends JPanel
         button.setVerticalTextPosition(posToInt(verticalTextPos, "vertical"));
 
         add(button);
-
     }
 
     public JButton returnJButton()

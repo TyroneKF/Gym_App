@@ -526,6 +526,10 @@ public class MyJDBC
     //##################################################################################################################
     // Uploading Data to DB Methods
     //##################################################################################################################
+
+    /**
+     *  This method can upload one statement or, multiple queries within a single String after each statement in the string is separated by a ;
+     */
     public Boolean uploadData(String query, boolean multipleQueries)
     {
         if (!(get_DB_Connection_Status()))
@@ -554,7 +558,7 @@ public class MyJDBC
     }
 
     /*
-      if one query fails the whole queries fail
+      If one query fails the whole queries fails
       The changes made by a previous query in the list isn't visible to the query after it, the updates are made altogether
      */
     public Boolean uploadData_Batch_Altogether(String[] queries)
@@ -608,7 +612,7 @@ public class MyJDBC
     /*
       Each query upload is executed separately and the query after, it can notice the changes
      */
-    public Boolean uploadData_Batch_Independently(String[] queries)
+    public Boolean uploadData_Batch_Independently(String[] queries) // HELLO Can't this method and the one below refactored
     {
         if (!(get_DB_Connection_Status()))
         {
