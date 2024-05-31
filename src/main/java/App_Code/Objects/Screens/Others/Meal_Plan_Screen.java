@@ -315,10 +315,10 @@ public class Meal_Plan_Screen extends JPanel
             //########################################
             // Getting ID's of Meals Of Chosen Plan
             //########################################
-            String query = String.format("SELECT MealInPlanID, Meal_Name FROM mealsInPlan WHERE PlanID = %s ORDER BY MealInPlanID;", tempPlanID);
+            String query = String.format("SELECT MealInPlanID, Meal_Name, Meal_Time FROM mealsInPlan WHERE PlanID = %s ORDER BY MealInPlanID;", tempPlanID);
 
-            ArrayList<ArrayList<String>> plan_Meal_IDs_And_Name = db.getMultiColumnQuery(query);
-            plan_Meal_IDs_And_Name = plan_Meal_IDs_And_Name != null ? plan_Meal_IDs_And_Name : new ArrayList<>();
+            ArrayList<ArrayList<String>> meals_Info_In_Plan = db.getMultiColumnQuery(query);
+            meals_Info_In_Plan = meals_Info_In_Plan != null ? meals_Info_In_Plan : new ArrayList<>();
 
             //#########################################################################################
             // Macro Targets & Macros Left Setup
@@ -396,8 +396,11 @@ public class Meal_Plan_Screen extends JPanel
                 //#####################################################
                 // Get MealID  & Name For Meal
                 //#####################################################
-                int mealInPlanID = Integer.parseInt(plan_Meal_IDs_And_Name.get(i).get(0)); // MealID's From Original Plan Not Temp
-                String mealName = plan_Meal_IDs_And_Name.get(i).get(1);
+                int mealInPlanID = Integer.parseInt(meals_Info_In_Plan.get(i).get(0)); // MealID's From Original Plan Not Temp
+                String mealName = meals_Info_In_Plan.get(i).get(1);
+                String mealTime = meals_Info_In_Plan.get(i).get(2);
+
+
 
                 //#####################################################
                 // Get MealID's Of SubMeals
@@ -421,7 +424,7 @@ public class Meal_Plan_Screen extends JPanel
                 //#####################################################
                 mealNo++;
 
-                MealManager meal = new MealManager(this, scrollJPanelCenter, true, mealInPlanID, mealNo, mealName, subMealsInMealArrayList);
+                MealManager meal = new MealManager(this, scrollJPanelCenter, true, mealInPlanID, mealNo, mealName, mealTime, subMealsInMealArrayList);
                 mealManagerArrayList.add(meal);
 
                 //######################################################
