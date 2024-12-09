@@ -9,7 +9,6 @@ INSERT INTO ingredientTypes (Ingredient_Type_Name) VALUES
 ('Cheese'),
 ('Chocolate'),
 ('Desserts'),
-('Eggs'),
 ('Fish'),
 ('Frozen Fruit'),
 ('Frozen Vegetables'),
@@ -40,4 +39,8 @@ INSERT INTO ingredientTypes (Ingredient_Type_Name) VALUES
 ('Vegetables'),
 ('Vitamins'),
 ('Whole Wheat'),
-('Yoghurt');;
+('Yoghurt'),
+
+('Flour'),
+('Dairy'),
+('Sugar');;

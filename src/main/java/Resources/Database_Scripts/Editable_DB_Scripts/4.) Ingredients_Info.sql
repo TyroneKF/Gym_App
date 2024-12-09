@@ -55,4 +55,15 @@ VALUES
 
 (null,("Litres"),("Semi Skin Cow Milk"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Milk"),(100.00),(31),(3.6),(4.8),(4.8),(0.00),(1.8),(1.1),(0.11),(0.00),(100.00),(50.00)),
 (null,("Grams"),("Black Beans"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Grains & Legumes"),(172.00),(30),(15.2),(40.8),(0.6),(15.00),(0.9),(0.2),(0.00),(0.00),(0.00),(227.00)),
-(null,("Grams"),("Grapefruit"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Fruit"),(100.00),(25),(0.6),(8.1),(7.00),(1.1),(0.1),(0.00),(0.00),(0.00),(0.00),(32.00));;
+(null,("Grams"),("Grapefruit"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Fruit"),(100.00),(25),(0.6),(8.1),(7.00),(1.1),(0.1),(0.00),(0.00),(0.00),(0.00),(32.00)),
+(null,("Grams"),("Corned Beef (Princess Reduced Fat)"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Meat"),(100.00),(0),(25.00),(0.00),(0.00),(0.00),(13.5),(6.5),(1.4),(0.00),(0.00),(222.00)),
+(null,("Grams"),("Large Eggs (60g)"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Poultry"),(1.00),(0),(8.30),(0.50),(0.50),(0.50),(5.70),(1.60),(0.22),(0.00),(0.00),(85.00)),
+(null,("Grams"),("Fage Greek Yoghurt"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Yoghurt"),(100.00),(12),(10.3),(3.00),(3.00),(0.00),(0.00),(0.00),(0.1),(0.00),(100.00),(54.00)),
+(null,("Grams"),("Be-Ro Plain Flour"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Flour"),(100.00),(85),(10.4),(70.1),(1.4),(3.2),(1.3),(0.2),(0.00),(0.00),(0.00),(340.00)),
+(null,("Grams"),("Allisons Wholemeal Flour"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Flour"),(100.00),(60),(12.00),(65.00),(1.4),(10.00),(2.6),(0.5),(0.03),(0.00),(0.00),(350.00)),
+(null,("Grams"),("Grace Jamaican Jerk BBQ Sauce"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Sauce"),(100.00),(0),(1.00),(40.00),(32.00),(0.00),(0.5),(0.1),(1.1),(0.00),(100.00),(169.00)),
+(null,("Grams"),("Bertolli Olive Oil Spread"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Dairy"),(100.00),(0),(0.5),(0.5),(0.5),(0.00),(59.00),(17.00),(1.1),(0.00),(0.00),(531.00)),
+(null,("Grams"),("Allinson Self-Raising Wholemeal Flour"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Flour"),(100.00),(60),(11.00),(69.3),(1.1),(10.00),(2.4),(0.4),(1.1),(0.00),(0.00),(359.00)),
+(null,("Grams"),("Plantin"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Fruit"),(100.00),(40),(1.3),(32.00),(15.00),(2.3),(0.4),(0.1),(0.00),(0.00),(0.00),(122.00)),
+
+(null,("Grams"),("Billingtons Brown Sugar"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Sugar"),(100.00),(70),(0.00),(99.00),(99.00),(0.00),(0.00),(0.00),(0.25),(0.00),(0.00),(398.00));;

@@ -315,7 +315,7 @@ public class Meal_Plan_Screen extends JPanel
             //########################################
             // Getting ID's of Meals Of Chosen Plan
             //########################################
-            String query = String.format("SELECT MealInPlanID, Meal_Name, Meal_Time FROM mealsInPlan WHERE PlanID = %s ORDER BY MealInPlanID;", tempPlanID);
+            String query = String.format("SELECT MealInPlanID, Meal_Name, Meal_Time FROM mealsInPlan WHERE PlanID = %s ORDER BY Meal_Time;", tempPlanID);
 
             ArrayList<ArrayList<String>> meals_Info_In_Plan = db.getMultiColumnQuery(query);
             meals_Info_In_Plan = meals_Info_In_Plan != null ? meals_Info_In_Plan : new ArrayList<>();
@@ -338,6 +338,7 @@ public class Meal_Plan_Screen extends JPanel
 
             macros_Targets_Table = new MacrosTargetsTable(db, macrosInfoJPanel, planData, macroTargetsTable_ColumnNames, planID,
                     tableName, new ArrayList<>(Arrays.asList(macroTargetsTable_ColumnNames)), null, macrosTargets_Table_ColToHide);
+
 
             macros_Targets_Table.setOpaque(true); //content panes must be opaque
 

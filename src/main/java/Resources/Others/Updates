@@ -1,3 +1,7 @@
+.) When appending ingredient Types an ingredients add them in alphabetically
+.) When adding ingredients restrict the user from adding ' symbol because it messes with querys in the database when retrieving ingredient name
+
+
 .) SQLFILE backups create editable files on initialization
 .) WTF is this filename "Parent_Ingredients_And_Shop"
 .) DB maybe created but, not all tables - check if all tables are created
@@ -19,7 +23,11 @@ https://www.tutorialspoint.com/how-to-run-sql-script-using-jdbc#
 .) Change replaceTxtInSQLFileV for replaceTxtInSQLFileV2
 .) uploadData_Batch_Altogether(String[] queries) & uploadData_Batch_Altogether(ArrayList<> queries) in MYJDBC class can be refactored into the same method
 
-
+Data diagrams
+Views of diagrams per meal
+.) Data diagrams etc pie chat showing ratio of fruit/veg/meat
+.) Data diagrams etc showing calorie distribution between different macronutrients
+.) Data diagrams etc showing calorie distribution between different macronutrients
 //######################################################################################################
 // Extra Features
 //######################################################################################################
