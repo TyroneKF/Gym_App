@@ -273,20 +273,6 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
         ingredientsType_JComboBox.setSelectedIndex(-1);
     }
 
-    protected boolean doesStringContainCharacters(String input)
-    {
-        Pattern p1 = Pattern.compile("[^a-zA-Z]", Pattern.CASE_INSENSITIVE);
-        Matcher m1 = p1.matcher(input.replaceAll("\\s+", ""));
-        boolean b1 = m1.find();
-
-        if (b1)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
     public void update_IngredientForm_FromSearch(LinkedHashMap<String, Object> foodInfo)//HELLO EDITED NOW
     {
         if (foodInfo != null)
@@ -516,7 +502,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
                 //#########################################
                 //
                 //#########################################
-                if (row == glycemicObjectIndex)
+                else if (row == glycemicObjectIndex)
                 {
                     try
                     {
@@ -540,7 +526,6 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
                 //#########################################
                 else if (row == ingredientSaltObjectIndex)
                 {
-
                     if (saltMeasurement_JComboBox.getSelectedIndex() == -1)
                     {
                         errorTxt += String.format("\n\n  ' %s ' on Row: %s, an option for the measurement chosen for salt needs to be selected in the dropdown box!", ingredientFormLabel, row + 1);
@@ -566,25 +551,23 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
                 //#########################################
                 // Do BigDecimal Processing
                 //#########################################
-
                 errorTxt = convertToBigDecimal(value, errorTxt, ingredientFormLabel, row + 1, jTextField); // HELLO Shouldn't this be +=
             }
         }
 
         //####################################################
-        //Check if ingredient name in DB
+        // Check if ingredient name in DB
         //####################################################
         errorTxt = extra_Validation_IngredientName(errorTxt, ingredientName_Txt);
 
         //####################################################
-        //Check if any error were found & Process it
+        // Check if any error were found & Process it
         //####################################################
-
         if (errorTxt.length() == 0)
         {
             return true;
         }
-
+        //####################################################
         JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("\n\nPlease fix the following rows being; \n%s", errorTxt));
 
         return false;
@@ -592,10 +575,15 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
 
     protected String extra_Validation_IngredientName(String errorTxt, String ingredientName)
     {
+        if (doesStringContainCharacters(ingredientName,"'"))
+        {
+            errorTxt += String.format("\n\n  Ingredient named \"%s\" cannot contain the symbol \" ' \"!", ingredientName);
+        }
+
         //####################################################
         //Check if IngredientName Already exists in DB
         //####################################################
-        if (ingredientName != null || !(ingredientName.equals("")))
+        else if (ingredientName != null || !(ingredientName.equals(""))) // HELLO can this not be reduced
         {
             if (checkIfIngredientNameInDB(ingredientName))
             {

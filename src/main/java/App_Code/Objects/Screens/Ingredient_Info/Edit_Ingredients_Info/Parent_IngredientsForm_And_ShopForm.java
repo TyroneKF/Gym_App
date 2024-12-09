@@ -8,6 +8,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 // Shop Form and Ingredients Form
@@ -137,5 +139,23 @@ public class Parent_IngredientsForm_And_ShopForm extends CollapsibleJPanel
         }
 
         container.add(addToContainer, gbc);
+    }
+
+    protected boolean doesStringContainCharacters(String stringToCheck, String condition)
+    {
+        Pattern p1 =
+                (condition==null || condition.equals("")) ?
+                        Pattern.compile("[^a-zA-Z]", Pattern.CASE_INSENSITIVE):
+                        Pattern.compile(String.format("%s",condition), Pattern.CASE_INSENSITIVE);
+
+        Matcher m1 = p1.matcher(stringToCheck.replaceAll("\\s+", ""));
+        boolean b1 = m1.find();
+
+        if (b1)
+        {
+            return true;
+        }
+
+        return false;
     }
 }
