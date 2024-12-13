@@ -141,7 +141,7 @@ public class Parent_IngredientsForm_And_ShopForm extends CollapsibleJPanel
         container.add(addToContainer, gbc);
     }
 
-    protected boolean doesStringContainCharacters(String stringToCheck, String condition)
+    protected boolean doesStringContainGivenCharacters(String stringToCheck, String condition)
     {
         Pattern p1 =
                 (condition==null || condition.equals("")) ?

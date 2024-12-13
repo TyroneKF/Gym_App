@@ -25,7 +25,6 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
             currentFormData = new ArrayList<>();
 
 
-
     public Edit_IngredientsForm(Container parentContainer, Ingredients_Info_Screen ingredients_info_screen, Edit_IngredientsScreen edit_ingredientsScreen, String btnText, int btnWidth, int btnHeight)
     {
         super(parentContainer, ingredients_info_screen, btnText, btnWidth, btnHeight);
@@ -41,21 +40,19 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
     @Override
     protected String extra_Validation_IngredientName(String errorTxt, String makeIngredientName)
     {
-        if (makeIngredientName != null || !(makeIngredientName.equals("")))
+        makeIngredientName = removeSpaceAndHiddenChars(makeIngredientName);
+        String previousIngredientName = removeSpaceAndHiddenChars(selectedIngredientName);
+
+        System.out.printf("\n\nName 1: %s || Name2: %s", makeIngredientName, previousIngredientName);
+
+        if (!(previousIngredientName.equals(makeIngredientName)))
         {
-            makeIngredientName = removeSpaceAndHiddenChars(makeIngredientName);
-            String previousIngredientName = removeSpaceAndHiddenChars(selectedIngredientName);
-
-            System.out.printf("\n\nName 1: %s || Name2: %s", makeIngredientName, previousIngredientName);
-
-            if (!(previousIngredientName.equals(makeIngredientName)))
+            if (checkIfIngredientNameInDB(makeIngredientName))
             {
-                if (checkIfIngredientNameInDB(makeIngredientName))
-                {
-                    errorTxt += String.format("\n\n@@  Ingredient named %s already exists within the database!", makeIngredientName);
-                }
+                errorTxt += String.format("\n\n@@  Ingredient named %s already exists within the database!", makeIngredientName);
             }
         }
+
         return errorTxt;
     }
 
@@ -296,7 +293,7 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
             //####################################
             if (pos == ingredientTypeObjectIndex)
             {
-                String  ingredientTypeSet = "SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = \"";
+                String ingredientTypeSet = "SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = \"";
                 formFieldValue = String.format("(%s%s\")", ingredientTypeSet, formFieldValue);
             }
             else if (mysqlColumnDataType.equals("String"))

@@ -1,3 +1,6 @@
+.)  When adding ingredients restrict the user from adding ' symbol because it messes with querys in the database when retrieving ingredient name
+
+
 .) When appending ingredient Types an ingredients add them in alphabetically
 .) When adding ingredients restrict the user from adding ' symbol because it messes with querys in the database when retrieving ingredient name
 
@@ -8,7 +11,7 @@
 
 .) Find ingredients in mealplan
 .) Efficient way of saving plan whereby only meals that are changed processed.
-.) Initialize db if missing on setup
+.) Initialize db if missing on setup+
 .) backup and restore ingredients / ingredients types, meals
 .) autosize column widths in jtables
 

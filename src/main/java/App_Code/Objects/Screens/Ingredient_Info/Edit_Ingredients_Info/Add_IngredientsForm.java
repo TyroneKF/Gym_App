@@ -12,12 +12,10 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
 {
-    
+
     //##################################################
     //
     //##################################################
@@ -446,12 +444,6 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
 
     protected boolean validate_IngredientsForm()//HELLO EDITED NOW
     {
-        if (tempPlanID == null && planID == null && planName == null)
-        {
-            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Please Select A Plan First!");
-            return false;
-        }
-
         String errorTxt = "", ingredientName_Txt = "";
 
         //##############################
@@ -556,9 +548,19 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
         }
 
         //####################################################
-        // Check if ingredient name in DB
+        //  ingredientName checks
         //####################################################
-        errorTxt = extra_Validation_IngredientName(errorTxt, ingredientName_Txt);
+        if (!(ingredientName_Txt.equals("")))
+        {
+            if (doesStringContainGivenCharacters(ingredientName_Txt, "'"))
+            {
+                errorTxt += String.format("\n\n  Ingredient named \"%s\" cannot contain the symbol \" ' \"!", ingredientName_Txt);
+            }
+            else
+            {
+                errorTxt = extra_Validation_IngredientName(errorTxt, ingredientName_Txt);
+            }
+        }
 
         //####################################################
         // Check if any error were found & Process it
@@ -567,29 +569,21 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
         {
             return true;
         }
-        //####################################################
-        JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("\n\nPlease fix the following rows being; \n%s", errorTxt));
 
+        JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("\n\nPlease fix the following rows being; \n%s", errorTxt));
         return false;
     }
 
     protected String extra_Validation_IngredientName(String errorTxt, String ingredientName)
     {
-        if (doesStringContainCharacters(ingredientName,"'"))
-        {
-            errorTxt += String.format("\n\n  Ingredient named \"%s\" cannot contain the symbol \" ' \"!", ingredientName);
-        }
-
         //####################################################
         //Check if IngredientName Already exists in DB
         //####################################################
-        else if (ingredientName != null || !(ingredientName.equals(""))) // HELLO can this not be reduced
+        if (checkIfIngredientNameInDB(ingredientName))
         {
-            if (checkIfIngredientNameInDB(ingredientName))
-            {
-                errorTxt += String.format("\n\n  Ingredient named %s already exists within the database!", ingredientName);
-            }
+            errorTxt += String.format("\n\n  Ingredient named %s already exists within the database!", ingredientName);
         }
+
         return errorTxt;
     }
 
