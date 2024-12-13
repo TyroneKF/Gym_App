@@ -530,15 +530,15 @@ public class MealManager
         //###################################
         // Update MealName
         //###################################
-        String newMealName = JOptionPane.showInputDialog("Input Meal Name?").trim();
+        String newMealName = JOptionPane.showInputDialog("Input Meal Name?");
 
-        if (newMealName.length() == 0)
+        if (newMealName == null || newMealName.length() == 0)
         {
             JOptionPane.showMessageDialog(frame, "\n\nNew Meal Name Cannot Be Empty!!");
             return;
         }
 
-        newMealName = StringUtils.capitalize(newMealName);
+        newMealName = StringUtils.capitalize(newMealName).trim();
 
         //########################################
         // Update
@@ -546,7 +546,7 @@ public class MealManager
         String uploadQuery = String.format(""" 
                 UPDATE mealsInPlan
                 SET Meal_Name = '%s'
-                WHERE PlanID = %s AND  MealInPlanID = %s; """, newMealName, tempPlanID, mealInPlanID);
+                WHERE PlanID = %s AND  MealInPlanID = %s;""", newMealName, tempPlanID, mealInPlanID);
 
         //##########################################
         // Upload Into Database Table
