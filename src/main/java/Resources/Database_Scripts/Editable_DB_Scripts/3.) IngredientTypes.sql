@@ -1,5 +1,5 @@
 use gymapp00001;
-INSERT INTO ingredientTypes (Ingredient_Type_Name) VALUES
+INSERT IGNORE INTO ingredientTypes (Ingredient_Type_Name) VALUES
 ('None Of The Above'),
 ('UnAssigned'),
 ('Breads'),
