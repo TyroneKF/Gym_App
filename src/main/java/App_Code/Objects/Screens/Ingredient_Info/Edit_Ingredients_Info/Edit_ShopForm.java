@@ -68,7 +68,7 @@ public class Edit_ShopForm extends Add_ShopForm
             row.getShops_JComboBox().setSelectedItem(rowData.get(1));// HELLO IDK WHAT I DID HERE in REFACTORING
 
             // Set Cost Info
-            row.getIngredientPrice_TxtField().setText(rowData.get(2));// HELLO IDK WHAT I DID HERE  in REFACTORING
+            row.getProductPrice_TxtField().setText(rowData.get(2));// HELLO IDK WHAT I DID HERE  in REFACTORING
 
             // Set Volume Info
             row.getQuantityPerPack_TxtField().setText(rowData.get(3));// HELLO IDK WHAT I DID HERE  in REFACTORING
@@ -146,7 +146,7 @@ public class Edit_ShopForm extends Add_ShopForm
                                 SET Volume_Per_Unit = %s, Cost_Per_Unit = %s, StoreID = (SELECT StoreID FROM stores WHERE Store_Name = '%s')
                                 WHERE PDID = %s;""",
                         supplierInDB.getQuantityPerPack_TxtField().getText(),
-                        supplierInDB.getIngredientPrice_TxtField().getText(),
+                        supplierInDB.getProductPrice_TxtField().getText(),
                         supplierInDB.getShops_JComboBox().getSelectedItem().toString(),
                         PDID);
 

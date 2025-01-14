@@ -24,6 +24,7 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
     protected int objectID = 0;
 
     protected HashMap<Integer, JComboBox> shopJComboBoxes = new HashMap<>();
+    protected HashMap<Integer, JTextField> productNames = new HashMap<>();
     protected HashMap<Integer, JTextField> prices = new HashMap<>();
     protected HashMap<Integer, JTextField> quantityPerPack = new HashMap<>();
 
@@ -327,7 +328,7 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
 
         Container parentContainer;
         JComboBox<String> shops_JComboBox;
-        JTextField ingredientPrice_TxtField, quantityPerPack_TxtField;
+        JTextField productName_TxtField, productPrice_TxtField, quantityPerPack_TxtField;
 
         AddShopForm_Object(Container parentContainer, boolean addRow)
         {
@@ -367,25 +368,88 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
             // Creating Sections for GUI
             //###############################
 
+            // Delete row button section
             JPanel eastPanel = new JPanel();
             eastPanel.setLayout(new GridLayout(1, 1));
             eastPanel.setBorder(new EmptyBorder(0, 10, 0, 10));
             eastPanel.setPreferredSize(new Dimension(120, 34)); // width, height
             rowPanel.add(eastPanel, BorderLayout.EAST);
 
+            //
             JPanel centrePanel = new JPanel();
-            GridLayout layout = new GridLayout(1, 2);
-            layout.setHgap(10);
+            centrePanel.setPreferredSize(new Dimension(400, 25)); // width, height
+
+            GridLayout layout = new GridLayout(1, 3);
+            layout.setHgap(5); // sets horizontal gap between each item (textFields)  in the row
             centrePanel.setLayout(layout);
+
             rowPanel.add(centrePanel, BorderLayout.CENTER);
 
+            // Delete store selection dropdown
             JPanel westPanel = new JPanel();
             westPanel.setLayout(new GridLayout(1, 1));
             westPanel.setBorder(new EmptyBorder(0, 0, 0, 10));
             westPanel.setPreferredSize(new Dimension(150, 25)); // width, height
             rowPanel.add(westPanel, BorderLayout.WEST);
 
-            if (addRowBool)
+            if(!addRowBool)
+            {
+                //#####################################################
+                // West Panel
+                //######################################################
+                int fontSize = 12;
+
+                //panel
+                westPanel.setBorder(new EmptyBorder(0, 10, 0, 10));
+                westPanel.setBackground(Color.LIGHT_GRAY);
+
+                //Label
+                JLabel westLabel = new JLabel("Select A Store");
+                westLabel.setFont(new Font("Arial", Font.BOLD, fontSize)); // setting font
+                westPanel.add(westLabel);
+
+                //#####################################################
+                // Centre Panel
+                //######################################################
+                 int x =0, y =0;
+
+                // centre panel
+                centrePanel.setBackground(Color.LIGHT_GRAY);
+
+                //########################
+                //Label
+                JLabel setProductNameLabel = new JLabel("Set Product Name");
+                setProductNameLabel.setFont(new Font("Arial", Font.BOLD, fontSize)); // setting font
+                //centrePanel.add(panelWithSpace(setProductName, Color.LIGHT_GRAY, 0, 25, 0, 25));
+
+                addToContainer(centrePanel, setProductNameLabel, x, y+1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+
+                //########################
+                //Label
+                JLabel setPriceLabel = new JLabel("Set Price (£)");
+                setPriceLabel.setFont(new Font("Arial", Font.BOLD, fontSize)); // setting font
+               // centrePanel.add(panelWithSpace(setPriceLabel, Color.LIGHT_GRAY, 25, 25, 5, 25));
+                 centrePanel.add(setPriceLabel, BorderLayout.CENTER);
+
+                //########################
+                //Label
+                JLabel setQuantityLabel = new JLabel("Quantity In Package (G,L)");
+                setQuantityLabel.setFont(new Font("Arial", Font.BOLD, fontSize)); // setting font
+                centrePanel.add(panelWithSpace(setQuantityLabel, Color.LIGHT_GRAY, 0, 25, 5, 25));
+
+                //#####################################################
+                // East Panel
+                //######################################################
+
+                //panel
+                eastPanel.setBackground(Color.LIGHT_GRAY);
+
+                //Label
+                JLabel eastLabel = new JLabel("Delete Row");
+                eastLabel.setFont(new Font("Arial", Font.BOLD, fontSize)); // setting font
+                eastPanel.add(eastLabel);
+            }
+            else
             {
                 //#####################################################
                 // West Side
@@ -410,11 +474,17 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
                 //#####################################################
                 // Centre Side
                 //######################################################
-                ingredientPrice_TxtField = new JTextField();
-                ingredientPrice_TxtField.setDocument(new JTextFieldLimit(charLimit));
-                ingredientPrice_TxtField.setText("0.00");
-                prices.put(id, ingredientPrice_TxtField);
-                centrePanel.add(ingredientPrice_TxtField);
+                productName_TxtField = new JTextField();
+                productName_TxtField.setDocument(new JTextFieldLimit(charLimit));
+                productName_TxtField.setText("");
+                productNames.put(id, productName_TxtField);
+                centrePanel.add(productName_TxtField);
+
+                productPrice_TxtField = new JTextField();
+                productPrice_TxtField.setDocument(new JTextFieldLimit(charLimit));
+                productPrice_TxtField.setText("0.00");
+                prices.put(id, productPrice_TxtField);
+                centrePanel.add(productPrice_TxtField);
 
                 quantityPerPack_TxtField = new JTextField();
                 quantityPerPack_TxtField.setDocument(new JTextFieldLimit(charLimit));
@@ -441,50 +511,6 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
                 // Adding row to memory
                 //######################################################
                 addShopFormObjects.add(this);
-            }
-            else
-            {
-                //#####################################################
-                // West Panel
-                //######################################################
-
-                //panel
-                westPanel.setBorder(new EmptyBorder(0, 10, 0, 10));
-                westPanel.setBackground(Color.LIGHT_GRAY);
-
-                //Label
-                JLabel westLabel = new JLabel("Select A Store");
-                westLabel.setFont(new Font("Arial", Font.BOLD, 16)); // setting font
-                westPanel.add(westLabel);
-
-                //#####################################################
-                // Centre Panel
-                //######################################################
-
-                // centre panel
-                centrePanel.setBackground(Color.LIGHT_GRAY);
-
-                //Label
-                JLabel setPriceLabel = new JLabel("Set Price (£)");
-                setPriceLabel.setFont(new Font("Arial", Font.BOLD, 16)); // setting font
-                centrePanel.add(panelWithSpace(setPriceLabel, Color.LIGHT_GRAY, 50, 50, 50, 50));
-                // centrePanel.add(setPriceLabel, BorderLayout.CENTER);
-
-                JLabel setQuantityLabel = new JLabel("Package Quantity (G,L)");
-                setQuantityLabel.setFont(new Font("Arial", Font.BOLD, 14)); // setting font
-                centrePanel.add(panelWithSpace(setQuantityLabel, Color.LIGHT_GRAY, 15, 50, 0, 50));
-
-                //#####################################################
-                // East Panel
-                //######################################################
-
-                //panel
-                eastPanel.setBackground(Color.LIGHT_GRAY);
-
-                //Label
-                JLabel eastLabel = new JLabel("Delete Row");
-                eastLabel.setFont(new Font("Arial", Font.BOLD, 16)); // setting font
-                eastPanel.add(eastLabel);
             }
 
             //#########################################################################################################
@@ -518,9 +544,9 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
             return shops_JComboBox;
         }
 
-        JTextField getIngredientPrice_TxtField()
+        JTextField getProductPrice_TxtField()
         {
-            return ingredientPrice_TxtField;
+            return productPrice_TxtField;
         }
 
         JTextField getQuantityPerPack_TxtField()
