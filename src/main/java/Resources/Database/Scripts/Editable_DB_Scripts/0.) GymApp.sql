@@ -162,9 +162,11 @@ CREATE TABLE IF NOT EXISTS ingredientInShops
 (   
     -- PRIMARY KEY , UNIQUE To this Table
     PDID INT  PRIMARY KEY AUTO_INCREMENT,
-	
+		
     IngredientID INT  NOT NULL,
 	FOREIGN KEY (IngredientID) REFERENCES ingredients_info(IngredientID),
+
+    Product_Name VARCHAR(100) NOT NULL,
 
 	Volume_Per_Unit DECIMAL(7,2) NOT NULL,
 	Cost_Per_Unit DECIMAL(7,2) NOT NULL,
@@ -172,7 +174,7 @@ CREATE TABLE IF NOT EXISTS ingredientInShops
 	StoreID INT NOT NULL,
 	FOREIGN KEY (StoreID) REFERENCES stores(StoreID),
 	
-    UNIQUE KEY Ingredient_In_Store(StoreID, IngredientID)	
+    UNIQUE KEY Product_In_Store(StoreID, Product_Name)	
 );
 --######################################
 

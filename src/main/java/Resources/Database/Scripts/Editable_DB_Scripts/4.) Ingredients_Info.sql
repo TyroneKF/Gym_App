@@ -66,6 +66,4 @@ VALUES
 (null,("Grams"),("Allinson Self-Raising Wholemeal Flour"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Flour"),(100.00),(60),(11.00),(69.3),(1.1),(10.00),(2.4),(0.4),(1.1),(0.00),(0.00),(359.00)),
 (null,("Grams"),("Plantin"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Fruit"),(100.00),(40),(1.3),(32.00),(15.00),(2.3),(0.4),(0.1),(0.00),(0.00),(0.00),(122.00)),
 
-(null,("Grams"),("Billingtons Brown Sugar"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Sugar"),(100.00),(70),(0.00),(99.00),(99.00),(0.00),(0.00),(0.00),(0.25),(0.00),(0.00),(398.00)),
-
-(null,("Grams"),("(chicken)"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Cake"),(100.00),(0),(23.96),(0.05),(0.00),(0.00),(13.07),(3.66),(71.00),(0.00),(0.00),(220.00));;
+(null,("Grams"),("Billingtons Brown Sugar"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Sugar"),(100.00),(70),(0.00),(99.00),(99.00),(0.00),(0.00),(0.00),(0.25),(0.00),(0.00),(398.00));;

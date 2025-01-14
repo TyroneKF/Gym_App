@@ -1,3 +1,9 @@
+
+.) Add gui for product name in ingredientInShops when adding a product to an ingredient
+.) Show productName on mealPlanner screen
+.) When adding to ingredients_in_sections_of_meal PDID by default needs to be 1
+
+
 .)  When adding ingredients restrict the user from adding ' symbol because it messes with querys in the database when retrieving ingredient name
 
 
