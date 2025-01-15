@@ -37,7 +37,7 @@ public class Ingredients_Info_Screen extends JFrame
 
     private GridBagConstraints gbc = new GridBagConstraints();
 
-    private int jFramewidth = 710, jFrameheight = 850;
+    private int jFramewidth = 800, jFrameheight = 850;
     private Container contentPane;
 
     private MyJDBC db;
