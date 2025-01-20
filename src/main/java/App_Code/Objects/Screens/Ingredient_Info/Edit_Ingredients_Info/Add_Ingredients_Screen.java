@@ -34,7 +34,7 @@ public class Add_Ingredients_Screen extends JPanel
     protected MyJDBC db;
     protected Integer planID, tempPlanID;
     protected String planName;
-    protected  String sqlBackUpPath = "src/main/java/Resources/Database_Scripts/Editable_DB_Scripts/4.) Ingredients_Info.sql";
+    protected  String sqlBackUpPath = "src/main/java/Resources/Database/Scripts/Editable_DB_Scripts/4.) Ingredients_Info.sql";
 
     //##################################################################################################################
     // Constructor
@@ -330,6 +330,7 @@ public class Add_Ingredients_Screen extends JPanel
     protected boolean backupDataInSQLFile()
     {
         String ingredientsValuesBeingAdded = addIngredientsForm.getIngredientsValuesBeingAdded();
+        System.out.printf("\n\nbackupDataInSQLFile() \n%s", ingredientsValuesBeingAdded);
         if(!(db.writeTxtToSQLFile(sqlBackUpPath, ingredientsValuesBeingAdded)))
         {
             return false;
