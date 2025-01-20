@@ -543,7 +543,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
                 //#########################################
                 // Do BigDecimal Processing
                 //#########################################
-                errorTxt = convertToBigDecimal(value, errorTxt, ingredientFormLabel, row + 1, jTextField); // HELLO Shouldn't this be +=
+                errorTxt += convertToBigDecimal(value,ingredientFormLabel, row + 1, jTextField, false);
             }
         }
 

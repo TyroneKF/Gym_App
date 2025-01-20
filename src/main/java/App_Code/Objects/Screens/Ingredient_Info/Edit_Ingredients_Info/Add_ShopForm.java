@@ -9,10 +9,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 
 public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
 {
@@ -118,136 +115,114 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
 
     protected boolean validateForm()
     {
-        boolean noError = true;
+        //######################################################
+        //
+        //######################################################
+        String overalErrorTxt = "";
+        int pos = 0;
 
-        if (!(validatePrices()))
+        Set<Integer> keySet = productNames.keySet();
+
+        //######################################################
+        //
+        //######################################################
+
+        for(Integer key: keySet)
         {
-            noError = false;
-        }
+            System.out.println("\n\nhere");
+            //#######################################
+            // Reset Values
+            //#######################################
+            pos ++;
+            String space = "\n\n", iterationErrorTxt = "";
 
-        if (!(validateShops()))
-        {
-            noError = false;
-        }
+            //#######################################
+            // Validate Stores
+            //#######################################
+            String shopChosen = shopJComboBoxes.get(key).getSelectedItem().toString();
 
-        if (!(validateQuantity()))
-        {
-            noError = false;
-        }
-
-        return noError;
-    }
-
-    private boolean validatePrices()
-    {
-        String errorTxt = "";
-        BigDecimal zero = new BigDecimal(0);
-        int i = 1;
-
-        for (Integer key : prices.keySet())
-        {
-            JTextField jTextField = prices.get(key);
-            String value = jTextField.getText().trim();
-
-            //#########################################
-            // Check if JTextfield input is empty
-            //#########################################
-            if (value.equals(""))
+            if (shopChosen.equals("No Shop"))
             {
-                errorTxt += String.format("\n\nOn Row: %s, the 'price' must have a value which is not ' NULL '!", i);
-                i++;
-                continue;
+                iterationErrorTxt += String.format("%sOn Row %s,  please Select a shop that isn't 'No Shop'! Or, delete the row!",space, pos);
+                space = "\n";
             }
 
-            //#########################################
-            // Do BigDecimal Processing
-            //#########################################
-            errorTxt = convertToBigDecimal(value, errorTxt, "Prices", i, jTextField);
-
-            i++;
-        }
-
-        if (errorTxt.equals(""))
-        {
-            return true;
-        }
-
-        JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("\n\nPlease fix the following rows being; \n%s", errorTxt));
-        return false;
-    }
-
-    private boolean validateQuantity()
-    {
-        String errorTxt = "";
-        BigDecimal zero = new BigDecimal(0);
-        int i = 1;
-
-        for (Integer key : quantityPerPack.keySet())
-        {
-            JTextField jTextField = quantityPerPack.get(key);
-            String value = jTextField.getText().trim();
-
-            //#########################################
-            // Check if JTextfield input is empty
-            //#########################################
-            if (value.equals(""))
+            //########################################
+            // Validate Product Name
+            //########################################
+            String productNameTxt = productNames.get(key).getText().trim();
+            if(productNameTxt.equals(""))
             {
-                errorTxt += String.format("\n\nOn Row: %s, the 'Quantity' must have a value which is not ' NULL '!", i);
-                i++;
-                continue;
+                iterationErrorTxt += String.format("%sOn Row: %s, the 'Product Name' cannot be empty or, ' NULL '!",space,pos);
+                space = "\n";
             }
 
-            //#########################################
-            // Do BigDecimal Processing
-            //#########################################
-            errorTxt = convertToBigDecimal(value, errorTxt, "Quantity", i, jTextField);
+            //#######################################
+            // Validate Prices
+            //#######################################
+            JTextField prices = this.prices.get(key);
+            String price = prices.getText().trim();
 
-            i++;
-        }
-
-
-        if (errorTxt.equals(""))
-        {
-            return true;
-        }
-
-        JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("\n\nPlease fix the following rows being; \n%s", errorTxt));
-        return false;
-    }
-
-    private boolean validateShops()
-    {
-        String errorTxt = "";
-
-        int i = 1;
-        ArrayList<String> chosenShops = new ArrayList<>();
-        for (Integer key : shopJComboBoxes.keySet())
-        {
-            String chosenItem = shopJComboBoxes.get(key).getSelectedItem().toString();
-
-            if (chosenItem.equals("No Shop"))
+            if (!(price.equals(""))) // Check if text field input is empty
             {
-                errorTxt += String.format("\nOn Row %s,  please Select a shop that isnt 'No Shop'! Or, delete the row!", i);
-            }
-
-            if (chosenShops.contains(chosenItem))
-            {
-                errorTxt += String.format("\nOn Row %s, there is also another row/rows with with the supplier %s - no duplicate stores!", i, chosenItem);
+                String txt = convertToBigDecimal(price, "Prices", pos, prices, true);
+                if(!txt.equals(""))
+                {
+                    if(iterationErrorTxt.equals(""))
+                    {
+                        space="\n";
+                        iterationErrorTxt = String.format("\n%s",txt);
+                    }
+                    else
+                    {
+                        iterationErrorTxt += txt;
+                    }
+                }
             }
             else
             {
-                chosenShops.add(chosenItem);
+                iterationErrorTxt += String.format("%sOn Row: %s, the 'Price' must have a value which is not ' NULL '!",space, pos);
+                space="\n";
             }
 
-            i++;
+            //#######################################
+            // Validate Quantity
+            //#######################################
+            JTextField quantity = quantityPerPack.get(key);
+            String value = quantity.getText().trim();
+
+            if (!(value.equals(""))) // Check if text field input is empty
+            {
+                String txt = convertToBigDecimal(value, "Quantity", pos, quantity, true);
+                if(!txt.equals(""))
+                {
+                    if(iterationErrorTxt.equals(""))                    {
+
+                        iterationErrorTxt = String.format("\n%s",txt);
+                    }
+                    else
+                    {
+                        iterationErrorTxt += txt;
+                    }
+                }
+            }
+            else
+            {
+                iterationErrorTxt += String.format("%sOn Row: %s, the 'Quantity' must have a value which is not ' NULL '!",space, pos);
+            }
+
+           overalErrorTxt += iterationErrorTxt;
         }
 
-        if (errorTxt.equals(""))
+        // #################################################
+        // End Of Validating process release results
+        // #################################################
+        if (overalErrorTxt.equals(""))
         {
             return true;
         }
 
-        JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("\n\nPlease fix the following rows being; \n%s", errorTxt));
+        JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("\n\nPlease fix the following rows being; %s", overalErrorTxt));
         return false;
     }
 
@@ -340,23 +315,6 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
             addRow(addRow);
         }
 
-        //EDIT NOW
-        protected void setPDID(Integer PDID)
-        {
-            this.PDID = PDID;
-        }
-
-        //EDIT NOW
-        protected Integer getPDID()
-        {
-            return PDID;
-        }
-
-        protected int getObjectID()
-        {
-            return objectID;
-        }
-
         private void addRow(boolean addRowBool)
         {
             //#########################################################################################################
@@ -428,7 +386,7 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
                 jp2.setPreferredSize(new Dimension(10, 25));
                 jp2.setBorder(new EmptyBorder(0, 5, 0, 0)); //Pushes object inside further along
 
-//                jp2.setBackground(Color.ORANGE);
+                //                jp2.setBackground(Color.ORANGE);
                 jp2.setBackground(Color.LIGHT_GRAY);
 
                 jp2.add(setPriceLabel);
@@ -443,7 +401,7 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
                 jp3.setPreferredSize(new Dimension(120, 34));
                 jp3.setBorder(new EmptyBorder(0, 15, 0, 0)); //Pushes object inside further along
 
-//                jp3.setBackground(Color.RED);
+                //                jp3.setBackground(Color.RED);
                 jp3.setBackground(Color.LIGHT_GRAY);
 
                 jp3.add(setQuantityLabel);
@@ -564,9 +522,26 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
             parentContainer.revalidate();
         }
 
+        //EDIT NOW
+        protected void setPDID(Integer PDID)
+        {
+            this.PDID = PDID;
+        }
+
+        //EDIT NOW
+        protected Integer getPDID()
+        {
+            return PDID;
+        }
+
+        protected int getObjectID()
+        {
+            return objectID;
+        }
+
         protected void deleteRowAction()
         {
-            removeFromParentContainer();
+            removeFromParentContainer(); // remove all the  input GUI objects from memory
             addShopFormObjects.remove(this);
         }
 
@@ -580,20 +555,22 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
                 shops_JComboBox.addItem(storeName);
             }
 
-            shops_JComboBox.setSelectedItem("No Shop");
+            shops_JComboBox.setSelectedItem("No Shop"); // make the first selected item N/A
         }
 
-        JComboBox<String> getShops_JComboBox()
+        protected JComboBox<String> getShops_JComboBox()
         {
             return shops_JComboBox;
         }
 
-        JTextField getProductPrice_TxtField()
+        protected JTextField getProductName() {return productName_TxtField;}
+
+        protected JTextField getProductPrice_TxtField()
         {
             return productPrice_TxtField;
         }
 
-        JTextField getQuantityPerPack_TxtField()
+        protected JTextField getQuantityPerPack_TxtField()
         {
             return quantityPerPack_TxtField;
         }
@@ -601,8 +578,9 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
         public void removeFromParentContainer()
         {
             // Removing Objects from memory as the row they belong to is gone
-            prices.remove(id);
             shopJComboBoxes.remove(id);
+            productNames.remove(id);
+            prices.remove(id);
             quantityPerPack.remove(id);
 
             //Remove from parent Container
@@ -613,30 +591,6 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
 
             //Resizing Form
             add_ingredientsScreen.resize_GUI();
-        }
-
-        public JPanel panelWithSpace(Component addObjectToPanel, Color backgroundColour, int westWidth, int westHeight, int eastWidth, int eastHeight)
-        {
-            JPanel panel = new JPanel(new BorderLayout());
-            panel.add(addObjectToPanel, BorderLayout.CENTER);
-
-            //####################
-            // Space Filler
-            //####################
-
-            // space filler panels
-            JPanel westSpaceFiller = new JPanel();
-            westSpaceFiller.setPreferredSize(new Dimension(westWidth, westHeight)); // width, height
-            westSpaceFiller.setBackground(backgroundColour);
-            panel.add(westSpaceFiller, BorderLayout.WEST);
-
-            JPanel eastSpaceFiller = new JPanel();
-            eastSpaceFiller.setPreferredSize(new Dimension(eastWidth, eastHeight)); // width, height
-            eastSpaceFiller.setBackground(backgroundColour);
-            panel.setBackground(backgroundColour);
-            panel.add(eastSpaceFiller, BorderLayout.EAST);
-
-            return panel;
         }
     }
 }
