@@ -1,0 +1,987 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="cc1e1179-1f78-4e32-b366-09825a90e4d6" name="Default Changelist" comment="Updates Made in this commit:&#10;.) Added some backend features for product name gui and refactoring&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <change beforePath="$PROJECT_DIR$/target/classes/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Add_IngredientsForm.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Add_IngredientsForm.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Add_ShopForm$AddShopForm_Object.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Add_ShopForm$AddShopForm_Object.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Add_ShopForm.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Add_ShopForm.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Edit_ShopForm$EditAddShopForm_Object.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Edit_ShopForm$EditAddShopForm_Object.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Parent_IngredientsForm_And_ShopForm.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Parent_IngredientsForm_And_ShopForm.class" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="package-info" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <excluded-from-favorite>
+      <branch-storage>
+        <map>
+          <entry type="LOCAL">
+            <value>
+              <list>
+                <branch-info repo="$PROJECT_DIR$" source="master" />
+              </list>
+            </value>
+          </entry>
+        </map>
+      </branch-storage>
+    </excluded-from-favorite>
+    <option name="PUSH_AUTO_UPDATE" value="true" />
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="nn" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="HARD" />
+    <option name="UPDATE_TYPE" value="REBASE" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="1wXE4pP4z7lJvMNYUnLZphuV46m" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/main/java/Resources/Database_Scripts/Editable_DB_Scripts" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="project.structure.last.edited" value="Problems" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="restartRequiresConfirmation" value="false" />
+    <property name="settings.editor.selected.configurable" value="reference.settings.project.maven.repository.indices" />
+    <property name="two.files.diff.last.used.file" value="$PROJECT_DIR$/src/Resources/DatabaseScripts/new 2.java" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\DonTy\Dropbox\0.) Coding\Gym_App\src\main\java\Resources\Database_Scripts\Editable_DB_Scripts" />
+      <recent name="C:\Users\DonTy\Dropbox\0.) Coding\Gym_App\src\main\java\Resources\Database_Scripts\Original_DB_Scripts" />
+      <recent name="C:\Users\DonTy\Dropbox\0.) Coding\Gym_App\src\main\java\Resources\Database_Scripts\Test" />
+      <recent name="C:\Users\DonTy\Dropbox\0.) Coding\Gym_App\src\main\java\Resources\Database_Scripts\DB_Scripts" />
+      <recent name="C:\Users\DonTy\Dropbox\0.) Coding\Gym_App\src\Scripts\DB_Scripts" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\DonTy\Dropbox\0.) Coding\Gym_App\src\main\java\Resources\Database\Info" />
+      <recent name="C:\Users\DonTy\Dropbox\0.) Coding\Gym_App\src\main\java\Resources\Database_Scripts\Test_Scripts" />
+      <recent name="C:\Users\DonTy\Dropbox\0.) Coding\Gym_App\src\main\java\Resources\Database_Scripts\DB_Scripts\Test" />
+      <recent name="C:\Users\DonTy\Dropbox\0.) Coding\Gym_App\src\main\java\Resources\Database_Scripts" />
+      <recent name="C:\Users\DonTy\Dropbox\0.) Coding\Gym_App\src\App_Code\Objects\Screens\Tests" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="App_Code.Objects.Gui_Objects" />
+      <recent name="App_Code.Objects.Screens.Add_Ingredients_Screen" />
+      <recent name="App_Code.Objects.Screens.MacrosTargets_Screen" />
+      <recent name="App_Code.Objects.Screens.Meal_Plan_Screen" />
+      <recent name="App_Code.Objects.Database_Objects.JTable_JDBC" />
+    </key>
+  </component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="í" />
+    </option>
+  </component>
+  <component name="RunManager" selected="Application.Meal_Plan_Screen">
+    <configuration name="Meal_Plan_Screen" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="App_Code.Objects.Screens.Others.Meal_Plan_Screen" />
+      <module name="Gym_App" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="App_Code.Objects.Screens.Others.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MyJDBC" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="App_Code.Objects.Database_Objects.JDBC.MyJDBC" />
+      <module name="Gym_App" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="App_Code.Objects.Database_Objects.JDBC.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TableRenderDemo (1)" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="TableRenderDemo" />
+      <module name="Gym_App" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TestFile" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Tests.TestFile" />
+      <module name="Gym_App" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="Tests.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test_Script" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Tests.Test_Script" />
+      <module name="Gym_App" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="Tests.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.Meal_Plan_Screen" />
+        <item itemvalue="Application.Test_Script" />
+        <item itemvalue="Application.TestFile" />
+        <item itemvalue="Application.TableRenderDemo (1)" />
+        <item itemvalue="Application.MyJDBC" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="cc1e1179-1f78-4e32-b366-09825a90e4d6" name="Default Changelist" comment="" />
+      <created>1628596347646</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1628596347646</updated>
+      <workItem from="1636456845191" duration="8557000" />
+      <workItem from="1636569452788" duration="1856000" />
+      <workItem from="1636638722741" duration="920000" />
+      <workItem from="1637383598126" duration="1626000" />
+      <workItem from="1637385261779" duration="1001000" />
+      <workItem from="1637409767074" duration="7000" />
+      <workItem from="1637409793030" duration="6305000" />
+      <workItem from="1639451237829" duration="24000" />
+      <workItem from="1639451283457" duration="892000" />
+      <workItem from="1639511855700" duration="728000" />
+      <workItem from="1639545186062" duration="290000" />
+      <workItem from="1639625197696" duration="8394000" />
+      <workItem from="1639764545206" duration="2230000" />
+      <workItem from="1641651120425" duration="163000" />
+      <workItem from="1641652367808" duration="353000" />
+      <workItem from="1641652748061" duration="1768000" />
+      <workItem from="1641654589335" duration="691000" />
+      <workItem from="1641655303813" duration="5926000" />
+      <workItem from="1641661392438" duration="461000" />
+      <workItem from="1641661902676" duration="37000" />
+      <workItem from="1641697355632" duration="8833000" />
+      <workItem from="1641778574082" duration="8457000" />
+      <workItem from="1644601781685" duration="11000" />
+      <workItem from="1645937600291" duration="6000" />
+      <workItem from="1648914658398" duration="372000" />
+      <workItem from="1649373398309" duration="151000" />
+      <workItem from="1654638312564" duration="686000" />
+      <workItem from="1654687353253" duration="592000" />
+      <workItem from="1654697614434" duration="808000" />
+      <workItem from="1654698566761" duration="1000" />
+      <workItem from="1654698585594" duration="433000" />
+      <workItem from="1654699046022" duration="115000" />
+      <workItem from="1654699669482" duration="13000" />
+      <workItem from="1656317752038" duration="160000" />
+      <workItem from="1656941374523" duration="204000" />
+      <workItem from="1657720947712" duration="16000" />
+      <workItem from="1657720999635" duration="150000" />
+    </task>
+    <task id="LOCAL-00379" summary="Updates Made in this commit:&#10;.) Adding Time to Total Meals&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Previous Update:&#10;.) Refactoring Edit_ShopForm&#10;.) Fixed - Edit_Ingredients.java error&#10;&#10;Errors:&#10;.)&#10;&#10;Next To Do:&#10;.) Efficient way of saving plan whereby only meals that are changed processed.&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1673468015528</created>
+      <option name="number" value="00379" />
+      <option name="presentableId" value="LOCAL-00379" />
+      <option name="project" value="LOCAL" />
+      <updated>1673468015528</updated>
+    </task>
+    <task id="LOCAL-00380" summary="Updates Made in this commit:&#10;.) Adding Time controls to Total Meals&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Previous Update:&#10;.) Refactoring Edit_ShopForm&#10;.) Fixed - Edit_Ingredients.java error&#10;&#10;Errors:&#10;.)&#10;&#10;Next To Do:&#10;.) Efficient way of saving plan whereby only meals that are changed processed.&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1673472881275</created>
+      <option name="number" value="00380" />
+      <option name="presentableId" value="LOCAL-00380" />
+      <option name="project" value="LOCAL" />
+      <updated>1673472881275</updated>
+    </task>
+    <task id="LOCAL-00381" summary="Updates Made in this commit:&#10;.) Pushing Updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Previous Update:&#10;.) Refactoring Edit_ShopForm&#10;.) Fixed - Edit_Ingredients.java error&#10;&#10;Errors:&#10;.)&#10;&#10;Next To Do:&#10;.) Efficient way of saving plan whereby only meals that are changed processed.&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1673888932372</created>
+      <option name="number" value="00381" />
+      <option name="presentableId" value="LOCAL-00381" />
+      <option name="project" value="LOCAL" />
+      <updated>1673888932375</updated>
+    </task>
+    <task id="LOCAL-00382" summary="Updates Made in this commit:&#10;.) Pushing Updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Previous Update:&#10;.) Refactoring Edit_ShopForm&#10;.) Fixed - Edit_Ingredients.java error&#10;&#10;Errors:&#10;.)&#10;&#10;Next To Do:&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1687688538840</created>
+      <option name="number" value="00382" />
+      <option name="presentableId" value="LOCAL-00382" />
+      <option name="project" value="LOCAL" />
+      <updated>1687688538840</updated>
+    </task>
+    <task id="LOCAL-00383" summary="Updates Made in this commit:&#10;.) Added Edit BTn Icon on Meal Manager&#10;&#10;Trying to do in this update:&#10;.) Implement edit btn Action&#10;&#10;Previous Update:&#10;.) Refactoring Edit_ShopForm&#10;.) Fixed - Edit_Ingredients.java error&#10;&#10;Errors:&#10;.)&#10;&#10;Next To Do:&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1687692168322</created>
+      <option name="number" value="00383" />
+      <option name="presentableId" value="LOCAL-00383" />
+      <option name="project" value="LOCAL" />
+      <updated>1687692168322</updated>
+    </task>
+    <task id="LOCAL-00384" summary="Updates Made in this commit:&#10;.) Added Maven to project&#10;.) Auto create DB on runtime&#10;.) &#10;&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) Finish off edit jtables button&#10;.) Keyword swap in DB script&#10;.) Fix Icons, paths changed&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1687915229137</created>
+      <option name="number" value="00384" />
+      <option name="presentableId" value="LOCAL-00384" />
+      <option name="project" value="LOCAL" />
+      <updated>1687915229137</updated>
+    </task>
+    <task id="LOCAL-00385" summary="Updates Made in this commit:&#10;.) IDK what this is&#10;&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) Finish off edit jtables button&#10;.) Keyword swap in DB script&#10;.) Fix Icons, paths changed&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1687915273748</created>
+      <option name="number" value="00385" />
+      <option name="presentableId" value="LOCAL-00385" />
+      <option name="project" value="LOCAL" />
+      <updated>1687915273748</updated>
+    </task>
+    <task id="LOCAL-00386" summary="Updates Made in this commit:&#10;.) DB version updated  in sql script&#10;&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) Finish off edit jtables button&#10;.) Fix Icons, paths changed&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1687944216123</created>
+      <option name="number" value="00386" />
+      <option name="presentableId" value="LOCAL-00386" />
+      <option name="project" value="LOCAL" />
+      <updated>1687944216125</updated>
+    </task>
+    <task id="LOCAL-00387" summary="Updates Made in this commit:&#10;.) Refactoring MyJDBC.java&#10;&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) Finish off edit jtables button&#10;.) Fix Icons, paths changed&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1687955845291</created>
+      <option name="number" value="00387" />
+      <option name="presentableId" value="LOCAL-00387" />
+      <option name="project" value="LOCAL" />
+      <updated>1687955845291</updated>
+    </task>
+    <task id="LOCAL-00388" summary="Updates Made in this commit:&#10;.) Refactoring MyJDBC.java&#10;.) Fixing missing icons&#10;.) loading screen gif fixed&#10;&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) Finish off edit jtables button&#10;.) Fix Icons, paths changed&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1687956615075</created>
+      <option name="number" value="00388" />
+      <option name="presentableId" value="LOCAL-00388" />
+      <option name="project" value="LOCAL" />
+      <updated>1687956615075</updated>
+    </task>
+    <task id="LOCAL-00389" summary="Updates Made in this commit:&#10;.) SearchForFoodInfo.java icons fixed&#10;&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) Finish off edit jtables button&#10;.) Fix Icons, paths changed&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1687958451069</created>
+      <option name="number" value="00389" />
+      <option name="presentableId" value="LOCAL-00389" />
+      <option name="project" value="LOCAL" />
+      <updated>1687958451069</updated>
+    </task>
+    <task id="LOCAL-00390" summary="Updates Made in this commit:&#10;.) SearchForFoodInfo.java icons fixed&#10;&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) Finish off edit jtables button&#10;.) Fix Icons, paths changed&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1687958840039</created>
+      <option name="number" value="00390" />
+      <option name="presentableId" value="LOCAL-00390" />
+      <option name="project" value="LOCAL" />
+      <updated>1687958840039</updated>
+    </task>
+    <task id="LOCAL-00391" summary="Updates Made in this commit:&#10;.) Fixed Main GUI icon paths&#10;&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1687959344147</created>
+      <option name="number" value="00391" />
+      <option name="presentableId" value="LOCAL-00391" />
+      <option name="project" value="LOCAL" />
+      <updated>1687959344147</updated>
+    </task>
+    <task id="LOCAL-00392" summary="Updates Made in this commit:&#10;.) All icons fixed&#10;&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1687959576446</created>
+      <option name="number" value="00392" />
+      <option name="presentableId" value="LOCAL-00392" />
+      <option name="project" value="LOCAL" />
+      <updated>1687959576447</updated>
+    </task>
+    <task id="LOCAL-00393" summary="Updates Made in this commit:&#10;.) Most Scripts Backed-UP&#10;&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) Backup Ingredients_Info &#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1688034619115</created>
+      <option name="number" value="00393" />
+      <option name="presentableId" value="LOCAL-00393" />
+      <option name="project" value="LOCAL" />
+      <updated>1688034619116</updated>
+    </task>
+    <task id="LOCAL-00394" summary="Updates Made in this commit:&#10;.) Most Scripts Backed-UP&#10;&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) Backup Ingredients_Info &#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1688034669350</created>
+      <option name="number" value="00394" />
+      <option name="presentableId" value="LOCAL-00394" />
+      <option name="project" value="LOCAL" />
+      <updated>1688034669350</updated>
+    </task>
+    <task id="LOCAL-00395" summary="Updates Made in this commit:&#10;.) Backup Ingredients_Info &#10;&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) &#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1688060680232</created>
+      <option name="number" value="00395" />
+      <option name="presentableId" value="LOCAL-00395" />
+      <option name="project" value="LOCAL" />
+      <updated>1688060680232</updated>
+    </task>
+    <task id="LOCAL-00396" summary="Updates Made in this commit:&#10;.) Refactoring Backup Ingredients_Info &#10;&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) &#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1688062154884</created>
+      <option name="number" value="00396" />
+      <option name="presentableId" value="LOCAL-00396" />
+      <option name="project" value="LOCAL" />
+      <updated>1688062154884</updated>
+    </task>
+    <task id="LOCAL-00397" summary="Updates Made in this commit:&#10;.) IngredientsTypes and Stores now backup when adding through gui to sql file&#10;&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1688065596613</created>
+      <option name="number" value="00397" />
+      <option name="presentableId" value="LOCAL-00397" />
+      <option name="project" value="LOCAL" />
+      <updated>1688065596613</updated>
+    </task>
+    <task id="LOCAL-00398" summary="Updates Made in this commit:&#10;.) IngredientsTypes and Stores now backup when editing through gui to sql file&#10;&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1688067768917</created>
+      <option name="number" value="00398" />
+      <option name="presentableId" value="LOCAL-00398" />
+      <option name="project" value="LOCAL" />
+      <updated>1688067768917</updated>
+    </task>
+    <task id="LOCAL-00399" summary="Updates Made in this commit:&#10;.)&#10;&#10;&#10;Trying to do in this update:&#10;.) delete for ingredientsInfo in MyJDBC.java&#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1688335422696</created>
+      <option name="number" value="00399" />
+      <option name="presentableId" value="LOCAL-00399" />
+      <option name="project" value="LOCAL" />
+      <updated>1688335422696</updated>
+    </task>
+    <task id="LOCAL-00400" summary="Updates Made in this commit:&#10;.) delete for ingredientsInfo in MyJDBC.java&#10;&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1688351244519</created>
+      <option name="number" value="00400" />
+      <option name="presentableId" value="LOCAL-00400" />
+      <option name="project" value="LOCAL" />
+      <updated>1688351244519</updated>
+    </task>
+    <task id="LOCAL-00401" summary="Updates Made in this commit:&#10;.) delete for ingredientsInfo in MyJDBC.java&#10;&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1688351254912</created>
+      <option name="number" value="00401" />
+      <option name="presentableId" value="LOCAL-00401" />
+      <option name="project" value="LOCAL" />
+      <updated>1688351254912</updated>
+    </task>
+    <task id="LOCAL-00402" summary="Updates Made in this commit:&#10;.) Add, Replace, Delete should work for ingredientTypes and ingredientStores.&#10;&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1688464703311</created>
+      <option name="number" value="00402" />
+      <option name="presentableId" value="LOCAL-00402" />
+      <option name="project" value="LOCAL" />
+      <updated>1688464703311</updated>
+    </task>
+    <task id="LOCAL-00403" summary="Updates Made in this commit:&#10;.) Refactoring&#10;&#10;&#10;Trying to do in this update:&#10;.) Replace, delete for ingredientsInfo&#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1688469930269</created>
+      <option name="number" value="00403" />
+      <option name="presentableId" value="LOCAL-00403" />
+      <option name="project" value="LOCAL" />
+      <updated>1688469930269</updated>
+    </task>
+    <task id="LOCAL-00404" summary="Updates Made in this commit:&#10;.) Refactoring&#10;&#10;&#10;Trying to do in this update:&#10;.) Replace, delete for ingredientsInfo&#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1688481643248</created>
+      <option name="number" value="00404" />
+      <option name="presentableId" value="LOCAL-00404" />
+      <option name="project" value="LOCAL" />
+      <updated>1688481643248</updated>
+    </task>
+    <task id="LOCAL-00405" summary="Updates Made in this commit:&#10;.) Refactored getting DB Info for ingredients in edit ingredientsform&#10;&#10;&#10;Trying to do in this update:&#10;.) Replace, delete for ingredientsInfo&#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1688488680051</created>
+      <option name="number" value="00405" />
+      <option name="presentableId" value="LOCAL-00405" />
+      <option name="project" value="LOCAL" />
+      <updated>1688488680051</updated>
+    </task>
+    <task id="LOCAL-00406" summary="Updates Made in this commit:&#10;.) Refactoring&#10;&#10;&#10;Trying to do in this update:&#10;.) Replace, delete for ingredientsInfo&#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1688503003255</created>
+      <option name="number" value="00406" />
+      <option name="presentableId" value="LOCAL-00406" />
+      <option name="project" value="LOCAL" />
+      <updated>1688503003255</updated>
+    </task>
+    <task id="LOCAL-00407" summary="Updates Made in this commit:&#10;.) Refactoring&#10;&#10;&#10;Trying to do in this update:&#10;.) Replace, delete for ingredientsInfo&#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1688512111471</created>
+      <option name="number" value="00407" />
+      <option name="presentableId" value="LOCAL-00407" />
+      <option name="project" value="LOCAL" />
+      <updated>1688512111471</updated>
+    </task>
+    <task id="LOCAL-00408" summary="Updates Made in this commit:&#10;.) Parent_IngredientsForm_And_ShopForm formatting for how the data is saved onto the backup file the same as the DB. &#10;.) MyJDBC.java new method for replacing text for ingredientsInfo&#10;&#10;&#10;Trying to do in this update:&#10;.) Replace, delete for ingredientsInfo&#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1688671911217</created>
+      <option name="number" value="00408" />
+      <option name="presentableId" value="LOCAL-00408" />
+      <option name="project" value="LOCAL" />
+      <updated>1688671911217</updated>
+    </task>
+    <task id="LOCAL-00409" summary="Updates Made in this commit:&#10;.) Fixed Replacing Data on Edit IngredientsForm&#10;&#10;&#10;Trying to do in this update:&#10;.) Replace, delete for ingredientsInfo&#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1688681256436</created>
+      <option name="number" value="00409" />
+      <option name="presentableId" value="LOCAL-00409" />
+      <option name="project" value="LOCAL" />
+      <updated>1688681256437</updated>
+    </task>
+    <task id="LOCAL-00410" summary="Updates Made in this commit:&#10;.) Refactoring / Comments &#10;&#10;&#10;Trying to do in this update:&#10;.) Replace, delete for ingredientsInfo&#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1715904010692</created>
+      <option name="number" value="00410" />
+      <option name="presentableId" value="LOCAL-00410" />
+      <option name="project" value="LOCAL" />
+      <updated>1715904010692</updated>
+    </task>
+    <task id="LOCAL-00411" summary="Updates Made in this commit:&#10;.) First part of changing and saving meal name changes &#10;.) Refactoring / Comments &#10;&#10;&#10;&#10;Trying to do in this update:&#10;.) Replace, delete for ingredientsInfo&#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1716224606306</created>
+      <option name="number" value="00411" />
+      <option name="presentableId" value="LOCAL-00411" />
+      <option name="project" value="LOCAL" />
+      <updated>1716224606306</updated>
+    </task>
+    <task id="LOCAL-00412" summary="Updates Made in this commit:&#10;.) First part of changing and saving meal name changes &#10;.) Refactoring / Comments &#10;&#10;&#10;&#10;Trying to do in this update:&#10;.) Replace, delete for ingredientsInfo&#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1717143808896</created>
+      <option name="number" value="00412" />
+      <option name="presentableId" value="LOCAL-00412" />
+      <option name="project" value="LOCAL" />
+      <updated>1717143808896</updated>
+    </task>
+    <task id="LOCAL-00413" summary="Updates Made in this commit:&#10;.)&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1733760085565</created>
+      <option name="number" value="00413" />
+      <option name="presentableId" value="LOCAL-00413" />
+      <option name="project" value="LOCAL" />
+      <updated>1733760085566</updated>
+    </task>
+    <task id="LOCAL-00414" summary="Updates Made in this commit:&#10;.) When adding ingredients restrict the user from adding ' symbol because it messes with querys in the database when retrieving ingredient name&#10;&#10;Trying to do in this update:&#10;.) Need to work on the edit screen version&#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1733766126779</created>
+      <option name="number" value="00414" />
+      <option name="presentableId" value="LOCAL-00414" />
+      <option name="project" value="LOCAL" />
+      <updated>1733766126779</updated>
+    </task>
+    <task id="LOCAL-00415" summary="Updates Made in this commit:&#10;.) When adding ingredients restrict the user from adding ' symbol because it messes with querys in the database when retrieving ingredient name&#10;&#10;Trying to do in this update:&#10;.) Need to work on the edit screen version&#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1733766167174</created>
+      <option name="number" value="00415" />
+      <option name="presentableId" value="LOCAL-00415" />
+      <option name="project" value="LOCAL" />
+      <updated>1733766167174</updated>
+    </task>
+    <task id="LOCAL-00416" summary="Updates Made in this commit:&#10;.) When adding ingredients restrict the user from adding ' symbol because it messes with querys in the database when retrieving ingredient name&#10;&#10;Trying to do in this update:&#10;.) Need to work on the edit screen version&#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1734049330346</created>
+      <option name="number" value="00416" />
+      <option name="presentableId" value="LOCAL-00416" />
+      <option name="project" value="LOCAL" />
+      <updated>1734049330347</updated>
+    </task>
+    <task id="LOCAL-00417" summary="Updates Made in this commit:&#10;.) Fixed edit name btn error which occured when the user entered no name.&#10;&#10;Trying to do in this update:&#10;.) Need to work on the edit screen version&#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1734055738128</created>
+      <option name="number" value="00417" />
+      <option name="presentableId" value="LOCAL-00417" />
+      <option name="project" value="LOCAL" />
+      <updated>1734055738128</updated>
+    </task>
+    <task id="LOCAL-00418" summary="Updates Made in this commit:&#10;.) Fixed edit name btn error which occured when the user entered no name.&#10;&#10;Trying to do in this update:&#10;.) Need to work on the edit screen version&#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1734060597327</created>
+      <option name="number" value="00418" />
+      <option name="presentableId" value="LOCAL-00418" />
+      <option name="project" value="LOCAL" />
+      <updated>1734060597327</updated>
+    </task>
+    <task id="LOCAL-00419" summary="Updates Made in this commit:&#10;.) Fixed edit name btn error which occured when the user entered no name.&#10;&#10;Trying to do in this update:&#10;.) Need to work on the edit screen version&#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1734110375926</created>
+      <option name="number" value="00419" />
+      <option name="presentableId" value="LOCAL-00419" />
+      <option name="project" value="LOCAL" />
+      <updated>1734110375926</updated>
+    </task>
+    <task id="LOCAL-00420" summary="Updates Made in this commit:&#10;.) Fixed sql duplicate errors when inserting &#10;&#10;Trying to do in this update:&#10;.) Need to work on the edit screen version&#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1734113931680</created>
+      <option name="number" value="00420" />
+      <option name="presentableId" value="LOCAL-00420" />
+      <option name="project" value="LOCAL" />
+      <updated>1734113931680</updated>
+    </task>
+    <task id="LOCAL-00421" summary="Updates Made in this commit:&#10;.) Fixed sql duplicate errors when inserting &#10;&#10;Trying to do in this update:&#10;.) Need to work on the edit screen version&#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1735592883699</created>
+      <option name="number" value="00421" />
+      <option name="presentableId" value="LOCAL-00421" />
+      <option name="project" value="LOCAL" />
+      <updated>1735592883700</updated>
+    </task>
+    <task id="LOCAL-00422" summary="Updates Made in this commit:&#10;.) Folder Refactoring&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1736624978641</created>
+      <option name="number" value="00422" />
+      <option name="presentableId" value="LOCAL-00422" />
+      <option name="project" value="LOCAL" />
+      <updated>1736624978641</updated>
+    </task>
+    <task id="LOCAL-00423" summary="Updates Made in this commit:&#10;.) Created Expense Calculations &#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1736888724574</created>
+      <option name="number" value="00423" />
+      <option name="presentableId" value="LOCAL-00423" />
+      <option name="project" value="LOCAL" />
+      <updated>1736888724574</updated>
+    </task>
+    <task id="LOCAL-00424" summary="Updates Made in this commit:&#10;.) &#10;&#10;Trying to do in this update:&#10;.) Trying to add product name into shops GUI&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1736899177040</created>
+      <option name="number" value="00424" />
+      <option name="presentableId" value="LOCAL-00424" />
+      <option name="project" value="LOCAL" />
+      <updated>1736899177040</updated>
+    </task>
+    <task id="LOCAL-00425" summary="Updates Made in this commit:&#10;.) &#10;&#10;Trying to do in this update:&#10;.) Trying to add product name into shops GUI&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1736899233700</created>
+      <option name="number" value="00425" />
+      <option name="presentableId" value="LOCAL-00425" />
+      <option name="project" value="LOCAL" />
+      <updated>1736899233700</updated>
+    </task>
+    <task id="LOCAL-00426" summary="Updates Made in this commit:&#10;.) Trying to add product name into shops GUI in ADD section&#10;&#10;Trying to do in this update:&#10;.) Trying to add product name into edit section&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1736912125976</created>
+      <option name="number" value="00426" />
+      <option name="presentableId" value="LOCAL-00426" />
+      <option name="project" value="LOCAL" />
+      <updated>1736912125976</updated>
+    </task>
+    <task id="LOCAL-00427" summary="Updates Made in this commit:&#10;.) Added some backend features for product name gui and refactoring&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals">
+      <created>1737337803890</created>
+      <option name="number" value="00427" />
+      <option name="presentableId" value="LOCAL-00427" />
+      <option name="project" value="LOCAL" />
+      <updated>1737337803890</updated>
+    </task>
+    <option name="localTasksCounter" value="428" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="Refactoring" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) All icons fixed&#10;&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) All Scripts Backed-UP&#10;&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) Backup Ingredients_Info &#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Most Scripts Backed-UP&#10;&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) Backup Ingredients_Info &#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Backup Ingredients_Info &#10;&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) &#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Refactoring Backup Ingredients_Info &#10;&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) &#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) IngredientsTypes and Stores now backup when adding through gui to sql file&#10;&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) IngredientsTypes and Stores now backup when editing through gui to sql file&#10;&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals" />
+    <MESSAGE value="Updates Made in this commit:&#10;.)&#10;&#10;&#10;Trying to do in this update:&#10;.) delete for ingredientsInfo in MyJDBC.java&#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) delete for ingredientsInfo in MyJDBC.java&#10;&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Add, Replace, Delete should work for ingredientTypes and ingredientStores.&#10;&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Refactored getting DB Info for ingredients in edit ingredientsform&#10;&#10;&#10;Trying to do in this update:&#10;.) Replace, delete for ingredientsInfo&#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Refactoring&#10;&#10;&#10;Trying to do in this update:&#10;.) Replace, delete for ingredientsInfo&#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Parent_IngredientsForm_And_ShopForm formatting for how the data is saved onto the backup file the same as the DB. &#10;.) MyJDBC.java new method for replacing text for ingredientsInfo&#10;&#10;&#10;Trying to do in this update:&#10;.) Replace, delete for ingredientsInfo&#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Fixed Replacing Data on Edit IngredientsForm&#10;&#10;&#10;Trying to do in this update:&#10;.) Replace, delete for ingredientsInfo&#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Refactoring / Comments &#10;&#10;&#10;Trying to do in this update:&#10;.) Replace, delete for ingredientsInfo&#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) First part of changing and saving meal name changes &#10;.) Refactoring / Comments &#10;&#10;&#10;&#10;Trying to do in this update:&#10;.) Replace, delete for ingredientsInfo&#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals" />
+    <MESSAGE value="Updates Made in this commit:&#10;.)&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) When adding ingredients restrict the user from adding ' symbol because it messes with querys in the database when retrieving ingredient name&#10;&#10;Trying to do in this update:&#10;.) Need to work on the edit screen version&#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Fixed edit name btn error which occured when the user entered no name.&#10;&#10;Trying to do in this update:&#10;.) Need to work on the edit screen version&#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Fixed sql duplicate errors when inserting &#10;&#10;Trying to do in this update:&#10;.) Need to work on the edit screen version&#10;&#10;Next To Do:&#10;.) SQL BackUp for editing files.&#10;.) Finish off edit jtables button&#10;.) Fix icon paths on Jtables&#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Folder Refactoring&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Created Expense Calculations &#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) &#10;&#10;Trying to do in this update:&#10;.) Trying to add product name into shops GUI&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Trying to add product name into shops GUI in ADD section&#10;&#10;Trying to do in this update:&#10;.) Trying to add product name into edit section&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Added some backend features for product name gui and refactoring&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updates Made in this commit:&#10;.) Added some backend features for product name gui and refactoring&#10;&#10;Trying to do in this update:&#10;.) &#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors:&#10;.)&#10;&#10;&#10;&#10;.) StoresList&#10;&#10;.) Closing Parent_Ingredients_Info ....&#10;brings up table successfully deleted&#10;&#10;.) if ingredientType / ingredientName changes the form should update (meal Plan)&#10;&#10;Need to update:&#10;.) ScrollBar_Down BTN incorporated &amp; into add new meal functionality.&#10;&#10;.) Delete folder in path: &quot;src/Resources/Database Docs/New Setup3&quot; if not needed.&#10;&#10;.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.&#10;&#10;.) Cant Update ingredient price if its in a meal.&#10;&#10;.) Any edits to ingredients needs to update meals" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/Tests/JTables/JComboBox/JcomboBox_Update.java</url>
+          <line>268</line>
+          <option name="timeStamp" value="18" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/Tests/JTables/JComboBox/JcomboBox_Update.java</url>
+          <line>78</line>
+          <option name="timeStamp" value="22" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/Tests/JTables/JComboBox/JcomboBox_Update.java</url>
+          <line>108</line>
+          <option name="timeStamp" value="23" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Add_Ingredients_Screen.java</url>
+          <line>158</line>
+          <option name="timeStamp" value="25" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/API/Nutritionix/NutritionIx_API.java</url>
+          <line>87</line>
+          <option name="timeStamp" value="41" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Add_Ingredients_Screen.java</url>
+          <line>50</line>
+          <option name="timeStamp" value="43" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/API/Nutritionix/NutritionIx_API.java</url>
+          <line>272</line>
+          <option name="timeStamp" value="48" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Edit_IngredientsScreen.java</url>
+          <line>84</line>
+          <option name="timeStamp" value="276" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Database_Objects/MyJTable_JDBC/ViewDataTables/Children/MacrosLeftTable.java</url>
+          <line>57</line>
+          <option name="timeStamp" value="280" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Edit_IngredientsScreen.java</url>
+          <line>312</line>
+          <option name="timeStamp" value="282" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Ingredients_Info_Screen.java</url>
+          <line>229</line>
+          <option name="timeStamp" value="284" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Ingredient_Info/Edit_Stores_And_Types/Parent_For_Types_And_Stores_Screens.java</url>
+          <line>568</line>
+          <option name="timeStamp" value="288" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Database_Objects/JTable_JDBC/Children/IngredientsTable.java</url>
+          <line>354</line>
+          <option name="timeStamp" value="289" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Database_Objects/JTable_JDBC/MealManager.java</url>
+          <line>34</line>
+          <option name="timeStamp" value="293" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Database_Objects/JTable_JDBC/MealManager.java</url>
+          <line>47</line>
+          <option name="timeStamp" value="294" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Database_Objects/JTable_JDBC/Children/IngredientsTable.java</url>
+          <line>1162</line>
+          <option name="timeStamp" value="295" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Others/Meal_Plan_Screen.java</url>
+          <line>1199</line>
+          <option name="timeStamp" value="298" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Others/Meal_Plan_Screen.java</url>
+          <line>1081</line>
+          <option name="timeStamp" value="299" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Others/Meal_Plan_Screen.java</url>
+          <line>740</line>
+          <option name="timeStamp" value="300" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Database_Objects/JTable_JDBC/MealManager.java</url>
+          <line>792</line>
+          <option name="timeStamp" value="301" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Database_Objects/JTable_JDBC/Children/IngredientsTable.java</url>
+          <line>785</line>
+          <option name="timeStamp" value="302" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Database_Objects/JTable_JDBC/Children/IngredientsTable.java</url>
+          <line>1059</line>
+          <option name="timeStamp" value="307" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Edit_IngredientsScreen.java</url>
+          <line>557</line>
+          <option name="timeStamp" value="311" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Others/Meal_Plan_Screen.java</url>
+          <line>1350</line>
+          <option name="timeStamp" value="313" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Add_ShopForm.java</url>
+          <line>37</line>
+          <option name="timeStamp" value="315" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Edit_IngredientsScreen.java</url>
+          <line>450</line>
+          <option name="timeStamp" value="316" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Stores_And_Types/Edit_Ingredients_Types_Screen.java</url>
+          <line>68</line>
+          <option name="timeStamp" value="318" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Database_Objects/JDBC/MyJDBC.java</url>
+          <line>502</line>
+          <option name="timeStamp" value="328" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Database_Objects/JDBC/MyJDBC.java</url>
+          <line>221</line>
+          <option name="timeStamp" value="329" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Database_Objects/JDBC/MyJDBC.java</url>
+          <line>664</line>
+          <option name="timeStamp" value="330" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Others/Meal_Plan_Screen.java</url>
+          <line>400</line>
+          <option name="timeStamp" value="336" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Database_Objects/JTable_JDBC/MealManager.java</url>
+          <line>113</line>
+          <option name="timeStamp" value="337" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Database_Objects/JTable_JDBC/MealManager.java</url>
+          <line>528</line>
+          <option name="timeStamp" value="338" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Database_Objects/JTable_JDBC/Children/IngredientsTable.java</url>
+          <line>1751</line>
+          <option name="timeStamp" value="340" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/API/Nutritionix/NutritionIx_API.java</url>
+          <line>86</line>
+          <properties class="App_Code.Objects.API.Nutritionix.NutritionIx_API">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="37" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/API/Nutritionix/NutritionIx_API.java</url>
+          <line>266</line>
+          <properties class="App_Code.Objects.API.Nutritionix.NutritionIx_API">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="38" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/API/Nutritionix/NutritionIx_API.java</url>
+          <line>322</line>
+          <properties class="App_Code.Objects.API.Nutritionix.NutritionIx_API">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="40" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Ingredients_Info_Screen.java</url>
+          <line>234</line>
+          <properties class="App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Ingredients_Info_Screen">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="283" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Others/Meal_Plan_Screen.java</url>
+          <line>847</line>
+          <properties class="App_Code.Objects.Screens.Others.Meal_Plan_Screen">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="287" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Others/Meal_Plan_Screen.java</url>
+          <line>995</line>
+          <properties class="App_Code.Objects.Screens.Others.Meal_Plan_Screen">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="306" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Add_Ingredients_Screen.java</url>
+          <line>277</line>
+          <properties class="App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Add_Ingredients_Screen">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="309" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Database_Objects/JDBC/MyJDBC.java</url>
+          <line>510</line>
+          <properties class="App_Code.Objects.Database_Objects.JDBC.MyJDBC" method="check_IF_DB_Exists">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="317" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Edit_IngredientsForm.java</url>
+          <line>75</line>
+          <properties class="App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Edit_IngredientsForm">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="325" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Edit_IngredientsScreen.java</url>
+          <line>437</line>
+          <properties class="App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Edit_IngredientsScreen" method="refreshFormBTNAction">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="326" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Database_Objects/JTable_JDBC/MealManager.java</url>
+          <line>527</line>
+          <properties class="App_Code.Objects.Database_Objects.JTable_JDBC.MealManager" method="edit_Name_BTN_Action">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="332" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Database_Objects/JTable_JDBC/MealManager.java</url>
+          <line>928</line>
+          <properties class="App_Code.Objects.Database_Objects.JTable_JDBC.MealManager" method="refresh_Btn_Action">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="333" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Database_Objects/JTable_JDBC/MealManager.java</url>
+          <line>1001</line>
+          <properties class="App_Code.Objects.Database_Objects.JTable_JDBC.MealManager" method="save_Btn_Action">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="334" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Database_Objects/JTable_JDBC/MealManager.java</url>
+          <line>776</line>
+          <properties class="App_Code.Objects.Database_Objects.JTable_JDBC.MealManager" method="transferMealDataToPlan">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="335" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Database_Objects/JTable_JDBC/MealManager.java</url>
+          <line>219</line>
+          <properties class="App_Code.Objects.Database_Objects.JTable_JDBC.MealManager" method="createTimeString">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="339" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Add_ShopForm.java</url>
+          <line>115</line>
+          <properties class="App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Add_ShopForm" method="validateForm">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="350" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Add_ShopForm.java</url>
+          <line>228</line>
+          <properties class="App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Add_ShopForm" method="get_ShopForm_UpdateString">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="351" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Add_ShopForm.java</url>
+          <line>279</line>
+          <properties class="App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Add_ShopForm" method="clearShopForm">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="352" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Add_ShopForm.java</url>
+          <line>294</line>
+          <properties class="App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Add_ShopForm" method="extraClearShopsForm">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="353" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Add_ShopForm.java</url>
+          <line>541</line>
+          <properties class="App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Add_ShopForm.AddShopForm_Object" method="deleteRowAction">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="354" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Add_ShopForm.java</url>
+          <line>547</line>
+          <properties class="App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Add_ShopForm.AddShopForm_Object" method="loadStoresInJComboBox">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="355" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/Gym_App$Meal_Plan_Screen.ic" NAME="Meal_Plan_Screen Coverage Results" MODIFIED="1657196051898" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>App_Code.Objects.Screens.Others.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/Gym_App$MealPlanScreen.ic" NAME="MealPlanScreen Coverage Results" MODIFIED="1641101443898" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>App_Code.Objects.Screens.MealPlanScreen</FILTER>
+    </SUITE>
+  </component>
+</project>
