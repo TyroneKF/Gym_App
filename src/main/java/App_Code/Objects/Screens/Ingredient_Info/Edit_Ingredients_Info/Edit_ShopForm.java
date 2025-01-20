@@ -87,8 +87,8 @@ public class Edit_ShopForm extends Add_ShopForm
     }
 
     //EDITING NOW
-    public String[] get_ShopForm_UpdateString(String ingredientIDIn) // Not an override method
-    {
+    public String[] get_ShopForm_UpdateString(String ingredientIDInDB) // Not an override method
+    {/*
         //#############################################################
         // Checks if there is anything to update before, updating
         //############################################################
@@ -155,6 +155,12 @@ public class Edit_ShopForm extends Add_ShopForm
 
                 listPos++;
             }
+
+
+
+
+
+
         }
 
         //###################################################################
@@ -178,7 +184,7 @@ public class Edit_ShopForm extends Add_ShopForm
                 int objectID = supplierAddToDB.getObjectID();
 
                 values += String.format("\n(%s, %s, %s, (SELECT StoreID FROM stores WHERE Store_Name = '%s'))",
-                        ingredientIDIn, quantityPerPack.get(objectID).getText(),
+                        ingredientIDInDB, quantityPerPack.get(objectID).getText(),
                         prices.get(objectID).getText(), shopJComboBoxes.get(objectID).getSelectedItem().toString());
 
                 if (pos == suppliersNotInDBSize - 1)
@@ -203,7 +209,9 @@ public class Edit_ShopForm extends Add_ShopForm
         //############################################################
         // Return values
         //############################################################
-        return updates;
+        return updates;*/
+
+        return new String[1];
     }
 
     //EDITING NOW
