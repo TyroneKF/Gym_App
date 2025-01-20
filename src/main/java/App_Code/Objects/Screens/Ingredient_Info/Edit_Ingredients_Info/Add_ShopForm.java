@@ -613,8 +613,6 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
 
         public void removeFromParentContainer()
         {
-
-
             //Remove from parent Container
             parentContainer.remove(this);
 

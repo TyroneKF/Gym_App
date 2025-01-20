@@ -26,7 +26,7 @@ public class Edit_ShopForm extends Add_ShopForm
         // Get New Ingredient Shop Info
         //###########################
         ArrayList<ArrayList<String>> temp_ShopsFormDBData = db.getMultiColumnQuery(String.format("""                    
-                SELECT i.PDID, s.Store_Name, i.Cost_Per_Unit, i.Volume_Per_Unit
+                SELECT i.PDID, s.Store_Name, i.Product_Name, i.Cost_Per_Unit, i.Volume_Per_Unit
                 FROM  ingredientInShops i
                 INNER JOIN
                 (
@@ -64,14 +64,19 @@ public class Edit_ShopForm extends Add_ShopForm
             Add_ShopForm.AddShopForm_Object row = addShopForm_object(Integer.parseInt(rowData.get(0)));
             addShopFormObjects.add(row);
 
+            System.out.printf("\n\nloadShopFormData() \n%s\n%s\n%s\n%s",rowData.get(0),rowData.get(1),rowData.get(2),rowData.get(3),rowData.get(4));
+
             // Set ShopName
             row.getShops_JComboBox().setSelectedItem(rowData.get(1));// HELLO IDK WHAT I DID HERE in REFACTORING
 
+            // Set Product Name
+            row.getProductName_TxtField().setText(rowData.get(2));
+
             // Set Cost Info
-            row.getProductPrice_TxtField().setText(rowData.get(2));// HELLO IDK WHAT I DID HERE  in REFACTORING
+            row.getProductPrice_TxtField().setText(rowData.get(3));// HELLO IDK WHAT I DID HERE  in REFACTORING
 
             // Set Volume Info
-            row.getQuantityPerPack_TxtField().setText(rowData.get(3));// HELLO IDK WHAT I DID HERE  in REFACTORING
+            row.getQuantityPerPack_TxtField().setText(rowData.get(4));// HELLO IDK WHAT I DID HERE  in REFACTORING
         }
     }
 
