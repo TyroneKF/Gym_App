@@ -257,11 +257,15 @@ public class Edit_ShopForm extends Add_ShopForm
             //################################################
             // Confirm if the user wants to delete the shop
             //################################################
-            String chosenShop = String.valueOf(shops_JComboBox.getSelectedItem());
-            if (!(areYouSure(String.format("you want to permanently delete %s as a Supplier for this ingredient", chosenShop))))
+            String
+                    chosenShop = String.valueOf(getShops_JComboBox().getSelectedItem()),
+                    productName = String.valueOf(getProductName_TxtField().getText());
+
+            if (!(areYouSure(String.format("you want to permanently delete the product: \"%s\" from \"%s\" as a product for this ingredient.", productName, chosenShop))))
             {
                 return;
             }
+
             //################################################
             // Get Ingredient PDID
             //################################################
@@ -279,7 +283,7 @@ public class Edit_ShopForm extends Add_ShopForm
 
                 if (selectedIngredientID == null)
                 {
-                    JOptionPane.showMessageDialog(mealPlanScreen, String.format("Unable to get selected ingredients information to delete the Supplier ' %s ' !", chosenShop));
+                    JOptionPane.showMessageDialog(mealPlanScreen, String.format("Unable to get selected ingredients information to delete product:\n\"%s\" from \"%s\" as a Supplier for this ingredient.", productName, chosenShop));
                     return;
                 }
 
@@ -287,7 +291,7 @@ public class Edit_ShopForm extends Add_ShopForm
                 // Delete Supplier From ingredients_in_meal (PDID)
                 //###################################################
                 String updateQuery = String.format("""
-                        UPDATE ingredients_in_meal
+                        UPDATE ingredients_in_sections_of_meal
                         SET  PDID = NULL
                         WHERE PDID = %s; """, PDID);
 
@@ -307,7 +311,7 @@ public class Edit_ShopForm extends Add_ShopForm
                 //###################################################
                 if (!(db.uploadData_Batch_Altogether(new String[]{updateQuery, updateQuery2})))
                 {
-                    JOptionPane.showMessageDialog(mealPlanScreen, String.format("Unable to remove the supplier ' %s ' from this ingredient!", chosenShop));
+                    JOptionPane.showMessageDialog(mealPlanScreen, String.format("Unable to remove product: \"%s\" from \"%s\" as a Supplier for this ingredient.", productName, chosenShop));
                     return;
                 }
             }
@@ -315,13 +319,13 @@ public class Edit_ShopForm extends Add_ShopForm
             //################################################
             // Remove Row Object
             //################################################
-            removeFromParentContainer();
             shopFormObjects.remove(this);
+            removeFromParentContainer();
 
             //################################################
             // Remove Row Object
             //################################################
-            JOptionPane.showMessageDialog(mealPlanScreen, String.format("Successfully, remove the  supplier ' %s ' from this ingredient!", chosenShop));
+            JOptionPane.showMessageDialog(mealPlanScreen, String.format("Successfully, removed product: \"%s\" from \"%s\" as a Supplier for this ingredient.", productName, chosenShop));
         }
     }
 }

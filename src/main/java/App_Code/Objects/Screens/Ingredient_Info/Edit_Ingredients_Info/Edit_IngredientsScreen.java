@@ -12,7 +12,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.TreeMap;
 
 public class Edit_IngredientsScreen extends Add_Ingredients_Screen
