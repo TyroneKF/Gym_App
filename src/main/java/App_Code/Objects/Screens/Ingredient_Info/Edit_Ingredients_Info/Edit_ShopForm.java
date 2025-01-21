@@ -6,21 +6,36 @@ import java.util.ArrayList;
 
 public class Edit_ShopForm extends Add_ShopForm
 {
-    private Edit_IngredientsForm ingredientsForm;
+    private Edit_IngredientsForm edit_IngredientsForm;
     private ArrayList<ArrayList<String>> shopsFormDBData = new ArrayList<>();
 
     public Edit_ShopForm(Container parentContainer, Ingredients_Info_Screen ingredients_info_screen, Edit_IngredientsScreen edit_ingredients, String btnText, int btnWidth, int btnHeight)
     {
         super(parentContainer, ingredients_info_screen, edit_ingredients, btnText, btnWidth, btnHeight);
-        this.ingredientsForm = edit_ingredients.getIngredientsForm();
+        this.edit_IngredientsForm = edit_ingredients.getIngredientsForm();
+    }
+
+    private Boolean areYouSure(String process)
+    {
+        int reply = JOptionPane.showConfirmDialog(mealPlanScreen, String.format("Are you sure you want to: %s?", process, process),
+                "Confirmation", JOptionPane.YES_NO_OPTION); //HELLO Edit
+
+        if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
+        {
+            return false;
+        }
+        return true;
     }
 
     public void updateShopFormWithInfoFromDB()
     {
+        // Clear Shop Form For New Requested Info
+         clearShopForm();
+
         //###########################
         //
         //###########################
-        String selectedIngredientID = ingredientsForm.getSelectedIngredientID();
+        String selectedIngredientID = edit_IngredientsForm.getSelectedIngredientID();
 
         //###########################
         // Get New Ingredient Shop Info
@@ -44,11 +59,6 @@ public class Edit_ShopForm extends Add_ShopForm
         shopsFormDBData = temp_ShopsFormDBData;
 
         //###########################
-        // Clear Supplier Info
-        //###########################
-        clearShopForm();
-
-        //###########################
         //Add Rows for shops onto form
         //###########################
         loadShopFormData();
@@ -60,23 +70,23 @@ public class Edit_ShopForm extends Add_ShopForm
         {
             ArrayList<String> rowData = shopsFormDBData.get(i);
 
-            // Set PDID & Add Row
-            Add_ShopForm.AddShopForm_Object row = addShopForm_object(Integer.parseInt(rowData.get(0)));
-            addShopFormObjects.add(row);
+            System.out.printf("\n\nloadShopFormData() \n%s",rowData);
 
-            System.out.printf("\n\nloadShopFormData() \n%s\n%s\n%s\n%s",rowData.get(0),rowData.get(1),rowData.get(2),rowData.get(3),rowData.get(4));
+            // PDID is set in consturctor & Add Row
+            EditAddShopForm_Object editShopForm_object = edit_AddShopForm_Object(Integer.parseInt(rowData.get(0)));
+            shopFormObjects.add(editShopForm_object); // store in ingredients screen object memory
 
             // Set ShopName
-            row.getShops_JComboBox().setSelectedItem(rowData.get(1));// HELLO IDK WHAT I DID HERE in REFACTORING
+            editShopForm_object.getShops_JComboBox().setSelectedItem(rowData.get(1));
 
             // Set Product Name
-            row.getProductName_TxtField().setText(rowData.get(2));
+            editShopForm_object.getProductName_TxtField().setText(rowData.get(2));
 
             // Set Cost Info
-            row.getProductPrice_TxtField().setText(rowData.get(3));// HELLO IDK WHAT I DID HERE  in REFACTORING
+            editShopForm_object.getProductPrice_TxtField().setText(rowData.get(3));// HELLO IDK WHAT I DID HERE  in REFACTORING
 
             // Set Volume Info
-            row.getQuantityPerPack_TxtField().setText(rowData.get(4));// HELLO IDK WHAT I DID HERE  in REFACTORING
+            editShopForm_object.getQuantityPerPack_TxtField().setText(rowData.get(4));// HELLO IDK WHAT I DID HERE  in REFACTORING
         }
     }
 
@@ -220,10 +230,10 @@ public class Edit_ShopForm extends Add_ShopForm
     }
 
     //EDITING NOW
-    public AddShopForm_Object addShopForm_object(Integer PDID) // Not an override method
+    private EditAddShopForm_Object edit_AddShopForm_Object(Integer PDID) // Not an override method
     {
         EditAddShopForm_Object obj = new EditAddShopForm_Object(inputArea, PDID, true);
-        addToContainer(inputArea, obj, 0, objectID, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+        addToContainer(inputArea, obj, 0, yPos+=1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
         return obj;
     }
 
@@ -237,16 +247,6 @@ public class Edit_ShopForm extends Add_ShopForm
             super(parentContainer, addRow);
             setPDID(PDID);
         }
-
-        //#######################################
-        // Inherited Constructor
-        //#######################################
-        EditAddShopForm_Object(Container parentContainer, boolean addRow) //HELLO DO not remove, it may appear as unused but, its definitely needed
-        {
-            super(parentContainer, addRow);
-            System.out.printf("\n\nID: %s");
-        }
-
 
         //#######################################
         // Delete Row
@@ -275,7 +275,7 @@ public class Edit_ShopForm extends Add_ShopForm
                 //################################################
                 // Get Ingredient ID
                 //################################################
-                String selectedIngredientID = ingredientsForm.getSelectedIngredientID();
+                String selectedIngredientID = edit_IngredientsForm.getSelectedIngredientID();
 
                 if (selectedIngredientID == null)
                 {
@@ -316,24 +316,12 @@ public class Edit_ShopForm extends Add_ShopForm
             // Remove Row Object
             //################################################
             removeFromParentContainer();
-            addShopFormObjects.remove(this);
+            shopFormObjects.remove(this);
 
             //################################################
             // Remove Row Object
             //################################################
             JOptionPane.showMessageDialog(mealPlanScreen, String.format("Successfully, remove the  supplier ' %s ' from this ingredient!", chosenShop));
         }
-    }
-
-    private Boolean areYouSure(String process)
-    {
-        int reply = JOptionPane.showConfirmDialog(mealPlanScreen, String.format("Are you sure you want to: %s?", process, process),
-                "Confirmation", JOptionPane.YES_NO_OPTION); //HELLO Edit
-
-        if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
-        {
-            return false;
-        }
-        return true;
     }
 }

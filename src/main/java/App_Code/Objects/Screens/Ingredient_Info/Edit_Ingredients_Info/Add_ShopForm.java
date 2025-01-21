@@ -4,11 +4,9 @@ import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Gui_Objects.JTextFieldLimit;
 
-import javax.imageio.plugins.jpeg.JPEGImageReadParam;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.math.BigDecimal;
 import java.util.*;
 
 public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
@@ -19,14 +17,9 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
     Add_Ingredients_Screen add_ingredientsScreen;
 
     //#######################################################
-    protected int objectID = 0;
+    protected int yPos =0;
 
-//    protected HashMap<Integer, JComboBox> shopJComboBoxes = new HashMap<>();
-//    protected HashMap<Integer, JTextField> productNames = new HashMap<>();
-//    protected HashMap<Integer, JTextField> prices = new HashMap<>();
-//    protected HashMap<Integer, JTextField> quantityPerPack = new HashMap<>();
-
-    protected ArrayList<AddShopForm_Object> addShopFormObjects = new ArrayList<>();
+    protected ArrayList<AddShopForm_Object> shopFormObjects = new ArrayList<>();
 
     protected Container parentContainer;
     protected JPanel inputArea;
@@ -101,15 +94,7 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
         //##########################################################################################
         mainJPanel.add(inputArea, BorderLayout.CENTER);
 
-        addToContainer(inputArea, new AddShopForm_Object(inputArea, false), 0, objectID, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
-    }
-
-    //#############################################################################################################
-    //
-    //#############################################################################################################
-    private void setObjectID(int objectID)
-    {
-        this.objectID = objectID;
+        addToContainer(inputArea, new AddShopForm_Object(inputArea, false), 0, yPos+=1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
     }
 
     //#############################################################################################################
@@ -128,7 +113,7 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
         //
         //######################################################
 
-        for(AddShopForm_Object  shopForm_object :addShopFormObjects)
+        for(AddShopForm_Object  shopForm_object : shopFormObjects)
         {
             System.out.println("\n\nhere");
             //#######################################
@@ -232,7 +217,7 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
         //########################################
         // Nothing to Update
         //########################################
-        if (addShopFormObjects.size() == 0) // prices is just used but, could be any list stored by the shop object
+        if (shopFormObjects.size() == 0) // prices is just used but, could be any list stored by the shop object
         {
             return null;
         }
@@ -250,7 +235,7 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
         // Creating String for Add Values
         //#################################
         String values = "";
-        Iterator<AddShopForm_Object> it = addShopFormObjects.iterator();
+        Iterator<AddShopForm_Object> it = shopFormObjects.iterator();
 
         while(it.hasNext())
         {
@@ -287,7 +272,7 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
     //#############################################################################################################
     public void clearShopForm()
     {
-        Iterator<AddShopForm_Object> it = addShopFormObjects.iterator();
+        Iterator<AddShopForm_Object> it = shopFormObjects.iterator();
         while (it.hasNext())
         {
             AddShopForm_Object i = it.next();
@@ -312,7 +297,7 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
     protected AddShopForm_Object addShopForm_object()
     {
         AddShopForm_Object obj = new AddShopForm_Object(inputArea, true);
-        addToContainer(inputArea, obj, 0, objectID, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+        addToContainer(inputArea, obj, 0, yPos+=1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
         return obj;
     }
 
@@ -321,9 +306,7 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
     //#############################################################################################################
     class AddShopForm_Object extends JPanel
     {
-        private int posY = 0, id;
         Integer PDID = null;  //EDIT NOW
-
         Container parentContainer;
         JComboBox<String> shops_JComboBox;
         JTextField productName_TxtField, productPrice_TxtField, quantityPerPack_TxtField;
@@ -334,14 +317,11 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
         AddShopForm_Object(Container parentContainer, boolean addRow)
         {
             this.parentContainer = parentContainer;
-            setObjectID(objectID += 1);
-            this.id = getObjectID();
-
             addRow(addRow);
         }
 
         //#############################################################################################################
-        //
+        // Methods
         //#############################################################################################################
         private void addRow(boolean addRowBool)
         {
@@ -536,13 +516,13 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
                 //#####################################################
                 // Adding row to memory
                 //######################################################
-                addShopFormObjects.add(this);
+                shopFormObjects.add(this);
             }
 
             //#########################################################################################################
             // Adding Object To GUI
             //#########################################################################################################
-            addToContainer(parentContainer, rowPanel, 0, posY += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+            addToContainer(parentContainer, rowPanel, 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
             parentContainer.revalidate();
         }
 
@@ -560,9 +540,8 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
         }
 
         //#############################################################################################################
-        // Accessor Methods
+        // Mutator Methods
         //#############################################################################################################
-        //EDIT NOW
         protected void setPDID(Integer PDID)
         {
             this.PDID = PDID;
@@ -571,12 +550,6 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
         //#############################################################################################################
         // Accessor Methods
         //#############################################################################################################
-        protected int getObjectID()
-        {
-            return objectID;
-        }
-
-        //EDIT NOW
         protected Integer getPDID()
         {
             return PDID;
@@ -608,10 +581,10 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
         protected void deleteRowAction()
         {
             removeFromParentContainer(); // remove all the  input GUI objects from memory
-            addShopFormObjects.remove(this);
+            shopFormObjects.remove(this);
         }
 
-        public void removeFromParentContainer()
+        protected void removeFromParentContainer()
         {
             //Remove from parent Container
             parentContainer.remove(this);
