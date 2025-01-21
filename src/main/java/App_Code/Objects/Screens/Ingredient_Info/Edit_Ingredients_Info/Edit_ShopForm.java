@@ -3,11 +3,13 @@ package App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Edit_ShopForm extends Add_ShopForm
 {
     private Edit_IngredientsForm edit_IngredientsForm;
     private ArrayList<ArrayList<String>> shopsFormDBData = new ArrayList<>();
+    protected ArrayList<EditAddShopForm_Object> shopFormObjects = new ArrayList<>(); // HELLO MAY remove and use super version
 
     public Edit_ShopForm(Container parentContainer, Ingredients_Info_Screen ingredients_info_screen, Edit_IngredientsScreen edit_ingredients, String btnText, int btnWidth, int btnHeight)
     {
@@ -20,7 +22,7 @@ public class Edit_ShopForm extends Add_ShopForm
         int reply = JOptionPane.showConfirmDialog(mealPlanScreen, String.format("Are you sure you want to: %s?", process, process),
                 "Confirmation", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
-        if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
+        if (reply==JOptionPane.NO_OPTION || reply==JOptionPane.CLOSED_OPTION)
         {
             return false;
         }
@@ -30,7 +32,7 @@ public class Edit_ShopForm extends Add_ShopForm
     public void updateShopFormWithInfoFromDB()
     {
         // Clear Shop Form For New Requested Info
-         clearShopForm();
+        clearShopForm();
 
         //###########################
         //
@@ -50,7 +52,7 @@ public class Edit_ShopForm extends Add_ShopForm
                 ON s.StoreID = i.StoreID
                 AND  i.IngredientID = %s ;""", selectedIngredientID));
 
-        if (temp_ShopsFormDBData == null)
+        if (temp_ShopsFormDBData==null)
         {
             JOptionPane.showMessageDialog(mealPlanScreen, "Unable to grab selected ingredient shop info! \nMaybe there isn't any suppliers created for this Ingredient!");
             return;
@@ -70,7 +72,7 @@ public class Edit_ShopForm extends Add_ShopForm
         {
             ArrayList<String> rowData = shopsFormDBData.get(i);
 
-            System.out.printf("\n\nloadShopFormData() \n%s",rowData);
+            System.out.printf("\n\nloadShopFormData() \n%s", rowData);
 
             // PDID is set in consturctor & Add Row
             EditAddShopForm_Object editShopForm_object = edit_AddShopForm_Object(Integer.parseInt(rowData.get(0)));
@@ -103,137 +105,98 @@ public class Edit_ShopForm extends Add_ShopForm
 
     //EDITING NOW
     public String[] get_ShopForm_UpdateString(String ingredientIDInDB) // Not an override method
-    {/*
+    {
         //#############################################################
         // Checks if there is anything to update before, updating
         //############################################################
-        if (addShopFormObjects.size() == 0)
+        if (shopFormObjects.size() == 0)
         {
             return null;
         }
-
-        //################################################################
-        // Adding Shops To Category's To Either Insert Or Update into DB
-        //################################################################
-        ArrayList<AddShopForm_Object> suppliersInDBList = new ArrayList<>();
-        ArrayList<AddShopForm_Object> suppliersNeedToBeAddedToDBList = new ArrayList<>();
-
-        for (AddShopForm_Object shopForm_object : addShopFormObjects)
-        {
-            //  EditAddShopForm_Object obj = (EditAddShopForm_Object) shopForm_object;
-            AddShopForm_Object obj = shopForm_object;
-
-            if (obj.getPDID() != null)
-            {
-                suppliersInDBList.add(obj);
-            }
-            else
-            {
-                suppliersNeedToBeAddedToDBList.add(obj);
-            }
-        }
-
-        //###############################
-        // Creating Update List
-        //###############################
-        int suppliersInDBSize = suppliersInDBList.size();
-        int suppliersNotInDBSize = suppliersNeedToBeAddedToDBList.size();
-
-        String[] updates = new String[suppliersInDBSize + suppliersNotInDBSize];
-
-        int listPos = 0;
 
         ///###################################################################
         // Creating Insert Supplier Statement
         //####################################################################
 
-        if (suppliersInDBSize > 0)
+        String
+                insertValues = "",
+                insertStatement = "INSERT INTO ingredientInShops (IngredientID, Product_Name, Volume_Per_Unit, Cost_Per_Unit, StoreID) VALUES";
+
+        Iterator<EditAddShopForm_Object> it = shopFormObjects.iterator();
+
+        String[] updates = new String[shopFormObjects.size()];
+
+        System.out.printf("\n\nget_ShopForm_UpdateString() here here %s", shopFormObjects.size());
+
+        int pos = 0;
+
+        while(it.hasNext())
         {
-            // Creating String Of Add Values
-            for (AddShopForm_Object supplierInDB : suppliersInDBList)
+            // Assigning current shopForm object in list to variable
+            EditAddShopForm_Object shopForm_object = it.next();
+
+            // Get PDID of ShopForm Object
+            Integer PDID = shopForm_object.getPDID();
+
+            // Shop Object is in DB
+            if(PDID != null)
             {
-                int objectID = supplierInDB.getObjectID();
-                Integer PDID = supplierInDB.getPDID();
-
                 //Update String
-                String updateString = String.format("""
+                updates[pos] = String.format("""
                                 UPDATE ingredientInShops
-                                SET Volume_Per_Unit = %s, Cost_Per_Unit = %s, StoreID = (SELECT StoreID FROM stores WHERE Store_Name = '%s')
+                                SET  Product_Name = '%s', Volume_Per_Unit = %s, Cost_Per_Unit = %s, StoreID = (SELECT StoreID FROM stores WHERE Store_Name = '%s')
                                 WHERE PDID = %s;""",
-                        supplierInDB.getQuantityPerPack_TxtField().getText(),
-                        supplierInDB.getProductPrice_TxtField().getText(),
-                        supplierInDB.getShops_JComboBox().getSelectedItem().toString(),
+                        shopForm_object.getProductName_TxtField().getText(),
+                        shopForm_object.getQuantityPerPack_TxtField().getText(),
+                        shopForm_object.getProductPrice_TxtField().getText(),
+                        shopForm_object.getShops_JComboBox().getSelectedItem().toString(),
                         PDID);
-
-                // Add to update List
-                updates[listPos] = updateString;
-
-                listPos++;
+            }
+            else
+            {
+                System.out.println("\n\nget_ShopForm_UpdateString() here here");
+                insertValues += String.format("\n(%s, '%s', %s, %s, (SELECT StoreID FROM stores WHERE Store_Name = '%s')),",
+                        ingredientIDInDB,
+                        shopForm_object.getProductName_TxtField().getText(),
+                        shopForm_object.getQuantityPerPack_TxtField().getText(),
+                        shopForm_object.getProductPrice_TxtField().getText(),
+                        shopForm_object.getShops_JComboBox().getSelectedItem().toString());
             }
 
-
-
-
-
-
+            //#############################
+            //
+            //#############################
+            pos++;
         }
 
-        //###################################################################
-        // Creating Insert Supplier Statement
-        //####################################################################
-
-        String query4_UpdateString = "";
-
-        if (suppliersNotInDBSize > 0)
+        //############################################################
+        // Insert Statement
+        //############################################################
+        if(!(insertValues.equals("")))
         {
-            // Variables
-            String values = "";
-            int pos = 0;
+            insertValues = insertValues.substring(0, insertValues.length() - 1) + ";;";
 
-            // Insert String
-            query4_UpdateString = "INSERT INTO ingredientInShops (IngredientID, Volume_Per_Unit, Cost_Per_Unit, StoreID) VALUES";
+            insertStatement += insertValues;
+            updates[pos+=1] = (insertStatement);
+        }
 
-            // Creating String Of Add Values
-            for (AddShopForm_Object supplierAddToDB : suppliersNeedToBeAddedToDBList)
-            {
-                int objectID = supplierAddToDB.getObjectID();
-
-                values += String.format("\n(%s, %s, %s, (SELECT StoreID FROM stores WHERE Store_Name = '%s'))",
-                        ingredientIDInDB, quantityPerPack.get(objectID).getText(),
-                        prices.get(objectID).getText(), shopJComboBoxes.get(objectID).getSelectedItem().toString());
-
-                if (pos == suppliersNotInDBSize - 1)
-                {
-                    values += ";";
-                    continue;
-                }
-
-                values += ",";
-                pos++;
-            }
-
-            // Adding Both The Query & Values Together
-            query4_UpdateString += values;
-
-            //########################
-            // Adding Update String
-            //########################
-            updates[listPos] = query4_UpdateString;
+        System.out.println("\n\nget_ShopForm_UpdateString()");
+        for(String i: updates)
+        {
+            System.out.printf("\n%s", i);
         }
 
         //############################################################
         // Return values
         //############################################################
-        return updates;*/
-
-        return new String[1];
+        return updates;
     }
 
     //EDITING NOW
     private EditAddShopForm_Object edit_AddShopForm_Object(Integer PDID) // Not an override method
     {
         EditAddShopForm_Object obj = new EditAddShopForm_Object(inputArea, PDID, true);
-        addToContainer(inputArea, obj, 0, yPos+=1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+        addToContainer(inputArea, obj, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
         return obj;
     }
 
@@ -274,14 +237,14 @@ public class Edit_ShopForm extends Add_ShopForm
             //################################################
             // If Object In DB Remove From DB
             //################################################
-            if (PDID != null)
+            if (PDID!=null)
             {
                 //################################################
                 // Get Ingredient ID
                 //################################################
                 String selectedIngredientID = edit_IngredientsForm.getSelectedIngredientID();
 
-                if (selectedIngredientID == null)
+                if (selectedIngredientID==null)
                 {
                     JOptionPane.showMessageDialog(mealPlanScreen, String.format("Unable to get selected ingredients information to delete product:\n\"%s\" from \"%s\" as a Supplier for this ingredient.", productName, chosenShop));
                     return;
