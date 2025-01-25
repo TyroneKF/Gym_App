@@ -9,7 +9,7 @@ public class Edit_ShopForm extends Add_ShopForm
 {
     private Edit_IngredientsForm edit_IngredientsForm;
     private ArrayList<ArrayList<String>> shopsFormDBData = new ArrayList<>();
-    protected ArrayList<EditAddShopForm_Object> shopFormObjects = new ArrayList<>(); // HELLO MAY remove and use super version
+
 
     public Edit_ShopForm(Container parentContainer, Ingredients_Info_Screen ingredients_info_screen, Edit_IngredientsScreen edit_ingredients, String btnText, int btnWidth, int btnHeight)
     {
@@ -75,8 +75,7 @@ public class Edit_ShopForm extends Add_ShopForm
             System.out.printf("\n\nloadShopFormData() \n%s", rowData);
 
             // PDID is set in consturctor & Add Row
-            EditAddShopForm_Object editShopForm_object = edit_AddShopForm_Object(Integer.parseInt(rowData.get(0)));
-            shopFormObjects.add(editShopForm_object); // store in ingredients screen object memory
+            EditAddShopForm_Object editShopForm_object = new EditAddShopForm_Object(inputArea, Integer.parseInt(rowData.get(0)));
 
             // Set ShopName
             editShopForm_object.getShops_JComboBox().setSelectedItem(rowData.get(1));
@@ -98,11 +97,6 @@ public class Edit_ShopForm extends Add_ShopForm
         shopsFormDBData.clear();
     }
 
-    public ArrayList<ArrayList<String>> getShopsFormDBData()
-    {
-        return shopsFormDBData;
-    }
-
     //EDITING NOW
     public String[] get_ShopForm_UpdateString(String ingredientIDInDB) // Not an override method
     {
@@ -122,7 +116,7 @@ public class Edit_ShopForm extends Add_ShopForm
                 insertValues = "",
                 insertStatement = "INSERT INTO ingredientInShops (IngredientID, Product_Name, Volume_Per_Unit, Cost_Per_Unit, StoreID) VALUES";
 
-        Iterator<EditAddShopForm_Object> it = shopFormObjects.iterator();
+        Iterator<AddShopForm_Object> it = shopFormObjects.iterator();
 
         String[] updates = new String[shopFormObjects.size()];
 
@@ -133,7 +127,7 @@ public class Edit_ShopForm extends Add_ShopForm
         while(it.hasNext())
         {
             // Assigning current shopForm object in list to variable
-            EditAddShopForm_Object shopForm_object = it.next();
+            AddShopForm_Object shopForm_object = it.next();
 
             // Get PDID of ShopForm Object
             Integer PDID = shopForm_object.getPDID();
@@ -192,22 +186,14 @@ public class Edit_ShopForm extends Add_ShopForm
         return updates;
     }
 
-    //EDITING NOW
-    private EditAddShopForm_Object edit_AddShopForm_Object(Integer PDID) // Not an override method
-    {
-        EditAddShopForm_Object obj = new EditAddShopForm_Object(inputArea, PDID, true);
-        addToContainer(inputArea, obj, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
-        return obj;
-    }
-
     public class EditAddShopForm_Object extends AddShopForm_Object
     {
         //#######################################
         // Main  Consturctor
         //#######################################
-        EditAddShopForm_Object(Container parentContainer, Integer PDID, boolean addRow)
+        EditAddShopForm_Object(Container parentContainer, Integer PDID)
         {
-            super(parentContainer, addRow);
+            super(parentContainer);
             setPDID(PDID);
         }
 
