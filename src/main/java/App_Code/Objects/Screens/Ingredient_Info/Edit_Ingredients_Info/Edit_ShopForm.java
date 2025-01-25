@@ -116,13 +116,12 @@ public class Edit_ShopForm extends Add_ShopForm
                 insertValues = "",
                 insertStatement = "INSERT INTO ingredientInShops (IngredientID, Product_Name, Volume_Per_Unit, Cost_Per_Unit, StoreID) VALUES";
 
-        Iterator<AddShopForm_Object> it = shopFormObjects.iterator();
-
         String[] updates = new String[shopFormObjects.size()];
 
         System.out.printf("\n\nget_ShopForm_UpdateString() here here %s", shopFormObjects.size());
 
-        int pos = 0;
+        int pos = -1; // Due to pos+=1, pos will be greater than list size
+        Iterator<AddShopForm_Object> it = shopFormObjects.iterator();
 
         while(it.hasNext())
         {
@@ -136,7 +135,7 @@ public class Edit_ShopForm extends Add_ShopForm
             if(PDID != null)
             {
                 //Update String
-                updates[pos] = String.format("""
+                updates[pos+=1] = String.format("""
                                 UPDATE ingredientInShops
                                 SET  Product_Name = '%s', Volume_Per_Unit = %s, Cost_Per_Unit = %s, StoreID = (SELECT StoreID FROM stores WHERE Store_Name = '%s')
                                 WHERE PDID = %s;""",
@@ -156,11 +155,6 @@ public class Edit_ShopForm extends Add_ShopForm
                         shopForm_object.getProductPrice_TxtField().getText(),
                         shopForm_object.getShops_JComboBox().getSelectedItem().toString());
             }
-
-            //#############################
-            //
-            //#############################
-            pos++;
         }
 
         //############################################################
