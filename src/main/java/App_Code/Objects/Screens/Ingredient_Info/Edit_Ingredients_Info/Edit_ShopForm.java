@@ -29,6 +29,12 @@ public class Edit_ShopForm extends Add_ShopForm
         return true;
     }
 
+    @Override
+    protected void extraClearShopsForm()
+    {
+        shopsFormDBData.clear();
+    }
+
     public void updateShopFormWithInfoFromDB()
     {
         // Clear Shop Form For New Requested Info
@@ -72,39 +78,21 @@ public class Edit_ShopForm extends Add_ShopForm
         {
             ArrayList<String> rowData = shopsFormDBData.get(i);
 
-            System.out.printf("\n\nloadShopFormData() \n%s", rowData);
-
-            // PDID is set in consturctor & Add Row
-            EditAddShopForm_Object editShopForm_object = new EditAddShopForm_Object(inputArea, Integer.parseInt(rowData.get(0)));
-
-            // Set ShopName
-            editShopForm_object.getShops_JComboBox().setSelectedItem(rowData.get(1));
-
-            // Set Product Name
-            editShopForm_object.getProductName_TxtField().setText(rowData.get(2));
-
-            // Set Cost Info
-            editShopForm_object.getProductPrice_TxtField().setText(rowData.get(3));// HELLO IDK WHAT I DID HERE  in REFACTORING
-
-            // Set Volume Info
-            editShopForm_object.getQuantityPerPack_TxtField().setText(rowData.get(4));// HELLO IDK WHAT I DID HERE  in REFACTORING
+            // PDID is set in constructor & Add Row
+            new EditShopForm_Object(inputArea, rowData.get(0), rowData.get(1), rowData.get(2), rowData.get(3), rowData.get(4));
         }
-    }
-
-    @Override
-    protected void extraClearShopsForm()
-    {
-        shopsFormDBData.clear();
     }
 
     //EDITING NOW
     public String[] get_ShopForm_UpdateString(String ingredientIDInDB) // Not an override method
     {
+        System.out.println("\n\nEDIT get_ShopForm_UpdateString()");
         //#############################################################
         // Checks if there is anything to update before, updating
         //############################################################
-        if (shopFormObjects.size() == 0)
+        if (shopFormObjects.size()==0)
         {
+            System.out.println("\n\nget_ShopForm_UpdateString() No Suppliers in shop");
             return null;
         }
 
@@ -118,31 +106,56 @@ public class Edit_ShopForm extends Add_ShopForm
 
         String[] updates = new String[shopFormObjects.size()];
 
-        System.out.printf("\n\nget_ShopForm_UpdateString() here here %s", shopFormObjects.size());
+        //##############################################################
+        // HELLO DELETE
+        //##############################################################
+        System.out.printf("\n\nget_ShopForm_UpdateString() List Size: %s \nList items:", shopFormObjects.size());
+        for (AddShopForm_Object i : shopFormObjects)
+        {
+            System.out.printf("\n%s", i.getProductName_TxtField().getText().trim());
+        }
+        //##############################################################
 
         int pos = -1; // Due to pos+=1, pos will be greater than list size
         Iterator<AddShopForm_Object> it = shopFormObjects.iterator();
 
-        while(it.hasNext())
+        while (it.hasNext())
         {
             // Assigning current shopForm object in list to variable
-            AddShopForm_Object shopForm_object = it.next();
+            AddShopForm_Object shopForm_Object = it.next();
 
             // Get PDID of ShopForm Object
-            Integer PDID = shopForm_object.getPDID();
+            Integer PDID = shopForm_Object.getPDID();
 
-            // Shop Object is in DB
-            if(PDID != null)
+            if (PDID!=null) // Shop Object is in DB
             {
+                // create dummy value for error below
+                EditShopForm_Object editShopForm_Object = new EditShopForm_Object();
+
+                // Convert to EditShopForm_Object
+                if (shopForm_Object instanceof EditShopForm_Object)
+                {
+                    editShopForm_Object = (EditShopForm_Object) shopForm_Object;
+                }
+
+                // Process whether the data has changed
+                editShopForm_Object.checkIfDataHasChanged();
+
+                // Check if the data changed
+                if (!(editShopForm_Object.hasDataChanged()))
+                {
+                    continue;
+                }
+
                 //Update String
-                updates[pos+=1] = String.format("""
+                updates[pos += 1] = String.format("""
                                 UPDATE ingredientInShops
                                 SET  Product_Name = '%s', Volume_Per_Unit = %s, Cost_Per_Unit = %s, StoreID = (SELECT StoreID FROM stores WHERE Store_Name = '%s')
                                 WHERE PDID = %s;""",
-                        shopForm_object.getProductName_TxtField().getText(),
-                        shopForm_object.getQuantityPerPack_TxtField().getText(),
-                        shopForm_object.getProductPrice_TxtField().getText(),
-                        shopForm_object.getShops_JComboBox().getSelectedItem().toString(),
+                        editShopForm_Object.getProductName_TxtField().getText(),
+                        editShopForm_Object.getProductQuantityPerPack_TxtField().getText(),
+                        editShopForm_Object.getProductPrice_TxtField().getText(),
+                        editShopForm_Object.getShops_JComboBox().getSelectedItem().toString(),
                         PDID);
             }
             else
@@ -150,29 +163,32 @@ public class Edit_ShopForm extends Add_ShopForm
                 System.out.println("\n\nget_ShopForm_UpdateString() here here");
                 insertValues += String.format("\n(%s, '%s', %s, %s, (SELECT StoreID FROM stores WHERE Store_Name = '%s')),",
                         ingredientIDInDB,
-                        shopForm_object.getProductName_TxtField().getText(),
-                        shopForm_object.getQuantityPerPack_TxtField().getText(),
-                        shopForm_object.getProductPrice_TxtField().getText(),
-                        shopForm_object.getShops_JComboBox().getSelectedItem().toString());
+                        shopForm_Object.getProductName_TxtField().getText(),
+                        shopForm_Object.getProductQuantityPerPack_TxtField().getText(),
+                        shopForm_Object.getProductPrice_TxtField().getText(),
+                        shopForm_Object.getShops_JComboBox().getSelectedItem().toString());
             }
         }
 
         //############################################################
         // Insert Statement
         //############################################################
-        if(!(insertValues.equals("")))
+        if (!(insertValues.equals("")))
         {
             insertValues = insertValues.substring(0, insertValues.length() - 1) + ";;";
 
             insertStatement += insertValues;
-            updates[pos+=1] = (insertStatement);
+            updates[pos += 1] = (insertStatement);
         }
 
+        /*//##############################################################
+        // HELLO DELETE
+        //##############################################################
         System.out.println("\n\nget_ShopForm_UpdateString()");
-        for(String i: updates)
+        for (String i : updates)
         {
             System.out.printf("\n%s", i);
-        }
+        }*/
 
         //############################################################
         // Return values
@@ -180,16 +196,70 @@ public class Edit_ShopForm extends Add_ShopForm
         return updates;
     }
 
-    public class EditAddShopForm_Object extends AddShopForm_Object
+    public class EditShopForm_Object extends AddShopForm_Object
     {
+        Boolean hasDataChanged = false;
+        String shopName_OG, productName_OG, productPrice_OG, quantityPerPack_OG;
+
         //#######################################
         // Main  Consturctor
         //#######################################
-        EditAddShopForm_Object(Container parentContainer, Integer PDID)
+        EditShopForm_Object(Container parentContainer, String PDID, String shopName, String productName, String productPrice, String quantityPerPack)
         {
+            // Setting Variables
             super(parentContainer);
-            setPDID(PDID);
+            this.shopName_OG = shopName;
+            this.productName_OG = productName;
+            this.productPrice_OG = productPrice;
+            this.quantityPerPack_OG = quantityPerPack;
+
+            // Set GUI Objects
+            setPDID(Integer.parseInt(PDID));   //Set PDID
+
+            getShops_JComboBox().setSelectedItem(shopName); // Set ShopName
+
+            getProductName_TxtField().setText(productName); // Set Product Name
+
+            getProductPrice_TxtField().setText(productPrice); // Set Product Price
+
+            getProductQuantityPerPack_TxtField().setText(quantityPerPack); // Set Volume Info
         }
+
+        EditShopForm_Object()
+        {
+
+        }
+
+        private boolean hasDataChanged()
+        {
+            return hasDataChanged;
+        }
+
+        private void checkIfDataHasChanged()
+        {
+            String shopName_current = getShops_JComboBox().getSelectedItem().toString().trim();
+            String productName_current = getProductName_TxtField().getText().trim();
+            String productPrice_current = getProductPrice_TxtField().getText().trim();
+            String quantityPerPack_current = getProductQuantityPerPack_TxtField().getText().trim();
+
+            if (!(shopName_current.equals(shopName_OG)))
+            {
+                hasDataChanged = true;
+            }
+            else if (!(productName_current.equals(productName_OG)))
+            {
+                hasDataChanged = true;
+            }
+            else if (!(productPrice_current.equals(productPrice_OG)))
+            {
+                hasDataChanged = true;
+            }
+            else if (!(quantityPerPack_current.equals(quantityPerPack_OG)))
+            {
+                hasDataChanged = true;
+            }
+        }
+
 
         //#######################################
         // Delete Row

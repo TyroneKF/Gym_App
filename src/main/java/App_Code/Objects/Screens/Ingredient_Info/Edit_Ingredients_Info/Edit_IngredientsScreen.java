@@ -617,24 +617,8 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //##############################################################################################################
         //
         //##############################################################################################################
-        boolean errorFound = false;
 
-        // ingredientsForm
-        if (!(ingredientsForm.validate_IngredientsForm()))
-        {
-            errorFound = true;
-        }
-
-        // ShopForm
-        if (!(shopForm.validateForm()))
-        {
-            errorFound = true;
-        }
-
-        //##############################################################################################################
-        //
-        //##############################################################################################################
-        if (errorFound)
+        if (!(ingredientsForm.validate_IngredientsForm()) || !(shopForm.validateForm()))
         {
             return;
         }

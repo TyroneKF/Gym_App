@@ -17,7 +17,7 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
     Add_Ingredients_Screen add_ingredientsScreen;
 
     //#######################################################
-    protected int yPos =0;
+    protected int yPos = 0;
 
     protected ArrayList<AddShopForm_Object> shopFormObjects = new ArrayList<>();
 
@@ -90,7 +90,8 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
         // Centre Form
         //#############################################################################################################
         inputArea = new JPanel(new GridBagLayout());
-        mainJPanel.add(inputArea, BorderLayout.CENTER);mainJPanel.add(inputArea, BorderLayout.CENTER);
+        mainJPanel.add(inputArea, BorderLayout.CENTER);
+        mainJPanel.add(inputArea, BorderLayout.CENTER);
 
         //##########################################
         // ShopForm GUI
@@ -216,13 +217,13 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
         //
         //######################################################
 
-        for(AddShopForm_Object  shopForm_object : shopFormObjects)
+        for (AddShopForm_Object shopForm_object : shopFormObjects)
         {
             System.out.println("\n\nhere");
             //#######################################
             // Reset Values
             //#######################################
-            pos ++;
+            pos++;
             String space = "\n\n", iterationErrorTxt = "";
 
             //#######################################
@@ -232,7 +233,7 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
 
             if (shopChosen.equals("No Shop"))
             {
-                iterationErrorTxt += String.format("%sOn Row %s,  please Select a shop that isn't 'No Shop'! Or, delete the row!",space, pos);
+                iterationErrorTxt += String.format("%sOn Row %s,  please Select a shop that isn't 'No Shop'! Or, delete the row!", space, pos);
                 space = "\n";
             }
 
@@ -240,9 +241,9 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
             // Validate Product Name
             //########################################
             String productNameTxt = shopForm_object.getProductName_TxtField().getText().trim();
-            if(productNameTxt.equals(""))
+            if (productNameTxt.equals(""))
             {
-                iterationErrorTxt += String.format("%sOn Row: %s, the 'Product Name' cannot be empty or, ' NULL '!",space,pos);
+                iterationErrorTxt += String.format("%sOn Row: %s, the 'Product Name' cannot be empty or, ' NULL '!", space, pos);
                 space = "\n";
             }
 
@@ -255,12 +256,12 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
             if (!(price.equals(""))) // Check if text field input is empty
             {
                 String txt = convertToBigDecimal(price, "Prices", pos, prices, true);
-                if(!txt.equals(""))
+                if (!txt.equals(""))
                 {
-                    if(iterationErrorTxt.equals(""))
+                    if (iterationErrorTxt.equals(""))
                     {
-                        space="\n";
-                        iterationErrorTxt = String.format("\n%s",txt);
+                        space = "\n";
+                        iterationErrorTxt = String.format("\n%s", txt);
                     }
                     else
                     {
@@ -270,24 +271,24 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
             }
             else
             {
-                iterationErrorTxt += String.format("%sOn Row: %s, the 'Price' must have a value which is not ' NULL '!",space, pos);
-                space="\n";
+                iterationErrorTxt += String.format("%sOn Row: %s, the 'Price' must have a value which is not ' NULL '!", space, pos);
+                space = "\n";
             }
 
             //#######################################
             // Validate Quantity
             //#######################################
-            JTextField quantity = shopForm_object.getQuantityPerPack_TxtField();
+            JTextField quantity = shopForm_object.getProductQuantityPerPack_TxtField();
             String value = quantity.getText().trim();
 
             if (!(value.equals(""))) // Check if text field input is empty
             {
                 String txt = convertToBigDecimal(value, "Quantity", pos, quantity, true);
-                if(!txt.equals(""))
+                if (!txt.equals(""))
                 {
-                    if(iterationErrorTxt.equals(""))                    {
-
-                        iterationErrorTxt = String.format("\n%s",txt);
+                    if (iterationErrorTxt.equals(""))
+                    {
+                        iterationErrorTxt = String.format("\n%s", txt);
                     }
                     else
                     {
@@ -297,10 +298,10 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
             }
             else
             {
-                iterationErrorTxt += String.format("%sOn Row: %s, the 'Quantity' must have a value which is not ' NULL '!",space, pos);
+                iterationErrorTxt += String.format("%sOn Row: %s, the 'Quantity' must have a value which is not ' NULL '!", space, pos);
             }
 
-           overalErrorTxt += iterationErrorTxt;
+            overalErrorTxt += iterationErrorTxt;
         }
 
         // #################################################
@@ -331,8 +332,8 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
         String mysqlVariableReference = "@newIngredientID";
         String createMysqlVariable = String.format("SET %s = (SELECT MAX(IngredientID) FROM ingredients_info);", mysqlVariableReference);
         String updateString = String.format("""
-                    INSERT INTO ingredientInShops (IngredientID, Product_Name, Volume_Per_Unit, Cost_Per_Unit, StoreID)
-                    VALUES """);
+                INSERT INTO ingredientInShops (IngredientID, Product_Name, Volume_Per_Unit, Cost_Per_Unit, StoreID)
+                VALUES """);
 
         ///#################################
         // Creating String for Add Values
@@ -340,14 +341,14 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
         String values = "";
         Iterator<AddShopForm_Object> it = shopFormObjects.iterator();
 
-        while(it.hasNext())
+        while (it.hasNext())
         {
             AddShopForm_Object shopForm_object = it.next();
 
             values += String.format("(%s, '%s', %s, %s, (SELECT StoreID FROM stores WHERE Store_Name = '%s'))",
                     mysqlVariableReference,
                     shopForm_object.getProductName_TxtField().getText(),
-                    shopForm_object.getQuantityPerPack_TxtField().getText(),
+                    shopForm_object.getProductQuantityPerPack_TxtField().getText(),
                     shopForm_object.getProductPrice_TxtField().getText(),
                     shopForm_object.getShops_JComboBox().getSelectedItem().toString());
 
@@ -406,216 +407,8 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
         //#############################################################################################################
         //
         //#############################################################################################################
-        AddShopForm_Object(Container parentContainer, boolean addRow) //HELLO Remove
-        {
-            this.parentContainer = parentContainer;
-            addRow(addRow);
-        }
-
-        private void addRow(boolean addRowBool) //HELLO Remove
-        {
-            //#########################################################################################################
-            //Creating JPanel
-            //#########################################################################################################
-            JPanel rowPanel = this;
-            rowPanel.setLayout(new BorderLayout());
-
-            //###############################
-            // Creating Sections for GUI
-            //###############################
-
-            //
-            JPanel westPanel = new JPanel(new GridLayout(1, 1));
-            westPanel.setBorder(new EmptyBorder(0, 0, 0, 10));
-            westPanel.setPreferredSize(new Dimension(150, 25)); // width, height
-            rowPanel.add(westPanel, BorderLayout.WEST);
-
-            //
-            JPanel centrePanel = new JPanel(new BorderLayout());
-            centrePanel.setBackground(Color.BLUE);
-            rowPanel.add(centrePanel, BorderLayout.CENTER);
-
-            // Delete row button section
-            JPanel eastPanel = new JPanel(new GridLayout(1, 1));
-            eastPanel.setBorder(new EmptyBorder(0, 5, 0, 0));
-            eastPanel.setPreferredSize(new Dimension(110, 34)); // width, height
-            rowPanel.add(eastPanel, BorderLayout.EAST);
-
-            if(!addRowBool)
-            {
-                //#####################################################
-                // West Panel
-                //######################################################
-                int fontSize = 14;
-
-                // Panel
-                westPanel.setBorder(new EmptyBorder(0, 10, 0, 10));
-                westPanel.setBackground(Color.LIGHT_GRAY);
-
-                // Label
-                JLabel westLabel = new JLabel("Select A Store");
-                westLabel.setFont(new Font("Arial", Font.BOLD, fontSize)); // setting font
-                westPanel.add(westLabel);
-
-                //#####################################################
-                // Centre Panel
-                //######################################################
-
-                //Label
-                JLabel setProductNameLabel = new JLabel("Set Product Name");
-                setProductNameLabel.setFont(new Font("Arial", Font.BOLD, fontSize)); // setting font
-
-                JPanel jp = new JPanel(new GridLayout(1,1));
-                jp.setPreferredSize(new Dimension(270, 34));
-                jp.setBorder(new EmptyBorder(0, 80, 0, 0)); //Pushes object inside further along
-                jp.setBackground(Color.LIGHT_GRAY);
-
-
-                jp.add(setProductNameLabel);
-                centrePanel.add(jp, BorderLayout.WEST);
-
-                //########################
-                //Label
-                JLabel setPriceLabel = new JLabel("Set Price (£)");
-                setPriceLabel.setFont(new Font("Arial", Font.BOLD, fontSize)); // setting font
-
-                JPanel jp2 = new JPanel(new GridLayout(1,1));
-                jp2.setPreferredSize(new Dimension(10, 25));
-                jp2.setBorder(new EmptyBorder(0, 5, 0, 0)); //Pushes object inside further along
-
-                //                jp2.setBackground(Color.ORANGE);
-                jp2.setBackground(Color.LIGHT_GRAY);
-
-                jp2.add(setPriceLabel);
-                centrePanel.add(jp2, BorderLayout.CENTER);
-
-                //########################
-                //Label
-                JLabel setQuantityLabel = new JLabel("Quantity (G,L)");
-                setQuantityLabel.setFont(new Font("Arial", Font.BOLD, fontSize)); // setting font
-
-                JPanel jp3 = new JPanel(new GridLayout(1,1));
-                jp3.setPreferredSize(new Dimension(120, 34));
-                jp3.setBorder(new EmptyBorder(0, 15, 0, 0)); //Pushes object inside further along
-
-                //                jp3.setBackground(Color.RED);
-                jp3.setBackground(Color.LIGHT_GRAY);
-
-                jp3.add(setQuantityLabel);
-
-                centrePanel.add(jp3, BorderLayout.EAST);
-
-                //#####################################################
-                // East Panel
-                //######################################################
-
-                //panel
-                eastPanel.setBackground(Color.LIGHT_GRAY);
-
-                //Label
-                JLabel deleteBtnLabel = new JLabel("Delete Row");
-                deleteBtnLabel.setFont(new Font("Arial", Font.BOLD, fontSize)); // setting font
-
-                JPanel jp4 = new JPanel(new GridLayout(1,1));
-                jp4.setBackground(Color.LIGHT_GRAY);
-                jp4.setPreferredSize(new Dimension(120, 34));
-                jp4.setBorder(new EmptyBorder(0, 10, 0, 0)); //Pushes object inside further along
-
-                jp4.add(deleteBtnLabel);
-                eastPanel.add(jp4);
-            }
-            else
-            {
-                //#####################################################
-                // West Side
-                //######################################################
-
-                if (ingredients_info_screen.getStoresNamesList() == null)
-                {
-                    JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Unable To Get ShopNames From DB; \nEither No Shops Exist. \nOr, Internal DB Error");
-                    return;
-                }
-
-                //########################
-                // create JComboBox
-                //########################
-                shops_JComboBox = new JComboBox<String>();
-                loadStoresInJComboBox();
-
-                ((JLabel) shops_JComboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
-                westPanel.add(shops_JComboBox);
-
-                //#####################################################
-                // Centre Side
-                //######################################################
-
-                //Product Name JTextField
-                productName_TxtField = new JTextField();
-                productName_TxtField.setDocument(new JTextFieldLimit(100));
-                productName_TxtField.setText("");
-
-                JPanel jp = new JPanel(new GridLayout(1,1));
-                jp.setPreferredSize(new Dimension(270, 34));
-                jp.setBorder(new EmptyBorder(0, 0, 0, 0)); //Pushes object inside further along
-                jp.add(productName_TxtField);
-                centrePanel.add(jp, BorderLayout.WEST);
-
-                // Product Price
-                productPrice_TxtField = new JTextField();
-                productPrice_TxtField.setDocument(new JTextFieldLimit(charLimit));
-                productPrice_TxtField.setText("0.00");
-
-                JPanel jp2 = new JPanel(new GridLayout(1,1));
-                jp2.setPreferredSize(new Dimension(10, 25));
-                jp2.setBorder(new EmptyBorder(0, 5, 0, 0)); //Pushes object inside further along
-                jp2.add(productPrice_TxtField);
-                centrePanel.add(jp2,BorderLayout.CENTER);
-
-                // Quantity
-                quantityPerPack_TxtField = new JTextField();
-                quantityPerPack_TxtField.setDocument(new JTextFieldLimit(charLimit));
-                quantityPerPack_TxtField.setText("0.00");
-
-                JPanel jp3 = new JPanel(new GridLayout(1,1));
-                jp3.setPreferredSize(new Dimension(120, 34));
-                jp3.setBorder(new EmptyBorder(0, 5, 0, 0)); //Pushes object inside further along
-                jp3.add(quantityPerPack_TxtField);
-                centrePanel.add(jp3,BorderLayout.EAST);
-
-                //#####################################################
-                // East Side
-                //######################################################
-
-                // Creating submit button
-                JButton deleteRowBtn = new JButton("Delete Row");
-                deleteRowBtn.setPreferredSize(new Dimension(140,34));
-                deleteRowBtn.setFont(new Font("Arial", Font.BOLD, 12)); // setting font
-
-                // creating commands for submit button to execute on
-                deleteRowBtn.addActionListener(ae -> {
-                    deleteRowAction();
-                });
-
-                JPanel jp4 = new JPanel(new GridLayout(1,1));
-                jp4.setPreferredSize(new Dimension(140, 34));
-                jp4.setBorder(new EmptyBorder(0, 0, 0, 0)); //Pushes object inside further along
-                jp4.add(deleteRowBtn);
-                eastPanel.add(jp4);
-
-                //#####################################################
-                // Adding row to memory
-                //######################################################
-                shopFormObjects.add(this);
-
-                System.out.printf("\n\nNew Object added \nList Size %s", shopFormObjects.size());
-            }
-
-            //#########################################################################################################
-            // Adding Object To GUI
-            //#########################################################################################################
-            addToContainer(parentContainer, rowPanel, 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
-            parentContainer.revalidate();
-        }
+        AddShopForm_Object()
+        {}
 
         AddShopForm_Object(Container parentContainer)// Remove
         {
@@ -624,7 +417,7 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
             //###############################
             // Creating Sections for GUI
             //###############################
-            if (ingredients_info_screen.getStoresNamesList() == null)
+            if (ingredients_info_screen.getStoresNamesList()==null)
             {
                 JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Unable To Get ShopNames From DB; \nEither No Shops Exist. \nOr, Internal DB Error");
                 return;
@@ -660,9 +453,8 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
             //#####################################################
             // West Side
             //######################################################
-            //########################
+
             // create JComboBox
-            //########################
             shops_JComboBox = new JComboBox<String>();
             loadStoresInJComboBox();
 
@@ -678,7 +470,7 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
             productName_TxtField.setDocument(new JTextFieldLimit(100));
             productName_TxtField.setText("");
 
-            JPanel jp = new JPanel(new GridLayout(1,1));
+            JPanel jp = new JPanel(new GridLayout(1, 1));
             jp.setPreferredSize(new Dimension(270, 34));
             jp.setBorder(new EmptyBorder(0, 0, 0, 0)); //Pushes object inside further along
             jp.add(productName_TxtField);
@@ -689,22 +481,22 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
             productPrice_TxtField.setDocument(new JTextFieldLimit(charLimit));
             productPrice_TxtField.setText("0.00");
 
-            JPanel jp2 = new JPanel(new GridLayout(1,1));
+            JPanel jp2 = new JPanel(new GridLayout(1, 1));
             jp2.setPreferredSize(new Dimension(10, 25));
             jp2.setBorder(new EmptyBorder(0, 5, 0, 0)); //Pushes object inside further along
             jp2.add(productPrice_TxtField);
-            centrePanel.add(jp2,BorderLayout.CENTER);
+            centrePanel.add(jp2, BorderLayout.CENTER);
 
             // Quantity
             quantityPerPack_TxtField = new JTextField();
             quantityPerPack_TxtField.setDocument(new JTextFieldLimit(charLimit));
             quantityPerPack_TxtField.setText("0.00");
 
-            JPanel jp3 = new JPanel(new GridLayout(1,1));
+            JPanel jp3 = new JPanel(new GridLayout(1, 1));
             jp3.setPreferredSize(new Dimension(120, 34));
             jp3.setBorder(new EmptyBorder(0, 5, 0, 0)); //Pushes object inside further along
             jp3.add(quantityPerPack_TxtField);
-            centrePanel.add(jp3,BorderLayout.EAST);
+            centrePanel.add(jp3, BorderLayout.EAST);
 
             //#####################################################
             // East Side
@@ -712,7 +504,7 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
 
             // Creating submit button
             JButton deleteRowBtn = new JButton("Delete Row");
-            deleteRowBtn.setPreferredSize(new Dimension(140,34));
+            deleteRowBtn.setPreferredSize(new Dimension(140, 34));
             deleteRowBtn.setFont(new Font("Arial", Font.BOLD, 12)); // setting font
 
             // creating commands for submit button to execute on
@@ -720,7 +512,7 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
                 deleteRowAction();
             });
 
-            JPanel jp4 = new JPanel(new GridLayout(1,1));
+            JPanel jp4 = new JPanel(new GridLayout(1, 1));
             jp4.setPreferredSize(new Dimension(140, 34));
             jp4.setBorder(new EmptyBorder(0, 0, 0, 0)); //Pushes object inside further along
             jp4.add(deleteRowBtn);
@@ -731,14 +523,11 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
             //######################################################
             shopFormObjects.add(this);
 
-            System.out.printf("\n\nNew Object added \nList Size %s", shopFormObjects.size());
-
-
-        //#########################################################################################################
-        // Adding Object To GUI
-        //#########################################################################################################
-        addToContainer(parentContainer, this, 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
-        parentContainer.revalidate();
+            //#########################################################################################################
+            // Adding Object To GUI
+            //#########################################################################################################
+            addToContainer(parentContainer, this, 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+            parentContainer.revalidate();
 
         }
 
@@ -782,14 +571,17 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
             return shops_JComboBox;
         }
 
-        protected JTextField getProductName_TxtField() {return productName_TxtField;}
+        protected JTextField getProductName_TxtField()
+        {
+            return productName_TxtField;
+        }
 
         protected JTextField getProductPrice_TxtField()
         {
             return productPrice_TxtField;
         }
 
-        protected JTextField getQuantityPerPack_TxtField()
+        protected JTextField getProductQuantityPerPack_TxtField()
         {
             return quantityPerPack_TxtField;
         }
