@@ -138,9 +138,6 @@ public class Edit_ShopForm extends Add_ShopForm
                     editShopForm_Object = (EditShopForm_Object) shopForm_Object;
                 }
 
-                // Process whether the data has changed
-                editShopForm_Object.checkIfDataHasChanged();
-
                 // Check if the data changed
                 if (!(editShopForm_Object.hasDataChanged()))
                 {
@@ -198,8 +195,7 @@ public class Edit_ShopForm extends Add_ShopForm
 
     public class EditShopForm_Object extends AddShopForm_Object
     {
-        Boolean hasDataChanged = false;
-        String shopName_OG, productName_OG, productPrice_OG, quantityPerPack_OG;
+       String shopName_OG, productName_OG, productPrice_OG, quantityPerPack_OG;
 
         //#######################################
         // Main  Consturctor
@@ -232,11 +228,8 @@ public class Edit_ShopForm extends Add_ShopForm
 
         private boolean hasDataChanged()
         {
-            return hasDataChanged;
-        }
+            Boolean hasDataChanged = false;
 
-        private void checkIfDataHasChanged()
-        {
             String shopName_current = getShops_JComboBox().getSelectedItem().toString().trim();
             String productName_current = getProductName_TxtField().getText().trim();
             String productPrice_current = getProductPrice_TxtField().getText().trim();
@@ -258,8 +251,9 @@ public class Edit_ShopForm extends Add_ShopForm
             {
                 hasDataChanged = true;
             }
-        }
 
+            return hasDataChanged;
+        }
 
         //#######################################
         // Delete Row
