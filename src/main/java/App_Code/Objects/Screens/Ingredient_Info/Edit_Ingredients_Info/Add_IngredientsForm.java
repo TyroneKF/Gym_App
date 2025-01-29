@@ -706,6 +706,13 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
         return  (JTextField) ingredientsFormObjectAndValues.get("Ingredient Name")[0];
     }
 
+    protected JTextField getIngredientTypeJTextField()
+    {
+        return  (JTextField) ingredientsFormObjectAndValues.get("Ingredient Type")[0];
+    }
+
+
+
     protected ArrayList<Component> getIngredientsFormObjects()
     {
         return ingredientsFormObjects;

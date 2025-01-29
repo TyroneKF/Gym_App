@@ -79,8 +79,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //###########################################
         // Set IngredientName in form to un-editable
         //############################################
-        ArrayList<Component> componentArrayList = ingredientsForm.getIngredientsFormObjects();
-        JTextField ingredientNameJTextField = (JTextField) componentArrayList.get(ingredientsForm.getIngredientNameObjectIndex());
+        JTextField ingredientNameJTextField = ingredientsForm.getIngredientNameJTextfield();
         ingredientNameJTextField.setEditable(ingredientEditable);
 
         //##########################################
