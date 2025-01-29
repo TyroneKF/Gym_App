@@ -132,7 +132,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
         JPanel inputArea = new JPanel(new GridBagLayout());
 
         // for each label it is created into a JLabel
-        int  yPos = -1;
+        int yPos = -1;
         for (Map.Entry<String, Object[]> info : ingredientsFormObjectAndValues.entrySet())
         {
             yPos++;
@@ -169,7 +169,6 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
                 String ingredientMeassurements[] = {"Litres", "Grams"};
                 ingredientsMeasure_JComboBox = new JComboBox(ingredientMeassurements);
                 comboBox = ingredientsMeasure_JComboBox;
-                //ingredientsFormObjects.add(comboBox);// HELLO DELETE
             }
             else if (formLabel.equals("Ingredient Type"))
             {
@@ -210,8 +209,8 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
                 //############################################
                 //
                 //############################################
-                tempValues[0]=textField;
-                ingredientsFormObjectAndValues.put(formLabel,tempValues);
+                tempValues[0] = textField;
+                ingredientsFormObjectAndValues.put(formLabel, tempValues);
 
                 addToContainer(inputArea, saltJPanelArea, xPos += 1, yPos, 1, 1, 0.25, 0.25, "both", 0, 0); // Adding JPanel to GUI
                 continue;
@@ -230,8 +229,8 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
                 // Set Selected Item To Nothing
                 comboBox.setSelectedIndex(-1);
 
-                tempValues[0]=comboBox;
-                ingredientsFormObjectAndValues.put(formLabel,tempValues);
+                tempValues[0] = comboBox;
+                ingredientsFormObjectAndValues.put(formLabel, tempValues);
 
                 addToContainer(inputArea, comboBox, xPos += 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
                 continue;
@@ -250,8 +249,8 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
                 textField.setDocument(new JTextFieldLimit(charLimit));
             }
 
-            tempValues[0]=textField;
-            ingredientsFormObjectAndValues.put(formLabel,tempValues);
+            tempValues[0] = textField;
+            ingredientsFormObjectAndValues.put(formLabel, tempValues);
 
             addToContainer(inputArea, textField, xPos += 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
         }
@@ -277,7 +276,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
 
     public void update_Form_WithNutritionIXSearch(LinkedHashMap<String, Object> foodInfo)//HELLO EDITED NOW
     {
-        if (foodInfo != null)
+        if (foodInfo!=null)
         {
             clearIngredientsForm();
 
@@ -288,9 +287,8 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
             System.out.println("\n\nupdate_Form_WithNutritionIXSearch()");
             for (Map.Entry<String, Object[]> info : ingredientsFormObjectAndValues.entrySet())
             {
-                //String key = info.getKey();
+                String key = info.getKey();
                 Object[] row = info.getValue();
-
                 Component comp = (Component) row[0];
 
                 if (comp instanceof JTextField)
@@ -318,7 +316,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
                 //
                 //############################
                 String foodInfoEquivalentLabel = keyObject.getValue0();
-                if (foodInfoEquivalentLabel == null)
+                if (foodInfoEquivalentLabel==null)
                 {
                     continue;
                 }
@@ -331,7 +329,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
                 System.out.printf("\n\n#############################\n\nNutritionIx Label: %s  = %s \nIngredient Form Label pos: %s | Ingredient Form Label: %s  ",
                         foodInfoEquivalentLabel, foodInfoNutritionValue, formLabelName, formLabelPos);
 
-                if (foodInfoNutritionValue == null || foodInfoNutritionValue.toString().equals("null"))
+                if (foodInfoNutritionValue==null || foodInfoNutritionValue.toString().equals("null"))
                 {
                     continue;
                 }
@@ -363,7 +361,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
                 {
                     if (formLabelName.equals("Ingredient Measurement In"))
                     {
-                        foodInfoNutritionValue = foodInfoNutritionValue.toString().equals("g") ? "Grams" : "Litres";
+                        foodInfoNutritionValue = foodInfoNutritionValue.toString().equals("g") ? "Grams":"Litres";
                     }
 
                     JComboBox obj = (JComboBox) comp;
@@ -456,13 +454,16 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
         // Validation Input Fields
         //##############################
 
-        int row = -1;
-        for (String ingredientFormLabel : ingredientsFormLabelsMapsToValues.keySet())
+        int rowPos = 0;
+        for (Map.Entry<String, Object[]> info : ingredientsFormObjectAndValues.entrySet())
         {
-            row++;
+            rowPos++;
 
-            String value = "";
-            Component comp = ingredientsFormObjects.get(row);
+            Object[] row = info.getValue();
+            Component comp = (Component) row[0];
+
+            String value = "", rowLabel = info.getKey();
+
 
             if (comp instanceof JComboBox)
             {
@@ -470,7 +471,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
 
                 if (comboBox.getSelectedIndex()==-1) // if no item has been selected by JComboBox
                 {
-                    errorTxt += String.format("\n\n  ' %s ' on Row: %s, an option inside the dropdown menu must be selected", ingredientFormLabel, row + 1);
+                    errorTxt += String.format("\n\n  ' %s ' on Row: %s, an option inside the dropdown menu must be selected", rowLabel, rowPos);
                 }
                 continue;
             }
@@ -480,18 +481,18 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
                 value = jTextField.getText().trim();
 
                 //#########################################
-                // Check if JTextfield input is empty
+                // Check if JTextField input is empty
                 //#########################################
                 if (value.equals(""))
                 {
-                    errorTxt += String.format("\n\n  ' %s ' on Row: %s,  must have a value which is not ' NULL '!", ingredientFormLabel, row + 1);
+                    errorTxt += String.format("\n\n  ' %s ' on Row: %s,  must have a value which is not ' NULL '!", rowLabel, rowPos);
                     continue;
                 }
 
                 //#########################################
                 //
                 //#########################################
-                if (row==ingredientNameObjectIndex)
+                if (rowLabel.equals("Ingredient Name"))
                 {
                     ingredientName_Txt = value;
                     continue;
@@ -500,7 +501,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
                 //#########################################
                 //
                 //#########################################
-                else if (row==glycemicObjectIndex)
+                else if (rowLabel.equals("Glycemic Index"))
                 {
                     try
                     {
@@ -508,13 +509,13 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
 
                         if (intValue > 100 || intValue < 0)
                         {
-                            errorTxt += String.format("\n\n  ' %s ' on Row: %s,  must be an Integer value which is: 0<= value <=100 !", ingredientFormLabel, row + 1);
+                            errorTxt += String.format("\n\n  ' %s ' on Row: %s,  must be an Integer value which is: 0<= value <=100 !", rowLabel, rowPos);
                         }
                     }
                     catch (Exception e)
                     {
-                        errorTxt += String.format("\n\n  ' %s ' on Row: %s,  must be an Integer value which is: 0<= value <=100 !", ingredientFormLabel, row + 1);
-                        errorTxt += String.format("\n\n  ' %s ' on Row: %s,  must be an Integer value which is: 0<= value <=100 !", ingredientFormLabel, row + 1);
+                        errorTxt += String.format("\n\n  ' %s ' on Row: %s,  must be an Integer value which is: 0<= value <=100 !", rowLabel, rowPos);
+                        errorTxt += String.format("\n\n  ' %s ' on Row: %s,  must be an Integer value which is: 0<= value <=100 !", rowLabel, rowPos);
                     }
                     continue;
                 }
@@ -522,11 +523,11 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
                 //#########################################
                 // Change salt value based on mg to g
                 //#########################################
-                else if (row==ingredientSaltObjectIndex)
+                else if (rowLabel.equals("Salt"))
                 {
                     if (saltMeasurement_JComboBox.getSelectedIndex()==-1)
                     {
-                        errorTxt += String.format("\n\n  ' %s ' on Row: %s, an option for the measurement chosen for salt needs to be selected in the dropdown box!", ingredientFormLabel, row + 1);
+                        errorTxt += String.format("\n\n  ' %s ' on Row: %s, an option for the measurement chosen for salt needs to be selected in the dropdown box!", rowLabel, rowPos);
                         continue;
                     }
 
@@ -549,7 +550,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
                 //#########################################
                 // Do BigDecimal Processing
                 //#########################################
-                errorTxt += convertToBigDecimal(value, ingredientFormLabel, row + 1, jTextField, false);
+                errorTxt += convertToBigDecimal(value, rowLabel, rowPos, jTextField, false);
             }
         }
 
@@ -624,14 +625,18 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
         for (Map.Entry<String, Triplet<String, String, String>> entry : ingredientsFormLabelsMapsToValues.entrySet())
         {
             pos++;
-            Triplet<String, String, String> value = entry.getValue();
-
-            String mysqlColumnDataType = value.getValue2();
 
             //####################################
             //
             //####################################
-            Component formObject = ingredientsFormObjects.get(pos);
+            String key = entry.getKey();
+            Triplet<String, String, String> value = entry.getValue();
+            String mysqlColumnDataType = value.getValue2();
+            Component formObject = (Component) ingredientsFormObjectAndValues.get(key)[0];
+
+            //####################################
+            //
+            //####################################
             String formFieldValue = "";
 
             if (formObject instanceof JTextField)
@@ -648,7 +653,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
             //####################################
             String fieldsQueryEx = "";
 
-            if (pos==ingredientTypeObjectIndex)
+            if (key.equals("Ingredient Type"))
             {
                 fieldsQueryEx = String.format("(%s%s\")", ingredientTypeSet, formFieldValue);
             }
@@ -664,7 +669,6 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
             //####################################
             //
             //####################################
-
             if (pos==endPos)
             {
                 ingredientsValuesBeingAdded += String.format("%s);", fieldsQueryEx);
@@ -692,6 +696,16 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
+    protected JComboBox getIngredientTypeJComboBox()
+    {
+       return  (JComboBox) ingredientsFormObjectAndValues.get("Ingredient Type")[0];
+    }
+
+    protected JTextField getIngredientNameJTextfield()
+    {
+        return  (JTextField) ingredientsFormObjectAndValues.get("Ingredient Name")[0];
+    }
+
     protected ArrayList<Component> getIngredientsFormObjects()
     {
         return ingredientsFormObjects;
