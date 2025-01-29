@@ -178,15 +178,6 @@ public class Edit_ShopForm extends Add_ShopForm
             updates[pos += 1] = (insertStatement);
         }
 
-        /*//##############################################################
-        // HELLO DELETE
-        //##############################################################
-        System.out.println("\n\nget_ShopForm_UpdateString()");
-        for (String i : updates)
-        {
-            System.out.printf("\n%s", i);
-        }*/
-
         //############################################################
         // Return values
         //############################################################
@@ -228,7 +219,7 @@ public class Edit_ShopForm extends Add_ShopForm
 
         private boolean hasDataChanged()
         {
-            Boolean hasDataChanged = false;
+            boolean hasDataChanged = false;
 
             String shopName_current = getShops_JComboBox().getSelectedItem().toString().trim();
             String productName_current = getProductName_TxtField().getText().trim();
