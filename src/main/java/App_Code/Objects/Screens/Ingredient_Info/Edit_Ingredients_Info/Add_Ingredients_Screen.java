@@ -233,7 +233,7 @@ public class Add_Ingredients_Screen extends JPanel
             //#####################################
             // Reset Ingredient Names/Types
             //####################################
-            String ingredientName =  addIngredientsForm.getIngredientNameJTextfield().getText();
+            String ingredientName =  addIngredientsForm.getIngredientNameJTextField().getText();
             String ingredientType = (String) addIngredientsForm.getIngredientTypeJComboBox().getSelectedItem();
 
             addOrDeleteIngredientFromMap("add", ingredientType, ingredientName);

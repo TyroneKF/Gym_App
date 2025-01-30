@@ -12,6 +12,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
 {
@@ -209,8 +210,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
                 //############################################
                 //
                 //############################################
-                tempValues[0] = textField;
-                ingredientsFormObjectAndValues.put(formLabel, tempValues);
+                setIngredientsFormObjectAndValues(formLabel, 0, textField);
 
                 addToContainer(inputArea, saltJPanelArea, xPos += 1, yPos, 1, 1, 0.25, 0.25, "both", 0, 0); // Adding JPanel to GUI
                 continue;
@@ -229,8 +229,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
                 // Set Selected Item To Nothing
                 comboBox.setSelectedIndex(-1);
 
-                tempValues[0] = comboBox;
-                ingredientsFormObjectAndValues.put(formLabel, tempValues);
+               setIngredientsFormObjectAndValues(formLabel, 0, comboBox);
 
                 addToContainer(inputArea, comboBox, xPos += 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
                 continue;
@@ -249,8 +248,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
                 textField.setDocument(new JTextFieldLimit(charLimit));
             }
 
-            tempValues[0] = textField;
-            ingredientsFormObjectAndValues.put(formLabel, tempValues);
+            setIngredientsFormObjectAndValues(formLabel, 0, textField);
 
             addToContainer(inputArea, textField, xPos += 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
         }
@@ -459,12 +457,11 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
         {
             rowPos++;
 
-            Object[] row = info.getValue();
-            Component comp = (Component) row[0];
-
             String value = "", rowLabel = info.getKey();
+            Object[] listValues = info.getValue();
+            Component comp = (Component) listValues[0];
 
-
+            //##########################################################################################################
             if (comp instanceof JComboBox)
             {
                 JComboBox comboBox = (JComboBox) comp;
@@ -472,9 +469,16 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
                 if (comboBox.getSelectedIndex()==-1) // if no item has been selected by JComboBox
                 {
                     errorTxt += String.format("\n\n  ' %s ' on Row: %s, an option inside the dropdown menu must be selected", rowLabel, rowPos);
+                    continue;
                 }
+
+                // Store current JComboBox form Values into store
+                value = comboBox.getSelectedItem().toString();
+                setIngredientsFormObjectAndValues(rowLabel, 1, value);
+
                 continue;
             }
+            //##########################################################################################################
             else if (comp instanceof JTextField)
             {
                 JTextField jTextField = (JTextField) comp;
@@ -490,11 +494,22 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
                 }
 
                 //#########################################
-                //
+                //HELLO Add more processing here
                 //#########################################
                 if (rowLabel.equals("Ingredient Name"))
                 {
                     ingredientName_Txt = value;
+
+                    if (doesStringContainGivenCharacters(ingredientName_Txt, "'"))
+                    {
+                        errorTxt += String.format("\n\n  Ingredient named \"%s\" cannot contain the symbol \" ' \"!", ingredientName_Txt);
+                    }
+                    else
+                    {
+                        errorTxt = extra_Validation_IngredientName(errorTxt, ingredientName_Txt);
+                    }
+
+                    setIngredientsFormObjectAndValues(rowLabel, 1, ingredientName_Txt);
                     continue;
                 }
 
@@ -509,12 +524,13 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
 
                         if (intValue > 100 || intValue < 0)
                         {
-                            errorTxt += String.format("\n\n  ' %s ' on Row: %s,  must be an Integer value which is: 0<= value <=100 !", rowLabel, rowPos);
+                            throw new Exception();
                         }
+
+                        setIngredientsFormObjectAndValues(rowLabel, 1, value);
                     }
                     catch (Exception e)
                     {
-                        errorTxt += String.format("\n\n  ' %s ' on Row: %s,  must be an Integer value which is: 0<= value <=100 !", rowLabel, rowPos);
                         errorTxt += String.format("\n\n  ' %s ' on Row: %s,  must be an Integer value which is: 0<= value <=100 !", rowLabel, rowPos);
                     }
                     continue;
@@ -548,24 +564,13 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
                 }
 
                 //#########################################
-                // Do BigDecimal Processing
+                // Do BigDecimal Processing on Everything
                 //#########################################
                 errorTxt += convertToBigDecimal(value, rowLabel, rowPos, jTextField, false);
-            }
-        }
 
-        //####################################################
-        //  ingredientName checks
-        //####################################################
-        if (!(ingredientName_Txt.equals("")))
-        {
-            if (doesStringContainGivenCharacters(ingredientName_Txt, "'"))
-            {
-                errorTxt += String.format("\n\n  Ingredient named \"%s\" cannot contain the symbol \" ' \"!", ingredientName_Txt);
-            }
-            else
-            {
-                errorTxt = extra_Validation_IngredientName(errorTxt, ingredientName_Txt);
+                //######################################################################################################
+                // After converting values, save it in memories
+                setIngredientsFormObjectAndValues(rowLabel, 1, jTextField.getText().trim());
             }
         }
 
@@ -621,7 +626,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
         //####################################
         //
         //####################################
-        int pos = -1, listSize = ingredientsFormLabelsMapsToValues.size(), endPos = listSize - 1;
+        int pos = -1, endPos = ingredientsFormLabelsMapsToValues.size() - 1;
         for (Map.Entry<String, Triplet<String, String, String>> entry : ingredientsFormLabelsMapsToValues.entrySet())
         {
             pos++;
@@ -632,27 +637,14 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
             String key = entry.getKey();
             Triplet<String, String, String> value = entry.getValue();
             String mysqlColumnDataType = value.getValue2();
-            Component formObject = (Component) ingredientsFormObjectAndValues.get(key)[0];
+
+            String
+                    fieldsQueryEx = "",
+                    formFieldValue = (String) ingredientsFormObjectAndValues.get(key)[1];
 
             //####################################
             //
             //####################################
-            String formFieldValue = "";
-
-            if (formObject instanceof JTextField)
-            {
-                formFieldValue = ((JTextField) formObject).getText().trim();
-            }
-            else if (formObject instanceof JComboBox)
-            {
-                formFieldValue = ((JComboBox) formObject).getSelectedItem().toString();
-            }
-
-            //####################################
-            //
-            //####################################
-            String fieldsQueryEx = "";
-
             if (key.equals("Ingredient Type"))
             {
                 fieldsQueryEx = String.format("(%s%s\")", ingredientTypeSet, formFieldValue);
@@ -691,27 +683,35 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
     {
         return stringToBeEdited.trim().replaceAll("\\p{C}", ""); // remove all whitespace & hidden characters like \n
     }
+    //##################################################################################################################
+    // Mutator Methods
+    //##################################################################################################################
 
+    // ingredientsFormLabel Key -> [Component, FormValue, DB Value]
+    protected void setIngredientsFormObjectAndValues(String key, int pos, Object valueToChange)
+    {
+        Object[] list = ingredientsFormObjectAndValues.get(key);
+        list[pos] = valueToChange;
+        ingredientsFormObjectAndValues.put(key, list);
+    }
 
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
     protected JComboBox getIngredientTypeJComboBox()
     {
-       return  (JComboBox) ingredientsFormObjectAndValues.get("Ingredient Type")[0];
+        return (JComboBox) ingredientsFormObjectAndValues.get("Ingredient Type")[0];
     }
 
-    protected JTextField getIngredientNameJTextfield()
+    protected JTextField getIngredientNameJTextField()
     {
-        return  (JTextField) ingredientsFormObjectAndValues.get("Ingredient Name")[0];
+        return (JTextField) ingredientsFormObjectAndValues.get("Ingredient Name")[0];
     }
 
     protected JTextField getIngredientTypeJTextField()
     {
-        return  (JTextField) ingredientsFormObjectAndValues.get("Ingredient Type")[0];
+        return (JTextField) ingredientsFormObjectAndValues.get("Ingredient Type")[0];
     }
-
-
 
     protected ArrayList<Component> getIngredientsFormObjects()
     {
