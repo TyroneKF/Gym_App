@@ -9,10 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
 {
@@ -44,7 +41,6 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
 
     }};
 
-
     protected LinkedHashMap<String, Object[]> ingredientsFormObjectAndValues = new LinkedHashMap<>()
     {{
         // ingredientsFormLabel Key -> [Component, FormValue, DB Value]
@@ -68,21 +64,12 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
         //put("Potassium", new Object[3]);
     }};
 
-    protected int
-            ingredientNameObjectIndex,
-            ingredientTypeObjectIndex,
-            glycemicObjectIndex,
-            ingredientSaltObjectIndex,
-            ingredientMeasurementObjectIndex;
-
     protected JComboBox<String>
             ingredientsMeasure_JComboBox = new JComboBox(),
             ingredientsType_JComboBox = new JComboBox(),
             saltMeasurement_JComboBox = new JComboBox();
 
-    protected ArrayList<Component> ingredientsFormObjects = new ArrayList<>();
-
-    protected String ingredientsValuesBeingAdded = "";
+    protected String ingredientsValuesBeingAdded = ""; //HELLO Refactor
 
     //##################################################################################################################
     //
@@ -420,7 +407,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
     {
         for (Map.Entry<String, Object[]> info : ingredientsFormObjectAndValues.entrySet())
         {
-            //String key = info.getKey();
+            String rowLabel = info.getKey();
             Object[] row = info.getValue();
             Component comp = (Component) row[0];
 
@@ -432,10 +419,12 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
             {
                 ((JTextField) comp).setText("");
             }
+
+            // Remove FormField Values in Memory to null
+            setIngredientsFormObjectAndValues(rowLabel, 1, null);
         }
 
         saltMeasurement_JComboBox.setSelectedIndex(-1);
-
         extraClearIngredientsForm();
     }
 
@@ -698,43 +687,26 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
-    protected JComboBox getIngredientTypeJComboBox()
+    protected String getIngredientTypeFormValue()
     {
-        return (JComboBox) ingredientsFormObjectAndValues.get("Ingredient Type")[0];
+        return (String) ingredientsFormObjectAndValues.get("Ingredient Type")[1];
     }
 
-    protected JTextField getIngredientNameJTextField()
+    protected String getIngredientNameFormValue()
     {
-        return (JTextField) ingredientsFormObjectAndValues.get("Ingredient Name")[0];
+        return (String) ingredientsFormObjectAndValues.get("Ingredient Name")[1];
     }
 
-    protected JTextField getIngredientTypeJTextField()
-    {
-        return (JTextField) ingredientsFormObjectAndValues.get("Ingredient Type")[0];
-    }
-
-    protected ArrayList<Component> getIngredientsFormObjects()
-    {
-        return ingredientsFormObjects;
-    }
-
-    protected int getIngredientNameObjectIndex()
-    {
-        return ingredientNameObjectIndex;
-    }
-
-    protected int getIngredientTypeObjectIndex()
-    {
-        return ingredientTypeObjectIndex;
-    }
-
-    protected int getIngredientSaltObjectIndex()
-    {
-        return ingredientSaltObjectIndex;
-    }
-
+    //######################################
+    //
+    //######################################
     protected String getIngredientsValuesBeingAdded()
     {
         return ingredientsValuesBeingAdded;
+    }
+
+    protected LinkedHashMap<String, Object[]> getIngredientsFormObjectAndValues()
+    {
+        return ingredientsFormObjectAndValues;
     }
 }

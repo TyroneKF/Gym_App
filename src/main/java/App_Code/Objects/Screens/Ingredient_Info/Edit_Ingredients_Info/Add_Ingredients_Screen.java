@@ -188,6 +188,18 @@ public class Add_Ingredients_Screen extends JPanel
     //####################################################
     // Submission Button Actions
     //####################################################
+    protected Boolean areYouSure(String process)
+    {
+        int reply = JOptionPane.showConfirmDialog(mealPlanScreen, String.format("Are you sure you want to: %s?", process, process),
+                "Confirmation", JOptionPane.YES_NO_OPTION); //HELLO Edit
+
+        if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
+        {
+            return false;
+        }
+        return true;
+    }
+
     protected void submissionBtnAction()
     {
         //###############################
@@ -233,8 +245,8 @@ public class Add_Ingredients_Screen extends JPanel
             //#####################################
             // Reset Ingredient Names/Types
             //####################################
-            String ingredientName =  addIngredientsForm.getIngredientNameJTextField().getText();
-            String ingredientType = (String) addIngredientsForm.getIngredientTypeJComboBox().getSelectedItem();
+            String ingredientName =  addIngredientsForm.getIngredientNameFormValue();
+            String ingredientType =  addIngredientsForm.getIngredientNameFormValue();
 
             addOrDeleteIngredientFromMap("add", ingredientType, ingredientName);
 
@@ -257,7 +269,7 @@ public class Add_Ingredients_Screen extends JPanel
 
     protected boolean updateBothForms(String updateIngredients_String, String[] updateIngredientShops_String)
     {
-        System.out.printf("\n\nIngredientValues: \n%s \n\nShopping Info: \n%s", updateIngredients_String, Arrays.toString(updateIngredientShops_String));
+        System.out.printf("\n\nupdateBothForms() \nIngredientValues: \n%s \n\nShopping Info: \n%s", updateIngredients_String, Arrays.toString(updateIngredientShops_String));
 
         //####################################
         // Uploading Query
@@ -312,18 +324,6 @@ public class Add_Ingredients_Screen extends JPanel
         }
 
         ingredients_info_screen.update_EditIngredientsInfo_IngredientsTypes();
-        return true;
-    }
-
-    protected Boolean areYouSure(String process)
-    {
-        int reply = JOptionPane.showConfirmDialog(mealPlanScreen, String.format("Are you sure you want to: %s?", process, process),
-                "Confirmation", JOptionPane.YES_NO_OPTION); //HELLO Edit
-
-        if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
-        {
-            return false;
-        }
         return true;
     }
 

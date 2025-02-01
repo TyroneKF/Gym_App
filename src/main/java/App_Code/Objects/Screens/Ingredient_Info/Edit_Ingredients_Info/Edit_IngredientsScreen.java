@@ -10,23 +10,24 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.TreeMap;
+import java.util.*;
 
 public class Edit_IngredientsScreen extends Add_Ingredients_Screen
 {
-    private boolean jcomboUpdateStaus = false;
     private Edit_IngredientsForm ingredientsForm;
     private Edit_ShopForm shopForm;
-
-    private boolean ingredientEditable = true;
 
     private JComboBox<String>
             ingredientsNameJComboBox = new JComboBox(),
             ingredientsTypesJComboBox = new JComboBox();
 
-    private String selected_IngredientType_JComboItem = "", selected_IngredientName = "";
+    private boolean
+            ingredientEditable = true,
+            jcomboUpdateStaus = false;
+
+    private String
+            selected_IngredientType = "",
+            selected_IngredientName = "";
 
 
     Edit_IngredientsScreen(Ingredients_Info_Screen parent, MyJDBC db)
@@ -70,17 +71,12 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //#################################
         // Needs to be created near this
         //##################################
-
         ingredientsForm = new Edit_IngredientsForm(this, ingredients_info_screen, this, "Edit Ingredients Info", 250, 50);
         shopForm = new Edit_ShopForm(scrollPaneJPanel, ingredients_info_screen, this, "Edit Ingredient Suppliers", 250, 50);
         searchForIngredientInfo = new SearchForFoodInfo(scrollPaneJPanel, ingredientsForm, "Search For Food Info", 250, 50);
-        searchForIngredientInfo.collapseJPanel();
 
-        //###########################################
-        // Set IngredientName in form to un-editable
-        //############################################
-        JTextField ingredientNameJTextField = ingredientsForm.getIngredientNameJTextfield();
-        ingredientNameJTextField.setEditable(ingredientEditable);
+        //shopForm.expandJPanel();//HELLO GET THIS TO WORK
+        searchForIngredientInfo.collapseJPanel();
 
         //##########################################
         // Icon Setup
@@ -133,12 +129,12 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
                 if (ie.getStateChange() == ItemEvent.SELECTED)
                 {
                     // Get ingredientType
-                    selected_IngredientType_JComboItem = (String) ie.getItem().toString();
+                    selected_IngredientType = (String) ie.getItem().toString();
 
                     // clear ingredientsNames JCombo
                     refreshInterface(true, false);
 
-                    if (selected_IngredientType_JComboItem.equals(""))
+                    if (selected_IngredientType.equals(""))
                     {
                         return;
                     }
@@ -214,7 +210,6 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
     //#########################################################################
     //
     //#########################################################################
-
     public void updateIngredientsTypeJComboBox()
     {
         ingredientsTypesJComboBox.removeAllItems(); // clearList
@@ -355,7 +350,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         setUpdateStatusOfIngredientNames(true); // stops ingredientName JComboBox from triggering any  actionListener events
 
         TreeMap<String, Collection<String>> map_ingredientTypesToIngredientNames = ingredients_info_screen.getMapIngredientTypesToNames();
-        for (String item : map_ingredientTypesToIngredientNames.get(selected_IngredientType_JComboItem))
+        for (String item : map_ingredientTypesToIngredientNames.get(selected_IngredientType))
         {
             if (!item.equals("None Of The Above"))
             {
@@ -451,7 +446,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //#####################################
         // Update IngredientsForms
         //####################################
-        ingredientsForm.updateIngredientsFormWithInfoFromDB();
+        ingredientsForm.updateIngredientsInfoFromDB();
 
         //#####################################
         // Update ShopForm
@@ -472,7 +467,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         shopForm.loadShopFormData();
     }
 
-    private void deleteIngredientBTNAction()
+    private void deleteIngredientBTNAction()//HELLO PROGRAM DELETE BTN
     {
         //##############################################################################################################
         //
@@ -488,7 +483,6 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //##############################################################################################################
         String selectedIngredientID = ingredientsForm.getSelectedIngredientID();
         String selectedIngredientName = ingredientsForm.getSelectedIngredientName();
-
 
         //HELLO should be removed as N/A is never in the JComboBox
         if (selectedIngredientName.equals("N/A"))
@@ -525,7 +519,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         if (db.uploadData_Batch_Altogether(new String[]{query0, query1, query2}))
         {
             JOptionPane.showMessageDialog(mealPlanScreen, String.format("Successfully Deleted '%s' From DB!", selectedIngredientName));
-            addOrDeleteIngredientFromMap("delete", selected_IngredientType_JComboItem, selectedIngredientName); // delete ingredient
+            addOrDeleteIngredientFromMap("delete", selected_IngredientType, selectedIngredientName); // delete ingredient
             refreshInterface(true, true);
             ingredients_info_screen.setUpdateIngredientInfo(true);
         }
@@ -616,7 +610,6 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //##############################################################################################################
         //
         //##############################################################################################################
-
         if (!(ingredientsForm.validate_IngredientsForm()) || !(shopForm.validateForm()))
         {
             return;
@@ -625,24 +618,17 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //##############################################################################################################
         //
         //##############################################################################################################
-
         String selectedIngredientID = ingredientsForm.getSelectedIngredientID();
-        String previousIngredientName = ingredientsForm.getPreviousIngredientName();
-        String previousIngredientType = ingredientsForm.getPreviousIngredientType();
 
-        //########################
-        // Get ingredient ID
-        //########################
         if (selectedIngredientID == null)
         {
             JOptionPane.showMessageDialog(mealPlanScreen, "\n\nUnable To Get Ingredient ID To Edit This Ingredient !!");
             return;
         }
 
-        //#############################
-        // Get Update Strings & Update
-        //#############################
-
+        //###############################################################
+        // Get Update Strings & Update for both forms using ingredientID
+        //###############################################################
         if (!(updateBothForms(ingredientsForm.get_IngredientsForm_UpdateString(selectedIngredientID), shopForm.get_ShopForm_UpdateString(selectedIngredientID))))
         {
             JOptionPane.showMessageDialog(mealPlanScreen, "\n\nUnable To Update Ingredient Info !!");
@@ -661,16 +647,20 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //
         //##############################################################################################################
         // Check if ingredientsName or IngredientType changed
-        String currentIngredientName = ((JTextField) ingredientsForm.getFormObjects().get(ingredientsForm.getIngredientNameObjectIndex())).getText().trim();
-        String currentIngredientType = ((JComboBox) ingredientsForm.getFormObjects().get(ingredientsForm.getIngredientTypeObjectIndex())).getSelectedItem().toString();
+        String currentIngredientName = ingredientsForm.getIngredientNameFormValue();
+        String currentIngredientType = ingredientsForm.getIngredientTypeFormValue();
 
-        /*//HELLO REMOVE
+        String previousIngredientName = selected_IngredientName;
+        String previousIngredientType = selected_IngredientType;
+
+        //HELLO REMOVE
         System.out.printf("\n\nIngredientName \nCurrent = '%s' \nPrevious = '%s' \n\nIngredientType \nCurrent = '%s' \nPrevious = '%s'",
-                currentIngredientName, previousIngredientName, previousIngredientType, currentIngredientType);*/
+                currentIngredientName, previousIngredientName, previousIngredientType, currentIngredientType);
 
         if ((!currentIngredientName.equals(previousIngredientName) || (!currentIngredientType.equals(previousIngredientType))))
         {
             ingredients_info_screen.setUpdateIngredientInfo(true);
+
             // if there is an error trying to add or remove ingredientType throw an error
             if (!addOrDeleteIngredientFromMap("delete", previousIngredientType, previousIngredientName) // remove old info ingredient
                     || !addOrDeleteIngredientFromMap("add", currentIngredientType, currentIngredientName))// add new info ingredient
@@ -691,43 +681,36 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
     @Override
     protected boolean backupDataInSQLFile()
     {
-        //##############################################################################################################
-        // Form data of selected ingredient
-        //##############################################################################################################
-        ArrayList<String> currentFormData = ingredientsForm.getCurrentFormData();
-
-        if(currentFormData.size() == 0) //HELLO Remove this problem should be fixed without this code block needed
+        String replacementData = "(null,";
+        for (Map.Entry<String, Object[]> entry : ingredientsForm.getIngredientsFormObjectAndValues().entrySet())
         {
-            JOptionPane.showMessageDialog(null, String.format("Error, getting form data for backup!", getSelectedIngredientName()));
-            return false;
-        }
+            String rowLabel = entry.getKey();
+            String formValue = (String) entry.getValue()[1];
 
-        //##################################
-        //
-        //##################################
-        String newData = "(null";
-        int size = currentFormData.size();
-
-        for (int i = 0; i < size; i++)
-        {
-            if (i == ingredientsForm.getIngredientTypeObjectIndex())
+            if(rowLabel.equals("Ingredient Measurement In") || rowLabel.equals("Ingredient Name"))
             {
-                newData += String.format(",%s", currentFormData.get(i));
+                replacementData += String.format("(\"%s\"),", formValue);
                 continue;
             }
-            newData += String.format(",(%s)", currentFormData.get(i));
+            else if (rowLabel.equals("Ingredient Type"))
+            {
+                replacementData += String.format("(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = \"%s\"),", formValue);
+                continue;
+            }
+            replacementData += String.format("(%s),", formValue);
         }
-        newData += ")";
+
+        replacementData =  replacementData.substring(0, replacementData.length() - 1)+");;";
+
+        System.out.printf("\n\nbackupDataInSQLFile() \n%s", replacementData);
 
         //##############################################################################################################
         //
         //##############################################################################################################
-        String name =String.format("(\"%s\")", getSelectedIngredientName().trim());
-        System.out.printf("\n\nNew Data: \n%s \ningredient name: %s", newData, name);
-
-        if( ! (db.replaceTxtInSQLFileV2(sqlBackUpPath,name,newData)))
+        String oldIngredientName = String.format("(\"%s\")", getSelectedIngredientName().trim());
+        if( ! (db.replaceTxtInSQLFileV2(sqlBackUpPath,oldIngredientName,replacementData)))
         {
-            JOptionPane.showMessageDialog(null, String.format("Error, changing back-up of %s in SQL file of ingredient info!", getSelectedIngredientName()));
+            JOptionPane.showMessageDialog(null, String.format("Error, changing back-up of %s in SQL file of ingredient info!", oldIngredientName));
             return false;
         }
 
@@ -739,9 +722,18 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
     protected boolean updateBothForms(String updateIngredients_String, String[] updateIngredientShops_String)
     {
         //####################################
+        //
+        //####################################
+        if(updateIngredients_String == null && updateIngredientShops_String == null)
+        {
+            System.out.println("\n\nupdateBothForms() no ingredientInfo / shopInfo to Update");
+            return false;
+        }
+
+        //####################################
         // Uploading Ingredient Info Query
         //####################################
-        if (!(db.uploadData_Batch_Altogether(new String[]{updateIngredients_String})))
+        if (updateIngredients_String!= null && !(db.uploadData_Batch_Altogether(new String[]{updateIngredients_String})))
         {
             JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Failed Upload - Unable To Add Ingredient Info & Shop Info & Ingredient Suppliers In DB!");
             return false;
@@ -771,6 +763,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
             {
                 JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("\n\nUpdated Ingredient Info! \n\nAlso updated %s/%s -  Suppliers For Ingredient Updated In DB!!!",
                         noOfUpdateProcesses, noOfUpdateProcesses));
+                return false;
             }
         }
         return true;

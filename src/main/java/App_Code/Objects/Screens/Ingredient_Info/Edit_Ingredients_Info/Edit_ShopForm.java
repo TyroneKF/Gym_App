@@ -118,7 +118,7 @@ public class Edit_ShopForm extends Add_ShopForm
 
         int pos = -1; // Due to pos+=1, pos will be greater than list size
         Iterator<AddShopForm_Object> it = shopFormObjects.iterator();
-
+        boolean hasDataChanged = false;
         while (it.hasNext())
         {
             // Assigning current shopForm object in list to variable
@@ -143,6 +143,7 @@ public class Edit_ShopForm extends Add_ShopForm
                 {
                     continue;
                 }
+                hasDataChanged = true;
 
                 //Update String
                 updates[pos += 1] = String.format("""
@@ -176,6 +177,10 @@ public class Edit_ShopForm extends Add_ShopForm
 
             insertStatement += insertValues;
             updates[pos += 1] = (insertStatement);
+        }
+        else if (!hasDataChanged)
+        {
+            return null;
         }
 
         //############################################################
