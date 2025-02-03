@@ -12,11 +12,10 @@ import java.util.*;
 public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
 {
     //#######################################################
-    //
+    // Variables
     //#######################################################
     Add_Ingredients_Screen add_ingredientsScreen;
 
-    //#######################################################
     protected int yPos = 0;
 
     protected ArrayList<AddShopForm_Object> shopFormObjects = new ArrayList<>();
@@ -25,7 +24,7 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
     protected JPanel inputArea;
 
     //#############################################################################################################
-    //
+    // Constructor
     //#############################################################################################################
     public Add_ShopForm(Container parentContainer, Ingredients_Info_Screen ingredients_info_screen, Add_Ingredients_Screen add_ingredientsScreen, String btnText, int btnWidth, int btnHeight)
     {
@@ -202,7 +201,7 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
     }
 
     //#############################################################################################################
-    //
+    // Methods
     //#############################################################################################################
     protected boolean validateForm()
     {
@@ -229,7 +228,7 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
             //#######################################
             // Validate Stores
             //#######################################
-            String shopChosen = shopForm_object.getShops_JComboBox().getSelectedItem().toString();
+            String shopChosen = shopForm_object.getProductShops_TXT();
 
             if (shopChosen.equals("No Shop"))
             {
@@ -240,7 +239,7 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
             //########################################
             // Validate Product Name
             //########################################
-            String productNameTxt = shopForm_object.getProductName_TxtField().getText().trim();
+            String productNameTxt = shopForm_object.getProductName_Txt();
             if (productNameTxt.equals(""))
             {
                 iterationErrorTxt += String.format("%sOn Row: %s, the 'Product Name' cannot be empty or, ' NULL '!", space, pos);
@@ -251,7 +250,7 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
             // Validate Prices
             //#######################################
             JTextField prices = shopForm_object.getProductPrice_TxtField();
-            String price = prices.getText().trim();
+            String price = shopForm_object.getProductPrice_Txt();
 
             if (!(price.equals(""))) // Check if text field input is empty
             {
@@ -278,12 +277,12 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
             //#######################################
             // Validate Quantity
             //#######################################
-            JTextField quantity = shopForm_object.getProductQuantityPerPack_TxtField();
-            String value = quantity.getText().trim();
+            JTextField quantityObj = shopForm_object.getProductQuantityPerPack_TxtField();
+            String quantity = shopForm_object.getProductPrice_Txt();
 
-            if (!(value.equals(""))) // Check if text field input is empty
+            if (!(quantity.equals(""))) // Check if text field input is empty
             {
-                String txt = convertToBigDecimal(value, "Quantity", pos, quantity, true);
+                String txt = convertToBigDecimal(quantity, "Quantity", pos, quantityObj, true);
                 if (!txt.equals(""))
                 {
                     if (iterationErrorTxt.equals(""))
@@ -347,10 +346,10 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
 
             values += String.format("(%s, '%s', %s, %s, (SELECT StoreID FROM stores WHERE Store_Name = '%s'))",
                     mysqlVariableReference,
-                    shopForm_object.getProductName_TxtField().getText(),
-                    shopForm_object.getProductQuantityPerPack_TxtField().getText(),
-                    shopForm_object.getProductPrice_TxtField().getText(),
-                    shopForm_object.getShops_JComboBox().getSelectedItem().toString());
+                    shopForm_object.getProductName_Txt(),
+                    shopForm_object.getProductQuantityPerPack_Txt(),
+                    shopForm_object.getProductPrice_Txt(),
+                    shopForm_object.getProductShops_TXT());
 
             if (!(it.hasNext()))
             {
@@ -372,7 +371,7 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
     }
 
     //#############################################################################################################
-    //
+    // Clear Form Methods
     //#############################################################################################################
     public void clearShopForm()
     {
@@ -395,17 +394,17 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
     }
 
     //#############################################################################################################
-    //
+    // NEW CLASS
     //#############################################################################################################
     class AddShopForm_Object extends JPanel
     {
         Integer PDID = null;  //EDIT NOW
         Container parentContainer;
-        JComboBox<String> shops_JComboBox;
+        JComboBox<String> productShops_JComboBox;
         JTextField productName_TxtField, productPrice_TxtField, quantityPerPack_TxtField;
 
         //#############################################################################################################
-        //
+        // Constructor
         //#############################################################################################################
         AddShopForm_Object()
         {}
@@ -455,11 +454,11 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
             //######################################################
 
             // create JComboBox
-            shops_JComboBox = new JComboBox<String>();
+            productShops_JComboBox = new JComboBox<String>();
             loadStoresInJComboBox();
 
-            ((JLabel) shops_JComboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
-            westPanel.add(shops_JComboBox);
+            ((JLabel) productShops_JComboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
+            westPanel.add(productShops_JComboBox);
 
             //#####################################################
             // Centre Side
@@ -532,19 +531,37 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
         }
 
         //#############################################################################################################
-        // Methods
+        // Other Methods
         //#############################################################################################################
         protected void loadStoresInJComboBox()
         {
-            shops_JComboBox.removeAllItems();
+            productShops_JComboBox.removeAllItems();
             Collection<String> storesNamesList = ingredients_info_screen.getStoresNamesList();
 
             for (String storeName : storesNamesList)
             {
-                shops_JComboBox.addItem(storeName);
+                productShops_JComboBox.addItem(storeName);
             }
 
-            shops_JComboBox.setSelectedItem("No Shop"); // make the first selected item N/A
+            productShops_JComboBox.setSelectedItem("No Shop"); // make the first selected item N/A
+        }
+
+        protected void deleteRowAction()
+        {
+            removeFromParentContainer(); // remove all the  input GUI objects from memory
+            shopFormObjects.remove(this);
+        }
+
+        protected void removeFromParentContainer()
+        {
+            //Remove from parent Container
+            parentContainer.remove(this);
+
+            //Resizing
+            parentContainer.revalidate();
+
+            //Resizing Form
+            add_ingredientsScreen.resize_GUI();
         }
 
         //#############################################################################################################
@@ -564,11 +581,34 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
         }
 
         //########################################
-        //
+        // Get TXT
         //########################################
-        protected JComboBox<String> getShops_JComboBox()
+        protected String getProductShops_TXT()
         {
-            return shops_JComboBox;
+            return productShops_JComboBox.getSelectedItem().toString();
+        }
+
+        protected String getProductName_Txt()
+        {
+            return productName_TxtField.getText().trim();
+        }
+
+        protected String getProductPrice_Txt()
+        {
+            return productPrice_TxtField.getText().trim();
+        }
+
+        protected String getProductQuantityPerPack_Txt()
+        {
+            return quantityPerPack_TxtField.getText().trim();
+        }
+
+        //########################################
+        // Get Object
+        //########################################
+        protected JComboBox<String> getProductShop_JComboBox()
+        {
+            return productShops_JComboBox;
         }
 
         protected JTextField getProductName_TxtField()
@@ -584,27 +624,6 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
         protected JTextField getProductQuantityPerPack_TxtField()
         {
             return quantityPerPack_TxtField;
-        }
-
-        //#############################################################################################################
-        //
-        //#############################################################################################################
-        protected void deleteRowAction()
-        {
-            removeFromParentContainer(); // remove all the  input GUI objects from memory
-            shopFormObjects.remove(this);
-        }
-
-        protected void removeFromParentContainer()
-        {
-            //Remove from parent Container
-            parentContainer.remove(this);
-
-            //Resizing
-            parentContainer.revalidate();
-
-            //Resizing Form
-            add_ingredientsScreen.resize_GUI();
         }
     }
 }

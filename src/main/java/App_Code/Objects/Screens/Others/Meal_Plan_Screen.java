@@ -446,6 +446,8 @@ public class Meal_Plan_Screen extends JPanel
         {
             JOptionPane.showMessageDialog(null, "No Chosen Plan");
         }
+
+        open_AddIngredients_Screen();
     }
 
     public void setFrameVisibility(boolean x)

@@ -7,34 +7,24 @@ import java.util.Iterator;
 
 public class Edit_ShopForm extends Add_ShopForm
 {
+    //##################################################
+    // Variables
+    //##################################################
     private Edit_IngredientsForm edit_IngredientsForm;
     private ArrayList<ArrayList<String>> shopsFormDBData = new ArrayList<>();
 
-
+    //##################################################################################################################
+    // Constructor
+    //##################################################################################################################
     public Edit_ShopForm(Container parentContainer, Ingredients_Info_Screen ingredients_info_screen, Edit_IngredientsScreen edit_ingredients, String btnText, int btnWidth, int btnHeight)
     {
         super(parentContainer, ingredients_info_screen, edit_ingredients, btnText, btnWidth, btnHeight);
         this.edit_IngredientsForm = edit_ingredients.getIngredientsForm();
     }
 
-    private Boolean areYouSure(String process)
-    {
-        int reply = JOptionPane.showConfirmDialog(mealPlanScreen, String.format("Are you sure you want to: %s?", process, process),
-                "Confirmation", JOptionPane.YES_NO_OPTION); //HELLO Edit
-
-        if (reply==JOptionPane.NO_OPTION || reply==JOptionPane.CLOSED_OPTION)
-        {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    protected void extraClearShopsForm()
-    {
-        shopsFormDBData.clear();
-    }
-
+    //##################################################################################################################
+    // Update Form From DB Info Methods
+    //##################################################################################################################
     public void updateShopFormWithInfoFromDB()
     {
         // Clear Shop Form For New Requested Info
@@ -83,6 +73,27 @@ public class Edit_ShopForm extends Add_ShopForm
         }
     }
 
+    //##################################################################################################################
+    // Methods
+    //##################################################################################################################
+    private Boolean areYouSure(String process)
+    {
+        int reply = JOptionPane.showConfirmDialog(mealPlanScreen, String.format("Are you sure you want to: %s?", process, process),
+                "Confirmation", JOptionPane.YES_NO_OPTION); //HELLO Edit
+
+        if (reply==JOptionPane.NO_OPTION || reply==JOptionPane.CLOSED_OPTION)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    protected void extraClearShopsForm()
+    {
+        shopsFormDBData.clear();
+    }
+
     //EDITING NOW
     public String[] get_ShopForm_UpdateString(String ingredientIDInDB) // Not an override method
     {
@@ -112,7 +123,7 @@ public class Edit_ShopForm extends Add_ShopForm
         System.out.printf("\n\nget_ShopForm_UpdateString() List Size: %s \nList items:", shopFormObjects.size());
         for (AddShopForm_Object i : shopFormObjects)
         {
-            System.out.printf("\n%s", i.getProductName_TxtField().getText().trim());
+            System.out.printf("\n%s", i.getProductName_Txt());
         }
         //##############################################################
 
@@ -150,10 +161,10 @@ public class Edit_ShopForm extends Add_ShopForm
                                 UPDATE ingredientInShops
                                 SET  Product_Name = '%s', Volume_Per_Unit = %s, Cost_Per_Unit = %s, StoreID = (SELECT StoreID FROM stores WHERE Store_Name = '%s')
                                 WHERE PDID = %s;""",
-                        editShopForm_Object.getProductName_TxtField().getText(),
-                        editShopForm_Object.getProductQuantityPerPack_TxtField().getText(),
-                        editShopForm_Object.getProductPrice_TxtField().getText(),
-                        editShopForm_Object.getShops_JComboBox().getSelectedItem().toString(),
+                        editShopForm_Object.getProductName_Txt(),
+                        editShopForm_Object.getProductQuantityPerPack_Txt(),
+                        editShopForm_Object.getProductPrice_Txt(),
+                        editShopForm_Object.getProductShops_TXT(),
                         PDID);
             }
             else
@@ -161,10 +172,10 @@ public class Edit_ShopForm extends Add_ShopForm
                 System.out.println("\n\nget_ShopForm_UpdateString() here here");
                 insertValues += String.format("\n(%s, '%s', %s, %s, (SELECT StoreID FROM stores WHERE Store_Name = '%s')),",
                         ingredientIDInDB,
-                        shopForm_Object.getProductName_TxtField().getText(),
-                        shopForm_Object.getProductQuantityPerPack_TxtField().getText(),
-                        shopForm_Object.getProductPrice_TxtField().getText(),
-                        shopForm_Object.getShops_JComboBox().getSelectedItem().toString());
+                        shopForm_Object.getProductName_Txt(),
+                        shopForm_Object.getProductQuantityPerPack_Txt(),
+                        shopForm_Object.getProductPrice_Txt(),
+                        shopForm_Object.getProductShops_TXT());
             }
         }
 
@@ -189,12 +200,16 @@ public class Edit_ShopForm extends Add_ShopForm
         return updates;
     }
 
+
+    //##################################################################################################################
+    // Constructor
+    //##################################################################################################################
     public class EditShopForm_Object extends AddShopForm_Object
     {
        String shopName_OG, productName_OG, productPrice_OG, quantityPerPack_OG;
 
         //#######################################
-        // Main  Consturctor
+        // Main  Constructor
         //#######################################
         EditShopForm_Object(Container parentContainer, String PDID, String shopName, String productName, String productPrice, String quantityPerPack)
         {
@@ -208,7 +223,7 @@ public class Edit_ShopForm extends Add_ShopForm
             // Set GUI Objects
             setPDID(Integer.parseInt(PDID));   //Set PDID
 
-            getShops_JComboBox().setSelectedItem(shopName); // Set ShopName
+            getProductShop_JComboBox().setSelectedItem(shopName); // Set ShopName
 
             getProductName_TxtField().setText(productName); // Set Product Name
 
@@ -222,14 +237,17 @@ public class Edit_ShopForm extends Add_ShopForm
 
         }
 
+        //#######################################
+        // Methods
+        //#######################################
         private boolean hasDataChanged()
         {
             boolean hasDataChanged = false;
 
-            String shopName_current = getShops_JComboBox().getSelectedItem().toString().trim();
-            String productName_current = getProductName_TxtField().getText().trim();
-            String productPrice_current = getProductPrice_TxtField().getText().trim();
-            String quantityPerPack_current = getProductQuantityPerPack_TxtField().getText().trim();
+            String shopName_current = getProductShops_TXT();
+            String productName_current = getProductName_Txt();
+            String productPrice_current = getProductPrice_Txt();
+            String quantityPerPack_current = getProductQuantityPerPack_Txt();
 
             if (!(shopName_current.equals(shopName_OG)))
             {
@@ -251,9 +269,6 @@ public class Edit_ShopForm extends Add_ShopForm
             return hasDataChanged;
         }
 
-        //#######################################
-        // Delete Row
-        //#######################################
         @Override
         protected void deleteRowAction()
         {
@@ -261,8 +276,8 @@ public class Edit_ShopForm extends Add_ShopForm
             // Confirm if the user wants to delete the shop
             //################################################
             String
-                    chosenShop = String.valueOf(getShops_JComboBox().getSelectedItem()),
-                    productName = String.valueOf(getProductName_TxtField().getText());
+                    chosenShop = String.valueOf(getProductShops_TXT()),
+                    productName = String.valueOf(getProductName_Txt());
 
             if (!(areYouSure(String.format("you want to permanently delete the product: \"%s\" from \"%s\" as a product for this ingredient.", productName, chosenShop))))
             {

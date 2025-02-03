@@ -157,9 +157,16 @@ public class Ingredients_Info_Screen extends JFrame
         }
     }
 
-    //#########################################################################
+    //##################################################################################################################
     // Accessor Methods (Get) Methods
-    //#########################################################################
+    //##################################################################################################################
+
+    // Objects
+    public Edit_IngredientsScreen getEditIngredientsForm()
+    {
+        return editIngredientsInfo;
+    }
+
     public Meal_Plan_Screen getMealPlanScreen()
     {
         return mealPlanScreen;
@@ -175,6 +182,14 @@ public class Ingredients_Info_Screen extends JFrame
         return contentPane;
     }
 
+    public MyJDBC getDb()
+    {
+        return db;
+    }
+
+    //############################################
+    // Get Values & Memory
+    //############################################
     public Collection<String> getIngredientsTypesList()
     {
         return ingredientsTypesList;
@@ -183,11 +198,6 @@ public class Ingredients_Info_Screen extends JFrame
     public Collection<String> getStoresNamesList()
     {
         return storesNamesList;
-    }
-
-    public void update_EditIngredientsInfo_IngredientsTypes()
-    {
-        editIngredientsInfo.updateIngredientsTypeJComboBox();
     }
 
     public Integer getTempPlanID()
@@ -205,13 +215,8 @@ public class Ingredients_Info_Screen extends JFrame
         return planName;
     }
 
-    public Edit_IngredientsScreen getEditIngredientsForm()
-    {
-        return editIngredientsInfo;
-    }
-
     //##################################################################################################################
-    // Other Classes
+    // Update Methods
     //##################################################################################################################
     public void updateIngredientsFormTypeJComboBoxes()
     {
@@ -226,12 +231,20 @@ public class Ingredients_Info_Screen extends JFrame
         editIngredientsInfo.refreshInterface(true, true);
     }
 
+    public void update_EditIngredientsInfo_IngredientsTypes()
+    {
+        editIngredientsInfo.updateIngredientsTypeJComboBox();
+    }
+
     //FIX
     /*  public JComboBox<String> getEdit_IngredientTypes_InPlan_JComboBox()
     {
         return editIngredientsInfo.getIngredientsTypesJComboBox();
     }*/
 
+    //##################################################################################################################
+    // Mutator Methods
+    //##################################################################################################################
     public boolean addChangeOrRemoveIngredientsTypeName(String process, String newKey, String oldKey)// HELLO CHECKA
     {
         /*//####################################################################
@@ -364,9 +377,8 @@ public class Ingredients_Info_Screen extends JFrame
     }
 
     //##################################################################################################################
-    // General Methods
+    // Resizing Methods
     //##################################################################################################################
-
     // HELLO! Stay in Parent
     public void makeFrameVisible()
     {
@@ -417,14 +429,6 @@ public class Ingredients_Info_Screen extends JFrame
         }
 
         container.add(addToContainer, gbc);
-    }
-
-    //#################################################################################################################
-    //
-    //#################################################################################################################
-    public MyJDBC getDb()
-    {
-        return db;
     }
 
     public void resize_GUI()

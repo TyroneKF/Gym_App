@@ -20,8 +20,6 @@ public class Add_Ingredients_Screen extends JPanel
     protected JPanel scrollPaneJPanel;
     protected GridBagConstraints gbc = new GridBagConstraints();
 
-    protected boolean formEditable = false;
-
     protected Add_IngredientsForm addIngredientsForm;
     private Add_ShopForm addShopForm;
     protected SearchForFoodInfo searchForIngredientInfo;
@@ -153,53 +151,8 @@ public class Add_Ingredients_Screen extends JPanel
     }
 
     //####################################################
-    // Clearing GUI Methods
-    //####################################################
-    private void refreshInterface() // only available to reset screen
-    {
-        clearSearchForIngredientInfoForm();
-        clearIngredientsForm();
-        clearShopForm();
-    }
-
-    protected void clearSearchForIngredientInfoForm()
-    {
-        searchForIngredientInfo.resetFullDisplay();
-    }
-
-    protected void clearIngredientsForm()
-    {
-        addIngredientsForm.clearIngredientsForm();
-    }
-
-    protected void clearShopForm()
-    {
-        addShopForm.clearShopForm();
-    }
-
-    //####################################################
-    // Update Methods
-    //####################################################
-    protected void updateIngredientForm_Type_JComboBox()
-    {
-        addIngredientsForm.loadIngredientsTypeJComboBox();
-    }
-
-    //####################################################
     // Submission Button Actions
     //####################################################
-    protected Boolean areYouSure(String process)
-    {
-        int reply = JOptionPane.showConfirmDialog(mealPlanScreen, String.format("Are you sure you want to: %s?", process, process),
-                "Confirmation", JOptionPane.YES_NO_OPTION); //HELLO Edit
-
-        if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
-        {
-            return false;
-        }
-        return true;
-    }
-
     protected void submissionBtnAction()
     {
         //###############################
@@ -265,6 +218,18 @@ public class Add_Ingredients_Screen extends JPanel
             resize_GUI();
         }
 
+    }
+
+    protected Boolean areYouSure(String process)
+    {
+        int reply = JOptionPane.showConfirmDialog(mealPlanScreen, String.format("Are you sure you want to: %s?", process, process),
+                "Confirmation", JOptionPane.YES_NO_OPTION); //HELLO Edit
+
+        if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
+        {
+            return false;
+        }
+        return true;
     }
 
     protected boolean updateBothForms(String updateIngredients_String, String[] updateIngredientShops_String)
@@ -336,6 +301,39 @@ public class Add_Ingredients_Screen extends JPanel
             return false;
         }
         return true;
+    }
+
+    //####################################################
+    // Clearing GUI Methods
+    //####################################################
+    private void refreshInterface() // only available to reset screen
+    {
+        clearSearchForIngredientInfoForm();
+        clearIngredientsForm();
+        clearShopForm();
+    }
+
+    protected void clearSearchForIngredientInfoForm()
+    {
+        searchForIngredientInfo.resetFullDisplay();
+    }
+
+    protected void clearIngredientsForm()
+    {
+        addIngredientsForm.clearIngredientsForm();
+    }
+
+    protected void clearShopForm()
+    {
+        addShopForm.clearShopForm();
+    }
+
+    //####################################################
+    // Update Methods
+    //####################################################
+    protected void updateIngredientForm_Type_JComboBox()
+    {
+        addIngredientsForm.loadIngredientsTypeJComboBox();
     }
 
     //##################################################################################################################

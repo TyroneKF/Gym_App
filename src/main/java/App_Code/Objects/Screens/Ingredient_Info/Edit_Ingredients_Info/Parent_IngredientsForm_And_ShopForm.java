@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 public class Parent_IngredientsForm_And_ShopForm extends CollapsibleJPanel
 {
     //##################################################
-    //
+    // Variables
     //##################################################
     protected JPanel northPanel = new JPanel(new GridBagLayout());
     protected Ingredients_Info_Screen ingredients_info_screen;
@@ -27,11 +27,11 @@ public class Parent_IngredientsForm_And_ShopForm extends CollapsibleJPanel
     protected String planName;
     protected GridBagConstraints gbc = new GridBagConstraints();
 
-    //##################################################
-    //
-    //##################################################
     protected final int totalNumbersAllowed = 7, decimalScale = 2, decimalPrecision = totalNumbersAllowed - decimalScale, charLimit = 8;
 
+    //##################################################
+    // Constructor
+    //##################################################
     public Parent_IngredientsForm_And_ShopForm(Container parentContainer, Ingredients_Info_Screen ingredients_info_screen, String btnText, int btnWidth, int btnHeight)
     {
         super(parentContainer, btnText, btnWidth, btnHeight);
@@ -47,6 +47,9 @@ public class Parent_IngredientsForm_And_ShopForm extends CollapsibleJPanel
         this.mealPlanScreen = ingredients_info_screen.getMealPlanScreen();
     }
 
+    //##################################################
+    // Methods
+    //##################################################
     protected String convertToBigDecimal(String value, String rowLabel, int rowNumber, JTextField jTextField, boolean checkIfValueEquals0)
     {
         String errorTxt = "";
@@ -121,6 +124,24 @@ public class Parent_IngredientsForm_And_ShopForm extends CollapsibleJPanel
         return errorTxt;
     }
 
+    protected boolean doesStringContainGivenCharacters(String stringToCheck, String condition)
+    {
+        Pattern p1 =
+                (condition==null || condition.equals("")) ?
+                        Pattern.compile("[^a-zA-Z]", Pattern.CASE_INSENSITIVE):
+                        Pattern.compile(String.format("%s",condition), Pattern.CASE_INSENSITIVE);
+
+        Matcher m1 = p1.matcher(stringToCheck.replaceAll("\\s+", ""));
+        boolean b1 = m1.find();
+
+        if (b1)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     protected void addToContainer(Container container, Component addToContainer, int gridx, int gridy, int gridwidth,
                                int gridheight, double weightx, double weighty, String fill, int ipady, int ipadx)
     {
@@ -149,23 +170,5 @@ public class Parent_IngredientsForm_And_ShopForm extends CollapsibleJPanel
         }
 
         container.add(addToContainer, gbc);
-    }
-
-    protected boolean doesStringContainGivenCharacters(String stringToCheck, String condition)
-    {
-        Pattern p1 =
-                (condition==null || condition.equals("")) ?
-                        Pattern.compile("[^a-zA-Z]", Pattern.CASE_INSENSITIVE):
-                        Pattern.compile(String.format("%s",condition), Pattern.CASE_INSENSITIVE);
-
-        Matcher m1 = p1.matcher(stringToCheck.replaceAll("\\s+", ""));
-        boolean b1 = m1.find();
-
-        if (b1)
-        {
-            return true;
-        }
-
-        return false;
     }
 }

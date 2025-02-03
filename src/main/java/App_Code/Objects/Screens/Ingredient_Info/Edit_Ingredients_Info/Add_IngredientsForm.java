@@ -13,9 +13,8 @@ import java.util.*;
 
 public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
 {
-
     //##################################################
-    //
+    // Variables
     //##################################################
     protected LinkedHashMap<String, Triplet<String, String, String>> ingredientsFormLabelsMapsToValues = new LinkedHashMap<>()
     {{
@@ -72,7 +71,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
     protected String ingredientsValuesBeingAdded = ""; //HELLO Refactor
 
     //##################################################################################################################
-    //
+    // Constructor
     //##################################################################################################################
     public Add_IngredientsForm(Container parentContainer, Ingredients_Info_Screen ingredients_info_screen, String btnText, int btnWidth, int btnHeight)
     {
@@ -82,6 +81,9 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
         expandJPanel();
     }
 
+    //##################################################################################################################
+    // Creating GUI Methods
+    //##################################################################################################################
     private void createIngredientsForm()
     {
         JPanel mainJPanel = getCentreJPanel();
@@ -243,6 +245,53 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
         mainJPanel.add(inputArea, BorderLayout.CENTER);
     }
 
+    protected void createIconBar()
+    {
+        createIconBarOnGUI(true);
+    }
+
+    protected void createIconBarOnGUI(boolean createIconBar)
+    {
+        //#####################################################
+        // Exit Clause
+        //#####################################################
+        if (!(createIconBar))
+        {
+            return;
+        }
+
+        //#####################################################
+        // Creating area for North JPanel (Refresh Icon)
+        //#####################################################
+
+        JPanel iconArea = new JPanel(new GridBagLayout());
+        addToContainer(northPanel, iconArea, 0, 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+
+        IconPanel iconPanel = new IconPanel(1, 10, "East");
+        JPanel iconPanelInsert = iconPanel.getIconJpanel();
+
+        addToContainer(iconArea, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0);
+
+        //##########################
+        // Refresh Icon
+        //##########################
+        int width = 30;
+        int height = 30;
+
+        IconButton refresh_Icon_Btn = new IconButton("src/main/java/images/refresh/++refresh.png", "", width, height, width, height,
+                "centre", "right"); // btn text is useless here , refactor
+
+        JButton refresh_Btn = refresh_Icon_Btn.returnJButton();
+        refresh_Icon_Btn.makeBTntransparent();
+
+        refresh_Btn.addActionListener(ae -> {
+
+            clearIngredientsForm();
+        });
+
+        iconPanelInsert.add(refresh_Icon_Btn);
+    }
+
     protected void loadIngredientsTypeJComboBox()
     {
         ingredientsType_JComboBox.removeAllItems();
@@ -259,6 +308,42 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
         ingredientsType_JComboBox.setSelectedIndex(-1);
     }
 
+    //##################################################################################################################
+    // Clear GUI Methods
+    //##################################################################################################################
+    protected void clearIngredientsForm()
+    {
+        for (Map.Entry<String, Object[]> info : ingredientsFormObjectAndValues.entrySet())
+        {
+            String rowLabel = info.getKey();
+            Object[] row = info.getValue();
+            Component comp = (Component) row[0];
+
+            if (comp instanceof JComboBox)
+            {
+                ((JComboBox<?>) comp).setSelectedIndex(-1);
+            }
+            else if (comp instanceof JTextField)
+            {
+                ((JTextField) comp).setText("");
+            }
+
+            // Remove FormField Values in Memory to null
+            setIngredientsFormObjectAndValues(rowLabel, 1, null);
+        }
+
+        saltMeasurement_JComboBox.setSelectedIndex(-1);
+        extraClearIngredientsForm();
+    }
+
+    protected void extraClearIngredientsForm()
+    {
+
+    }
+
+    //##################################################################################################################
+    // API Methods
+    //##################################################################################################################
     public void update_Form_WithNutritionIXSearch(LinkedHashMap<String, Object> foodInfo)//HELLO EDITED NOW
     {
         if (foodInfo!=null)
@@ -356,83 +441,9 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
         }
     }
 
-    protected void createIconBar()
-    {
-        createIconBarOnGUI(true);
-    }
-
-    protected void createIconBarOnGUI(boolean createIconBar)
-    {
-        //#####################################################
-        // Exit Clause
-        //#####################################################
-        if (!(createIconBar))
-        {
-            return;
-        }
-
-        //#####################################################
-        // Creating area for North JPanel (Refresh Icon)
-        //#####################################################
-
-        JPanel iconArea = new JPanel(new GridBagLayout());
-        addToContainer(northPanel, iconArea, 0, 1, 1, 1, 0.25, 0.25, "both", 0, 0);
-
-        IconPanel iconPanel = new IconPanel(1, 10, "East");
-        JPanel iconPanelInsert = iconPanel.getIconJpanel();
-
-        addToContainer(iconArea, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0);
-
-        //##########################
-        // Refresh Icon
-        //##########################
-        int width = 30;
-        int height = 30;
-
-        IconButton refresh_Icon_Btn = new IconButton("src/main/java/images/refresh/++refresh.png", "", width, height, width, height,
-                "centre", "right"); // btn text is useless here , refactor
-
-        JButton refresh_Btn = refresh_Icon_Btn.returnJButton();
-        refresh_Icon_Btn.makeBTntransparent();
-
-        refresh_Btn.addActionListener(ae -> {
-
-            clearIngredientsForm();
-        });
-
-        iconPanelInsert.add(refresh_Icon_Btn);
-    }
-
-    protected void clearIngredientsForm()
-    {
-        for (Map.Entry<String, Object[]> info : ingredientsFormObjectAndValues.entrySet())
-        {
-            String rowLabel = info.getKey();
-            Object[] row = info.getValue();
-            Component comp = (Component) row[0];
-
-            if (comp instanceof JComboBox)
-            {
-                ((JComboBox<?>) comp).setSelectedIndex(-1);
-            }
-            else if (comp instanceof JTextField)
-            {
-                ((JTextField) comp).setText("");
-            }
-
-            // Remove FormField Values in Memory to null
-            setIngredientsFormObjectAndValues(rowLabel, 1, null);
-        }
-
-        saltMeasurement_JComboBox.setSelectedIndex(-1);
-        extraClearIngredientsForm();
-    }
-
-    protected void extraClearIngredientsForm()
-    {
-
-    }
-
+    //##################################################################################################################
+    // Validate Form
+    //##################################################################################################################
     protected boolean validate_IngredientsForm()//HELLO EDITED NOW
     {
         String errorTxt = "", ingredientName_Txt = "";
@@ -602,6 +613,11 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
         return false;
     }
 
+    protected String removeSpaceAndHiddenChars(String stringToBeEdited)
+    {
+        return stringToBeEdited.trim().replaceAll("\\p{C}", ""); // remove all whitespace & hidden characters like \n
+    }
+
     protected String get_IngredientsForm_UpdateString(String ingredientID) // HELLO needs further update methods created for gui
     {
         //####################################
@@ -668,14 +684,9 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
         return (insertQuery += ingredientsValuesBeingAdded);
     }
 
-    protected String removeSpaceAndHiddenChars(String stringToBeEdited)
-    {
-        return stringToBeEdited.trim().replaceAll("\\p{C}", ""); // remove all whitespace & hidden characters like \n
-    }
     //##################################################################################################################
     // Mutator Methods
     //##################################################################################################################
-
     // ingredientsFormLabel Key -> [Component, FormValue, DB Value]
     protected void setIngredientsFormObjectAndValues(String key, int pos, Object valueToChange)
     {
@@ -697,9 +708,6 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
         return (String) ingredientsFormObjectAndValues.get("Ingredient Name")[1];
     }
 
-    //######################################
-    //
-    //######################################
     protected String getIngredientsValuesBeingAdded()
     {
         return ingredientsValuesBeingAdded;
