@@ -199,7 +199,9 @@ public class Add_Ingredients_Screen extends JPanel
             // Reset Ingredient Names/Types
             //####################################
             String ingredientName =  addIngredientsForm.getIngredientNameFormValue();
-            String ingredientType =  addIngredientsForm.getIngredientNameFormValue();
+            String ingredientType =  addIngredientsForm.getIngredientTypeFormValue();
+
+            System.out.printf("\n\nsubmissionBtnAction() \n%s %s", ingredientName,ingredientType);
 
             addOrDeleteIngredientFromMap("add", ingredientType, ingredientName);
 
