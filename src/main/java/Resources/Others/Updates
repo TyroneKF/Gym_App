@@ -1,3 +1,11 @@
+Delete BTN on ingredients page, fix all sql backup methods
+
+.) Instead of adding ;; to the end of the file when adding or, replacing in backup sql file
+   just have the FileReader when backing up into data read the script and replace the last lines , with a ;
+   when the program is being initialised.
+
+
+
 .) add stores info column and row on error message
 .) Backup Ingredients in store
 

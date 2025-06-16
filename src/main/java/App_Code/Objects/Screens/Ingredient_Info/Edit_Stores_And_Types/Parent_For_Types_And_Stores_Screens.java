@@ -365,7 +365,7 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
 
         protected boolean backupDataInSQLFile()
         {
-            String txtToAdd = String.format("\n('%s');", jTextfieldTXT);
+            String txtToAdd = String.format("\n('%s'),", jTextfieldTXT);
 
             if (!(db.writeTxtToSQLFile(sqlFilePath, txtToAdd)))
             {
@@ -574,7 +574,6 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
 
         protected boolean deleteBTNAction()
         {
-
             //##########################################################################################################
             // Delete From SQL Database
             //##########################################################################################################
