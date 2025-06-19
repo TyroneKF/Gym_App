@@ -40,7 +40,6 @@ INSERT IGNORE INTO ingredientTypes (Ingredient_Type_Name) VALUES
 ('Vitamins'),
 ('Whole Wheat'),
 ('Yoghurt'),
-
 ('Flour'),
 ('Dairy'),
 ('Sugar'),

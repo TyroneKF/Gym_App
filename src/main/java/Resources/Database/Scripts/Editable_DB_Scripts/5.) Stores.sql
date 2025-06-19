@@ -1,5 +1,4 @@
 use gymapp00001;
-
 INSERT IGNORE INTO stores (Store_Name) VALUES
 ('No Shop'),
 ('Aldi'), 
@@ -18,4 +17,4 @@ INSERT IGNORE INTO stores (Store_Name) VALUES
 ('Sainsbury'), 
 ('Tesco'),
 ('Vivo Life'),
-('Waitrose');;
+('Waitrose'),
