@@ -39,7 +39,7 @@ public class MyJDBC
 
     private boolean
             db_Connection_Status = false,
-             override = true; // ERROR surrounding this
+            override = true; // ERROR surrounding this
 
     private int
             connection_Attempts = 1;
@@ -64,7 +64,7 @@ public class MyJDBC
             //##############################################
             System.out.printf("\n\nChecking if DB '%s' EXISTS! ", databaseName);
 
-            if (attemptsMade == 1)
+            if (attemptsMade==1)
             {
                 if (check_IF_DB_Exists(databaseName))
                 {
@@ -218,6 +218,7 @@ public class MyJDBC
     /**
      * This method is typically good for replacing one word in a file with another and doesn't work if there is multiple amendments
      * for replacing text in stores & ingredientsTypes sql file this works perfect for because its only one value being changed a name
+     *
      * @param sqlFilePath
      * @param txt_To_Find
      * @param txt_Replacement
@@ -295,10 +296,10 @@ public class MyJDBC
             boolean replacementMade = false;
             String currentLine;
             int count = 0;
-            while ((currentLine = my_reader.readLine()) != null)
+            while ((currentLine = my_reader.readLine())!=null)
             {
                 count++;
-//              System.out.printf("\n\n%s \ncurrentLine: %s ", line_Separator, currentLine);
+                //              System.out.printf("\n\n%s \ncurrentLine: %s ", line_Separator, currentLine);
 
                 // Processing next lines
                 String trimmedLine = currentLine.trim(); // trim  current line
@@ -310,7 +311,7 @@ public class MyJDBC
                     {
                         System.out.printf("\n\nReplacement made: %s", currentLine);
 
-                        txt_Replacement = currentLine.contains(";;") ? txt_Replacement+";;" : txt_Replacement+",";
+                        txt_Replacement = currentLine.contains(";;") ? txt_Replacement + ";;":txt_Replacement + ",";
 
                         currentLine = txt_Replacement;
 
@@ -319,9 +320,9 @@ public class MyJDBC
                 }
 
                 // Writing Line to File
-               currentLine =
-                       count == 1 ? currentLine :
-                       System.getProperty("line.separator") + currentLine;
+                currentLine =
+                        count==1 ? currentLine:
+                                System.getProperty("line.separator") + currentLine;
                 my_writer.write(currentLine);
             }
 
@@ -359,7 +360,7 @@ public class MyJDBC
             //########################################
             //
             //########################################
-            if(! (replacementMade))
+            if (!(replacementMade))
             {
                 System.out.printf("\n\n%s \nNo replacements Found", line_Separator);
                 return false;
@@ -424,10 +425,12 @@ public class MyJDBC
             //########################################
             String currentLine = my_reader.readLine(), nextLine = my_reader.readLine(), nextNextLine = my_reader.readLine();
             boolean deletionMade = false;
+            int count = 0;
 
-            while (currentLine != null)
+            while (currentLine!=null)
             {
-              //  System.out.printf("\n\n%s \ncurrentLine: %s \nnextLine: %s", line_Separator, currentLine, nextLine);
+                count++;
+                //  System.out.printf("\n\n%s \ncurrentLine: %s \nnextLine: %s", line_Separator, currentLine, nextLine);
 
                 // Processing next lines
                 String trimmedLine = currentLine.trim(); // trim  current line
@@ -447,7 +450,7 @@ public class MyJDBC
                         continue;
                     }
                     // Check if the next line  is being deleted and if it is the currentLine is the new lastline
-                    else if (nextLine != null && !(trimmedLine.equals("VALUES")) && txtToDelete.contains(nextLine.trim()) && nextNextLine == null)
+                    else if (nextLine!=null && !(trimmedLine.equals("VALUES")) && txtToDelete.contains(nextLine.trim()) && nextNextLine==null)
                     {
                         //This currentLine is about to be the new last line in file as the next line is being deleted
                         currentLine = StringUtils.chop(currentLine); // remove comma at the end
@@ -456,8 +459,10 @@ public class MyJDBC
                 }
 
                 //
-                my_writer.write(currentLine + System.getProperty("line.separator"));
-
+                currentLine =
+                        count==1 ? currentLine:
+                                System.getProperty("line.separator") + currentLine;
+                my_writer.write(currentLine);
                 //
                 currentLine = nextLine;
                 nextLine = nextNextLine;
@@ -553,13 +558,11 @@ public class MyJDBC
             //##########################################################################################################
             String currentLine = my_reader.readLine().trim(), nextLine = my_reader.readLine().trim();
 
-            while (currentLine != null)
+            while (currentLine!=null)
             {
                 //  System.out.printf("\n\n%s \ncurrentLine: %s \nnextLine: %s", line_Separator, currentLine, nextLine);
 
                 // Processing next lines
-
-
 
 
                 // Check if last line to end file on ;;
@@ -616,7 +619,6 @@ public class MyJDBC
     }
 
 
-
     //##################################################################################################################
     //  Get Methods
     //##################################################################################################################
@@ -633,7 +635,7 @@ public class MyJDBC
 
         String sql = String.format("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '%s'", databaseName);
 
-        if (getMultiColumnQuery(sql) != null) // database exists
+        if (getMultiColumnQuery(sql)!=null) // database exists
         {
             return true;
         }
@@ -645,7 +647,7 @@ public class MyJDBC
     //##################################################################################################################
 
     /**
-     *  This method can upload one statement or, multiple queries within a single String after each statement in the string is separated by a ;
+     * This method can upload one statement or, multiple queries within a single String after each statement in the string is separated by a ;
      */
     public Boolean uploadData(String query, boolean multipleQueries)
     {
@@ -658,7 +660,7 @@ public class MyJDBC
         {
             //Query Setup
             Connection connection = multipleQueries ? DriverManager.getConnection(db_Connection_Address += "?autoReconnect=true&amp;allowMultiQueries=true", userName, password)
-                    : DriverManager.getConnection(db_Connection_Address, userName, password);
+                    :DriverManager.getConnection(db_Connection_Address, userName, password);
 
             Statement statement = connection.createStatement();
             statement.executeUpdate(query);
@@ -990,7 +992,7 @@ public class MyJDBC
 
                 Integer rowCount = getRowsInQuery(query); // get row count of query to this method "query"
 
-                if (rowCount != null)
+                if (rowCount!=null)
                 {
                     //############################################
                     // Storing query data in String[]
@@ -1065,7 +1067,7 @@ public class MyJDBC
 
                 Integer rowCount = getRowsInQuery(query); // get row count of query to this method "query"
 
-                if (rowCount != null)
+                if (rowCount!=null)
                 {
                     //############################################
                     // Storing query data in String[]
@@ -1138,7 +1140,7 @@ public class MyJDBC
 
                 Integer rowCount = getRowsInQuery(query); // get row count of query to this method "query"
 
-                if (rowCount != null)
+                if (rowCount!=null)
                 {
                     //############################################
                     // Storing query data in String[]
@@ -1204,7 +1206,7 @@ public class MyJDBC
                 //####################################################################
                 // Creating Data Object for JTable
                 //####################################################################
-                if (rowsInQuery != null)
+                if (rowsInQuery!=null)
                 {
                     Object[][] Data = new Object[rowsInQuery][noOfColumns];
 
@@ -1227,7 +1229,7 @@ public class MyJDBC
                                         Data[row][col] = colData;
                                         break;
                                     case "tinyint":
-                                        Data[row][col] = colData.equals("1") ? true : false;
+                                        Data[row][col] = colData.equals("1") ? true:false;
                                         break;
                                     case "int":
                                         Data[row][col] = Integer.valueOf(colData);
@@ -1367,9 +1369,9 @@ public class MyJDBC
     {
         String filePath = "src/main/java/Resources/Database/Scripts/Editable_DB_Scripts/4.) Ingredients_Info.sql";
 
-//        String txtToDelete = "(1, 'Grams','None Of The Above',1, 0,0,0,0,0,0,0,0,0,0,0,0)";
+        //        String txtToDelete = "(1, 'Grams','None Of The Above',1, 0,0,0,0,0,0,0,0,0,0,0,0)";
         String txtToDelete = "(\"AAANEWNEW\")";
-//        String txtToDelete = "(NULL,(\"Grams\"),(\"test3\"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = 'Cake'),(100),(1),(2),(3),(34),(5),(6),(7),(8),(9),(10),(11))";
+        //        String txtToDelete = "(NULL,(\"Grams\"),(\"test3\"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = 'Cake'),(100),(1),(2),(3),(34),(5),(6),(7),(8),(9),(10),(11))";
 
         MyJDBC db = new MyJDBC("root", "password", "gymapp00001", "src/main/java/Resources/Database_Scripts/DB_Scripts");
 
