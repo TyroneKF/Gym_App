@@ -23,7 +23,6 @@ import java.time.format.DateTimeFormatter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
-
 public class MyJDBC
 {
     private String
@@ -517,10 +516,9 @@ public class MyJDBC
      *
      * @param filePath
      * @param txtToDelete
-     * @param startDeletingFrom
      * @return
      */
-    public boolean deleteTxtInFile(String filePath, String txtToDelete, int startDeletingFrom)
+    public boolean deleteTxtInFile(String filePath, String txtToDelete)
     {
         try
         {
@@ -548,55 +546,62 @@ public class MyJDBC
             }
 
             //##########################################################################################################
-            // Creating File / Temp File
+            // Creating File / Temp File & Read & Writers
             //##########################################################################################################
             File input_file = new File(filePath);
             File temp_file = new File(tempFilePath);
 
-            //##########################################################################################################
-            // Creating Readers & Writers for the correlating files
-            //##########################################################################################################
             BufferedReader my_reader = new BufferedReader(new FileReader(input_file));
             BufferedWriter my_writer = new BufferedWriter(new FileWriter(temp_file));
 
             //##########################################################################################################
             // Iterating over the file
             //##########################################################################################################
-            Iterator<String> it = my_reader.lines().iterator();
-
-            // Start processing from this point
-            String txtToWrite, currentLine, nextLine = it.next().trim(); // get line text
             boolean found = false;
 
+            ArrayList<String> lines = new ArrayList<>();
+            Iterator<String> it = my_reader.lines().iterator();
+
+            // iterate through txt file &
             while (it.hasNext())
             {
-                txtToWrite = "";
-                currentLine = nextLine.trim();
-                nextLine = it.hasNext() ? it.next().trim():""; // If there's a next line set that value
+                String line = it.next().trim();
 
-                if ((currentLine.contains(txtToDelete)))
+                if (line.contains(txtToDelete))
                 {
                     found = true;
                     continue;
                 }
+                lines.add(line);
+            }
 
-               if (currentLine.contains(";")) // replace ',' at the end with ';'
+            if (!found) // Original file stays the same, delete temp file
+            {
+                my_writer.close();
+                my_reader.close();
+
+                if(!temp_file.delete()) // Delete tmp file
                 {
-                    currentLine = currentLine.substring(0, currentLine.length() - 1); // removes ',' at the end
-                    currentLine += ","; // replaces with ';' because this is the new last line now
+                    System.out.printf("\nError, deleting temp file !");
                 }
+                return false;
+            }
 
-                txtToWrite = currentLine + System.getProperty("line.separator");
+            Iterator<String> it2 = lines.iterator();
+            while (it2.hasNext())
+            {
+                String txtToWrite =  it2.next();
+                System.out.printf("\n %s", txtToWrite);
 
-                // This loop is always one step ahead, due to next line = currentLine outside loop
-                // The last line will be skipped so, this clause accounts for that
-                if (!(it.hasNext()) && !nextLine.equals("") && !nextLine.contains(txtToDelete))
+                if (!it2.hasNext()) // if there isn't another line
                 {
-                    txtToWrite = txtToWrite + nextLine;
-                }
+                    txtToWrite = txtToWrite.substring(0, txtToWrite.length() - 1); // removes ',' at the end
+                    txtToWrite += ";"; // replaces with ';' because this is the new last line now
 
-                // Write Line to file with no changes
-                my_writer.write(txtToWrite);
+                    my_writer.write(txtToWrite);
+                    break;
+                }
+                my_writer.write(txtToWrite + System.getProperty("line.separator"));
             }
 
             my_writer.close();
@@ -623,11 +628,7 @@ public class MyJDBC
             //##########################################################################################################
             //
             //##########################################################################################################
-            if (!found)
-            {
-                return false;
-            }
-            return true;
+            return true; // returns status of variable being found
         }
         catch (Exception e)
         {
@@ -1393,7 +1394,7 @@ public class MyJDBC
 
         MyJDBC db = new MyJDBC("root", "password", "gymapp00001", "src/main/java/Resources/Database_Scripts/DB_Scripts");
 
-        if (db.deleteTxtInFile(filePath, txtToDelete, 2))
+        if (db.deleteTxtInFile(filePath, txtToDelete))
         {
             System.out.println("\n\nSuccessful");
         }
