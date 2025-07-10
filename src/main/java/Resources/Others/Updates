@@ -1,5 +1,14 @@
 Delete BTN on ingredients page, fix all sql backup methods
 
+.) Make up sure backup to editable sql file uses , instead of ;; at the end and replace this during run time however, during writing use the commas
+   Check through read and write methods
+   Check delete methods too
+   Space gaps when adding to a file
+   Skip first 2 lines in sql file
+
+
+
+
 .) Instead of adding ;; to the end of the file when adding or, replacing in backup sql file
    just have the FileReader when backing up into data read the script and replace the last lines , with a ;
    when the program is being initialised.

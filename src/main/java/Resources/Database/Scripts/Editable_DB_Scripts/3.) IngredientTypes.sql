@@ -42,4 +42,4 @@ INSERT IGNORE INTO ingredientTypes (Ingredient_Type_Name) VALUES
 ('Yoghurt'),
 ('Flour'),
 ('Dairy'),
-('Sugar'),
+('Sugar');
