@@ -1,21 +1,20 @@
-use gymapp00001;
-
+USE gymapp00001;
 INSERT IGNORE INTO stores (Store_Name) VALUES
 ('No Shop'),
-('Aldi'), 
-('Amazon'), 
-('ASDA'), 
+('Aldi'),
+('Amazon'),
+('ASDA'),
 ('Co-Op'),
 ('Costco'),
-('Iceland'), 
+('Iceland'),
 ('Farm Foods'),
 ('Lidl'),
 ('M&S Food'),
-('Morisssons'), 
-('Muscle Food'), 
-('MyProtein'), 
-('Ocado'), 
-('Sainsbury'), 
+('Morisssons'),
+('Muscle Food'),
+('MyProtein'),
+('Ocado'),
+('Sainsbury'),
 ('Tesco'),
 ('Vivo Life'),
-('Waitrose');;
+('Waitrose');

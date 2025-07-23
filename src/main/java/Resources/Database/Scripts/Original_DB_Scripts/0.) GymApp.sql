@@ -1,7 +1,7 @@
 --######################################
 DROP DATABASE IF EXISTS gymapp00001;
-CREATE DATABASE gymapp00001;
-use gymapp00001;
+CREATE DATABASE IF NOT EXISTS gymapp00001;
+USE gymapp00001;
 
 --######################################
 CREATE TABLE IF NOT EXISTS plans
@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS plans
 	
 	Plan_Name VARCHAR(100) NOT NULL,
  
-    SelectedPlan BOOLEAN,  -- can be null
+    SelectedPlan BOOLEAN,  -- can be null, the only plan with a true value is the selected plan
     CHECK(SelectedPlan IN(true)),
 	
     Vegan BOOLEAN  NOT NULL,
@@ -162,9 +162,11 @@ CREATE TABLE IF NOT EXISTS ingredientInShops
 (   
     -- PRIMARY KEY , UNIQUE To this Table
     PDID INT  PRIMARY KEY AUTO_INCREMENT,
-	
+		
     IngredientID INT  NOT NULL,
 	FOREIGN KEY (IngredientID) REFERENCES ingredients_info(IngredientID),
+
+    Product_Name VARCHAR(100) NOT NULL,
 
 	Volume_Per_Unit DECIMAL(7,2) NOT NULL,
 	Cost_Per_Unit DECIMAL(7,2) NOT NULL,
@@ -172,7 +174,7 @@ CREATE TABLE IF NOT EXISTS ingredientInShops
 	StoreID INT NOT NULL,
 	FOREIGN KEY (StoreID) REFERENCES stores(StoreID),
 	
-    UNIQUE KEY Ingredient_In_Store(StoreID, IngredientID)	
+    UNIQUE KEY Product_In_Store(StoreID, Product_Name)	
 );
 --######################################
 
@@ -189,7 +191,6 @@ CREATE TABLE IF NOT EXISTS mealsInPlan
    PRIMARY KEY(MealInPlanID, PlanID),
    UNIQUE KEY Time_For_Meal(PlanID, Meal_Time), -- Only one meal can be at one time
    UNIQUE KEY No_Repeat_Meal_Names_In_Plan(PlanID, Meal_Name) -- can't have 2 of the same meal_names in a plan   
-
 );
 
 --######################################

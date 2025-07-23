@@ -41,7 +41,7 @@ public class Meal_Plan_Screen extends JPanel
     //
     //##################################################################################################################
     private final static String
-            version_no = "00001",
+            version_no = "00002",
             databaseName = "gymapp" + version_no,
             db_Script_Folder_Address = "src/main/java/Resources/Database/Scripts/Editable_DB_Scripts";
 

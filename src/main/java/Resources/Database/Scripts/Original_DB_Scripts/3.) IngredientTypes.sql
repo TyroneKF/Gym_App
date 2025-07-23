@@ -1,4 +1,4 @@
-use gymapp00001;
+USE gymapp00001;
 INSERT IGNORE INTO ingredientTypes (Ingredient_Type_Name) VALUES
 ('None Of The Above'),
 ('UnAssigned'),
@@ -9,7 +9,6 @@ INSERT IGNORE INTO ingredientTypes (Ingredient_Type_Name) VALUES
 ('Cheese'),
 ('Chocolate'),
 ('Desserts'),
-('Eggs'),
 ('Fish'),
 ('Frozen Fruit'),
 ('Frozen Vegetables'),
@@ -25,7 +24,7 @@ INSERT IGNORE INTO ingredientTypes (Ingredient_Type_Name) VALUES
 ('Nut Powder'),
 ('Nuts & Seeds'),
 ('Other Grains'),
-('Pasta'), 
+('Pasta'),
 ('Plant Milk'),
 ('Poultry'),
 ('Potatoes'),
@@ -40,4 +39,6 @@ INSERT IGNORE INTO ingredientTypes (Ingredient_Type_Name) VALUES
 ('Vegetables'),
 ('Vitamins'),
 ('Whole Wheat'),
-('Yoghurt');;
+('Flour'),
+('Dairy'),
+('Sugar');
