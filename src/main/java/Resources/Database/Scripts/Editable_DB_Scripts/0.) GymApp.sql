@@ -1,7 +1,7 @@
 --######################################
 DROP DATABASE IF EXISTS gymapp00001;
-CREATE DATABASE gymapp00001;
-use gymapp00001;
+CREATE DATABASE IF NOT EXISTS gymapp00001;
+USE gymapp00001;
 
 --######################################
 CREATE TABLE IF NOT EXISTS plans

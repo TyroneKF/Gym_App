@@ -1,4 +1,4 @@
-use gymapp00001;
+USE gymapp00001;
 INSERT IGNORE INTO ingredientTypes (Ingredient_Type_Name) VALUES
 ('None Of The Above'),
 ('UnAssigned'),

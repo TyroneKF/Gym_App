@@ -1,4 +1,4 @@
-use gymapp00001;
+USE gymapp00001;
 INSERT IGNORE INTO ingredients_info (IngredientID, Measurement, Ingredient_Name, Ingredient_Type_ID, Based_On_Quantity, Glycemic_Index, Protein, Carbohydrates, Sugars_Of_Carbs, Fibre, Fat, Saturated_Fat, Salt, Water_Content, Liquid_Content, Calories) VALUES
 (1, "Grams","None Of The Above",1, 0,0,0,0,0,0,0,0,0,0,0,0),
 (null,("Litres"),("Water"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Liquids"),(100.00),(0),(0.00),(0.00),(0.00),(0.00),(0.00),(0.00),(0.00),(100.00),(100.00),(0.00)),
