@@ -1,6 +1,5 @@
 use gymapp00001;
-INSERT IGNORE INTO ingredients_info
-(IngredientID, Measurement, Ingredient_Name, Ingredient_Type_ID, Based_On_Quantity, Glycemic_Index, Protein, Carbohydrates, Sugars_Of_Carbs, Fibre, Fat, Saturated_Fat, Salt, Water_Content, Liquid_Content, Calories) VALUES
+INSERT IGNORE INTO ingredients_info (IngredientID, Measurement, Ingredient_Name, Ingredient_Type_ID, Based_On_Quantity, Glycemic_Index, Protein, Carbohydrates, Sugars_Of_Carbs, Fibre, Fat, Saturated_Fat, Salt, Water_Content, Liquid_Content, Calories) VALUES
 (1, "Grams","None Of The Above",1, 0,0,0,0,0,0,0,0,0,0,0,0),
 (null,("Litres"),("Water"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Liquids"),(100.00),(0),(0.00),(0.00),(0.00),(0.00),(0.00),(0.00),(0.00),(100.00),(100.00),(0.00)),
 (null,("Grams"),("Banana"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Fruit"),(100.00),(51),(1.1),(23.00),(12.00),(2.6),(0.3),(0.1),(0.00),(0.00),(0.00),(89.00)),
