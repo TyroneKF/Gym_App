@@ -1,7 +1,6 @@
 use gymapp00001;
 INSERT IGNORE INTO ingredients_info
-(IngredientID, Measurement, Ingredient_Name, Ingredient_Type_ID, Based_On_Quantity, Glycemic_Index, Protein, Carbohydrates, Sugars_Of_Carbs, Fibre, Fat, Saturated_Fat, Salt, Water_Content, Liquid_Content, Calories)
-VALUES
+(IngredientID, Measurement, Ingredient_Name, Ingredient_Type_ID, Based_On_Quantity, Glycemic_Index, Protein, Carbohydrates, Sugars_Of_Carbs, Fibre, Fat, Saturated_Fat, Salt, Water_Content, Liquid_Content, Calories) VALUES
 (1, "Grams","None Of The Above",1, 0,0,0,0,0,0,0,0,0,0,0,0),
 (null,("Litres"),("Water"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Liquids"),(100.00),(0),(0.00),(0.00),(0.00),(0.00),(0.00),(0.00),(0.00),(100.00),(100.00),(0.00)),
 (null,("Grams"),("Banana"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Fruit"),(100.00),(51),(1.1),(23.00),(12.00),(2.6),(0.3),(0.1),(0.00),(0.00),(0.00),(89.00)),
@@ -49,7 +48,6 @@ VALUES
 (null,("Grams"),("Fage Greek Yoghurt"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Yoghurt"),(100.00),(12),(10.3),(3.00),(3.00),(0.00),(0.00),(0.00),(0.1),(0.00),(100.00),(54.00)),
 (null,("Grams"),("Be-Ro Plain Flour"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Flour"),(100.00),(85),(10.4),(70.1),(1.4),(3.2),(1.3),(0.2),(0.00),(0.00),(0.00),(340.00)),
 (null,("Grams"),("Allisons Wholemeal Flour"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Flour"),(100.00),(60),(12.00),(65.00),(1.4),(10.00),(2.6),(0.5),(0.03),(0.00),(0.00),(350.00)),
-(null,("Grams"),("Grace Jamaican Jerk BBQ Sauce"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Sauce"),(100.00),(0),(1.00),(40.00),(32.00),(0.00),(0.5),(0.1),(1.1),(0.00),(100.00),(169.00)),
 (null,("Grams"),("Bertolli Olive Oil Spread"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Dairy"),(100.00),(0),(0.5),(0.5),(0.5),(0.00),(59.00),(17.00),(1.1),(0.00),(0.00),(531.00)),
 (null,("Grams"),("Allinson Self-Raising Wholemeal Flour"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Flour"),(100.00),(60),(11.00),(69.3),(1.1),(10.00),(2.4),(0.4),(1.1),(0.00),(0.00),(359.00)),
 (null,("Grams"),("Plantin"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Fruit"),(100.00),(40),(1.3),(32.00),(15.00),(2.3),(0.4),(0.1),(0.00),(0.00),(0.00),(122.00)),

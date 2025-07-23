@@ -24,7 +24,7 @@ INSERT IGNORE INTO ingredientTypes (Ingredient_Type_Name) VALUES
 ('Nut Powder'),
 ('Nuts & Seeds'),
 ('Other Grains'),
-('Pasta'), 
+('Pasta'),
 ('Plant Milk'),
 ('Poultry'),
 ('Potatoes'),
@@ -39,7 +39,6 @@ INSERT IGNORE INTO ingredientTypes (Ingredient_Type_Name) VALUES
 ('Vegetables'),
 ('Vitamins'),
 ('Whole Wheat'),
-('Yoghurt'),
 ('Flour'),
 ('Dairy'),
 ('Sugar');
