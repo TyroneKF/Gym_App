@@ -342,6 +342,7 @@ public class MealManager
         // add_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
 
         JButton edit_Btn = edit_Icon_Btn.returnJButton();
+        edit_Btn.setToolTipText("Edit Meal Name"); //Hover message over icon
         edit_Icon_Btn.makeBTntransparent();
 
         edit_Btn.addActionListener(ae -> {
@@ -357,6 +358,7 @@ public class MealManager
         // add_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
 
         JButton editTime_Btn = editTime_Icon_Btn.returnJButton();
+        editTime_Btn.setToolTipText("Edit Meal Time"); //Hover message over icon
         editTime_Icon_Btn.makeBTntransparent();
 
         editTime_Btn.addActionListener(ae -> {
@@ -372,6 +374,7 @@ public class MealManager
         // add_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
 
         JButton add_Btn = add_Icon_Btn.returnJButton();
+        add_Icon_Btn.setToolTipText("Add Sub-Meal In Meal"); //Hover message over icon
         add_Icon_Btn.makeBTntransparent();
 
         add_Btn.addActionListener(ae -> {
@@ -388,6 +391,7 @@ public class MealManager
                 "centre", "right"); // btn text is useless here , refactor
 
         JButton refresh_Btn = refresh_Icon_Btn.returnJButton();
+        refresh_Btn.setToolTipText("Restore All Sub-Meals Data"); //Hover message over icon
         refresh_Icon_Btn.makeBTntransparent();
 
         refresh_Btn.addActionListener(ae -> {
@@ -414,7 +418,7 @@ public class MealManager
         saveIcon_Icon_Btn.makeBTntransparent();
 
         JButton save_btn = saveIcon_Icon_Btn.returnJButton();
-
+        save_btn.setToolTipText("Save All Sub-Meals Data"); //Hover message over icon
 
         save_btn.addActionListener(ae -> {
             if (areYouSure("Save Data"))
@@ -435,7 +439,7 @@ public class MealManager
         deleteIcon_Icon_Btn.makeBTntransparent();
 
         JButton delete_btn = deleteIcon_Icon_Btn.returnJButton();
-
+        delete_btn.setToolTipText("Delete Meal"); //Hover message over icon
 
         delete_btn.addActionListener(ae -> {
 

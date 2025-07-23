@@ -9,14 +9,8 @@ import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
 import App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Ingredients_Info_Screen;
 import App_Code.Objects.Screens.Others.Loading_Screen.SplashScreenDemo;
-
 import javax.swing.*;
 import java.awt.*;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 
@@ -41,7 +35,7 @@ public class Meal_Plan_Screen extends JPanel
     //
     //##################################################################################################################
     private final static String
-            version_no = "00002",
+            version_no = "00001",
             databaseName = "gymapp" + version_no,
             db_Script_Folder_Address = "src/main/java/Resources/Database/Scripts/Editable_DB_Scripts";
 
@@ -793,6 +787,7 @@ public class Meal_Plan_Screen extends JPanel
         down_ScrollBar_Icon_Btn.makeBTntransparent();
 
         JButton down_ScrollBar_Btn = down_ScrollBar_Icon_Btn.returnJButton();
+        down_ScrollBar_Btn.setToolTipText("Scroll to Bottom Of Meal Plan"); //Hover message over icon
 
         down_ScrollBar_Btn.addActionListener(ae -> {
 
@@ -811,6 +806,7 @@ public class Meal_Plan_Screen extends JPanel
                 "centre", "right"); // btn text is useless here , refactor
 
         JButton refresh_Btn = refresh_Icon_Btn.returnJButton();
+        refresh_Btn.setToolTipText("Restore All Meals Data"); //Hover message over icon
         refresh_Icon_Btn.makeBTntransparent();
 
         refresh_Btn.addActionListener(ae -> {
@@ -829,6 +825,7 @@ public class Meal_Plan_Screen extends JPanel
                 "centre", "right");
 
         JButton add_Btn = add_Icon_Btn.returnJButton();
+        add_Btn.setToolTipText("Add Meal"); //Hover message over icon
         add_Icon_Btn.makeBTntransparent();
 
         add_Btn.addActionListener(ae -> {
@@ -851,6 +848,7 @@ public class Meal_Plan_Screen extends JPanel
         saveIcon_Icon_Btn.makeBTntransparent();
 
         JButton save_btn = saveIcon_Icon_Btn.returnJButton();
+        save_btn.setToolTipText("Save All Meals"); //Hover message over icon
 
 
         save_btn.addActionListener(ae -> {
@@ -873,6 +871,7 @@ public class Meal_Plan_Screen extends JPanel
         add_Ingredients_Icon_Btn.makeBTntransparent();
 
         JButton add_Ingredients_Btn = add_Ingredients_Icon_Btn.returnJButton();
+        add_Ingredients_Btn.setToolTipText("Add Ingredients"); //Hover message over icon
 
 
         add_Ingredients_Btn.addActionListener(ae -> {
@@ -895,6 +894,7 @@ public class Meal_Plan_Screen extends JPanel
         macro_Targets_Icon_Btn.makeBTntransparent();
 
         JButton macro_Tagets_Btn = macro_Targets_Icon_Btn.returnJButton();
+        macro_Tagets_Btn.setToolTipText("Set Macro Targets"); //Hover message over icon
 
 
         macro_Tagets_Btn.addActionListener(ae -> {

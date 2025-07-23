@@ -256,6 +256,7 @@ public class IngredientsTable extends JDBC_JTable
         // add_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
 
         JButton add_Btn = add_Icon_Btn.returnJButton();
+        add_Icon_Btn.setToolTipText("Add Ingredients"); //Hover message over icon
         add_Icon_Btn.makeBTntransparent();
 
         add_Btn.addActionListener(ae -> {
@@ -275,6 +276,7 @@ public class IngredientsTable extends JDBC_JTable
 
 
         JButton refresh_Btn = refresh_Icon_Btn.returnJButton();
+        refresh_Btn.setToolTipText("Restore Sub-Meal"); //Hover message over icon
         refresh_Icon_Btn.makeBTntransparent();
 
         refresh_Btn.addActionListener(ae -> {
@@ -319,7 +321,7 @@ public class IngredientsTable extends JDBC_JTable
         saveIcon_Icon_Btn.makeBTntransparent();
 
         JButton save_btn = saveIcon_Icon_Btn.returnJButton();
-
+        save_btn.setToolTipText("Save Sub-Meal"); //Hover message over icon
 
         save_btn.addActionListener(ae -> {
             if (areYouSure("Save Data"))
@@ -340,6 +342,7 @@ public class IngredientsTable extends JDBC_JTable
         deleteIcon_Icon_Btn.makeBTntransparent();
 
         JButton delete_btn = deleteIcon_Icon_Btn.returnJButton();
+        delete_btn.setToolTipText("Delete Sub-Meal"); //Hover message over icon
 
 
         delete_btn.addActionListener(ae -> {
