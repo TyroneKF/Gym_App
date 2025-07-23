@@ -1,3 +1,10 @@
+Stores
+.) Replacement made in Stores not reflected in dropdown list on page
+.) Stores list doesn't update
+
+
+
+
 Delete BTN on ingredients page, fix all sql backup methods
 
 .) Make up sure backup to editable sql file uses , instead of ;; at the end and replace this during run time however, during writing use the commas

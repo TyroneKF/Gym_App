@@ -620,17 +620,17 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
 
     protected String get_IngredientsForm_UpdateString(String ingredientID) // HELLO needs further update methods created for gui
     {
-        //####################################
+        //##############################################################################################################
         // Creating Upload Query
-        //####################################
+        //##############################################################################################################
         String
                 ingredientTypeSet = "SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = \"",
                 insertQuery = "INSERT INTO ingredients_info VALUES";
 
-        ingredientsValuesBeingAdded = "\n(null,";
-        //####################################
+        ingredientsValuesBeingAdded = "(null,";
+        //##############################################################################################################
         //
-        //####################################
+        //##############################################################################################################
         int pos = -1, endPos = ingredientsFormLabelsMapsToValues.size() - 1;
         for (Map.Entry<String, Triplet<String, String, String>> entry : ingredientsFormLabelsMapsToValues.entrySet())
         {
@@ -668,7 +668,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
             //####################################
             if (pos==endPos)
             {
-                ingredientsValuesBeingAdded += String.format("%s);", fieldsQueryEx);
+                ingredientsValuesBeingAdded += String.format("%s)", fieldsQueryEx);
                 continue;
             }
 
@@ -678,10 +678,10 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
             ingredientsValuesBeingAdded += String.format("%s,", fieldsQueryEx);
         }
 
-        //####################################
+        //##############################################################################################################
         // Return results
-        //####################################
-        return (insertQuery += ingredientsValuesBeingAdded);
+        //##############################################################################################################
+        return (insertQuery += ingredientsValuesBeingAdded+";");
     }
 
     //##################################################################################################################

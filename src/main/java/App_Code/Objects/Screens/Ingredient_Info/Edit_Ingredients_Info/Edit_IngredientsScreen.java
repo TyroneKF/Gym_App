@@ -32,6 +32,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
             selected_IngredientType = "",
             selected_IngredientName = "";
 
+
     //#############################################################################################################
     // Constructor
     //#############################################################################################################
@@ -131,7 +132,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         {
             public void itemStateChanged(ItemEvent ie)
             {
-                if (ie.getStateChange() == ItemEvent.SELECTED)
+                if (ie.getStateChange()==ItemEvent.SELECTED)
                 {
                     // Get ingredientType
                     selected_IngredientType = (String) ie.getItem().toString();
@@ -190,7 +191,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
             {
                 if (!(getUpdateStatusOfIngredientNames())) // only trigger event when the ingredientsName Jcombobox is not updating
                 {
-                    if (ingredientsNameJComboBox.getSelectedIndex() != -1)
+                    if (ingredientsNameJComboBox.getSelectedIndex()!=-1)
                     {
                         selected_IngredientName = (String) ie.getItem().toString();
                         updateFormWithIngredientInfo();
@@ -273,7 +274,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
     //#############################################################################################################
     private void refreshFormBTNAction()
     {
-        if (ingredientsForm.getSelectedIngredientName() == null)
+        if (ingredientsForm.getSelectedIngredientName()==null)
         {
             return;
         }
@@ -388,7 +389,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
 
         ArrayList<ArrayList<String>> ingredientTypesNameAndIDResults = db.getMultiColumnQuery(queryIngredientsType);
 
-        if (ingredientTypesNameAndIDResults == null)
+        if (ingredientTypesNameAndIDResults==null)
         {
             JOptionPane.showMessageDialog(null, "\n\nUnable to update Ingredient Type Info");
             return;
@@ -411,7 +412,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
             Collection<String> ingredientNames = db.getSingleColumnQuery_AlphabeticallyOrderedTreeSet(queryTypeIngredientNames);
 
 
-            if (ingredientNames == null)
+            if (ingredientNames==null)
             {
                 errorTxt += String.format("\nUnable to grab ingredient names for Type '%s'!", ingredientType);
                 continue;
@@ -476,7 +477,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //##############################################################################################################
         //
         //##############################################################################################################
-        if (ingredientsNameJComboBox.getSelectedItem() == null)
+        if (ingredientsNameJComboBox.getSelectedItem()==null)
         {
             JOptionPane.showMessageDialog(mealPlanScreen, "Please select an ingredient please to edit it!");
             refreshInterface(true, true);
@@ -511,7 +512,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //##############################################################################################################
         String selectedIngredientID = ingredientsForm.getSelectedIngredientID();
 
-        if (selectedIngredientID == null)
+        if (selectedIngredientID==null)
         {
             JOptionPane.showMessageDialog(mealPlanScreen, "\n\nUnable To Get Ingredient ID To Edit This Ingredient !!");
             return;
@@ -576,7 +577,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //####################################
         //
         //####################################
-        if(updateIngredients_String == null && updateIngredientShops_String == null)
+        if (updateIngredients_String==null && updateIngredientShops_String==null)
         {
             System.out.println("\n\nupdateBothForms() no ingredientInfo / shopInfo to Update");
             return false;
@@ -585,7 +586,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //####################################
         // Uploading Ingredient Info Query
         //####################################
-        if (updateIngredients_String!= null && !(db.uploadData_Batch_Altogether(new String[]{updateIngredients_String})))
+        if (updateIngredients_String!=null && !(db.uploadData_Batch_Altogether(new String[]{updateIngredients_String})))
         {
             JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Failed Upload - Unable To Add Ingredient Info & Shop Info & Ingredient Suppliers In DB!");
             return false;
@@ -596,7 +597,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //####################################
         boolean errorUploading = false;
 
-        if (updateIngredientShops_String != null)
+        if (updateIngredientShops_String!=null)
         {
             int noOfUpdateProcesses = updateIngredientShops_String.length;
 
@@ -622,7 +623,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
     }
 
     @Override
-    protected boolean backupDataInSQLFile()
+    protected boolean backupDataInSQLFile() //HELLO Iteration has next can predict last loop
     {
         String replacementData = "(null,";
         for (Map.Entry<String, Object[]> entry : ingredientsForm.getIngredientsFormObjectAndValues().entrySet())
@@ -630,7 +631,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
             String rowLabel = entry.getKey();
             String formValue = (String) entry.getValue()[1];
 
-            if(rowLabel.equals("Ingredient Measurement In") || rowLabel.equals("Ingredient Name"))
+            if (rowLabel.equals("Ingredient Measurement In") || rowLabel.equals("Ingredient Name"))
             {
                 replacementData += String.format("(\"%s\"),", formValue);
                 continue;
@@ -643,15 +644,15 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
             replacementData += String.format("(%s),", formValue);
         }
 
-        replacementData =  replacementData.substring(0, replacementData.length() - 1)+");;";
+        replacementData = replacementData.substring(0, replacementData.length() - 1) + ")";
 
-        System.out.printf("\n\nbackupDataInSQLFile() \n%s", replacementData);
+        System.out.printf("\n\nbackupDataInSQLFile() Text to Replace \n%s", replacementData);
 
         //##############################################################################################################
         //
         //##############################################################################################################
         String oldIngredientName = String.format("(\"%s\")", getSelectedIngredientName().trim());
-        if( ! (db.replaceTxtInSQLFileV2(sqlBackUpPath,oldIngredientName,replacementData)))
+        if (!(db.replaceTxtInSQLFile(sqlBackUpPath, false, oldIngredientName, replacementData)))
         {
             JOptionPane.showMessageDialog(null, String.format("Error, changing back-up of %s in SQL file of ingredient info!", oldIngredientName));
             return false;
@@ -668,7 +669,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //##############################################################################################################
         //
         //##############################################################################################################
-        if (ingredientsNameJComboBox.getSelectedIndex() == -1)
+        if (ingredientsNameJComboBox.getSelectedIndex()==-1)
         {
             JOptionPane.showMessageDialog(mealPlanScreen, "Please select an item first before attempting to delete an ingredient!");
             return;
@@ -699,7 +700,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //##############################################################################################################
         //
         //##############################################################################################################
-        if (selectedIngredientID == null || selectedIngredientName == null)
+        if (selectedIngredientID==null || selectedIngredientName==null)
         {
             JOptionPane.showMessageDialog(mealPlanScreen, "Unable to grab Ingredient INFO to delete it!!");
             return;
@@ -728,17 +729,11 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //##############################################################################################################
         // Delete From BackUp SQL File
         //##############################################################################################################
-/*
-        ArrayList<String> txtToDeleteList = new ArrayList<String>(Arrays.asList(String.format("('%s'),", selectedJComboBoxItemTxt), String.format("('%s');;", selectedJComboBoxItemTxt)));
 
-        if (!(db.deleteTxtInFile(super.sqlBackUpPath, txtToDeleteList)))
+        if (!(db.deleteTxtInFile(super.sqlBackUpPath, String.format("(\"%s\"),", selectedIngredientName))))
         {
             JOptionPane.showMessageDialog(null, String.format("\n\nError, deleteBTNAction() deleting ingredient '%s' from backup files!", selectedIngredientName));
-        }*/
-
-        //##########################################################################################################
-        //
-        //##########################################################################################################
+        }
     }
 
     //#############################################################################################################

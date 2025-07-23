@@ -12,7 +12,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -365,7 +364,7 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
 
         protected boolean backupDataInSQLFile()
         {
-            String txtToAdd = String.format("\n('%s'),", jTextfieldTXT);
+            String txtToAdd = String.format("('%s')", jTextfieldTXT);
 
             if (!(db.writeTxtToSQLFile(sqlFilePath, txtToAdd)))
             {
@@ -600,9 +599,7 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
             // Delete From BackUp SQL File
             //##########################################################################################################
 
-            ArrayList<String> txtToDeleteList = new ArrayList<>(Arrays.asList(String.format("('%s'),", selectedJComboBoxItemTxt), String.format("('%s');;", selectedJComboBoxItemTxt)));
-
-            if (!(db.deleteTxtInFile(sqlFilePath, txtToDeleteList)))
+            if (!(db.deleteTxtInFile(sqlFilePath, String.format("('%s')", selectedJComboBoxItemTxt))))
             {
                 JOptionPane.showMessageDialog(null, String.format("\n\nError, deleteBTNAction() deleting ingredient type '%s' from backup files!", selectedJComboBoxItemTxt));
             }
@@ -618,7 +615,7 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
         {
             System.out.printf("\n\nSql File Path: %s \nSelectedJComboBox: %s \nJTextfield: %s", sqlFilePath,selectedJComboBoxItemTxt,jTextfieldTXT);
 
-            if( ! (db.replaceTxtInSQLFile(sqlFilePath,selectedJComboBoxItemTxt,jTextfieldTXT)))
+            if( ! (db.replaceTxtInSQLFile(sqlFilePath,false, String.format("('%s')",selectedJComboBoxItemTxt),String.format("('%s')",jTextfieldTXT))))
             {
                 JOptionPane.showMessageDialog(null, String.format("Error, changing back-up of %s in SQL file!", process));
                 return false;

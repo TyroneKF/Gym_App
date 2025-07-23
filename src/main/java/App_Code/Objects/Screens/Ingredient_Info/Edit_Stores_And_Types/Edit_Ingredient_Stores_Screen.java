@@ -19,7 +19,7 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
         //######################################
         //
         //######################################
-        super.sqlFilePath = "src/main/java/Resources/Database_Scripts/Editable_DB_Scripts/5.) Stores.sql";
+        super.sqlFilePath = "src/main/java/Resources/Database/Scripts/Editable_DB_Scripts/5.) Stores.sql";
         super.process = "ingredients stores";
 
         //######################################
