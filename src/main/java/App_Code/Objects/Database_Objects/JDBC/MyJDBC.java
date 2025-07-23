@@ -115,7 +115,7 @@ public class MyJDBC
                         Charset charset = StandardCharsets.UTF_8;
 
                         String content = new String(Files.readAllBytes(path), charset); // Get the contents of the file
-                        content = content.replaceFirst("(gymapp)......?", databaseName + ";"); // replace gymapp????? with gymapp(Current Version no), find only one = reduced search
+                        content = content.replaceAll("(gymapp)......?", databaseName + ";"); // replace gymapp????? with gymapp(Current Version no), find only one = reduced search
 
                         Files.write(path, content.getBytes(charset)); // write the current gym version inside the file
                     }
