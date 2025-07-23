@@ -100,37 +100,36 @@ public class MyJDBC
         // Traversing through the  objects in the files array
         for (File file : files)
         {
-            if (file.isFile()) // if the object is a file
+            if (!file.isFile()) { continue; } // skip folders & subdirectory's and anything that isnt a file for now
+
+            String filePath = file.getPath(); // get the path of the file
+            if (updateDBVersionInFile) // if instructed to update the DB version in the database script update it
             {
-                String filePath = file.getPath(); // get the path of the file
-
-                if (updateDBVersionInFile) // if instructed to update the DB version in the database script update it
+                try
                 {
-                    try
-                    {
-                        //##############################################
-                        // Update current Gym Version no in SQL File
-                        //##############################################
-                        Path path = Paths.get(filePath); // format the path of the file into proper format being a Path object
-                        Charset charset = StandardCharsets.UTF_8;
+                    //##############################################
+                    // Update current Gym Version no in SQL File
+                    //##############################################
+                    Path path = Paths.get(filePath); // format the path of the file into proper format being a Path object
+                    Charset charset = StandardCharsets.UTF_8;
 
-                        String content = new String(Files.readAllBytes(path), charset); // Get the contents of the file
-                        content = content.replaceAll("(gymapp)......?", databaseName + ";"); // replace gymapp????? with gymapp(Current Version no), find only one = reduced search
+                    String content = new String(Files.readAllBytes(path), charset); // Get the contents of the file
+                    content = content.replaceAll("(gymapp)......?", databaseName + ";"); // replace gymapp????? with gymapp(Current Version no), find only one = reduced search
 
-                        Files.write(path, content.getBytes(charset)); // write the current gym version inside the file
-                    }
-                    catch (Exception e)
-                    {
-                        System.out.printf("\n\n%s run_SQL_Script_Folder() Error, replacing version number  in file '%s'!  \n\n%s \n%s", line_Separator, file.getName(), e, line_Separator);
-                        return false;
-                    }
+                    Files.write(path, content.getBytes(charset)); // write the current gym version inside the file
                 }
-                if (!(run_SQL_Script(filePath))) // Run the database script for specific table
+                catch (Exception e)
                 {
-                    System.out.printf("\n\n%s run_SQL_Script_Folder() Error, executing sql script '%s'! \n%s", line_Separator, file.getName(), line_Separator);
+                    System.out.printf("\n\n%s run_SQL_Script_Folder() Error, replacing version number  in file '%s'!  \n\n%s \n%s", line_Separator, file.getName(), e, line_Separator);
                     return false;
                 }
             }
+            if (!(run_SQL_Script(filePath))) // Run the database script for specific table
+            {
+                System.out.printf("\n\n%s run_SQL_Script_Folder() Error, executing sql script '%s'! \n%s", line_Separator, file.getName(), line_Separator);
+                return false;
+            }
+
             System.out.printf("\n\n%s \nSuccessfully executed file '%s'! \n%s", line_Separator, file.getName(), line_Separator);
 
             /*else if (file.isDirectory()) // If a subdirectory is found, print the name of the sub directory
@@ -147,8 +146,7 @@ public class MyJDBC
     {
         try
         {
-            DriverManager.registerDriver(new com.mysql.jdbc.Driver());  //Registering the Driver
-
+            DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());  //Registering the Driver
             System.out.println("\n\n");
 
             Connection con = DriverManager.getConnection(initial_db_connection, userName, password);
@@ -205,7 +203,7 @@ public class MyJDBC
                 writer.write(line);
             }
 
-            writer.write( System.getProperty("line.separator") + txt_To_Write_To_SQL_File  + ";" ); // Add new line to file
+            writer.write(System.getProperty("line.separator") + txt_To_Write_To_SQL_File + ";"); // Add new line to file
 
         }
         catch (Exception e)
