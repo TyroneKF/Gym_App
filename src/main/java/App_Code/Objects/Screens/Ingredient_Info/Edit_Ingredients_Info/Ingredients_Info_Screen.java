@@ -15,8 +15,7 @@ import java.util.*;
 
 public class Ingredients_Info_Screen extends JFrame
 {
-
-    private Collection<String> ingredientsTypesList, storesNamesList;
+    private Collection<String> ingredientsTypesList, storesNamesList; // Ordered Collections applied from once its released from MYJDC LVL
 
     // Sorted Hashmap by key String
     private TreeMap<String, Collection<String>> map_ingredientTypesToNames = new TreeMap<String, Collection<String>>(new Comparator<String>()
@@ -69,7 +68,7 @@ public class Ingredients_Info_Screen extends JFrame
 
         try
         {
-            if (ingredientsTypesList == null)
+            if (ingredientsTypesList==null)
             {
                 JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "\n\nUnable to get IngredientTypes for form!");
                 return;
@@ -226,7 +225,7 @@ public class Ingredients_Info_Screen extends JFrame
 
     public void updateIngredientSuppliersJComboBoxes()
     {
-        System.out.printf("\n\nUpdating GUI");
+        System.out.printf("\n\nUpdating Suppliers GUI");
         addIngredientsInfo.clearShopForm();
         editIngredientsInfo.refreshInterface(true, true);
     }
@@ -245,6 +244,8 @@ public class Ingredients_Info_Screen extends JFrame
     //##################################################################################################################
     // Mutator Methods
     //##################################################################################################################
+
+    // Ingredient Types
     public boolean addChangeOrRemoveIngredientsTypeName(String process, String newKey, String oldKey)// HELLO CHECKA
     {
         /*//####################################################################
@@ -333,7 +334,7 @@ public class Ingredients_Info_Screen extends JFrame
         //#########################################
         // Check if oldKey exists if not error
         //#########################################
-        if (oldKey == null || !(ingredientsTypesList.contains(oldKey)))
+        if (oldKey==null || !(ingredientsTypesList.contains(oldKey)))
         {
             System.out.print("\n\nError1");
             return false;
@@ -369,6 +370,29 @@ public class Ingredients_Info_Screen extends JFrame
         //####################################################################
 
         return true;
+    }
+
+    //
+    public void addOrRemoveSupplierFromList(String process, String newKey, String oldKey)
+    {
+        // Validate input value
+        Set<String> processes = Set.of("add", "replace", "delete");
+        assert processes.contains(process) : String.format("addOrRemoveIngredientsTypeNameFromList() Invalid process: %s", process);
+
+        // Add Supplier
+        if (process.equals("add"))
+        {
+            storesNamesList.add(newKey);
+            return;
+        }
+
+        // Processes left are delete & Replace Suppliers which both involve deleting oldKey
+        storesNamesList.remove(oldKey); // Delete suppliers
+
+        if(process.equals("delete")){ return;} // Nothing left to do
+
+        // only process left is replace which is only to add the newKey
+        storesNamesList.add(newKey);
     }
 
     public void setUpdateIngredientInfo(boolean status)

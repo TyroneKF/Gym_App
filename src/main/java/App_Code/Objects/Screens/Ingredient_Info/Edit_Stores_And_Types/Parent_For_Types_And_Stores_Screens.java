@@ -286,8 +286,8 @@ public class Parent_For_Types_And_Stores_Screens extends JPanel
                 {
                     updateOtherScreens();
                     backupDataInSQLFile();
-                    resetActions();
                     successUploadMessage();
+                    resetActions();
                 }
                 else
                 {

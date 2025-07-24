@@ -481,7 +481,7 @@ public class Meal_Plan_Screen extends JPanel
                 ingredientsTypesList.clear();
             }
 
-            ingredientsTypesList = db.getSingleColumnQuery_AlphabeticallyOrderedTreeSet("SELECT Ingredient_Type_Name FROM ingredientTypes;");
+            ingredientsTypesList = db.getSingleColumnQuery_AlphabeticallyOrderedTreeSet("SELECT Ingredient_Type_Name FROM ingredientTypes ORDER BY Ingredient_Type_Name ASC;");
 
             if (ingredientsTypesList == null)
             {
@@ -501,7 +501,7 @@ public class Meal_Plan_Screen extends JPanel
                 storesNamesList.clear();
             }
 
-            storesNamesList = db.getSingleColumnQuery_AlphabeticallyOrderedTreeSet("SELECT Store_Name FROM stores;");
+            storesNamesList = db.getSingleColumnQuery_AlphabeticallyOrderedTreeSet("SELECT Store_Name FROM stores ORDER BY Store_Name ASC;");
 
             if (storesNamesList == null)
             {

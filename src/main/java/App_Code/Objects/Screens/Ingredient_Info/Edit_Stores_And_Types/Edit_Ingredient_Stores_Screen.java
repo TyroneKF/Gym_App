@@ -111,6 +111,7 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
         @Override
         protected void updateOtherScreens()
         {
+            parentIngredientsScreen.addOrRemoveSupplierFromList("add",jTextfieldTXT, null); // add to list
             parentIngredientsScreen.updateIngredientSuppliersJComboBoxes();
         }
     }
@@ -147,7 +148,7 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
         @Override
         protected void successUploadMessage()
         {
-            String text = String.format("\n\nSuccessfully Changed Ingredient Type From ' %s ' to ' %s ' !", selectedJComboBoxItemTxt, jTextfieldTXT);
+            String text = String.format("\n\nSuccessfully Changed Suppliers From ' %s ' to ' %s ' !", selectedJComboBoxItemTxt, jTextfieldTXT);
             JOptionPane.showMessageDialog(null, text);
         }
 
@@ -161,7 +162,17 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
         @Override
         protected void updateOtherScreens()
         {
-            parentIngredientsScreen.updateIngredientSuppliersJComboBoxes();
+            // this doesn't have to be in  a particular position, since all objects are deleted
+            parentIngredientsScreen.updateIngredientSuppliersJComboBoxes();  // Clear shop GUI in app
+
+            if (itemDeleted) // go through with the deleting process
+            {
+                parentIngredientsScreen.addOrRemoveSupplierFromList("delete", null, selectedJComboBoxItemTxt);
+                return;
+            }
+
+            //  Must be the replace process requested
+            parentIngredientsScreen.addOrRemoveSupplierFromList("replace", jTextfieldTXT, selectedJComboBoxItemTxt);
         }
 
         @Override

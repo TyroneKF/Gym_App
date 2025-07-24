@@ -93,7 +93,7 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
         @Override
         protected void successUploadMessage()
         {
-            String text = "\n\nSuccessfully Added New Ingredient Type";
+            String text = String.format("\n\nSuccessfully Added New Ingredient Type: '%s'", jTextfieldTXT);
             JOptionPane.showMessageDialog(null, text);
         }
 
