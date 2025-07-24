@@ -15,8 +15,37 @@ Delete BTN on ingredients page, fix all sql backup methods
    Space gaps when adding to a file
    Skip first 2 lines in sql file
 
+############################################################
+.) Based on ingredientsForm value cannot be 0
+.) Delete btn on edit
 
 
+
+.) Only change ingredient info and stores if they changed in Edit_ShopForm, Edit_IngredientsForm.java
+
+Errors:
+.)
+
+
+
+.) StoresList
+
+.) Closing Parent_Ingredients_Info ....
+brings up table successfully deleted
+
+.) if ingredientType / ingredientName changes the form should update (meal Plan)
+
+Need to update:
+.) ScrollBar_Down BTN incorporated & into add new meal functionality.
+
+.) Delete folder in path: "src/Resources/Database Docs/New Setup3" if not needed.
+
+.) Edit_Ingredients_Types_Screen() - doesnt remove space in ingredientType name provided when adding it to the db - check Edit_Ingredient_Stores_Screen() too.
+
+.) Cant Update ingredient price if its in a meal.
+
+.) Any edits to ingredients needs to update meals
+#######################################################################
 
 .) Instead of adding ;; to the end of the file when adding or, replacing in backup sql file
    just have the FileReader when backing up into data read the script and replace the last lines , with a ;
