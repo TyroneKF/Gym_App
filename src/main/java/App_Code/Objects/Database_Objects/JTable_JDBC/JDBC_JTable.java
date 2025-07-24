@@ -257,7 +257,7 @@ public class JDBC_JTable extends JPanel
     protected Boolean areYouSure(String process)
     {
         int reply = JOptionPane.showConfirmDialog(null, String.format("Are you sure you want to %s, \nany unsaved changes will be lost in this Table! \nDo you want to %s?", process, process),
-                "Restart Game", JOptionPane.YES_NO_OPTION); //HELLO Edit
+                "Notification", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
         if (reply==JOptionPane.NO_OPTION || reply==JOptionPane.CLOSED_OPTION)
         {
