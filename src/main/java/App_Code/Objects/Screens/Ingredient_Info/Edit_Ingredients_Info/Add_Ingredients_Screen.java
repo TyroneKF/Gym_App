@@ -32,7 +32,7 @@ public class Add_Ingredients_Screen extends JPanel
     protected MyJDBC db;
     protected Integer planID, tempPlanID;
     protected String planName;
-    protected  String sqlBackUpPath = "src/main/java/Resources/Database/Scripts/Editable_DB_Scripts/4.) Ingredients_Info.sql";
+    protected  String sqlBackUpPath = "src/main/java/Documentation_And_Scripts/Database/Scripts/Editable_DB_Scripts/4.) Ingredients_Info.sql";
 
     //##################################################################################################################
     // Constructor

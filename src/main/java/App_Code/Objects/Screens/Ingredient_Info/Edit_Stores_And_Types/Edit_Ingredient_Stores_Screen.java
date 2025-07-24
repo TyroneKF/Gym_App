@@ -7,7 +7,6 @@ import App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Ingredient
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 
 public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_Screens
@@ -19,7 +18,7 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
         //######################################
         //
         //######################################
-        super.sqlFilePath = "src/main/java/Resources/Database/Scripts/Editable_DB_Scripts/5.) Stores.sql";
+        super.sqlFilePath = "src/main/java/Documentation_And_Scripts/Database/Scripts/Editable_DB_Scripts/5.) Stores.sql";
         super.process = "ingredients stores";
 
         //######################################
