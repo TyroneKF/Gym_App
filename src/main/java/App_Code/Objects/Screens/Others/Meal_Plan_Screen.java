@@ -8,7 +8,7 @@ import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
 import App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Ingredients_Info_Screen;
-import App_Code.Objects.Screens.Others.Loading_Screen.SplashScreenDemo;
+import App_Code.Objects.Screens.Others.Loading_Screen.LoadingScreen;
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
@@ -161,7 +161,7 @@ public class Meal_Plan_Screen extends JPanel
              *  7.) MacrosLeft Setup
              */
 
-            SplashScreenDemo splashScreenDemo = new SplashScreenDemo(totalProgress, this);
+            LoadingScreen loadingScreen = new LoadingScreen(totalProgress, this);
 
 
             //####################################################
@@ -169,11 +169,11 @@ public class Meal_Plan_Screen extends JPanel
             //####################################################
             if (!transferPlanData(planID, tempPlanID))
             {
-                splashScreenDemo.closeWindow();
+                loadingScreen.closeWindow();
                 return;
             }
 
-            splashScreenDemo.increaseBar(10);
+            loadingScreen.increaseBar(10);
             System.out.printf("\nChosen Plan: %s  & Chosen Plan Name: %s \n\n%s", planID, planName, lineSeparator);
 
             //####################################################
@@ -181,11 +181,11 @@ public class Meal_Plan_Screen extends JPanel
             //####################################################
             if (!transferTargets(planID, tempPlanID, true, false))
             {
-                splashScreenDemo.closeWindow();
+                loadingScreen.closeWindow();
                 return;
             }
 
-            splashScreenDemo.increaseBar(10);
+            loadingScreen.increaseBar(10);
 
             //####################################################
             // Transferring this plans Meals  Info to Temp-Plan
@@ -193,24 +193,24 @@ public class Meal_Plan_Screen extends JPanel
 
             if (!(transferMealIngredients(planID, tempPlanID)))
             {
-                splashScreenDemo.closeWindow();
+                loadingScreen.closeWindow();
                 JOptionPane.showMessageDialog(null, "\n\nCannot Create Temporary Plan In DB to Allow Editing");
                 return;
             }
 
-            splashScreenDemo.increaseBar(10);
+            loadingScreen.increaseBar(10);
 
             //####################################################
             // Get IngredientTypes & Store Data
             //####################################################
             if (!(getIngredientsTypesAndStoresData(true, true, true)))
             {
-                splashScreenDemo.closeWindow();
+                loadingScreen.closeWindow();
                 JOptionPane.showMessageDialog(null, "\n\nCannot Get IngredientsTypes & Stores Info \n\ngetIngredientsTypesAndStoresData()");
                 return;
             }
 
-            splashScreenDemo.increaseBar(10);
+            loadingScreen.increaseBar(10);
 
             //#############################################################################################################
             //   1. Create the  GUI framework
@@ -299,7 +299,7 @@ public class Meal_Plan_Screen extends JPanel
             //##########################################################
             // Main GUI Complete
             //#########################################################
-            splashScreenDemo.increaseBar(10);
+            loadingScreen.increaseBar(10);
 
             //#############################################################################################################
             // Table Setup
@@ -345,7 +345,7 @@ public class Meal_Plan_Screen extends JPanel
             //########################################
             // macroTargets Complete
             //########################################
-            splashScreenDemo.increaseBar(10);
+            loadingScreen.increaseBar(10);
 
             //########################################################################################
             // planMacrosLeft Table Setup
@@ -372,7 +372,7 @@ public class Meal_Plan_Screen extends JPanel
             //########################################
             // macroTargets Complete
             //########################################
-            splashScreenDemo.increaseBar(10);
+            loadingScreen.increaseBar(10);
 
             //########################################################################################
             // Ingredients In Meal Calculation && Total_Meal_View  JTable Setup
@@ -425,7 +425,7 @@ public class Meal_Plan_Screen extends JPanel
                 //######################################################
                 // Update Progress
                 //######################################################
-                splashScreenDemo.increaseBar(1 + subMealsInMealArrayList.size()); // + original meal + the sub-meal
+                loadingScreen.increaseBar(1 + subMealsInMealArrayList.size()); // + original meal + the sub-meal
             }
 
             //##########################################

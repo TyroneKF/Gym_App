@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 
 
-public class SplashScreenDemo
+public class LoadingScreen
 {
     private GridBagConstraints gbc = new GridBagConstraints();
     Meal_Plan_Screen mealPlanScreen;
@@ -17,7 +17,7 @@ public class SplashScreenDemo
 
     JProgressBar progressBar = new JProgressBar();
 
-    public SplashScreenDemo(int endCount, Meal_Plan_Screen mealPlanScreen)
+    public LoadingScreen(int endCount, Meal_Plan_Screen mealPlanScreen)
     {
         this.endCount = endCount;
         this.mealPlanScreen = mealPlanScreen;
@@ -107,21 +107,22 @@ public class SplashScreenDemo
     public class ImagePanel2 extends JPanel
     {
 
-        Image image;
+        Image imageGif;
 
         public ImagePanel2()
         {
-            super.setBackground(Color.RED);
-            image = Toolkit.getDefaultToolkit().createImage("src/main/java/App_Code/Objects/Screens/Others/Loading_Screen/Running.gif");
+            //super.setBackground(Color.RED);
+           imageGif = Toolkit.getDefaultToolkit().createImage("src/main/java/images/0.) Intro Screen/Eating.gif");
+           //imageGif = Toolkit.getDefaultToolkit().createImage("src/main/java/images/0.) Intro Screen/Running.gif");
         }
 
         @Override
         public void paintComponent(Graphics g)
         {
             super.paintComponent(g);
-            if (image != null)
+            if (imageGif!= null)
             {
-                g.drawImage(image, 100, 0, this);
+                g.drawImage(imageGif, 0, 0, this);
             }
         }
     }
@@ -158,7 +159,7 @@ public class SplashScreenDemo
 
     public static void main(String[] args)
     {
-        SplashScreenDemo d = new SplashScreenDemo(250, null);
+        LoadingScreen d = new LoadingScreen(250, null);
         d.increaseBar(1);
         d.increaseBar(1);
         d.increaseBar(1);
