@@ -117,16 +117,6 @@ public class Edit_ShopForm extends Add_ShopForm
 
         String[] updates = new String[shopFormObjects.size()];
 
-        //##############################################################
-        // HELLO DELETE
-        //##############################################################
-        System.out.printf("\n\nget_ShopForm_UpdateString() List Size: %s \nList items:", shopFormObjects.size());
-        for (AddShopForm_Object i : shopFormObjects)
-        {
-            System.out.printf("\n%s", i.getProductName_Txt());
-        }
-        //##############################################################
-
         int pos = -1; // Due to pos+=1, pos will be greater than list size
         Iterator<AddShopForm_Object> it = shopFormObjects.iterator();
         boolean hasDataChanged = false;

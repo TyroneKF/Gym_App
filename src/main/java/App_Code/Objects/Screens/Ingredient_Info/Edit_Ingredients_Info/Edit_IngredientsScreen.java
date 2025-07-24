@@ -519,9 +519,34 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         }
 
         //###############################################################
+        // Update Database Only if Data on form has changed
+        //###############################################################
+        String ingredientsFormUpdateString = ingredientsForm.get_IngredientsForm_UpdateString(selectedIngredientID);
+        String[] shopFormUpdateString = shopForm.get_ShopForm_UpdateString(selectedIngredientID);
+
+        if(ingredientsFormUpdateString==null && shopFormUpdateString == null)
+        {
+            int reply = JOptionPane.showConfirmDialog(mealPlanScreen,
+                    String.format("\n\nNo modifications / changes were made to the ingredient '%s'. \nWould you like to clear the form?",ingredientsNameJComboBox.getSelectedItem()),
+                    "", JOptionPane.YES_NO_OPTION); //HELLO Edit
+
+            if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
+            {
+                return;
+            }
+            if(reply == JOptionPane.YES_OPTION)
+            {
+                refreshInterface(true, true);
+                return;
+            }
+        }
+
+        //###############################################################
         // Get Update Strings & Update for both forms using ingredientID
         //###############################################################
-        if (!(updateBothForms(ingredientsForm.get_IngredientsForm_UpdateString(selectedIngredientID), shopForm.get_ShopForm_UpdateString(selectedIngredientID))))
+        //System.out.printf("\n\nsubmissionBtnAction() \ninfo Update: \n%s \n\nshop Update: \n%s", ingredientsFormUpdateString, Arrays.toString(shopFormUpdateString));
+
+        if (!(updateBothForms(ingredientsFormUpdateString,shopFormUpdateString )))
         {
             JOptionPane.showMessageDialog(mealPlanScreen, "\n\nUnable To Update Ingredient Info !!");
             return;
@@ -575,7 +600,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
     protected boolean updateBothForms(String updateIngredients_String, String[] updateIngredientShops_String)
     {
         //####################################
-        //
+        // Nothing to Update
         //####################################
         if (updateIngredients_String==null && updateIngredientShops_String==null)
         {
@@ -593,7 +618,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         }
 
         //####################################
-        // Update Shop Info
+        // Uploading Shop Info
         //####################################
         boolean errorUploading = false;
 
@@ -612,14 +637,16 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
                 }
             }
 
-            if (!errorUploading)
+            if (errorUploading) // if there were errors, flag it (return false)
             {
-                JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("\n\nUpdated Ingredient Info! \n\nAlso updated %s/%s -  Suppliers For Ingredient Updated In DB!!!",
-                        noOfUpdateProcesses, noOfUpdateProcesses));
                 return false;
             }
+
+            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("\n\nUpdated Ingredient Info! \n\nAlso updated %s/%s -  Suppliers For Ingredient Updated In DB!!!",
+                    noOfUpdateProcesses, noOfUpdateProcesses));
         }
-        return true;
+
+        return true;  // No Errors found
     }
 
     @Override
