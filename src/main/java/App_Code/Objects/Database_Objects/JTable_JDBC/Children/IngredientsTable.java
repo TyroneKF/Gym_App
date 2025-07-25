@@ -615,28 +615,44 @@ public class IngredientsTable extends JDBC_JTable
         //###############################
         else if (columnEdited == getIngredientsTable_Supplier_Col())
         {
+            System.out.printf("\n\n@tableDataChange_Action() Ingredient Supplier Changed"); //HELLO REMOVE
+            setRowBeingEdited();
+            return;
+        }
+
+        //#################################
+        // Ingredients Product Name Column
+        //#################################
+        else if (columnEdited == getIngredientsTable_Product_Name_Col())
+        {
             String uploadQuery = "";
 
-            if (cellValue.equals("No Shop"))
+            if (cellValue.equals("N/A"))
             {
                 setRowBeingEdited();
                 return;
             }
 
-            if (!(cellValue.equals("N/A")))
+            else if (!(cellValue.equals("N/A")))
             {
                 //######################################################
-                // Get PDID For Chosen Store For Ingredient Statement
+                // Get PDID For Product Name For Ingredient Statement
                 //######################################################
+                Object storeName = jTable.getValueAt(rowEdited, getIngredientsTable_Supplier_Col());
                 String getPDIDQuery = String.format("""
-                        SELECT i.PDID
-                        FROM ingredientInShops i
+                        SELECT PDID
+                        FROM
+                            (
+                              SELECT PDID, Product_Name, IngredientID, StoreID FROM ingredientInShops 
+                              WHERE IngredientID = %s
+                        	) AS i
                         LEFT JOIN
-                        (
-                           SELECT StoreID, Store_Name FROM stores
-                        ) s
-                        ON s.StoreID = i.StoreID
-                        WHERE i.IngredientID = %s AND s.Store_Name = '%s';""", ingredientID, cellValue);
+                            (
+                              SELECT StoreID, Store_Name FROM stores
+                            ) AS s
+                        	
+                        ON i.StoreID = s.StoreID
+                        WHERE i.Product_Name = "%s" AND s.Store_Name = "%s";""", ingredientID, cellValue, storeName);
 
                 ArrayList<String> newPDIDResults = db.getSingleColumnQuery_ArrayList(getPDIDQuery);
                 if (newPDIDResults == null)
@@ -644,7 +660,7 @@ public class IngredientsTable extends JDBC_JTable
                     JOptionPane.showMessageDialog(frame, "\n\n ERROR:\n\nUnable to retrieve  Ingredient In Shop PDID info!");
 
                     // HELLO Create Previous value for supplier column
-                    jTable.setValueAt(previous_Supplier_JComboItem, rowEdited, columnEdited);
+                    jTable.setValueAt(previous_ProductName_JComboItem, rowEdited, columnEdited);
 
                     setRowBeingEdited();
                     return;
@@ -672,14 +688,14 @@ public class IngredientsTable extends JDBC_JTable
             }
 
             //##################################################################################################
-            // Upload IngredientName & NEW PDID
+            // Upload Selected Product Name for Ingredient
             //##################################################################################################
             if (!(db.uploadData_Batch_Altogether(new String[]{uploadQuery})))
             {
                 JOptionPane.showMessageDialog(frame, "\n\n ERROR:\n\nUnable to update Ingredient Store In DB!");
 
                 // HELLO Create Previous value for supplier column
-                jTable.setValueAt(previous_Supplier_JComboItem, rowEdited, columnEdited);
+                jTable.setValueAt(previous_ProductName_JComboItem, rowEdited, columnEdited);
 
                 setRowBeingEdited();
                 return;
@@ -687,15 +703,6 @@ public class IngredientsTable extends JDBC_JTable
 
             setRowBeingEdited();
             updateTableValuesByQuantity(rowEdited, ingredientIndex, jTable.getValueAt(rowEdited, getIngredientsTable_Quantity_Col()));
-            return;
-        }
-
-        //#################################
-        // Ingredients Product Name Column
-        //#################################
-        else if (columnEdited == getIngredientsTable_Product_Name_Col())
-        {
-
             return;
         }
     }
@@ -1525,7 +1532,7 @@ public class IngredientsTable extends JDBC_JTable
                 ////######################################
 
                 String queryStore = String.format("""
-                        SELECT  IFNULL(D.STORE_Name, 'N/A') AS STORE
+                        SELECT DISTINCT IFNULL(D.Store_Name, 'N/A') AS STORE
                         FROM 
                         (
                         	SELECT i.IngredientID FROM ingredients_info i
@@ -1543,7 +1550,7 @@ public class IngredientsTable extends JDBC_JTable
                           SELECT StoreID, Store_Name FROM stores
                         ) D
                         ON C.StoreID = D.StoreID
-                        ORDER BY STORE;""", ingredientID);
+                        ORDER BY Store_Name;""", ingredientID);
 
                 ArrayList<String> storesResults = db.getSingleColumnQuery_ArrayList(queryStore);
 
