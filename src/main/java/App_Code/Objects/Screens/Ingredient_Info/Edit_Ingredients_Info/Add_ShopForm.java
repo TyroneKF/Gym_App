@@ -278,7 +278,7 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
             // Validate Quantity
             //#######################################
             JTextField quantityObj = shopForm_object.getProductQuantityPerPack_TxtField();
-            String quantity = shopForm_object.getProductPrice_Txt();
+            String quantity = shopForm_object.getProductQuantityPerPack_Txt();
 
             if (!(quantity.equals(""))) // Check if text field input is empty
             {
