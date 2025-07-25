@@ -579,10 +579,11 @@ public class IngredientsTable extends JDBC_JTable
 
             if (cellValue.equals("N/A"))
             {
-                setRowBeingEdited();
-                return;
+                uploadQuery = String.format("""
+                    UPDATE  ingredients_in_sections_of_meal
+                    SET PDID = NULL
+                    WHERE Ingredients_Index = %s AND PlanID = %s; """, ingredientIndex, temp_PlanID);
             }
-
             else if (!(cellValue.equals("N/A")))
             {
                 //######################################################
@@ -1295,7 +1296,6 @@ public class IngredientsTable extends JDBC_JTable
                 //######################################################
                 // Make JComboBox Visible
                 //######################################################
-
                 ComboBoxTableCellRenderer renderer = new ComboBoxTableCellRenderer();
 
                 renderer.setModel(model1);
@@ -1316,12 +1316,9 @@ public class IngredientsTable extends JDBC_JTable
                 //########################################
                 // Get Previous Stored Item
                 ////######################################
-
                 model1.removeAllElements();
 
-
                 Object ingredientID = jTable.getValueAt(row, getIngredientsTable_ID_Col());
-                Object ingredientIndex = jTable.getValueAt(row, getIngredientsTable_Index_Col());
                 Object ingrdientName = table.getValueAt(row, getIngredientsTable_IngredientsName_Col());
                 Object ingredientSupplier = table.getValueAt(row, getIngredientsTable_Supplier_Col());
 
@@ -1374,8 +1371,7 @@ public class IngredientsTable extends JDBC_JTable
                 }
                 else
                 {
-                    //HELLO FIX WILL SOMEHOW CAUSE ERROR
-                    JOptionPane.showMessageDialog(frame, "\n\nError \nSetting Available Stores for Ingredient!");
+                    model1.addElement("N/A");
                 }
 
                 return super.getTableCellEditorComponent(table, value, isSelected, row, column);
@@ -1470,12 +1466,8 @@ public class IngredientsTable extends JDBC_JTable
 
                 model1.removeAllElements();
 
-                String keyColumnValue = jTable.getValueAt(row, getIngredientsTable_ID_Col()).toString(); // HELLO Not Sure what this does
                 Object ingredientID = jTable.getValueAt(row, getIngredientsTable_ID_Col());
-                Object ingredientIndex = jTable.getValueAt(row, getIngredientsTable_Index_Col());
                 Object ingrdientName = table.getValueAt(row, getIngredientsTable_IngredientsName_Col());
-
-                TableColumn tableColumn = jTable.getColumnModel().getColumn(column);
 
                 //########################################
                 // Get Supplier Based on ingredientIndex
