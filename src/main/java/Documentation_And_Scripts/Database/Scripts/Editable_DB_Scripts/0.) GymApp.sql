@@ -236,13 +236,14 @@ CREATE VIEW ingredients_in_sections_of_meal_calculation AS
 
 SELECT
 
-i.PlanID, i.DivMealSectionsID, i.Ingredients_Index,  i.IngredientID, i.Quantity,  
+i.PlanID, i.DivMealSectionsID, i.Ingredients_Index,  i.IngredientID, i.Quantity,  --ingredients_in_sections_of_meal
 (SELECT t.Ingredient_Type_Name FROM ingredientTypes t WHERE t.Ingredient_Type_ID = info.Ingredient_Type_ID)  AS Ingredient_Type, 
 
 info.Ingredient_Name, 
 
 IFNULL(ROUND((i.Quantity /p.Volume_Per_Unit)*p.Cost_Per_Unit,2),0) AS Ingredient_Cost,
 IFNULL(s.Store_Name,'N/A') AS  Supplier,
+IFNULL(p.Product_Name,'N/A') AS  Product_Name,
 
 IFNULL(ROUND((info.Protein /info.Based_On_Quantity)*i.Quantity,2),0) AS Protein,
 IFNULL(info.Glycemic_Index, -0) AS GI, 
