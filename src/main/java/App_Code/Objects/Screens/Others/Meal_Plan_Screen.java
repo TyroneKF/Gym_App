@@ -70,7 +70,7 @@ public class Meal_Plan_Screen extends JPanel
     // Ingredients Table Columns
     //##################################################################################################################
     private final ArrayList<String>
-            ingredients_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList("Ingredient_Type", "Ingredient_Name", "Supplier")),
+            ingredients_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList("Ingredient_Type", "Ingredient_Name", "Supplier", "Product_Name")),
             ingredientsTableUnEditableCells = new ArrayList<>(Arrays.asList(
                     "Ingredients_Index", "IngredientID", "Ingredient_Cost", "Protein", "GI", "Carbohydrates", "Sugars_Of_Carbs", "Fibre", "Fat", "Saturated_Fat", "Salt", "Water_Content", "Liquid_Content", "Calories"));
 
@@ -441,7 +441,7 @@ public class Meal_Plan_Screen extends JPanel
             JOptionPane.showMessageDialog(null, "No Chosen Plan");
         }
 
-        open_AddIngredients_Screen();
+        //open_AddIngredients_Screen();
     }
 
     public void setFrameVisibility(boolean x)

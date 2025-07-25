@@ -478,7 +478,7 @@ public class MealManager
         }
 
         //##############################################
-        // Ingredients_In_Meal_Calculation  Creation
+        // Ingredients_In_Meal_Calculation Creation
         //##############################################
         JPanel spaceDivider = new JPanel();
         IngredientsTable ingredients_Calculation_JTable = new IngredientsTable(db, this, mealData, ingredientsTable_ColumnNames, planID, mealInPlanID, divMealSectionsID, subMealInDB, savedMealName,

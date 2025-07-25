@@ -48,12 +48,14 @@ public class IngredientsTable extends JDBC_JTable
             ingredientsTable_Quantity_Col,
             ingredientsTable_Type_Col,
             ingredientsTable_IngredientsName_Col,
-            ingredientsTable_Supplier_Col;
+            ingredientsTable_Supplier_Col,
+            ingredientsTable_Product_Name_Col;
 
     private final int NoneOfTheAbove_PDID = 1;
 
     //SupplierName JComboBox Variables
     private Object
+            previous_ProductName_JComboItem, selected_ProductName_JComboItem,
             previous_Supplier_JComboItem, selected_Supplier_JCombo_Item,
             previous_IngredientName_JComboItem, selected_IngredientName_JCombo_Item,
             previous_IngredientType_JComboItem, selected_IngredientType_JComboItem;
@@ -112,15 +114,17 @@ public class IngredientsTable extends JDBC_JTable
         set_IngredientsTable_IngredientType_Col(columnNamesAndPositions.get("Ingredient_Type")[1]);
         set_IngredientsTable_IngredientsName_Col(columnNamesAndPositions.get("Ingredient_Name")[1]);
         set_IngredientsTable_Supplier_Col(columnNamesAndPositions.get("Supplier")[1]);
-
+        set_IngredientsTable_Product_Name_Col(columnNamesAndPositions.get("Product_Name")[1]);
         set_IngredientsTable_DeleteBTN_Col(columnNamesAndPositions.get("Delete Button")[1]);
 
         //##############################################################
         // Setting Trigger Columns
         //##############################################################
 
-        this.triggerColumns = new ArrayList(Arrays.asList(getIngredientsTable_Index_Col(), getIngredientsTable_ID_Col(),
-                getIngredientsTable_Quantity_Col(), getIngredientsTable_Type_Col(), getIngredientsTable_IngredientsName_Col(), getIngredientsTable_Supplier_Col()));
+        this.triggerColumns = new ArrayList(Arrays.asList(
+                getIngredientsTable_Index_Col(), getIngredientsTable_ID_Col(),
+                getIngredientsTable_Quantity_Col(), getIngredientsTable_Type_Col(), getIngredientsTable_IngredientsName_Col(), getIngredientsTable_Supplier_Col(),
+                getIngredientsTable_Product_Name_Col()));
 
         //##############################################################
         // Setting Up JComboBox Fields on Table
@@ -128,6 +132,7 @@ public class IngredientsTable extends JDBC_JTable
         new SetupIngredientTypeColumn(getIngredientsTable_Type_Col());
         new SetupIngredientNameColumn(getIngredientsTable_IngredientsName_Col());
         new SetupSupplierColumn(getIngredientsTable_Supplier_Col());
+        new SetupProduct_NameColumn(getIngredientsTable_Product_Name_Col());
 
         //##############################################################
         // Setting Up Delete Button On JTable
@@ -220,6 +225,7 @@ public class IngredientsTable extends JDBC_JTable
             new SetupIngredientTypeColumn(getIngredientsTable_Type_Col());
             new SetupIngredientNameColumn(getIngredientsTable_IngredientsName_Col());
             new SetupSupplierColumn(getIngredientsTable_Supplier_Col());
+            new SetupProduct_NameColumn(getIngredientsTable_Product_Name_Col());
 
             setupDeleteBtnColumn(getDeleteBTN_Col()); // specifying delete column
 
@@ -681,6 +687,15 @@ public class IngredientsTable extends JDBC_JTable
 
             setRowBeingEdited();
             updateTableValuesByQuantity(rowEdited, ingredientIndex, jTable.getValueAt(rowEdited, getIngredientsTable_Quantity_Col()));
+            return;
+        }
+
+        //#################################
+        // Ingredients Product Name Column
+        //#################################
+        else if (columnEdited == getIngredientsTable_Product_Name_Col())
+        {
+
             return;
         }
     }
@@ -1260,6 +1275,157 @@ public class IngredientsTable extends JDBC_JTable
     //##################################################################################################################
     // JCombo Boxes
     //##################################################################################################################
+    public class SetupProduct_NameColumn
+    {
+        public SetupProduct_NameColumn(int col)
+        {
+            TableColumn tableColumn = jTable.getColumnModel().getColumn(col);
+
+            //Set up the editor for the sport cells.
+            tableColumn.setCellEditor(new ComboEditor());
+
+            //Set up tool tips for the sport cells.
+            DefaultTableCellRenderer renderer = new DefaultTableCellRenderer()
+            {
+                @Override
+                public Component getTableCellRendererComponent(JTable table, Object value,
+                                                               boolean isSelected, boolean hasFocus, int row, int column)
+                {
+                    JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                    label.setIcon(UIManager.getIcon("Table.descendingSortIcon"));
+                    return label;
+                }
+            };
+
+            renderer.setToolTipText("Click to see suppliers who sell this ingredient!");
+            tableColumn.setCellRenderer(renderer);
+        }
+
+        class ComboEditor extends DefaultCellEditor
+        {
+            DefaultComboBoxModel model1;
+            JComboBox comboBox;
+
+            public ComboEditor()
+            {
+                super(new JComboBox());
+                model1 = (DefaultComboBoxModel) ((JComboBox) getComponent()).getModel();
+
+                comboBox = ((JComboBox) getComponent());
+                comboBox.setEditable(true);
+
+                comboBox.addItemListener(new ItemListener()
+                {
+                    public void itemStateChanged(ItemEvent ie)
+                    {
+                        if (ie.getStateChange() == ItemEvent.DESELECTED)
+                        {
+                            previous_ProductName_JComboItem = ie.getItem();
+                        }
+                        if (ie.getStateChange() == ItemEvent.SELECTED)
+                        {
+                            selected_ProductName_JComboItem = ie.getItem();
+                        }
+                    }
+                });
+
+
+                //######################################################
+                // Centre ComboBox Items
+                //######################################################
+                ((JLabel) comboBox.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
+
+                //######################################################
+                // Make JComboBox Visible
+                //######################################################
+
+                ComboBoxTableCellRenderer renderer = new ComboBoxTableCellRenderer();
+
+                renderer.setModel(model1);
+
+                TableColumn tableColumn = jTable.getColumnModel().getColumn(getIngredientsTable_Product_Name_Col());
+                tableColumn.setCellRenderer(renderer);
+            }
+
+
+            //First time the cell is created
+            @Override
+            public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column)
+            {
+                // HELLO
+            /*
+               save previous option then set it to it if it exists in list
+             */
+                //########################################
+                // Get Previous Stored Item
+                ////######################################
+
+                model1.removeAllElements();
+
+
+                Object ingredientID = jTable.getValueAt(row, getIngredientsTable_ID_Col());
+                Object ingredientIndex = jTable.getValueAt(row, getIngredientsTable_Index_Col());
+                Object ingrdientName = table.getValueAt(row, getIngredientsTable_IngredientsName_Col());
+                Object ingredientSupplier = table.getValueAt(row, getIngredientsTable_Supplier_Col());
+
+                //########################################
+                // Get Supplier Based on ingredientIndex
+                ////######################################
+
+                String queryStore = String.format("""
+                        SELECT 
+                                #IFNULL(i.PDID, 'N/A') AS PDID,  
+                                IFNULL(i.Product_Name, 'N/A') AS Product_Name
+                        FROM
+                           (
+                        	  SELECT PDID, IngredientID, Product_Name, StoreID FROM ingredientInShops
+                            ) AS i
+                        LEFT JOIN
+                            (
+                        	  SELECT StoreID, Store_Name FROM stores
+                        	) AS s	
+                        ON i.StoreID = s.StoreID
+                                                
+                        WHERE s.Store_Name = "%s" AND i.IngredientID = %s
+                        ORDER BY i.Product_Name ASC;""", ingredientSupplier, ingredientID);
+
+                ArrayList<String> productNameResults = db.getSingleColumnQuery_ArrayList(queryStore);
+
+                //HELLO REMOVE
+
+                String seperator = "#######################################################################";
+                System.out.printf("\n\n%s \n\nQuery: \n%s \n\nList Of Available Shops:\n\n%s", seperator, queryStore, productNameResults);
+
+
+                if (productNameResults != null)
+                {
+                    boolean NA_in_List = false;
+                    for (String productName : productNameResults)
+                    {
+                        model1.addElement(productName);
+                        if (productName.equals("N/A"))
+                        {
+                            NA_in_List = true;
+                        }
+                        //System.out.printf("\n\n%s", productName); //HELLO Remove
+                    }
+
+                    if (!(ingrdientName.equals("None Of The Above")) && !NA_in_List)
+                    {
+                        model1.addElement("N/A");
+                    }
+                }
+                else
+                {
+                    //HELLO FIX WILL SOMEHOW CAUSE ERROR
+                    JOptionPane.showMessageDialog(frame, "\n\nError \nSetting Available Stores for Ingredient!");
+                }
+
+                return super.getTableCellEditorComponent(table, value, isSelected, row, column);
+            }
+        }
+    }
+
     public class SetupSupplierColumn
     {
         public SetupSupplierColumn(int col)
@@ -1470,7 +1636,6 @@ public class IngredientsTable extends JDBC_JTable
                     }
                 });
 
-
                 //######################################################
                 // Centre ComboBox Items
                 //######################################################
@@ -1484,7 +1649,7 @@ public class IngredientsTable extends JDBC_JTable
 
                 renderer.setModel(model1);
 
-                TableColumn tableColumn = jTable.getColumnModel().getColumn(getIngredientsTable_Supplier_Col());
+                TableColumn tableColumn = jTable.getColumnModel().getColumn(getIngredientsTable_Type_Col());
                 tableColumn.setCellRenderer(renderer);
             }
 
@@ -1503,7 +1668,6 @@ public class IngredientsTable extends JDBC_JTable
                 Object ingredientID = jTable.getValueAt(row, getIngredientsTable_ID_Col());
                 Object ingredientIndex = jTable.getValueAt(row, getIngredientsTable_Index_Col());
                 Object ingrdientName = table.getValueAt(row, getIngredientsTable_IngredientsName_Col());
-
                 TableColumn tableColumn = jTable.getColumnModel().getColumn(column);
 
                 for (String key : map_ingredientTypesToNames.keySet())
@@ -1596,7 +1760,7 @@ public class IngredientsTable extends JDBC_JTable
 
                 renderer.setModel(model1);
 
-                TableColumn tableColumn = jTable.getColumnModel().getColumn(getIngredientsTable_Supplier_Col());
+                TableColumn tableColumn = jTable.getColumnModel().getColumn(getIngredientsTable_IngredientsName_Col());
                 tableColumn.setCellRenderer(renderer);
             }
 
@@ -1615,7 +1779,6 @@ public class IngredientsTable extends JDBC_JTable
                 Object ingredientID = jTable.getValueAt(row, getIngredientsTable_ID_Col());
                 Object ingredientIndex = jTable.getValueAt(row, getIngredientsTable_Index_Col());
                 Object ingrdientName = table.getValueAt(row, getIngredientsTable_IngredientsName_Col());
-
                 TableColumn tableColumn = jTable.getColumnModel().getColumn(column);
 
                 String ingredientType = table.getValueAt(row, getIngredientsTable_Type_Col()).toString();
@@ -2030,6 +2193,8 @@ public class IngredientsTable extends JDBC_JTable
         ingredientsTable_Supplier_Col = value;
     }
 
+    private void set_IngredientsTable_Product_Name_Col(int value){ ingredientsTable_Product_Name_Col=value; }
+
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
@@ -2125,6 +2290,8 @@ public class IngredientsTable extends JDBC_JTable
     {
         return ingredientsTable_Supplier_Col;
     }
+
+    private int getIngredientsTable_Product_Name_Col(){return ingredientsTable_Product_Name_Col;}
 
     //##################################################################################################################
 }
