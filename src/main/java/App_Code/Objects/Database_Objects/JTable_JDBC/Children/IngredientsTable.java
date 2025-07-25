@@ -1309,10 +1309,6 @@ public class IngredientsTable extends JDBC_JTable
             @Override
             public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column)
             {
-                // HELLO
-            /*
-               save previous option then set it to it if it exists in list
-             */
                 //########################################
                 // Get Previous Stored Item
                 ////######################################
@@ -1346,27 +1342,14 @@ public class IngredientsTable extends JDBC_JTable
                 ArrayList<String> productNameResults = db.getSingleColumnQuery_ArrayList(queryStore);
 
                 //HELLO REMOVE
-
                 String seperator = "#######################################################################";
-                System.out.printf("\n\n%s \n\nQuery: \n%s \n\nList Of Available Shops:\n\n%s", seperator, queryStore, productNameResults);
-
+                System.out.printf("\n\n%s \n\nQuery: \n%s \n\nList Of Available Shops:\n%s", seperator, queryStore, productNameResults);
 
                 if (productNameResults != null)
                 {
-                    boolean NA_in_List = false;
                     for (String productName : productNameResults)
                     {
                         model1.addElement(productName);
-                        if (productName.equals("N/A"))
-                        {
-                            NA_in_List = true;
-                        }
-                        //System.out.printf("\n\n%s", productName); //HELLO Remove
-                    }
-
-                    if (!(ingrdientName.equals("None Of The Above")) && !NA_in_List)
-                    {
-                        model1.addElement("N/A");
                     }
                 }
                 else
@@ -1500,7 +1483,6 @@ public class IngredientsTable extends JDBC_JTable
 
                 String seperator = "#######################################################################";
                 System.out.printf("\n\n%s \n\nQuery: \n%s \n\nList Of Available Shops:\n\n%s", seperator, queryStore, storesResults);
-
 
                 if (storesResults != null)
                 {
