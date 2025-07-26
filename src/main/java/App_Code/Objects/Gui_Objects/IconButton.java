@@ -2,18 +2,17 @@ package App_Code.Objects.Gui_Objects;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.URL;
 
 public class IconButton extends JPanel
 {
-    Icon icon;
-    Image img;
     JButton button = new JButton();
 
     public IconButton(String iconPath, String btnText, int iconWidth, int iconHeight, int btnWidth, int btnHeight,
                       String verticalTextPos, String horizontalTextPos)
     {
         // setBackground(Color.YELLOW);
-        setPreferredSize(new Dimension(btnWidth+10, btnHeight+10));
+        setPreferredSize(new Dimension(btnWidth + 10, btnHeight + 10));
         setIconIMG(iconPath, iconWidth, iconHeight);
 
         button.setText(btnText);
@@ -44,14 +43,20 @@ public class IconButton extends JPanel
 
     public void setIconIMG(String iconPath, int iconWidth, int iconHeight)
     {
-        icon = new ImageIcon(String.format("%s", iconPath));
-        img = ((ImageIcon) icon).getImage();
+        URL imageUrl = getClass().getResource(iconPath);
 
-        Image newimg = img.getScaledInstance(iconWidth, iconHeight, java.awt.Image.SCALE_SMOOTH);
-        icon = new ImageIcon(newimg);
+        if (imageUrl==null)
+        {
+            System.err.println("Could not load icon: " + iconPath);
+            return;
+        }
 
-        button.setIcon(icon);
+        ImageIcon originalIcon = new ImageIcon(imageUrl);
+        Image img = originalIcon.getImage();
+        Image scaledImg = img.getScaledInstance(iconWidth, iconHeight, Image.SCALE_SMOOTH);
 
+        ImageIcon scaledIcon = new ImageIcon(scaledImg);
+        button.setIcon(scaledIcon);
     }
 
     public Integer posToInt(String position, String axis)

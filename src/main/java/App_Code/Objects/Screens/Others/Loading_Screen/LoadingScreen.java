@@ -4,6 +4,7 @@ import App_Code.Objects.Screens.Others.Meal_Plan_Screen;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.URL;
 
 
 public class LoadingScreen
@@ -104,24 +105,24 @@ public class LoadingScreen
         frame.dispose();
     }
 
-    public class ImagePanel2 extends JPanel
-    {
+    public class ImagePanel2 extends JPanel {
 
-        Image imageGif;
+        private Image imageGif;
 
-        public ImagePanel2()
-        {
-            //super.setBackground(Color.RED);
-           imageGif = Toolkit.getDefaultToolkit().createImage("src/main/java/images/0.) Intro Screen/Eating.gif");
-           //imageGif = Toolkit.getDefaultToolkit().createImage("src/main/java/images/0.) Intro Screen/Running.gif");
+        public ImagePanel2() {
+            // Load GIF from resources using classpath
+            URL gifUrl = getClass().getResource("/images/0.) Intro Screen/Eating.gif");
+            if (gifUrl != null) {
+                imageGif = Toolkit.getDefaultToolkit().createImage(gifUrl);
+            } else {
+                System.err.println("GIF not found at images/0.) Intro Screen");
+            }
         }
 
         @Override
-        public void paintComponent(Graphics g)
-        {
+        protected void paintComponent(Graphics g) {
             super.paintComponent(g);
-            if (imageGif!= null)
-            {
+            if (imageGif != null) {
                 g.drawImage(imageGif, 0, 0, this);
             }
         }

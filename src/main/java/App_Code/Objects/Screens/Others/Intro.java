@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.net.URL;
 
 public class Intro extends JFrame
 {
@@ -57,7 +58,9 @@ public class Intro extends JFrame
         //#############################################################################################################
         //   2. Add Picture to GUI
         //#############################################################################################################
-        Image image = Toolkit.getDefaultToolkit().createImage("src/main/java/images/0.) Intro Screen/Background.jpeg")
+        URL imageUrl = getClass().getResource("/images/intro_screen/background.jpeg");
+        Image image = Toolkit.getDefaultToolkit()
+                .createImage(imageUrl)
                 .getScaledInstance(jFrameWidth, jFrameHeight, Image.SCALE_DEFAULT);
 
         JPanel picturePanel = new JPanel(new GridLayout(1,1)){

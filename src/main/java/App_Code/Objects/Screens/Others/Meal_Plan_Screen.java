@@ -781,7 +781,7 @@ public class Meal_Plan_Screen extends JPanel
         width = 51;
         height = 51;
 
-        IconButton down_ScrollBar_Icon_Btn = new IconButton("src/main/java/images/scrollBar_Down/scrollBar_Down5.png", "", width, height, width, height,
+        IconButton down_ScrollBar_Icon_Btn = new IconButton("/images/scrollBar_Down/scrollBar_Down5.png", "", width, height, width, height,
                 "centre", "right"); // btn text is useless here , refactor
 
         down_ScrollBar_Icon_Btn.makeBTntransparent();
@@ -802,7 +802,7 @@ public class Meal_Plan_Screen extends JPanel
         width = 50;
         height = 50;
 
-        IconButton refresh_Icon_Btn = new IconButton("src/main/java/images/refresh/++refresh.png", "", width, height, width, height,
+        IconButton refresh_Icon_Btn = new IconButton("/images/refresh/++refresh.png", "", width, height, width, height,
                 "centre", "right"); // btn text is useless here , refactor
 
         JButton refresh_Btn = refresh_Icon_Btn.returnJButton();
@@ -821,7 +821,7 @@ public class Meal_Plan_Screen extends JPanel
         width = 50;
         height = 52;
 
-        IconButton add_Icon_Btn = new IconButton("src/main/java/images/add/++add.png", "", width, height, width, height,
+        IconButton add_Icon_Btn = new IconButton("/images/add/++add.png", "", width, height, width, height,
                 "centre", "right");
 
         JButton add_Btn = add_Icon_Btn.returnJButton();
@@ -842,7 +842,7 @@ public class Meal_Plan_Screen extends JPanel
         width = 54;
         height = 57;
 
-        IconButton saveIcon_Icon_Btn = new IconButton("src/main/java/images/save/+++save.png", "", width, height, width, height,
+        IconButton saveIcon_Icon_Btn = new IconButton("/images/save/+++save.png", "", width, height, width, height,
                 "centre", "right"); // btn text is useless here , refactor
         //saveIcon_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
         saveIcon_Icon_Btn.makeBTntransparent();
@@ -865,7 +865,7 @@ public class Meal_Plan_Screen extends JPanel
         width = 54;
         height = 57;
 
-        IconButton add_Ingredients_Icon_Btn = new IconButton("src/main/java/images/add_Ingredients/add_Ingredients.png", "", width, height, width, height,
+        IconButton add_Ingredients_Icon_Btn = new IconButton("/images/add_Ingredients/add_Ingredients.png", "", width, height, width, height,
                 "centre", "right"); // btn text is useless here , refactor
         //saveIcon_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
         add_Ingredients_Icon_Btn.makeBTntransparent();
@@ -888,7 +888,7 @@ public class Meal_Plan_Screen extends JPanel
         width = 54;
         height = 50;
 
-        IconButton macro_Targets_Icon_Btn = new IconButton("src/main/java/images/targets/target.png", "", width, height, width, height,
+        IconButton macro_Targets_Icon_Btn = new IconButton("/images/targets/target.png", "", width, height, width, height,
                 "centre", "right"); // btn text is useless here , refactor
         //saveIcon_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
         macro_Targets_Icon_Btn.makeBTntransparent();

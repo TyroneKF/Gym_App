@@ -31,7 +31,7 @@ public class CollapsibleJPanel extends JPanel
         //####################################################
         // Icon Button
         //####################################################
-        collapse_And_Expand_Btn = new IconButton("src/main/java/images/expand2.png", btnText, 50, 50, btnWidth, btnHeight,
+        collapse_And_Expand_Btn = new IconButton("/images/expand2.png", btnText, 50, 50, btnWidth, btnHeight,
                 "centre", "right"); // btn text is useless here , refactor
 
         topJPanel.add(collapse_And_Expand_Btn, BorderLayout.WEST);
@@ -110,7 +110,7 @@ public class CollapsibleJPanel extends JPanel
         collapsibleJPanel.setVisible(true);
 
         //iconBtn.setText(String.format("Collapse %s", btnText));
-        collapse_And_Expand_Btn.setIconIMG("src/main/java/images/+collapse2.png", 40, 40);
+        collapse_And_Expand_Btn.setIconIMG("/images/+collapse2.png", 40, 40);
     }
 
     public void collapseJPanel()
@@ -121,7 +121,7 @@ public class CollapsibleJPanel extends JPanel
         collapsibleJPanel.setVisible(false);
 
         // iconBtn.setText(String.format("Expand %s", btnText));
-        collapse_And_Expand_Btn.setIconIMG("src/main/java/images/expand2.png", 40, 40);
+        collapse_And_Expand_Btn.setIconIMG("/images/expand2.png", 40, 40);
     }
 
     public void removeCollapsibleJPanel()
