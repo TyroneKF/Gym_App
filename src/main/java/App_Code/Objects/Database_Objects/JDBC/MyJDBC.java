@@ -44,7 +44,7 @@ public class MyJDBC
     //##################################################################################################################
     //
     //##################################################################################################################
-    public MyJDBC(String userName, String password, String databaseName, String db_Script_Folder_Address)
+    public MyJDBC(String userName, String password, String databaseName, String db_Script_Folder_Address, String script_List_Name)
     {
         this.userName = userName;
         this.password = password;
@@ -75,7 +75,7 @@ public class MyJDBC
             // Setup Database data
             //##############################################
             System.out.printf("\n\n%s \nCreating DB tables! \n%s", middle_line_Separator, middle_line_Separator);
-            if (run_SQL_Script_Folder(db_Script_Folder_Address, true))
+            if (run_SQL_Script_Folder(db_Script_Folder_Address, script_List_Name))
             {
                 success = true;
                 System.out.printf("\n\n%s \nSuccessfully, created DB & Initialized Data! \n%s", line_Separator, line_Separator);
@@ -93,78 +93,44 @@ public class MyJDBC
     //##################################################################################################################
     // Changes to TXT files / SQL Backup Files  Methods
     //##################################################################################################################
-    public boolean run_SQL_Script_Folder(String folder_Address, boolean updateDBVersionInFile)
+    public boolean run_SQL_Script_Folder(String db_Script_Folder_Address, String script_List_Name)
     {
-        File[] files = new File(folder_Address).listFiles();
+        InputStream listStream = getClass().getResourceAsStream(String.format("%s/%s", db_Script_Folder_Address, script_List_Name));
 
-        // Traversing through the  objects in the files array
-        for (File file : files)
+        try (BufferedReader  br = new BufferedReader(new InputStreamReader(listStream, StandardCharsets.UTF_8))) // resources automatically released in try block / no need for reader.close()
         {
-            if (!file.isFile()) { continue; } // skip folders & subdirectory's and anything that isnt a file for now
+            DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());  //Registering the Driver
+            Connection con = DriverManager.getConnection(initial_db_connection, userName, password);
 
-            String filePath = file.getPath(); // get the path of the file
-            if (updateDBVersionInFile) // if instructed to update the DB version in the database script update it
+            Iterator<String> it = br.lines().iterator();
+            while(it.hasNext())
             {
-                try
-                {
-                    //##############################################
-                    // Update current Gym Version no in SQL File
-                    //##############################################
-                    Path path = Paths.get(filePath); // format the path of the file into proper format being a Path object
-                    Charset charset = StandardCharsets.UTF_8;
+                String fileName = it.next();
+                System.out.printf("\nrun_SQL_Script_Folder() Executing script: %s \n", fileName);
 
-                    String content = new String(Files.readAllBytes(path), charset); // Get the contents of the file
-                    content = content.replaceAll("(gymapp)......?", databaseName + ";"); // replace gymapp????? with gymapp(Current Version no), find only one = reduced search
-
-                    Files.write(path, content.getBytes(charset)); // write the current gym version inside the file
-                }
-                catch (Exception e)
+                InputStream scriptStream = getClass().getResourceAsStream(db_Script_Folder_Address + fileName);
+                if( scriptStream == null)
                 {
-                    System.out.printf("\n\n%s run_SQL_Script_Folder() Error, replacing version number  in file '%s'!  \n\n%s \n%s", line_Separator, file.getName(), e, line_Separator);
+                    System.err.println("\nrun_SQL_Script_Folder() Script not found: " + fileName);
                     return false;
                 }
+
+                Reader reader = new InputStreamReader(scriptStream, StandardCharsets.UTF_8);
+
+                new ScriptRunner(con).runScript(reader);
             }
-            if (!(run_SQL_Script(filePath))) // Run the database script for specific table
-            {
-                System.out.printf("\n\n%s run_SQL_Script_Folder() Error, executing sql script '%s'! \n%s", line_Separator, file.getName(), line_Separator);
-                return false;
-            }
-
-            System.out.printf("\n\n%s \nSuccessfully executed file '%s'! \n%s", line_Separator, file.getName(), line_Separator);
-
-            /*else if (file.isDirectory()) // If a subdirectory is found, print the name of the sub directory
-            {
-                System.out.println("Directory: " + file.getName());
-
-                run_SQL_Script_Folder(file.getPath()); // recursively call the function on the files in this new folder
-            }*/
         }
+        catch (Exception e)
+        {
+            System.out.printf("\n\nrun_SQL_Script_Folder() Error Writing / Reading to file \n%s", e);
+            return false;
+        }
+
         return true;
     }
 
     private boolean run_SQL_Script(String sql_Script_Address)
     {
-        try
-        {
-            DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());  //Registering the Driver
-            System.out.println("\n\n");
-
-            Connection con = DriverManager.getConnection(initial_db_connection, userName, password);
-
-            ScriptRunner sr = new ScriptRunner(con);  //Initialize the script runner
-            Reader reader = new BufferedReader(new FileReader(sql_Script_Address)); //Creating a reader object
-
-            sr.setStopOnError(true);
-            sr.runScript(reader);   //Running the script
-
-            con.close();
-            return true;
-        }
-        catch (Exception e)
-        {
-            System.out.printf("\n\n%s \nrun_SQL_Script() ERROR \n, ", line_Separator, e);
-        }
-
         return false;
     }
 
@@ -1146,46 +1112,6 @@ public class MyJDBC
     //##################################################################################################################
     public static void main(String[] args)
     {
-        String filePath = "src/main/java/Resources/Database/Scripts/Editable_DB_Scripts/5.) Stores.sql";
 
-        //        String txt = "(1, 'Grams','None Of The Above',1, 0,0,0,0,0,0,0,0,0,0,0,0)";
-        String
-                txt = "(\'Tesco\')",
-                txt2 = "(\'NENWNW\')";
-
-        MyJDBC db = new MyJDBC("root", "password", "gymapp00001", "src/main/java/Resources/Database_Scripts/DB_Scripts");
-
-        // Add text to file
-/*
-        if (db.writeTxtToSQLFile(filePath, txt))
-        {
-            System.out.println("\n\nSuccessful");
-        }
-        else
-        {
-            System.out.println("\n\nFail");
-        }*/
-
-        // Text to replace
-       /* //
-        if (db.replaceTxtInSQLFile(filePath, true, txt, txt2))
-        {
-            System.out.println("\n\n Sucessful");
-        }
-        else
-        {
-            System.out.println("\n\n Fail");
-        }*/
-
-        // Txt to Delete
-
-        if (db.deleteTxtInFile(filePath, txt2))
-        {
-            System.out.println("\n\nSuccessful");
-        }
-        else
-        {
-            System.out.println("\n\nUn-Successful");
-        }
     }
 }
