@@ -95,21 +95,28 @@ public class MyJDBC
     //##################################################################################################################
     public boolean run_SQL_Script_Folder(String db_Script_Folder_Address, String script_List_Name)
     {
-        InputStream listStream = getClass().getResourceAsStream(String.format("%s/%s", db_Script_Folder_Address, script_List_Name));
+        String path = String.format("%s/%s", db_Script_Folder_Address, script_List_Name);
 
-        try (BufferedReader  br = new BufferedReader(new InputStreamReader(listStream, StandardCharsets.UTF_8))) // resources automatically released in try block / no need for reader.close()
+        InputStream listStream = getClass().getResourceAsStream(path);
+        if (listStream == null)
+        {
+            System.out.printf("\n\nrun_SQL_Script_Folder() Error Loading = NULL \n%s", path);
+            return false;
+        }
+
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(listStream, StandardCharsets.UTF_8))) // resources automatically released in try block / no need for reader.close()
         {
             DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());  //Registering the Driver
             Connection con = DriverManager.getConnection(initial_db_connection, userName, password);
 
             Iterator<String> it = br.lines().iterator();
-            while(it.hasNext())
+            while (it.hasNext())
             {
                 String fileName = it.next();
                 System.out.printf("\nrun_SQL_Script_Folder() Executing script: %s \n", fileName);
 
                 InputStream scriptStream = getClass().getResourceAsStream(db_Script_Folder_Address + fileName);
-                if( scriptStream == null)
+                if (scriptStream==null)
                 {
                     System.err.println("\nrun_SQL_Script_Folder() Script not found: " + fileName);
                     return false;
