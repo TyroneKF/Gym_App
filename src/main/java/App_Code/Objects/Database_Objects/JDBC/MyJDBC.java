@@ -95,10 +95,10 @@ public class MyJDBC
     //##################################################################################################################
     public boolean run_SQL_Script_Folder(String db_Script_Folder_Address, String script_List_Name)
     {
-        String path = String.format("%s/%s", db_Script_Folder_Address, script_List_Name);
+        String path = String.format("%s%s", db_Script_Folder_Address, script_List_Name); // don't include a / between the files
 
         InputStream listStream = getClass().getResourceAsStream(path);
-        if (listStream == null)
+        if (listStream==null)
         {
             System.out.printf("\n\nrun_SQL_Script_Folder() Error Loading = NULL \n%s", path);
             return false;
@@ -122,9 +122,21 @@ public class MyJDBC
                     return false;
                 }
 
-                Reader reader = new InputStreamReader(scriptStream, StandardCharsets.UTF_8);
+                try // Execute Script
+                {
+                    System.out.printf("\nrun_SQL_Script_Folder() executing script: %s", fileName);
 
-                new ScriptRunner(con).runScript(reader);
+                    Reader reader = new InputStreamReader(scriptStream, StandardCharsets.UTF_8);
+                    new ScriptRunner(con).runScript(reader);
+
+                    System.out.printf("\nrun_SQL_Script_Folder() successfully executed script: %s", fileName);
+                }
+                catch (Exception e)
+                {
+                    System.err.printf("\nrun_SQL_Script_Folder(): error executing file: %s \n\n%s\n", fileName, e.getMessage());
+                    e.printStackTrace();
+                    return false;
+                }
             }
         }
         catch (Exception e)

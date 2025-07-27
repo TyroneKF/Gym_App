@@ -443,6 +443,7 @@ public class Meal_Plan_Screen extends JPanel
         }
 
         //open_AddIngredients_Screen();
+        scrollBarUp_BTN_Action(); // scrolls mealPlan to the top
     }
 
     public void setFrameVisibility(boolean x)
@@ -774,28 +775,26 @@ public class Meal_Plan_Screen extends JPanel
         JPanel iconPanelInsert = iconPanel.getIconJpanel();
 
         addToContainer(mainNorthPanel, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0, null);
-
         //##########################
-        //  ScrollBar Bottom
+        //  ScrollBar Up
         //##########################
-
         width = 51;
-        height = 51;
+        height = 53;
 
-        IconButton down_ScrollBar_Icon_Btn = new IconButton("/images/scrollBar_Down/scrollBar_Down5.png", "", width, height, width, height,
+        IconButton up_ScrollBar_Icon_Btn = new IconButton("/images/scrollBar_Up/scrollBar_Up.png", "", width, height, width, height,
                 "centre", "right"); // btn text is useless here , refactor
 
-        down_ScrollBar_Icon_Btn.makeBTntransparent();
+        up_ScrollBar_Icon_Btn.makeBTntransparent();
 
-        JButton down_ScrollBar_Btn = down_ScrollBar_Icon_Btn.returnJButton();
-        down_ScrollBar_Btn.setToolTipText("Scroll to Bottom Of Meal Plan"); //Hover message over icon
+        JButton up_ScrollBar_Btn = up_ScrollBar_Icon_Btn.returnJButton();
+        up_ScrollBar_Btn.setToolTipText("Scroll to the top of Meal Plan"); //Hover message over icon
 
-        down_ScrollBar_Btn.addActionListener(ae -> {
+        up_ScrollBar_Btn.addActionListener(ae -> {
 
-            scrollBarDown_BTN_Action();
+            scrollBarUp_BTN_Action();
         });
 
-        iconPanelInsert.add(down_ScrollBar_Btn);
+        iconPanelInsert.add(up_ScrollBar_Btn);
 
         //##########################
         // Refresh Icon
@@ -904,6 +903,27 @@ public class Meal_Plan_Screen extends JPanel
         });
 
         iconPanelInsert.add(macro_Tagets_Btn);
+
+        //##########################
+        //  ScrollBar Bottom
+        //##########################
+        width = 51;
+        height = 51;
+
+        IconButton down_ScrollBar_Icon_Btn = new IconButton("/images/scrollBar_Down/scrollBar_Down5.png", "", width, height, width, height,
+                "centre", "right"); // btn text is useless here , refactor
+
+        down_ScrollBar_Icon_Btn.makeBTntransparent();
+
+        JButton down_ScrollBar_Btn = down_ScrollBar_Icon_Btn.returnJButton();
+        down_ScrollBar_Btn.setToolTipText("Scroll to Bottom Of Meal Plan"); //Hover message over icon
+
+        down_ScrollBar_Btn.addActionListener(ae -> {
+
+            scrollBarDown_BTN_Action();
+        });
+
+        iconPanelInsert.add(down_ScrollBar_Btn);
     }
 
     private Boolean areYouSure(String process)
@@ -921,6 +941,15 @@ public class Meal_Plan_Screen extends JPanel
     //######################################
     // Icon Button Actions
     //######################################
+    public void scrollBarUp_BTN_Action()
+    {
+        //##############################################
+        // Set ScrollPane to the Bottom Straight Away
+        //##############################################
+        JScrollBar vertical = scrollPane.getVerticalScrollBar();
+        vertical.setValue(vertical.getMinimum());
+    }
+
     public void scrollBarDown_BTN_Action()
     {
         //##############################################
@@ -928,29 +957,6 @@ public class Meal_Plan_Screen extends JPanel
         //##############################################
         JScrollBar vertical = scrollPane.getVerticalScrollBar();
         vertical.setValue(vertical.getMaximum());
-
-        //OR
-
-        /*
-        //##############################################
-        // Set ScrollPane to the Bottom Animated View
-        //##############################################
-        JScrollBar verticalBar = scrollPane.getVerticalScrollBar();
-
-        int currentScrollValue = verticalBar.getValue();
-        int previousScrollValue = -1;
-
-        while (currentScrollValue != previousScrollValue) {
-            // Scroll down a bit
-            int downDirection = 1;
-            int amountToScroll = verticalBar.getUnitIncrement(downDirection);
-            verticalBar.setValue(currentScrollValue + amountToScroll);
-
-            previousScrollValue = currentScrollValue;
-            currentScrollValue = verticalBar.getValue();
-        }
-        */
-
     }
 
     private void addMealToPlan()
