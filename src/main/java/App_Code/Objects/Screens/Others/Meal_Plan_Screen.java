@@ -93,7 +93,44 @@ public class Meal_Plan_Screen extends JPanel
     //##################################################################################################################
     public static void main(String[] args)
     {
-        //############################################################################################################
+
+        try
+        {
+            String host = System.getenv("DB_HOST");
+            String port = System.getenv("DB_PORT");
+            String user = System.getenv("DB_USER");
+            String password = System.getenv("DB_PASS");
+            String dbName = System.getenv("DB_NAME");
+
+            if (host==null || port==null || user==null || password==null || dbName==null)
+            {
+                System.out.printf("\n\nDB Values: \nhost: %s \nport: %s \nuser: %s \npassword: %s \ndbName: %s",
+                        host,port,user,password,dbName);
+
+                throw new RuntimeException("Missing one or more required DB environment variables.");
+            }
+
+            //##############################################
+            // Create DB Object & run SQL Script
+            //##############################################
+            MyJDBC db = new MyJDBC(host, port, user, password, dbName, db_Script_List_Folder_Path, db_Script_List_Name);
+
+            if (db.get_DB_Connection_Status())
+            {
+                new Meal_Plan_Screen(db);
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(null, "ERROR, Cannot Connect To Database!");
+            }
+        }
+        catch (Exception e)
+        {
+            System.out.printf("\n\nError Meal_Plan_Screen() \n%s",e);
+            return;
+        }
+
+        /*//############################################################################################################
         // Database Setup
         //#############################################################################################################
 
@@ -116,7 +153,7 @@ public class Meal_Plan_Screen extends JPanel
         catch (Exception e)
         {
             System.out.printf("\n\n%s", e);
-        }
+        }*/
     }
 
     public Meal_Plan_Screen(MyJDBC db)

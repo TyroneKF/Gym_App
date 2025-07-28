@@ -44,6 +44,44 @@ public class MyJDBC
     //##################################################################################################################
     //
     //##################################################################################################################
+    public MyJDBC(String host, String port, String userName, String password, String databaseName, String db_Script_Folder_Address, String script_List_Name)
+    {
+        this.userName = userName;
+        this.password = password;
+        this.databaseName = databaseName.toLowerCase();
+        this.initial_db_connection = String.format("jdbc:mysql://%s:%s",host,port);
+
+        //##############################################
+        //  Check if DB has already been connected
+        //##############################################
+        System.out.printf("\n\nChecking if DB '%s' EXISTS! ", databaseName);
+
+        if (!check_IF_DB_Exists(databaseName))
+        {
+            //##############################################
+            // Setup Database data
+            //##############################################
+            System.out.printf("\n\n%s \nCreating DB tables! \n%s", middle_line_Separator, middle_line_Separator);
+            if (! (run_SQL_Script_Folder(initial_db_connection, db_Script_Folder_Address, script_List_Name)))
+            {
+                System.out.printf("\n\n%s \nFailed creating DB & Initializing Data! \n%s", line_Separator, line_Separator);
+                return;
+            }
+
+            System.out.printf("\n\n%s \nSuccessfully, created DB & Initialized Data! \n%s", line_Separator, line_Separator);
+        }
+        else
+        {
+            System.out.printf("\n\nDB '%s' exists!!", databaseName);
+        }
+
+        override = false;
+        db_Connection_Status = true;
+        db_Connection_Address = String.format("%s/%s", db_Connection_Address, databaseName);
+
+    }
+
+
     public MyJDBC(String userName, String password, String databaseName, String db_Script_Folder_Address, String script_List_Name)
     {
         this.userName = userName;
