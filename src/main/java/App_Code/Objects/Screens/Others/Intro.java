@@ -87,17 +87,17 @@ public class Intro extends JFrame
 
     public void checkIfTablesExist()
     {
-        db = new MyJDBC("root", "password", databaseName, db_Script_List_Folder_Path, db_Script_List_Name);
+        /*db = new MyJDBC("root", "password", databaseName, db_Script_List_Folder_Path, db_Script_List_Name);
         if (!(db.get_DB_Connection_Status()))
         {
             JOptionPane.showMessageDialog(null, "ERROR, Cannot Connect To Database!");
             return;
-        }
+        }*/
     }
 
     public static void main(String[] args)
     {
-        MyJDBC db = new MyJDBC("root", "password", databaseName, db_Script_List_Folder_Path, db_Script_List_Name);
-        new Intro(db);
+       /* MyJDBC db = new MyJDBC("root", "password", databaseName, db_Script_List_Folder_Path, db_Script_List_Name);
+        new Intro(db);*/
     }
 }
