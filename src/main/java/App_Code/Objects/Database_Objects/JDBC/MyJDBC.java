@@ -49,51 +49,41 @@ public class MyJDBC
         this.userName = userName;
         this.password = password;
         this.databaseName = databaseName.toLowerCase();
-        boolean success = false;
 
-        // Repeat attempts to connect to DB for an X amount of time
-        for (int attemptsMade = 1; attemptsMade <= connection_Attempts; attemptsMade++)
+        //##############################################
+        //  Check if DB has already been connected
+        //##############################################
+        System.out.printf("\n\nChecking if DB '%s' EXISTS! ", databaseName);
+
+        if (!check_IF_DB_Exists(databaseName))
         {
-            System.out.printf("\n%s\n Attempt %s: \n%s", line_Separator, attemptsMade, line_Separator);
-
-            //##############################################
-            //  Check if DB has already been connected
-            //##############################################
-            System.out.printf("\n\nChecking if DB '%s' EXISTS! ", databaseName);
-
-            if (attemptsMade==1)
-            {
-                if (check_IF_DB_Exists(databaseName))
-                {
-                    System.out.printf("\n\nDB '%s' already exists!! \n%s", databaseName, line_Separator);
-                    success = true;
-                    break;
-                }
-            }
-
             //##############################################
             // Setup Database data
             //##############################################
             System.out.printf("\n\n%s \nCreating DB tables! \n%s", middle_line_Separator, middle_line_Separator);
-            if (run_SQL_Script_Folder(db_Script_Folder_Address, script_List_Name))
+            if (! (run_SQL_Script_Folder(initial_db_connection, db_Script_Folder_Address, script_List_Name)))
             {
-                success = true;
-                System.out.printf("\n\n%s \nSuccessfully, created DB & Initialized Data! \n%s", line_Separator, line_Separator);
+                System.out.printf("\n\n%s \nFailed creating DB & Initializing Data! \n%s", line_Separator, line_Separator);
+                return;
             }
+
+            System.out.printf("\n\n%s \nSuccessfully, created DB & Initialized Data! \n%s", line_Separator, line_Separator);
+        }
+        else
+        {
+            System.out.printf("\n\nDB '%s' exists!!", databaseName);
         }
 
-        if (success)
-        {
-            override = false;
-            db_Connection_Status = true;
-            db_Connection_Address = String.format("%s/%s", db_Connection_Address, databaseName);
-        }
+        override = false;
+        db_Connection_Status = true;
+        db_Connection_Address = String.format("%s/%s", db_Connection_Address, databaseName);
+
     }
 
     //##################################################################################################################
     // Changes to TXT files / SQL Backup Files  Methods
     //##################################################################################################################
-    public boolean run_SQL_Script_Folder(String db_Script_Folder_Address, String script_List_Name)
+    public boolean run_SQL_Script_Folder(String connection, String db_Script_Folder_Address, String script_List_Name)
     {
         String path = String.format("%s%s", db_Script_Folder_Address, script_List_Name); // don't include a / between the files
 
@@ -107,7 +97,7 @@ public class MyJDBC
         try (BufferedReader br = new BufferedReader(new InputStreamReader(listStream, StandardCharsets.UTF_8))) // resources automatically released in try block / no need for reader.close()
         {
             DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());  //Registering the Driver
-            Connection con = DriverManager.getConnection(initial_db_connection, userName, password);
+            Connection con = DriverManager.getConnection(connection, userName, password);
 
             Iterator<String> it = br.lines().iterator();
             while (it.hasNext())
