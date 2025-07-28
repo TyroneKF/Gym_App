@@ -574,12 +574,12 @@ public class Meal_Plan_Screen extends JPanel
                 FROM
                 (
                   SELECT DISTINCT(Ingredient_Type_ID) FROM ingredients_info
-                ) I
+                ) AS I
                 INNER JOIN
                 (
                   SELECT Ingredient_Type_ID, Ingredient_Type_Name FROM ingredientTypes
-                )n
-                ON i.Ingredient_Type_ID = n.Ingredient_Type_ID 
+                ) AS n
+                ON I.Ingredient_Type_ID = n.Ingredient_Type_ID 
                 ORDER BY Ingredient_Type_Name;""");
 
         ArrayList<ArrayList<String>> ingredientTypesNameAndIDResults = db.getMultiColumnQuery(queryIngredientsType);
@@ -645,7 +645,7 @@ public class Meal_Plan_Screen extends JPanel
         String query0 = String.format("""
                 UPDATE `plans` AS `P`,
                 (
-                	SELECT Plan_Name, Vegan FROM Plans WHERE PlanID = %s
+                	SELECT Plan_Name, Vegan FROM plans WHERE PlanID = %s
                 ) AS `SRC`
                                     
                 SET
