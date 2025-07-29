@@ -29,7 +29,7 @@ https://www.oracle.com/uk/java/technologies/downloads/
 #  1.) Double-click the bat file to execute the program
 
 ################################################################################
-Linux
+Linux & MACS (Done)
 ################################################################################
 
 # This project requires MYSQL && JAVA SDK 15 to operate.
@@ -45,6 +45,9 @@ https://www.oracle.com/uk/java/technologies/downloads/
 # 3.) Paste the code (below) to give permissions for the script to run & install packages
 
       sudo chmod +x './1.)_Linux_And_Mac_Install_Prerequisites.sh' && sudo './1.)_Linux_And_Mac_Install_Prerequisites.sh'
+
+4.) Enter Password when prompted
+5.) Script will be executed, downloading prerequisites
 
 #########################################
 # Executing Application:

@@ -163,7 +163,8 @@ public class MyJDBC
                 {
                     System.err.printf("\nrun_SQL_Script_Folder(): error executing file: %s \n\n%s\n", fileName, e.getMessage());
                     e.printStackTrace();
-                    return false;
+
+                    throw new Exception(String.format("\nrun_SQL_Script_Folder() ERROR:  %s", fileName));
                 }
             }
         }
