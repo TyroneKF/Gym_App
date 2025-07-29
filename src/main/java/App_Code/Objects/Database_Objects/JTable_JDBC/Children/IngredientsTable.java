@@ -1457,23 +1457,21 @@ public class IngredientsTable extends JDBC_JTable
                 ////######################################
 
                 String queryStore = String.format("""
-                        SELECT DISTINCT IFNULL(D.Store_Name, 'N/A') AS STORE
+                        SELECT DISTINCT IFNULL(D.Store_Name, 'N/A') AS Store_Name
                         FROM 
                         (
-                        	SELECT i.IngredientID FROM ingredients_info i
-                        	WHERE i.IngredientID = %s
-                        ) AS t 
-                                            
+                        	SELECT I.IngredientID FROM ingredients_info I
+                        	WHERE I.IngredientID = %s
+                        ) AS T                                             
                         LEFT JOIN
                         (
-                           SELECT l.IngredientID, l.StoreID FROM ingredientInShops l 
-                        	
-                        )  AS C
-                        ON t.IngredientID = C.IngredientID 
+                           SELECT L.IngredientID, L.StoreID FROM ingredientInShops L                         	
+                        ) AS C
+                        ON T.IngredientID = C.IngredientID 
                         LEFT JOIN
                         (
                           SELECT StoreID, Store_Name FROM stores
-                        ) D
+                        ) AS D
                         ON C.StoreID = D.StoreID
                         ORDER BY Store_Name;""", ingredientID);
 
