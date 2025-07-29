@@ -760,7 +760,7 @@ public class MealManager
         //##########################################
         // Update Message
         //##########################################
-        JOptionPane.showMessageDialog(null, "Table Successfully Deleted! nmn");
+        JOptionPane.showMessageDialog(null, "Table Successfully Deleted!");
     }
 
     public void completely_Delete_MealManager()
