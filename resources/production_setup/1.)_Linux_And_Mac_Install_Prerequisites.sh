@@ -36,12 +36,20 @@ MYSQL_USER="root"
 MYSQL_PASS="password"
 
 # SQL commands to run
-SQL="
-ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$MYSQL_PASS';
-GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
-FLUSH PRIVILEGES;
-"
+
+#SQL="
+#ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$MYSQL_PASS';
+#GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
+#FLUSH PRIVILEGES;
+#"
 # Run the command using mysql client
+
+SQL="
+ALTER USER '$MYSQL_USER'@'localhost' IDENTIFIED WITH mysql_native_password BY '$MYSQL_PASS';
+GRANT ALL PRIVILEGES ON *.* TO '$MYSQL_USER'@'localhost' WITH GRANT OPTION;
+DROP DATABASE IF EXISTS gymapp0001;
+FLUSH PRIVILEGES;
+
 mysql -u "$MYSQL_USER" -p"$MYSQL_PASS" -e "$SQL"
 
 echo "Installation and configuration completed successfully!"
