@@ -1,10 +1,14 @@
 #################################################################################
-# Installing Prerequisites On OS
+Windows
 #################################################################################
 
-# Installing Prerequisites Windows
-
 # This project requires MYSQL && JAVA SDK 15 to operate.
+https://dev.mysql.com/downloads/installer/
+https://www.oracle.com/uk/java/technologies/downloads/
+
+#####################################
+# Installing Prerequisites Windows
+####################################
 
 # 1.) Open PowerShell as Administrator
 # 2.) Change directory into the folder location this file is located in.
@@ -16,27 +20,37 @@
 # 4.) Execute the prerequisites script by the following command below:
 
       & ".\1.)Windows-Install-Prerequisites.ps1"
+      & "E:\App\1.)Windows-Install-Prerequisites.ps1"
+
+##############################
+# Executing Application:
+##############################
+
+#  1.) Double-click the bat file to execute the program
 
 ################################################################################
+Linux
+################################################################################
+
+# This project requires MYSQL && JAVA SDK 15 to operate.
+https://dev.mysql.com/downloads/installer/
+https://www.oracle.com/uk/java/technologies/downloads/
+
+#########################################
 # Installing Prerequisites Mac && Linux
+#########################################
 
-# 1.) Open your CML  & change directory into the folder this script is in
-# 2.) Paste the code (below) to give permissions for the script to run & install packages
+# 1.) Copy the project folder into a readable and writable directory
+# 2.) Open your CML  & change directory into the folder this script is in
+# 3.) Paste the code (below) to give permissions for the script to run & install packages
 
-      sudo chmod +x './1.)_Linux_And_Mac_Install_Prerequisites.sh' && './1.)_Linux_And_Mac_Install_Prerequisites.sh'
+      sudo chmod +x './1.)_Linux_And_Mac_Install_Prerequisites.sh' && sudo './1.)_Linux_And_Mac_Install_Prerequisites.sh'
 
-#################################################################################
-# Executing Application
-#################################################################################
+#########################################
+# Executing Application:
+#########################################
 
-Windows: 
-
-   1.) Double click the bat file to execute the program  
-
-
-Linux & Mac: 
-
-   # 1.) Open your CML  & chnage directory into the folder this script is in
+   # 1.) Open your CML  & change directory into the folder this script is in from the prerequisites steps
    # 2.) Run the command (below) to give the script permissions to run & execute
    
          sudo chmod +x '2.)_Start_App_Linux_And_Mac_Bash_Script.sh' && ./'2.)_Start_App_Linux_And_Mac_Bash_Script.sh'
