@@ -744,7 +744,7 @@ public class MyJDBC
     {
         if (!(get_DB_Connection_Status()))
         {
-            System.out.printf("\n\n  getSingleColumnQuery() DB couldn't successfully connect to DB '%s'!", databaseName);
+            System.out.printf("\n\ngetSingleColumnQuery() DB couldn't successfully connect to DB '%s'!", databaseName);
             return null;
         }
 
@@ -808,7 +808,9 @@ public class MyJDBC
         }
         catch (Exception e)
         {
-            System.out.printf("\n\n  @getSingleColumnQuery() ERROR from query '%s' \n\n  %s", query, e);
+            System.out.printf("\n\n@getSingleColumnQuery() ERROR from query \n\n'%s' \n\n%s\n\n", query, e);
+           // e.printStackTrace();
+
             JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
             //System.exit(1);
         }
@@ -883,7 +885,9 @@ public class MyJDBC
         }
         catch (Exception e)
         {
-            System.out.printf("\n\n  @getSingleColumnQuery() ERROR from query '%s' \n\n  %s", query, e);
+            System.out.printf("\n\n@getSingleColumnQuery_ArrayList() ERROR from query: \n\n'%s' \n\n%s\n\n", query, e);
+
+           // e.printStackTrace();
             JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
         }
         return null;
@@ -956,7 +960,8 @@ public class MyJDBC
         }
         catch (Exception e)
         {
-            System.out.printf("\n\n  @getSingleColumnQuery() ERROR from query '%s' \n\n  %s", query, e);
+            System.out.printf("\n\n@getSingleColumnQuery_AlphabeticallyOrderedTreeSet() ERROR from query \n\n'%s' \n\n%s\n", query, e);
+           // e.printStackTrace();
             JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
         }
         return null;
