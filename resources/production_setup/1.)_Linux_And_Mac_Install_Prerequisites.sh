@@ -31,12 +31,16 @@ echo "Verifying MySQL installation..."
 mysql --version
 
 echo "Configuring MySQL root user..."
+
 MYSQL_USER="root"
 MYSQL_PASS="password"
 
-# The SQL command you want to run
-SQL="GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION; FLUSH PRIVILEGES;"
-
+# SQL commands to run
+SQL="
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$MYSQL_PASS';
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+"
 # Run the command using mysql client
 mysql -u "$MYSQL_USER" -p"$MYSQL_PASS" -e "$SQL"
 
