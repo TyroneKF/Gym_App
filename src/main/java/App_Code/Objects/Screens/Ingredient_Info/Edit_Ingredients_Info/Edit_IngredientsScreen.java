@@ -375,17 +375,17 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         // Store ingredientTypes ID's & IngredientTypeName that occur
         //###########################################################
         String queryIngredientsType = String.format("""
-                SELECT I.Ingredient_Type_ID, n.Ingredient_Type_Name
+                SELECT I.Ingredient_Type_ID, N.Ingredient_Type_Name
                 FROM
                 (
                   SELECT DISTINCT(Ingredient_Type_ID) FROM ingredients_info
-                ) I
+                ) AS I
                 INNER JOIN
                 (
                   SELECT Ingredient_Type_ID, Ingredient_Type_Name FROM ingredientTypes
-                )n
-                ON i.Ingredient_Type_ID = n.Ingredient_Type_ID
-                ORDER BY n.Ingredient_Type_Name;""");
+                ) AS N
+                ON I.Ingredient_Type_ID = N.Ingredient_Type_ID
+                ORDER BY N.Ingredient_Type_Name;""");
 
         ArrayList<ArrayList<String>> ingredientTypesNameAndIDResults = db.getMultiColumnQuery(queryIngredientsType);
 
