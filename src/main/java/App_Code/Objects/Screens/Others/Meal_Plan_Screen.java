@@ -16,9 +16,9 @@ import java.util.List;
 
 public class Meal_Plan_Screen extends JPanel
 {
-   private static boolean production
-           = true;
-//           = false;
+   private static boolean
+//          production = true;
+    production = false;
 
     private Collection<String> ingredientsTypesList, storesNamesList;
 

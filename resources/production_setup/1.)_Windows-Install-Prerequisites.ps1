@@ -75,12 +75,3 @@ catch {
 
 $env:MYSQL_PWD = $MySQLRootPassword
 
-$grantSql = @"
-GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
-FLUSH PRIVILEGES;
-"@
-
-Write-Host "Running SQL grant statement..."
-mysql -u root -e "$grantSql"
-
-Write-Host "`n✅ Installation and configuration completed successfully!"

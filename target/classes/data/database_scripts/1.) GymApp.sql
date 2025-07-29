@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS plans
 CREATE TABLE IF NOT EXISTS macros_Per_Pound_And_Limits
 (
     PlanID INT NOT NULL,
-    FOREIGN KEY (PlanID) REFERENCES plans(PlanID),
+    FOREIGN KEY (PlanID) REFERENCES plans(PlanID) ON DELETE CASCADE,
 
 	DateTime_Of_Creation DATETIME NOT NULL,
 
@@ -94,7 +94,7 @@ LEFT JOIN
 	    ROUND((M.current_Weight_In_Pounds * M.Protein_PerPound) * 4, 2) +
 		ROUND((M.current_Weight_In_Pounds * M.Carbohydrates_PerPound) * 4, 2) +
 		ROUND((M.current_Weight_In_Pounds * M.Fats_PerPound) *9, 2) +
-		+ M.Additional_Calories
+		M.Additional_Calories
 	, 0) AS Additional_Calories_Target
 
 	FROM macros_Per_Pound_And_Limits M
@@ -119,13 +119,12 @@ CREATE TABLE IF NOT EXISTS ingredients_info
     -- PRIMARY KEYS
     IngredientID INT  PRIMARY KEY AUTO_INCREMENT,
 
-	Measurement VARCHAR(6) NOT NULL,
-	CHECK(Measurement IN("Litres","Grams")),
+	Measurement ENUM('Litres', 'Grams') NOT NULL,
 
 	Ingredient_Name VARCHAR(100) NOT NULL,
 
 	Ingredient_Type_ID  INT NOT NULL,
-	FOREIGN KEY (Ingredient_Type_ID) REFERENCES ingredientTypes(Ingredient_Type_ID),
+	FOREIGN KEY (Ingredient_Type_ID) REFERENCES ingredientTypes(Ingredient_Type_ID) ON DELETE CASCADE,
 
 	Based_On_Quantity DECIMAL(7,2) NOT NULL,
 
@@ -164,7 +163,7 @@ CREATE TABLE IF NOT EXISTS ingredientInShops
     PDID INT  PRIMARY KEY AUTO_INCREMENT,
 
     IngredientID INT  NOT NULL,
-	FOREIGN KEY (IngredientID) REFERENCES ingredients_info(IngredientID),
+	FOREIGN KEY (IngredientID) REFERENCES ingredients_info(IngredientID) ON DELETE CASCADE,
 
     Product_Name VARCHAR(100) NOT NULL,
 
@@ -172,7 +171,7 @@ CREATE TABLE IF NOT EXISTS ingredientInShops
 	Cost_Per_Unit DECIMAL(7,2) NOT NULL,
 
 	StoreID INT NOT NULL,
-	FOREIGN KEY (StoreID) REFERENCES stores(StoreID),
+	FOREIGN KEY (StoreID) REFERENCES stores(StoreID) ON DELETE CASCADE,
 
     UNIQUE KEY Product_In_Store(StoreID, Product_Name)
 );
@@ -183,7 +182,7 @@ CREATE TABLE IF NOT EXISTS mealsInPlan
    MealInPlanID INT NOT NULL AUTO_INCREMENT,
 
    PlanID INT NOT NULL,
-   FOREIGN KEY (PlanID) REFERENCES plans(PlanID),
+   FOREIGN KEY (PlanID) REFERENCES plans(PlanID) ON DELETE CASCADE,
 
    Meal_Name VARCHAR(100) NOT NULL,
    Meal_Time TIME NOT NULL,
@@ -200,10 +199,10 @@ CREATE TABLE IF NOT EXISTS dividedMealSections
    DivMealSectionsID INT AUTO_INCREMENT,
 
    MealInPlanID INT  NOT NULL,
-   FOREIGN KEY (MealInPlanID) REFERENCES mealsInPlan (MealInPlanID),
+   FOREIGN KEY (MealInPlanID) REFERENCES mealsInPlan (MealInPlanID) ON DELETE CASCADE,
 
    PlanID INT NOT NULL,
-   FOREIGN KEY (PlanID) REFERENCES plans(PlanID),
+   FOREIGN KEY (PlanID) REFERENCES plans(PlanID) ON DELETE CASCADE,
 
    PRIMARY KEY(DivMealSectionsID, MealInPlanID, PlanID)
 );
@@ -214,18 +213,18 @@ CREATE TABLE IF NOT EXISTS ingredients_in_sections_of_meal
     Ingredients_Index INT  AUTO_INCREMENT,
 
     DivMealSectionsID INT NOT NULL,
-	FOREIGN KEY (DivMealSectionsID) REFERENCES dividedMealSections(DivMealSectionsID),
+	FOREIGN KEY (DivMealSectionsID) REFERENCES dividedMealSections(DivMealSectionsID) ON DELETE CASCADE,
 
     PlanID INT,
- 	FOREIGN KEY (PlanID) REFERENCES plans(PlanID),
+ 	FOREIGN KEY (PlanID) REFERENCES plans(PlanID) ON DELETE CASCADE,
 
     IngredientID INT NOT NULL,
-	FOREIGN KEY (IngredientID) REFERENCES ingredients_info(IngredientID),
+	FOREIGN KEY (IngredientID) REFERENCES ingredients_info(IngredientID) ON DELETE CASCADE,
 
 	Quantity DECIMAL(15,2) NOT NULL,
 
 	PDID INT NULL,
- 	FOREIGN KEY (PDID) REFERENCES ingredientInShops(PDID),
+ 	FOREIGN KEY (PDID) REFERENCES ingredientInShops(PDID) ON DELETE CASCADE,
 
 	PRIMARY KEY (Ingredients_Index, PlanID),
 	UNIQUE KEY No_Repeat_Meals (Ingredients_Index, DivMealSectionsID, PlanID)
@@ -292,7 +291,10 @@ GROUP BY DivMealSectionsID, PlanID;
 --######################################
 CREATE VIEW total_meal_view AS
 
-SELECT m.PlanID, m.MealInPlanID, m.Meal_Time,  m.Meal_Name,
+SELECT m.PlanID, m.MealInPlanID,
+
+MAX(m.Meal_Time) AS Meal_Time,
+MAX(m.Meal_Name) AS Meal_Name,
 
 IFNULL(ROUND(SUM(di.No_Of_Ingredients),2),0) as No_Of_Ingredients,
 IFNULL(ROUND(SUM(di.Weight_OF_Meal),2),0) as Weight_OF_Meal,
@@ -317,13 +319,13 @@ ON m.MealInPlanID = d.MealInPlanID AND m.PlanID = d.PlanID
 LEFT JOIN divided_meal_sections_calculations di
 ON di.DivMealSectionsID = d.DivMealSectionsID AND di.PlanID = d.PlanID
 
-GROUP BY m.MealInPlanID, di.PlanID;
+GROUP BY m.MealInPlanID, m.PlanID;
 
 --######################################
 
 CREATE VIEW total_plan_view AS
 
-SELECT P.PlanID, P.Plan_Name,
+SELECT P.PlanID, P.Plan_Name, -- needs to be here to prevent ONLY_FULL_GROUP_BY
 
 COUNT(T.MealInPlanID) AS No_Of_Meals,
 
@@ -347,7 +349,7 @@ FROM plans P
 LEFT  JOIN total_meal_view T
 ON P.PlanID = T.PlanID
 
-GROUP BY  PlanID;
+GROUP BY  P.PlanID, P.Plan_Name;
 
 --######################################
 
@@ -361,7 +363,7 @@ IFNULL(ROUND(C.Expected_Fibre_Grams  - P.Fibre_In_Plan ,2),0) AS Fibre_Grams_Lef
 IFNULL(ROUND(C.Expected_Fats_Grams - P.Fats_In_Plan ,2),0) Fats_Grams_Left,
 IFNULL(ROUND(C.Saturated_Fat_Limit - P.Saturated_Fat_In_Plan ,2),0) AS Potential_Saturated_Fat_Grams,
 
-IFNULL(ROUND(C.Salt_LIMIT_Grams - P.Salt_In_Plan ,2),0) AS Potential_Salt_Grams,
+IFNULL(ROUND(C.Salt_LIMIT_Grams - P.Salt_In_Plan ,2),0) AS Potential_Salt,
 IFNULL(ROUND(C.Water_Content_Target - P.Water_Content_In_Plan ,2),0) AS  Water_Left_To_Drink,
 IFNULL(ROUND(C.Liquid_Content_Target - P.Liquid_Content_In_Plan ,2),0) AS  Liquids_Left,
 
