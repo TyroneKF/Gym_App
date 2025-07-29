@@ -16,6 +16,10 @@ import java.util.List;
 
 public class Meal_Plan_Screen extends JPanel
 {
+   private static boolean production
+           = true;
+//           = false;
+
     private Collection<String> ingredientsTypesList, storesNamesList;
 
     // Sorted Hashmap by key String
@@ -93,67 +97,71 @@ public class Meal_Plan_Screen extends JPanel
     //##################################################################################################################
     public static void main(String[] args)
     {
-
-        try
+        if(production)
         {
-            String host = System.getenv("DB_HOST");
-            String port = System.getenv("DB_PORT");
-            String user = System.getenv("DB_USER");
-            String password = System.getenv("DB_PASS");
-            String dbName = System.getenv("DB_NAME");
-
-            if (host==null || port==null || user==null || password==null || dbName==null)
+            try
             {
-                System.out.printf("\n\nDB Values: \nhost: %s \nport: %s \nuser: %s \npassword: %s \ndbName: %s",
-                        host,port,user,password,dbName);
+                String host = System.getenv("DB_HOST");
+                String port = System.getenv("DB_PORT");
+                String user = System.getenv("DB_USER");
+                String password = System.getenv("DB_PASS");
+                String dbName = System.getenv("DB_NAME");
 
-                throw new RuntimeException("Missing one or more required DB environment variables.");
+                if (host==null || port==null || user==null || password==null || dbName==null)
+                {
+                    System.out.printf("\n\nDB Values: \nhost: %s \nport: %s \nuser: %s \npassword: %s \ndbName: %s",
+                            host, port, user, password, dbName);
+
+                    throw new RuntimeException("Missing one or more required DB environment variables.");
+                }
+
+                //##############################################
+                // Create DB Object & run SQL Script
+                //##############################################
+                MyJDBC db = new MyJDBC(host, port, user, password, dbName, db_Script_List_Folder_Path, db_Script_List_Name);
+
+                if (db.get_DB_Connection_Status())
+                {
+                    new Meal_Plan_Screen(db);
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(null, "ERROR, Cannot Connect To Database!");
+                }
             }
-
-            //##############################################
-            // Create DB Object & run SQL Script
-            //##############################################
-            MyJDBC db = new MyJDBC(host, port, user, password, dbName, db_Script_List_Folder_Path, db_Script_List_Name);
-
-            if (db.get_DB_Connection_Status())
+            catch (Exception e)
             {
-                new Meal_Plan_Screen(db);
-            }
-            else
-            {
-                JOptionPane.showMessageDialog(null, "ERROR, Cannot Connect To Database!");
+                System.out.printf("\n\nError Meal_Plan_Screen() \n%s", e);
+                return;
             }
         }
-        catch (Exception e)
+        else
         {
-            System.out.printf("\n\nError Meal_Plan_Screen() \n%s",e);
-            return;
-        }
+            //############################################################################################################
+            // Database Setup
+            //#############################################################################################################
 
-        /*//############################################################################################################
-        // Database Setup
-        //#############################################################################################################
-
-        try
-        {
-            //##############################################
-            // Create DB Object & run SQL Script
-            //##############################################
-            MyJDBC db = new MyJDBC("root", "password", databaseName, db_Script_List_Folder_Path, db_Script_List_Name);
-
-            if (db.get_DB_Connection_Status())
+            try
             {
-                new Meal_Plan_Screen(db);
+                //##############################################
+                // Create DB Object & run SQL Script
+                //##############################################
+                MyJDBC db = new MyJDBC("root", "password", databaseName, db_Script_List_Folder_Path, db_Script_List_Name);
+
+                if (db.get_DB_Connection_Status())
+                {
+                    new Meal_Plan_Screen(db);
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(null, "ERROR, Cannot Connect To Database!");
+                }
             }
-            else
+            catch (Exception e)
             {
-                JOptionPane.showMessageDialog(null, "ERROR, Cannot Connect To Database!");
+                System.out.printf("\n\n%s", e);
             }
         }
-        catch (Exception e)
-        {
-            System.out.printf("\n\n%s", e);
-        }*/
     }
 
     public Meal_Plan_Screen(MyJDBC db)
