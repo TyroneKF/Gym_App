@@ -14,7 +14,7 @@ import java.util.*;
 
 public class NutritionIx_API
 {
-    private final String pathToNutrientsCSV = "src/App_Code/Objects/API/Nutritionix/Resources/Nutritionix API v2 - Full Nutrient USDA .csv";
+    private final String pathToNutrientsCSV = "src/main/java/App_Code/Objects/API/Nutritionix/Resources/Nutritionix API v2 - Full Nutrient USDA .csv";
     private final int attr_ID_Col = 1, attr_Name_Col = 4;
 
     //######################################################
