@@ -86,13 +86,28 @@ public class MealManager
     public MealManager(Meal_Plan_Screen meal_plan_screen, Container container)
     {
         //##############################################################################################################
+        // Setting Variable
+        //##############################################################################################################
+        System.out.println("\n\nMealManager() HERE ");
+
+        this.meal_plan_screen = meal_plan_screen;
+        this.container = container;
+
+        ///############################
+        //
+        ///############################
+        this.tempPlanID = meal_plan_screen.getTempPlanID();
+        this.planID = meal_plan_screen.getPlanID();
+        this.db = meal_plan_screen.getDb();
+
+        //##############################################################################################################
         // Getting user input for Meal Name
         //##############################################################################################################
 
         // Get User Input
         String newMealName = JOptionPane.showInputDialog(getFrame(),"Input Meal Name?");
 
-        newMealName = inputCheck(false,"name", newMealName, currentMealName);
+        newMealName = inputCheck(true,"name", newMealName, currentMealName);
 
         if(newMealName == null) // Error occurred in validation checks above
         {
@@ -152,16 +167,6 @@ public class MealManager
 
         meal_plan_screen.addMealManger(this);
         setMealManagerInDB(false);
-
-        this.meal_plan_screen = meal_plan_screen;
-        this.container = container;
-
-        ///############################
-        //
-        ///############################
-        this.tempPlanID = meal_plan_screen.getTempPlanID();
-        this.planID = meal_plan_screen.getPlanID();
-        this.db = meal_plan_screen.getDb();
 
         //##############################################################################################################
         // SetUP
