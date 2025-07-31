@@ -22,9 +22,13 @@ public class MealManager
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    private boolean mealManagerInDB = false, hasMealPlannerBeenDeleted = false, hasMealNameBeenChanged = false, hasMealTimeBeenChanged = false;
-    private Integer mealInPlanID, tempPlanID, planID, yPoInternally = 0, mealNo;
-    private String savedMealName, savedMealTime, newMealTime = "";
+    private boolean
+            mealManagerInDB = false, hasMealPlannerBeenDeleted = false,
+
+            hasMealNameBeenChanged = false, hasMealTimeBeenChanged = false;
+    private String savedMealName="", currentMealName = "", savedMealTime="", currentMealTime="";
+
+    private Integer mealInPlanID, tempPlanID, planID, yPoInternally = 0;
     private String[] mealTotalTable_ColumnNames, ingredientsTable_ColumnNames;
     private ArrayList<String> totalMeal_Table_ColToHide, ingredientsTableUnEditableCells, ingredients_Table_Col_Avoid_Centering, ingredientsInMeal_Table_ColToHide;
     private TreeMap<String, Collection<String>> map_ingredientTypesToNames;
@@ -33,9 +37,9 @@ public class MealManager
 
     String lineSeparator = "###############################################################################";
 
-    //####################
+    //################################################################################
     // Objects
-    //####################
+    //################################################################################
     private JPanel collapsibleCenterJPanel, spaceDivider = new JPanel();
     private MyJDBC db;
     private GridBagConstraints gbc;
@@ -43,23 +47,23 @@ public class MealManager
     private CollapsibleJPanel collapsibleJpObj;
     private MacrosLeftTable macrosLeft_JTable;
     private TotalMealTable total_Meal_View_Table;
-    private Frame frame;
     private Meal_Plan_Screen meal_plan_screen;
 
     //##################################################################################################################
     // Constructors
     //##################################################################################################################
-    public MealManager(Meal_Plan_Screen meal_plan_screen, Container container, boolean mealManagerInDB, int mealInPlanID, int mealNo, String mealName, String savedMealTime, ArrayList<ArrayList<String>> subMealsInMealArrayList)
+    public MealManager(Meal_Plan_Screen meal_plan_screen, Container container, int mealInPlanID, String mealName, String mealTime, ArrayList<ArrayList<String>> subMealsInMealArrayList)
     {
         //##############################################################################################################
         // Global Variables
         //##############################################################################################################
         this.mealInPlanID = mealInPlanID;
-        this.mealNo = mealNo;
-        this.savedMealName = mealName;
-        this.savedMealTime = savedMealTime;
+
+        setMealNameVariables(false, mealName, mealName); // Set MealName Variables
+        setTimeVariables(false, mealTime, mealTime);     // Set MealTime Variables
+        setMealManagerInDB(true);
+
         this.container = container;
-        this.mealManagerInDB = mealManagerInDB;
         this.meal_plan_screen = meal_plan_screen;
 
         //##############################################################################################################
@@ -82,83 +86,29 @@ public class MealManager
     public MealManager(Meal_Plan_Screen meal_plan_screen, Container container)
     {
         //##############################################################################################################
-        // Global Variables
-        //##############################################################################################################
-        this.meal_plan_screen = meal_plan_screen;
-        this.container = container;
-        this.mealManagerInDB = false;
-        this.mealNo = meal_plan_screen.getCurrentMealNo() + 1;
-
-
-        ///############################
-        //
-        ///############################
-        this.tempPlanID = meal_plan_screen.getTempPlanID();
-        this.planID = meal_plan_screen.getPlanID();
-        this.db = meal_plan_screen.getDb();
-
-        //##############################################################################################################
         // Getting user input for Meal Name
         //##############################################################################################################
-        String newMealName = JOptionPane.showInputDialog("Input Meal Name?");
 
-        if (newMealName == null || newMealName.length() == 0)
+        // Get User Input
+        String newMealName = JOptionPane.showInputDialog(getFrame(),"Input Meal Name?");
+
+        newMealName = inputCheck(false,"name", newMealName, currentMealName);
+
+        if(newMealName == null) // Error occurred in validation checks above
         {
-            JOptionPane.showMessageDialog(null, "\n\nPlease Input A Valid Name With 1+ Characters!");
             return;
         }
 
         //#############################################
         // Input Time
         //#############################################
-        String newMealTime = createTimeString();
+        // User info prompt
+        String newMealTime = JOptionPane.showInputDialog("Input Meal Time etc \"09:00\"?");
 
-        if (newMealTime.equals("void"))
+        newMealTime = inputCheck(true,"time", newMealTime, currentMealTime);
+
+        if(newMealTime == null) // Error occurred in validation checks above
         {
-            return;
-        }
-
-        //##############################################################################################################
-        // Does The Chosen Meal Name Exist Within Temp Plan Or Original Plan
-        //##############################################################################################################
-
-        /*
-
-           String mealInTempPlan = String.format("""
-                        SELECT Meal_Name FROM mealsInPlan
-                        WHERE
-                        	Meal_Name = '%s' AND (PlanID = %s OR PlanID = %s)
-                        OR
-                            Meal_Time = '%s' AND (PlanID = %s OR PlanID = %s)
-                        OR
-                            `Meal_Time` > '%s' AND (PlanID = %s OR PlanID = %s)
-
-                        LIMIT 1;""",
-                newMealName, tempPlanID, planID,
-                newMealTime, tempPlanID, planID,
-                newMealTime, tempPlanID, planID);
-         */
-
-        String mealInTempPlan = String.format("""
-                        SELECT Meal_Name FROM mealsInPlan
-                        WHERE
-                        	Meal_Name = '%s' AND (PlanID = %s OR PlanID = %s)
-                        OR  
-                            Meal_Time = '%s' AND (PlanID = %s OR PlanID = %s)                                 
-                                                                   	
-                        LIMIT 1;""",
-                newMealName, tempPlanID, planID,
-                newMealTime, tempPlanID, planID);
-
-        System.out.printf("""
-                \n\nMealManager(Meal_Plan_Screen meal_plan_screen, Container container) 
-                
-                %s
-                """, mealInTempPlan);
-
-        if (!(db.getSingleColumnQuery(mealInTempPlan) == null))
-        {
-            JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nMeal Name / Time Already Exists Within This Plan!! \nOr, Meal Time is lower than previously entered meals!");
             return;
         }
 
@@ -193,7 +143,25 @@ public class MealManager
         }
 
         mealInPlanID = Integer.valueOf(results[0]);
-        savedMealTime = newMealTime;
+
+        //##############################################################################################################
+        // Set Name & Time Variables
+        //##############################################################################################################
+        setMealNameVariables(false, newMealName, newMealName); // Set MealName Variables
+        setTimeVariables(false, newMealTime, newMealTime);     // Set MealTime Variables
+
+        meal_plan_screen.addMealManger(this);
+        setMealManagerInDB(false);
+
+        this.meal_plan_screen = meal_plan_screen;
+        this.container = container;
+
+        ///############################
+        //
+        ///############################
+        this.tempPlanID = meal_plan_screen.getTempPlanID();
+        this.planID = meal_plan_screen.getPlanID();
+        this.db = meal_plan_screen.getDb();
 
         //##############################################################################################################
         // SetUP
@@ -209,34 +177,11 @@ public class MealManager
         // Add SubMeal To Meal & MealManger Processes
         //##############################################################################################################
         meal_plan_screen.addMealManger(this);
-        meal_plan_screen.increaseMealNo();
 
         //##############################################################################################################
         // Sort MealPlan GUI Out
         //##############################################################################################################
         scroll_To_The_End();
-    }
-
-    private String createTimeString()
-    {
-        try
-        {
-            String newMealTime = JOptionPane.showInputDialog("Input Meal Time etc \"09:00\"?");
-
-            DateTimeFormatter strictTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
-                    .withResolverStyle(ResolverStyle.STRICT);
-
-            LocalTime.parse(newMealTime, strictTimeFormatter);
-
-            System.out.printf("\n\ncreateTimeString() %s:00", newMealTime);
-
-            return newMealTime += ":00";
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null, "\n\nPlease Input A Valid Time etc \"09:00\"?");
-            return "void";
-        }
     }
 
     //##################################################################################################################
@@ -250,7 +195,6 @@ public class MealManager
         this.db = meal_plan_screen.getDb();
         this.gbc = meal_plan_screen.getGbc();
         this.macrosLeft_JTable = meal_plan_screen.getMacrosLeft_JTable();
-        this.frame = meal_plan_screen.getFrame();
 
         ///############################
         // Lists & Arraylists & Maps
@@ -496,7 +440,6 @@ public class MealManager
     //##################################################################################################################
     // Actions
     //##################################################################################################################
-
     private void scroll_To_The_End()
     {
         //##############################################################################################################
@@ -513,11 +456,10 @@ public class MealManager
     //##################################################################################################################
     // Button Actions
     //##################################################################################################################
-
     private Boolean areYouSure(String process)
     {
-        int reply = JOptionPane.showConfirmDialog(null, String.format("Are you sure you want to %s, \nany unsaved changes will be lost in this Table! \nDo you want to %s?", process, process),
-                "Meal Notification", JOptionPane.YES_NO_OPTION); //HELLO Edit
+        int reply = JOptionPane.showConfirmDialog(getFrame(), String.format("You are requesting to %s ! \n\nAre you sure you want to %s?", process, process),
+                "Notification", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
         if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
         {
@@ -527,81 +469,221 @@ public class MealManager
     }
 
     //#################################################################################
-    // Edit BTN
+    // Edit Time  BTN
     //#################################################################################
     public void edit_Name_BTN_Action()// Update method to update time aswell
     {
-        //###################################
-        // Update MealName
-        //###################################
-        String newMealName = JOptionPane.showInputDialog("Input Meal Name?");
+        //#########################################################################################################
+        // Validation Checks
+        //#########################################################################################################
 
-        if (newMealName == null || newMealName.length() == 0)
+        // Get User Input
+        String inputMealName = JOptionPane.showInputDialog(getFrame(),"Input Meal Name?");
+
+        inputMealName = inputCheck(false,"name", inputMealName, currentMealName);
+
+        if(inputMealName == null) // Error occurred in validation checks above
         {
-            JOptionPane.showMessageDialog(frame, "\n\nNew Meal Name Cannot Be Empty!!");
             return;
         }
 
-        newMealName = StringUtils.capitalize(newMealName).trim();
-
-        //########################################
+        //#########################################################################################################
         // Update
-        //########################################
+        //#########################################################################################################
+
         String uploadQuery = String.format(""" 
                 UPDATE mealsInPlan
                 SET Meal_Name = '%s'
-                WHERE PlanID = %s AND  MealInPlanID = %s;""", newMealName, tempPlanID, mealInPlanID);
+                WHERE PlanID = %s AND  MealInPlanID = %s;""", inputMealName, tempPlanID, mealInPlanID);
 
-        //##########################################
-        // Upload Into Database Table
-        //##########################################
         if (!db.uploadData(uploadQuery, false))
         {
-            JOptionPane.showMessageDialog(null, "\n\nUnable to successfully change this  meals name! \n\nMaybe he selected timeframe  meal name already exists within this meal plan!!");
+            JOptionPane.showMessageDialog(getFrame(), "\n\nUnable to successfully change this  meals name! \n\nMaybe he selected meal name already exists within this meal plan!!");
             return;
         }
 
-        //##########################################
+        //#########################################################################################################
         // Change Button Text & Related Variables
-        //##########################################
-        collapsibleJpObj.setIconBtnText(newMealName);
-        hasMealNameBeenChanged = true;
+        //#########################################################################################################
+
+        // Success MSG
+        JOptionPane.showMessageDialog(getFrame(), String.format("Successfully, changed meal name from ' %s ' to ' %s ' ",currentMealName, inputMealName));
+
+        collapsibleJpObj.setIconBtnText(inputMealName);
+        setMealNameVariables(true, savedMealName, inputMealName);  // Set Meal Name Variables
+        total_Meal_View_Table.updateTotalMealTable(); // Make Updates Visible
     }
 
     public void editTime_Btn_Action()
     {
-        //###################################
-        // Update MealTime
-        //###################################
-        String newMealTime = createTimeString();
-        if (newMealTime.equals("void"))
+        //#########################################################################################################
+        // Validation Checks
+        //#########################################################################################################
+
+        // User info prompt
+        String inputMealTime = JOptionPane.showInputDialog("Input Meal Time etc \"09:00\"?");
+
+        inputMealTime = inputCheck(false,"time", inputMealTime, currentMealTime);
+
+        if(inputMealTime == null) // Error occurred in validation checks above
         {
             return;
         }
 
-        //########################################
+        //#########################################################################################################
         // Update
-        //########################################
+        //#########################################################################################################
         String uploadQuery = String.format(""" 
                 UPDATE mealsInPlan
                 SET Meal_Time = '%s'
-                WHERE PlanID = %s AND  MealInPlanID = %s; """, newMealTime, tempPlanID, mealInPlanID);
+                WHERE PlanID = %s AND  MealInPlanID = %s; """, inputMealTime, tempPlanID, mealInPlanID);
+
+        System.out.printf("\n\neditTime_Btn_Action() uploadQuery = \n%s", uploadQuery);
 
         //##########################################
         // Upload Into Database Table
         //##########################################
         if (!db.uploadData(uploadQuery, false))
         {
-            JOptionPane.showMessageDialog(null, "\n\nUnable to successfully change this  meals name! \n\nMaybe he selected timeframe  meal name already exists within this meal plan!!");
+            JOptionPane.showMessageDialog(null, "\n\nUnable to successfully change this  meals time! \n\nMaybe he selected timeframe  meal name already exists within this meal plan!!");
             return;
         }
 
-        //##########################################
+        //#########################################################################################################
         // Change Button Text & Related Variables
-        //##########################################
-        this.newMealTime = newMealTime;
-        hasMealTimeBeenChanged = true;
+        //#########################################################################################################
+        //
+        // Success MSG
+        JOptionPane.showMessageDialog(getFrame(), String.format("Successfully, changed meal time from '%s' to '%s'", currentMealTime, inputMealTime));
+        setTimeVariables(true, savedMealTime, inputMealTime); // Set Meal Time Variables
+        total_Meal_View_Table.updateTotalMealTable(); // Make Updates Visible
+    }
 
+    private String inputCheck(boolean skipConfirmation, String variableName, String input, String currentVariableValue)
+    {
+        //#########################################################################################################
+        // Validation Checks
+        //#########################################################################################################
+
+        // User Cancels dialog box
+        if(input == null)
+        {
+            return null;
+        }
+
+        // User entered nothing in text field
+        if (input.length() == 0)
+        {
+            JOptionPane.showMessageDialog(getFrame(), String.format("\n\nAssigned Meal %s Cannot Be Empty!!", variableName));
+            return null;
+        }
+
+        // User enters same meal name
+        if(input.equals(currentVariableValue))
+        {
+            JOptionPane.showMessageDialog(getFrame(), String.format("This meal already has the value '%s' as a %s !!", variableName, currentVariableValue));
+            return null;
+        }
+
+        // #########################################
+        // Format Variables & Query
+        // #########################################
+        String query = "";
+
+        if(variableName.equals("time")) // Validate time String
+        {
+            //  If Invalid Meal Time returned
+            input = createTimeString(input);
+
+            if (input.equals("void"))
+            {
+                return null;
+            }
+
+            query = String.format("""
+                    SELECT IFNULL((
+                        SELECT Meal_Time
+                        FROM mealsInPlan
+                        WHERE PlanID = %s AND Meal_Time = '%s'
+                        LIMIT 1
+                    ), 'N/A') AS Meal_Time;
+                    """, tempPlanID, input);
+        }
+        else if(variableName.equals("name"))
+        {
+            input = StringUtils.capitalize(input.toLowerCase().trim());
+
+            query = String.format("""
+                    SELECT IFNULL((
+                        SELECT Meal_Name
+                        FROM mealsInPlan
+                        WHERE PlanID = %s AND Meal_Name = '%s'
+                        LIMIT 1
+                    ), 'N/A') AS Meal_Name;
+                    """, tempPlanID, input);
+        }
+
+        // #########################################
+        // Check DB If Value Exist
+        // #########################################
+
+        System.out.printf("\n\nQuery: \n%s", query);
+
+        ArrayList<String> results = db.getSingleColumnQuery_ArrayList(query);
+
+        if(results==null) { return null;} // Error occurred during script
+
+        if(! results.get(0).equals("N/A")) // Means value already exists, returns N/A if the value doesn
+        {
+            JOptionPane.showMessageDialog(getFrame(), String.format("A meal in this plan already has a meal %s of '%s' !!", variableName, input));
+            return null;
+        }
+
+        //#########################################################################################################
+        // User Confirmation
+        //#########################################################################################################
+
+        // If requested not to skip a confirmation msg prompt confirmation
+        if(! skipConfirmation && ! areYouSure(String.format("change meal %s from '%s' to '%s'", variableName, currentVariableValue, input)))
+        {
+            return null;
+        }
+
+        return input;
+    }
+
+    private String createTimeString(String newMealTime)
+    {
+        try
+        {
+            DateTimeFormatter strictTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+                    .withResolverStyle(ResolverStyle.STRICT);
+
+            LocalTime.parse(newMealTime, strictTimeFormatter);
+
+            System.out.printf("\n\ncreateTimeString() %s:00", newMealTime);
+
+            return newMealTime += ":00";
+        }
+        catch (Exception e)
+        {
+            JOptionPane.showMessageDialog(null, "\n\nPlease Input A Valid Time etc \"09:00\"?");
+            return "void";
+        }
+    }
+
+    private void setTimeVariables(boolean hasMealTimeBeenChanged, String savedMealTime, String currentMealTime)
+    {
+        this.hasMealTimeBeenChanged = hasMealTimeBeenChanged;
+        this.savedMealTime = savedMealTime;
+        this.currentMealTime = currentMealTime;
+    }
+
+    private void setMealNameVariables(boolean hasMealNameBeenChanged, String savedMealName, String currentMealName)
+    {
+        this.hasMealNameBeenChanged = hasMealNameBeenChanged;
+        this.savedMealName = savedMealName;
+        this.currentMealName = currentMealName;
     }
 
     //#################################################################################
@@ -644,7 +726,7 @@ public class MealManager
     }
 
     //#################################################################################
-    // Delete
+    // Delete BTN Methods
     //#################################################################################
     private void setHasMealPlannerBeenDeleted(boolean x)
     {
@@ -710,7 +792,7 @@ public class MealManager
 
         if (!(db.uploadData_Batch_Altogether(new String[]{query1, query2, query3})))
         {
-            JOptionPane.showMessageDialog(frame, "\n\n1.)  Error MealManager.ingredientsTableHasBeenDeleted() \nUnable to Delete Selected Meal From DB!");
+            JOptionPane.showMessageDialog(getFrame(), "\n\n1.)  Error MealManager.ingredientsTableHasBeenDeleted() \nUnable to Delete Selected Meal From DB!");
             return;
         }
 
@@ -857,7 +939,7 @@ public class MealManager
             if (process.equals("saved"))
             {
                 updateMealName = collapsibleJpObj.getBtnText();
-                updateMealTime = newMealTime;
+                updateMealTime = currentMealName;
             }
             // else is the default value (reset)
 
@@ -881,7 +963,7 @@ public class MealManager
             {
                 if (process.equals("saved"))
                 {
-                    updateMealTime = newMealTime;
+                    updateMealTime = currentMealName;
                 }
                 uploadQuery = String.format("UPDATE mealsInPlan SET  Meal_Time = '%s' WHERE PlanID = %s AND  MealInPlanID = %s;", updateMealTime, toPlanID, mealInPlanID);
             }
@@ -945,6 +1027,10 @@ public class MealManager
         // Reset IngredientsTable Data
         //##############################################################################################
         reloadingIngredientsTableDataFromRefresh(true);
+
+        // Reset Time & MealName Variables
+        setTimeVariables(false,savedMealTime, savedMealTime);
+        setMealNameVariables(false, savedMealName, savedMealName);
     }
 
     public void reloadingIngredientsTableDataFromRefresh(boolean updateMacrosLeft)
@@ -1007,14 +1093,19 @@ public class MealManager
     {
         // ###############################################################################
         // Transferring Meals & Ingredients from FromPlan to toPlan
-        // ##############################################################################
+        // ###############################################################################
         if (!(transferMealDataToPlan("saving", tempPlanID, planID))) // transfer meals and ingredients from temp plan to original plan
         {
             System.out.println("\n\n#################################### \nError MealManager saveMealData()");
 
-            JOptionPane.showMessageDialog(frame, "\n\n1.)  Error \nUnable to save this Meal and its sub-meals");
+            JOptionPane.showMessageDialog(getFrame(), "\n\n1.)  Error \nUnable to save this Meal and its sub-meals");
             return;
         }
+
+        // Set Variables
+        setTimeVariables(true,currentMealTime, currentMealTime);
+        setMealNameVariables(true, currentMealName, currentMealName);
+        setMealManagerInDB(true);
 
         saveData(true);
     }
@@ -1056,14 +1147,9 @@ public class MealManager
         // #####################################
         if (errorCount > 0)
         {
-            JOptionPane.showMessageDialog(frame, "\n\n Error \n1.) Unable to updateTableModelData() all sub-meals in meal! \n\nPlease retry again!");
+            JOptionPane.showMessageDialog(getFrame(), "\n\n Error \n1.) Unable to updateTableModelData() all sub-meals in meal! \n\nPlease retry again!");
             return;
         }
-
-        // ##############################################################################
-        //
-        // ##############################################################################
-        setMealManagerInDB(true);
 
         // ##############################################################################
         // Save TotalMealTable
@@ -1075,7 +1161,7 @@ public class MealManager
         // ##############################################################################
         if (showUpdateMessage)
         {
-            JOptionPane.showMessageDialog(frame, "\n\nAll SubMeals Within Meal Have Successfully Saved!");
+            JOptionPane.showMessageDialog(getFrame(), "\n\nAll SubMeals Within Meal Have Successfully Saved!");
         }
     }
 
@@ -1107,7 +1193,7 @@ public class MealManager
 
     public Frame getFrame()
     {
-        return frame;
+        return meal_plan_screen.getFrame();
     }
 
     //##################################################################################################################

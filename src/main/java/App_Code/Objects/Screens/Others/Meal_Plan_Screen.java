@@ -67,7 +67,7 @@ public class Meal_Plan_Screen extends JPanel
 
     private String planName;
     private Integer tempPlanID = 1, planID;
-    private int containerYPos = 0, mealNo = 0, frameHeight = 1082, frameWidth = 1925;
+    private int containerYPos = 0,  frameHeight = 1082, frameWidth = 1925;
 
     private boolean macroTargetsChanged = false;
 
@@ -463,9 +463,7 @@ public class Meal_Plan_Screen extends JPanel
                 //#####################################################
                 // Create Meal Component
                 //#####################################################
-                mealNo++;
-
-                MealManager meal = new MealManager(this, scrollJPanelCenter, mealInPlanID, mealNo, mealName, mealTime, subMealsInMealArrayList);
+                MealManager meal = new MealManager(this, scrollJPanelCenter, mealInPlanID,  mealName, mealTime, subMealsInMealArrayList);
                 mealManagerArrayList.add(meal);
 
                 //######################################################
@@ -1368,16 +1366,6 @@ public class Meal_Plan_Screen extends JPanel
         return containerYPos;
     }
 
-    public int getCurrentMealNo()
-    {
-        return mealNo;
-    }
-
-    public void increaseMealNo()
-    {
-        mealNo++;
-    }
-
     public void addMealManger(MealManager mealManager)
     {
         mealManagerArrayList.add(mealManager);
@@ -1386,11 +1374,6 @@ public class Meal_Plan_Screen extends JPanel
     //###########################################
     // Lists
     //###########################################
-    public String getDatabaseName()
-    {
-        return databaseName;
-    }
-
     public String[] getMeal_total_columnNames()
     {
         return meal_total_columnNames;
