@@ -50,6 +50,4 @@ INSERT IGNORE INTO ingredients_info (IngredientID, Measurement, Ingredient_Name,
 (null,("Grams"),("Bertolli Olive Oil Spread"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Dairy"),(100.00),(0),(0.50),(0.50),(0.50),(0.00),(59.00),(17.00),(1.10),(0.00),(0.00),(531.00)),
 (null,("Grams"),("Allinson Self-Raising Wholemeal Flour"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Flour"),(100.00),(60),(11.00),(69.3),(1.1),(10.00),(2.4),(0.4),(1.1),(0.00),(0.00),(359.00)),
 (null,("Grams"),("Plantin"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Fruit"),(100.00),(40),(1.3),(32.00),(15.00),(2.3),(0.4),(0.1),(0.00),(0.00),(0.00),(122.00)),
-(null,("Grams"),("Billingtons Brown Sugar"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Sugar"),(100.00),(70),(0.00),(99.00),(99.00),(0.00),(0.00),(0.00),(0.25),(0.00),(0.00),(398.00)),
-(null,("Grams"),("aNew"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Breads"),(1.00),(2),(3.00),(4.00),(5.00),(6.00),(7.00),(8.00),(9.00),(10.00),(11.00),(12.00)),
-(null,("Grams"),("abbbaa"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Breads"),(1.00),(2),(3.00),(4.00),(5.00),(6.00),(7.00),(8.00),(9.00),(10.00),(11.00),(12.00));
+(null,("Grams"),("Billingtons Brown Sugar"),(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = "Sugar"),(100.00),(70),(0.00),(99.00),(99.00),(0.00),(0.00),(0.00),(0.25),(0.00),(0.00),(398.00));
