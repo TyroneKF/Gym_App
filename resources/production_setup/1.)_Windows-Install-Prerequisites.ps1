@@ -74,7 +74,7 @@ try {
     Write-Host "Root password set successfully."
 }
 catch {
-    Write-Warning "Failed to set root password — it may already be set."
+    Write-Warning "Failed to set root password  it may already be set."
 }
 
 $env:MYSQL_PWD = $MySQLRootPassword
