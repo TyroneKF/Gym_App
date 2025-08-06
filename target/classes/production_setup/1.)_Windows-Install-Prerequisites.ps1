@@ -46,6 +46,10 @@ Write-Host "Installing MySQL Server..."
 choco install mysql -y
 choco install mysql.workbench -y
 
+Write-Host "Reloading Environment Variables ..."
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+
+
 # Set MySQL root password
 $MySQLRootPassword = "password"
 
@@ -70,7 +74,7 @@ try {
     Write-Host "Root password set successfully."
 }
 catch {
-    Write-Warning "Failed to set root password — it may already be set."
+    Write-Warning "Failed to set root password  it may already be set."
 }
 
 $env:MYSQL_PWD = $MySQLRootPassword
