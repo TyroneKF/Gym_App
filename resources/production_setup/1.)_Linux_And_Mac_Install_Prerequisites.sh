@@ -5,11 +5,11 @@ clear
 
 printf "\n\n=================================================="
 printf "\nInstalling OpenJDK 17 "
-printf "\n================================================== \n\n"
+printf "\n=================================================="
 
 # -------- Step 1: System Updates & Java --------
-echo "[1/6] Updating packages..."
-echo
+printf "\n\n[1/6] Updating packages...\n\n"
+
 sudo apt update
 
 printf "\n\n[2/6] Installing OpenJDK 17... \n\n"
@@ -22,11 +22,11 @@ java -version
 
 printf "\n\n=================================================="
 printf "\nInstalling MySQL"
-printf "\n==================================================\n\n"
+printf "\n=================================================="
 
 # -------- Step 2: Install MySQL Server --------
 
-printf "[3/6] Installing MySQL Server...\n\n"
+printf "\n\n[3/6] Installing MySQL Server...\n\n"
 
 sudo apt purge -y mysql-server
 sudo apt autoremove --purge -y
