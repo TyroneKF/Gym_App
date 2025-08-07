@@ -24,9 +24,7 @@ fi
 printf "\n\n"
 
 # Run your JAR (edit filename if needed)
-java -Denv.path="$(pwd)" -jar Gym_App.jar
- 
-#java -jar target/Gym_App.jar
+java -jar Gym_App.jar
 
 # Pause at end (press Enter to continue)
 read -p "Press Enter to continue..."

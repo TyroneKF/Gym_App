@@ -1,13 +1,11 @@
 package App_Code.Objects.Database_Objects.JDBC;
 
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.jdbc.ScriptRunner;
 
 import javax.swing.*;
 import java.io.*;
 import java.math.BigDecimal;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.sql.*;
@@ -30,6 +28,8 @@ public class MyJDBC
             initial_db_connection = "jdbc:mysql://localhost:3306",
             db_Connection_Address = initial_db_connection;
 
+    private Connection con;
+
     private final String
             line_Separator = "############################################################################################################################",
             middle_line_Separator = "###########################################################################################";
@@ -46,39 +46,67 @@ public class MyJDBC
     //##################################################################################################################
     public MyJDBC(String host, String port, String userName, String password, String databaseName, String db_Script_Folder_Address, String script_List_Name)
     {
+        //##############################################
+        //  Setting Variables
+        //##############################################
         this.userName = userName;
         this.password = password;
         this.databaseName = databaseName.toLowerCase();
-        this.initial_db_connection = String.format("jdbc:mysql://%s:%s",host,port);
+        this.initial_db_connection = String.format("jdbc:mysql://%s:%s", host, port);
+        db_Connection_Address = String.format("%s/%s", initial_db_connection, databaseName);
 
         //##############################################
-        //  Check if DB has already been connected
+        //  Checking DB & User Credentials Are Valid
         //##############################################
-        System.out.printf("\n\nChecking if DB '%s' EXISTS! ", databaseName);
+        System.out.printf("\n\n%s \nTesting User Credentials: '%s@%s' & DB: %s \n%s ", line_Separator, userName, host, databaseName, line_Separator);
 
-        if (!check_IF_DB_Exists(databaseName))
+        try
         {
-            //##############################################
-            // Setup Database data
-            //##############################################
-            System.out.printf("\n\n%s \nCreating DB tables! \n%s", middle_line_Separator, middle_line_Separator);
-            if (! (run_SQL_Script_Folder(initial_db_connection, db_Script_Folder_Address, script_List_Name)))
+            DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());  //Registering the Driver
+            con = DriverManager.getConnection(db_Connection_Address, userName, password);
+
+            System.out.println("\n\nSuccessful: User & Database Credentials are valid !");
+        }
+        catch (SQLException e)
+        {
+            String sqlState = e.getSQLState();
+            String message = e.getMessage();
+            int errorCode = e.getErrorCode();// 2003 = Can't connect to MySQL server, 0	= General connection failure
+
+            if (errorCode==1045) // Access denied (bad username or password)
             {
-                System.out.printf("\n\n%s \nFailed creating DB & Initializing Data! \n%s", line_Separator, line_Separator);
+                System.err.printf("\n\nAccess denied: Incorrect Username ('%s') or Password. \nTry re-running the prerequisites script to setup Credentials!\n\n%s", userName, line_Separator);
+                return;
+            }
+            else if (errorCode==1049) // Unknown database
+            {
+                System.err.printf("\nDatabase Access Denied: '%s' (Unknown database).", databaseName);
+            }
+            else
+            {
+                System.err.printf("\n\nSQL Error Exception: \n\n%s \nSQL State: %s \n\n%s \n\n", message, sqlState, line_Separator);
                 return;
             }
 
-            System.out.printf("\n\n%s \nSuccessfully, created DB & Initialized Data! \n%s", line_Separator, line_Separator);
-        }
-        else
-        {
-            System.out.printf("\n\nDB '%s' exists!!", databaseName);
+            // ##########################################
+            // Re-setup Database
+            // ##########################################
+            System.out.printf("\n\n\n%s\nAttempting to create Database Structure! \n%s", line_Separator, line_Separator);
+
+            if (!(run_SQL_Script_Folder(initial_db_connection, db_Script_Folder_Address, script_List_Name)))
+            {
+                System.err.printf("\n\n%s \nFailed creating DB & Initializing Data! \n%s", line_Separator, line_Separator);
+                return;
+            }
+
+            System.out.printf("\n\n%s \nSuccessfully, Authenticated using User & DB Credentials! \n%s", line_Separator, line_Separator);
         }
 
+        //##############################################
+        // Set DB Variables
+        //##############################################
         override = false;
         db_Connection_Status = true;
-        db_Connection_Address = String.format("%s/%s", db_Connection_Address, databaseName);
-
     }
 
 
@@ -93,24 +121,17 @@ public class MyJDBC
         //##############################################
         System.out.printf("\n\nChecking if DB '%s' EXISTS! ", databaseName);
 
-        if (!check_IF_DB_Exists(databaseName))
+        //##############################################
+        // Setup Database data
+        //##############################################
+        System.out.printf("\n\n%s \nCreating DB tables! \n%s", middle_line_Separator, middle_line_Separator);
+        if (!(run_SQL_Script_Folder(initial_db_connection, db_Script_Folder_Address, script_List_Name)))
         {
-            //##############################################
-            // Setup Database data
-            //##############################################
-            System.out.printf("\n\n%s \nCreating DB tables! \n%s", middle_line_Separator, middle_line_Separator);
-            if (! (run_SQL_Script_Folder(initial_db_connection, db_Script_Folder_Address, script_List_Name)))
-            {
-                System.out.printf("\n\n%s \nFailed creating DB & Initializing Data! \n%s", line_Separator, line_Separator);
-                return;
-            }
+            System.err.printf("\n\n%s \nFailed creating DB & Initializing Data! \n%s", line_Separator, line_Separator);
+            return;
+        }
 
-            System.out.printf("\n\n%s \nSuccessfully, created DB & Initialized Data! \n%s", line_Separator, line_Separator);
-        }
-        else
-        {
-            System.out.printf("\n\nDB '%s' exists!!", databaseName);
-        }
+        System.out.printf("\n\n%s \nSuccessfully, created DB & Initialized Data! \n%s", line_Separator, line_Separator);
 
         override = false;
         db_Connection_Status = true;
@@ -123,37 +144,35 @@ public class MyJDBC
     //##################################################################################################################
     public boolean run_SQL_Script_Folder(String connection, String db_Script_Folder_Address, String script_List_Name)
     {
-        String path = String.format("%s%s", db_Script_Folder_Address, script_List_Name); // don't include a / between the files
+        String path = String.format("%s/%s", db_Script_Folder_Address, script_List_Name); // don't include a / between the files
 
         InputStream listStream = getClass().getResourceAsStream(path);
         if (listStream==null)
         {
-            System.out.printf("\n\nrun_SQL_Script_Folder() Error Loading = NULL \n%s", path);
+            System.err.printf("\n\nrun_SQL_Script_Folder() Error Loading = NULL \n%s", path);
             return false;
         }
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(listStream, StandardCharsets.UTF_8))) // resources automatically released in try block / no need for reader.close()
         {
-            DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());  //Registering the Driver
-            Connection con = DriverManager.getConnection(connection, userName, password);
+            con = DriverManager.getConnection(connection, userName, password);
 
             Iterator<String> it = br.lines().iterator();
             while (it.hasNext())
             {
                 String fileName = it.next();
-                System.out.printf("\nrun_SQL_Script_Folder() Executing script: %s \n", fileName);
+                System.out.printf("\nrun_SQL_Script_Folder() Executing script: %s \n\n", fileName);
 
-                InputStream scriptStream = getClass().getResourceAsStream(db_Script_Folder_Address + fileName);
+                InputStream scriptStream = getClass().getResourceAsStream(String.format("%s/%s",db_Script_Folder_Address,fileName));
+
                 if (scriptStream==null)
                 {
-                    System.err.println("\nrun_SQL_Script_Folder() Script not found: " + fileName);
+                    System.err.printf("\nrun_SQL_Script_Folder() Script not found: '%s'",fileName);
                     return false;
                 }
 
                 try // Execute Script
                 {
-                    System.out.printf("\nrun_SQL_Script_Folder() executing script: %s", fileName);
-
                     Reader reader = new InputStreamReader(scriptStream, StandardCharsets.UTF_8);
                     new ScriptRunner(con).runScript(reader);
 
@@ -161,7 +180,7 @@ public class MyJDBC
                 }
                 catch (Exception e)
                 {
-                    System.err.printf("\nrun_SQL_Script_Folder(): error executing file: %s \n\n%s\n", fileName, e.getMessage());
+                    System.err.printf("\n\nrun_SQL_Script_Folder(): error executing file: %s \n\n%s\n", fileName, e.getMessage());
                     e.printStackTrace();
 
                     throw new Exception(String.format("\nrun_SQL_Script_Folder() ERROR:  %s", fileName));
@@ -170,7 +189,7 @@ public class MyJDBC
         }
         catch (Exception e)
         {
-            System.out.printf("\n\nrun_SQL_Script_Folder() Error Writing / Reading to file \n%s", e);
+            System.err.printf("\n\nrun_SQL_Script_Folder() Error Writing / Reading to file \n%s", e);
             return false;
         }
 
@@ -222,7 +241,7 @@ public class MyJDBC
         }
         catch (Exception e)
         {
-            System.out.printf("\n\nwriteTxtToSQLFile() Error Writing / Reading to file \n%s", e);
+            System.err.printf("\n\nwriteTxtToSQLFile() Error Writing / Reading to file \n%s", e);
             return false;
         }
 
@@ -236,12 +255,13 @@ public class MyJDBC
         }
         catch (Exception e)
         {
-            System.out.printf("\n\nwriteTxtToSQLFile() Error Replacing Temp File \n%s", e);
+            System.err.printf("\n\nwriteTxtToSQLFile() Error Replacing Temp File \n%s", e);
             return false;
         }
     }
 
-    public boolean replaceTxtInSQLFile(String sqlFilePath, boolean multiValues, String txt_To_Find, String txt_Replacement)
+    public boolean replaceTxtInSQLFile(String sqlFilePath, boolean multiValues, String txt_To_Find, String
+            txt_Replacement)
     {
 
         //########################################
@@ -300,7 +320,7 @@ public class MyJDBC
         }
         catch (Exception e)
         {
-            System.out.printf("\n\nreplaceTxtInSQLFile() Error Writing / Reading to file \n%s", e);
+            System.err.printf("\n\nreplaceTxtInSQLFile() Error Writing / Reading to file \n%s", e);
             return false;
         }
 
@@ -314,7 +334,7 @@ public class MyJDBC
         }
         catch (Exception e)
         {
-            System.out.printf("\n\nreplaceTxtInSQLFile() Error Replacing Temp File \n%s", e);
+            System.err.printf("\n\nreplaceTxtInSQLFile() Error Replacing Temp File \n%s", e);
             return false;
         }
     }
@@ -394,7 +414,7 @@ public class MyJDBC
         }
         catch (Exception e)
         {
-            System.out.printf("\n\ndeleteTxtInFile() Error Writing / Reading to file \n%s", e);
+            System.err.printf("\n\ndeleteTxtInFile() Error Writing / Reading to file \n%s", e);
             return false;
         }
 
@@ -408,7 +428,7 @@ public class MyJDBC
         }
         catch (Exception e)
         {
-            System.out.printf("\n\ndeleteTxtInFile() Error Replacing Temp File \n%s", e);
+            System.err.printf("\n\ndeleteTxtInFile() Error Replacing Temp File \n%s", e);
             return false;
         }
     }
@@ -463,7 +483,7 @@ public class MyJDBC
         }
         catch (Exception e)
         {
-            System.out.printf("\n\n  @uploadData() \nQuery: %s \n%s", query, e);
+            System.err.printf("\n\n  @uploadData() \nQuery: %s \n%s", query, e);
             JOptionPane.showMessageDialog(null, "Database Error, uploading Query:\n\nCheck Output ", "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
         }
 
@@ -509,12 +529,12 @@ public class MyJDBC
         }
         catch (Exception e)
         {
-            System.out.printf("\n\n @uploadData_Batch() \n\nQuery:\n ");
+            System.err.printf("\n\n @uploadData_Batch() \n\nQuery:\n ");
             for (String query : queries)
             {
-                System.out.printf("\n\n%s", query);
+                System.err.printf("\n\n%s", query);
             }
-            System.out.printf("\n\n%s", e);
+            System.err.printf("\n\n%s", e);
 
             JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
         }
@@ -525,7 +545,8 @@ public class MyJDBC
     /*
       Each query upload is executed separately and the query after, it can notice the changes
      */
-    public Boolean uploadData_Batch_Independently(String[] queries) // HELLO Can't this method and the one below refactored
+    public Boolean uploadData_Batch_Independently(String[]
+                                                          queries) // HELLO Can't this method and the one below refactored
     {
         if (!(get_DB_Connection_Status()))
         {
@@ -560,12 +581,12 @@ public class MyJDBC
         }
         catch (Exception e)
         {
-            System.out.printf("\n\n @uploadData_Batch() \n\nQuery:\n ");
+            System.err.printf("\n\n @uploadData_Batch() \n\nQuery:\n ");
             for (String query : queries)
             {
-                System.out.printf("\n\n%s", query);
+                System.err.printf("\n\n%s", query);
             }
-            System.out.printf("\n\n%s", e);
+            System.err.printf("\n\n%s", e);
 
             JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
         }
@@ -607,12 +628,12 @@ public class MyJDBC
         }
         catch (Exception e)
         {
-            System.out.printf("\n\n @uploadData_Batch() \n\nQuery:\n ");
+            System.err.printf("\n\n @uploadData_Batch() \n\nQuery:\n ");
             for (String query : queries)
             {
-                System.out.printf("\n\n%s", query);
+                System.err.printf("\n\n%s", query);
             }
-            System.out.printf("\n\n%s", e);
+            System.err.printf("\n\n%s", e);
 
             JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
         }
@@ -676,7 +697,7 @@ public class MyJDBC
         }
         catch (Exception e)
         {
-            System.out.printf("\n\n@getQueryResults()\n ERROR from query: \n\n'' %s '' \n\nException Msg: \n\n'' %s ''", query, e);
+            System.err.printf("\n\n@getQueryResults()\n ERROR from query: \n\n'' %s '' \n\nException Msg: \n\n'' %s ''", query, e);
             JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
             //System.exit(1);
 
@@ -732,7 +753,7 @@ public class MyJDBC
         }
         catch (Exception e)
         {
-            System.out.printf("\n\n  @getQueryResults() ERROR from query %s \n\n  %s", query, e);
+            System.err.printf("\n\n  @getQueryResults() ERROR from query %s \n\n  %s", query, e);
             JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
             //System.exit(1);
         }
@@ -808,8 +829,8 @@ public class MyJDBC
         }
         catch (Exception e)
         {
-            System.out.printf("\n\n@getSingleColumnQuery() ERROR from query \n\n'%s' \n\n%s\n\n", query, e);
-           // e.printStackTrace();
+            System.err.printf("\n\n@getSingleColumnQuery() ERROR from query \n\n'%s' \n\n%s\n\n", query, e);
+            // e.printStackTrace();
 
             JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
             //System.exit(1);
@@ -885,9 +906,9 @@ public class MyJDBC
         }
         catch (Exception e)
         {
-            System.out.printf("\n\n@getSingleColumnQuery_ArrayList() ERROR from query: \n\n'%s' \n\n%s\n\n", query, e);
+            System.err.printf("\n\n@getSingleColumnQuery_ArrayList() ERROR from query: \n\n'%s' \n\n%s\n\n", query, e);
 
-           // e.printStackTrace();
+            // e.printStackTrace();
             JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
         }
         return null;
@@ -960,8 +981,8 @@ public class MyJDBC
         }
         catch (Exception e)
         {
-            System.out.printf("\n\n@getSingleColumnQuery_AlphabeticallyOrderedTreeSet() ERROR from query \n\n'%s' \n\n%s\n", query, e);
-           // e.printStackTrace();
+            System.err.printf("\n\n@getSingleColumnQuery_AlphabeticallyOrderedTreeSet() ERROR from query \n\n'%s' \n\n%s\n", query, e);
+            // e.printStackTrace();
             JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
         }
         return null;
@@ -1066,7 +1087,7 @@ public class MyJDBC
                             }
                             catch (Exception e)
                             {
-                                System.out.printf("\n@getTableDataObject() \nUn-Accounted table data type! \n\n%s", e);
+                                System.err.printf("\n@getTableDataObject() \nUn-Accounted table data type! \n\n%s", e);
                                 JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
                                 return null;
                             }
@@ -1078,7 +1099,7 @@ public class MyJDBC
         }
         catch (Exception e)
         {
-            System.out.printf("\n\n@getTableDataObject() ERROR from query: \n'%s' \n\n %s", query, e);
+            System.err.printf("\n\n@getTableDataObject() ERROR from query: \n'%s' \n\n %s", query, e);
         }
         return null;
     }
@@ -1151,7 +1172,7 @@ public class MyJDBC
         }
         catch (Exception e)
         {
-            System.out.printf("\n\n@getRowsInQuery() ERROR \n%s\n%s", query, e);
+            System.err.printf("\n\n@getRowsInQuery() ERROR \n%s\n%s", query, e);
             JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
             //System.exit(1);
         }

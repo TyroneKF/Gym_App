@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="Gym_App:jar">
+  <artifact type="jar" build-on-make="true" name="Gym_App:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/Gym_App_jar</output-path>
     <root id="archive" name="Gym_App.jar">
       <element id="directory" name="META-INF">
@@ -11,6 +11,7 @@
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/mysql-connector-java-8.0.23.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/commons/commons-lang3/3.12.0/commons-lang3-3.12.0.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/javatuples-1.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/io/github/cdimascio/dotenv-java/3.2.0/dotenv-java-3.2.0.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

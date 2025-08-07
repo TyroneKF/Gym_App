@@ -9,16 +9,19 @@ import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
 import App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Ingredients_Info_Screen;
 import App_Code.Objects.Screens.Others.Loading_Screen.LoadingScreen;
+
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.util.*;
 import java.util.List;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
 public class Meal_Plan_Screen extends JPanel
 {
-   private static boolean
-//          production = true;
-    production = false;
+    private static boolean
+            production = true;
 
     private Collection<String> ingredientsTypesList, storesNamesList;
 
@@ -40,9 +43,11 @@ public class Meal_Plan_Screen extends JPanel
     //##################################################################################################################
     private final static String
             version_no = "00001",
-            databaseName = "gymapp" + version_no,
-            db_Script_List_Folder_Path = "/data/database_scripts/",
             db_Script_List_Name = "0.) Script_List.txt";
+
+    private static String
+            databaseName = "gymapp" + version_no,
+            db_Script_List_Folder_Path = "/data/database_scripts";
 
     private String JFrameName = databaseName;
 
@@ -67,7 +72,7 @@ public class Meal_Plan_Screen extends JPanel
 
     private String planName;
     private Integer tempPlanID = 1, planID;
-    private int containerYPos = 0,  frameHeight = 1082, frameWidth = 1925;
+    private int containerYPos = 0, frameHeight = 1082, frameWidth = 1925;
 
     private boolean macroTargetsChanged = false;
 
@@ -92,20 +97,39 @@ public class Meal_Plan_Screen extends JPanel
 
     String lineSeparator = "###############################################################################";
 
-    //##################################################################################################################
-    // Constructor & Main
-    //##################################################################################################################
+
     public static void main(String[] args)
     {
-        if(production)
+        if (production)
         {
             try
             {
-                String host = System.getenv("DB_HOST");
-                String port = System.getenv("DB_PORT");
-                String user = System.getenv("DB_USER");
-                String password = System.getenv("DB_PASS");
-                String dbName = System.getenv("DB_NAME");
+                /*
+                // Using System Variables (OS LVL)
+                String host = System.getenv("GYM_APP_DB_HOST");
+                String port = System.getenv("GYM_APP_DB_PORT");
+                String user = System.getenv("GYM_APP_DB_USER");
+                String password = System.getenv("GYM_APP_DB_PASS");
+                String dbName = System.getenv("GYM_APP_DB_NAME");
+                */
+
+                String userDirectory = new File("").getAbsolutePath(); // get path file of where this is being executed
+                db_Script_List_Folder_Path = String.format("%s/database_scripts", userDirectory);
+
+                System.out.printf("\n\nDirectory: \n%s \n\nScripts Directory:\n%s\n\n", userDirectory, db_Script_List_Folder_Path);
+
+                Dotenv dotenv = Dotenv.configure()
+                        .directory(userDirectory)
+                        .filename(".env") // instead of '.env', use 'env'
+                        .load();
+
+                String host = dotenv.get("DB_HOST");
+                String port = dotenv.get("DB_PORT");
+                String user = dotenv.get("DB_USER");
+                String password = dotenv.get("DB_PASS");
+
+                String dbName = dotenv.get("DB_NAME");
+                databaseName = dbName;
 
                 if (host==null || port==null || user==null || password==null || dbName==null)
                 {
@@ -131,7 +155,7 @@ public class Meal_Plan_Screen extends JPanel
             }
             catch (Exception e)
             {
-                System.out.printf("\n\nError Meal_Plan_Screen() \n%s", e);
+                System.err.printf("\n\nError Meal_Plan_Screen() \n%s", e);
                 return;
             }
         }
@@ -140,13 +164,36 @@ public class Meal_Plan_Screen extends JPanel
             //############################################################################################################
             // Database Setup
             //#############################################################################################################
-
             try
             {
+                String userDirectory = String.format("%s\\resources\\production_setup", new File("").getAbsolutePath()); // get path file of where this is being executed
+
+                System.out.printf("\n\nDirectory: \n%s \n\nScripts Directory:\n%s\n\n", userDirectory, db_Script_List_Folder_Path);
+
+                Dotenv dotenv = Dotenv.configure()
+                        .directory(userDirectory)
+                        .filename(".env") // instead of '.env', use 'env'
+                        .load();
+
+                String host = dotenv.get("DB_HOST");
+                String port = dotenv.get("DB_PORT");
+                String user = dotenv.get("DB_USER");
+                String password = dotenv.get("DB_PASS");
+                String dbName = dotenv.get("DB_NAME");
+                databaseName = dbName;
+
+                if (host==null || port==null || user==null || password==null || dbName==null)
+                {
+                    System.out.printf("\n\nDB Values: \nhost: %s \nport: %s \nuser: %s \npassword: %s \ndbName: %s",
+                            host, port, user, password, dbName);
+
+                    throw new RuntimeException("Missing one or more required DB environment variables.");
+                }
+
                 //##############################################
                 // Create DB Object & run SQL Script
                 //##############################################
-                MyJDBC db = new MyJDBC("root", "password", databaseName, db_Script_List_Folder_Path, db_Script_List_Name);
+                MyJDBC db = new MyJDBC(host, port, user, password, dbName, db_Script_List_Folder_Path, db_Script_List_Name);
 
                 if (db.get_DB_Connection_Status())
                 {
@@ -159,7 +206,7 @@ public class Meal_Plan_Screen extends JPanel
             }
             catch (Exception e)
             {
-                System.out.printf("\n\n%s", e);
+                System.err.printf("\n\n%s", e);
             }
         }
     }
@@ -172,12 +219,12 @@ public class Meal_Plan_Screen extends JPanel
         // Getting selected plan Info
         //##############################################################################################################
         ArrayList<ArrayList<String>> results1 = db.getMultiColumnQuery(String.format("SELECT PlanID, Plan_Name FROM plans WHERE SelectedPlan = %s;", tempPlanID));
-        ArrayList<String> results = results1 != null ? results1.get(0) : null;
+        ArrayList<String> results = results1!=null ? results1.get(0):null;
 
-        planID = results != null ? Integer.parseInt(results.get(0)) : null;
-        planName = results != null ? results.get(1) : null;
+        planID = results!=null ? Integer.parseInt(results.get(0)):null;
+        planName = results!=null ? results.get(1):null;
 
-        if (planID != null)
+        if (planID!=null)
         {
             //####################################################
             // Getting Number Of Meals & Subsections of meals
@@ -194,8 +241,8 @@ public class Meal_Plan_Screen extends JPanel
             // Setting Up Loading Screen
             //####################################################
             int
-                    no_of_meals = mealsInPlanCount == null ? 0 : Integer.parseInt(mealsInPlanCount[0]),
-                    no_of_sub_meals = dividedMealSectionsCount == null ? 0 : Integer.parseInt(dividedMealSectionsCount[0]),
+                    no_of_meals = mealsInPlanCount==null ? 0:Integer.parseInt(mealsInPlanCount[0]),
+                    no_of_sub_meals = dividedMealSectionsCount==null ? 0:Integer.parseInt(dividedMealSectionsCount[0]),
                     totalProgress = no_of_meals + no_of_sub_meals + (7 * 10);
             /**
              *  1.) Transfer Plan Data
@@ -208,7 +255,6 @@ public class Meal_Plan_Screen extends JPanel
              */
 
             LoadingScreen loadingScreen = new LoadingScreen(totalProgress, this);
-
 
             //####################################################
             // Transferring PLan Data To Temp
@@ -294,11 +340,11 @@ public class Meal_Plan_Screen extends JPanel
                     // ##############################################
                     // Close Other Windows If Open
                     // ##############################################
-                    if (macrosTargets_Screen != null)
+                    if (macrosTargets_Screen!=null)
                     {
                         macrosTargets_Screen.closeeWindow();
                     }
-                    if (ingredientsInfoScreen != null)
+                    if (ingredientsInfoScreen!=null)
                     {
                         ingredientsInfoScreen.closeWindow();
                     }
@@ -358,7 +404,7 @@ public class Meal_Plan_Screen extends JPanel
             String query = String.format("SELECT MealInPlanID, Meal_Name, Meal_Time FROM mealsInPlan WHERE PlanID = %s ORDER BY Meal_Time;", tempPlanID);
 
             ArrayList<ArrayList<String>> meals_Info_In_Plan = db.getMultiColumnQuery(query);
-            meals_Info_In_Plan = meals_Info_In_Plan != null ? meals_Info_In_Plan : new ArrayList<>();
+            meals_Info_In_Plan = meals_Info_In_Plan!=null ? meals_Info_In_Plan:new ArrayList<>();
 
             //#########################################################################################
             // Macro Targets & Macros Left Setup
@@ -373,8 +419,8 @@ public class Meal_Plan_Screen extends JPanel
             tableName = "plan_Macro_Target_Calculations";
             String planCalcQuery = String.format("SELECT * from %s  WHERE PlanID = %s;", tableName, tempPlanID);
 
-            Object[][] planData = db.getTableDataObject(planCalcQuery, tableName) != null ? db.getTableDataObject(planCalcQuery, tableName) : new Object[0][0];
-            String[] macroTargetsTable_ColumnNames = db.getColumnNames(tableName) != null ? db.getColumnNames(tableName) : new String[0];
+            Object[][] planData = db.getTableDataObject(planCalcQuery, tableName)!=null ? db.getTableDataObject(planCalcQuery, tableName):new Object[0][0];
+            String[] macroTargetsTable_ColumnNames = db.getColumnNames(tableName)!=null ? db.getColumnNames(tableName):new String[0];
 
             macros_Targets_Table = new MacrosTargetsTable(db, macrosInfoJPanel, planData, macroTargetsTable_ColumnNames, planID,
                     tableName, new ArrayList<>(Arrays.asList(macroTargetsTable_ColumnNames)), null, macrosTargets_Table_ColToHide);
@@ -399,8 +445,8 @@ public class Meal_Plan_Screen extends JPanel
             tableName = "planMacrosLeft";
             String macrosQuery = String.format("SELECT * from %s  WHERE PlanID = %s;", tableName, tempPlanID);
 
-            Object[][] macrosData = db.getTableDataObject(macrosQuery, tableName) != null ? db.getTableDataObject(macrosQuery, tableName) : new Object[0][0];
-            String[] macros_columnNames = db.getColumnNames(tableName) != null ? db.getColumnNames(tableName) : new String[0];
+            Object[][] macrosData = db.getTableDataObject(macrosQuery, tableName)!=null ? db.getTableDataObject(macrosQuery, tableName):new Object[0][0];
+            String[] macros_columnNames = db.getColumnNames(tableName)!=null ? db.getColumnNames(tableName):new String[0];
 
             macrosLeft_JTable = new MacrosLeftTable(db, macrosInfoJPanel, macrosData, macros_columnNames, planID,
                     tableName, new ArrayList<>(Arrays.asList(macros_columnNames)), null, macrosLeft_Table_ColToHide);
@@ -426,10 +472,10 @@ public class Meal_Plan_Screen extends JPanel
 
             // Table Variables
             tableName = "total_meal_view";
-            meal_total_columnNames = db.getColumnNames(tableName) != null ? db.getColumnNames(tableName) : new String[0];
+            meal_total_columnNames = db.getColumnNames(tableName)!=null ? db.getColumnNames(tableName):new String[0];
 
             tableName = "ingredients_in_sections_of_meal_calculation";
-            ingredients_ColumnNames = db.getColumnNames(tableName) != null ? db.getColumnNames(tableName) : new String[0];
+            ingredients_ColumnNames = db.getColumnNames(tableName)!=null ? db.getColumnNames(tableName):new String[0];
 
             boolean errorFound = false;
             for (int i = 0; i < no_of_meals; i++)
@@ -442,14 +488,13 @@ public class Meal_Plan_Screen extends JPanel
                 String mealTime = meals_Info_In_Plan.get(i).get(2);
 
 
-
                 //#####################################################
                 // Get MealID's Of SubMeals
                 //#####################################################
                 String subDivQuery = String.format("\nSELECT DivMealSectionsID FROM dividedMealSections WHERE MealInPlanID = %s AND PlanID = %s;", mealInPlanID, tempPlanID);
                 ArrayList<ArrayList<String>> subMealsInMealArrayList = db.getMultiColumnQuery(subDivQuery);
 
-                if (subMealsInMealArrayList == null)
+                if (subMealsInMealArrayList==null)
                 {
                     String message = String.format("\n\nError, gathering sub-meals ID for meal named ' %s ' ! \nA meal must have 1 sub-meal minimum!", mealName);
 
@@ -463,7 +508,7 @@ public class Meal_Plan_Screen extends JPanel
                 //#####################################################
                 // Create Meal Component
                 //#####################################################
-                MealManager meal = new MealManager(this, scrollJPanelCenter, mealInPlanID,  mealName, mealTime, subMealsInMealArrayList);
+                MealManager meal = new MealManager(this, scrollJPanelCenter, mealInPlanID, mealName, mealTime, subMealsInMealArrayList);
                 mealManagerArrayList.add(meal);
 
                 //######################################################
@@ -521,14 +566,14 @@ public class Meal_Plan_Screen extends JPanel
 
         if (getIngredientsTypes)
         {
-            if (ingredientsTypesList != null)
+            if (ingredientsTypesList!=null)
             {
                 ingredientsTypesList.clear();
             }
 
             ingredientsTypesList = db.getSingleColumnQuery_AlphabeticallyOrderedTreeSet("SELECT Ingredient_Type_Name FROM ingredientTypes ORDER BY Ingredient_Type_Name ASC;");
 
-            if (ingredientsTypesList == null)
+            if (ingredientsTypesList==null)
             {
                 errorTxt += "\n\nUnable to get IngredientTypes";
                 errorFound = true;
@@ -541,14 +586,14 @@ public class Meal_Plan_Screen extends JPanel
 
         if (getIngredientStores)
         {
-            if (storesNamesList != null)
+            if (storesNamesList!=null)
             {
                 storesNamesList.clear();
             }
 
             storesNamesList = db.getSingleColumnQuery_AlphabeticallyOrderedTreeSet("SELECT Store_Name FROM stores ORDER BY Store_Name ASC;");
 
-            if (storesNamesList == null)
+            if (storesNamesList==null)
             {
                 errorTxt += "\n\nUnable to get storesList";
                 errorFound = true;
@@ -590,7 +635,7 @@ public class Meal_Plan_Screen extends JPanel
 
         ArrayList<ArrayList<String>> ingredientTypesNameAndIDResults = db.getMultiColumnQuery(queryIngredientsType);
 
-        if (ingredientTypesNameAndIDResults == null)
+        if (ingredientTypesNameAndIDResults==null)
         {
             JOptionPane.showMessageDialog(null, "\n\nUnable to update Ingredient Type Info");
             return false;
@@ -620,7 +665,7 @@ public class Meal_Plan_Screen extends JPanel
             String queryTypeIngredientNames = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Type_ID = %s ORDER BY Ingredient_Name;", ID);
             ArrayList<String> ingredientNames = db.getSingleColumnQuery_ArrayList(queryTypeIngredientNames);
 
-            if (ingredientNames == null)
+            if (ingredientNames==null)
             {
                 errorTxt += String.format("\nUnable to grab ingredient names for Type '%s'!", ingredientType);
                 continue;
@@ -697,13 +742,13 @@ public class Meal_Plan_Screen extends JPanel
         {
             String colToAdd = columnsToAvoid.contains(macrosColumns[i]) ? "" : String.format("\n\t%s", macrosColumns[i]);
 
-            if (i == listSize - 1)
+            if (i==listSize - 1)
             {
                 query05 += String.format("%s \n) \nSELECT * FROM temp_Macros;", colToAdd);
                 break;
             }
 
-            query05 = !colToAdd.equals("") ? String.format("%s %s,", query05, colToAdd) : query05;
+            query05 = !colToAdd.equals("") ? String.format("%s %s,", query05, colToAdd):query05;
         }
 
         //####################################
@@ -974,7 +1019,7 @@ public class Meal_Plan_Screen extends JPanel
         int reply = JOptionPane.showConfirmDialog(frame, String.format("Are you sure you want to %s, \nany unsaved changes will be lost in this Table! \nDo you want to %s?", process, process),
                 "Close Application", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
-        if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
+        if (reply==JOptionPane.NO_OPTION || reply==JOptionPane.CLOSED_OPTION)
         {
             return false;
         }
@@ -1013,7 +1058,7 @@ public class Meal_Plan_Screen extends JPanel
         }
 
         // If No Plan Is Selected
-        if (planID == null)
+        if (planID==null)
         {
             JOptionPane.showMessageDialog(null, "\n\nCannot Add A  Meal As A Plan Is Not Selected! \nPlease Select A Plan First!!");
             return;
@@ -1176,7 +1221,7 @@ public class Meal_Plan_Screen extends JPanel
             int reply = JOptionPane.showConfirmDialog(frame, String.format("Would you like to save your MacroTarget  Changes Too?"),
                     "Save Macro Targets", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
-            if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
+            if (reply==JOptionPane.NO_OPTION || reply==JOptionPane.CLOSED_OPTION)
             {
                 return;
             }
@@ -1208,7 +1253,7 @@ public class Meal_Plan_Screen extends JPanel
             int reply = JOptionPane.showConfirmDialog(frame, String.format("Would you like to refresh your MacroTargets Too?"),
                     "Refresh Macro Targets", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
-            if (reply == JOptionPane.YES_OPTION)
+            if (reply==JOptionPane.YES_OPTION)
             {
                 if (transferTargets(planID, tempPlanID, true, false))
                 {
@@ -1237,7 +1282,7 @@ public class Meal_Plan_Screen extends JPanel
             return;
         }
 
-        if (macrosTargets_Screen != null)
+        if (macrosTargets_Screen!=null)
         {
             macrosTargets_Screen.makeJframeVisible();
             return;
@@ -1258,7 +1303,7 @@ public class Meal_Plan_Screen extends JPanel
             return;
         }
 
-        if (ingredientsInfoScreen != null)
+        if (ingredientsInfoScreen!=null)
         {
             ingredientsInfoScreen.makeFrameVisible();
             return;
@@ -1298,7 +1343,7 @@ public class Meal_Plan_Screen extends JPanel
     //##################################################################################################################
     public boolean get_IsPlanSelected()
     {
-        if (planID == null)
+        if (planID==null)
         {
             JOptionPane.showMessageDialog(frame, "Please Select A Plan First!");
             return false;
@@ -1422,11 +1467,11 @@ public class Meal_Plan_Screen extends JPanel
     private void addToContainer(Container container, Component addToContainer, Integer gridx, Integer gridy, Integer gridwidth,
                                 Integer gridheight, Double weightx, Double weighty, String fill, Integer ipady, Integer ipadx, String anchor)
     {
-        if (gridx != null)
+        if (gridx!=null)
         {
             gbc.gridx = gridx;
         }
-        if (gridy != null)
+        if (gridy!=null)
         {
             gbc.gridy = gridy;
         }
@@ -1453,7 +1498,7 @@ public class Meal_Plan_Screen extends JPanel
                 break;
         }
 
-        if (anchor != null)
+        if (anchor!=null)
         {
             switch (anchor.toLowerCase())
             {
