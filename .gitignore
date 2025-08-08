@@ -19,3 +19,4 @@
 /target/classes/data/database_scripts/others/9.) Monthly_Calculations.sql
 /target/classes/production_setup/database_scripts/others/9.) Monthly_Calculations.sql
 /target/classes/production_setup/database_scripts/others/8.) Weekly_Calculations.sql
+/resources/production_setup/database_scripts/
