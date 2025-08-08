@@ -21,3 +21,4 @@
 /target/classes/production_setup/database_scripts/others/8.) Weekly_Calculations.sql
 /resources/production_setup/database_scripts/
 /resources/production_setup/Gym_App.jar
+/resources/production_setup/.env
