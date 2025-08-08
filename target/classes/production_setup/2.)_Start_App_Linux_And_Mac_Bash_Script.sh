@@ -26,5 +26,7 @@ printf "\n\n"
 # Run your JAR (edit filename if needed)
 java -jar Gym_App.jar
 
+printf "\n\n"
+
 # Pause at end (press Enter to continue)
 read -p "Press Enter to continue..."

@@ -1,0 +1,15 @@
+plans
+macros_Per_Pound_And_Limits
+plan_Macro_Target_Calculations
+ingredientTypes
+ingredients_info
+stores
+ingredientInShops
+mealsInPlan
+dividedMealSections
+ingredients_in_sections_of_meal
+ingredients_in_sections_of_meal_calculation
+divided_meal_sections_calculations
+total_meal_view
+total_plan_view
+planMacrosLeft

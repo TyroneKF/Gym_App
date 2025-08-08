@@ -9,14 +9,13 @@ import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
 import App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Ingredients_Info_Screen;
 import App_Code.Objects.Screens.Others.Loading_Screen.LoadingScreen;
+import io.github.cdimascio.dotenv.Dotenv;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.util.*;
 import java.util.List;
-
-import io.github.cdimascio.dotenv.Dotenv;
 
 public class Meal_Plan_Screen extends JPanel
 {
@@ -43,11 +42,15 @@ public class Meal_Plan_Screen extends JPanel
     //##################################################################################################################
     private final static String
             version_no = "00001",
-            db_Script_List_Name = "0.) Script_List.txt";
+            db_Folder_Script_Name = "database_scripts",
+            db_File_Script_List_Name = "0.) Script_List.txt",
+            db_File_Tables_Name = "0.) Database_Names.txt";
+
 
     private static String
             databaseName = "gymapp" + version_no,
-            db_Script_List_Folder_Path = "/data/database_scripts";
+            db_Script_Folder_Path_Dev = "/data/database_scripts",
+            db_Scripts_Folder_Path_Prod = "";
 
     private String JFrameName = databaseName;
 
@@ -97,7 +100,6 @@ public class Meal_Plan_Screen extends JPanel
 
     String lineSeparator = "###############################################################################";
 
-
     public static void main(String[] args)
     {
         if (production)
@@ -113,11 +115,18 @@ public class Meal_Plan_Screen extends JPanel
                 String dbName = System.getenv("GYM_APP_DB_NAME");
                 */
 
+                // #########################################
+                // Set Path Files
+                // #########################################
                 String userDirectory = new File("").getAbsolutePath(); // get path file of where this is being executed
-                db_Script_List_Folder_Path = String.format("%s/database_scripts", userDirectory);
+                db_Scripts_Folder_Path_Prod = String.format("%s/%s", userDirectory, db_Folder_Script_Name);
 
-                System.out.printf("\n\nDirectory: \n%s \n\nScripts Directory:\n%s\n\n", userDirectory, db_Script_List_Folder_Path);
+                System.out.printf("\nDirectory: \n%s \n\nScripts Directory:\n%s", userDirectory, db_Scripts_Folder_Path_Prod);
+                System.out.println("\n\nReading ENV Variables: host, port, user, ****, db_name");
 
+                // #########################################
+                // Get .env variables
+                // #########################################
                 Dotenv dotenv = Dotenv.configure()
                         .directory(userDirectory)
                         .filename(".env") // instead of '.env', use 'env'
@@ -133,16 +142,18 @@ public class Meal_Plan_Screen extends JPanel
 
                 if (host==null || port==null || user==null || password==null || dbName==null)
                 {
-                    System.out.printf("\n\nDB Values: \nhost: %s \nport: %s \nuser: %s \npassword: %s \ndbName: %s",
+                    System.err.printf("\n\nDB Values: \nhost: %s \nport: %s \nuser: %s \npassword: %s \ndbName: %s",
                             host, port, user, password, dbName);
 
                     throw new RuntimeException("Missing one or more required DB environment variables.");
                 }
 
-                //##############################################
-                // Create DB Object & run SQL Script
-                //##############################################
-                MyJDBC db = new MyJDBC(host, port, user, password, dbName, db_Script_List_Folder_Path, db_Script_List_Name);
+                System.out.println("\nSuccessfully retrieved ENV Variables: host, port, user, *****, db_name");
+
+                // #########################################
+                // Create DB Object & run SQL Scripts
+                // #########################################
+                MyJDBC db = new MyJDBC(host, port, user, password, dbName, db_Scripts_Folder_Path_Prod, db_File_Script_List_Name, db_File_Tables_Name);
 
                 if (db.get_DB_Connection_Status())
                 {
@@ -151,6 +162,7 @@ public class Meal_Plan_Screen extends JPanel
                 else
                 {
                     JOptionPane.showMessageDialog(null, "ERROR, Cannot Connect To Database!");
+                    return;
                 }
             }
             catch (Exception e)
@@ -168,7 +180,9 @@ public class Meal_Plan_Screen extends JPanel
             {
                 String userDirectory = String.format("%s\\resources\\production_setup", new File("").getAbsolutePath()); // get path file of where this is being executed
 
-                System.out.printf("\n\nDirectory: \n%s \n\nScripts Directory:\n%s\n\n", userDirectory, db_Script_List_Folder_Path);
+                System.out.printf("\n\nDirectory: \n%s \n\nScripts Directory:\n%s\n\n", userDirectory, db_Script_Folder_Path_Dev);
+
+                System.out.println("\n\nReading ENV Variables: host, port, user, ****, db_name");
 
                 Dotenv dotenv = Dotenv.configure()
                         .directory(userDirectory)
@@ -190,10 +204,13 @@ public class Meal_Plan_Screen extends JPanel
                     throw new RuntimeException("Missing one or more required DB environment variables.");
                 }
 
+                System.out.println("\n\nSuccessfully retrieved ENV Variables: host, port, user, ****, db_name");
+
+
                 //##############################################
                 // Create DB Object & run SQL Script
                 //##############################################
-                MyJDBC db = new MyJDBC(host, port, user, password, dbName, db_Script_List_Folder_Path, db_Script_List_Name);
+                MyJDBC db = new MyJDBC(host, port, user, password, dbName, db_Script_Folder_Path_Dev, db_File_Script_List_Name, db_File_Tables_Name);
 
                 if (db.get_DB_Connection_Status())
                 {

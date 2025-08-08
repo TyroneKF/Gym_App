@@ -1,6 +1,7 @@
 package App_Code.Objects.Database_Objects.JDBC;
 
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.jdbc.ScriptRunner;
 
 import javax.swing.*;
@@ -26,6 +27,7 @@ public class MyJDBC
             userName,
             password,
             initial_db_connection = "jdbc:mysql://localhost:3306",
+            databaseNamesFile = "",
             db_Connection_Address = initial_db_connection;
 
     private Connection con;
@@ -44,30 +46,70 @@ public class MyJDBC
     //##################################################################################################################
     //
     //##################################################################################################################
-    public MyJDBC(String host, String port, String userName, String password, String databaseName, String db_Script_Folder_Address, String script_List_Name)
+    public MyJDBC(String host, String port, String userName, String password, String databaseName, String db_Script_Folder_Address, String script_List_Name, String databaseNamesFileName)
     {
-        //##############################################
+        //####################################################################
         //  Setting Variables
-        //##############################################
+        //####################################################################
         this.userName = userName;
         this.password = password;
         this.databaseName = databaseName.toLowerCase();
         this.initial_db_connection = String.format("jdbc:mysql://%s:%s", host, port);
+        this.databaseNamesFile = databaseNamesFileName;
         db_Connection_Address = String.format("%s/%s", initial_db_connection, databaseName);
-
-        //##############################################
-        //  Checking DB & User Credentials Are Valid
-        //##############################################
-        System.out.printf("\n\n%s \nTesting User Credentials: '%s@%s' & DB: %s \n%s ", line_Separator, userName, host, databaseName, line_Separator);
 
         try
         {
-            DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());  //Registering the Driver
-            con = DriverManager.getConnection(db_Connection_Address, userName, password);
+            //#################################################################
+            //  Checking DB & User Credentials Are Valid
+            //#################################################################
+            System.out.printf("\n\n%s \nTesting User Credentials: '%s@%s' & DB: %s \n%s ", line_Separator, userName, host, databaseName, line_Separator);
 
-            System.out.println("\n\nSuccessful: User & Database Credentials are valid !");
+            DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());  //Registering the Driver
+            con = DriverManager.getConnection(db_Connection_Address, userName, password); // if connection fails, error is thrown, script stops here
+
+            System.out.println("\nUser & Database Credentials are valid !");
+
+            //#################################################################
+            //  Compiling SQL Statement to check if DB Tables from List Exist
+            //#################################################################
+            String
+                    path = String.format("%s/%s", db_Script_Folder_Address, databaseNamesFileName), // don't include a / between the files
+                    sql_Statement = "SELECT COUNT(*) FROM information_schema.tables WHERE table_name IN (";
+
+            int tablesCount = 0; // increments and identifies how many tables there are in the DB
+
+            System.out.printf("\nExtracting SQL Table names from file: '%s' at path: \n%s", databaseNamesFileName, path);
+
+            try (BufferedReader br = new BufferedReader(new FileReader(path))) // resources automatically released in try block / no need for reader.close()
+            {
+                Iterator<String> it = br.lines().iterator();
+                while (it.hasNext())
+                {
+                    sql_Statement += String.format("'%s',", it.next());
+                    tablesCount ++;
+                }
+
+                // last item remove last comma and replace with ); to end SQL query off
+                sql_Statement = String.format("%s);",StringUtils.substring(sql_Statement, 0, sql_Statement.length() - 1));
+            }
+            catch (Exception e)
+            {
+                System.err.printf("\n\nMyJDBC() error, reading file: '%s'! \n\n%s", databaseNamesFileName,e);
+                return;
+            }
+
+            //#################################################################
+            //  Executing Statement to test how many tables there are
+            //#################################################################
+            System.out.printf("\n\nMyJDBC(): \n%s", sql_Statement);
+
+
+
+
+            return;
         }
-        catch (SQLException e)
+        catch (SQLException e) // Create Database
         {
             String sqlState = e.getSQLState();
             String message = e.getMessage();
@@ -80,27 +122,31 @@ public class MyJDBC
             }
             else if (errorCode==1049) // Unknown database
             {
-                System.err.printf("\nDatabase Access Denied: '%s' (Unknown database).", databaseName);
+                System.err.printf("""
+                 \n\nDatabase Access Denied: '%s' (Unknown database).
+                 \nAttempting to recreate Database Shortly.
+                 \nHowever, this may denied as maybe user '%s'@'%s' doesn't have the correct mysql privileges to do so!
+                 It would be better to rerun the  pre-requisites script to ensure proper user privileges!""", databaseName, userName, host);
             }
             else
             {
                 System.err.printf("\n\nSQL Error Exception: \n\n%s \nSQL State: %s \n\n%s \n\n", message, sqlState, line_Separator);
                 return;
             }
-
-            // ##########################################
-            // Re-setup Database
-            // ##########################################
-            System.out.printf("\n\n\n%s\nAttempting to create Database Structure! \n%s", line_Separator, line_Separator);
-
-            if (!(run_SQL_Script_Folder(initial_db_connection, db_Script_Folder_Address, script_List_Name)))
-            {
-                System.err.printf("\n\n%s \nFailed creating DB & Initializing Data! \n%s", line_Separator, line_Separator);
-                return;
-            }
-
-            System.out.printf("\n\n%s \nSuccessfully, Authenticated using User & DB Credentials! \n%s", line_Separator, line_Separator);
         }
+
+        // ##########################################
+        // Re-setup Database
+        // ##########################################
+        System.out.printf("\n\n\n%s\nAttempting to create Database Structure! \n%s", line_Separator, line_Separator);
+
+        if (!(run_SQL_Script_Folder(initial_db_connection, db_Script_Folder_Address, script_List_Name)))
+        {
+            System.err.printf("\n\n%s \nFailed creating DB & Initializing Data! \n%s", line_Separator, line_Separator);
+            return;
+        }
+
+        System.out.printf("\n\n%s \nSuccessfully, Authenticated using User & DB Credentials! \n%s", line_Separator, line_Separator);
 
         //##############################################
         // Set DB Variables

@@ -28,12 +28,13 @@ printf "\n=================================================="
 
 printf "\n\n[3/6] Installing MySQL Server...\n\n"
 
-sudo apt purge -y mysql-server
-sudo apt autoremove --purge -y
-sudo rm -rf /etc/mysql /var/lib/mysql
-sudo apt install -y mysql-server
+# -- remove comments below to reinstall mysql if broken on a system
+# sudo apt purge -y mysql-server
+# sudo apt autoremove --purge -y
+# sudo rm -rf /etc/mysql /var/lib/mysql
+# sudo apt install --reinstall -y mysql-server
 
-sudo apt install --reinstall -y mysql-server
+sudo apt install -y mysql-server
 
 
 printf "\n\n[4/6] Enabling MySQL service...\n\n"
