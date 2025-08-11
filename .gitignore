@@ -22,3 +22,4 @@
 /resources/production_setup/database_scripts/
 /resources/production_setup/Gym_App.jar
 /resources/production_setup/.env
+/target/classes/production_setup/.env

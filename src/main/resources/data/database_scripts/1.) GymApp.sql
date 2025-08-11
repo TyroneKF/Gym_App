@@ -1,9 +1,4 @@
 --######################################
-DROP DATABASE IF EXISTS gymapp00001;
-CREATE DATABASE IF NOT EXISTS gymapp00001;
-USE gymapp00001;
-
---######################################
 CREATE TABLE IF NOT EXISTS plans
  (
     PlanID INT  PRIMARY KEY AUTO_INCREMENT,

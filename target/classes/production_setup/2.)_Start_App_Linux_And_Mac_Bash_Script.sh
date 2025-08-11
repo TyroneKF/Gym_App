@@ -8,25 +8,22 @@
 ##############################################################
 
 clear
-printf "\n\n\n"
 
-echo "==============================="
-echo "Starting My GYM App..."
-echo "==============================="
-
-printf "\n"
+printf "\n\n\n########################################################################################################################"
+printf "\nStarting My GYM App..."
+printf "\n########################################################################################################################\n\n"
 
 if [ ! -f .env ]; then
-  echo "❌ .env file not found. Please run the prerequisites script first."
+  printf "❌ .env file not found. Please run the prerequisites script first.\n\n"
   exit 1
 fi
-
-printf "\n\n"
 
 # Run your JAR (edit filename if needed)
 java -jar Gym_App.jar
 
-printf "\n\n"
-
 # Pause at end (press Enter to continue)
+printf "\n\n\n############################################################################################################################"
+printf "\nProgram Terminated..."
+printf "\n############################################################################################################################\n\n"
+
 read -p "Press Enter to continue..."
