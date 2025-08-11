@@ -18,7 +18,6 @@ import java.time.format.DateTimeFormatter;
 //######################################
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.util.concurrent.ExecutionException;
 
 public class MyJDBC
 {
@@ -30,7 +29,7 @@ public class MyJDBC
             databaseNamesFile = "",
             db_Connection_Address = initial_db_connection;
 
-    private Connection con;
+    private Connection connection;
 
     private final String
             line_Separator = "############################################################################################################################",
@@ -66,20 +65,20 @@ public class MyJDBC
             System.out.printf("\n\n%s \nTesting User Credentials: '%s@%s' & DB: %s \n%s ", line_Separator, userName, host, databaseName, line_Separator);
 
             DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());  //Registering the Driver
-            con = DriverManager.getConnection(db_Connection_Address, userName, password); // if connection fails, error is thrown, script stops here
+            connection = DriverManager.getConnection(db_Connection_Address, userName, password); // if connection fails, error is thrown, script stops here
 
             System.out.println("\nUser & Database Credentials are valid !");
 
             //#################################################################
             //  Compiling SQL Statement to check if DB Tables from List Exist
             //#################################################################
+            System.out.printf("\n\nValidating Database Setup (Tables) inside of DB '%s' through queries!", databaseName);
+
             String
                     path = String.format("%s/%s", db_Script_Folder_Address, databaseNamesFileName), // don't include a / between the files
                     sql_Statement = "SELECT COUNT(*) FROM information_schema.tables WHERE table_name IN (";
 
             int tablesCount = 0; // increments and identifies how many tables there are in the DB
-
-            System.out.printf("\nExtracting SQL Table names from file: '%s' at path: \n%s", databaseNamesFileName, path);
 
             try (BufferedReader br = new BufferedReader(new FileReader(path))) // resources automatically released in try block / no need for reader.close()
             {
@@ -87,27 +86,41 @@ public class MyJDBC
                 while (it.hasNext())
                 {
                     sql_Statement += String.format("'%s',", it.next());
-                    tablesCount ++;
+                    tablesCount++;
                 }
 
                 // last item remove last comma and replace with ); to end SQL query off
-                sql_Statement = String.format("%s);",StringUtils.substring(sql_Statement, 0, sql_Statement.length() - 1));
+                sql_Statement = String.format("%s);", StringUtils.substring(sql_Statement, 0, sql_Statement.length() - 1));
             }
             catch (Exception e)
             {
-                System.err.printf("\n\nMyJDBC() error, reading file: '%s'! \n\n%s", databaseNamesFileName,e);
+                System.err.printf("\n\nMyJDBC() error, reading file: '%s'! \n\n%s", databaseNamesFileName, e);
                 return;
             }
 
             //#################################################################
             //  Executing Statement to test how many tables there are
             //#################################################################
-            System.out.printf("\n\nMyJDBC(): \n%s", sql_Statement);
+            ArrayList<String> queryResults = getSingleColumnQuery_ArrayList(sql_Statement);
+            if (queryResults==null) // error return invalid results
+            {
+                System.err.printf("\n\nMyJDBC() error, executing SQL Statement == NULL: \n\n%s", sql_Statement);
+                return;
+            }
 
+            // Get DB Value for how many tables are in DB
+            int db_Tables_Count = Integer.parseInt(queryResults.get(0));
 
+            if (tablesCount==db_Tables_Count)
+            {
+                System.out.printf("\n\n%s \nDatabase '%s' Setup is OK !! \n%s ", line_Separator, databaseName, line_Separator);
 
+                override = false;
+                db_Connection_Status = true;
+                return;
+            }
 
-            return;
+            System.out.printf("\n\n%s \nDatabase '%s' Tables need to be setup !! \n%s ", line_Separator, databaseName, line_Separator);
         }
         catch (SQLException e) // Create Database
         {
@@ -123,10 +136,13 @@ public class MyJDBC
             else if (errorCode==1049) // Unknown database
             {
                 System.err.printf("""
-                 \n\nDatabase Access Denied: '%s' (Unknown database).
-                 \nAttempting to recreate Database Shortly.
-                 \nHowever, this may denied as maybe user '%s'@'%s' doesn't have the correct mysql privileges to do so!
-                 It would be better to rerun the  pre-requisites script to ensure proper user privileges!""", databaseName, userName, host);
+                        \n\nDatabase Access Denied: '%s' (Unknown database).
+                        \nAttempting to recreate Database Shortly.
+                        \nHowever, this may denied as maybe user '%s'@'%s' doesn't have the correct mysql privileges to do so!
+                        It would be better to rerun the  pre-requisites script to ensure proper user privileges!""", databaseName, userName, host);
+
+                return;
+
             }
             else
             {
@@ -140,7 +156,7 @@ public class MyJDBC
         // ##########################################
         System.out.printf("\n\n\n%s\nAttempting to create Database Structure! \n%s", line_Separator, line_Separator);
 
-        if (!(run_SQL_Script_Folder(initial_db_connection, db_Script_Folder_Address, script_List_Name)))
+        if (!(run_SQL_Script_Folder(db_Connection_Address, db_Script_Folder_Address, script_List_Name)))
         {
             System.err.printf("\n\n%s \nFailed creating DB & Initializing Data! \n%s", line_Separator, line_Separator);
             return;
@@ -190,18 +206,28 @@ public class MyJDBC
     //##################################################################################################################
     public boolean run_SQL_Script_Folder(String connection, String db_Script_Folder_Address, String script_List_Name)
     {
-        String path = String.format("%s/%s", db_Script_Folder_Address, script_List_Name); // don't include a / between the files
+        // ####################################################
+        //  Getting Script_List Object
+        // ####################################################
+        String path = String.format("%s/%s", db_Script_Folder_Address, script_List_Name);
+        InputStream listStream;
 
-        InputStream listStream = getClass().getResourceAsStream(path);
-        if (listStream==null)
+        try
         {
-            System.err.printf("\n\nrun_SQL_Script_Folder() Error Loading = NULL \n%s", path);
+             listStream =  new FileInputStream(path);
+        }
+        catch ( IOException e)
+        {
+            System.err.printf("\n\nrun_SQL_Script_Folder() Error, grabbing script: '%s' \n\n%s", script_List_Name,e);
             return false;
         }
 
+        // ####################################################
+        //  Reading Script List & Executing Each Script in List
+        // ####################################################
         try (BufferedReader br = new BufferedReader(new InputStreamReader(listStream, StandardCharsets.UTF_8))) // resources automatically released in try block / no need for reader.close()
         {
-            con = DriverManager.getConnection(connection, userName, password);
+            this.connection = DriverManager.getConnection(connection, userName, password);
 
             Iterator<String> it = br.lines().iterator();
             while (it.hasNext())
@@ -209,37 +235,43 @@ public class MyJDBC
                 String fileName = it.next();
                 System.out.printf("\nrun_SQL_Script_Folder() Executing script: %s \n\n", fileName);
 
-                InputStream scriptStream = getClass().getResourceAsStream(String.format("%s/%s",db_Script_Folder_Address,fileName));
-
-                if (scriptStream==null)
-                {
-                    System.err.printf("\nrun_SQL_Script_Folder() Script not found: '%s'",fileName);
-                    return false;
-                }
-
                 try // Execute Script
                 {
+                    /*InputStream scriptStream = getClass().getResourceAsStream(String.format("%s/%s",db_Script_Folder_Address,fileName));
+
+                    if (scriptStream==null)
+                    {
+                        System.err.printf("\nrun_SQL_Script_Folder() Script not found: '%s'",fileName);
+                        return false;
+                    }*/
+
+                    InputStream scriptStream = new FileInputStream(String.format("%s/%s", db_Script_Folder_Address, fileName));
                     Reader reader = new InputStreamReader(scriptStream, StandardCharsets.UTF_8);
-                    new ScriptRunner(con).runScript(reader);
+
+                    // Creating Script Runner to stop on errors
+                    ScriptRunner runner = new ScriptRunner(this.connection);
+                    runner.setStopOnError(true);
+                    runner.runScript(reader);
 
                     System.out.printf("\nrun_SQL_Script_Folder() successfully executed script: %s", fileName);
                 }
                 catch (Exception e)
                 {
-                    System.err.printf("\n\nrun_SQL_Script_Folder(): error executing file: %s \n\n%s\n", fileName, e.getMessage());
+                    System.err.printf("\n\nrun_SQL_Script_Folder(): error executing file: %s \n\n%s\n\n" +
+                            "", fileName, e.getMessage());
                     e.printStackTrace();
 
                     throw new Exception(String.format("\nrun_SQL_Script_Folder() ERROR:  %s", fileName));
                 }
             }
+
+            return true;
         }
         catch (Exception e)
         {
             System.err.printf("\n\nrun_SQL_Script_Folder() Error Writing / Reading to file \n%s", e);
             return false;
         }
-
-        return true;
     }
 
     private boolean run_SQL_Script(String sql_Script_Address)
@@ -519,12 +551,13 @@ public class MyJDBC
         try
         {
             //Query Setup
-            Connection connection = multipleQueries ? DriverManager.getConnection(db_Connection_Address += "?autoReconnect=true&amp;allowMultiQueries=true", userName, password)
+             connection = multipleQueries ? DriverManager.getConnection(db_Connection_Address += "?autoReconnect=true&amp;allowMultiQueries=true", userName, password)
                     :DriverManager.getConnection(db_Connection_Address, userName, password);
 
             Statement statement = connection.createStatement();
             statement.executeUpdate(query);
-            connection.close();
+
+            connection =  DriverManager.getConnection(db_Connection_Address, userName, password); // reset back to default patterns
             return true;
         }
         catch (Exception e)
@@ -550,7 +583,6 @@ public class MyJDBC
 
         try
         {
-            Connection connection = DriverManager.getConnection(db_Connection_Address, userName, password);
             Statement statement = connection.createStatement();
 
             //Setting auto-commit false
@@ -601,7 +633,6 @@ public class MyJDBC
         }
         try
         {
-            Connection connection = DriverManager.getConnection(db_Connection_Address, userName, password);
             Statement statement = connection.createStatement();
 
             //Setting auto-commit false
@@ -648,8 +679,7 @@ public class MyJDBC
         }
         try
         {
-            Connection connection = DriverManager.getConnection(db_Connection_Address, userName, password);
-            Statement statement = connection.createStatement();
+           Statement statement = connection.createStatement();
 
             //Setting auto-commit false
             connection.setAutoCommit(false);
@@ -707,7 +737,6 @@ public class MyJDBC
         try
         {
             //Query Setup
-            Connection connection = DriverManager.getConnection(db_Connection_Address, userName, password);
             Statement statement = connection.createStatement();
 
             //Fetching Query
@@ -736,10 +765,8 @@ public class MyJDBC
                     queryResultsList.add(tempList);
                 }
 
-                connection.close();
                 return queryResultsList;
             }
-            connection.close();
         }
         catch (Exception e)
         {
@@ -762,7 +789,6 @@ public class MyJDBC
         try
         {
             //Query Setup
-            Connection connection = DriverManager.getConnection(db_Connection_Address, userName, password);
             Statement statement = connection.createStatement();
 
             //Fetching Query
@@ -790,12 +816,8 @@ public class MyJDBC
                     }
                     queryResultsList.add(tempList);
                 }
-
-                connection.close();
                 return queryResultsList;
             }
-            connection.close();
-
         }
         catch (Exception e)
         {
@@ -818,7 +840,6 @@ public class MyJDBC
         try
         {
             //Query Setup
-            Connection connection = DriverManager.getConnection(db_Connection_Address, userName, password);
             Statement statement = connection.createStatement();
 
             //Fetching Query
@@ -887,77 +908,59 @@ public class MyJDBC
 
     public ArrayList<String> getSingleColumnQuery_ArrayList(String query)
     {
-        if (!(get_DB_Connection_Status()))
-        {
-            System.out.printf("\n\n  getSingleColumnQuery_ArrayList() DB couldn't successfully connect to DB '%s'!", databaseName);
-            return null;
-        }
         try
         {
-            //Query Setup
-            Connection connection = DriverManager.getConnection(db_Connection_Address, userName, password);
-            Statement statement = connection.createStatement();
+            //############################################
+            // Execute Query & Get Results
+            //############################################
+            Statement statement = connection.createStatement(); // Query Setup
 
-            //Fetching Query
-            String query2 = String.format("%s", query);
-            ResultSet resultSet = statement.executeQuery(query2);
+            ResultSet resultSet = statement.executeQuery(query);  // Fetching Query Results
 
-            // checks if any data was returned, otherwise  the code will eventually return null
-            if (resultSet.isBeforeFirst())
+            //############################################
+            // Get number of  Columns in each query row
+            //############################################
+            if ( ! resultSet.isBeforeFirst()) // checks if any data wasn't returned, exit
             {
-                //############################################
-                // Get number of  Columns in each query row
-                //############################################
-                ResultSetMetaData rsmd = resultSet.getMetaData();
-                int columnSize = rsmd.getColumnCount();
-
-                // if query has multiple columnns this method cannot produce a 2d list results,
-                if (columnSize > 1)
-                {
-                    System.out.printf("\n\n!!! Query size bigger than one column, use multi-line query !!! \n\n");
-                    throw new Exception();
-                }
-
-                //############################################
-                // Get the number of rows in the query
-                //############################################
-
-                    /*
-                    remove last char ";" for getRowsInQuery() method
-                    sub-query cannot have a ";" in in the middle sub-query
-                     */
-
-                Integer rowCount = getRowsInQuery(query); // get row count of query to this method "query"
-
-                if (rowCount!=null)
-                {
-                    //############################################
-                    // Storing query data in String[]
-                    //############################################
-                    ArrayList<String> queryData = new ArrayList<>(); // storing  all the columns results of a record
-                    // System.out.printf("\nRow Count is %s", rowCount);
-
-                    // for each row of the query
-                    int i = 0;
-                    while (resultSet.next())
-                    {
-                        String result = resultSet.getString(1); // resultset is the row
-                        queryData.add(result);
-                        i++;
-                    }
-                    return queryData;
-                }
+                System.err.printf("\n\ngetSingleColumnQuery_ArrayList() Returned NULL using query: \n\n%s", query);
+                JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
+                return null;
             }
-            connection.close();
+
+            //############################################
+            // Get number of  Columns in each query row
+            //############################################
+            ResultSetMetaData rsmd = resultSet.getMetaData();
+            int columnSize = rsmd.getColumnCount();
+
+            if (columnSize > 1) // if query has multiple columns this method cannot produce a 2d list results,
+            {
+                System.err.printf("\n\n!!! getSingleColumnQuery_ArrayList() Query size bigger than one column, use multi-line query !!!");
+                JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
+                return null;
+            }
+
+            //############################################
+            // Storing query data in ArrayList
+            //############################################
+            ArrayList<String> queryData = new ArrayList<>(); // storing  all the records 1 column results
+
+            while (resultSet.next()) // for each row of the query
+            {
+                String result = resultSet.getString(1); // resultset is the row
+                queryData.add(result);
+            }
+            return queryData;
+
         }
         catch (Exception e)
         {
             System.err.printf("\n\n@getSingleColumnQuery_ArrayList() ERROR from query: \n\n'%s' \n\n%s\n\n", query, e);
 
-            // e.printStackTrace();
             JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
+
+            return null;
         }
-        return null;
     }
 
     public Collection<String> getSingleColumnQuery_AlphabeticallyOrderedTreeSet(String query)
@@ -970,7 +973,6 @@ public class MyJDBC
         try
         {
             //Query Setup
-            Connection connection = DriverManager.getConnection(db_Connection_Address, userName, password);
             Statement statement = connection.createStatement();
 
             //Fetching Query
@@ -1023,7 +1025,6 @@ public class MyJDBC
                     return queryData;
                 }
             }
-            connection.close();
         }
         catch (Exception e)
         {
@@ -1045,7 +1046,6 @@ public class MyJDBC
         try
         {
             //Query Setup
-            Connection connection = DriverManager.getConnection(db_Connection_Address, userName, password);
             Statement statement = connection.createStatement();
 
             //###################################
@@ -1201,7 +1201,6 @@ public class MyJDBC
         try
         {
             //Query Setup
-            Connection connection = DriverManager.getConnection(db_Connection_Address, userName, password);
             Statement statement = connection.createStatement();
 
             query = query.replaceFirst(".$", ""); //=> aaabc  ;

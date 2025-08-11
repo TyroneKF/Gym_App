@@ -121,8 +121,8 @@ public class Meal_Plan_Screen extends JPanel
                 String userDirectory = new File("").getAbsolutePath(); // get path file of where this is being executed
                 db_Scripts_Folder_Path_Prod = String.format("%s/%s", userDirectory, db_Folder_Script_Name);
 
-                System.out.printf("\nDirectory: \n%s \n\nScripts Directory:\n%s", userDirectory, db_Scripts_Folder_Path_Prod);
-                System.out.println("\n\nReading ENV Variables: host, port, user, ****, db_name");
+                System.out.printf("\nDirectory: \n%s \n\n\nScripts Directory:\n%s", userDirectory, db_Scripts_Folder_Path_Prod);
+                System.out.println("\n\n\nReading ENV Variables: host, port, user, ****, db_name");
 
                 // #########################################
                 // Get .env variables
@@ -148,7 +148,7 @@ public class Meal_Plan_Screen extends JPanel
                     throw new RuntimeException("Missing one or more required DB environment variables.");
                 }
 
-                System.out.println("\nSuccessfully retrieved ENV Variables: host, port, user, *****, db_name");
+                System.out.println("\n\nSuccessfully retrieved ENV Variables: host, port, user, *****, db_name");
 
                 // #########################################
                 // Create DB Object & run SQL Scripts
