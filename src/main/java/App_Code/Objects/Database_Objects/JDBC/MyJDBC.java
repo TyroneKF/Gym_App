@@ -80,7 +80,14 @@ public class MyJDBC
 
             int tablesCount = 0; // increments and identifies how many tables there are in the DB
 
-            try (BufferedReader br = new BufferedReader(new FileReader(path))) // resources automatically released in try block / no need for reader.close()
+            InputStream listStream = getClass().getResourceAsStream(path);
+            if (listStream==null)
+            {
+                System.out.printf("\n\nMyJDBC() error, reading file with path: \n%s", path);
+                return;
+            }
+
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(listStream, StandardCharsets.UTF_8))) // resources automatically released in try block / no need for reader.close()
             {
                 Iterator<String> it = br.lines().iterator();
                 while (it.hasNext())
@@ -204,21 +211,18 @@ public class MyJDBC
     //##################################################################################################################
     // Changes to TXT files / SQL Backup Files  Methods
     //##################################################################################################################
-    public boolean run_SQL_Script_Folder(String connection, String db_Script_Folder_Address, String script_List_Name)
+    public boolean run_SQL_Script_Folder(String db_Connection_Path, String db_Script_Folder_Address, String script_List_Name)
     {
         // ####################################################
         //  Getting Script_List Object
         // ####################################################
         String path = String.format("%s/%s", db_Script_Folder_Address, script_List_Name);
-        InputStream listStream;
 
-        try
+        InputStream listStream = getClass().getResourceAsStream(path);
+
+        if (listStream==null)
         {
-             listStream =  new FileInputStream(path);
-        }
-        catch ( IOException e)
-        {
-            System.err.printf("\n\nrun_SQL_Script_Folder() Error, grabbing script: '%s' \n\n%s", script_List_Name,e);
+            System.err.printf("\n\nrun_SQL_Script_Folder() Error Loading = NULL \n%s", path);
             return false;
         }
 
@@ -227,7 +231,7 @@ public class MyJDBC
         // ####################################################
         try (BufferedReader br = new BufferedReader(new InputStreamReader(listStream, StandardCharsets.UTF_8))) // resources automatically released in try block / no need for reader.close()
         {
-            this.connection = DriverManager.getConnection(connection, userName, password);
+            connection = DriverManager.getConnection(db_Connection_Path, userName, password);
 
             Iterator<String> it = br.lines().iterator();
             while (it.hasNext())
@@ -237,19 +241,19 @@ public class MyJDBC
 
                 try // Execute Script
                 {
-                    /*InputStream scriptStream = getClass().getResourceAsStream(String.format("%s/%s",db_Script_Folder_Address,fileName));
+                    InputStream scriptStream = getClass().getResourceAsStream(String.format("%s/%s",db_Script_Folder_Address,fileName));
 
                     if (scriptStream==null)
                     {
                         System.err.printf("\nrun_SQL_Script_Folder() Script not found: '%s'",fileName);
                         return false;
-                    }*/
+                    }
 
-                    InputStream scriptStream = new FileInputStream(String.format("%s/%s", db_Script_Folder_Address, fileName));
+                    //InputStream scriptStream = new FileInputStream(String.format("%s/%s", db_Script_Folder_Address, fileName));
                     Reader reader = new InputStreamReader(scriptStream, StandardCharsets.UTF_8);
 
                     // Creating Script Runner to stop on errors
-                    ScriptRunner runner = new ScriptRunner(this.connection);
+                    ScriptRunner runner = new ScriptRunner(connection);
                     runner.setStopOnError(true);
                     runner.runScript(reader);
 

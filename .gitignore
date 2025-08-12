@@ -1,25 +1,5 @@
 # Project exclude paths
 /out/
-/resources/production_setup/database_scripts/
-/target/classes/production_setup/database_scripts/3.) IngredientTypes.sql
-/target/classes/production_setup/database_scripts/4.) Ingredients_Info.sql
-/target/classes/production_setup/database_scripts/2.) Macros_Per_Pound_And_Limits.sql
-/target/classes/production_setup/database_scripts/1.) Plans.sql
-/target/classes/production_setup/database_scripts/1.) GymApp.sql
-/target/classes/production_setup/database_scripts/0.) Database_Names.txt
-/target/classes/production_setup/database_scripts/0.) Script_List.txt
-/target/classes/production_setup/database_scripts/5.) Stores.sql
-/target/classes/production_setup/database_scripts/6.) IngredientInShops.sql
-/target/classes/data/database_scripts/others/7.) Daily_Calculations.sql
-/target/classes/production_setup/database_scripts/others/7.) Daily_Calculations.sql
-/target/classes/data/database_scripts/others/7.) PreLoad_Products
-/target/classes/production_setup/database_scripts/others/7.) PreLoad_Products
-/target/classes/production_setup/database_scripts/8.) PreLoadMealPlan.sql
-/target/classes/data/database_scripts/others/8.) Weekly_Calculations.sql
-/target/classes/data/database_scripts/others/9.) Monthly_Calculations.sql
-/target/classes/production_setup/database_scripts/others/9.) Monthly_Calculations.sql
-/target/classes/production_setup/database_scripts/others/8.) Weekly_Calculations.sql
-/resources/production_setup/database_scripts/
 /resources/production_setup/Gym_App.jar
 /resources/production_setup/.env
 /target/classes/production_setup/.env

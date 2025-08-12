@@ -1,4 +1,3 @@
-USE gymapp00001;
 
 #######################################################################################
 INSERT IGNORE INTO mealsInPlan (MealInPlanID, PlanID, Meal_Name, Meal_Time) VALUES

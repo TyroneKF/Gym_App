@@ -1,4 +1,3 @@
-USE gymapp00001;
 INSERT IGNORE INTO stores (Store_Name) VALUES
 ('No Shop'),
 ('Aldi'),
