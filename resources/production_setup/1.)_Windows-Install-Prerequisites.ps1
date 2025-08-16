@@ -187,16 +187,23 @@ if (-not $ExecutedStatement)
 # ####################################################################################
 # Create ENV File in current directory
 # ####################################################################################
-$envFilePath = ".\.env"
 
-@"
+$envFilePath = Join-Path -Path $PSScriptRoot -ChildPath ".env"
+
+$text = @"
 # DO NOT COMMIT THIS FILE
 DB_NAME=$DB_NAME
 DB_USER=$DB_USER
 DB_PASS=$DB_PASS
 DB_HOST=localhost
 DB_PORT=3306
-"@ | Out-File -FilePath $envFilePath -Encoding UTF8
+"@
+
+$utf8NoBOM = New-Object System.Text.UTF8Encoding($false)
+[System.IO.File]::WriteAllText($envFilePath, $text, $utf8NoBOM)
+
+Write-Host "Env file created at: $envFilePath"
+
 
 Write-Host "ENV: Successfully created in current directory!"
 
@@ -204,10 +211,10 @@ Write-Host "ENV: Successfully created in current directory!"
 # Reset Password Variables (Security)
 # ####################################################################################
 $DB_PASS = $null
-$PASSWORD.Dispose()
+if ($PASSWORD) { $PASSWORD.Dispose() }
 $PASSWORD = $null
 $plainPassword = $null
-$rootPassword.Dispose()
+if ($rootPassword) { $rootPassword.Dispose() }
 $rootPassword = $null
 
 Write-Host "Password variables cleared from memory."
