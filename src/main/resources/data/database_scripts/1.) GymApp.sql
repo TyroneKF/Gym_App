@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS macros_Per_Pound_And_Limits
 	DateTime_Of_Creation DATETIME NOT NULL,
 
 	current_Weight_KG DECIMAL(7,2) NOT NULL,
-	current_Weight_In_Pounds DECIMAL(7,2) AS (ROUND(current_Weight_KG * 2.2, 2)),
+	current_Weight_In_Pounds DECIMAL(7,2) AS (ROUND(current_Weight_KG * 2.2, 2)) STORED,
 
 	BodyFatPercentage DECIMAL(7,2) NOT NULL,
 
@@ -63,28 +63,18 @@ LEFT JOIN
 (
     SELECT  M.PlanID, M.DateTime_Of_Creation,
 	IFNULL(ROUND(M.current_Weight_In_Pounds * M.Protein_PerPound, 2),0) AS Expected_Protein_Grams,
-
 	IFNULL(ROUND(M.current_Weight_In_Pounds * M.Carbohydrates_PerPound, 2),0) AS Expected_Carbohydrates_Grams,
-
-
 	IFNULL(M.Fibre, 0) AS Expected_Fibre_Grams,
-
 	IFNULL(ROUND(M.current_Weight_In_Pounds * M.Fats_PerPound, 2),0) AS Expected_Fats_Grams,
-
-
 	IFNULL(M.Saturated_Fat_Limit, 0) AS Saturated_Fat_Limit,
-
     IFNULL(M.Salt_LIMIT, 0)  AS Salt_LIMIT_Grams,
-
     IFNULL(M.Water_Target, 0) AS Water_Content_Target,
 	IFNULL(M.Liquid_Target, 0) AS Liquid_Content_Target,
-
 	IFNULL(
 	    ROUND((M.current_Weight_In_Pounds * M.Protein_PerPound) * 4, 2) +
 		ROUND((M.current_Weight_In_Pounds * M.Carbohydrates_PerPound) * 4, 2) +
 		ROUND((M.current_Weight_In_Pounds * M.Fats_PerPound) *9, 2)
 	, 0) AS Calories_Target,
-
 	IFNULL(
 	    ROUND((M.current_Weight_In_Pounds * M.Protein_PerPound) * 4, 2) +
 		ROUND((M.current_Weight_In_Pounds * M.Carbohydrates_PerPound) * 4, 2) +
@@ -358,7 +348,7 @@ IFNULL(ROUND(C.Expected_Fibre_Grams  - P.Fibre_In_Plan ,2),0) AS Fibre_Grams_Lef
 IFNULL(ROUND(C.Expected_Fats_Grams - P.Fats_In_Plan ,2),0) Fats_Grams_Left,
 IFNULL(ROUND(C.Saturated_Fat_Limit - P.Saturated_Fat_In_Plan ,2),0) AS Potential_Saturated_Fat_Grams,
 
-IFNULL(ROUND(C.Salt_LIMIT_Grams - P.Salt_In_Plan ,2),0) AS Potential_Salt,
+IFNULL(ROUND(C.Salt_LIMIT - P.Salt_In_Plan ,2),0) AS Potential_Salt,
 IFNULL(ROUND(C.Water_Content_Target - P.Water_Content_In_Plan ,2),0) AS  Water_Left_To_Drink,
 IFNULL(ROUND(C.Liquid_Content_Target - P.Liquid_Content_In_Plan ,2),0) AS  Liquids_Left,
 
