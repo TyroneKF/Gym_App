@@ -40,7 +40,9 @@ https://www.oracle.com/uk/java/technologies/downloads/
 # Installing Prerequisites Mac && Linux
 #########################################
 
-# 1.) Copy the project folder into a readable and writable directory
+# 1.) Copy the project folder into a readable and writable directory:
+      In CML use the command  " sudo chown $(whoami) /path/to/directory " to grant permissions to read / write in a directory
+
 # 2.) Open your CML  & change directory into the folder this script is in
 # 3.) Paste the code (below) to give permissions for the script to run & install packages
 

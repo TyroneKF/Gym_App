@@ -308,7 +308,7 @@ ON m.MealInPlanID = d.MealInPlanID AND m.PlanID = d.PlanID
 LEFT JOIN divided_meal_sections_calculations di
 ON di.DivMealSectionsID = d.DivMealSectionsID AND di.PlanID = d.PlanID
 
-GROUP BY  m.PlanID, m.MealInPlanID, Meal_Time, Meal_Name;
+GROUP BY  m.PlanID, m.MealInPlanID, Meal_Time, Meal_Name; -- Last 2 were just added because of Aggregation strict sql mode
 
 --######################################
 
