@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS plans
 --######################################
 
 CREATE TABLE IF NOT EXISTS macros_Per_Pound_And_Limits
-(
+(   	
     PlanID INT NOT NULL,
     FOREIGN KEY (PlanID) REFERENCES plans(PlanID) ON DELETE CASCADE,
 
@@ -51,13 +51,13 @@ SELECT P.PlanID, P.Plan_Name,
 
 C.DateTime_Of_Creation,
 C.Expected_Protein_Grams, C.Expected_Carbohydrates_Grams, C.Expected_Fibre_Grams, C.Expected_Fats_Grams,
-C.Saturated_Fat_Limit, C.Salt_LIMIT_Grams, C.Water_Content_Target, C.Liquid_Content_Target, C.Calories_Target,
+C.Saturated_Fat_Limit, C.Salt_Limit_Grams, C.Water_Content_Target, C.Liquid_Content_Target, C.Calories_Target,
 C.Additional_Calories_Target
 
 FROM
 (
 	SELECT  PlanID, Plan_Name FROM plans
-) AS P
+)  P
 
 LEFT JOIN
 (
@@ -67,7 +67,7 @@ LEFT JOIN
 	IFNULL(M.Fibre, 0) AS Expected_Fibre_Grams,
 	IFNULL(ROUND(M.current_Weight_In_Pounds * M.Fats_PerPound, 2),0) AS Expected_Fats_Grams,
 	IFNULL(M.Saturated_Fat_Limit, 0) AS Saturated_Fat_Limit,
-    IFNULL(M.Salt_LIMIT, 0)  AS Salt_LIMIT_Grams,
+    IFNULL(M.Salt_Limit, 0)  AS Salt_Limit_Grams,
     IFNULL(M.Water_Target, 0) AS Water_Content_Target,
 	IFNULL(M.Liquid_Target, 0) AS Liquid_Content_Target,
 	IFNULL(
@@ -84,7 +84,7 @@ LEFT JOIN
 
 	FROM macros_Per_Pound_And_Limits M
 
-) AS C
+)  C
 ON P.PlanID = C.PlanID;
 
 --######################################
@@ -128,7 +128,7 @@ CREATE TABLE IF NOT EXISTS ingredients_info
 
 	Calories DECIMAL(7,2) NOT NULL,
 
-	UNIQUE KEY unique_ingredient_info (Ingredient_Name)
+	UNIQUE KEY unique_ingredient_name(Ingredient_Name)
 );
 
 --######################################
@@ -172,7 +172,7 @@ CREATE TABLE IF NOT EXISTS mealsInPlan
    Meal_Name VARCHAR(100) NOT NULL,
    Meal_Time TIME NOT NULL,
 
-   PRIMARY KEY(MealInPlanID, PlanID),
+   PRIMARY KEY(MealInPlanID, PlanID), -- MealInPlanID isn't unique enough because its duplicated in temp meal plan for temp data it becomes unique with PlanID 
    UNIQUE KEY Time_For_Meal(PlanID, Meal_Time), -- Only one meal can be at one time
    UNIQUE KEY No_Repeat_Meal_Names_In_Plan(PlanID, Meal_Name) -- can't have 2 of the same meal_names in a plan
 );
@@ -183,13 +183,16 @@ CREATE TABLE IF NOT EXISTS dividedMealSections
 (
    DivMealSectionsID INT AUTO_INCREMENT,
 
-   MealInPlanID INT  NOT NULL,
-   FOREIGN KEY (MealInPlanID) REFERENCES mealsInPlan (MealInPlanID) ON DELETE CASCADE,
-
+   MealInPlanID  INT  NOT NULL, 
    PlanID INT NOT NULL,
-   FOREIGN KEY (PlanID) REFERENCES plans(PlanID) ON DELETE CASCADE,
+   
+   FOREIGN KEY (MealInPlanID, PlanID)  
+        REFERENCES mealsInPlan (MealInPlanID, PlanID)
+        ON DELETE CASCADE,
+		
+   PRIMARY KEY(DivMealSectionsID, PlanID), -- DivMealSectionsID isn't unique enough because its duplicated in temp meal plan for temp data it becomes unique with PlanID
+   UNIQUE KEY No_Repeat_Sub_Meals_Per_Plan(DivMealSectionsID, MealInPlanID, PlanID)
 
-   PRIMARY KEY(DivMealSectionsID, MealInPlanID, PlanID)
 );
 
 --######################################
@@ -198,10 +201,11 @@ CREATE TABLE IF NOT EXISTS ingredients_in_sections_of_meal
     Ingredients_Index INT  AUTO_INCREMENT,
 
     DivMealSectionsID INT NOT NULL,
-	FOREIGN KEY (DivMealSectionsID) REFERENCES dividedMealSections(DivMealSectionsID) ON DELETE CASCADE,
-
-    PlanID INT,
- 	FOREIGN KEY (PlanID) REFERENCES plans(PlanID) ON DELETE CASCADE,
+	PlanID INT NOT NULL,
+	
+	FOREIGN KEY (DivMealSectionsID, PlanID) 
+		REFERENCES dividedMealSections(DivMealSectionsID, PlanID) 
+		ON DELETE CASCADE,
 
     IngredientID INT NOT NULL,
 	FOREIGN KEY (IngredientID) REFERENCES ingredients_info(IngredientID) ON DELETE CASCADE,
@@ -212,7 +216,7 @@ CREATE TABLE IF NOT EXISTS ingredients_in_sections_of_meal
  	FOREIGN KEY (PDID) REFERENCES ingredientInShops(PDID) ON DELETE CASCADE,
 
 	PRIMARY KEY (Ingredients_Index, PlanID),
-	UNIQUE KEY No_Repeat_Meals (Ingredients_Index, DivMealSectionsID, PlanID)
+	UNIQUE KEY No_Repeat_Meals (Ingredients_Index, DivMealSectionsID, PlanID) -- #HELLO is DivMealSectionsID needed
 );
 
 --######################################
@@ -230,7 +234,7 @@ IFNULL(s.Store_Name,'N/A') AS  Supplier,
 IFNULL(p.Product_Name,'N/A') AS  Product_Name,
 
 IFNULL(ROUND((info.Protein /info.Based_On_Quantity)*i.Quantity,2),0) AS Protein,
-IFNULL(info.Glycemic_Index, -0) AS GI,
+IFNULL(info.Glycemic_Index, 0) AS GI,
 IFNULL(ROUND((info.Carbohydrates /info.Based_On_Quantity)*i.Quantity,2),0) AS Carbohydrates,
 IFNULL(ROUND((info.Sugars_Of_Carbs /info.Based_On_Quantity)*i.Quantity,2),0) AS Sugars_Of_Carbs,
 IFNULL(ROUND((info.Fibre /info.Based_On_Quantity)*i.Quantity,2),0) AS Fibre,
@@ -278,8 +282,8 @@ CREATE VIEW total_meal_view AS
 
 SELECT m.PlanID, m.MealInPlanID,
 
-MAX(m.Meal_Time) AS Meal_Time,
-MAX(m.Meal_Name) AS Meal_Name,
+m.Meal_Time AS Meal_Time,
+m.Meal_Name AS Meal_Name,
 
 IFNULL(ROUND(SUM(di.No_Of_Ingredients),2),0) as No_Of_Ingredients,
 IFNULL(ROUND(SUM(di.Weight_OF_Meal),2),0) as Weight_OF_Meal,
@@ -304,7 +308,7 @@ ON m.MealInPlanID = d.MealInPlanID AND m.PlanID = d.PlanID
 LEFT JOIN divided_meal_sections_calculations di
 ON di.DivMealSectionsID = d.DivMealSectionsID AND di.PlanID = d.PlanID
 
-GROUP BY m.MealInPlanID, m.PlanID;
+GROUP BY  m.PlanID, m.MealInPlanID, Meal_Time, Meal_Name; -- Last 2 were just added because
 
 --######################################
 
@@ -345,10 +349,10 @@ P.PlanID, P.Plan_Name,
 IFNULL(ROUND(C.Expected_Protein_Grams - P.Protein_In_Plan ,2),0) AS Protein_Grams_Left,
 IFNULL(ROUND(C.Expected_Carbohydrates_Grams  - P.Carbohydrates_In_Plan ,2),0) AS Carbohydrates_Grams_Left,
 IFNULL(ROUND(C.Expected_Fibre_Grams  - P.Fibre_In_Plan ,2),0) AS Fibre_Grams_Left,
-IFNULL(ROUND(C.Expected_Fats_Grams - P.Fats_In_Plan ,2),0) Fats_Grams_Left,
+IFNULL(ROUND(C.Expected_Fats_Grams - P.Fats_In_Plan ,2),0) AS Fats_Grams_Left,
 IFNULL(ROUND(C.Saturated_Fat_Limit - P.Saturated_Fat_In_Plan ,2),0) AS Potential_Saturated_Fat_Grams,
 
-IFNULL(ROUND(C.Salt_LIMIT - P.Salt_In_Plan ,2),0) AS Potential_Salt,
+IFNULL(ROUND(C.Salt_Limit_Grams - P.Salt_In_Plan ,2),0) AS Potential_Salt,
 IFNULL(ROUND(C.Water_Content_Target - P.Water_Content_In_Plan ,2),0) AS  Water_Left_To_Drink,
 IFNULL(ROUND(C.Liquid_Content_Target - P.Liquid_Content_In_Plan ,2),0) AS  Liquids_Left,
 
@@ -371,10 +375,9 @@ FROM
 
   FROM total_plan_view
 
-) AS P
+) P
 LEFT JOIN
 (
    SELECT * FROM plan_Macro_Target_Calculations
-) AS C
-
+) C
 ON C.PlanID = P.PlanID;
