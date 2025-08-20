@@ -56,7 +56,8 @@ read -p "Enter the username (MYSQL): " APP_USER
 read -s -p "Enter a password (MYSQL): " APP_PASS # Password Hidden
 
 
-# Confirm inputs
+# Confirm Inputs (Line below is needed causes an error flag)
+# shellcheck disable=SC2059
 printf "\n\n\nCreating database '${APP_DB}' and user '${APP_USER}'..."
 printf "\nYou might be prompted to enter your password in the next steps (Mysql Setup)!!"
 
@@ -74,6 +75,7 @@ printf "\n\nDatabase and user created successfully."
 # -------- Step 5: Generate .env File --------
 printf "\n\n[6/6] Creating .env file for your application... "
 
+# Drop sudo here, so this part runs as your user:
 cat <<ENV > .env
 # DO NOT COMMIT THIS FILE
 DB_NAME=${APP_DB}
@@ -83,7 +85,11 @@ DB_HOST=localhost
 DB_PORT=3306
 ENV
 
-chmod 600 .env  # Secure file
+chmod 600 .env # Secures File
+
+# Ensures we have permission to view the file for execution purposes
+USER_NAME=${SUDO_USER:-$(whoami)}
+sudo chown "$USER_NAME":"$USER_NAME" .env
 
 printf "\n\n.env file created with DB credentials (only readable by you)."
 printf "\n✅ Installation and configuration complete."
