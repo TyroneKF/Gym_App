@@ -1,5 +1,5 @@
 # Project exclude paths
 /out/
-/resources/production_setup/Gym_App.jar
-/resources/production_setup/.env
+/scripts/production_setup_scripts/Gym_App.jar
+/scripts/production_setup_scripts/.env
 /target/classes/production_setup/.env
