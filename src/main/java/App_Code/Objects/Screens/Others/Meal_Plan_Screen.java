@@ -20,7 +20,7 @@ import java.util.List;
 public class Meal_Plan_Screen extends JPanel
 {
     private static boolean
-            production = true;
+            production = false;
 
     private Collection<String> ingredientsTypesList, storesNamesList;
 
@@ -137,7 +137,7 @@ public class Meal_Plan_Screen extends JPanel
                 if (host==null || port==null || user==null || password==null || dbName==null)
                 {
                     System.err.printf("\n\nDB Values: \nhost: %s \nport: %s \nuser: %s \ndbName: %s",
-                            host, port, user,  dbName);
+                            host, port, user, dbName);
 
                     throw new RuntimeException("Missing one or more required DB environment variables.");
                 }
@@ -147,7 +147,7 @@ public class Meal_Plan_Screen extends JPanel
                 // #########################################
                 // Create DB Object & run SQL Scripts
                 // #########################################
-                MyJDBC db = new MyJDBC(host, port, user, password, dbName, db_Scripts_Folder_Path, db_File_Script_List_Name, db_File_Tables_Name);
+                MyJDBC db = new MyJDBC(true, host, port, user, password, dbName, db_Scripts_Folder_Path, db_File_Script_List_Name, db_File_Tables_Name);
 
                 if (db.get_DB_Connection_Status())
                 {
@@ -168,57 +168,20 @@ public class Meal_Plan_Screen extends JPanel
         else
         {
             //############################################################################################################
-            // Database Setup
+            // Create DB Object & run SQL Script
             //#############################################################################################################
-            try
+
+            MyJDBC db = new MyJDBC(false, "localhost", "3306", "root", "password", databaseName, db_Scripts_Folder_Path, db_File_Script_List_Name, db_File_Tables_Name);
+
+            if (db.get_DB_Connection_Status())
             {
-                String userDirectory = String.format("%s\\resources\\production_setup", new File("").getAbsolutePath()); // get path file of where this is being executed
-
-                System.out.printf("\n\nDirectory: \n%s \n\nScripts Directory:\n%s\n\n", userDirectory, db_Scripts_Folder_Path);
-
-                System.out.println("\n\nReading ENV Variables: host, port, user, ****, db_name");
-
-                Dotenv dotenv = Dotenv.configure()
-                        .directory(userDirectory)
-                        .filename(".env") // instead of '.env', use 'env'
-                        .load();
-
-                String host = dotenv.get("DB_HOST");
-                String port = dotenv.get("DB_PORT");
-                String user = dotenv.get("DB_USER");
-                String password = dotenv.get("DB_PASS");
-                String dbName = dotenv.get("DB_NAME");
-                databaseName = dbName;
-
-                if (host==null || port==null || user==null || password==null || dbName==null)
-                {
-                    System.out.printf("\n\nDB Values: \nhost: %s \nport: %s \nuser: %s \npassword: %s \ndbName: %s",
-                            host, port, user, password, dbName);
-
-                    throw new RuntimeException("Missing one or more required DB environment variables.");
-                }
-
-                System.out.println("\n\nSuccessfully retrieved ENV Variables: host, port, user, ****, db_name");
-
-
-                //##############################################
-                // Create DB Object & run SQL Script
-                //##############################################
-                MyJDBC db = new MyJDBC(host, port, user, password, dbName, db_Scripts_Folder_Path, db_File_Script_List_Name, db_File_Tables_Name);
-
-                if (db.get_DB_Connection_Status())
-                {
-                    new Meal_Plan_Screen(db);
-                }
-                else
-                {
-                    JOptionPane.showMessageDialog(null, "ERROR, Cannot Connect To Database!");
-                }
+                new Meal_Plan_Screen(db);
             }
-            catch (Exception e)
+            else
             {
-                System.err.printf("\n\n%s", e);
+                JOptionPane.showMessageDialog(null, "ERROR, Cannot Connect To Database!");
             }
+
         }
     }
 
@@ -751,7 +714,7 @@ public class Meal_Plan_Screen extends JPanel
 
         for (int i = 0; i <= listSize - 1; i++)
         {
-            String colToAdd = columnsToAvoid.contains(macrosColumns[i]) ? "" : String.format("\n\t%s", macrosColumns[i]);
+            String colToAdd = columnsToAvoid.contains(macrosColumns[i]) ? "":String.format("\n\t%s", macrosColumns[i]);
 
             if (i==listSize - 1)
             {

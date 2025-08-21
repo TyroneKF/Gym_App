@@ -45,7 +45,7 @@ public class MyJDBC
     //##################################################################################################################
     //
     //##################################################################################################################
-    public MyJDBC(String host, String port, String userName, String password, String databaseName, String db_Script_Folder_Address, String script_List_Name, String databaseNamesFileName)
+    public MyJDBC(Boolean productionMode, String host, String port, String userName, String password, String databaseName, String db_Script_Folder_Address, String script_List_Name, String databaseNamesFileName)
     {
         //####################################################################
         //  Setting Variables
@@ -140,20 +140,36 @@ public class MyJDBC
                 System.err.printf("\n\nAccess denied: Incorrect Username ('%s') or Password. \nTry re-running the prerequisites script to setup Credentials!\n\n%s", userName, line_Separator);
                 return;
             }
+            else if (errorCode==2003) { System.out.println("\n\nMYSQL ERROR: Issues Connecting to MYSQL"); }
             else if (errorCode==1049) // Unknown database
             {
-                System.err.printf("""
+                String msg = String.format("""
                         \n\nDatabase Access Denied: '%s' (Unknown database).
                         \nAttempting to recreate Database Shortly.
                         \nHowever, this may denied as maybe user '%s'@'%s' doesn't have the correct mysql privileges to do so!
                         It would be better to rerun the  pre-requisites script to ensure proper user privileges!""", databaseName, userName, host);
 
-                return;
+                if (productionMode) { System.out.println(msg); return; } // if  not in testing mode, pre-requisites script needs to be run to give user permissions / creating db app side won't fix the broader issue
 
+                // In non production mode, try and create the DB assuming the users account already has privileges in MYSQL
+                try
+                {
+                    System.out.println("MyJDBC MYSQL ERROR: Connecting to DB, attempting to recreate DB !");
+                    connection = DriverManager.getConnection(initial_db_connection, userName, password);
+
+                    String sqlScript = String.format("create database if not exists %s;", databaseName);
+                    Statement statement = connection.createStatement();
+                    statement.executeUpdate(sqlScript);
+                }
+                catch (SQLException x)
+                {
+                    System.out.printf("/n/nMyJDBC MYSQL ERROR: Creating Database '%s' \n\n%s", databaseName, msg);
+                    return;
+                }
             }
             else
             {
-                System.err.printf("\n\nSQL Error Exception: \n\n%s \nSQL State: %s \n\n%s \n\n", message, sqlState, line_Separator);
+                System.err.printf("\n\nMyJDBC SQL Error Exception: \n\n%s \nSQL State: %s \n\n%s \n\n", message, sqlState, line_Separator);
                 return;
             }
         }
@@ -241,11 +257,11 @@ public class MyJDBC
 
                 try // Execute Script
                 {
-                    InputStream scriptStream = getClass().getResourceAsStream(String.format("%s/%s",db_Script_Folder_Address,fileName));
+                    InputStream scriptStream = getClass().getResourceAsStream(String.format("%s/%s", db_Script_Folder_Address, fileName));
 
                     if (scriptStream==null)
                     {
-                        System.err.printf("\nrun_SQL_Script_Folder() Script not found: '%s'",fileName);
+                        System.err.printf("\nrun_SQL_Script_Folder() Script not found: '%s'", fileName);
                         return false;
                     }
 
@@ -555,13 +571,13 @@ public class MyJDBC
         try
         {
             //Query Setup
-             connection = multipleQueries ? DriverManager.getConnection(db_Connection_Address += "?autoReconnect=true&amp;allowMultiQueries=true", userName, password)
+            connection = multipleQueries ? DriverManager.getConnection(db_Connection_Address += "?autoReconnect=true&amp;allowMultiQueries=true", userName, password)
                     :DriverManager.getConnection(db_Connection_Address, userName, password);
 
             Statement statement = connection.createStatement();
             statement.executeUpdate(query);
 
-            connection =  DriverManager.getConnection(db_Connection_Address, userName, password); // reset back to default patterns
+            connection = DriverManager.getConnection(db_Connection_Address, userName, password); // reset back to default patterns
             return true;
         }
         catch (Exception e)
@@ -683,7 +699,7 @@ public class MyJDBC
         }
         try
         {
-           Statement statement = connection.createStatement();
+            Statement statement = connection.createStatement();
 
             //Setting auto-commit false
             connection.setAutoCommit(false);
@@ -924,7 +940,7 @@ public class MyJDBC
             //############################################
             // Get number of  Columns in each query row
             //############################################
-            if ( ! resultSet.isBeforeFirst()) // checks if any data wasn't returned, exit
+            if (!resultSet.isBeforeFirst()) // checks if any data wasn't returned, exit
             {
                 System.err.printf("\n\ngetSingleColumnQuery_ArrayList() Returned NULL using query: \n\n%s", query);
                 JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);

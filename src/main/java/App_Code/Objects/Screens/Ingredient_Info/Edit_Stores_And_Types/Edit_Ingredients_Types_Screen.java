@@ -15,7 +15,7 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
 
     public Edit_Ingredients_Types_Screen(MyJDBC db, Ingredients_Info_Screen ingredientsInfoScreen, Collection<String> jcomboBoxList)
     {
-        super.sqlFilePath = "src/main/java/Documentation_And_Scripts/Database/Scripts/Editable_DB_Scripts/3.) IngredientTypes.sql";
+        super.sqlFilePath = "src/main/java/Documentation_And_Scripts/Database/Scripts/Editable_DB_Scripts/5.) IngredientTypes.sql";
         super.process = "ingredients types";
 
         this.db = db;

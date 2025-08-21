@@ -1,16 +1,27 @@
 --######################################
+CREATE TABLE IF NOT EXISTS users
+(
+  User_ID INT PRIMARY KEY AUTO_INCREMENT,
+  Username VARCHAR(100) NOT NULL
+);
+
+--######################################
+
 CREATE TABLE IF NOT EXISTS plans
- (
-    PlanID INT  PRIMARY KEY AUTO_INCREMENT,
+(
+    PlanID INT PRIMARY KEY AUTO_INCREMENT,
+    Plan_Name VARCHAR(100) NOT NULL,
 
-	Plan_Name VARCHAR(100) NOT NULL,
+	User_ID INT NOT NULL,
+	FOREIGN KEY (User_ID) REFERENCES users(User_ID) ON DELETE CASCADE,
 
-    SelectedPlan BOOLEAN,  -- can be null, the only plan with a true value is the selected plan
-    CHECK(SelectedPlan IN(true)),
+    SelectedPlan BOOLEAN NOT NULL DEFAULT false,
+    Vegan BOOLEAN NOT NULL DEFAULT FALSE,
 
-    Vegan BOOLEAN  NOT NULL,
+    -- Ensures a user can only have one active plan, by using this field as an (identifier)
+    Selected_Plan_Flag BOOLEAN GENERATED ALWAYS AS (IF(SelectedPlan, TRUE, NULL)) STORED,
 
-    UNIQUE KEY chosen_plan (selectedPlan)
+    UNIQUE KEY one_true_plan_per_user (User_ID, Selected_Plan_Flag)
 );
 
 --######################################
@@ -45,6 +56,7 @@ CREATE TABLE IF NOT EXISTS macros_Per_Pound_And_Limits
 
 --######################################
 
+DROP VIEW IF EXISTS plan_Macro_Target_Calculations;
 CREATE  VIEW plan_Macro_Target_Calculations AS
 
 SELECT P.PlanID, P.Plan_Name,
@@ -220,6 +232,8 @@ CREATE TABLE IF NOT EXISTS ingredients_in_sections_of_meal
 );
 
 --######################################
+
+DROP VIEW IF EXISTS ingredients_in_sections_of_meal_calculation;
 CREATE VIEW ingredients_in_sections_of_meal_calculation AS
 
 SELECT
@@ -253,6 +267,7 @@ LEFT JOIN stores s ON p.StoreID = s.StoreID;
 
 --######################################
 
+DROP VIEW IF EXISTS divided_meal_sections_calculations;
 CREATE VIEW divided_meal_sections_calculations AS
 
 SELECT
@@ -278,6 +293,8 @@ FROM  ingredients_in_sections_of_meal_calculation
 GROUP BY DivMealSectionsID, PlanID;
 
 --######################################
+
+DROP VIEW IF EXISTS total_meal_view;
 CREATE VIEW total_meal_view AS
 
 SELECT m.PlanID, m.MealInPlanID,
@@ -312,6 +329,7 @@ GROUP BY  m.PlanID, m.MealInPlanID, Meal_Time, Meal_Name; -- Last 2 were just ad
 
 --######################################
 
+DROP VIEW IF EXISTS total_plan_view;
 CREATE VIEW total_plan_view AS
 
 SELECT P.PlanID, P.Plan_Name, -- needs to be here to prevent ONLY_FULL_GROUP_BY
@@ -342,6 +360,7 @@ GROUP BY  P.PlanID, P.Plan_Name;
 
 --######################################
 
+DROP VIEW IF EXISTS planMacrosLeft;
 CREATE VIEW  planMacrosLeft AS
 
 SELECT
