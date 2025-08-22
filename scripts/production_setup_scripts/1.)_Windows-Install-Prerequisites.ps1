@@ -55,6 +55,7 @@ $rootPassword = $null
 # ####################################################################################
 Write-Host "Checking if MySQL is installed."
 
+# (Heads UP) This doesnt check the MYSQL Version & only checks if MYSQL is installed it could use some tightening if MYSQL speicific
 if (-not (Get-Command mysql.exe -ErrorAction SilentlyContinue))
 {
     Write-Host "Installing MySQL Server and Workbench..."
