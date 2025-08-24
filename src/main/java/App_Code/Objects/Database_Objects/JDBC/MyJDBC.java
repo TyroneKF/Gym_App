@@ -32,15 +32,13 @@ public class MyJDBC
     private Connection connection;
 
     private final String
+            users_DB_Script_Path = "/data/database_scripts/2.) Users.sql",
             line_Separator = "############################################################################################################################",
             middle_line_Separator = "###########################################################################################";
 
     private boolean
             db_Connection_Status = false,
             override = true; // ERROR surrounding this
-
-    private int
-            connection_Attempts = 1;
 
     //##################################################################################################################
     //
@@ -72,11 +70,11 @@ public class MyJDBC
             //#################################################################
             //  Compiling SQL Statement to check if DB Tables from List Exist
             //#################################################################
-            System.out.printf("\n\nValidating Database Setup (Tables) inside of DB '%s' through queries!", databaseName);
+            System.out.printf("\n\nValidating Database Setup (Tables) inside of DB '%s', checking if all the tables are initialized.", databaseName);
 
             String
                     path = String.format("%s/%s", db_Script_Folder_Address, databaseNamesFileName), // don't include a / between the files
-                    sql_Statement = "SELECT COUNT(*) FROM information_schema.tables WHERE table_name IN (";
+                    sql_Statement = String.format("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '%s' AND table_name IN (", databaseName);
 
             int tablesCount = 0; // increments and identifies how many tables there are in the DB
 
@@ -111,7 +109,7 @@ public class MyJDBC
             ArrayList<String> queryResults = getSingleColumnQuery_ArrayList(sql_Statement);
             if (queryResults==null) // error return invalid results
             {
-                System.err.printf("\n\nMyJDBC() error, executing SQL Statement == NULL: \n\n%s", sql_Statement);
+                System.err.printf("\n\nMyJDBC() Error, executing SQL Statement == NULL: \n\n%s", sql_Statement);
                 return;
             }
 
@@ -126,6 +124,8 @@ public class MyJDBC
                 db_Connection_Status = true;
                 return;
             }
+
+            System.out.printf("\n\nDatabase '%s' expected %s tables DB has %s", databaseName, tablesCount, db_Tables_Count);
 
             System.out.printf("\n\n%s \nDatabase '%s' Tables need to be setup !! \n%s ", line_Separator, databaseName, line_Separator);
         }
@@ -154,7 +154,7 @@ public class MyJDBC
                 // In non production mode, try and create the DB assuming the users account already has privileges in MYSQL
                 try
                 {
-                    System.out.println("MyJDBC MYSQL ERROR: Connecting to DB, attempting to recreate DB !");
+                    System.err.println("MyJDBC MYSQL ERROR: Connecting to DB, attempting to recreate DB !");
                     connection = DriverManager.getConnection(initial_db_connection, userName, password);
 
                     String sqlScript = String.format("create database if not exists %s;", databaseName);
@@ -163,7 +163,7 @@ public class MyJDBC
                 }
                 catch (SQLException x)
                 {
-                    System.out.printf("/n/nMyJDBC MYSQL ERROR: Creating Database '%s' \n\n%s", databaseName, msg);
+                    System.err.printf("/n/nMyJDBC MYSQL ERROR: Creating Database '%s' \n%s \n\n%s", databaseName, x, msg);
                     return;
                 }
             }
@@ -174,9 +174,69 @@ public class MyJDBC
             }
         }
 
-        // ##########################################
+         /*
+            (Heads UP) This segment of code is only executed if the tables in the DB don't match the expected number
+            meaning the DB hasn't been set up prior  or, if the DB initialization failed first time around.
+         */
+
+        // ####################################################################
+        // Get Users Script & Format it for current user details
+        // ####################################################################
+        String usersQueryScript = "";
+        try (InputStream scriptFile = getClass().getResourceAsStream(users_DB_Script_Path))
+        {
+            if (scriptFile==null)
+            {
+                System.err.printf("\n\nMyJDBC: Error opening file in path: \n'%s'", users_DB_Script_Path);
+                return;
+            }
+
+            usersQueryScript = new String(scriptFile.readAllBytes(), StandardCharsets.UTF_8);
+            usersQueryScript = usersQueryScript.replace("@USERNAME", userName); // swap username scriptFile the script with the replacement txt
+
+        }
+        catch (Exception e)
+        {
+            System.err.printf("\n\nMyJDBC MYSQL ERROR: locating / reading script : '%s' ! \n\nError MSG: \n%s", usersQueryScript, e);
+            return;
+        }
+
+        // ####################################################################
+        // Execute Script
+        // ####################################################################
+        try
+        {
+            System.out.printf("\n\nUsers Script Query: \n%s", usersQueryScript);
+
+            // ##################################
+            // Upload Query
+            // ##################################
+            String fullUrl = db_Connection_Address + "?autoReconnect=true&allowMultiQueries=true";
+            connection = DriverManager.getConnection(fullUrl, userName, password);
+
+            Statement statement = connection.createStatement();
+            statement.executeUpdate(usersQueryScript);
+
+            connection = DriverManager.getConnection(db_Connection_Address, userName, password); // reset back to default patterns
+
+            // ##################################
+            // Print success msg
+            // ##################################
+            System.out.printf("\n\nUser '%s' successfully created / exists !", userName);
+        }
+        catch (SQLException x)
+        {
+            String message = x.getMessage();
+            int errorCode = x.getErrorCode();// 2003 = Can't connect to MySQL server, 0	= General connection failure
+
+            // 1045 : Access denied (bad username or password) | 2003 : Issues connecting to MySQL | 1049 : Unknown DB
+            System.err.printf("\n\nMyJDBC Running users script | Error Code: %s \n\n%s", errorCode, message );
+            return;
+        }
+
+        // ####################################################################
         // Re-setup Database
-        // ##########################################
+        // ####################################################################
         System.out.printf("\n\n\n%s\nAttempting to create Database Structure! \n%s", line_Separator, line_Separator);
 
         if (!(run_SQL_Script_Folder(db_Connection_Address, db_Script_Folder_Address, script_List_Name)))
@@ -643,8 +703,7 @@ public class MyJDBC
     /*
       Each query upload is executed separately and the query after, it can notice the changes
      */
-    public Boolean uploadData_Batch_Independently(String[]
-                                                          queries) // HELLO Can't this method and the one below refactored
+    public Boolean uploadData_Batch_Independently(String[] queries) // HELLO Can't this method and the one below refactored
     {
         if (!(get_DB_Connection_Status()))
         {

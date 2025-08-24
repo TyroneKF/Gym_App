@@ -1,5 +1,4 @@
 1.) GymApp.sql
-2.) Users.sql
 3.) Plans.sql
 4.) Macros_Per_Pound_And_Limits.sql
 5.) IngredientTypes.sql

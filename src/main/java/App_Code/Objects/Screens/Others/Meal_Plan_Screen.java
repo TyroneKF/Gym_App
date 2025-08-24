@@ -762,9 +762,9 @@ public class Meal_Plan_Screen extends JPanel
         //################################################################
         // Delete temp tables if they already exist
         //################################################################
-        String query0 = String.format("DROP TABLE IF EXISTS temp_ingredients_in_sections_of_meal;");
-        String query1 = String.format("DROP TABLE IF EXISTS temp_dividedMealSections;");
-        String query2 = String.format("DROP TABLE IF EXISTS temp_mealsInPlan;");
+        String query0 = "DROP TABLE IF EXISTS temp_ingredients_in_sections_of_meal;";
+        String query1 = "DROP TABLE IF EXISTS temp_dividedMealSections;";
+        String query2 = "DROP TABLE IF EXISTS temp_mealsInPlan;";
 
         String query3 = "SET FOREIGN_KEY_CHECKS = 0;"; // Disable Foreign Key Checks
 
@@ -789,28 +789,30 @@ public class Meal_Plan_Screen extends JPanel
         //################################################################
         String query11 = String.format("CREATE table temp_dividedMealSections AS SELECT * FROM dividedMealSections WHERE PlanID = %s ORDER BY DivMealSectionsID;", fromPlanID);
         String query12 = String.format("UPDATE temp_dividedMealSections SET PlanID = %s;", toPlanID);
-        String query13 = String.format("INSERT INTO dividedMealSections SELECT * FROM temp_dividedMealSections;");
+        String query13 = "INSERT INTO dividedMealSections SELECT * FROM temp_dividedMealSections;";
 
         //################################################################
         // Transferring this plans Ingredients to Temp-Plan
         //################################################################
         // Create Table to transfer ingredients from original plan to temp
-        String query14 = String.format(""" 
-                                    
+        String query14 = String.format("""                  
                 CREATE table temp_ingredients_in_sections_of_meal AS
                 SELECT i.*
                 FROM ingredients_in_sections_of_meal i                                                       
-                WHERE i.PlanID = %s;                  
-                """, fromPlanID);
+                WHERE i.PlanID = %s;""", fromPlanID);
 
         String query15 = String.format("UPDATE temp_ingredients_in_sections_of_meal SET PlanID = %s;", toPlanID);
-        String query16 = String.format("INSERT INTO ingredients_in_sections_of_meal SELECT * FROM temp_ingredients_in_sections_of_meal;");
+        String query16 = "INSERT INTO ingredients_in_sections_of_meal SELECT * FROM temp_ingredients_in_sections_of_meal;";
+
+        String query17 = "DROP TABLE temp_mealsInPlan;";
+        String query18 = "DROP TABLE IF EXISTS temp_ingredients_in_sections_of_meal;";
+        String query19 = "DROP TABLE IF EXISTS temp_dividedMealSections;";
 
         //####################################################
         // Update
         //####################################################
         String[] query_Temp_Data = new String[]{query0, query1, query2, query3, query4, query5, query6, query7, query8, query9, query10, query11, query12,
-                query13, query14, query15, query16};
+                query13, query14, query15, query16, query17, query18, query19};
 
         if (!(db.uploadData_Batch_Altogether(query_Temp_Data)))
         {

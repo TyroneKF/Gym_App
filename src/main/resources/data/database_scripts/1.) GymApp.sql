@@ -1,11 +1,4 @@
 --######################################
-CREATE TABLE IF NOT EXISTS users
-(
-  User_ID INT PRIMARY KEY AUTO_INCREMENT,
-  Username VARCHAR(100) NOT NULL
-);
-
---######################################
 
 CREATE TABLE IF NOT EXISTS plans
 (

@@ -1,2 +1,9 @@
+CREATE TABLE IF NOT EXISTS users
+(
+  User_ID INT PRIMARY KEY AUTO_INCREMENT,
+  Username VARCHAR(100) NOT NULL,
+  UNIQUE KEY User_Name(Username)
+
+);
 INSERT IGNORE INTO users  (User_ID, Username) VALUES
-(1, "Dummy User");
+(NULL, "@USERNAME");
