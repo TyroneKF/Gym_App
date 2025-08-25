@@ -19,7 +19,7 @@ public class MacrosTargetsTable extends MyJTable_DisplayData
 
     public void updateMacrosTargetsTable()
     {
-        String query = String.format("SELECT * FROM plan_Macro_Target_Calculations WHERE PlanID = %s;", temp_PlanID);
+        String query = String.format("SELECT * FROM plan_Macro_Target_Calculations WHERE plan_id = %s;", temp_PlanID);
         super.updateTable("MacrosTargetsTable", query, 0);
     }
 }

@@ -18,13 +18,13 @@ public class MacrosLeftTable extends MyJTable_DisplayData
 
     public void updateMacrosLeftTable()
     {
-        String query = String.format("select * from planMacrosLeft WHERE PlanID = %s", temp_PlanID);
+        String query = String.format("select * from planMacrosLeft WHERE plan_id = %s", temp_PlanID);
         super.updateTable("MacrosLeftTable", query, 0);
     }
 
     public boolean updateMacrosLeftTableModelData()
     {
-        String query = String.format("select * from planMacrosLeft WHERE PlanID = %s;", temp_PlanID);
+        String query = String.format("select * from planMacrosLeft WHERE plan_id = %s;", temp_PlanID);
 
         return super.updateTableModelData("planMacrosLeft", query);
     }

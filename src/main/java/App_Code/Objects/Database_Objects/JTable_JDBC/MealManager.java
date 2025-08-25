@@ -130,7 +130,7 @@ public class MealManager
         //##############################################################################################################
         // Upload Meal To Temp Plan
         //##############################################################################################################
-        String uploadQuery = String.format(" INSERT INTO mealsInPlan (PlanID, Meal_Name, Meal_Time) VALUES (%s,'%s','%s')", tempPlanID, newMealName, newMealTime);
+        String uploadQuery = String.format(" INSERT INTO mealsInPlan (plan_id, Meal_Name, Meal_Time) VALUES (%s,'%s','%s')", tempPlanID, newMealName, newMealTime);
 
         if (!(db.uploadData_Batch_Altogether(new String[]{uploadQuery})))
         {
@@ -141,14 +141,14 @@ public class MealManager
         //##############################################################################################################
         // Get mealInPlanID
         //##############################################################################################################
-        String query = String.format("Select MealInPlanID from mealsInPlan WHERE PlanID = %s AND  Meal_Name = '%s';", tempPlanID, newMealName);
+        String query = String.format("Select MealInPlanID from mealsInPlan WHERE plan_id = %s AND  Meal_Name = '%s';", tempPlanID, newMealName);
         String[] results = db.getSingleColumnQuery(query);
 
         if (results == null)
         {
             JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nCannot Get Created Meals ID!!");
 
-            String deleteQuery = String.format("DELETE FROM  mealsInPlan WHERE planID = %s AND  MealName = '%s';)", tempPlanID, newMealName);
+            String deleteQuery = String.format("DELETE FROM  mealsInPlan WHERE plan_id = %s AND  MealName = '%s';)", tempPlanID, newMealName);
             if (!(db.uploadData_Batch_Altogether(new String[]{deleteQuery})))
             {
                 JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nUnable To Undo Errors Made!\n\nRecommendation Action: Refresh This Plan");
@@ -238,7 +238,7 @@ public class MealManager
 
         JPanel southPanel = collapsibleJpObj.getSouthJPanel();
 
-        String query = String.format("SELECT *  FROM total_meal_view WHERE MealInPlanID = %s AND PlanID = %s;", mealInPlanID, tempPlanID);
+        String query = String.format("SELECT *  FROM total_meal_view WHERE MealInPlanID = %s AND plan_id = %s;", mealInPlanID, tempPlanID);
         Object[][] result = db.getTableDataObject(query, tableName);
 
         Object[][] meal_Total_Data = result != null ? result : new Object[0][0];
@@ -422,7 +422,7 @@ public class MealManager
         if (subMealInDB)
         {
             // Getting Ingredients In Meal
-            String query = String.format("SELECT *  FROM ingredients_in_sections_of_meal_calculation WHERE DivMealSectionsID = %s AND PlanID = %s ORDER BY Ingredients_Index;", divMealSectionsID, tempPlanID);
+            String query = String.format("SELECT *  FROM ingredients_in_sections_of_meal_calculation WHERE DivMealSectionsID = %s AND plan_id = %s ORDER BY Ingredients_Index;", divMealSectionsID, tempPlanID);
             mealData = db.getTableDataObject(query, tableName) != null ? db.getTableDataObject(query, tableName) : mealData;
         }
 
@@ -499,7 +499,7 @@ public class MealManager
         String uploadQuery = String.format(""" 
                 UPDATE mealsInPlan
                 SET Meal_Name = '%s'
-                WHERE PlanID = %s AND  MealInPlanID = %s;""", inputMealName, tempPlanID, mealInPlanID);
+                WHERE plan_id = %s AND  MealInPlanID = %s;""", inputMealName, tempPlanID, mealInPlanID);
 
         if (!db.uploadData(uploadQuery, false))
         {
@@ -541,7 +541,7 @@ public class MealManager
         String uploadQuery = String.format(""" 
                 UPDATE mealsInPlan
                 SET Meal_Time = '%s'
-                WHERE PlanID = %s AND  MealInPlanID = %s; """, inputMealTime, tempPlanID, mealInPlanID);
+                WHERE plan_id = %s AND  MealInPlanID = %s; """, inputMealTime, tempPlanID, mealInPlanID);
 
         System.out.printf("\n\neditTime_Btn_Action() uploadQuery = \n%s", uploadQuery);
 
@@ -609,10 +609,9 @@ public class MealManager
                     SELECT IFNULL((
                         SELECT Meal_Time
                         FROM mealsInPlan
-                        WHERE PlanID = %s AND Meal_Time = '%s'
+                        WHERE plan_id = %s AND Meal_Time = '%s'
                         LIMIT 1
-                    ), 'N/A') AS Meal_Time;
-                    """, tempPlanID, input);
+                    ), 'N/A') AS Meal_Time;""", tempPlanID, input);
         }
         else if(variableName.equals("name"))
         {
@@ -622,10 +621,9 @@ public class MealManager
                     SELECT IFNULL((
                         SELECT Meal_Name
                         FROM mealsInPlan
-                        WHERE PlanID = %s AND Meal_Name = '%s'
+                        WHERE plan_id = %s AND Meal_Name = '%s'
                         LIMIT 1
-                    ), 'N/A') AS Meal_Name;
-                    """, tempPlanID, input);
+                    ), 'N/A') AS Meal_Name;""", tempPlanID, input);
         }
 
         // #########################################
@@ -715,7 +713,7 @@ public class MealManager
         //##########################################
         // Insert Into Database Table
         //##########################################
-        String uploadQuery = String.format(" INSERT INTO dividedMealSections (DivMealSectionsID, MealInPlanID, PlanID) VALUES (%s, %s, %s)",
+        String uploadQuery = String.format(" INSERT INTO dividedMealSections (DivMealSectionsID, MealInPlanID, plan_id) VALUES (%s, %s, %s)",
                 divMealSectionsID, mealInPlanID, tempPlanID);
 
         if (!db.uploadData_Batch_Altogether(new String[]{uploadQuery}))
@@ -792,7 +790,7 @@ public class MealManager
         // Delete Meal From DB
         //##########################################
         String query1 = "SET FOREIGN_KEY_CHECKS = 0;"; // Disable Foreign Key Checks
-        String query2 = String.format("DELETE FROM mealsInPlan WHERE MealInPlanID = %s AND PlanID = %s;", mealInPlanID, tempPlanID);
+        String query2 = String.format("DELETE FROM mealsInPlan WHERE MealInPlanID = %s AND plan_id = %s;", mealInPlanID, tempPlanID);
         String query3 = "SET FOREIGN_KEY_CHECKS = 1;"; // Enable Foreign Key Checks
 
         if (!(db.uploadData_Batch_Altogether(new String[]{query1, query2, query3})))
@@ -814,15 +812,15 @@ public class MealManager
         // DELETE ingredients_in_sections_of_meal
         String query2 = String.format(""" 
                 DELETE FROM ingredients_in_sections_of_meal
-                WHERE DivMealSectionsID IN (SELECT DivMealSectionsID FROM dividedMealSections WHERE MealInPlanID = %s AND PlanID = %s) AND PlanID = %s;""", mealInPlanID, tempPlanID, tempPlanID);
+                WHERE DivMealSectionsID IN (SELECT DivMealSectionsID FROM dividedMealSections WHERE MealInPlanID = %s AND plan_id = %s) AND plan_id = %s;""", mealInPlanID, tempPlanID, tempPlanID);
 
         // DELETE dividedMealSections
         String query3 = String.format("""
                 DELETE FROM dividedMealSections
-                WHERE MealInPlanID = %s AND PlanID = %s;""", mealInPlanID, tempPlanID);
+                WHERE MealInPlanID = %s AND plan_id = %s;""", mealInPlanID, tempPlanID);
 
         // DELETE mealsInPlan
-        String query4 = String.format("DELETE FROM mealsInPlan WHERE MealInPlanID = %s AND PlanID = %s", mealInPlanID, tempPlanID);
+        String query4 = String.format("DELETE FROM mealsInPlan WHERE MealInPlanID = %s AND plan_id = %s", mealInPlanID, tempPlanID);
 
         String query5 = "SET FOREIGN_KEY_CHECKS = 1;"; // Enable Foreign Key Checks
 
@@ -885,12 +883,12 @@ public class MealManager
         // Delete ingredients from this meal in toPlan
         String query3 = String.format(""" 
                 DELETE FROM ingredients_in_sections_of_meal
-                WHERE DivMealSectionsID IN (SELECT DivMealSectionsID FROM dividedMealSections WHERE MealInPlanID = %s AND PlanID = %s) AND PlanID = %s;""", mealInPlanID, toPlanID, toPlanID);
+                WHERE DivMealSectionsID IN (SELECT DivMealSectionsID FROM dividedMealSections WHERE MealInPlanID = %s AND plan_id = %s) AND plan_id = %s;""", mealInPlanID, toPlanID, toPlanID);
 
         // Delete sub-meals from this meal in toPlan
         String query4 = String.format(""" 
                 DELETE FROM dividedMealSections
-                WHERE MealInPlanID = %s AND PlanID = %s;""", mealInPlanID, toPlanID);
+                WHERE MealInPlanID = %s AND plan_id = %s;""", mealInPlanID, toPlanID);
 
         String query5 = "SET FOREIGN_KEY_CHECKS = 1;"; // Enable Foreign Key Checks
 
@@ -903,10 +901,10 @@ public class MealManager
                 CREATE TABLE temp_dividedMealSections  AS
                 SELECT i.*
                 FROM dividedMealSections i
-                WHERE i.MealInPlanID = %s AND i.PlanID = %s;
+                WHERE i.MealInPlanID = %s AND i.plan_id = %s;
                 """, mealInPlanID, fromPlanID);
 
-        String query7 = String.format("UPDATE temp_dividedMealSections  SET PlanID = %s;", toPlanID);
+        String query7 = String.format("UPDATE temp_dividedMealSections  SET plan_id = %s;", toPlanID);
 
         String query8 = String.format("INSERT INTO dividedMealSections SELECT * FROM temp_dividedMealSections;");
         //####################################################
@@ -918,10 +916,10 @@ public class MealManager
                 CREATE table temp_ingredients_in_meal  AS
                 SELECT i.*
                 FROM ingredients_in_sections_of_meal i
-                WHERE DivMealSectionsID IN (SELECT DivMealSectionsID FROM dividedMealSections WHERE MealInPlanID = %s AND PlanID = %s) AND PlanID = %s;
+                WHERE DivMealSectionsID IN (SELECT DivMealSectionsID FROM dividedMealSections WHERE MealInPlanID = %s AND plan_id = %s) AND plan_id = %s;
                 """, mealInPlanID, fromPlanID, fromPlanID);
 
-        String query10 = String.format("UPDATE temp_ingredients_in_meal  SET PlanID = %s;", toPlanID);
+        String query10 = String.format("UPDATE temp_ingredients_in_meal  SET plan_id = %s;", toPlanID);
 
         String query11 = String.format("INSERT INTO ingredients_in_sections_of_meal SELECT * FROM temp_ingredients_in_meal;");
 
@@ -948,7 +946,7 @@ public class MealManager
             }
             // else is the default value (reset)
 
-            uploadQuery = String.format("UPDATE mealsInPlan SET Meal_Name = '%s', Meal_Time = '%s'  WHERE PlanID = %s AND  MealInPlanID = %s;", updateMealName, updateMealTime, toPlanID, mealInPlanID);
+            uploadQuery = String.format("UPDATE mealsInPlan SET Meal_Name = '%s', Meal_Time = '%s'  WHERE plan_id = %s AND  MealInPlanID = %s;", updateMealName, updateMealTime, toPlanID, mealInPlanID);
 
             query_Temp_Data = new String[]{uploadQuery, query0, query1, query2, query3, query4, query5, query6, query7, query8, query9, query10, query11};
         }
@@ -962,7 +960,7 @@ public class MealManager
                 }
                 // else is the default value (reset)
 
-                uploadQuery = String.format("UPDATE mealsInPlan SET Meal_Name = '%s' WHERE PlanID = %s AND  MealInPlanID = %s;", updateMealName, toPlanID, mealInPlanID);
+                uploadQuery = String.format("UPDATE mealsInPlan SET Meal_Name = '%s' WHERE plan_id = %s AND  MealInPlanID = %s;", updateMealName, toPlanID, mealInPlanID);
             }
             else // Must mean time has changed
             {
@@ -970,7 +968,7 @@ public class MealManager
                 {
                     updateMealTime = currentMealName;
                 }
-                uploadQuery = String.format("UPDATE mealsInPlan SET  Meal_Time = '%s' WHERE PlanID = %s AND  MealInPlanID = %s;", updateMealTime, toPlanID, mealInPlanID);
+                uploadQuery = String.format("UPDATE mealsInPlan SET  Meal_Time = '%s' WHERE plan_id = %s AND  MealInPlanID = %s;", updateMealTime, toPlanID, mealInPlanID);
             }
 
             query_Temp_Data = new String[]{uploadQuery, query0, query1, query2, query3, query4, query5, query6, query7, query8, query9, query10, query11};

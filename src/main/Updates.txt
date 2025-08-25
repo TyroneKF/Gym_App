@@ -1,0 +1,18 @@
+GYM APP SQL
+.) Only one true plan per user
+
+.) MAX is apparently not needed although it flagged an error on linux:
+   MAX(m.Meal_Time) AS Meal_Time, -- HELLO 
+   MAX(m.Meal_Name) AS Meal_Name,
+   
+.) Deleting foreign key checks in app when removing objects
+
+.) Create a meassurements table (Grams
+
+.) Measurement ENUM('Litres', 'Grams') NOT NULL,
+
+.) Filter ingredients by dietary requirements
+
+.) Programming for when selected plan is false
+
+

@@ -192,7 +192,7 @@ public class MyJDBC
             }
 
             usersQueryScript = new String(scriptFile.readAllBytes(), StandardCharsets.UTF_8);
-            usersQueryScript = usersQueryScript.replace("@USERNAME", userName); // swap username scriptFile the script with the replacement txt
+            usersQueryScript = usersQueryScript.replace("@USERNAME@", userName); // swap username scriptFile the script with the replacement txt
 
         }
         catch (Exception e)

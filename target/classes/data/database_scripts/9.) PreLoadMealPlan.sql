@@ -1,6 +1,6 @@
 
 #######################################################################################
-INSERT IGNORE INTO mealsInPlan (MealInPlanID, PlanID, Meal_Name, Meal_Time) VALUES
+INSERT IGNORE INTO mealsInPlan (MealInPlanID, plan_id, Meal_Name, Meal_Time) VALUES
 (1, 2, "Breakfast", '09:00:00'),         -- 1
 (2, 2, "Mid-Morning Snack", '12:00:00'), -- 2
 (3, 2, "Lunch", '15:00:00'),             -- 3
@@ -11,7 +11,7 @@ INSERT IGNORE INTO mealsInPlan (MealInPlanID, PlanID, Meal_Name, Meal_Time) VALU
 
 #######################################################################################
 
-INSERT IGNORE INTO dividedMealSections (MealInPlanID, PlanID) VALUES
+INSERT IGNORE INTO dividedMealSections (MealInPlanID, plan_id) VALUES
 
 # Breakfast
 (1, 2), -- Pancakes             -- 1
@@ -45,7 +45,7 @@ INSERT IGNORE INTO dividedMealSections (MealInPlanID, PlanID) VALUES
 #######################################################################################
 
 INSERT IGNORE INTO ingredients_in_sections_of_meal 
-(Ingredients_Index, PlanID, PDID, DivMealSectionsID, IngredientID, Quantity) VALUES 
+(Ingredients_Index, plan_id, PDID, DivMealSectionsID, IngredientID, Quantity) VALUES
 
 #####################################################
 # Breakfast
