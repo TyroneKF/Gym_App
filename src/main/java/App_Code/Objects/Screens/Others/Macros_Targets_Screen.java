@@ -14,19 +14,19 @@ public class Macros_Targets_Screen extends JFrame
     private MyJDBC db;
     private Integer temp_PlanID, planID;
     private String planName;
-    private Meal_Plan_Screen gui;
+    private Meal_Plan_Screen meal_plan_screen;
 
     private boolean formEditable = false;
 
     private ArrayList<JTextField> listOfTextFields = new ArrayList<>();
-    private static final String[] labels = {"Selected Plan Name:", "Current Weight (KG):", "Body Fat Percentage:",
-            "Protein Per Pound Target", "Carbohydrates Per Pound Target:", "Fibre Target:", "Fats Per Pound Target:",
-            "Saturated Fat Limit:", "Salt Limit:", "Water Target:", "Additional Calories:"};
+    private static final String[] labels = {"Selected Plan Name:", "Current Weight (KG):", "Body Fat Percentage (%):",
+            "Protein Per Pound Target", "Carbohydrates Per Pound Target:", "Fibre Target (G):", "Fats Per Pound Target:",
+            "Saturated Fat Limit:", "Salt Limit (G):", "Water Target (Ml):", "Liquid Target (Ml)", "Additional Calories:"};
 
-    public Macros_Targets_Screen(MyJDBC db, Meal_Plan_Screen gui, int planID, int temp_PlanID, String planName)
+    public Macros_Targets_Screen(MyJDBC db, Meal_Plan_Screen meal_plan_screen, int planID, int temp_PlanID, String planName)
     {
         this.db = db;
-        this.gui = gui;
+        this.meal_plan_screen = meal_plan_screen;
 
         this.planID = planID;
         this.temp_PlanID = temp_PlanID;
@@ -40,15 +40,15 @@ public class Macros_Targets_Screen extends JFrame
                 // Get Current Targets For This Plan DB Info
                 //###########################################################
                 String query = String.format("""
-                       Select PlanID, current_Weight_KG, BodyFatPercentage, Protein_PerPound, Carbohydrates_PerPound, Fibre, 
-                       Fats_PerPound, Saturated_Fat_Limit, Salt_Limit, Water_Target, Additional_Calories
+                       Select plan_id, current_weight_kg, body_fat_percentage, protein_per_pound, carbohydrates_per_pound, fibre, 
+                       fats_per_pound, saturated_fat_limit, salt_limit, water_target, liquid_target, additional_calories
                        FROM macros_Per_Pound_And_Limits 
-                       WHERE PlanID = %s;""", temp_PlanID);
+                       WHERE plan_id = %s;""", temp_PlanID);
 
                 ArrayList<ArrayList<String>> data = db.getMultiColumnQuery(query);
                 if(data == null)
                 {
-                    JOptionPane.showMessageDialog(gui.getFrame(), "\n\nUnable to retrieve current plan Macros Data!");
+                    JOptionPane.showMessageDialog(meal_plan_screen.getFrame(), "\n\nUnable to retrieve current plan Macros Data!");
                     return;
                 }
 
@@ -147,7 +147,7 @@ public class Macros_Targets_Screen extends JFrame
 
                     if (!getEditableForm())
                     {
-                        int reply = JOptionPane.showConfirmDialog(gui.getFrame(), String.format("Would you To Edit Your Macros?"),
+                        int reply = JOptionPane.showConfirmDialog(meal_plan_screen.getFrame(), String.format("Would you To Edit Your Macros?"),
                                 "Edit Macro Targets", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
                         if (reply==JOptionPane.YES_OPTION)
@@ -179,8 +179,8 @@ public class Macros_Targets_Screen extends JFrame
                         if (updateForm())
                         {
                             closeWindowEvent();
-                            gui.updateTargetsAndMacrosLeft();
-                            gui.macrosTargetsChanged(true);
+                            meal_plan_screen.updateTargetsAndMacrosLeft();
+                            meal_plan_screen.macrosTargetsChanged(true);
                             closeeWindow();
                         }
                     }
@@ -206,7 +206,7 @@ public class Macros_Targets_Screen extends JFrame
 
     public void closeWindowEvent()
     {
-        gui.remove_macrosTargets_Screen();
+        meal_plan_screen.remove_macrosTargets_Screen();
     }
 
     public void makeJframeVisible()
@@ -221,7 +221,7 @@ public class Macros_Targets_Screen extends JFrame
     {
         if (temp_PlanID==null && planID==null && planName==null)
         {
-            JOptionPane.showMessageDialog(gui.getFrame(), "Please Select A Plan First!");
+            JOptionPane.showMessageDialog(meal_plan_screen.getFrame(), "Please Select A Plan First!");
             return false;
         }
 
@@ -266,7 +266,7 @@ public class Macros_Targets_Screen extends JFrame
             return true;
         }
 
-        JOptionPane.showMessageDialog(gui.getFrame(), String.format("\n\nAll the input rows must have a value which is a ' Decimal(8,2) ' !" +
+        JOptionPane.showMessageDialog(meal_plan_screen.getFrame(), String.format("\n\nAll the input rows must have a value which is a ' Decimal(8,2) ' !" +
                 "\n\nPlease fix the following rows being; \n%s", errorTxt));
 
         return false;
@@ -277,24 +277,25 @@ public class Macros_Targets_Screen extends JFrame
         String updateTargets_Query = String.format("""
                         UPDATE macros_Per_Pound_And_Limits
                                       
-                        SET DateTime_Of_Creation = now(), current_Weight_KG = %s , BodyFatPercentage = %s, Protein_PerPound =%s, Carbohydrates_PerPound = %s,
-                        Fibre =%s, Fats_PerPound = %s, Saturated_Fat_Limit = %s,  Salt_Limit = %s, Water_Target = %s,
-                        Additional_Calories = %s
-                                      
-                        WHERE PlanID =  %s;""", listOfTextFields.get(1).getText().trim(), listOfTextFields.get(2).getText().trim(), listOfTextFields.get(3).getText().trim(),
-                listOfTextFields.get(4).getText().trim(), listOfTextFields.get(5).getText().trim(), listOfTextFields.get(6).getText().trim(), listOfTextFields.get(7).getText().trim(),
-                listOfTextFields.get(8).getText().trim(), listOfTextFields.get(9).getText().trim(), listOfTextFields.get(10).getText().trim(), temp_PlanID);
+                        SET date_time_of_creation = now(), current_weight_kg = %s , body_fat_percentage = %s, protein_per_pound = %s, 
+                        carbohydrates_per_pound = %s, fibre =%s, fats_per_pound = %s, saturated_fat_limit = %s,  salt_limit = %s, 
+                        water_target = %s, liquid_target = %s, additional_calories = %s WHERE plan_id =  %s;""",
+
+                listOfTextFields.get(1).getText().trim(), listOfTextFields.get(2).getText().trim(), listOfTextFields.get(3).getText().trim(),
+                listOfTextFields.get(4).getText().trim(), listOfTextFields.get(5).getText().trim(), listOfTextFields.get(6).getText().trim(),
+                listOfTextFields.get(7).getText().trim(),listOfTextFields.get(8).getText().trim(), listOfTextFields.get(9).getText().trim(),
+                listOfTextFields.get(10).getText().trim(),listOfTextFields.get(11).getText().trim(), temp_PlanID);
 
         System.out.printf("\n\nQuery: \n\n%s", updateTargets_Query);
 
         if (!(db.uploadData_Batch_Altogether(new String[]{updateTargets_Query})))
         {
-            JOptionPane.showMessageDialog(gui.getFrame(), "Un-able to Update Macro Targets In DB");
+            JOptionPane.showMessageDialog(meal_plan_screen.getFrame(), "Un-able to Update Macro Targets In DB");
             return false;
         }
 
-        JOptionPane.showMessageDialog(gui.getFrame(), "Macro Targets Successfully Updated In DB");
-        gui.updateTargetsAndMacrosLeft();
+        JOptionPane.showMessageDialog(meal_plan_screen.getFrame(), "Macro Targets Successfully Updated In DB");
+        meal_plan_screen.updateTargetsAndMacrosLeft();
         return true;
     }
 

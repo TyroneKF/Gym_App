@@ -15,4 +15,4 @@ GYM APP SQL
 
 .) Programming for when selected plan is false
 
-
+.) using mysql exception handling for queries vs regular

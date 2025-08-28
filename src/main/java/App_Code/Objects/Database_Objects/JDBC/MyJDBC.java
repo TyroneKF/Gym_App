@@ -339,7 +339,6 @@ public class MyJDBC
                 {
                     System.err.printf("\n\nrun_SQL_Script_Folder(): error executing file: %s \n\n%s\n\n" +
                             "", fileName, e.getMessage());
-                    e.printStackTrace();
 
                     throw new Exception(String.format("\nrun_SQL_Script_Folder() ERROR:  %s", fileName));
                 }

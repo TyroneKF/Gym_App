@@ -88,7 +88,7 @@ public class Meal_Plan_Screen extends JPanel
 
     ingredientsTableUnEditableCells = new ArrayList<>(Arrays.asList(
             "Ingredients_Index", "IngredientID", "Ingredient_Cost", "Protein", "GI", "Carbohydrates", "Sugars_Of_Carbs",
-            "Fibre", "Fat", "Saturated_Fat", "Salt", "Water_Content", "Liquid_Content", "Calories"));
+            "fibre", "Fat", "Saturated_Fat", "Salt", "Water_Content", "Liquid_Content", "Calories"));
 
     //##################################################################################################################
     // Table Customisations
@@ -96,7 +96,7 @@ public class Meal_Plan_Screen extends JPanel
     private final ArrayList<String>
             ingredientsInMeal_Table_ColToHide = new ArrayList<String>(Arrays.asList("plan_id", "MealID")),
             totalMeal_Table_ColToHide = new ArrayList<String>(Arrays.asList("plan_id", "MealID")),
-            macrosTargets_Table_ColToHide = new ArrayList<String>(Arrays.asList("plan_id", "plan_name", "DateTime_Of_Creation")),
+            macrosTargets_Table_ColToHide = new ArrayList<String>(Arrays.asList("plan_id", "plan_name", "date_time_of_creation")),
             macrosLeft_Table_ColToHide = new ArrayList<String>(Arrays.asList("plan_id", "plan_name"));
 
     //########################################################
@@ -314,6 +314,7 @@ public class Meal_Plan_Screen extends JPanel
         //#############################################################################################################
         //   1. Create the  GUI framework
         //#############################################################################################################
+        System.out.printf("\nMeal_Plan_Screen.java : Creating GUI Screen \n%s", lineSeparator); // Update
 
         // Container (ContentPane)
         contentPane = frame.getContentPane();
@@ -432,7 +433,6 @@ public class Meal_Plan_Screen extends JPanel
         macros_Targets_Table = new MacrosTargetsTable(db, macrosInfoJPanel, planData, macroTargetsTable_ColumnNames, planID,
                 tableName, new ArrayList<>(Arrays.asList(macroTargetsTable_ColumnNames)), null, macrosTargets_Table_ColToHide);
 
-
         macros_Targets_Table.setOpaque(true); //content panes must be opaque
 
         macros_Targets_Table.setTableHeaderFont(new Font("Dialog", Font.BOLD, 14));
@@ -494,7 +494,6 @@ public class Meal_Plan_Screen extends JPanel
             String mealName = meals_Info_In_Plan.get(i).get(1);
             String mealTime = meals_Info_In_Plan.get(i).get(2);
 
-
             //#####################################################
             // Get MealID's Of SubMeals
             //#####################################################
@@ -515,12 +514,14 @@ public class Meal_Plan_Screen extends JPanel
             //#####################################################
             // Create Meal Component
             //#####################################################
+
+            System.err.printf("\n\nMeal_Plan_Screen.java \nmealInPlanID : %s \nmealName : %s \nmealTime : %s \nsubMealsInMealArrayList : %s%n", mealInPlanID, mealName, mealTime, subMealsInMealArrayList);//HELLO DELETE
             MealManager meal = new MealManager(this, scrollJPanelCenter, mealInPlanID, mealName, mealTime, subMealsInMealArrayList);
             mealManagerArrayList.add(meal);
 
-            //######################################################
-            // Update Progress
-            //######################################################
+           //######################################################
+           // Update Progress
+           //######################################################
             loadingScreen.increaseBar(1 + subMealsInMealArrayList.size()); // + original meal + the sub-meal
         }
 
@@ -722,19 +723,19 @@ public class Meal_Plan_Screen extends JPanel
         // Mysql Transferring Data
         //####################################
         String query00 = String.format("DELETE FROM macros_Per_Pound_And_Limits WHERE plan_id = %s;", toPlan);
-        String query01 = String.format("DROP TABLE IF EXISTS temp_Macros;");
+        String query01 = "DROP TABLE IF EXISTS temp_Macros;";
         String query02 = String.format("""
                 CREATE table temp_Macros AS SELECT * FROM macros_Per_Pound_And_Limits 
                 WHERE plan_id = %s 
-                AND DateTime_Of_Creation = (SELECT MAX(DateTime_Of_Creation)  FROM macros_Per_Pound_And_Limits);""", fromPlan);
-        String query03 = String.format("ALTER TABLE temp_Macros DROP COLUMN current_Weight_In_Pounds;");
+                AND date_time_of_creation = (SELECT MAX(date_time_of_creation) FROM macros_Per_Pound_And_Limits);""", fromPlan);
+        String query03 = "ALTER TABLE temp_Macros DROP COLUMN current_weight_in_pounds;";
         String query04 = String.format("UPDATE temp_Macros SET plan_id = %s;", toPlan);
 
         //####################################
         // Gathering Table Columns
         //####################################
 
-        ArrayList<String> columnsToAvoid = new ArrayList<>(List.of("current_Weight_In_Pounds"));
+        ArrayList<String> columnsToAvoid = new ArrayList<>(List.of("current_weight_in_pounds"));
         String[] macrosColumns = db.getColumnNames("macros_Per_Pound_And_Limits");
 
         String query05 = "INSERT INTO macros_Per_Pound_And_Limits \n(";
