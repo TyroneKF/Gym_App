@@ -53,43 +53,39 @@ DROP VIEW IF EXISTS plan_Macro_Target_Calculations;
 CREATE VIEW plan_Macro_Target_Calculations AS
 
 SELECT P.plan_id, P.plan_name,
-
 C.date_time_of_creation,
-C.Expected_Protein_Grams, C.Expected_Carbohydrates_Grams, C.Expected_Fibre_Grams, C.Expected_Fats_Grams,
-C.saturated_fat_limit, C.Salt_Limit_Grams, C.Water_Content_Target, C.Liquid_Content_Target, C.Calories_Target,
-C.Additional_Calories_Target
-
+C.expected_protein_grams, C.expected_carbohydrates_grams, C.expected_fibre_grams, C.expected_fats_grams,
+C.saturated_fat_limit, C.salt_limit_grams, C.water_content_target, C.liquid_content_target, C.calories_target,
+C.additional_calories_target
 FROM
 (
 	SELECT  plan_id, plan_name FROM plans
 )  P
-
 LEFT JOIN
 (
     SELECT
     M.plan_id, M.date_time_of_creation,
-	IFNULL(ROUND(M.current_weight_in_pounds * M.protein_per_pound, 2),0) AS Expected_Protein_Grams,
-	IFNULL(ROUND(M.current_weight_in_pounds * M.carbohydrates_per_pound, 2),0) AS Expected_Carbohydrates_Grams,
-	IFNULL(M.fibre, 0) AS Expected_Fibre_Grams,
-	IFNULL(ROUND(M.current_weight_in_pounds * M.fats_per_pound, 2),0) AS Expected_Fats_Grams,
+	IFNULL(ROUND(M.current_weight_in_pounds * M.protein_per_pound, 2),0) AS expected_protein_grams,
+	IFNULL(ROUND(M.current_weight_in_pounds * M.carbohydrates_per_pound, 2),0) AS expected_carbohydrates_grams,
+	IFNULL(M.fibre, 0) AS expected_fibre_grams,
+	IFNULL(ROUND(M.current_weight_in_pounds * M.fats_per_pound, 2),0) AS expected_fats_grams,
 	IFNULL(M.saturated_fat_limit, 0) AS saturated_fat_limit,
-    IFNULL(M.salt_limit, 0)  AS Salt_Limit_Grams,
-    IFNULL(M.water_target, 0) AS Water_Content_Target,
-	IFNULL(M.liquid_target, 0) AS Liquid_Content_Target,
+    IFNULL(M.salt_limit, 0)  AS salt_limit_grams,
+    IFNULL(M.water_target, 0) AS water_content_target,
+	IFNULL(M.liquid_target, 0) AS liquid_content_target,
 	IFNULL(
 	    ROUND((M.current_weight_in_pounds * M.protein_per_pound) * 4, 2) +
 		ROUND((M.current_weight_in_pounds * M.carbohydrates_per_pound) * 4, 2) +
 		ROUND((M.current_weight_in_pounds * M.fats_per_pound) *9, 2)
-	, 0) AS Calories_Target,
+	, 0) AS calories_target,
 	IFNULL(
 	    ROUND((M.current_weight_in_pounds * M.protein_per_pound) * 4, 2) +
 		ROUND((M.current_weight_in_pounds * M.carbohydrates_per_pound) * 4, 2) +
 		ROUND((M.current_weight_in_pounds * M.fats_per_pound) *9, 2) +
 		M.additional_calories
-	, 0) AS Additional_Calories_Target
+	, 0) AS additional_calories_target
 
 	FROM macros_Per_Pound_And_Limits M
-
 )  C
 ON P.plan_id = C.plan_id;
 
@@ -97,10 +93,10 @@ ON P.plan_id = C.plan_id;
 
 CREATE TABLE IF NOT EXISTS ingredientTypes
 (
-    Ingredient_Type_ID INT  PRIMARY KEY AUTO_INCREMENT,
+    ingredient_type_id INT  PRIMARY KEY AUTO_INCREMENT,
 
-	Ingredient_Type_Name VARCHAR(100) NOT NULL,
-	UNIQUE KEY unique_type_name (Ingredient_Type_Name)
+	ingredient_type_name VARCHAR(100) NOT NULL,
+	UNIQUE KEY no_repeat_ingredient_type_name (ingredient_type_name)
 );
 
 --######################################
@@ -114,8 +110,8 @@ CREATE TABLE IF NOT EXISTS ingredients_info
 
 	Ingredient_Name VARCHAR(100) NOT NULL,
 
-	Ingredient_Type_ID  INT NOT NULL,
-	FOREIGN KEY (Ingredient_Type_ID) REFERENCES ingredientTypes(Ingredient_Type_ID) ON DELETE CASCADE,
+	ingredient_type_id  INT NOT NULL,
+	FOREIGN KEY (ingredient_type_id) REFERENCES ingredientTypes(ingredient_type_id) ON DELETE CASCADE,
 
 	Based_On_Quantity DECIMAL(7,2) NOT NULL,
 
@@ -233,7 +229,7 @@ CREATE VIEW ingredients_in_sections_of_meal_calculation AS
 SELECT
 
 i.plan_id, i.DivMealSectionsID, i.Ingredients_Index,  i.IngredientID, i.Quantity,
-(SELECT t.Ingredient_Type_Name FROM ingredientTypes t WHERE t.Ingredient_Type_ID = info.Ingredient_Type_ID)  AS Ingredient_Type,
+(SELECT t.ingredient_type_name FROM ingredientTypes t WHERE t.ingredient_type_id = info.ingredient_type_id)  AS Ingredient_Type,
 
 info.Ingredient_Name,
 
@@ -359,18 +355,18 @@ CREATE VIEW  planMacrosLeft AS
 
 SELECT
 P.plan_id, P.plan_name,
-IFNULL(ROUND(C.Expected_Protein_Grams - P.Protein_In_Plan ,2),0) AS Protein_Grams_Left,
-IFNULL(ROUND(C.Expected_Carbohydrates_Grams  - P.Carbohydrates_In_Plan ,2),0) AS Carbohydrates_Grams_Left,
-IFNULL(ROUND(C.Expected_Fibre_Grams  - P.Fibre_In_Plan ,2),0) AS Fibre_Grams_Left,
-IFNULL(ROUND(C.Expected_Fats_Grams - P.Fats_In_Plan ,2),0) AS Fats_Grams_Left,
+IFNULL(ROUND(C.expected_protein_grams - P.Protein_In_Plan ,2),0) AS Protein_Grams_Left,
+IFNULL(ROUND(C.expected_carbohydrates_grams  - P.Carbohydrates_In_Plan ,2),0) AS Carbohydrates_Grams_Left,
+IFNULL(ROUND(C.expected_fibre_grams  - P.Fibre_In_Plan ,2),0) AS Fibre_Grams_Left,
+IFNULL(ROUND(C.expected_fats_grams - P.Fats_In_Plan ,2),0) AS Fats_Grams_Left,
 IFNULL(ROUND(C.saturated_fat_limit - P.Saturated_Fat_In_Plan ,2),0) AS Potential_Saturated_Fat_Grams,
 
-IFNULL(ROUND(C.Salt_Limit_Grams - P.Salt_In_Plan ,2),0) AS Potential_Salt,
-IFNULL(ROUND(C.Water_Content_Target - P.Water_Content_In_Plan ,2),0) AS  Water_Left_To_Drink,
-IFNULL(ROUND(C.Liquid_Content_Target - P.Liquid_Content_In_Plan ,2),0) AS  Liquids_Left,
+IFNULL(ROUND(C.salt_limit_grams - P.Salt_In_Plan ,2),0) AS Potential_Salt,
+IFNULL(ROUND(C.water_content_target - P.Water_Content_In_Plan ,2),0) AS  Water_Left_To_Drink,
+IFNULL(ROUND(C.liquid_content_target - P.Liquid_Content_In_Plan ,2),0) AS  Liquids_Left,
 
-IFNULL(ROUND(C.Calories_Target - P.Total_Calories_In_Plan ,2),0) AS Calories_Left,
-IFNULL(ROUND(C.Additional_Calories_Target - P.Total_Calories_In_Plan ,2),0) AS Added_Calories_Left
+IFNULL(ROUND(C.calories_target - P.Total_Calories_In_Plan ,2),0) AS Calories_Left,
+IFNULL(ROUND(C.additional_calories_target - P.Total_Calories_In_Plan ,2),0) AS Added_Calories_Left
 
 FROM
 (

@@ -22,7 +22,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
 
         put("Ingredient Measurement In", new Triplet<String, String, String>("serving_unit", "Measurement", "String"));
         put("Ingredient Name", new Triplet<String, String, String>("food_name", "Ingredient_Name", "String"));
-        put("Ingredient Type", new Triplet<String, String, String>(null, "Ingredient_Type_ID", "Integer"));
+        put("Ingredient Type", new Triplet<String, String, String>(null, "ingredient_type_id", "Integer"));
         put("Based_On_Quantity", new Triplet<String, String, String>("serving_weight_grams", "Based_On_Quantity", "Double"));
         put("Glycemic Index", new Triplet<String, String, String>(null, "Glycemic_Index", "Double"));
         put("Protein", new Triplet<String, String, String>("nf_protein", "Protein", "Double"));
@@ -624,7 +624,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
         // Creating Upload Query
         //##############################################################################################################
         String
-                ingredientTypeSet = "SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = \"",
+                ingredientTypeSet = "SELECT ingredient_type_id FROM ingredientTypes WHERE ingredient_type_name = \"",
                 insertQuery = "INSERT INTO ingredients_info VALUES";
 
         ingredientsValuesBeingAdded = "(null,";

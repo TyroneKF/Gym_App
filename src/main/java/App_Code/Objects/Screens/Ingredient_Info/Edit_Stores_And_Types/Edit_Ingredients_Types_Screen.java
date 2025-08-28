@@ -77,7 +77,7 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
             super.mainLabel = "Add Ingredient Type Name";
 
             super.dataGatheringName = "Ingredient Type Name";
-            super.dbColumnNameField = "Ingredient_Type_Name";
+            super.dbColumnNameField = "ingredient_type_name";
             super.dbTableName = "ingredientTypes";
 
 
@@ -125,10 +125,10 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
             super.label2 = "Change Ingredient Type Name";
 
             super.dataGatheringName = "Ingredient Type Name";
-            super.dbColumnNameField = "Ingredient_Type_Name";
+            super.dbColumnNameField = "ingredient_type_name";
             super.dbTableName = "ingredientTypes";
 
-            super.idColumnName = "Ingredient_Type_ID";
+            super.idColumnName = "ingredient_type_id";
             super.fkTable = "ingredients_info";
             super.removeJComboBoxItems = new String[]{"None Of The Above", "UnAssigned"};
 

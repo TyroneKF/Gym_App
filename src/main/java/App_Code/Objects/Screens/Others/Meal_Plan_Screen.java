@@ -515,7 +515,7 @@ public class Meal_Plan_Screen extends JPanel
             // Create Meal Component
             //#####################################################
 
-            System.err.printf("\n\nMeal_Plan_Screen.java \nmealInPlanID : %s \nmealName : %s \nmealTime : %s \nsubMealsInMealArrayList : %s%n", mealInPlanID, mealName, mealTime, subMealsInMealArrayList);//HELLO DELETE
+            System.out.printf("\n\nMeal_Plan_Screen.java \nmealInPlanID : %s \nmealName : %s \nmealTime : %s \nsubMealsInMealArrayList : %s%n", mealInPlanID, mealName, mealTime, subMealsInMealArrayList);//HELLO DELETE
             MealManager meal = new MealManager(this, scrollJPanelCenter, mealInPlanID, mealName, mealTime, subMealsInMealArrayList);
             mealManagerArrayList.add(meal);
 
@@ -574,7 +574,7 @@ public class Meal_Plan_Screen extends JPanel
                 ingredientsTypesList.clear();
             }
 
-            ingredientsTypesList = db.getSingleColumnQuery_AlphabeticallyOrderedTreeSet("SELECT Ingredient_Type_Name FROM ingredientTypes ORDER BY Ingredient_Type_Name ASC;");
+            ingredientsTypesList = db.getSingleColumnQuery_AlphabeticallyOrderedTreeSet("SELECT ingredient_type_name FROM ingredientTypes ORDER BY ingredient_type_name ASC;");
 
             if (ingredientsTypesList==null)
             {
@@ -624,17 +624,17 @@ public class Meal_Plan_Screen extends JPanel
         // Store ingredientTypes ID's & IngredientTypeName that occur
         //###########################################################
         String queryIngredientsType = String.format("""
-                SELECT I.Ingredient_Type_ID, N.Ingredient_Type_Name
+                SELECT I.ingredient_type_id, N.ingredient_type_name
                 FROM
                 (
-                  SELECT DISTINCT(Ingredient_Type_ID) FROM ingredients_info
+                  SELECT DISTINCT(ingredient_type_id) FROM ingredients_info
                 ) AS I
                 INNER JOIN
                 (
-                  SELECT Ingredient_Type_ID, Ingredient_Type_Name FROM ingredientTypes
+                  SELECT ingredient_type_id, ingredient_type_name FROM ingredientTypes
                 ) AS N
-                ON I.Ingredient_Type_ID = N.Ingredient_Type_ID 
-                ORDER BY N.Ingredient_Type_Name;""");
+                ON I.ingredient_type_id = N.ingredient_type_id 
+                ORDER BY N.ingredient_type_name;""");
 
         ArrayList<ArrayList<String>> ingredientTypesNameAndIDResults = db.getMultiColumnQuery(queryIngredientsType);
 
@@ -665,7 +665,7 @@ public class Meal_Plan_Screen extends JPanel
             //########################################
             // Get IngredientNames for Type
             //########################################
-            String queryTypeIngredientNames = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Type_ID = %s ORDER BY Ingredient_Name;", ID);
+            String queryTypeIngredientNames = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE ingredient_type_id = %s ORDER BY Ingredient_Name;", ID);
             ArrayList<String> ingredientNames = db.getSingleColumnQuery_ArrayList(queryTypeIngredientNames);
 
             if (ingredientNames==null)

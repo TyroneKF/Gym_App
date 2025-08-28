@@ -375,17 +375,17 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         // Store ingredientTypes ID's & IngredientTypeName that occur
         //###########################################################
         String queryIngredientsType = String.format("""
-                SELECT I.Ingredient_Type_ID, N.Ingredient_Type_Name
+                SELECT I.ingredient_type_id, N.ingredient_type_name
                 FROM
                 (
-                  SELECT DISTINCT(Ingredient_Type_ID) FROM ingredients_info
+                  SELECT DISTINCT(ingredient_type_id) FROM ingredients_info
                 ) AS I
                 INNER JOIN
                 (
-                  SELECT Ingredient_Type_ID, Ingredient_Type_Name FROM ingredientTypes
+                  SELECT ingredient_type_id, ingredient_type_name FROM ingredientTypes
                 ) AS N
-                ON I.Ingredient_Type_ID = N.Ingredient_Type_ID
-                ORDER BY N.Ingredient_Type_Name;""");
+                ON I.ingredient_type_id = N.ingredient_type_id
+                ORDER BY N.ingredient_type_name;""");
 
         ArrayList<ArrayList<String>> ingredientTypesNameAndIDResults = db.getMultiColumnQuery(queryIngredientsType);
 
@@ -408,7 +408,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
             //########################################
             // Get IngredientNames for Type
             //########################################
-            String queryTypeIngredientNames = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Type_ID = %s ORDER BY Ingredient_Name;", ID);
+            String queryTypeIngredientNames = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE ingredient_type_id = %s ORDER BY Ingredient_Name;", ID);
             Collection<String> ingredientNames = db.getSingleColumnQuery_AlphabeticallyOrderedTreeSet(queryTypeIngredientNames);
 
 
@@ -665,7 +665,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
             }
             else if (rowLabel.equals("Ingredient Type"))
             {
-                replacementData += String.format("(SELECT Ingredient_Type_ID FROM ingredientTypes WHERE Ingredient_Type_Name = \"%s\"),", formValue);
+                replacementData += String.format("(SELECT ingredient_type_id FROM ingredientTypes WHERE ingredient_type_name = \"%s\"),", formValue);
                 continue;
             }
             replacementData += String.format("(%s),", formValue);
