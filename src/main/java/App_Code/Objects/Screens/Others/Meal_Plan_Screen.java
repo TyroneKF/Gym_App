@@ -82,22 +82,31 @@ public class Meal_Plan_Screen extends JPanel
     //##################################################################################################################
     // Ingredients Table Columns
     //##################################################################################################################
+
+    // Table: ingredients_in_sections_of_meal_calculation
     private final ArrayList<String>
             ingredients_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList(
             "Ingredient_Type", "Ingredient_Name", "Supplier", "Product_Name")),
 
-    ingredientsTableUnEditableCells = new ArrayList<>(Arrays.asList(
-            "Ingredients_Index", "IngredientID", "Ingredient_Cost", "Protein", "GI", "Carbohydrates", "Sugars_Of_Carbs",
-            "fibre", "Fat", "Saturated_Fat", "Salt", "Water_Content", "Liquid_Content", "Calories"));
+            ingredientsTableUnEditableCells = new ArrayList<>(Arrays.asList(
+            "Ingredients_Index", "Ingredient_ID", "Ingredient_Cost", "Protein", "GI", "Carbohydrates", "Sugars_Of_Carbs",
+            "Fibre", "Fat", "Saturated_Fat", "Salt", "Water_Content", "Liquid_Content", "Calories")),
+
+             ingredientsInMeal_Table_ColToHide = new ArrayList<>(Arrays.asList("plan_id", "DivMealSectionsID"));
 
     //##################################################################################################################
-    // Table Customisations
+    // Other Table Customisations
     //##################################################################################################################
     private final ArrayList<String>
-            ingredientsInMeal_Table_ColToHide = new ArrayList<String>(Arrays.asList("plan_id", "MealID")),
-            totalMeal_Table_ColToHide = new ArrayList<String>(Arrays.asList("plan_id", "MealID")),
-            macrosTargets_Table_ColToHide = new ArrayList<String>(Arrays.asList("plan_id", "plan_name", "date_time_of_creation")),
-            macrosLeft_Table_ColToHide = new ArrayList<String>(Arrays.asList("plan_id", "plan_name"));
+
+            // Table : total_meal_view Table
+            totalMeal_Table_ColToHide = new ArrayList<String>(Arrays.asList("plan_id","Meal_Time", "MealInPlanID")),
+
+           // Table : plan_Macro_Target_Calculations
+           macrosTargets_Table_ColToHide = new ArrayList<String>(Arrays.asList("plan_id", "plan_name", "date_time_of_creation")),
+
+           // Table : planMacrosLeft
+           macrosLeft_Table_ColToHide = new ArrayList<String>(Arrays.asList("plan_id", "plan_name"));
 
     //########################################################
 
@@ -515,7 +524,7 @@ public class Meal_Plan_Screen extends JPanel
             // Create Meal Component
             //#####################################################
 
-            System.out.printf("\n\nMeal_Plan_Screen.java \nmealInPlanID : %s \nmealName : %s \nmealTime : %s \nsubMealsInMealArrayList : %s%n", mealInPlanID, mealName, mealTime, subMealsInMealArrayList);//HELLO DELETE
+            System.out.printf("\n\nMeal_Plan_Screen.java | MealManager \nmealInPlanID : %s \nmealName : %s \nmealTime : %s \nSub-Meals In MealManager (ID) : %s%n", mealInPlanID, mealName, mealTime, subMealsInMealArrayList);//HELLO DELETE
             MealManager meal = new MealManager(this, scrollJPanelCenter, mealInPlanID, mealName, mealTime, subMealsInMealArrayList);
             mealManagerArrayList.add(meal);
 
@@ -665,7 +674,7 @@ public class Meal_Plan_Screen extends JPanel
             //########################################
             // Get IngredientNames for Type
             //########################################
-            String queryTypeIngredientNames = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE ingredient_type_id = %s ORDER BY Ingredient_Name;", ID);
+            String queryTypeIngredientNames = String.format("SELECT ingredient_name FROM ingredients_info WHERE ingredient_type_id = %s ORDER BY ingredient_name;", ID);
             ArrayList<String> ingredientNames = db.getSingleColumnQuery_ArrayList(queryTypeIngredientNames);
 
             if (ingredientNames==null)

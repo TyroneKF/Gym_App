@@ -1,4 +1,4 @@
-INSERT IGNORE INTO ingredientTypes (Ingredient_Type_Name) VALUES
+INSERT IGNORE INTO ingredientTypes (ingredient_type_name) VALUES
 ('None Of The Above'),
 ('UnAssigned'),
 ('Breads'),
