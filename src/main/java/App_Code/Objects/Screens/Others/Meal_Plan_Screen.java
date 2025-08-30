@@ -603,7 +603,7 @@ public class Meal_Plan_Screen extends JPanel
                 storesNamesList.clear();
             }
 
-            storesNamesList = db.getSingleColumnQuery_AlphabeticallyOrderedTreeSet("SELECT Store_Name FROM stores ORDER BY Store_Name ASC;");
+            storesNamesList = db.getSingleColumnQuery_AlphabeticallyOrderedTreeSet("SELECT store_name FROM stores ORDER BY store_name ASC;");
 
             if (storesNamesList==null)
             {

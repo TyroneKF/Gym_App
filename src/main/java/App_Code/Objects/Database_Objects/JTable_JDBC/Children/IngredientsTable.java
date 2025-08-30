@@ -528,7 +528,7 @@ public class IngredientsTable extends JDBC_JTable
             String uploadQuery = String.format("""
                     UPDATE  ingredients_in_sections_of_meal
                     SET ingredient_id = %s, 
-                    PDID = NULL
+                    pdid = NULL
                     WHERE Ingredients_Index = %s AND plan_id = %s; """, selected_Ingredient_ID, ingredientIndex, temp_PlanID);
 
             // Upload IngredientName & NEW PDID
@@ -580,7 +580,7 @@ public class IngredientsTable extends JDBC_JTable
             {
                 uploadQuery = String.format("""
                     UPDATE  ingredients_in_sections_of_meal
-                    SET PDID = NULL
+                    SET pdid = NULL
                     WHERE Ingredients_Index = %s AND plan_id = %s; """, ingredientIndex, temp_PlanID);
             }
             else if (!(cellValue.equals("N/A")))
@@ -590,19 +590,19 @@ public class IngredientsTable extends JDBC_JTable
                 //######################################################
                 Object storeName = jTable.getValueAt(rowEdited, getIngredientsTable_Supplier_Col());
                 String getPDIDQuery = String.format("""
-                        SELECT PDID
+                        SELECT pdid
                         FROM
                             (
-                              SELECT PDID, Product_Name, ingredient_id, StoreID FROM ingredientInShops 
+                              SELECT pdid, product_name, ingredient_id, store_id FROM ingredientInShops 
                               WHERE ingredient_id = %s
                         	) AS i
                         LEFT JOIN
                             (
-                              SELECT StoreID, Store_Name FROM stores
+                              SELECT store_id, store_name FROM stores
                             ) AS s
                         	
-                        ON i.StoreID = s.StoreID
-                        WHERE i.Product_Name = "%s" AND s.Store_Name = "%s";""", ingredientID, cellValue, storeName);
+                        ON i.store_id = s.store_id
+                        WHERE i.product_name = '%s' AND s.store_name = '%s';""", ingredientID, cellValue, storeName);
 
                 ArrayList<String> newPDIDResults = db.getSingleColumnQuery_ArrayList(getPDIDQuery);
                 if (newPDIDResults == null)
@@ -623,7 +623,7 @@ public class IngredientsTable extends JDBC_JTable
                 // Create  Statement for changing PDID (Ingredient_Index)
                 uploadQuery = String.format("""
                         UPDATE  ingredients_in_sections_of_meal
-                        SET PDID = %s
+                        SET pdid = %s
                         WHERE Ingredients_Index = %s AND plan_id = %s;""", newPDIDResults.get(0), ingredientIndex, temp_PlanID);
 
                 System.out.printf("\n\nQUERY PDID: \n'''%s''' \n\nPDID = %s \n\nUpload Query \n'''%s'''", getPDIDQuery, newPDIDResults.get(0), uploadQuery);
@@ -633,7 +633,7 @@ public class IngredientsTable extends JDBC_JTable
                 // Create  Statement for changing PDID (Ingredient_Index)
                 uploadQuery = String.format("""
                         UPDATE  ingredients_in_sections_of_meal
-                        SET PDID = NULL
+                        SET pdid = NULL
                         WHERE Ingredients_Index = %s AND plan_id = %s;""", ingredientIndex, temp_PlanID);
             }
 
@@ -769,8 +769,7 @@ public class IngredientsTable extends JDBC_JTable
                                         
                     If you delete this ingredient, this table will also be deleted.
                                        
-                    Would you still like to proceed?
-                     """;
+                    Would you still like to proceed?""";
 
             int reply = JOptionPane.showConfirmDialog(null, question, "Delete Ingredients", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
@@ -971,10 +970,8 @@ public class IngredientsTable extends JDBC_JTable
         //#########################################################
 
         String query1 = String.format("""
-                        
                 INSERT INTO ingredients_in_sections_of_meal
-                (Ingredients_Index, divMealSectionsID, plan_id, ingredient_id, Quantity, PDID)
-                                        
+                (Ingredients_Index, divMealSectionsID, plan_id, ingredient_id, Quantity, pdid)                                        
                 VALUES
                 (%s, %s, %s, %s, %s, %s); 
                         """, newIngredientsIndex2, divMealSectionsID, temp_PlanID, ingredientID, quantity, NoneOfTheAbove_PDID);
@@ -1183,19 +1180,15 @@ public class IngredientsTable extends JDBC_JTable
         // insert meal if it does not exist inside toPlanID
         String query4 = String.format("""
                 INSERT IGNORE INTO mealsInPlan
-                (MealInPlanID, plan_id, Meal_Name)
-                                
+                (MealInPlanID, plan_id, Meal_Name)                                
                 VALUES
-                (%s, %s, '%s');
-                  """, mealInPlanID, toPlanID, mealName);
+                (%s, %s, '%s');""", mealInPlanID, toPlanID, mealName);
 
         String query5 = String.format("""
                 INSERT IGNORE INTO dividedMealSections
-                (DivMealSectionsID, MealInPlanID, plan_id)
-                                
+                (DivMealSectionsID, MealInPlanID, plan_id)            
                 VALUES
-                (%s, %s, '%s');
-                  """, divMealSectionsID, mealInPlanID, toPlanID);
+                (%s, %s, '%s'); """, divMealSectionsID, mealInPlanID, toPlanID);
 
         //####################################################
         // Transferring this plans Ingredients to Temp-Plan
@@ -1206,8 +1199,7 @@ public class IngredientsTable extends JDBC_JTable
                 CREATE table temp_ingredients_in_meal  AS
                 SELECT i.*
                 FROM ingredients_in_sections_of_meal i                                                       
-                WHERE i.DivMealSectionsID = %s AND i.plan_id = %s;          
-                """, divMealSectionsID, fromPlanID);
+                WHERE i.DivMealSectionsID = %s AND i.plan_id = %s;""", divMealSectionsID, fromPlanID);
 
         String query7 = String.format("UPDATE temp_ingredients_in_meal  SET plan_id = %s;", toPlanID);
 
@@ -1322,20 +1314,19 @@ public class IngredientsTable extends JDBC_JTable
 
                 String queryStore = String.format("""
                         SELECT 
-                                #IFNULL(i.PDID, 'N/A') AS PDID,  
-                                IFNULL(i.Product_Name, 'N/A') AS Product_Name
+                        #IFNULL(i.pdid, 'N/A') AS pdid,  
+                        IFNULL(i.product_name, 'N/A') AS product_name
                         FROM
-                           (
-                        	  SELECT PDID, ingredient_id, Product_Name, StoreID FROM ingredientInShops
-                            ) AS i
+                        (
+                            SELECT pdid, ingredient_id, product_name, store_id FROM ingredientInShops
+                        ) AS i
                         LEFT JOIN
-                            (
-                        	  SELECT StoreID, Store_Name FROM stores
-                        	) AS s	
-                        ON i.StoreID = s.StoreID
-                                                
-                        WHERE s.Store_Name = "%s" AND i.ingredient_id = %s
-                        ORDER BY i.Product_Name ASC;""", ingredientSupplier, ingredientID);
+                        (
+                        	SELECT store_id, store_name FROM stores
+                        ) AS s	
+                        ON i.store_id = s.store_id                                                
+                        WHERE s.store_name = "%s" AND i.ingredient_id = %s
+                        ORDER BY i.product_name ASC;""", ingredientSupplier, ingredientID);
 
                 ArrayList<String> productNameResults = db.getSingleColumnQuery_ArrayList(queryStore);
 
@@ -1455,7 +1446,7 @@ public class IngredientsTable extends JDBC_JTable
                 ////######################################
 
                 String queryStore = String.format("""
-                        SELECT DISTINCT IFNULL(D.Store_Name, 'N/A') AS Store_Name
+                        SELECT DISTINCT IFNULL(D.store_name, 'N/A') AS store_name
                         FROM 
                         (
                         	SELECT I.ingredient_id FROM ingredients_info I
@@ -1463,15 +1454,15 @@ public class IngredientsTable extends JDBC_JTable
                         ) AS T                                             
                         LEFT JOIN
                         (
-                           SELECT L.ingredient_id, L.StoreID FROM ingredientInShops L                         	
+                           SELECT L.ingredient_id, L.store_id FROM ingredientInShops L                         	
                         ) AS C
                         ON T.ingredient_id = C.ingredient_id 
                         LEFT JOIN
                         (
-                          SELECT StoreID, Store_Name FROM stores
+                          SELECT store_id, store_name FROM stores
                         ) AS D
-                        ON C.StoreID = D.StoreID
-                        ORDER BY Store_Name;""", ingredientID);
+                        ON C.store_id = D.store_id
+                        ORDER BY store_name;""", ingredientID);
 
                 ArrayList<String> storesResults = db.getSingleColumnQuery_ArrayList(queryStore);
 

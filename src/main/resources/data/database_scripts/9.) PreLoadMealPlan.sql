@@ -45,7 +45,7 @@ INSERT IGNORE INTO dividedMealSections (MealInPlanID, plan_id) VALUES
 #######################################################################################
 
 INSERT IGNORE INTO ingredients_in_sections_of_meal 
-(Ingredients_Index, plan_id, PDID, DivMealSectionsID, ingredient_id, Quantity) VALUES
+(Ingredients_Index, plan_id, pdid, DivMealSectionsID, ingredient_id, Quantity) VALUES
 
 #####################################################
 # Breakfast

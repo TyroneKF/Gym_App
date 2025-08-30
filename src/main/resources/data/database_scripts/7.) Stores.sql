@@ -1,4 +1,4 @@
-INSERT IGNORE INTO stores (Store_Name) VALUES
+INSERT IGNORE INTO stores (store_name) VALUES
 ('No Shop'),
 ('Aldi'),
 ('Amazon'),

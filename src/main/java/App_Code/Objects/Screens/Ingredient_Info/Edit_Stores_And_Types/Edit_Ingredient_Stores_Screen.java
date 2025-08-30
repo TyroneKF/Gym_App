@@ -83,7 +83,7 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
             super.mainLabel = "Add Supplier Name";
 
             super.dataGatheringName = "Supplier Name";
-            super.dbColumnNameField = "Store_Name";
+            super.dbColumnNameField = "store_name";
             super.dbTableName = "stores";
             //###################################################################
             // Drawing interface
@@ -132,7 +132,7 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
             super.dbColumnNameField = "Store_Name";
             super.dbTableName = "stores";
 
-            super.idColumnName = "StoreID";
+            super.idColumnName = "store_id";
             super.fkTable = "ingredients_info";
             super.removeJComboBoxItems = new String[]{"No Shop"};
 
@@ -182,14 +182,14 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
             //######################################
             String query1 = String.format("""
                     UPDATE ingredients_in_sections_of_meal
-                       SET PDID = NULL
-                    WHERE PDID IN (SELECT PDID FROM ingredientInShops WHERE StoreID = %s);""", mysqlVariableReference1);
+                    SET pdid = NULL
+                    WHERE pdid IN (SELECT pdid FROM ingredientInShops WHERE store_id = %s);""", mysqlVariableReference1);
 
             //######################################
             // Update  ingredientInShops & Stores
             //######################################
-            String query2 = String.format("DELETE FROM ingredientInShops WHERE StoreID = %s;", mysqlVariableReference1);
-            String query3 = String.format("DELETE FROM stores WHERE StoreID = %s;", mysqlVariableReference1);
+            String query2 = String.format("DELETE FROM ingredientInShops WHERE store_id = %s;", mysqlVariableReference1);
+            String query3 = String.format("DELETE FROM stores WHERE store_id = %s;", mysqlVariableReference1);
 
             //#############################################
             //

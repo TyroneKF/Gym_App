@@ -141,16 +141,16 @@ CREATE TABLE IF NOT EXISTS ingredients_info
 
 	calories DECIMAL(7,2) NOT NULL,
 
-	UNIQUE KEY no_repeat_ingredient_name(ingredient_name)
+	UNIQUE KEY no_repeat_ingredient_names(ingredient_name)
 );
 
 --######################################
 CREATE TABLE IF NOT EXISTS stores
 (
     -- PRIMARY KEYS
-    StoreID INT  PRIMARY KEY AUTO_INCREMENT,
-	Store_Name VARCHAR(255) NOT NULL,
-	UNIQUE KEY unique_store_name (Store_Name)
+    store_id INT  PRIMARY KEY AUTO_INCREMENT,
+	store_name VARCHAR(255) NOT NULL,
+	UNIQUE KEY no_repeat_store_names (store_name)
 
 );
 --######################################
@@ -158,20 +158,20 @@ CREATE TABLE IF NOT EXISTS stores
 CREATE TABLE IF NOT EXISTS ingredientInShops
 (
     -- PRIMARY KEY , UNIQUE To this Table
-    PDID INT  PRIMARY KEY AUTO_INCREMENT,
+    pdid INT  PRIMARY KEY AUTO_INCREMENT,
 
     ingredient_id INT  NOT NULL,
 	FOREIGN KEY (ingredient_id) REFERENCES ingredients_info(ingredient_id) ON DELETE CASCADE,
 
-    Product_Name VARCHAR(100) NOT NULL,
+    product_name VARCHAR(100) NOT NULL,
 
-	Volume_Per_Unit DECIMAL(7,2) NOT NULL,
-	Cost_Per_Unit DECIMAL(7,2) NOT NULL,
+	volume_per_unit DECIMAL(7,2) NOT NULL,
+	cost_per_unit DECIMAL(7,2) NOT NULL,
 
-	StoreID INT NOT NULL,
-	FOREIGN KEY (StoreID) REFERENCES stores(StoreID) ON DELETE CASCADE,
+	store_id INT NOT NULL,
+	FOREIGN KEY (store_id) REFERENCES stores(store_id) ON DELETE CASCADE,
 
-    UNIQUE KEY Product_In_Store(StoreID, Product_Name)
+    UNIQUE KEY no_repeat_products_in_store(store_id, product_name)
 );
 --######################################
 
@@ -225,8 +225,8 @@ CREATE TABLE IF NOT EXISTS ingredients_in_sections_of_meal
 
 	Quantity DECIMAL(15,2) NOT NULL,
 
-	PDID INT NULL,
- 	FOREIGN KEY (PDID) REFERENCES ingredientInShops(PDID) ON DELETE CASCADE,
+	pdid INT NULL,
+ 	FOREIGN KEY (pdid) REFERENCES ingredientInShops(pdid) ON DELETE CASCADE,
 
 	PRIMARY KEY (Ingredients_Index, plan_id),
 	UNIQUE KEY No_Repeat_Meals (Ingredients_Index, DivMealSectionsID, plan_id) -- #HELLO is DivMealSectionsID needed
@@ -246,9 +246,9 @@ i.ingredient_id AS Ingredient_ID,
 i.Quantity,
 (SELECT t.ingredient_type_name FROM ingredientTypes t WHERE t.ingredient_type_id = info.ingredient_type_id)  AS Ingredient_Type,
 info.ingredient_name AS Ingredient_Name,
-IFNULL(ROUND((i.Quantity /p.Volume_Per_Unit)*p.Cost_Per_Unit,2),0) AS Ingredient_Cost,
-IFNULL(s.Store_Name,'N/A') AS  Supplier,
-IFNULL(p.Product_Name,'N/A') AS  Product_Name,
+IFNULL(ROUND((i.Quantity /p.volume_per_unit)*p.cost_per_unit,2),0) AS Ingredient_Cost,
+IFNULL(s.store_name,'N/A') AS  Supplier,
+IFNULL(p.product_name,'N/A') AS  Product_Name,
 IFNULL(ROUND((info.protein /info.based_on_quantity)*i.Quantity,2),0) AS Protein,
 IFNULL(info.glycemic_index, 0) AS GI,
 IFNULL(ROUND((info.carbohydrates /info.based_on_quantity)*i.Quantity,2),0) AS Carbohydrates,
@@ -264,8 +264,8 @@ IFNULL(ROUND((info.calories /info.based_on_quantity)*i.Quantity,2),0) AS Calorie
 
 FROM ingredients_in_sections_of_meal i
 LEFT JOIN ingredients_info info ON  info.ingredient_id = i.ingredient_id
-LEFT JOIN ingredientInShops p ON p.PDID = i.PDID
-LEFT JOIN stores s ON p.StoreID = s.StoreID;
+LEFT JOIN ingredientInShops p ON p.pdid = i.pdid
+LEFT JOIN stores s ON p.store_id = s.store_id;
 
 --######################################
 
