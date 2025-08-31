@@ -221,7 +221,7 @@ CREATE TABLE IF NOT EXISTS dividedMealSections
         ON DELETE CASCADE,
 		
    PRIMARY KEY(div_meal_sections_id, plan_id), -- div_meal_sections_id isn't unique enough because its duplicated in temp meal plan for temp data it becomes unique with plan_id
-   UNIQUE KEY No_Repeat_Sub_Meals_Per_Plan(div_meal_sections_id, meal_in_plan_id, plan_id)
+   UNIQUE KEY no_repeat_sub_meals_per_plan(div_meal_sections_id, plan_id) -- need to be able to uniquely identify each sub meal, allowing duplicating doesn't do this
 
 );
 
