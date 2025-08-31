@@ -211,7 +211,7 @@ CREATE TABLE IF NOT EXISTS mealsInPlan
 
 CREATE TABLE IF NOT EXISTS dividedMealSections
 (
-   DivMealSectionsID INT AUTO_INCREMENT,
+   div_meal_sections_id INT AUTO_INCREMENT,
 
    meal_in_plan_id  INT  NOT NULL,
    plan_id INT NOT NULL,
@@ -220,8 +220,8 @@ CREATE TABLE IF NOT EXISTS dividedMealSections
         REFERENCES mealsInPlan (meal_in_plan_id, plan_id)
         ON DELETE CASCADE,
 		
-   PRIMARY KEY(DivMealSectionsID, plan_id), -- DivMealSectionsID isn't unique enough because its duplicated in temp meal plan for temp data it becomes unique with plan_id
-   UNIQUE KEY No_Repeat_Sub_Meals_Per_Plan(DivMealSectionsID, meal_in_plan_id, plan_id)
+   PRIMARY KEY(div_meal_sections_id, plan_id), -- div_meal_sections_id isn't unique enough because its duplicated in temp meal plan for temp data it becomes unique with plan_id
+   UNIQUE KEY No_Repeat_Sub_Meals_Per_Plan(div_meal_sections_id, meal_in_plan_id, plan_id)
 
 );
 
@@ -230,11 +230,11 @@ CREATE TABLE IF NOT EXISTS ingredients_in_sections_of_meal
 (
     Ingredients_Index INT  AUTO_INCREMENT,
 
-    DivMealSectionsID INT NOT NULL,
+    div_meal_sections_id INT NOT NULL,
 	plan_id INT NOT NULL,
 	
-	FOREIGN KEY (DivMealSectionsID, plan_id) 
-		REFERENCES dividedMealSections(DivMealSectionsID, plan_id) 
+	FOREIGN KEY (div_meal_sections_id, plan_id)
+		REFERENCES dividedMealSections(div_meal_sections_id, plan_id)
 		ON DELETE CASCADE,
 
     ingredient_id INT NOT NULL,
@@ -246,7 +246,7 @@ CREATE TABLE IF NOT EXISTS ingredients_in_sections_of_meal
  	FOREIGN KEY (pdid) REFERENCES ingredientInShops(pdid) ON DELETE CASCADE,
 
 	PRIMARY KEY (Ingredients_Index, plan_id),
-	UNIQUE KEY No_Repeat_Meals (Ingredients_Index, DivMealSectionsID, plan_id) -- #HELLO is DivMealSectionsID needed
+	UNIQUE KEY No_Repeat_Meals (Ingredients_Index, div_meal_sections_id, plan_id) -- #HELLO is div_meal_sections_id needed
 );
 
 --######################################
@@ -257,7 +257,7 @@ CREATE VIEW ingredients_in_sections_of_meal_calculation AS
 SELECT
 
 i.plan_id, 
-i.DivMealSectionsID, 
+i.div_meal_sections_id,
 i.Ingredients_Index,  
 i.ingredient_id AS Ingredient_ID, 
 i.Quantity,
@@ -292,7 +292,7 @@ CREATE VIEW divided_meal_sections_calculations AS
 SELECT
 
 plan_id, 
-DivMealSectionsID,
+div_meal_sections_id,
 COUNT(ingredient_id) as No_Of_Ingredients,
 IFNULL(ROUND(SUM(Quantity),2),0) as Weight_OF_Meal,
 IFNULL(ROUND(SUM(Ingredient_Cost),2),0) as Total_Cost,
@@ -308,7 +308,7 @@ IFNULL(ROUND(SUM(Liquid_Content),2),0) as Total_Liquid_Content,
 IFNULL(ROUND(SUM(Calories),2),0) as Total_Calories
 
 FROM  ingredients_in_sections_of_meal_calculation
-GROUP BY DivMealSectionsID, plan_id;
+GROUP BY div_meal_sections_id, plan_id;
 
 --######################################
 
@@ -340,7 +340,7 @@ LEFT JOIN dividedMealSections d
 ON m.meal_in_plan_id = d.meal_in_plan_id AND m.plan_id = d.plan_id
 
 LEFT JOIN divided_meal_sections_calculations di
-ON di.DivMealSectionsID = d.DivMealSectionsID AND di.plan_id = d.plan_id
+ON di.div_meal_sections_id = d.div_meal_sections_id AND di.plan_id = d.plan_id
 
 GROUP BY  m.plan_id, m.meal_in_plan_id, Meal_Time, Meal_Name; -- Last 2 were just added because
 
