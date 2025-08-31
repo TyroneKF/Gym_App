@@ -1,4 +1,21 @@
 
+\! cls;
+
+DROP DATABASE IF EXISTS gymapp00001;
+CREATE DATABASE gymapp00001;
+USE gymapp00001;
+
+CREATE TABLE IF NOT EXISTS users
+(
+  user_id INT PRIMARY KEY AUTO_INCREMENT,
+  user_name VARCHAR(100) NOT NULL,
+
+  is_user_selected BOOLEAN NOT NULL DEFAULT FALSE,
+  selected_user_flag BOOLEAN GENERATED ALWAYS AS (IF(is_user_selected, TRUE, NULL)) STORED,
+
+  UNIQUE KEY no_repeat_user_names(user_name)
+);
+
 -- ######################################
 CREATE TABLE IF NOT EXISTS plans
 (
@@ -177,17 +194,17 @@ CREATE TABLE IF NOT EXISTS ingredientInShops
 
 CREATE TABLE IF NOT EXISTS mealsInPlan
 (
-   MealInPlanID INT NOT NULL AUTO_INCREMENT,
+   meal_in_plan_id INT NOT NULL AUTO_INCREMENT,
 
    plan_id INT NOT NULL,
    FOREIGN KEY (plan_id) REFERENCES plans(plan_id) ON DELETE CASCADE,
 
-   Meal_Name VARCHAR(100) NOT NULL,
-   Meal_Time TIME NOT NULL,
+   meal_name VARCHAR(100) NOT NULL,
+   meal_time TIME NOT NULL,
 
-   PRIMARY KEY(MealInPlanID, plan_id), -- MealInPlanID isn't unique enough because its duplicated in temp meal plan for temp data it becomes unique with plan_id 
-   UNIQUE KEY Time_For_Meal(plan_id, Meal_Time), -- Only one meal can be at one time
-   UNIQUE KEY No_Repeat_Meal_Names_In_Plan(plan_id, Meal_Name) -- can't have 2 of the same meal_names in a plan
+   PRIMARY KEY(meal_in_plan_id, plan_id), -- meal_in_plan_id isn't unique enough because its duplicated in temp meal plan for temp data it becomes unique with plan_id
+   UNIQUE KEY no_repeat_meal_times_in_plan(plan_id, meal_time), -- Only one meal can be at one time
+   UNIQUE KEY no_repeat_meal_names_in_plan(plan_id, meal_name) -- can't have 2 of the same meal_names in a plan
 );
 
 --######################################
@@ -196,15 +213,15 @@ CREATE TABLE IF NOT EXISTS dividedMealSections
 (
    DivMealSectionsID INT AUTO_INCREMENT,
 
-   MealInPlanID  INT  NOT NULL, 
+   meal_in_plan_id  INT  NOT NULL,
    plan_id INT NOT NULL,
    
-   FOREIGN KEY (MealInPlanID, plan_id)  
-        REFERENCES mealsInPlan (MealInPlanID, plan_id)
+   FOREIGN KEY (meal_in_plan_id, plan_id)
+        REFERENCES mealsInPlan (meal_in_plan_id, plan_id)
         ON DELETE CASCADE,
 		
    PRIMARY KEY(DivMealSectionsID, plan_id), -- DivMealSectionsID isn't unique enough because its duplicated in temp meal plan for temp data it becomes unique with plan_id
-   UNIQUE KEY No_Repeat_Sub_Meals_Per_Plan(DivMealSectionsID, MealInPlanID, plan_id)
+   UNIQUE KEY No_Repeat_Sub_Meals_Per_Plan(DivMealSectionsID, meal_in_plan_id, plan_id)
 
 );
 
@@ -300,9 +317,9 @@ CREATE VIEW total_meal_view AS
 
 SELECT 
 m.plan_id, 
-m.MealInPlanID,
+m.meal_in_plan_id,
 m.Meal_Time AS Meal_Time,
-m.Meal_Name AS Meal_Name,
+m.meal_name AS Meal_Name,
 IFNULL(ROUND(SUM(di.No_Of_Ingredients),2),0) as No_Of_Ingredients,
 IFNULL(ROUND(SUM(di.Weight_OF_Meal),2),0) as Weight_OF_Meal,
 IFNULL(ROUND(SUM(di.Total_Cost),2),0) as Total_Cost,
@@ -320,12 +337,12 @@ IFNULL(ROUND(SUM(di.Total_Calories),2),0) as Total_Calories
 FROM  mealsInPlan m
 
 LEFT JOIN dividedMealSections d
-ON m.MealInPlanID = d.MealInPlanID AND m.plan_id = d.plan_id
+ON m.meal_in_plan_id = d.meal_in_plan_id AND m.plan_id = d.plan_id
 
 LEFT JOIN divided_meal_sections_calculations di
 ON di.DivMealSectionsID = d.DivMealSectionsID AND di.plan_id = d.plan_id
 
-GROUP BY  m.plan_id, m.MealInPlanID, Meal_Time, Meal_Name; -- Last 2 were just added because
+GROUP BY  m.plan_id, m.meal_in_plan_id, Meal_Time, Meal_Name; -- Last 2 were just added because
 
 --######################################
 
@@ -336,7 +353,7 @@ SELECT
 
 P.plan_id, 
 P.plan_name, -- needs to be here to prevent ONLY_FULL_GROUP_BY
-COUNT(T.MealInPlanID) AS No_Of_Meals,
+COUNT(T.meal_in_plan_id) AS No_Of_Meals,
 IFNULL(ROUND(SUM(T.No_Of_Ingredients),2),0) AS Ingredients_In_Plan,
 IFNULL(ROUND(SUM(T.Weight_OF_Meal),2),0) AS Weight_In_Plan,
 IFNULL(ROUND(SUM(T.Total_Cost),2),0) AS Total_Cost,
