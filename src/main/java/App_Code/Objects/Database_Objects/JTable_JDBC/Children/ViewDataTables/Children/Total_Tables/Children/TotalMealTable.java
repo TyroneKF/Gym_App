@@ -77,13 +77,13 @@ public class TotalMealTable extends Parent_Totals_Table
 
     public void updateTotalMealTable()
     {
-        String query = String.format("SELECT *  FROM total_meal_view WHERE MealInPlanID = %s AND plan_id = %s;", MealInPlanID, temp_PlanID);
+        String query = String.format("SELECT * FROM total_meal_view WHERE meal_in_plan_id = %s AND plan_id = %s;", MealInPlanID, temp_PlanID);
         super.updateTable(0, query, tableName);
     }
 
     public boolean updateTotalMealTableModelData()
     {
-        String query = String.format("SELECT * FROM total_meal_view WHERE MealInPlanID = %s AND plan_id = %s;",  MealInPlanID, temp_PlanID);
+        String query = String.format("SELECT * FROM total_meal_view WHERE meal_in_plan_id = %s AND plan_id = %s;",  MealInPlanID, temp_PlanID);
         return super.updateTableModelData(databaseTableName, query);
     }
 }

@@ -1,4 +1,3 @@
-
 -- ######################################
 CREATE TABLE IF NOT EXISTS plans
 (
@@ -177,59 +176,59 @@ CREATE TABLE IF NOT EXISTS ingredientInShops
 
 CREATE TABLE IF NOT EXISTS mealsInPlan
 (
-   MealInPlanID INT NOT NULL AUTO_INCREMENT,
+   meal_in_plan_id INT NOT NULL AUTO_INCREMENT,
 
    plan_id INT NOT NULL,
    FOREIGN KEY (plan_id) REFERENCES plans(plan_id) ON DELETE CASCADE,
 
-   Meal_Name VARCHAR(100) NOT NULL,
-   Meal_Time TIME NOT NULL,
+   meal_name VARCHAR(100) NOT NULL,
+   meal_time TIME NOT NULL,
 
-   PRIMARY KEY(MealInPlanID, plan_id), -- MealInPlanID isn't unique enough because its duplicated in temp meal plan for temp data it becomes unique with plan_id 
-   UNIQUE KEY Time_For_Meal(plan_id, Meal_Time), -- Only one meal can be at one time
-   UNIQUE KEY No_Repeat_Meal_Names_In_Plan(plan_id, Meal_Name) -- can't have 2 of the same meal_names in a plan
+   PRIMARY KEY(meal_in_plan_id, plan_id), -- meal_in_plan_id isn't unique enough because its duplicated in temp meal plan for temp data it becomes unique with plan_id
+   UNIQUE KEY no_repeat_meal_times_in_plan(plan_id, meal_time), -- Only one meal can be at one time
+   UNIQUE KEY no_repeat_meal_names_in_plan(plan_id, meal_name) -- can't have 2 of the same meal_names in a plan
 );
 
 --######################################
 
 CREATE TABLE IF NOT EXISTS dividedMealSections
 (
-   DivMealSectionsID INT AUTO_INCREMENT,
+   div_meal_sections_id INT AUTO_INCREMENT,
 
-   MealInPlanID  INT  NOT NULL, 
+   meal_in_plan_id  INT  NOT NULL,
    plan_id INT NOT NULL,
    
-   FOREIGN KEY (MealInPlanID, plan_id)  
-        REFERENCES mealsInPlan (MealInPlanID, plan_id)
+   FOREIGN KEY (meal_in_plan_id, plan_id)
+        REFERENCES mealsInPlan (meal_in_plan_id, plan_id)
         ON DELETE CASCADE,
 		
-   PRIMARY KEY(DivMealSectionsID, plan_id), -- DivMealSectionsID isn't unique enough because its duplicated in temp meal plan for temp data it becomes unique with plan_id
-   UNIQUE KEY No_Repeat_Sub_Meals_Per_Plan(DivMealSectionsID, MealInPlanID, plan_id)
+   PRIMARY KEY(div_meal_sections_id, plan_id), -- div_meal_sections_id isn't unique enough because its duplicated in temp meal plan for temp data it becomes unique with plan_id
+   UNIQUE KEY no_repeat_sub_meals_per_plan(div_meal_sections_id, plan_id) -- need to be able to uniquely identify each sub meal, allowing duplicating doesn't do this
 
 );
 
 --######################################
 CREATE TABLE IF NOT EXISTS ingredients_in_sections_of_meal
 (
-    Ingredients_Index INT  AUTO_INCREMENT,
+    ingredients_index INT  AUTO_INCREMENT,
 
-    DivMealSectionsID INT NOT NULL,
+    div_meal_sections_id INT NOT NULL,
 	plan_id INT NOT NULL,
 	
-	FOREIGN KEY (DivMealSectionsID, plan_id) 
-		REFERENCES dividedMealSections(DivMealSectionsID, plan_id) 
+	FOREIGN KEY (div_meal_sections_id, plan_id)
+		REFERENCES dividedMealSections(div_meal_sections_id, plan_id)
 		ON DELETE CASCADE,
 
     ingredient_id INT NOT NULL,
 	FOREIGN KEY (ingredient_id) REFERENCES ingredients_info(ingredient_id) ON DELETE CASCADE,
 
-	Quantity DECIMAL(15,2) NOT NULL,
+	quantity DECIMAL(15,2) NOT NULL,
 
 	pdid INT NULL,
  	FOREIGN KEY (pdid) REFERENCES ingredientInShops(pdid) ON DELETE CASCADE,
 
-	PRIMARY KEY (Ingredients_Index, plan_id),
-	UNIQUE KEY No_Repeat_Meals (Ingredients_Index, DivMealSectionsID, plan_id) -- #HELLO is DivMealSectionsID needed
+	PRIMARY KEY (ingredients_index, plan_id),
+	UNIQUE KEY no_repeat_records (ingredients_index, div_meal_sections_id, plan_id)
 );
 
 --######################################
@@ -240,26 +239,26 @@ CREATE VIEW ingredients_in_sections_of_meal_calculation AS
 SELECT
 
 i.plan_id, 
-i.DivMealSectionsID, 
-i.Ingredients_Index,  
-i.ingredient_id AS Ingredient_ID, 
-i.Quantity,
+i.div_meal_sections_id,
+i.ingredients_index,
+i.ingredient_id, 
+i.quantity AS Quantity,
 (SELECT t.ingredient_type_name FROM ingredientTypes t WHERE t.ingredient_type_id = info.ingredient_type_id)  AS Ingredient_Type,
 info.ingredient_name AS Ingredient_Name,
-IFNULL(ROUND((i.Quantity /p.volume_per_unit)*p.cost_per_unit,2),0) AS Ingredient_Cost,
+IFNULL(ROUND((i.quantity /p.volume_per_unit)*p.cost_per_unit,2),0) AS Ingredient_Cost,
 IFNULL(s.store_name,'N/A') AS  Supplier,
 IFNULL(p.product_name,'N/A') AS  Product_Name,
-IFNULL(ROUND((info.protein /info.based_on_quantity)*i.Quantity,2),0) AS Protein,
+IFNULL(ROUND((info.protein /info.based_on_quantity)*i.quantity,2),0) AS Protein,
 IFNULL(info.glycemic_index, 0) AS GI,
-IFNULL(ROUND((info.carbohydrates /info.based_on_quantity)*i.Quantity,2),0) AS Carbohydrates,
-IFNULL(ROUND((info.sugars_of_carbs /info.based_on_quantity)*i.Quantity,2),0) AS Sugars_Of_Carbs,
-IFNULL(ROUND((info.fibre /info.based_on_quantity)*i.Quantity,2),0) AS Fibre,
-IFNULL(ROUND((info.fat /info.based_on_quantity)*i.Quantity,2),0) AS Fat,
-IFNULL(ROUND((info.saturated_fat /info.based_on_quantity)*i.Quantity,2),0) AS Saturated_Fat,
-IFNULL(ROUND((info.salt /info.based_on_quantity)*i.Quantity,2),0) AS Salt,
-IFNULL(ROUND((info.water_content /info.based_on_quantity)*i.Quantity,2),0) AS Water_Content,
-IFNULL(ROUND((info.liquid_content /info.based_on_quantity)*i.Quantity,2),0) AS Liquid_Content,
-IFNULL(ROUND((info.calories /info.based_on_quantity)*i.Quantity,2),0) AS Calories,
+IFNULL(ROUND((info.carbohydrates /info.based_on_quantity)*i.quantity,2),0) AS Carbohydrates,
+IFNULL(ROUND((info.sugars_of_carbs /info.based_on_quantity)*i.quantity,2),0) AS Sugars_Of_Carbs,
+IFNULL(ROUND((info.fibre /info.based_on_quantity)*i.quantity,2),0) AS Fibre,
+IFNULL(ROUND((info.fat /info.based_on_quantity)*i.quantity,2),0) AS Fat,
+IFNULL(ROUND((info.saturated_fat /info.based_on_quantity)*i.quantity,2),0) AS Saturated_Fat,
+IFNULL(ROUND((info.salt /info.based_on_quantity)*i.quantity,2),0) AS Salt,
+IFNULL(ROUND((info.water_content /info.based_on_quantity)*i.quantity,2),0) AS Water_Content,
+IFNULL(ROUND((info.liquid_content /info.based_on_quantity)*i.quantity,2),0) AS Liquid_Content,
+IFNULL(ROUND((info.calories /info.based_on_quantity)*i.quantity,2),0) AS Calories,
 'Delete Row' AS `Delete Button`
 
 FROM ingredients_in_sections_of_meal i
@@ -275,7 +274,7 @@ CREATE VIEW divided_meal_sections_calculations AS
 SELECT
 
 plan_id, 
-DivMealSectionsID,
+div_meal_sections_id,
 COUNT(ingredient_id) as No_Of_Ingredients,
 IFNULL(ROUND(SUM(Quantity),2),0) as Weight_OF_Meal,
 IFNULL(ROUND(SUM(Ingredient_Cost),2),0) as Total_Cost,
@@ -291,7 +290,7 @@ IFNULL(ROUND(SUM(Liquid_Content),2),0) as Total_Liquid_Content,
 IFNULL(ROUND(SUM(Calories),2),0) as Total_Calories
 
 FROM  ingredients_in_sections_of_meal_calculation
-GROUP BY DivMealSectionsID, plan_id;
+GROUP BY div_meal_sections_id, plan_id;
 
 --######################################
 
@@ -300,9 +299,9 @@ CREATE VIEW total_meal_view AS
 
 SELECT 
 m.plan_id, 
-m.MealInPlanID,
+m.meal_in_plan_id,
 m.Meal_Time AS Meal_Time,
-m.Meal_Name AS Meal_Name,
+m.meal_name AS Meal_Name,
 IFNULL(ROUND(SUM(di.No_Of_Ingredients),2),0) as No_Of_Ingredients,
 IFNULL(ROUND(SUM(di.Weight_OF_Meal),2),0) as Weight_OF_Meal,
 IFNULL(ROUND(SUM(di.Total_Cost),2),0) as Total_Cost,
@@ -320,12 +319,12 @@ IFNULL(ROUND(SUM(di.Total_Calories),2),0) as Total_Calories
 FROM  mealsInPlan m
 
 LEFT JOIN dividedMealSections d
-ON m.MealInPlanID = d.MealInPlanID AND m.plan_id = d.plan_id
+ON m.meal_in_plan_id = d.meal_in_plan_id AND m.plan_id = d.plan_id
 
 LEFT JOIN divided_meal_sections_calculations di
-ON di.DivMealSectionsID = d.DivMealSectionsID AND di.plan_id = d.plan_id
+ON di.div_meal_sections_id = d.div_meal_sections_id AND di.plan_id = d.plan_id
 
-GROUP BY  m.plan_id, m.MealInPlanID, Meal_Time, Meal_Name; -- Last 2 were just added because
+GROUP BY  m.plan_id, m.meal_in_plan_id, Meal_Time, Meal_Name; -- Last 2 were just added because
 
 --######################################
 
@@ -336,7 +335,7 @@ SELECT
 
 P.plan_id, 
 P.plan_name, -- needs to be here to prevent ONLY_FULL_GROUP_BY
-COUNT(T.MealInPlanID) AS No_Of_Meals,
+COUNT(T.meal_in_plan_id) AS No_Of_Meals,
 IFNULL(ROUND(SUM(T.No_Of_Ingredients),2),0) AS Ingredients_In_Plan,
 IFNULL(ROUND(SUM(T.Weight_OF_Meal),2),0) AS Weight_In_Plan,
 IFNULL(ROUND(SUM(T.Total_Cost),2),0) AS Total_Cost,

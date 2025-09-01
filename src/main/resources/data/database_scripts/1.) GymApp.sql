@@ -1,21 +1,3 @@
-
-\! cls;
-
-DROP DATABASE IF EXISTS gymapp00001;
-CREATE DATABASE gymapp00001;
-USE gymapp00001;
-
-CREATE TABLE IF NOT EXISTS users
-(
-  user_id INT PRIMARY KEY AUTO_INCREMENT,
-  user_name VARCHAR(100) NOT NULL,
-
-  is_user_selected BOOLEAN NOT NULL DEFAULT FALSE,
-  selected_user_flag BOOLEAN GENERATED ALWAYS AS (IF(is_user_selected, TRUE, NULL)) STORED,
-
-  UNIQUE KEY no_repeat_user_names(user_name)
-);
-
 -- ######################################
 CREATE TABLE IF NOT EXISTS plans
 (
@@ -228,7 +210,7 @@ CREATE TABLE IF NOT EXISTS dividedMealSections
 --######################################
 CREATE TABLE IF NOT EXISTS ingredients_in_sections_of_meal
 (
-    Ingredients_Index INT  AUTO_INCREMENT,
+    ingredients_index INT  AUTO_INCREMENT,
 
     div_meal_sections_id INT NOT NULL,
 	plan_id INT NOT NULL,
@@ -240,13 +222,13 @@ CREATE TABLE IF NOT EXISTS ingredients_in_sections_of_meal
     ingredient_id INT NOT NULL,
 	FOREIGN KEY (ingredient_id) REFERENCES ingredients_info(ingredient_id) ON DELETE CASCADE,
 
-	Quantity DECIMAL(15,2) NOT NULL,
+	quantity DECIMAL(15,2) NOT NULL,
 
 	pdid INT NULL,
  	FOREIGN KEY (pdid) REFERENCES ingredientInShops(pdid) ON DELETE CASCADE,
 
-	PRIMARY KEY (Ingredients_Index, plan_id),
-	UNIQUE KEY No_Repeat_Meals (Ingredients_Index, div_meal_sections_id, plan_id) -- #HELLO is div_meal_sections_id needed
+	PRIMARY KEY (ingredients_index, plan_id),
+	UNIQUE KEY no_repeat_records(ingredients_index, div_meal_sections_id, plan_id)
 );
 
 --######################################
@@ -258,25 +240,25 @@ SELECT
 
 i.plan_id, 
 i.div_meal_sections_id,
-i.Ingredients_Index,  
-i.ingredient_id AS Ingredient_ID, 
-i.Quantity,
+i.ingredients_index,
+i.ingredient_id, 
+i.quantity AS Quantity,
 (SELECT t.ingredient_type_name FROM ingredientTypes t WHERE t.ingredient_type_id = info.ingredient_type_id)  AS Ingredient_Type,
 info.ingredient_name AS Ingredient_Name,
-IFNULL(ROUND((i.Quantity /p.volume_per_unit)*p.cost_per_unit,2),0) AS Ingredient_Cost,
+IFNULL(ROUND((i.quantity /p.volume_per_unit)*p.cost_per_unit,2),0) AS Ingredient_Cost,
 IFNULL(s.store_name,'N/A') AS  Supplier,
 IFNULL(p.product_name,'N/A') AS  Product_Name,
-IFNULL(ROUND((info.protein /info.based_on_quantity)*i.Quantity,2),0) AS Protein,
+IFNULL(ROUND((info.protein /info.based_on_quantity)*i.quantity,2),0) AS Protein,
 IFNULL(info.glycemic_index, 0) AS GI,
-IFNULL(ROUND((info.carbohydrates /info.based_on_quantity)*i.Quantity,2),0) AS Carbohydrates,
-IFNULL(ROUND((info.sugars_of_carbs /info.based_on_quantity)*i.Quantity,2),0) AS Sugars_Of_Carbs,
-IFNULL(ROUND((info.fibre /info.based_on_quantity)*i.Quantity,2),0) AS Fibre,
-IFNULL(ROUND((info.fat /info.based_on_quantity)*i.Quantity,2),0) AS Fat,
-IFNULL(ROUND((info.saturated_fat /info.based_on_quantity)*i.Quantity,2),0) AS Saturated_Fat,
-IFNULL(ROUND((info.salt /info.based_on_quantity)*i.Quantity,2),0) AS Salt,
-IFNULL(ROUND((info.water_content /info.based_on_quantity)*i.Quantity,2),0) AS Water_Content,
-IFNULL(ROUND((info.liquid_content /info.based_on_quantity)*i.Quantity,2),0) AS Liquid_Content,
-IFNULL(ROUND((info.calories /info.based_on_quantity)*i.Quantity,2),0) AS Calories,
+IFNULL(ROUND((info.carbohydrates /info.based_on_quantity)*i.quantity,2),0) AS Carbohydrates,
+IFNULL(ROUND((info.sugars_of_carbs /info.based_on_quantity)*i.quantity,2),0) AS Sugars_Of_Carbs,
+IFNULL(ROUND((info.fibre /info.based_on_quantity)*i.quantity,2),0) AS Fibre,
+IFNULL(ROUND((info.fat /info.based_on_quantity)*i.quantity,2),0) AS Fat,
+IFNULL(ROUND((info.saturated_fat /info.based_on_quantity)*i.quantity,2),0) AS Saturated_Fat,
+IFNULL(ROUND((info.salt /info.based_on_quantity)*i.quantity,2),0) AS Salt,
+IFNULL(ROUND((info.water_content /info.based_on_quantity)*i.quantity,2),0) AS Water_Content,
+IFNULL(ROUND((info.liquid_content /info.based_on_quantity)*i.quantity,2),0) AS Liquid_Content,
+IFNULL(ROUND((info.calories /info.based_on_quantity)*i.quantity,2),0) AS Calories,
 'Delete Row' AS `Delete Button`
 
 FROM ingredients_in_sections_of_meal i

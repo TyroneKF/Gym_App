@@ -89,10 +89,10 @@ public class Meal_Plan_Screen extends JPanel
             "Ingredient_Type", "Ingredient_Name", "Supplier", "Product_Name")),
 
             ingredientsTableUnEditableCells = new ArrayList<>(Arrays.asList(
-            "Ingredients_Index", "Ingredient_ID", "Ingredient_Cost", "Protein", "GI", "Carbohydrates", "Sugars_Of_Carbs",
+            "ingredients_index", "ingredient_id", "Ingredient_Cost", "Protein", "GI", "Carbohydrates", "Sugars_Of_Carbs",
             "Fibre", "Fat", "Saturated_Fat", "Salt", "Water_Content", "Liquid_Content", "Calories")),
 
-             ingredientsInMeal_Table_ColToHide = new ArrayList<>(Arrays.asList("plan_id", "DivMealSectionsID"));
+             ingredientsInMeal_Table_ColToHide = new ArrayList<>(Arrays.asList("plan_id", "div_meal_sections_id"));
 
     //##################################################################################################################
     // Other Table Customisations
@@ -100,7 +100,7 @@ public class Meal_Plan_Screen extends JPanel
     private final ArrayList<String>
 
             // Table : total_meal_view Table
-            totalMeal_Table_ColToHide = new ArrayList<String>(Arrays.asList("plan_id","Meal_Time", "MealInPlanID")),
+            totalMeal_Table_ColToHide = new ArrayList<String>(Arrays.asList("plan_id","meal_time", "meal_in_plan_id")),
 
            // Table : plan_Macro_Target_Calculations
            macrosTargets_Table_ColToHide = new ArrayList<String>(Arrays.asList("plan_id", "plan_name", "date_time_of_creation")),
@@ -245,10 +245,10 @@ public class Meal_Plan_Screen extends JPanel
         //####################################################
         // Getting Number Of Meals & Subsections of meals
         //####################################################
-        String query1 = String.format("SELECT COUNT(MealInPlanID) AS TotalMeals FROM mealsInPlan WHERE plan_id = %s;", planID);
+        String query1 = String.format("SELECT COUNT(meal_in_plan_id) AS TotalMeals FROM mealsInPlan WHERE plan_id = %s;", planID);
         String[] mealsInPlanCount = db.getSingleColumnQuery(query1);
 
-        String query2 = String.format("SELECT COUNT(DivMealSectionsID) AS TotalSubMeals FROM dividedMealSections WHERE plan_id = %s;", planID);
+        String query2 = String.format("SELECT COUNT(div_meal_sections_id) AS TotalSubMeals FROM dividedMealSections WHERE plan_id = %s;", planID);
         String[] dividedMealSectionsCount = db.getSingleColumnQuery(query2);
 
         System.out.printf("\n\n%s \nMeals In Plan: %s\nSub-Meals In Plan: %s \n", lineSeparator, mealsInPlanCount[0], dividedMealSectionsCount[0]);
@@ -418,7 +418,7 @@ public class Meal_Plan_Screen extends JPanel
         //########################################
         // Getting ID's of Meals Of Chosen Plan
         //########################################
-        String query = String.format("SELECT MealInPlanID, Meal_Name, Meal_Time FROM mealsInPlan WHERE plan_id = %s ORDER BY Meal_Time;", tempPlanID);
+        String query = String.format("SELECT meal_in_plan_id, meal_name, meal_time FROM mealsInPlan WHERE plan_id = %s ORDER BY meal_time;", tempPlanID);
 
         ArrayList<ArrayList<String>> meals_Info_In_Plan = db.getMultiColumnQuery(query);
         meals_Info_In_Plan = meals_Info_In_Plan!=null ? meals_Info_In_Plan:new ArrayList<>();
@@ -436,6 +436,7 @@ public class Meal_Plan_Screen extends JPanel
         tableName = "plan_Macro_Target_Calculations";
         String planCalcQuery = String.format("SELECT * from %s  WHERE plan_id = %s;", tableName, tempPlanID);
 
+        // HELLO LOGIC Below could be simplified as its doing a db request twice
         Object[][] planData = db.getTableDataObject(planCalcQuery, tableName)!=null ? db.getTableDataObject(planCalcQuery, tableName):new Object[0][0];
         String[] macroTargetsTable_ColumnNames = db.getColumnNames(tableName)!=null ? db.getColumnNames(tableName):new String[0];
 
@@ -506,7 +507,7 @@ public class Meal_Plan_Screen extends JPanel
             //#####################################################
             // Get MealID's Of SubMeals
             //#####################################################
-            String subDivQuery = String.format("\nSELECT DivMealSectionsID FROM dividedMealSections WHERE MealInPlanID = %s AND plan_id = %s;", mealInPlanID, tempPlanID);
+            String subDivQuery = String.format("SELECT div_meal_sections_id FROM dividedMealSections WHERE meal_in_plan_id = %s AND plan_id = %s;", mealInPlanID, tempPlanID);
             ArrayList<ArrayList<String>> subMealsInMealArrayList = db.getMultiColumnQuery(subDivQuery);
 
             if (subMealsInMealArrayList==null)
@@ -524,7 +525,7 @@ public class Meal_Plan_Screen extends JPanel
             // Create Meal Component
             //#####################################################
 
-            System.out.printf("\n\nMeal_Plan_Screen.java | MealManager \nmealInPlanID : %s \nmealName : %s \nmealTime : %s \nSub-Meals In MealManager (ID) : %s%n", mealInPlanID, mealName, mealTime, subMealsInMealArrayList);//HELLO DELETE
+            System.out.printf("\n\nMeal_Plan_Screen.java | MealManager \nmeal_in_plan_id : %s \nmeal_name : %s \nmeal_time : %s \nSub-Meals In MealManager (ID) : %s%n", mealInPlanID, mealName, mealTime, subMealsInMealArrayList);//HELLO DELETE
             MealManager meal = new MealManager(this, scrollJPanelCenter, mealInPlanID, mealName, mealTime, subMealsInMealArrayList);
             mealManagerArrayList.add(meal);
 
@@ -632,7 +633,7 @@ public class Meal_Plan_Screen extends JPanel
         //###########################################################
         // Store ingredientTypes ID's & IngredientTypeName that occur
         //###########################################################
-        String queryIngredientsType = String.format("""
+        String queryIngredientsType = """
                 SELECT I.ingredient_type_id, N.ingredient_type_name
                 FROM
                 (
@@ -643,7 +644,7 @@ public class Meal_Plan_Screen extends JPanel
                   SELECT ingredient_type_id, ingredient_type_name FROM ingredientTypes
                 ) AS N
                 ON I.ingredient_type_id = N.ingredient_type_id 
-                ORDER BY N.ingredient_type_name;""");
+                ORDER BY N.ingredient_type_name;""";
 
         ArrayList<ArrayList<String>> ingredientTypesNameAndIDResults = db.getMultiColumnQuery(queryIngredientsType);
 
@@ -818,14 +819,14 @@ public class Meal_Plan_Screen extends JPanel
         //################################################################
         // Transferring Meals From One Plan To Another
         //################################################################
-        String query8 = String.format("CREATE table temp_mealsInPlan AS SELECT * FROM mealsInPlan WHERE plan_id = %s ORDER BY MealInPlanID;", fromPlanID);
+        String query8 = String.format("CREATE table temp_mealsInPlan AS SELECT * FROM mealsInPlan WHERE plan_id = %s ORDER BY meal_in_plan_id;", fromPlanID);
         String query9 = String.format("UPDATE temp_mealsInPlan SET plan_id = %s;", toPlanID);
-        String query10 = String.format("INSERT INTO mealsInPlan SELECT * FROM temp_mealsInPlan;");
+        String query10 = "INSERT INTO mealsInPlan SELECT * FROM temp_mealsInPlan;";
 
         //################################################################
         // Transferring Sections Of Meals From One Plan To Another
         //################################################################
-        String query11 = String.format("CREATE table temp_dividedMealSections AS SELECT * FROM dividedMealSections WHERE plan_id = %s ORDER BY DivMealSectionsID;", fromPlanID);
+        String query11 = String.format("CREATE table temp_dividedMealSections AS SELECT * FROM dividedMealSections WHERE plan_id = %s ORDER BY div_meal_sections_id;", fromPlanID);
         String query12 = String.format("UPDATE temp_dividedMealSections SET plan_id = %s;", toPlanID);
         String query13 = "INSERT INTO dividedMealSections SELECT * FROM temp_dividedMealSections;";
 
