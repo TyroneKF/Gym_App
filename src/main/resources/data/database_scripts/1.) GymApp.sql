@@ -78,29 +78,29 @@ LEFT JOIN
 (
     SELECT
 
-    M.plan_id,
-    M.date_time_of_creation,
-	ROUND(M.current_weight_in_pounds * M.protein_per_pound, 2) AS expected_protein_grams, -- returns null if 1 of the values are empty
-	ROUND(M.current_weight_in_pounds * M.carbohydrates_per_pound, 2) AS expected_carbohydrates_grams,
-	M.fibre,
-	ROUND(M.current_weight_in_pounds * M.fats_per_pound, 2) AS expected_fats_grams,
-	M.saturated_fat_limit,
-    M.salt_limit,
-    M.water_target,
-	M.liquid_target,
+    plan_id,
+    date_time_of_creation,
+	ROUND(current_weight_in_pounds * protein_per_pound, 2) AS expected_protein_grams, -- returns null if 1 of the values are empty
+	ROUND(current_weight_in_pounds * carbohydrates_per_pound, 2) AS expected_carbohydrates_grams,
+	fibre,
+	ROUND(current_weight_in_pounds * fats_per_pound, 2) AS expected_fats_grams,
+	saturated_fat_limit,
+    salt_limit,
+    water_target,
+	liquid_target,
 	(
-	    ROUND((M.current_weight_in_pounds * M.protein_per_pound) * 4, 2) +
-		ROUND((M.current_weight_in_pounds * M.carbohydrates_per_pound) * 4, 2) +
-		ROUND((M.current_weight_in_pounds * M.fats_per_pound) * 9, 2)
+	    ROUND((current_weight_in_pounds * protein_per_pound) * 4, 2) +
+		ROUND((current_weight_in_pounds * carbohydrates_per_pound) * 4, 2) +
+		ROUND((current_weight_in_pounds * fats_per_pound) * 9, 2)
 	) AS calories_target,
 	(
-	    ROUND((M.current_weight_in_pounds * M.protein_per_pound) * 4, 2) +
-		ROUND((M.current_weight_in_pounds * M.carbohydrates_per_pound) * 4, 2) +
-		ROUND((M.current_weight_in_pounds * M.fats_per_pound) * 9, 2) +
-		M.additional_calories
+	    ROUND((current_weight_in_pounds * protein_per_pound) * 4, 2) +
+		ROUND((current_weight_in_pounds * carbohydrates_per_pound) * 4, 2) +
+		ROUND((current_weight_in_pounds * fats_per_pound) * 9, 2) +
+		additional_calories
 	) AS additional_calories_target
 
-	FROM macros_Per_Pound_And_Limits M
+	FROM macros_Per_Pound_And_Limits
 )  C
 ON P.plan_id = C.plan_id;
 
