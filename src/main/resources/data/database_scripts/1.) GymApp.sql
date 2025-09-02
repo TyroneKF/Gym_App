@@ -80,7 +80,7 @@ LEFT JOIN
 
     M.plan_id,
     M.date_time_of_creation,
-	ROUND(M.current_weight_in_pounds * M.protein_per_pound, 2) AS expected_protein_grams,
+	ROUND(M.current_weight_in_pounds * M.protein_per_pound, 2) AS expected_protein_grams, -- returns null if 1 of the values are empty
 	ROUND(M.current_weight_in_pounds * M.carbohydrates_per_pound, 2) AS expected_carbohydrates_grams,
 	M.fibre,
 	ROUND(M.current_weight_in_pounds * M.fats_per_pound, 2) AS expected_fats_grams,
