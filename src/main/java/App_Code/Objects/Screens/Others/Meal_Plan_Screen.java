@@ -86,11 +86,11 @@ public class Meal_Plan_Screen extends JPanel
     // Table: ingredients_in_sections_of_meal_calculation
     private final ArrayList<String>
             ingredients_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList(
-            "Ingredient_Type", "Ingredient_Name", "Supplier", "Product_Name")),
+            "ingredient_type", "ingredient_name", "supplier", "product_name")),
 
             ingredientsTableUnEditableCells = new ArrayList<>(Arrays.asList(
-            "ingredients_index", "ingredient_id", "Ingredient_Cost", "Protein", "GI", "Carbohydrates", "Sugars_Of_Carbs",
-            "Fibre", "Fat", "Saturated_Fat", "Salt", "Water_Content", "Liquid_Content", "Calories")),
+            "ingredients_index", "ingredient_id", "ingredient_cost", "protein", "gi", "carbohydrates", "sugars_of_carbs",
+            "fibre", "fat", "saturated_fat", "salt", "water_content", "liquid_content", "calories")),
 
              ingredientsInMeal_Table_ColToHide = new ArrayList<>(Arrays.asList("plan_id", "div_meal_sections_id"));
 
@@ -236,7 +236,7 @@ public class Meal_Plan_Screen extends JPanel
 
         if (planID == null || user_id == null || planName == null || user_name == null)
         {
-            System.err.printf("\n\nUsername : %s \nUserID : %s \n\nSelected Plan ID : %s  \nSelected Plan Name : %s\n", user_name, user_id, planID, planName);
+            System.err.printf("\n\nUsername : %s \nUser ID : %s \n\nSelected Plan ID : %s  \nSelected Plan Name : %s\n", user_name, user_id, planID, planName);
 
             JOptionPane.showMessageDialog(null, "No Chosen Plan Or User");
             return;
@@ -766,7 +766,7 @@ public class Meal_Plan_Screen extends JPanel
 
         //####################################
 
-        String query06 = String.format("DROP TABLE IF EXISTS temp_Macros;");
+        String query06 = "DROP TABLE temp_Macros;";
 
         //####################################
         // Perform Upload
@@ -844,8 +844,8 @@ public class Meal_Plan_Screen extends JPanel
         String query16 = "INSERT INTO ingredients_in_sections_of_meal SELECT * FROM temp_ingredients_in_sections_of_meal;";
 
         String query17 = "DROP TABLE temp_mealsInPlan;";
-        String query18 = "DROP TABLE IF EXISTS temp_ingredients_in_sections_of_meal;";
-        String query19 = "DROP TABLE IF EXISTS temp_dividedMealSections;";
+        String query18 = "DROP TABLE temp_ingredients_in_sections_of_meal;";
+        String query19 = "DROP TABLE temp_dividedMealSections;";
 
         //####################################################
         // Update

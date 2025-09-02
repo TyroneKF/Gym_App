@@ -242,24 +242,24 @@ i.plan_id,
 i.div_meal_sections_id,
 i.ingredients_index,
 i.ingredient_id, 
-i.quantity AS Quantity,
-(SELECT t.ingredient_type_name FROM ingredientTypes t WHERE t.ingredient_type_id = info.ingredient_type_id)  AS Ingredient_Type,
-info.ingredient_name AS Ingredient_Name,
-IFNULL(ROUND((i.quantity /p.volume_per_unit)*p.cost_per_unit,2),0) AS Ingredient_Cost,
-IFNULL(s.store_name,'N/A') AS  Supplier,
-IFNULL(p.product_name,'N/A') AS  Product_Name,
-IFNULL(ROUND((info.protein /info.based_on_quantity)*i.quantity,2),0) AS Protein,
-IFNULL(info.glycemic_index, 0) AS GI,
-IFNULL(ROUND((info.carbohydrates /info.based_on_quantity)*i.quantity,2),0) AS Carbohydrates,
-IFNULL(ROUND((info.sugars_of_carbs /info.based_on_quantity)*i.quantity,2),0) AS Sugars_Of_Carbs,
-IFNULL(ROUND((info.fibre /info.based_on_quantity)*i.quantity,2),0) AS Fibre,
-IFNULL(ROUND((info.fat /info.based_on_quantity)*i.quantity,2),0) AS Fat,
-IFNULL(ROUND((info.saturated_fat /info.based_on_quantity)*i.quantity,2),0) AS Saturated_Fat,
-IFNULL(ROUND((info.salt /info.based_on_quantity)*i.quantity,2),0) AS Salt,
-IFNULL(ROUND((info.water_content /info.based_on_quantity)*i.quantity,2),0) AS Water_Content,
-IFNULL(ROUND((info.liquid_content /info.based_on_quantity)*i.quantity,2),0) AS Liquid_Content,
-IFNULL(ROUND((info.calories /info.based_on_quantity)*i.quantity,2),0) AS Calories,
-'Delete Row' AS `Delete Button`
+i.quantity,
+(SELECT t.ingredient_type_name FROM ingredientTypes t WHERE t.ingredient_type_id = info.ingredient_type_id) AS ingredient_type,
+info.ingredient_name,
+IFNULL(ROUND((i.quantity /p.volume_per_unit)*p.cost_per_unit,2),0) AS ingredient_cost,
+IFNULL(s.store_name,'N/A') AS  supplier,
+IFNULL(p.product_name,'N/A') AS  product_name,
+IFNULL(ROUND((info.protein /info.based_on_quantity)*i.quantity,2),0) AS protein,
+IFNULL(info.glycemic_index, 0) AS gi,
+IFNULL(ROUND((info.carbohydrates /info.based_on_quantity)*i.quantity,2),0) AS carbohydrates,
+IFNULL(ROUND((info.sugars_of_carbs /info.based_on_quantity)*i.quantity,2),0) AS sugars_of_carbs,
+IFNULL(ROUND((info.fibre /info.based_on_quantity)*i.quantity,2),0) AS fibre,
+IFNULL(ROUND((info.fat /info.based_on_quantity)*i.quantity,2),0) AS fat,
+IFNULL(ROUND((info.saturated_fat /info.based_on_quantity)*i.quantity,2),0) AS saturated_fat,
+IFNULL(ROUND((info.salt /info.based_on_quantity)*i.quantity,2),0) AS salt,
+IFNULL(ROUND((info.water_content /info.based_on_quantity)*i.quantity,2),0) AS water_content,
+IFNULL(ROUND((info.liquid_content /info.based_on_quantity)*i.quantity,2),0) AS liquid_content,
+IFNULL(ROUND((info.calories /info.based_on_quantity)*i.quantity,2),0) AS calories,
+'Delete Row' AS `delete button`
 
 FROM ingredients_in_sections_of_meal i
 LEFT JOIN ingredients_info info ON  info.ingredient_id = i.ingredient_id
@@ -275,19 +275,19 @@ SELECT
 
 plan_id, 
 div_meal_sections_id,
-COUNT(ingredient_id) as No_Of_Ingredients,
-IFNULL(ROUND(SUM(Quantity),2),0) as Weight_OF_Meal,
-IFNULL(ROUND(SUM(Ingredient_Cost),2),0) as Total_Cost,
-IFNULL(ROUND(SUM(Protein),2),0) as Total_Protein,
-IFNULL(ROUND(SUM(Carbohydrates),2),0) as Total_Carbohydrates,
-IFNULL(ROUND(SUM(Sugars_Of_Carbs),2),0) as Total_Sugars_Of_Carbs,
-IFNULL(ROUND(SUM(Fibre),2),0) as Total_Fibre,
-IFNULL(ROUND(SUM(Fat),2),0) as Total_Fats,
-IFNULL(ROUND(SUM(Saturated_Fat),2),0) as Total_Saturated_Fat,
-IFNULL(ROUND(SUM(Salt),2),0) as Total_Salt,
-IFNULL(ROUND(SUM(Water_Content),2),0) as Total_Water_Content,
-IFNULL(ROUND(SUM(Liquid_Content),2),0) as Total_Liquid_Content,
-IFNULL(ROUND(SUM(Calories),2),0) as Total_Calories
+COUNT(ingredient_id) as no_of_ingredients,
+IFNULL(ROUND(SUM(quantity),2),0) as weight_of_meal,
+IFNULL(ROUND(SUM(ingredient_cost),2),0) as total_cost,
+IFNULL(ROUND(SUM(protein),2),0) as total_protein,
+IFNULL(ROUND(SUM(carbohydrates),2),0) as total_carbohydrates,
+IFNULL(ROUND(SUM(sugars_of_carbs),2),0) as total_sugars_of_carbs,
+IFNULL(ROUND(SUM(fibre),2),0) as total_fibre,
+IFNULL(ROUND(SUM(fat),2),0) as total_fats,
+IFNULL(ROUND(SUM(saturated_fat),2),0) as total_saturated_fat,
+IFNULL(ROUND(SUM(salt),2),0) as total_salt,
+IFNULL(ROUND(SUM(water_content),2),0) as total_water_content,
+IFNULL(ROUND(SUM(liquid_content),2),0) as total_liquid_content,
+IFNULL(ROUND(SUM(calories),2),0) as total_calories
 
 FROM  ingredients_in_sections_of_meal_calculation
 GROUP BY div_meal_sections_id, plan_id;
@@ -300,21 +300,21 @@ CREATE VIEW total_meal_view AS
 SELECT 
 m.plan_id, 
 m.meal_in_plan_id,
-m.Meal_Time AS Meal_Time,
-m.meal_name AS Meal_Name,
-IFNULL(ROUND(SUM(di.No_Of_Ingredients),2),0) as No_Of_Ingredients,
-IFNULL(ROUND(SUM(di.Weight_OF_Meal),2),0) as Weight_OF_Meal,
-IFNULL(ROUND(SUM(di.Total_Cost),2),0) as Total_Cost,
-IFNULL(ROUND(SUM(di.Total_Protein),2),0) as Total_Protein,
-IFNULL(ROUND(SUM(di.Total_Carbohydrates),2),0) as Total_Carbohydrates,
-IFNULL(ROUND(SUM(di.Total_Sugars_Of_Carbs),2),0) as Total_Sugars_Of_Carbs,
-IFNULL(ROUND(SUM(di.Total_Fibre),2),0) as Total_Fibre,
-IFNULL(ROUND(SUM(di.Total_Fats),2),0) as Total_Fats,
-IFNULL(ROUND(SUM(di.Total_Saturated_Fat),2),0) as Total_Saturated_Fat,
-IFNULL(ROUND(SUM(di.Total_Salt),2),0) as Total_Salt,
-IFNULL(ROUND(SUM(di.Total_Water_Content),2),0) as Total_Water_Content,
-IFNULL(ROUND(SUM(di.Total_Liquid_Content),2),0) as Total_Liquid_Content,
-IFNULL(ROUND(SUM(di.Total_Calories),2),0) as Total_Calories
+m.meal_time,
+m.meal_name,
+IFNULL(ROUND(SUM(di.no_of_ingredients),2),0) as no_of_ingredients,
+IFNULL(ROUND(SUM(di.weight_of_meal),2),0) as weight_of_meal,
+IFNULL(ROUND(SUM(di.total_cost),2),0) as total_cost,
+IFNULL(ROUND(SUM(di.total_protein),2),0) as total_protein,
+IFNULL(ROUND(SUM(di.total_carbohydrates),2),0) as total_carbohydrates,
+IFNULL(ROUND(SUM(di.total_sugars_of_carbs),2),0) as total_sugars_of_carbs,
+IFNULL(ROUND(SUM(di.total_fibre),2),0) as total_fibre,
+IFNULL(ROUND(SUM(di.total_fats),2),0) as total_fats,
+IFNULL(ROUND(SUM(di.total_saturated_fat),2),0) as total_saturated_fat,
+IFNULL(ROUND(SUM(di.total_salt),2),0) as total_salt,
+IFNULL(ROUND(SUM(di.total_water_content),2),0) as total_water_content,
+IFNULL(ROUND(SUM(di.total_liquid_content),2),0) as total_liquid_content,
+IFNULL(ROUND(SUM(di.total_calories),2),0) as total_calories
 
 FROM  mealsInPlan m
 
@@ -335,20 +335,20 @@ SELECT
 
 P.plan_id, 
 P.plan_name, -- needs to be here to prevent ONLY_FULL_GROUP_BY
-COUNT(T.meal_in_plan_id) AS No_Of_Meals,
-IFNULL(ROUND(SUM(T.No_Of_Ingredients),2),0) AS Ingredients_In_Plan,
-IFNULL(ROUND(SUM(T.Weight_OF_Meal),2),0) AS Weight_In_Plan,
-IFNULL(ROUND(SUM(T.Total_Cost),2),0) AS Total_Cost,
-IFNULL(ROUND(SUM(T.Total_Protein),2),0) AS Protein_In_Plan,
-IFNULL(ROUND(SUM(T.Total_Carbohydrates),2),0) AS Carbohydrates_In_Plan,
-IFNULL(ROUND(SUM(T.Total_Sugars_Of_Carbs),2),0) AS Sugars_Of_Carbs_In_Plan,
-IFNULL(ROUND(SUM(T.Total_Fibre),2),0) AS Fibre_In_Plan,
-IFNULL(ROUND(SUM(T.Total_Fats),2),0) AS Fats_In_Plan,
-IFNULL(ROUND(SUM(T.Total_Saturated_Fat),2),0) AS Saturated_Fat_In_Plan,
-IFNULL(ROUND(SUM(T.Total_Salt),2),0) AS Salt_In_Plan,
-IFNULL(ROUND(SUM(T.Total_Water_Content),2),0) AS Water_Content_In_Plan,
-IFNULL(ROUND(SUM(T.Total_Liquid_Content),2),0) AS Liquid_Content_In_Plan,
-IFNULL(ROUND(SUM(T.Total_Calories),2),0) AS Total_Calories_In_Plan
+COUNT(T.meal_in_plan_id) AS no_of_meals,
+IFNULL(ROUND(SUM(T.no_of_ingredients),2),0) AS ingredients_in_plan,
+IFNULL(ROUND(SUM(T.weight_of_meal),2),0) AS weight_in_plan,
+IFNULL(ROUND(SUM(T.total_cost),2),0) AS total_cost,
+IFNULL(ROUND(SUM(T.total_protein),2),0) AS protein_in_plan,
+IFNULL(ROUND(SUM(T.total_carbohydrates),2),0) AS carbohydrates_in_Plan,
+IFNULL(ROUND(SUM(T.total_sugars_of_carbs),2),0) AS sugars_of_carbs_in_plan,
+IFNULL(ROUND(SUM(T.total_fibre),2),0) AS fibre_in_plan,
+IFNULL(ROUND(SUM(T.total_fats),2),0) AS fats_in_plan,
+IFNULL(ROUND(SUM(T.total_saturated_fat),2),0) AS saturated_fat_in_plan,
+IFNULL(ROUND(SUM(T.total_salt),2),0) AS salt_in_plan,
+IFNULL(ROUND(SUM(T.total_water_content),2),0) AS water_content_in_plan,
+IFNULL(ROUND(SUM(T.total_liquid_content),2),0) AS liquid_content_in_plan,
+IFNULL(ROUND(SUM(T.total_calories),2),0) AS total_calories_in_plan
 
 FROM plans P
 
@@ -366,30 +366,31 @@ SELECT
 
 P.plan_id, 
 P.plan_name,
-IFNULL(ROUND(C.expected_protein_grams - P.Protein_In_Plan ,2),0) AS Protein_Grams_Left,
-IFNULL(ROUND(C.expected_carbohydrates_grams  - P.Carbohydrates_In_Plan ,2),0) AS Carbohydrates_Grams_Left,
-IFNULL(ROUND(C.expected_fibre_grams  - P.Fibre_In_Plan ,2),0) AS Fibre_Grams_Left,
-IFNULL(ROUND(C.expected_fats_grams - P.Fats_In_Plan ,2),0) AS Fats_Grams_Left,
-IFNULL(ROUND(C.saturated_fat_limit - P.Saturated_Fat_In_Plan ,2),0) AS Potential_Saturated_Fat_Grams,
-IFNULL(ROUND(C.salt_limit_grams - P.Salt_In_Plan ,2),0) AS Potential_Salt,
-IFNULL(ROUND(C.water_content_target - P.Water_Content_In_Plan ,2),0) AS  Water_Left_To_Drink,
-IFNULL(ROUND(C.liquid_content_target - P.Liquid_Content_In_Plan ,2),0) AS  Liquids_Left,
-IFNULL(ROUND(C.calories_target - P.Total_Calories_In_Plan ,2),0) AS Calories_Left,
-IFNULL(ROUND(C.additional_calories_target - P.Total_Calories_In_Plan ,2),0) AS Added_Calories_Left
+IFNULL(ROUND(C.expected_protein_grams - P.protein_in_plan ,2),0) AS protein_grams_left,
+IFNULL(ROUND(C.expected_carbohydrates_grams  - P.carbohydrates_in_Plan ,2),0) AS carbohydrates_grams_left,
+IFNULL(ROUND(C.expected_fibre_grams  - P.fibre_in_plan ,2),0) AS fibre_grams_left,
+IFNULL(ROUND(C.expected_fats_grams - P.fats_in_plan ,2),0) AS fats_grams_left,
+IFNULL(ROUND(C.saturated_fat_limit - P.saturated_fat_in_plan ,2),0) AS potential_saturated_fat_grams,
+IFNULL(ROUND(C.salt_limit_grams - P.salt_in_plan ,2),0) AS potential_salt,
+IFNULL(ROUND(C.water_content_target - P.water_content_in_plan ,2),0) AS  water_left_to_drink,
+IFNULL(ROUND(C.liquid_content_target - P.liquid_content_in_plan ,2),0) AS  liquids_left,
+IFNULL(ROUND(C.calories_target - P.total_calories_in_plan ,2),0) AS calories_left,
+IFNULL(ROUND(C.additional_calories_target - P.total_calories_in_plan ,2),0) AS added_calories_left
 
 FROM
 (
   SELECT
-       plan_id, plan_name,
-	   IFNULL( Protein_In_Plan, 0) AS Protein_In_Plan,
-	   IFNULL( Carbohydrates_In_Plan, 0) AS Carbohydrates_In_Plan,
-	   IFNULL(Fibre_In_Plan,0) AS  Fibre_In_Plan,
-	   IFNULL( Fats_In_Plan, 0) AS Fats_In_Plan,
-	   IFNULL( Saturated_Fat_In_Plan,0) AS Saturated_Fat_In_Plan,
-       IFNULL( Salt_In_Plan, 0) AS Salt_In_Plan,
-	   IFNULL( Water_Content_In_Plan, 0) AS Water_Content_In_Plan,
-	   IFNULL( Liquid_Content_In_Plan, 0) AS Liquid_Content_In_Plan,
-	   IFNULL( Total_Calories_In_Plan, 0) AS Total_Calories_In_Plan
+       plan_id,
+       plan_name,
+	   IFNULL( protein_in_plan, 0) AS protein_in_plan,
+	   IFNULL( carbohydrates_in_Plan, 0) AS carbohydrates_in_Plan,
+	   IFNULL(fibre_in_plan,0) AS  fibre_in_plan,
+	   IFNULL( fats_in_plan, 0) AS fats_in_plan,
+	   IFNULL( saturated_fat_in_plan,0) AS saturated_fat_in_plan,
+       IFNULL( salt_in_plan, 0) AS salt_in_plan,
+	   IFNULL( water_content_in_plan, 0) AS water_content_in_plan,
+	   IFNULL( liquid_content_in_plan, 0) AS liquid_content_in_plan,
+	   IFNULL( total_calories_in_plan, 0) AS total_calories_in_plan
 
   FROM total_plan_view
 

@@ -111,12 +111,12 @@ public class IngredientsTable extends JDBC_JTable
         // Table : ingredients_in_sections_of_meal_calculation
         set_IngredientsTable_Index_Col(columnNamesAndPositions.get("ingredients_index")[1]);
         set_IngredientsTable_ID_Col(columnNamesAndPositions.get("ingredient_id")[1]);
-        set_IngredientsTable_Quantity_Col(columnNamesAndPositions.get("Quantity")[1]);
-        set_IngredientsTable_IngredientType_Col(columnNamesAndPositions.get("Ingredient_Type")[1]);
-        set_IngredientsTable_IngredientsName_Col(columnNamesAndPositions.get("Ingredient_Name")[1]);
-        set_IngredientsTable_Supplier_Col(columnNamesAndPositions.get("Supplier")[1]);
-        set_IngredientsTable_Product_Name_Col(columnNamesAndPositions.get("Product_Name")[1]);
-        set_IngredientsTable_DeleteBTN_Col(columnNamesAndPositions.get("Delete Button")[1]);
+        set_IngredientsTable_Quantity_Col(columnNamesAndPositions.get("quantity")[1]);
+        set_IngredientsTable_IngredientType_Col(columnNamesAndPositions.get("ingredient_type")[1]);
+        set_IngredientsTable_IngredientsName_Col(columnNamesAndPositions.get("ingredient_name")[1]);
+        set_IngredientsTable_Supplier_Col(columnNamesAndPositions.get("supplier")[1]);
+        set_IngredientsTable_Product_Name_Col(columnNamesAndPositions.get("product_name")[1]);
+        set_IngredientsTable_DeleteBTN_Col(columnNamesAndPositions.get("delete button")[1]);
 
         //##############################################################
         // Setting Trigger Columns
@@ -138,7 +138,7 @@ public class IngredientsTable extends JDBC_JTable
         //##############################################################
         // Setting Up Delete Button On JTable
         //##############################################################
-        setupDeleteBtnColumn(columnNamesAndPositions.get("Delete Button")[1]);
+        setupDeleteBtnColumn(getDeleteBTN_Col());
 
         //##############################################################
         // Table Customization
