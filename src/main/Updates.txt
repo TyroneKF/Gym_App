@@ -21,3 +21,6 @@ GYM APP SQL
 MYJDBC: 
 .) Refactor script setup 
 .) Create a user log in page
+
+Ingredients_Table
+.) Delete row on last ingredient, confirm no = product reset to None of the above
