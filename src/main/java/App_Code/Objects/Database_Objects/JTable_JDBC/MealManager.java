@@ -221,7 +221,8 @@ public class MealManager
         //##############################################################################################################
         // Create Collapsible Object
         //##############################################################################################################
-        collapsibleJpObj = new CollapsibleJPanel(container, savedMealName, 150, 50);
+        //collapsibleJpObj = new CollapsibleJPanel(container, removeSecondsOnTimeString(savedMealTime), 150, 50); // time as btn txt
+        collapsibleJpObj = new CollapsibleJPanel(container, savedMealName, 150, 50); // time as btn txt
         collapsibleCenterJPanel = collapsibleJpObj.getCentreJPanel();
         collapsibleCenterJPanel.setBackground(Color.YELLOW);
         addToContainer(container, collapsibleJpObj, 0, meal_plan_screen.getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
@@ -399,6 +400,20 @@ public class MealManager
         });
 
         iconPanelInsert.add(delete_btn);
+    }
+
+    private String removeSecondsOnTimeString(String mealTime)
+    {
+        String returnString = "\t\t\t";
+        int colonCount = 0;
+
+        for (char c : mealTime.toCharArray())
+        {
+            if(c == ':') {colonCount++; if(colonCount == 2){ return returnString;}}
+            returnString += c;
+        }
+
+        return mealTime;
     }
 
     private void add_MultipleSubMealsToGUI(ArrayList<ArrayList<String>> subMealIDs)

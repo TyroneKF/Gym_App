@@ -100,7 +100,7 @@ public class Meal_Plan_Screen extends JPanel
     private final ArrayList<String>
 
             // Table : total_meal_view Table
-            totalMeal_Table_ColToHide = new ArrayList<String>(Arrays.asList("plan_id","meal_time", "meal_in_plan_id")),
+            totalMeal_Table_ColToHide = new ArrayList<String>(Arrays.asList("plan_id","meal_name", "meal_in_plan_id")),
 
            // Table : plan_Macro_Target_Calculations
            macrosTargets_Table_ColToHide = new ArrayList<String>(Arrays.asList("plan_id", "plan_name", "date_time_of_creation")),
