@@ -1,3 +1,16 @@
+
+-- ######################################
+CREATE TABLE IF NOT EXISTS users
+(
+  user_id INT PRIMARY KEY AUTO_INCREMENT,
+  user_name VARCHAR(100) NOT NULL,
+  
+  is_user_selected BOOLEAN NOT NULL DEFAULT FALSE,
+  selected_user_flag BOOLEAN GENERATED ALWAYS AS (IF(is_user_selected, TRUE, NULL)) STORED,
+  
+  UNIQUE KEY no_repeat_user_names(user_name)
+);
+
 -- ######################################
 CREATE TABLE IF NOT EXISTS plans
 (
@@ -60,7 +73,7 @@ P.plan_name,
 C.date_time_of_creation,
 
 IFNULL(C.expected_protein_grams, 0) AS expected_protein_grams,
-IFNULL(C.expected_carbohydrates_grams, 0) AS expected_carbohydrates_grams,
+IFNULL(C.expected_carbohydrates_grams, 0) AS expected_carbs_grams,
 IFNULL(C.fibre, 0) AS expected_fibre_grams,
 IFNULL(C.expected_fats_grams, 0) AS expected_fats_grams,
 IFNULL(C.saturated_fat_limit, 0) AS saturated_fat_limit,
@@ -248,11 +261,15 @@ i.div_meal_sections_id,
 i.ingredients_index,
 i.ingredient_id, 
 i.quantity,
+
 (SELECT t.ingredient_type_name FROM ingredientTypes t WHERE t.ingredient_type_id = info.ingredient_type_id) AS ingredient_type,
+
 info.ingredient_name,
 IFNULL(ROUND((i.quantity /p.volume_per_unit)*p.cost_per_unit,2),0) AS ingredient_cost,
+
 IFNULL(s.store_name,'N/A') AS  supplier,
 IFNULL(p.product_name,'N/A') AS  product_name,
+
 IFNULL(ROUND((info.protein /info.based_on_quantity)*i.quantity,2),0) AS protein,
 IFNULL(info.glycemic_index, 0) AS gi,
 IFNULL(ROUND((info.carbohydrates /info.based_on_quantity)*i.quantity,2),0) AS carbohydrates,
@@ -264,6 +281,7 @@ IFNULL(ROUND((info.salt /info.based_on_quantity)*i.quantity,2),0) AS salt,
 IFNULL(ROUND((info.water_content /info.based_on_quantity)*i.quantity,2),0) AS water_content,
 IFNULL(ROUND((info.liquid_content /info.based_on_quantity)*i.quantity,2),0) AS liquid_content,
 IFNULL(ROUND((info.calories /info.based_on_quantity)*i.quantity,2),0) AS calories,
+
 'Delete Row' AS `delete button`
 
 FROM ingredients_in_sections_of_meal i
@@ -371,12 +389,13 @@ SELECT
 
 P.plan_id,
 P.plan_name,
+
 IFNULL(ROUND(C.expected_protein_grams - P.protein_in_plan ,2),0) AS protein_grams_left,
-IFNULL(ROUND(C.expected_carbohydrates_grams  - P.carbohydrates_in_Plan ,2),0) AS carbohydrates_grams_left,
+IFNULL(ROUND(C.expected_carbs_grams  - P.carbohydrates_in_Plan ,2),0) AS carb_grams_left,
 IFNULL(ROUND(C.expected_fibre_grams  - P.fibre_in_plan ,2),0) AS fibre_grams_left,
-IFNULL(ROUND(C.expected_fats_grams - P.fats_in_plan ,2),0) AS fats_grams_left,
-IFNULL(ROUND(C.saturated_fat_limit - P.saturated_fat_in_plan ,2),0) AS potential_saturated_fat_grams,
-IFNULL(ROUND(C.salt_limit_grams - P.salt_in_plan ,2),0) AS potential_salt,
+IFNULL(ROUND(C.expected_fats_grams - P.fats_in_plan ,2),0) AS fat_grams_left,
+IFNULL(ROUND(C.saturated_fat_limit - P.saturated_fat_in_plan ,2),0) AS potential_sat_fat_grams_left,
+IFNULL(ROUND(C.salt_limit_grams - P.salt_in_plan ,2),0) AS potential_salt_grams_left,
 IFNULL(ROUND(C.water_content_target - P.water_content_in_plan ,2),0) AS  water_left_to_drink,
 IFNULL(ROUND(C.liquid_content_target - P.liquid_content_in_plan ,2),0) AS  liquids_left,
 IFNULL(ROUND(C.calories_target - P.total_calories_in_plan ,2),0) AS calories_left,
@@ -387,18 +406,17 @@ FROM
   SELECT
        plan_id,
        plan_name,
-	   IFNULL( protein_in_plan, 0) AS protein_in_plan,
-	   IFNULL( carbohydrates_in_Plan, 0) AS carbohydrates_in_Plan,
-	   IFNULL(fibre_in_plan,0) AS  fibre_in_plan,
-	   IFNULL( fats_in_plan, 0) AS fats_in_plan,
-	   IFNULL( saturated_fat_in_plan,0) AS saturated_fat_in_plan,
-       IFNULL( salt_in_plan, 0) AS salt_in_plan,
-	   IFNULL( water_content_in_plan, 0) AS water_content_in_plan,
-	   IFNULL( liquid_content_in_plan, 0) AS liquid_content_in_plan,
-	   IFNULL( total_calories_in_plan, 0) AS total_calories_in_plan
+	   protein_in_plan,
+	   carbohydrates_in_Plan,
+	   fibre_in_plan,
+	   fats_in_plan,
+	   saturated_fat_in_plan,
+       salt_in_plan,
+	   water_content_in_plan,
+	   liquid_content_in_plan,
+	   total_calories_in_plan
 
   FROM total_plan_view
-
 ) P
 LEFT JOIN
 (
