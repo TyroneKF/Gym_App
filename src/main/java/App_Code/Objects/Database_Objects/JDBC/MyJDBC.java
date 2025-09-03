@@ -68,7 +68,7 @@ public class MyJDBC
             System.out.println("\nUser & Database Credentials are valid !");
 
             //#################################################################
-            //  Compiling SQL Statement to check if DB Tables from List Exist
+            //  Checking Table Count of Current DB Against Tables in File Count
             //#################################################################
             System.out.printf("\n\nValidating Database Setup (Tables) inside of DB '%s', checking if all the tables are initialized.", databaseName);
 
@@ -104,7 +104,7 @@ public class MyJDBC
             }
 
             //#################################################################
-            //  Executing Statement to test how many tables there are
+            //  Db Check How Many Tables There Are VS Expected Count
             //#################################################################
             ArrayList<String> queryResults = getSingleColumnQuery_ArrayList(sql_Statement);
             if (queryResults==null) // error return invalid results
@@ -145,9 +145,9 @@ public class MyJDBC
             {
                 String msg = String.format("""
                         \n\nDatabase Access Denied: '%s' (Unknown database).
-                        \nAttempting to recreate Database Shortly.
+                        \nAttempting to recreate Database shortly, if program is not in production Mode.
                         \nHowever, this may denied as maybe user '%s'@'%s' doesn't have the correct mysql privileges to do so!
-                        It would be better to rerun the  pre-requisites script to ensure proper user privileges!""", databaseName, userName, host);
+                        Re-execute the pre-requisites script to ensure proper user privileges!""", databaseName, userName, host);
 
                 if (productionMode) { System.out.println(msg); return; } // if  not in testing mode, pre-requisites script needs to be run to give user permissions / creating db app side won't fix the broader issue
 
@@ -157,7 +157,7 @@ public class MyJDBC
                     System.err.println("MyJDBC MYSQL ERROR: Connecting to DB, attempting to recreate DB !");
                     connection = DriverManager.getConnection(initial_db_connection, userName, password);
 
-                    String sqlScript = String.format("create database if not exists %s;", databaseName);
+                    String sqlScript = String.format("CREATE DATABASE IF NOT EXISTS %s;", databaseName);
                     Statement statement = connection.createStatement();
                     statement.executeUpdate(sqlScript);
                 }
@@ -169,7 +169,7 @@ public class MyJDBC
             }
             else
             {
-                System.err.printf("\n\nMyJDBC SQL Error Exception: \n\n%s \nSQL State: %s \n\n%s \n\n", message, sqlState, line_Separator);
+                System.err.printf("\n\nMyJDBC UNKNOWN SQL Error Exception: \n\n%s \nSQL State: %s \n\n%s \n\n", message, sqlState, line_Separator);
                 return;
             }
         }
@@ -179,9 +179,9 @@ public class MyJDBC
             meaning the DB hasn't been set up prior  or, if the DB initialization failed first time around.
          */
 
-        // ####################################################################
-        // Get Users Script & Format it for current user details
-        // ####################################################################
+        // ############################################
+        // Edit Insert Users Script with Users Details
+        // ############################################
         String usersQueryScript = "";
         try (InputStream scriptFile = getClass().getResourceAsStream(users_DB_Script_Path))
         {
@@ -193,7 +193,6 @@ public class MyJDBC
 
             usersQueryScript = new String(scriptFile.readAllBytes(), StandardCharsets.UTF_8);
             usersQueryScript = usersQueryScript.replace("@USERNAME@", userName); // swap username scriptFile the script with the replacement txt
-
         }
         catch (Exception e)
         {
@@ -201,16 +200,16 @@ public class MyJDBC
             return;
         }
 
-        // ####################################################################
-        // Execute Script
-        // ####################################################################
+        // #################################################
+        // Execute Users.SQL Users Script
+        // #################################################
         try
         {
             System.out.printf("\n\nUsers Script Query: \n%s", usersQueryScript);
 
-            // ##################################
+            // ######################
             // Upload Query
-            // ##################################
+            // ######################
             String fullUrl = db_Connection_Address + "?autoReconnect=true&allowMultiQueries=true";
             connection = DriverManager.getConnection(fullUrl, userName, password);
 
@@ -219,9 +218,9 @@ public class MyJDBC
 
             connection = DriverManager.getConnection(db_Connection_Address, userName, password); // reset back to default patterns
 
-            // ##################################
+            // ######################
             // Print success msg
-            // ##################################
+            // ######################
             System.out.printf("\n\nUser '%s' successfully created / exists !", userName);
         }
         catch (SQLException x)
@@ -234,9 +233,9 @@ public class MyJDBC
             return;
         }
 
-        // ####################################################################
+        // #################################################
         // Re-setup Database
-        // ####################################################################
+        // #################################################
         System.out.printf("\n\n\n%s\nAttempting to create Database Structure! \n%s", line_Separator, line_Separator);
 
         if (!(run_SQL_Script_Folder(db_Connection_Address, db_Script_Folder_Address, script_List_Name)))
@@ -247,9 +246,9 @@ public class MyJDBC
 
         System.out.printf("\n\n%s \nSuccessfully, Authenticated using User & DB Credentials! \n%s", line_Separator, line_Separator);
 
-        //##############################################
+        // #################################################
         // Set DB Variables
-        //##############################################
+        // #################################################
         override = false;
         db_Connection_Status = true;
     }

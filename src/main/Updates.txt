@@ -16,3 +16,8 @@ GYM APP SQL
 .) Programming for when selected plan is false
 
 .) using mysql exception handling for queries vs regular
+
+
+MYJDBC: 
+.) Refactor script setup 
+.) Create a user log in page
