@@ -1302,7 +1302,7 @@ public class IngredientsTable extends JDBC_JTable
                 Object ingredientSupplier = table.getValueAt(row, getIngredientsTable_Supplier_Col());
 
                 //########################################
-                // Get Supplier Based on ingredientIndex
+                // Get product names Based on store selected
                 ////######################################
 
                 String queryStore = String.format("""
