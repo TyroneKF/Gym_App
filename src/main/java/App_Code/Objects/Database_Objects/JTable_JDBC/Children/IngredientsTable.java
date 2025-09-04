@@ -1306,20 +1306,19 @@ public class IngredientsTable extends JDBC_JTable
                 ////######################################
 
                 String queryStore = String.format("""
-                        SELECT 
-                        #IFNULL(i.pdid, 'N/A') AS pdid,  
-                        IFNULL(i.product_name, 'N/A') AS product_name
+                        SELECT IFNULL(S.product_name, 'N/A') AS product_name
                         FROM
                         (
-                            SELECT pdid, ingredient_id, product_name, store_id FROM ingredientInShops
-                        ) AS i
+                            SELECT ingredient_id FROM ingredients_info
+                        ) AS I
                         LEFT JOIN
                         (
-                        	SELECT store_id, store_name FROM stores
-                        ) AS s	
-                        ON i.store_id = s.store_id                                                
-                        WHERE s.store_name = "%s" AND i.ingredient_id = %s
-                        ORDER BY i.product_name ASC;""", ingredientSupplier, ingredientID);
+                            SELECT ingredient_id, product_name, store_id  FROM ingredientInShops 	
+                        ) AS S
+                        ON I.ingredient_id = S.ingredient_id
+                        AND S.store_id = (SELECT store_id FROM stores WHERE store_name = '%s')
+                        WHERE I.ingredient_id = %s
+                        ORDER BY S.product_name ASC;""", ingredientSupplier, ingredientID);
 
                 ArrayList<String> productNameResults = db.getSingleColumnQuery_ArrayList(queryStore);
 
@@ -1442,12 +1441,11 @@ public class IngredientsTable extends JDBC_JTable
                         SELECT DISTINCT IFNULL(D.store_name, 'N/A') AS store_name
                         FROM 
                         (
-                        	SELECT I.ingredient_id FROM ingredients_info I
-                        	WHERE I.ingredient_id = %s
+                        	SELECT ingredient_id FROM ingredients_info 
                         ) AS T                                             
                         LEFT JOIN
                         (
-                           SELECT L.ingredient_id, L.store_id FROM ingredientInShops L                         	
+                           SELECT ingredient_id, store_id FROM ingredientInShops                         	
                         ) AS C
                         ON T.ingredient_id = C.ingredient_id 
                         LEFT JOIN
@@ -1455,7 +1453,8 @@ public class IngredientsTable extends JDBC_JTable
                           SELECT store_id, store_name FROM stores
                         ) AS D
                         ON C.store_id = D.store_id
-                        ORDER BY store_name;""", ingredientID);
+                        WHERE T.ingredient_id = %s
+                        ORDER BY D.store_name ASC;""", ingredientID);
 
                 ArrayList<String> storesResults = db.getSingleColumnQuery_ArrayList(queryStore);
 
