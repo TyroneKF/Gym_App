@@ -2,9 +2,7 @@ package App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Ch
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.MyJTable_DisplayData;
-import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 
-import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.ArrayList;
@@ -70,7 +68,7 @@ public class Parent_Totals_Table extends MyJTable_DisplayData
         //#################################################################################
 
         //initColumnSizes();
-        setCellsAlignment(0, colAvoidCentering);
+        setCellRenderer();
 
         if (getTableInitialised())  //first time this method is called, special columns aren't defined
         {

@@ -239,7 +239,7 @@ public class JDBC_JTable extends JPanel
         //#################################################################################
 
         //initColumnSizes();
-        setCellsAlignment(0, colAvoidCentering);
+        setCellRenderer();
 
         if (tableInitialised)  //first time this method is called, special columns aren't defined
         {
@@ -442,12 +442,15 @@ public class JDBC_JTable extends JPanel
 
     /**
      * This needs to be done before hiding columns
+     * Set Column alignment
      *
-     * @param alignment
-     * @param columnByNameToSkipCentering
      */
-    protected void setCellsAlignment(int alignment, ArrayList<String> columnByNameToSkipCentering)
+    protected void setCellRenderer()
     {
+        // ###############################################################
+        // Centering Column Txt
+        // ###############################################################
+
         /*DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
         rightRenderer.setHorizontalAlignment(alignment);
 
@@ -463,16 +466,15 @@ public class JDBC_JTable extends JPanel
             jTable.getColumnModel().getColumn(columnIndex).setCellRenderer(rightRenderer);
         }*/
 
-
         DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
-        rightRenderer.setHorizontalAlignment(alignment);
+        rightRenderer.setHorizontalAlignment(0);
 
         int pos = -1;
         for (String columnName : columnNames)
         {
             pos++;
 
-            if (columnByNameToSkipCentering!=null && columnByNameToSkipCentering.contains(columnName))
+            if (colAvoidCentering != null && colAvoidCentering.contains(columnName))
             {
                 continue;
             }

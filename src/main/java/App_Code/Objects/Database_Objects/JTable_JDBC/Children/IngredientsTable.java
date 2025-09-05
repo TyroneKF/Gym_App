@@ -212,7 +212,7 @@ public class IngredientsTable extends JDBC_JTable
         //#################################################################################
 
         //initColumnSizes();
-        setCellsAlignment(0, colAvoidCentering);
+        setCellRenderer();
 
         if (getTableInitialised())  //first time this method is called, special columns aren't defined
         {

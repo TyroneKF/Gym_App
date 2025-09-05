@@ -2,7 +2,6 @@ package App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Ch
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Children.Total_Tables.Parent_Totals_Table;
-import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.MyJTable_DisplayData;
 import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 
 import javax.swing.table.DefaultTableModel;
@@ -59,7 +58,7 @@ public class TotalMealTable extends Parent_Totals_Table
         //#################################################################################
 
         //initColumnSizes();
-        setCellsAlignment(0, colAvoidCentering);
+        setCellRenderer();
 
         if (getTableInitialised())  //first time this method is called, special columns aren't defined
         {
