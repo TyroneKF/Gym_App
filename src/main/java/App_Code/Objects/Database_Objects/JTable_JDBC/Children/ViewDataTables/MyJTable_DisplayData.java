@@ -50,7 +50,6 @@ public class MyJTable_DisplayData extends JDBC_JTable
         {
             int colPos = columnNamesAndPositions.get(columnName)[0];
 
-
             if (colAvoidCentering == null) // if list is null apply to all fields
             {
                 cellRenderer2.setHorizontalAlignment(0);
