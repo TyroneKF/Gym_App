@@ -120,7 +120,6 @@ public class JDBC_JTable extends JPanel
             guiColumnNames[x] = Arrays.stream(columnName.split("_"))
                     .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
                     .collect(Collectors.joining("_"));
-
         }
 
         //################################################################
@@ -320,7 +319,7 @@ public class JDBC_JTable extends JPanel
 
     public void refreshData()
     {
-        tableModel_Setup(getData(), getColumnNames());
+        tableModel_Setup(getData(), getGuiColumnNames());
     }
 
     //##################################################################################################################
@@ -341,6 +340,8 @@ public class JDBC_JTable extends JPanel
     {
         return columnNames;
     }
+
+    protected String[] getGuiColumnNames(){ return guiColumnNames;}
 
     protected JTable getTable()
     {
