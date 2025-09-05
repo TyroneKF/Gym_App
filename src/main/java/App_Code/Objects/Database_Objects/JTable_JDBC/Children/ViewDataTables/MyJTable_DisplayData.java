@@ -4,6 +4,7 @@ import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.JTable_JDBC.JDBC_JTable;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -34,6 +35,33 @@ public class MyJTable_DisplayData extends JDBC_JTable
 
         // Remove the focus outline from cells
         jTable.setFocusable(false);
+    }
+
+    @Override
+    protected void setCellRenderer()
+    {
+        // ###############################################################
+        // Centering Column Txt
+        // ###############################################################
+
+        DefaultTableCellRenderer cellRenderer2 = new DefaultTableCellRenderer();
+
+        for (String columnName : columnNamesAndPositions.keySet())
+        {
+            int colPos = columnNamesAndPositions.get(columnName)[0];
+
+
+            if (colAvoidCentering == null) // if list is null apply to all fields
+            {
+                cellRenderer2.setHorizontalAlignment(0);
+                jTable.getColumnModel().getColumn(colPos).setCellRenderer(cellRenderer2); // Center Column Data
+            }
+            else if (! colAvoidCentering.contains(columnName)) // If list != null &  column is not in the list to avoid centering, center it
+            {
+                cellRenderer2.setHorizontalAlignment(0);
+                jTable.getColumnModel().getColumn(colPos).setCellRenderer(cellRenderer2); // Center Column Data
+            }
+        }
     }
 
     protected void updateTable(String tableName, String query, int updateRow)
