@@ -18,6 +18,22 @@ public class MyJTable_DisplayData extends JDBC_JTable
         super(db, parentContainer, false,  tableName, data, columnNames, unEditableColumns, colAvoidCentering, columnsToHide);
 
         this.planID = planID;
+
+        // #################################################
+        // Stop Rows From Being Highlighted From Selection
+        // #################################################
+
+        // Disable row selection
+        jTable.setRowSelectionAllowed(false);
+
+        // Disable column selection
+        jTable.setColumnSelectionAllowed(false);
+
+        // Disable cell selection
+        jTable.setCellSelectionEnabled(false);
+
+        // Remove the focus outline from cells
+        jTable.setFocusable(false);
     }
 
     protected void updateTable(String tableName, String query, int updateRow)
