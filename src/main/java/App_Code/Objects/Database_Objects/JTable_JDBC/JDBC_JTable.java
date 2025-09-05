@@ -10,6 +10,7 @@ import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class JDBC_JTable extends JPanel
@@ -30,7 +31,7 @@ public class JDBC_JTable extends JPanel
     protected Object[][] data;
     protected int rowsInTable = 0, columnsInTable = 0;
     protected String  tableName;
-    protected String[] columnDataTypes, columnNames;
+    protected String[] columnDataTypes, columnNames, guiColumnNames;
 
     protected ArrayList<String> colAvoidCentering = new ArrayList<>();
     protected ArrayList<Integer> unEditableColumns = new ArrayList<>();
@@ -55,10 +56,6 @@ public class JDBC_JTable extends JPanel
     */
 
     //##################################################################################################################
-    public JDBC_JTable()
-    {
-    }
-
     public JDBC_JTable(MyJDBC db, Container parentContainer, boolean setIconsUp, String tableName, Object[][] data,
                        String[] columnNames,
                       ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering,  ArrayList<String> columnsToHide)
@@ -109,16 +106,33 @@ public class JDBC_JTable extends JPanel
 
         this.unEditableColumns = columnPositions;
 
-        //##############################################################
+        //################################################################
+        // Reformat Column Names To be Capitalised on the Application lvl
+        //################################################################
+        guiColumnNames = new String[columnNames.length];
+
+        for (int x = 0; x < columnNames.length ; x ++)
+        {
+            // Get Column Name
+            String columnName = columnNames[x];
+
+            // Re-assign Re-Capitalised Value into list
+            guiColumnNames[x] = Arrays.stream(columnName.split("_"))
+                    .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
+                    .collect(Collectors.joining("_"));
+
+        }
+
+        //################################################################
         // Table Setup With Table Data
-        //##############################################################
+        //################################################################
         if (data !=null)
         {
-            tableSetup(data, columnNames, setIconsUp);
+            tableSetup(data, guiColumnNames, setIconsUp);
         }
         else
         {
-            tableSetup(new Object[0][0], columnNames, setIconsUp);
+            tableSetup(new Object[0][0], guiColumnNames, setIconsUp);
         }
 
         //##############################################################
