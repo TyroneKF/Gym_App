@@ -627,7 +627,7 @@ public class IngredientsTable extends JDBC_JTable
         // HELLO REMOVE
         System.out.printf("\n\n%s", query);
 
-        ArrayList<ArrayList<Object>> ingredientsUpdateData = db.get_Multi_ColumnQuery_Object(query);
+        Object[][] ingredientsUpdateData = db.getTableDataObject(query, tableName);
 
         System.out.printf("\n\n\n\nUpdate DATA: \n%s\n\n", ingredientsUpdateData);  // HELLO REMOVE
 
@@ -643,7 +643,7 @@ public class IngredientsTable extends JDBC_JTable
         //   Updating Ingredients In Meal Table
         //##########################################################################
 
-        ArrayList<Object> ingredientsTable_UpdateData = ingredientsUpdateData.get(0);
+        Object[] ingredientsTable_UpdateData = ingredientsUpdateData[0];
         super.updateTable(ingredientsTable_UpdateData, row);
 
         if (jTable.getValueAt(row, getIngredientsTable_IngredientsName_Col()).equals("None Of The Above"))
@@ -921,7 +921,7 @@ public class IngredientsTable extends JDBC_JTable
 
         System.out.printf("\n\n%s", query); // HELLO REMOVE
 
-        ArrayList<ArrayList<Object>> results = db.get_Multi_ColumnQuery_Object(query);
+        Object[][] results = db.getTableDataObject(query, tableName);
 
         System.out.printf("\n\n\n\n%s\n\n", results);  // HELLO REMOVE
 
@@ -937,8 +937,8 @@ public class IngredientsTable extends JDBC_JTable
 
         setRowBeingEdited(); // stops endless loop being called for all cells being editted
 
-        ArrayList<Object> ingredientsTable_UpdateData = results.get(0);
-        super.updateTable(ingredientsTable_UpdateData, rowsInTable);
+        Object[] ingredientsTable_UpdateData = results[0];
+        super.updateTable(ingredientsTable_UpdateData, tableRow);
 
         setRowBeingEdited(); // stops endless loop being called for all cells being editted
 

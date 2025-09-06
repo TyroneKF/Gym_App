@@ -287,42 +287,7 @@ public class JDBC_JTable extends JPanel
 
     }
 
-    public void updateTable(ArrayList<Object> updateData, int updateRow)
-    {
-        //########################################################################
-        // Updating Table Info
-        //#######################################################################
-        int pos = 0;
-        for (Map.Entry<String, Integer[]> jTableColumn : columnNamesAndPositions.entrySet())
-        {
-            //############################################
-            // Extracting Info
-            //############################################
-            String columnName = jTableColumn.getKey();
-
-            /*
-             Pos 1 column original position in JTable Data
-             Pos 2 column position in JTable after columns are hidden
-            */
-            Integer[] columnPositionsList = jTableColumn.getValue();
-            Integer columnPosAfterHidingColumns = columnPositionsList[1];
-
-            //############################################
-            // Update Table
-            //############################################
-            if (columnPosAfterHidingColumns!=null) // this column isn't visible in the JTable Data
-            {
-                jTable.setValueAt(updateData.get(pos), updateRow, columnPosAfterHidingColumns);
-            }
-
-            //############################################
-            pos++;
-        }
-
-        jTable.repaint();
-    }
-
-    public void updateTable2(Object[] updateData, int updateRow)
+    public void updateTable(Object[] updateData, int updateRow)
     {
         //########################################################################
         // Updating Table Info

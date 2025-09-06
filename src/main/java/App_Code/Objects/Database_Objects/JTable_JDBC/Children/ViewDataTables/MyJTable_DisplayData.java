@@ -98,7 +98,7 @@ public class MyJTable_DisplayData extends JDBC_JTable
         }
 
         Object[] tableData = tableDataObject[0];
-        super.updateTable2(tableData, updateRow);
+        super.updateTable(tableData, updateRow);
     }
 
     protected boolean updateTableModelData()
