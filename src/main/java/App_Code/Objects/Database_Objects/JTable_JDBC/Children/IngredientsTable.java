@@ -38,7 +38,7 @@ public class IngredientsTable extends JDBC_JTable
     private boolean
             dataChangedInTable = false,
             rowBeingEdited = false,
-            meal_In_DB = true,
+            meal_In_DB,
             objectDeleted = false,
             ingredientNameChanged = false;
 
