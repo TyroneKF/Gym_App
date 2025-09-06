@@ -84,7 +84,7 @@ public class IngredientsTable extends JDBC_JTable
                             Integer mealInPlanID, Integer divMealSectionsID, boolean meal_In_DB, String mealName, String tableName,
                             ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering, ArrayList<String> columnsToHide, JPanel spaceDivider)
     {
-        super(db, mealManager.getCollapsibleCenterJPanel(), true, tableName, data, columnNames, unEditableColumns, colAvoidCentering, columnsToHide);
+        super(db, mealManager.getCollapsibleCenterJPanel(), true, true, tableName, data, columnNames, unEditableColumns, colAvoidCentering, columnsToHide);
 
         //##############################################################
         // Other Variables
@@ -161,80 +161,13 @@ public class IngredientsTable extends JDBC_JTable
     @Override
     protected void extraTableModel_Setup()
     {
-        if (deleteColumn != null)
-        {
-            setupDeleteBtnColumn(deleteColumn); // specifying delete column
-        }
+        // Setup Specials sections in table
+        new SetupIngredientTypeColumn(getIngredientsTable_Type_Col());
+        new SetupIngredientNameColumn(getIngredientsTable_IngredientsName_Col());
+        new SetupSupplierColumn(getIngredientsTable_Supplier_Col());
+        new SetupProduct_NameColumn(getIngredientsTable_Product_Name_Col());
 
-        // Setting up JcomboBox Field
-        for (Integer key : jComboMap.keySet())
-        {
-            setUpJComboColumn(key, "IngredientName", jComboMap.get(key));
-        }
-    }
-
-    @Override
-    protected void tableModel_Setup(Object[][] data, String[] columnNames)
-    {
-        tableModel = new DefaultTableModel(data, columnNames)
-        {
-            @Override
-            public boolean isCellEditable(int row, int col)
-            {
-                //Note that the data/cell address is constant,
-                //no matter where the cell appears onscreen.
-                if (unEditableColumns.contains(col))
-                {
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-            }
-
-            @Override
-            public Class getColumnClass(int c)
-            {
-                return getValueAt(0, c).getClass();
-            }
-        };
-
-        tableModel.addTableModelListener(
-                evt -> tableDataChange_Action());
-
-        jTable.setModel(tableModel);
-
-        rowsInTable = data.length;
-
-        //#################################################################################
-        // Table Personalisation
-        //#################################################################################
-
-        //initColumnSizes();
-        setCellRenderer();
-
-        if (getTableInitialised())  //first time this method is called, special columns aren't defined
-        {
-            if (getColumnsToHide() != null)//Must be first
-            {
-                SetUp_HiddenTableColumns(getColumnsToHide());
-            }
-
-            //EDITING
-            new SetupIngredientTypeColumn(getIngredientsTable_Type_Col());
-            new SetupIngredientNameColumn(getIngredientsTable_IngredientsName_Col());
-            new SetupSupplierColumn(getIngredientsTable_Supplier_Col());
-            new SetupProduct_NameColumn(getIngredientsTable_Product_Name_Col());
-
-            setupDeleteBtnColumn(getDeleteBTN_Col()); // specifying delete column
-
-        }
-        else
-        {
-            setTableInitialized();
-        }
-        resizeObject();
+        setupDeleteBtnColumn(getDeleteBTN_Col()); // specifying delete column
     }
 
     @Override

@@ -514,7 +514,7 @@ public class Meal_Plan_Screen extends JPanel
             {
                 String message = String.format("\n\nError, gathering sub-meals ID for meal named ' %s ' ! \nA meal must have 1 sub-meal minimum!", mealName);
 
-                System.out.printf("%s", message);
+                System.err.printf("%s", message);
                 JOptionPane.showMessageDialog(null, message);
 
                 errorFound = true;
@@ -534,6 +534,8 @@ public class Meal_Plan_Screen extends JPanel
            //######################################################
             loadingScreen.increaseBar(1 + subMealsInMealArrayList.size()); // + original meal + the sub-meal
         }
+
+        System.out.printf("\n\n%s", lineSeparator);
 
         //##########################################
         // Make frame visible

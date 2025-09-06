@@ -38,7 +38,7 @@ public class JDBC_JTable extends JPanel
     protected ArrayList<String> columnsToHide = new ArrayList<>();
 
     //##############################################
-    protected boolean tableInitialised = false;
+    protected boolean tableInitialised = false, addJTableAction;
 
     protected HashMap<Integer, ArrayList<String>> jComboMap = new HashMap<>();
 
@@ -56,9 +56,12 @@ public class JDBC_JTable extends JPanel
     */
 
     //##################################################################################################################
-    public JDBC_JTable(MyJDBC db, Container parentContainer, boolean setIconsUp, String tableName, Object[][] data,
-                       String[] columnNames,
-                      ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering,  ArrayList<String> columnsToHide)
+    public JDBC_JTable
+    (
+            MyJDBC db, Container parentContainer, boolean setIconsUp, boolean addJTableAction,
+            String tableName, Object[][] data, String[] columnNames,
+            ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering,  ArrayList<String> columnsToHide
+    )
     {
         setLayout(new GridBagLayout());
 
@@ -69,6 +72,7 @@ public class JDBC_JTable extends JPanel
         this.data = data;
 
         this.parentContainer = parentContainer;
+        this.addJTableAction = addJTableAction;
         this.tableName = tableName;
 
         this.columnDataTypes = db.getColumnDataTypes(tableName); //Column Data Types
@@ -165,7 +169,7 @@ public class JDBC_JTable extends JPanel
         jTable = new JTable();
         //instance table model
 
-        tableModel_Setup(data, columnNames); // sets Jtable Model
+        tableModel_Setup(data, columnNames); // sets JTable Model
         jTable.setRowHeight(jTable.getRowHeight() + 15);
         jTable.setFillsViewportHeight(true);
 
@@ -176,7 +180,7 @@ public class JDBC_JTable extends JPanel
         jTable.getTableHeader().setPreferredSize(new Dimension(100, 50));
 
         //################################################################################
-        // Adding Jtable to JscrollPane
+        // Adding JTable to JScrollPane
         //################################################################################
 
         // Create the scroll pane and add the table to it, has to be added to a scrollpane as otherwise it doesnt work
@@ -227,8 +231,7 @@ public class JDBC_JTable extends JPanel
             }
         };
 
-        tableModel.addTableModelListener(
-                evt -> tableDataChange_Action());
+        if (addJTableAction) {  tableModel.addTableModelListener( evt -> tableDataChange_Action());}
 
         jTable.setModel(tableModel);
 
@@ -241,18 +244,18 @@ public class JDBC_JTable extends JPanel
         //initColumnSizes();
         setCellRenderer();
 
-        if (tableInitialised)  //first time this method is called, special columns aren't defined
+        if (getTableInitialised())  //first time this method is called, special columns aren't defined
         {
-            extraTableModel_Setup();
-
-            if (columnsToHide!=null)
+            if (getColumnsToHide()!=null)
             {
                 SetUp_HiddenTableColumns(columnsToHide);
             }
+
+            extraTableModel_Setup();
         }
         else
         {
-            tableInitialised = true;
+            setTableInitialized();
         }
         resizeObject();
     }

@@ -18,7 +18,7 @@ public class MyJTable_DisplayData extends JDBC_JTable
                                 String tableName, ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering,
                                 ArrayList<String> columnsToHide)
     {
-        super(db, parentContainer, false, tableName, data, columnNames, unEditableColumns, colAvoidCentering, columnsToHide);
+        super(db, parentContainer, false, false, tableName, data, columnNames, unEditableColumns, colAvoidCentering, columnsToHide);
 
         this.planID = planID;
         this.temp_PlanID = temp_PlanID;
