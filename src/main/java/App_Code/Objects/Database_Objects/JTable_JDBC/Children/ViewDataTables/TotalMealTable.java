@@ -1,38 +1,33 @@
-package App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Children.Total_Tables;
+package App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.MyJTable_DisplayData;
+import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
 import java.util.ArrayList;
 
-
-public class Parent_Totals_Table extends MyJTable_DisplayData
+public class TotalMealTable extends MyJTable_DisplayData
 {
-    protected Integer planID, temp_PlanID = 1, MealInPlanID;
-    protected String mealName;
+    private Integer MealInPlanID;
+    private String mealName;
 
-
-
-
-    public Parent_Totals_Table(MyJDBC db, Container parentContainer, Object[][] data, String[] columnNames, int planID, int temp_PlanID, int MealInPlanID,
-                               String mealName, String tableName,
-                               ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering, ArrayList<String> columnsToHide)
+    public TotalMealTable(MyJDBC db, CollapsibleJPanel collapsibleObj, Object[][] data, String[] columnNames, int planID, int temp_PlanID,
+                          Integer MealInPlanID, String mealName, String tableName, ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering,
+                          ArrayList<String> columnsToHide)
     {
 
-        super(db, parentContainer, data, columnNames, planID, tableName, unEditableColumns, colAvoidCentering, columnsToHide);
+        super(db, collapsibleObj.getCentreJPanel(), data, columnNames, planID, temp_PlanID, tableName, unEditableColumns, colAvoidCentering, columnsToHide);
+        super.query = String.format("SELECT * FROM %s WHERE meal_in_plan_id = %s AND plan_id = %s;", tableName, MealInPlanID, temp_PlanID);
 
         this.MealInPlanID = MealInPlanID;
         this.mealName = mealName;
-        this.planID = planID;
-        this.temp_PlanID = temp_PlanID;
     }
 
     @Override
-    protected void tableModel_Setup(Object[][] data, String[] columnNames)
+    public void tableModel_Setup(Object[][] data, String[] columnNames)
     {
-        tableModel = new DefaultTableModel(data, columnNames)
+        super.tableModel = new DefaultTableModel(data, columnNames)
         {
             @Override
             public boolean isCellEditable(int row, int col)
@@ -61,7 +56,7 @@ public class Parent_Totals_Table extends MyJTable_DisplayData
 
         jTable.setModel(tableModel);
 
-        rowsInTable = data.length;
+        super.rowsInTable = data.length;
 
         //#################################################################################
         // Table Personalisation
@@ -84,15 +79,14 @@ public class Parent_Totals_Table extends MyJTable_DisplayData
         resizeObject();
     }
 
-    protected void updateTable(int updateRow, String query, String tableName)
+    public void updateTotalMealTable()
     {
-        super.updateTable(tableName, query, updateRow);
+        super.updateTable();
     }
 
-    protected boolean updateTableModelData(String databaseTableName, String query)
+    public boolean updateTotalMealTableModelData()
     {
-        return super.updateTableModelData(databaseTableName, query);
+        return super.updateTableModelData();
     }
 }
-
 

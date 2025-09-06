@@ -10,15 +10,18 @@ import java.util.ArrayList;
 
 public class MyJTable_DisplayData extends JDBC_JTable
 {
-    protected Integer planID, temp_PlanID = 1;
+    protected Integer planID, temp_PlanID;
+    protected String query = "";
+    protected int updateRow =  0;
 
-    public MyJTable_DisplayData(MyJDBC db, Container parentContainer, Object[][] data, String[] columnNames, int planID,
+    public MyJTable_DisplayData(MyJDBC db, Container parentContainer, Object[][] data, String[] columnNames, int planID, int temp_PlanID,
                                 String tableName, ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering,
                                 ArrayList<String> columnsToHide)
     {
-        super(db, parentContainer, false,  tableName, data, columnNames, unEditableColumns, colAvoidCentering, columnsToHide);
+        super(db, parentContainer, false, tableName, data, columnNames, unEditableColumns, colAvoidCentering, columnsToHide);
 
         this.planID = planID;
+        this.temp_PlanID = temp_PlanID;
 
         // #################################################
         // Stop Rows From Being Highlighted From Selection
@@ -44,45 +47,61 @@ public class MyJTable_DisplayData extends JDBC_JTable
         // Centering Column Txt
         // ###############################################################
 
-        DefaultTableCellRenderer cellRenderer2 = new DefaultTableCellRenderer();
-
-        for (String columnName : columnNamesAndPositions.keySet())
+        DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer()
         {
-            int colPos = columnNamesAndPositions.get(columnName)[0];
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                                                           boolean hasFocus, int row, int column)
+            {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-            if (colAvoidCentering == null) // if list is null apply to all fields
-            {
-                cellRenderer2.setHorizontalAlignment(0);
-                jTable.getColumnModel().getColumn(colPos).setCellRenderer(cellRenderer2); // Center Column Data
+                if (!isSelected)
+                {
+                    // Always reset to defaults first
+                    c.setBackground(Color.WHITE);
+                    c.setForeground(Color.BLACK);
+
+                    // Then apply your condition
+                    if (value instanceof Number && ((Number) value).doubleValue() < 0)
+                    {
+                        c.setBackground(table.getSelectionBackground());
+                        c.setForeground(table.getSelectionForeground());
+                    }
+                }
+
+                setHorizontalAlignment(0); // Center text in cell
+
+                return c;
             }
-            else if (! colAvoidCentering.contains(columnName)) // If list != null &  column is not in the list to avoid centering, center it
-            {
-                cellRenderer2.setHorizontalAlignment(0);
-                jTable.getColumnModel().getColumn(colPos).setCellRenderer(cellRenderer2); // Center Column Data
-            }
+        };
+
+        for (int i = 0; i < jTable.getColumnCount(); i++) // Apply this to all the columns in Jtable
+        {
+            jTable.getColumnModel().getColumn(i).setCellRenderer(cellRenderer);
         }
     }
 
-    protected void updateTable(String tableName, String query, int updateRow)
+    protected void updateTable()
     {
         //###########################################################################
         //   Updating MacrosLeft_Table
         ///##########################################################################
 
-        ArrayList<ArrayList<Object>> tableDataObject = db.get_Multi_ColumnQuery_Object(query);
+        //ArrayList<ArrayList<Object>> tableDataObject = db.get_Multi_ColumnQuery_Object(query);
+        Object[][] tableDataObject = db.getTableDataObject(query, tableName);
 
-        if (tableDataObject== null)
+        if (tableDataObject==null)
         {
             JOptionPane.showMessageDialog(null, String.format("ERROR updateTable(): \nUn-able to update %s Table!", tableName));
 
             return;
         }
 
-        ArrayList<Object> tableData = tableDataObject.get(0);
-        super.updateTable(tableData, updateRow);
+        Object[] tableData = tableDataObject[0];
+        super.updateTable2(tableData, updateRow);
     }
 
-    protected  boolean updateTableModelData(String tableName, String query)
+    protected boolean updateTableModelData()
     {
         //##########################################
         // Changing Table Model
@@ -92,11 +111,15 @@ public class MyJTable_DisplayData extends JDBC_JTable
 
         if (data == null)
         {
-            System.out.printf("\n\nupdateTableModelData() Unable to update %s model data!", tableName);
+            JOptionPane.showMessageDialog(null, String.format("ERROR updateTableModelData(): \nUn-able to updateTableModel %s !", tableName));
+
+            System.err.printf("\n\nupdateTableModelData() Unable to update %s model data!", tableName);
             return false;
         }
 
         setTableModelData(data);
+
+        jTable.repaint();
         return true;
     }
 

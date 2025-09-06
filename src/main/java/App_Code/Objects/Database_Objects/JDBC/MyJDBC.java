@@ -969,7 +969,6 @@ public class MyJDBC
                     return queryData;
                 }
             }
-            connection.close();
         }
         catch (Exception e)
         {
