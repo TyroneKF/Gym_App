@@ -679,7 +679,7 @@ public class IngredientsTable extends JDBC_JTable
                 }
             }
         };
-        Working_ButtonColumn2 workingButtonColumn = new Working_ButtonColumn2(jTable, delete, getDeleteBTN_Col());
+        Working_ButtonColumn2 workingButtonColumn = new Working_ButtonColumn2(jTable, delete, deleteBtnColumn);
         workingButtonColumn.setMnemonic(KeyEvent.VK_D);
     }
 
