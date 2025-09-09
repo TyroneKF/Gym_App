@@ -526,7 +526,7 @@ public class IngredientsTable extends JDBC_JTable
                         SELECT pdid
                         FROM
                         (
-                             SELECT pdid, product_name, ingredient_id, store_id FROM ingredientInShops 
+                             SELECT pdid, product_name, ingredient_id, store_id FROM ingredient_in_shops 
                              WHERE ingredient_id = %s
                         ) AS i
                         LEFT JOIN
@@ -788,7 +788,7 @@ public class IngredientsTable extends JDBC_JTable
 
         String query1 = "SET FOREIGN_KEY_CHECKS = 0;"; // Disable Foreign Key Checks
         String query2 = String.format("DELETE FROM ingredients_in_sections_of_meal WHERE div_meal_sections_id = %s AND plan_id = %s;", divMealSectionsID, temp_PlanID);
-        String query4 = String.format("DELETE FROM  dividedMealSections WHERE div_meal_sections_id = %s AND plan_id = %s;", divMealSectionsID, temp_PlanID);
+        String query4 = String.format("DELETE FROM divided_meal_sections WHERE div_meal_sections_id = %s AND plan_id = %s;", divMealSectionsID, temp_PlanID);
         String query5 = "SET FOREIGN_KEY_CHECKS = 1;"; // Enable Foreign Key Checks
 
         if (!db.uploadData_Batch_Altogether(new String[]{query1, query2, query4, query5}))
@@ -1063,7 +1063,7 @@ public class IngredientsTable extends JDBC_JTable
         //##########################################
         String tableInQuery = "ingredients_in_sections_of_meal_calculation";
 
-        String query = String.format("Select * from %s WHERE div_meal_sections_id = %s AND plan_id = %s;", tableInQuery, divMealSectionsID, temp_PlanID);
+        String query = String.format("SELECT * FROM %s WHERE div_meal_sections_id = %s AND plan_id = %s;", tableInQuery, divMealSectionsID, temp_PlanID);
         System.out.printf("\n\n################################################### \nupdateTableModelData() \n%s", query);
 
         Object[][] ingredients_Data = db.getTableDataObject(query, tableInQuery);
@@ -1111,7 +1111,7 @@ public class IngredientsTable extends JDBC_JTable
                 (%s, %s, '%s');""", mealInPlanID, toPlanID, mealName);
 
         String query5 = String.format("""
-                INSERT IGNORE INTO dividedMealSections
+                INSERT IGNORE INTO divided_meal_sections
                 (div_meal_sections_id, meal_in_plan_id, plan_id)            
                 VALUES
                 (%s, %s, '%s'); """, divMealSectionsID, mealInPlanID, toPlanID);
@@ -1246,7 +1246,7 @@ public class IngredientsTable extends JDBC_JTable
                         ) AS I
                         LEFT JOIN
                         (
-                            SELECT ingredient_id, product_name, store_id  FROM ingredientInShops 	
+                            SELECT ingredient_id, product_name, store_id  FROM ingredient_in_shops 	
                         ) AS S
                         ON I.ingredient_id = S.ingredient_id
                         AND S.store_id = (SELECT store_id FROM stores WHERE store_name = '%s')
@@ -1378,7 +1378,7 @@ public class IngredientsTable extends JDBC_JTable
                         ) AS T                                             
                         LEFT JOIN
                         (
-                           SELECT ingredient_id, store_id FROM ingredientInShops                         	
+                           SELECT ingredient_id, store_id FROM ingredient_in_shops                         	
                         ) AS C
                         ON T.ingredient_id = C.ingredient_id 
                         LEFT JOIN
