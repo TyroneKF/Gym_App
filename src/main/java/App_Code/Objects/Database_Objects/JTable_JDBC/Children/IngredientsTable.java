@@ -710,35 +710,8 @@ public class IngredientsTable extends JDBC_JTable
             }
             else if (reply == JOptionPane.NO_OPTION) // instead of delete last ingredient, replace with ingredient None Of Above
             {
-                Object ingredients_Index = jTable.getValueAt(0, ingredientsTable_Index_Col);
-                Object ingredientID = 1;
-
-                //#######################################
-                // Change Quantity & IngredientID
-                //########################################
-
-                // Update DB Values
-                String query1 = String.format("""
-                        UPDATE  ingredients_in_sections_of_meal
-                        SET ingredient_id = %s, quantity = 0
-                        WHERE plan_id = %s  AND ingredients_index = %s;""", ingredientID, temp_PlanID, ingredients_Index);
-
-                //HELLO DELETE
-                System.out.printf("\n\ndeleteRowAction() \nQuery: \n\n%s", query1);
-
-                if (!(db.uploadData_Batch_Altogether(new String[]{query1})))
-                {
-                    JOptionPane.showMessageDialog(frame, "Un-able to change last row values!");
-
-                    setRowBeingEdited();
-                    return;
-                }
-
-                // Change Table
-                updateTableValuesByQuantity(0, ingredients_Index, 0);
+                return;
             }
-
-            return;
         }
         //#################################################
         // Remove From Row From DB

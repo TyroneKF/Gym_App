@@ -129,6 +129,18 @@ CREATE TABLE IF NOT EXISTS ingredient_types
 
 --######################################
 
+CREATE TABLE IF NOT EXISTS measurements
+ (
+    -- PRIMARY KEYS
+    meassurement_id INT PRIMARY KEY AUTO_INCREMENT,
+
+	unit_name VARCHAR(100) NOT NULL,
+	unit_symbol VARCHAR(10) NOT NULL,
+	measured_material_type ENUM('solids', 'liquids') NOT NULL
+ );
+ 
+--######################################
+
 CREATE TABLE IF NOT EXISTS ingredients_info
  (
     -- PRIMARY KEYS

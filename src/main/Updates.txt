@@ -1,15 +1,10 @@
 GYM APP SQL
-.) Only one true plan per user
 
 .) MAX is apparently not needed although it flagged an error on linux:
    MAX(m.Meal_Time) AS Meal_Time, -- HELLO 
    MAX(m.Meal_Name) AS Meal_Name,
    
 .) Deleting foreign key checks in app when removing objects
-
-.) Create a meassurements table (Grams
-
-.) Measurement ENUM('Litres', 'Grams') NOT NULL,
 
 .) Filter ingredients by dietary requirements
 
@@ -24,10 +19,16 @@ MYJDBC:
 
 
 Ingredients_Table
-.) Delete row on last ingredient, confirm no = product reset to None of the above
+.) Fix Column Titles to fit length
+.) Fix column Width
 
 
-Meal_Plan_Screen.java
+Meal_Plan_Screen.java:
 .) FOREIGN_KEY_CHECKS - Get rid of this
+.) Ingredients
 
+Total_Meal_View:
+.) Table Weights include water weight only include solid
 
+Display_tables
+Being able to hide rows

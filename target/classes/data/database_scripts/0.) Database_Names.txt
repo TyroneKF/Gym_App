@@ -3,6 +3,7 @@ plans
 macros_per_pound_and_limits
 plan_macro_target_calculations
 ingredient_types
+measurements
 ingredients_info
 stores
 ingredient_in_shops
