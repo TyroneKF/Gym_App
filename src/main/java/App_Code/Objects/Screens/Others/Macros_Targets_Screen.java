@@ -42,7 +42,7 @@ public class Macros_Targets_Screen extends JFrame
                 String query = String.format("""
                        Select plan_id, current_weight_kg, body_fat_percentage, protein_per_pound, carbohydrates_per_pound, fibre, 
                        fats_per_pound, saturated_fat_limit, salt_limit, water_target, liquid_target, additional_calories
-                       FROM macros_Per_Pound_And_Limits 
+                       FROM macros_per_pound_and_limits 
                        WHERE plan_id = %s;""", temp_PlanID);
 
                 ArrayList<ArrayList<String>> data = db.getMultiColumnQuery(query);
@@ -275,9 +275,9 @@ public class Macros_Targets_Screen extends JFrame
     public boolean updateForm()
     {
         String updateTargets_Query = String.format("""
-                        UPDATE macros_Per_Pound_And_Limits
-                                      
-                        SET date_time_of_creation = now(), current_weight_kg = %s , body_fat_percentage = %s, protein_per_pound = %s, 
+                        UPDATE macros_per_pound_and_limits
+                        SET 
+                        date_time_of_creation = now(), current_weight_kg = %s , body_fat_percentage = %s, protein_per_pound = %s, 
                         carbohydrates_per_pound = %s, fibre =%s, fats_per_pound = %s, saturated_fat_limit = %s,  salt_limit = %s, 
                         water_target = %s, liquid_target = %s, additional_calories = %s WHERE plan_id =  %s;""",
 

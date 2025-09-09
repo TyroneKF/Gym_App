@@ -222,7 +222,7 @@ public class MealManager
         // Create Collapsible Object
         //##############################################################################################################
         //collapsibleJpObj = new CollapsibleJPanel(container, removeSecondsOnTimeString(savedMealTime), 150, 50); // time as btn txt
-        collapsibleJpObj = new CollapsibleJPanel(container, savedMealName, 150, 50); // time as btn txt
+        collapsibleJpObj = new CollapsibleJPanel(container, savedMealName, 180, 60); // time as btn txt
         collapsibleCenterJPanel = collapsibleJpObj.getCentreJPanel();
         collapsibleCenterJPanel.setBackground(Color.YELLOW);
         addToContainer(container, collapsibleJpObj, 0, meal_plan_screen.getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
@@ -246,9 +246,6 @@ public class MealManager
 
         total_Meal_View_Table = new TotalMealTable(db, collapsibleJpObj, meal_Total_Data, mealTotalTable_ColumnNames, planID, tempPlanID,
                 mealInPlanID, savedMealName, tableName, new ArrayList<>(Arrays.asList(mealTotalTable_ColumnNames)), null, totalMeal_Table_ColToHide);
-
-        total_Meal_View_Table.setOpaque(true); //content panes must be opaque
-        total_Meal_View_Table.setTableHeaderFont(new Font("Dialog", Font.BOLD, 12));
 
         //#############################################
         // TotalMealTable to Collapsible Object

@@ -1,8 +1,8 @@
-1.) GymApp.sql
-3.) Plans.sql
-4.) Macros_Per_Pound_And_Limits.sql
-5.) IngredientTypes.sql
-6.) Ingredients_Info.sql
-7.) Stores.sql
-8.) IngredientInShops.sql
-9.) PreLoadMealPlan.sql
+1.) Gym_App_DB_Script.sql
+3.) plans.sql
+4.) macros_per_pound_and_limits.sql
+5.) ingredient_types.sql
+6.) ingredients_info.sql
+7.) stores.sql
+8.) ingredient_in_shops.sql
+9.) meals_in_plan.sql

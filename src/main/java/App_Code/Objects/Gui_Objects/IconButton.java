@@ -15,7 +15,7 @@ public class IconButton extends JPanel
         setPreferredSize(new Dimension(btnWidth + 10, btnHeight + 10));
         setIconIMG(iconPath, iconWidth, iconHeight);
 
-        button.setText(btnText);
+        button.setFont(new Font("Dialog", Font.BOLD, 14));
         button.setPreferredSize(new Dimension(btnWidth, btnHeight));
         button.setFocusPainted(false); //remove icon border
         button.setHorizontalTextPosition(posToInt(horizontalTextPos, "horizontal"));

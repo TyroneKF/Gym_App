@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS plans
 
 -- ######################################
 
-CREATE TABLE IF NOT EXISTS macros_Per_Pound_And_Limits
+CREATE TABLE IF NOT EXISTS macros_per_pound_and_limits
 (   	
     plan_id INT NOT NULL,
     FOREIGN KEY (plan_id) REFERENCES plans(plan_id) ON DELETE CASCADE,
@@ -62,8 +62,8 @@ CREATE TABLE IF NOT EXISTS macros_Per_Pound_And_Limits
 
 -- ######################################
 
-DROP VIEW IF EXISTS plan_Macro_Target_Calculations;
-CREATE VIEW plan_Macro_Target_Calculations AS
+DROP VIEW IF EXISTS plan_macro_target_calculations;
+CREATE VIEW plan_macro_target_calculations AS
 
 SELECT
 
@@ -113,13 +113,13 @@ LEFT JOIN
 		additional_calories
 	) AS additional_calories_target
 
-	FROM macros_Per_Pound_And_Limits
+	FROM macros_per_pound_and_limits
 )  C
 ON P.plan_id = C.plan_id;
 
 --######################################
 
-CREATE TABLE IF NOT EXISTS ingredientTypes
+CREATE TABLE IF NOT EXISTS ingredient_types
 (
     ingredient_type_id INT  PRIMARY KEY AUTO_INCREMENT,
 
@@ -139,7 +139,7 @@ CREATE TABLE IF NOT EXISTS ingredients_info
 	ingredient_name VARCHAR(100) NOT NULL,
 
 	ingredient_type_id  INT NOT NULL,
-	FOREIGN KEY (ingredient_type_id) REFERENCES ingredientTypes(ingredient_type_id) ON DELETE CASCADE,
+	FOREIGN KEY (ingredient_type_id) REFERENCES ingredient_types(ingredient_type_id) ON DELETE CASCADE,
 
 	based_on_quantity DECIMAL(7,2) NOT NULL,
 
@@ -172,7 +172,7 @@ CREATE TABLE IF NOT EXISTS stores
 );
 --######################################
 
-CREATE TABLE IF NOT EXISTS ingredientInShops
+CREATE TABLE IF NOT EXISTS ingredient_in_shops
 (
     -- PRIMARY KEY , UNIQUE To this Table
     pdid INT  PRIMARY KEY AUTO_INCREMENT,
@@ -192,7 +192,7 @@ CREATE TABLE IF NOT EXISTS ingredientInShops
 );
 --######################################
 
-CREATE TABLE IF NOT EXISTS mealsInPlan
+CREATE TABLE IF NOT EXISTS meals_in_plan
 (
    meal_in_plan_id INT NOT NULL AUTO_INCREMENT,
 
@@ -209,7 +209,7 @@ CREATE TABLE IF NOT EXISTS mealsInPlan
 
 --######################################
 
-CREATE TABLE IF NOT EXISTS dividedMealSections
+CREATE TABLE IF NOT EXISTS divided_meal_sections
 (
    div_meal_sections_id INT AUTO_INCREMENT,
 
@@ -217,7 +217,7 @@ CREATE TABLE IF NOT EXISTS dividedMealSections
    plan_id INT NOT NULL,
    
    FOREIGN KEY (meal_in_plan_id, plan_id)
-        REFERENCES mealsInPlan (meal_in_plan_id, plan_id)
+        REFERENCES meals_in_plan (meal_in_plan_id, plan_id)
         ON DELETE CASCADE,
 		
    PRIMARY KEY(div_meal_sections_id, plan_id), -- div_meal_sections_id isn't unique enough because its duplicated in temp meal plan for temp data it becomes unique with plan_id
@@ -234,7 +234,7 @@ CREATE TABLE IF NOT EXISTS ingredients_in_sections_of_meal
 	plan_id INT NOT NULL,
 	
 	FOREIGN KEY (div_meal_sections_id, plan_id)
-		REFERENCES dividedMealSections(div_meal_sections_id, plan_id)
+		REFERENCES divided_meal_sections(div_meal_sections_id, plan_id)
 		ON DELETE CASCADE,
 
     ingredient_id INT NOT NULL,
@@ -243,7 +243,7 @@ CREATE TABLE IF NOT EXISTS ingredients_in_sections_of_meal
 	quantity DECIMAL(15,2) NOT NULL,
 
 	pdid INT NULL,
- 	FOREIGN KEY (pdid) REFERENCES ingredientInShops(pdid) ON DELETE CASCADE,
+ 	FOREIGN KEY (pdid) REFERENCES ingredient_in_shops(pdid) ON DELETE CASCADE,
 
 	PRIMARY KEY (ingredients_index, plan_id),
 	UNIQUE KEY no_repeat_records(ingredients_index, div_meal_sections_id, plan_id)
@@ -262,7 +262,7 @@ i.ingredients_index,
 i.ingredient_id, 
 i.quantity,
 
-(SELECT t.ingredient_type_name FROM ingredientTypes t WHERE t.ingredient_type_id = info.ingredient_type_id) AS ingredient_type,
+(SELECT t.ingredient_type_name FROM ingredient_types t WHERE t.ingredient_type_id = info.ingredient_type_id) AS ingredient_type,
 
 info.ingredient_name,
 IFNULL(ROUND((i.quantity /p.volume_per_unit)*p.cost_per_unit,2),0) AS ingredient_cost,
@@ -286,7 +286,7 @@ IFNULL(ROUND((info.calories /info.based_on_quantity)*i.quantity,2),0) AS calorie
 
 FROM ingredients_in_sections_of_meal i
 LEFT JOIN ingredients_info info ON  info.ingredient_id = i.ingredient_id
-LEFT JOIN ingredientInShops p ON p.pdid = i.pdid
+LEFT JOIN ingredient_in_shops p ON p.pdid = i.pdid
 LEFT JOIN stores s ON p.store_id = s.store_id;
 
 --######################################
@@ -339,9 +339,9 @@ IFNULL(ROUND(SUM(di.total_water_content),2),0) as total_water_content,
 IFNULL(ROUND(SUM(di.total_liquid_content),2),0) as total_liquid_content,
 IFNULL(ROUND(SUM(di.total_calories),2),0) as total_calories
 
-FROM  mealsInPlan m
+FROM  meals_in_plan m
 
-LEFT JOIN dividedMealSections d
+LEFT JOIN divided_meal_sections d
 ON m.meal_in_plan_id = d.meal_in_plan_id AND m.plan_id = d.plan_id
 
 LEFT JOIN divided_meal_sections_calculations di
@@ -382,8 +382,8 @@ GROUP BY  P.plan_id, P.plan_name;
 
 --######################################
 
-DROP VIEW IF EXISTS planMacrosLeft;
-CREATE VIEW  planMacrosLeft AS
+DROP VIEW IF EXISTS plan_macros_left;
+CREATE VIEW  plan_macros_left AS
 
 SELECT
 
@@ -420,6 +420,6 @@ FROM
 ) P
 LEFT JOIN
 (
-   SELECT * FROM plan_Macro_Target_Calculations
+   SELECT * FROM plan_macro_target_calculations
 ) C
 ON C.plan_id = P.plan_id;

@@ -38,6 +38,15 @@ public class MyJTable_DisplayData extends JDBC_JTable
 
         // Remove the focus outline from cells
         jTable.setFocusable(false);
+
+        //content panes must be opaque
+        setOpaque(true);
+
+        // Set Header Font
+        setTableHeaderFont(new Font("Dialog", Font.BOLD, 14));
+
+        // Set Txt Font
+        setTableTextFont(new Font("Dialog", Font.PLAIN, 14));
     }
 
     @Override

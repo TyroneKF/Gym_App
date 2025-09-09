@@ -22,5 +22,12 @@ MYJDBC:
 .) Refactor script setup 
 .) Create a user log in page
 
+
 Ingredients_Table
 .) Delete row on last ingredient, confirm no = product reset to None of the above
+
+
+Meal_Plan_Screen.java
+.) FOREIGN_KEY_CHECKS - Get rid of this
+
+
