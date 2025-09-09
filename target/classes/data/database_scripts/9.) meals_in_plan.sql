@@ -1,6 +1,6 @@
 
 #######################################################################################
-INSERT IGNORE INTO mealsInPlan (meal_in_plan_id, plan_id, meal_name, meal_time) VALUES
+INSERT IGNORE INTO meals_in_plan (meal_in_plan_id, plan_id, meal_name, meal_time) VALUES
 (1, 2, "Breakfast", '09:00:00'),         -- 1
 (2, 2, "Mid-Morning Snack", '12:00:00'), -- 2
 (3, 2, "Lunch", '15:00:00'),             -- 3
@@ -11,7 +11,7 @@ INSERT IGNORE INTO mealsInPlan (meal_in_plan_id, plan_id, meal_name, meal_time) 
 
 #######################################################################################
 
-INSERT IGNORE INTO dividedMealSections (meal_in_plan_id, plan_id) VALUES
+INSERT IGNORE INTO divided_meal_sections (meal_in_plan_id, plan_id) VALUES
 
 # Breakfast
 (1, 2), -- Pancakes             -- 1

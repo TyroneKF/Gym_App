@@ -222,7 +222,7 @@ public class MealManager
         // Create Collapsible Object
         //##############################################################################################################
         //collapsibleJpObj = new CollapsibleJPanel(container, removeSecondsOnTimeString(savedMealTime), 150, 50); // time as btn txt
-        collapsibleJpObj = new CollapsibleJPanel(container, savedMealName, 180, 60); // time as btn txt
+        collapsibleJpObj = new CollapsibleJPanel(container, savedMealName, 180, 50); // time as btn txt
         collapsibleCenterJPanel = collapsibleJpObj.getCentreJPanel();
         collapsibleCenterJPanel.setBackground(Color.YELLOW);
         addToContainer(container, collapsibleJpObj, 0, meal_plan_screen.getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
