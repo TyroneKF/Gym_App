@@ -236,7 +236,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         int width = 35;
         int height = 35;
 
-        IconButton delete_Icon_Btn = new IconButton("/images/x/x.png", "", width, height, width, height,
+        IconButton delete_Icon_Btn = new IconButton("/images/x/x.png", width, height, width, height,
                 "centre", "right"); // btn text is useless here , refactor
 
         JButton delete_Btn = delete_Icon_Btn.returnJButton();
@@ -255,7 +255,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         width = 35;
         height = 40;
 
-        IconButton refresh_Icon_Btn = new IconButton("/images/refresh/+++++refresh.png", "", width, height, width, height,
+        IconButton refresh_Icon_Btn = new IconButton("/images/refresh/+++++refresh.png", width, height, width, height,
                 "centre", "right"); // btn text is useless here , refactor
 
         JButton refresh_Btn = refresh_Icon_Btn.returnJButton();

@@ -31,8 +31,8 @@ public class CollapsibleJPanel extends JPanel
         //####################################################
         // Icon Button
         //####################################################
-        collapse_And_Expand_Btn = new IconButton("/images/expand2.png", btnText, 50, 50, btnWidth, btnHeight,
-                "centre", "right"); // btn text is useless here , refactor
+        Font f = new Font("Dialog", Font.BOLD, 14);
+        collapse_And_Expand_Btn = new IconButton("/images/expand2.png", f, btnText, 50, 50, btnWidth, btnHeight, "centre", "right"); // btn text is useless here , refactor
 
         topJPanel.add(collapse_And_Expand_Btn, BorderLayout.WEST);
 

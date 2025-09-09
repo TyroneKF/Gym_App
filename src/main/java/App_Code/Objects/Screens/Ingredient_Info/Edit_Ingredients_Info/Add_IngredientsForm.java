@@ -278,8 +278,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
         int width = 30;
         int height = 30;
 
-        IconButton refresh_Icon_Btn = new IconButton("/images/refresh/++refresh.png", "", width, height, width, height,
-                "centre", "right"); // btn text is useless here , refactor
+        IconButton refresh_Icon_Btn = new IconButton("/images/refresh/++refresh.png", width, height, width, height,"centre", "right"); // btn text is useless here , refactor
 
         JButton refresh_Btn = refresh_Icon_Btn.returnJButton();
         refresh_Icon_Btn.makeBTntransparent();

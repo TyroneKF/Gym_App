@@ -3,20 +3,67 @@ package App_Code.Objects.Gui_Objects;
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
+import java.util.Locale;
 
 public class IconButton extends JPanel
 {
-    JButton button = new JButton();
+    private JButton button = new JButton();
+    private Font font = null;
 
-    public IconButton(String iconPath, String btnText, int iconWidth, int iconHeight, int btnWidth, int btnHeight,
+    private String iconPath, verticalTextPos, horizontalTextPos, btnText = null;
+    private int iconWidth, iconHeight, btnWidth, btnHeight;
+
+    public IconButton(String iconPath, int iconWidth, int iconHeight, int btnWidth, int btnHeight, String verticalTextPos,
+                      String horizontalTextPos)
+    {
+        // ###############################
+        // Setting Variables
+        // ###############################
+        this.iconPath = iconPath;
+        this.iconWidth = iconWidth;
+        this.iconHeight = iconHeight;
+        this.btnWidth = btnWidth;
+        this.btnHeight = btnHeight;
+        this.verticalTextPos = verticalTextPos;
+        this.horizontalTextPos = horizontalTextPos;
+
+        setup(); // Build Object
+    }
+
+
+    public IconButton(String iconPath, Font font, String btnText, int iconWidth, int iconHeight, int btnWidth, int btnHeight,
                       String verticalTextPos, String horizontalTextPos)
     {
+        // ###############################
+        // Setting Variables
+        // ###############################
+        this.font = font;
+        this.btnText = btnText;
+
+        this.iconPath = iconPath;
+        this.iconWidth = iconWidth;
+        this.iconHeight = iconHeight;
+        this.btnWidth = btnWidth;
+        this.btnHeight = btnHeight;
+        this.verticalTextPos = verticalTextPos;
+        this.horizontalTextPos = horizontalTextPos;
+
+        setup();   // Build Object
+    }
+
+    private void setup()
+    {
+        // ###############################
         // setBackground(Color.YELLOW);
         setPreferredSize(new Dimension(btnWidth + 10, btnHeight + 10));
         setIconIMG(iconPath, iconWidth, iconHeight);
 
-        button.setFont(new Font("Dialog", Font.BOLD, 14));
-        button.setText(String.format("%s",btnText));
+        if (font!=null && btnText != null)
+        {
+            button.setFont(font);
+            button.setText(String.format("%s", btnText));
+        }
+
         button.setPreferredSize(new Dimension(btnWidth, btnHeight));
         button.setFocusPainted(false); //remove icon border
         button.setHorizontalTextPosition(posToInt(horizontalTextPos, "horizontal"));
@@ -62,7 +109,7 @@ public class IconButton extends JPanel
 
     public Integer posToInt(String position, String axis)
     {
-        if (axis.equals("horizontal")) // Horizontal
+        if (axis.toLowerCase(Locale.ROOT).equals("horizontal")) // Horizontal
         {
             switch (position.toLowerCase())
             {

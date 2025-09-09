@@ -202,7 +202,7 @@ public class SearchForFoodInfo extends CollapsibleJPanel
         // (East)  Search Icon
         //#########################################
 
-        IconButton searchIcon = new IconButton("/images/search/search2.png", "", searchBarIconWidth, searchBarIconHeight, searchBarButtonWidth, searchBarButtonHeight,
+        IconButton searchIcon = new IconButton("/images/search/search2.png", searchBarIconWidth, searchBarIconHeight, searchBarButtonWidth, searchBarButtonHeight,
                 "centre", "right");
 //        searchIcon.makeBTntransparent();
 
@@ -294,7 +294,7 @@ public class SearchForFoodInfo extends CollapsibleJPanel
             //####################################
             // Add Icon BTN
             //####################################
-            IconButton addIcon = new IconButton("/images/add/++++add.png", "", addIconWidth, addIconHeight, addIconWidth, addIconHeight, "centre", "right");
+            IconButton addIcon = new IconButton("/images/add/++++add.png", addIconWidth, addIconHeight, addIconWidth, addIconHeight, "centre", "right");
 
             addIcon.makeBTntransparent();
 
@@ -414,7 +414,7 @@ public class SearchForFoodInfo extends CollapsibleJPanel
                 //####################################
                 // Add Icon BTN
                 //####################################
-                IconButton addIcon = new IconButton("/images/add/++++add.png", "", addIconWidth, addIconHeight, addIconWidth, addIconHeight, "centre", "right");
+                IconButton addIcon = new IconButton("/images/add/++++add.png", addIconWidth, addIconHeight, addIconWidth, addIconHeight, "centre", "right");
 
                 addIcon.makeBTntransparent();
 

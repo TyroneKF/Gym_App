@@ -191,7 +191,7 @@ public class IngredientsTable extends JDBC_JTable
         //##########################
         //Add BTN
         //##########################
-        IconButton add_Icon_Btn = new IconButton("/images/add/add.png", "", iconSize, iconSize, iconSize, iconSize, "centre", "right");
+        IconButton add_Icon_Btn = new IconButton("/images/add/add.png", iconSize, iconSize, iconSize, iconSize, "centre", "right");
         // add_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
 
         JButton add_Btn = add_Icon_Btn.returnJButton();
@@ -209,7 +209,7 @@ public class IngredientsTable extends JDBC_JTable
         // Refresh Icon
         //##########################
 
-        IconButton refresh_Icon_Btn = new IconButton("/images/refresh/+refresh.png", "", iconSize, iconSize, iconSize, iconSize,
+        IconButton refresh_Icon_Btn = new IconButton("/images/refresh/+refresh.png", iconSize, iconSize, iconSize, iconSize,
                 "centre", "right"); // btn text is useless here , refactor
         //refresh_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
 
@@ -254,7 +254,7 @@ public class IngredientsTable extends JDBC_JTable
         // Update Icon
         //##########################
 
-        IconButton saveIcon_Icon_Btn = new IconButton("/images/save/save.png", "", iconSize, iconSize, iconSize, iconSize,
+        IconButton saveIcon_Icon_Btn = new IconButton("/images/save/save.png", iconSize, iconSize, iconSize, iconSize,
                 "centre", "right"); // btn text is useless here , refactor
         //saveIcon_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
         saveIcon_Icon_Btn.makeBTntransparent();
@@ -275,7 +275,7 @@ public class IngredientsTable extends JDBC_JTable
         // Delete Icon
         //##########################
 
-        IconButton deleteIcon_Icon_Btn = new IconButton("/images/delete/+delete.png", "", iconSize, iconSize, iconSize + 10, iconSize,
+        IconButton deleteIcon_Icon_Btn = new IconButton("/images/delete/+delete.png", iconSize, iconSize, iconSize + 10, iconSize,
                 "centre", "right"); // btn text is useless here , refactor
         //deleteIcon_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
         deleteIcon_Icon_Btn.makeBTntransparent();

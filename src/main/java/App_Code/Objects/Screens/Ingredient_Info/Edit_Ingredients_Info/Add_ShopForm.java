@@ -73,8 +73,7 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
         int width = 30;
         int height = 30;
 
-        IconButton add_Icon_Btn = new IconButton("/images/add/++add.png", "", width, height, width, height,
-                "centre", "right"); // btn text is useless here , refactor
+        IconButton add_Icon_Btn = new IconButton("/images/add/++add.png", width, height, width, height, "centre", "right"); // btn text is useless here , refactor
 
         JButton add_Btn = add_Icon_Btn.returnJButton();
         add_Icon_Btn.makeBTntransparent();
