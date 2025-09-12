@@ -14,7 +14,6 @@ import io.github.cdimascio.dotenv.Dotenv;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.time.LocalTime;
 import java.util.*;
 import java.util.List;
 
@@ -34,11 +33,12 @@ public class Meal_Plan_Screen extends JPanel
         }
     });
 
-    private TreeSet<MealManager> mealManagerTreeSet = new TreeSet<MealManager>(new Comparator<MealManager>()
+    private TreeSet< Map.Entry<Integer, MealManager> > mealManagerTreeSet = new TreeSet<Map.Entry<Integer, MealManager>>(new Comparator<Map.Entry<Integer,MealManager>>()
     {
-        public int compare(MealManager o1, MealManager o2)
+        @Override
+        public int compare( Map.Entry<Integer, MealManager> o1, Map.Entry<Integer, MealManager> o2 )
         {
-            return o1.getCurrentMealTime().compareTo(o2.getCurrentMealTime());
+            return  o1.getValue().getCurrentMealTime().compareTo(o2.getValue().getCurrentMealTime());
         }
     });
 
@@ -1147,10 +1147,10 @@ public class Meal_Plan_Screen extends JPanel
         //####################################################################
         // Refresh ingredients meal table & total Tables Data
         //####################################################################
-        Iterator<MealManager> it = mealManagerTreeSet.iterator();
+        Iterator<Map.Entry<Integer, MealManager>> it = mealManagerTreeSet.iterator();
         while (it.hasNext())
         {
-            MealManager mealManager = it.next();
+            MealManager mealManager = it.next().getValue();
 
             // If mealManager is in DB  then refresh
             if (mealManager.isMealManagerInDB())
@@ -1189,10 +1189,10 @@ public class Meal_Plan_Screen extends JPanel
         // ##############################################################################
         boolean noMealsLeft = true;
 
-        Iterator<MealManager> it = mealManagerTreeSet.iterator();
+        Iterator<Map.Entry<Integer, MealManager>> it = mealManagerTreeSet.iterator();
         while (it.hasNext())
         {
-            MealManager mealManager = it.next();
+            MealManager mealManager = it.next().getValue();
             if (mealManager.getHasMealPlannerBeenDeleted())
             {
                 mealManager.completely_Delete_MealManager();
@@ -1235,11 +1235,11 @@ public class Meal_Plan_Screen extends JPanel
             // ###############################################################################
             // Instructing Meal Manager Tables To Update Their Model Data
             // ##############################################################################
-            Iterator<MealManager> it2 = mealManagerTreeSet.iterator();
+            Iterator<Map.Entry<Integer, MealManager>> it2 = mealManagerTreeSet.iterator();
 
             while (it2.hasNext())
             {
-                MealManager mealManager = it2.next();
+                MealManager mealManager = it2.next().getValue();
                 mealManager.saveData(false);
             }
         }
@@ -1259,14 +1259,16 @@ public class Meal_Plan_Screen extends JPanel
         JOptionPane.showMessageDialog(frame, "\n\nAll Meals Are Successfully Saved!");
     }
 
-    public void addMealManger2 (MealManager mealManager,  boolean clearScreenThenAdd)
+    public void addMealManger2 (MealManager mealManager, boolean clearGUIThenAdd)
     {
         if( ! mealManager.isObjectCreated()) { return; }  // If object was rejected in creation, will cause an error below with time comparison
 
-        if(! clearScreenThenAdd )  // Just add this Meal Manager to the screen without clearing the screen
+        Integer meal_in_plan_id = mealManager.getMealInPlanID();
+
+        if( ! clearGUIThenAdd )  // Just add this Meal Manager to the screen without clearing the screen
         {
             // Add Meal Manager to collection
-            mealManagerTreeSet.add(mealManager);
+            mealManagerTreeSet.add(Map.entry(meal_in_plan_id, mealManager));
 
             // Add to GUI Meal Manager & Its Space Divider
             addToContainer(scrollJPanelCenter, mealManager.getCollapsibleJpObj(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
@@ -1279,26 +1281,34 @@ public class Meal_Plan_Screen extends JPanel
             // Expand Meal in GUI
             mealManager.getCollapsibleJpObj().expandJPanel();
 
+            // Remove MealManagers old index based on old time by removing it from the list
+            mealManager.removeMealManagerFromGUI(); // remove from GUI
+
+            // Remove MealManager From List
+            mealManagerTreeSet.removeIf(e-> e.getKey().equals(meal_in_plan_id));
+
             // If MealManager is the latest time in the plan just add it to the bottom without clearing the screen
-            if(mealManager.getCurrentMealTime().isAfter(mealManagerTreeSet.last().getCurrentMealTime()))
+            if( mealManagerTreeSet.size() == 0 || mealManager.getCurrentMealTime().isAfter(mealManagerTreeSet.last().getValue().getCurrentMealTime()))
             {
                 addMealManger2(mealManager, false);
                 return;
             }
 
-			// Clear GUI has to be cleared by instructing each Meal Manager to remove itself from the GUI
-			for(MealManager m : mealManagerTreeSet)
-			{
-			    m.getCollapsibleJpObj().collapseJPanel(); // Minimise Meal
-				m.removeMealManagerFromGUI();
-			}
-
 			// Add Meal Manager to collection & it should be sorted in order now
-			mealManagerTreeSet.add(mealManager);
+			mealManagerTreeSet.add(Map.entry(meal_in_plan_id, mealManager));
 
 			// Re-add all the MealManagers to GUI
-			for(MealManager m : mealManagerTreeSet)
+			for(Map.Entry<Integer, MealManager > x : mealManagerTreeSet)
 			{
+			    MealManager m = x.getValue();
+
+			    if( ! meal_in_plan_id.equals( m.getMealInPlanID()) )
+			    {
+			        // remove from old position in GUI
+                    m.getCollapsibleJpObj().collapseJPanel(); // Minimise Meal
+                    m.removeMealManagerFromGUI();
+                }
+
 				// Add to GUI Meal Manager & Its Space Divider
 				addToContainer(scrollJPanelCenter, m.getCollapsibleJpObj(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
 				addToContainer(scrollJPanelCenter, m.getSpaceDividerForMealManager(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 50, 0, null);

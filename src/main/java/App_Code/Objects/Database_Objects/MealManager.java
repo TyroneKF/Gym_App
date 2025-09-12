@@ -1174,7 +1174,7 @@ public class MealManager
         return isObjectCreated;
     }
 
-    public int getMealPlanID()
+    public int getMealInPlanID()
     {
         return mealInPlanID;
     }
