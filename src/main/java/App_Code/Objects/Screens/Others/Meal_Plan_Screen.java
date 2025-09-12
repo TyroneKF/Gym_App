@@ -14,6 +14,7 @@ import io.github.cdimascio.dotenv.Dotenv;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.List;
 
@@ -32,6 +33,15 @@ public class Meal_Plan_Screen extends JPanel
             return o1.toLowerCase().compareTo(o2.toLowerCase());
         }
     });
+
+    private TreeSet<MealManager> mealManagerTreeSet = new TreeSet<MealManager>(new Comparator<MealManager>()
+    {
+        public int compare(MealManager o1, MealManager o2)
+        {
+            return o1.getCurrentMealTime().compareTo(o2.getCurrentMealTime());
+        }
+    });
+
 
     //##################################################################################################################
     private MacrosLeftTable macrosLeft_JTable;
@@ -82,7 +92,6 @@ public class Meal_Plan_Screen extends JPanel
     private MyJDBC db;
     private Macros_Targets_Screen macrosTargets_Screen = null;
     private Ingredients_Info_Screen ingredientsInfoScreen = null;
-    private ArrayList<MealManager> mealManagerArrayList = new ArrayList<>();
 
     //##################################################################################################################
     // Variables
@@ -555,10 +564,8 @@ public class Meal_Plan_Screen extends JPanel
             //#####################################################
             // Create Meal Component
             //#####################################################
-
             System.out.printf("\n\nMeal_Plan_Screen.java | MealManager \nmeal_in_plan_id : %s \nmeal_name : %s \nmeal_time : %s \nSub-Meals In MealManager (ID) : %s%n", mealInPlanID, mealName, mealTime, subMealsInMealArrayList);//HELLO DELETE
-            MealManager meal = new MealManager(this, scrollJPanelCenter, mealInPlanID, mealName, mealTime, subMealsInMealArrayList);
-            mealManagerArrayList.add(meal);
+            addMealManger2( new MealManager(this, scrollJPanelCenter, mealInPlanID, mealName, mealTime, subMealsInMealArrayList), false);
 
             //######################################################
             // Update Progress
@@ -569,18 +576,17 @@ public class Meal_Plan_Screen extends JPanel
         System.out.printf("\n\n%s", lineSeparator);
 
         //##############################################################################################################
-        // Make frame visible
+        // GUI Alignments & Configurations
         //##############################################################################################################
         if (!errorFound)
         {
             frame.setVisible(true);
         }
 
-        //open_AddIngredients_Screen();
-
         //###############################
-        // scrolls mealPlan to the top
+        // Align GUI
         //###############################
+        resizeGUI();
         scrollBarUp_BTN_Action();
     }
 
@@ -740,7 +746,7 @@ public class Meal_Plan_Screen extends JPanel
     }
 
     //##################################################################################################################
-    // Frequently Used Methods
+    // Transfer Methods
     //##################################################################################################################
     private boolean transferPlanData(int fromPlan, int toPlan)
     {
@@ -1119,7 +1125,7 @@ public class Meal_Plan_Screen extends JPanel
         //##############################################################################################################
         //
         //##############################################################################################################
-        new MealManager(this, scrollJPanelCenter);
+        addMealManger2(new MealManager(this, scrollJPanelCenter), true);
     }
 
     private void refreshPlan(boolean askPermission)
@@ -1141,7 +1147,7 @@ public class Meal_Plan_Screen extends JPanel
         //####################################################################
         // Refresh ingredients meal table & total Tables Data
         //####################################################################
-        Iterator<MealManager> it = mealManagerArrayList.iterator();
+        Iterator<MealManager> it = mealManagerTreeSet.iterator();
         while (it.hasNext())
         {
             MealManager mealManager = it.next();
@@ -1183,7 +1189,7 @@ public class Meal_Plan_Screen extends JPanel
         // ##############################################################################
         boolean noMealsLeft = true;
 
-        Iterator<MealManager> it = mealManagerArrayList.iterator();
+        Iterator<MealManager> it = mealManagerTreeSet.iterator();
         while (it.hasNext())
         {
             MealManager mealManager = it.next();
@@ -1229,7 +1235,7 @@ public class Meal_Plan_Screen extends JPanel
             // ###############################################################################
             // Instructing Meal Manager Tables To Update Their Model Data
             // ##############################################################################
-            Iterator<MealManager> it2 = mealManagerArrayList.iterator();
+            Iterator<MealManager> it2 = mealManagerTreeSet.iterator();
 
             while (it2.hasNext())
             {
@@ -1251,6 +1257,54 @@ public class Meal_Plan_Screen extends JPanel
         // Successful Message
         // ##############################################################################
         JOptionPane.showMessageDialog(frame, "\n\nAll Meals Are Successfully Saved!");
+    }
+
+    public void addMealManger2 (MealManager mealManager,  boolean clearScreenThenAdd)
+    {
+        if( ! mealManager.isObjectCreated()) { return; }  // If object was rejected in creation, will cause an error below with time comparison
+
+        if(! clearScreenThenAdd )  // Just add this Meal Manager to the screen without clearing the screen
+        {
+            // Add Meal Manager to collection
+            mealManagerTreeSet.add(mealManager);
+
+            // Add to GUI Meal Manager & Its Space Divider
+            addToContainer(scrollJPanelCenter, mealManager.getCollapsibleJpObj(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
+            addToContainer(scrollJPanelCenter, mealManager.getSpaceDividerForMealManager(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 50, 0, null);
+
+            scrollBarDown_BTN_Action();
+        }
+        else
+        {
+            // Expand Meal in GUI
+            mealManager.getCollapsibleJpObj().expandJPanel();
+
+            // If MealManager is the latest time in the plan just add it to the bottom without clearing the screen
+            if(mealManager.getCurrentMealTime().isAfter(mealManagerTreeSet.last().getCurrentMealTime()))
+            {
+                addMealManger2(mealManager, false);
+                return;
+            }
+
+			// Clear GUI has to be cleared by instructing each Meal Manager to remove itself from the GUI
+			for(MealManager m : mealManagerTreeSet)
+			{
+			    m.getCollapsibleJpObj().collapseJPanel(); // Minimise Meal
+				m.removeMealManagerFromGUI();
+			}
+
+			// Add Meal Manager to collection & it should be sorted in order now
+			mealManagerTreeSet.add(mealManager);
+
+			// Re-add all the MealManagers to GUI
+			for(MealManager m : mealManagerTreeSet)
+			{
+				// Add to GUI Meal Manager & Its Space Divider
+				addToContainer(scrollJPanelCenter, m.getCollapsibleJpObj(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
+				addToContainer(scrollJPanelCenter, m.getSpaceDividerForMealManager(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 50, 0, null);
+			}
+		}
+        resizeGUI();
     }
 
     //##################################################################################################################
@@ -1394,6 +1448,8 @@ public class Meal_Plan_Screen extends JPanel
     //##################################################################################################################
     //  Accessor Methods
     //##################################################################################################################
+
+    // Boolean
     public boolean get_IsPlanSelected()
     {
         if (planID==null)
@@ -1458,19 +1514,8 @@ public class Meal_Plan_Screen extends JPanel
         return planID;
     }
 
-    public Integer getAndIncreaseContainerYPos()
-    {
-        containerYPos++;
-        return containerYPos;
-    }
-
-    public void addMealManger(MealManager mealManager)
-    {
-        mealManagerArrayList.add(mealManager);
-    }
-
     //###########################################
-    // Lists
+    // Collections :  Accessor Methods
     //###########################################
     public String[] getMeal_total_columnNames()
     {
@@ -1510,6 +1555,12 @@ public class Meal_Plan_Screen extends JPanel
     //##################################################################################################################
     // Sizing & Adding to GUI Methods
     //##################################################################################################################
+    public Integer getAndIncreaseContainerYPos()
+    {
+        containerYPos++;
+        return containerYPos;
+    }
+
     public void resizeGUI()
     {
         scrollJPanelCenter.revalidate();

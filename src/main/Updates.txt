@@ -17,18 +17,51 @@ MYJDBC:
 .) Refactor script setup 
 .) Create a user log in page
 
-
 Ingredients_Table
 .) Fix Column Titles to fit length
 .) Fix column Width
 
-
 Meal_Plan_Screen.java:
 .) FOREIGN_KEY_CHECKS - Get rid of this
 .) Ingredients
+.) Sorts meal based on time when a new one is added
+.) Added Meal Scroll up or down & resize GUI
 
 Total_Meal_View:
 .) Table Weights include water weight only include solid
 
+Meal_Manager:
+.) Graph GUI Display per meal
+.) Scroll_To_End - let mealManager do this process at the end
+.) What happens if you have a meal set to a time and reset an old meal and there are 2 with the same name now
+
+
 Display_tables
-Being able to hide rows
+.) Being able to hide rows
+
+Ingredients_Info
+.) Refactoring out nutrition X product key
+.) Barcode Scanner
+
+OVERALL
+.) GRAPHS
+.) Columns in table sizes
+.) Adding meal in order of time
+.) Demo Screen
+.) Clear GUI Screen
+.) SQL injections on Input
+.) Ingredients_info page
+
+MYJDBC Updates FROM User inputs:
+.) SQL injections
+
+New Features
+.) SQL Injection
+.) Barcode scanner using phone portal / tunnel as a connection
+.) Graphs / Charts of Meals
+.) Shopping Evaluator / Stock
+.) AI Meal Suggester
+.) Being Able to  define font size
+.) Hiding Columns preferences
+
+
