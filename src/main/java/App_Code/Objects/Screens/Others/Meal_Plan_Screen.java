@@ -4,6 +4,7 @@ import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.MacrosLeftTable;
 import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.MacrosTargetsTable;
 import App_Code.Objects.Database_Objects.MealManager;
+import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
@@ -43,6 +44,8 @@ public class Meal_Plan_Screen extends JPanel
     });
 
 
+    //##################################################################################################################
+    // Table Objects
     //##################################################################################################################
     private MacrosLeftTable macrosLeft_JTable;
     private MacrosTargetsTable macros_Targets_Table;
@@ -1273,8 +1276,6 @@ public class Meal_Plan_Screen extends JPanel
             // Add to GUI Meal Manager & Its Space Divider
             addToContainer(scrollJPanelCenter, mealManager.getCollapsibleJpObj(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
             addToContainer(scrollJPanelCenter, mealManager.getSpaceDividerForMealManager(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 50, 0, null);
-
-            scrollBarDown_BTN_Action();
         }
         else
         {
@@ -1314,7 +1315,21 @@ public class Meal_Plan_Screen extends JPanel
 				addToContainer(scrollJPanelCenter, m.getSpaceDividerForMealManager(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 50, 0, null);
 			}
 		}
+
+        // ########################################################
+        // Resize & Align GUI screen so new object is visible
+        // ########################################################
         resizeGUI();
+
+        // Get your collapsible panel
+        CollapsibleJPanel obj_Display = mealManager.getCollapsibleJpObj();
+
+        // Scroll to that panel AFTER layout has finished
+        SwingUtilities.invokeLater(() -> {
+            obj_Display.scrollRectToVisible(
+                    new Rectangle(0, 0, obj_Display.getWidth(), obj_Display.getHeight())
+            );
+        });
     }
 
     //##################################################################################################################
