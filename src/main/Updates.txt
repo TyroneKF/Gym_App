@@ -1,17 +1,16 @@
-GYM APP SQL
+SQL :
 
 .) MAX is apparently not needed although it flagged an error on linux:
    MAX(m.Meal_Time) AS Meal_Time, -- HELLO 
    MAX(m.Meal_Name) AS Meal_Name,
-   
+
+.) Using mysql exception handling for queries vs regular
+
 .) Deleting foreign key checks in app when removing objects
 
+Unknown:
 .) Filter ingredients by dietary requirements
-
 .) Programming for when selected plan is false
-
-.) using mysql exception handling for queries vs regular
-
 
 MYJDBC: 
 .) Refactor script setup 
@@ -23,9 +22,9 @@ Ingredients_Table
 
 Meal_Plan_Screen.java:
 .) FOREIGN_KEY_CHECKS - Get rid of this
-.) Ingredients
-.) Sorts meal based on time when a new one is added
-.) Added Meal Scroll up or down & resize GUI
+.) Expand All Meals
+.) Close All Meals
+.) Delete all meals
 
 Total_Meal_View:
 .) Table Weights include water weight only include solid
