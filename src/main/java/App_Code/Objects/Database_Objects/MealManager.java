@@ -995,6 +995,24 @@ public class MealManager
     public void refresh_Btn_Action()
     {
         //#############################################################################################
+        // Check IF OLD Table Name & Meal Time Are Available To Assign Back To This Meal
+        //##############################################################################################
+        // Check if old time and name are already taken by a pre-existing meal before trying to revert
+        String query = String.format("""                                
+		SELECT *
+		FROM
+		(
+			SELECT
+				ROW_NUMBER() OVER (ORDER BY meal_time ASC) AS pos,
+				meal_name, meal_time, plan_id 		
+			FROM meals_in_plan
+			WHERE plan_id = %s
+			
+		) AS ranked
+				
+		WHERE meal_name = '%s' OR meal_time = '%s'; """, savedMealName, savedMealTime, tempPlanID );
+
+        //#############################################################################################
         // Reset DB Data
         //##############################################################################################
         if (!(transferMealDataToPlan("refresh", planID, tempPlanID)))
