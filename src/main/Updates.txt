@@ -50,6 +50,7 @@ OVERALL
 .) Clear GUI Screen
 .) SQL injections on Input
 .) Ingredients_info page
+.) Refactor db requests method if nulll into a method that return boolean
 
 MYJDBC Updates FROM User inputs:
 .) SQL injections

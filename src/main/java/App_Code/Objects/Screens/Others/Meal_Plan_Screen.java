@@ -1282,9 +1282,6 @@ public class Meal_Plan_Screen extends JPanel
             // Expand Meal in GUI
             mealManager.getCollapsibleJpObj().expandJPanel();
 
-            // Remove MealManagers old index based on old time by removing it from the list
-            mealManager.removeMealManagerFromGUI(); // remove from GUI
-
             // Remove MealManager From List
             mealManagerTreeSet.removeIf(e-> e.getKey().equals(meal_in_plan_id));
 

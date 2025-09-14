@@ -997,22 +997,70 @@ public class MealManager
         //#############################################################################################
         // Check IF OLD Table Name & Meal Time Are Available To Assign Back To This Meal
         //##############################################################################################
-        // Check if old time and name are already taken by a pre-existing meal before trying to revert
+
         String query = String.format("""                                
-		SELECT *
+		SELECT IFNULL(M.pos, "N/A") AS pos		
 		FROM
 		(
+		  -- This being the anchor had to restricted to make sure there's always a true value
+		  -- to attach to for IFNULL to work
+		 
+		  SELECT plan_id FROM plans WHERE plan_id = %s
+		 
+		) AS P
+		LEFT JOIN
+		(
+			-- Has to be restricted on plan_id then count as
+			
 			SELECT
-				ROW_NUMBER() OVER (ORDER BY meal_time ASC) AS pos,
-				meal_name, meal_time, plan_id 		
+			ROW_NUMBER() OVER (ORDER BY meal_time ASC) AS pos,
+			meal_in_plan_id, plan_id, meal_name, meal_time
 			FROM meals_in_plan
 			WHERE plan_id = %s
 			
-		) AS ranked
-				
-		WHERE meal_name = '%s' OR meal_time = '%s'; """, savedMealName, savedMealTime, tempPlanID );
+		) AS M
+		  
+		ON P.plan_id = M.plan_id
+		AND (M.meal_name = '%s' OR M.meal_time = '%s')
+		AND M.meal_in_plan_id != %s; """,tempPlanID,tempPlanID,savedMealName, savedMealTime, mealInPlanID);
 
-        //#############################################################################################
+        // Execute Query
+        System.out.printf("\n\nQuery: \n %s", query);
+
+        ArrayList<ArrayList<String>> results = db.getMultiColumnQuery(query);
+        if( results == null)
+        {
+            JOptionPane.showMessageDialog(getFrame(), "\n\nError, unable to use DB to gather whether old meal time/name are \nattached to another meal in plan right now!");
+            System.err.printf("\n\nError,MealManager.java: refresh_Btn_Action() \nUsing script: \n\n%s", query);
+            return;
+        }
+
+        //##############################################################################################
+        // Check if results prove another table in plan has this meal saved time/name & cancel if needed
+        //##############################################################################################
+        ArrayList<String> positions = new ArrayList<>();
+
+        if (results.size() >= 1 && ! results.get(0).get(0).equals("N/A")) { positions.add(results.get(0).get(0));}
+        if (results.size() >= 2 && ! results.get(1).get(0).equals("N/A")) { positions.add(results.get(1).get(0));}
+
+        if(positions.size() > 0)
+        {
+            JOptionPane.showMessageDialog(getFrame(), String.format("""
+            \n\nA meal in this plan already has this meals saved info:
+            
+            'Meal Name' of : '%s' or 'Meal Time' of : '%s' 
+            
+            at positions : %s  which is stopping this meal from refreshing !
+            
+            Change those values first at positions : %s in this plan 
+            to be able to refresh this meal!
+            
+            Or, refresh the whole plan if the other meals won't be affected !""", savedMealName, savedMealTime, positions, positions));
+
+            return;
+        }
+
+        //##############################################################################################
         // Reset DB Data
         //##############################################################################################
         if (!(transferMealDataToPlan("refresh", planID, tempPlanID)))
@@ -1031,6 +1079,9 @@ public class MealManager
         collapsibleJpObj.setIconBtnText(savedMealName); // Reset Meal Name in GUI to Old Txt
 
         reloadingIngredientsTableDataFromRefresh(true);
+
+        // Reset GUI by removing and adding this object to the GUI
+        meal_plan_screen.addMealManger2(this, true);
     }
 
     public void reloadingIngredientsTableDataFromRefresh(boolean updateMacrosLeft)
