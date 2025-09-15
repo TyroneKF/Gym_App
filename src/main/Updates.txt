@@ -63,5 +63,6 @@ New Features
 .) AI Meal Suggester
 .) Being Able to  define font size
 .) Hiding Columns preferences
+.) Mobile App thats aligns with meals one pc & tracks progress shows % of how much of your meals you eat on a daily
 
 

@@ -155,7 +155,7 @@ public class MealManager
         setup();
 
         //##############################################################################################################
-        // Add SubMeal To Meal
+        // Add A SubMeal To Meal
         //##############################################################################################################
         addButtonAction();
     }
@@ -251,6 +251,22 @@ public class MealManager
         JPanel iconPanelInsert = iconPanel.getIconJpanel();
 
         addToContainer(eastJPanel, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0, null);
+
+        //##########################
+        // Edit Graph BTN
+        //##########################
+        IconButton graph_Icon_Btn = new IconButton("/images/graph/pie2.png", iconSize, iconSize, iconSize, iconSize, "centre", "right");
+        // add_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
+
+        JButton graph_Btn = graph_Icon_Btn.returnJButton();
+        graph_Btn.setToolTipText("Get Graph Data"); //Hover message over icon
+        graph_Icon_Btn.makeBTntransparent();
+
+        graph_Btn.addActionListener(ae -> {
+            edit_Name_BTN_Action();
+        });
+
+        iconPanelInsert.add(graph_Icon_Btn);
 
         //##########################
         // Edit Name BTN
