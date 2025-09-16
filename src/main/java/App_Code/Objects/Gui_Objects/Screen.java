@@ -6,18 +6,24 @@ import java.awt.*;
 public class Screen
 {
     protected static GridBagConstraints gbc = new GridBagConstraints();
-    protected static ScrollPaneCreator scrollPane = new ScrollPaneCreator();
     protected static JFrame frame = new JFrame();
+    protected static Container contentPane;
+    protected static ScrollPaneCreator scrollPane = new ScrollPaneCreator();
     protected static JPanel
             scrollPaneJPanel,
             scrollJPanelCenter,
-            scrollJPanelEnd;
+            screenSectioned,
+            mainNorthPanel,
+            mainCenterPanel,
+            scrollJPanelBottom;
 
-    protected static Container contentPane;
     protected static int containerYPos = 0;
 
-    public Screen(int frameWidth, int frameHeight, int xPos, int yPos )
+    public Screen(int frameWidth, int frameHeight, int xPos, int yPos)
     {
+        //########################################################
+        //
+        //########################################################
         frame.setVisible(false);
         frame.setResizable(true);
         frame.setSize(frameWidth, frameHeight);
@@ -31,24 +37,24 @@ public class Screen
         //########################################################
         // Create Interface With Sections
         //########################################################
-        JPanel screenSectioned = new JPanel(new BorderLayout());
+        screenSectioned = new JPanel(new BorderLayout());
         addToContainer(contentPane, screenSectioned, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
 
         // Top of GUI
-        JPanel mainNorthPanel = new JPanel(new GridBagLayout());
+        mainNorthPanel = new JPanel(new GridBagLayout());
         screenSectioned.add(mainNorthPanel, BorderLayout.NORTH);
 
         // Centre of GUI
-        JPanel mainCenterPanel = new JPanel(new GridBagLayout());
+        mainCenterPanel = new JPanel(new GridBagLayout());
         screenSectioned.add(mainCenterPanel, BorderLayout.CENTER);
 
         //##########################################################
         // Create ScrollPane & Add it to Centre of GUI
         //##########################################################
+        // Attach ScrollPane to the centre of the screen
+        addToContainer(mainCenterPanel, scrollPane, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
         scrollPaneJPanel = scrollPane.getJPanel();
         scrollPaneJPanel.setLayout(new GridBagLayout());
-        addToContainer(mainCenterPanel, scrollPane, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
-
     }
 
     //##################################################################################################################
@@ -112,21 +118,26 @@ public class Screen
     // Accessor Methods
     //##################################################################################################################
 
-    public JFrame getFrame()
-    {
-        return frame;
-    }
-
-    public GridBagConstraints getGbc()
+    protected GridBagConstraints getGbc()
     {
         return gbc;
     }
 
-      /*  protected JPanel getCenterPanel()
+    protected JFrame getFrame()
     {
-        return
+        return frame;
     }
- */
+
+
+    protected JPanel getMainNorthPanel()
+    {
+        return mainNorthPanel;
+    }
+
+    protected JPanel getScrollPaneJPanel()
+    {
+        return scrollPaneJPanel;
+    }
 
 
     //##################################################################################################################
@@ -202,7 +213,7 @@ public class Screen
     //##################################################################################################################
     public static void main(String[] args)
     {
-        new Screen(400,600, 200,200);
+        new Screen(400, 600, 200, 200);
     }
 
 }

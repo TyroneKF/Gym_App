@@ -442,9 +442,10 @@ public class Meal_Plan_Screen extends JPanel
         //##########################################################
         // Create ScrollPane & Add it to Centre of GUI
         //##########################################################
+        // Attach ScrollPane to the centre of the screen
+        addToContainer(mainCenterPanel, scrollPane, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
         scrollPaneJPanel = scrollPane.getJPanel();
         scrollPaneJPanel.setLayout(new GridBagLayout());
-        addToContainer(mainCenterPanel, scrollPane, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
 
         //##############################
         // Splitting Scroll JPanel
