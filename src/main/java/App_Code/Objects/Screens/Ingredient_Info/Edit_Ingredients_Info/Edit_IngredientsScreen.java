@@ -32,7 +32,6 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
             selected_IngredientType = "",
             selected_IngredientName = "";
 
-
     //#############################################################################################################
     // Constructor
     //#############################################################################################################
@@ -479,14 +478,14 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //##############################################################################################################
         if (ingredientsNameJComboBox.getSelectedItem()==null)
         {
-            JOptionPane.showMessageDialog(mealPlanScreen, "Please select an ingredient please to edit it!");
+            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Please select an ingredient please to edit it!");
             refreshInterface(true, true);
             return;
         }
 
         if (ingredientsNameJComboBox.getSelectedItem().equals("N/A"))
         {
-            JOptionPane.showMessageDialog(mealPlanScreen, "The Store N/A cannot be edited, its a placeholder");
+            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "The Store N/A cannot be edited, its a placeholder");
             refreshInterface(true, true);
             return;
         }
@@ -514,7 +513,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
 
         if (selectedIngredientID==null)
         {
-            JOptionPane.showMessageDialog(mealPlanScreen, "\n\nUnable To Get Ingredient ID To Edit This Ingredient !!");
+            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "\n\nUnable To Get Ingredient ID To Edit This Ingredient !!");
             return;
         }
 
@@ -526,7 +525,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
 
         if(ingredientsFormUpdateString==null && shopFormUpdateString == null)
         {
-            int reply = JOptionPane.showConfirmDialog(mealPlanScreen,
+            int reply = JOptionPane.showConfirmDialog(mealPlanScreen.getFrame(),
                     String.format("\n\nNo modifications / changes were made to the ingredient '%s'. \nWould you like to clear the form?",ingredientsNameJComboBox.getSelectedItem()),
                     "", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
@@ -548,7 +547,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
 
         if (!(updateBothForms(ingredientsFormUpdateString,shopFormUpdateString )))
         {
-            JOptionPane.showMessageDialog(mealPlanScreen, "\n\nUnable To Update Ingredient Info !!");
+            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "\n\nUnable To Update Ingredient Info !!");
             return;
         }
 
@@ -590,7 +589,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //##############################################################################################################
         //
         //##############################################################################################################
-        JOptionPane.showMessageDialog(mealPlanScreen, "The ingredient updates won't appear on the mealPlan screen until this window is closed!");
+        JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "The ingredient updates won't appear on the mealPlan screen until this window is closed!");
         refreshInterface(true, true);
         super.resize_GUI();
     }
@@ -698,7 +697,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //##############################################################################################################
         if (ingredientsNameJComboBox.getSelectedIndex()==-1)
         {
-            JOptionPane.showMessageDialog(mealPlanScreen, "Please select an item first before attempting to delete an ingredient!");
+            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Please select an item first before attempting to delete an ingredient!");
             return;
         }
 
@@ -711,7 +710,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //HELLO should be removed as N/A is never in the JComboBox
         if (selectedIngredientName.equals("N/A"))
         {
-            JOptionPane.showMessageDialog(mealPlanScreen, "This item cannot be deleted from the list (its a placeholder) !");
+            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "This item cannot be deleted from the list (its a placeholder) !");
             refreshInterface(true, true);
             return;
         }
@@ -729,7 +728,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //##############################################################################################################
         if (selectedIngredientID==null || selectedIngredientName==null)
         {
-            JOptionPane.showMessageDialog(mealPlanScreen, "Unable to grab Ingredient INFO to delete it!!");
+            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Unable to grab Ingredient INFO to delete it!!");
             return;
         }
 
@@ -742,14 +741,14 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
 
         if (db.uploadData_Batch_Altogether(new String[]{query0, query1, query2}))
         {
-            JOptionPane.showMessageDialog(mealPlanScreen, String.format("Successfully Deleted '%s' From DB!", selectedIngredientName));
+            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("Successfully Deleted '%s' From DB!", selectedIngredientName));
             addOrDeleteIngredientFromMap("delete", selected_IngredientType, selectedIngredientName); // delete ingredient
             refreshInterface(true, true);
             ingredients_info_screen.setUpdateIngredientInfo(true);
         }
         else
         {
-            JOptionPane.showMessageDialog(mealPlanScreen, "Unable to delete item From DB!");
+            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Unable to delete item From DB!");
             return;
         }
 

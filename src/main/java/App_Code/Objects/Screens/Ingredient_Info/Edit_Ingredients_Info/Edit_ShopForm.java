@@ -50,7 +50,7 @@ public class Edit_ShopForm extends Add_ShopForm
 
         if (temp_ShopsFormDBData==null)
         {
-            JOptionPane.showMessageDialog(mealPlanScreen, "Unable to grab selected ingredient shop info! \nMaybe there isn't any suppliers created for this Ingredient!");
+            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Unable to grab selected ingredient shop info! \nMaybe there isn't any suppliers created for this Ingredient!");
             return;
         }
 
@@ -78,7 +78,7 @@ public class Edit_ShopForm extends Add_ShopForm
     //##################################################################################################################
     private Boolean areYouSure(String process)
     {
-        int reply = JOptionPane.showConfirmDialog(mealPlanScreen, String.format("Are you sure you want to: %s?", process, process),
+        int reply = JOptionPane.showConfirmDialog(mealPlanScreen.getFrame(), String.format("Are you sure you want to: %s?", process, process),
                 "Confirmation", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
         if (reply==JOptionPane.NO_OPTION || reply==JOptionPane.CLOSED_OPTION)
@@ -291,7 +291,7 @@ public class Edit_ShopForm extends Add_ShopForm
 
                 if (selectedIngredientID==null)
                 {
-                    JOptionPane.showMessageDialog(mealPlanScreen, String.format("Unable to get selected ingredients information to delete product:\n\"%s\" from \"%s\" as a Supplier for this ingredient.", productName, chosenShop));
+                    JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("Unable to get selected ingredients information to delete product:\n\"%s\" from \"%s\" as a Supplier for this ingredient.", productName, chosenShop));
                     return;
                 }
 
@@ -319,7 +319,7 @@ public class Edit_ShopForm extends Add_ShopForm
                 //###################################################
                 if (!(db.uploadData_Batch_Altogether(new String[]{updateQuery, updateQuery2})))
                 {
-                    JOptionPane.showMessageDialog(mealPlanScreen, String.format("Unable to remove product: \"%s\" from \"%s\" as a Supplier for this ingredient.", productName, chosenShop));
+                    JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("Unable to remove product: \"%s\" from \"%s\" as a Supplier for this ingredient.", productName, chosenShop));
                     return;
                 }
             }
@@ -333,7 +333,7 @@ public class Edit_ShopForm extends Add_ShopForm
             //################################################
             // Remove Row Object
             //################################################
-            JOptionPane.showMessageDialog(mealPlanScreen, String.format("Successfully, removed product: \"%s\" from \"%s\" as a Supplier for this ingredient.", productName, chosenShop));
+            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("Successfully, removed product: \"%s\" from \"%s\" as a Supplier for this ingredient.", productName, chosenShop));
         }
     }
 }

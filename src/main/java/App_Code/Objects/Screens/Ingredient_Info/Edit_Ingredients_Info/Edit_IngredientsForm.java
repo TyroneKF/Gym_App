@@ -47,7 +47,7 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
 
         if (selectedIngredientName==null)
         {
-            JOptionPane.showMessageDialog(mealPlanScreen, "Unable to grab Ingredient Name to edit it!!");
+            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Unable to grab Ingredient Name to edit it!!");
             return;
         }
 
@@ -60,7 +60,7 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
 
         if (ingredientInfo_Results==null)
         {
-            JOptionPane.showMessageDialog(mealPlanScreen, "Unable to grab selected ingredient info!");
+            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Unable to grab selected ingredient info!");
             return;
         }
 

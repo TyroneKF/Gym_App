@@ -4,10 +4,7 @@ import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.MacrosLeftTable;
 import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.MacrosTargetsTable;
 import App_Code.Objects.Database_Objects.MealManager;
-import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
-import App_Code.Objects.Gui_Objects.IconButton;
-import App_Code.Objects.Gui_Objects.IconPanel;
-import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
+import App_Code.Objects.Gui_Objects.*;
 import App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Ingredients_Info_Screen;
 import App_Code.Objects.Screens.Others.Loading_Screen.LoadingScreen;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -18,7 +15,7 @@ import java.io.File;
 import java.util.*;
 import java.util.List;
 
-public class Meal_Plan_Screen extends JPanel
+public class Meal_Plan_Screen extends Screen
 {
     private static boolean
             production = false;
@@ -83,16 +80,6 @@ public class Meal_Plan_Screen extends JPanel
 
     private String JFrameName = databaseName;
 
-    //##################################################################################################################
-    // Objects
-    //##################################################################################################################
-    private GridBagConstraints gbc = new GridBagConstraints();
-    private JFrame frame = new JFrame(JFrameName);
-    private JPanel scrollPaneJPanel, scrollJPanelCenter, scrollJPanelBottom;
-    private Container contentPane;
-    private final ScrollPaneCreator scrollPane  = new ScrollPaneCreator();;
-
-    private MyJDBC db;
     private Macros_Targets_Screen macrosTargets_Screen = null;
     private Ingredients_Info_Screen ingredientsInfoScreen = null;
 
@@ -104,7 +91,6 @@ public class Meal_Plan_Screen extends JPanel
     private static Integer user_id;
     private String planName;
     private Integer tempPlanID = 1, planID;
-    private int containerYPos = 0, frameHeight = 1082, frameWidth = 1925;
 
     private boolean macroTargetsChanged = false;
 
@@ -238,7 +224,7 @@ public class Meal_Plan_Screen extends JPanel
 
     public Meal_Plan_Screen(MyJDBC db)
     {
-        this.db = db;
+        super(db, "Gym App",1925, 1082, 0, 0);
 
         //##############################################################################################################
         // Getting Selected User & Plan Info
@@ -588,11 +574,6 @@ public class Meal_Plan_Screen extends JPanel
         });
     }
 
-    public void setFrameVisibility(boolean x)
-    {
-        frame.setVisible(x);
-    }
-
     public boolean getIngredientsTypesAndStoresData(boolean getMapIngredientsTypesToNames, boolean getIngredientsTypes, boolean getIngredientStores)
     {
         //#################################################################################
@@ -908,7 +889,8 @@ public class Meal_Plan_Screen extends JPanel
     //##################################################################################################################
     //  Icon Methods & ActionListener Events
     //##################################################################################################################
-    private void iconSetup(Container mainNorthPanel)
+    @Override
+    protected void iconSetup(Container mainNorthPanel)
     {
         int width, height;
         //##############################################################################################################
@@ -1069,39 +1051,6 @@ public class Meal_Plan_Screen extends JPanel
         });
 
         iconPanelInsert.add(down_ScrollBar_Btn);
-    }
-
-    private Boolean areYouSure(String process)
-    {
-        int reply = JOptionPane.showConfirmDialog(frame, String.format("Are you sure you want to %s, \nany unsaved changes will be lost in this Table! \nDo you want to %s?", process, process),
-                "Close Application", JOptionPane.YES_NO_OPTION); //HELLO Edit
-
-        if (reply==JOptionPane.NO_OPTION || reply==JOptionPane.CLOSED_OPTION)
-        {
-            return false;
-        }
-        return true;
-    }
-
-    //######################################
-    // Icon Button Actions
-    //######################################
-    public void scrollBarUp_BTN_Action()
-    {
-        //##############################################
-        // Set ScrollPane to the Bottom Straight Away
-        //##############################################
-        JScrollBar vertical = scrollPane.getVerticalScrollBar();
-        vertical.setValue(vertical.getMinimum());
-    }
-
-    public void scrollBarDown_BTN_Action()
-    {
-        //##############################################
-        // Set ScrollPane to the Bottom Straight Away
-        //##############################################
-        JScrollBar vertical = scrollPane.getVerticalScrollBar();
-        vertical.setValue(vertical.getMaximum());
     }
 
     private void addMealToPlan()
@@ -1313,15 +1262,8 @@ public class Meal_Plan_Screen extends JPanel
         // ########################################################
         resizeGUI();
 
-        // Get your collapsible panel
-        CollapsibleJPanel obj_Display = mealManager.getCollapsibleJpObj();
-
-        // Scroll to that panel AFTER layout has finished
-        SwingUtilities.invokeLater(() -> {
-            obj_Display.scrollRectToVisible(
-                    new Rectangle(0, 0, obj_Display.getWidth(), obj_Display.getHeight())
-            );
-        });
+        // Scroll to MealManager
+        scrollToJPanelOnScreen(mealManager.getCollapsibleJpObj());
     }
 
     //##################################################################################################################
@@ -1493,21 +1435,6 @@ public class Meal_Plan_Screen extends JPanel
     //###########################################
     // Objects
     //###########################################
-    public MyJDBC getDb()
-    {
-        return db;
-    }
-
-    public GridBagConstraints getGbc()
-    {
-        return gbc;
-    }
-
-    public JFrame getFrame()
-    {
-        return frame;
-    }
-
     public MacrosLeftTable getMacrosLeft_JTable()
     {
         return macrosLeft_JTable;
@@ -1562,72 +1489,5 @@ public class Meal_Plan_Screen extends JPanel
     public String[] getIngredients_ColumnNames()
     {
         return ingredients_ColumnNames;
-    }
-
-    //##################################################################################################################
-    // Sizing & Adding to GUI Methods
-    //##################################################################################################################
-    public Integer getAndIncreaseContainerYPos()
-    {
-        containerYPos++;
-        return containerYPos;
-    }
-
-    public void resizeGUI()
-    {
-        scrollJPanelCenter.revalidate();
-        scrollPaneJPanel.revalidate();
-        contentPane.revalidate();
-    }
-
-    private void addToContainer(Container container, Component addToContainer, Integer gridx, Integer gridy, Integer gridwidth,
-                                Integer gridheight, Double weightx, Double weighty, String fill, Integer ipady, Integer ipadx, String anchor)
-    {
-        if (gridx!=null)
-        {
-            gbc.gridx = gridx;
-        }
-        if (gridy!=null)
-        {
-            gbc.gridy = gridy;
-        }
-
-        gbc.gridwidth = gridwidth;
-        gbc.gridheight = gridheight;
-        gbc.weightx = weightx;
-        gbc.weighty = weighty;
-
-        gbc.ipady = ipady;
-        gbc.ipadx = ipadx;
-
-        switch (fill.toLowerCase())
-        {
-            case "horizontal":
-                gbc.fill = GridBagConstraints.HORIZONTAL;
-                break;
-            case "vertical":
-                gbc.fill = GridBagConstraints.VERTICAL;
-                break;
-
-            case "both":
-                gbc.fill = GridBagConstraints.BOTH;
-                break;
-        }
-
-        if (anchor!=null)
-        {
-            switch (anchor.toLowerCase())
-            {
-                case "start":
-                    gbc.anchor = GridBagConstraints.PAGE_START;
-                    break;
-
-                case "end":
-                    gbc.anchor = GridBagConstraints.PAGE_END;
-                    break;
-            }
-        }
-
-        container.add(addToContainer, gbc);
     }
 }

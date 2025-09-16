@@ -1,10 +1,13 @@
 package App_Code.Objects.Gui_Objects;
 
+import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class Screen
 {
+    protected MyJDBC db;
     protected static GridBagConstraints gbc = new GridBagConstraints();
     protected static JFrame frame = new JFrame();
     protected static Container contentPane;
@@ -17,16 +20,24 @@ public class Screen
             mainCenterPanel,
             scrollJPanelBottom;
 
-    protected static int containerYPos = 0;
+    protected int containerYPos = 0, frameWidth, frameHeight;
 
-    public Screen(int frameWidth, int frameHeight, int xPos, int yPos)
+    public Screen(MyJDBC db, String title, int frameWidth, int frameHeight, int xPos, int yPos)
     {
+        //########################################################
+        //
+        //########################################################
+        this.db = db;
+        this.frameHeight = frameHeight;
+        this.frameWidth = frameWidth;
+
         //########################################################
         //
         //########################################################
         frame.setVisible(false);
         frame.setResizable(true);
         frame.setSize(frameWidth, frameHeight);
+        frame.setTitle(title);
         frame.setLocation(00, 0);
 
         // Container (ContentPane)
@@ -61,7 +72,7 @@ public class Screen
     // Actions
     //##################################################################################################################
 
-    protected void scrollBarUp_BTN_Action()
+    public void scrollBarUp_BTN_Action()
     {
         //##############################################
         // Set ScrollPane to the Bottom Straight Away
@@ -70,7 +81,7 @@ public class Screen
         vertical.setValue(vertical.getMinimum());
     }
 
-    protected void scrollBarDown_BTN_Action()
+    public void scrollBarDown_BTN_Action()
     {
         //##############################################
         // Set ScrollPane to the Bottom Straight Away
@@ -109,7 +120,7 @@ public class Screen
     //##################################################################################################################
     // Mutator Methods
     //##################################################################################################################
-    protected void setFrameVisibility(boolean x)
+    public void setFrameVisibility(boolean x)
     {
         frame.setVisible(x);
     }
@@ -117,17 +128,20 @@ public class Screen
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
+    public MyJDBC getDb()
+    {
+        return db;
+    }
 
-    protected GridBagConstraints getGbc()
+    public GridBagConstraints getGbc()
     {
         return gbc;
     }
 
-    protected JFrame getFrame()
+    public JFrame getFrame()
     {
         return frame;
     }
-
 
     protected JPanel getMainNorthPanel()
     {
@@ -139,17 +153,16 @@ public class Screen
         return scrollPaneJPanel;
     }
 
-
     //##################################################################################################################
     // Sizing & Adding to GUI Methods
     //##################################################################################################################
-    protected int getAndIncreaseContainerYPos()
+     protected int getAndIncreaseContainerYPos()
     {
         containerYPos++;
         return containerYPos;
     }
 
-    protected void resizeGUI()
+    public void resizeGUI()
     {
         scrollJPanelCenter.revalidate();
         scrollPaneJPanel.revalidate();
@@ -213,7 +226,7 @@ public class Screen
     //##################################################################################################################
     public static void main(String[] args)
     {
-        new Screen(400, 600, 200, 200);
+        //new Screen(400, 600, 200, 200);
     }
 
 }

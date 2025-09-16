@@ -193,7 +193,7 @@ public class Add_Ingredients_Screen extends JPanel
         if (updateBothForms(addIngredientsForm.get_IngredientsForm_UpdateString(null), addShopForm.get_ShopForm_UpdateString()))
         {
             ingredients_info_screen.setUpdateIngredientInfo(true);
-            JOptionPane.showMessageDialog(mealPlanScreen, "The ingredient updates won't appear on the mealPlan screen until this window is closed!");
+            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "The ingredient updates won't appear on the mealPlan screen until this window is closed!");
 
             //#####################################
             // Reset Ingredient Names/Types
@@ -224,7 +224,7 @@ public class Add_Ingredients_Screen extends JPanel
 
     protected Boolean areYouSure(String process)
     {
-        int reply = JOptionPane.showConfirmDialog(mealPlanScreen, String.format("Are you sure you want to: %s?", process, process),
+        int reply = JOptionPane.showConfirmDialog(mealPlanScreen.getFrame(), String.format("Are you sure you want to: %s?", process, process),
                 "Confirmation", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
         if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
