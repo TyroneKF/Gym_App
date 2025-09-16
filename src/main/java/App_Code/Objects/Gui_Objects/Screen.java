@@ -1,0 +1,210 @@
+package App_Code.Objects.Gui_Objects;
+
+import javax.swing.*;
+import java.awt.*;
+
+public class Screen
+{
+    protected static GridBagConstraints gbc = new GridBagConstraints();
+    protected static ScrollPaneCreator scrollPane = new ScrollPaneCreator();
+    protected static JFrame frame = new JFrame();
+    protected static JPanel
+            scrollPaneJPanel,
+            scrollJPanelCenter,
+            scrollJPanelEnd;
+
+    protected static Container contentPane;
+    protected static int containerYPos = 0;
+
+    public Screen(int frameWidth, int frameHeight, int xPos, int yPos )
+    {
+        frame.setVisible(false);
+        frame.setResizable(true);
+        frame.setSize(frameWidth, frameHeight);
+        frame.setLocation(00, 0);
+
+        // Container (ContentPane)
+        contentPane = frame.getContentPane();
+        contentPane.setLayout(new GridBagLayout());
+        contentPane.setVisible(true);
+
+        //########################################################
+        // Create Interface With Sections
+        //########################################################
+        JPanel screenSectioned = new JPanel(new BorderLayout());
+        addToContainer(contentPane, screenSectioned, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+
+        // Top of GUI
+        JPanel mainNorthPanel = new JPanel(new GridBagLayout());
+        screenSectioned.add(mainNorthPanel, BorderLayout.NORTH);
+
+        // Centre of GUI
+        JPanel mainCenterPanel = new JPanel(new GridBagLayout());
+        screenSectioned.add(mainCenterPanel, BorderLayout.CENTER);
+
+        //##########################################################
+        // Create ScrollPane & Add it to Centre of GUI
+        //##########################################################
+        scrollPaneJPanel = scrollPane.getJPanel();
+        scrollPaneJPanel.setLayout(new GridBagLayout());
+        addToContainer(mainCenterPanel, scrollPane, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+
+    }
+
+    //##################################################################################################################
+    // Actions
+    //##################################################################################################################
+
+    protected void scrollBarUp_BTN_Action()
+    {
+        //##############################################
+        // Set ScrollPane to the Bottom Straight Away
+        //##############################################
+        JScrollBar vertical = scrollPane.getVerticalScrollBar();
+        vertical.setValue(vertical.getMinimum());
+    }
+
+    protected void scrollBarDown_BTN_Action()
+    {
+        //##############################################
+        // Set ScrollPane to the Bottom Straight Away
+        //##############################################
+        JScrollBar vertical = scrollPane.getVerticalScrollBar();
+        vertical.setValue(vertical.getMaximum());
+    }
+
+    protected Boolean areYouSure(String process)
+    {
+        int reply = JOptionPane.showConfirmDialog(frame, String.format("Are you sure you want to %s, \nany unsaved changes will be lost in this Table! \nDo you want to %s?", process, process),
+                "Close Application", JOptionPane.YES_NO_OPTION); //HELLO Edit
+
+        if (reply==JOptionPane.NO_OPTION || reply==JOptionPane.CLOSED_OPTION)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    protected void iconSetup(Container mainNorthPanel)
+    {
+    }
+
+    // Only Works With JPanels
+    protected void findObjectOnScreen(JPanel panel)
+    {
+
+
+        // Scroll to that panel AFTER layout has finished
+        SwingUtilities.invokeLater(() -> {
+            panel.scrollRectToVisible(
+                    new Rectangle(0, 0, panel.getWidth(), panel.getHeight())
+            );
+        });
+    }
+
+    //##################################################################################################################
+    // Mutator Methods
+    //##################################################################################################################
+    protected void setFrameVisibility(boolean x)
+    {
+        frame.setVisible(x);
+    }
+
+    //##################################################################################################################
+    // Accessor Methods
+    //##################################################################################################################
+
+    public JFrame getFrame()
+    {
+        return frame;
+    }
+
+    public GridBagConstraints getGbc()
+    {
+        return gbc;
+    }
+
+      /*  protected JPanel getCenterPanel()
+    {
+        return
+    }
+ */
+
+
+    //##################################################################################################################
+    // Sizing & Adding to GUI Methods
+    //##################################################################################################################
+    protected int getAndIncreaseContainerYPos()
+    {
+        containerYPos++;
+        return containerYPos;
+    }
+
+    protected void resizeGUI()
+    {
+        scrollJPanelCenter.revalidate();
+        scrollPaneJPanel.revalidate();
+        contentPane.revalidate();
+    }
+
+    protected void addToContainer(Container container, Component addToContainer,
+                                  Integer gridx, Integer gridy, Integer gridwidth, Integer gridheight, Double weightx,
+                                  Double weighty, String fill, Integer ipady, Integer ipadx, String anchor)
+    {
+        if (gridx!=null)
+        {
+            gbc.gridx = gridx;
+        }
+        if (gridy!=null)
+        {
+            gbc.gridy = gridy;
+        }
+
+        gbc.gridwidth = gridwidth;
+        gbc.gridheight = gridheight;
+        gbc.weightx = weightx;
+        gbc.weighty = weighty;
+
+        gbc.ipady = ipady;
+        gbc.ipadx = ipadx;
+
+        switch (fill.toLowerCase())
+        {
+            case "horizontal":
+                gbc.fill = GridBagConstraints.HORIZONTAL;
+                break;
+            case "vertical":
+                gbc.fill = GridBagConstraints.VERTICAL;
+                break;
+
+            case "both":
+                gbc.fill = GridBagConstraints.BOTH;
+                break;
+        }
+
+        if (anchor!=null)
+        {
+            switch (anchor.toLowerCase())
+            {
+                case "start":
+                    gbc.anchor = GridBagConstraints.PAGE_START;
+                    break;
+
+                case "end":
+                    gbc.anchor = GridBagConstraints.PAGE_END;
+                    break;
+            }
+        }
+
+        container.add(addToContainer, gbc);
+    }
+
+    //##################################################################################################################
+    // Sizing & Adding to GUI Methods
+    //##################################################################################################################
+    public static void main(String[] args)
+    {
+        new Screen(400,600, 200,200);
+    }
+
+}

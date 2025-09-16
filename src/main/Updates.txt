@@ -43,13 +43,16 @@ Ingredients_Info
 .) Barcode Scanner
 
 OVERALL
+.) Add meassurments table field to App
+.) Factor out NutritionIx API key into .env file
 .) GRAPHS
 .) Columns in table sizes
-.) Adding meal in order of time
 .) Demo Screen
 .) Clear GUI Screen
 .) SQL injections on Input
-.) Ingredients_info page
+.) Ingredients_info page DB Update
+
+.) Has data changed in ingredients table
 .) Refactor db requests method if nulll into a method that return boolean
 
 MYJDBC Updates FROM User inputs:
