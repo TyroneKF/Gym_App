@@ -90,10 +90,8 @@ public class Screen
     }
 
     // Only Works With JPanels
-    protected void findObjectOnScreen(JPanel panel)
+    protected void scrollToJPanelOnScreen(JPanel panel)
     {
-
-
         // Scroll to that panel AFTER layout has finished
         SwingUtilities.invokeLater(() -> {
             panel.scrollRectToVisible(
