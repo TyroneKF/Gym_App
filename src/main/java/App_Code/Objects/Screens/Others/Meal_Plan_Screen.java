@@ -324,16 +324,16 @@ public class Meal_Plan_Screen extends Screen
         scrollJPanelBottom = new JPanel(new GridBagLayout());
         addToContainer(getScrollPaneJPanel(), scrollJPanelBottom, 0, 1, 1, 1, 0.25, 0.25, "both", 0, 0, "end");
 
-        //##########################################################
+        //###################################
         // Increase Progress
-        //##########################################################
+        //###################################
         loadingScreen.increaseBar(10);
 
         //##############################################################################################################
         //Bottom : ScrollPanel
         //##############################################################################################################
         JPanel macrosInfoJPanel = new JPanel(new GridBagLayout());
-        addToContainer(scrollJPanelBottom, macrosInfoJPanel, 0, containerYPos++, 1, 1, 0.25, 0.25, "horizontal", 0, 0, "end");
+        addToContainer(scrollJPanelBottom, macrosInfoJPanel, 0, 0, 1, 1, 0.25, 0.25, "horizontal", 0, 0, "end");
 
         //#########################################################################
         // Setting up macroTargets Table
@@ -347,7 +347,7 @@ public class Meal_Plan_Screen extends Screen
         macros_Targets_Table = new MacrosTargetsTable(db, macrosInfoJPanel, planData, macroTargetsTable_ColumnNames, planID, tempPlanID,
                 tablePlanMacroTargetsNameCalc, new ArrayList<>(Arrays.asList(macroTargetsTable_ColumnNames)), null, macrosTargets_Table_ColToHide);
 
-        addToContainer(macrosInfoJPanel, macros_Targets_Table, 0, 1, 1, 1, 0.25, 0.25, "both", 40, 0, null);
+        addToContainer(macrosInfoJPanel, macros_Targets_Table, 0, 0, 1, 1, 0.25, 0.25, "both", 40, 0, null);
 
         //########################################
         // macroTargets Complete
@@ -367,7 +367,7 @@ public class Meal_Plan_Screen extends Screen
         macrosLeft_JTable = new MacrosLeftTable(db, macrosInfoJPanel, macrosData, macrosLeft_columnNames, planID, tempPlanID,
                 tablePlanMacrosLeftName, new ArrayList<>(Arrays.asList(macrosLeft_columnNames)), null, macrosLeft_Table_ColToHide);
 
-        addToContainer(macrosInfoJPanel, macrosLeft_JTable, 0, 2, 1, 1, 0.25, 0.25, "both", 30, 0, null);
+        addToContainer(macrosInfoJPanel, macrosLeft_JTable, 0, 1, 1, 1, 0.25, 0.25, "both", 30, 0, null);
 
         //########################################
         // macroTargets Complete
