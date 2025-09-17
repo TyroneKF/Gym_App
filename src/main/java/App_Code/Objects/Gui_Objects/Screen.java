@@ -134,6 +134,11 @@ public class Screen
         if(title.length() > 0) frame.setTitle(title);
     }
 
+    public void setResizable(boolean x)
+    {
+        frame.setResizable(false);
+    }
+
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
@@ -160,6 +165,16 @@ public class Screen
     protected JPanel getScrollPaneJPanel()
     {
         return scrollPaneJPanel;
+    }
+
+    protected int getFrameWidth()
+    {
+        return frameWidth;
+    }
+
+    protected int getFrameHeight()
+    {
+        return frameHeight;
     }
 
     //##################################################################################################################

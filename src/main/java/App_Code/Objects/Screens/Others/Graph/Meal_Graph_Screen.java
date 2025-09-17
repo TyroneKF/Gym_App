@@ -15,6 +15,7 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.PiePlot3D;
+import org.jfree.chart.title.TextTitle;
 import org.jfree.chart.util.Rotation;
 import org.jfree.data.general.DefaultPieDataset;
 
@@ -47,7 +48,9 @@ public class Meal_Graph_Screen extends Screen
         //############################################
         // Variables
         //############################################
-        super(db, meal_name, 800, 1082, 0, 0);
+        super(db, meal_name, 800, 600, 0, 0);
+        getScrollPaneJPanel().setBackground(Color.WHITE);
+        setResizable(false);
 
         this.meal_in_plan_id = meal_in_plan_id;
         this.temp_planID = temp_planID;
@@ -59,13 +62,13 @@ public class Meal_Graph_Screen extends Screen
         //############################################
         for (String key : macros.keySet())
         {
-            dataset.setValue(key, macros.get(key));
+            dataset.setValue(String.format("  %s (%s g )  ", key, macros.get(key)), macros.get(key) );
         }
 
         //############################################
-        // Add Data to Dataset to represent
+        // Create Plot with Data & Configurations
         //############################################
-        JFreeChart chart = ChartFactory.createPieChart3D("Market Share", dataset, true, true, false);
+        JFreeChart chart = ChartFactory.createPieChart3D(String.format("%s Macros", meal_name), dataset, true, true, false);
 
         PiePlot3D plot = (PiePlot3D) chart.getPlot();
         plot.setStartAngle(290);
@@ -84,19 +87,35 @@ public class Meal_Graph_Screen extends Screen
         // Place labels inside slices
         plot.setSimpleLabels(true);
         plot.setLabelGap(0.02);
-        plot.setLabelFont(new Font("SansSerif", Font.BOLD, 20));
+
+        // #############################################
+        // Setting Font sizes
+        //#############################################
+        // Set Title Font Size
+        TextTitle title = chart.getTitle();
+        title.setFont(new Font("Serif", Font.PLAIN, 27));
+
+        // Label font size on diagram
+        plot.setLabelFont(new Font("SansSerif", Font.BOLD, 22));
         plot.setLabelPaint(Color.BLACK);   // Black stands out better than white
 
-        // Optional: change legend font too
-        chart.getLegend().setItemFont(new Font("SansSerif", Font.PLAIN, 18));
+        // Legend Font Size
+        chart.getLegend().setItemFont(new Font("Serif", Font.PLAIN, 25));
 
-        // Add chart to panel
-        ChartPanel chartPanel = new ChartPanel(chart);
-        addToContainer(getScrollPaneJPanel(), chartPanel, 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
-
+        // #############################################
+        // Auto Rotate Features
+        //#############################################
         // 🔹 auto-rotate : auto-rotate (50 ms delay ≈ 20 frames/sec)
         Rotator rotator = new Rotator(plot, 50);
         rotator.start();
+
+        // #############################################
+        // Create Plot & Add to GUI
+        //#############################################
+        // Add chart to panel
+        ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setPreferredSize(new java.awt.Dimension(getFrameWidth() - 50, getFrameHeight() - 60));
+        addToContainer(getScrollPaneJPanel(), chartPanel, 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
     }
 
     public class Rotator extends Timer implements ActionListener
@@ -134,9 +153,9 @@ public class Meal_Graph_Screen extends Screen
         if (db.get_DB_Connection_Status())
         {
             Map<String, Double> macros = Map.ofEntries(
-                    Map.entry("Alice", 90.0),
-                    Map.entry("Bob", 85.0),
-                    Map.entry("Charlie", 92.0)
+                    Map.entry("Protein", 71.89),
+                    Map.entry("Carbs", 231.15),
+                    Map.entry("Fats", 104.62)
             );
 
             Meal_Graph_Screen x = new Meal_Graph_Screen(db, "Breakfast", 2, 1, macros);
