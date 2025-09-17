@@ -16,6 +16,7 @@ import org.jfree.chart.labels.PieSectionLabelGenerator;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
 
 import java.text.DecimalFormat;
+import org.jfree.chart.plot.PiePlot;
 
 public class DynamicPieChart2 extends JFrame
 {
@@ -55,15 +56,20 @@ public class DynamicPieChart2 extends JFrame
         // Place labels inside slices
         plot.setSimpleLabels(true);
         plot.setLabelGap(0.02);
-        plot.setLabelFont(new Font("SansSerif", Font.BOLD, 16));
+        plot.setLabelFont(new Font("SansSerif", Font.BOLD, 20));
         plot.setLabelPaint(Color.BLACK);   // Black stands out better than white
 
         // Optional: change legend font too
-        chart.getLegend().setItemFont(new Font("SansSerif", Font.PLAIN, 14));
+        chart.getLegend().setItemFont(new Font("SansSerif", Font.PLAIN, 18));
 
         // Add chart to panel
         ChartPanel chartPanel = new ChartPanel(chart);
         setContentPane(chartPanel);
+
+        // 🔹 auto-rotate
+        // auto-rotate (50 ms delay ≈ 20 frames/sec)
+        Rotator rotator = new Rotator(plot, 50);
+        rotator.start();
 
         // Example: Dynamically update data every 2 seconds
         Timer timer = new Timer(2000, new ActionListener()
@@ -78,6 +84,30 @@ public class DynamicPieChart2 extends JFrame
             }
         });
         timer.start();
+    }
+
+    public class Rotator extends Timer implements ActionListener
+    {
+        private final PiePlot plot;
+        private int angle = 270; // starting angle
+
+        public Rotator(PiePlot plot, int delay)
+        {
+            super(delay, null);
+            this.plot = plot;
+            addActionListener(this);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            angle = angle + 1;          // rotate 1 degree per tick
+            if (angle==360)
+            {
+                angle = 0;
+            }
+            plot.setStartAngle(angle);  // update the plot
+        }
     }
 
     public static void main(String[] args)
