@@ -4,6 +4,7 @@ import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 
 public class Screen
 {
@@ -224,7 +225,7 @@ public class Screen
     //##################################################################################################################
     // Sizing & Adding to GUI Methods
     //##################################################################################################################
-    public static void main(String[] args)
+    public static void main(String[] args) throws IOException
     {
         //new Screen(400, 600, 200, 200);
     }
