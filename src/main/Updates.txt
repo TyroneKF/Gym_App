@@ -54,6 +54,7 @@ OVERALL
 
 .) Has data changed in ingredients table
 .) Refactor db requests method if nulll into a method that return boolean
+.) Diagram of carbs and nutrients in line graph over the day
 
 MYJDBC Updates FROM User inputs:
 .) SQL injections

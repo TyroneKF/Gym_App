@@ -17,9 +17,6 @@ import java.util.List;
 
 public class Meal_Plan_Screen extends Screen
 {
-    private static boolean
-            production = false;
-
     private Collection<String> ingredientsTypesList, storesNamesList;
 
     // Sorted Hashmap by key String
@@ -47,11 +44,21 @@ public class Meal_Plan_Screen extends Screen
     private MacrosLeftTable macrosLeft_JTable;
     private MacrosTargetsTable macros_Targets_Table;
 
+    private Macros_Targets_Screen macrosTargets_Screen = null;
+    private Ingredients_Info_Screen ingredientsInfoScreen = null;
+
     //##################################################################################################################
     //
     //##################################################################################################################
-    private final static String
+    private static String
             version_no = "00001",
+            databaseName = "gymapp" + version_no,
+            user_name = "root",
+            password = "password";
+
+    private String JFrameName = databaseName;
+
+    private final static String
             db_Scripts_Folder_Path = "/data/database_scripts",
             db_File_Script_List_Name = "0.) Script_List.txt",
             db_File_Tables_Name = "0.) Database_Names.txt",
@@ -73,16 +80,6 @@ public class Meal_Plan_Screen extends Screen
             tableTotalPlanTableName = "total_plan_view",
             tablePlanMacrosLeftName = "plan_macros_left";
 
-    private static String
-            user_name = "root",
-            password = "password",
-            databaseName = "gymapp" + version_no;
-
-    private String JFrameName = databaseName;
-
-    private Macros_Targets_Screen macrosTargets_Screen = null;
-    private Ingredients_Info_Screen ingredientsInfoScreen = null;
-
     //##################################################################################################################
     // Variables
     //##################################################################################################################
@@ -93,6 +90,9 @@ public class Meal_Plan_Screen extends Screen
     private Integer tempPlanID = 1, planID;
 
     private boolean macroTargetsChanged = false;
+    private static boolean production = false;
+
+    private String lineSeparator = "###############################################################################";
 
     //##################################################################################################################
     // Ingredients Table Columns
@@ -123,105 +123,9 @@ public class Meal_Plan_Screen extends Screen
     // Table : plan_macros_left
     macrosLeft_Table_ColToHide = new ArrayList<String>(Arrays.asList("plan_id", "plan_name"));
 
-    //########################################################
-
-    String lineSeparator = "###############################################################################";
-
-    public static void main(String[] args)
-    {
-        if (production)
-        {
-            try
-            {
-                /*
-                // Using System Variables (OS LVL)
-                String host = System.getenv("GYM_APP_DB_HOST");
-                String port = System.getenv("GYM_APP_DB_PORT");
-                String user = System.getenv("GYM_APP_DB_USER");
-                String password = System.getenv("GYM_APP_DB_PASS");
-                String dbName = System.getenv("GYM_APP_DB_NAME");
-                */
-
-                // #########################################
-                // Set Path Files
-                // #########################################
-                String userDirectory = new File("").getAbsolutePath(); // get path file of where this is being executed
-
-                System.out.printf("\nDirectory: \n%s \n\n\nScripts Directory:\n%s", userDirectory, db_Scripts_Folder_Path);
-                System.out.println("\n\n\nReading ENV Variables: host, port, user, ****, db_name");
-
-                // #########################################
-                // Get .env variables
-                // #########################################
-                Dotenv dotenv = Dotenv.configure()
-                        .directory(userDirectory)
-                        .filename(".env") // instead of '.env', use 'env'
-                        .load();
-
-                String host = dotenv.get("DB_HOST");
-                String port = dotenv.get("DB_PORT");
-                String user = dotenv.get("DB_USER");
-                String password = dotenv.get("DB_PASS");
-
-                String dbName = dotenv.get("DB_NAME");
-
-                if (host==null || port==null || user==null || password==null || dbName==null)
-                {
-                    System.err.printf("\n\nDB Values: \nhost: %s \nport: %s \nuser: %s \ndbName: %s",
-                            host, port, user, dbName);
-
-                    throw new RuntimeException("Missing one or more required DB environment variables.");
-                }
-
-                System.out.println("\n\nSuccessfully retrieved ENV Variables: host, port, user, *****, db_name");
-
-                // #########################################
-                // Assigning values to variables &
-                // #########################################
-
-                databaseName = dbName;
-                user_name = user;
-
-                // #########################################
-                // Create DB Object & run SQL Scripts
-                // #########################################
-                MyJDBC db = new MyJDBC(true, host, port, user, password, dbName, db_Scripts_Folder_Path, db_File_Script_List_Name, db_File_Tables_Name);
-
-                if (db.get_DB_Connection_Status())
-                {
-                    new Meal_Plan_Screen(db);
-                }
-                else
-                {
-                    JOptionPane.showMessageDialog(null, "ERROR, Cannot Connect To Database!");
-                    return;
-                }
-            }
-            catch (Exception e)
-            {
-                System.err.printf("\n\nError Meal_Plan_Screen() \n%s", e);
-                return;
-            }
-        }
-        else
-        {
-            //############################################################################################################
-            // Create DB Object & run SQL Script
-            //#############################################################################################################
-
-            MyJDBC db = new MyJDBC(false, "localhost", "3306", user_name, password, databaseName, db_Scripts_Folder_Path, db_File_Script_List_Name, db_File_Tables_Name);
-
-            if (db.get_DB_Connection_Status())
-            {
-                new Meal_Plan_Screen(db);
-            }
-            else
-            {
-                JOptionPane.showMessageDialog(null, "ERROR, Cannot Connect To Database!");
-            }
-        }
-    }
-
+    //##################################################################################################################
+    //
+    //##################################################################################################################
     public Meal_Plan_Screen(MyJDBC db)
     {
         super(db, "Gym App",1925, 1082, 0, 0);
@@ -574,6 +478,107 @@ public class Meal_Plan_Screen extends Screen
         });
     }
 
+    //##################################################################################################################
+    //
+    //##################################################################################################################
+    public static void main(String[] args)
+    {
+        if (production)
+        {
+            try
+            {
+                /*
+                // Using System Variables (OS LVL)
+                String host = System.getenv("GYM_APP_DB_HOST");
+                String port = System.getenv("GYM_APP_DB_PORT");
+                String user = System.getenv("GYM_APP_DB_USER");
+                String password = System.getenv("GYM_APP_DB_PASS");
+                String dbName = System.getenv("GYM_APP_DB_NAME");
+                */
+
+                // #########################################
+                // Set Path Files
+                // #########################################
+                String userDirectory = new File("").getAbsolutePath(); // get path file of where this is being executed
+
+                System.out.printf("\nDirectory: \n%s \n\n\nScripts Directory:\n%s", userDirectory, db_Scripts_Folder_Path);
+                System.out.println("\n\n\nReading ENV Variables: host, port, user, ****, db_name");
+
+                // #########################################
+                // Get .env variables
+                // #########################################
+                Dotenv dotenv = Dotenv.configure()
+                        .directory(userDirectory)
+                        .filename(".env") // instead of '.env', use 'env'
+                        .load();
+
+                String host = dotenv.get("DB_HOST");
+                String port = dotenv.get("DB_PORT");
+                String user = dotenv.get("DB_USER");
+                String password = dotenv.get("DB_PASS");
+
+                String dbName = dotenv.get("DB_NAME");
+
+                if (host==null || port==null || user==null || password==null || dbName==null)
+                {
+                    System.err.printf("\n\nDB Values: \nhost: %s \nport: %s \nuser: %s \ndbName: %s",
+                            host, port, user, dbName);
+
+                    throw new RuntimeException("Missing one or more required DB environment variables.");
+                }
+
+                System.out.println("\n\nSuccessfully retrieved ENV Variables: host, port, user, *****, db_name");
+
+                // #########################################
+                // Assigning values to variables &
+                // #########################################
+
+                databaseName = dbName;
+                user_name = user;
+
+                // #########################################
+                // Create DB Object & run SQL Scripts
+                // #########################################
+                MyJDBC db = new MyJDBC(true, host, port, user, password, dbName, db_Scripts_Folder_Path, db_File_Script_List_Name, db_File_Tables_Name);
+
+                if (db.get_DB_Connection_Status())
+                {
+                    new Meal_Plan_Screen(db);
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(null, "ERROR, Cannot Connect To Database!");
+                    return;
+                }
+            }
+            catch (Exception e)
+            {
+                System.err.printf("\n\nError Meal_Plan_Screen() \n%s", e);
+                return;
+            }
+        }
+        else
+        {
+            //############################################################################################################
+            // Create DB Object & run SQL Script
+            //#############################################################################################################
+
+            MyJDBC db = new MyJDBC(false, "localhost", "3306", user_name, password, databaseName, db_Scripts_Folder_Path, db_File_Script_List_Name, db_File_Tables_Name);
+
+            if (db.get_DB_Connection_Status())
+            {
+                new Meal_Plan_Screen(db);
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(null, "ERROR, Cannot Connect To Database!");
+            }
+        }
+    }
+
+    //##################################################################################################################
+    //
+    //##################################################################################################################
     public boolean getIngredientsTypesAndStoresData(boolean getMapIngredientsTypesToNames, boolean getIngredientsTypes, boolean getIngredientStores)
     {
         //#################################################################################
