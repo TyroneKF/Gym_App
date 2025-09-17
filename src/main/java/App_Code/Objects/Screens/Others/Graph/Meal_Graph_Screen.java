@@ -65,8 +65,7 @@ public class Meal_Graph_Screen extends Screen
         //############################################
         // Add Data to Dataset to represent
         //############################################
-        JFreeChart chart = ChartFactory.createPieChart3D(
-                "Market Share", dataset, true, true, false);
+        JFreeChart chart = ChartFactory.createPieChart3D("Market Share", dataset, true, true, false);
 
         PiePlot3D plot = (PiePlot3D) chart.getPlot();
         plot.setStartAngle(290);
