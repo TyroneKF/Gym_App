@@ -13,13 +13,16 @@ public class Screen
     protected static JFrame frame = new JFrame();
     protected static Container contentPane;
     protected static ScrollPaneCreator scrollPane = new ScrollPaneCreator();
-    protected static JPanel
-            scrollPaneJPanel,
-            scrollJPanelCenter,
-            screenSectioned,
+
+    // public
+    protected JPanel
             mainNorthPanel,
-            mainCenterPanel,
-            scrollJPanelBottom;
+            scrollPaneJPanel;
+
+    // private
+    private static JPanel
+            screenSectioned,
+            mainCenterPanel;
 
     protected int containerYPos = 0, frameWidth, frameHeight;
 
@@ -126,6 +129,11 @@ public class Screen
         frame.setVisible(x);
     }
 
+    public void setTitle(String title)
+    {
+        if(title.length() > 0) frame.setTitle(title);
+    }
+
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
@@ -165,7 +173,6 @@ public class Screen
 
     public void resizeGUI()
     {
-        scrollJPanelCenter.revalidate();
         scrollPaneJPanel.revalidate();
         contentPane.revalidate();
     }

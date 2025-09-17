@@ -17,6 +17,10 @@ import java.util.List;
 
 public class Meal_Plan_Screen extends Screen
 {
+
+    //##################################################################################################################
+    //
+    //##################################################################################################################
     private Collection<String> ingredientsTypesList, storesNamesList;
 
     // Sorted Hashmap by key String
@@ -37,6 +41,12 @@ public class Meal_Plan_Screen extends Screen
         }
     });
 
+    //##################################################################################################################
+    //
+    //##################################################################################################################
+    private JPanel
+            scrollJPanelCenter,
+            scrollJPanelBottom;
 
     //##################################################################################################################
     // Table Objects
@@ -299,56 +309,69 @@ public class Meal_Plan_Screen extends Screen
         }
 
         //#############################################################################################################
-        //  1. Create the GUI framework
+        //  Setup GUI & Split ScrollPane Into Sections
         //#############################################################################################################
         System.out.printf("\nMeal_Plan_Screen.java : Creating GUI Screen \n%s", lineSeparator); // Update
 
-        frame.setVisible(false);
-        frame.setResizable(true);
-        frame.setSize(frameWidth, frameHeight);
-        frame.setLocation(00, 0);
-
-        // Container (ContentPane)
-        contentPane = frame.getContentPane();
-        contentPane.setLayout(new GridBagLayout());
-        contentPane.setVisible(true);
-
-        //########################################################
-        // Create Interface With Sections
-        //########################################################
-        JPanel screenSectioned = new JPanel(new BorderLayout());
-        addToContainer(contentPane, screenSectioned, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
-
-        // Top of GUI
-        JPanel mainNorthPanel = new JPanel(new GridBagLayout());
-        screenSectioned.add(mainNorthPanel, BorderLayout.NORTH);
-
-        iconSetup(mainNorthPanel); // Icon Setup in mainNorthPanel
-
-        // Centre of GUI
-        JPanel mainCenterPanel = new JPanel(new GridBagLayout());
-        screenSectioned.add(mainCenterPanel, BorderLayout.CENTER);
-
-        //##########################################################
-        // Create ScrollPane & Add it to Centre of GUI
-        //##########################################################
-        // Attach ScrollPane to the centre of the screen
-        addToContainer(mainCenterPanel, scrollPane, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
-        scrollPaneJPanel = scrollPane.getJPanel();
-        scrollPaneJPanel.setLayout(new GridBagLayout());
+        iconSetup(getMainNorthPanel()); // Icon Setup in mainNorthPanel
 
         //##############################
         // Splitting Scroll JPanel
         //##############################
         scrollJPanelCenter = new JPanel(new GridBagLayout());
-        addToContainer(scrollPaneJPanel, scrollJPanelCenter, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, "center");
+        addToContainer(getScrollPaneJPanel(), scrollJPanelCenter, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, "center");
 
         scrollJPanelBottom = new JPanel(new GridBagLayout());
-        addToContainer(scrollPaneJPanel, scrollJPanelBottom, 0, 1, 1, 1, 0.25, 0.25, "both", 0, 0, "end");
+        addToContainer(getScrollPaneJPanel(), scrollJPanelBottom, 0, 1, 1, 1, 0.25, 0.25, "both", 0, 0, "end");
 
         //##########################################################
         // Increase Progress
         //##########################################################
+        loadingScreen.increaseBar(10);
+
+        //##############################################################################################################
+        //Bottom : ScrollPanel
+        //##############################################################################################################
+        JPanel macrosInfoJPanel = new JPanel(new GridBagLayout());
+        addToContainer(scrollJPanelBottom, macrosInfoJPanel, 0, containerYPos++, 1, 1, 0.25, 0.25, "horizontal", 0, 0, "end");
+
+        //#########################################################################
+        // Setting up macroTargets Table
+        //#########################################################################
+        // Getting data for plan_macro_target_calculations
+        String planCalcQuery = String.format("SELECT * from %s WHERE plan_id = %s;", tablePlanMacroTargetsNameCalc, tempPlanID);
+
+        Object[][] planData = db.getTableDataObject(planCalcQuery, tablePlanMacroTargetsNameCalc);
+        planData = planData!=null ? planData:new Object[0][0];
+
+        macros_Targets_Table = new MacrosTargetsTable(db, macrosInfoJPanel, planData, macroTargetsTable_ColumnNames, planID, tempPlanID,
+                tablePlanMacroTargetsNameCalc, new ArrayList<>(Arrays.asList(macroTargetsTable_ColumnNames)), null, macrosTargets_Table_ColToHide);
+
+        addToContainer(macrosInfoJPanel, macros_Targets_Table, 0, 1, 1, 1, 0.25, 0.25, "both", 40, 0, null);
+
+        //########################################
+        // macroTargets Complete
+        //########################################
+        loadingScreen.increaseBar(10);
+
+        //###########################################################################
+        // planMacrosLeft Table Setup
+        //###########################################################################
+
+        // Get table data from plan_macros_left
+        String macrosQuery = String.format("SELECT * from %s WHERE plan_id = %s;", tablePlanMacrosLeftName, tempPlanID);
+
+        Object[][] macrosData = db.getTableDataObject(macrosQuery, tablePlanMacrosLeftName);
+        macrosData = macrosData!=null ? macrosData:new Object[0][0];
+
+        macrosLeft_JTable = new MacrosLeftTable(db, macrosInfoJPanel, macrosData, macrosLeft_columnNames, planID, tempPlanID,
+                tablePlanMacrosLeftName, new ArrayList<>(Arrays.asList(macrosLeft_columnNames)), null, macrosLeft_Table_ColToHide);
+
+        addToContainer(macrosInfoJPanel, macrosLeft_JTable, 0, 2, 1, 1, 0.25, 0.25, "both", 30, 0, null);
+
+        //########################################
+        // macroTargets Complete
+        //########################################
         loadingScreen.increaseBar(10);
 
         //##############################################################################################################
@@ -397,51 +420,6 @@ public class Meal_Plan_Screen extends Screen
         if (errorFound) return;
 
         System.out.printf("\n\n%s", lineSeparator);
-
-        //##############################################################################################################
-        //Bottom : ScrollPanel
-        //##############################################################################################################
-        JPanel macrosInfoJPanel = new JPanel(new GridBagLayout());
-        addToContainer(scrollJPanelBottom, macrosInfoJPanel, 0, containerYPos++, 1, 1, 0.25, 0.25, "horizontal", 0, 0, "end");
-
-        //#########################################################################
-        // Setting up macroTargets Table
-        //#########################################################################
-        // Getting data for plan_macro_target_calculations
-        String planCalcQuery = String.format("SELECT * from %s WHERE plan_id = %s;", tablePlanMacroTargetsNameCalc, tempPlanID);
-
-        Object[][] planData = db.getTableDataObject(planCalcQuery, tablePlanMacroTargetsNameCalc);
-        planData = planData!=null ? planData:new Object[0][0];
-
-        macros_Targets_Table = new MacrosTargetsTable(db, macrosInfoJPanel, planData, macroTargetsTable_ColumnNames, planID, tempPlanID,
-                tablePlanMacroTargetsNameCalc, new ArrayList<>(Arrays.asList(macroTargetsTable_ColumnNames)), null, macrosTargets_Table_ColToHide);
-
-        addToContainer(macrosInfoJPanel, macros_Targets_Table, 0, 1, 1, 1, 0.25, 0.25, "both", 40, 0, null);
-
-        //########################################
-        // macroTargets Complete
-        //########################################
-        loadingScreen.increaseBar(10);
-
-        //###########################################################################
-        // planMacrosLeft Table Setup
-        //###########################################################################
-
-        // Get table data from plan_macros_left
-        String macrosQuery = String.format("SELECT * from %s WHERE plan_id = %s;", tablePlanMacrosLeftName, tempPlanID);
-
-        Object[][] macrosData = db.getTableDataObject(macrosQuery, tablePlanMacrosLeftName);
-        macrosData = macrosData!=null ? macrosData:new Object[0][0];
-
-        macrosLeft_JTable = new MacrosLeftTable(db, macrosInfoJPanel, macrosData, macrosLeft_columnNames, planID, tempPlanID,
-                tablePlanMacrosLeftName, new ArrayList<>(Arrays.asList(macrosLeft_columnNames)), null, macrosLeft_Table_ColToHide);
-
-        addToContainer(macrosInfoJPanel, macrosLeft_JTable, 0, 2, 1, 1, 0.25, 0.25, "both", 30, 0, null);
-
-        //########################################
-        // macroTargets Complete
-        //########################################
-        loadingScreen.increaseBar(10);
 
         //##############################################################################################################
         // GUI Alignments & Configurations
