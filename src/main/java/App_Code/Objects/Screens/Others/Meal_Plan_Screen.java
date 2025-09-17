@@ -885,6 +885,46 @@ public class Meal_Plan_Screen extends Screen
         JPanel iconPanelInsert = iconPanel.getIconJpanel();
 
         addToContainer(mainNorthPanel, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0, null);
+
+        //##########################
+        // Clear
+        //##########################
+        width = 60;
+        height = 53;
+
+        IconButton clear_Icon_Btn = new IconButton("/images/close_btn/delete.png", width, height, width, height,
+                "centre", "right"); // btn text is useless here , refactor
+
+        clear_Icon_Btn.makeBTntransparent();
+
+        JButton clear_Btn = clear_Icon_Btn.returnJButton();
+        clear_Btn.setToolTipText("Clear Meal Plan"); //Hover message over icon
+
+        clear_Btn.addActionListener(ae -> {
+        });
+
+        iconPanelInsert.add(clear_Btn);
+
+        //##########################
+        //  Histogram
+        //##########################
+        width = 51;
+        height = 53;
+
+        IconButton histogram_Icon_Btn = new IconButton("/images/graph/bar1.png", width, height, width, height,
+                "centre", "right"); // btn text is useless here , refactor
+
+        histogram_Icon_Btn.makeBTntransparent();
+
+        JButton histogram_Btn = histogram_Icon_Btn.returnJButton();
+        histogram_Btn.setToolTipText("Display Macronutrient Data in Histogram"); //Hover message over icon
+
+        histogram_Btn.addActionListener(ae -> {
+
+        });
+
+        iconPanelInsert.add(histogram_Btn);
+
         //##########################
         //  ScrollBar Up
         //##########################
