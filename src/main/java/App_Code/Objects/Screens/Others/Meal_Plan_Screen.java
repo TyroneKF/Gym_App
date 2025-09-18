@@ -32,12 +32,12 @@ public class Meal_Plan_Screen extends Screen
         }
     });
 
-    private TreeSet< Map.Entry<Integer, MealManager> > mealManagerTreeSet = new TreeSet<Map.Entry<Integer, MealManager>>(new Comparator<Map.Entry<Integer,MealManager>>()
+    private TreeSet<Map.Entry<Integer, MealManager>> mealManagerTreeSet = new TreeSet<Map.Entry<Integer, MealManager>>(new Comparator<Map.Entry<Integer, MealManager>>()
     {
         @Override
-        public int compare( Map.Entry<Integer, MealManager> o1, Map.Entry<Integer, MealManager> o2 )
+        public int compare(Map.Entry<Integer, MealManager> o1, Map.Entry<Integer, MealManager> o2)
         {
-            return  o1.getValue().getCurrentMealTime().compareTo(o2.getValue().getCurrentMealTime());
+            return o1.getValue().getCurrentMealTime().compareTo(o2.getValue().getCurrentMealTime());
         }
     });
 
@@ -138,7 +138,7 @@ public class Meal_Plan_Screen extends Screen
     //##################################################################################################################
     public Meal_Plan_Screen(MyJDBC db)
     {
-        super(db, "Gym App",1925, 1082, 0, 0);
+        super(db, "Gym App", 1925, 1082, 0, 0);
 
         //##############################################################################################################
         // Getting Selected User & Plan Info
@@ -155,13 +155,13 @@ public class Meal_Plan_Screen extends Screen
 
         ArrayList<ArrayList<String>> results1 = db.getMultiColumnQuery(queryX);
 
-        ArrayList<String> results = results1!=null ? results1.get(0):null;
+        ArrayList<String> results = results1 != null ? results1.get(0) : null;
 
-        user_id = results!=null ? Integer.parseInt(results.get(0)):null;
-        planID = results!=null ? Integer.parseInt(results.get(1)):null;
-        planName = results!=null ? results.get(2):null;
+        user_id = results != null ? Integer.parseInt(results.get(0)) : null;
+        planID = results != null ? Integer.parseInt(results.get(1)) : null;
+        planName = results != null ? results.get(2) : null;
 
-        if (planID==null || user_id==null || planName==null || user_name==null)
+        if (planID == null || user_id == null || planName == null || user_name == null)
         {
             System.err.printf("\n\nUsername : %s \nUser ID : %s \n\nSelected Plan ID : %s  \nSelected Plan Name : %s\n", user_name, user_id, planID, planName);
 
@@ -178,7 +178,7 @@ public class Meal_Plan_Screen extends Screen
         String query2 = String.format("SELECT COUNT(div_meal_sections_id) AS total_sub_meals FROM %s WHERE plan_id = %s;", tableSub_MealsName, planID);
         String[] dividedMealSectionsCount = db.getSingleColumnQuery(query2);
 
-        if (mealsInPlanCount==null | dividedMealSectionsCount==null)
+        if (mealsInPlanCount == null | dividedMealSectionsCount == null)
         {
             String msg = "\n\nError, Getting Meal Count Or, Sub Meals Count";
 
@@ -215,7 +215,7 @@ public class Meal_Plan_Screen extends Screen
         //####################################################
         // Transferring PLan Data To Temp
         //####################################################
-        if (!transferPlanData(planID, tempPlanID))
+        if (! transferPlanData(planID, tempPlanID))
         {
             loadingScreen.closeWindow();
             return;
@@ -227,7 +227,7 @@ public class Meal_Plan_Screen extends Screen
         //####################################################
         // Transferring Targets From Chosen PLan to Temp
         //####################################################
-        if (!transferTargets(planID, tempPlanID, true, false))
+        if (! transferTargets(planID, tempPlanID, true, false))
         {
             loadingScreen.closeWindow();
             return;
@@ -238,7 +238,7 @@ public class Meal_Plan_Screen extends Screen
         //####################################################
         // Transferring this plans Meals  Info to Temp-Plan
         //####################################################
-        if (!(transferMealIngredients(planID, tempPlanID)))
+        if (! (transferMealIngredients(planID, tempPlanID)))
         {
             loadingScreen.closeWindow();
             JOptionPane.showMessageDialog(null, "\n\nCannot Create Temporary Plan In DB to Allow Editing");
@@ -250,7 +250,7 @@ public class Meal_Plan_Screen extends Screen
         //####################################################
         // Get IngredientTypes & Store Data
         //####################################################
-        if (!(getIngredientsTypesAndStoresData(true, true, true)))
+        if (! (getIngredientsTypesAndStoresData(true, true, true)))
         {
             loadingScreen.closeWindow();
             JOptionPane.showMessageDialog(null, "\n\nCannot Get Ingredients_Types & Stores Info \n\ngetIngredientsTypesAndStoresData()");
@@ -275,7 +275,7 @@ public class Meal_Plan_Screen extends Screen
         // Get table column names for plan_macros_left
         macrosLeft_columnNames = db.getColumnNames(tablePlanMacrosLeftName);
 
-        if (ingredients_ColumnNames==null | meal_total_columnNames==null | macroTargetsTable_ColumnNames==null | macrosLeft_columnNames==null)
+        if (ingredients_ColumnNames == null | meal_total_columnNames == null | macroTargetsTable_ColumnNames == null | macrosLeft_columnNames == null)
         {
             System.err.printf("Error, Gathering Column Names for Tables: \n%s = %s%n \n%s = %s%n \n%s = %s%n \n%s = %s%n",
 
@@ -300,7 +300,7 @@ public class Meal_Plan_Screen extends Screen
 
             meals_Info_In_Plan = db.getMultiColumnQuery(query);
 
-            if (meals_Info_In_Plan==null)
+            if (meals_Info_In_Plan == null)
             {
                 JOptionPane.showMessageDialog(getFrame(), "Error, getting meal_in_plan_id, meal_name, meal_time from Meals in plan");
                 System.err.printf("\n\nMeal_Plan_Screen.java Meal_Plan_Screen() Error with script \n%s", query);
@@ -342,7 +342,7 @@ public class Meal_Plan_Screen extends Screen
         String planCalcQuery = String.format("SELECT * from %s WHERE plan_id = %s;", tablePlanMacroTargetsNameCalc, tempPlanID);
 
         Object[][] planData = db.getTableDataObject(planCalcQuery, tablePlanMacroTargetsNameCalc);
-        planData = planData!=null ? planData:new Object[0][0];
+        planData = planData != null ? planData : new Object[0][0];
 
         macros_Targets_Table = new MacrosTargetsTable(db, macrosInfoJPanel, planData, macroTargetsTable_ColumnNames, planID, tempPlanID,
                 tablePlanMacroTargetsNameCalc, new ArrayList<>(Arrays.asList(macroTargetsTable_ColumnNames)), null, macrosTargets_Table_ColToHide);
@@ -362,7 +362,7 @@ public class Meal_Plan_Screen extends Screen
         String macrosQuery = String.format("SELECT * from %s WHERE plan_id = %s;", tablePlanMacrosLeftName, tempPlanID);
 
         Object[][] macrosData = db.getTableDataObject(macrosQuery, tablePlanMacrosLeftName);
-        macrosData = macrosData!=null ? macrosData:new Object[0][0];
+        macrosData = macrosData != null ? macrosData : new Object[0][0];
 
         macrosLeft_JTable = new MacrosLeftTable(db, macrosInfoJPanel, macrosData, macrosLeft_columnNames, planID, tempPlanID,
                 tablePlanMacrosLeftName, new ArrayList<>(Arrays.asList(macrosLeft_columnNames)), null, macrosLeft_Table_ColToHide);
@@ -394,7 +394,7 @@ public class Meal_Plan_Screen extends Screen
             String subDivQuery = String.format("SELECT div_meal_sections_id FROM %s WHERE meal_in_plan_id = %s AND plan_id = %s;", tableSub_MealsName, mealInPlanID, tempPlanID);
             ArrayList<ArrayList<String>> subMealsInMealArrayList = db.getMultiColumnQuery(subDivQuery);
 
-            if (subMealsInMealArrayList==null)
+            if (subMealsInMealArrayList == null)
             {
                 String message = String.format("\n\nError, gathering sub-meals ID for meal named ' %s ' ! \nA meal must have 1 sub-meal minimum!", mealName);
 
@@ -409,7 +409,7 @@ public class Meal_Plan_Screen extends Screen
             // Create Meal Component
             //#####################################################
             System.out.printf("\n\nMeal_Plan_Screen.java | MealManager \nmeal_in_plan_id : %s \nmeal_name : %s \nmeal_time : %s \nSub-Meals In MealManager (ID) : %s%n", mealInPlanID, mealName, mealTime, subMealsInMealArrayList);//HELLO DELETE
-            addMealManger2( new MealManager(this, scrollJPanelCenter, mealInPlanID, mealName, mealTime, subMealsInMealArrayList), false);
+            addMealManger2(new MealManager(this, scrollJPanelCenter, mealInPlanID, mealName, mealTime, subMealsInMealArrayList), false);
 
             //######################################################
             // Update Progress
@@ -417,7 +417,7 @@ public class Meal_Plan_Screen extends Screen
             loadingScreen.increaseBar(1 + subMealsInMealArrayList.size()); // + original meal + the sub-meal
         }
 
-        if (errorFound) return;
+        if (errorFound) { return; }
 
         System.out.printf("\n\n%s", lineSeparator);
 
@@ -471,7 +471,7 @@ public class Meal_Plan_Screen extends Screen
 
                 String dbName = dotenv.get("DB_NAME");
 
-                if (host==null || port==null || user==null || password==null || dbName==null)
+                if (host == null || port == null || user == null || password == null || dbName == null)
                 {
                     System.err.printf("\n\nDB Values: \nhost: %s \nport: %s \nuser: %s \ndbName: %s",
                             host, port, user, dbName);
@@ -545,7 +545,7 @@ public class Meal_Plan_Screen extends Screen
 
         if (getMapIngredientsTypesToNames)
         {
-            if (!updateIngredientTypesMappedToIngredientsName())
+            if (! updateIngredientTypesMappedToIngredientsName())
             {
                 errorTxt += "\n\nUnable to get IngredientTypesToNames";
                 errorFound = true;
@@ -558,14 +558,14 @@ public class Meal_Plan_Screen extends Screen
 
         if (getIngredientsTypes)
         {
-            if (ingredientsTypesList!=null)
+            if (ingredientsTypesList != null)
             {
                 ingredientsTypesList.clear();
             }
 
             ingredientsTypesList = db.getSingleColumnQuery_AlphabeticallyOrderedTreeSet(String.format("SELECT ingredient_type_name FROM %s ORDER BY ingredient_type_name ASC;", tableIngredientsTypeName));
 
-            if (ingredientsTypesList==null)
+            if (ingredientsTypesList == null)
             {
                 errorTxt += "\n\nUnable to get ingredient_types";
                 errorFound = true;
@@ -578,14 +578,14 @@ public class Meal_Plan_Screen extends Screen
 
         if (getIngredientStores)
         {
-            if (storesNamesList!=null)
+            if (storesNamesList != null)
             {
                 storesNamesList.clear();
             }
 
             storesNamesList = db.getSingleColumnQuery_AlphabeticallyOrderedTreeSet(String.format("SELECT store_name FROM %s ORDER BY store_name ASC;", tableStoresName));
 
-            if (storesNamesList==null)
+            if (storesNamesList == null)
             {
                 errorTxt += "\n\nUnable to get storesList";
                 errorFound = true;
@@ -628,7 +628,7 @@ public class Meal_Plan_Screen extends Screen
 
         ArrayList<ArrayList<String>> ingredientTypesNameAndIDResults = db.getMultiColumnQuery(queryIngredientsType);
 
-        if (ingredientTypesNameAndIDResults==null)
+        if (ingredientTypesNameAndIDResults == null)
         {
             JOptionPane.showMessageDialog(null, "\n\nUnable to update Ingredient Type Info");
             return false;
@@ -658,7 +658,7 @@ public class Meal_Plan_Screen extends Screen
             String queryTypeIngredientNames = String.format("SELECT ingredient_name FROM %s WHERE ingredient_type_id = %s ORDER BY ingredient_name;", tableIngredientsInfoName, ID);
             ArrayList<String> ingredientNames = db.getSingleColumnQuery_ArrayList(queryTypeIngredientNames);
 
-            if (ingredientNames==null)
+            if (ingredientNames == null)
             {
                 errorTxt += String.format("\nUnable to grab ingredient names for Type '%s'!", ingredientType);
                 continue;
@@ -697,7 +697,7 @@ public class Meal_Plan_Screen extends Screen
                 WHERE
                     `P`.`plan_id` = %s; """, tablePlansName, fromPlan, toPlan);
 
-        if (!(db.uploadData_Batch_Altogether(new String[]{query0})))
+        if (! (db.uploadData_Batch_Altogether(new String[]{ query0 })))
         {
             JOptionPane.showMessageDialog(null, "\n\ntransferPlanData() Cannot Transfer Plan Data");
             return false;
@@ -735,9 +735,9 @@ public class Meal_Plan_Screen extends Screen
 
         for (int i = 0; i <= listSize - 1; i++)
         {
-            String colToAdd = columnsToAvoid.contains(macrosColumns[i]) ? "":String.format("\n\t%s", macrosColumns[i]);
+            String colToAdd = columnsToAvoid.contains(macrosColumns[i]) ? "" : String.format("\n\t%s", macrosColumns[i]);
 
-            query05 = !colToAdd.equals("") ? String.format("%s %s,", query05, colToAdd):query05;
+            query05 = ! colToAdd.equals("") ? String.format("%s %s,", query05, colToAdd) : query05;
         }
 
         query05 = query05.substring(0, query05.length() - 1); // Remove last ',' from query
@@ -755,14 +755,14 @@ public class Meal_Plan_Screen extends Screen
 
         if (deleteFromToPlan)
         {
-            uploadQueries = new String[]{query00, query01, query02, query03, query04, query05, query06};
+            uploadQueries = new String[]{ query00, query01, query02, query03, query04, query05, query06 };
         }
         else
         {
-            uploadQueries = new String[]{query01, query02, query03, query04, query05, query06};
+            uploadQueries = new String[]{ query01, query02, query03, query04, query05, query06 };
         }
 
-        if (!(db.uploadData_Batch_Altogether(uploadQueries)))
+        if (! (db.uploadData_Batch_Altogether(uploadQueries)))
         {
             JOptionPane.showMessageDialog(null, "\n\nCannot Transfer Targets");
             return false;
@@ -830,10 +830,10 @@ public class Meal_Plan_Screen extends Screen
         //####################################################
         // Update
         //####################################################
-        String[] query_Temp_Data = new String[]{query0, query1, query2, query3, query4, query5, query6, query7, query8, query9, query10, query11, query12,
-                query13, query14, query15, query16, query17, query18, query19};
+        String[] query_Temp_Data = new String[]{ query0, query1, query2, query3, query4, query5, query6, query7, query8, query9, query10, query11, query12,
+                query13, query14, query15, query16, query17, query18, query19 };
 
-        if (!(db.uploadData_Batch_Altogether(query_Temp_Data)))
+        if (! (db.uploadData_Batch_Altogether(query_Temp_Data)))
         {
             JOptionPane.showMessageDialog(null, "\n\nError, transferMealIngredients() cannot transfer meal Ingredients");
             return false;
@@ -854,11 +854,11 @@ public class Meal_Plan_Screen extends Screen
         saveMealData(true, false);
 
         // Close Other Windows If Open
-        if (macrosTargets_Screen!=null)
+        if (macrosTargets_Screen != null)
         {
             macrosTargets_Screen.closeeWindow();
         }
-        if (ingredientsInfoScreen!=null)
+        if (ingredientsInfoScreen != null)
         {
             ingredientsInfoScreen.closeWindow();
         }
@@ -1096,13 +1096,13 @@ public class Meal_Plan_Screen extends Screen
         //##############################################################################################################
         //
         //##############################################################################################################
-        if (!(get_IsPlanSelected()))
+        if (! (get_IsPlanSelected()))
         {
             return;
         }
 
         // If No Plan Is Selected
-        if (planID==null)
+        if (planID == null)
         {
             JOptionPane.showMessageDialog(null, "\n\nCannot Add A  Meal As A Plan Is Not Selected! \nPlease Select A Plan First!!");
             return;
@@ -1115,7 +1115,7 @@ public class Meal_Plan_Screen extends Screen
 
     private void refreshPlan(boolean askPermission)
     {
-        if ((!(get_IsPlanSelected())) || askPermission && !(areYouSure("Refresh Data")))
+        if ((! (get_IsPlanSelected())) || askPermission && ! (areYouSure("Refresh Data")))
         {
             return;
         }
@@ -1123,7 +1123,7 @@ public class Meal_Plan_Screen extends Screen
         //####################################################################
         // Refresh DB Data
         //####################################################################
-        if (!(transferMealIngredients(planID, tempPlanID))) // transfer meals and ingredients from temp plan to original plan
+        if (! (transferMealIngredients(planID, tempPlanID))) // transfer meals and ingredients from temp plan to original plan
         {
             JOptionPane.showMessageDialog(frame, "`\n\nError couldn't transfer ingredients data from temp to real plan !!");
             return;
@@ -1164,7 +1164,7 @@ public class Meal_Plan_Screen extends Screen
         // Exit Clauses
         // ##############################################################################
         // If no plan is selected exit Or,  if user rejects saving when asked  exit
-        if ((!(get_IsPlanSelected())) || askPermission && !(areYouSure("Save Data")))
+        if ((! (get_IsPlanSelected())) || askPermission && ! (areYouSure("Save Data")))
         {
             return;
         }
@@ -1201,7 +1201,7 @@ public class Meal_Plan_Screen extends Screen
             String query3 = String.format("DELETE FROM %s WHERE plan_id = %s;", tableMealsInPlanName, planID);
             String query4 = "SET FOREIGN_KEY_CHECKS = 1;"; // Enable Foreign Key Checks
 
-            if (!(db.uploadData_Batch_Altogether(new String[]{query0, query1, query2, query3, query4})))
+            if (! (db.uploadData_Batch_Altogether(new String[]{ query0, query1, query2, query3, query4 })))
             {
                 JOptionPane.showMessageDialog(frame, "\n\n1.)  Error \nUnable to save meals in plan!");
                 return;
@@ -1209,7 +1209,7 @@ public class Meal_Plan_Screen extends Screen
         }
         else // because there are meals save them
         {
-            if ((!(transferMealIngredients(tempPlanID, planID)))) // transfer meals and ingredients from temp plan to original plan
+            if ((! (transferMealIngredients(tempPlanID, planID)))) // transfer meals and ingredients from temp plan to original plan
             {
                 System.out.println("\n\n#################################### \n2.) saveMealData() Meals Transferred to Original Plan");
 
@@ -1232,7 +1232,7 @@ public class Meal_Plan_Screen extends Screen
         // ##############################################################################
         // Update MacrosLeft Targets
         // ##############################################################################
-        if (!(macrosLeft_JTable.updateMacrosLeftTableModelData()))
+        if (! (macrosLeft_JTable.updateMacrosLeftTableModelData()))
         {
             JOptionPane.showMessageDialog(frame, "\n\n Error \n3.) Unable to save MacrosLeftTable! \n\nPlease retry again!");
             return;
@@ -1244,13 +1244,16 @@ public class Meal_Plan_Screen extends Screen
         JOptionPane.showMessageDialog(frame, "\n\nAll Meals Are Successfully Saved!");
     }
 
-    public void addMealManger2 (MealManager mealManager, boolean clearGUIThenAdd)
+    public void addMealManger2(MealManager mealManager, boolean clearGUIThenAdd)
     {
-        if( ! mealManager.isObjectCreated()) { return; }  // If object was rejected in creation, will cause an error below with time comparison
+        if (! mealManager.isObjectCreated())
+        {
+            return;
+        }  // If object was rejected in creation, will cause an error below with time comparison
 
         Integer meal_in_plan_id = mealManager.getMealInPlanID();
 
-        if( ! clearGUIThenAdd )  // Just add this Meal Manager to the screen without clearing the screen
+        if (! clearGUIThenAdd)  // Just add this Meal Manager to the screen without clearing the screen
         {
             // Add Meal Manager to collection
             mealManagerTreeSet.add(Map.entry(meal_in_plan_id, mealManager));
@@ -1265,35 +1268,35 @@ public class Meal_Plan_Screen extends Screen
             mealManager.getCollapsibleJpObj().expandJPanel();
 
             // Remove MealManager From List
-            mealManagerTreeSet.removeIf(e-> e.getKey().equals(meal_in_plan_id));
+            mealManagerTreeSet.removeIf(e -> e.getKey().equals(meal_in_plan_id));
 
             // If MealManager is the latest time in the plan just add it to the bottom without clearing the screen
-            if( mealManagerTreeSet.size() == 0 || mealManager.getCurrentMealTime().isAfter(mealManagerTreeSet.last().getValue().getCurrentMealTime()))
+            if (mealManagerTreeSet.size() == 0 || mealManager.getCurrentMealTime().isAfter(mealManagerTreeSet.last().getValue().getCurrentMealTime()))
             {
                 addMealManger2(mealManager, false);
                 return;
             }
 
-			// Add Meal Manager to collection & it should be sorted in order now
-			mealManagerTreeSet.add(Map.entry(meal_in_plan_id, mealManager));
+            // Add Meal Manager to collection & it should be sorted in order now
+            mealManagerTreeSet.add(Map.entry(meal_in_plan_id, mealManager));
 
-			// Re-add all the MealManagers to GUI
-			for(Map.Entry<Integer, MealManager > x : mealManagerTreeSet)
-			{
-			    MealManager m = x.getValue();
+            // Re-add all the MealManagers to GUI
+            for (Map.Entry<Integer, MealManager> x : mealManagerTreeSet)
+            {
+                MealManager m = x.getValue();
 
-			    if( ! meal_in_plan_id.equals( m.getMealInPlanID()) )
-			    {
-			        // remove from old position in GUI
+                if (! meal_in_plan_id.equals(m.getMealInPlanID()))
+                {
+                    // remove from old position in GUI
                     m.getCollapsibleJpObj().collapseJPanel(); // Minimise Meal
                     m.removeMealManagerFromGUI();
                 }
 
-				// Add to GUI Meal Manager & Its Space Divider
-				addToContainer(scrollJPanelCenter, m.getCollapsibleJpObj(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
-				addToContainer(scrollJPanelCenter, m.getSpaceDividerForMealManager(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 50, 0, null);
-			}
-		}
+                // Add to GUI Meal Manager & Its Space Divider
+                addToContainer(scrollJPanelCenter, m.getCollapsibleJpObj(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
+                addToContainer(scrollJPanelCenter, m.getSpaceDividerForMealManager(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 50, 0, null);
+            }
+        }
 
         // ########################################################
         // Resize & Align GUI screen so new object is visible
@@ -1312,7 +1315,7 @@ public class Meal_Plan_Screen extends Screen
         // ##############################################
         // If targets haven't changed exit
         // ##############################################
-        if (!getMacrosTargetsChanged())
+        if (! getMacrosTargetsChanged())
         {
             return;
         }
@@ -1325,7 +1328,7 @@ public class Meal_Plan_Screen extends Screen
             int reply = JOptionPane.showConfirmDialog(frame, String.format("Would you like to save your MacroTarget  Changes Too?"),
                     "Save Macro Targets", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
-            if (reply==JOptionPane.NO_OPTION || reply==JOptionPane.CLOSED_OPTION)
+            if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
             {
                 return;
             }
@@ -1357,7 +1360,7 @@ public class Meal_Plan_Screen extends Screen
             int reply = JOptionPane.showConfirmDialog(frame, String.format("Would you like to refresh your MacroTargets Too?"),
                     "Refresh Macro Targets", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
-            if (reply==JOptionPane.YES_OPTION)
+            if (reply == JOptionPane.YES_OPTION)
             {
                 if (transferTargets(planID, tempPlanID, true, false))
                 {
@@ -1381,12 +1384,12 @@ public class Meal_Plan_Screen extends Screen
     // Macro Targets Screen
     private void open_MacrosTargets_Screen()
     {
-        if (!(get_IsPlanSelected()))
+        if (! (get_IsPlanSelected()))
         {
             return;
         }
 
-        if (macrosTargets_Screen!=null)
+        if (macrosTargets_Screen != null)
         {
             macrosTargets_Screen.makeJframeVisible();
             return;
@@ -1402,12 +1405,12 @@ public class Meal_Plan_Screen extends Screen
     // Add Ingredients Screen
     private void open_AddIngredients_Screen()
     {
-        if (!(get_IsPlanSelected()))
+        if (! (get_IsPlanSelected()))
         {
             return;
         }
 
-        if (ingredientsInfoScreen!=null)
+        if (ingredientsInfoScreen != null)
         {
             ingredientsInfoScreen.makeFrameVisible();
             return;
@@ -1449,7 +1452,7 @@ public class Meal_Plan_Screen extends Screen
     // Boolean
     public boolean get_IsPlanSelected()
     {
-        if (planID==null)
+        if (planID == null)
         {
             JOptionPane.showMessageDialog(frame, "Please Select A Plan First!");
             return false;
