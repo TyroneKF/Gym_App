@@ -53,15 +53,16 @@ INSERT IGNORE INTO ingredients_in_sections_of_meal
 
 # Breakfast Part 1 (Pancakes)
 (null, 2, null, 1, 44, 3),  -- EGGS
-(null, 2, null, 1, 47, 110), -- Butter
-(null, 2, null, 1, 48, 28), -- Flour
+(null, 2, null, 1, 47, 110), -- Flour
+(null, 2, null, 1, 48, 28), -- Butter
+(null, 2, null, 1, 51, 28), -- Sugar
 (null, 2, null, 1, 40, 140), -- Milk
 (null, 2, null, 1, 45, 110), -- Yoghurt
-(null, 2, null, 1, 51, 28), -- Sugar
+
 
 # Breakfast Part 2 (Eggs + Plantain)
 (null, 2, null, 2, 44, 3), -- EGGS
-(null, 2, null, 1, 40, 40), -- Milk
+(null, 2, null, 2, 40, 40), -- Milk
 (null, 2, null, 2, 50, 120), -- Plantain
 
 # Breakfast Part 3 (Celery Drink)

@@ -1301,10 +1301,7 @@ public class MealManager
 
     public void update_Pie_Chart_Screen()
     {
-        if (pie_chart_meal_manager_screen!=null)
-        {
-            pie_chart_meal_manager_screen.update_pieChart();
-        }
+        if (pie_chart_meal_manager_screen!=null){ pie_chart_meal_manager_screen.update_pieChart(); }
     }
 
     //##################################################################################################################
