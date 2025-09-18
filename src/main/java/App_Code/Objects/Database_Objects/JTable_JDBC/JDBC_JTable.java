@@ -34,7 +34,7 @@ public class JDBC_JTable extends JPanel
     protected String[] columnDataTypes, columnNames, guiColumnNames;
 
     protected ArrayList<String> colAvoidCentering = new ArrayList<>();
-    protected ArrayList<Integer> unEditableColumns = new ArrayList<>();
+    protected ArrayList<Integer> unEditableColumnPositions = new ArrayList<>();
     protected ArrayList<String> columnsToHide = new ArrayList<>();
 
     //##############################################
@@ -60,7 +60,7 @@ public class JDBC_JTable extends JPanel
     (
             MyJDBC db, Container parentContainer, boolean setIconsUp, boolean addJTableAction,
             String tableName, Object[][] data, String[] columnNames,
-            ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering,  ArrayList<String> columnsToHide
+            ArrayList<String> unEditableColumnNames, ArrayList<String> colAvoidCentering,  ArrayList<String> columnsToHide
     )
     {
         setLayout(new GridBagLayout());
@@ -98,17 +98,14 @@ public class JDBC_JTable extends JPanel
         //##############################################################
         // Get UnEditable Column Positions By Name
         //##############################################################
-        ArrayList<Integer> columnPositions = new ArrayList<Integer>();
 
-        if (unEditableColumns != null)
+        if (unEditableColumnNames != null)
         {
-            for(String columnName: unEditableColumns)
+            for(String columnName: unEditableColumnNames)
             {
-                columnPositions.add(columnNamesAndPositions.get(columnName)[0]);
+                unEditableColumnPositions.add(columnNamesAndPositions.get(columnName)[0]);
             }
         }
-
-        this.unEditableColumns = columnPositions;
 
         //################################################################
         // Reformat Column Names To be Capitalised on the Application lvl
@@ -214,7 +211,7 @@ public class JDBC_JTable extends JPanel
             {
                 //Note that the data/cell address is constant,
                 //no matter where the cell appears onscreen.
-                if (unEditableColumns.contains(col))
+                if (unEditableColumnPositions.contains(col))
                 {
                     return false;
                 }

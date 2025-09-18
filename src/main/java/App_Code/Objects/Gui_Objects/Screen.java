@@ -42,7 +42,7 @@ public class Screen
         frame.setResizable(true);
         frame.setSize(frameWidth, frameHeight);
         frame.setTitle(title);
-        frame.setLocation(00, 0);
+        frame.setLocation(xPos, yPos);
 
         // Container (ContentPane)
         contentPane = frame.getContentPane();
@@ -251,5 +251,4 @@ public class Screen
     {
         //new Screen(400, 600, 200, 200);
     }
-
 }

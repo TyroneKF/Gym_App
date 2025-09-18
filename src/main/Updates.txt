@@ -19,6 +19,7 @@ MYJDBC:
 Ingredients_Table
 .) Fix Column Titles to fit length
 .) Fix column Width
+.) Block user from re-ording table after creations, creates an error later
 
 Meal_Plan_Screen.java:
 .) FOREIGN_KEY_CHECKS - Get rid of this
@@ -35,8 +36,12 @@ Meal_Manager:
 .) What happens if you have a meal set to a time and reset an old meal and there are 2 with the same name now
 
 
-Display_tables
+Display_tables:
 .) Being able to hide rows
+
+Total_Meal_View:
+.) Weight_Of_Meal - Total_Liquid
+
 
 Ingredients_Info
 .) Refactoring out nutrition X product key
@@ -55,6 +60,9 @@ OVERALL
 .) Has data changed in ingredients table
 .) Refactor db requests method if nulll into a method that return boolean
 .) Diagram of carbs and nutrients in line graph over the day
+
+Refactoring:
+.) Check Public / private methods
 
 MYJDBC Updates FROM User inputs:
 .) SQL injections
