@@ -4,15 +4,14 @@ import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 
 public class Screen
 {
     protected MyJDBC db;
-    protected static GridBagConstraints gbc = new GridBagConstraints();
-    protected static JFrame frame = new JFrame();
-    protected static Container contentPane;
-    protected static ScrollPaneCreator scrollPane = new ScrollPaneCreator();
+    protected GridBagConstraints gbc = new GridBagConstraints();
+    protected JFrame frame = new JFrame();
+    protected Container contentPane;
+    protected ScrollPaneCreator scrollPane = new ScrollPaneCreator();
 
     // public
     protected JPanel
@@ -20,7 +19,7 @@ public class Screen
             scrollPaneJPanel;
 
     // private
-    private static JPanel
+    private JPanel
             screenSectioned,
             mainCenterPanel;
 
@@ -70,6 +69,8 @@ public class Screen
         addToContainer(mainCenterPanel, scrollPane, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
         scrollPaneJPanel = scrollPane.getJPanel();
         scrollPaneJPanel.setLayout(new GridBagLayout());
+
+        System.out.println("\n\nC : Screen.java Here");
     }
 
     //##################################################################################################################
@@ -242,13 +243,5 @@ public class Screen
         }
 
         container.add(addToContainer, gbc);
-    }
-
-    //##################################################################################################################
-    // Sizing & Adding to GUI Methods
-    //##################################################################################################################
-    public static void main(String[] args) throws IOException
-    {
-        //new Screen(400, 600, 200, 200);
     }
 }
