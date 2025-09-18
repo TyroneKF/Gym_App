@@ -1,15 +1,14 @@
 package App_Code.Objects.Screens.Others.Graph;
 
-import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
-import App_Code.Objects.Gui_Objects.Screen;
+
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Map;
 
-import Tests.Graphs.DynamicPieChart2;
+import org.javatuples.Pair;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -19,56 +18,35 @@ import org.jfree.chart.title.TextTitle;
 import org.jfree.chart.util.Rotation;
 import org.jfree.data.general.DefaultPieDataset;
 
-import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import org.jfree.chart.labels.PieSectionLabelGenerator;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
 
-import java.text.DecimalFormat;
 
-
-public class Meal_Graph_Screen extends Screen
+public class Pie_Chart extends JPanel
 {
-    private final static String
-            db_Scripts_Folder_Path = "/data/database_scripts",
-            db_File_Script_List_Name = "0.) Script_List.txt",
-            db_File_Tables_Name = "0.) Database_Names.txt";
-
-    private String meal_name;
-    private int meal_in_plan_id, temp_planID;
-    private Map<String, Double> macros;
     private DefaultPieDataset dataset = new DefaultPieDataset();
+    protected JFreeChart chart;
 
-    // replace with mealManager eventually
-    public Meal_Graph_Screen(MyJDBC db, String meal_name, int meal_in_plan_id, int temp_planID, Map<String, Double> macros)
+    public Pie_Chart(String title, int frameWidth, int frameHeight, Map<String, Pair<BigDecimal, String>> data)
     {
         //############################################
-        // Variables
+        // Set Layout Dimensions
         //############################################
-        super(db, meal_name, 800, 600, 0, 0);
-        getScrollPaneJPanel().setBackground(Color.WHITE);
-        setResizable(false);
-
-        this.meal_in_plan_id = meal_in_plan_id;
-        this.temp_planID = temp_planID;
-        this.meal_name = meal_name;
-        this.macros = macros;
+        setPreferredSize(new Dimension(frameWidth, frameHeight));
+        setLayout(new GridLayout(1, 1));
 
         //############################################
         // Add Data to Dataset to represent
         //############################################
-        for (String key : macros.keySet())
-        {
-            dataset.setValue(String.format("  %s (%s g )  ", key, macros.get(key)), macros.get(key) );
-        }
+        update_dataset(data);
 
         //############################################
         // Create Plot with Data & Configurations
         //############################################
-        JFreeChart chart = ChartFactory.createPieChart3D(String.format("%s Macros", meal_name), dataset, true, true, false);
+        chart = ChartFactory.createPieChart3D(String.format("%s Macros", title), dataset, true, true, false);
 
         PiePlot3D plot = (PiePlot3D) chart.getPlot();
         plot.setStartAngle(290);
@@ -92,8 +70,8 @@ public class Meal_Graph_Screen extends Screen
         // Setting Font sizes
         //#############################################
         // Set Title Font Size
-        TextTitle title = chart.getTitle();
-        title.setFont(new Font("Serif", Font.PLAIN, 27));
+        TextTitle titleObject = chart.getTitle();
+        titleObject.setFont(new Font("Serif", Font.PLAIN, 27));
 
         // Label font size on diagram
         plot.setLabelFont(new Font("SansSerif", Font.BOLD, 22));
@@ -114,8 +92,12 @@ public class Meal_Graph_Screen extends Screen
         //#############################################
         // Add chart to panel
         ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setPreferredSize(new java.awt.Dimension(getFrameWidth() - 50, getFrameHeight() - 60));
-        addToContainer(getScrollPaneJPanel(), chartPanel, 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
+        chartPanel.setPreferredSize(new Dimension(frameWidth, frameHeight));
+
+        // #############################################
+        // Add Plot to Panel
+        //#############################################
+        add(chartPanel);
     }
 
     public class Rotator extends Timer implements ActionListener
@@ -142,29 +124,24 @@ public class Meal_Graph_Screen extends Screen
         }
     }
 
-
-    public static void main(String[] args) throws IOException
+    public void setTitle(String meal_name)
     {
-        // #########################################
-        // Create DB Object & run SQL Scripts
-        // #########################################
-        MyJDBC db = new MyJDBC(true, "localhost", "3306", "root", "password", "gymapp00001", db_Scripts_Folder_Path, db_File_Script_List_Name, db_File_Tables_Name);
+        chart.setTitle(String.format("%s Macros", meal_name));
+    }
 
-        if (db.get_DB_Connection_Status())
+    public void update_dataset(Map<String, Pair<BigDecimal, String>> data)
+    {
+        //############################################
+        // Add Data to Dataset to represent
+        //############################################]
+        dataset.clear();
+        for (String name : data.keySet())
         {
-            Map<String, Double> macros = Map.ofEntries(
-                    Map.entry("Protein", 71.89),
-                    Map.entry("Carbs", 231.15),
-                    Map.entry("Fats", 104.62)
-            );
+            Pair<BigDecimal, String> list = data.get(name);
+            BigDecimal value = list.getValue0();
+            String measurement  = list.getValue1();
 
-            Meal_Graph_Screen x = new Meal_Graph_Screen(db, "Breakfast", 2, 1, macros);
-            x.setFrameVisibility(true);
-        }
-        else
-        {
-            JOptionPane.showMessageDialog(null, "ERROR, Cannot Connect To Database!");
-            return;
+            dataset.setValue(String.format("  %s ( %s %s )  ", name, value, measurement), value);
         }
     }
 }

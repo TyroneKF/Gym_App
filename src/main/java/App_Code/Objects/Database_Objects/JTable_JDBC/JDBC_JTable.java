@@ -82,7 +82,6 @@ public class JDBC_JTable extends JPanel
         //##############################################################
         // Column Names & Their Original Positions
         //##############################################################
-
         this.columnNames = columnNames;
 
         // Adding column names and their original positions to the hashmap
@@ -98,7 +97,6 @@ public class JDBC_JTable extends JPanel
         //##############################################################
         // Get UnEditable Column Positions By Name
         //##############################################################
-
         if (unEditableColumnNames != null)
         {
             for(String columnName: unEditableColumnNames)

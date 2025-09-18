@@ -70,12 +70,27 @@ public class Screen
         scrollPaneJPanel = scrollPane.getJPanel();
         scrollPaneJPanel.setLayout(new GridBagLayout());
 
-        System.out.println("\n\nC : Screen.java Here");
+        //##########################################################
+        // Closing Events on Screen
+        //##########################################################
+        frame.addWindowListener(new java.awt.event.WindowAdapter()
+        {
+            @Override //HELLO Causes Error
+            public void windowClosing(java.awt.event.WindowEvent windowEvent)
+            {
+                windowClosedEvent();
+            }
+        });
     }
 
     //##################################################################################################################
     // Actions
     //##################################################################################################################
+    protected void windowClosedEvent()
+    {
+
+    }
+
 
     public void scrollBarUp_BTN_Action()
     {
@@ -181,7 +196,14 @@ public class Screen
     //##################################################################################################################
     // Sizing & Adding to GUI Methods
     //##################################################################################################################
-     protected int getAndIncreaseContainerYPos()
+    protected void makeJFrameVisible()
+    {
+        getFrame().setExtendedState(JFrame.NORMAL); // makes frames visible
+        getFrame().setLocation(0, 0);
+    }
+
+
+    protected int getAndIncreaseContainerYPos()
     {
         containerYPos++;
         return containerYPos;

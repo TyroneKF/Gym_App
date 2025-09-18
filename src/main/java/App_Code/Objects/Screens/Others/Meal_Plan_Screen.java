@@ -428,32 +428,6 @@ public class Meal_Plan_Screen extends Screen
         scrollBarUp_BTN_Action();
 
         setFrameVisibility(true);
-
-        //Delete all temp data on close
-        frame.addWindowListener(new java.awt.event.WindowAdapter()
-        {
-            @Override //HELLO Causes Error
-            public void windowClosing(java.awt.event.WindowEvent windowEvent)
-            {
-
-                if (macroTargetsChanged) // If targets have changed, save them?
-                {
-                    saveMacroTargets(true, false);
-                }
-
-                saveMealData(true, false);
-
-                // Close Other Windows If Open
-                if (macrosTargets_Screen!=null)
-                {
-                    macrosTargets_Screen.closeeWindow();
-                }
-                if (ingredientsInfoScreen!=null)
-                {
-                    ingredientsInfoScreen.closeWindow();
-                }
-            }
-        });
     }
 
     //##################################################################################################################
@@ -867,6 +841,27 @@ public class Meal_Plan_Screen extends Screen
 
         System.out.printf("\nMealIngredients Successfully Transferred! \n\n%s", lineSeparator);
         return true;
+    }
+
+    @Override
+    public void windowClosedEvent()
+    {
+        if (macroTargetsChanged) // If targets have changed, save them?
+        {
+            saveMacroTargets(true, false);
+        }
+
+        saveMealData(true, false);
+
+        // Close Other Windows If Open
+        if (macrosTargets_Screen!=null)
+        {
+            macrosTargets_Screen.closeeWindow();
+        }
+        if (ingredientsInfoScreen!=null)
+        {
+            ingredientsInfoScreen.closeWindow();
+        }
     }
 
     //##################################################################################################################
