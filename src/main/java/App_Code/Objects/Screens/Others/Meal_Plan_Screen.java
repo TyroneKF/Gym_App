@@ -906,6 +906,26 @@ public class Meal_Plan_Screen extends Screen
         iconPanelInsert.add(clear_Btn);
 
         //##########################
+        //  BarChart
+        //##########################
+        width = 55;
+        height = 55;
+
+        IconButton pieChart_Icon_Btn = new IconButton("/images/graph/pie7.png", width, height, width, height,
+                "centre", "right"); // btn text is useless here , refactor
+
+        pieChart_Icon_Btn.makeBTntransparent();
+
+        JButton pieChart_Btn = pieChart_Icon_Btn.returnJButton();
+        pieChart_Btn.setToolTipText("Display Macronutrient Data in Pie"); //Hover message over icon
+
+        pieChart_Btn.addActionListener(ae -> {
+
+        });
+
+        iconPanelInsert.add(pieChart_Btn);
+
+        //##########################
         //  Histogram
         //##########################
         width = 51;
