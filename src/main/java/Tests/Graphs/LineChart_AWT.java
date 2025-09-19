@@ -1,5 +1,6 @@
 package Tests.Graphs;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -9,6 +10,9 @@ import org.jfree.data.category.DefaultCategoryDataset;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class LineChart_AWT extends JFrame
 {
@@ -19,7 +23,7 @@ public class LineChart_AWT extends JFrame
         setVisible(true);
         Container contentPane = getContentPane();
         setSize(new Dimension(900, 900));
-        contentPane.setLayout(new GridLayout(1,1));
+        contentPane.setLayout(new GridLayout(1, 1));
 
 
         JFreeChart lineChart = ChartFactory.createLineChart(
@@ -31,17 +35,37 @@ public class LineChart_AWT extends JFrame
 
         ChartPanel chartPanel = new ChartPanel(lineChart);
         contentPane.add(chartPanel);
+        contentPane.revalidate();
     }
 
     private DefaultCategoryDataset createDataset()
     {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        dataset.addValue(15, "schools", "1970");
-        dataset.addValue(30, "schools", "1980");
-        dataset.addValue(60, "schools", "1990");
-        dataset.addValue(120, "schools", "2000");
-        dataset.addValue(240, "schools", "2010");
-        dataset.addValue(300, "schools", "2014");
+
+        // Group 1
+        dataset.addValue((int) (Math.random() * 300), "schools", "09:00");
+        dataset.addValue((int) (Math.random() * 300), "schools", "12:00");
+        dataset.addValue((int) (Math.random() * 300), "schools", "15:00");
+        dataset.addValue((int) (Math.random() * 300), "schools", "17:00");
+        dataset.addValue((int) (Math.random() * 300), "schools", "18:30");
+        dataset.addValue((int) (Math.random() * 300), "schools", "22:00");
+
+        // Group 2
+        dataset.addValue((int) (Math.random() * 300), "Dog", "09:00");
+        dataset.addValue((int) (Math.random() * 300), "Dog", "12:00");
+        dataset.addValue((int) (Math.random() * 300), "Dog", "15:00");
+        dataset.addValue((int) (Math.random() * 300), "Dog", "17:00");
+        dataset.addValue((int) (Math.random() * 300), "Dog", "18:30");
+        dataset.addValue((int) (Math.random() * 300), "Dog", "22:00");
+
+        // Group 3
+        dataset.addValue((int) (Math.random() * 300), "Cat", "09:00");
+        dataset.addValue((int) (Math.random() * 300), "Cat", "12:00");
+        dataset.addValue((int) (Math.random() * 300), "Cat", "15:00");
+        dataset.addValue((int) (Math.random() * 300), "Cat", "17:00");
+        dataset.addValue((int) (Math.random() * 300), "Cat", "18:30");
+        dataset.addValue((int) (Math.random() * 300), "Cat", "22:00");
+
         return dataset;
     }
 
