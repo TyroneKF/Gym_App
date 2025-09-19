@@ -5,7 +5,7 @@ import java.text.Collator;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Screens.Ingredient_Info.Edit_Stores_And_Types.Edit_Ingredient_Stores_Screen;
 import App_Code.Objects.Screens.Ingredient_Info.Edit_Stores_And_Types.Edit_Ingredients_Types_Screen;
-import App_Code.Objects.Screens.Others.Meal_Plan_Screen;
+import App_Code.Objects.Screens.Meal_Plan_Screen;
 
 import javax.swing.*;
 import java.awt.*;

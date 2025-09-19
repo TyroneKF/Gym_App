@@ -2,7 +2,7 @@ package App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
-import App_Code.Objects.Screens.Others.Meal_Plan_Screen;
+import App_Code.Objects.Screens.Meal_Plan_Screen;
 
 import javax.swing.*;
 import java.awt.*;

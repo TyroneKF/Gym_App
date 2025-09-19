@@ -1,4 +1,4 @@
-package App_Code.Objects.Screens.Others;
+package App_Code.Objects.Screens;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 //import org.imgscalr.Scalr;

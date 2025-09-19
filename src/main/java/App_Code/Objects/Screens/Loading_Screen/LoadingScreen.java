@@ -1,6 +1,6 @@
-package App_Code.Objects.Screens.Others.Loading_Screen;
+package App_Code.Objects.Screens.Loading_Screen;
 
-import App_Code.Objects.Screens.Others.Meal_Plan_Screen;
+import App_Code.Objects.Screens.Meal_Plan_Screen;
 
 import javax.swing.*;
 import java.awt.*;

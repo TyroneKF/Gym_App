@@ -1,4 +1,4 @@
-package App_Code.Objects.Screens.Others;
+package App_Code.Objects.Screens;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.MacrosLeftTable;
@@ -6,7 +6,7 @@ import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Mac
 import App_Code.Objects.Database_Objects.MealManager;
 import App_Code.Objects.Gui_Objects.*;
 import App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Ingredients_Info_Screen;
-import App_Code.Objects.Screens.Others.Loading_Screen.LoadingScreen;
+import App_Code.Objects.Screens.Loading_Screen.LoadingScreen;
 import io.github.cdimascio.dotenv.Dotenv;
 
 import javax.swing.*;
