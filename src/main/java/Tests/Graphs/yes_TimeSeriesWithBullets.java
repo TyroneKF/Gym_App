@@ -18,23 +18,33 @@ public class yes_TimeSeriesWithBullets extends JFrame
 
     public yes_TimeSeriesWithBullets()
     {
-        // Create a time series
-        TimeSeries series = new TimeSeries("Random Data");
         Random random = new Random();
 
-        // Add random values for 10 minutes
+        // --- Create 3 series ---
+        TimeSeries series1 = new TimeSeries("Sensor A");
+        TimeSeries series2 = new TimeSeries("Sensor B");
+        TimeSeries series3 = new TimeSeries("Sensor C");
+
+        // Start from "now"
         Minute current = new Minute();
-        for (int i = 0; i < 10; i++)
-        {
-            series.add(current, random.nextInt(100)); // y = random value
+
+        // Add 10 minutes of random data
+        for (int i = 0; i < 10; i++) {
+            series1.add(current, 50 + random.nextInt(50)); // 50–99
+            series2.add(current, 20 + random.nextInt(80)); // 20–99
+            series3.add(current, random.nextInt(100));     // 0–99
             current = (Minute) current.next();
         }
 
-        TimeSeriesCollection dataset = new TimeSeriesCollection(series);
+        // Dataset with all 3
+        TimeSeriesCollection dataset = new TimeSeriesCollection();
+        dataset.addSeries(series1);
+        dataset.addSeries(series2);
+        dataset.addSeries(series3);
 
         // Create chart
         JFreeChart chart = ChartFactory.createTimeSeriesChart(
-                "Time vs Random Value",
+                "3 Line Time Series with Bullets",
                 "Time",
                 "Value",
                 dataset,
@@ -43,11 +53,14 @@ public class yes_TimeSeriesWithBullets extends JFrame
 
         XYPlot plot = chart.getXYPlot();
 
-        // Renderer with bullet dots
+        // --- Renderer: enable lines + bullet dots ---
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-        renderer.setSeriesLinesVisible(0, true);   // true = show connecting lines
-        renderer.setSeriesShapesVisible(0, true);  // show bullets/dots
-        renderer.setSeriesShape(0, new Ellipse2D.Double(- 4, - 4, 8, 8)); // circle marker
+
+        for (int i = 0; i < 3; i++) {
+            renderer.setSeriesLinesVisible(i, true);   // lines on
+            renderer.setSeriesShapesVisible(i, true);  // dots on
+            renderer.setSeriesShape(i, new Ellipse2D.Double(-3, -3, 6, 6)); // bullet dot
+        }
 
         plot.setRenderer(renderer);
 
