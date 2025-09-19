@@ -1,9 +1,10 @@
-package App_Code.Objects.Database_Objects;
+package App_Code.Objects.Screens.Others.Graph;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.TotalMealTable;
+import App_Code.Objects.Database_Objects.MealManager;
 import App_Code.Objects.Gui_Objects.Screen;
-import App_Code.Objects.Screens.Others.Graph.Pie_Chart;
+import App_Code.Objects.Graph_Objects.Pie_Chart;
 import App_Code.Objects.Screens.Others.Meal_Plan_Screen;
 import org.javatuples.Pair;
 
@@ -25,7 +26,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
             frameWidth = 800,
             frameHeight = 600;
 
-    Pie_Chart_Meal_Manager_Screen(MyJDBC db, MealManager mealManager)
+    public Pie_Chart_Meal_Manager_Screen(MyJDBC db, MealManager mealManager)
     {
         // ##########################################
         // Super Constructors & Variables
