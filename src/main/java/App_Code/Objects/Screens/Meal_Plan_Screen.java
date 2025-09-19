@@ -884,8 +884,8 @@ public class Meal_Plan_Screen extends Screen
         //##########################
         // Clear
         //##########################
-        width = 60;
-        height = 53;
+        width = 53;
+        height = 50;
 
         IconButton clear_Icon_Btn = new IconButton("/images/close_btn/delete.png", width, height, width, height,
                 "centre", "right"); // btn text is useless here , refactor
@@ -899,6 +899,25 @@ public class Meal_Plan_Screen extends Screen
         });
 
         iconPanelInsert.add(clear_Btn);
+
+        //##########################
+        // Recipe List
+        //##########################
+        width = 53;
+        height = 50;
+
+        IconButton RecipeList_Icon_Btn = new IconButton("/images/RecipeList/recipeList1.png", width, height, width, height,
+                "centre", "right"); // btn text is useless here , refactor
+
+        RecipeList_Icon_Btn.makeBTntransparent();
+
+        JButton recipe_Btn = RecipeList_Icon_Btn.returnJButton();
+        recipe_Btn.setToolTipText("Get Plan Recipe List"); //Hover message over icon
+
+        recipe_Btn.addActionListener(ae -> {
+        });
+
+        iconPanelInsert.add(recipe_Btn);
 
         //##########################
         //  BarChart

@@ -41,6 +41,7 @@ Display_tables:
 
 Total_Meal_View:
 .) Weight_Of_Meal - Total_Liquid
+.) No Of ingredients = destinct
 
 
 Ingredients_Info

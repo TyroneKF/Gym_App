@@ -29,7 +29,8 @@ public class yes_TimeSeriesWithBullets extends JFrame
         Minute current = new Minute();
 
         // Add 10 minutes of random data
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++)
+        {
             series1.add(current, 50 + random.nextInt(50)); // 50–99
             series2.add(current, 20 + random.nextInt(80)); // 20–99
             series3.add(current, random.nextInt(100));     // 0–99
@@ -56,10 +57,11 @@ public class yes_TimeSeriesWithBullets extends JFrame
         // --- Renderer: enable lines + bullet dots ---
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++)
+        {
             renderer.setSeriesLinesVisible(i, true);   // lines on
             renderer.setSeriesShapesVisible(i, true);  // dots on
-            renderer.setSeriesShape(i, new Ellipse2D.Double(-3, -3, 6, 6)); // bullet dot
+            renderer.setSeriesShape(i, new Ellipse2D.Double(- 3, - 3, 6, 6)); // bullet dot
         }
 
         plot.setRenderer(renderer);
