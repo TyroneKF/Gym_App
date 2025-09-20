@@ -85,36 +85,36 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
 
             TimeSeries timeSeries = timeSeriesHashMap.get(macro);
 
-            for (Map.Entry<Integer, MealManager> x : mealManagerTreeSet)
+            for (Map.Entry<Integer, MealManager> mapEntry : mealManagerTreeSet)
             {
                 // ############################################
                 // Get Meal Manager Variables
                 // ############################################
-                MealManager m = x.getValue();
-                TotalMealTable totalMealTable = m.getTotalMealTable();
+                MealManager mealManager = mapEntry.getValue();
+                TotalMealTable totalMealTable = mealManager.getTotalMealTable();
+                BigDecimal macroValue = totalMealTable.getValueOnTable(macro);
 
-                Integer mealID = x.getKey();
-                String mealName = m.getCurrentMealName();
-                LocalTime mealTime = m.getCurrentMealTime();
-                BigDecimal value = totalMealTable.getValueOnTable(macro);
+                Integer mealID = mapEntry.getKey();
+                String mealName = mealManager.getCurrentMealName();
 
+                // ############################################
+                // Meal Time
                 // ############################################
                 // Convert LocalTime -> Date (fixed base date)
-                // ############################################
+                LocalTime mealTime = mealManager.getCurrentMealTime();
                 LocalDate baseDate = LocalDate.of(1970, 1, 1);
                 LocalDateTime dateTime = baseDate.atTime(mealTime);
                 Date date = Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
 
                 Second second = new Second(date);
-                timeSeries.add(second, value.doubleValue());
 
                 // ############################################
-                // Convert LocalTime -> Date (fixed base date)
+                // Adding Value & to Macro Timeseries
                 // ############################################
-
-
-
+                timeSeries.add(second, macroValue.doubleValue());
             }
+
+            dataset.addSeries(timeSeries);
         }
         return false;
     }
