@@ -1550,4 +1550,9 @@ public class Meal_Plan_Screen extends Screen
     {
         return ingredients_ColumnNames;
     }
+
+    public TreeSet<Map.Entry<Integer, MealManager>> getMealManagerTreeSet()
+    {
+        return mealManagerTreeSet;
+    }
 }
