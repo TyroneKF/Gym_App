@@ -5,6 +5,7 @@ import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Mac
 import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.MacrosTargetsTable;
 import App_Code.Objects.Database_Objects.MealManager;
 import App_Code.Objects.Gui_Objects.*;
+import App_Code.Objects.Screens.Graph.Line_Chart_Meal_Plan_Screen;
 import App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Ingredients_Info_Screen;
 import App_Code.Objects.Screens.Loading_Screen.LoadingScreen;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -56,6 +57,7 @@ public class Meal_Plan_Screen extends Screen
 
     private Macros_Targets_Screen macrosTargets_Screen = null;
     private Ingredients_Info_Screen ingredientsInfoScreen = null;
+    private Line_Chart_Meal_Plan_Screen lineChartMealPlanScreen = null;
 
     //##################################################################################################################
     //
@@ -864,6 +866,8 @@ public class Meal_Plan_Screen extends Screen
         }
     }
 
+
+
     //##################################################################################################################
     //  Icon Methods & ActionListener Events
     //##################################################################################################################
@@ -940,24 +944,24 @@ public class Meal_Plan_Screen extends Screen
         iconPanelInsert.add(pieChart_Btn);
 
         //##########################
-        //  Histogram
+        //  LineChart
         //##########################
         width = 51;
         height = 53;
 
-        IconButton histogram_Icon_Btn = new IconButton("/images/graph/bar1.png", width, height, width, height,
+        IconButton lineChart_Icon_Btn = new IconButton("/images/graph/bar1.png", width, height, width, height,
                 "centre", "right"); // btn text is useless here , refactor
 
-        histogram_Icon_Btn.makeBTntransparent();
+        lineChart_Icon_Btn.makeBTntransparent();
 
-        JButton histogram_Btn = histogram_Icon_Btn.returnJButton();
-        histogram_Btn.setToolTipText("Display Macronutrient Data in Histogram"); //Hover message over icon
+        JButton lineChart_Btn = lineChart_Icon_Btn.returnJButton();
+        lineChart_Btn.setToolTipText("Display Macronutrient Data in LineChart"); //Hover message over icon
 
-        histogram_Btn.addActionListener(ae -> {
-
+        lineChart_Btn.addActionListener(ae -> {
+            open_LineChartScreen();
         });
 
-        iconPanelInsert.add(histogram_Btn);
+        iconPanelInsert.add(lineChart_Btn);
 
         //##########################
         //  ScrollBar Up
@@ -1395,6 +1399,22 @@ public class Meal_Plan_Screen extends Screen
     private void refreshMacrosLeft()
     {
         macrosLeft_JTable.refreshData();
+    }
+
+    private void open_LineChartScreen()
+    {
+        if (lineChartMealPlanScreen == null)
+        {
+            lineChartMealPlanScreen = new Line_Chart_Meal_Plan_Screen(db, this);
+            return;
+        }
+
+        lineChartMealPlanScreen.makeJFrameVisible();
+    }
+
+    public void removeLineChartScreen()
+    {
+        lineChartMealPlanScreen = null;
     }
 
     //##################################################################################################################

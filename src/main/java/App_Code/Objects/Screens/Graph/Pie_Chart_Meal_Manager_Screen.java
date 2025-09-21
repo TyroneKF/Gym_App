@@ -65,11 +65,6 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
         mealManager.removePieChartScreen();
     }
 
-    public void makeVisible()
-    {
-        super.makeJFrameVisible();
-    }
-
     public void update_PieChart_Title()
     {
         meal_name = mealManager.getCurrentMealName();
@@ -104,8 +99,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
         catch (Exception e)
         {
             JOptionPane.showMessageDialog(meal_plan_screen.getFrame(), "Error, creating Pie Chart with column table names!");
-            System.err.printf("\n\nPie_Chart.java : Constructor \n%s", e);
-
+            System.err.printf("\n\nPie_Chart.java : updateDataSet() \n%s", e);
             return false;
         }
     }

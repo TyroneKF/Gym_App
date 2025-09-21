@@ -37,8 +37,6 @@ public class TotalMealTable extends MyJTable_DisplayData
     {
         column_name = column_name.toLowerCase(Locale.ROOT);
 
-        if(columnNamesAndPositions.containsKey(column_name)) System.out.printf("\n\nYes %s is in the list", column_name);
-
         return  columnNamesAndPositions.containsKey(column_name)   ?
                 (BigDecimal) getTable().getValueAt(0,columnNamesAndPositions.get(column_name)[1])  // Index of Column after columns are hidden
                 : null;

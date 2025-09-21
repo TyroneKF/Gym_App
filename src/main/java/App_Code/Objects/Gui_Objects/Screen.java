@@ -152,7 +152,7 @@ public class Screen
 
     public void setResizable(boolean x)
     {
-        frame.setResizable(false);
+        frame.setResizable(x);
     }
 
     //##################################################################################################################
@@ -196,12 +196,11 @@ public class Screen
     //##################################################################################################################
     // Sizing & Adding to GUI Methods
     //##################################################################################################################
-    protected void makeJFrameVisible()
+    public void makeJFrameVisible()
     {
         getFrame().setExtendedState(JFrame.NORMAL); // makes frames visible
         getFrame().setLocation(0, 0);
     }
-
 
     protected int getAndIncreaseContainerYPos()
     {

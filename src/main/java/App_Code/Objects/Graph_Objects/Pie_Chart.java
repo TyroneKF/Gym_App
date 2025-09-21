@@ -88,7 +88,7 @@ public class Pie_Chart extends JPanel
         rotator.start();
 
         // #############################################
-        // Create Plot & Add to GUI
+        // Create Plot Dimensions
         //#############################################
         // Add chart to panel
         ChartPanel chartPanel = new ChartPanel(chart);
@@ -98,6 +98,27 @@ public class Pie_Chart extends JPanel
         // Add Plot to Panel
         //#############################################
         add(chartPanel);
+    }
+
+    public void setTitle(String meal_name)
+    {
+        chart.setTitle(String.format("%s Macros", meal_name));
+    }
+
+    public void update_dataset(Map<String, Pair<BigDecimal, String>> data)
+    {
+        //############################################
+        // Add Data to Dataset to represent
+        //############################################]
+        dataset.clear();
+        for (String name : data.keySet())
+        {
+            Pair<BigDecimal, String> list = data.get(name);
+            BigDecimal value = list.getValue0();
+            String measurement  = list.getValue1();
+
+            dataset.setValue(String.format("  %s ( %s %s )  ", name, value, measurement), value);
+        }
     }
 
     public class Rotator extends Timer implements ActionListener
@@ -121,27 +142,6 @@ public class Pie_Chart extends JPanel
                 angle = 0;
             }
             plot.setStartAngle(angle);  // update the plot
-        }
-    }
-
-    public void setTitle(String meal_name)
-    {
-        chart.setTitle(String.format("%s Macros", meal_name));
-    }
-
-    public void update_dataset(Map<String, Pair<BigDecimal, String>> data)
-    {
-        //############################################
-        // Add Data to Dataset to represent
-        //############################################]
-        dataset.clear();
-        for (String name : data.keySet())
-        {
-            Pair<BigDecimal, String> list = data.get(name);
-            BigDecimal value = list.getValue0();
-            String measurement  = list.getValue1();
-
-            dataset.setValue(String.format("  %s ( %s %s )  ", name, value, measurement), value);
         }
     }
 }

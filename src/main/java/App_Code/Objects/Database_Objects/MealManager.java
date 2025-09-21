@@ -458,7 +458,7 @@ public class MealManager
         {
             System.out.println("\n\nB : pieChart_Action() 1 !!!!");
 
-            pie_chart_meal_manager_screen.makeVisible();
+            pie_chart_meal_manager_screen.makeJFrameVisible();
             return;
         }
 

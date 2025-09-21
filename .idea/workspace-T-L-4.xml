@@ -1,0 +1,1223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="Gym_App:jar" />
+    </artifacts-to-build>
+  </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="cc1e1179-1f78-4e32-b366-09825a90e4d6" name="Default Changelist" comment="Updates Made in this commit:&#10;.) Class updates&#10;&#10;&#10;Previous Updates:&#10;&#10;&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <change beforePath="$PROJECT_DIR$/src/main/java/App_Code/Objects/Graph_Objects/Line_Chart.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/App_Code/Objects/Graph_Objects/Line_Chart.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/App_Code/Objects/Graph_Objects/Pie_Chart.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/App_Code/Objects/Graph_Objects/Pie_Chart.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Graph/Line_Chart_Meal_Plan_Screen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Graph/Line_Chart_Meal_Plan_Screen.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Graph/Pie_Chart_Meal_Manager_Screen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Graph/Pie_Chart_Meal_Manager_Screen.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Meal_Plan_Screen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Meal_Plan_Screen.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/App_Code/Objects/Graph_Objects/Line_Chart.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/App_Code/Objects/Graph_Objects/Pie_Chart$Rotator.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/App_Code/Objects/Graph_Objects/Pie_Chart.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/App_Code/Objects/Screens/Graph/Line_Chart_Meal_Plan_Screen.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/App_Code/Objects/Screens/Graph/Pie_Chart_Meal_Manager_Screen.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/App_Code/Objects/Screens/Meal_Plan_Screen$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/App_Code/Objects/Screens/Meal_Plan_Screen$2.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/App_Code/Objects/Screens/Meal_Plan_Screen.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Tests/Graphs/yes_TimeSeriesWithBullets.class" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="package-info" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <excluded-from-favorite>
+      <branch-storage>
+        <map>
+          <entry type="LOCAL">
+            <value>
+              <list>
+                <branch-info repo="$PROJECT_DIR$" source="master" />
+              </list>
+            </value>
+          </entry>
+        </map>
+      </branch-storage>
+    </excluded-from-favorite>
+    <option name="PUSH_AUTO_UPDATE" value="true" />
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="nn" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="HARD" />
+    <option name="UPDATE_TYPE" value="REBASE" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Stores_And_Types/Parent_For_Types_And_Stores_Screens.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Edit_ShopForm.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Edit_IngredientsScreen.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Stores_And_Types/Edit_Ingredient_Stores_Screen.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Ingredients_Info_Screen.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Stores_And_Types/Edit_Ingredients_Types_Screen.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Edit_IngredientsForm.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Database_Objects/JDBC/MyJDBC.java" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="1wXE4pP4z7lJvMNYUnLZphuV46m" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="JavaMethodFindUsagesOptions.isOverridingMethods" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/main/java/Tests/Graphs/DynamicPieChart2.java" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.44832042" />
+    <property name="restartRequiresConfirmation" value="false" />
+    <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
+    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.Java" />
+    <property name="settings.editor.splitter.proportion" value="0.13249572" />
+    <property name="two.files.diff.last.used.file" value="$PROJECT_DIR$/src/main/java/Tests/Graphs/DynamicPieChart2.java" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Users\DonTy\OneDrive\0.) Coding\Gym_App\resources\production_setup" />
+      <recent name="D:\Users\DonTy\OneDrive\0.) Coding\Gym_App\src\main\resources\data\database_scripts" />
+      <recent name="D:\Users\DonTy\OneDrive\0.) Coding\Gym_App\resources" />
+      <recent name="D:\Users\DonTy\OneDrive\0.) Coding\Gym_App\resources\production_setup\database_scripts" />
+      <recent name="D:\Users\DonTy\OneDrive\0.) Coding\Gym_App\out\artifacts\Gym_App_jar" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Users\DonTy\OneDrive\0.) Coding\Gym_App\scripts" />
+      <recent name="D:\Users\DonTy\OneDrive\0.) Coding\Gym_App\docs" />
+      <recent name="D:\Users\DonTy\OneDrive\0.) Coding\Gym_App" />
+      <recent name="D:\Users\DonTy\OneDrive\0.) Coding\Gym_App\src\main\resources\data\database_scripts" />
+      <recent name="D:\Users\DonTy\OneDrive\0.) Coding\Gym_App\src\main\resources\data" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="App_Code.Objects.Gui_Objects" />
+      <recent name="App_Code.Objects.Screens.Add_Ingredients_Screen" />
+      <recent name="App_Code.Objects.Screens.MacrosTargets_Screen" />
+      <recent name="App_Code.Objects.Screens.Meal_Plan_Screen" />
+      <recent name="App_Code.Objects.Database_Objects.JTable_JDBC" />
+    </key>
+  </component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="í" />
+    </option>
+  </component>
+  <component name="RunManager" selected="Application.Meal_Plan_Screen">
+    <configuration name="BulletPointsExample" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Tests.Graphs.BulletPointsExample" />
+      <module name="Gym_App" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="Tests.Graphs.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="LineChart_AWT" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Tests.Graphs.LineChart_AWT" />
+      <module name="Gym_App" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="Tests.Graphs.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Meal_Plan_Screen" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="App_Code.Objects.Screens.Meal_Plan_Screen" />
+      <module name="Gym_App" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="App_Code.Objects.Screens.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TimeYAxisExample" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Tests.Graphs.TimeYAxisExample" />
+      <module name="Gym_App" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="Tests.Graphs.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="yes_TimeSeriesWithBullets" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Tests.Graphs.yes_TimeSeriesWithBullets" />
+      <module name="Gym_App" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="Tests.Graphs.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.BulletPointsExample" />
+      <item itemvalue="Application.LineChart_AWT" />
+      <item itemvalue="Application.Meal_Plan_Screen" />
+      <item itemvalue="Application.TimeYAxisExample" />
+      <item itemvalue="Application.yes_TimeSeriesWithBullets" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.Meal_Plan_Screen" />
+        <item itemvalue="Application.yes_TimeSeriesWithBullets" />
+        <item itemvalue="Application.LineChart_AWT" />
+        <item itemvalue="Application.TimeYAxisExample" />
+        <item itemvalue="Application.BulletPointsExample" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="cc1e1179-1f78-4e32-b366-09825a90e4d6" name="Default Changelist" comment="" />
+      <created>1628596347646</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1628596347646</updated>
+      <workItem from="1636456845191" duration="8557000" />
+      <workItem from="1636569452788" duration="1856000" />
+      <workItem from="1636638722741" duration="920000" />
+      <workItem from="1637383598126" duration="1626000" />
+      <workItem from="1637385261779" duration="1001000" />
+      <workItem from="1637409767074" duration="7000" />
+      <workItem from="1637409793030" duration="6305000" />
+      <workItem from="1639451237829" duration="24000" />
+      <workItem from="1639451283457" duration="892000" />
+      <workItem from="1639511855700" duration="728000" />
+      <workItem from="1639545186062" duration="290000" />
+      <workItem from="1639625197696" duration="8394000" />
+      <workItem from="1639764545206" duration="2230000" />
+      <workItem from="1641651120425" duration="163000" />
+      <workItem from="1641652367808" duration="353000" />
+      <workItem from="1641652748061" duration="1768000" />
+      <workItem from="1641654589335" duration="691000" />
+      <workItem from="1641655303813" duration="5926000" />
+      <workItem from="1641661392438" duration="461000" />
+      <workItem from="1641661902676" duration="37000" />
+      <workItem from="1641697355632" duration="8833000" />
+      <workItem from="1641778574082" duration="8457000" />
+      <workItem from="1644601781685" duration="11000" />
+      <workItem from="1645937600291" duration="6000" />
+      <workItem from="1648914658398" duration="372000" />
+      <workItem from="1649373398309" duration="151000" />
+      <workItem from="1654638312564" duration="686000" />
+      <workItem from="1654687353253" duration="592000" />
+      <workItem from="1654697614434" duration="808000" />
+      <workItem from="1654698566761" duration="1000" />
+      <workItem from="1654698585594" duration="433000" />
+      <workItem from="1654699046022" duration="115000" />
+      <workItem from="1654699669482" duration="13000" />
+      <workItem from="1656317752038" duration="160000" />
+      <workItem from="1656941374523" duration="204000" />
+      <workItem from="1657720947712" duration="16000" />
+      <workItem from="1657720999635" duration="150000" />
+    </task>
+    <task id="LOCAL-00575" summary="Updates Made in this commit:&#10;.) Refactoring / Restructuring&#10;&#10;&#10;Previous Updates:&#10;.) &#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1757166469418</created>
+      <option name="number" value="00575" />
+      <option name="presentableId" value="LOCAL-00575" />
+      <option name="project" value="LOCAL" />
+      <updated>1757166469418</updated>
+    </task>
+    <task id="LOCAL-00576" summary="Updates Made in this commit:&#10;.) Refactoring / Restructuring&#10;&#10;&#10;Previous Updates:&#10;.) &#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1757166703671</created>
+      <option name="number" value="00576" />
+      <option name="presentableId" value="LOCAL-00576" />
+      <option name="project" value="LOCAL" />
+      <updated>1757166703671</updated>
+    </task>
+    <task id="LOCAL-00577" summary="Updates Made in this commit:&#10;.) Refactoring / Restructuring&#10;&#10;&#10;Previous Updates:&#10;.) &#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1757166744286</created>
+      <option name="number" value="00577" />
+      <option name="presentableId" value="LOCAL-00577" />
+      <option name="project" value="LOCAL" />
+      <updated>1757166744286</updated>
+    </task>
+    <task id="LOCAL-00578" summary="Updates Made in this commit:&#10;.) Refactoring / Restructuring update methods in JDBC_JTable.java&#10;&#10;&#10;Previous Updates:&#10;.) &#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1757171897512</created>
+      <option name="number" value="00578" />
+      <option name="presentableId" value="LOCAL-00578" />
+      <option name="project" value="LOCAL" />
+      <updated>1757171897512</updated>
+    </task>
+    <task id="LOCAL-00579" summary="Updates Made in this commit:&#10;.) Random class updates&#10;&#10;&#10;Previous Updates:&#10;.) &#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1757274601499</created>
+      <option name="number" value="00579" />
+      <option name="presentableId" value="LOCAL-00579" />
+      <option name="project" value="LOCAL" />
+      <updated>1757274601499</updated>
+    </task>
+    <task id="LOCAL-00580" summary="Updates Made in this commit:&#10;.) Refactoring MealPlanScreen.java &#10;.) Changed Tables In DB names&#10;&#10;&#10;Previous Updates:&#10;.) &#10;&#10;Trying to do in this update:&#10;.) Font as constructor parameter on ICON BTN&#10;.) Reflect DB changes on other pages&#10;.) Incorporate Measurements Table in DB&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1757383156740</created>
+      <option name="number" value="00580" />
+      <option name="presentableId" value="LOCAL-00580" />
+      <option name="project" value="LOCAL" />
+      <updated>1757383156740</updated>
+    </task>
+    <task id="LOCAL-00581" summary="Updates Made in this commit:&#10;.) Class Updates&#10;&#10;Previous Updates:&#10;.) &#10;&#10;Trying to do in this update:&#10;.) Font as constructor parameter on ICON BTN&#10;.) Reflect DB changes on other pages&#10;.) Incorporate Measurements Table in DB&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1757418960582</created>
+      <option name="number" value="00581" />
+      <option name="presentableId" value="LOCAL-00581" />
+      <option name="project" value="LOCAL" />
+      <updated>1757418960582</updated>
+    </task>
+    <task id="LOCAL-00582" summary="Updates Made in this commit:&#10;.) Class Updates&#10;&#10;Previous Updates:&#10;.) &#10;&#10;Trying to do in this update:&#10;.) Font as constructor parameter on ICON BTN&#10;.) Reflect DB changes on other pages&#10;.) Incorporate Measurements Table in DB&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1757420852932</created>
+      <option name="number" value="00582" />
+      <option name="presentableId" value="LOCAL-00582" />
+      <option name="project" value="LOCAL" />
+      <updated>1757420852932</updated>
+    </task>
+    <task id="LOCAL-00583" summary="Updates Made in this commit:&#10;.) Class Updates&#10;&#10;Previous Updates:&#10;.) &#10;&#10;Trying to do in this update:&#10;.) Font as constructor parameter on ICON BTN&#10;.) Reflect DB changes on other pages&#10;.) Incorporate Measurements Table in DB&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1757420986800</created>
+      <option name="number" value="00583" />
+      <option name="presentableId" value="LOCAL-00583" />
+      <option name="project" value="LOCAL" />
+      <updated>1757420986800</updated>
+    </task>
+    <task id="LOCAL-00584" summary="Updates Made in this commit:&#10;.) IngredientsTable.java  fixed error due to table changes&#10;&#10;Previous Updates:&#10;.) &#10;&#10;Trying to do in this update:&#10;.) Font as constructor parameter on ICON BTN&#10;.) Reflect DB changes on other pages&#10;.) Incorporate Measurements Table in DB&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1757421780568</created>
+      <option name="number" value="00584" />
+      <option name="presentableId" value="LOCAL-00584" />
+      <option name="project" value="LOCAL" />
+      <updated>1757421780568</updated>
+    </task>
+    <task id="LOCAL-00585" summary="Updates Made in this commit:&#10;.) Class Updates&#10;.) IngredientsTable.java  fixed error due to table changes&#10;&#10;&#10;Previous Updates:&#10;.) &#10;&#10;Trying to do in this update:&#10;.) Font as constructor parameter on ICON BTN&#10;.) Reflect DB changes on other pages&#10;.) Incorporate Measurements Table in DB&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1757421814550</created>
+      <option name="number" value="00585" />
+      <option name="presentableId" value="LOCAL-00585" />
+      <option name="project" value="LOCAL" />
+      <updated>1757421814550</updated>
+    </task>
+    <task id="LOCAL-00586" summary="Updates Made in this commit:&#10;.) Incorporated measurements table&#10;.) IngredientsTable.java fixed error :  Delete row on last ingredient, confirm no = product reset to None of the above&#10;&#10;&#10;&#10;Previous Updates:&#10;.) &#10;&#10;Trying to do in this update:&#10;.) Font as constructor parameter on ICON BTN&#10;.) Reflect DB changes on other pages&#10;.) Incorporate Measurements Table in DB&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1757457447940</created>
+      <option name="number" value="00586" />
+      <option name="presentableId" value="LOCAL-00586" />
+      <option name="project" value="LOCAL" />
+      <updated>1757457447940</updated>
+    </task>
+    <task id="LOCAL-00587" summary="Updates Made in this commit:&#10;.) Refactoring time methods &amp; ordering GUI by meal_time&#10;&#10;&#10;&#10;Previous Updates:&#10;.) &#10;&#10;Trying to do in this update:&#10;.) Font as constructor parameter on ICON BTN&#10;.) Reflect DB changes on other pages&#10;.) Incorporate Measurements Table in DB&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1757687006825</created>
+      <option name="number" value="00587" />
+      <option name="presentableId" value="LOCAL-00587" />
+      <option name="project" value="LOCAL" />
+      <updated>1757687006825</updated>
+    </task>
+    <task id="LOCAL-00588" summary="Updates Made in this commit:&#10;.) Fixed time issue on meals not being reset to an earlier position. &#10;&#10;&#10;&#10;Previous Updates:&#10;.) Refactoring time methods &amp; ordering GUI by meal_time&#10;&#10;Trying to do in this update:&#10;.) Font as constructor parameter on ICON BTN&#10;.) Reflect DB changes on other pages&#10;.) Incorporate Measurements Table in DB&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1757715668001</created>
+      <option name="number" value="00588" />
+      <option name="presentableId" value="LOCAL-00588" />
+      <option name="project" value="LOCAL" />
+      <updated>1757715668001</updated>
+    </task>
+    <task id="LOCAL-00589" summary="Updates Made in this commit:&#10;.) After Meal Object time is added, scrollpane is adjusted to where it is in GUI&#10;&#10;&#10;&#10;Previous Updates:&#10;.) Refactoring time methods &amp; ordering GUI by meal_time&#10;&#10;Trying to do in this update:&#10;.) Font as constructor parameter on ICON BTN&#10;.) Reflect DB changes on other pages&#10;.) Incorporate Measurements Table in DB&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1757730304704</created>
+      <option name="number" value="00589" />
+      <option name="presentableId" value="LOCAL-00589" />
+      <option name="project" value="LOCAL" />
+      <updated>1757730304705</updated>
+    </task>
+    <task id="LOCAL-00590" summary="Updates Made in this commit:&#10;.) Class Updates&#10;&#10;&#10;&#10;Previous Updates:&#10;.) After Meal Object time is added, scrollpane is adjusted to where it is in GUI&#10;&#10;Trying to do in this update:&#10;.) Font as constructor parameter on ICON BTN&#10;.) Reflect DB changes on other pages&#10;.) Incorporate Measurements Table in DB&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1757730332679</created>
+      <option name="number" value="00590" />
+      <option name="presentableId" value="LOCAL-00590" />
+      <option name="project" value="LOCAL" />
+      <updated>1757730332679</updated>
+    </task>
+    <task id="LOCAL-00591" summary="Updates Made in this commit:&#10;.) Updates.txt update&#10;&#10;&#10;&#10;Previous Updates:&#10;.) After Meal Object time is added, scrollpane is adjusted to where it is in GUI&#10;&#10;Trying to do in this update:&#10;.) Font as constructor parameter on ICON BTN&#10;.) Reflect DB changes on other pages&#10;.) Incorporate Measurements Table in DB&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1757765491385</created>
+      <option name="number" value="00591" />
+      <option name="presentableId" value="LOCAL-00591" />
+      <option name="project" value="LOCAL" />
+      <updated>1757765491385</updated>
+    </task>
+    <task id="LOCAL-00592" summary="Updates Made in this commit:&#10;.) Fixed Adding Meal_Manager to the correct spot after meal_time has been refreshed on meal&#10;&#10;&#10;&#10;Previous Updates:&#10;.) &#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1757891729918</created>
+      <option name="number" value="00592" />
+      <option name="presentableId" value="LOCAL-00592" />
+      <option name="project" value="LOCAL" />
+      <updated>1757891729919</updated>
+    </task>
+    <task id="LOCAL-00593" summary="Updates Made in this commit:&#10;.) Add Graph Icon&#10;&#10;&#10;&#10;Previous Updates:&#10;.) &#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1757976710529</created>
+      <option name="number" value="00593" />
+      <option name="presentableId" value="LOCAL-00593" />
+      <option name="project" value="LOCAL" />
+      <updated>1757976710529</updated>
+    </task>
+    <task id="LOCAL-00594" summary="Updates Made in this commit:&#10;.) Add Graph Icon&#10;&#10;&#10;&#10;Previous Updates:&#10;.) &#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1757976788882</created>
+      <option name="number" value="00594" />
+      <option name="presentableId" value="LOCAL-00594" />
+      <option name="project" value="LOCAL" />
+      <updated>1757976788882</updated>
+    </task>
+    <task id="LOCAL-00595" summary="Updates Made in this commit:&#10;.) Refactoring Screens Object&#10;&#10;&#10;&#10;Previous Updates:&#10;.) &#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1758036359604</created>
+      <option name="number" value="00595" />
+      <option name="presentableId" value="LOCAL-00595" />
+      <option name="project" value="LOCAL" />
+      <updated>1758036359604</updated>
+    </task>
+    <task id="LOCAL-00596" summary="Updates Made in this commit:&#10;.) Refactoring Screens Object&#10;&#10;&#10;&#10;Previous Updates:&#10;.) &#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1758038743012</created>
+      <option name="number" value="00596" />
+      <option name="presentableId" value="LOCAL-00596" />
+      <option name="project" value="LOCAL" />
+      <updated>1758038743012</updated>
+    </task>
+    <task id="LOCAL-00597" summary="Updates Made in this commit:&#10;.) Refactoring Screens Object&#10;&#10;&#10;&#10;Previous Updates:&#10;.) &#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1758048568932</created>
+      <option name="number" value="00597" />
+      <option name="presentableId" value="LOCAL-00597" />
+      <option name="project" value="LOCAL" />
+      <updated>1758048568932</updated>
+    </task>
+    <task id="LOCAL-00598" summary="Updates Made in this commit:&#10;.) Meal_Plan_Screen.java extends into Screens Objects &#10;.) Refactoring Screens Object&#10;&#10;&#10;&#10;Previous Updates:&#10;.) &#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1758056281435</created>
+      <option name="number" value="00598" />
+      <option name="presentableId" value="LOCAL-00598" />
+      <option name="project" value="LOCAL" />
+      <updated>1758056281435</updated>
+    </task>
+    <task id="LOCAL-00599" summary="Updates Made in this commit:&#10;.) Class updates&#10;&#10;&#10;&#10;Previous Updates:&#10;.) Meal_Plan_Screen.java extends into Screens Objects &#10;.) Refactoring Screens Object&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1758056353310</created>
+      <option name="number" value="00599" />
+      <option name="presentableId" value="LOCAL-00599" />
+      <option name="project" value="LOCAL" />
+      <updated>1758056353310</updated>
+    </task>
+    <task id="LOCAL-00600" summary="Updates Made in this commit:&#10;.) Graphs &#10;.) Class Updates&#10;&#10;&#10;&#10;Previous Updates:&#10;&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1758069215790</created>
+      <option name="number" value="00600" />
+      <option name="presentableId" value="LOCAL-00600" />
+      <option name="project" value="LOCAL" />
+      <updated>1758069215790</updated>
+    </task>
+    <task id="LOCAL-00601" summary="Updates Made in this commit:&#10;.) Graphs &#10;.) Class Updates&#10;&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1758069460626</created>
+      <option name="number" value="00601" />
+      <option name="presentableId" value="LOCAL-00601" />
+      <option name="project" value="LOCAL" />
+      <updated>1758069460626</updated>
+    </task>
+    <task id="LOCAL-00602" summary="Updates Made in this commit:&#10;.) Screen.java &amp; Meal_Plan_Screen.java Screens objects refactoring&#10;&#10;&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1758115238374</created>
+      <option name="number" value="00602" />
+      <option name="presentableId" value="LOCAL-00602" />
+      <option name="project" value="LOCAL" />
+      <updated>1758115238375</updated>
+    </task>
+    <task id="LOCAL-00603" summary="Updates Made in this commit:&#10;.) Class Updates&#10;.) Screen.java &amp; Meal_Plan_Screen.java Screens objects refactoring&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1758115330747</created>
+      <option name="number" value="00603" />
+      <option name="presentableId" value="LOCAL-00603" />
+      <option name="project" value="LOCAL" />
+      <updated>1758115330747</updated>
+    </task>
+    <task id="LOCAL-00604" summary="Updates Made in this commit:&#10;.) Fixed when calling addToContainer&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1758119558183</created>
+      <option name="number" value="00604" />
+      <option name="presentableId" value="LOCAL-00604" />
+      <option name="project" value="LOCAL" />
+      <updated>1758119558184</updated>
+    </task>
+    <task id="LOCAL-00605" summary="Updates Made in this commit:&#10;.) Added Clear GUI &amp; Histogram button to GUI&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1758121731753</created>
+      <option name="number" value="00605" />
+      <option name="presentableId" value="LOCAL-00605" />
+      <option name="project" value="LOCAL" />
+      <updated>1758121731753</updated>
+    </task>
+    <task id="LOCAL-00606" summary="Updates Made in this commit:&#10;.) Graph Classes &amp; Tests configured for rotating graphs.&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1758122096231</created>
+      <option name="number" value="00606" />
+      <option name="presentableId" value="LOCAL-00606" />
+      <option name="project" value="LOCAL" />
+      <updated>1758122096231</updated>
+    </task>
+    <task id="LOCAL-00607" summary="Updates Made in this commit:&#10;.) Graph Classes &amp; Tests configured for rotating graphs.&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1758122118186</created>
+      <option name="number" value="00607" />
+      <option name="presentableId" value="LOCAL-00607" />
+      <option name="project" value="LOCAL" />
+      <updated>1758122118186</updated>
+    </task>
+    <task id="LOCAL-00608" summary="Updates Made in this commit:&#10;.) Graph GUI Looking good updates&#10;.) Screen class updates&#10;&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1758134583120</created>
+      <option name="number" value="00608" />
+      <option name="presentableId" value="LOCAL-00608" />
+      <option name="project" value="LOCAL" />
+      <updated>1758134583120</updated>
+    </task>
+    <task id="LOCAL-00609" summary="Updates Made in this commit:&#10;.) Pie Chart pics &amp; GUI Integration on Meal_Plan_Screen.java&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1758163336851</created>
+      <option name="number" value="00609" />
+      <option name="presentableId" value="LOCAL-00609" />
+      <option name="project" value="LOCAL" />
+      <updated>1758163336851</updated>
+    </task>
+    <task id="LOCAL-00610" summary="Updates Made in this commit:&#10;.) Screen.java refactoring&#10;.) Updates.txt updated &#10;.) JDBC_JTable.java refactored &amp; renamed variables&#10;.) Class updates Meal_Plan_Screen.class&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1758211618644</created>
+      <option name="number" value="00610" />
+      <option name="presentableId" value="LOCAL-00610" />
+      <option name="project" value="LOCAL" />
+      <updated>1758211618644</updated>
+    </task>
+    <task id="LOCAL-00611" summary="Updates Made in this commit:&#10;.) Screen.java static caused an error across the classes inherited this class.&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1758213245900</created>
+      <option name="number" value="00611" />
+      <option name="presentableId" value="LOCAL-00611" />
+      <option name="project" value="LOCAL" />
+      <updated>1758213245900</updated>
+    </task>
+    <task id="LOCAL-00612" summary="Updates Made in this commit:&#10;.) Class update Meal_Plan_Screen.class&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1758213340438</created>
+      <option name="number" value="00612" />
+      <option name="presentableId" value="LOCAL-00612" />
+      <option name="project" value="LOCAL" />
+      <updated>1758213340438</updated>
+    </task>
+    <task id="LOCAL-00613" summary="Updates Made in this commit:&#10;.) Incoporated Pie Charts into GUI fully working&#10;.) Screen.java refactored into classes&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1758225333948</created>
+      <option name="number" value="00613" />
+      <option name="presentableId" value="LOCAL-00613" />
+      <option name="project" value="LOCAL" />
+      <updated>1758225333948</updated>
+    </task>
+    <task id="LOCAL-00614" summary="Updates Made in this commit:&#10;.) Incoporated Pie Charts into GUI fully working&#10;.) Screen.java refactored into classes&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1758225919395</created>
+      <option name="number" value="00614" />
+      <option name="presentableId" value="LOCAL-00614" />
+      <option name="project" value="LOCAL" />
+      <updated>1758225919395</updated>
+    </task>
+    <task id="LOCAL-00615" summary="Updates Made in this commit:&#10;.) Incoporated Pie Charts into GUI fully working&#10;.) Screen.java refactored into classes&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1758227148513</created>
+      <option name="number" value="00615" />
+      <option name="presentableId" value="LOCAL-00615" />
+      <option name="project" value="LOCAL" />
+      <updated>1758227148513</updated>
+    </task>
+    <task id="LOCAL-00616" summary="Updates Made in this commit:&#10;.) Formatting&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1758227557119</created>
+      <option name="number" value="00616" />
+      <option name="presentableId" value="LOCAL-00616" />
+      <option name="project" value="LOCAL" />
+      <updated>1758227557119</updated>
+    </task>
+    <task id="LOCAL-00617" summary="Updates Made in this commit:&#10;.) Refactoring &#10;.) Adding Tests for line graphs ...&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1758243168603</created>
+      <option name="number" value="00617" />
+      <option name="presentableId" value="LOCAL-00617" />
+      <option name="project" value="LOCAL" />
+      <updated>1758243168604</updated>
+    </task>
+    <task id="LOCAL-00618" summary="Updates Made in this commit:&#10;.) Refactoring &#10;&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1758249987255</created>
+      <option name="number" value="00618" />
+      <option name="presentableId" value="LOCAL-00618" />
+      <option name="project" value="LOCAL" />
+      <updated>1758249987255</updated>
+    </task>
+    <task id="LOCAL-00619" summary="Updates Made in this commit:&#10;.) Graph Tests&#10;&#10;&#10;Previous Updates:&#10;&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1758251511618</created>
+      <option name="number" value="00619" />
+      <option name="presentableId" value="LOCAL-00619" />
+      <option name="project" value="LOCAL" />
+      <updated>1758251511618</updated>
+    </task>
+    <task id="LOCAL-00620" summary="Updates Made in this commit:&#10;.) Graph Tests&#10;&#10;&#10;Previous Updates:&#10;&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1758251751665</created>
+      <option name="number" value="00620" />
+      <option name="presentableId" value="LOCAL-00620" />
+      <option name="project" value="LOCAL" />
+      <updated>1758251751666</updated>
+    </task>
+    <task id="LOCAL-00621" summary="Updates Made in this commit:&#10;.) Meal_Plan_Screen.java recipe list included in GUI&#10;.) Trying to build line chart too&#10;&#10;&#10;Previous Updates:&#10;&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1758300054606</created>
+      <option name="number" value="00621" />
+      <option name="presentableId" value="LOCAL-00621" />
+      <option name="project" value="LOCAL" />
+      <updated>1758300054607</updated>
+    </task>
+    <task id="LOCAL-00622" summary="Updates Made in this commit:&#10;.) Trying to build linechart&#10;&#10;&#10;Previous Updates:&#10;&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1758368359418</created>
+      <option name="number" value="00622" />
+      <option name="presentableId" value="LOCAL-00622" />
+      <option name="project" value="LOCAL" />
+      <updated>1758368359418</updated>
+    </task>
+    <task id="LOCAL-00623" summary="Updates Made in this commit:&#10;.) Class updates&#10;&#10;&#10;Previous Updates:&#10;&#10;&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)">
+      <created>1758368558245</created>
+      <option name="number" value="00623" />
+      <option name="presentableId" value="LOCAL-00623" />
+      <option name="project" value="LOCAL" />
+      <updated>1758368558246</updated>
+    </task>
+    <option name="localTasksCounter" value="624" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ID_ORDER">
+      <list>
+        <option value="Default.Root" />
+        <option value="Default.Author" />
+        <option value="Default.Date" />
+        <option value="Default.Subject" />
+        <option value="Space.CommitStatus" />
+      </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="Refactoring" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Add Graph Icon&#10;&#10;&#10;&#10;Previous Updates:&#10;.) &#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Refactoring Screens Object&#10;&#10;&#10;&#10;Previous Updates:&#10;.) &#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Meal_Plan_Screen.java extends into Screens Objects &#10;.) Refactoring Screens Object&#10;&#10;&#10;&#10;Previous Updates:&#10;.) &#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Class updates&#10;&#10;&#10;&#10;Previous Updates:&#10;.) Meal_Plan_Screen.java extends into Screens Objects &#10;.) Refactoring Screens Object&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Graphs &#10;.) Class Updates&#10;&#10;&#10;&#10;Previous Updates:&#10;&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Graphs &#10;.) Class Updates&#10;&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Screen.java &amp; Meal_Plan_Screen.java Screens objects refactoring&#10;&#10;&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Class Updates&#10;.) Screen.java &amp; Meal_Plan_Screen.java Screens objects refactoring&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Fixed when calling addToContainer&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Added Clear GUI &amp; Histogram button to GUI&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Graph Classes &amp; Tests configured for rotating graphs.&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Graph GUI Looking good updates&#10;.) Screen class updates&#10;&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Pie Chart pics &amp; GUI Integration on Meal_Plan_Screen.java&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Screen.java refactoring&#10;.) Updates.txt updated &#10;.) JDBC_JTable.java refactored &amp; renamed variables&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Screen.java refactoring&#10;.) Updates.txt updated &#10;.) JDBC_JTable.java refactored &amp; renamed variables&#10;.) Class updates Meal_Plan_Screen.class&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Screen.java static caused an error across the classes inherited this class.&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Class update Meal_Plan_Screen.class&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Incoporated Pie Charts into GUI fully working&#10;.) Screen.java refactored into classes&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Formatting&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Refactoring &#10;.) Adding Tests for line graphs ...&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Refactoring &#10;&#10;&#10;&#10;Previous Updates:&#10;.) Graph Tests&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Graph Tests&#10;&#10;&#10;Previous Updates:&#10;&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Meal_Plan_Screen.java recipe list included in GUI&#10;.) Trying to build line chart too&#10;&#10;&#10;Previous Updates:&#10;&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Trying to build linechart&#10;&#10;&#10;Previous Updates:&#10;&#10;.) Class updates&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)" />
+    <MESSAGE value="Updates Made in this commit:&#10;.) Class updates&#10;&#10;&#10;Previous Updates:&#10;&#10;&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updates Made in this commit:&#10;.) Class updates&#10;&#10;&#10;Previous Updates:&#10;&#10;&#10;&#10;Trying to do in this update:&#10;.)&#10;&#10;Next To Do:&#10;.) &#10;&#10;Errors&#10;.)" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/Tests/JTables/JComboBox/JcomboBox_Update.java</url>
+          <line>268</line>
+          <option name="timeStamp" value="18" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/Tests/JTables/JComboBox/JcomboBox_Update.java</url>
+          <line>78</line>
+          <option name="timeStamp" value="22" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/Tests/JTables/JComboBox/JcomboBox_Update.java</url>
+          <line>108</line>
+          <option name="timeStamp" value="23" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Add_Ingredients_Screen.java</url>
+          <line>158</line>
+          <option name="timeStamp" value="25" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/API/Nutritionix/NutritionIx_API.java</url>
+          <line>87</line>
+          <option name="timeStamp" value="41" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Add_Ingredients_Screen.java</url>
+          <line>50</line>
+          <option name="timeStamp" value="43" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/API/Nutritionix/NutritionIx_API.java</url>
+          <line>272</line>
+          <option name="timeStamp" value="48" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Edit_IngredientsScreen.java</url>
+          <line>84</line>
+          <option name="timeStamp" value="276" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Database_Objects/MyJTable_JDBC/ViewDataTables/Children/MacrosLeftTable.java</url>
+          <line>57</line>
+          <option name="timeStamp" value="280" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Edit_IngredientsScreen.java</url>
+          <line>312</line>
+          <option name="timeStamp" value="282" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Ingredients_Info_Screen.java</url>
+          <line>229</line>
+          <option name="timeStamp" value="284" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Ingredient_Info/Edit_Stores_And_Types/Parent_For_Types_And_Stores_Screens.java</url>
+          <line>568</line>
+          <option name="timeStamp" value="288" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Database_Objects/JTable_JDBC/Children/IngredientsTable.java</url>
+          <line>354</line>
+          <option name="timeStamp" value="289" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Database_Objects/JTable_JDBC/MealManager.java</url>
+          <line>34</line>
+          <option name="timeStamp" value="293" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Database_Objects/JTable_JDBC/MealManager.java</url>
+          <line>47</line>
+          <option name="timeStamp" value="294" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Database_Objects/JTable_JDBC/Children/IngredientsTable.java</url>
+          <line>1162</line>
+          <option name="timeStamp" value="295" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Others/Meal_Plan_Screen.java</url>
+          <line>1199</line>
+          <option name="timeStamp" value="298" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Others/Meal_Plan_Screen.java</url>
+          <line>1081</line>
+          <option name="timeStamp" value="299" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Others/Meal_Plan_Screen.java</url>
+          <line>740</line>
+          <option name="timeStamp" value="300" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Database_Objects/JTable_JDBC/MealManager.java</url>
+          <line>792</line>
+          <option name="timeStamp" value="301" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Database_Objects/JTable_JDBC/Children/IngredientsTable.java</url>
+          <line>785</line>
+          <option name="timeStamp" value="302" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Database_Objects/JTable_JDBC/Children/IngredientsTable.java</url>
+          <line>1059</line>
+          <option name="timeStamp" value="307" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Edit_IngredientsScreen.java</url>
+          <line>557</line>
+          <option name="timeStamp" value="311" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Others/Meal_Plan_Screen.java</url>
+          <line>1350</line>
+          <option name="timeStamp" value="313" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Add_ShopForm.java</url>
+          <line>37</line>
+          <option name="timeStamp" value="315" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Edit_IngredientsScreen.java</url>
+          <line>450</line>
+          <option name="timeStamp" value="316" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Stores_And_Types/Edit_Ingredients_Types_Screen.java</url>
+          <line>68</line>
+          <option name="timeStamp" value="318" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Database_Objects/JDBC/MyJDBC.java</url>
+          <line>591</line>
+          <option name="timeStamp" value="328" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Database_Objects/JDBC/MyJDBC.java</url>
+          <line>752</line>
+          <option name="timeStamp" value="330" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Edit_IngredientsScreen.java</url>
+          <line>766</line>
+          <option name="timeStamp" value="386" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Edit_IngredientsForm.java</url>
+          <line>138</line>
+          <option name="timeStamp" value="391" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Edit_IngredientsScreen.java</url>
+          <line>81</line>
+          <option name="timeStamp" value="396" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Database_Objects/JDBC/MyJDBC.java</url>
+          <line>364</line>
+          <option name="timeStamp" value="402" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Database_Objects/JDBC/MyJDBC.java</url>
+          <line>795</line>
+          <option name="timeStamp" value="403" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Database_Objects/JDBC/MyJDBC.java</url>
+          <line>1228</line>
+          <option name="timeStamp" value="404" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Stores_And_Types/Edit_Ingredient_Stores_Screen.java</url>
+          <line>114</line>
+          <option name="timeStamp" value="412" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Ingredients_Info_Screen.java</url>
+          <line>228</line>
+          <option name="timeStamp" value="413" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Ingredients_Info_Screen.java</url>
+          <line>229</line>
+          <option name="timeStamp" value="414" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Ingredients_Info_Screen.java</url>
+          <line>29</line>
+          <option name="timeStamp" value="415" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Edit_IngredientsScreen.java</url>
+          <line>524</line>
+          <option name="timeStamp" value="418" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Edit_IngredientsScreen.java</url>
+          <line>546</line>
+          <option name="timeStamp" value="419" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Database_Objects/JTable_JDBC/Children/IngredientsTable.java</url>
+          <line>127</line>
+          <option name="timeStamp" value="431" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Database_Objects/JTable_JDBC/Children/IngredientsTable.java</url>
+          <line>135</line>
+          <option name="timeStamp" value="432" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Database_Objects/JTable_JDBC/Children/IngredientsTable.java</url>
+          <line>1578</line>
+          <option name="timeStamp" value="436" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Stores_And_Types/Parent_For_Types_And_Stores_Screens.java</url>
+          <line>431</line>
+          <option name="timeStamp" value="441" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Database_Objects/JDBC/MyJDBC.java</url>
+          <line>257</line>
+          <option name="timeStamp" value="448" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Database_Objects/JDBC/MyJDBC.java</url>
+          <line>132</line>
+          <option name="timeStamp" value="450" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Database_Objects/JTable_JDBC/Children/IngredientsTable.java</url>
+          <line>1038</line>
+          <option name="timeStamp" value="457" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Database_Objects/JTable_JDBC/Children/IngredientsTable.java</url>
+          <line>875</line>
+          <option name="timeStamp" value="460" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Meal_Plan_Screen.java</url>
+          <line>1155</line>
+          <option name="timeStamp" value="472" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Database_Objects/JTable_JDBC/JDBC_JTable.java</url>
+          <line>446</line>
+          <option name="timeStamp" value="473" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Database_Objects/MealManager.java</url>
+          <line>166</line>
+          <option name="timeStamp" value="481" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Meal_Plan_Screen.java</url>
+          <line>1506</line>
+          <option name="timeStamp" value="487" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Database_Objects/JTable_JDBC/Children/ViewDataTables/MyJTable_DisplayData.java</url>
+          <line>93</line>
+          <option name="timeStamp" value="488" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/Tests/Graphs/MultiLineHistogramExample.java</url>
+          <line>2</line>
+          <option name="timeStamp" value="489" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Meal_Plan_Screen.java</url>
+          <line>1510</line>
+          <option name="timeStamp" value="490" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Meal_Plan_Screen.java</url>
+          <line>52</line>
+          <option name="timeStamp" value="491" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/API/Nutritionix/NutritionIx_API.java</url>
+          <line>86</line>
+          <properties class="App_Code.Objects.API.Nutritionix.NutritionIx_API">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="37" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/API/Nutritionix/NutritionIx_API.java</url>
+          <line>266</line>
+          <properties class="App_Code.Objects.API.Nutritionix.NutritionIx_API">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="38" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/API/Nutritionix/NutritionIx_API.java</url>
+          <line>322</line>
+          <properties class="App_Code.Objects.API.Nutritionix.NutritionIx_API">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="40" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Ingredients_Info_Screen.java</url>
+          <line>234</line>
+          <properties class="App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Ingredients_Info_Screen">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="283" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Others/Meal_Plan_Screen.java</url>
+          <line>847</line>
+          <properties class="App_Code.Objects.Screens.Others.Meal_Plan_Screen">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="287" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Others/Meal_Plan_Screen.java</url>
+          <line>995</line>
+          <properties class="App_Code.Objects.Screens.Others.Meal_Plan_Screen">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="306" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Add_Ingredients_Screen.java</url>
+          <line>277</line>
+          <properties class="App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Add_Ingredients_Screen">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="309" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Database_Objects/JDBC/MyJDBC.java</url>
+          <line>599</line>
+          <properties class="App_Code.Objects.Database_Objects.JDBC.MyJDBC" method="check_IF_DB_Exists">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="317" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Edit_ShopForm.java</url>
+          <line>73</line>
+          <properties class="App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Edit_ShopForm">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="358" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Edit_ShopForm.java</url>
+          <line>72</line>
+          <properties class="App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Edit_ShopForm">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="359" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Edit_ShopForm.java</url>
+          <line>50</line>
+          <properties class="App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Edit_ShopForm">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="360" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Add_ShopForm.java</url>
+          <line>372</line>
+          <properties class="App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Add_ShopForm" method="clearShopForm">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="365" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Edit_ShopForm.java</url>
+          <line>284</line>
+          <properties class="App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Edit_ShopForm.EditShopForm_Object">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="370" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Edit_IngredientsForm.java</url>
+          <line>158</line>
+          <properties class="App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Edit_IngredientsForm" method="extraClearIngredientsForm">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="374" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Add_IngredientsForm.java</url>
+          <line>75</line>
+          <properties class="App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Add_IngredientsForm" method="&lt;init&gt;">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="378" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Add_IngredientsForm.java</url>
+          <line>86</line>
+          <properties class="App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Add_IngredientsForm" method="createIngredientsForm">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="381" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Add_IngredientsForm.java</url>
+          <line>345</line>
+          <properties class="App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Add_IngredientsForm" method="update_Form_WithNutritionIXSearch">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="382" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Add_IngredientsForm.java</url>
+          <line>293</line>
+          <properties class="App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Add_IngredientsForm" method="loadIngredientsTypeJComboBox">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="384" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Edit_IngredientsForm.java</url>
+          <line>139</line>
+          <properties class="App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Edit_IngredientsForm" method="extra_Validation_IngredientName">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="392" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Edit_IngredientsScreen.java</url>
+          <line>691</line>
+          <properties class="App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Edit_IngredientsScreen" method="deleteIngredientBTNAction">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="399" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Edit_IngredientsScreen.java</url>
+          <line>650</line>
+          <properties class="App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Edit_IngredientsScreen" method="backupDataInSQLFile">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="405" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Stores_And_Types/Parent_For_Types_And_Stores_Screens.java</url>
+          <line>353</line>
+          <properties class="App_Code.Objects.Screens.Ingredient_Info.Edit_Stores_And_Types.Parent_For_Types_And_Stores_Screens.AddScreen" method="updateOtherScreens">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="407" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Stores_And_Types/Parent_For_Types_And_Stores_Screens.java</url>
+          <line>573</line>
+          <properties class="App_Code.Objects.Screens.Ingredient_Info.Edit_Stores_And_Types.Parent_For_Types_And_Stores_Screens.EditScreen" method="deleteBTNAction">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="408" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Stores_And_Types/Parent_For_Types_And_Stores_Screens.java</url>
+          <line>280</line>
+          <properties class="App_Code.Objects.Screens.Ingredient_Info.Edit_Stores_And_Types.Parent_For_Types_And_Stores_Screens.AddScreen" method="submissionBtnAction">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="409" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Stores_And_Types/Edit_Ingredient_Stores_Screen.java</url>
+          <line>111</line>
+          <properties class="App_Code.Objects.Screens.Ingredient_Info.Edit_Stores_And_Types.Edit_Ingredient_Stores_Screen.AddStores">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="410" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Ingredients_Info_Screen.java</url>
+          <line>225</line>
+          <properties class="App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Ingredients_Info_Screen" method="updateIngredientSuppliersJComboBoxes">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="411" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Ingredients_Info_Screen.java</url>
+          <line>375</line>
+          <properties class="App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Ingredients_Info_Screen" method="addOrRemoveSupplierFromList">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="416" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Stores_And_Types/Edit_Ingredient_Stores_Screen.java</url>
+          <line>162</line>
+          <properties class="App_Code.Objects.Screens.Ingredient_Info.Edit_Stores_And_Types.Edit_Ingredient_Stores_Screen.EditStores">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="417" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Database_Objects/JTable_JDBC/Children/IngredientsTable.java</url>
+          <line>335</line>
+          <properties class="App_Code.Objects.Database_Objects.JTable_JDBC.Children.IngredientsTable" method="tableDataChange_Action">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="439" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-field">
+          <url>file://$PROJECT_DIR$/src/main/java/App_Code/Objects/Screens/Ingredient_Info/Edit_Ingredients_Info/Add_Ingredients_Screen.java</url>
+          <line>34</line>
+          <properties field="sqlBackUpPath" class="App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Add_Ingredients_Screen" />
+          <option name="timeStamp" value="357" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/Gym_App$Meal_Plan_Screen.ic" NAME="Meal_Plan_Screen Coverage Results" MODIFIED="1657196051898" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>App_Code.Objects.Screens.Others.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/Gym_App$MealPlanScreen.ic" NAME="MealPlanScreen Coverage Results" MODIFIED="1641101443898" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>App_Code.Objects.Screens.MealPlanScreen</FILTER>
+    </SUITE>
+  </component>
+</project>
