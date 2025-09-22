@@ -7,24 +7,38 @@ import java.awt.*;
 
 public class Screen
 {
+    //##################################################################################################################
+    // Variables
+    //##################################################################################################################
+
+    // Objects
     protected MyJDBC db;
     protected GridBagConstraints gbc = new GridBagConstraints();
     protected JFrame frame = new JFrame();
     protected Container contentPane;
     protected ScrollPaneCreator scrollPane = new ScrollPaneCreator();
 
-    // public
-    protected JPanel
-            mainNorthPanel,
-            scrollPaneJPanel;
+    //##############################################
+    // JPanels
+    //##############################################
+    // Public: JPanels
+    protected JPanel mainNorthPanel, scrollPaneJPanel;
 
-    // private
-    private JPanel
-            screenSectioned,
-            mainCenterPanel;
+    // Private: JPanels
+    private JPanel screenSectioned, mainCenterPanel;
 
+    //##############################################
+    // Others
+    //##############################################
+    // Integers
     protected int containerYPos = 0, frameWidth, frameHeight;
 
+    // String
+    protected String lineSeparator = "###############################################################################";
+
+    //##################################################################################################################
+    // Constructors
+    //##################################################################################################################
     public Screen(MyJDBC db, String title, int frameWidth, int frameHeight, int xPos, int yPos)
     {
         //########################################################
@@ -86,11 +100,43 @@ public class Screen
     //##################################################################################################################
     // Actions
     //##################################################################################################################
+    protected Boolean areYouSure(String process)
+    {
+        int reply = JOptionPane.showConfirmDialog(frame, String.format("Are you sure you want to %s, \nany unsaved changes will be lost in this Table! \nDo you want to %s?", process, process),
+                "Close Application", JOptionPane.YES_NO_OPTION); //HELLO Edit
+
+        if (reply==JOptionPane.NO_OPTION || reply==JOptionPane.CLOSED_OPTION)
+        {
+            return false;
+        }
+        return true;
+    }
+
     protected void windowClosedEvent()
     {
 
     }
 
+
+    //##############################################
+    // GUI Setup
+    //##############################################
+    protected void iconSetup(Container mainNorthPanel)
+    {
+    }
+
+    //##############################################
+    // Screen Positioning
+    //##############################################
+    protected void scrollToJPanelOnScreen(JPanel panel) // Only Works With JPanels
+    {
+        // Scroll to that panel AFTER layout has finished
+        SwingUtilities.invokeLater(() -> {
+            panel.scrollRectToVisible(
+                    new Rectangle(0, 0, panel.getWidth(), panel.getHeight())
+            );
+        });
+    }
 
     public void scrollBarUp_BTN_Action()
     {
@@ -108,33 +154,6 @@ public class Screen
         //##############################################
         JScrollBar vertical = scrollPane.getVerticalScrollBar();
         vertical.setValue(vertical.getMaximum());
-    }
-
-    protected Boolean areYouSure(String process)
-    {
-        int reply = JOptionPane.showConfirmDialog(frame, String.format("Are you sure you want to %s, \nany unsaved changes will be lost in this Table! \nDo you want to %s?", process, process),
-                "Close Application", JOptionPane.YES_NO_OPTION); //HELLO Edit
-
-        if (reply==JOptionPane.NO_OPTION || reply==JOptionPane.CLOSED_OPTION)
-        {
-            return false;
-        }
-        return true;
-    }
-
-    protected void iconSetup(Container mainNorthPanel)
-    {
-    }
-
-    // Only Works With JPanels
-    protected void scrollToJPanelOnScreen(JPanel panel)
-    {
-        // Scroll to that panel AFTER layout has finished
-        SwingUtilities.invokeLater(() -> {
-            panel.scrollRectToVisible(
-                    new Rectangle(0, 0, panel.getWidth(), panel.getHeight())
-            );
-        });
     }
 
     //##################################################################################################################
@@ -158,6 +177,8 @@ public class Screen
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
+
+    // Other Objects
     public MyJDBC getDb()
     {
         return db;
@@ -173,6 +194,9 @@ public class Screen
         return frame;
     }
 
+    // ##################################
+    // Get JPanels Methods
+    // ##################################
     protected JPanel getMainNorthPanel()
     {
         return mainNorthPanel;
@@ -183,6 +207,9 @@ public class Screen
         return scrollPaneJPanel;
     }
 
+    // ##################################
+    // Get Int Methods
+    // ##################################
     protected int getFrameWidth()
     {
         return frameWidth;
@@ -262,7 +289,6 @@ public class Screen
                     break;
             }
         }
-
         container.add(addToContainer, gbc);
     }
 }
