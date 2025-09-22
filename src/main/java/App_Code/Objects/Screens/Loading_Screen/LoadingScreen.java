@@ -85,13 +85,9 @@ public class LoadingScreen
 
             progressBar.setValue(percentage);//Setting value of Progress Bar
 
-
             if (currentCount == endCount)
             {
                 closeWindow();
-                mealPlanScreen.setFrameVisibility(true);
-                mealPlanScreen.resizeGUI();
-                mealPlanScreen.scrollBarDown_BTN_Action();
             }
         }
         catch (Exception e)

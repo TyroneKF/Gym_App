@@ -27,9 +27,15 @@ import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
 
 public class Pie_Chart extends JPanel
 {
+    // ############################################################################################
+    // Variables
+    // ############################################################################################
     private DefaultPieDataset dataset = new DefaultPieDataset();
     protected JFreeChart chart;
 
+    // ############################################################################################
+    // Constructor
+    // ############################################################################################
     public Pie_Chart(String title, int frameWidth, int frameHeight, Map<String, Pair<BigDecimal, String>> data)
     {
         //############################################
@@ -100,6 +106,9 @@ public class Pie_Chart extends JPanel
         add(chartPanel);
     }
 
+    // ############################################################################################
+    // Methods
+    // ############################################################################################
     public void setTitle(String meal_name)
     {
         chart.setTitle(String.format("%s Macros", meal_name));
@@ -121,6 +130,9 @@ public class Pie_Chart extends JPanel
         }
     }
 
+    //############################################################################################
+    // Rotator Class
+    //############################################################################################
     public class Rotator extends Timer implements ActionListener
     {
         private final PiePlot plot;

@@ -1,12 +1,28 @@
+
 ######################################################################################
 Refactored & Ordered Classes:
 ######################################################################################
 .) MealManager.java
 .) Screen.java
 
+.) Pie_Chart_Meal_Manager_Screen.java
+.) Pie_Chart.java
 
+.) Line_Chart.java
+.) Line_Chart_Meal_Plan_Screen.java
 
-
+#####################################
+Check for
+#####################################
+.) Public / Private Methods
+.) Refactoring
+.) Grouping Methods
+.) Foreign Keys Deleting
+.) SQL Injections
+.) Classes & Parents
+.) Screens Refactoring
+.) Database columns Checks
+.) Delete on keys should be simpler due to cascade now
 
 ######################################################################################
 SQL :
@@ -16,8 +32,9 @@ SQL :
    MAX(m.Meal_Name) AS Meal_Name,
 
 .) Using mysql exception handling for queries vs regular
-
 .) Deleting foreign key checks in app when removing objects
+.) Total cost has to be grouped by product in a plan
+.) Weight of meal
 
 ######################################################################################
 Unknown:
@@ -30,6 +47,7 @@ MYJDBC:
 ######################################################################################
 .) Refactor script setup 
 .) Create a user log in page
+.) Execute and return value methods vs execute query does result == null, this can be refactored
 
 ######################################################################################
 Ingredients_Table:
@@ -85,7 +103,6 @@ OVERALL:
 .) Clear GUI Screen
 .) SQL injections on Input
 .) Ingredients_info page DB Update
-
 .) Has data changed in ingredients table
 .) Refactor db requests method if nulll into a method that return boolean
 .) Diagram of carbs and nutrients in line graph over the day

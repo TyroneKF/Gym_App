@@ -18,10 +18,41 @@ import java.util.List;
 
 public class Meal_Plan_Screen extends Screen
 {
+    //##################################################################################################################
+    // Variables
+    //##################################################################################################################
 
-    //##################################################################################################################
-    //
-    //##################################################################################################################
+    // Integers
+    private final Integer tempPlanID = 1;
+    private Integer planID;
+    private static Integer user_id;
+
+    //###############################################
+    // String
+    //###############################################
+    private static String
+            version_no = "00001",
+            databaseName = "gymapp" + version_no,
+            user_name = "root",
+            password = "password";
+
+    private String JFrameName = databaseName;
+
+    private String
+            planName,
+            lineSeparator = "###############################################################################";
+
+    //###############################################
+    // Booleans
+    //###############################################
+    private boolean macroTargetsChanged = false;
+    private static boolean production = false;
+
+    //###############################################
+    // Collections
+    //###############################################
+    private String[] meal_total_columnNames, ingredients_ColumnNames, macroTargetsTable_ColumnNames, macrosLeft_columnNames;
+
     private Collection<String> ingredientsTypesList, storesNamesList;
 
     // Sorted Hashmap by key String
@@ -42,33 +73,25 @@ public class Meal_Plan_Screen extends Screen
         }
     });
 
-    //##################################################################################################################
-    //
-    //##################################################################################################################
-    private JPanel
-            scrollJPanelCenter,
-            scrollJPanelBottom;
+    //#################################################
+    // Objects
+    //#################################################
 
-    //##################################################################################################################
+    // JPanels
+    private JPanel scrollJPanelCenter, scrollJPanelBottom;
+
     // Table Objects
-    //##################################################################################################################
     private MacrosLeftTable macrosLeft_JTable;
     private MacrosTargetsTable macros_Targets_Table;
 
+    // Screen Objects
     private Macros_Targets_Screen macrosTargets_Screen = null;
     private Ingredients_Info_Screen ingredientsInfoScreen = null;
     private Line_Chart_Meal_Plan_Screen lineChartMealPlanScreen = null;
 
-    //##################################################################################################################
-    //
-    //##################################################################################################################
-    private static String
-            version_no = "00001",
-            databaseName = "gymapp" + version_no,
-            user_name = "root",
-            password = "password";
-
-    private String JFrameName = databaseName;
+    //##################################################
+    // Database Table Names
+    //##################################################
 
     private final static String
             db_Scripts_Folder_Path = "/data/database_scripts",
@@ -78,8 +101,7 @@ public class Meal_Plan_Screen extends Screen
     // Table Names Frequently Used
     tablePlansName = "plans",
             tableMacrosPerPoundLimitName = "macros_per_pound_and_limits",
-
-    tablePlanMacroTargetsNameCalc = "plan_macro_target_calculations",
+            tablePlanMacroTargetsNameCalc = "plan_macro_target_calculations",
             tableIngredientsInfoName = "ingredients_info",
             tableIngredientsTypeName = "ingredient_types",
             tableStoresName = "stores",
@@ -93,25 +115,12 @@ public class Meal_Plan_Screen extends Screen
             tablePlanMacrosLeftName = "plan_macros_left";
 
     //##################################################################################################################
-    // Variables
-    //##################################################################################################################
-    private String[] meal_total_columnNames, ingredients_ColumnNames, macroTargetsTable_ColumnNames, macrosLeft_columnNames;
-
-    private static Integer user_id;
-    private String planName;
-    private Integer tempPlanID = 1, planID;
-
-    private boolean macroTargetsChanged = false;
-    private static boolean production = false;
-
-    private String lineSeparator = "###############################################################################";
-
-    //##################################################################################################################
     // Ingredients Table Columns
     //##################################################################################################################
 
     // Table: ingredients_in_sections_of_meal_calculation
     private final ArrayList<String>
+
             ingredients_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList(
             "ingredient_type", "ingredient_name", "supplier", "product_name")),
 
@@ -136,8 +145,103 @@ public class Meal_Plan_Screen extends Screen
     macrosLeft_Table_ColToHide = new ArrayList<String>(Arrays.asList("plan_id", "plan_name"));
 
     //##################################################################################################################
-    //
+    // Constructor & Main
     //##################################################################################################################
+    public static void main(String[] args)
+    {
+        if (production)
+        {
+            try
+            {
+                /*
+                // Using System Variables (OS LVL)
+                String host = System.getenv("GYM_APP_DB_HOST");
+                String port = System.getenv("GYM_APP_DB_PORT");
+                String user = System.getenv("GYM_APP_DB_USER");
+                String password = System.getenv("GYM_APP_DB_PASS");
+                String dbName = System.getenv("GYM_APP_DB_NAME");
+                */
+
+                // #########################################
+                // Set Path Files
+                // #########################################
+                String userDirectory = new File("").getAbsolutePath(); // get path file of where this is being executed
+
+                System.out.printf("\nDirectory: \n%s \n\n\nScripts Directory:\n%s", userDirectory, db_Scripts_Folder_Path);
+                System.out.println("\n\n\nReading ENV Variables: host, port, user, ****, db_name");
+
+                // #########################################
+                // Get .env variables
+                // #########################################
+                Dotenv dotenv = Dotenv.configure()
+                        .directory(userDirectory)
+                        .filename(".env") // instead of '.env', use 'env'
+                        .load();
+
+                String host = dotenv.get("DB_HOST");
+                String port = dotenv.get("DB_PORT");
+                String user = dotenv.get("DB_USER");
+                String password = dotenv.get("DB_PASS");
+
+                String dbName = dotenv.get("DB_NAME");
+
+                if (host == null || port == null || user == null || password == null || dbName == null)
+                {
+                    System.err.printf("\n\nDB Values: \nhost: %s \nport: %s \nuser: %s \ndbName: %s",
+                            host, port, user, dbName);
+
+                    throw new RuntimeException("Missing one or more required DB environment variables.");
+                }
+
+                System.out.println("\n\nSuccessfully retrieved ENV Variables: host, port, user, *****, db_name");
+
+                // #########################################
+                // Assigning values to variables &
+                // #########################################
+
+                databaseName = dbName;
+                user_name = user;
+
+                // #########################################
+                // Create DB Object & run SQL Scripts
+                // #########################################
+                MyJDBC db = new MyJDBC(true, host, port, user, password, dbName, db_Scripts_Folder_Path, db_File_Script_List_Name, db_File_Tables_Name);
+
+                if (db.get_DB_Connection_Status())
+                {
+                    new Meal_Plan_Screen(db);
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(null, "ERROR, Cannot Connect To Database!");
+                    return;
+                }
+            }
+            catch (Exception e)
+            {
+                System.err.printf("\n\nError Meal_Plan_Screen() \n%s", e);
+                return;
+            }
+        }
+        else
+        {
+            //############################################################################################################
+            // Create DB Object & run SQL Script
+            //#############################################################################################################
+
+            MyJDBC db = new MyJDBC(false, "localhost", "3306", user_name, password, databaseName, db_Scripts_Folder_Path, db_File_Script_List_Name, db_File_Tables_Name);
+
+            if (db.get_DB_Connection_Status())
+            {
+                new Meal_Plan_Screen(db);
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(null, "ERROR, Cannot Connect To Database!");
+            }
+        }
+    }
+
     public Meal_Plan_Screen(MyJDBC db)
     {
         super(db, "Gym App", 1925, 1082, 0, 0);
@@ -411,7 +515,7 @@ public class Meal_Plan_Screen extends Screen
             // Create Meal Component
             //#####################################################
             System.out.printf("\n\nMeal_Plan_Screen.java | MealManager \nmeal_in_plan_id : %s \nmeal_name : %s \nmeal_time : %s \nSub-Meals In MealManager (ID) : %s%n", mealInPlanID, mealName, mealTime, subMealsInMealArrayList);//HELLO DELETE
-            addMealManger2(new MealManager(this, scrollJPanelCenter, mealInPlanID, mealName, mealTime, subMealsInMealArrayList), false);
+            addMealManger(new MealManager(this, scrollJPanelCenter, mealInPlanID, mealName, mealTime, subMealsInMealArrayList), false);
 
             //######################################################
             // Update Progress
@@ -427,265 +531,16 @@ public class Meal_Plan_Screen extends Screen
         // GUI Alignments & Configurations
         //##############################################################################################################
         resizeGUI();
-        scrollBarUp_BTN_Action();
+        scroll_To_Top_of_ScrollPane();
 
         setFrameVisibility(true);
     }
 
     //##################################################################################################################
-    //
+    // Transfer SQL Data & Get Data Methods
     //##################################################################################################################
-    public static void main(String[] args)
-    {
-        if (production)
-        {
-            try
-            {
-                /*
-                // Using System Variables (OS LVL)
-                String host = System.getenv("GYM_APP_DB_HOST");
-                String port = System.getenv("GYM_APP_DB_PORT");
-                String user = System.getenv("GYM_APP_DB_USER");
-                String password = System.getenv("GYM_APP_DB_PASS");
-                String dbName = System.getenv("GYM_APP_DB_NAME");
-                */
 
-                // #########################################
-                // Set Path Files
-                // #########################################
-                String userDirectory = new File("").getAbsolutePath(); // get path file of where this is being executed
-
-                System.out.printf("\nDirectory: \n%s \n\n\nScripts Directory:\n%s", userDirectory, db_Scripts_Folder_Path);
-                System.out.println("\n\n\nReading ENV Variables: host, port, user, ****, db_name");
-
-                // #########################################
-                // Get .env variables
-                // #########################################
-                Dotenv dotenv = Dotenv.configure()
-                        .directory(userDirectory)
-                        .filename(".env") // instead of '.env', use 'env'
-                        .load();
-
-                String host = dotenv.get("DB_HOST");
-                String port = dotenv.get("DB_PORT");
-                String user = dotenv.get("DB_USER");
-                String password = dotenv.get("DB_PASS");
-
-                String dbName = dotenv.get("DB_NAME");
-
-                if (host == null || port == null || user == null || password == null || dbName == null)
-                {
-                    System.err.printf("\n\nDB Values: \nhost: %s \nport: %s \nuser: %s \ndbName: %s",
-                            host, port, user, dbName);
-
-                    throw new RuntimeException("Missing one or more required DB environment variables.");
-                }
-
-                System.out.println("\n\nSuccessfully retrieved ENV Variables: host, port, user, *****, db_name");
-
-                // #########################################
-                // Assigning values to variables &
-                // #########################################
-
-                databaseName = dbName;
-                user_name = user;
-
-                // #########################################
-                // Create DB Object & run SQL Scripts
-                // #########################################
-                MyJDBC db = new MyJDBC(true, host, port, user, password, dbName, db_Scripts_Folder_Path, db_File_Script_List_Name, db_File_Tables_Name);
-
-                if (db.get_DB_Connection_Status())
-                {
-                    new Meal_Plan_Screen(db);
-                }
-                else
-                {
-                    JOptionPane.showMessageDialog(null, "ERROR, Cannot Connect To Database!");
-                    return;
-                }
-            }
-            catch (Exception e)
-            {
-                System.err.printf("\n\nError Meal_Plan_Screen() \n%s", e);
-                return;
-            }
-        }
-        else
-        {
-            //############################################################################################################
-            // Create DB Object & run SQL Script
-            //#############################################################################################################
-
-            MyJDBC db = new MyJDBC(false, "localhost", "3306", user_name, password, databaseName, db_Scripts_Folder_Path, db_File_Script_List_Name, db_File_Tables_Name);
-
-            if (db.get_DB_Connection_Status())
-            {
-                new Meal_Plan_Screen(db);
-            }
-            else
-            {
-                JOptionPane.showMessageDialog(null, "ERROR, Cannot Connect To Database!");
-            }
-        }
-    }
-
-    //##################################################################################################################
-    //
-    //##################################################################################################################
-    public boolean getIngredientsTypesAndStoresData(boolean getMapIngredientsTypesToNames, boolean getIngredientsTypes, boolean getIngredientStores)
-    {
-        //#################################################################################
-        //
-        //#################################################################################
-
-        boolean errorFound = false;
-        String errorTxt = "";
-        //#################################################################################
-        // Map IngredientTypes  To IngredientNames
-        //#################################################################################
-
-        if (getMapIngredientsTypesToNames)
-        {
-            if (! updateIngredientTypesMappedToIngredientsName())
-            {
-                errorTxt += "\n\nUnable to get IngredientTypesToNames";
-                errorFound = true;
-            }
-        }
-
-        //#################################################################################
-        // Get All The IngredientsType Inside The DB
-        //#################################################################################
-
-        if (getIngredientsTypes)
-        {
-            if (ingredientsTypesList != null)
-            {
-                ingredientsTypesList.clear();
-            }
-
-            ingredientsTypesList = db.getSingleColumnQuery_AlphabeticallyOrderedTreeSet(String.format("SELECT ingredient_type_name FROM %s ORDER BY ingredient_type_name ASC;", tableIngredientsTypeName));
-
-            if (ingredientsTypesList == null)
-            {
-                errorTxt += "\n\nUnable to get ingredient_types";
-                errorFound = true;
-            }
-        }
-
-        //#################################################################################
-        // Get All The Store Names Inside The DB
-        //#################################################################################
-
-        if (getIngredientStores)
-        {
-            if (storesNamesList != null)
-            {
-                storesNamesList.clear();
-            }
-
-            storesNamesList = db.getSingleColumnQuery_AlphabeticallyOrderedTreeSet(String.format("SELECT store_name FROM %s ORDER BY store_name ASC;", tableStoresName));
-
-            if (storesNamesList == null)
-            {
-                errorTxt += "\n\nUnable to get storesList";
-                errorFound = true;
-            }
-        }
-
-        //#################################################################################
-        //
-        //#################################################################################
-
-        if (errorFound)
-        {
-            JOptionPane.showMessageDialog(frame, String.format("\n\nError \n%s", errorTxt));
-            return false;
-        }
-
-        System.out.printf("\nIngredient Types & Names Successfully transferred! \n\n%s", lineSeparator);
-        return true;
-    }
-
-    public boolean updateIngredientTypesMappedToIngredientsName()
-    {
-
-        //###########################################################
-        // Store ingredientTypes ID's & IngredientTypeName that occur
-        //###########################################################
-        String queryIngredientsType = String.format(
-                """
-                        SELECT I.ingredient_type_id, N.ingredient_type_name
-                        FROM
-                        (
-                          SELECT DISTINCT(ingredient_type_id) FROM %s
-                        ) AS I
-                        INNER JOIN
-                        (
-                          SELECT ingredient_type_id, ingredient_type_name FROM %s
-                        ) AS N
-                        ON I.ingredient_type_id = N.ingredient_type_id 
-                        ORDER BY N.ingredient_type_name;""", tableIngredientsInfoName, tableIngredientsTypeName);
-
-        ArrayList<ArrayList<String>> ingredientTypesNameAndIDResults = db.getMultiColumnQuery(queryIngredientsType);
-
-        if (ingredientTypesNameAndIDResults == null)
-        {
-            JOptionPane.showMessageDialog(null, "\n\nUnable to update Ingredient Type Info");
-            return false;
-        }
-
-        //###########################################################
-        // Clear List
-        //###########################################################
-
-        map_ingredientTypesToNames.clear();
-
-        //######################################
-        // Store all ingredient types & names
-        //######################################
-        String errorTxt = "";
-        int listSize = ingredientTypesNameAndIDResults.size();
-
-        for (int i = 0; i < listSize; i++)
-        {
-            ArrayList<String> row = ingredientTypesNameAndIDResults.get(i);
-            String ID = row.get(0);
-            String ingredientType = row.get(1);
-
-            //########################################
-            // Get IngredientNames for Type
-            //########################################
-            String queryTypeIngredientNames = String.format("SELECT ingredient_name FROM %s WHERE ingredient_type_id = %s ORDER BY ingredient_name;", tableIngredientsInfoName, ID);
-            ArrayList<String> ingredientNames = db.getSingleColumnQuery_ArrayList(queryTypeIngredientNames);
-
-            if (ingredientNames == null)
-            {
-                errorTxt += String.format("\nUnable to grab ingredient names for Type '%s'!", ingredientType);
-                continue;
-            }
-
-            //########################################
-            // Mapping Ingredient Type to Names
-            //########################################
-            map_ingredientTypesToNames.put(ingredientType, ingredientNames);
-
-            //System.out.printf("\n\nType %s\n%s",ingredientType, ingredientNames);
-        }
-
-        if (errorTxt.length() > 0)
-        {
-            JOptionPane.showMessageDialog(null, String.format("Had Errors Trying to map ingredient_types to IngredientNames: \n\n%s", errorTxt));
-            return false;
-        }
-
-        return true;
-    }
-
-    //##################################################################################################################
-    // Transfer Methods
-    //##################################################################################################################
+    // Transfer Data Methods
     private boolean transferPlanData(int fromPlan, int toPlan)
     {
         String query0 = String.format("""
@@ -845,28 +700,156 @@ public class Meal_Plan_Screen extends Screen
         return true;
     }
 
-    @Override
-    public void windowClosedEvent()
+    // Get Data Methods
+    public boolean getIngredientsTypesAndStoresData(boolean getMapIngredientsTypesToNames, boolean getIngredientsTypes, boolean getIngredientStores)
     {
-        if (macroTargetsChanged) // If targets have changed, save them?
+        //#################################################################################
+        //
+        //#################################################################################
+
+        boolean errorFound = false;
+        String errorTxt = "";
+        //#################################################################################
+        // Map IngredientTypes  To IngredientNames
+        //#################################################################################
+
+        if (getMapIngredientsTypesToNames)
         {
-            saveMacroTargets(true, false);
+            if (! updateIngredientTypesMappedToIngredientsName())
+            {
+                errorTxt += "\n\nUnable to get IngredientTypesToNames";
+                errorFound = true;
+            }
         }
 
-        saveMealData(true, false);
+        //#################################################################################
+        // Get All The IngredientsType Inside The DB
+        //#################################################################################
 
-        // Close Other Windows If Open
-        if (macrosTargets_Screen != null)
+        if (getIngredientsTypes)
         {
-            macrosTargets_Screen.closeeWindow();
+            if (ingredientsTypesList != null)
+            {
+                ingredientsTypesList.clear();
+            }
+
+            ingredientsTypesList = db.getSingleColumnQuery_AlphabeticallyOrderedTreeSet(String.format("SELECT ingredient_type_name FROM %s ORDER BY ingredient_type_name ASC;", tableIngredientsTypeName));
+
+            if (ingredientsTypesList == null)
+            {
+                errorTxt += "\n\nUnable to get ingredient_types";
+                errorFound = true;
+            }
         }
-        if (ingredientsInfoScreen != null)
+
+        //#################################################################################
+        // Get All The Store Names Inside The DB
+        //#################################################################################
+
+        if (getIngredientStores)
         {
-            ingredientsInfoScreen.closeWindow();
+            if (storesNamesList != null)
+            {
+                storesNamesList.clear();
+            }
+
+            storesNamesList = db.getSingleColumnQuery_AlphabeticallyOrderedTreeSet(String.format("SELECT store_name FROM %s ORDER BY store_name ASC;", tableStoresName));
+
+            if (storesNamesList == null)
+            {
+                errorTxt += "\n\nUnable to get storesList";
+                errorFound = true;
+            }
         }
+
+        //#################################################################################
+        //
+        //#################################################################################
+
+        if (errorFound)
+        {
+            JOptionPane.showMessageDialog(frame, String.format("\n\nError \n%s", errorTxt));
+            return false;
+        }
+
+        System.out.printf("\nIngredient Types & Names Successfully transferred! \n\n%s", lineSeparator);
+        return true;
     }
 
+    public boolean updateIngredientTypesMappedToIngredientsName()
+    {
 
+        //###########################################################
+        // Store ingredientTypes ID's & IngredientTypeName that occur
+        //###########################################################
+        String queryIngredientsType = String.format(
+                """
+                        SELECT I.ingredient_type_id, N.ingredient_type_name
+                        FROM
+                        (
+                          SELECT DISTINCT(ingredient_type_id) FROM %s
+                        ) AS I
+                        INNER JOIN
+                        (
+                          SELECT ingredient_type_id, ingredient_type_name FROM %s
+                        ) AS N
+                        ON I.ingredient_type_id = N.ingredient_type_id 
+                        ORDER BY N.ingredient_type_name;""", tableIngredientsInfoName, tableIngredientsTypeName);
+
+        ArrayList<ArrayList<String>> ingredientTypesNameAndIDResults = db.getMultiColumnQuery(queryIngredientsType);
+
+        if (ingredientTypesNameAndIDResults == null)
+        {
+            JOptionPane.showMessageDialog(null, "\n\nUnable to update Ingredient Type Info");
+            return false;
+        }
+
+        //###########################################################
+        // Clear List
+        //###########################################################
+
+        map_ingredientTypesToNames.clear();
+
+        //######################################
+        // Store all ingredient types & names
+        //######################################
+        String errorTxt = "";
+        int listSize = ingredientTypesNameAndIDResults.size();
+
+        for (int i = 0; i < listSize; i++)
+        {
+            ArrayList<String> row = ingredientTypesNameAndIDResults.get(i);
+            String ID = row.get(0);
+            String ingredientType = row.get(1);
+
+            //########################################
+            // Get IngredientNames for Type
+            //########################################
+            String queryTypeIngredientNames = String.format("SELECT ingredient_name FROM %s WHERE ingredient_type_id = %s ORDER BY ingredient_name;", tableIngredientsInfoName, ID);
+            ArrayList<String> ingredientNames = db.getSingleColumnQuery_ArrayList(queryTypeIngredientNames);
+
+            if (ingredientNames == null)
+            {
+                errorTxt += String.format("\nUnable to grab ingredient names for Type '%s'!", ingredientType);
+                continue;
+            }
+
+            //########################################
+            // Mapping Ingredient Type to Names
+            //########################################
+            map_ingredientTypesToNames.put(ingredientType, ingredientNames);
+
+            //System.out.printf("\n\nType %s\n%s",ingredientType, ingredientNames);
+        }
+
+        if (errorTxt.length() > 0)
+        {
+            JOptionPane.showMessageDialog(null, String.format("Had Errors Trying to map ingredient_types to IngredientNames: \n\n%s", errorTxt));
+            return false;
+        }
+
+        return true;
+    }
 
     //##################################################################################################################
     //  Icon Methods & ActionListener Events
@@ -900,6 +883,7 @@ public class Meal_Plan_Screen extends Screen
         clear_Btn.setToolTipText("Clear Meal Plan"); //Hover message over icon
 
         clear_Btn.addActionListener(ae -> {
+            delete_btnAction();
         });
 
         iconPanelInsert.add(clear_Btn);
@@ -919,6 +903,7 @@ public class Meal_Plan_Screen extends Screen
         recipe_Btn.setToolTipText("Get Plan Recipe List"); //Hover message over icon
 
         recipe_Btn.addActionListener(ae -> {
+            recipeList_BtnAction_OpenScreen();
         });
 
         iconPanelInsert.add(recipe_Btn);
@@ -938,7 +923,7 @@ public class Meal_Plan_Screen extends Screen
         pieChart_Btn.setToolTipText("Display Macronutrient Data in Pie"); //Hover message over icon
 
         pieChart_Btn.addActionListener(ae -> {
-
+            pieChart_BtnAction_OpenScreen();
         });
 
         iconPanelInsert.add(pieChart_Btn);
@@ -958,7 +943,7 @@ public class Meal_Plan_Screen extends Screen
         lineChart_Btn.setToolTipText("Display Macronutrient Data in LineChart"); //Hover message over icon
 
         lineChart_Btn.addActionListener(ae -> {
-            open_LineChartScreen();
+            lineChart_Btn_Action_OpenScreen();
         });
 
         iconPanelInsert.add(lineChart_Btn);
@@ -979,7 +964,7 @@ public class Meal_Plan_Screen extends Screen
 
         up_ScrollBar_Btn.addActionListener(ae -> {
 
-            scrollBarUp_BTN_Action();
+            scrollUp_BtnAction();
         });
 
         iconPanelInsert.add(up_ScrollBar_Btn);
@@ -1018,13 +1003,13 @@ public class Meal_Plan_Screen extends Screen
 
         add_Btn.addActionListener(ae -> {
 
-            addMealToPlan();
+            add_Meal_Btn_Action();
         });
 
         iconPanelInsert.add(add_Icon_Btn);
 
         //##########################
-        // Update Icon
+        // Save BTN
         //##########################
 
         width = 54;
@@ -1037,7 +1022,6 @@ public class Meal_Plan_Screen extends Screen
 
         JButton save_btn = saveIcon_Icon_Btn.returnJButton();
         save_btn.setToolTipText("Save All Meals"); //Hover message over icon
-
 
         save_btn.addActionListener(ae -> {
 
@@ -1093,7 +1077,7 @@ public class Meal_Plan_Screen extends Screen
         iconPanelInsert.add(macro_Tagets_Btn);
 
         //##########################
-        //  ScrollBar Bottom
+        //  Scroll Bottom
         //##########################
         width = 51;
         height = 51;
@@ -1108,34 +1092,92 @@ public class Meal_Plan_Screen extends Screen
 
         down_ScrollBar_Btn.addActionListener(ae -> {
 
-            scrollBarDown_BTN_Action();
+            scrollDown_BtnAction();
         });
 
         iconPanelInsert.add(down_ScrollBar_Btn);
     }
 
-    private void addMealToPlan()
+    // ###################################################
+    // Delete BTN Actions
+    // ###################################################
+    private void delete_btnAction()
     {
-        //##############################################################################################################
-        //
-        //##############################################################################################################
-        if (! (get_IsPlanSelected()))
+        //###########################################################
+        // Ask for Confirmation
+        //###########################################################
+        if (! areYouSure("delete all the meals in this plan")) { return; }
+
+        //###########################################################
+        // Delete all the meals in the plans in SQL
+        //###########################################################
+        String queryDelete = String.format("DELETE FROM meals_in_plan WHERE plan_id = %s", tempPlanID);
+
+        if (! db.uploadData(queryDelete, false))
         {
-            return;
+            JOptionPane.showMessageDialog(null, "\n\nUnable to DELETE All Meals in Plan!");
         }
 
-        // If No Plan Is Selected
-        if (planID == null)
+        Iterator<Map.Entry<Integer, MealManager>> it = mealManagerTreeSet.iterator();
+        while (it.hasNext())
         {
-            JOptionPane.showMessageDialog(null, "\n\nCannot Add A  Meal As A Plan Is Not Selected! \nPlease Select A Plan First!!");
-            return;
+            it.next().getValue().hideMealManager(); // Hide Meal Managers
         }
-        //##############################################################################################################
-        //
-        //##############################################################################################################
-        addMealManger2(new MealManager(this, scrollJPanelCenter), true);
+
+        JOptionPane.showMessageDialog(getFrame(), "\n\nSuccessfully, DELETED all meals in plan!");
+
+        //###########################################################
+        // Update MacrosLeft
+        //###########################################################
+        update_MacrosLeftTable();
     }
 
+    // ###################################################
+    // Recipe BTN Actions
+    // ###################################################
+    private void recipeList_BtnAction_OpenScreen()
+    {
+
+    }
+
+    // ###################################################
+    // Pie Chart BTN Actions
+    // ###################################################
+    private void pieChart_BtnAction_OpenScreen()
+    {
+
+    }
+
+    // #########################################
+    // Line Chart BTN Actions
+    // #########################################
+    private void lineChart_Btn_Action_OpenScreen()
+    {
+        if (lineChartMealPlanScreen == null)
+        {
+            lineChartMealPlanScreen = new Line_Chart_Meal_Plan_Screen(db, this);
+            return;
+        }
+
+        lineChartMealPlanScreen.makeJFrameVisible();
+    }
+
+    public void removeLineChartScreen()
+    {
+        lineChartMealPlanScreen = null;
+    }
+
+    // ###################################################
+    // Scroll Up BTN Action
+    // ###################################################
+    private void scrollUp_BtnAction()
+    {
+        super.scroll_To_Top_of_ScrollPane();
+    }
+
+    // ###################################################
+    // Refresh BTN Actions / Plan Actions
+    // ###################################################
     private void refreshPlan(boolean askPermission)
     {
         if ((! (get_IsPlanSelected())) || askPermission && ! (areYouSure("Refresh Data")))
@@ -1177,10 +1219,101 @@ public class Meal_Plan_Screen extends Screen
         //####################################################################
         // Refresh Macro-Targets Table
         //####################################################################
-        refreshMacroTargets(); // if macroTargets changed ask the user if they would like to refresh this data
-        refreshMacrosLeft();
+        refresh_MacroTargets(); // if macroTargets changed ask the user if they would like to refresh this data
+        refresh_MacrosLeft();
     }
 
+    // ###################################################
+    // Add Meal BTN Actions
+    // ###################################################
+    private void add_Meal_Btn_Action()
+    {
+        //##############################################################################################################
+        //
+        //##############################################################################################################
+        if (! (get_IsPlanSelected()))
+        {
+            return;
+        }
+
+        // If No Plan Is Selected
+        if (planID == null)
+        {
+            JOptionPane.showMessageDialog(null, "\n\nCannot Add A  Meal As A Plan Is Not Selected! \nPlease Select A Plan First!!");
+            return;
+        }
+        //##############################################################################################################
+        //
+        //##############################################################################################################
+        addMealManger(new MealManager(this, scrollJPanelCenter), true);
+    }
+
+    public void addMealManger(MealManager mealManager, boolean clearGUIThenAdd)
+    {
+        if (! mealManager.isObjectCreated())
+        {
+            return;
+        }  // If object was rejected in creation, will cause an error below with time comparison
+
+        Integer meal_in_plan_id = mealManager.getMealInPlanID();
+
+        if (! clearGUIThenAdd)  // Just add this Meal Manager to the screen without clearing the screen
+        {
+            // Add Meal Manager to collection
+            mealManagerTreeSet.add(Map.entry(meal_in_plan_id, mealManager));
+
+            // Add to GUI Meal Manager & Its Space Divider
+            addToContainer(scrollJPanelCenter, mealManager.getCollapsibleJpObj(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
+            addToContainer(scrollJPanelCenter, mealManager.getSpaceDividerForMealManager(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 50, 0, null);
+        }
+        else
+        {
+            // Expand Meal in GUI
+            mealManager.getCollapsibleJpObj().expandJPanel();
+
+            // Remove MealManager From List
+            mealManagerTreeSet.removeIf(e -> e.getKey().equals(meal_in_plan_id));
+
+            // If MealManager is the latest time in the plan just add it to the bottom without clearing the screen
+            if (mealManagerTreeSet.size() == 0 || mealManager.getCurrentMealTime().isAfter(mealManagerTreeSet.last().getValue().getCurrentMealTime()))
+            {
+                addMealManger(mealManager, false);
+                return;
+            }
+
+            // Add Meal Manager to collection & it should be sorted in order now
+            mealManagerTreeSet.add(Map.entry(meal_in_plan_id, mealManager));
+
+            // Re-add all the MealManagers to GUI
+            for (Map.Entry<Integer, MealManager> x : mealManagerTreeSet)
+            {
+                MealManager m = x.getValue();
+
+                if (! meal_in_plan_id.equals(m.getMealInPlanID()))
+                {
+                    // remove from old position in GUI
+                    m.getCollapsibleJpObj().collapseJPanel(); // Minimise Meal
+                    m.removeMealManagerFromGUI();
+                }
+
+                // Add to GUI Meal Manager & Its Space Divider
+                addToContainer(scrollJPanelCenter, m.getCollapsibleJpObj(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
+                addToContainer(scrollJPanelCenter, m.getSpaceDividerForMealManager(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 50, 0, null);
+            }
+        }
+
+        // ########################################################
+        // Resize & Align GUI screen so new object is visible
+        // ########################################################
+        resizeGUI();
+
+        // Scroll to MealManager
+        scrollToJPanelOnScreen(mealManager.getCollapsibleJpObj());
+    }
+
+    // ###################################################
+    // Save Plan BTN
+    // ###################################################
     private void saveMealData(boolean askPermission, boolean showMsg)
     {
         // ##############################################################################
@@ -1264,75 +1397,77 @@ public class Meal_Plan_Screen extends Screen
         // ##############################################################################
         // Successful Message
         // ##############################################################################
-        JOptionPane.showMessageDialog(frame, "\n\nAll Meals Are Successfully Saved!");
+        if(showMsg)
+        {
+            JOptionPane.showMessageDialog(frame, "\n\nAll Meals Are Successfully Saved!");
+        }
     }
 
-    public void addMealManger2(MealManager mealManager, boolean clearGUIThenAdd)
+    // ###################################################
+    // Add Ingredients Screen & Ingredient Methods
+    // ###################################################
+    private void open_AddIngredients_Screen()
     {
-        if (! mealManager.isObjectCreated())
+        if (! (get_IsPlanSelected()))
         {
             return;
-        }  // If object was rejected in creation, will cause an error below with time comparison
-
-        Integer meal_in_plan_id = mealManager.getMealInPlanID();
-
-        if (! clearGUIThenAdd)  // Just add this Meal Manager to the screen without clearing the screen
-        {
-            // Add Meal Manager to collection
-            mealManagerTreeSet.add(Map.entry(meal_in_plan_id, mealManager));
-
-            // Add to GUI Meal Manager & Its Space Divider
-            addToContainer(scrollJPanelCenter, mealManager.getCollapsibleJpObj(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
-            addToContainer(scrollJPanelCenter, mealManager.getSpaceDividerForMealManager(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 50, 0, null);
-        }
-        else
-        {
-            // Expand Meal in GUI
-            mealManager.getCollapsibleJpObj().expandJPanel();
-
-            // Remove MealManager From List
-            mealManagerTreeSet.removeIf(e -> e.getKey().equals(meal_in_plan_id));
-
-            // If MealManager is the latest time in the plan just add it to the bottom without clearing the screen
-            if (mealManagerTreeSet.size() == 0 || mealManager.getCurrentMealTime().isAfter(mealManagerTreeSet.last().getValue().getCurrentMealTime()))
-            {
-                addMealManger2(mealManager, false);
-                return;
-            }
-
-            // Add Meal Manager to collection & it should be sorted in order now
-            mealManagerTreeSet.add(Map.entry(meal_in_plan_id, mealManager));
-
-            // Re-add all the MealManagers to GUI
-            for (Map.Entry<Integer, MealManager> x : mealManagerTreeSet)
-            {
-                MealManager m = x.getValue();
-
-                if (! meal_in_plan_id.equals(m.getMealInPlanID()))
-                {
-                    // remove from old position in GUI
-                    m.getCollapsibleJpObj().collapseJPanel(); // Minimise Meal
-                    m.removeMealManagerFromGUI();
-                }
-
-                // Add to GUI Meal Manager & Its Space Divider
-                addToContainer(scrollJPanelCenter, m.getCollapsibleJpObj(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
-                addToContainer(scrollJPanelCenter, m.getSpaceDividerForMealManager(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 50, 0, null);
-            }
         }
 
-        // ########################################################
-        // Resize & Align GUI screen so new object is visible
-        // ########################################################
-        resizeGUI();
+        if (ingredientsInfoScreen != null)
+        {
+            ingredientsInfoScreen.makeFrameVisible();
+            return;
+        }
 
-        // Scroll to MealManager
-        scrollToJPanelOnScreen(mealManager.getCollapsibleJpObj());
+        ingredientsInfoScreen = new Ingredients_Info_Screen(db, this, planID, tempPlanID, planName,
+                map_ingredientTypesToNames, ingredientsTypesList, storesNamesList);
     }
 
-    //##################################################################################################################
-    //  Macro Targets  Screen Methods
-    //##################################################################################################################
+    public void remove_Ingredients_Info_Screen()
+    {
+        ingredientsInfoScreen = null;
+    }
+
+    public void updateIngredientsNameAndTypesInJTables(boolean ingredientsAddedOrRemove)
+    {
+        if (ingredientsAddedOrRemove)
+        {
+            //#####################################
+            // Save Plan & Refresh Plan
+            //#####################################
+            saveMealData(false, false); // Save Plan
+            refreshPlan(false); // Refresh Plan
+        }
+    }
+
+    // ###################################################
+    // Macro Targets Screen & Target Methods
+    // ###################################################
+    private void open_MacrosTargets_Screen()
+    {
+        if (! (get_IsPlanSelected()))
+        {
+            return;
+        }
+
+        if (macrosTargets_Screen != null)
+        {
+            macrosTargets_Screen.makeJframeVisible();
+            return;
+        }
+        macrosTargets_Screen = new Macros_Targets_Screen(db, this, planID, tempPlanID, planName);
+    }
+
+    public void remove_macrosTargets_Screen()
+    {
+        macrosTargets_Screen = null;
+    }
+
+    public void macrosTargetsChanged(boolean bool)
+    {
+        macroTargetsChanged = bool;
+    }
+
     private void saveMacroTargets(boolean askPermission, boolean showUpdateMsg)
     {
         // ##############################################
@@ -1360,20 +1495,78 @@ public class Meal_Plan_Screen extends Screen
         if (transferTargets(tempPlanID, planID, false, showUpdateMsg))
         {
             macrosTargetsChanged(false);
-            updateTargetsAndMacrosLeft();
+            update_Targets_And_MacrosLeftTables();
         }
     }
 
-    public void updateTargetsAndMacrosLeft()
+    // ###################################################
+    // Scroll Down BTN Action
+    // ###################################################
+    private void scrollDown_BtnAction()
     {
-        macros_Targets_Table.updateMacrosTargetsTable();
-        macrosLeft_JTable.updateMacrosLeftTable();
+        super.scroll_To_Bottom_of_ScrollPane();
+    }
+
+    //##################################################################################################################
+    // Other Methods
+    //##################################################################################################################
+    @Override
+    public void windowClosedEvent()
+    {
+        if (macroTargetsChanged) // If targets have changed, save them?
+        {
+            saveMacroTargets(true, false);
+        }
+
+        saveMealData(true, false);
+
+        // Close Other Windows If Open
+        if (macrosTargets_Screen != null)
+        {
+            macrosTargets_Screen.closeeWindow();
+        }
+        if (ingredientsInfoScreen != null)
+        {
+            ingredientsInfoScreen.closeWindow();
+        }
+    }
+
+    //##################################################################################################################
+    //  Macro Targets/Left Table Methods
+    //##################################################################################################################
+    public void update_Targets_And_MacrosLeftTables()
+    {
+        update_MacrosTargetTable();
+        update_MacrosLeftTable();
     }
 
     //##########################################
-    // Refresh macrosLeft & macroTargets Table
+    // MacrosLeft Table
     //#########################################
-    private void refreshMacroTargets()
+    public void update_MacrosLeftTable()
+    {
+        macrosLeft_JTable.updateMacrosLeftTable();
+    }
+
+    private void refresh_MacrosLeft()
+    {
+        macrosLeft_JTable.refreshData();
+    }
+
+    public MacrosLeftTable getMacrosLeft_JTable()
+    {
+        return macrosLeft_JTable;
+    }
+
+    //##########################################
+    // MacroTargets Table
+    //#########################################
+    public void update_MacrosTargetTable()
+    {
+        macros_Targets_Table.updateMacrosTargetsTable();
+    }
+
+    private void refresh_MacroTargets()
     {
         // ##############################################
         // If targets have changed, save them?
@@ -1396,99 +1589,16 @@ public class Meal_Plan_Screen extends Screen
         }
     }
 
-    private void refreshMacrosLeft()
-    {
-        macrosLeft_JTable.refreshData();
-    }
-
-    private void open_LineChartScreen()
-    {
-        if (lineChartMealPlanScreen == null)
-        {
-            lineChartMealPlanScreen = new Line_Chart_Meal_Plan_Screen(db, this);
-            return;
-        }
-
-        lineChartMealPlanScreen.makeJFrameVisible();
-    }
-
-    public void removeLineChartScreen()
-    {
-        lineChartMealPlanScreen = null;
-    }
-
-    //##################################################################################################################
-    //  Opening & Closing External Screen
-    //##################################################################################################################
-    // Macro Targets Screen
-    private void open_MacrosTargets_Screen()
-    {
-        if (! (get_IsPlanSelected()))
-        {
-            return;
-        }
-
-        if (macrosTargets_Screen != null)
-        {
-            macrosTargets_Screen.makeJframeVisible();
-            return;
-        }
-        macrosTargets_Screen = new Macros_Targets_Screen(db, this, planID, tempPlanID, planName);
-    }
-
-    public void remove_macrosTargets_Screen()
-    {
-        macrosTargets_Screen = null;
-    }
-
-    // Add Ingredients Screen
-    private void open_AddIngredients_Screen()
-    {
-        if (! (get_IsPlanSelected()))
-        {
-            return;
-        }
-
-        if (ingredientsInfoScreen != null)
-        {
-            ingredientsInfoScreen.makeFrameVisible();
-            return;
-        }
-
-        ingredientsInfoScreen = new Ingredients_Info_Screen(db, this, planID, tempPlanID, planName,
-                map_ingredientTypesToNames, ingredientsTypesList, storesNamesList);
-    }
-
-    public void remove_Ingredients_Info_Screen()
-    {
-        ingredientsInfoScreen = null;
-    }
-
-    //##################################################################################################################
-    //  Mutator Methods
-    //##################################################################################################################
-    public void macrosTargetsChanged(boolean bool)
-    {
-        macroTargetsChanged = bool;
-    }
-
-    public void updateIngredientsNameAndTypesInJTables(boolean ingredientsAddedOrRemove)
-    {
-        if (ingredientsAddedOrRemove)
-        {
-            //#####################################
-            // Save Plan & Refresh Plan
-            //#####################################
-            saveMealData(false, false); // Save Plan
-            refreshPlan(false); // Refresh Plan
-        }
-    }
-
     //##################################################################################################################
     //  Accessor Methods
     //##################################################################################################################
 
-    // Boolean
+    // Booleans
+    public boolean getMacrosTargetsChanged()
+    {
+        return macroTargetsChanged;
+    }
+
     public boolean get_IsPlanSelected()
     {
         if (planID == null)
@@ -1499,25 +1609,12 @@ public class Meal_Plan_Screen extends Screen
         return true;
     }
 
-    public boolean getMacrosTargetsChanged()
-    {
-        return macroTargetsChanged;
-    }
-
     //###########################################
     // String
     //###########################################
     public String getPlanName()
     {
         return planName;
-    }
-
-    //###########################################
-    // Objects
-    //###########################################
-    public MacrosLeftTable getMacrosLeft_JTable()
-    {
-        return macrosLeft_JTable;
     }
 
     //###########################################
@@ -1533,22 +1630,40 @@ public class Meal_Plan_Screen extends Screen
         return planID;
     }
 
-    //###########################################
+    //####################################################################
     // Collections :  Accessor Methods
-    //###########################################
-    public String[] getMeal_total_columnNames()
+    //#####################################################################
+
+    // Others
+    public TreeMap<String, Collection<String>> getMap_ingredientTypesToNames()
     {
-        return meal_total_columnNames;
+        return map_ingredientTypesToNames;
     }
 
+    public TreeSet<Map.Entry<Integer, MealManager>> getMealManagerTreeSet()
+    {
+        return mealManagerTreeSet;
+    }
+
+    //###########################################
+    // TotalMeal Table Collections
+    //###########################################
     public ArrayList<String> getTotalMeal_Table_ColToHide()
     {
         return totalMeal_Table_ColToHide;
     }
 
-    public TreeMap<String, Collection<String>> getMap_ingredientTypesToNames()
+    public String[] getMeal_total_columnNames()
     {
-        return map_ingredientTypesToNames;
+        return meal_total_columnNames;
+    }
+
+    //###########################################
+    // Ingredients Table Collections
+    //###########################################
+    public String[] getIngredients_ColumnNames()
+    {
+        return ingredients_ColumnNames;
     }
 
     public ArrayList<String> getIngredientsTableUnEditableCells()
@@ -1556,23 +1671,10 @@ public class Meal_Plan_Screen extends Screen
         return ingredientsTableUnEditableCells;
     }
 
-    public ArrayList<String> getIngredients_Table_Col_Avoid_Centering()
-    {
-        return ingredients_Table_Col_Avoid_Centering;
-    }
+    public ArrayList<String> getIngredients_Table_Col_Avoid_Centering() { return ingredients_Table_Col_Avoid_Centering; }
 
     public ArrayList<String> getIngredientsInMeal_Table_ColToHide()
     {
         return ingredientsInMeal_Table_ColToHide;
-    }
-
-    public String[] getIngredients_ColumnNames()
-    {
-        return ingredients_ColumnNames;
-    }
-
-    public TreeSet<Map.Entry<Integer, MealManager>> getMealManagerTreeSet()
-    {
-        return mealManagerTreeSet;
     }
 }

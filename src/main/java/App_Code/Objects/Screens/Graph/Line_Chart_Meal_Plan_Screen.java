@@ -25,23 +25,41 @@ import java.util.*;
 
 public class Line_Chart_Meal_Plan_Screen extends Screen
 {
+    // #################################################################################################################
+    // Variables
+    // #################################################################################################################
+    private String planName;
+
+    //##############################################
+    // Objects
+    //##############################################
     private MyJDBC db;
     private Meal_Plan_Screen meal_plan_screen;
-    private String planName;
-    private Line_Chart line_chart;
 
-    private TreeSet<Map.Entry<Integer, MealManager>> mealManagerTreeSet;
+    //##############################################
+    // Collections
+    //##############################################
     private final String[] macronutrientsToCheck = new String[]{
             "total_protein", "total_carbohydrates", "total_sugars_of_carbs", "total_fats", "total_saturated_fat",
             "total_salt", "total_fibre"
-           // ,"total_calories"
+            // ,"total_calories"
             // , "total_water_content"
     };
 
-    // Key : Meal ID | Value: MacroName, Time, Value
     private HashMap<Integer, ArrayList<Triplet<String, LocalTime, BigDecimal>>> mealValues = new HashMap<>();
+    // Key : Meal ID | Value: MacroName, Time, Value
+
+    private TreeSet<Map.Entry<Integer, MealManager>> mealManagerTreeSet;
+
+    //##############################################
+    // Datasets Objects
+    //##############################################
+    private Line_Chart line_chart;
     TimeSeriesCollection dataset = new TimeSeriesCollection();
 
+    // #################################################################################################################
+    // Constructor
+    // #################################################################################################################
     public Line_Chart_Meal_Plan_Screen(MyJDBC db, Meal_Plan_Screen meal_plan_screen)
     {
         // ##########################################
@@ -80,18 +98,18 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
         setFrameVisibility(true);
     }
 
+    // #################################################################################################################
+    // Methods
+    // #################################################################################################################
     @Override
     public void windowClosedEvent()
     {
         meal_plan_screen.removeLineChartScreen();
     }
 
-    public void update_PieChart_Title()
-    {
-        planName = meal_plan_screen.getPlanName();
-        line_chart.setTitle(planName);
-    }
-
+    // ##################################################
+    // Dataset / Update Methods
+    // ##################################################
     private boolean createDataSet(boolean clear)
     {
         // ############################################
@@ -109,7 +127,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
         {
             if (! timeSeriesHashMap.containsKey(macroName) || clear)
             {
-                String macroNameGUI = String.format("  %s  ", macroName); // reformat macroName for GUI purposes
+                String macroNameGUI = String.format("  %s  ", macroName).replaceAll("_", " "); // reformat macroName for GUI purposes
                 timeSeriesHashMap.put(macroName, new TimeSeries(macroNameGUI));
             }
 
@@ -155,6 +173,12 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
             dataset.addSeries(timeSeries);
         }
         return true;
+    }
+
+    public void update_LineChart_Title()
+    {
+        planName = meal_plan_screen.getPlanName();
+        line_chart.setTitle(planName);
     }
 }
 

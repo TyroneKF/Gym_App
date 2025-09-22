@@ -179,7 +179,7 @@ public class Macros_Targets_Screen extends JFrame
                         if (updateForm())
                         {
                             closeWindowEvent();
-                            meal_plan_screen.updateTargetsAndMacrosLeft();
+                            meal_plan_screen.update_Targets_And_MacrosLeftTables();
                             meal_plan_screen.macrosTargetsChanged(true);
                             closeeWindow();
                         }
@@ -295,7 +295,7 @@ public class Macros_Targets_Screen extends JFrame
         }
 
         JOptionPane.showMessageDialog(meal_plan_screen.getFrame(), "Macro Targets Successfully Updated In DB");
-        meal_plan_screen.updateTargetsAndMacrosLeft();
+        meal_plan_screen.update_Targets_And_MacrosLeftTables();
         return true;
     }
 

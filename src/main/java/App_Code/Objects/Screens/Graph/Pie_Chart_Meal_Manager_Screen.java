@@ -15,17 +15,36 @@ import java.util.Map;
 
 public class Pie_Chart_Meal_Manager_Screen extends Screen
 {
+    //###########################################################################################
+    // Variables
+    //###########################################################################################
+
+    // Collections
     private Map<String, Pair<BigDecimal, String>> macros;
+
+    //#####################################
+    // Objects
+    //#####################################
     private MealManager mealManager;
     private TotalMealTable totalMealTable;
     private Meal_Plan_Screen meal_plan_screen;
     private Pie_Chart pieChart;
+
+    //#####################################
+    // Strings
+    //#####################################
     private String meal_name;
 
+    //#####################################
+    // Integers
+    //#####################################
     private int
             frameWidth = 800,
             frameHeight = 600;
 
+    //###########################################################################################
+    // Constructor
+    //###########################################################################################
     public Pie_Chart_Meal_Manager_Screen(MyJDBC db, MealManager mealManager)
     {
         // ##########################################
@@ -59,18 +78,18 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
         setFrameVisibility(true);
     }
 
+    //###########################################################################################
+    // Methods
+    //###########################################################################################
     @Override
     public void windowClosedEvent()
     {
         mealManager.removePieChartScreen();
     }
 
-    public void update_PieChart_Title()
-    {
-        meal_name = mealManager.getCurrentMealName();
-        pieChart.setTitle(meal_name);
-    }
-
+    //####################################
+    // Update Methods
+    //####################################
     public void update_pieChart()
     {
         if(updateDataSet()) pieChart.update_dataset(macros);
@@ -102,5 +121,11 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
             System.err.printf("\n\nPie_Chart.java : updateDataSet() \n%s", e);
             return false;
         }
+    }
+
+    public void update_PieChart_Title()
+    {
+        meal_name = mealManager.getCurrentMealName();
+        pieChart.setTitle(meal_name);
     }
 }

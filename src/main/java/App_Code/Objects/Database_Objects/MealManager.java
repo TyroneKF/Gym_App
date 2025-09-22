@@ -689,7 +689,7 @@ public class MealManager
 
         // Time Variables
         setTimeVariables(true, savedMealTime, newMealTime); // Set Meal Time Variables
-        meal_plan_screen.addMealManger2(this, true); // Update Meal Plan Screen
+        meal_plan_screen.addMealManger(this, true); // Update Meal Plan Screen
 
         // Update total Meal View
         totalMealTable.updateTotalMealTable(); // Make Updates Visible
@@ -905,7 +905,7 @@ public class MealManager
         JOptionPane.showMessageDialog(null, "Table Successfully Deleted!");
     }
 
-    private void hideMealManager()
+    public void hideMealManager()
     {
         setVisibility(false); // hide collapsible Object
         setHasMealPlannerBeenDeleted(true); // set this object as deleted
@@ -1174,7 +1174,7 @@ public class MealManager
         pieChart_UpdateMealName();
 
         // Reset GUI by removing and adding this object to the GUI
-        meal_plan_screen.addMealManger2(this, true);
+        meal_plan_screen.addMealManger(this, true);
     }
 
     public void reloadingIngredientsTableDataFromRefresh(boolean updateMacrosLeft)

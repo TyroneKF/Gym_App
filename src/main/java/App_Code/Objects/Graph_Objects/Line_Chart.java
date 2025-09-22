@@ -18,9 +18,15 @@ import java.util.HashMap;
 
 public class Line_Chart extends JPanel
 {
+    // ############################################################################################
+    // Variables
+    // ############################################################################################
     JFreeChart chart;
     TimeSeriesCollection dataset = new TimeSeriesCollection();
 
+    // ############################################################################################
+    // Constructor
+    // ############################################################################################
     public Line_Chart(String title, int frameWidth, int frameHeight, TimeSeriesCollection dataset)
     {
         //############################################
@@ -52,7 +58,7 @@ public class Line_Chart extends JPanel
         //#################################################
         Paint[] customPaints = new Paint[]{
                 Color.RED, Color.BLUE, Color.GREEN, Color.ORANGE,
-                Color.MAGENTA, Color.CYAN, Color.PINK, Color.YELLOW,
+                Color.MAGENTA, Color.PINK, Color.CYAN,  Color.YELLOW,
                 Color.BLACK
         };
 
@@ -107,6 +113,9 @@ public class Line_Chart extends JPanel
         add(chartPanel);
     }
 
+    // ############################################################################################
+    // Methods
+    // ############################################################################################
     public void setTitle(String meal_name)
     {
         chart.setTitle(String.format("%s Macros Over 24 Hours", meal_name));

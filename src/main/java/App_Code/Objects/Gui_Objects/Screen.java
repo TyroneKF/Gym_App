@@ -138,7 +138,7 @@ public class Screen
         });
     }
 
-    public void scrollBarUp_BTN_Action()
+    protected void scroll_To_Top_of_ScrollPane()
     {
         //##############################################
         // Set ScrollPane to the Bottom Straight Away
@@ -147,7 +147,7 @@ public class Screen
         vertical.setValue(vertical.getMinimum());
     }
 
-    public void scrollBarDown_BTN_Action()
+    protected void scroll_To_Bottom_of_ScrollPane()
     {
         //##############################################
         // Set ScrollPane to the Bottom Straight Away
