@@ -1191,7 +1191,7 @@ public class Meal_Plan_Screen extends Screen
     {
         if(lineChartMealPlanScreen == null) return;
 
-        lineChartMealPlanScreen.clear_Dataset();
+        lineChartMealPlanScreen.clear_And_Rebuild_Dataset();
     }
 
     // ###################################################
@@ -1232,7 +1232,7 @@ public class Meal_Plan_Screen extends Screen
             // If mealManager is in DB  then refresh
             if (mealManager.isMealManagerInDB())
             {
-                mealManager.reloadingIngredientsTableDataFromRefresh(false);
+                mealManager.reloadingIngredientsTableDataFromRefresh(false, false);
                 continue;
             }
 
@@ -1252,7 +1252,9 @@ public class Meal_Plan_Screen extends Screen
         //####################################################################
         // Re-Upload LineChart Data in One Go
         //####################################################################
+        if(lineChartMealPlanScreen == null) return;
 
+         lineChartMealPlanScreen.clear_And_Rebuild_Dataset(); // clear but, also adds data in
     }
 
     // ###################################################

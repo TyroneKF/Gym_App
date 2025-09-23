@@ -243,7 +243,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
     // ##################################################
     //  Clear Dataset Methods
     // ##################################################
-    public void clear_Dataset()
+    public void clear_And_Rebuild_Dataset()
     {
         dataset = new TimeSeriesCollection();
         line_chart.getXY_Plot().setDataset(dataset);

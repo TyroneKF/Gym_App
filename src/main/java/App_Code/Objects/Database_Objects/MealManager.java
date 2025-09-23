@@ -1189,7 +1189,7 @@ public class MealManager
 
         collapsibleJpObj.setIconBtnText(savedMealName); // Reset Meal Name in GUI to Old Txt
 
-        reloadingIngredientsTableDataFromRefresh(true);
+        reloadingIngredientsTableDataFromRefresh(true, true);
 
         // Update PieChart Name
         pieChart_UpdateMealName();
@@ -1198,7 +1198,7 @@ public class MealManager
         meal_plan_screen.addMealManger(this, true);
     }
 
-    public void reloadingIngredientsTableDataFromRefresh(boolean updateMacrosLeft)
+    public void reloadingIngredientsTableDataFromRefresh(boolean updateMacrosLeft, boolean updateCharts)
     {
         //##############################################################################################
         // Refresh ingredients meal table & total Tables Data
@@ -1230,7 +1230,7 @@ public class MealManager
         //##############################################################################################
         // Refresh TotalMeal
         //##############################################################################################
-        update_TotalMeal_Table(); // this has to be done
+        update_TotalMeal_Table(updateCharts); // this has to be done
 
         //##############################################################################################
         // Refresh MacrosLeft
@@ -1339,14 +1339,16 @@ public class MealManager
     }
 
 
-    public void update_TotalMeal_Table()
+    public void update_TotalMeal_Table(Boolean updateCharts)
     {
-
         totalMealTable.updateTotalMealTable(); // Update TotalMealView
         update_Pie_Chart_Screen(); // Update Pie Chart Screen
 
-        // Update LineChart Data
-        meal_plan_screen.updateLineChartData(this, getCurrentMealTime(), getCurrentMealTime());
+        if(updateCharts) // Update LineChart Data
+        {
+            System.err.println("\n\nMealManager.java update_TotalMeal_Table()");
+            meal_plan_screen.updateLineChartData(this, getCurrentMealTime(), getCurrentMealTime());
+        }
     }
 
     //##################################################################################################################
