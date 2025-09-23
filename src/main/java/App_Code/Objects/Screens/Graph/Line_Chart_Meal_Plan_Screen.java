@@ -4,12 +4,8 @@ import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.TotalMealTable;
 import App_Code.Objects.Database_Objects.MealManager;
 import App_Code.Objects.Graph_Objects.Line_Chart;
-import App_Code.Objects.Graph_Objects.Pie_Chart;
 import App_Code.Objects.Gui_Objects.Screen;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
-import org.apache.commons.lang3.tuple.Triple;
-import org.javatuples.Triplet;
-import org.jfree.data.time.Minute;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
@@ -22,6 +18,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.List;
 
 public class Line_Chart_Meal_Plan_Screen extends Screen
 {
@@ -42,20 +39,17 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
     private final String[] macronutrientsToCheck = new String[]{
             "total_protein", "total_carbohydrates", "total_sugars_of_carbs", "total_fats", "total_saturated_fat",
             "total_salt", "total_fibre"
-            // ,"total_calories"
-            // , "total_water_content"
+//            ,"total_calories"
+//            ,"total_water_content"
     };
-
-    private HashMap<Integer, ArrayList<Triplet<String, LocalTime, BigDecimal>>> mealValues = new HashMap<>();
-    // Key : Meal ID | Value: MacroName, Time, Value
 
     private TreeSet<Map.Entry<Integer, MealManager>> mealManagerTreeSet;
 
     //##############################################
     // Datasets Objects
     //##############################################
+    private TimeSeriesCollection dataset  = new TimeSeriesCollection(); // Clear Dataset;
     private Line_Chart line_chart;
-    TimeSeriesCollection dataset = new TimeSeriesCollection();
 
     // #################################################################################################################
     // Constructor
@@ -80,7 +74,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
         //############################################
         // Creating Macros / Dataset
         //############################################
-        if (! createDataSet(false))
+        if (! createDataSet())
         {
             getFrame().dispose();
             return;
@@ -98,64 +92,45 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
         setFrameVisibility(true);
     }
 
-    // #################################################################################################################
-    // Methods
-    // #################################################################################################################
-    @Override
-    public void windowClosedEvent()
-    {
-        meal_plan_screen.removeLineChartScreen();
-    }
-
     // ##################################################
-    // Dataset / Update Methods
+    // Build Methods
     // ##################################################
-    private boolean createDataSet(boolean clear)
+    public boolean createDataSet()
     {
-        // ############################################
-        // Clear Old Data
-        // ############################################
-        mealValues.clear();
-        dataset = new TimeSeriesCollection();
-
         // ############################################
         // Build Dataset
         // ############################################
-        HashMap<String, TimeSeries> timeSeriesHashMap = new HashMap<String, TimeSeries>();
-
         for (String macroName : macronutrientsToCheck)
         {
-            if (! timeSeriesHashMap.containsKey(macroName) || clear)
-            {
-                String macroNameGUI = String.format("  %s  ", macroName).replaceAll("_", " "); // reformat macroName for GUI purposes
-                timeSeriesHashMap.put(macroName, new TimeSeries(macroNameGUI));
-            }
+            // ############################################
+            // Create TimeSeries For Macros
+            // ############################################
+            String macroNameGUI = convertMacroNameToGuiVersion(macroName);
+            TimeSeries timeSeries = new TimeSeries(macroNameGUI);
 
-            TimeSeries timeSeries = timeSeriesHashMap.get(macroName);
-
+            // #################################################
+            // Per MacroName Get Values From Each MealManager
+            // #################################################
             for (Map.Entry<Integer, MealManager> mapEntry : mealManagerTreeSet)
             {
-                try{
+                MealManager mealManager = mapEntry.getValue();
+
+                // If meal has been deleted don't include it in the count
+                if (mealManager.getHasMealPlannerBeenDeleted()) { continue; }
+
+                try
+                {
                     // ############################################
                     // Get Meal Manager Variables
                     // ############################################
-                    MealManager mealManager = mapEntry.getValue();
                     TotalMealTable totalMealTable = mealManager.getTotalMealTable();
                     BigDecimal macroValue = totalMealTable.getValueOnTable(macroName);
 
-                    Integer mealID = mapEntry.getKey();
-                    String mealName = mealManager.getCurrentMealName();
-
                     // ############################################
-                    // Meal Time
+                    // Meal Time Refactoring for TimeSeries Format
                     // ############################################
                     LocalTime mealTime = mealManager.getCurrentMealTime();
-
-                    // Convert LocalTime -> Date (fixed base date)
-                    LocalDate baseDate = LocalDate.of(2025, 1, 1);
-                    LocalDateTime dateTime = baseDate.atTime(mealTime);
-                    Date date = Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
-                    Second second = new Second(date);
+                    Second second = localTimeToSecond(mealTime);
 
                     // ############################################
                     // Adding Value & to Macro TimeSeries
@@ -169,16 +144,136 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
                     return false;
                 }
             }
-
             dataset.addSeries(timeSeries);
         }
+
         return true;
     }
 
+    public void updateMealManagerDataChange(MealManager mealManager, LocalTime previousTime, LocalTime currentTime)
+    {
+        // ####################################################
+        // Get MealManager Info
+        // ####################################################
+        Boolean timeChanged = ! previousTime.equals(currentTime);
+
+
+        // ####################################################
+        // Get MealManager MacroInfo & Replace
+        // ####################################################
+
+        for (String macroName : macronutrientsToCheck)
+        {
+            // ########################################
+            // Get Correlated Macro TimeSeries
+            // ########################################
+            // Convert Table Column to Key in TimeSeries Collection
+            String macroNameGUI = convertMacroNameToGuiVersion(macroName);
+
+            // Get TimeSeries correlated to MacroName in collection
+            TimeSeries macroSeries = dataset.getSeries(macroNameGUI);
+
+            // ########################################
+            // Get Macronutrient Info
+            // ########################################
+            // MealManager / TotalMealView Table Macro Result
+            BigDecimal newMacroValue = mealManager.getTotalMealTable().getValueOnTable(macroName);
+
+            // convert old time to second for collection
+            Second oldMealTime = localTimeToSecond(previousTime);
+
+            // #######################################
+            // OLD Time: Replace With New Value
+            // #######################################
+            if (! timeChanged) // IF the time hasn't changed just update the series value with the old time
+            {
+                macroSeries.addOrUpdate(oldMealTime, newMacroValue); // update value
+                continue;
+            }
+
+            // ########################################
+            // New Time : Delete & Add Old / New Value
+            // ########################################
+            macroSeries.delete(oldMealTime); // IF the time has changed delete the old time from series value
+            macroSeries.add(localTimeToSecond(currentTime), newMacroValue); // Add new value to Series with new Time
+        }
+    }
+
+    // #################################################################################################################
+    // Methods
+    // #################################################################################################################
+    @Override
+    protected void windowClosedEvent()
+    {
+        meal_plan_screen.removeLineChartScreen();
+    }
+
+    // ##################################################
+    // Conversion Methods
+    // ##################################################
+    private String convertMacroNameToGuiVersion(String macroName)
+    {
+        // Reformat macroName for GUI purposes  "\u00A0" is like space because \t doesn't work in this label format
+
+      //  return String.format("\u00A0\u00A0%s\u00A0\u00A0", macroName, true);
+
+        return String.format("\u00A0\u00A0%s\u00A0\u00A0", formatStrings(macroName, true));
+    }
+
+    private Second localTimeToSecond(LocalTime localTime)
+    {
+        // Convert LocalTime -> Date (fixed base date)
+        LocalDate baseDate = LocalDate.of(2025, 1, 1);
+        LocalDateTime dateTime = baseDate.atTime(localTime);
+        Date date = Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
+
+        return new Second(date);
+    }
+
+    // ##################################################
+    //  Update  Methods
+    // ##################################################
     public void update_LineChart_Title()
     {
         planName = meal_plan_screen.getPlanName();
         line_chart.setTitle(planName);
     }
+
+
+    // ##################################################
+    //  Clear Dataset Methods
+    // ##################################################
+    public void clear_Dataset()
+    {
+        dataset = new TimeSeriesCollection();
+        line_chart.getXY_Plot().setDataset(dataset);
+
+        createDataSet();
+    }
+
+    /*
+       Based on MealManagers time the data is deleted in the series collection
+     */
+    public void deleteMealManagerData(MealManager mealManager, LocalTime mealTime)
+    {
+        for (String macroName : macronutrientsToCheck)
+        {
+            // ###########################################
+            // Get Correlated Macro TimeSeries
+            // ############################################
+            // Convert Table Column to Key in TimeSeries Collection
+            String macroNameGUI = convertMacroNameToGuiVersion(macroName);
+
+            // Get TimeSeries correlated to MacroName in collection
+            TimeSeries macroSeries = dataset.getSeries(macroNameGUI);
+
+            // #############################################
+            // Delete MealManagers Correlated Macro Value
+            // #############################################
+            macroSeries.delete(localTimeToSecond(mealTime));
+        }
+    }
+
+
 }
 

@@ -13,6 +13,7 @@ import io.github.cdimascio.dotenv.Dotenv;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.List;
 
@@ -1130,6 +1131,11 @@ public class Meal_Plan_Screen extends Screen
         // Update MacrosLeft
         //###########################################################
         update_MacrosLeftTable();
+
+        //###########################################################
+        // Update LineChart Screen
+        //###########################################################
+        clearLineChartDataSet();
     }
 
     // ###################################################
@@ -1165,6 +1171,27 @@ public class Meal_Plan_Screen extends Screen
     public void removeLineChartScreen()
     {
         lineChartMealPlanScreen = null;
+    }
+
+    public void updateLineChartData(MealManager mealManager, LocalTime previousTime, LocalTime currentTime)
+    {
+        if(lineChartMealPlanScreen == null) return;
+
+        lineChartMealPlanScreen.updateMealManagerDataChange(mealManager, previousTime, currentTime);
+    }
+
+    public void deleteLineChartData(MealManager mealManager, LocalTime currentTime)
+    {
+        if(lineChartMealPlanScreen == null) return;
+
+        lineChartMealPlanScreen.deleteMealManagerData(mealManager, currentTime);
+    }
+
+    public void clearLineChartDataSet()
+    {
+        if(lineChartMealPlanScreen == null) return;
+
+        lineChartMealPlanScreen.clear_Dataset();
     }
 
     // ###################################################
@@ -1221,6 +1248,11 @@ public class Meal_Plan_Screen extends Screen
         //####################################################################
         refresh_MacroTargets(); // if macroTargets changed ask the user if they would like to refresh this data
         refresh_MacrosLeft();
+
+        //####################################################################
+        // Re-Upload LineChart Data in One Go
+        //####################################################################
+
     }
 
     // ###################################################

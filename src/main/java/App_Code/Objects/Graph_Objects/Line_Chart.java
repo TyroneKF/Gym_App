@@ -125,4 +125,11 @@ public class Line_Chart extends JPanel
     {
         this.dataset = dataset;
     }
+
+    public XYPlot getXY_Plot()
+    {
+        return chart.getXYPlot();
+    }
+
+
 }

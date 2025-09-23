@@ -4,6 +4,8 @@ import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class Screen
 {
@@ -105,7 +107,7 @@ public class Screen
         int reply = JOptionPane.showConfirmDialog(frame, String.format("Are you sure you want to %s, \nany unsaved changes will be lost in this Table! \nDo you want to %s?", process, process),
                 "Close Application", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
-        if (reply==JOptionPane.NO_OPTION || reply==JOptionPane.CLOSED_OPTION)
+        if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
         {
             return false;
         }
@@ -117,6 +119,10 @@ public class Screen
 
     }
 
+    public void closeJFrame()
+    {
+        frame.dispose();
+    }
 
     //##############################################
     // GUI Setup
@@ -166,12 +172,26 @@ public class Screen
 
     public void setTitle(String title)
     {
-        if(title.length() > 0) frame.setTitle(title);
+        if (title.length() > 0) { frame.setTitle(title); }
     }
 
     public void setResizable(boolean x)
     {
         frame.setResizable(x);
+    }
+
+    protected String formatStrings(String txt, boolean separateWords)
+    {
+        // Re-assign Re-Capitalised Value into list
+        return txt =
+                separateWords ?
+                        Arrays.stream(txt.split("[ _]+"))
+                                .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
+                                .collect(Collectors.joining(" "))
+                        :
+                        Arrays.stream(txt.split("[ _]+"))
+                                .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
+                                .collect(Collectors.joining("_"));
     }
 
     //##################################################################################################################
@@ -245,11 +265,11 @@ public class Screen
                                   Integer gridx, Integer gridy, Integer gridwidth, Integer gridheight, Double weightx,
                                   Double weighty, String fill, Integer ipady, Integer ipadx, String anchor)
     {
-        if (gridx!=null)
+        if (gridx != null)
         {
             gbc.gridx = gridx;
         }
-        if (gridy!=null)
+        if (gridy != null)
         {
             gbc.gridy = gridy;
         }
@@ -276,7 +296,7 @@ public class Screen
                 break;
         }
 
-        if (anchor!=null)
+        if (anchor != null)
         {
             switch (anchor.toLowerCase())
             {

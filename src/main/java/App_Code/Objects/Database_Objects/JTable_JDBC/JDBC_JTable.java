@@ -116,7 +116,7 @@ public class JDBC_JTable extends JPanel
             String columnName = columnNames[x];
 
             // Re-assign Re-Capitalised Value into list
-            guiColumnNames[x] = Arrays.stream(columnName.split("_"))
+            guiColumnNames[x] = Arrays.stream(columnName.split("[ _]+"))
                     .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
                     .collect(Collectors.joining("_"));
         }

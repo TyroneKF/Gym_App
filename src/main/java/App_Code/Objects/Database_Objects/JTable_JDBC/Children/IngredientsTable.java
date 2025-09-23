@@ -1078,7 +1078,7 @@ public class IngredientsTable extends JDBC_JTable
         //########################################################
         // insert meal if it does not exist inside toPlanID
         String query4 = String.format("""
-                INSERT IGNORE INTO mealsInPlan
+                INSERT IGNORE INTO meals_in_plan
                 (meal_in_plan_id, plan_id, meal_name)                                
                 VALUES
                 (%s, %s, '%s');""", mealInPlanID, toPlanID, mealName);

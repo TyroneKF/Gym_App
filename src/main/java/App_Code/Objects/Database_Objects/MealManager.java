@@ -492,6 +492,9 @@ public class MealManager
 
     public void removePieChartScreen()
     {
+        if(pie_chart_meal_manager_screen == null ) return;
+
+        pie_chart_meal_manager_screen.closeJFrame();
         pie_chart_meal_manager_screen = null;
     }
 
@@ -687,15 +690,18 @@ public class MealManager
         //#########################################################################################################
         JOptionPane.showMessageDialog(getFrame(), String.format("Successfully, changed meal time from '%s' to '%s'", currentMealTime, newMealTime)); // Success MSG
 
-        // Time Variables
-        setTimeVariables(true, savedMealTime, newMealTime); // Set Meal Time Variables
-        meal_plan_screen.addMealManger(this, true); // Update Meal Plan Screen
-
         // Update total Meal View
         totalMealTable.updateTotalMealTable(); // Make Updates Visible
+
+        // Update LineChart Data
+        meal_plan_screen.updateLineChartData(this, getCurrentMealTime(), newMealTime);
+
+        // Update Time Variables & Update GUI Too
+        setTimeVariables(true, savedMealTime, newMealTime); // Set Meal Time Variables
+        meal_plan_screen.addMealManger(this, true); // Update Meal Plan Screen
     }
 
-    public LocalTime promptUserForMealTime(boolean skipConfirmation, boolean comparison)
+    private LocalTime promptUserForMealTime(boolean skipConfirmation, boolean comparison)
     {
         // User info prompt
         String inputMealTime = JOptionPane.showInputDialog("Input Meal Time etc \"09:00\"?");
@@ -729,6 +735,11 @@ public class MealManager
     public LocalTime getCurrentMealTime()
     {
         return currentMealTime;
+    }
+
+    private void updateLineChartScreen()
+    {
+
     }
 
     //####################################
@@ -898,6 +909,16 @@ public class MealManager
         // Update MacrosLeftTable
         //##########################################
         update_MacrosLeft_Table();// update macrosLeft table, due to number deductions from this meal
+
+        //##########################################
+        // Delete PieChart (Meal is Gone)
+        //##########################################
+        removePieChartScreen();
+
+        //##########################################
+        // Update LineChart Data
+        //##########################################
+        meal_plan_screen.deleteLineChartData(this, getCurrentMealTime());
 
         //##########################################
         // Update Message
@@ -1320,8 +1341,12 @@ public class MealManager
 
     public void update_TotalMeal_Table()
     {
-        totalMealTable.updateTotalMealTable();
-        update_Pie_Chart_Screen();
+
+        totalMealTable.updateTotalMealTable(); // Update TotalMealView
+        update_Pie_Chart_Screen(); // Update Pie Chart Screen
+
+        // Update LineChart Data
+        meal_plan_screen.updateLineChartData(this, getCurrentMealTime(), getCurrentMealTime());
     }
 
     //##################################################################################################################
@@ -1329,7 +1354,6 @@ public class MealManager
     //##################################################################################################################
 
     // Other Objects
-    // ###########################
     public Frame getFrame()
     {
         return meal_plan_screen.getFrame();
