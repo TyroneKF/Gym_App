@@ -25,6 +25,21 @@ Check for
 .) Delete on keys should be simpler due to cascade now
 
 ######################################################################################
+OVERALL:
+######################################################################################
+.) Add meassurments table field to App
+.) Factor out NutritionIx API key into .env file
+.) GRAPHS
+.) Columns in table sizes
+.) Demo Screen
+.) Clear GUI Screen
+.) SQL injections on Input
+.) Ingredients_info page DB Update
+.) Has data changed in ingredients table
+.) Refactor db requests method if nulll into a method that return boolean
+.) Diagram of carbs and nutrients in line graph over the day
+
+######################################################################################
 SQL :
 ######################################################################################
 .) MAX is apparently not needed although it flagged an error on linux:
@@ -92,20 +107,7 @@ Ingredients_Info
 .) Refactoring out nutrition X product key
 .) Barcode Scanner
 
-######################################################################################
-OVERALL:
-######################################################################################
-.) Add meassurments table field to App
-.) Factor out NutritionIx API key into .env file
-.) GRAPHS
-.) Columns in table sizes
-.) Demo Screen
-.) Clear GUI Screen
-.) SQL injections on Input
-.) Ingredients_info page DB Update
-.) Has data changed in ingredients table
-.) Refactor db requests method if nulll into a method that return boolean
-.) Diagram of carbs and nutrients in line graph over the day
+
 
 ######################################################################################
 Refactoring:

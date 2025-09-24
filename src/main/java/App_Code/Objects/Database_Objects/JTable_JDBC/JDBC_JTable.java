@@ -7,6 +7,7 @@ package App_Code.Objects.Database_Objects.JTable_JDBC;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
 import javax.swing.table.*;
 import java.awt.*;
 import java.util.*;
@@ -42,7 +43,7 @@ public class JDBC_JTable extends JPanel
 
     protected HashMap<Integer, ArrayList<String>> jComboMap = new HashMap<>();
 
-    protected Integer deleteColumn = null;
+    protected Integer model_DeleteBTN_Col = null;
     protected Object previousJComboItem;
     protected Object selected_JCombo_Item;
 
@@ -226,7 +227,7 @@ public class JDBC_JTable extends JPanel
             }
         };
 
-        if (addJTableAction) {  tableModel.addTableModelListener( evt -> tableDataChange_Action());}
+        if (addJTableAction) {  tableModel.addTableModelListener( evt -> tableDataChange_Action(evt));}
 
         jTable.setModel(tableModel);
 
@@ -277,7 +278,7 @@ public class JDBC_JTable extends JPanel
         return true;
     }
 
-    protected void tableDataChange_Action()
+    protected void tableDataChange_Action(TableModelEvent evt)
     {
 
     }
@@ -286,32 +287,10 @@ public class JDBC_JTable extends JPanel
     {
         //########################################################################
         // Updating Table Info
-        //#######################################################################
-        int pos = 0;
-        for (Map.Entry<String, Integer[]> jTableColumn : columnNamesAndPositions.entrySet())
+        //########################################################################
+        for(int columnPos = 0; columnPos < columnsInTable; columnPos++)
         {
-            //############################################
-            // Extracting Info
-            //############################################
-            String columnName = jTableColumn.getKey();
-
-            /*
-             Pos 1 column original position in JTable Data
-             Pos 2 column position in JTable after columns are hidden
-            */
-            Integer[] columnPositionsList = jTableColumn.getValue();
-            Integer columnPosAfterHidingColumns = columnPositionsList[1];
-
-            //############################################
-            // Update Table
-            //############################################
-            if (columnPosAfterHidingColumns!=null) // this column isn't visible in the JTable Data
-            {
-                jTable.setValueAt(updateData[pos], updateRow, columnPosAfterHidingColumns);
-            }
-
-            //############################################
-            pos++;
+            tableModel.setValueAt(updateData[columnPos], updateRow, columnPos);
         }
 
         jTable.repaint();

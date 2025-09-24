@@ -129,7 +129,8 @@ public class Meal_Plan_Screen extends Screen
             "ingredients_index", "ingredient_id", "ingredient_cost", "protein", "gi", "carbohydrates", "sugars_of_carbs",
             "fibre", "fat", "saturated_fat", "salt", "water_content", "liquid_content", "calories")),
 
-    ingredientsInMeal_Table_ColToHide = new ArrayList<>(Arrays.asList("plan_id", "div_meal_sections_id"));
+    ingredientsInMeal_Table_ColToHide = new ArrayList<>(Arrays.asList("plan_id", "div_meal_sections_id", "ingredient_id",
+            "ingredients_index", "liquid_content", "water_content" ));
 
     //##################################################################################################################
     // Other Table Customisations

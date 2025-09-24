@@ -52,7 +52,7 @@ public class Pie_Chart extends JPanel
         //############################################
         // Create Plot with Data & Configurations
         //############################################
-        chart = ChartFactory.createPieChart3D(String.format("%s Macros", title), dataset, true, true, false);
+        chart = ChartFactory.createPieChart3D(title, dataset, true, true, false);
 
         PiePlot3D plot = (PiePlot3D) chart.getPlot();
         plot.setStartAngle(290);

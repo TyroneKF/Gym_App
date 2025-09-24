@@ -272,18 +272,19 @@ i.plan_id,
 i.div_meal_sections_id,
 i.ingredients_index,
 i.ingredient_id, 
-i.quantity,
 
 (SELECT t.ingredient_type_name FROM ingredient_types t WHERE t.ingredient_type_id = info.ingredient_type_id) AS ingredient_type,
-
 info.ingredient_name,
-IFNULL(ROUND((i.quantity /p.volume_per_unit)*p.cost_per_unit,2),0) AS ingredient_cost,
+
+i.quantity,
 
 IFNULL(s.store_name,'N/A') AS  supplier,
 IFNULL(p.product_name,'N/A') AS  product_name,
 
-IFNULL(ROUND((info.protein /info.based_on_quantity)*i.quantity,2),0) AS protein,
+IFNULL(ROUND((i.quantity /p.volume_per_unit)*p.cost_per_unit,2),0) AS ingredient_cost,
+
 IFNULL(info.glycemic_index, 0) AS gi,
+IFNULL(ROUND((info.protein /info.based_on_quantity)*i.quantity,2),0) AS protein,
 IFNULL(ROUND((info.carbohydrates /info.based_on_quantity)*i.quantity,2),0) AS carbohydrates,
 IFNULL(ROUND((info.sugars_of_carbs /info.based_on_quantity)*i.quantity,2),0) AS sugars_of_carbs,
 IFNULL(ROUND((info.fibre /info.based_on_quantity)*i.quantity,2),0) AS fibre,
