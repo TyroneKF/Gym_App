@@ -1346,7 +1346,6 @@ public class MealManager
 
         if(updateCharts) // Update LineChart Data
         {
-            System.err.println("\n\nMealManager.java update_TotalMeal_Table()");
             meal_plan_screen.updateLineChartData(this, getCurrentMealTime(), getCurrentMealTime());
         }
     }
