@@ -227,6 +227,14 @@ public class Screen
         return scrollPaneJPanel;
     }
 
+    protected JPanel createSpaceDivider(int width, int height)
+    {
+        JPanel spaceDivider = new JPanel(new GridBagLayout());
+        spaceDivider.setPreferredSize(new Dimension(width,height));
+
+        return spaceDivider;
+    }
+
     // ##################################
     // Get Int Methods
     // ##################################

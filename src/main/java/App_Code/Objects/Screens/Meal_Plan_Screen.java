@@ -11,8 +11,10 @@ import App_Code.Objects.Screens.Loading_Screen.LoadingScreen;
 import io.github.cdimascio.dotenv.Dotenv;
 
 import javax.swing.*;
+import javax.swing.border.*;
 import java.awt.*;
 import java.io.File;
+import java.net.URL;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.List;
@@ -138,7 +140,8 @@ public class Meal_Plan_Screen extends Screen
     private final ArrayList<String>
 
             // Table : total_meal_view Table
-            totalMeal_Table_ColToHide = new ArrayList<String>(Arrays.asList("plan_id", "meal_name", "meal_in_plan_id")),
+            totalMeal_Table_ColToHide = new ArrayList<String>(Arrays.asList("plan_id", "meal_name", "meal_in_plan_id",
+            "weight_of_meal")),
 
     // Table : plan_macro_target_calculations
     macrosTargets_Table_ColToHide = new ArrayList<String>(Arrays.asList("plan_id", "plan_name", "date_time_of_creation")),
@@ -440,9 +443,45 @@ public class Meal_Plan_Screen extends Screen
         //##############################################################################################################
         //Bottom : ScrollPanel
         //##############################################################################################################
+
+        // Add Bottom JPanel to GUI
         JPanel macrosInfoJPanel = new JPanel(new GridBagLayout());
         addToContainer(scrollJPanelBottom, macrosInfoJPanel, 0, 0, 1, 1, 0.25, 0.25, "horizontal", 0, 0, "end");
 
+        int  macrosInfoJP_YPos = 0;
+
+        /*//#########################################################################
+        // Setting up Horizontal Image Divider
+        //#########################################################################
+        int height = 75, width = 0;
+        JPanel macrosDividerJPanel = new JPanel(new GridLayout(1,1));
+        macrosDividerJPanel.setPreferredSize(new Dimension(width,height));
+
+        // Border Line Config
+        BevelBorder borderLine = new BevelBorder(BevelBorder.LOWERED);  // Create a red line border
+        LineBorder redLine = new LineBorder(Color.RED, 2); // 2px thick red border
+        CompoundBorder compoundBorder = new CompoundBorder(redLine, borderLine); // Combine them: outer = red line, inner = raised bevel
+        macrosDividerJPanel.setBorder(compoundBorder); // Set Border
+
+        // Add image
+        URL imageUrl = getClass().getResource("/images/border/border_divider/border_divider4.jpg");
+        ImageIcon originalIcon = new ImageIcon(imageUrl);
+        Image img = originalIcon.getImage();
+        Image scaledImg = img.getScaledInstance(450, 200, Image.SCALE_SMOOTH); // W: 1925
+        ImageIcon scaledIcon = new ImageIcon(scaledImg);
+        JLabel label = new JLabel(scaledIcon);
+
+        addToContainer(macrosDividerJPanel, label, 0,0 , 1, 1, 0.25, 0.25, "both", 0, 0, null);
+
+        addToContainer(macrosInfoJPanel, macrosDividerJPanel, 0, macrosInfoJP_YPos+=1, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+
+        //#########################################################################
+        // Add Space Divider
+        //#########################################################################
+
+        addToContainer(macrosInfoJPanel, createSpaceDivider(0,20), 0, macrosInfoJP_YPos+=1, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+
+*/
         //#########################################################################
         // Setting up macroTargets Table
         //#########################################################################
@@ -455,7 +494,7 @@ public class Meal_Plan_Screen extends Screen
         macros_Targets_Table = new MacrosTargetsTable(db, macrosInfoJPanel, planData, macroTargetsTable_ColumnNames, planID, tempPlanID,
                 tablePlanMacroTargetsNameCalc, new ArrayList<>(Arrays.asList(macroTargetsTable_ColumnNames)), null, macrosTargets_Table_ColToHide);
 
-        addToContainer(macrosInfoJPanel, macros_Targets_Table, 0, 0, 1, 1, 0.25, 0.25, "both", 40, 0, null);
+        addToContainer(macrosInfoJPanel, macros_Targets_Table, 0, macrosInfoJP_YPos+=1, +1, 1, 0.25, 0.25, "both", 40, 0, null);
 
         //########################################
         // macroTargets Complete
@@ -475,7 +514,7 @@ public class Meal_Plan_Screen extends Screen
         macrosLeft_JTable = new MacrosLeftTable(db, macrosInfoJPanel, macrosData, macrosLeft_columnNames, planID, tempPlanID,
                 tablePlanMacrosLeftName, new ArrayList<>(Arrays.asList(macrosLeft_columnNames)), null, macrosLeft_Table_ColToHide);
 
-        addToContainer(macrosInfoJPanel, macrosLeft_JTable, 0, 1, 1, 1, 0.25, 0.25, "both", 30, 0, null);
+        addToContainer(macrosInfoJPanel, macrosLeft_JTable, 0, macrosInfoJP_YPos+=1, 1, 1, 0.25, 0.25, "both", 30, 0, null);
 
         //########################################
         // macroTargets Complete
@@ -536,6 +575,8 @@ public class Meal_Plan_Screen extends Screen
         scroll_To_Top_of_ScrollPane();
 
         setFrameVisibility(true);
+
+        scrollDown_BtnAction();
     }
 
     //##################################################################################################################
@@ -1487,7 +1528,7 @@ public class Meal_Plan_Screen extends Screen
 
         if (macrosTargets_Screen != null)
         {
-            macrosTargets_Screen.makeJframeVisible();
+            macrosTargets_Screen.makeJFrameVisible();
             return;
         }
         macrosTargets_Screen = new Macros_Targets_Screen(db, this, planID, tempPlanID, planName);
@@ -1558,7 +1599,7 @@ public class Meal_Plan_Screen extends Screen
         // Close Other Windows If Open
         if (macrosTargets_Screen != null)
         {
-            macrosTargets_Screen.closeeWindow();
+            macrosTargets_Screen.windowClosedEvent();
         }
         if (ingredientsInfoScreen != null)
         {
