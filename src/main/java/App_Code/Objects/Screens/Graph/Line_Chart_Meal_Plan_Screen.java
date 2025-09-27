@@ -59,7 +59,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
         // ##########################################
         // Super Constructors & Variables
         // ##########################################
-        super(db, "Line Chart: Plan Macros", 1000, 900, 0, 0);
+        super(db, true,"Line Chart: Plan Macros", 1000, 900, 0, 0);
         getScrollPaneJPanel().setBackground(Color.WHITE);
         setResizable(true);
 

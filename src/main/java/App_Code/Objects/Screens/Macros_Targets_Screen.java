@@ -26,6 +26,9 @@ public class Macros_Targets_Screen extends Screen
             "Protein Per Pound Target", "Carbohydrates Per Pound Target:", "Fibre Target (G):", "Fats Per Pound Target:",
             "Saturated Fat Limit:", "Salt Limit (G):", "Water Target (Ml):", "Liquid Target (Ml)", "Additional Calories:" };
 
+    private ArrayList<String> macrosData;
+    private String tableName = "macros_per_pound_and_limits";
+
     // ################################################################################################################
     // Constructor
     // ################################################################################################################
@@ -34,7 +37,7 @@ public class Macros_Targets_Screen extends Screen
         // #############################################################################################################
         // Super Constructors & Variables
         // #############################################################################################################
-        super(db, "Macro-Nutrients Screen", 650, 550, 0, 0);
+        super(db, false, "Macro-Nutrients Screen", 650, 550, 0, 0);
         getScrollPaneJPanel().setBackground(Color.WHITE);
         setResizable(true);
 
@@ -57,22 +60,21 @@ public class Macros_Targets_Screen extends Screen
         // Get DB Target Info for this Plan
         //##############################################################################################################
         String query = String.format("""
-                SELECT
-                                
+                SELECT                                
                 plan_id, current_weight_kg, body_fat_percentage, protein_per_pound, carbohydrates_per_pound, fibre, 
-                fats_per_pound, saturated_fat_limit, salt_limit, water_target, liquid_target, additional_calories
-                                
-                FROM macros_per_pound_and_limits 
-                WHERE plan_id = %s;""", temp_PlanID);
+                fats_per_pound, saturated_fat_limit, salt_limit, water_target, liquid_target, additional_calories                                
+                FROM %s                                
+                WHERE plan_id = %s;""", tableName, temp_PlanID);
 
         ArrayList<ArrayList<String>> data = db.getMultiColumnQuery(query);
+
         if (data == null)
         {
             JOptionPane.showMessageDialog(meal_plan_screen.getFrame(), "\n\nUnable to retrieve current plan Macros Data!");
             return;
         }
 
-        ArrayList<String> macrosData = data.get(0);
+        macrosData = data.get(0);
 
         //##############################################################################################################
         // GUI Set-Up
@@ -209,7 +211,7 @@ public class Macros_Targets_Screen extends Screen
 
         if (! validateForm()) { return; } // Error
 
-        if (! areYouSure("to update your current 'Macro Values'")) { return; }
+        if (! areYouSure("Update Macro Values", "\n\nAre you sure you want to update your current 'Macro Values'?")) { return; }
 
         if (! updateForm()) { return; } // Error
 
@@ -224,35 +226,40 @@ public class Macros_Targets_Screen extends Screen
         // ##############################################
         // Processing User Input
         // ##############################################
+        Boolean hasDataChanged = false;
         String errorTxt = "";
         BigDecimal zero = new BigDecimal(0);
+
 
         for (int row = 0; row < listOfTextFields.size(); row++)
         {
             if (row == 0) { continue; } // IF row = PlanName skip processing
 
             String value = listOfTextFields.get(row).getText().trim();  // Gather User Input In TextField
+            String labelName = labels[row];
 
             if (value.equals("")) // If the users input was empty
             {
-                errorTxt += String.format("\n\n' %s ' on Row: %s,  must have a value which is not ' NULL '!", labels[row], row + 1);
+                errorTxt += String.format("\n\n' %s ' on Row: %s,  must have a value which is not ' NULL '!", labelName, row + 1);
                 continue;
             }
 
             // Decimal Converting
             try
             {
-                String labelName = labels[row];
+                BigDecimal bd_User_Input = new BigDecimal(value);
+                BigDecimal dbRowData_BD_Form = new BigDecimal(macrosData.get(row));
 
-                BigDecimal bdFromString = new BigDecimal(String.format("%s", value));
-                if (bdFromString.compareTo(zero) < 0 || bdFromString.compareTo(zero) == 0) // decimal less than 0
+                if (bd_User_Input.compareTo(zero) < 0 || bd_User_Input.compareTo(zero) == 0) // decimal less than 0
                 {
-                    if (bdFromString.compareTo(zero) == 0 && labelName.equals("Additional Calories:") || labelName.equals("Liquid Target (Ml)"))
+                    if (bd_User_Input.compareTo(zero) == 0 && labelName.equals("Additional Calories:") || labelName.equals("Liquid Target (Ml)"))
                     {
                         continue;
                     }
                     errorTxt += String.format("\n\n' %s ' on Row: %s,  must have a value which is bigger than 0 !", labels[row], row + 1);
                 }
+
+                if (bd_User_Input.compareTo(dbRowData_BD_Form) != 0) { hasDataChanged = true; } // if they're not equal
             }
             catch (Exception e)
             {
@@ -261,25 +268,30 @@ public class Macros_Targets_Screen extends Screen
         }
 
         // ##############################################
+        // Error: Same DATA
+        // ##############################################
+        if (! hasDataChanged)
+        {
+            String txt = "\nMacroTarget haven't changed!\nDo you want exit this screen instead?";
+            if (areYouSure("Exit Screen",txt)) { windowClosedEvent(); }
+            return false;
+        }
+
+        // ##############################################
         // No Error: Exit
         // ##############################################
-        if (errorTxt.length() == 0)
-        {
-            System.out.printf("\n\nNo Error");
-            return true;
-        }
+        if (errorTxt.length() == 0) { System.out.printf("\n\nNo Error"); return true; }
 
         // ##############################################
         // Error Found:  MSG OUTPUT
         // ##############################################
         String txt = String.format("""
                 \n\nAll the input rows must have a value which is a ' Decimal(8,2) ' !" +
-                
-                
+                                
+                                
                 Please fix the following rows being; \n%s""", errorTxt);
 
         JOptionPane.showMessageDialog(meal_plan_screen.getFrame(), txt);
-
         return false;
     }
 

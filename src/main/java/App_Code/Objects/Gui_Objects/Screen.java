@@ -41,7 +41,7 @@ public class Screen
     //##################################################################################################################
     // Constructors
     //##################################################################################################################
-    public Screen(MyJDBC db, String title, int frameWidth, int frameHeight, int xPos, int yPos)
+    public Screen(MyJDBC db, Boolean addScrollPane, String title, int frameWidth, int frameHeight, int xPos, int yPos)
     {
         //########################################################
         //
@@ -81,10 +81,18 @@ public class Screen
         //##########################################################
         // Create ScrollPane & Add it to Centre of GUI
         //##########################################################
-        // Attach ScrollPane to the centre of the screen
-        addToContainer(mainCenterPanel, scrollPane, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
-        scrollPaneJPanel = scrollPane.getJPanel();
-        scrollPaneJPanel.setLayout(new GridBagLayout());
+
+        if(addScrollPane)
+        {
+            // Attach ScrollPane to the centre of the screen
+            addToContainer(mainCenterPanel, scrollPane, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+            scrollPaneJPanel = scrollPane.getJPanel();
+            scrollPaneJPanel.setLayout(new GridBagLayout());
+        }
+        else
+        {
+            scrollPaneJPanel = mainCenterPanel;
+        }
 
         //##########################################################
         // Closing Events on Screen
@@ -102,10 +110,9 @@ public class Screen
     //##################################################################################################################
     // Actions
     //##################################################################################################################
-    protected Boolean areYouSure(String process)
+    protected Boolean areYouSure(String title, String msg)
     {
-        int reply = JOptionPane.showConfirmDialog(frame, String.format("Are you sure you want to %s, \nany unsaved changes will be lost in this Table! \nDo you want to %s?", process, process),
-                "Close Application", JOptionPane.YES_NO_OPTION); //HELLO Edit
+        int reply = JOptionPane.showConfirmDialog(frame,  msg, title, JOptionPane.YES_NO_OPTION); //HELLO Edit
 
         if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
         {

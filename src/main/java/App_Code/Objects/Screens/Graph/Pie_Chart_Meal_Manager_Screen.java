@@ -50,7 +50,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
         // ##########################################
         // Super Constructors & Variables
         // ##########################################
-        super(db, "Pie Chart : Macronutrients ", 800, 600, 0, 0);
+        super(db, false, "Pie Chart : Macronutrients ", 800, 600, 0, 0);
 
         getScrollPaneJPanel().setBackground(Color.WHITE);
         setResizable(false);
@@ -67,12 +67,12 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
         //############################################
         // Creating Macros / Dataset
         //############################################
-        if(! updateDataSet()) { getFrame().dispose(); return; }
+        if (! updateDataSet()) { getFrame().dispose(); return; }
 
         // ##########################################
         // Create Graph Object & Adding to GUI
         // ##########################################
-        pieChart = new Pie_Chart(String.format("%s Macros", meal_name), frameWidth-50, frameHeight-60, macros);
+        pieChart = new Pie_Chart(String.format("%s Macros", meal_name), frameWidth - 50, frameHeight - 60, macros);
         addToContainer(getScrollPaneJPanel(), pieChart, 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
 
         setFrameVisibility(true);
@@ -92,7 +92,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
     //####################################
     public void update_pieChart()
     {
-        if(updateDataSet()) pieChart.update_dataset(macros);
+        if (updateDataSet()) { pieChart.update_dataset(macros); }
     }
 
     private boolean updateDataSet()
@@ -103,8 +103,9 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
             BigDecimal carbsValue = totalMealTable.getValueOnTable("Total_Carbohydrates");
             BigDecimal fatsValue = totalMealTable.getValueOnTable("Total_Fats");
 
-            System.out.printf("\n\nPie_Chart_Meal_Manager_Screen.java : updateDataSet() \n\nProtein : %s \nCarbs : %s \nFats : %s", proteinValue.toString(),carbsValue.toString(), fatsValue.toString());
-            if (proteinValue == null || carbsValue == null || fatsValue == null) throw new Exception("null values returned");
+            System.out.printf("\n\nPie_Chart_Meal_Manager_Screen.java : updateDataSet() \n\nProtein : %s \nCarbs : %s \nFats : %s", proteinValue.toString(), carbsValue.toString(), fatsValue.toString());
+            if (proteinValue == null || carbsValue == null || fatsValue == null)
+            { throw new Exception("null values returned"); }
 
             // Get Macros Results on Table
             macros = Map.ofEntries(
@@ -113,7 +114,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
                     Map.entry("Fats", new Pair<>(fatsValue, "g"))
             );
 
-            return  true;
+            return true;
         }
         catch (Exception e)
         {

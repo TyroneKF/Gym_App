@@ -13,6 +13,18 @@ Refactored & Ordered Classes:
 
 .) Macros_Targets_Screen.java
 
+######################################################################################
+New Features:
+######################################################################################
+.) SQL Injection
+.) Barcode scanner using phone portal / tunnel as a connection
+.) Graphs / Charts of Meals
+.) Shopping Evaluator / Stock
+.) AI Meal Suggester
+.) Being Able to  define font size
+.) Hiding Columns preferences
+.) Mobile App thats aligns with meals one pc & tracks progress shows % of how much of your meals you eat on a daily
+.) Track body weight & body fat % in a graph to see meal plans efficiency
 
 
 #####################################
@@ -124,18 +136,6 @@ MYJDBC Updates FROM User inputs:
 ######################################################################################
 .) SQL injections
 
-
-######################################################################################
-New Features:
-######################################################################################
-.) SQL Injection
-.) Barcode scanner using phone portal / tunnel as a connection
-.) Graphs / Charts of Meals
-.) Shopping Evaluator / Stock
-.) AI Meal Suggester
-.) Being Able to  define font size
-.) Hiding Columns preferences
-.) Mobile App thats aligns with meals one pc & tracks progress shows % of how much of your meals you eat on a daily
 
 
 

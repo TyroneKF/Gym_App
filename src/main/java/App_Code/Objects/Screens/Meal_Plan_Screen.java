@@ -132,7 +132,7 @@ public class Meal_Plan_Screen extends Screen
             "fibre", "fat", "saturated_fat", "salt", "water_content", "liquid_content", "calories")),
 
     ingredientsInMeal_Table_ColToHide = new ArrayList<>(Arrays.asList("plan_id", "div_meal_sections_id", "ingredient_id",
-            "ingredients_index", "liquid_content", "water_content" ));
+            "ingredients_index", "liquid_content", "water_content"));
 
     //##################################################################################################################
     // Other Table Customisations
@@ -249,7 +249,7 @@ public class Meal_Plan_Screen extends Screen
 
     public Meal_Plan_Screen(MyJDBC db)
     {
-        super(db, "Gym App", 1925, 1082, 0, 0);
+        super(db, true, "Gym App", 1925, 1082, 0, 0);
 
         //##############################################################################################################
         // Getting Selected User & Plan Info
@@ -448,14 +448,14 @@ public class Meal_Plan_Screen extends Screen
         JPanel macrosInfoJPanel = new JPanel(new GridBagLayout());
         addToContainer(scrollJPanelBottom, macrosInfoJPanel, 0, 0, 1, 1, 0.25, 0.25, "horizontal", 0, 0, "end");
 
-        int  macrosInfoJP_YPos = 0;
+        int macrosInfoJP_YPos = 0;
 
         //#########################################################################
         // Setting up Horizontal Image Divider
         //#########################################################################
         int height = 75, width = 0;
-        JPanel macrosDividerJPanel = new JPanel(new GridLayout(1,1));
-        macrosDividerJPanel.setPreferredSize(new Dimension(width,height));
+        JPanel macrosDividerJPanel = new JPanel(new GridLayout(1, 1));
+        macrosDividerJPanel.setPreferredSize(new Dimension(width, height));
 
         // Border Line Config
         BevelBorder borderLine = new BevelBorder(BevelBorder.LOWERED);  // Create a red line border
@@ -471,15 +471,15 @@ public class Meal_Plan_Screen extends Screen
         ImageIcon scaledIcon = new ImageIcon(scaledImg);
         JLabel label = new JLabel(scaledIcon);
 
-        addToContainer(macrosDividerJPanel, label, 0,0 , 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        addToContainer(macrosDividerJPanel, label, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
 
-        addToContainer(macrosInfoJPanel, macrosDividerJPanel, 0, macrosInfoJP_YPos+=1, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        addToContainer(macrosInfoJPanel, macrosDividerJPanel, 0, macrosInfoJP_YPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0, null);
 
         //#########################################################################
         // Add Space Divider
         //#########################################################################
 
-        addToContainer(macrosInfoJPanel, createSpaceDivider(0,20), 0, macrosInfoJP_YPos+=1, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        addToContainer(macrosInfoJPanel, createSpaceDivider(0, 20), 0, macrosInfoJP_YPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0, null);
 
         //#########################################################################
         // Setting up macroTargets Table
@@ -493,7 +493,7 @@ public class Meal_Plan_Screen extends Screen
         macros_Targets_Table = new MacrosTargetsTable(db, macrosInfoJPanel, planData, macroTargetsTable_ColumnNames, planID, tempPlanID,
                 tablePlanMacroTargetsNameCalc, new ArrayList<>(Arrays.asList(macroTargetsTable_ColumnNames)), null, macrosTargets_Table_ColToHide);
 
-        addToContainer(macrosInfoJPanel, macros_Targets_Table, 0, macrosInfoJP_YPos+=1, +1, 1, 0.25, 0.25, "both", 40, 0, null);
+        addToContainer(macrosInfoJPanel, macros_Targets_Table, 0, macrosInfoJP_YPos += 1, + 1, 1, 0.25, 0.25, "both", 40, 0, null);
 
         //########################################
         // macroTargets Complete
@@ -513,7 +513,7 @@ public class Meal_Plan_Screen extends Screen
         macrosLeft_JTable = new MacrosLeftTable(db, macrosInfoJPanel, macrosData, macrosLeft_columnNames, planID, tempPlanID,
                 tablePlanMacrosLeftName, new ArrayList<>(Arrays.asList(macrosLeft_columnNames)), null, macrosLeft_Table_ColToHide);
 
-        addToContainer(macrosInfoJPanel, macrosLeft_JTable, 0, macrosInfoJP_YPos+=1, 1, 1, 0.25, 0.25, "both", 30, 0, null);
+        addToContainer(macrosInfoJPanel, macrosLeft_JTable, 0, macrosInfoJP_YPos += 1, 1, 1, 0.25, 0.25, "both", 30, 0, null);
 
         //########################################
         // macroTargets Complete
@@ -1148,7 +1148,7 @@ public class Meal_Plan_Screen extends Screen
         //###########################################################
         // Ask for Confirmation
         //###########################################################
-        if (! areYouSure("delete all the meals in this plan")) { return; }
+        if (! areYouSure("Delete All Meals", "Are you want to 'DELETE' all the meals in this plan?")) { return; }
 
         //###########################################################
         // Delete all the meals in the plans in SQL
@@ -1216,21 +1216,21 @@ public class Meal_Plan_Screen extends Screen
 
     public void updateLineChartData(MealManager mealManager, LocalTime previousTime, LocalTime currentTime)
     {
-        if(lineChartMealPlanScreen == null) return;
+        if (lineChartMealPlanScreen == null) { return; }
 
         lineChartMealPlanScreen.updateMealManagerDataChange(mealManager, previousTime, currentTime);
     }
 
     public void deleteLineChartData(MealManager mealManager, LocalTime currentTime)
     {
-        if(lineChartMealPlanScreen == null) return;
+        if (lineChartMealPlanScreen == null) { return; }
 
         lineChartMealPlanScreen.deleteMealManagerData(mealManager, currentTime);
     }
 
     public void clearLineChartDataSet()
     {
-        if(lineChartMealPlanScreen == null) return;
+        if (lineChartMealPlanScreen == null) { return; }
 
         lineChartMealPlanScreen.clear_And_Rebuild_Dataset();
     }
@@ -1248,10 +1248,8 @@ public class Meal_Plan_Screen extends Screen
     // ###################################################
     private void refreshPlan(boolean askPermission)
     {
-        if ((! (get_IsPlanSelected())) || askPermission && ! (areYouSure("Refresh Data")))
-        {
-            return;
-        }
+        String txt = "Are you sure you want to refresh all the meals in this plan?";
+        if ((! (get_IsPlanSelected())) || askPermission && ! (areYouSure("Refresh Meal Plan Data", txt))) { return; }
 
         //####################################################################
         // Refresh DB Data
@@ -1293,9 +1291,9 @@ public class Meal_Plan_Screen extends Screen
         //####################################################################
         // Re-Upload LineChart Data in One Go
         //####################################################################
-        if(lineChartMealPlanScreen == null) return;
+        if (lineChartMealPlanScreen == null) { return; }
 
-         lineChartMealPlanScreen.clear_And_Rebuild_Dataset(); // clear but, also adds data in
+        lineChartMealPlanScreen.clear_And_Rebuild_Dataset(); // clear but, also adds data in
     }
 
     // ###################################################
@@ -1395,10 +1393,8 @@ public class Meal_Plan_Screen extends Screen
         // Exit Clauses
         // ##############################################################################
         // If no plan is selected exit Or,  if user rejects saving when asked  exit
-        if ((! (get_IsPlanSelected())) || askPermission && ! (areYouSure("Save Data")))
-        {
-            return;
-        }
+        String txt = "Are you want to save all the data in this meal plan?";
+        if ((! (get_IsPlanSelected())) || askPermission && ! (areYouSure("Save Meal Plan Data", txt))) { return; }
 
         // ##############################################################################
         // Remove Delete MealManagers & Check if
@@ -1472,10 +1468,7 @@ public class Meal_Plan_Screen extends Screen
         // ##############################################################################
         // Successful Message
         // ##############################################################################
-        if(showMsg)
-        {
-            JOptionPane.showMessageDialog(frame, "\n\nAll Meals Are Successfully Saved!");
-        }
+        if (showMsg) { JOptionPane.showMessageDialog(frame, "\n\nAll Meals Are Successfully Saved!"); }
     }
 
     // ###################################################
