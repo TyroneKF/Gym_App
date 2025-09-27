@@ -450,7 +450,7 @@ public class Meal_Plan_Screen extends Screen
 
         int  macrosInfoJP_YPos = 0;
 
-        /*//#########################################################################
+        //#########################################################################
         // Setting up Horizontal Image Divider
         //#########################################################################
         int height = 75, width = 0;
@@ -481,7 +481,6 @@ public class Meal_Plan_Screen extends Screen
 
         addToContainer(macrosInfoJPanel, createSpaceDivider(0,20), 0, macrosInfoJP_YPos+=1, 1, 1, 0.25, 0.25, "both", 0, 0, null);
 
-*/
         //#########################################################################
         // Setting up macroTargets Table
         //#########################################################################

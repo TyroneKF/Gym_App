@@ -11,6 +11,10 @@ Refactored & Ordered Classes:
 .) Line_Chart.java
 .) Line_Chart_Meal_Plan_Screen.java
 
+.) Macros_Targets_Screen.java
+
+
+
 #####################################
 Check for
 #####################################
@@ -38,6 +42,7 @@ OVERALL:
 .) Has data changed in ingredients table
 .) Refactor db requests method if nulll into a method that return boolean
 .) Diagram of carbs and nutrients in line graph over the day
+.) Docked Window / side by side screens (diet planner  & Graphs)
 
 ######################################################################################
 SQL :

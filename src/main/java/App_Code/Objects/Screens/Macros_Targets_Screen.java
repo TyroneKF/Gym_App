@@ -155,9 +155,23 @@ public class Macros_Targets_Screen extends Screen
         makeJFrameVisible();
     }
 
+    // ################################################################################################################
+    // Methods
+    // ################################################################################################################
+
+    @Override
+    protected void windowClosedEvent()
+    {
+        meal_plan_screen.remove_macrosTargets_Screen();
+        closeJFrame(); // Destroy Window
+    }
+
+    // ###########################################################
+    // Form Methods
+    // ##########################################################
     public void submissionBTN_Action()
     {
-        if (! getEditableForm())
+        if (! getEditableForm())  // if the user hasn't requested to edit the form before
         {
             //########################################
             // Confirm Input
@@ -203,40 +217,29 @@ public class Macros_Targets_Screen extends Screen
         meal_plan_screen.macrosTargetsChanged(true);
 
         windowClosedEvent(); // Trigger Events to call on exit
-        closeJFrame(); // Destroy Window
-    }
-
-    @Override
-    protected void windowClosedEvent()
-    {
-        meal_plan_screen.remove_macrosTargets_Screen();
     }
 
     public boolean validateForm()
     {
-        if (temp_PlanID == null && planID == null && planName == null)
-        {
-            JOptionPane.showMessageDialog(meal_plan_screen.getFrame(), "Please Select A Plan First!");
-            return false;
-        }
-
+        // ##############################################
+        // Processing User Input
+        // ##############################################
         String errorTxt = "";
         BigDecimal zero = new BigDecimal(0);
 
         for (int row = 0; row < listOfTextFields.size(); row++)
         {
-            if (row == 0)
-            {
-                continue;
-            }
+            if (row == 0) { continue; } // IF row = PlanName skip processing
 
-            String value = listOfTextFields.get(row).getText().trim();
+            String value = listOfTextFields.get(row).getText().trim();  // Gather User Input In TextField
 
-            if (value.equals(""))
+            if (value.equals("")) // If the users input was empty
             {
                 errorTxt += String.format("\n\n' %s ' on Row: %s,  must have a value which is not ' NULL '!", labels[row], row + 1);
                 continue;
             }
+
+            // Decimal Converting
             try
             {
                 String labelName = labels[row];
@@ -257,20 +260,34 @@ public class Macros_Targets_Screen extends Screen
             }
         }
 
+        // ##############################################
+        // No Error: Exit
+        // ##############################################
         if (errorTxt.length() == 0)
         {
             System.out.printf("\n\nNo Error");
             return true;
         }
 
-        JOptionPane.showMessageDialog(meal_plan_screen.getFrame(), String.format("\n\nAll the input rows must have a value which is a ' Decimal(8,2) ' !" +
-                "\n\nPlease fix the following rows being; \n%s", errorTxt));
+        // ##############################################
+        // Error Found:  MSG OUTPUT
+        // ##############################################
+        String txt = String.format("""
+                \n\nAll the input rows must have a value which is a ' Decimal(8,2) ' !" +
+                
+                
+                Please fix the following rows being; \n%s""", errorTxt);
+
+        JOptionPane.showMessageDialog(meal_plan_screen.getFrame(), txt);
 
         return false;
     }
 
     public boolean updateForm()
     {
+        // ##############################################
+        // SQL Update MSG
+        // ##############################################
         String updateTargets_Query = String.format("""
                         UPDATE macros_per_pound_and_limits
                         SET 
@@ -286,6 +303,9 @@ public class Macros_Targets_Screen extends Screen
 
         System.out.printf("\n\nQuery: \n\n%s", updateTargets_Query);
 
+        // ##############################################
+        // Execute Query
+        // ##############################################
         if (! (db.uploadData_Batch_Altogether(new String[]{ updateTargets_Query })))
         {
             JOptionPane.showMessageDialog(meal_plan_screen.getFrame(), "Un-able to Update Macro Targets In DB");
