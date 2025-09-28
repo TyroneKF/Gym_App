@@ -11,14 +11,27 @@ Graph Screens
 .) Pie_Chart_Meal_Manager_Screen.java
 .) Pie_Chart.java
 
-.) Line_Chart.java
 .) Line_Chart_Meal_Plan_Screen.java
+.) Line_Chart.java
 
 ############################
 Other Screens
 ############################
 .) Macros_Targets_Screen.java
 .) LoadingScreen.java
+
+################################################################
+Check for
+################################################################
+.) Public / Private Methods
+.) Refactoring
+.) Grouping Methods
+.) Foreign Keys Deleting
+.) SQL Injections
+.) Classes & Parents
+.) Screens Refactoring
+.) Database columns Checks
+.) Delete on keys should be simpler due to cascade now
 
 ######################################################################################
 New Features:
@@ -32,20 +45,6 @@ New Features:
 .) Hiding Columns preferences
 .) Mobile App thats aligns with meals one pc & tracks progress shows % of how much of your meals you eat on a daily
 .) Track body weight & body fat % in a graph to see meal plans efficiency
-
-
-#####################################
-Check for
-#####################################
-.) Public / Private Methods
-.) Refactoring
-.) Grouping Methods
-.) Foreign Keys Deleting
-.) SQL Injections
-.) Classes & Parents
-.) Screens Refactoring
-.) Database columns Checks
-.) Delete on keys should be simpler due to cascade now
 
 ######################################################################################
 OVERALL:
