@@ -39,8 +39,7 @@ public class TotalMealTable extends MyJTable_DisplayData
 
     public BigDecimal getValueOnTable(String column_name)
     {
-        return columnNamesAndPositions.containsKey(column_name) ?
-                (BigDecimal) getCurrentData()[0][columnNamesAndPositions.get(column_name)[0]] : null;
+        return (BigDecimal) getCurrentData()[0][columnNamesAndPositions.get(column_name)[0]];
     }
 }
 
