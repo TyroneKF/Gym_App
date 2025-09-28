@@ -29,7 +29,7 @@ public class JDBC_JTable extends JPanel
     //##############################################
     protected JTable jTable = new JTable();
     protected DefaultTableModel tableModel;
-    protected Object[][] data;
+    protected Object[][] savedData, currentData;
     protected int rowsInTable = 0, columnsInTable = 0;
     protected String  tableName;
     protected String[] columnDataTypes, columnNames, guiColumnNames;
@@ -60,8 +60,8 @@ public class JDBC_JTable extends JPanel
     public JDBC_JTable
     (
             MyJDBC db, Container parentContainer, boolean setIconsUp, boolean addJTableAction,
-            String tableName, Object[][] data, String[] columnNames,
-            ArrayList<String> unEditableColumnNames, ArrayList<String> colAvoidCentering,  ArrayList<String> columnsToHide
+            String tableName, Object[][] savedData, String[] columnNames,
+            ArrayList<String> unEditableColumnNames, ArrayList<String> colAvoidCentering, ArrayList<String> columnsToHide
     )
     {
         setLayout(new GridBagLayout());
@@ -70,7 +70,8 @@ public class JDBC_JTable extends JPanel
         // Variables
         //##############################################################
         this.db = db;
-        this.data = data;
+        this.savedData = savedData;
+        this.currentData = savedData;
 
         this.parentContainer = parentContainer;
         this.addJTableAction = addJTableAction;
@@ -78,7 +79,7 @@ public class JDBC_JTable extends JPanel
 
         this.columnDataTypes = db.getColumnDataTypes(tableName); //Column Data Types
         this.columnsInTable = columnNames.length;
-        this.rowsInTable = data != null ? data.length : 0;
+        this.rowsInTable = savedData != null ? savedData.length : 0;
 
         //##############################################################
         // Column Names & Their Original Positions
@@ -125,9 +126,9 @@ public class JDBC_JTable extends JPanel
         //################################################################
         // Table Setup With Table Data
         //################################################################
-        if (data !=null)
+        if (savedData !=null)
         {
-            tableSetup(data, guiColumnNames, setIconsUp);
+            tableSetup(savedData, guiColumnNames, setIconsUp);
         }
         else
         {
@@ -258,7 +259,7 @@ public class JDBC_JTable extends JPanel
 
     protected void setTableModelData(Object[][] tableModelData)
     {
-        this.data = tableModelData;
+        this.savedData = tableModelData;
         resizeObject();
     }
 
@@ -293,12 +294,20 @@ public class JDBC_JTable extends JPanel
             tableModel.setValueAt(updateData[columnPos], updateRow, columnPos);
         }
 
+        //########################################################################
+        // Updating CurrentData
+        //########################################################################
+        currentData[updateRow] = updateData;
+
+        //########################################################################
+        // Redraw JTable
+        //########################################################################
         jTable.repaint();
     }
 
     public void refreshData()
     {
-        tableModel_Setup(getData(), getGuiColumnNames());
+        tableModel_Setup(getSavedData(), getGuiColumnNames());
     }
 
     //##################################################################################################################
@@ -310,9 +319,14 @@ public class JDBC_JTable extends JPanel
         return tableInitialised;
     }
 
-    protected Object[][] getData()
+    protected Object[][] getSavedData()
     {
-        return data;
+        return savedData;
+    }
+
+    protected Object[][] getCurrentData()
+    {
+        return currentData;
     }
 
     protected String[] getColumnNames()

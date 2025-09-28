@@ -304,7 +304,7 @@ public class IngredientsTable extends JDBC_JTable
         //######################################################
         // Get Table Data
         //######################################################
-        Object[][] tableData = getData();
+        Object[][] tableData = getSavedData();
 
         //######################################################
         // Get Index Of IngredientsIndex in Original Data
@@ -948,7 +948,7 @@ public class IngredientsTable extends JDBC_JTable
         //##############################################################################################
         // Reset Table Model data
         ///#############################################################################################
-        tableModel_Setup(getData(), getGuiColumnNames());
+        tableModel_Setup(getSavedData(), getGuiColumnNames());
 
         //#############################################################################################
         // Reset Meal Total  Table Data
