@@ -1,4 +1,4 @@
-package App_Code.Objects.Screens.Ingredient_Info;
+package App_Code.Objects.Screens.Ingredient_Info_Screens;
 
 //#################################################################################################################
 //
@@ -13,7 +13,7 @@ import App_Code.Objects.API.Nutritionix.NutritionIx_API;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.JTextFieldLimit;
 import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
-import App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Add_IngredientsForm;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Edit_Ingredients_Info.Add_IngredientsForm;
 
 import javax.imageio.ImageIO;
 

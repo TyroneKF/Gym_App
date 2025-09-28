@@ -7,7 +7,7 @@ import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Tot
 import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
-import App_Code.Objects.Screens.Graph.Pie_Chart_Meal_Manager_Screen;
+import App_Code.Objects.Screens.Graph_Screens.Pie_Chart_Meal_Manager_Screen;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 import org.apache.commons.lang3.StringUtils;
 

@@ -1,4 +1,4 @@
-package App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info;
+package App_Code.Objects.Screens.Ingredient_Info_Screens.Edit_Ingredients_Info;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Gui_Objects.CollapsibleJPanel;

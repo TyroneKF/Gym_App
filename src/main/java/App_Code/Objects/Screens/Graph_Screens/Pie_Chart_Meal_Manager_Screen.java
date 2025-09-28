@@ -1,4 +1,4 @@
-package App_Code.Objects.Screens.Graph;
+package App_Code.Objects.Screens.Graph_Screens;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.TotalMealTable;

@@ -5,16 +5,14 @@ import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Mac
 import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.MacrosTargetsTable;
 import App_Code.Objects.Database_Objects.MealManager;
 import App_Code.Objects.Gui_Objects.*;
-import App_Code.Objects.Screens.Graph.Line_Chart_Meal_Plan_Screen;
-import App_Code.Objects.Screens.Ingredient_Info.Edit_Ingredients_Info.Ingredients_Info_Screen;
+import App_Code.Objects.Screens.Graph_Screens.Line_Chart_Meal_Plan_Screen;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Edit_Ingredients_Info.Ingredients_Info_Screen;
 import App_Code.Objects.Screens.Loading_Screen.LoadingScreen;
 import io.github.cdimascio.dotenv.Dotenv;
 
 import javax.swing.*;
-import javax.swing.border.*;
 import java.awt.*;
 import java.io.File;
-import java.net.URL;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.List;
