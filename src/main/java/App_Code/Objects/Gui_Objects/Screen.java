@@ -13,7 +13,19 @@ public class Screen
     // Variables
     //##################################################################################################################
 
+    // Integers
+    protected int containerYPos = 0, frameWidth, frameHeight, xPos, yPos;
+
+    // String
+    protected String lineSeparator = "###############################################################################";
+    protected String title;
+
+    // Booleans
+    Boolean addScrollPane;
+
+    //##############################################
     // Objects
+    //##############################################
     protected MyJDBC db;
     protected GridBagConstraints gbc = new GridBagConstraints();
     protected JFrame frame = new JFrame();
@@ -24,32 +36,56 @@ public class Screen
     // JPanels
     //##############################################
     // Public: JPanels
-    protected JPanel mainNorthPanel, scrollPaneJPanel;
+    protected JPanel mainNorthPanel, mainSouthPanel, scrollPaneJPanel;
 
     // Private: JPanels
     private JPanel screenSectioned, mainCenterPanel;
-
-    //##############################################
-    // Others
-    //##############################################
-    // Integers
-    protected int containerYPos = 0, frameWidth, frameHeight;
-
-    // String
-    protected String lineSeparator = "###############################################################################";
 
     //##################################################################################################################
     // Constructors
     //##################################################################################################################
     public Screen(MyJDBC db, Boolean addScrollPane, String title, int frameWidth, int frameHeight, int xPos, int yPos)
     {
-        //########################################################
-        //
-        //########################################################
+        //##############################################
+        // Variables
+        //##############################################
         this.db = db;
+        this.addScrollPane = addScrollPane;
+        this.title = title;
         this.frameHeight = frameHeight;
         this.frameWidth = frameWidth;
+        this.xPos = xPos;
+        this.yPos = yPos;
 
+        //##############################################
+        // Setup
+        //##############################################
+        setup();
+    }
+
+    public Screen(Boolean addScrollPane, String title, int frameWidth, int frameHeight, int xPos, int yPos)
+    {
+        //##############################################
+        // Variables
+        //##############################################
+        this.addScrollPane = addScrollPane;
+        this.title = title;
+        this.frameHeight = frameHeight;
+        this.frameWidth = frameWidth;
+        this.xPos = xPos;
+        this.yPos = yPos;
+
+        //##############################################
+        // Setup
+        //##############################################
+        setup();
+    }
+
+    //##################################################################################################################
+    // GUI Setup
+    //##################################################################################################################
+    private void setup()
+    {
         //########################################################
         //
         //########################################################
@@ -78,11 +114,15 @@ public class Screen
         mainCenterPanel = new JPanel(new GridBagLayout());
         screenSectioned.add(mainCenterPanel, BorderLayout.CENTER);
 
+        // South of GUI
+        mainSouthPanel = new JPanel(new GridBagLayout());
+        screenSectioned.add(mainSouthPanel, BorderLayout.SOUTH);
+
         //##########################################################
         // Create ScrollPane & Add it to Centre of GUI
         //##########################################################
 
-        if(addScrollPane)
+        if (addScrollPane)
         {
             // Attach ScrollPane to the centre of the screen
             addToContainer(mainCenterPanel, scrollPane, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
@@ -107,12 +147,17 @@ public class Screen
         });
     }
 
+    protected void iconSetup(Container mainNorthPanel)
+    {
+
+    }
+
     //##################################################################################################################
     // Actions
     //##################################################################################################################
     protected Boolean areYouSure(String title, String msg)
     {
-        int reply = JOptionPane.showConfirmDialog(frame,  msg, title, JOptionPane.YES_NO_OPTION); //HELLO Edit
+        int reply = JOptionPane.showConfirmDialog(frame, msg, title, JOptionPane.YES_NO_OPTION); //HELLO Edit
 
         if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
         {
@@ -121,7 +166,7 @@ public class Screen
         return true;
     }
 
-    protected void windowClosedEvent()
+    public void windowClosedEvent()
     {
 
     }
@@ -129,13 +174,6 @@ public class Screen
     public void closeJFrame()
     {
         frame.dispose();
-    }
-
-    //##############################################
-    // GUI Setup
-    //##############################################
-    protected void iconSetup(Container mainNorthPanel)
-    {
     }
 
     //##############################################
@@ -234,10 +272,12 @@ public class Screen
         return scrollPaneJPanel;
     }
 
+    protected JPanel getMainSouthPanel() { return mainSouthPanel; }
+
     protected JPanel createSpaceDivider(int width, int height)
     {
         JPanel spaceDivider = new JPanel(new GridBagLayout());
-        spaceDivider.setPreferredSize(new Dimension(width,height));
+        spaceDivider.setPreferredSize(new Dimension(width, height));
 
         return spaceDivider;
     }
@@ -260,7 +300,9 @@ public class Screen
     //##################################################################################################################
     public void makeJFrameVisible()
     {
+        setFrameVisibility(true);
         getFrame().setExtendedState(JFrame.NORMAL); // makes frames visible
+
         getFrame().setLocation(0, 0);
     }
 
@@ -272,6 +314,8 @@ public class Screen
 
     public void resizeGUI()
     {
+        if (frame != null) { frame.revalidate(); }
+
         scrollPaneJPanel.revalidate();
         contentPane.revalidate();
     }

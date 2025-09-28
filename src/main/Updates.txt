@@ -5,13 +5,20 @@ Refactored & Ordered Classes:
 .) MealManager.java
 .) Screen.java
 
+############################
+Graph Screens
+############################
 .) Pie_Chart_Meal_Manager_Screen.java
 .) Pie_Chart.java
 
 .) Line_Chart.java
 .) Line_Chart_Meal_Plan_Screen.java
 
+############################
+Other Screens
+############################
 .) Macros_Targets_Screen.java
+.) LoadingScreen.java
 
 ######################################################################################
 New Features:

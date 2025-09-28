@@ -203,7 +203,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
     // Methods
     // #################################################################################################################
     @Override
-    protected void windowClosedEvent()
+    public void windowClosedEvent()
     {
         meal_plan_screen.removeLineChartScreen();
     }

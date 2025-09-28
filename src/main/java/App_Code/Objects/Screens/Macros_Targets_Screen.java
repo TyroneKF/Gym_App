@@ -162,7 +162,7 @@ public class Macros_Targets_Screen extends Screen
     // ################################################################################################################
 
     @Override
-    protected void windowClosedEvent()
+    public void windowClosedEvent()
     {
         meal_plan_screen.remove_macrosTargets_Screen();
         closeJFrame(); // Destroy Window

@@ -1,5 +1,6 @@
 package App_Code.Objects.Screens.Loading_Screen;
 
+import App_Code.Objects.Gui_Objects.Screen;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 
 import javax.swing.*;
@@ -7,56 +8,43 @@ import java.awt.*;
 import java.net.URL;
 
 
-public class LoadingScreen
+public class LoadingScreen extends Screen
 {
-    private GridBagConstraints gbc = new GridBagConstraints();
-    Meal_Plan_Screen mealPlanScreen;
-    int endCount, currentCount = 0, posY=0;
+    //##################################################################################################################
+    // Variables
+    //##################################################################################################################
+    private int
+            endCount,
+            currentCount = 0;
 
-    JFrame frame;
-    JLabel text = new JLabel("Gym App Loading");
+    // Objects
+    private JProgressBar progressBar = new JProgressBar();
 
-    JProgressBar progressBar = new JProgressBar();
-
-    public LoadingScreen(int endCount, Meal_Plan_Screen mealPlanScreen)
+    //##################################################################################################################
+    // Constructor
+    //##################################################################################################################
+    public LoadingScreen(int endCount)
     {
+        //##############################################
+        // Super Constructor & Variables
+        //##############################################
+        super(false, "Gym App Loading", 600, 600, 0, 0);
+
         this.endCount = endCount;
-        this.mealPlanScreen = mealPlanScreen;
-        // #######################################################################
-        if(endCount == 0)
-        {
-            mealPlanScreen.setFrameVisibility(true);
-            return;
-        }
 
-        // #######################################################################
+        if (endCount == 0) { windowClosedEvent(); return; }
 
-        frame = new JFrame();
-        frame.setResizable(false);
-        frame.setVisible(true);
-        frame.setSize(600, 600);
-        frame.setLocationRelativeTo(null);
-
-        // #######################################################################
-
-        Container container = frame.getContentPane();
-        container.setLayout(new BorderLayout());
-        container.setBackground(Color.magenta);
-
-        // #######################################################################
-
-        JPanel mainJP = new JPanel(new GridBagLayout());
-        container.add(mainJP, BorderLayout.CENTER);
-
-        // #######################################################################
-
+        //##############################################
+        //  Centre GUI : Image Setup
+        //##############################################
+        // Create Picture Panel
         JPanel jp = new ImagePanel2();
         jp.setPreferredSize(new Dimension(600, 450));
-        addToContainer(mainJP, jp,0, posY += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+        addToContainer(getScrollPaneJPanel(), jp, 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
 
-        // frame.add(iconLabel);
-
-        // #######################################################################
+        //##############################################
+        // South GUI : Progress Bar Setup
+        //##############################################
 
         progressBar.setPreferredSize(new Dimension(600, 35));
         progressBar.setBorderPainted(true);
@@ -65,30 +53,31 @@ public class LoadingScreen
         progressBar.setForeground(Color.BLACK);
         progressBar.setValue(0);
 
-        container.add(progressBar, BorderLayout.SOUTH);
+        getMainSouthPanel().setLayout(new GridLayout(1, 1));
+        getMainSouthPanel().add(progressBar);
 
-//        addToContainer(container, progressBar,0, posY += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
-
-        // #######################################################################
-
-        frame.revalidate();
+        //##############################################
+        // Super Constructor & Variables
+        //##############################################
+        makeJFrameVisible();
     }
 
+    //##################################################################################################################
+    // Methods
+    //##################################################################################################################
     public void increaseBar(int increaseBy)
     {
         try
         {
             currentCount += increaseBy;
+
             int percentage = (int) ((currentCount * 100.0f) / endCount);
 
-            Thread.sleep(50);//Pausing execution for 50 milliseconds
+            Thread.sleep(50); //Pausing execution for 50 milliseconds
 
-            progressBar.setValue(percentage);//Setting value of Progress Bar
+            progressBar.setValue(percentage); //Setting value of Progress Bar
 
-            if (currentCount == endCount)
-            {
-                closeWindow();
-            }
+            if (currentCount == endCount) { windowClosedEvent(); }
         }
         catch (Exception e)
         {
@@ -96,70 +85,47 @@ public class LoadingScreen
         }
     }
 
-    public void closeWindow()
+    @Override
+    public void windowClosedEvent()
     {
-        frame.dispose();
+        if (frame != null) { closeJFrame(); }
     }
 
-    public class ImagePanel2 extends JPanel {
-
+    //##################################################################################################################
+    // ImagePanel Class
+    //##################################################################################################################
+    public class ImagePanel2 extends JPanel
+    {
         private Image imageGif;
 
-        public ImagePanel2() {
+        // #########################################
+        // Load Image to JPanel
+        // #########################################
+        public ImagePanel2()
+        {
             // Load GIF from resources using classpath
             URL gifUrl = getClass().getResource("/images/0.) Intro Screen/Eating.gif");
-            if (gifUrl != null) {
+            if (gifUrl != null)
+            {
                 imageGif = Toolkit.getDefaultToolkit().createImage(gifUrl);
-            } else {
+            }
+            else
+            {
                 System.err.println("GIF not found at images/0.) Intro Screen");
             }
         }
 
+        // #########################################
+        // Draw image on JPanel
+        // #########################################
         @Override
-        protected void paintComponent(Graphics g) {
+        protected void paintComponent(Graphics g)
+        {
             super.paintComponent(g);
-            if (imageGif != null) {
+            if (imageGif != null)
+            {
                 g.drawImage(imageGif, 0, 0, this);
             }
         }
-    }
-
-    public void addToContainer(Container container, Component addToContainer, int gridx, int gridy, int gridwidth,
-                               int gridheight, double weightx, double weighty, String fill, int ipady, int ipadx)
-    {
-        gbc.gridx = gridx;
-        gbc.gridy = gridy;
-        gbc.gridwidth = gridwidth;
-        gbc.gridheight = gridheight;
-        gbc.weightx = weightx;
-        gbc.weighty = weighty;
-
-        gbc.ipady = ipady;
-        gbc.ipadx = ipadx;
-
-        switch (fill.toLowerCase())
-        {
-            case "horizontal":
-                gbc.fill = GridBagConstraints.HORIZONTAL;
-                break;
-            case "vertical":
-                gbc.fill = GridBagConstraints.VERTICAL;
-                break;
-
-            case "both":
-                gbc.fill = GridBagConstraints.BOTH;
-                break;
-        }
-
-        container.add(addToContainer, gbc);
-    }
-
-    public static void main(String[] args)
-    {
-        LoadingScreen d = new LoadingScreen(250, null);
-        d.increaseBar(1);
-        d.increaseBar(1);
-        d.increaseBar(1);
-        d.increaseBar(1);
     }
 }

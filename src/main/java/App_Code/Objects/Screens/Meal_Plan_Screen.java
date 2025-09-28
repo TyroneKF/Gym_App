@@ -321,14 +321,14 @@ public class Meal_Plan_Screen extends Screen
 
         // Setting Up Loading Screen
         int totalProgress = no_of_meals + no_of_sub_meals + (7 * 10);
-        LoadingScreen loadingScreen = new LoadingScreen(totalProgress, this);
+        LoadingScreen loadingScreen = new LoadingScreen(totalProgress);
 
         //####################################################
         // Transferring PLan Data To Temp
         //####################################################
         if (! transferPlanData(planID, tempPlanID))
         {
-            loadingScreen.closeWindow();
+            loadingScreen.windowClosedEvent();
             return;
         }
 
@@ -340,7 +340,7 @@ public class Meal_Plan_Screen extends Screen
         //####################################################
         if (! transferTargets(planID, tempPlanID, true, false))
         {
-            loadingScreen.closeWindow();
+            loadingScreen.windowClosedEvent();
             return;
         }
 
@@ -351,7 +351,7 @@ public class Meal_Plan_Screen extends Screen
         //####################################################
         if (! (transferMealIngredients(planID, tempPlanID)))
         {
-            loadingScreen.closeWindow();
+            loadingScreen.windowClosedEvent();
             JOptionPane.showMessageDialog(null, "\n\nCannot Create Temporary Plan In DB to Allow Editing");
             return;
         }
@@ -363,7 +363,7 @@ public class Meal_Plan_Screen extends Screen
         //####################################################
         if (! (getIngredientsTypesAndStoresData(true, true, true)))
         {
-            loadingScreen.closeWindow();
+            loadingScreen.windowClosedEvent();
             JOptionPane.showMessageDialog(null, "\n\nCannot Get Ingredients_Types & Stores Info \n\ngetIngredientsTypesAndStoresData()");
             return;
         }
@@ -450,7 +450,7 @@ public class Meal_Plan_Screen extends Screen
 
         int macrosInfoJP_YPos = 0;
 
-        //#########################################################################
+        /*//#########################################################################
         // Setting up Horizontal Image Divider
         //#########################################################################
         int height = 75, width = 0;
@@ -480,7 +480,7 @@ public class Meal_Plan_Screen extends Screen
         //#########################################################################
 
         addToContainer(macrosInfoJPanel, createSpaceDivider(0, 20), 0, macrosInfoJP_YPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0, null);
-
+*/
         //#########################################################################
         // Setting up macroTargets Table
         //#########################################################################
@@ -571,11 +571,8 @@ public class Meal_Plan_Screen extends Screen
         // GUI Alignments & Configurations
         //##############################################################################################################
         resizeGUI();
-        scroll_To_Top_of_ScrollPane();
-
         setFrameVisibility(true);
-
-        scrollDown_BtnAction();
+        scroll_To_Top_of_ScrollPane();
     }
 
     //##################################################################################################################
