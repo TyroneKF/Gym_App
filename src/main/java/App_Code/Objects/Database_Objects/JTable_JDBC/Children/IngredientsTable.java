@@ -948,7 +948,7 @@ public class IngredientsTable extends JDBC_JTable
         //##############################################################################################
         // Reset Table Model data
         ///#############################################################################################
-        tableModel_Setup(getSavedData(), getGuiColumnNames());
+        refreshData();
 
         //#############################################################################################
         // Reset Meal Total  Table Data

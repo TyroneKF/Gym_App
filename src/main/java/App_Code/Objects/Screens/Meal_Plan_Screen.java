@@ -6,6 +6,7 @@ import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Mac
 import App_Code.Objects.Database_Objects.MealManager;
 import App_Code.Objects.Gui_Objects.*;
 import App_Code.Objects.Screens.Graph_Screens.Line_Chart_Meal_Plan_Screen;
+import App_Code.Objects.Screens.Graph_Screens.Pie_Chart_Meal_Plan_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Edit_Ingredients_Info.Ingredients_Info_Screen;
 import App_Code.Objects.Screens.Loading_Screen.LoadingScreen;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -89,6 +90,7 @@ public class Meal_Plan_Screen extends Screen
     private Macros_Targets_Screen macrosTargets_Screen = null;
     private Ingredients_Info_Screen ingredientsInfoScreen = null;
     private Line_Chart_Meal_Plan_Screen lineChartMealPlanScreen = null;
+    private Pie_Chart_Meal_Plan_Screen pie_chart_meal_plan_screen = null;
 
     //##################################################
     // Database Table Names
@@ -133,16 +135,31 @@ public class Meal_Plan_Screen extends Screen
             "ingredients_index", "liquid_content", "water_content"));
 
     //##################################################################################################################
-    // Other Table Customisations
+    // TotalMealView Table
     //##################################################################################################################
     private final ArrayList<String>
 
             // Table : total_meal_view Table
             totalMeal_Table_ColToHide = new ArrayList<String>(Arrays.asList("plan_id", "meal_name", "meal_in_plan_id",
-            "weight_of_meal")),
+            "weight_of_meal"));
+    
+    private Map<String, Integer> totalMeal_macroColNamePos = new HashMap<>() {{
+        put("total_protein", null);
+        put("total_carbohydrates", null);
+        put("total_sugars_of_carbs", null);
+        put("total_fats", null);
+        put("total_saturated_fat", null);
+        put("total_salt", null);
+        put("total_fibre", null);
+    }};
 
-    // Table : plan_macro_target_calculations
-    macrosTargets_Table_ColToHide = new ArrayList<String>(Arrays.asList("plan_id", "plan_name", "date_time_of_creation")),
+    //##################################################################################################################
+    // Other Table Customisations
+    //##################################################################################################################
+    private final ArrayList<String>
+
+            // Table : plan_macro_target_calculations
+            macrosTargets_Table_ColToHide = new ArrayList<String>(Arrays.asList("plan_id", "plan_name", "date_time_of_creation")),
 
     // Table : plan_macros_left
     macrosLeft_Table_ColToHide = new ArrayList<String>(Arrays.asList("plan_id", "plan_name"));
@@ -383,7 +400,28 @@ public class Meal_Plan_Screen extends Screen
 
         // Get table column names for plan_macros_left
         macrosLeft_columnNames = db.getColumnNames(tablePlanMacrosLeftName);
-
+    
+        //##############################
+        // column names : total_meal_view
+        ////##############################
+        meal_total_columnNames = db.getColumnNames(tableTotalMealsTableName);
+        
+        if(meal_total_columnNames != null)
+        {
+            int pos = 0;
+            for(String columnName : meal_total_columnNames)
+            {
+                if (totalMeal_macroColNamePos.containsKey(columnName))
+                {
+                    totalMeal_macroColNamePos.put(columnName, pos);
+                }
+                pos++;
+            }
+        }
+    
+        //######################################################################
+        // Check IF Data Collections Are NULL
+        //######################################################################
         if (ingredients_ColumnNames == null | meal_total_columnNames == null | macroTargetsTable_ColumnNames == null | macrosLeft_columnNames == null)
         {
             System.err.printf("Error, Gathering Column Names for Tables: \n%s = %s%n \n%s = %s%n \n%s = %s%n \n%s = %s%n",
@@ -395,6 +433,7 @@ public class Meal_Plan_Screen extends Screen
             );
 
             JOptionPane.showMessageDialog(getFrame(), "Error, Getting Column Names For Tables In GUI !!");
+            windowClosedEvent();
             return;
         }
 
@@ -946,7 +985,7 @@ public class Meal_Plan_Screen extends Screen
         iconPanelInsert.add(recipe_Btn);
 
         //##########################
-        //  BarChart
+        //  PieChart
         //##########################
         width = 55;
         height = 55;
@@ -1187,8 +1226,16 @@ public class Meal_Plan_Screen extends Screen
     // ###################################################
     private void pieChart_BtnAction_OpenScreen()
     {
+        if (pie_chart_meal_plan_screen == null)
+        {
+            pie_chart_meal_plan_screen = new Pie_Chart_Meal_Plan_Screen(db, this);
+            return;
+        }
 
+        pie_chart_meal_plan_screen.makeJFrameVisible();
     }
+
+    public void removePieChartScreen() { pie_chart_meal_plan_screen = null; }
 
     // #########################################
     // Line Chart BTN Actions
@@ -1286,9 +1333,10 @@ public class Meal_Plan_Screen extends Screen
         //####################################################################
         // Re-Upload LineChart Data in One Go
         //####################################################################
-        if (lineChartMealPlanScreen == null) { return; }
-
-        lineChartMealPlanScreen.clear_And_Rebuild_Dataset(); // clear but, also adds data in
+        if (lineChartMealPlanScreen != null)
+        {
+            lineChartMealPlanScreen.clear_And_Rebuild_Dataset(); // clear but, also adds data in
+        }
     }
 
     // ###################################################
@@ -1576,6 +1624,9 @@ public class Meal_Plan_Screen extends Screen
     @Override
     public void windowClosedEvent()
     {
+        // ##########################################
+        // Ask to Save DATA
+        // ##########################################
         if (macroTargetsChanged) // If targets have changed, save them?
         {
             saveMacroTargets(true, false);
@@ -1583,7 +1634,9 @@ public class Meal_Plan_Screen extends Screen
 
         saveMealData(true, false);
 
+        // ##########################################
         // Close Other Windows If Open
+        // ##########################################
         if (macrosTargets_Screen != null)
         {
             macrosTargets_Screen.windowClosedEvent();
@@ -1591,6 +1644,17 @@ public class Meal_Plan_Screen extends Screen
         if (ingredientsInfoScreen != null)
         {
             ingredientsInfoScreen.closeWindow();
+        }
+    
+        // ##########################################
+        // Close PieCharts Open by MealManagers
+        // ##########################################
+        Iterator<Map.Entry<Integer, MealManager>> it = mealManagerTreeSet.iterator();
+        while(it.hasNext())
+        {
+            Map.Entry<Integer, MealManager> mealManagerEntry = it.next();
+            
+            mealManagerEntry.getValue().removePieChartScreen();
         }
     }
 
@@ -1707,7 +1771,12 @@ public class Meal_Plan_Screen extends Screen
     {
         return mealManagerTreeSet;
     }
-
+    
+    public Map<String, Integer> getTotalMeal_MacroColNamePos()
+    {
+        return totalMeal_macroColNamePos;
+    }
+    
     //###########################################
     // TotalMeal Table Collections
     //###########################################

@@ -854,7 +854,6 @@ public class MealManager
     // Delete BTN Methods
     //#################################################################################
 
-
     // Completely Delete Table Through Processing
     //###########################################
     public void completely_Delete_MealManager()
@@ -1198,7 +1197,7 @@ public class MealManager
         meal_plan_screen.addMealManger(this, true);
     }
 
-    public void reloadingIngredientsTableDataFromRefresh(boolean updateMacrosLeft, boolean updateCharts)
+    public void reloadingIngredientsTableDataFromRefresh(boolean updateMacrosLeft, boolean updateExternalCharts)
     {
         //##############################################################################################
         // Refresh ingredients meal table & total Tables Data
@@ -1230,8 +1229,8 @@ public class MealManager
         //##############################################################################################
         // Refresh TotalMeal
         //##############################################################################################
-        update_TotalMeal_Table(updateCharts); // this has to be done
-
+        refresh_TotalMealTable(updateExternalCharts);
+        
         //##############################################################################################
         // Refresh MacrosLeft
         //##############################################################################################
@@ -1239,6 +1238,12 @@ public class MealManager
         {
             update_MacrosLeft_Table();
         }
+    }
+    
+    public void refresh_TotalMealTable(Boolean updateExternalCharts)
+    {
+        totalMealTable.refreshData();
+        updateCharts(updateExternalCharts);
     }
 
     //######################################
@@ -1338,13 +1343,18 @@ public class MealManager
         macrosLeft_JTable.updateMacrosLeftTable();
     }
 
-
-    public void update_TotalMeal_Table(Boolean updateCharts)
+    
+    public void update_TotalMeal_Table(Boolean updateExternalCharts)
     {
         totalMealTable.updateTotalMealTable(); // Update TotalMealView
+        updateCharts(updateExternalCharts);
+    }
+    
+    public void updateCharts(Boolean updateExternalCharts)
+    {
         update_Pie_Chart_Screen(); // Update Pie Chart Screen
-
-        if(updateCharts) // Update LineChart Data
+    
+        if(updateExternalCharts) // Update LineChart Data
         {
             meal_plan_screen.updateLineChartData(this, getCurrentMealTime(), getCurrentMealTime());
         }

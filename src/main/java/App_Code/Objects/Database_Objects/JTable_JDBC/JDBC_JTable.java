@@ -10,6 +10,7 @@ import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.*;
 import java.awt.*;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -71,7 +72,7 @@ public class JDBC_JTable extends JPanel
         //##############################################################
         this.db = db;
         this.savedData = savedData;
-        this.currentData = savedData;
+        this.currentData = savedData.clone();
 
         this.parentContainer = parentContainer;
         this.addJTableAction = addJTableAction;
@@ -308,6 +309,7 @@ public class JDBC_JTable extends JPanel
     public void refreshData()
     {
         tableModel_Setup(getSavedData(), getGuiColumnNames());
+        currentData = savedData.clone();
     }
 
     //##################################################################################################################
@@ -349,6 +351,11 @@ public class JDBC_JTable extends JPanel
     protected ArrayList<String> getColumnsToHide()
     {
         return columnsToHide;
+    }
+    
+    protected Object getValueOnTable(int row, int col)
+    {
+        return  getCurrentData()[row][col];
     }
 
 
