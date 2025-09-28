@@ -95,8 +95,6 @@ public class MyJTable_DisplayData extends JDBC_JTable
         //###########################################################################
         //   Updating MacrosLeft_Table
         ///##########################################################################
-
-        //ArrayList<ArrayList<Object>> tableDataObject = db.get_Multi_ColumnQuery_Object(query);
         Object[][] tableDataObject = db.getTableDataObject(query, tableName);
 
         if (tableDataObject==null)

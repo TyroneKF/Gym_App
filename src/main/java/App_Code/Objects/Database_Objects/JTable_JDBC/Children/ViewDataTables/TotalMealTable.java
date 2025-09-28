@@ -1,8 +1,12 @@
 package App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables;
+
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
+
+import java.io.BufferedReader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 
 
@@ -35,11 +39,8 @@ public class TotalMealTable extends MyJTable_DisplayData
 
     public BigDecimal getValueOnTable(String column_name)
     {
-        column_name = column_name.toLowerCase(Locale.ROOT);
-
-        return  columnNamesAndPositions.containsKey(column_name)   ?
-                (BigDecimal) getTable().getValueAt(0,columnNamesAndPositions.get(column_name)[1])  // Index of Column after columns are hidden
-                : null;
+        return columnNamesAndPositions.containsKey(column_name) ?
+                (BigDecimal) getCurrentData()[0][columnNamesAndPositions.get(column_name)[0]] : null;
     }
 }
 
