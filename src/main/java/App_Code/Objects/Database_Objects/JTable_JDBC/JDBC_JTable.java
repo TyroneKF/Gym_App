@@ -31,32 +31,35 @@ public class JDBC_JTable extends JPanel
     protected JTable jTable = new JTable();
     protected DefaultTableModel tableModel;
     protected Object[][] savedData, currentData;
-    protected int rowsInTable = 0, columnsInTable = 0;
+    
+    protected int rowsInTable = 0, columnsInTable = 0; // HELLO DELETE
     protected String  tableName;
     protected String[] columnDataTypes, columnNames, guiColumnNames;
+    
+    protected HashMap<Integer, ArrayList<String>> jComboMap = new HashMap<>();
 
+    // Collection : Customisation Options
     protected ArrayList<String> colAvoidCentering = new ArrayList<>();
     protected ArrayList<Integer> unEditableColumnPositions = new ArrayList<>();
     protected ArrayList<String> columnsToHide = new ArrayList<>();
-
-    //##############################################
-    protected boolean tableInitialised = false, addJTableAction;
-
-    protected HashMap<Integer, ArrayList<String>> jComboMap = new HashMap<>();
-
-    protected Integer model_DeleteBTN_Col = null;
-    protected Object previousJComboItem;
-    protected Object selected_JCombo_Item;
-
-    //###############################################
-
-    //###############################################
-    protected LinkedHashMap<String, Integer[]> columnNamesAndPositions = new LinkedHashMap<>();
+    
+    protected LinkedHashMap<String, Integer[]> columnNamesAndPositions = new LinkedHashMap<>(); // Hello Can be removed
     /*
         Array Pos 1 = Original Position in JTable Data
         Array Pos 2 = Position after columns hidden
     */
 
+    //##############################################
+    //
+    //##############################################
+    protected boolean tableInitialised = false, addJTableAction;
+
+    protected Integer model_DeleteBTN_Col = null;
+    protected Object previousJComboItem;
+    protected Object selected_JCombo_Item;
+    
+    //##################################################################################################################
+    // Constructor
     //##################################################################################################################
     public JDBC_JTable
     (
@@ -143,18 +146,53 @@ public class JDBC_JTable extends JPanel
     }
 
     //##################################################################################################################
-    // Set Up Methods
+    // Table Model Set Up Methods
     //##################################################################################################################
-
+    public class CustomTableModel extends AbstractTableModel {
+    
+        private ArrayList<ArrayList<Object>> data;
+        private ArrayList<String> columnNames;
+    
+        public CustomTableModel(ArrayList<ArrayList<Object>> data, ArrayList<String> columnNames) {
+            this.data = data;
+            this.columnNames = columnNames;
+        }
+    
+        @Override
+        public int getRowCount() {
+            return data.size();
+        }
+    
+        @Override
+        public int getColumnCount() {
+            return columnNames.size();
+        }
+    
+        @Override
+        public Object getValueAt(int row, int col) {
+            return data.get(row).get(col);
+        }
+    
+        @Override
+        public String getColumnName(int col) {
+            return columnNames.get(col);
+        }
+    
+        @Override
+        public void setValueAt(Object value, int row, int col) {
+            data.get(row).set(col, value);
+            fireTableCellUpdated(row, col);
+        }
+    
+        @Override
+        public boolean isCellEditable(int row, int col) {
+            return true;
+        }
+    }
 
     //###################################################
     // Table Setup Methods
     //###################################################
-    protected void extra_TableSetup()
-    {
-
-    }
-
     protected void tableSetup(Object[][] data, String[] columnNames, boolean setIconsUp)
     {
         extra_TableSetup();
@@ -194,15 +232,12 @@ public class JDBC_JTable extends JPanel
         //#################################################################################
         resizeObject();
     }
-
-    //###################################################
-    // Table Model Setup Methods
-    //###################################################
-    protected void extraTableModel_Setup()
+    
+    protected void extra_TableSetup()
     {
-
+    
     }
-
+    
     protected void tableModel_Setup(Object[][] data, String[] columnNames)
     {
         tableModel = new DefaultTableModel(data, columnNames)
@@ -221,34 +256,34 @@ public class JDBC_JTable extends JPanel
                     return true;
                 }
             }
-
+            
             @Override
             public Class getColumnClass(int c)
             {
                 return getValueAt(0, c).getClass();
             }
         };
-
+        
         if (addJTableAction) {  tableModel.addTableModelListener( evt -> tableDataChange_Action(evt));}
-
+        
         jTable.setModel(tableModel);
-
+        
         rowsInTable = data.length;
-
+        
         //#################################################################################
         // Table Personalisation
         //#################################################################################
-
+        
         //initColumnSizes();
         setCellRenderer();
-
+        
         if (getTableInitialised())  //first time this method is called, special columns aren't defined
         {
             if (getColumnsToHide()!=null)
             {
                 SetUp_HiddenTableColumns(columnsToHide);
             }
-
+            
             extraTableModel_Setup();
         }
         else
@@ -257,17 +292,130 @@ public class JDBC_JTable extends JPanel
         }
         resizeObject();
     }
-
+    
+    /**
+     * This needs to be done before hiding columns
+     * Set Column alignment
+     *
+     */
+    protected void setCellRenderer()
+    {
+        // ###############################################################
+        // Centering Column Txt
+        // ###############################################################
+        
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        rightRenderer.setHorizontalAlignment(0);
+        
+        int pos = -1;
+        for (String columnName : columnNames)
+        {
+            pos++;
+            
+            if (colAvoidCentering != null && colAvoidCentering.contains(columnName))
+            {
+                continue;
+            }
+            
+            jTable.getColumnModel().getColumn(pos).setCellRenderer(rightRenderer); // Center Column Data
+        }
+    }
+    
+    protected void extraTableModel_Setup()
+    {
+    
+    }
+    
     protected void setTableModelData(Object[][] tableModelData)
     {
         this.savedData = tableModelData;
         resizeObject();
     }
 
+    //###################################################
+    // Table Model Setup Methods
+    //###################################################
+    /*
+       As columns are hidden the position changes by -1 for the next time its called
+     */
+    protected void SetUp_HiddenTableColumns(ArrayList<String> columnsToHide)
+    {
+        int pos = 0, numberOfColumnsHidden = 0, jTablePosAfterHiding = 0;
+    
+        for (Map.Entry<String, Integer[]> jTableColumn : columnNamesAndPositions.entrySet())
+        {
+            jTablePosAfterHiding = pos - numberOfColumnsHidden;
+        
+            //########################################################################
+            // Extracting Info
+            //#######################################################################
+            String columnName = jTableColumn.getKey();
+
+            /*
+             Pos 1 column original position in JTable Data
+             Pos 2 column position in JTable after columns are hidden
+            */
+            Integer[] columnPositionsList = jTableColumn.getValue();
+        
+            //#######################################################################
+            // Hide Or Update Column Pos After Hiding
+            //#######################################################################
+        
+            if (columnsToHide.contains(columnName)) // Hide Column In JTable
+            {
+                columnPositionsList[1] = null; // No Longer In The JTable so position is null
+                columnNamesAndPositions.replace(columnName, columnPositionsList); // Update position
+            
+                jTable.removeColumn(jTable.getColumnModel().getColumn(jTablePosAfterHiding)); // Hide Column in JTable
+            
+                numberOfColumnsHidden++;
+            }
+            else // Adjust current column position
+            {
+                columnPositionsList[1] = jTablePosAfterHiding;
+                columnNamesAndPositions.replace(columnName, columnPositionsList);
+            }
+            //#######################################################################
+        
+            pos++;
+        }
+    }
+    
+    protected void tableDataChange_Action(TableModelEvent evt)
+    {
+    
+    }
+    
+    public void updateTable(Object[] updateData, int updateRow)
+    {
+        //########################################################################
+        // Updating Table Info
+        //########################################################################
+        for(int columnPos = 0; columnPos < columnsInTable; columnPos++)
+        {
+            tableModel.setValueAt(updateData[columnPos], updateRow, columnPos);
+        }
+        
+        //########################################################################
+        // Updating CurrentData
+        //########################################################################
+        currentData[updateRow] = updateData;
+        
+        //########################################################################
+        // Redraw JTable
+        //########################################################################
+        jTable.repaint();
+    }
+    
+    public void refreshData()
+    {
+        tableModel_Setup(getSavedData(), getGuiColumnNames());
+        currentData = savedData.clone();
+    }
+    
     //##################################################################################################################
     // Action Methods
     //##################################################################################################################
-
     protected Boolean areYouSure(String process)
     {
         int reply = JOptionPane.showConfirmDialog(null, String.format("Are you sure you want to %s, \nany unsaved changes will be lost in this Table! \nDo you want to %s?", process, process),
@@ -279,149 +427,76 @@ public class JDBC_JTable extends JPanel
         }
         return true;
     }
-
-    protected void tableDataChange_Action(TableModelEvent evt)
+    
+    //######################################################
+    // Mutator Methods
+    //######################################################
+    protected void setTableInitialized()
     {
-
+        tableInitialised = true;
     }
-
-    public void updateTable(Object[] updateData, int updateRow)
+    
+    public void setTableHeaderFont(Font font)
     {
-        //########################################################################
-        // Updating Table Info
-        //########################################################################
-        for(int columnPos = 0; columnPos < columnsInTable; columnPos++)
-        {
-            tableModel.setValueAt(updateData[columnPos], updateRow, columnPos);
-        }
-
-        //########################################################################
-        // Updating CurrentData
-        //########################################################################
-        currentData[updateRow] = updateData;
-
-        //########################################################################
-        // Redraw JTable
-        //########################################################################
-        jTable.repaint();
+        jTable.getTableHeader().setFont(font);
     }
-
-    public void refreshData()
+    
+    public void setTableTextFont(Font font)
     {
-        tableModel_Setup(getSavedData(), getGuiColumnNames());
-        currentData = savedData.clone();
+        jTable.setFont(font);
     }
-
-    //##################################################################################################################
-    //
-    //##################################################################################################################
-
-    protected boolean getTableInitialised()
-    {
-        return tableInitialised;
-    }
-
-    protected Object[][] getSavedData()
-    {
-        return savedData;
-    }
-
-    protected Object[][] getCurrentData()
-    {
-        return currentData;
-    }
-
-    protected String[] getColumnNames()
-    {
-        return columnNames;
-    }
-
-    protected String[] getGuiColumnNames(){ return guiColumnNames;}
-
-    protected JTable getTable()
-    {
-        return jTable;
-    }
-
-    protected int getNoOfColumns()
-    {
-        return columnsInTable;
-    }
-
+    
+    //######################################################
+    // Accessor Methods
+    //######################################################
     protected ArrayList<String> getColumnsToHide()
     {
         return columnsToHide;
     }
     
+    protected String[] getColumnNames()
+    {
+        return columnNames;
+    }
+    
+    protected String[] getGuiColumnNames(){ return guiColumnNames;}
+    
+    protected int getNoOfColumns()
+    {
+        return columnsInTable;
+    }
+    
+    protected JTable getTable()
+    {
+        return jTable;
+    }
+    
+    protected boolean getTableInitialised()
+    {
+        return tableInitialised;
+    }
+    
+    //######################################################
+    // Get Data Methods
+    //######################################################
     protected Object getValueOnTable(int row, int col)
     {
         return  getCurrentData()[row][col];
     }
-
-
+    
+    protected Object[][] getSavedData()
+    {
+        return savedData;
+    }
+    
+    protected Object[][] getCurrentData()
+    {
+        return currentData;
+    }
+    
     //##################################################################################################################
-
-    /*
-       As columns are hidden the position changes by -1 for the next time its called
-     */
-    protected void SetUp_HiddenTableColumns(ArrayList<String> columnsToHide)
-    {
-        int pos = 0, numberOfColumnsHidden = 0, jTablePosAfterHiding = 0;
-
-        for (Map.Entry<String, Integer[]> jTableColumn : columnNamesAndPositions.entrySet())
-        {
-            jTablePosAfterHiding = pos - numberOfColumnsHidden;
-
-            //########################################################################
-            // Extracting Info
-            //#######################################################################
-            String columnName = jTableColumn.getKey();
-
-            /*
-             Pos 1 column original position in JTable Data
-             Pos 2 column position in JTable after columns are hidden
-            */
-            Integer[] columnPositionsList = jTableColumn.getValue();
-
-            //#######################################################################
-            // Hide Or Update Column Pos After Hiding
-            //#######################################################################
-
-            if (columnsToHide.contains(columnName)) // Hide Column In JTable
-            {
-                columnPositionsList[1] = null; // No Longer In The JTable so position is null
-                columnNamesAndPositions.replace(columnName, columnPositionsList); // Update position
-
-                jTable.removeColumn(jTable.getColumnModel().getColumn(jTablePosAfterHiding)); // Hide Column in JTable
-
-                numberOfColumnsHidden++;
-            }
-            else // Adjust current column position
-            {
-                columnPositionsList[1] = jTablePosAfterHiding;
-                columnNamesAndPositions.replace(columnName, columnPositionsList);
-            }
-            //#######################################################################
-
-            pos++;
-        }
-    }
-
-    protected void setTableInitialized()
-    {
-        tableInitialised = true;
-    }
-
-    public void setTableHeaderFont(Font font)
-    {
-        jTable.getTableHeader().setFont(font);
-    }
-
-    public void setTableTextFont(Font font)
-    {
-        jTable.setFont(font);
-    }
-
+    // Resizing GUi & Add Component Methods
+    //##################################################################################################################
     protected void resizeObject()
     {
         jTable.revalidate();
@@ -430,45 +505,15 @@ public class JDBC_JTable extends JPanel
                         jTable.getPreferredSize().width,
                         //jTable.getRowHeight() * rowsInTable +20))
                         jTable.getRowHeight() * rowsInTable)); // get rid of 20, to have the border be exact
-
+    
         scrollPane.revalidate(); // reshapes scrollpane
         revalidate();
-
+    
         if (parentContainer!=null)
         {
             parentContainer.revalidate();
         }
     }
-
-    /**
-     * This needs to be done before hiding columns
-     * Set Column alignment
-     *
-     */
-    protected void setCellRenderer()
-    {
-        // ###############################################################
-        // Centering Column Txt
-        // ###############################################################
-
-        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
-        rightRenderer.setHorizontalAlignment(0);
-
-        int pos = -1;
-        for (String columnName : columnNames)
-        {
-            pos++;
-
-            if (colAvoidCentering != null && colAvoidCentering.contains(columnName))
-            {
-                continue;
-            }
-
-            jTable.getColumnModel().getColumn(pos).setCellRenderer(rightRenderer); // Center Column Data
-        }
-    }
-
-    //##################################################################################################################
 
     protected static void addToContainer(Container container, Component addToContainer, int gridx, int gridy, int gridwidth,
                                          int gridheight, double weightx, double weighty, String fill, String anchor)
@@ -511,7 +556,5 @@ public class JDBC_JTable extends JPanel
         }
 
         container.add(addToContainer, gbc);
-
     }
-    //##################################################################################################################
 }
