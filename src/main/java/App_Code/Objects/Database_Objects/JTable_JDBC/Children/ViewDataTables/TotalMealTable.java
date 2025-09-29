@@ -36,5 +36,10 @@ public class TotalMealTable extends MyJTable_DisplayData
     {
         return (BigDecimal) super.getValueOnTable(row, col);
     }
+    
+    public Object[] getTableData()
+    {
+        return getCurrentData()[0];
+    }
 }
 

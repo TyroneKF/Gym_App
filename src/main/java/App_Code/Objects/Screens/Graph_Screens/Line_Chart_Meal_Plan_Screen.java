@@ -29,25 +29,19 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
     //##############################################
     // Objects
     //##############################################
-    private MyJDBC db;
     private Meal_Plan_Screen meal_plan_screen;
 
     //##############################################
     // Collections
     //##############################################
-    private final String[] macronutrientsToCheck = new String[]{
-            "total_protein", "total_carbohydrates", "total_sugars_of_carbs", "total_fats", "total_saturated_fat",
-            "total_salt", "total_fibre"
-//            ,"total_calories"
-//            ,"total_water_content"
-    };
-
     private TreeSet<Map.Entry<Integer, MealManager>> mealManagerTreeSet;
+
+    private Map<String, Integer> macronutrientsToCheckAndPos;
 
     //##############################################
     // Datasets Objects
     //##############################################
-    private TimeSeriesCollection dataset  = new TimeSeriesCollection(); // Clear Dataset;
+    private TimeSeriesCollection dataset = new TimeSeriesCollection(); // Clear Dataset;
     private Line_Chart line_chart;
 
     // #################################################################################################################
@@ -58,7 +52,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
         // ##########################################
         // Super Constructors & Variables
         // ##########################################
-        super(db, true,"Line Chart: Plan Macros", 1000, 900, 0, 0);
+        super(db, true, "Line Chart: Plan Macros", 1000, 900, 0, 0);
         getScrollPaneJPanel().setBackground(Color.WHITE);
         setResizable(true);
 
@@ -66,18 +60,15 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
         // Variables
         // ##########################################
         this.db = db;
-        this.mealManagerTreeSet = meal_plan_screen.getMealManagerTreeSet();
         this.meal_plan_screen = meal_plan_screen;
+        this.mealManagerTreeSet = meal_plan_screen.getMealManagerTreeSet();
         this.planName = meal_plan_screen.getPlanName();
+        this.macronutrientsToCheckAndPos = meal_plan_screen.getTotalMeal_MacroColNamePos();
 
         //############################################
         // Creating Macros / Dataset
         //############################################
-        if (! createDataSet())
-        {
-            getFrame().dispose();
-            return;
-        }
+        if (! createDataSet()) { windowClosedEvent(); return; }
 
         // ##########################################
         // Create Graph Object & Adding to GUI
@@ -99,53 +90,53 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
         // ############################################
         // Build Dataset
         // ############################################
-        for (String macroName : macronutrientsToCheck)
+        Iterator<Map.Entry<Integer, MealManager>> it = mealManagerTreeSet.iterator();
+        while(it.hasNext())
         {
             // ############################################
-            // Create TimeSeries For Macros
+            // MealManager Object & Info
             // ############################################
-            String macroNameGUI = convertMacroNameToGuiVersion(macroName);
-            TimeSeries timeSeries = new TimeSeries(macroNameGUI);
-
-            // #################################################
-            // Per MacroName Get Values From Each MealManager
-            // #################################################
-            for (Map.Entry<Integer, MealManager> mapEntry : mealManagerTreeSet)
+            Map.Entry<Integer, MealManager> mealManagerEntry = it.next();
+            MealManager mealManager = mealManagerEntry.getValue();
+    
+            // MealManager MealName
+            String mealManagerName = mealManager.getCurrentMealName();
+    
+            // Meal Time In TimeSeries Format
+            Second mealTimeSeconds = localTimeToSecond(mealManager.getCurrentMealTime());
+          
+            // Get MealManager TotalMeal Data
+            Object[] totalMealTableData = mealManager.getTotalMealTable().getTableData();
+    
+            // ############################################
+            // Add Desired Macros From TotalMeal to DATA
+            // ############################################
+            Iterator<Map.Entry<String, Integer>> macrosIT = macronutrientsToCheckAndPos.entrySet().iterator();
+            while(macrosIT.hasNext())
             {
-                MealManager mealManager = mapEntry.getValue();
-
-                // If meal has been deleted don't include it in the count
-                if (mealManager.getHasMealPlannerBeenDeleted()) { continue; }
-
-                try
+                // Get MacroDetails
+                Map.Entry<String, Integer> macroEntry = macrosIT.next();
+                String macroGUIName = convertMacroNameToGuiVersion(macroEntry.getKey());
+                Integer macroColPos = macroEntry.getValue();
+        
+                // ############################################
+                // Get Macro TimeSeries
+                // ############################################
+                TimeSeries macroTimeSeries;
+                if(dataset.getSeriesIndex(macroGUIName) < 0) // IF Macros Series doesn't exist in collection, add it
                 {
-                    // ############################################
-                    // Get Meal Manager Variables
-                    // ############################################
-                    TotalMealTable totalMealTable = mealManager.getTotalMealTable();
-                    BigDecimal macroValue = totalMealTable.getValueOnTable(macroName);
-
-                    // ############################################
-                    // Meal Time Refactoring for TimeSeries Format
-                    // ############################################
-                    LocalTime mealTime = mealManager.getCurrentMealTime();
-                    Second second = localTimeToSecond(mealTime);
-
-                    // ############################################
-                    // Adding Value & to Macro TimeSeries
-                    // ############################################
-                    timeSeries.add(second, macroValue.doubleValue());
+                    macroTimeSeries = new TimeSeries(macroGUIName);
+                    dataset.addSeries(macroTimeSeries);
                 }
-                catch (Exception e)
+                else
                 {
-                    JOptionPane.showMessageDialog(meal_plan_screen.getFrame(), "Error, creating Line Chart with column table names!");
-                    System.err.printf("\n\nLine_Chart_Meal_Plan_Screen.java : updateDataSet() \nValue: %s \n%s", macroName, e);
-                    return false;
+                    macroTimeSeries = dataset.getSeries(macroGUIName);
                 }
+                
+                macroTimeSeries.add(mealTimeSeconds, (BigDecimal) totalMealTableData[macroColPos]);
             }
-            dataset.addSeries(timeSeries);
         }
-
+        
         return true;
     }
 
@@ -160,9 +151,18 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
         // ####################################################
         // Get MealManager MacroInfo & Replace
         // ####################################################
-
-        for (String macroName : macronutrientsToCheck)
+    
+        Iterator<Map.Entry<String, Integer>> it = macronutrientsToCheckAndPos.entrySet().iterator();
+    
+        while(it.hasNext())
         {
+            // ############################################
+            // Create TimeSeries For Macros
+            // ############################################
+            Map.Entry<String, Integer> macroEntry = it.next();
+            String macroName = macroEntry.getKey();
+            Integer macroColPos = macroEntry.getValue();
+            
             // ########################################
             // Get Correlated Macro TimeSeries
             // ########################################
@@ -176,7 +176,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
             // Get Macronutrient Info
             // ########################################
             // MealManager / TotalMealView Table Macro Result
-            BigDecimal newMacroValue = mealManager.getTotalMealTable().getValueOnTable(macroName);
+            BigDecimal newMacroValue = mealManager.getTotalMealTable().get_ValueOnTable(0, macroColPos);
 
             // convert old time to second for collection
             Second oldMealTime = localTimeToSecond(previousTime);
@@ -214,7 +214,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
     {
         // Reformat macroName for GUI purposes  "\u00A0" is like space because \t doesn't work in this label format
 
-      //  return String.format("\u00A0\u00A0%s\u00A0\u00A0", macroName, true);
+        //  return String.format("\u00A0\u00A0%s\u00A0\u00A0", macroName, true);
 
         return String.format("\u00A0\u00A0%s\u00A0\u00A0", formatStrings(macroName, true));
     }
@@ -237,8 +237,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
         planName = meal_plan_screen.getPlanName();
         line_chart.setTitle(planName);
     }
-
-
+    
     // ##################################################
     //  Clear Dataset Methods
     // ##################################################
@@ -255,7 +254,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
      */
     public void deleteMealManagerData(MealManager mealManager, LocalTime mealTime)
     {
-        for (String macroName : macronutrientsToCheck)
+        for (String macroName : macronutrientsToCheckAndPos.keySet())
         {
             // ###########################################
             // Get Correlated Macro TimeSeries
@@ -272,7 +271,5 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
             macroSeries.delete(localTimeToSecond(mealTime));
         }
     }
-
-
 }
 
