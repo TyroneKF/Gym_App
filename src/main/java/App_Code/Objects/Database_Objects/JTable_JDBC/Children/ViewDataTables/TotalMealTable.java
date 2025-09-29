@@ -10,7 +10,7 @@ public class TotalMealTable extends MyJTable_DisplayData
     private Integer MealInPlanID;
     private String mealName;
 
-    public TotalMealTable(MyJDBC db, CollapsibleJPanel collapsibleObj, Object[][] data, String[] columnNames, int planID, int temp_PlanID,
+    public TotalMealTable(MyJDBC db, CollapsibleJPanel collapsibleObj, ArrayList<ArrayList<Object>> data, ArrayList<String> columnNames, int planID, int temp_PlanID,
                           Integer MealInPlanID, String mealName, String tableName, ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering,
                           ArrayList<String> columnsToHide)
     {
@@ -37,9 +37,9 @@ public class TotalMealTable extends MyJTable_DisplayData
         return (BigDecimal) super.getValueOnTable(row, col);
     }
     
-    public Object[] getTableData()
+    public ArrayList<Object> getTableData()
     {
-        return getCurrentData()[0];
+        return getCurrentData().get(0);
     }
 }
 

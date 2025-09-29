@@ -106,7 +106,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
             Second mealTimeSeconds = localTimeToSecond(mealManager.getCurrentMealTime());
           
             // Get MealManager TotalMeal Data
-            Object[] totalMealTableData = mealManager.getTotalMealTable().getTableData();
+            ArrayList<Object> totalMealTableData = mealManager.getTotalMealTable().getTableData();
     
             // ############################################
             // Add Desired Macros From TotalMeal to DATA
@@ -133,7 +133,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
                     macroTimeSeries = dataset.getSeries(macroGUIName);
                 }
                 
-                macroTimeSeries.add(mealTimeSeconds, (BigDecimal) totalMealTableData[macroColPos]);
+                macroTimeSeries.add(mealTimeSeconds, (BigDecimal) totalMealTableData.get(macroColPos));
             }
         }
         

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class MacrosLeftTable extends MyJTable_DisplayData
 {
 
-    public MacrosLeftTable(MyJDBC db, Container parentContainer, Object[][] data, String[] columnNames, int planID, int temp_PlanID,
+    public MacrosLeftTable(MyJDBC db, Container parentContainer, ArrayList<ArrayList<Object>> data, ArrayList<String> columnNames, int planID, int temp_PlanID,
                            String tableName, ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering,
                            ArrayList<String> columnsToHide)
     {

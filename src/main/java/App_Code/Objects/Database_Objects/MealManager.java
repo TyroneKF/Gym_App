@@ -46,7 +46,7 @@ public class MealManager
     private DateTimeFormatter strictTimeFormatter = DateTimeFormatter.ofPattern("HH:mm").withResolverStyle(ResolverStyle.STRICT);
 
     // Collections
-    private String[] mealTotalTable_ColumnNames, ingredientsTable_ColumnNames;
+    private ArrayList<String> mealTotalTable_ColumnNames, ingredientsTable_ColumnNames;
     private ArrayList<String> totalMeal_Table_ColToHide, ingredientsTableUnEditableCells, ingredients_Table_Col_Avoid_Centering, ingredientsInMeal_Table_ColToHide;
     private TreeMap<String, Collection<String>> map_ingredientTypesToNames;
     private ArrayList<IngredientsTable> ingredientsTables = new ArrayList<>();
@@ -231,12 +231,12 @@ public class MealManager
         JPanel southPanel = collapsibleJpObj.getSouthJPanel();
 
         String query = String.format("SELECT * FROM total_meal_view WHERE meal_in_plan_id = %s AND plan_id = %s;", mealInPlanID, tempPlanID);
-        Object[][] result = db.getTableDataObject(query, tableName);
-
-        Object[][] meal_Total_Data = result != null ? result : new Object[0][0];
+        ArrayList<ArrayList<Object>> result = db.getTableDataObject_AL(query, tableName);
+    
+        ArrayList<ArrayList<Object>> meal_Total_Data = result != null ? result : new ArrayList<>();
 
         totalMealTable = new TotalMealTable(db, collapsibleJpObj, meal_Total_Data, mealTotalTable_ColumnNames, planID, tempPlanID,
-                mealInPlanID, savedMealName, tableName, new ArrayList<>(Arrays.asList(mealTotalTable_ColumnNames)), null, totalMeal_Table_ColToHide);
+                mealInPlanID, savedMealName, tableName, mealTotalTable_ColumnNames, null, totalMeal_Table_ColToHide);
 
         //#############################################
         // TotalMealTable to Collapsible Object
@@ -408,7 +408,7 @@ public class MealManager
 
     private void add_MultipleSubMealsToGUI(ArrayList<ArrayList<String>> subMealIDs)
     {
-        ///##############################################################################################################
+        ///#############################################################################################################
         //  Ingredients_In_Meal_Calculation JTable
         //##############################################################################################################
         int no_Of_SubMealID = subMealIDs.size();
@@ -422,13 +422,13 @@ public class MealManager
     private void add_SubMealToGUi(boolean subMealInDB, Integer divMealSectionsID)
     {
         String tableName = "ingredients_in_sections_of_meal_calculation";
-        Object[][] mealData = new Object[0][0];
+        ArrayList<ArrayList<Object>> mealData = new ArrayList<>();
 
         if(subMealInDB)
         {
             // Getting Ingredients In Meal
             String query = String.format("SELECT * FROM %s WHERE div_meal_sections_id = %s AND plan_id = %s ORDER BY ingredients_index;", tableName, divMealSectionsID, tempPlanID);
-            mealData = db.getTableDataObject(query, tableName) != null ? db.getTableDataObject(query, tableName) : mealData;
+            mealData = db.getTableDataObject(query, tableName) != null ? db.getTableDataObject_AL(query, tableName) : mealData;
         }
 
         //##############################################

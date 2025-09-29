@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class MacrosTargetsTable extends MyJTable_DisplayData
 {
-    public MacrosTargetsTable(MyJDBC db, Container parentContainer, Object[][] data, String[] columnNames, int planID, int temp_PlanID,
+    public MacrosTargetsTable(MyJDBC db, Container parentContainer, ArrayList<ArrayList<Object>> data, ArrayList<String> columnNames, int planID, int temp_PlanID,
                               String tableName, ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering,
                               ArrayList<String> columnsToHide)
     {

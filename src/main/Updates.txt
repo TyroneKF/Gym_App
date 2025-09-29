@@ -41,6 +41,10 @@ Work On:
 .) Meal_Plan
 .) Add Row increasing currentData[] by 1 so this variable needs to expand
 
+JDBC Table
+Rowsintable remove
+Get rid of currentData as tablemodel should have this data instead
+
 ######################################################################################
 New Features:
 ######################################################################################

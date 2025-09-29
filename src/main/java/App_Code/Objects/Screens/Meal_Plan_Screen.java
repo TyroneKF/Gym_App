@@ -53,7 +53,7 @@ public class Meal_Plan_Screen extends Screen
     //###############################################
     // Collections
     //###############################################
-    private String[] meal_total_columnNames, ingredients_ColumnNames, macroTargetsTable_ColumnNames, macrosLeft_columnNames;
+    private ArrayList<String> meal_total_columnNames, ingredients_ColumnNames, macroTargetsTable_ColumnNames, macrosLeft_columnNames;
 
     private Collection<String> ingredientsTypesList, storesNamesList;
 
@@ -390,21 +390,21 @@ public class Meal_Plan_Screen extends Screen
         //#############################################################################################################
 
         // column names : ingredients_in_sections_of_meal_calculation
-        ingredients_ColumnNames = db.getColumnNames(tableIngredientsCalName);
+        ingredients_ColumnNames = db.getColumnNames_AL(tableIngredientsCalName);
 
         // column names : total_meal_view
-        meal_total_columnNames = db.getColumnNames(tableTotalMealsTableName);
+        meal_total_columnNames = db.getColumnNames_AL(tableTotalMealsTableName);
 
         // column names : plan_macro_target_calculations
-        macroTargetsTable_ColumnNames = db.getColumnNames(tablePlanMacroTargetsNameCalc);
+        macroTargetsTable_ColumnNames = db.getColumnNames_AL(tablePlanMacroTargetsNameCalc);
 
         // Get table column names for plan_macros_left
-        macrosLeft_columnNames = db.getColumnNames(tablePlanMacrosLeftName);
+        macrosLeft_columnNames = db.getColumnNames_AL(tablePlanMacrosLeftName);
     
         //##############################
         // column names : total_meal_view
         ////##############################
-        meal_total_columnNames = db.getColumnNames(tableTotalMealsTableName);
+        meal_total_columnNames = db.getColumnNames_AL(tableTotalMealsTableName);
         
         if(meal_total_columnNames != null)
         {
@@ -426,10 +426,10 @@ public class Meal_Plan_Screen extends Screen
         {
             System.err.printf("Error, Gathering Column Names for Tables: \n%s = %s%n \n%s = %s%n \n%s = %s%n \n%s = %s%n",
 
-                    tableIngredientsCalName, Arrays.toString(ingredients_ColumnNames),
-                    tableTotalMealsTableName, Arrays.toString(meal_total_columnNames),
-                    tablePlanMacroTargetsNameCalc, Arrays.toString(macroTargetsTable_ColumnNames),
-                    tablePlanMacrosLeftName, Arrays.toString(macrosLeft_columnNames)
+                    tableIngredientsCalName, ingredients_ColumnNames,
+                    tableTotalMealsTableName, meal_total_columnNames,
+                    tablePlanMacroTargetsNameCalc, macroTargetsTable_ColumnNames,
+                    tablePlanMacrosLeftName, macrosLeft_columnNames
             );
 
             JOptionPane.showMessageDialog(getFrame(), "Error, Getting Column Names For Tables In GUI !!");
@@ -523,12 +523,12 @@ public class Meal_Plan_Screen extends Screen
         //#########################################################################
         // Getting data for plan_macro_target_calculations
         String planCalcQuery = String.format("SELECT * from %s WHERE plan_id = %s;", tablePlanMacroTargetsNameCalc, tempPlanID);
-
-        Object[][] planData = db.getTableDataObject(planCalcQuery, tablePlanMacroTargetsNameCalc);
-        planData = planData != null ? planData : new Object[0][0];
+    
+        ArrayList<ArrayList<Object>> planData = db.getTableDataObject_AL(planCalcQuery, tablePlanMacroTargetsNameCalc);
+        planData = planData != null ? planData : new ArrayList<>();
 
         macros_Targets_Table = new MacrosTargetsTable(db, macrosInfoJPanel, planData, macroTargetsTable_ColumnNames, planID, tempPlanID,
-                tablePlanMacroTargetsNameCalc, new ArrayList<>(Arrays.asList(macroTargetsTable_ColumnNames)), null, macrosTargets_Table_ColToHide);
+                tablePlanMacroTargetsNameCalc, macroTargetsTable_ColumnNames, null, macrosTargets_Table_ColToHide);
 
         addToContainer(macrosInfoJPanel, macros_Targets_Table, 0, macrosInfoJP_YPos += 1, + 1, 1, 0.25, 0.25, "both", 40, 0, null);
 
@@ -543,12 +543,12 @@ public class Meal_Plan_Screen extends Screen
 
         // Get table data from plan_macros_left
         String macrosQuery = String.format("SELECT * from %s WHERE plan_id = %s;", tablePlanMacrosLeftName, tempPlanID);
-
-        Object[][] macrosData = db.getTableDataObject(macrosQuery, tablePlanMacrosLeftName);
-        macrosData = macrosData != null ? macrosData : new Object[0][0];
+    
+        ArrayList<ArrayList<Object>> macrosData = db.getTableDataObject_AL(macrosQuery, tablePlanMacrosLeftName);
+        macrosData = macrosData != null ? macrosData : new ArrayList<>();
 
         macrosLeft_JTable = new MacrosLeftTable(db, macrosInfoJPanel, macrosData, macrosLeft_columnNames, planID, tempPlanID,
-                tablePlanMacrosLeftName, new ArrayList<>(Arrays.asList(macrosLeft_columnNames)), null, macrosLeft_Table_ColToHide);
+                tablePlanMacrosLeftName, macrosLeft_columnNames, null, macrosLeft_Table_ColToHide);
 
         addToContainer(macrosInfoJPanel, macrosLeft_JTable, 0, macrosInfoJP_YPos += 1, 1, 1, 0.25, 0.25, "both", 30, 0, null);
 
@@ -1785,7 +1785,7 @@ public class Meal_Plan_Screen extends Screen
         return totalMeal_Table_ColToHide;
     }
 
-    public String[] getMeal_total_columnNames()
+    public ArrayList<String> getMeal_total_columnNames()
     {
         return meal_total_columnNames;
     }
@@ -1793,7 +1793,7 @@ public class Meal_Plan_Screen extends Screen
     //###########################################
     // Ingredients Table Collections
     //###########################################
-    public String[] getIngredients_ColumnNames()
+    public ArrayList<String> getIngredients_ColumnNames()
     {
         return ingredients_ColumnNames;
     }

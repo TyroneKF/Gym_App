@@ -42,3 +42,5 @@ INSERT IGNORE INTO ingredient_types (ingredient_type_name) VALUES
 ('Vitamins'),
 ('Whole Wheat'),
 ('Yoghurt');
+
+

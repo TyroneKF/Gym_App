@@ -14,7 +14,7 @@ public class MyJTable_DisplayData extends JDBC_JTable
     protected String query = "";
     protected int updateRow =  0;
 
-    public MyJTable_DisplayData(MyJDBC db, Container parentContainer, Object[][] data, String[] columnNames, int planID, int temp_PlanID,
+    public MyJTable_DisplayData(MyJDBC db, Container parentContainer, ArrayList<ArrayList<Object>> data, ArrayList<String> columnNames, int planID, int temp_PlanID,
                                 String tableName, ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering,
                                 ArrayList<String> columnsToHide)
     {
@@ -95,7 +95,7 @@ public class MyJTable_DisplayData extends JDBC_JTable
         //###########################################################################
         //   Updating MacrosLeft_Table
         ///##########################################################################
-        Object[][] tableDataObject = db.getTableDataObject(query, tableName);
+        ArrayList<ArrayList<Object>> tableDataObject = db.getTableDataObject_AL(query, tableName);
 
         if (tableDataObject==null)
         {
@@ -103,8 +103,8 @@ public class MyJTable_DisplayData extends JDBC_JTable
 
             return;
         }
-
-        Object[] tableData = tableDataObject[0];
+    
+        ArrayList<Object> tableData = tableDataObject.get(0);
         super.updateTable(tableData, updateRow);
     }
 
@@ -113,8 +113,8 @@ public class MyJTable_DisplayData extends JDBC_JTable
         //##########################################
         // Changing Table Model
         //##########################################
-
-        Object[][] data = db.getTableDataObject(query, tableName);
+    
+        ArrayList<ArrayList<Object>> data = db.getTableDataObject_AL(query, tableName);
 
         if (data == null)
         {
@@ -130,7 +130,7 @@ public class MyJTable_DisplayData extends JDBC_JTable
         return true;
     }
 
-    protected void setTableModelData(Object[][] tableModelData)
+    protected void setTableModelData(ArrayList<ArrayList<Object>> tableModelData)
     {
         super.setTableModelData(tableModelData);
     }
