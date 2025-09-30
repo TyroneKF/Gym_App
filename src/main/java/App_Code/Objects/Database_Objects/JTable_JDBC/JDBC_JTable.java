@@ -148,7 +148,10 @@ public class JDBC_JTable extends JPanel
         
         public CustomTableModel(ArrayList<ArrayList<Object>> data, ArrayList<String> columnNames)
         {
-            this.data = data;
+            // ######################################################
+            //
+            // ######################################################
+            this.data = (ArrayList<ArrayList<Object>>) data.clone();
             this.columnNames = columnNames;
         }
         
@@ -188,6 +191,12 @@ public class JDBC_JTable extends JPanel
         {
             return true;
         }
+    
+        @Override
+        public Class getColumnClass(int c)
+        {
+            return getValueAt(0, c).getClass();
+        }
         
         public void removeRow(int modelRow)
         {
@@ -208,12 +217,24 @@ public class JDBC_JTable extends JPanel
             
             data.add(newRowData);
             
-            int size = data.size() - 1;
-            
             //#############################################
             // Trigger JTable Update Methods
             //#############################################
+            int size = data.size() - 1;
             fireTableRowsInserted(size, size); // Alerts JTable has been updated and refreshes JTable
+        }
+        
+        public void refreshData()
+        {
+            data = (ArrayList<ArrayList<Object>>) getSavedData().clone();
+            
+            System.out.printf("\n\n#################################################### \nTableName : %s", tableName);
+            for(int i = 0; i < getRowsInTable(); i++)
+            {
+                System.out.printf("\n%n%s",data.get(i));
+            }
+            fireTableDataChanged(); // notifies JTable to redraw everything
+            resizeObject();
         }
     }
     
@@ -261,30 +282,7 @@ public class JDBC_JTable extends JPanel
     
     protected void tableModel_Setup(ArrayList<ArrayList<Object>> data, ArrayList<String> columnNames)
     {
-        tableModel = new CustomTableModel(data, columnNames)
-        {
-            @Override
-            public boolean isCellEditable(int row, int col)
-            {
-                //Note that the data/cell address is constant,
-                //no matter where the cell appears onscreen.
-                if (unEditableColumnPositions.contains(col))
-                {
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-            }
-            
-            @Override
-            public Class getColumnClass(int c)
-            {
-                return getValueAt(0, c).getClass();
-            }
-        };
-        
+        tableModel = new CustomTableModel(data, columnNames);
         
         if (addJTableAction) { tableModel.addTableModelListener(evt -> tableDataChange_Action(evt)); }
         
@@ -423,7 +421,8 @@ public class JDBC_JTable extends JPanel
     
     public void refreshData()
     {
-        tableModel_Setup(getSavedData(), getGuiColumnNames());
+        tableModel.refreshData();
+        //tableModel_Setup(getSavedData(), getGuiColumnNames());
         currentData = (ArrayList<ArrayList<Object>>) savedData.clone();
     }
     
@@ -518,6 +517,7 @@ public class JDBC_JTable extends JPanel
     //##################################################################################################################
     protected void resizeObject()
     {
+        jTable.repaint();
         jTable.revalidate();
         jTable.setPreferredScrollableViewportSize(
                 new Dimension(

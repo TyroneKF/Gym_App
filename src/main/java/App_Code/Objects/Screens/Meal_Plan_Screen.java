@@ -661,14 +661,15 @@ public class Meal_Plan_Screen extends Screen
         //####################################
 
         ArrayList<String> columnsToAvoid = new ArrayList<>(List.of("current_weight_in_pounds"));
-        String[] macrosColumns = db.getColumnNames(tableMacrosPerPoundLimitName);
+        ArrayList<String> macrosColumns = db.getColumnNames_AL(tableMacrosPerPoundLimitName);
 
         String query05 = String.format("INSERT INTO %s \n(", tableMacrosPerPoundLimitName);
-        int listSize = macrosColumns.length;
+        int listSize = macrosColumns.size();
 
         for (int i = 0; i <= listSize - 1; i++)
         {
-            String colToAdd = columnsToAvoid.contains(macrosColumns[i]) ? "" : String.format("\n\t%s", macrosColumns[i]);
+            String columnName = macrosColumns.get(i);
+            String colToAdd = columnsToAvoid.contains(columnName) ? "" : String.format("\n\t%s", columnName);
 
             query05 = ! colToAdd.equals("") ? String.format("%s %s,", query05, colToAdd) : query05;
         }
