@@ -151,30 +151,8 @@ public class JDBC_JTable extends JPanel
             // ######################################################
             //
             // ######################################################
-            this.data = new ArrayList<>();
             this.columnNames = columnNames;
-    
-            /**
-             * Although this does look long alternative methods dont work
-             * .clone() references the original list so still creates error when recalling savedData list
-             */
-            // ######################################################
-            // Create DataSet by manually adding each Cell
-            // ######################################################
-            int rowSize = inputData.size(), columnSize = columnNames.size();
-            
-            for (int row = 0; row < rowSize; row++)
-            {
-                ArrayList<Object> readingRow = inputData.get(row);
-                ArrayList<Object> newRow = new ArrayList<>();
-                
-                for (int col = 0; col < columnSize; col++)
-                {
-                    newRow.add(readingRow.get(col));
-                }
-                
-                data.add(newRow);
-            }
+            this.data = cloneData(inputData);
         }
         
         @Override
@@ -252,15 +230,34 @@ public class JDBC_JTable extends JPanel
             // Clear DATA
             // ######################################################
             data.clear();
+            data = cloneData(getSavedData());
             
             // ######################################################
-            // Re-Create DataSet
+            //
             // ######################################################
-            int rowSize = savedData.size(), columnSize = columnNames.size();
+            fireTableDataChanged(); // notifies JTable to redraw everything
+            resizeObject();
+        }
+        
+        private ArrayList<ArrayList<Object>> cloneData(ArrayList<ArrayList<Object>> sourceData)
+        {
+            /**
+             * Although this does look long alternative methods dont work
+             * .clone() references the original list so still creates error when recalling savedData list
+             * Datatypes like BigDecimal & LocalTime needed to be completely recreated from scratch as they
+             * will still reference the original source.
+             */
+            
+            // ######################################################
+            // Create DataSet by manually adding each Cell
+            // ######################################################
+            ArrayList<ArrayList<Object>> tempData = new ArrayList<>();
+            
+            int rowSize = sourceData.size(), columnSize = columnNames.size();
     
             for (int row = 0; row < rowSize; row++)
             {
-                ArrayList<Object> readingRow = savedData.get(row);
+                ArrayList<Object> readingRow = sourceData.get(row);
                 ArrayList<Object> newRow = new ArrayList<>();
         
                 for (int col = 0; col < columnSize; col++)
@@ -268,14 +265,9 @@ public class JDBC_JTable extends JPanel
                     newRow.add(readingRow.get(col));
                 }
         
-                data.add(newRow);
+                tempData.add(newRow);
             }
-            
-            // ######################################################
-            //
-            // ######################################################
-            fireTableDataChanged(); // notifies JTable to redraw everything
-            resizeObject();
+            return tempData;
         }
     }
     
