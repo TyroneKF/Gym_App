@@ -30,7 +30,7 @@ public class JDBC_JTable extends JPanel
     //##############################################
     protected JTable jTable = new JTable();
     protected CustomTableModel tableModel;
-    protected ArrayList<ArrayList<Object>> savedData, currentData;
+    protected ArrayList<ArrayList<Object>> savedData;
     
     protected String tableName;
     protected ArrayList<String> columnNames, guiColumnNames;
@@ -69,7 +69,6 @@ public class JDBC_JTable extends JPanel
         //##############################################################
         this.db = db;
         this.savedData = savedData;
-        this.currentData = (ArrayList<ArrayList<Object>>) savedData.clone();
         
         this.parentContainer = parentContainer;
         this.addJTableAction = addJTableAction;
@@ -269,6 +268,11 @@ public class JDBC_JTable extends JPanel
             }
             return tempData;
         }
+        
+        protected ArrayList<ArrayList<Object>> getTableModelData()
+        {
+            return data;
+        }
     }
     
     //###################################################
@@ -455,8 +459,6 @@ public class JDBC_JTable extends JPanel
     public void refreshData()
     {
         tableModel.refreshData();
-        //tableModel_Setup(getSavedData(), getGuiColumnNames());
-        currentData = (ArrayList<ArrayList<Object>>) savedData.clone();
     }
     
     //##################################################################################################################
@@ -540,7 +542,7 @@ public class JDBC_JTable extends JPanel
     
     protected ArrayList<ArrayList<Object>> getCurrentData()
     {
-        return currentData;
+        return tableModel.getTableModelData();
     }
     
     //##################################################################################################################
