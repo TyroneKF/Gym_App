@@ -146,13 +146,35 @@ public class JDBC_JTable extends JPanel
         private ArrayList<ArrayList<Object>> data;
         private ArrayList<String> columnNames;
         
-        public CustomTableModel(ArrayList<ArrayList<Object>> data, ArrayList<String> columnNames)
+        public CustomTableModel(ArrayList<ArrayList<Object>> inputData, ArrayList<String> columnNames)
         {
             // ######################################################
             //
             // ######################################################
-            this.data = (ArrayList<ArrayList<Object>>) data.clone();
+            this.data = new ArrayList<>();
             this.columnNames = columnNames;
+    
+            /**
+             * Although this does look long alternative methods dont work
+             * .clone() references the original list so still creates error when recalling savedData list
+             */
+            // ######################################################
+            // Create DataSet by manually adding each Cell
+            // ######################################################
+            int rowSize = inputData.size(), columnSize = columnNames.size();
+            
+            for (int row = 0; row < rowSize; row++)
+            {
+                ArrayList<Object> readingRow = inputData.get(row);
+                ArrayList<Object> newRow = new ArrayList<>();
+                
+                for (int col = 0; col < columnSize; col++)
+                {
+                    newRow.add(readingRow.get(col));
+                }
+                
+                data.add(newRow);
+            }
         }
         
         @Override
@@ -191,7 +213,7 @@ public class JDBC_JTable extends JPanel
         {
             return true;
         }
-    
+        
         @Override
         public Class getColumnClass(int c)
         {
@@ -226,13 +248,32 @@ public class JDBC_JTable extends JPanel
         
         public void refreshData()
         {
-            data = (ArrayList<ArrayList<Object>>) getSavedData().clone();
+            // ######################################################
+            // Clear DATA
+            // ######################################################
+            data.clear();
             
-            System.out.printf("\n\n#################################################### \nTableName : %s", tableName);
-            for(int i = 0; i < getRowsInTable(); i++)
+            // ######################################################
+            // Re-Create DataSet
+            // ######################################################
+            int rowSize = savedData.size(), columnSize = columnNames.size();
+    
+            for (int row = 0; row < rowSize; row++)
             {
-                System.out.printf("\n%n%s",data.get(i));
+                ArrayList<Object> readingRow = savedData.get(row);
+                ArrayList<Object> newRow = new ArrayList<>();
+        
+                for (int col = 0; col < columnSize; col++)
+                {
+                    newRow.add(readingRow.get(col));
+                }
+        
+                data.add(newRow);
             }
+            
+            // ######################################################
+            //
+            // ######################################################
             fireTableDataChanged(); // notifies JTable to redraw everything
             resizeObject();
         }
@@ -434,10 +475,8 @@ public class JDBC_JTable extends JPanel
         int reply = JOptionPane.showConfirmDialog(null, String.format("Are you sure you want to %s, \nany unsaved changes will be lost in this Table! \nDo you want to %s?", process, process),
                 "Notification", JOptionPane.YES_NO_OPTION); //HELLO Edit
         
-        if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
-        {
-            return false;
-        }
+        if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION) { return false; }
+        
         return true;
     }
     
