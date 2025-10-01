@@ -46,6 +46,11 @@ JDBC Table
 liquids left
 Force
 
+// ############################
+IngredientsTable
+1.) Change SubMeal / Save it
+2.) Refresh MealManager, can't identify if individual meals have changed so everything gets
+
 ######################################################################################
 New Features:
 ######################################################################################

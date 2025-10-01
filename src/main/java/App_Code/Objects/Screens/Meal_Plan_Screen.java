@@ -95,7 +95,6 @@ public class Meal_Plan_Screen extends Screen
     //##################################################
     // Database Table Names
     //##################################################
-
     private final static String
             db_Scripts_Folder_Path = "/data/database_scripts",
             db_File_Script_List_Name = "0.) Script_List.txt",
@@ -120,7 +119,6 @@ public class Meal_Plan_Screen extends Screen
     //##################################################################################################################
     // Ingredients Table Columns
     //##################################################################################################################
-
     // Table: ingredients_in_sections_of_meal_calculation
     private final ArrayList<String>
 
@@ -615,7 +613,6 @@ public class Meal_Plan_Screen extends Screen
     //##################################################################################################################
     // Transfer SQL Data & Get Data Methods
     //##################################################################################################################
-
     // Transfer Data Methods
     private boolean transferPlanData(int fromPlan, int toPlan)
     {
@@ -1175,9 +1172,9 @@ public class Meal_Plan_Screen extends Screen
         iconPanelInsert.add(down_ScrollBar_Btn);
     }
 
-    // ###################################################
+    // ################################################################
     // Delete BTN Actions
-    // ###################################################
+    // ###############################################################
     private void delete_btnAction()
     {
         //###########################################################
@@ -1213,18 +1210,18 @@ public class Meal_Plan_Screen extends Screen
         //###########################################################
         clearLineChartDataSet();
     }
-
-    // ###################################################
+    
+    // ###############################################################
     // Recipe BTN Actions
-    // ###################################################
+    // ###############################################################
     private void recipeList_BtnAction_OpenScreen()
     {
 
     }
-
-    // ###################################################
+    
+    // ###############################################################
     // Pie Chart BTN Actions
-    // ###################################################
+    // ###############################################################
     private void pieChart_BtnAction_OpenScreen()
     {
         if (pie_chart_meal_plan_screen == null)
@@ -1237,10 +1234,10 @@ public class Meal_Plan_Screen extends Screen
     }
 
     public void removePieChartScreen() { pie_chart_meal_plan_screen = null; }
-
-    // #########################################
+    
+    // ###############################################################
     // Line Chart BTN Actions
-    // #########################################
+    // ###############################################################
     private void lineChart_Btn_Action_OpenScreen()
     {
         if (lineChartMealPlanScreen == null)
@@ -1277,18 +1274,18 @@ public class Meal_Plan_Screen extends Screen
 
         lineChartMealPlanScreen.clear_And_Rebuild_Dataset();
     }
-
-    // ###################################################
+    
+    // ###############################################################
     // Scroll Up BTN Action
-    // ###################################################
+    // ###############################################################
     private void scrollUp_BtnAction()
     {
         super.scroll_To_Top_of_ScrollPane();
     }
-
-    // ###################################################
+    
+    // ###############################################################
     // Refresh BTN Actions / Plan Actions
-    // ###################################################
+    // ###############################################################
     private void refreshPlan(boolean askPermission)
     {
         String txt = "Are you sure you want to refresh all the meals in this plan?";
@@ -1329,7 +1326,7 @@ public class Meal_Plan_Screen extends Screen
         // Refresh Macro-Targets Table
         //####################################################################
         refresh_MacroTargets(); // if macroTargets changed ask the user if they would like to refresh this data
-        refresh_MacrosLeft();
+        update_MacrosLeftTable();
 
         //####################################################################
         // Re-Upload LineChart Data in One Go
@@ -1339,10 +1336,10 @@ public class Meal_Plan_Screen extends Screen
             lineChartMealPlanScreen.clear_And_Rebuild_Dataset(); // clear but, also adds data in
         }
     }
-
-    // ###################################################
+    
+    // ###############################################################
     // Add Meal BTN Actions
-    // ###################################################
+    // ###############################################################
     private void add_Meal_Btn_Action()
     {
         //##############################################################################################################
@@ -1427,10 +1424,10 @@ public class Meal_Plan_Screen extends Screen
         // Scroll to MealManager
         scrollToJPanelOnScreen(mealManager.getCollapsibleJpObj());
     }
-
-    // ###################################################
+    
+    // ###############################################################
     // Save Plan BTN
-    // ###################################################
+    // ###############################################################
     private void saveMealData(boolean askPermission, boolean showMsg)
     {
         // ##############################################################################
@@ -1455,9 +1452,9 @@ public class Meal_Plan_Screen extends Screen
                 it.remove();
                 continue;
             }
-            noMealsLeft = false;
+            noMealsLeft = false; // if this line is reached there is a  MealManager (for loop) that hasn't been deleted
         }
-
+        
         // ##############################################################################
         // Save meal plan data in DB
         // ##############################################################################
@@ -1501,23 +1498,14 @@ public class Meal_Plan_Screen extends Screen
         }
 
         // ##############################################################################
-        // Update MacrosLeft Targets
-        // ##############################################################################
-        if (! (macrosLeft_JTable.updateMacrosLeftTableModelData()))
-        {
-            JOptionPane.showMessageDialog(frame, "\n\n Error \n3.) Unable to save MacrosLeftTable! \n\nPlease retry again!");
-            return;
-        }
-
-        // ##############################################################################
         // Successful Message
         // ##############################################################################
         if (showMsg) { JOptionPane.showMessageDialog(frame, "\n\nAll Meals Are Successfully Saved!"); }
     }
-
-    // ###################################################
+    
+    // ###############################################################
     // Add Ingredients Screen & Ingredient Methods
-    // ###################################################
+    // ###############################################################
     private void open_AddIngredients_Screen()
     {
         if (! (get_IsPlanSelected()))
@@ -1551,10 +1539,10 @@ public class Meal_Plan_Screen extends Screen
             refreshPlan(false); // Refresh Plan
         }
     }
-
-    // ###################################################
+    
+    // ###############################################################
     // Macro Targets Screen & Target Methods
-    // ###################################################
+    // ###############################################################
     private void open_MacrosTargets_Screen()
     {
         if (! (get_IsPlanSelected()))
@@ -1579,13 +1567,19 @@ public class Meal_Plan_Screen extends Screen
     {
         macroTargetsChanged = bool;
     }
-
+    
+    // Booleans
+    public boolean hasMacroTargetsChanged()
+    {
+        return macroTargetsChanged;
+    }
+    
     private void saveMacroTargets(boolean askPermission, boolean showUpdateMsg)
     {
         // ##############################################
         // If targets haven't changed exit
         // ##############################################
-        if (! getMacrosTargetsChanged())
+        if (! hasMacroTargetsChanged())
         {
             return;
         }
@@ -1610,10 +1604,10 @@ public class Meal_Plan_Screen extends Screen
             update_Targets_And_MacrosLeftTables();
         }
     }
-
-    // ###################################################
+    
+    // ###############################################################
     // Scroll Down BTN Action
-    // ###################################################
+    // ###############################################################
     private void scrollDown_BtnAction()
     {
         super.scroll_To_Bottom_of_ScrollPane();
@@ -1628,7 +1622,7 @@ public class Meal_Plan_Screen extends Screen
         // ##########################################
         // Ask to Save DATA
         // ##########################################
-        if (macroTargetsChanged) // If targets have changed, save them?
+        if (hasMacroTargetsChanged()) // If targets have changed, save them?
         {
             saveMacroTargets(true, false);
         }
@@ -1667,6 +1661,37 @@ public class Meal_Plan_Screen extends Screen
         update_MacrosTargetTable();
         update_MacrosLeftTable();
     }
+    
+    //##########################################
+    // MacrosLeft Targets
+    //#########################################
+    public void update_MacrosTargetTable()
+    {
+        macros_Targets_Table.updateMacrosTargetsTable();
+    }
+    
+    private void refresh_MacroTargets()
+    {
+        // ##############################################
+        // If targets have changed prompt to Refresh
+        // ##############################################
+        if (hasMacroTargetsChanged())
+        {
+            int reply = JOptionPane.showConfirmDialog(frame, String.format("Would you like to refresh your MacroTargets Too?"),
+                    "Refresh Macro Targets", JOptionPane.YES_NO_OPTION); //HELLO Edit
+            
+            if (reply == JOptionPane.YES_OPTION)
+            {
+                if (transferTargets(planID, tempPlanID, true, false))
+                {
+                    JOptionPane.showMessageDialog(frame, "\n\nMacro-Targets Successfully Refreshed!!");
+                    macrosTargetsChanged(false);
+                    
+                    macros_Targets_Table.refreshData();
+                }
+            }
+        }
+    }
 
     //##########################################
     // MacrosLeft Table
@@ -1675,58 +1700,15 @@ public class Meal_Plan_Screen extends Screen
     {
         macrosLeft_JTable.updateMacrosLeftTable();
     }
-
-    private void refresh_MacrosLeft()
-    {
-        macrosLeft_JTable.refreshData();
-    }
-
+    
     public MacrosLeftTable getMacrosLeft_JTable()
     {
         return macrosLeft_JTable;
     }
 
-    //##########################################
-    // MacroTargets Table
-    //#########################################
-    public void update_MacrosTargetTable()
-    {
-        macros_Targets_Table.updateMacrosTargetsTable();
-    }
-
-    private void refresh_MacroTargets()
-    {
-        // ##############################################
-        // If targets have changed, save them?
-        // ##############################################
-        if (getMacrosTargetsChanged())
-        {
-            int reply = JOptionPane.showConfirmDialog(frame, String.format("Would you like to refresh your MacroTargets Too?"),
-                    "Refresh Macro Targets", JOptionPane.YES_NO_OPTION); //HELLO Edit
-
-            if (reply == JOptionPane.YES_OPTION)
-            {
-                if (transferTargets(planID, tempPlanID, true, false))
-                {
-                    JOptionPane.showMessageDialog(frame, "\n\nMacro-Targets Successfully Refreshed!!");
-                    macrosTargetsChanged(false);
-
-                    macros_Targets_Table.refreshData();
-                }
-            }
-        }
-    }
-
     //##################################################################################################################
     //  Accessor Methods
     //##################################################################################################################
-
-    // Booleans
-    public boolean getMacrosTargetsChanged()
-    {
-        return macroTargetsChanged;
-    }
-
     public boolean get_IsPlanSelected()
     {
         if (planID == null)
@@ -1761,7 +1743,6 @@ public class Meal_Plan_Screen extends Screen
     //####################################################################
     // Collections :  Accessor Methods
     //#####################################################################
-
     // Others
     public TreeMap<String, Collection<String>> getMap_ingredientTypesToNames()
     {

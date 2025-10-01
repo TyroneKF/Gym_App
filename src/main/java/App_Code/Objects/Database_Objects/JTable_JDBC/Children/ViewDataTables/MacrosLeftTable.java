@@ -24,9 +24,4 @@ public class MacrosLeftTable extends MyJTable_DisplayData
     {
         super.updateTable();
     }
-
-    public boolean updateMacrosLeftTableModelData()
-    {
-        return super.updateTableModelData();
-    }
 }

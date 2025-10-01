@@ -1145,9 +1145,9 @@ public class MealManager
             return;
         }
 
-        //##############################################################################################
-        // Check if results prove another table in plan has this meal saved time/name & cancel if needed
-        //##############################################################################################
+        //###########################################
+        // IF TRUE Notify Meal Name/Time Taken
+        //###########################################
         ArrayList<String> positions = new ArrayList<>();
 
         if(results.size() >= 1 && ! results.get(0).get(0).equals("N/A")) { positions.add(results.get(0).get(0)); }
@@ -1229,7 +1229,7 @@ public class MealManager
         //##############################################################################################
         // Refresh TotalMeal
         //##############################################################################################
-        refresh_TotalMealTable(updateExternalCharts);
+        update_TotalMeal_Table(updateExternalCharts);
         
         //##############################################################################################
         // Refresh MacrosLeft
@@ -1240,12 +1240,6 @@ public class MealManager
         }
     }
     
-    public void refresh_TotalMealTable(Boolean updateExternalCharts)
-    {
-        totalMealTable.refreshData();
-        updateCharts(updateExternalCharts);
-    }
-
     //######################################
     // Save BTN Methods
     //######################################
@@ -1301,11 +1295,6 @@ public class MealManager
             table.set_Meal_In_DB(true);
             table.savedData();
         }
-
-        // ##############################################################################
-        // Save TotalMealTable
-        // ##############################################################################
-        totalMealTable.savedData();
 
         // ##############################################################################
         // Successful Message
