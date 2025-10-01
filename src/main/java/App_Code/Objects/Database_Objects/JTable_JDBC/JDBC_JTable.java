@@ -10,7 +10,6 @@ import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.*;
 import java.awt.*;
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -142,7 +141,7 @@ public class JDBC_JTable extends JPanel
     public class CustomTableModel extends AbstractTableModel
     {
         
-        private ArrayList<ArrayList<Object>> data;
+        private ArrayList<ArrayList<Object>> currentTableData;
         private ArrayList<String> columnNames;
         
         public CustomTableModel(ArrayList<ArrayList<Object>> inputData, ArrayList<String> columnNames)
@@ -151,13 +150,13 @@ public class JDBC_JTable extends JPanel
             //
             // ######################################################
             this.columnNames = columnNames;
-            this.data = cloneData(inputData);
+            this.currentTableData = cloneData(inputData);
         }
         
         @Override
         public int getRowCount()
         {
-            return data.size();
+            return currentTableData.size();
         }
         
         @Override
@@ -169,7 +168,7 @@ public class JDBC_JTable extends JPanel
         @Override
         public Object getValueAt(int row, int col)
         {
-            return data.get(row).get(col);
+            return currentTableData.get(row).get(col);
         }
         
         @Override
@@ -181,7 +180,7 @@ public class JDBC_JTable extends JPanel
         @Override
         public void setValueAt(Object value, int row, int col)
         {
-            data.get(row).set(col, value);
+            currentTableData.get(row).set(col, value);
             fireTableCellUpdated(row, col);
         }
         
@@ -199,7 +198,7 @@ public class JDBC_JTable extends JPanel
         
         public void removeRow(int modelRow)
         {
-            data.remove(modelRow);
+            currentTableData.remove(modelRow);
             fireTableRowsDeleted(modelRow, modelRow); // notify JTable
         }
         
@@ -214,12 +213,12 @@ public class JDBC_JTable extends JPanel
                 newRowData.add(null);
             }
             
-            data.add(newRowData);
+            currentTableData.add(newRowData);
             
             //#############################################
             // Trigger JTable Update Methods
             //#############################################
-            int size = data.size() - 1;
+            int size = currentTableData.size() - 1;
             fireTableRowsInserted(size, size); // Alerts JTable has been updated and refreshes JTable
         }
         
@@ -228,14 +227,20 @@ public class JDBC_JTable extends JPanel
             // ######################################################
             // Clear DATA
             // ######################################################
-            data.clear();
-            data = cloneData(getSavedData());
+            currentTableData.clear();
+            currentTableData = cloneData(getSavedData());
             
             // ######################################################
             //
             // ######################################################
             fireTableDataChanged(); // notifies JTable to redraw everything
             resizeObject();
+        }
+        
+        public void saveData()
+        {
+            savedData.clear();
+            savedData = cloneData(currentTableData);
         }
         
         private ArrayList<ArrayList<Object>> cloneData(ArrayList<ArrayList<Object>> sourceData)
@@ -253,17 +258,17 @@ public class JDBC_JTable extends JPanel
             ArrayList<ArrayList<Object>> tempData = new ArrayList<>();
             
             int rowSize = sourceData.size(), columnSize = columnNames.size();
-    
+            
             for (int row = 0; row < rowSize; row++)
             {
                 ArrayList<Object> readingRow = sourceData.get(row);
                 ArrayList<Object> newRow = new ArrayList<>();
-        
+                
                 for (int col = 0; col < columnSize; col++)
                 {
                     newRow.add(readingRow.get(col));
                 }
-        
+                
                 tempData.add(newRow);
             }
             return tempData;
@@ -271,7 +276,7 @@ public class JDBC_JTable extends JPanel
         
         protected ArrayList<ArrayList<Object>> getTableModelData()
         {
-            return data;
+            return currentTableData;
         }
     }
     
@@ -460,6 +465,8 @@ public class JDBC_JTable extends JPanel
     {
         tableModel.refreshData();
     }
+    
+    public void savedData() { tableModel.saveData(); }
     
     //##################################################################################################################
     // Action Methods

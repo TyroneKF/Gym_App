@@ -27,11 +27,6 @@ public class TotalMealTable extends MyJTable_DisplayData
         super.updateTable();
     }
 
-    public boolean updateTotalMealTableModelData()
-    {
-        return super.updateTableModelData();
-    }
-
     public BigDecimal get_ValueOnTable(int row, int col )
     {
         return (BigDecimal) super.getValueOnTable(row, col);

@@ -976,14 +976,7 @@ public class IngredientsTable extends JDBC_JTable
         //######################################################################
         // Update Table Model
         //######################################################################
-        if (! updateTableModelData())
-        {
-            if (showMessage)
-            {
-                JOptionPane.showMessageDialog(frame, "\n\nUnable to update table model!");
-            }
-            return false;
-        }
+        savedData();
         
         //######################################################################
         // Success Message
@@ -1000,29 +993,6 @@ public class IngredientsTable extends JDBC_JTable
         dataChangedInTable = false;
         
         //#############################################################################################
-        
-        return true;
-    }
-    
-    public boolean updateTableModelData()
-    {
-        //##########################################
-        // Changing Ingredients In Meal Table Model
-        //##########################################
-        String tableInQuery = "ingredients_in_sections_of_meal_calculation";
-        
-        String query = String.format("SELECT * FROM %s WHERE div_meal_sections_id = %s AND plan_id = %s;", tableInQuery, divMealSectionsID, temp_PlanID);
-        System.out.printf("\n\n################################################### \nupdateTableModelData() \n%s", query);
-        
-        ArrayList<ArrayList<Object>> ingredients_Data = db.getTableDataObject_AL(query, tableInQuery);
-        
-        if (ingredients_Data == null)
-        {
-            System.out.printf("\n\nUnable to change table model: %s", getMealName());
-            return false;
-        }
-        
-        setTableModelData(ingredients_Data);
         
         return true;
     }

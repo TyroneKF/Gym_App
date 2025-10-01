@@ -1281,7 +1281,6 @@ public class MealManager
         // Removing Sub-Meals that have been deleted & Saving The Other Tables
         // ##############################################################################
         Iterator<IngredientsTable> it = ingredientsTables.iterator();
-        int errorCount = 0;
         while (it.hasNext())
         {
             IngredientsTable table = it.next();
@@ -1297,29 +1296,16 @@ public class MealManager
             }
 
             // #####################################
-            // If error occurred above exit
+            // Saved Data & Reset Variables
             // #####################################
             table.set_Meal_In_DB(true);
-
-            if(! (table.updateTableModelData()))
-            {
-                errorCount++;
-            }
-        }
-
-        // #####################################
-        // If error occurred above exit
-        // #####################################
-        if(errorCount > 0)
-        {
-            JOptionPane.showMessageDialog(getFrame(), "\n\n Error \n1.) Unable to updateTableModelData() all sub-meals in meal! \n\nPlease retry again!");
-            return;
+            table.savedData();
         }
 
         // ##############################################################################
         // Save TotalMealTable
         // ##############################################################################
-        totalMealTable.updateTotalMealTableModelData();
+        totalMealTable.savedData();
 
         // ##############################################################################
         // Successful Message
