@@ -61,6 +61,7 @@ public class MealManager
     private GridBagConstraints gbc;
     private Container container;
     private CollapsibleJPanel collapsibleJpObj;
+    private MealManagerRegistry mealManagerRegistry;
 
     // Screens
     private Pie_Chart_Meal_Manager_Screen pie_chart_meal_manager_screen;
@@ -73,13 +74,14 @@ public class MealManager
     //##################################################################################################################
     // Constructors
     //##################################################################################################################
-    public MealManager(Meal_Plan_Screen meal_plan_screen, Container container, int mealInPlanID, String mealName, String mealTime, ArrayList<ArrayList<String>> subMealsInMealArrayList)
+    public MealManager(Meal_Plan_Screen meal_plan_screen, int mealInPlanID, String mealName, String mealTime, ArrayList<ArrayList<String>> subMealsInMealArrayList)
     {
         //##############################################################################################################
         // Global Variables
         //##############################################################################################################
         this.meal_plan_screen = meal_plan_screen;
-        this.container = container;
+        this.mealManagerRegistry = meal_plan_screen.get_MealManagerRegistry();
+        this.container = meal_plan_screen.getScrollJPanelCenter();
         this.db = meal_plan_screen.getDb();
 
 
@@ -106,6 +108,7 @@ public class MealManager
         // Setting Variable
         //##############################################################################################################
         this.meal_plan_screen = meal_plan_screen;
+        this.mealManagerRegistry = meal_plan_screen.get_MealManagerRegistry();
         this.container = container;
         this.db = meal_plan_screen.getDb();
 
@@ -190,7 +193,7 @@ public class MealManager
         // Objects
         ///############################
         this.db = meal_plan_screen.getDb();
-        this.gbc = meal_plan_screen.getGbc();
+        this.gbc = new GridBagConstraints();
         this.macrosLeft_JTable = meal_plan_screen.getMacrosLeft_JTable();
 
         ///############################
@@ -235,7 +238,7 @@ public class MealManager
     
         ArrayList<ArrayList<Object>> meal_Total_Data = result != null ? result : new ArrayList<>();
 
-        totalMealTable = new TotalMealTable(db, collapsibleJpObj, meal_Total_Data, mealTotalTable_ColumnNames, planID, tempPlanID,
+        totalMealTable = new TotalMealTable(db, this, collapsibleJpObj, meal_Total_Data, mealTotalTable_ColumnNames, planID, tempPlanID,
                 mealInPlanID, savedMealName, tableName, mealTotalTable_ColumnNames, null, totalMeal_Table_ColToHide);
 
         //#############################################
@@ -698,7 +701,7 @@ public class MealManager
 
         // Update Time Variables & Update GUI Too
         setTimeVariables(true, savedMealTime, newMealTime); // Set Meal Time Variables
-        meal_plan_screen.addMealManger(this, true); // Update Meal Plan Screen
+        meal_plan_screen.addMealMangerToGUI(this, false, true, false); // Update Meal Plan Screen
     }
 
     private LocalTime promptUserForMealTime(boolean skipConfirmation, boolean comparison)
@@ -1194,7 +1197,7 @@ public class MealManager
         pieChart_UpdateMealName();
 
         // Reset GUI by removing and adding this object to the GUI
-        meal_plan_screen.addMealManger(this, true);
+        meal_plan_screen.addMealMangerToGUI(this, false, true, true);
     }
 
     public void reloadingIngredientsTableDataFromRefresh(boolean updateMacrosLeft, boolean updateExternalCharts)
@@ -1349,7 +1352,12 @@ public class MealManager
     {
         return spaceDividerForMealManager;
     }
-
+    
+    public MealManagerRegistry getMealManagerRegistry()
+    {
+        return mealManagerRegistry;
+    }
+    
     // ###########################
     // Booleans
     // ###########################
@@ -1408,25 +1416,25 @@ public class MealManager
     //##################################################################################################################
     // Resizing GUI
     //##################################################################################################################
-    private void addToContainer(Container container, Component addToContainer, Integer gridx, Integer gridy, Integer gridwidth,
-                                Integer gridheight, Double weightx, Double weighty, String fill, Integer ipady, Integer ipadx, String anchor)
+    private void addToContainer(Container container, Component addToContainer, Integer gridX, Integer gridy, Integer gridWidth,
+                                Integer gridHeight, Double weightX, Double weightY, String fill, Integer ipadY, Integer ipadX, String anchor)
     {
-        if(gridx != null)
+        if(gridX != null)
         {
-            gbc.gridx = gridx;
+            gbc.gridx = gridX;
         }
         if(gridy != null)
         {
             gbc.gridy = gridy;
         }
 
-        gbc.gridwidth = gridwidth;
-        gbc.gridheight = gridheight;
-        gbc.weightx = weightx;
-        gbc.weighty = weighty;
+        gbc.gridwidth = gridWidth;
+        gbc.gridheight = gridHeight;
+        gbc.weightx = weightX;
+        gbc.weighty = weightY;
 
-        gbc.ipady = ipady;
-        gbc.ipadx = ipadx;
+        gbc.ipady = ipadY;
+        gbc.ipadx = ipadX;
 
         switch (fill.toLowerCase())
         {

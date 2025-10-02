@@ -35,7 +35,7 @@ public class MealManagerRegistry
      * <Key: MacroName | Value: Map <Key: MealManagerID, Value: < MealTime, Quantity>>
      * Etc;  <Key: Salt | Value: <MealManagerID: 1, <MealTime: 14:00 , Quantity: 300g >>
      */
-    private Map<String, Map<Integer, Pair<LocalTime, BigDecimal>>> mealManagersMacroValues = new HashMap<>();
+    private Map<String, Map<Integer, Pair<LocalTime, BigDecimal>>> mealManagersMacroValues;
     
     //##################################################################################################################
     // Constructor
@@ -51,15 +51,25 @@ public class MealManagerRegistry
         //##################################
         // Create Macros Collection
         //##################################
+        recreateEmpty_MealManagersMacrosValues();
+    }
+    
+    //##################################################################################################################
+    //  Methods
+    //##################################################################################################################
+    public void recreateEmpty_MealManagersMacrosValues()
+    {
+        mealManagersMacroValues = new HashMap<>();
+        
+        //##################################
+        // Create Macros Collection
+        //##################################
         for (String macroName : totalMeal_macroColNamePos.keySet())
         {
             mealManagersMacroValues.put(macroName, new HashMap<>());
         }
     }
     
-    //##################################################################################################################
-    // Methods
-    //##################################################################################################################
     
     public void addMealManager(MealManager mealManager)
     {
@@ -137,7 +147,7 @@ public class MealManagerRegistry
         }
     }
     
-    public void replaceMealManager(MealManager mealManager)
+    public void replaceMealManagerDATA(MealManager mealManager)
     {
         //##########################################
         // mealManager Info
@@ -151,6 +161,7 @@ public class MealManagerRegistry
         //##########################################
         mealManagerTreeSet.removeIf(e -> e.getKey().equals(mealManagerID));
         mealManagerTreeSet.add(Map.entry(mealManagerID, mealManager));
+        
         
         //##########################################
         // Remove MealManager Results to Collection
@@ -174,18 +185,106 @@ public class MealManagerRegistry
             
             /**
              *  <Key: MacroName | Value: Map<Key: MealManagerID, Value: < MealTime, Quantity>>
-             *   Replace
+             *   Put, Replace
              */
-
-            mealManagersMacroValues.get(macroName).put(mealManagerID, new Pair<>(mealManagerTime,macroValue ));
+            
+            mealManagersMacroValues.get(macroName).put(mealManagerID, new Pair<>(mealManagerTime, macroValue));
         }
     }
     
     //############################################################
     // Accessor Methods
     //############################################################
-    public Map<String, Map<Integer, Pair<LocalTime, BigDecimal>>> getMealManagersMacroValues()
+    public Map<String, Map<Integer, Pair<LocalTime, BigDecimal>>> get_MealManagersMacroValues()
     {
         return mealManagersMacroValues;
     }
+    
+    public TreeSet<Map.Entry<Integer, MealManager>> get_MealManagerTreeSet()
+    {
+        return mealManagerTreeSet;
+    }
+    
+    //##################################################################################################################
+    //  Meal_Plan_Screen Methods
+    //##################################################################################################################
+    public void delete_MealManagers()
+    {
+        //##################################
+        // Delete MealManagers
+        //##################################
+        Iterator<Map.Entry<Integer, MealManager>> it = mealManagerTreeSet.iterator();
+        while (it.hasNext())
+        {
+            it.next().getValue().hideMealManager(); // Hide Meal Managers
+        }
+        
+        //##################################
+        // Clear / Recreate EMPTY Collection
+        //##################################
+        recreateEmpty_MealManagersMacrosValues();
+    }
+    
+    public void refresh_MealManagers()
+    {
+        Iterator<Map.Entry<Integer, MealManager>> it = mealManagerTreeSet.iterator();
+        while (it.hasNext())
+        {
+            //####################################
+            // MealManager Info
+            //####################################
+            MealManager mealManager = it.next().getValue();
+            int mealManagerID = mealManager.getMealInPlanID();
+            
+            //####################################
+            // Remove mealManager from memory
+            //####################################
+            it.remove();
+            
+            //####################################
+            // Remove MealManager (Not Saved)
+            //####################################
+            if (! mealManager.isMealManagerInDB()) // IF MealManager isn't saved Remove it
+            {
+                mealManager.completely_Delete_MealManager();  // mealManager is not in the DB erase it from the GUI
+                
+                // Remove this mealManagers MacrosValues
+                for (String macroName : totalMeal_macroColNamePos.keySet())
+                {
+                    mealManagersMacroValues.get(macroName).remove(mealManagerID);
+                }
+                continue;
+            }
+            
+            //####################################
+            // MealManagers in DB NOW ADD Info
+            //####################################
+            // Add back to TreeSet to re-correct ORDER
+            mealManagerTreeSet.add(Map.entry(mealManagerID, mealManager));
+            
+            // Reload MealManager Data
+            mealManager.reloadingIngredientsTableDataFromRefresh(false, false);
+            
+            // Replace this mealManagers MacrosValues
+            LocalTime mealTime = mealManager.getCurrentMealTime();
+            TotalMealTable totalMealTable = mealManager.getTotalMealTable();
+            
+            // For Each Macro Replace its old value
+            Iterator<Map.Entry<String, Integer>> it2 = totalMeal_macroColNamePos.entrySet().iterator();
+            while (it2.hasNext())
+            {
+                Map.Entry<String, Integer> entry = it2.next();
+                
+                String macroName = entry.getKey();
+                Integer macroPos = entry.getValue();
+                
+                BigDecimal macroValue = totalMealTable.get_ValueOnTable(0, macroPos);
+                
+                // Replace OLD Value
+                mealManagersMacroValues.get(macroName).put(mealManagerID, new Pair<>(mealTime, macroValue));
+            }
+        }
+    }
+    
+    
 }
