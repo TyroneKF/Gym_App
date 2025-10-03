@@ -38,6 +38,7 @@ Work On:
 ######################################################################################
 .) All MealManager PieCharts in one Screen
 .) Meal_Plan_Screen per macro %s
+.) MealManagers & All pie charts share the same piechart object
 
 
 
