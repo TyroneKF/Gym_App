@@ -47,7 +47,8 @@ public class MealManager
     
     // Collections
     private ArrayList<String> mealTotalTable_ColumnNames, ingredientsTable_ColumnNames;
-    private ArrayList<String> totalMeal_Table_ColToHide, ingredientsTableUnEditableCells, ingredients_Table_Col_Avoid_Centering, ingredientsInMeal_Table_ColToHide;
+    private ArrayList<String> totalMeal_Table_ColToHide, ingredientsTableUnEditableCells, ingredients_Table_Col_Avoid_Centering,
+            ingredientsInMeal_Table_ColToHide;
     private TreeMap<String, Collection<String>> map_ingredientTypesToNames;
     private ArrayList<IngredientsTable> ingredientsTables = new ArrayList<>();
     
@@ -68,8 +69,8 @@ public class MealManager
     
     // Table Objects
     private MacrosLeftTable macrosLeft_JTable;
-    private TotalMealTable totalMealTable;
     private Meal_Plan_Screen meal_plan_screen;
+    private TotalMealTable totalMealTable;
     
     //##################################################################################################################
     // Constructors
@@ -80,14 +81,13 @@ public class MealManager
         // Global Variables
         //##############################################################################################################
         this.meal_plan_screen = meal_plan_screen;
-        this.mealManagerRegistry = meal_plan_screen.get_MealManagerRegistry();
-        this.container = meal_plan_screen.getScrollJPanelCenter();
-        this.db = meal_plan_screen.getDb();
         
+        this.db = meal_plan_screen.getDb();
+    
+        this.mealInPlanID = mealInPlanID;
         
         this.tempPlanID = meal_plan_screen.getTempPlanID();
         this.planID = meal_plan_screen.getPlanID();
-        this.mealInPlanID = mealInPlanID;
         
         LocalTime timeStringFormatted = LocalTime.parse(removeSecondsOnTimeString(mealTime)); // turns etc 09:30:00 into 09:30 for GUI purposes & in time format
         setTimeVariables(false, timeStringFormatted, timeStringFormatted); // Set MealTime Variables
@@ -102,14 +102,13 @@ public class MealManager
     }
     
     //
-    public MealManager(Meal_Plan_Screen meal_plan_screen, Container container)
+    public MealManager(Meal_Plan_Screen meal_plan_screen)
     {
         //##############################################################################################################
         // Setting Variable
         //##############################################################################################################
         this.meal_plan_screen = meal_plan_screen;
-        this.mealManagerRegistry = meal_plan_screen.get_MealManagerRegistry();
-        this.container = container;
+        
         this.db = meal_plan_screen.getDb();
         
         this.tempPlanID = meal_plan_screen.getTempPlanID();
@@ -192,8 +191,9 @@ public class MealManager
         ///############################
         // Objects
         ///############################
-        this.db = meal_plan_screen.getDb();
         this.gbc = new GridBagConstraints();
+        this.container = meal_plan_screen.getScrollJPanelCenter();
+        this.mealManagerRegistry = meal_plan_screen.get_MealManagerRegistry();
         this.macrosLeft_JTable = meal_plan_screen.getMacrosLeft_JTable();
         
         ///############################
@@ -201,17 +201,12 @@ public class MealManager
         ///############################
         this.mealTotalTable_ColumnNames = meal_plan_screen.getMeal_total_columnNames();
         this.totalMeal_Table_ColToHide = meal_plan_screen.getTotalMeal_Table_ColToHide();
+        
         this.map_ingredientTypesToNames = meal_plan_screen.getMap_ingredientTypesToNames();
         this.ingredientsTableUnEditableCells = meal_plan_screen.getIngredientsTableUnEditableCells();
         this.ingredients_Table_Col_Avoid_Centering = meal_plan_screen.getIngredients_Table_Col_Avoid_Centering();
         this.ingredientsInMeal_Table_ColToHide = meal_plan_screen.getIngredientsInMeal_Table_ColToHide();
         this.ingredientsTable_ColumnNames = meal_plan_screen.getIngredients_ColumnNames();
-        
-        ///############################
-        // Integers
-        ///############################
-        this.tempPlanID = meal_plan_screen.getTempPlanID();
-        this.planID = meal_plan_screen.getPlanID();
         
         //##############################################################################################################
         // Create Collapsible Object
@@ -787,16 +782,17 @@ public class MealManager
         
         collapsibleJpObj.setIconBtnText(inputMealName);
         setMealNameVariables(true, savedMealName, inputMealName);  // Set Meal Name Variables
-       
-        //#########################################################################################################
-        // Update TotalMealTable
-        //#########################################################################################################
-        update_TotalMeal_Table(false, false); // Make Updates Visible
-        
+    
+    
         //#########################################################################################################
         // Change Graph Title if exists
         //#########################################################################################################
         pieChart_UpdateMealName();
+        
+        //#########################################################################################################
+        // Update TotalMealTable
+        //#########################################################################################################
+        update_TotalMeal_Table(false, false); // Chart already updated above (no need)
     }
     
     private String promptUserForMealName(boolean skipConfirmation, boolean comparison)
@@ -914,6 +910,11 @@ public class MealManager
         // Hide JTable object & Collapsible OBJ
         //##########################################
         hideMealManager();
+    
+        //##########################################
+        // Update Registry Data
+        //##########################################
+        mealManagerRegistry.deleteMealManager(mealInPlanID);
         
         //##########################################
         // Update MacrosLeftTable
@@ -1193,18 +1194,23 @@ public class MealManager
         //#############################################################################################
         // Reset GUI  & Variables
         //##############################################################################################
+        
+        
         // Reset Time & MealName Variables
         setTimeVariables(false, savedMealTime, savedMealTime);
         setMealNameVariables(false, savedMealName, savedMealName);
         
         collapsibleJpObj.setIconBtnText(savedMealName); // Reset Meal Name in GUI to Old Txt
         
+        //######################################
+        // Update PieChart Data
+        //######################################
         reloadTableAndChartsData(true, true);
-        
-        // Update PieChart Name
-        pieChart_UpdateMealName();
-        
-        // Reset GUI by removing and adding this object to the GUI
+        pieChart_UpdateMealName(); //Update PieChart Name
+    
+        //######################################
+        // Remove & Re-add to GUI & RegistryDATA
+        //######################################
         meal_plan_screen.addMealMangerToGUI(this, true, false, true);
     }
     
@@ -1331,8 +1337,13 @@ public class MealManager
     
     public void update_TotalMeal_Table(Boolean updateInternalCharts, Boolean updateExternalCharts)
     {
-        totalMealTable.updateTotalMealTable(); // Update TotalMealView
+        // Update TotalMealView (Has to be first)
+        totalMealTable.updateTotalMealTable();
         
+        // Update Registry Data (Second)
+        mealManagerRegistry.replaceMealManagerDATA(this);
+        
+        // Update Charts
         updateCharts(updateInternalCharts, updateExternalCharts);
     }
     

@@ -79,6 +79,8 @@ public class MealManagerRegistry
         LocalTime mealManagerTime = mealManager.getCurrentMealTime();
         TotalMealTable totalMealTable = mealManager.getTotalMealTable();
         
+        System.out.printf("\n\nMealManagerRegistry.java : addMealManager() \nMealInPlanID :  %s", mealManagerID);
+        
         //##########################################
         // Add MealManager to Collection
         //##########################################
@@ -107,10 +109,13 @@ public class MealManagerRegistry
              */
             mealManagersMacroValues.get(macroName) // Map Returned
                     .put(mealManagerID, new Pair<>(mealManagerTime, macroValue));
+            
+            System.out.printf("\nmealManagerID : %s  mealManagerTime : %s |MacroName: %s  | macroValue : %s",
+                    mealManagerID, mealManagerTime, macroName, macroValue);
         }
     }
     
-    public void updateMealManagerDATA(MealManager mealManager) // Done by replacing data
+    public void replaceMealManagerDATA(MealManager mealManager) // Update done by replacing data
     {
         //##########################################
         // mealManager Info
@@ -118,6 +123,8 @@ public class MealManagerRegistry
         int mealManagerID = mealManager.getMealInPlanID();
         LocalTime mealManagerTime = mealManager.getCurrentMealTime();
         TotalMealTable totalMealTable = mealManager.getTotalMealTable();
+        
+        System.out.printf("\n\nMealManagerRegistry.java : replaceMealManagerDATA() \nMealInPlanID :  %s", mealManagerID);
         
         //##########################################
         // Remove / ADD MealManager to Collection
@@ -160,7 +167,7 @@ public class MealManagerRegistry
     public void completelyDeleteMealManager(MealManager mealManager)
     {
         //##########################################
-        // mealManager Info
+        // GET MealManager Info
         //##########################################
         int mealManagerID = mealManager.getMealInPlanID();
         
@@ -172,11 +179,27 @@ public class MealManagerRegistry
         //##########################################
         // Remove MealManager Results to Collection
         //##########################################
+        removeMealManagersMacroValues(mealManagerID);
+    }
+    
+    public void deleteMealManager(int mealManagerID)
+    {
+        //##########################################
+        // Remove MealManager Results to Collection
+        //##########################################
+        removeMealManagersMacroValues(mealManagerID);
+    }
+    
+    private void removeMealManagersMacroValues(Integer mealManagerID)
+    {
+        //##########################################
+        // Remove MealManager Results to Collection
+        //##########################################
         /**
          * HashMap<String, Map<Integer, Pair<LocalTime, BigDecimal>>> mealManagersMacroValues = new HashMap<>();
          * Stores all the mealManagers TotalMealValues in collections by the macroName
          * <Key: MacroName | Value: Map <Key: MealManagerID, Value: < MealTime, Quantity>>
-         * Etc;  <Key: Salt | Value: <MealManagerID: 1, <MealTime: 14:00 , Quantity: 300g >>
+         * Etc; <Key: Salt | Value: <MealManagerID: 1, <MealTime: 14:00 , Quantity: 300g >>
          */
         
         Iterator<Map.Entry<String, Integer>> it = totalMeal_macroColNamePos.entrySet().iterator();
@@ -192,20 +215,7 @@ public class MealManagerRegistry
             mealManagersMacroValues.get(macroName).remove(mealManagerID);
         }
     }
-   
-    //############################################################
-    // Accessor Methods
-    //############################################################
-    public Map<String, Map<Integer, Pair<LocalTime, BigDecimal>>> get_MealManagersMacroValues()
-    {
-        return mealManagersMacroValues;
-    }
     
-    public TreeSet<Map.Entry<Integer, MealManager>> get_MealManagerTreeSet()
-    {
-        return mealManagerTreeSet;
-    }
-
     //##################################################################################################################
     //  Meal_Plan_Screen Methods
     //##################################################################################################################
@@ -285,5 +295,27 @@ public class MealManagerRegistry
                 mealManagersMacroValues.get(macroName).put(mealManagerID, new Pair<>(mealTime, macroValue));
             }
         }
+    }
+    
+    //##################################################################################################################
+    // Accessor Methods
+    ///##################################################################################################################
+    public Map<String, Pair<BigDecimal, String>> get_MM_MacroInfo_PieChart(Integer mealInPlanID)
+    {
+        Map<String, Pair<BigDecimal, String>> values = new HashMap<>();
+        
+        values.put("Protein", new Pair<>(mealManagersMacroValues.get("total_protein").get(mealInPlanID).getValue1(), "g"));
+        values.put("Fats", new Pair<>(mealManagersMacroValues.get("total_fats").get(mealInPlanID).getValue1(), "g"));
+        values.put("Carbohydrates", new Pair<>(mealManagersMacroValues.get("total_carbohydrates").get(mealInPlanID).getValue1(), "g"));
+        
+        return values;
+    }
+    
+    //#########################################
+    // Objects
+    //#########################################
+    public TreeSet<Map.Entry<Integer, MealManager>> get_MealManagerTreeSet()
+    {
+        return mealManagerTreeSet;
     }
 }

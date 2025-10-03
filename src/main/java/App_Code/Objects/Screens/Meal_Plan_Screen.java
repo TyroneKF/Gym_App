@@ -590,7 +590,8 @@ public class Meal_Plan_Screen extends Screen
             //#####################################################
             // Create Meal Component
             //#####################################################
-            System.out.printf("\n\nMeal_Plan_Screen.java | MealManager \nmeal_in_plan_id : %s \nmeal_name : %s \nmeal_time : %s \nSub-Meals In MealManager (ID) : %s%n", mealInPlanID, mealName, mealTime, subMealsInMealArrayList);//HELLO DELETE
+            System.out.printf("\n\n%s \nMeal_Plan_Screen.java | MealManager \nmeal_in_plan_id : %s \nmeal_name : %s \nmeal_time : %s \nSub-Meals In MealManager (ID) : %s%n",
+                    lineSeparator, mealInPlanID, mealName, mealTime, subMealsInMealArrayList);//HELLO DELETE
             addMealMangerToGUI(new MealManager(this, mealInPlanID, mealName, mealTime, subMealsInMealArrayList), false, false, false);
             
             //######################################################
@@ -1351,7 +1352,7 @@ public class Meal_Plan_Screen extends Screen
         //##############################################################################################################
         //
         //##############################################################################################################
-        addMealMangerToGUI(new MealManager(this, scrollJPanelCenter), false, false, true);
+        addMealMangerToGUI(new MealManager(this), false, false, true);
     }
     
     public void addMealMangerToGUI(MealManager mealManager, boolean isMealManagerInGUI, boolean skipMealRegistry, boolean expandView)
@@ -1437,7 +1438,7 @@ public class Meal_Plan_Screen extends Screen
             if (mealManager.getHasMealPlannerBeenDeleted())
             {
                 mealManager.completely_Delete_MealManager(); // delete from GUI
-                mealManagerRegistry.completelyRemoveMealManager(mealManager); // remove from memory
+                mealManagerRegistry.completelyDeleteMealManager(mealManager); // remove from memory
                 continue;
             }
             noMealsLeft = false; // if this line is reached there is a  MealManager (for loop) that hasn't been deleted

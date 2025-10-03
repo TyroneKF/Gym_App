@@ -3,6 +3,7 @@ package App_Code.Objects.Screens.Graph_Screens;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.TotalMealTable;
 import App_Code.Objects.Database_Objects.MealManager;
+import App_Code.Objects.Database_Objects.MealManagerRegistry;
 import App_Code.Objects.Gui_Objects.Screen;
 import App_Code.Objects.Graph_Objects.Pie_Chart;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
@@ -30,6 +31,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
     private TotalMealTable totalMealTable;
     private Meal_Plan_Screen meal_plan_screen;
     private Pie_Chart pieChart;
+    private MealManagerRegistry mealManagerRegistry;
     
     //#####################################
     // Strings
@@ -42,6 +44,8 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
     private int
             frameWidth = 800,
             frameHeight = 600;
+    
+    private int mealInPlanID;
     
     //###########################################################################################
     // Constructor
@@ -60,17 +64,21 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
         // Variables
         // ##########################################
         this.mealManager = mealManager;
-        
-        this.meal_name = mealManager.getCurrentMealName();
-        this.totalMealTable = mealManager.getTotalMealTable();
+        this.mealManagerRegistry = mealManager.getMealManagerRegistry();
         this.meal_plan_screen = mealManager.getMeal_plan_screen();
+        this.totalMealTable = mealManager.getTotalMealTable();
+    
+        this.mealInPlanID = mealManager.getMealInPlanID();
+        this.meal_name = mealManager.getCurrentMealName();
+        
         this.macronutrientsToCheckAndPos = meal_plan_screen.getTotalMeal_MacroColNamePos();
         
         //############################################
         // Creating Macros / Dataset
         //############################################
-        if (! updateDataSet()) { windowClosedEvent(); return; }
+        updateDataSet();
         
+        System.out.printf("Pie_Chart_Meal_Manager_Screen.java \n DataSet: \n%n%s", macros);
         // ##########################################
         // Create Graph Object & Adding to GUI
         // ##########################################
@@ -94,34 +102,12 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
     //####################################
     public void update_pieChart()
     {
-        if (updateDataSet()) { pieChart.update_dataset(macros); }
+        updateDataSet(); pieChart.update_dataset(macros);
     }
     
-    private boolean updateDataSet()
+    private void updateDataSet()
     {
-        try
-        {
-            BigDecimal proteinValue = totalMealTable.get_ValueOnTable(0, macronutrientsToCheckAndPos.get("total_protein"));
-            BigDecimal carbsValue = totalMealTable.get_ValueOnTable(0, macronutrientsToCheckAndPos.get("total_carbohydrates"));
-            BigDecimal fatsValue = totalMealTable.get_ValueOnTable(0, macronutrientsToCheckAndPos.get("total_fats"));
-            
-            System.out.printf("\n\nPie_Chart_Meal_Manager_Screen.java : updateDataSet() \n\nProtein : %s \nCarbs : %s \nFats : %s", proteinValue.toString(), carbsValue.toString(), fatsValue.toString());
-    
-            // Get Macros Results on Table
-            macros = Map.ofEntries(
-                    Map.entry("Protein", new Pair<>(proteinValue, "g")),
-                    Map.entry("Carbohydrates", new Pair<>(carbsValue, "g")),
-                    Map.entry("Fats", new Pair<>(fatsValue, "g"))
-            );
-            
-            return true;
-        }
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(meal_plan_screen.getFrame(), "Error, creating Pie Chart with column table names!");
-            System.err.printf("\n\nPie_Chart.java : updateDataSet() \n%s", e);
-            return false;
-        }
+        macros = mealManagerRegistry.get_MM_MacroInfo_PieChart(mealInPlanID);
     }
     
     public void update_PieChart_Title()
