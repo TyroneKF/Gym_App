@@ -109,9 +109,6 @@ public class MealManagerRegistry
              */
             mealManagersMacroValues.get(macroName) // Map Returned
                     .put(mealManagerID, new Pair<>(mealManagerTime, macroValue));
-            
-            System.out.printf("\nmealManagerID : %s  mealManagerTime : %s |MacroName: %s  | macroValue : %s",
-                    mealManagerID, mealManagerTime, macroName, macroValue);
         }
     }
     
