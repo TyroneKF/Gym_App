@@ -36,20 +36,10 @@ Check for
 ######################################################################################
 Work On:
 ######################################################################################
-.) Total Meal Update save to Data[]
-.) Add meals change data in graphs
-.) Meal_Plan
-.) Add Row increasing currentData[] by 1 so this variable needs to expand
+.) All MealManager PieCharts in one Screen
+.) Meal_Plan_Screen per macro %s
 
-JDBC Table
 
-liquids left
-Force
-
-// ############################
-IngredientsTable
-1.) Change SubMeal / Save it
-2.) Refresh MealManager, can't identify if individual meals have changed so everything gets
 
 ######################################################################################
 New Features:

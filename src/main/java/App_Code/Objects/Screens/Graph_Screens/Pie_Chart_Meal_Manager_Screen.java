@@ -106,11 +106,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
             BigDecimal fatsValue = totalMealTable.get_ValueOnTable(0, macronutrientsToCheckAndPos.get("total_fats"));
             
             System.out.printf("\n\nPie_Chart_Meal_Manager_Screen.java : updateDataSet() \n\nProtein : %s \nCarbs : %s \nFats : %s", proteinValue.toString(), carbsValue.toString(), fatsValue.toString());
-            if (proteinValue == null || carbsValue == null || fatsValue == null)
-            {
-                throw new Exception("null values returned");
-            }
-            
+    
             // Get Macros Results on Table
             macros = Map.ofEntries(
                     Map.entry("Protein", new Pair<>(proteinValue, "g")),

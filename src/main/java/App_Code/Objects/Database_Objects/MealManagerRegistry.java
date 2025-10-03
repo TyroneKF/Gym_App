@@ -263,7 +263,7 @@ public class MealManagerRegistry
             mealManagerTreeSet.add(Map.entry(mealManagerID, mealManager));
             
             // Reload MealManager Data
-            mealManager.reloadingIngredientsTableDataFromRefresh(false, false);
+            mealManager.reloadTableAndChartsData(false, false);
             
             // Replace this mealManagers MacrosValues
             LocalTime mealTime = mealManager.getCurrentMealTime();
