@@ -1354,7 +1354,7 @@ public class Meal_Plan_Screen extends Screen
         addMealMangerToGUI(new MealManager(this, scrollJPanelCenter), false, false, true);
     }
     
-    public void addMealMangerToGUI(MealManager mealManager, boolean skipMealRegistry, boolean isMealManagerInGUI, boolean expandView)
+    public void addMealMangerToGUI(MealManager mealManager, boolean isMealManagerInGUI, boolean skipMealRegistry, boolean expandView)
     {
         if (! mealManager.isObjectCreated())
         {

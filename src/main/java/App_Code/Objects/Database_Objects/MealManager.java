@@ -672,7 +672,7 @@ public class MealManager
         //#########################################################################################################
         // Update
         //#########################################################################################################
-        String uploadQuery = String.format(""" 
+        String uploadQuery = String.format("""
                 UPDATE meals_in_plan
                 SET meal_time = '%s'
                 WHERE plan_id = %s AND meal_in_plan_id = %s; """, newMealTime, tempPlanID, mealInPlanID);
@@ -701,7 +701,7 @@ public class MealManager
 
         // Update Time Variables & Update GUI Too
         setTimeVariables(true, savedMealTime, newMealTime); // Set Meal Time Variables
-        meal_plan_screen.addMealMangerToGUI(this, false, true, false); // Update Meal Plan Screen
+        meal_plan_screen.addMealMangerToGUI(this, true, false, false); // Update Meal Plan Screen
     }
 
     private LocalTime promptUserForMealTime(boolean skipConfirmation, boolean comparison)
@@ -763,7 +763,7 @@ public class MealManager
         // Update
         //#########################################################################################################
 
-        String uploadQuery = String.format(""" 
+        String uploadQuery = String.format("""
                 UPDATE meals_in_plan
                 SET meal_name = '%s'
                 WHERE plan_id = %s AND meal_in_plan_id = %s;""", inputMealName, tempPlanID, mealInPlanID);
@@ -882,7 +882,7 @@ public class MealManager
         String query1 = "SET FOREIGN_KEY_CHECKS = 0;"; // Disable Foreign Key Checks
 
         // DELETE ingredients_in_sections_of_meal
-        String query2 = String.format(""" 
+        String query2 = String.format("""
                 DELETE FROM ingredients_in_sections_of_meal
                 WHERE div_meal_sections_id IN (SELECT div_meal_sections_id FROM divided_meal_sections WHERE meal_in_plan_id = %s AND plan_id = %s) AND plan_id = %s;""", mealInPlanID, tempPlanID, tempPlanID);
 
@@ -1028,7 +1028,7 @@ public class MealManager
         String query2 = "SET FOREIGN_KEY_CHECKS = 0;"; // Disable Foreign Key Checks
 
         // Delete ingredients from this meal in toPlan
-        String query3 = String.format(""" 
+        String query3 = String.format("""
                 DELETE FROM ingredients_in_sections_of_meal
                 WHERE div_meal_sections_id IN (SELECT div_meal_sections_id FROM divided_meal_sections WHERE meal_in_plan_id = %s AND plan_id = %s) AND plan_id = %s;""", mealInPlanID, toPlanID, toPlanID);
 
@@ -1111,8 +1111,8 @@ public class MealManager
         // Check IF OLD Table Name & Meal Time Are Available To Assign Back To This Meal
         //##############################################################################################
 
-        String query = String.format("""                                
-                SELECT IFNULL(M.pos, "N/A") AS pos		
+        String query = String.format("""
+                SELECT IFNULL(M.pos, "N/A") AS pos
                 FROM
                 (
                   -- This being the anchor had to restricted to make sure there's always a true value
@@ -1132,7 +1132,7 @@ public class MealManager
                 	WHERE plan_id = %s
                 	
                 ) AS M
-                  
+                
                 ON P.plan_id = M.plan_id
                 AND (M.meal_name = '%s' OR M.meal_time = '%s')
                 AND M.meal_in_plan_id != %s; """, tempPlanID, tempPlanID, savedMealName, savedMealTime, mealInPlanID);
@@ -1160,14 +1160,14 @@ public class MealManager
         {
             JOptionPane.showMessageDialog(getFrame(), String.format("""
                     \n\nA meal in this plan already has this meals saved info:
-                                
-                    'Meal Name' of : '%s' or 'Meal Time' of : '%s' 
-                                
+                    
+                    'Meal Name' of : '%s' or 'Meal Time' of : '%s'
+                    
                     at positions : %s  which is stopping this meal from refreshing !
-                                
-                    Change those values first at positions : %s in this plan 
+                    
+                    Change those values first at positions : %s in this plan
                     to be able to refresh this meal!
-                                
+                    
                     Or, refresh the whole plan if the other meals won't be affected !""", savedMealName, savedMealTime, positions, positions));
 
             return;
@@ -1197,7 +1197,7 @@ public class MealManager
         pieChart_UpdateMealName();
 
         // Reset GUI by removing and adding this object to the GUI
-        meal_plan_screen.addMealMangerToGUI(this, false, true, true);
+        meal_plan_screen.addMealMangerToGUI(this, true, false, true);
     }
 
     public void reloadingIngredientsTableDataFromRefresh(boolean updateMacrosLeft, boolean updateExternalCharts)
@@ -1321,7 +1321,6 @@ public class MealManager
         macrosLeft_JTable.updateMacrosLeftTable();
     }
 
-    
     public void update_TotalMeal_Table(Boolean updateExternalCharts)
     {
         totalMealTable.updateTotalMealTable(); // Update TotalMealView
