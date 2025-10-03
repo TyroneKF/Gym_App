@@ -12,31 +12,21 @@ public class TotalMealTable extends MyJTable_DisplayData
 {
     private Integer mealInPlanID;
     private String mealName;
-    private MealManagerRegistry mealManagerRegistry;
-    private MealManager mealManager;
-    
 
-    public TotalMealTable(MyJDBC db, MealManager mealManager, CollapsibleJPanel collapsibleObj, ArrayList<ArrayList<Object>> data, ArrayList<String> columnNames, int planID, int temp_PlanID,
+    public TotalMealTable(MyJDBC db, CollapsibleJPanel collapsibleObj, ArrayList<ArrayList<Object>> data, ArrayList<String> columnNames, int planID, int temp_PlanID,
                           Integer MealInPlanID, String mealName, String tableName, ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering,
                           ArrayList<String> columnsToHide)
     {
-
         super(db, collapsibleObj.getCentreJPanel(), data, columnNames, planID, temp_PlanID, tableName, unEditableColumns, colAvoidCentering, columnsToHide);
         super.query = String.format("SELECT * FROM %s WHERE meal_in_plan_id = %s AND plan_id = %s;", tableName, MealInPlanID, temp_PlanID);
 
         this.mealInPlanID = MealInPlanID;
         this.mealName = mealName;
-        
-        this.mealManager = mealManager;
-        this.mealManagerRegistry = mealManager.getMealManagerRegistry();
     }
 
     public void updateTotalMealTable()
     {
         super.updateTable();
-        
-        // Replace data in Collections
-        //mealManagerRegistry.replaceMealManagerDATA(mealManager);
     }
     
     public BigDecimal get_ValueOnTable(int row, int col )
