@@ -2,6 +2,7 @@ package App_Code.Objects.Screens.Graph_Screens;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.MealManager;
+import App_Code.Objects.Database_Objects.MealManagerRegistry;
 import App_Code.Objects.Graph_Objects.Line_Chart;
 import App_Code.Objects.Gui_Objects.Screen;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
@@ -19,15 +20,16 @@ import java.util.*;
 
 public class Line_Chart_Meal_Plan_Screen extends Screen
 {
-    // #################################################################################################################
+    //#################################################################################################################
     // Variables
-    // #################################################################################################################
+    //#################################################################################################################
     private String planName;
 
     //##############################################
     // Objects
     //##############################################
     private Meal_Plan_Screen meal_plan_screen;
+    private MealManagerRegistry mealManagerRegistry;
 
     //##############################################
     // Collections
@@ -59,6 +61,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
         // ##########################################
         this.db = db;
         this.meal_plan_screen = meal_plan_screen;
+        this.mealManagerRegistry = meal_plan_screen.get_MealManagerRegistry();
         this.mealManagerTreeSet = meal_plan_screen.getMealManagerTreeSet();
         this.planName = meal_plan_screen.getPlanName();
         this.macronutrientsToCheckAndPos = meal_plan_screen.getTotalMeal_MacroColNamePos();
@@ -66,7 +69,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
         //############################################
         // Creating Macros / Dataset
         //############################################
-        if (! createDataSet()) { windowClosedEvent(); return; }
+        createDataSet();
 
         // ##########################################
         // Create Graph Object & Adding to GUI
@@ -83,59 +86,9 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
     // ##################################################
     // Build Methods
     // ##################################################
-    public boolean createDataSet()
+    public void createDataSet()
     {
-        // ############################################
-        // Build Dataset
-        // ############################################
-        Iterator<Map.Entry<Integer, MealManager>> it = mealManagerTreeSet.iterator();
-        while(it.hasNext())
-        {
-            // ############################################
-            // MealManager Object & Info
-            // ############################################
-            Map.Entry<Integer, MealManager> mealManagerEntry = it.next();
-            MealManager mealManager = mealManagerEntry.getValue();
-    
-            // MealManager MealName
-            String mealManagerName = mealManager.getCurrentMealName();
-    
-            // Meal Time In TimeSeries Format
-            Second mealTimeSeconds = localTimeToSecond(mealManager.getCurrentMealTime());
-          
-            // Get MealManager TotalMeal Data
-            ArrayList<Object> totalMealTableData = mealManager.getTotalMealTable().getTableData();
-    
-            // ############################################
-            // Add Desired Macros From TotalMeal to DATA
-            // ############################################
-            Iterator<Map.Entry<String, Integer>> macrosIT = macronutrientsToCheckAndPos.entrySet().iterator();
-            while(macrosIT.hasNext())
-            {
-                // Get MacroDetails
-                Map.Entry<String, Integer> macroEntry = macrosIT.next();
-                String macroGUIName = convertMacroNameToGuiVersion(macroEntry.getKey());
-                Integer macroColPos = macroEntry.getValue();
-        
-                // ############################################
-                // Get Macro TimeSeries
-                // ############################################
-                TimeSeries macroTimeSeries;
-                if(dataset.getSeriesIndex(macroGUIName) < 0) // IF Macros Series doesn't exist in collection, add it
-                {
-                    macroTimeSeries = new TimeSeries(macroGUIName);
-                    dataset.addSeries(macroTimeSeries);
-                }
-                else
-                {
-                    macroTimeSeries = dataset.getSeries(macroGUIName);
-                }
-                
-                macroTimeSeries.add(mealTimeSeconds, (BigDecimal) totalMealTableData.get(macroColPos));
-            }
-        }
-        
-        return true;
+        dataset = mealManagerRegistry.get_Plan_MacroValues_LineChart();
     }
 
     public void updateMealManagerDataChange(MealManager mealManager, LocalTime previousTime, LocalTime currentTime)
@@ -205,9 +158,9 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
         meal_plan_screen.removeLineChartScreen();
     }
 
-    // ##################################################
+    //##################################################
     // Conversion Methods
-    // ##################################################
+    //##################################################
     private String convertMacroNameToGuiVersion(String macroName)
     {
         // Reformat macroName for GUI purposes  "\u00A0" is like space because \t doesn't work in this label format
@@ -227,18 +180,18 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
         return new Second(date);
     }
 
-    // ##################################################
+    //##################################################
     //  Update  Methods
-    // ##################################################
+    //##################################################
     public void update_LineChart_Title()
     {
         planName = meal_plan_screen.getPlanName();
         line_chart.setTitle(planName);
     }
     
-    // ##################################################
+    //##################################################
     //  Clear Dataset Methods
-    // ##################################################
+    //##################################################
     public void clear_And_Rebuild_Dataset()
     {
         dataset = new TimeSeriesCollection();

@@ -3,10 +3,17 @@ package App_Code.Objects.Database_Objects;
 import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.TotalMealTable;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 import org.javatuples.Pair;
+import org.jfree.data.time.Second;
+import org.jfree.data.time.TimeSeries;
+import org.jfree.data.time.TimeSeriesCollection;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MealManagerRegistry
 {
@@ -19,7 +26,7 @@ public class MealManagerRegistry
     // Collections
     //##################################
     private Map<String, Integer> totalMeal_macroColNamePos;
-    
+ 
     private TreeSet<Map.Entry<Integer, MealManager>> mealManagerTreeSet = new TreeSet<Map.Entry<Integer, MealManager>>(new Comparator<Map.Entry<Integer, MealManager>>()
     {
         @Override
@@ -35,7 +42,7 @@ public class MealManagerRegistry
      * <Key: MacroName | Value: Map <Key: MealManagerID, Value: < MealTime, Quantity>>
      * Etc;  <Key: Salt | Value: <MealManagerID: 1, <MealTime: 14:00 , Quantity: 300g >>
      */
-    private Map<String, Map<Integer, Pair<LocalTime, BigDecimal>>> mealManagersMacroValues;
+    private Map<String, HashMap<Integer, Pair<Second, BigDecimal>>> mealManagersMacroValues;
     
     //##################################################################################################################
     // Constructor
@@ -108,7 +115,7 @@ public class MealManagerRegistry
              * Etc;  <Key: Salt | Value: <MealManagerID: 1, <MealTime: 14:00 , Quantity: 300g >>
              */
             mealManagersMacroValues.get(macroName) // Map Returned
-                    .put(mealManagerID, new Pair<>(mealManagerTime, macroValue));
+                    .put(mealManagerID, new Pair<>(localTimeToSecond(mealManagerTime), macroValue));
         }
     }
     
@@ -154,7 +161,7 @@ public class MealManagerRegistry
              *   Put, Replace
              */
             
-            mealManagersMacroValues.get(macroName).put(mealManagerID, new Pair<>(mealManagerTime, macroValue));
+            mealManagersMacroValues.get(macroName).put(mealManagerID, new Pair<>(localTimeToSecond(mealManagerTime), macroValue));
         }
     }
     
@@ -289,7 +296,7 @@ public class MealManagerRegistry
                 BigDecimal macroValue = totalMealTable.get_ValueOnTable(0, macroPos);
                 
                 // Replace OLD Value
-                mealManagersMacroValues.get(macroName).put(mealManagerID, new Pair<>(mealTime, macroValue));
+                mealManagersMacroValues.get(macroName).put(mealManagerID, new Pair<>(localTimeToSecond(mealTime), macroValue));
             }
         }
     }
@@ -297,6 +304,8 @@ public class MealManagerRegistry
     //##################################################################################################################
     // Accessor Methods
     ///##################################################################################################################
+    
+    // Pie Chart
     public Map<String, Pair<BigDecimal, String>> get_MM_MacroInfo_PieChart(Integer mealInPlanID)
     {
         Map<String, Pair<BigDecimal, String>> values = new HashMap<>();
@@ -306,6 +315,76 @@ public class MealManagerRegistry
         values.put("Carbohydrates", new Pair<>(mealManagersMacroValues.get("total_carbohydrates").get(mealInPlanID).getValue1(), "g"));
         
         return values;
+    }
+    
+    //#########################################
+    // LineChart Methods
+    //#########################################
+    public TimeSeriesCollection get_Plan_MacroValues_LineChart()
+    {
+        TimeSeriesCollection timeSeriesCollection = new TimeSeriesCollection();
+        
+        for(String macroName : totalMeal_macroColNamePos.keySet())
+        {
+            // Create a series for each macroName
+            TimeSeries macroTimeSeries = new TimeSeries(convertMacroNameToGuiVersion(macroName));
+            timeSeriesCollection.addSeries(macroTimeSeries);
+    
+            // Add all the values from this macroName into the series
+            /**
+             * HashMap<String, Map<Integer, Pair<LocalTime, BigDecimal>>> mealManagersMacroValues = new HashMap<>();
+             * Stores all the mealManagers TotalMealValues in collections by the macroName
+             * <Key: MacroName | Value: Map <Key: MealManagerID, Value: < MealTime, Quantity>>
+             * Etc;  <Key: Salt | Value: <MealManagerID: 1, <MealTime: 14:00 , Quantity: 300g >>
+             */
+    
+            Map<Integer, Pair<Second, BigDecimal>> macroValues = mealManagersMacroValues.get(macroName);
+            Iterator<Map.Entry<Integer, Pair<Second, BigDecimal>>> it = macroValues.entrySet().iterator();
+            
+            while(it.hasNext()) // Iterate through the recorded MealManager Values for this macro
+            {
+                Map.Entry<Integer, Pair<Second, BigDecimal>> mealManagers_Info = it.next();
+                Pair<Second, BigDecimal> mealManagerValues = mealManagers_Info.getValue();
+                
+                // Add time and Value for MealManager
+                macroTimeSeries.add(mealManagerValues.getValue0(), mealManagerValues.getValue1() );
+            }
+        }
+        
+        return timeSeriesCollection;
+    }
+    
+    private Second localTimeToSecond(LocalTime localTime)
+    {
+        // Convert LocalTime -> Date (fixed base date)
+        LocalDate baseDate = LocalDate.of(2025, 1, 1);
+        LocalDateTime dateTime = baseDate.atTime(localTime);
+        Date date = Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
+        
+        return new Second(date);
+    }
+    
+    private String convertMacroNameToGuiVersion(String macroName)
+    {
+        // Reformat macroName for GUI purposes  "\u00A0" is like space because \t doesn't work in this label format
+        
+        //  return String.format("\u00A0\u00A0%s\u00A0\u00A0", macroName, true);
+        
+        return String.format("\u00A0\u00A0%s\u00A0\u00A0", formatStrings(macroName, true));
+    }
+    
+    private String formatStrings(String txt, boolean separateWords)
+    {
+        // Re-assign Re-Capitalised Value into list
+        return txt =
+                separateWords ?
+                        Arrays.stream(txt.split("[ _]+"))
+                                .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
+                                .collect(Collectors.joining(" "))
+                        :
+                        Arrays.stream(txt.split("[ _]+"))
+                                .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
+                                .collect(Collectors.joining("_"));
     }
     
     //#########################################
