@@ -6,6 +6,7 @@ import App_Code.Objects.Database_Objects.MealManagerRegistry;
 import App_Code.Objects.Graph_Objects.Line_Chart;
 import App_Code.Objects.Gui_Objects.Screen;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
+import org.javatuples.Pair;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
@@ -97,22 +98,30 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
         // Get MealManager Info
         // ####################################################
         Boolean timeChanged = ! previousTime.equals(currentTime);
-
-
+   
+        int mealInPlanID = mealManager.getMealInPlanID();
         // ####################################################
         // Get MealManager MacroInfo & Replace
         // ####################################################
     
-        Iterator<Map.Entry<String, Integer>> it = macronutrientsToCheckAndPos.entrySet().iterator();
+        Iterator<Map.Entry<String, HashMap<Integer, Pair<Second, BigDecimal>>>> it
+                = mealManagerRegistry.get_MealManagersMacroValues().entrySet().iterator();
     
+        /**
+         *  <Key: MacroName | Value: Map<Key: MealManagerID, Value: < MealTime, Quantity>>
+         *   Put, Replace
+         */
+        
         while(it.hasNext())
         {
             // ############################################
             // Create TimeSeries For Macros
             // ############################################
-            Map.Entry<String, Integer> macroEntry = it.next();
+            /**
+             *   Map<Key: MealManagerID, Value: < MealTime, Quantity>>
+             */
+            Map.Entry<String, HashMap<Integer, Pair<Second, BigDecimal>>> macroEntry = it.next();
             String macroName = macroEntry.getKey();
-            Integer macroColPos = macroEntry.getValue();
             
             // ########################################
             // Get Correlated Macro TimeSeries
@@ -127,7 +136,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
             // Get Macronutrient Info
             // ########################################
             // MealManager / TotalMealView Table Macro Result
-            BigDecimal newMacroValue = mealManager.getTotalMealTable().get_ValueOnTable(0, macroColPos);
+            BigDecimal newMacroValue = macroEntry.getValue().get(mealInPlanID).getValue1();
 
             // convert old time to second for collection
             Second oldMealTime = localTimeToSecond(previousTime);

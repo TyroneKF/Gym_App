@@ -394,4 +394,9 @@ public class MealManagerRegistry
     {
         return mealManagerTreeSet;
     }
+    
+    public Map<String, HashMap<Integer, Pair<Second, BigDecimal>>> get_MealManagersMacroValues()
+    {
+        return mealManagersMacroValues;
+    }
 }

@@ -661,6 +661,7 @@ public class MealManager
         //#########################################################################################################
         
         LocalTime newMealTime = promptUserForMealTime(false, true);
+        LocalTime oldMealTime = getCurrentMealTime();
         
         if (newMealTime == null) { return; } // Error occurred in validation checks above
         
@@ -694,19 +695,19 @@ public class MealManager
         update_TotalMeal_Table(false, false); // Add External is false for now because its dealt with below
     
         //#######################################
-        // Update LineChart Data
-        //#######################################
-        meal_plan_screen.updateLineChartData(this, getCurrentMealTime(), newMealTime);
-        
-        //#######################################
         // Update Time Variables
         //#######################################
         setTimeVariables(true, savedMealTime, newMealTime); // Set Meal Time Variables
     
         //#######################################
-        // Update GUI
+        // Update GUI & DATA Registry
         //#######################################
         meal_plan_screen.addMealMangerToGUI(this, true, false, false); // Update Meal Plan Screen
+    
+        //#######################################
+        // Update LineChart Data
+        //#######################################
+        meal_plan_screen.updateLineChartData(this, oldMealTime, newMealTime);
     }
     
     private LocalTime promptUserForMealTime(boolean skipConfirmation, boolean comparison)
