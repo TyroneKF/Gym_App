@@ -4,11 +4,7 @@ package App_Code.Objects.Graph_Objects;
 
 import javax.swing.*;
 import java.awt.*;
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.util.Map;
-
-import org.javatuples.Pair;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -30,13 +26,13 @@ public class Pie_Chart extends JPanel
     // ############################################################################################
     // Variables
     // ############################################################################################
-    private DefaultPieDataset dataset = new DefaultPieDataset();
+    private DefaultPieDataset<String> dataset;
     protected JFreeChart chart;
 
     // ############################################################################################
     // Constructor
     // ############################################################################################
-    public Pie_Chart(String title, int frameWidth, int frameHeight, Map<String, Pair<BigDecimal, String>> data)
+    public Pie_Chart(String title, int frameWidth, int frameHeight, DefaultPieDataset dataset)
     {
         //############################################
         // Set Layout Dimensions
@@ -47,7 +43,7 @@ public class Pie_Chart extends JPanel
         //############################################
         // Add Data to Dataset to represent
         //############################################
-        update_dataset(data);
+        this.dataset = dataset;
 
         //############################################
         // Create Plot with Data & Configurations
@@ -84,13 +80,13 @@ public class Pie_Chart extends JPanel
         plot.setLabelPaint(Color.BLACK);   // Black stands out better than white
 
         // Legend Font Size
-        chart.getLegend().setItemFont(new Font("Serif", Font.PLAIN, 25));
+        chart.getLegend().setItemFont(new Font("Serif", Font.PLAIN, 23));
 
         // #############################################
         // Auto Rotate Features
         //#############################################
         // 🔹 auto-rotate : auto-rotate (50 ms delay ≈ 20 frames/sec)
-        Rotator rotator = new Rotator(plot, 50);
+        Rotator rotator = new Rotator(plot, 100);
         rotator.start();
 
         // #############################################
@@ -114,20 +110,15 @@ public class Pie_Chart extends JPanel
         chart.setTitle(String.format("%s Macros", meal_name));
     }
 
-    public void update_dataset(Map<String, Pair<BigDecimal, String>> data)
+    public void update_dataset(DefaultPieDataset<String> dataset)
     {
-        //############################################
-        // Add Data to Dataset to represent
-        //############################################]
-        dataset.clear();
-        for (String name : data.keySet())
-        {
-            Pair<BigDecimal, String> list = data.get(name);
-            BigDecimal value = list.getValue0();
-            String measurement  = list.getValue1();
-
-            dataset.setValue(String.format("  %s ( %s %s )  ", name, value, measurement), value);
-        }
+        // Clear Dataset
+        this.dataset.clear();
+        
+        // Transfer Data Over into this dataset
+        dataset.getKeys().forEach(key -> {
+            this.dataset.setValue(key, dataset.getValue(key));
+        });
     }
 
     //############################################################################################

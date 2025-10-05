@@ -1,27 +1,21 @@
 package App_Code.Objects.Screens.Graph_Screens;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
-import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.TotalMealTable;
 import App_Code.Objects.Database_Objects.MealManager;
 import App_Code.Objects.Database_Objects.MealManagerRegistry;
 import App_Code.Objects.Gui_Objects.Screen;
 import App_Code.Objects.Graph_Objects.Pie_Chart;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
-import org.javatuples.Pair;
+import org.jfree.data.general.DefaultPieDataset;
 
-import javax.swing.*;
 import java.awt.*;
-import java.math.BigDecimal;
-import java.util.Map;
 
 public class Pie_Chart_Meal_Manager_Screen extends Screen
 {
     //###########################################################################################
     // Variables
     //###########################################################################################
-    
-    // Collections
-    private Map<String, Pair<BigDecimal, String>> macros;
+
     
     //#####################################
     // Objects
@@ -53,7 +47,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
         // ##########################################
         // Super Constructors & Variables
         // ##########################################
-        super(db, false, "Pie Chart : Macronutrients ", 800, 600, 0, 0);
+        super(db, false, "Pie Chart : Macronutrients ", 850, 700, 0, 0);
         
         getScrollPaneJPanel().setBackground(Color.WHITE);
         setResizable(false);
@@ -71,13 +65,12 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
         //############################################
         // Creating Macros / Dataset
         //############################################
-        updateDataSet();
+        DefaultPieDataset dataset = get_UpdatedDataSet();
         
-        System.out.printf("Pie_Chart_Meal_Manager_Screen.java \n DataSet: \n%n%s", macros);
         // ##########################################
         // Create Graph Object & Adding to GUI
         // ##########################################
-        pieChart = new Pie_Chart(String.format("%s Macros", meal_name), frameWidth - 50, frameHeight - 60, macros);
+        pieChart = new Pie_Chart(String.format("%s Macros", meal_name), frameWidth - 50, frameHeight - 20, dataset);
         addToContainer(getScrollPaneJPanel(), pieChart, 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
         
         setFrameVisibility(true);
@@ -97,12 +90,12 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
     //####################################
     public void update_pieChart()
     {
-        updateDataSet(); pieChart.update_dataset(macros);
+        pieChart.update_dataset(get_UpdatedDataSet());
     }
     
-    private void updateDataSet()
+    private DefaultPieDataset get_UpdatedDataSet()
     {
-        macros = mealManagerRegistry.get_MM_MacroInfo_PieChart(mealInPlanID);
+        return mealManagerRegistry.create_MM_MacroInfo_PieChart(mealInPlanID);
     }
     
     public void update_PieChart_Title()

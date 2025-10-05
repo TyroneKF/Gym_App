@@ -3,11 +3,13 @@ package App_Code.Objects.Database_Objects;
 import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.TotalMealTable;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 import org.javatuples.Pair;
+import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -26,7 +28,7 @@ public class MealManagerRegistry
     // Collections
     //##################################
     private Map<String, Integer> totalMeal_macroColNamePos;
- 
+    
     private TreeSet<Map.Entry<Integer, MealManager>> mealManagerTreeSet = new TreeSet<Map.Entry<Integer, MealManager>>(new Comparator<Map.Entry<Integer, MealManager>>()
     {
         @Override
@@ -306,19 +308,63 @@ public class MealManagerRegistry
     ///##################################################################################################################
     
     
-    
     //#########################################
     // Pie Chart
     //#########################################
-    public Map<String, Pair<BigDecimal, String>> get_MM_MacroInfo_PieChart(Integer mealInPlanID)
+    private int percent_Calculator(BigDecimal value, BigDecimal overall)
     {
-        Map<String, Pair<BigDecimal, String>> values = new HashMap<>();
+        BigDecimal ratio = value.divide(overall, 4, RoundingMode.DOWN); // 4 decimal places, rounded
+        BigDecimal percent = ratio.multiply(BigDecimal.valueOf(100));      // Convert to %
+        return percent.setScale(0, RoundingMode.HALF_DOWN).intValueExact();
+    }
+    
+    public DefaultPieDataset<String> create_MM_MacroInfo_PieChart(Integer mealInPlanID)
+    {
+        /**
+         *  mealManagersMacroValues : <Key: Salt | Value: <MealManagerID: 1, <MealTime: 14:00 , Quantity: 300g >>
+         */
+        LinkedHashMap<String, BigDecimal> data = new LinkedHashMap<>()
+        {{
+            // ###########################
+            // Overall Components
+            // ###########################
+            BigDecimal proteinValue = mealManagersMacroValues.get("total_protein").get(mealInPlanID).getValue1();
+            BigDecimal carbsValue = mealManagersMacroValues.get("total_carbohydrates").get(mealInPlanID).getValue1();
+            BigDecimal fatsValue = mealManagersMacroValues.get("total_fats").get(mealInPlanID).getValue1();
+            
+            BigDecimal total = proteinValue.add(carbsValue).add(fatsValue);
+            // ###########################
+            // Protein
+            // ###########################
+            put(String.format("Protein [ %d%% ] ", percent_Calculator(proteinValue, total)), proteinValue);
+            
+            // ###########################
+            // Carbs
+            // ###########################
+            BigDecimal sugarCarbsValue = mealManagersMacroValues.get("total_sugars_of_carbs").get(mealInPlanID).getValue1();
+            
+            put(String.format("Carbohydrates [ %d%% ] ", percent_Calculator(carbsValue, total)), carbsValue.subtract(sugarCarbsValue));
+            put("Sugars Of Carbs", sugarCarbsValue);
+            
+            // ###########################
+            // Fats
+            // ###########################
+            BigDecimal satFatsValue = mealManagersMacroValues.get("total_saturated_fat").get(mealInPlanID).getValue1();
+            
+            put(String.format("Fats [ %d%% ] ", percent_Calculator(fatsValue, total)), fatsValue.subtract(satFatsValue));
+            put("Saturated Fats", satFatsValue);
+        }};
         
-        values.put("Protein", new Pair<>(mealManagersMacroValues.get("total_protein").get(mealInPlanID).getValue1(), "g"));
-        values.put("Fats", new Pair<>(mealManagersMacroValues.get("total_fats").get(mealInPlanID).getValue1(), "g"));
-        values.put("Carbohydrates", new Pair<>(mealManagersMacroValues.get("total_carbohydrates").get(mealInPlanID).getValue1(), "g"));
+        //############################################
+        // Add Data to Dataset to represent
+        //############################################]
+        DefaultPieDataset<String> dataset = new DefaultPieDataset<>();
+        for (Map.Entry<String, BigDecimal> macroValues : data.entrySet())
+        {
+            dataset.setValue(String.format("  %s - %s g   ", macroValues.getKey(), macroValues.getValue()), macroValues.getValue());
+        }
         
-        return values;
+        return dataset;
     }
     
     //#########################################
@@ -328,12 +374,12 @@ public class MealManagerRegistry
     {
         TimeSeriesCollection timeSeriesCollection = new TimeSeriesCollection();
         
-        for(String macroName : totalMeal_macroColNamePos.keySet())
+        for (String macroName : totalMeal_macroColNamePos.keySet())
         {
             // Create a series for each macroName
             TimeSeries macroTimeSeries = new TimeSeries(convertMacroNameToGuiVersion(macroName));
             timeSeriesCollection.addSeries(macroTimeSeries);
-    
+            
             // Add all the values from this macroName into the series
             /**
              * HashMap<String, Map<Integer, Pair<LocalTime, BigDecimal>>> mealManagersMacroValues = new HashMap<>();
@@ -341,17 +387,17 @@ public class MealManagerRegistry
              * <Key: MacroName | Value: Map <Key: MealManagerID, Value: < MealTime, Quantity>>
              * Etc;  <Key: Salt | Value: <MealManagerID: 1, <MealTime: 14:00 , Quantity: 300g >>
              */
-    
+            
             Map<Integer, Pair<Second, BigDecimal>> macroValues = mealManagersMacroValues.get(macroName);
             Iterator<Map.Entry<Integer, Pair<Second, BigDecimal>>> it = macroValues.entrySet().iterator();
             
-            while(it.hasNext()) // Iterate through the recorded MealManager Values for this macro
+            while (it.hasNext()) // Iterate through the recorded MealManager Values for this macro
             {
                 Map.Entry<Integer, Pair<Second, BigDecimal>> mealManagers_Info = it.next();
                 Pair<Second, BigDecimal> mealManagerValues = mealManagers_Info.getValue();
                 
                 // Add time and Value for MealManager
-                macroTimeSeries.add(mealManagerValues.getValue0(), mealManagerValues.getValue1() );
+                macroTimeSeries.add(mealManagerValues.getValue0(), mealManagerValues.getValue1());
             }
         }
         
