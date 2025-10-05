@@ -91,8 +91,17 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
     {
         dataset = mealManagerRegistry.get_Plan_MacroValues_LineChart();
     }
-
-    public void updateMealManagerDataChange(MealManager mealManager, Second previousTime, Second currentTime)
+    
+    /**
+     ** @param mealManager - MealManager responsible for the changes made
+     * @param previousTime - old meal time
+     * @param currentTime - current meal time
+     *
+     * For Loop through each macroNutrient Name in HashMap (Outer)
+     * (Inner HashMap) Contains all the values for all the MealManagers
+     * Update the values specific to this mealManager
+     */
+    public void updateMealManagerData(MealManager mealManager, Second previousTime, Second currentTime)
     {
         // ####################################################
         // Get MealManager Info
@@ -100,15 +109,15 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
         Boolean timeChanged = ! previousTime.equals(currentTime);
    
         int mealInPlanID = mealManager.getMealInPlanID();
+        
         // ####################################################
         // Get MealManager MacroInfo & Replace
         // ####################################################
-    
         Iterator<Map.Entry<String, HashMap<Integer, Pair<Second, BigDecimal>>>> it
                 = mealManagerRegistry.get_MealManagersMacroValues().entrySet().iterator();
     
         /**
-         *  <Key: MacroName | Value: Map<Key: MealManagerID, Value: < MealTime, Quantity>>
+         *  <Key: MacroName | Value: HashMap<Key: MealManagerID, Value: < MealTime, Quantity>>
          *   Put, Replace
          */
         
@@ -135,12 +144,11 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
             // ########################################
             // Get Macronutrient Info
             // ########################################
-            // MealManager / TotalMealView Table Macro Result
+            // Get Macro Info Specific to this mealManager correlating to macroName
             BigDecimal newMacroValue = macroEntry.getValue().get(mealInPlanID).getValue1();
-
             
             // #######################################
-            // OLD Time: Replace With New Value
+            // Same Time: Update MacroValue
             // #######################################
             if (! timeChanged) // IF the time hasn't changed just update the series value with the old time
             {
@@ -149,7 +157,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
             }
 
             // ########################################
-            // New Time : Delete & Add Old / New Value
+            // New Time : Delete Time & Add New Value
             // ########################################
             macroSeries.delete(previousTime); // IF the time has changed delete the old time from series value
             macroSeries.add(currentTime, newMacroValue); // Add new value to Series with new Time

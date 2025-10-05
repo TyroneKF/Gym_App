@@ -130,6 +130,5 @@ public class Line_Chart extends JPanel
     {
         return chart.getXYPlot();
     }
-
-
+    
 }

@@ -16,7 +16,6 @@ import org.jfree.data.time.Second;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.time.LocalTime;
 import java.util.*;
 import java.util.List;
 
@@ -1261,7 +1260,7 @@ public class Meal_Plan_Screen extends Screen
     {
         if (lineChartMealPlanScreen == null) { return; }
         
-        lineChartMealPlanScreen.updateMealManagerDataChange(mealManager, previousTime, currentTime);
+        lineChartMealPlanScreen.updateMealManagerData(mealManager, previousTime, currentTime);
     }
     
     public void deleteLineChartData(Second currentTime)
