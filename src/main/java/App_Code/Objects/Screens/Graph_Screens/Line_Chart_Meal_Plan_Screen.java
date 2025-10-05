@@ -176,9 +176,6 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
     private String convertMacroNameToGuiVersion(String macroName)
     {
         // Reformat macroName for GUI purposes  "\u00A0" is like space because \t doesn't work in this label format
-
-        //  return String.format("\u00A0\u00A0%s\u00A0\u00A0", macroName, true);
-
         return String.format("\u00A0\u00A0%s\u00A0\u00A0", formatStrings(macroName, true));
     }
 
