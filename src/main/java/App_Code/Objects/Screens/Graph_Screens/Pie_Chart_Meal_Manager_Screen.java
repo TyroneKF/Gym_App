@@ -22,13 +22,11 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
     
     // Collections
     private Map<String, Pair<BigDecimal, String>> macros;
-    private Map<String, Integer> macronutrientsToCheckAndPos;
     
     //#####################################
     // Objects
     //#####################################
     private MealManager mealManager;
-    private TotalMealTable totalMealTable;
     private Meal_Plan_Screen meal_plan_screen;
     private Pie_Chart pieChart;
     private MealManagerRegistry mealManagerRegistry;
@@ -66,12 +64,9 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
         this.mealManager = mealManager;
         this.mealManagerRegistry = mealManager.getMealManagerRegistry();
         this.meal_plan_screen = mealManager.getMeal_plan_screen();
-        this.totalMealTable = mealManager.getTotalMealTable();
     
         this.mealInPlanID = mealManager.getMealInPlanID();
         this.meal_name = mealManager.getCurrentMealName();
-        
-        this.macronutrientsToCheckAndPos = meal_plan_screen.getTotalMeal_MacroColNamePos();
         
         //############################################
         // Creating Macros / Dataset

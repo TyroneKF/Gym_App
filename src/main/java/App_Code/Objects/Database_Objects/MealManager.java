@@ -14,8 +14,6 @@ import org.jfree.data.time.Second;
 
 import javax.swing.*;
 import java.awt.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -87,7 +85,7 @@ public class MealManager
         this.meal_plan_screen = meal_plan_screen;
         
         this.db = meal_plan_screen.getDb();
-    
+        
         this.mealInPlanID = mealInPlanID;
         
         this.tempPlanID = meal_plan_screen.getTempPlanID();
@@ -509,41 +507,17 @@ public class MealManager
     //#################################################################################
     // Meal Name & Meal Time Functions
     //#################################################################################
-    private Object inputValidation(String variableName, String input, boolean comparison, Object currentVariableValue, boolean skipConfirmation)
+    private Object inputValidation(String variableName, String input, boolean comparison, boolean skipConfirmation)
     {
         // Remove whitespace at the end of variable
         input = input.trim();
-        
-        //#########################################################################################################
-        // Check the Right Parameters are Entered Per Request Type
-        //#########################################################################################################
-        
-        // variable : input due to prior checks will not be null or "" at this stage. Will always have a value.
-        // Instance of also returns false on null values
-        // Prior to this method being called the users input is checked if its null or "" and rejected
-        
-        if (variableName.equals("name") && comparison && ! (currentVariableValue instanceof String))
-        {
-            System.err.printf("\n\nMealManager.java : inputValidation() for 'name' variable; must be 2 strings");
-            return null;
-        }
-        else if (variableName.equals("time") && comparison && ! (currentVariableValue instanceof LocalTime))
-        {
-            System.err.printf("\n\nMealManager.java : inputCheck() for 'time' variable; must be a string & time variable");
-            return null;
-        }
-        else if (! variableName.equals("name") && ! variableName.equals("time"))
-        {
-            System.err.printf("\n\nMealManager.java : inputCheck() Unknown Request");
-            return null;
-        }
         
         //##############################################################################################################
         // Validation Checks
         //##############################################################################################################
         // Prior to this method being called the users input is checked if its null or "" and rejected
-        
-        LocalTime newTimeVar = null;
+        LocalTime inputConvertedToLocalTime = null;
+        Second inputConvertedToSeconds = null;
         
         if (variableName.equals("time"))
         {
@@ -551,8 +525,8 @@ public class MealManager
             
             try
             {
-                newTimeVar = LocalTime.parse(input);
-                if (newTimeVar == null) { throw new Exception("\n\nError, time variable null"); }
+                inputConvertedToLocalTime = LocalTime.parse(input);
+                if (inputConvertedToLocalTime == null) { throw new Exception("\n\nError, time variable null"); }
             }
             catch (Exception e)
             {
@@ -568,22 +542,23 @@ public class MealManager
         }
         
         // ####################################################
-        // Compare with save Values
+        // Compare with saved correlating values
         // ####################################################
         if (comparison)
         {
             // User enters same meal name
-            if (variableName.equals("name") && input.equals(currentVariableValue.toString()))
+            if (variableName.equals("name") && input.equals(getCurrentMealName()))
             {
-                JOptionPane.showMessageDialog(getFrame(), String.format("This meal '%s' already has the value '%s' !!", variableName, currentVariableValue));
+                JOptionPane.showMessageDialog(getFrame(), String.format("This meal '%s' already has the value '%s' !!", variableName, getCurrentMealName()));
                 return null;
             }
             else if (variableName.equals("time"))
             {
-                LocalTime currentTime = (LocalTime) currentVariableValue;
-                if (newTimeVar.equals(currentTime)) // Time : User enters same meal time
+                inputConvertedToSeconds = convertMysqlTimeToSecond(input);
+                
+                if (getCurrentMealTime().equals(inputConvertedToSeconds)) // Time : User enters same meal time
                 {
-                    JOptionPane.showMessageDialog(getFrame(), String.format("This meal '%s' already has the value '%s' !!", variableName, currentVariableValue));
+                    JOptionPane.showMessageDialog(getFrame(), String.format("This meal '%s' already has the value '%s' !!", variableName, getCurrentMealTime()));
                     return null;
                 }
             }
@@ -602,7 +577,7 @@ public class MealManager
                         FROM meals_in_plan
                         WHERE plan_id = %s AND meal_time = '%s:00'
                         LIMIT 1
-                    ), 'N/A') AS meal_time;""", tempPlanID, newTimeVar.toString());
+                    ), 'N/A') AS meal_time;""", tempPlanID, inputConvertedToLocalTime.toString());
         }
         else // Last possible option based on logic is Meal Name
         {
@@ -636,6 +611,7 @@ public class MealManager
         // User Confirmation
         //##############################################################################################################
         // If requested not to skip a confirmation msg prompt confirmation
+        String currentVariableValue = variableName.equals("name") ? getCurrentMealName() : getCurrentMealTimeGUI();
         if (! skipConfirmation && ! areYouSure(String.format("change meal %s from '%s' to '%s'", variableName, currentVariableValue, input)))
         {
             return null;
@@ -645,7 +621,7 @@ public class MealManager
         // Return Value
         //##############################################################################################################
         if (variableName.equals("name")) { return input; }
-        else { return newTimeVar; }
+        else { return inputConvertedToLocalTime; }
     }
     
     private boolean containsSymbols(String stringToCheck)
@@ -668,7 +644,7 @@ public class MealManager
         LocalTime newMealTime = promptUserForMealTime(false, true);
         
         if (newMealTime == null) { return; } // Error occurred in validation checks above
-    
+        
         Second newMealSecond = localTimeToSecond(newMealTime);
         Second oldMealSeconds = getCurrentMealTime();
         
@@ -694,23 +670,25 @@ public class MealManager
         //#########################################################################################################
         // Update GUI & Variables
         //#########################################################################################################
-        JOptionPane.showMessageDialog(getFrame(), String.format("Successfully, changed meal time from '%s' to '%s'", currentMealTime, newMealTime)); // Success MSG
-    
+        
+        JOptionPane.showMessageDialog(getFrame(), String.format("Successfully, changed meal time from '%s' to '%s'",
+                getCurrentMealTimeGUI(), newMealTime)); // Success MSG
+        
         //#######################################
         // Update total Meal View
         //#######################################
         update_TotalMeal_Table(false, false); // Add External is false for now because its dealt with below
-    
+        
         //#######################################
         // Update Time Variables
         //#######################################
         setTimeVariables(true, savedMealTime, newMealSecond); // Set Meal Time Variables
-    
+        
         //#######################################
         // Update GUI & DATA Registry
         //#######################################
         meal_plan_screen.addMealMangerToGUI(this, true, false, false); // Update Meal Plan Screen
-    
+        
         //#######################################
         // Update LineChart Data
         //#######################################
@@ -724,7 +702,7 @@ public class MealManager
         
         if (inputMealTime == null || inputMealTime.equals("")) { return null; }
         
-        return (LocalTime) inputValidation("time", inputMealTime, comparison, currentMealTime, skipConfirmation);
+        return (LocalTime) inputValidation("time", inputMealTime, comparison, skipConfirmation);
     }
     
     private  Second convertMysqlTimeToSecond(String timeString)
@@ -735,10 +713,11 @@ public class MealManager
     private Second localTimeToSecond(LocalTime localTime)
     {
         // Convert LocalTime -> Date (fixed base date)
-        LocalDate baseDate = LocalDate.of(2025, 1, 1);
-        LocalDateTime dateTime = baseDate.atTime(localTime);
-        Date date = Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
-        
+        Date date = Date.from(localTime.atDate(java.time.LocalDate.of(1970, 1, 1))
+                .atZone(ZoneId.systemDefault())
+                .toInstant());
+    
+        // Wrap into JFree Second
         return new Second(date);
     }
     
@@ -756,6 +735,7 @@ public class MealManager
         return mealTime;
     }
     
+    
     private void setTimeVariables(boolean hasMealTimeBeenChanged, Second savedMealTime, Second currentMealTime)
     {
         this.hasMealTimeBeenChanged = hasMealTimeBeenChanged;
@@ -766,6 +746,14 @@ public class MealManager
     public Second getCurrentMealTime()
     {
         return currentMealTime;
+    }
+    
+    private String getCurrentMealTimeGUI()
+    {
+       return currentMealTime.getStart()
+            .toInstant()
+            .atZone(ZoneId.systemDefault())
+            .toLocalTime().toString();
     }
     
     //####################################
@@ -805,8 +793,7 @@ public class MealManager
         
         collapsibleJpObj.setIconBtnText(inputMealName);
         setMealNameVariables(true, savedMealName, inputMealName);  // Set Meal Name Variables
-    
-    
+        
         //#########################################################################################################
         // Change Graph Title if exists
         //#########################################################################################################
@@ -827,7 +814,7 @@ public class MealManager
         if (newMealName == null || newMealName.equals("")) { return null; }
         
         // validate user input
-        return (String) inputValidation("name", newMealName, comparison, currentMealName, skipConfirmation);
+        return (String) inputValidation("name", newMealName, comparison, skipConfirmation);
     }
     
     private void setMealNameVariables(boolean hasMealNameBeenChanged, String savedMealName, String currentMealName)
@@ -933,7 +920,7 @@ public class MealManager
         // Hide JTable object & Collapsible OBJ
         //##########################################
         hideMealManager();
-    
+        
         //##########################################
         // Update Registry Data
         //##########################################
@@ -1230,7 +1217,7 @@ public class MealManager
         //######################################
         reloadTableAndChartsData(true, true);
         pieChart_UpdateMealName(); //Update PieChart Name
-    
+        
         //######################################
         // Remove & Re-add to GUI & RegistryDATA
         //######################################
