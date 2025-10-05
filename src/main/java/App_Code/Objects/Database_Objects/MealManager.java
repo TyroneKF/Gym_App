@@ -495,13 +495,21 @@ public class MealManager
     {
         if (pie_chart_meal_manager_screen == null) { return; }
         
-        pie_chart_meal_manager_screen.closeJFrame();
         pie_chart_meal_manager_screen = null;
+        
+        meal_plan_screen.remove_Unused_PieData(mealInPlanID);
     }
     
     public void update_Pie_Chart_Screen()
     {
-        if (pie_chart_meal_manager_screen != null) { pie_chart_meal_manager_screen.update_pieChart(); }
+        /***
+         * Update data behind pieCharts whcih will effectively update all pieCharts actively using this data
+         * */
+        
+        if(! mealManagerRegistry.updatePieChart_MM_Values(getMealInPlanID()))
+        {
+            System.err.printf("\n\nMealManagerRegistry.java : updatePieChart_MM_Values() \nPieChart not Open %s", mealInPlanID);
+        }
     }
     
     //#################################################################################

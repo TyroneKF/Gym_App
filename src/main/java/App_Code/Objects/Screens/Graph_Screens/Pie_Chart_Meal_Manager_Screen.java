@@ -65,7 +65,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
         //############################################
         // Creating Macros / Dataset
         //############################################
-        DefaultPieDataset dataset = get_UpdatedDataSet();
+        DefaultPieDataset<String> dataset = mealManagerRegistry.create_MM_MacroInfo_PieChart(mealInPlanID);
         
         // ##########################################
         // Create Graph Object & Adding to GUI
@@ -83,24 +83,16 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
     public void windowClosedEvent()
     {
         mealManager.removePieChartScreen();
+        closeJFrame();
     }
     
     //####################################
     // Update Methods
     //####################################
-    public void update_pieChart()
-    {
-        pieChart.update_dataset(get_UpdatedDataSet());
-    }
-    
-    private DefaultPieDataset get_UpdatedDataSet()
-    {
-        return mealManagerRegistry.create_MM_MacroInfo_PieChart(mealInPlanID);
-    }
-    
     public void update_PieChart_Title()
     {
         meal_name = mealManager.getCurrentMealName();
         pieChart.setTitle(meal_name);
     }
+    
 }

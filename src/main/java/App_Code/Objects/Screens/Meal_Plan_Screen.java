@@ -1237,6 +1237,14 @@ public class Meal_Plan_Screen extends Screen
     
     public void removePieChartScreen() { pie_chart_meal_plan_screen = null; }
     
+    public void remove_Unused_PieData(Integer mealInPlanID)
+    {
+        if (pie_chart_meal_plan_screen == null)
+        {
+            mealManagerRegistry.removePieChartDatasetValue(mealInPlanID);
+        }
+    }
+    
     // ###############################################################
     // Line Chart BTN Actions
     // ###############################################################
@@ -1739,7 +1747,7 @@ public class Meal_Plan_Screen extends Screen
     
     public JPanel getScrollJPanelCenter()
     {
-       return scrollJPanelCenter;
+        return scrollJPanelCenter;
     }
     
     //####################################################################

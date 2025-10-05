@@ -110,17 +110,6 @@ public class Pie_Chart extends JPanel
         chart.setTitle(String.format("%s Macros", meal_name));
     }
 
-    public void update_dataset(DefaultPieDataset<String> dataset)
-    {
-        // Clear Dataset
-        this.dataset.clear();
-        
-        // Transfer Data Over into this dataset
-        dataset.getKeys().forEach(key -> {
-            this.dataset.setValue(key, dataset.getValue(key));
-        });
-    }
-
     //############################################################################################
     // Rotator Class
     //############################################################################################

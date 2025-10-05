@@ -38,6 +38,8 @@ public class MealManagerRegistry
         }
     });
     
+    private HashMap<Integer, DefaultPieDataset<String>> pieDatasetHashMap = new HashMap<>();
+    
     /**
      * HashMap<String, Map<Integer, Pair<LocalTime, BigDecimal>>> mealManagersMacroValues = new HashMap<>();
      * Stores all the mealManagers TotalMealValues in collections by the macroName
@@ -303,22 +305,32 @@ public class MealManagerRegistry
         }
     }
     
-    //##################################################################################################################
-    // Accessor Methods
-    ///##################################################################################################################
-    
-    
-    //#########################################
+    ///#################################################################################################################
     // Pie Chart
-    //#########################################
-    private int percent_Calculator(BigDecimal value, BigDecimal overall)
+    ///#################################################################################################################
+    public DefaultPieDataset<String> create_MM_MacroInfo_PieChart(Integer mealInPlanID)
     {
-        BigDecimal ratio = value.divide(overall, 4, RoundingMode.DOWN); // 4 decimal places, rounded
-        BigDecimal percent = ratio.multiply(BigDecimal.valueOf(100));      // Convert to %
-        return percent.setScale(0, RoundingMode.HALF_DOWN).intValueExact();
+        //##############################################
+        // Add to HashMapDataset
+        //##############################################
+        if (pieDatasetHashMap.containsKey(mealInPlanID))
+        {
+            System.err.printf("\ncreate_MM_MacroInfo_PieChart() Already Created");
+            return pieDatasetHashMap.get(mealInPlanID);
+        }
+        
+        //##############################################
+        // Add to HashMapDataset
+        //##############################################
+        pieDatasetHashMap.put(mealInPlanID, get_NewUpdatedPieData(mealInPlanID));
+        
+        //##############################################
+        // Add to HashMapDataset
+        //##############################################
+        return pieDatasetHashMap.get(mealInPlanID);
     }
     
-    public DefaultPieDataset<String> create_MM_MacroInfo_PieChart(Integer mealInPlanID)
+    private DefaultPieDataset<String> get_NewUpdatedPieData(Integer mealInPlanID)
     {
         /**
          *  mealManagersMacroValues : <Key: Salt | Value: <MealManagerID: 1, <MealTime: 14:00 , Quantity: 300g >>
@@ -355,21 +367,68 @@ public class MealManagerRegistry
             put("Saturated Fats", satFatsValue);
         }};
         
-        //############################################
+        //#############################################
         // Add Data to Dataset to represent
-        //############################################]
+        //#############################################
         DefaultPieDataset<String> dataset = new DefaultPieDataset<>();
         for (Map.Entry<String, BigDecimal> macroValues : data.entrySet())
         {
             dataset.setValue(String.format("  %s - %s g   ", macroValues.getKey(), macroValues.getValue()), macroValues.getValue());
         }
-        
+    
+        //#############################################
+        // Return Value
+        //#############################################
         return dataset;
     }
     
-    //#########################################
+    private int percent_Calculator(BigDecimal value, BigDecimal overall)
+    {
+        BigDecimal ratio = value.divide(overall, 4, RoundingMode.DOWN); // 4 decimal places, rounded
+        BigDecimal percent = ratio.multiply(BigDecimal.valueOf(100));      // Convert to %
+        return percent.setScale(0, RoundingMode.HALF_DOWN).intValueExact();
+    }
+    
+    public Boolean updatePieChart_MM_Values(Integer mealInPlanID)
+    {
+        System.err.println("\n\nupdatePieChart_MM_Values() ");
+        //#########################################
+        // IF PieChart Not Open Exit
+        //#########################################
+        if (! pieDatasetHashMap.containsKey(mealInPlanID)) { return false; }
+        
+        //#########################################
+        // Updated Saved Dataset With New Values
+        //#########################################
+        DefaultPieDataset<String> newGenerated = get_NewUpdatedPieData(mealInPlanID);
+        DefaultPieDataset<String> mm_PieData = pieDatasetHashMap.get(mealInPlanID);
+        
+        System.err.printf("\n\nOldData \n%s", mm_PieData);
+        
+        // Clear Data First
+        mm_PieData.clear();
+        
+        // Transfer Data Over into this dataset
+        System.err.println("\n\nNewData : ");
+        newGenerated.getKeys().forEach(key -> {
+            mm_PieData.setValue(key, newGenerated.getValue(key));
+            System.err.printf("\nKey : %s | Value : %s", key, newGenerated.getValue(key));
+        });
+        
+        //#########################################
+        // Updated Saved Dataset With New Values
+        //#########################################
+        return true;
+    }
+    
+    public void removePieChartDatasetValue(Integer mealInPlanID)
+    {
+        pieDatasetHashMap.remove(mealInPlanID);
+    }
+    
+    //##################################################################################################################
     // LineChart Methods
-    //#########################################
+    //##################################################################################################################
     public TimeSeriesCollection get_Plan_MacroValues_LineChart()
     {
         TimeSeriesCollection timeSeriesCollection = new TimeSeriesCollection();
@@ -427,9 +486,9 @@ public class MealManagerRegistry
                                 .collect(Collectors.joining("_"));
     }
     
-    //#########################################
-    // Objects
-    //#########################################
+    //##################################################################################################################
+    // Accessor Methods
+    //##################################################################################################################
     public TreeSet<Map.Entry<Integer, MealManager>> get_MealManagerTreeSet()
     {
         return mealManagerTreeSet;
@@ -439,4 +498,13 @@ public class MealManagerRegistry
     {
         return mealManagersMacroValues;
     }
+    
+    //######################################
+    // Objects
+    //######################################
+    public MealManager getMealManager(Integer mealInPlanID)
+    {
+        return null;
+    }
+    
 }
