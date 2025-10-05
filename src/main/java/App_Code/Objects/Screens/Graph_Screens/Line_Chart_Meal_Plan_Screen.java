@@ -35,8 +35,6 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
     //##############################################
     // Collections
     //##############################################
-    private TreeSet<Map.Entry<Integer, MealManager>> mealManagerTreeSet;
-
     private Map<String, Integer> macronutrientsToCheckAndPos;
 
     //##############################################
@@ -63,7 +61,6 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
         this.db = db;
         this.meal_plan_screen = meal_plan_screen;
         this.mealManagerRegistry = meal_plan_screen.get_MealManagerRegistry();
-        this.mealManagerTreeSet = meal_plan_screen.getMealManagerTreeSet();
         this.planName = meal_plan_screen.getPlanName();
         this.macronutrientsToCheckAndPos = meal_plan_screen.getTotalMeal_MacroColNamePos();
 
