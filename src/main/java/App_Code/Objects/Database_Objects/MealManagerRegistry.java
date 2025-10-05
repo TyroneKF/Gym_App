@@ -391,7 +391,6 @@ public class MealManagerRegistry
     
     public Boolean updatePieChart_MM_Values(Integer mealInPlanID)
     {
-        System.err.println("\n\nupdatePieChart_MM_Values() ");
         //#########################################
         // IF PieChart Not Open Exit
         //#########################################
@@ -403,16 +402,12 @@ public class MealManagerRegistry
         DefaultPieDataset<String> newGenerated = get_NewUpdatedPieData(mealInPlanID);
         DefaultPieDataset<String> mm_PieData = pieDatasetHashMap.get(mealInPlanID);
         
-        System.err.printf("\n\nOldData \n%s", mm_PieData);
-        
         // Clear Data First
         mm_PieData.clear();
         
         // Transfer Data Over into this dataset
-        System.err.println("\n\nNewData : ");
         newGenerated.getKeys().forEach(key -> {
             mm_PieData.setValue(key, newGenerated.getValue(key));
-            System.err.printf("\nKey : %s | Value : %s", key, newGenerated.getValue(key));
         });
         
         //#########################################
