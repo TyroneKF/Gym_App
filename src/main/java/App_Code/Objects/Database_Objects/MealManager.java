@@ -10,10 +10,14 @@ import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Screens.Graph_Screens.Pie_Chart_Meal_Manager_Screen;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 import org.apache.commons.lang3.StringUtils;
+import org.jfree.data.time.Second;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
 import java.util.*;
@@ -42,7 +46,7 @@ public class MealManager
     private String savedMealName = "", currentMealName = "";
     
     // Time Variables
-    private LocalTime savedMealTime = null, currentMealTime = null;
+    private Second savedMealTime = null, currentMealTime = null;
     private DateTimeFormatter strictTimeFormatter = DateTimeFormatter.ofPattern("HH:mm").withResolverStyle(ResolverStyle.STRICT);
     
     // Collections
@@ -89,7 +93,7 @@ public class MealManager
         this.tempPlanID = meal_plan_screen.getTempPlanID();
         this.planID = meal_plan_screen.getPlanID();
         
-        LocalTime timeStringFormatted = LocalTime.parse(removeSecondsOnTimeString(mealTime)); // turns etc 09:30:00 into 09:30 for GUI purposes & in time format
+        Second timeStringFormatted = convertMysqlTimeToSecond(mealTime); // turns etc 09:30:00 into 09:30 for GUI purposes & in second format
         setTimeVariables(false, timeStringFormatted, timeStringFormatted); // Set MealTime Variables
         
         setMealNameVariables(false, mealName, mealName); // Set MealName Variables
@@ -168,7 +172,8 @@ public class MealManager
         
         setMealNameVariables(false, newMealName, newMealName); // Set MealName Variables
         
-        setTimeVariables(false, newMealTime, newMealTime);     // Set MealTime Variables
+        Second convertedNewMealTime = localTimeToSecond(newMealTime);
+        setTimeVariables(false, convertedNewMealTime, convertedNewMealTime);     // Set MealTime Variables
         
         setMealManagerInDB(false);
         
@@ -661,9 +666,11 @@ public class MealManager
         //#########################################################################################################
         
         LocalTime newMealTime = promptUserForMealTime(false, true);
-        LocalTime oldMealTime = getCurrentMealTime();
         
         if (newMealTime == null) { return; } // Error occurred in validation checks above
+    
+        Second newMealSecond = localTimeToSecond(newMealTime);
+        Second oldMealSeconds = getCurrentMealTime();
         
         //#########################################################################################################
         // Update
@@ -697,7 +704,7 @@ public class MealManager
         //#######################################
         // Update Time Variables
         //#######################################
-        setTimeVariables(true, savedMealTime, newMealTime); // Set Meal Time Variables
+        setTimeVariables(true, savedMealTime, newMealSecond); // Set Meal Time Variables
     
         //#######################################
         // Update GUI & DATA Registry
@@ -707,7 +714,7 @@ public class MealManager
         //#######################################
         // Update LineChart Data
         //#######################################
-        meal_plan_screen.updateLineChartData(this, oldMealTime, newMealTime);
+        meal_plan_screen.updateLineChartData(this, oldMealSeconds, newMealSecond);
     }
     
     private LocalTime promptUserForMealTime(boolean skipConfirmation, boolean comparison)
@@ -718,6 +725,21 @@ public class MealManager
         if (inputMealTime == null || inputMealTime.equals("")) { return null; }
         
         return (LocalTime) inputValidation("time", inputMealTime, comparison, currentMealTime, skipConfirmation);
+    }
+    
+    private  Second convertMysqlTimeToSecond(String timeString)
+    {
+       return localTimeToSecond(LocalTime.parse(removeSecondsOnTimeString(timeString)));
+    }
+    
+    private Second localTimeToSecond(LocalTime localTime)
+    {
+        // Convert LocalTime -> Date (fixed base date)
+        LocalDate baseDate = LocalDate.of(2025, 1, 1);
+        LocalDateTime dateTime = baseDate.atTime(localTime);
+        Date date = Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
+        
+        return new Second(date);
     }
     
     private String removeSecondsOnTimeString(String mealTime)
@@ -734,14 +756,14 @@ public class MealManager
         return mealTime;
     }
     
-    private void setTimeVariables(boolean hasMealTimeBeenChanged, LocalTime savedMealTime, LocalTime currentMealTime)
+    private void setTimeVariables(boolean hasMealTimeBeenChanged, Second savedMealTime, Second currentMealTime)
     {
         this.hasMealTimeBeenChanged = hasMealTimeBeenChanged;
         this.savedMealTime = savedMealTime;
         this.currentMealTime = currentMealTime;
     }
     
-    public LocalTime getCurrentMealTime()
+    public Second getCurrentMealTime()
     {
         return currentMealTime;
     }
@@ -930,7 +952,7 @@ public class MealManager
         //##########################################
         // Update LineChart Data
         //##########################################
-        meal_plan_screen.deleteLineChartData(this, getCurrentMealTime());
+        meal_plan_screen.deleteLineChartData(getCurrentMealTime());
         
         //##########################################
         // Update Message
@@ -1486,7 +1508,6 @@ public class MealManager
                     break;
             }
         }
-        
         container.add(addToContainer, gbc);
     }
 }

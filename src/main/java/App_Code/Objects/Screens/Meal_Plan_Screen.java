@@ -11,6 +11,7 @@ import App_Code.Objects.Screens.Graph_Screens.Pie_Chart_Meal_Plan_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Edit_Ingredients_Info.Ingredients_Info_Screen;
 import App_Code.Objects.Screens.Loading_Screen.LoadingScreen;
 import io.github.cdimascio.dotenv.Dotenv;
+import org.jfree.data.time.Second;
 
 import javax.swing.*;
 import java.awt.*;
@@ -1256,18 +1257,18 @@ public class Meal_Plan_Screen extends Screen
         lineChartMealPlanScreen = null;
     }
     
-    public void updateLineChartData(MealManager mealManager, LocalTime previousTime, LocalTime currentTime)
+    public void updateLineChartData(MealManager mealManager, Second previousTime, Second currentTime)
     {
         if (lineChartMealPlanScreen == null) { return; }
         
         lineChartMealPlanScreen.updateMealManagerDataChange(mealManager, previousTime, currentTime);
     }
     
-    public void deleteLineChartData(MealManager mealManager, LocalTime currentTime)
+    public void deleteLineChartData(Second currentTime)
     {
         if (lineChartMealPlanScreen == null) { return; }
         
-        lineChartMealPlanScreen.deleteMealManagerData(mealManager, currentTime);
+        lineChartMealPlanScreen.deleteMealManagerData(currentTime);
     }
     
     public void clearLineChartDataSet()

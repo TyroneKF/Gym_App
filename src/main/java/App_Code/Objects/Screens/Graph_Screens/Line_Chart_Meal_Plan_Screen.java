@@ -92,7 +92,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
         dataset = mealManagerRegistry.get_Plan_MacroValues_LineChart();
     }
 
-    public void updateMealManagerDataChange(MealManager mealManager, LocalTime previousTime, LocalTime currentTime)
+    public void updateMealManagerDataChange(MealManager mealManager, Second previousTime, Second currentTime)
     {
         // ####################################################
         // Get MealManager Info
@@ -138,23 +138,21 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
             // MealManager / TotalMealView Table Macro Result
             BigDecimal newMacroValue = macroEntry.getValue().get(mealInPlanID).getValue1();
 
-            // convert old time to second for collection
-            Second oldMealTime = localTimeToSecond(previousTime);
-
+            
             // #######################################
             // OLD Time: Replace With New Value
             // #######################################
             if (! timeChanged) // IF the time hasn't changed just update the series value with the old time
             {
-                macroSeries.addOrUpdate(oldMealTime, newMacroValue); // update value
+                macroSeries.addOrUpdate(previousTime, newMacroValue); // update value
                 continue;
             }
 
             // ########################################
             // New Time : Delete & Add Old / New Value
             // ########################################
-            macroSeries.delete(oldMealTime); // IF the time has changed delete the old time from series value
-            macroSeries.add(localTimeToSecond(currentTime), newMacroValue); // Add new value to Series with new Time
+            macroSeries.delete(previousTime); // IF the time has changed delete the old time from series value
+            macroSeries.add(currentTime, newMacroValue); // Add new value to Series with new Time
         }
     }
 
@@ -177,16 +175,6 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
         //  return String.format("\u00A0\u00A0%s\u00A0\u00A0", macroName, true);
 
         return String.format("\u00A0\u00A0%s\u00A0\u00A0", formatStrings(macroName, true));
-    }
-
-    private Second localTimeToSecond(LocalTime localTime)
-    {
-        // Convert LocalTime -> Date (fixed base date)
-        LocalDate baseDate = LocalDate.of(2025, 1, 1);
-        LocalDateTime dateTime = baseDate.atTime(localTime);
-        Date date = Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
-
-        return new Second(date);
     }
 
     //##################################################
@@ -212,7 +200,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
     /*
        Based on MealManagers time the data is deleted in the series collection
      */
-    public void deleteMealManagerData(MealManager mealManager, LocalTime mealTime)
+    public void deleteMealManagerData(Second mealTime)
     {
         for (String macroName : macronutrientsToCheckAndPos.keySet())
         {
@@ -228,7 +216,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
             // #############################################
             // Delete MealManagers Correlated Macro Value
             // #############################################
-            macroSeries.delete(localTimeToSecond(mealTime));
+            macroSeries.delete(mealTime);
         }
     }
 }

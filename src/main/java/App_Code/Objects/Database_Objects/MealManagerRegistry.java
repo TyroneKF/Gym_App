@@ -83,7 +83,7 @@ public class MealManagerRegistry
         // mealManager Info
         //##########################################
         int mealManagerID = mealManager.getMealInPlanID();
-        LocalTime mealManagerTime = mealManager.getCurrentMealTime();
+        Second mealManagerTime = mealManager.getCurrentMealTime();
         TotalMealTable totalMealTable = mealManager.getTotalMealTable();
         
         System.out.printf("\n\nMealManagerRegistry.java : addMealManager() \nMealInPlanID :  %s", mealManagerID);
@@ -115,7 +115,7 @@ public class MealManagerRegistry
              * Etc;  <Key: Salt | Value: <MealManagerID: 1, <MealTime: 14:00 , Quantity: 300g >>
              */
             mealManagersMacroValues.get(macroName) // Map Returned
-                    .put(mealManagerID, new Pair<>(localTimeToSecond(mealManagerTime), macroValue));
+                    .put(mealManagerID, new Pair<>(mealManagerTime, macroValue));
         }
     }
     
@@ -125,7 +125,7 @@ public class MealManagerRegistry
         // mealManager Info
         //##########################################
         int mealManagerID = mealManager.getMealInPlanID();
-        LocalTime mealManagerTime = mealManager.getCurrentMealTime();
+        Second mealManagerTime = mealManager.getCurrentMealTime();
         TotalMealTable totalMealTable = mealManager.getTotalMealTable();
         
         System.out.printf("\n\nMealManagerRegistry.java : replaceMealManagerDATA() \nMealInPlanID :  %s", mealManagerID);
@@ -161,7 +161,7 @@ public class MealManagerRegistry
              *   Put, Replace
              */
             
-            mealManagersMacroValues.get(macroName).put(mealManagerID, new Pair<>(localTimeToSecond(mealManagerTime), macroValue));
+            mealManagersMacroValues.get(macroName).put(mealManagerID, new Pair<>(mealManagerTime, macroValue));
         }
     }
     
@@ -281,7 +281,7 @@ public class MealManagerRegistry
             mealManager.reloadTableAndChartsData(false, false);
             
             // Replace this mealManagers MacrosValues
-            LocalTime mealTime = mealManager.getCurrentMealTime();
+            Second mealTime = mealManager.getCurrentMealTime();
             TotalMealTable totalMealTable = mealManager.getTotalMealTable();
             
             // For Each Macro Replace its old value
@@ -296,7 +296,7 @@ public class MealManagerRegistry
                 BigDecimal macroValue = totalMealTable.get_ValueOnTable(0, macroPos);
                 
                 // Replace OLD Value
-                mealManagersMacroValues.get(macroName).put(mealManagerID, new Pair<>(localTimeToSecond(mealTime), macroValue));
+                mealManagersMacroValues.get(macroName).put(mealManagerID, new Pair<>(mealTime, macroValue));
             }
         }
     }
@@ -305,7 +305,11 @@ public class MealManagerRegistry
     // Accessor Methods
     ///##################################################################################################################
     
+    
+    
+    //#########################################
     // Pie Chart
+    //#########################################
     public Map<String, Pair<BigDecimal, String>> get_MM_MacroInfo_PieChart(Integer mealInPlanID)
     {
         Map<String, Pair<BigDecimal, String>> values = new HashMap<>();
@@ -352,16 +356,6 @@ public class MealManagerRegistry
         }
         
         return timeSeriesCollection;
-    }
-    
-    private Second localTimeToSecond(LocalTime localTime)
-    {
-        // Convert LocalTime -> Date (fixed base date)
-        LocalDate baseDate = LocalDate.of(2025, 1, 1);
-        LocalDateTime dateTime = baseDate.atTime(localTime);
-        Date date = Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
-        
-        return new Second(date);
     }
     
     private String convertMacroNameToGuiVersion(String macroName)
