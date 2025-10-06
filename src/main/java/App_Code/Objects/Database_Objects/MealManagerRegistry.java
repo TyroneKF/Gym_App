@@ -431,8 +431,8 @@ public class MealManagerRegistry
         Iterator<Integer> it = pieDatasetHashMap.keySet().iterator();
         while (it.hasNext())
         {
-            Integer mmKey = it.next(); ;
-            if (getMealManager(mmKey).is_PieChartOpen()) { it.remove(); System.out.printf("\nRemoved : %s", mmKey); }
+            Integer mmKey = it.next();
+            if (! getMealManager(mmKey).is_PieChartOpen()) { it.remove(); System.out.printf("\nPieDelete: %s", mmKey); }
         }
     }
     

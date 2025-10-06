@@ -1,10 +1,10 @@
 package App_Code.Objects.Graph_Objects;
 
 
-
 import javax.swing.*;
 import java.awt.*;
 import java.text.DecimalFormat;
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -28,34 +28,35 @@ public class Pie_Chart extends JPanel
     // ############################################################################################
     private DefaultPieDataset<String> dataset;
     protected JFreeChart chart;
-
+    
     // ############################################################################################
     // Constructor
     // ############################################################################################
-    public Pie_Chart(String title, int frameWidth, int frameHeight, DefaultPieDataset dataset)
+    public Pie_Chart(String title, int frameWidth, int frameHeight, Font titleFont, Font labelFont, Font legendFont,
+                     DefaultPieDataset dataset)
     {
         //############################################
         // Set Layout Dimensions
         //############################################
         setPreferredSize(new Dimension(frameWidth, frameHeight));
         setLayout(new GridLayout(1, 1));
-
+        
         //############################################
         // Add Data to Dataset to represent
         //############################################
         this.dataset = dataset;
-
+        
         //############################################
         // Create Plot with Data & Configurations
         //############################################
         chart = ChartFactory.createPieChart3D(title, dataset, true, true, false);
-
+        
         PiePlot3D plot = (PiePlot3D) chart.getPlot();
         plot.setStartAngle(290);
         plot.setDirection(Rotation.CLOCKWISE);
         plot.setForegroundAlpha(0.6f);
         plot.setInteriorGap(0.02);
-
+        
         // Format: "{0}" = key, "{1}" = value, "{2}" = percentage
         PieSectionLabelGenerator labelGenerator =
                 new StandardPieSectionLabelGenerator(
@@ -63,45 +64,45 @@ public class Pie_Chart extends JPanel
                         new DecimalFormat("0.0"),   // one decimal place for values
                         new DecimalFormat("0%"));   // percentage
         plot.setLabelGenerator(labelGenerator);
-
+        
         // Place labels inside slices
         plot.setSimpleLabels(true);
         plot.setLabelGap(0.02);
-
+        
         // #############################################
         // Setting Font sizes
         //#############################################
         // Set Title Font Size
         TextTitle titleObject = chart.getTitle();
-        titleObject.setFont(new Font("Serif", Font.PLAIN, 27));
-
+        titleObject.setFont(titleFont);
+        
         // Label font size on diagram
-        plot.setLabelFont(new Font("SansSerif", Font.BOLD, 22));
+        plot.setLabelFont(labelFont);
         plot.setLabelPaint(Color.BLACK);   // Black stands out better than white
-
+        
         // Legend Font Size
-        chart.getLegend().setItemFont(new Font("Serif", Font.PLAIN, 23));
-
+        chart.getLegend().setItemFont(legendFont);
+        
         // #############################################
         // Auto Rotate Features
         //#############################################
         // 🔹 auto-rotate : auto-rotate (50 ms delay ≈ 20 frames/sec)
         Rotator rotator = new Rotator(plot, 100);
         rotator.start();
-
+        
         // #############################################
         // Create Plot Dimensions
         //#############################################
         // Add chart to panel
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new Dimension(frameWidth, frameHeight));
-
+        
         // #############################################
         // Add Plot to Panel
         //#############################################
         add(chartPanel);
     }
-
+    
     // ############################################################################################
     // Methods
     // ############################################################################################
@@ -109,7 +110,7 @@ public class Pie_Chart extends JPanel
     {
         chart.setTitle(String.format("%s Macros", meal_name));
     }
-
+    
     //############################################################################################
     // Rotator Class
     //############################################################################################
@@ -117,19 +118,19 @@ public class Pie_Chart extends JPanel
     {
         private final PiePlot plot;
         private int angle = 270; // starting angle
-
+        
         public Rotator(PiePlot plot, int delay)
         {
             super(delay, null);
             this.plot = plot;
             addActionListener(this);
         }
-
+        
         @Override
         public void actionPerformed(ActionEvent e)
         {
             angle = angle + 1;          // rotate 1 degree per tick
-            if (angle==360)
+            if (angle == 360)
             {
                 angle = 0;
             }

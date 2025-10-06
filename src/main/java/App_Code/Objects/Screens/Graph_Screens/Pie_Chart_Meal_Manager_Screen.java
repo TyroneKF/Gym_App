@@ -15,7 +15,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
     //###########################################################################################
     // Variables
     //###########################################################################################
-
+    
     
     //#####################################
     // Objects
@@ -35,9 +35,8 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
     //#####################################
     private int
             frameWidth = 800,
-            frameHeight = 600;
-    
-    private int mealInPlanID;
+            frameHeight = 600,
+            mealInPlanID;
     
     //###########################################################################################
     // Constructor
@@ -58,7 +57,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
         this.mealManager = mealManager;
         this.mealManagerRegistry = mealManager.getMealManagerRegistry();
         this.meal_plan_screen = mealManager.getMeal_plan_screen();
-    
+        
         this.mealInPlanID = mealManager.getMealInPlanID();
         this.meal_name = mealManager.getCurrentMealName();
         
@@ -67,12 +66,28 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
         //############################################
         DefaultPieDataset<String> dataset = mealManagerRegistry.create_MM_MacroInfo_PieChart(mealInPlanID);
         
-        // ##########################################
-        // Create Graph Object & Adding to GUI
-        // ##########################################
-        pieChart = new Pie_Chart(String.format("%s Macros", meal_name), frameWidth - 50, frameHeight - 20, dataset);
+        //#####################################
+        // Graph Preferences
+        //#####################################
+        String title = String.format("%s Macros", meal_name);
+        int
+                pieWidth = frameWidth - 50,
+                pieHeight = frameHeight - 20;
+        
+        Font
+                titleFont = new Font("Serif", Font.PLAIN, 27),
+                labelFont = new Font("SansSerif", Font.BOLD, 22),
+                legendFont = new Font("Serif", Font.PLAIN, 23);
+    
+        //#####################################
+        // Create PieChart
+        //#####################################
+        pieChart = new Pie_Chart(title, pieWidth, pieHeight, titleFont, labelFont, legendFont, dataset);
         addToContainer(getScrollPaneJPanel(), pieChart, 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
         
+        //#####################################
+        // Frame
+        //#####################################
         setFrameVisibility(true);
     }
     
