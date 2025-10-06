@@ -26,8 +26,7 @@ public class Pie_Chart extends JPanel
     // ############################################################################################
     // Variables
     // ############################################################################################
-    private DefaultPieDataset<String> dataset;
-    protected JFreeChart chart;
+     protected JFreeChart chart;
     
     // ############################################################################################
     // Constructor
@@ -40,11 +39,6 @@ public class Pie_Chart extends JPanel
         //############################################
         setPreferredSize(new Dimension(frameWidth, frameHeight));
         setLayout(new GridLayout(1, 1));
-        
-        //############################################
-        // Add Data to Dataset to represent
-        //############################################
-        this.dataset = dataset;
         
         //############################################
         // Create Plot with Data & Configurations

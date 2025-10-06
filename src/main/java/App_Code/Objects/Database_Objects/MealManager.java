@@ -489,6 +489,11 @@ public class MealManager
         {
             pie_chart_meal_manager_screen.update_PieChart_Title();
         }
+        
+        if(meal_plan_screen.is_PieScreenOpen())
+        {
+//            meal_plan_screen.update_PieChartName(getMealInPlanID(), getCurrentMealName());
+        }
     }
     
     /**
