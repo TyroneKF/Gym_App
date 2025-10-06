@@ -518,9 +518,9 @@ public class MealManager
         }
     }
     
-    public Pie_Chart_Meal_Manager_Screen getPie_chart_meal_manager_screen()
+    public Boolean is_PieChartOpen()
     {
-        return pie_chart_meal_manager_screen;
+        return pie_chart_meal_manager_screen != null;
     }
     
     //#################################################################################

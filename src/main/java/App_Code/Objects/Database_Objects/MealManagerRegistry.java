@@ -424,7 +424,7 @@ public class MealManagerRegistry
     
     /**
      * This is requested by the Meal_Plan_Screen when the pieChart screen is closed!
-     * Remove the pieChart data which doesnt have a MealManager pie chart active
+     * Remove the pieChart data which doesn't have a MealManager pie chart actively using it.
      */
     public void remove_Unused_PieData()
     {
@@ -432,7 +432,7 @@ public class MealManagerRegistry
         while (it.hasNext())
         {
             Integer mmKey = it.next(); ;
-            if (getMealManager(mmKey).getPie_chart_meal_manager_screen() == null) { it.remove(); System.out.printf("\nRemoved : %s", mmKey); }
+            if (getMealManager(mmKey).is_PieChartOpen()) { it.remove(); System.out.printf("\nRemoved : %s", mmKey); }
         }
     }
     
