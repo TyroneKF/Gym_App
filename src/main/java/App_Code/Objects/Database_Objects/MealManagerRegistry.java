@@ -375,7 +375,7 @@ public class MealManagerRegistry
         {
             dataset.setValue(String.format("  %s - %s g   ", macroValues.getKey(), macroValues.getValue()), macroValues.getValue());
         }
-    
+        
         //#############################################
         // Return Value
         //#############################################
@@ -418,7 +418,22 @@ public class MealManagerRegistry
     
     public void removePieChartDatasetValue(Integer mealInPlanID)
     {
+        System.out.printf("\n\nRemoved Data %s", mealInPlanID);
         pieDatasetHashMap.remove(mealInPlanID);
+    }
+    
+    /**
+     * This is requested by the Meal_Plan_Screen when the pieChart screen is closed!
+     * Remove the pieChart data which doesnt have a MealManager pie chart active
+     */
+    public void remove_Unused_PieData()
+    {
+        Iterator<Integer> it = pieDatasetHashMap.keySet().iterator();
+        while (it.hasNext())
+        {
+            Integer mmKey = it.next(); ;
+            if (getMealManager(mmKey).getPie_chart_meal_manager_screen() == null) { it.remove(); System.out.printf("\nRemoved : %s", mmKey); }
+        }
     }
     
     //##################################################################################################################
@@ -499,7 +514,16 @@ public class MealManagerRegistry
     //######################################
     public MealManager getMealManager(Integer mealInPlanID)
     {
+        Iterator<Map.Entry<Integer, MealManager>> it = mealManagerTreeSet.iterator();
+        while (it.hasNext())
+        {
+            Map.Entry<Integer, MealManager> entry = it.next();
+            
+            if (entry.getKey().equals(mealInPlanID))
+            {
+                return entry.getValue();
+            }
+        }
         return null;
     }
-    
 }

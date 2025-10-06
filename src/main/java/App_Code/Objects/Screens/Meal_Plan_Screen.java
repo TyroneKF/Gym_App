@@ -1235,14 +1235,15 @@ public class Meal_Plan_Screen extends Screen
         pie_chart_meal_plan_screen.makeJFrameVisible();
     }
     
-    public void removePieChartScreen() { pie_chart_meal_plan_screen = null; }
-    
-    public void remove_Unused_PieData(Integer mealInPlanID)
+    public void removePieChartScreen()
     {
-        if (pie_chart_meal_plan_screen == null)
-        {
-            mealManagerRegistry.removePieChartDatasetValue(mealInPlanID);
-        }
+        pie_chart_meal_plan_screen = null;
+        mealManagerRegistry.remove_Unused_PieData();
+    }
+    
+    public Boolean is_PieScreenOpen()
+    {
+        return pie_chart_meal_plan_screen != null;
     }
     
     // ###############################################################

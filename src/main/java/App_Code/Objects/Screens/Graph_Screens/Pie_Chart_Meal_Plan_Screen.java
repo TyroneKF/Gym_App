@@ -56,5 +56,5 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
     }
 
     @Override
-    public void windowClosedEvent() { meal_plan_screen.removePieChartScreen(); }
+    public void windowClosedEvent() { meal_plan_screen.removePieChartScreen(); closeJFrame(); }
 }

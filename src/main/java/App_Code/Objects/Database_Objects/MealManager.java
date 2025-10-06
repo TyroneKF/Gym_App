@@ -491,13 +491,19 @@ public class MealManager
         }
     }
     
+    /**
+     * 1.) Remove Pie Chart Object
+     *
+     * 2.) IF Meal_Plan_Screen PieChart Screen is NULL, Pie Data can be removed
+     *     as it's not in use and not on display somewhere else     *
+     */
     public void removePieChartScreen()
     {
-        if (pie_chart_meal_manager_screen == null) { return; }
-        
         pie_chart_meal_manager_screen = null;
         
-        meal_plan_screen.remove_Unused_PieData(mealInPlanID);
+        if (meal_plan_screen.is_PieScreenOpen()) { return; }
+    
+        mealManagerRegistry.removePieChartDatasetValue(mealInPlanID);
     }
     
     public void update_Pie_Chart_Screen()
@@ -506,10 +512,15 @@ public class MealManager
          * Update data behind pieCharts whcih will effectively update all pieCharts actively using this data
          * */
         
-        if(! mealManagerRegistry.updatePieChart_MM_Values(getMealInPlanID()))
+        if (! mealManagerRegistry.updatePieChart_MM_Values(getMealInPlanID()))
         {
             System.err.printf("\n\nMealManagerRegistry.java : updatePieChart_MM_Values() \nPieChart not Open %s", mealInPlanID);
         }
+    }
+    
+    public Pie_Chart_Meal_Manager_Screen getPie_chart_meal_manager_screen()
+    {
+        return pie_chart_meal_manager_screen;
     }
     
     //#################################################################################
@@ -713,9 +724,9 @@ public class MealManager
         return (LocalTime) inputValidation("time", inputMealTime, comparison, skipConfirmation);
     }
     
-    private  Second convertMysqlTimeToSecond(String timeString)
+    private Second convertMysqlTimeToSecond(String timeString)
     {
-       return localTimeToSecond(LocalTime.parse(removeSecondsOnTimeString(timeString)));
+        return localTimeToSecond(LocalTime.parse(removeSecondsOnTimeString(timeString)));
     }
     
     private Second localTimeToSecond(LocalTime localTime)
@@ -724,7 +735,7 @@ public class MealManager
         Date date = Date.from(localTime.atDate(java.time.LocalDate.of(1970, 1, 1))
                 .atZone(ZoneId.systemDefault())
                 .toInstant());
-    
+        
         // Wrap into JFree Second
         return new Second(date);
     }
@@ -758,10 +769,10 @@ public class MealManager
     
     private String getCurrentMealTimeGUI()
     {
-       return currentMealTime.getStart()
-            .toInstant()
-            .atZone(ZoneId.systemDefault())
-            .toLocalTime().toString();
+        return currentMealTime.getStart()
+                .toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalTime().toString();
     }
     
     //####################################
