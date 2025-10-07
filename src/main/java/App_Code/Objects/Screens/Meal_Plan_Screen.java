@@ -1226,7 +1226,7 @@ public class Meal_Plan_Screen extends Screen
     // ###############################################################
     private void pieChart_BtnAction_OpenScreen()
     {
-        if (! is_PieScreenOpen())
+        if (! is_PieChart_Screen_Open())
         {
             pieChart_Meal_Plan_Screen = new Pie_Chart_Meal_Plan_Screen(db, this);
             return;
@@ -1241,14 +1241,14 @@ public class Meal_Plan_Screen extends Screen
         mealManagerRegistry.remove_Unused_PieData();
     }
     
-    public Boolean is_PieScreenOpen()
+    public Boolean is_PieChart_Screen_Open()
     {
         return pieChart_Meal_Plan_Screen != null;
     }
     
     public void update_PieChart_Title(Integer mealInPlanID)
     {
-        if (! is_PieScreenOpen()) { return; }
+        if (! is_PieChart_Screen_Open()) { return; }
         
         pieChart_Meal_Plan_Screen.update_PieChart_MealName(mealInPlanID);
     }
@@ -1258,7 +1258,7 @@ public class Meal_Plan_Screen extends Screen
     // ###############################################################
     private void lineChart_Btn_Action_OpenScreen()
     {
-        if (lineChartMealPlanScreen == null)
+        if (! is_LineChart_Screen_Open())
         {
             lineChartMealPlanScreen = new Line_Chart_Meal_Plan_Screen(db, this);
             return;
@@ -1274,23 +1274,28 @@ public class Meal_Plan_Screen extends Screen
     
     public void updateLineChartData(MealManager mealManager, Second previousTime, Second currentTime)
     {
-        if (lineChartMealPlanScreen == null) { return; }
+        if (! is_LineChart_Screen_Open()) { return; }
         
         lineChartMealPlanScreen.updateMealManagerData(mealManager, previousTime, currentTime);
     }
     
     public void deleteLineChartData(Second currentTime)
     {
-        if (lineChartMealPlanScreen == null) { return; }
+        if (! is_LineChart_Screen_Open()) { return; }
         
         lineChartMealPlanScreen.deleteMealManagerData(currentTime);
     }
     
     public void clearLineChartDataSet()
     {
-        if (lineChartMealPlanScreen == null) { return; }
+        if (! is_LineChart_Screen_Open()) { return; }
         
         lineChartMealPlanScreen.clear_And_Rebuild_Dataset();
+    }
+    
+    public boolean is_LineChart_Screen_Open()
+    {
+        return lineChartMealPlanScreen != null;
     }
     
     // ###############################################################
@@ -1518,7 +1523,7 @@ public class Meal_Plan_Screen extends Screen
             return;
         }
         
-        if (ingredientsInfoScreen != null)
+        if (is_IngredientScreen_Open())
         {
             ingredientsInfoScreen.makeFrameVisible();
             return;
@@ -1526,6 +1531,11 @@ public class Meal_Plan_Screen extends Screen
         
         ingredientsInfoScreen = new Ingredients_Info_Screen(db, this, planID, tempPlanID, planName,
                 map_ingredientTypesToNames, ingredientsTypesList, storesNamesList);
+    }
+    
+    private Boolean is_IngredientScreen_Open()
+    {
+        return ingredientsInfoScreen != null;
     }
     
     public void remove_Ingredients_Info_Screen()
@@ -1555,12 +1565,17 @@ public class Meal_Plan_Screen extends Screen
             return;
         }
         
-        if (macrosTargets_Screen != null)
+        if (is_MacroTargetsScreen_Open())
         {
             macrosTargets_Screen.makeJFrameVisible();
             return;
         }
         macrosTargets_Screen = new Macros_Targets_Screen(db, this, planID, tempPlanID, planName);
+    }
+    
+    private boolean is_MacroTargetsScreen_Open()
+    {
+       return macrosTargets_Screen != null;
     }
     
     public void remove_macrosTargets_Screen()
@@ -1637,13 +1652,21 @@ public class Meal_Plan_Screen extends Screen
         // ##########################################
         // Close Other Windows If Open
         // ##########################################
-        if (macrosTargets_Screen != null)
+        if (is_MacroTargetsScreen_Open())
         {
             macrosTargets_Screen.windowClosedEvent();
         }
-        if (ingredientsInfoScreen != null)
+        if (is_IngredientScreen_Open()) // HELLO Refactor into screen method
         {
             ingredientsInfoScreen.closeWindow();
+        }
+        if (is_PieChart_Screen_Open())
+        {
+            pieChart_Meal_Plan_Screen.windowClosedEvent();
+        }
+        if (is_LineChart_Screen_Open())
+        {
+            lineChartMealPlanScreen.windowClosedEvent();
         }
         
         // ##########################################
@@ -1654,7 +1677,7 @@ public class Meal_Plan_Screen extends Screen
         {
             Map.Entry<Integer, MealManager> mealManagerEntry = it.next();
             
-            mealManagerEntry.getValue().removePieChartScreen();
+            mealManagerEntry.getValue().close_PieChartScreen();
         }
     }
     

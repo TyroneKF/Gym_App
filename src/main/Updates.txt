@@ -43,8 +43,9 @@ Work On:
 .) isOpenMethods for external screens
 
 PieChartScreen MPS - Ordered by time:
-.) Change Meal Name - changes title
 .) Change Meal Time - changes order & title
+.) Add Meal = new pie chart
+.) Delete Meal = new pie chart
 
 .) Refresh Meal - Redraws screen
 

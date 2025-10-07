@@ -95,11 +95,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
     // Methods
     //###########################################################################################
     @Override
-    public void windowClosedEvent()
-    {
-        mealManager.removePieChartScreen();
-        closeJFrame();
-    }
+    public void windowClosedEvent() { mealManager.removePieChartScreen(); closeJFrame(); }
     
     //####################################
     // Update Methods
@@ -108,5 +104,4 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
     {
         pieChart.setTitle(String.format("%s Macros", mealManager.getCurrentMealName()));
     }
-    
 }

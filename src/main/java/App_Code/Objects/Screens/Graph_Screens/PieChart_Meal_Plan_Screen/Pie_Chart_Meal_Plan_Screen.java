@@ -55,7 +55,7 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
         //#####################################
         int
                 col = 3,
-                pieWidth = (frameWidth / col) -20, // 750
+                pieWidth = (frameWidth / col) - 30,
                 pieHeight = 500,
                 rotateDelay = 200; //580
         
@@ -132,6 +132,6 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
     // #################################################################################################################
     public void update_PieChart_MealName(Integer mealInPlanID)
     {
-       mealManagerRegistry.get_PieChart_MPS(mealInPlanID).update_PieChart_Title();
+        mealManagerRegistry.get_PieChart_MPS(mealInPlanID).update_PieChart_Title();
     }
 }

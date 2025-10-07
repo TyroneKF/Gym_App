@@ -12,17 +12,17 @@ public class Screen
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-
+    
     // Integers
     protected int containerYPos = 0, frameWidth, frameHeight, xPos, yPos;
-
+    
     // String
     protected String lineSeparator = "###############################################################################";
     protected String title;
-
+    
     // Booleans
     Boolean addScrollPane;
-
+    
     //##############################################
     // Objects
     //##############################################
@@ -31,16 +31,16 @@ public class Screen
     protected JFrame frame = new JFrame();
     protected Container contentPane;
     protected ScrollPaneCreator scrollPane = new ScrollPaneCreator();
-
+    
     //##############################################
     // JPanels
     //##############################################
     // Public: JPanels
     protected JPanel mainNorthPanel, mainSouthPanel, scrollPaneJPanel;
-
+    
     // Private: JPanels
     private JPanel screenSectioned, mainCenterPanel;
-
+    
     //##################################################################################################################
     // Constructors
     //##################################################################################################################
@@ -56,13 +56,13 @@ public class Screen
         this.frameWidth = frameWidth;
         this.xPos = xPos;
         this.yPos = yPos;
-
+        
         //##############################################
         // Setup
         //##############################################
         setup();
     }
-
+    
     public Screen(Boolean addScrollPane, String title, int frameWidth, int frameHeight, int xPos, int yPos)
     {
         //##############################################
@@ -74,13 +74,13 @@ public class Screen
         this.frameWidth = frameWidth;
         this.xPos = xPos;
         this.yPos = yPos;
-
+        
         //##############################################
         // Setup
         //##############################################
         setup();
     }
-
+    
     //##################################################################################################################
     // GUI Setup
     //##################################################################################################################
@@ -94,34 +94,34 @@ public class Screen
         frame.setSize(frameWidth, frameHeight);
         frame.setTitle(title);
         frame.setLocation(xPos, yPos);
-
+        
         // Container (ContentPane)
         contentPane = frame.getContentPane();
         contentPane.setLayout(new GridBagLayout());
         contentPane.setVisible(true);
-
+        
         //########################################################
         // Create Interface With Sections
         //########################################################
         screenSectioned = new JPanel(new BorderLayout());
         addToContainer(contentPane, screenSectioned, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
-
+        
         // Top of GUI
         mainNorthPanel = new JPanel(new GridBagLayout());
         screenSectioned.add(mainNorthPanel, BorderLayout.NORTH);
-
+        
         // Centre of GUI
         mainCenterPanel = new JPanel(new GridBagLayout());
         screenSectioned.add(mainCenterPanel, BorderLayout.CENTER);
-
+        
         // South of GUI
         mainSouthPanel = new JPanel(new GridBagLayout());
         screenSectioned.add(mainSouthPanel, BorderLayout.SOUTH);
-
+        
         //##########################################################
         // Create ScrollPane & Add it to Centre of GUI
         //##########################################################
-
+        
         if (addScrollPane)
         {
             // Attach ScrollPane to the centre of the screen
@@ -133,14 +133,15 @@ public class Screen
         {
             scrollPaneJPanel = mainCenterPanel;
         }
-
+        
         //##########################################################
         // Closing Events on Screen
         //##########################################################
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.addWindowListener(new java.awt.event.WindowAdapter()
         {
             @Override //HELLO Causes Error
-            public void windowClosing(java.awt.event.WindowEvent windowEvent)
+            public void windowClosed(java.awt.event.WindowEvent windowEvent)
             {
                 windowClosedEvent();
             }
@@ -149,16 +150,16 @@ public class Screen
 
     protected void iconSetup(Container mainNorthPanel)
     {
-
+    
     }
-
+    
     //##################################################################################################################
     // Actions
     //##################################################################################################################
     protected Boolean areYouSure(String title, String msg)
     {
         int reply = JOptionPane.showConfirmDialog(frame, msg, title, JOptionPane.YES_NO_OPTION); //HELLO Edit
-
+        
         if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
         {
             return false;
@@ -188,7 +189,7 @@ public class Screen
             );
         });
     }
-
+    
     protected void scroll_To_Top_of_ScrollPane()
     {
         //##############################################
@@ -197,7 +198,7 @@ public class Screen
         JScrollBar vertical = scrollPane.getVerticalScrollBar();
         vertical.setValue(vertical.getMinimum());
     }
-
+    
     protected void scroll_To_Bottom_of_ScrollPane()
     {
         //##############################################
@@ -206,7 +207,7 @@ public class Screen
         JScrollBar vertical = scrollPane.getVerticalScrollBar();
         vertical.setValue(vertical.getMaximum());
     }
-
+    
     //##################################################################################################################
     // Mutator Methods
     //##################################################################################################################
@@ -214,17 +215,17 @@ public class Screen
     {
         frame.setVisible(x);
     }
-
+    
     public void setTitle(String title)
     {
         if (title.length() > 0) { frame.setTitle(title); }
     }
-
+    
     public void setResizable(boolean x)
     {
         frame.setResizable(x);
     }
-
+    
     protected String formatStrings(String txt, boolean separateWords)
     {
         // Re-assign Re-Capitalised Value into list
@@ -238,27 +239,27 @@ public class Screen
                                 .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
                                 .collect(Collectors.joining("_"));
     }
-
+    
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
-
+    
     // Other Objects
     public MyJDBC getDb()
     {
         return db;
     }
-
+    
     public GridBagConstraints getGbc()
     {
         return gbc;
     }
-
+    
     public JFrame getFrame()
     {
         return frame;
     }
-
+    
     // ##################################
     // Get JPanels Methods
     // ##################################
@@ -266,23 +267,23 @@ public class Screen
     {
         return mainNorthPanel;
     }
-
+    
     protected JPanel getScrollPaneJPanel()
     {
         return scrollPaneJPanel;
     }
-
+    
     protected JPanel getMainSouthPanel() { return mainSouthPanel; }
-
+    
     protected JPanel createSpaceDivider(int width, int height)
     {
         JPanel spaceDivider = new JPanel(new GridBagLayout());
         spaceDivider.setBackground(Color.WHITE);
         spaceDivider.setPreferredSize(new Dimension(width, height));
-
+        
         return spaceDivider;
     }
-
+    
     // ##################################
     // Get Int Methods
     // ##################################
@@ -290,12 +291,12 @@ public class Screen
     {
         return frameWidth;
     }
-
+    
     protected int getFrameHeight()
     {
         return frameHeight;
     }
-
+    
     //##################################################################################################################
     // Sizing & Adding to GUI Methods
     //##################################################################################################################
@@ -303,24 +304,24 @@ public class Screen
     {
         setFrameVisibility(true);
         getFrame().setExtendedState(JFrame.NORMAL); // makes frames visible
-
+        
         getFrame().setLocation(0, 0);
     }
-
+    
     protected int getAndIncreaseContainerYPos()
     {
         containerYPos++;
         return containerYPos;
     }
-
+    
     public void resizeGUI()
     {
         if (frame != null) { frame.revalidate(); }
-
+        
         scrollPaneJPanel.revalidate();
         contentPane.revalidate();
     }
-
+    
     protected void addToContainer(Container container, Component addToContainer,
                                   Integer gridx, Integer gridy, Integer gridwidth, Integer gridheight, Double weightx,
                                   Double weighty, String fill, Integer ipady, Integer ipadx, String anchor)
@@ -333,15 +334,15 @@ public class Screen
         {
             gbc.gridy = gridy;
         }
-
+        
         gbc.gridwidth = gridwidth;
         gbc.gridheight = gridheight;
         gbc.weightx = weightx;
         gbc.weighty = weighty;
-
+        
         gbc.ipady = ipady;
         gbc.ipadx = ipadx;
-
+        
         switch (fill.toLowerCase())
         {
             case "horizontal":
@@ -350,12 +351,12 @@ public class Screen
             case "vertical":
                 gbc.fill = GridBagConstraints.VERTICAL;
                 break;
-
+            
             case "both":
                 gbc.fill = GridBagConstraints.BOTH;
                 break;
         }
-
+        
         if (anchor != null)
         {
             switch (anchor.toLowerCase())
@@ -363,7 +364,7 @@ public class Screen
                 case "start":
                     gbc.anchor = GridBagConstraints.PAGE_START;
                     break;
-
+                
                 case "end":
                     gbc.anchor = GridBagConstraints.PAGE_END;
                     break;

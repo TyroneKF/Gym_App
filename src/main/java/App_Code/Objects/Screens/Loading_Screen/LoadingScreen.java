@@ -1,12 +1,9 @@
 package App_Code.Objects.Screens.Loading_Screen;
 
 import App_Code.Objects.Gui_Objects.Screen;
-import App_Code.Objects.Screens.Meal_Plan_Screen;
-
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
-
 
 public class LoadingScreen extends Screen
 {
@@ -88,7 +85,7 @@ public class LoadingScreen extends Screen
     @Override
     public void windowClosedEvent()
     {
-        if (frame != null) { closeJFrame(); }
+        if (frame != null) { frame.dispose(); }
     }
 
     //##################################################################################################################

@@ -489,7 +489,7 @@ public class MealManager
         {
             pie_chart_meal_manager_screen.update_PieChart_Title();
         }
-    
+        
         //#########################################################################################################
         // Change External Graphs Of this Pie Title
         //#########################################################################################################
@@ -506,9 +506,19 @@ public class MealManager
     {
         pie_chart_meal_manager_screen = null;
         
-        if (meal_plan_screen.is_PieScreenOpen()) { return; }
-    
+        //############################################
+        // External
+        //############################################
+        if (meal_plan_screen.is_PieChart_Screen_Open()) { return; }
+        
         mealManagerRegistry.removePieChartDatasetValue(mealInPlanID);
+    }
+    
+    public void close_PieChartScreen()
+    {
+        if (! is_PieChartOpen()) return;
+        
+        pie_chart_meal_manager_screen.windowClosedEvent();
     }
     
     public void update_Pie_Chart_Screen()
@@ -717,6 +727,11 @@ public class MealManager
         // Update LineChart Data
         //#######################################
         meal_plan_screen.updateLineChartData(this, oldMealSeconds, newMealSecond);
+        
+        //#########################################################################################################
+        // Change External Graphs Of this Pie Title
+        //#########################################################################################################
+        meal_plan_screen.update_PieChart_Title(getMealInPlanID());
     }
     
     private LocalTime promptUserForMealTime(boolean skipConfirmation, boolean comparison)
@@ -962,8 +977,8 @@ public class MealManager
         //##########################################
         // Delete PieChart (Meal is Gone)
         //##########################################
-        removePieChartScreen();
-        
+         close_PieChartScreen();
+         
         //##########################################
         // Update LineChart Data
         //##########################################

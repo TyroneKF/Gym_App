@@ -25,24 +25,24 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
     // Variables
     //#################################################################################################################
     private String planName;
-
+    
     //##############################################
     // Objects
     //##############################################
     private Meal_Plan_Screen meal_plan_screen;
     private MealManagerRegistry mealManagerRegistry;
-
+    
     //##############################################
     // Collections
     //##############################################
     private Map<String, Integer> macronutrientsToCheckAndPos;
-
+    
     //##############################################
     // Datasets Objects
     //##############################################
     private TimeSeriesCollection dataset = new TimeSeriesCollection(); // Clear Dataset;
     private Line_Chart line_chart;
-
+    
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
@@ -54,7 +54,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
         super(db, true, "Line Chart: Plan Macros", 1000, 900, 0, 0);
         getScrollPaneJPanel().setBackground(Color.WHITE);
         setResizable(true);
-
+        
         // ##########################################
         // Variables
         // ##########################################
@@ -63,24 +63,24 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
         this.mealManagerRegistry = meal_plan_screen.get_MealManagerRegistry();
         this.planName = meal_plan_screen.getPlanName();
         this.macronutrientsToCheckAndPos = meal_plan_screen.getTotalMeal_MacroColNamePos();
-
+        
         //############################################
         // Creating Macros / Dataset
         //############################################
         createDataSet();
-
+        
         // ##########################################
         // Create Graph Object & Adding to GUI
         // ##########################################
         line_chart = new Line_Chart(String.format("%s : Macros Over 24 Hours", planName), frameWidth - 100, frameHeight - 60, dataset);
         addToContainer(getScrollPaneJPanel(), line_chart, 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
-
+        
         // ##########################################
         // Make Frame Visible
         // ##########################################
         setFrameVisibility(true);
     }
-
+    
     // ##################################################
     // Build Methods
     // ##################################################
@@ -90,13 +90,14 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
     }
     
     /**
-     ** @param mealManager - MealManager responsible for the changes made
-     * @param previousTime - old meal time
-     * @param currentTime - current meal time
+     * * @param mealManager - MealManager responsible for the changes made
      *
-     * For Loop through each macroNutrient Name in HashMap (Outer)
-     * (Inner HashMap) Contains all the values for all the MealManagers
-     * Update the values specific to this mealManager
+     * @param previousTime - old meal time
+     * @param currentTime  - current meal time
+     *                     <p>
+     *                     For Loop through each macroNutrient Name in HashMap (Outer)
+     *                     (Inner HashMap) Contains all the values for all the MealManagers
+     *                     Update the values specific to this mealManager
      */
     public void updateMealManagerData(MealManager mealManager, Second previousTime, Second currentTime)
     {
@@ -104,7 +105,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
         // Get MealManager Info
         // ####################################################
         Boolean timeChanged = ! previousTime.equals(currentTime);
-   
+        
         int mealInPlanID = mealManager.getMealInPlanID();
         
         // ####################################################
@@ -112,13 +113,13 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
         // ####################################################
         Iterator<Map.Entry<String, HashMap<Integer, Pair<Second, BigDecimal>>>> it
                 = mealManagerRegistry.get_MealManagersMacroValues().entrySet().iterator();
-    
+        
         /**
          *  <Key: MacroName | Value: HashMap<Key: MealManagerID, Value: < MealTime, Quantity>>
          *   Put, Replace
          */
         
-        while(it.hasNext())
+        while (it.hasNext())
         {
             // ############################################
             // Create TimeSeries For Macros
@@ -134,10 +135,10 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
             // ########################################
             // Convert Table Column to Key in TimeSeries Collection
             String macroNameGUI = convertMacroNameToGuiVersion(macroName);
-
+            
             // Get TimeSeries correlated to MacroName in collection
             TimeSeries macroSeries = dataset.getSeries(macroNameGUI);
-
+            
             // ########################################
             // Get Macronutrient Info
             // ########################################
@@ -152,7 +153,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
                 macroSeries.addOrUpdate(previousTime, newMacroValue); // update value
                 continue;
             }
-
+            
             // ########################################
             // New Time : Delete Time & Add New Value
             // ########################################
@@ -160,16 +161,13 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
             macroSeries.add(currentTime, newMacroValue); // Add new value to Series with new Time
         }
     }
-
+    
     // #################################################################################################################
     // Methods
     // #################################################################################################################
     @Override
-    public void windowClosedEvent()
-    {
-        meal_plan_screen.removeLineChartScreen();
-    }
-
+    public void windowClosedEvent() { meal_plan_screen.removeLineChartScreen(); closeJFrame();}
+    
     //##################################################
     // Conversion Methods
     //##################################################
@@ -178,7 +176,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
         // Reformat macroName for GUI purposes  "\u00A0" is like space because \t doesn't work in this label format
         return String.format("\u00A0\u00A0%s\u00A0\u00A0", formatStrings(macroName, true));
     }
-
+    
     //##################################################
     //  Update  Methods
     //##################################################
@@ -195,10 +193,10 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
     {
         dataset = new TimeSeriesCollection();
         line_chart.getXY_Plot().setDataset(dataset);
-
+        
         createDataSet();
     }
-
+    
     /*
        Based on MealManagers time the data is deleted in the series collection
      */
@@ -211,10 +209,10 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
             // ############################################
             // Convert Table Column to Key in TimeSeries Collection
             String macroNameGUI = convertMacroNameToGuiVersion(macroName);
-
+            
             // Get TimeSeries correlated to MacroName in collection
             TimeSeries macroSeries = dataset.getSeries(macroNameGUI);
-
+            
             // #############################################
             // Delete MealManagers Correlated Macro Value
             // #############################################
