@@ -106,8 +106,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
     //####################################
     public void update_PieChart_Title()
     {
-        meal_name = mealManager.getCurrentMealName();
-        pieChart.setTitle(meal_name);
+        pieChart.setTitle(String.format("%s Macros", mealManager.getCurrentMealName()));
     }
     
 }

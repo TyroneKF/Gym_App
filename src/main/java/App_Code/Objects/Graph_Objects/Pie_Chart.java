@@ -97,9 +97,9 @@ public class Pie_Chart extends JPanel
     // ############################################################################################
     // Methods
     // ############################################################################################
-    public void setTitle(String meal_name)
+    public void setTitle(String txt)
     {
-        chart.setTitle(String.format("%s Macros", meal_name));
+        chart.setTitle(txt);
     }
     
     //############################################################################################
