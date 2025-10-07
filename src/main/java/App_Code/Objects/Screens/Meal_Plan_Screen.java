@@ -7,7 +7,7 @@ import App_Code.Objects.Database_Objects.MealManager;
 import App_Code.Objects.Database_Objects.MealManagerRegistry;
 import App_Code.Objects.Gui_Objects.*;
 import App_Code.Objects.Screens.Graph_Screens.Line_Chart_Meal_Plan_Screen;
-import App_Code.Objects.Screens.Graph_Screens.PieChart_MealPlanScreen.Pie_Chart_Meal_Plan_Screen;
+import App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Pie_Chart_Meal_Plan_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Edit_Ingredients_Info.Ingredients_Info_Screen;
 import App_Code.Objects.Screens.Loading_Screen.LoadingScreen;
 import io.github.cdimascio.dotenv.Dotenv;

@@ -1,8 +1,7 @@
-package App_Code.Objects.Screens.Graph_Screens.PieChart_MealPlanScreen;
+package App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen;
 
 import App_Code.Objects.Database_Objects.MealManager;
 import App_Code.Objects.Graph_Objects.Pie_Chart;
-import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.time.Second;
 
 public class PieChart_Entry_MPS

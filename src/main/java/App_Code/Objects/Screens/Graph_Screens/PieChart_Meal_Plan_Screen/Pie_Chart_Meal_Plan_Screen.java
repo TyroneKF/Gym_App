@@ -1,4 +1,4 @@
-package App_Code.Objects.Screens.Graph_Screens.PieChart_MealPlanScreen;
+package App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.MealManager;
