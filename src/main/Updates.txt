@@ -40,7 +40,16 @@ Work On:
 .) Meal_Plan_Screen per macro %s
 .) MealManagers & All pie charts share the same piechart object
 
+.) isOpenMethods for external screens
 
+PieChartScreen MPS - Ordered by time:
+.) Change Meal Name - changes title
+.) Change Meal Time - changes order & title
+
+.) Refresh Meal - Redraws screen
+
+MealManager -
+.) Check time comparison methods with get currentTime
 
 ######################################################################################
 New Features:

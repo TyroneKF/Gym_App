@@ -35,4 +35,10 @@ public class PieChart_Entry_MPS
     {
         return mealManager.getCurrentMealTime();
     }
+    
+    public void update_PieChart_Title()
+    {
+        String title = String.format("[%s]      %s Macros", mealManager.getCurrentMealTimeGUI(), mealManager.getCurrentMealName());
+        pieChart.setTitle(title);
+    }
 }

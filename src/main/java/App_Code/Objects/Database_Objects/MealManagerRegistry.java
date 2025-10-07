@@ -74,7 +74,7 @@ public class MealManagerRegistry
     }
     
     //##################################################################################################################
-    //  Methods
+    //  MealManager Methods in mealManagerTreeSet
     //##################################################################################################################
     public void recreateEmpty_MealManagersMacrosValues()
     {
@@ -447,7 +447,7 @@ public class MealManagerRegistry
         while (it.hasNext())
         {
             Integer mmKey = it.next();
-            if (! getMealManager(mmKey).is_PieChartOpen()) { it.remove(); System.out.printf("\nPieDelete: %s", mmKey); }
+            if (! get_MealManager_In_MM_TreeSet(mmKey).is_PieChartOpen()) { it.remove(); System.out.printf("\nPieDelete: %s", mmKey); }
         }
     }
     
@@ -458,7 +458,7 @@ public class MealManagerRegistry
     
     
     //##################################################################################################################
-    // LineChart Methods
+    // LineChart Methods [Meal_Plan_Screen]
     //##################################################################################################################
     public TimeSeriesCollection get_Plan_MacroValues_LineChart()
     {
@@ -543,12 +543,27 @@ public class MealManagerRegistry
     //######################################
     // Objects
     //######################################
-    public MealManager getMealManager(Integer mealInPlanID)
+    public MealManager get_MealManager_In_MM_TreeSet(Integer mealInPlanID)
     {
         Iterator<Map.Entry<Integer, MealManager>> it = mealManagerTreeSet.iterator();
         while (it.hasNext())
         {
             Map.Entry<Integer, MealManager> entry = it.next();
+            
+            if (entry.getKey().equals(mealInPlanID))
+            {
+                return entry.getValue();
+            }
+        }
+        return null;
+    }
+    
+    public PieChart_Entry_MPS get_PieChart_MPS(Integer mealInPlanID)
+    {
+        Iterator<Map.Entry<Integer, PieChart_Entry_MPS>> it = pieChart_MPS_Entries.iterator();
+        while (it.hasNext())
+        {
+            Map.Entry<Integer, PieChart_Entry_MPS> entry = it.next();
             
             if (entry.getKey().equals(mealInPlanID))
             {

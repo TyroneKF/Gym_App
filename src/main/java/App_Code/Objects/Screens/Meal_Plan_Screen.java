@@ -84,7 +84,7 @@ public class Meal_Plan_Screen extends Screen
     private Macros_Targets_Screen macrosTargets_Screen = null;
     private Ingredients_Info_Screen ingredientsInfoScreen = null;
     private Line_Chart_Meal_Plan_Screen lineChartMealPlanScreen = null;
-    private Pie_Chart_Meal_Plan_Screen pie_chart_meal_plan_screen = null;
+    private Pie_Chart_Meal_Plan_Screen pieChart_Meal_Plan_Screen = null;
     
     //##################################################
     // Database Table Names
@@ -1226,24 +1226,31 @@ public class Meal_Plan_Screen extends Screen
     // ###############################################################
     private void pieChart_BtnAction_OpenScreen()
     {
-        if (pie_chart_meal_plan_screen == null)
+        if (! is_PieScreenOpen())
         {
-            pie_chart_meal_plan_screen = new Pie_Chart_Meal_Plan_Screen(db, this);
+            pieChart_Meal_Plan_Screen = new Pie_Chart_Meal_Plan_Screen(db, this);
             return;
         }
         
-        pie_chart_meal_plan_screen.makeJFrameVisible();
+        pieChart_Meal_Plan_Screen.makeJFrameVisible();
     }
     
     public void removePieChartScreen()
     {
-        pie_chart_meal_plan_screen = null;
+        pieChart_Meal_Plan_Screen = null;
         mealManagerRegistry.remove_Unused_PieData();
     }
     
     public Boolean is_PieScreenOpen()
     {
-        return pie_chart_meal_plan_screen != null;
+        return pieChart_Meal_Plan_Screen != null;
+    }
+    
+    public void update_PieChart_Title(Integer mealInPlanID)
+    {
+        if (! is_PieScreenOpen()) { return; }
+        
+        pieChart_Meal_Plan_Screen.update_PieChart_MealName(mealInPlanID);
     }
     
     // ###############################################################

@@ -130,8 +130,8 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
     // #################################################################################################################
     // Accessor Methods
     // #################################################################################################################
-    public void update_PieChart_MealName(Integer mealInPlanID, String newMealName)
+    public void update_PieChart_MealName(Integer mealInPlanID)
     {
-    
+       mealManagerRegistry.get_PieChart_MPS(mealInPlanID).update_PieChart_Title();
     }
 }

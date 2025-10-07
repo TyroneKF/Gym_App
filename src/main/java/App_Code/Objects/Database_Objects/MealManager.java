@@ -483,17 +483,17 @@ public class MealManager
     private void pieChart_UpdateMealName()
     {
         //#########################################################################################################
-        // Change Graph Title if exists
+        // Change Internal Graph Title if exists
         //#########################################################################################################
         if (pie_chart_meal_manager_screen != null)
         {
             pie_chart_meal_manager_screen.update_PieChart_Title();
         }
-        
-        if(meal_plan_screen.is_PieScreenOpen())
-        {
-//            meal_plan_screen.update_PieChartName(getMealInPlanID(), getCurrentMealName());
-        }
+    
+        //#########################################################################################################
+        // Change External Graphs Of this Pie Title
+        //#########################################################################################################
+        meal_plan_screen.update_PieChart_Title(getMealInPlanID());
     }
     
     /**
@@ -582,7 +582,7 @@ public class MealManager
                 
                 if (getCurrentMealTime().equals(inputConvertedToSeconds)) // Time : User enters same meal time
                 {
-                    JOptionPane.showMessageDialog(getFrame(), String.format("This meal '%s' already has the value '%s' !!", variableName, getCurrentMealTime()));
+                    JOptionPane.showMessageDialog(getFrame(), String.format("This meal '%s' already has the value '%s' !!", variableName, getCurrentMealTimeGUI()));
                     return null;
                 }
             }
@@ -767,6 +767,7 @@ public class MealManager
         this.currentMealTime = currentMealTime;
     }
     
+    // Accessor Methods
     public Second getCurrentMealTime()
     {
         return currentMealTime;
@@ -775,6 +776,14 @@ public class MealManager
     public String getCurrentMealTimeGUI()
     {
         return currentMealTime.getStart()
+                .toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalTime().toString();
+    }
+    
+    private String get_SavedMealTime_GUI()
+    {
+        return savedMealTime.getStart()
                 .toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalTime().toString();
@@ -822,11 +831,6 @@ public class MealManager
         // Change Graph Title if exists
         //#########################################################################################################
         pieChart_UpdateMealName();
-        
-        //#########################################################################################################
-        // Update TotalMealTable
-        //#########################################################################################################
-        update_TotalMeal_Table(false, false); // Chart already updated above (no need)
     }
     
     private String promptUserForMealName(boolean skipConfirmation, boolean comparison)
@@ -1118,7 +1122,7 @@ public class MealManager
         String
                 uploadQuery = "",
                 updateMealName = process.equals("refresh") ? savedMealName : currentMealName, // set mealName to refresh
-                updateMealTime = process.equals("refresh") ? savedMealTime.toString() : currentMealTime.toString(); // set mealTime to time
+                updateMealTime = process.equals("refresh") ? get_SavedMealTime_GUI() : getCurrentMealTimeGUI(); // set mealTime to time
         
         if (hasMealNameBeenChanged || hasMealTimeBeenChanged) //  The meal time or name doesn't need to be updated
         {
@@ -1178,7 +1182,7 @@ public class MealManager
                 
                 ON P.plan_id = M.plan_id
                 AND (M.meal_name = '%s' OR M.meal_time = '%s')
-                AND M.meal_in_plan_id != %s; """, tempPlanID, tempPlanID, savedMealName, savedMealTime, mealInPlanID);
+                AND M.meal_in_plan_id != %s; """, tempPlanID, tempPlanID, savedMealName, get_SavedMealTime_GUI(), mealInPlanID);
         
         // Execute Query
         System.out.printf("\n\nQuery: \n %s", query);
