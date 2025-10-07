@@ -772,7 +772,7 @@ public class MealManager
         return currentMealTime;
     }
     
-    private String getCurrentMealTimeGUI()
+    public String getCurrentMealTimeGUI()
     {
         return currentMealTime.getStart()
                 .toInstant()

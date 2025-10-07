@@ -4,7 +4,6 @@ package App_Code.Objects.Graph_Objects;
 import javax.swing.*;
 import java.awt.*;
 import java.text.DecimalFormat;
-
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -13,10 +12,8 @@ import org.jfree.chart.plot.PiePlot3D;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.chart.util.Rotation;
 import org.jfree.data.general.DefaultPieDataset;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import org.jfree.chart.labels.PieSectionLabelGenerator;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
 
@@ -26,13 +23,13 @@ public class Pie_Chart extends JPanel
     // ############################################################################################
     // Variables
     // ############################################################################################
-     protected JFreeChart chart;
+    protected JFreeChart chart;
     
     // ############################################################################################
     // Constructor
     // ############################################################################################
-    public Pie_Chart(String title, int frameWidth, int frameHeight, Font titleFont, Font labelFont, Font legendFont,
-                     DefaultPieDataset dataset)
+    public Pie_Chart(String title, int frameWidth, int frameHeight, int rotateDelay, Font titleFont, Font labelFont,
+                     Font legendFont,  DefaultPieDataset dataset)
     {
         //############################################
         // Set Layout Dimensions
@@ -81,7 +78,7 @@ public class Pie_Chart extends JPanel
         // Auto Rotate Features
         //#############################################
         // 🔹 auto-rotate : auto-rotate (50 ms delay ≈ 20 frames/sec)
-        Rotator rotator = new Rotator(plot, 100);
+        Rotator rotator = new Rotator(plot, rotateDelay);
         rotator.start();
         
         // #############################################

@@ -277,6 +277,7 @@ public class Screen
     protected JPanel createSpaceDivider(int width, int height)
     {
         JPanel spaceDivider = new JPanel(new GridBagLayout());
+        spaceDivider.setBackground(Color.WHITE);
         spaceDivider.setPreferredSize(new Dimension(width, height));
 
         return spaceDivider;

@@ -1,19 +1,15 @@
 package App_Code.Objects.Database_Objects;
 
 import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.TotalMealTable;
+import App_Code.Objects.Screens.Graph_Screens.PieChart_MealPlanScreen.PieChart_Entry_MPS;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 import org.javatuples.Pair;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -38,15 +34,27 @@ public class MealManagerRegistry
         }
     });
     
-    private HashMap<Integer, DefaultPieDataset<String>> pieDatasetHashMap = new HashMap<>();
-    
     /**
      * HashMap<String, Map<Integer, Pair<LocalTime, BigDecimal>>> mealManagersMacroValues = new HashMap<>();
      * Stores all the mealManagers TotalMealValues in collections by the macroName
      * <Key: MacroName | Value: Map <Key: MealManagerID, Value: < MealTime, Quantity>>
      * Etc;  <Key: Salt | Value: <MealManagerID: 1, <MealTime: 14:00 , Quantity: 300g >>
      */
-    private Map<String, HashMap<Integer, Pair<Second, BigDecimal>>> mealManagersMacroValues;
+    private Map<String, HashMap<Integer, Pair<Second, BigDecimal>>> mealManagersMacroValues; // Can be refactored to include mealManager
+    
+    //#############################
+    // Chart Data Collections
+    //#############################
+    private HashMap<Integer, DefaultPieDataset<String>> pieDatasetHashMap = new HashMap<>();
+    
+    private TreeSet<Map.Entry<Integer, PieChart_Entry_MPS>> pieChart_MPS_Entries = new TreeSet<Map.Entry<Integer, PieChart_Entry_MPS>>(new Comparator<Map.Entry<Integer, PieChart_Entry_MPS>>()
+    {
+        @Override
+        public int compare(Map.Entry<Integer, PieChart_Entry_MPS> o1, Map.Entry<Integer, PieChart_Entry_MPS> o2)
+        {
+            return o1.getValue().get_MealTime().compareTo(o2.getValue().get_MealTime());
+        }
+    });
     
     //##################################################################################################################
     // Constructor
@@ -308,6 +316,13 @@ public class MealManagerRegistry
     ///#################################################################################################################
     // Pie Chart
     ///#################################################################################################################
+    /**
+     * @param mealInPlanID - ID of MealManager
+     * @return PieChart Dataset
+     *
+     * This method is used to retrieve pieChart Data based on MealInPlanID
+     * if it exists it is returned. Otherwise, it's created and added to DATA (Collection) and then it's returned
+     */
     public DefaultPieDataset<String> create_MM_MacroInfo_PieChart(Integer mealInPlanID)
     {
         //##############################################
@@ -436,6 +451,12 @@ public class MealManagerRegistry
         }
     }
     
+    ///######################################################
+    // MealPlanScreen
+    ///######################################################
+    
+    
+    
     //##################################################################################################################
     // LineChart Methods
     //##################################################################################################################
@@ -507,6 +528,16 @@ public class MealManagerRegistry
     public Map<String, HashMap<Integer, Pair<Second, BigDecimal>>> get_MealManagersMacroValues()
     {
         return mealManagersMacroValues;
+    }
+    
+    public TreeSet<Map.Entry<Integer, PieChart_Entry_MPS>> get_PieChart_MPS_Entries()
+    {
+        return pieChart_MPS_Entries;
+    }
+    
+    public HashMap<Integer, DefaultPieDataset<String>> get_PieDatasetHashMap()
+    {
+        return pieDatasetHashMap;
     }
     
     //######################################

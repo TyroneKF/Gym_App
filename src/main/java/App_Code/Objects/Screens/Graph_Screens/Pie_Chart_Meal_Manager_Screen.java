@@ -82,7 +82,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
         //#####################################
         // Create PieChart
         //#####################################
-        pieChart = new Pie_Chart(title, pieWidth, pieHeight, titleFont, labelFont, legendFont, dataset);
+        pieChart = new Pie_Chart(title, pieWidth, pieHeight, 150, titleFont, labelFont, legendFont, dataset);
         addToContainer(getScrollPaneJPanel(), pieChart, 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
         
         //#####################################
