@@ -5,7 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
 
-public class LoadingScreen extends Screen
+public class Loading_Screen extends Screen
 {
     //##################################################################################################################
     // Variables
@@ -20,7 +20,7 @@ public class LoadingScreen extends Screen
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public LoadingScreen(int endCount)
+    public Loading_Screen(int endCount)
     {
         //##############################################
         // Super Constructor & Variables

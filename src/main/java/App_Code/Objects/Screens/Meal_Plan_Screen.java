@@ -9,7 +9,7 @@ import App_Code.Objects.Gui_Objects.*;
 import App_Code.Objects.Screens.Graph_Screens.Line_Chart_Meal_Plan_Screen;
 import App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Pie_Chart_Meal_Plan_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Edit_Ingredients_Info.Ingredients_Info_Screen;
-import App_Code.Objects.Screens.Loading_Screen.LoadingScreen;
+import App_Code.Objects.Screens.Loading_Screen.Loading_Screen;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.jfree.data.time.Second;
 
@@ -329,7 +329,7 @@ public class Meal_Plan_Screen extends Screen
         
         // Setting Up Loading Screen
         int totalProgress = no_of_meals + no_of_sub_meals + (7 * 10);
-        LoadingScreen loadingScreen = new LoadingScreen(totalProgress);
+        Loading_Screen loadingScreen = new Loading_Screen(totalProgress);
         
         //####################################################
         // Transferring PLan Data To Temp
