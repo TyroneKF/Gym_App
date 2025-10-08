@@ -713,7 +713,7 @@ public class MealManager
         //#######################################
         // Update total Meal View
         //#######################################
-        update_TotalMeal_Table(false, false); // Add External is false for now because its dealt with below
+        update_MealManager_DATA(false, false); // Add External is false for now because its dealt with below
         
         //#######################################
         // Update Time Variables
@@ -1301,7 +1301,7 @@ public class MealManager
         //##############################################################################################
         // Refresh TotalMealTable & Charts
         //##############################################################################################
-        update_TotalMeal_Table(true, updateExternalCharts);
+        update_MealManager_DATA(true, updateExternalCharts);
         
         //##############################################################################################
         // Refresh MacrosLeft
@@ -1395,7 +1395,7 @@ public class MealManager
         totalMealTable.updateTotalMealTable();
     }
     
-    public void update_TotalMeal_Table(Boolean updateInternalCharts, Boolean updateExternalCharts)
+    public void update_MealManager_DATA(Boolean updateInternalCharts, Boolean updateExternalCharts)
     {
         // Update TotalMealView (Has to be first)
         update_TotalMeal_Table();
