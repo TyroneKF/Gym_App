@@ -1410,7 +1410,7 @@ public class Meal_Plan_Screen extends Screen
         else
         {
             // Replace MealMangers Info in Collections
-            if (! skipMealRegistry) { mealManagerRegistry.replaceMealManagerDATA(mealManager); }
+            if (! skipMealRegistry) { mealManagerRegistry.replaceMealManagerDATA(mealManager, false); }
             
             // Re-add all the MealManagers to GUI
             TreeSet<Map.Entry<Integer, MealManager>> mealManagerTreeSet = mealManagerRegistry.get_MealManagerTreeSet();

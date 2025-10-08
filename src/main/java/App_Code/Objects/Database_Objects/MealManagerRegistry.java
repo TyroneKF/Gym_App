@@ -133,7 +133,7 @@ public class MealManagerRegistry
         }
     }
     
-    public void replaceMealManagerDATA(MealManager mealManager) // Update done by replacing data
+    public void replaceMealManagerDATA(MealManager mealManager, Boolean skipRemoval) // Update done by replacing data
     {
         //##########################################
         // mealManager Info
@@ -147,8 +147,11 @@ public class MealManagerRegistry
         //##########################################
         // Remove / ADD MealManager to Collection
         //##########################################
-        mealManagerTreeSet.removeIf(e -> e.getKey().equals(mealManagerID));
-        mealManagerTreeSet.add(Map.entry(mealManagerID, mealManager));
+        if(! skipRemoval)
+        {
+            mealManagerTreeSet.removeIf(e -> e.getKey().equals(mealManagerID));
+            mealManagerTreeSet.add(Map.entry(mealManagerID, mealManager));
+        }
         
         //##########################################
         // Remove MealManager Results to Collection
