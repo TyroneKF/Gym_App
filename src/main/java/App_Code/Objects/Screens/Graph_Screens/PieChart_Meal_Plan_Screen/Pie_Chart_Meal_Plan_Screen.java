@@ -70,24 +70,22 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
         // #####################################
         /// Collections
         // ######################################
-        TreeSet<Map.Entry<Integer, MealManager>> mealManagerTreeSet = mealManagerRegistry.get_MealManagerTreeSet();
+        ArrayList<MealManager> mealManager_ArrayList = mealManagerRegistry.get_MealManager_ArrayList();
         pieChart_MPS_Entries = mealManagerRegistry.get_PieChart_MPS_Entries();
         
-        int rows = (int) mealManagerTreeSet.size() / col;
+        int rows = (int) mealManager_ArrayList.size() / col;
         getScrollPaneJPanel().setLayout(new GridLayout(col, rows));
         // ################################################################
         // Build DATA
         // ################################################################
-        Iterator<Map.Entry<Integer, MealManager>> it = mealManagerTreeSet.iterator();
+        Iterator<MealManager> it = mealManager_ArrayList.iterator();
         while (it.hasNext())
         {
             //##############################
             // Get Info
             //##############################
-            Map.Entry<Integer, MealManager> entry = it.next();
-            MealManager mealManager = entry.getValue();
-            
-            Integer mealPlanID = entry.getKey();
+            MealManager mealManager = it.next();
+            Integer mealPlanID = mealManager.getMealInPlanID();
             
             //##############################
             // Get / Create PieChart Data

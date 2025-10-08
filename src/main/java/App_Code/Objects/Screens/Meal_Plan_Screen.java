@@ -257,7 +257,7 @@ public class Meal_Plan_Screen extends Screen
     
     public Meal_Plan_Screen(MyJDBC db)
     {
-        super(db, true, "Gym App", 1925, 1082, 0, 0);
+        super(db, true, "Gym App", 1925, 1082, 1300, 0);
         
         //##############################################################################################################
         // Getting Selected User & Plan Info
@@ -1327,13 +1327,21 @@ public class Meal_Plan_Screen extends Screen
         // Refresh MealManagers Collections
         //####################################################################
         mealManagerRegistry.refresh_MealManagers();
-        TreeSet<Map.Entry<Integer, MealManager>> mealManagers_Set = mealManagerRegistry.get_MealManagerTreeSet();
         
-        // Remove then Re-add to GUI
-        for (Map.Entry<Integer, MealManager> m : mealManagers_Set)
+        //##################################
+        // Clear GUI Screen
+        //##################################
+        scrollJPanelCenter.removeAll(); // Clear Screen
+        
+        // Re-add all MealManager to GUI
+        ArrayList<MealManager> mealManager_ArrayList = mealManagerRegistry.get_MealManager_ArrayList();
+        for (MealManager mealManager : mealManager_ArrayList)
         {
-            addMealMangerToGUI(m.getValue(), true, true, false);
+            addMealMangerToGUI(mealManager, false, true, false);
         }
+        
+        resizeGUI();
+        scrollJPanelCenter.repaint();
         
         //####################################################################
         // Refresh Macro-Targets Table
@@ -1349,11 +1357,11 @@ public class Meal_Plan_Screen extends Screen
         {
             lineChartMealPlanScreen.clear_And_Rebuild_Dataset(); // clear but, also adds data in
         }
-    
+        
         //####################################################################
         // Re-Draw GUI
         //####################################################################
-        if(is_PieChart_Screen_Open())
+        if (is_PieChart_Screen_Open())
         {
             pieChart_Meal_Plan_Screen.redraw_GUI();
         }
@@ -1386,19 +1394,22 @@ public class Meal_Plan_Screen extends Screen
     
     public void addMealMangerToGUI(MealManager mealManager, boolean clearThanAdd, boolean skipMealRegistry, boolean expandView)
     {
-        if (! mealManager.isObjectCreated())
-        {
-            return;
-        }  // If object was rejected in creation, will cause an error below with time comparison
+        //###############################################
+        // If Object Creation Failed Exit
+        //###############################################
+        if (! mealManager.isObjectCreated()) { return; }
         
         Integer meal_in_plan_id = mealManager.getMealInPlanID();
         
-        if (expandView)
-        {
-            mealManager.getCollapsibleJpObj().expandJPanel(); // Expand Meal in GUI
-        }
+        //###############################################
+        // Expand MealManager in GUI
+        //###############################################
+        if (expandView) { mealManager.getCollapsibleJpObj().expandJPanel(); }
         
-        if (! clearThanAdd)  // Just add this Meal Manager to the screen without clearing the screen
+        //###############################################
+        // Simple Add, No Ordering Needed
+        //###############################################
+        if (! clearThanAdd)
         {
             // Add Meal Manager to collection
             if (! skipMealRegistry) { mealManagerRegistry.addMealManager(mealManager); }
@@ -1413,12 +1424,10 @@ public class Meal_Plan_Screen extends Screen
             if (! skipMealRegistry) { mealManagerRegistry.replaceMealManagerDATA(mealManager, false); }
             
             // Re-add all the MealManagers to GUI
-            TreeSet<Map.Entry<Integer, MealManager>> mealManagerTreeSet = mealManagerRegistry.get_MealManagerTreeSet();
+            ArrayList<MealManager> mealManager_ArrayList = mealManagerRegistry.get_MealManager_ArrayList();
             
-            for (Map.Entry<Integer, MealManager> x : mealManagerTreeSet)
+            for (MealManager m : mealManager_ArrayList)
             {
-                MealManager m = x.getValue();
-                
                 if (! meal_in_plan_id.equals(m.getMealInPlanID()))
                 {
                     // remove from old position in GUI
@@ -1458,12 +1467,12 @@ public class Meal_Plan_Screen extends Screen
         // ##############################################################################
         boolean noMealsLeft = true;
         
-        TreeSet<Map.Entry<Integer, MealManager>> mealManagerTreeSet = mealManagerRegistry.get_MealManagerTreeSet();
+        ArrayList<MealManager> mealManager_ArrayList = mealManagerRegistry.get_MealManager_ArrayList();
         
-        Iterator<Map.Entry<Integer, MealManager>> it = mealManagerTreeSet.iterator();
+        Iterator<MealManager> it = mealManager_ArrayList.iterator();
         while (it.hasNext())
         {
-            MealManager mealManager = it.next().getValue();
+            MealManager mealManager = it.next();
             if (mealManager.getHasMealPlannerBeenDeleted())
             {
                 mealManager.completely_Delete_MealManager(); // delete from GUI
@@ -1506,11 +1515,11 @@ public class Meal_Plan_Screen extends Screen
             // ###############################################################################
             // Instructing Meal Manager Tables To Update Their Model Data
             // ##############################################################################
-            Iterator<Map.Entry<Integer, MealManager>> it2 = mealManagerTreeSet.iterator();
+            Iterator<MealManager> it2 = mealManager_ArrayList.iterator();
             
             while (it2.hasNext())
             {
-                MealManager mealManager = it2.next().getValue();
+                MealManager mealManager = it2.next();
                 mealManager.saveData(false);
             }
         }
@@ -1583,7 +1592,7 @@ public class Meal_Plan_Screen extends Screen
     
     private boolean is_MacroTargetsScreen_Open()
     {
-       return macrosTargets_Screen != null;
+        return macrosTargets_Screen != null;
     }
     
     public void remove_macrosTargets_Screen()
@@ -1655,7 +1664,7 @@ public class Meal_Plan_Screen extends Screen
             saveMacroTargets(true, false);
         }
         
-        saveMealData(true, false);
+        saveMealData(true, false);  //Meal Data
         
         // ##########################################
         // Close Other Windows If Open
@@ -1680,12 +1689,11 @@ public class Meal_Plan_Screen extends Screen
         // ##########################################
         // Close PieCharts Open by MealManagers
         // ##########################################
-        Iterator<Map.Entry<Integer, MealManager>> it = mealManagerRegistry.get_MealManagerTreeSet().iterator();
+        Iterator<MealManager> it = mealManagerRegistry.get_MealManager_ArrayList().iterator();
         while (it.hasNext())
         {
-            Map.Entry<Integer, MealManager> mealManagerEntry = it.next();
-            
-            mealManagerEntry.getValue().close_PieChartScreen();
+            it.next().close_PieChartScreen();
+            it.remove();
         }
     }
     
@@ -1796,11 +1804,6 @@ public class Meal_Plan_Screen extends Screen
     public TreeMap<String, Collection<String>> getMap_ingredientTypesToNames()
     {
         return map_ingredientTypesToNames;
-    }
-    
-    public TreeSet<Map.Entry<Integer, MealManager>> getMealManagerTreeSet()
-    {
-        return mealManagerRegistry.get_MealManagerTreeSet();
     }
     
     public Map<String, Integer> getTotalMeal_MacroColNamePos()
