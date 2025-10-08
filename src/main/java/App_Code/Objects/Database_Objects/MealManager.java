@@ -1390,10 +1390,15 @@ public class MealManager
         macrosLeft_JTable.updateMacrosLeftTable();
     }
     
+    public void update_TotalMeal_Table()
+    {
+        totalMealTable.updateTotalMealTable();
+    }
+    
     public void update_TotalMeal_Table(Boolean updateInternalCharts, Boolean updateExternalCharts)
     {
         // Update TotalMealView (Has to be first)
-        totalMealTable.updateTotalMealTable();
+        update_TotalMeal_Table();
         
         // Update Registry Data (Second)
         mealManagerRegistry.replaceMealManagerDATA(this);

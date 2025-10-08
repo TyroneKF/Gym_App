@@ -8,6 +8,7 @@ import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
@@ -20,10 +21,14 @@ public class MealManagerRegistry
     //##################################################################################################################
     private Meal_Plan_Screen meal_plan_screen;
     
-    //##################################
+    //#####################################################################
     // Collections
-    //##################################
+    //#####################################################################
     private Map<String, Integer> totalMeal_macroColNamePos;
+    
+    //#############################
+    // Chart Data Collections
+    //#############################
     
     private TreeSet<Map.Entry<Integer, MealManager>> mealManagerTreeSet = new TreeSet<Map.Entry<Integer, MealManager>>(new Comparator<Map.Entry<Integer, MealManager>>()
     {
@@ -42,9 +47,6 @@ public class MealManagerRegistry
      */
     private Map<String, HashMap<Integer, Pair<Second, BigDecimal>>> mealManagersMacroValues; // Can be refactored to include mealManager
     
-    //#############################
-    // Chart Data Collections
-    //#############################
     private HashMap<Integer, DefaultPieDataset<String>> pieDatasetHashMap = new HashMap<>();
     
     private TreeSet<Map.Entry<Integer, PieChart_Entry_MPS>> pieChart_MPS_Entries = new TreeSet<Map.Entry<Integer, PieChart_Entry_MPS>>(new Comparator<Map.Entry<Integer, PieChart_Entry_MPS>>()
@@ -257,35 +259,47 @@ public class MealManagerRegistry
         Iterator<Map.Entry<Integer, MealManager>> it = mealManagerTreeSet.iterator();
         while (it.hasNext())
         {
-            //####################################
+            //#################################################################
             // MealManager Info
-            //####################################
-            MealManager mealManager = it.next().getValue();
-            int mealManagerID = mealManager.getMealInPlanID();
-            
-            //####################################
-            // Remove mealManager from memory
-            //####################################
+            //#################################################################
+            Map.Entry<Integer, MealManager> mealManagerEntry = it.next();
+    
+            int mealManagerID = mealManagerEntry.getKey();
+            MealManager mealManager = mealManagerEntry.getValue();
+    
+            //#################################################################
+            // Remove (To reset Index)
+            //#################################################################
             it.remove();
             
-            //####################################
+            //#################################################################
             // Remove MealManager (Not Saved)
-            //####################################
+            //#################################################################
             if (! mealManager.isMealManagerInDB()) // IF MealManager isn't saved Remove it
             {
                 mealManager.completely_Delete_MealManager();  // mealManager is not in the DB erase it from the GUI
                 
+                // ###########################################
+                // Remove Data from Collections
+                // ###########################################
                 // Remove this mealManagers MacrosValues
                 for (String macroName : totalMeal_macroColNamePos.keySet())
                 {
                     mealManagersMacroValues.get(macroName).remove(mealManagerID);
                 }
+                
+                pieDatasetHashMap.remove(mealManagerID);
+                pieChart_MPS_Entries.removeIf(entry -> entry.getKey().equals(mealManagerID));
+                
+                // ###########################################
+                // Continue
+                // ###########################################
                 continue;
             }
-            
-            //####################################
-            // MealManagers in DB NOW ADD Info
-            //####################################
+    
+            //############################################################################
+            // Adjust DATA Attached to this MealManager
+            //############################################################################
             // Add back to TreeSet to re-correct ORDER
             mealManagerTreeSet.add(Map.entry(mealManagerID, mealManager));
             
