@@ -1,0 +1,48 @@
+#####################################################
+Meal_Plan_Screen
+#####################################################
+Delete All Meals:
+
+PieChart Screen:
+
+ScrollUP:
+
+Refresh:
+
+ADD New Meal
+.) Add new Meal with time at the start / end / middle is it positioned correctly
+.) Refreshing new meal should delete it
+
+Save:
+
+Add_Ingredients
+
+
+MacroTargets:
+
+ScrollDown
+
+
+#####################################################
+Meal_Manager
+#####################################################
+PieChart
+Change MealName
+Change MealTime
+Add
+Save
+Refresh
+Delete Ingredient
+Delete Table
+
+
+#####################################################
+IngredientsTable
+#####################################################
+Add Ingredient
+Change Ingredient Quantity
+Change IngredientName
+Save
+Refresh
+Delete Ingredient
+Delete Table

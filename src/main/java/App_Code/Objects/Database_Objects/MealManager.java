@@ -469,7 +469,7 @@ public class MealManager
     public void pieChart_Action()
     {
         // If pieChart is already created bring up to the surface and make it visible
-        if (pie_chart_meal_manager_screen != null)
+        if (is_PieChartOpen())
         {
             System.out.println("\n\nB : pieChart_Action() 1 !!!!");
             
@@ -485,7 +485,7 @@ public class MealManager
         //#########################################################################################################
         // Change Internal Graph Title if exists
         //#########################################################################################################
-        if (pie_chart_meal_manager_screen != null)
+        if (is_PieChartOpen())
         {
             pie_chart_meal_manager_screen.update_PieChart_Title();
         }
@@ -498,9 +498,9 @@ public class MealManager
     
     /**
      * 1.) Remove Pie Chart Object
-     *
+     * <p>
      * 2.) IF Meal_Plan_Screen PieChart Screen is NULL, Pie Data can be removed
-     *     as it's not in use and not on display somewhere else     *
+     * as it's not in use and not on display somewhere else     *
      */
     public void removePieChartScreen()
     {
@@ -516,7 +516,7 @@ public class MealManager
     
     public void close_PieChartScreen()
     {
-        if (! is_PieChartOpen()) return;
+        if (! is_PieChartOpen()) { return; }
         
         pie_chart_meal_manager_screen.windowClosedEvent();
     }
@@ -644,11 +644,13 @@ public class MealManager
         //##############################################################################################################
         // User Confirmation
         //##############################################################################################################
-        // If requested not to skip a confirmation msg prompt confirmation
-        String currentVariableValue = variableName.equals("name") ? getCurrentMealName() : getCurrentMealTimeGUI();
-        if (! skipConfirmation && ! areYouSure(String.format("change meal %s from '%s' to '%s'", variableName, currentVariableValue, input)))
+        if (! skipConfirmation) // If requested not to skip a confirmation msg prompt confirmation
         {
-            return null;
+            String currentVariableValue = variableName.equals("name") ? getCurrentMealName() : getCurrentMealTimeGUI();
+            if (! areYouSure(String.format("change meal %s from '%s' to '%s'", variableName, currentVariableValue, input)))
+            {
+                return null;
+            }
         }
         
         //##############################################################################################################
@@ -796,7 +798,7 @@ public class MealManager
                 .toLocalTime().toString();
     }
     
-    private String get_SavedMealTime_GUI()
+    public String get_SavedMealTime_GUI()
     {
         return savedMealTime.getStart()
                 .toInstant()
@@ -975,11 +977,6 @@ public class MealManager
         update_MacrosLeft_Table();// update macrosLeft table, due to number deductions from this meal
         
         //##########################################
-        // Delete PieChart (Meal is Gone)
-        //##########################################
-         close_PieChartScreen();
-         
-        //##########################################
         // Update LineChart Data
         //##########################################
         meal_plan_screen.deleteLineChartData(getCurrentMealTime());
@@ -994,6 +991,11 @@ public class MealManager
     {
         setVisibility(false); // hide collapsible Object
         setHasMealPlannerBeenDeleted(true); // set this object as deleted
+        
+        //##########################################
+        // Delete PieChart (Meal is Gone)
+        //##########################################
+        close_PieChartScreen();
     }
     
     private void unHideMealManager()

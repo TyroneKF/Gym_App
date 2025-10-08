@@ -46,8 +46,9 @@ PieChartScreen MPS - Ordered by time:
 .) Change Meal Time - changes order & title
 .) Add Meal = new pie chart
 .) Delete Meal = new pie chart
+.) Are deleted meals drawn on GUI
 
-.) Refresh Meal - Redraws screen
+.) Refresh Meal - Redraws screen and whats happens to pie charts open from unsaved meals it should be removed
 
 MealManager -
 .) Check time comparison methods with get currentTime

@@ -1345,9 +1345,17 @@ public class Meal_Plan_Screen extends Screen
         //####################################################################
         // Re-Upload LineChart Data in One Go
         //####################################################################
-        if (lineChartMealPlanScreen != null)
+        if (is_LineChart_Screen_Open())
         {
             lineChartMealPlanScreen.clear_And_Rebuild_Dataset(); // clear but, also adds data in
+        }
+    
+        //####################################################################
+        // Re-Draw GUI
+        //####################################################################
+        if(is_PieChart_Screen_Open())
+        {
+            pieChart_Meal_Plan_Screen.redraw_GUI();
         }
     }
     
@@ -1373,10 +1381,10 @@ public class Meal_Plan_Screen extends Screen
         //##############################################################################################################
         //
         //##############################################################################################################
-        addMealMangerToGUI(new MealManager(this), false, false, true);
+        addMealMangerToGUI(new MealManager(this), true, false, true);
     }
     
-    public void addMealMangerToGUI(MealManager mealManager, boolean isMealManagerInGUI, boolean skipMealRegistry, boolean expandView)
+    public void addMealMangerToGUI(MealManager mealManager, boolean clearThanAdd, boolean skipMealRegistry, boolean expandView)
     {
         if (! mealManager.isObjectCreated())
         {
@@ -1390,7 +1398,7 @@ public class Meal_Plan_Screen extends Screen
             mealManager.getCollapsibleJpObj().expandJPanel(); // Expand Meal in GUI
         }
         
-        if (! isMealManagerInGUI)  // Just add this Meal Manager to the screen without clearing the screen
+        if (! clearThanAdd)  // Just add this Meal Manager to the screen without clearing the screen
         {
             // Add Meal Manager to collection
             if (! skipMealRegistry) { mealManagerRegistry.addMealManager(mealManager); }

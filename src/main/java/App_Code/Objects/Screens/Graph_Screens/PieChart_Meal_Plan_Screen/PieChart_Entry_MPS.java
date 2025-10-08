@@ -31,14 +31,22 @@ public class PieChart_Entry_MPS
     //##################################################################################################################
     // Methods
     //##################################################################################################################
+    public void update_PieChart_Title()
+    {
+        String title = String.format("[%s]      %s Macros", mealManager.getCurrentMealTimeGUI(), mealManager.getCurrentMealName());
+        pieChart.setTitle(title);
+    }
+    
+    //##################################################################################################################
+    // Accessors
+    //##################################################################################################################
     public Second get_MealTime()
     {
         return mealManager.getCurrentMealTime();
     }
     
-    public void update_PieChart_Title()
+    public Pie_Chart getPieChart()
     {
-        String title = String.format("[%s]      %s Macros", mealManager.getCurrentMealTimeGUI(), mealManager.getCurrentMealName());
-        pieChart.setTitle(title);
+        return pieChart;
     }
 }

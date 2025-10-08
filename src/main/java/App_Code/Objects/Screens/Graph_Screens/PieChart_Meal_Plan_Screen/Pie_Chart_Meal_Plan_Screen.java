@@ -19,6 +19,15 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
     // #################################################################################################################
     private String planName;
     
+    //#####################################
+    // Graph Preferences
+    //#####################################
+    private int
+            col = 3,
+            pieWidth = (frameWidth / col) - 30,
+            pieHeight = 500,
+            rotateDelay = 200; //580
+    
     //##############################################
     // Objects
     //##############################################
@@ -53,12 +62,6 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
         //#####################################
         // Graph Preferences
         //#####################################
-        int
-                col = 3,
-                pieWidth = (frameWidth / col) - 30,
-                pieHeight = 500,
-                rotateDelay = 200; //580
-        
         Font
                 titleFont = new Font("Serif", Font.PLAIN, 27),
                 labelFont = new Font("SansSerif", Font.BOLD, 22),
@@ -82,8 +85,8 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
             // Get Info
             //##############################
             Map.Entry<Integer, MealManager> entry = it.next();
-            
             MealManager mealManager = entry.getValue();
+            
             Integer mealPlanID = entry.getKey();
             
             //##############################
@@ -114,6 +117,7 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
         // Make Frame Visible
         // ################################################################
         setFrameVisibility(true);
+        resizeGUI();
     }
     
     // #################################################################################################################
@@ -122,9 +126,38 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
     @Override
     public void windowClosedEvent() { meal_plan_screen.removePieChartScreen(); closeJFrame(); }
     
-    public void add_PieChart_To_GUI(Integer mealInPlanID)
+    public void redraw_GUI()
     {
+        // ####################################################
+        // Clear GUI
+        // ####################################################
+        getScrollPaneJPanel().removeAll();
     
+        int rows = (int) pieChart_MPS_Entries.size() / col;
+        getScrollPaneJPanel().setLayout(new GridLayout(col, rows));
+    
+        // ####################################################
+        // Paint GUI
+        // ####################################################
+        Iterator<Map.Entry<Integer, PieChart_Entry_MPS>> it = pieChart_MPS_Entries.iterator();
+        while (it.hasNext())
+        {
+            //##############################
+            // GET Pie_Entry Object
+            //##############################
+            Pie_Chart pieChart = it.next().getValue().getPieChart();
+            
+            //##############################
+            // Add PieChart to GUI
+            //##############################
+            JPanel x = new JPanel(new GridBagLayout());
+            addToContainer(x, pieChart, 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 10, 10, null);
+    
+            addToContainer(x, createSpaceDivider(20, 50), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
+            getScrollPaneJPanel().add(x);
+        }
+        
+        resizeGUI();
     }
     
     // #################################################################################################################
