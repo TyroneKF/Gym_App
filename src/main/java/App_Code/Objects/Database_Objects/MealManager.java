@@ -185,7 +185,7 @@ public class MealManager
         //##############################################################################################################
         addButtonAction();
     }
-
+    
     //##################################################################################################################
     // GUI Setup
     //##################################################################################################################
@@ -524,13 +524,14 @@ public class MealManager
     public void update_Pie_Chart_Screen()
     {
         /***
-         * Update data behind pieCharts whcih will effectively update all pieCharts actively using this data
+         * Update data behind pieCharts which will effectively update all pieCharts actively using this data
          * */
         
         if (! mealManagerRegistry.updatePieChart_MM_Values(getMealInPlanID()))
         {
             System.err.printf("\n\nMealManagerRegistry.java : updatePieChart_MM_Values() \nPieChart not Open %s", mealInPlanID);
         }
+        
     }
     
     public Boolean is_PieChartOpen()
@@ -1223,16 +1224,17 @@ public class MealManager
         if (positions.size() > 0)
         {
             JOptionPane.showMessageDialog(getFrame(), String.format("""
-                    \n\nA meal in this plan already has this meals saved info:
-                    
-                    'Meal Name' of : '%s' or 'Meal Time' of : '%s'
-                    
-                    at positions : %s  which is stopping this meal from refreshing !
-                    
-                    Change those values first at positions : %s in this plan
-                    to be able to refresh this meal!
-                    
-                    Or, refresh the whole plan if the other meals won't be affected !""", savedMealName, savedMealTime, positions, positions));
+                            \n\nA meal in this plan already has this meals saved info:
+                            
+                            'Meal Name' of : '%s' or 'Meal Time' of : '%s'
+                            
+                            at positions : %s  which is stopping this meal from refreshing !
+                            
+                            Change those values first at positions : %s in this plan
+                            to be able to refresh this meal!
+                            
+                            Or, refresh the whole plan if the other meals won't be affected !""", savedMealName,
+                    savedMealTime, positions, positions));
             
             return;
         }
@@ -1246,6 +1248,15 @@ public class MealManager
             return;
         }
         
+        //##############################################################################################
+        // RELOAD IngredientsTable & TotalMeal Table & Update  Chart DATA
+        //##############################################################################################
+        reloadTableAndChartsData(true, true, false);
+        
+    }
+    
+    public void reloadTableAndChartsData(boolean updateMacrosLeft, boolean updateExternalCharts, boolean skipSorting)
+    {
         //#############################################################################################
         // Reset GUI  & Variables
         //##############################################################################################
@@ -1255,22 +1266,8 @@ public class MealManager
         
         collapsibleJpObj.setIconBtnText(savedMealName); // Reset Meal Name in GUI to Old Txt
         
-        //######################################
-        // Update PieChart Data
-        //######################################
-        reloadTableAndChartsData(true, true, false);
-        pieChart_UpdateMealName(); //Update PieChart Name
-        
-        //######################################
-        // Remove & Re-add to GUI & RegistryDATA
-        //######################################
-        meal_plan_screen.addMealMangerToGUI(this, true, false, true);
-    }
-    
-    public void reloadTableAndChartsData(boolean updateMacrosLeft, boolean updateExternalCharts, Boolean skipSorting)
-    {
         //##############################################################################################
-        // Refresh ingredients meal table & total Tables Data
+        // Refresh IngredientTables
         //##############################################################################################
         Iterator<IngredientsTable> it = ingredientsTables.iterator();
         while (it.hasNext())
@@ -1292,22 +1289,29 @@ public class MealManager
         }
         
         //##############################################################################################
-        // Make This MealManager Visible
-        //##############################################################################################
-        unHideMealManager();
-        
-        //##############################################################################################
-        // Refresh TotalMealTable & Charts
+        // Refresh TotalMealTable DATA & Charts
         //##############################################################################################
         update_MealManager_DATA(true, updateExternalCharts, skipSorting);
+    
+        pieChart_UpdateMealName(); // Update PieChart Name
         
+        //##############################################################################################
+        // Remove & Re-add to GUI & RegistryDATA
+        ///##############################################################################################
+        if(! skipSorting)
+        {
+            meal_plan_screen.addMealMangerToGUI(this, true, false, true);
+        }
+    
         //##############################################################################################
         // Refresh MacrosLeft
         //##############################################################################################
-        if (updateMacrosLeft) // this is optional
-        {
-            update_MacrosLeft_Table();
-        }
+        if (updateMacrosLeft) { update_MacrosLeft_Table(); }// this is optional
+        
+        //##############################################################################################
+        // Make This MealManager Visible
+        //##############################################################################################
+        unHideMealManager();
     }
     
     //######################################
