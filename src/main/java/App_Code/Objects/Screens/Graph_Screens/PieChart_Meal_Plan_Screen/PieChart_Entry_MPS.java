@@ -45,6 +45,11 @@ public class PieChart_Entry_MPS
         return mealManager.getCurrentMealTime();
     }
     
+    public int get_MealInPlanID()
+    {
+        return mealInPlanID;
+    }
+    
     public Pie_Chart getPieChart()
     {
         return pieChart;

@@ -37,7 +37,7 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
     //##############################################
     // Collections
     //##############################################
-    private TreeSet<Map.Entry<Integer, PieChart_Entry_MPS>> pieChart_MPS_Entries;
+    private ArrayList<PieChart_Entry_MPS> pieChart_MPS_Entries;
     
     // #################################################################################################################
     // Constructor
@@ -98,7 +98,7 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
             String title = String.format("[%s]      %s Macros", mealManager.getCurrentMealTimeGUI(), mealManager.getCurrentMealName());
             
             Pie_Chart pieChart = new Pie_Chart(title, pieWidth, pieHeight, rotateDelay, titleFont, labelFont, legendFont, pieDataset);
-            pieChart_MPS_Entries.add(Map.entry(mealPlanID, new PieChart_Entry_MPS(mealPlanID, mealManager, pieChart)));
+            pieChart_MPS_Entries.add(new PieChart_Entry_MPS(mealPlanID, mealManager, pieChart));
             
             //##############################
             // Add PieChart to GUI
@@ -118,39 +118,57 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
         resizeGUI();
     }
     
-    // #################################################################################################################
-    // Methods
-    // #################################################################################################################
     @Override
-    public void windowClosedEvent() { meal_plan_screen.removePieChartScreen(); closeJFrame(); }
+    public void windowClosedEvent()
+    {
+        // ####################################
+        // Remove Attachment to MealPlanScreen
+        // ####################################
+        meal_plan_screen.removePieChartScreen();
+        
+        // ####################################
+        // Remove GUI DATA
+        // ####################################
+        mealManagerRegistry.clear_PieChart_MPS_DATA();
+        
+        mealManagerRegistry.remove_Unused_PieData();
+        
+        // ####################################
+        // Close JFrame
+        // ####################################
+        closeJFrame();
+    }
     
+    // #################################################################################################################
+    //  Update / Draw GUI Methods
+    // #################################################################################################################
     public void redraw_GUI()
     {
         // ####################################################
         // Clear GUI
         // ####################################################
         getScrollPaneJPanel().removeAll();
-    
+        
         int rows = (int) pieChart_MPS_Entries.size() / col;
         getScrollPaneJPanel().setLayout(new GridLayout(col, rows));
-    
+        
         // ####################################################
         // Paint GUI
         // ####################################################
-        Iterator<Map.Entry<Integer, PieChart_Entry_MPS>> it = pieChart_MPS_Entries.iterator();
+        Iterator<PieChart_Entry_MPS> it = pieChart_MPS_Entries.iterator();
         while (it.hasNext())
         {
             //##############################
             // GET Pie_Entry Object
             //##############################
-            Pie_Chart pieChart = it.next().getValue().getPieChart();
+            Pie_Chart pieChart = it.next().getPieChart();
             
             //##############################
             // Add PieChart to GUI
             //##############################
             JPanel x = new JPanel(new GridBagLayout());
             addToContainer(x, pieChart, 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 10, 10, null);
-    
+            
             addToContainer(x, createSpaceDivider(20, 50), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
             getScrollPaneJPanel().add(x);
         }
@@ -158,11 +176,16 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
         resizeGUI();
     }
     
-    // #################################################################################################################
-    // Accessor Methods
-    // #################################################################################################################
-    public void update_PieChart_MealName(Integer mealInPlanID)
+    public void update_PieChart_MealName(int mealInPlanID)
     {
-        mealManagerRegistry.get_PieChart_MPS(mealInPlanID).update_PieChart_Title();
+        ArrayList<PieChart_Entry_MPS> pieChartEntry_MPS_AL = mealManagerRegistry.get_PieChart_MPS_Entries();
+        
+        Iterator<PieChart_Entry_MPS> it = pieChartEntry_MPS_AL.iterator();
+        while (it.hasNext())
+        {
+            PieChart_Entry_MPS pieChart_Entry = it.next();
+            
+            if (pieChart_Entry.get_MealInPlanID() == mealInPlanID) { pieChart_Entry.update_PieChart_Title(); break; }
+        }
     }
 }

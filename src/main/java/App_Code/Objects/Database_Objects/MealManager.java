@@ -916,24 +916,6 @@ public class MealManager
     //#################################################################################
     // Delete BTN Methods
     //#################################################################################
-    
-    // Completely Delete Table Through Processing
-    //###########################################
-    public void completely_Delete_MealManager()
-    {
-        hideMealManager();
-        removeMealManagerFromGUI();
-    }
-    
-    public void removeMealManagerFromGUI()
-    {
-        container.remove(collapsibleJpObj); // remove the GUI elements from GUI
-        container.remove(spaceDividerForMealManager);    // remove space divider from GUI
-    }
-    
-    //##########################################
-    // Delete BTN Action
-    //##########################################
     public void deleteMealManagerAction()
     {
         //##########################################
@@ -970,7 +952,7 @@ public class MealManager
         //##########################################
         // Update Registry Data
         //##########################################
-        mealManagerRegistry.deleteMealManager(mealInPlanID);
+        mealManagerRegistry.deleteMealManager(this);
         
         //##########################################
         // Update MacrosLeftTable
@@ -1021,9 +1003,23 @@ public class MealManager
         return hasMealPlannerBeenDeleted;
     }
     
-    //######################################
+    //################################################
+    // Completely Delete Table Through Processing
+    //################################################
+    public void completely_Delete_MealManager()
+    {
+        removeMealManagerFromGUI();
+    }
+    
+    public void removeMealManagerFromGUI()
+    {
+        container.remove(collapsibleJpObj); // remove the GUI elements from GUI
+        container.remove(spaceDividerForMealManager);    // remove space divider from GUI
+    }
+    
+    //################################################
     // Delete IngredientsTable Methods
-    //######################################
+    //################################################
     public void ingredientsTableHasBeenDeleted()
     {
         //##########################################
@@ -1387,16 +1383,6 @@ public class MealManager
     //##################################################################################################################
     // Updating Other Tables
     //##################################################################################################################
-    public void update_MacrosLeft_Table()
-    {
-        macrosLeft_JTable.updateMacrosLeftTable();
-    }
-    
-    public void update_TotalMeal_Table()
-    {
-        totalMealTable.updateTotalMealTable();
-    }
-    
     public void update_MealManager_DATA(Boolean updateInternalCharts, Boolean updateExternalCharts, Boolean skipSorting)
     {
         // Update TotalMealView (Has to be first)
@@ -1407,6 +1393,16 @@ public class MealManager
         
         // Update Charts
         updateCharts(updateInternalCharts, updateExternalCharts);
+    }
+    
+    public void update_TotalMeal_Table()
+    {
+        totalMealTable.updateTotalMealTable();
+    }
+    
+    public void update_MacrosLeft_Table()
+    {
+        macrosLeft_JTable.updateMacrosLeftTable();
     }
     
     public void updateCharts(Boolean updateInternalCharts, Boolean updateExternalCharts)
