@@ -514,6 +514,7 @@ public class MealManager
         mealManagerRegistry.remove_PieChart_DatasetValues(mealInPlanID);
     }
     
+    // External Call Usage
     public void close_PieChartScreen()
     {
         if (! is_PieChartOpen()) { return; }

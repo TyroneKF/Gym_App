@@ -124,14 +124,12 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
         // Remove Attachment to MealPlanScreen
         // ####################################
         meal_plan_screen.removePieChartScreen();
-        
+    
         // ####################################
         // Remove GUI DATA
         // ####################################
-        mealManagerRegistry.clear_PieChart_DATA_MPS();
-        
         mealManagerRegistry.remove_Unused_PieData();
-        
+    
         // ####################################
         // Close JFrame
         // ####################################
@@ -160,7 +158,7 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
             //##############################
             // GET Pie_Entry Object
             //##############################
-            Pie_Chart pieChart = it.next().getPieChart();
+            Pie_Chart pieChart = it.next().get_PieChart();
             
             //##############################
             // Add PieChart to GUI

@@ -63,7 +63,7 @@ public class MealManagerRegistry
     public void initialize_MealManagers_MacrosValues()
     {
         mealManagers_TotalMeal_MacroValues = new HashMap<>();
-    
+        
         //##################################
         // Create Macros Collection
         //##################################
@@ -306,7 +306,6 @@ public class MealManagerRegistry
      *
      * This method is used to retrieve pieChart Data based on MealInPlanID
      * if it exists it is returned. Otherwise, it's created and added to DATA (Collection) and then it's returned.
-     *
      */
     public DefaultPieDataset<String> get_OR_Create_PieChart_Dataset(Integer mealInPlanID)
     {
@@ -427,33 +426,40 @@ public class MealManagerRegistry
     ///########################################
     public void remove_PieChart_DatasetValues(Integer mealInPlanID)
     {
-        System.out.printf("\n\nRemoved Data %s", mealInPlanID);
+        System.out.printf("\n\nRemoved PieChart Data %s", mealInPlanID);
         pieChart_Dataset_HashMap.remove(mealInPlanID);
     }
     
     //###############################################################################
     // PieChart [MealPlanScreen]
     //###############################################################################
+    
     /**
      * This is requested by the Meal_Plan_Screen when the pieChart screen is closed!
      * Remove the pieChart data which doesn't have a MealManager pie chart actively using it.
      */
     public void remove_Unused_PieData()
     {
-        Iterator<Integer> it = pieChart_Dataset_HashMap.keySet().iterator();
+        Iterator<PieChart_Entry_MPS> it = pieChartEntry_MPS_AL.iterator();
         while (it.hasNext())
         {
-            Integer mmKey = it.next();
-            if (! get_MealManager_In_MM_ArrayList(mmKey).is_PieChartOpen())
+            PieChart_Entry_MPS pieChart_entry_mps = it.next();
+            MealManager mealManager = pieChart_entry_mps.get_MealManager();
+            
+            int mealManagerID = mealManager.getMealInPlanID();
+            
+            // IF MealManager Associated with Entry isn't open, remove its dataset
+            if (! mealManager.is_PieChartOpen())
             {
-                it.remove(); System.out.printf("\nPieDelete: %s", mmKey);
+                if (pieChart_Dataset_HashMap.containsKey(mealManagerID))
+                {
+                    pieChart_Dataset_HashMap.remove(mealManagerID);
+                }
             }
+            
+            // Remove this item from the MPS PieChart Screen
+            it.remove();
         }
-    }
-    
-    public void clear_PieChart_DATA_MPS()
-    {
-        pieChartEntry_MPS_AL.clear();
     }
     
     //##################################################################################################################
@@ -517,21 +523,8 @@ public class MealManagerRegistry
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
-    // Objects
-    public MealManager get_MealManager_In_MM_ArrayList(Integer mealInPlanID) // Results in error
-    {
-        Iterator<MealManager> it = mealManager_ArrayList.iterator();
-        while (it.hasNext())
-        {
-            MealManager mealManager = it.next();
-            if (mealManager.equals(mealInPlanID)) { return mealManager; }
-        }
-        return null;
-    }
     
-    //##################################################
     // Collections
-    //##################################################
     public ArrayList<MealManager> get_MealManager_ArrayList()
     {
         return mealManager_ArrayList;

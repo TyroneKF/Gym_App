@@ -50,8 +50,13 @@ public class PieChart_Entry_MPS
         return mealInPlanID;
     }
     
-    public Pie_Chart getPieChart()
+    public Pie_Chart get_PieChart()
     {
         return pieChart;
+    }
+    
+    public MealManager get_MealManager()
+    {
+        return mealManager;
     }
 }
