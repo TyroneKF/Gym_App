@@ -511,7 +511,7 @@ public class MealManager
         //############################################
         if (meal_plan_screen.is_PieChart_Screen_Open()) { return; }
         
-        mealManagerRegistry.removePieChartDatasetValue(mealInPlanID);
+        mealManagerRegistry.remove_PieChart_DatasetValues(mealInPlanID);
     }
     
     public void close_PieChartScreen()
@@ -527,7 +527,7 @@ public class MealManager
          * Update data behind pieCharts which will effectively update all pieCharts actively using this data
          * */
         
-        if (! mealManagerRegistry.updatePieChart_MM_Values(getMealInPlanID()))
+        if (! mealManagerRegistry.update_PieChart_Values(getMealInPlanID()))
         {
             System.err.printf("\n\nMealManagerRegistry.java : updatePieChart_MM_Values() \nPieChart not Open %s", mealInPlanID);
         }
@@ -952,7 +952,7 @@ public class MealManager
         //##########################################
         // Update Registry Data
         //##########################################
-        mealManagerRegistry.deleteMealManager(this);
+        mealManagerRegistry.delete_MealManager(this);
         
         //##########################################
         // Update MacrosLeftTable

@@ -1200,7 +1200,7 @@ public class Meal_Plan_Screen extends Screen
         //###########################################################
         // DELETE all the meals in Memory
         //###########################################################
-        mealManagerRegistry.delete_MealManagers();
+        mealManagerRegistry.delete_MealManagers_MPS();
         
         //###########################################################
         // Update MacrosLeft
@@ -1325,7 +1325,7 @@ public class Meal_Plan_Screen extends Screen
         //####################################################################
         // Refresh MealManagers Collections
         //####################################################################
-        mealManagerRegistry.refresh_MealManagers();
+        mealManagerRegistry.refresh_MealManagers_MPS();
         
         //##################################
         // Clear GUI Screen

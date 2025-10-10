@@ -18,6 +18,7 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
     // Variables
     // #################################################################################################################
     private String planName;
+    private ArrayList<PieChart_Entry_MPS> pieChartEntry_MPS_AL = new ArrayList<>();
     
     //#####################################
     // Graph Preferences
@@ -27,6 +28,11 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
             pieWidth = (frameWidth / col) - 30,
             pieHeight = 500,
             rotateDelay = 200; //580
+    private Font
+            titleFont = new Font("Serif", Font.PLAIN, 27),
+            labelFont = new Font("SansSerif", Font.BOLD, 22),
+            legendFont = new Font("Serif", Font.PLAIN, 20);
+    
     
     //##############################################
     // Objects
@@ -59,14 +65,6 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
         this.planName = meal_plan_screen.getPlanName();
         this.mealManagerRegistry = meal_plan_screen.get_MealManagerRegistry();
         
-        //#####################################
-        // Graph Preferences
-        //#####################################
-        Font
-                titleFont = new Font("Serif", Font.PLAIN, 27),
-                labelFont = new Font("SansSerif", Font.BOLD, 22),
-                legendFont = new Font("Serif", Font.PLAIN, 20);
-        
         // #####################################
         /// Collections
         // ######################################
@@ -75,6 +73,7 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
         
         int rows = (int) mealManager_ArrayList.size() / col;
         getScrollPaneJPanel().setLayout(new GridLayout(col, rows));
+        
         // ################################################################
         // Build DATA
         // ################################################################
@@ -90,7 +89,7 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
             //##############################
             // Get / Create PieChart Data
             //##############################
-            DefaultPieDataset<String> pieDataset = mealManagerRegistry.create_MM_MacroInfo_PieChart(mealPlanID);
+            DefaultPieDataset<String> pieDataset = mealManagerRegistry.get_OR_Create_PieChart_Dataset(mealPlanID);
             
             //##############################
             // Create PieChart & Add to List
@@ -129,7 +128,7 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
         // ####################################
         // Remove GUI DATA
         // ####################################
-        mealManagerRegistry.clear_PieChart_MPS_DATA();
+        mealManagerRegistry.clear_PieChart_DATA_MPS();
         
         mealManagerRegistry.remove_Unused_PieData();
         
@@ -187,5 +186,25 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
             
             if (pieChart_Entry.get_MealInPlanID() == mealInPlanID) { pieChart_Entry.update_PieChart_Title(); break; }
         }
+    }
+    
+    public Pie_Chart add_MealManagerToGUI(MealManager mealManager)
+    {
+        Integer mealPlanID = mealManager.getMealInPlanID();
+    
+        //##############################
+        // Get / Create PieChart Data
+        //##############################
+        DefaultPieDataset<String> pieDataset = mealManagerRegistry.get_OR_Create_PieChart_Dataset(mealPlanID);
+    
+        //##############################
+        // Create PieChart & Add to List
+        //##############################
+        String title = String.format("[%s]      %s Macros", mealManager.getCurrentMealTimeGUI(), mealManager.getCurrentMealName());
+    
+        Pie_Chart pieChart = new Pie_Chart(title, pieWidth, pieHeight, rotateDelay, titleFont, labelFont, legendFont, pieDataset);
+        pieChart_MPS_Entries.add(new PieChart_Entry_MPS(mealPlanID, mealManager, pieChart));
+        
+        return pieChart;
     }
 }

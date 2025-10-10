@@ -47,6 +47,7 @@ PieChartScreen MPS - Ordered by time:
 .) Add Meal = new pie chart
 .) Delete Meal = new pie chart
 .) Are deleted meals drawn on GUI
+.) Close method triggers errors when screens are open
 
 .) Refresh Meal - Redraws screen and whats happens to pie charts open from unsaved meals it should be removed
 

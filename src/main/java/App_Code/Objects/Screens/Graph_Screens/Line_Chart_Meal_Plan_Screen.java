@@ -10,13 +10,8 @@ import org.javatuples.Pair;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
-
 import java.awt.*;
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
 import java.util.*;
 
 public class Line_Chart_Meal_Plan_Screen extends Screen
@@ -86,7 +81,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
     // ##################################################
     public void createDataSet()
     {
-        dataset = mealManagerRegistry.get_Plan_MacroValues_LineChart();
+        dataset = mealManagerRegistry.create_Plan_MacroValues_LineChart();
     }
     
     /**
@@ -112,7 +107,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
         // Get MealManager MacroInfo & Replace
         // ####################################################
         Iterator<Map.Entry<String, HashMap<Integer, Pair<Second, BigDecimal>>>> it
-                = mealManagerRegistry.get_MealManagersMacroValues().entrySet().iterator();
+                = mealManagerRegistry.get_MealManagers_MacroValues().entrySet().iterator();
         
         /**
          *  <Key: MacroName | Value: HashMap<Key: MealManagerID, Value: < MealTime, Quantity>>
