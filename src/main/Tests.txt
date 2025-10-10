@@ -1,4 +1,29 @@
 #####################################################
+IngredientsTable
+#####################################################
+Add Ingredient
+Change Ingredient Quantity
+Change IngredientName
+Save
+Refresh
+Delete Ingredient
+Delete Table
+
+#####################################################
+Meal_Manager
+#####################################################
+Change MealName - changes pieChart names
+Change MealTime - changes order
+Add
+Save
+Refresh
+Delete Ingredient
+Delete Table
+
+PieChart
+LineGraph
+
+#####################################################
 Meal_Plan_Screen
 #####################################################
 Delete All Meals:
@@ -21,28 +46,3 @@ Add_Ingredients
 MacroTargets:
 
 ScrollDown
-
-
-#####################################################
-Meal_Manager
-#####################################################
-PieChart
-Change MealName
-Change MealTime
-Add
-Save
-Refresh
-Delete Ingredient
-Delete Table
-
-
-#####################################################
-IngredientsTable
-#####################################################
-Add Ingredient
-Change Ingredient Quantity
-Change IngredientName
-Save
-Refresh
-Delete Ingredient
-Delete Table

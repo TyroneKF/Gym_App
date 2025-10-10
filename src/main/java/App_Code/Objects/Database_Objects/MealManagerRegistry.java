@@ -1,6 +1,7 @@
 package App_Code.Objects.Database_Objects;
 
 import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.TotalMealTable;
+import App_Code.Objects.Graph_Objects.Pie_Chart;
 import App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.PieChart_Entry_MPS;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 import org.javatuples.Pair;
@@ -21,8 +22,6 @@ public class MealManagerRegistry
     //##################################################################################################################
     // Collections
     //##################################################################################################################
-    private ArrayList<MealManager> mealManager_ArrayList = new ArrayList<>();
-  
     private Map<String, Integer> totalMeal_macroColNamePos;
     
     /**
@@ -32,6 +31,8 @@ public class MealManagerRegistry
      * Etc;  <Key: Salt | Value: <MealManagerID: 1, <MealTime: 14:00 , Quantity: 300g >>
      */
     private HashMap<String, HashMap<Integer, Pair<Second, BigDecimal>>> mealManagers_TotalMeal_MacroValues; // Can be refactored to include mealManager
+    
+    private ArrayList<MealManager> mealManager_ArrayList = new ArrayList<>();
     
     //#############################
     // Chart Data Collections
@@ -73,6 +74,12 @@ public class MealManagerRegistry
         }
     }
     
+    private void sortLists()
+    {
+        sort_MealManager_AL();
+        if (meal_plan_screen.is_PieChart_Screen_Open()) { sort_PieChartEntry_AL(); }
+    }
+    
     private void sort_MealManager_AL()
     {
         mealManager_ArrayList.sort((a, b) -> a.getCurrentMealTime().compareTo(b.getCurrentMealTime()));
@@ -93,12 +100,6 @@ public class MealManagerRegistry
         TotalMealTable totalMealTable = mealManager.getTotalMealTable();
         
         System.out.printf("\n\nMealManagerRegistry.java : addMealManager() \nMealInPlanID :  %s", mealManagerID);
-        
-        //##########################################
-        // Add MealManager to Collection & Sort
-        //##########################################
-        mealManager_ArrayList.add(mealManager);
-        sort_MealManager_AL();
         
         //##########################################
         // Add MealManager Results to Collection
@@ -124,6 +125,12 @@ public class MealManagerRegistry
             mealManagers_TotalMeal_MacroValues.get(macroName) // Map Returned
                     .put(mealManagerID, new Pair<>(mealManagerTime, macroValue));
         }
+    
+        //##########################################
+        // Add MealManager to Collection & Sort
+        //##########################################
+        mealManager_ArrayList.add(mealManager);
+        sortLists();
     }
     
     public void replaceMealManagerDATA(MealManager mealManager, Boolean skipSorting) // Update done by replacing data
