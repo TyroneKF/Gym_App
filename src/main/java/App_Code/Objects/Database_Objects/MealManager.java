@@ -466,7 +466,7 @@ public class MealManager
     //#################################################################################
     // Pie Charts
     //#################################################################################
-    public void pieChart_Action()
+    private  void pieChart_Action()
     {
         // If pieChart is already created bring up to the surface and make it visible
         if (is_PieChartOpen())
@@ -522,7 +522,7 @@ public class MealManager
         pie_chart_meal_manager_screen.windowClosedEvent();
     }
     
-    public void update_Pie_Chart_Screen()
+    private void update_Pie_Chart_Screen()
     {
         /***
          * Update data behind pieCharts which will effectively update all pieCharts actively using this data
@@ -532,7 +532,6 @@ public class MealManager
         {
             System.err.printf("\n\nMealManagerRegistry.java : updatePieChart_MM_Values() \nPieChart not Open %s", mealInPlanID);
         }
-        
     }
     
     public Boolean is_PieChartOpen()
@@ -673,7 +672,7 @@ public class MealManager
     //####################################
     // Meal Time Functions
     //####################################
-    public void editTime_Btn_Action()
+    private void editTime_Btn_Action()
     {
         //#########################################################################################################
         // Prompt User for time Input
@@ -880,7 +879,7 @@ public class MealManager
     // Add BTN
     //#################################################################################
     // HELLO, Needs to scroll down to the bottom of the MealManager
-    public void addButtonAction()
+    private void addButtonAction()
     {
         //##########################################
         // Get New ID For SubMeal
@@ -917,10 +916,10 @@ public class MealManager
     //#################################################################################
     // Delete BTN Methods
     //#################################################################################
-    public void deleteMealManagerAction()
+    private void deleteMealManagerAction()
     {
         //##########################################
-        // Delete Meal from database
+        // Delete MealManager Queries
         //##########################################
         String query1 = "SET FOREIGN_KEY_CHECKS = 0;"; // Disable Foreign Key Checks
         
@@ -946,6 +945,19 @@ public class MealManager
         }
         
         //##########################################
+        // Delete
+        //##########################################
+        delete_MealManager(true, true, true);
+        
+        //##########################################
+        // Show MSG
+        //##########################################
+        JOptionPane.showMessageDialog(null, "Table Successfully Deleted!");
+    }
+    
+    public void delete_MealManager(boolean updateMacrosLeft, boolean update_External_Charts, boolean useRegistry)
+    {
+        //##########################################
         // Hide JTable object & Collapsible OBJ
         //##########################################
         hideMealManager();
@@ -953,25 +965,29 @@ public class MealManager
         //##########################################
         // Update Registry Data
         //##########################################
-        mealManagerRegistry.delete_MealManager(this);
+        if(! useRegistry)
+        {
+            mealManagerRegistry.delete_MealManager(this);
+        }
         
         //##########################################
         // Update MacrosLeftTable
         //##########################################
-        update_MacrosLeft_Table();// update macrosLeft table, due to number deductions from this meal
+        if(updateMacrosLeft)
+        {
+            update_MacrosLeft_Table();// update macrosLeft table, due to number deductions from this meal
+        }
         
         //##########################################
         // Update LineChart Data
         //##########################################
-        meal_plan_screen.deleteLineChartData(getCurrentMealTime());
-        
-        //##########################################
-        // Update Message
-        //##########################################
-        JOptionPane.showMessageDialog(null, "Table Successfully Deleted!");
+        if (update_External_Charts)
+        {
+            meal_plan_screen.deleteLineChartData(getCurrentMealTime());
+        }
     }
     
-    public void hideMealManager()
+    private void hideMealManager()
     {
         setVisibility(false); // hide collapsible Object
         setHasMealPlannerBeenDeleted(true); // set this object as deleted
@@ -988,7 +1004,7 @@ public class MealManager
         setHasMealPlannerBeenDeleted(false); // set this object as deleted
     }
     
-    public void setVisibility(boolean condition)
+    private void setVisibility(boolean condition)
     {
         collapsibleJpObj.setVisible(condition);
         spaceDividerForMealManager.setVisible(condition);
@@ -1072,7 +1088,7 @@ public class MealManager
     //#################################################################################
     // Save & Refresh Methods
     //#################################################################################
-    public boolean transferMealDataToPlan(String process, int fromPlanID, int toPlanID)
+    private boolean transferMealDataToPlan(String process, int fromPlanID, int toPlanID)
     {
         System.out.printf("\n\n%s transferMealDataToPlan()  %s %s %s", lineSeparator, process, fromPlanID, toPlanID);
         //########################################################
@@ -1167,7 +1183,7 @@ public class MealManager
     //######################################
     // Refresh BTN Methods
     //######################################
-    public void refresh_Btn_Action()
+    private void refresh_Btn_Action()
     {
         //#############################################################################################
         // Check IF OLD Table Name & Meal Time Are Available To Assign Back To This Meal
@@ -1289,17 +1305,17 @@ public class MealManager
         // Refresh TotalMealTable DATA & Charts
         //##############################################################################################
         update_MealManager_DATA(true, updateExternalCharts, skipSorting);
-    
+        
         pieChart_UpdateMealName(); // Update PieChart Name
         
         //##############################################################################################
         // Remove & Re-add to GUI & RegistryDATA
         ///##############################################################################################
-        if(! skipSorting)
+        if (! skipSorting)
         {
             meal_plan_screen.addMealMangerToGUI(this, true, false, true);
         }
-    
+        
         //##############################################################################################
         // Refresh MacrosLeft
         //##############################################################################################
@@ -1327,21 +1343,18 @@ public class MealManager
             return;
         }
         
-        // Set Variables
-        setTimeVariables(false, currentMealTime, currentMealTime);
-        setMealNameVariables(false, currentMealName, currentMealName);
-        setMealManagerInDB(true);
-        
         saveData(true);
-    }
-    
-    public void setMealManagerInDB(boolean mealManagerInDB)
-    {
-        this.mealManagerInDB = mealManagerInDB;
     }
     
     public void saveData(boolean showUpdateMessage)
     {
+        // ###############################################################################
+        // Set Variables
+        // ###############################################################################
+        setTimeVariables(false, currentMealTime, currentMealTime);
+        setMealNameVariables(false, currentMealName, currentMealName);
+        setMealManagerInDB(true);
+        
         // ###############################################################################
         // Removing Sub-Meals that have been deleted & Saving The Other Tables
         // ##############################################################################
@@ -1376,6 +1389,11 @@ public class MealManager
         }
     }
     
+    private void setMealManagerInDB(boolean mealManagerInDB)
+    {
+        this.mealManagerInDB = mealManagerInDB;
+    }
+    
     public boolean isMealManagerInDB()
     {
         return mealManagerInDB;
@@ -1396,7 +1414,7 @@ public class MealManager
         updateCharts(updateInternalCharts, updateExternalCharts);
     }
     
-    public void update_TotalMeal_Table()
+    private void update_TotalMeal_Table()
     {
         totalMealTable.updateTotalMealTable();
     }
@@ -1406,7 +1424,7 @@ public class MealManager
         macrosLeft_JTable.updateMacrosLeftTable();
     }
     
-    public void updateCharts(Boolean updateInternalCharts, Boolean updateExternalCharts)
+    private void updateCharts(Boolean updateInternalCharts, Boolean updateExternalCharts)
     {
         if (updateInternalCharts)
         {

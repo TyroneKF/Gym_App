@@ -196,7 +196,6 @@ public class MealManagerRegistry
         //###########################################
         int mealManagerID = mealManager.getMealInPlanID();
         remove_MealManagers_MacroValues(mealManagerID);
-        
     }
     
     private void remove_MealManagers_MacroValues(Integer mealManagerID)
@@ -230,18 +229,18 @@ public class MealManagerRegistry
     //################################################
     public void delete_MealManagers_MPS()
     {
-        //##################################
+        //###########################################################
         // Delete MealManagers
-        //##################################
+        //###########################################################
         Iterator<MealManager> it = mealManager_ArrayList.iterator();
         while (it.hasNext())
         {
-            it.next().hideMealManager(); // Hide Meal Managers
+            it.next().delete_MealManager(false, false, false); // Hide Meal Managers
         }
-        
-        //##################################
+    
+        //###########################################################
         // Clear / Recreate EMPTY Collection
-        //##################################
+        //###########################################################
         initialize_MealManagers_MacrosValues();
     }
     

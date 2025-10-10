@@ -1192,10 +1192,10 @@ public class Meal_Plan_Screen extends Screen
         if (! db.uploadData(queryDelete, false))
         {
             JOptionPane.showMessageDialog(null, "\n\nUnable to DELETE All Meals in Plan!");
+            return;
         }
         
         JOptionPane.showMessageDialog(getFrame(), "\n\nSuccessfully, DELETED all meals in plan!");
-        
         
         //###########################################################
         // DELETE all the meals in Memory
