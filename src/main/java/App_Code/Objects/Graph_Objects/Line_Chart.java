@@ -22,7 +22,6 @@ public class Line_Chart extends JPanel
     // Variables
     // ############################################################################################
     JFreeChart chart;
-    TimeSeriesCollection dataset = new TimeSeriesCollection();
 
     // ############################################################################################
     // Constructor
@@ -34,11 +33,6 @@ public class Line_Chart extends JPanel
         //############################################
         setPreferredSize(new Dimension(frameWidth, frameHeight));
         setLayout(new GridLayout(1, 1));
-
-        //############################################
-        // Add Data to Dataset to represent
-        //############################################
-        update_dataset(dataset);
 
         //############################################
         // Create Plot
@@ -126,17 +120,8 @@ public class Line_Chart extends JPanel
         // ########################################
         // Change Dataset
         // ########################################
-        this.dataset = dataset;
-    }
-    
-    public void update_dataset2(TimeSeriesCollection dataset)
-    {
-        // ########################################
-        // Change Dataset
-        // ########################################
-        this.dataset = dataset;
         chart.getXYPlot().setDataset(dataset);
-        
+    
         // ########################################
         // Update Changes on GUI
         // ########################################
