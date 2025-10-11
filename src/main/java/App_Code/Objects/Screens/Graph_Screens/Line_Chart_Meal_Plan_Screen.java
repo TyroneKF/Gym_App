@@ -89,7 +89,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
      *
      * @param previousTime - old meal time
      * @param currentTime  - current meal time
-     *                     <p>
+     *
      *                     For Loop through each macroNutrient Name in HashMap (Outer)
      *                     (Inner HashMap) Contains all the values for all the MealManagers
      *                     Update the values specific to this mealManager
@@ -184,12 +184,22 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
     //##################################################
     //  Clear Dataset Methods
     //##################################################
-    public void clear_And_Rebuild_Dataset()
+    public void clear_LineChart_Dataset()
     {
+        //####################################
+        // Create new Dataset & Re-assign
+        //####################################
         dataset = new TimeSeriesCollection();
-        line_chart.getXY_Plot().setDataset(dataset);
-        
+        line_chart.update_dataset(dataset);
+    }
+    
+    public void refresh_Data()
+    {
+        //####################################
+        // Create new Dataset & Re-assign
+        //####################################
         createDataSet();
+        line_chart.update_dataset(dataset);
     }
     
     /*

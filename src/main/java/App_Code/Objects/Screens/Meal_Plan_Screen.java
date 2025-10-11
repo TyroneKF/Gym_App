@@ -1294,7 +1294,7 @@ public class Meal_Plan_Screen extends Screen
     
     private void refresh_LineChart_Data()
     {
-        if (! is_PieChart_Screen_Open()) { return; }
+        if (! is_LineChart_Screen_Open()) { return; }
         
         lineChartMealPlanScreen.refresh_Data();
     }
@@ -1416,7 +1416,7 @@ public class Meal_Plan_Screen extends Screen
         else
         {
             // Replace MealMangers Info in Collections
-            if (! skipMealRegistry) { mealManagerRegistry.replaceMealManagerDATA(mealManager, false); }
+            if (! skipMealRegistry) { mealManagerRegistry.add_OR_Replace_MealManager_Macros_DATA(mealManager, false); }
             
             // Re-add all the MealManagers to GUI
             ArrayList<MealManager> mealManager_ArrayList = mealManagerRegistry.get_MealManager_ArrayList();

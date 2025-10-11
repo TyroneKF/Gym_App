@@ -98,50 +98,21 @@ public class MealManagerRegistry
     public void addMealManager(MealManager mealManager)
     {
         //##########################################
-        // mealManager Info
-        //##########################################
-        int mealManagerID = mealManager.getMealInPlanID();
-        Second mealManagerTime = mealManager.getCurrentMealTime();
-        TotalMealTable totalMealTable = mealManager.getTotalMealTable();
-        
-        System.out.printf("\n\nMealManagerRegistry.java : addMealManager() \nMealInPlanID :  %s", mealManagerID);
-        
-        //##########################################
-        // Add MealManager Results to Collection
-        //##########################################
-        Iterator<Map.Entry<String, Integer>> it = totalMeal_macroColNamePos.entrySet().iterator();
-        
-        while (it.hasNext())
-        {
-            Map.Entry<String, Integer> mapEntry = it.next();
-            
-            // Relative to TotalMealTable
-            String macroName = mapEntry.getKey();
-            Integer macroPos = mapEntry.getValue();
-            
-            BigDecimal macroValue = totalMealTable.get_ValueOnTable(0, macroPos);
-            
-            /**
-             * HashMap<String, Map<Integer, Pair<LocalTime, BigDecimal>>> mealManagersMacroValues = new HashMap<>();
-             * Stores all the mealManagers TotalMealValues in collections by the macroName
-             * <Key: MacroName | Value: Map <Key: MealManagerID, Value: < MealTime, Quantity>>
-             * Etc;  <Key: Salt | Value: <MealManagerID: 1, <MealTime: 14:00 , Quantity: 300g >>
-             */
-            mealManagers_TotalMeal_MacroValues.get(macroName) // Map Returned
-                    .put(mealManagerID, new Pair<>(mealManagerTime, macroValue));
-        }
-        
-        //##########################################
         // Add MealManager to Collection & Sort
         //##########################################
         mealManager_ArrayList.add(mealManager);
-        sortLists();
+        
+        //###############################################
+        // Add MealManager Macro Values
+        //###############################################
+        add_OR_Replace_MealManager_Macros_DATA(mealManager, false);
     }
+    
     
     //###############################################################################
     // Replace Methods
     //###############################################################################
-    public void replaceMealManagerDATA(MealManager mealManager, Boolean skipSorting) // Update done by replacing data
+    public void add_OR_Replace_MealManager_Macros_DATA(MealManager mealManager, Boolean skipSorting) // Update done by replacing data
     {
         //##########################################
         // mealManager Info
@@ -155,7 +126,7 @@ public class MealManagerRegistry
         //##########################################
         // Remove / ADD MealManager to Collection
         //##########################################
-        if (! skipSorting) { sort_MealManager_AL(); }
+        if (! skipSorting) { sortLists(); }
         
         //##########################################
         // Remove MealManager Results to Collection
@@ -288,11 +259,12 @@ public class MealManagerRegistry
             // Reload MealManager Data
             //#################################################################
             mealManager.reloadTableAndChartsData(false, false, true);
-        }
     
-        //#################################################################
-        // Refresh MealRegistry DATA
-        //#################################################################
+            //#################################################################
+            // Re-Upload Or, Change Meal MacroData
+            //#################################################################
+            add_OR_Replace_MealManager_Macros_DATA(mealManager, true);
+        }
         
         //#################################################################
         // Sort MealManager Order

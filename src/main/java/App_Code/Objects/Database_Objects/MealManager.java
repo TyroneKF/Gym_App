@@ -1403,7 +1403,7 @@ public class MealManager
         update_TotalMeal_Table();
         
         // Update Registry Data (Second)
-        mealManagerRegistry.replaceMealManagerDATA(this, skipSorting);
+        mealManagerRegistry.add_OR_Replace_MealManager_Macros_DATA(this, skipSorting);
         
         // Update Charts
         updateCharts(updateInternalCharts, updateExternalCharts);
