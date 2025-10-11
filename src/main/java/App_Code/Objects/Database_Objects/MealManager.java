@@ -466,7 +466,7 @@ public class MealManager
     //#################################################################################
     // Pie Charts
     //#################################################################################
-    private  void pieChart_Action()
+    private void pieChart_Action()
     {
         // If pieChart is already created bring up to the surface and make it visible
         if (is_PieChartOpen())
@@ -727,9 +727,9 @@ public class MealManager
         meal_plan_screen.addMealMangerToGUI(this, true, false, false); // Update Meal Plan Screen
         
         //#######################################
-        // Update LineChart Data
+        // Update External Charts
         //#######################################
-        meal_plan_screen.updateLineChartData(this, oldMealSeconds, newMealSecond);
+        meal_plan_screen.update_External_Charts(false, "mealTime", this, oldMealSeconds, newMealSecond);
         
         //#########################################################################################################
         // Change External Graphs Of this Pie Title
@@ -965,7 +965,7 @@ public class MealManager
         //##########################################
         // Update Registry Data
         //##########################################
-        if(! useRegistry)
+        if (! useRegistry)
         {
             mealManagerRegistry.delete_MealManager(this);
         }
@@ -973,17 +973,17 @@ public class MealManager
         //##########################################
         // Update MacrosLeftTable
         //##########################################
-        if(updateMacrosLeft)
+        if (updateMacrosLeft)
         {
             update_MacrosLeft_Table();// update macrosLeft table, due to number deductions from this meal
         }
         
         //##########################################
-        // Update LineChart Data
+        // Delete in External Charts
         //##########################################
         if (update_External_Charts)
         {
-            meal_plan_screen.deleteLineChartData(getCurrentMealTime());
+            meal_plan_screen.update_External_Charts(false, "delete", this, getCurrentMealTime(), getCurrentMealTime());
         }
     }
     
@@ -1426,9 +1426,9 @@ public class MealManager
             update_Pie_Chart_Screen(); // Update Pie Chart Screen
         }
         
-        if (updateExternalCharts) // Update LineChart Data
+        if (updateExternalCharts) // Update External Charts
         {
-            meal_plan_screen.updateLineChartData(this, getCurrentMealTime(), getCurrentMealTime());
+            meal_plan_screen.update_External_Charts(false, "update", this, getCurrentMealTime(), getCurrentMealTime());
         }
     }
     

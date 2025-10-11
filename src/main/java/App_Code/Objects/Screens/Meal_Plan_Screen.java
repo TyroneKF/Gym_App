@@ -1208,9 +1208,9 @@ public class Meal_Plan_Screen extends Screen
         update_MacrosLeftTable();
         
         //###########################################################
-        // Update LineChart Screen
+        // Update External Graphs
         //###########################################################
-        clearLineChartDataSet();
+        update_External_Charts(true, "clear", null, null, null);
     }
     
     // ###############################################################
@@ -1271,28 +1271,35 @@ public class Meal_Plan_Screen extends Screen
         lineChartMealPlanScreen = null;
     }
     
-    public void updateLineChartData(MealManager mealManager, Second previousTime, Second currentTime)
+    private void updateLineChartData(MealManager mealManager, Second previousTime, Second currentTime)
     {
         if (! is_LineChart_Screen_Open()) { return; }
         
         lineChartMealPlanScreen.updateMealManagerData(mealManager, previousTime, currentTime);
     }
     
-    public void deleteLineChartData(Second currentTime)
+    private void deleteLineChartData(Second currentTime)
     {
         if (! is_LineChart_Screen_Open()) { return; }
         
         lineChartMealPlanScreen.deleteMealManagerData(currentTime);
     }
     
-    public void clearLineChartDataSet()
+    private void clearLineChartDataSet()
     {
         if (! is_LineChart_Screen_Open()) { return; }
         
-        lineChartMealPlanScreen.clear_And_Rebuild_Dataset();
+        lineChartMealPlanScreen.clear_LineChart_Dataset();
     }
     
-    public boolean is_LineChart_Screen_Open()
+    private void refresh_LineChart_Data()
+    {
+        if (! is_PieChart_Screen_Open()) { return; }
+        
+        lineChartMealPlanScreen.refresh_Data();
+    }
+    
+    private boolean is_LineChart_Screen_Open()
     {
         return lineChartMealPlanScreen != null;
     }
@@ -1350,20 +1357,9 @@ public class Meal_Plan_Screen extends Screen
         update_MacrosLeftTable(); // Update macrosLeft, refresh methods do not work here, needs to be computed
         
         //####################################################################
-        // Re-Upload LineChart Data in One Go
+        // Update External Charts
         //####################################################################
-        if (is_LineChart_Screen_Open())
-        {
-            lineChartMealPlanScreen.clear_And_Rebuild_Dataset(); // clear but, also adds data in
-        }
-        
-        //####################################################################
-        // Re-Draw GUI
-        //####################################################################
-        if (is_PieChart_Screen_Open())
-        {
-            pieChart_Meal_Plan_Screen.redraw_GUI();
-        }
+        update_External_Charts(true, "refresh", null, null, null);
     }
     
     // ###############################################################
@@ -1476,7 +1472,7 @@ public class Meal_Plan_Screen extends Screen
             {
                 mealManager.completely_Delete_MealManager(); // delete from GUI
                 
-                it.remove();  continue;
+                it.remove(); continue;
             }
             noMealsLeft = false; // if this line is reached there is a  MealManager (for loop) that hasn't been deleted
         }
@@ -1695,6 +1691,64 @@ public class Meal_Plan_Screen extends Screen
             it.remove();
         }
     }
+    
+    public void update_External_Charts(boolean mealPlanScreen_Action, String action, MealManager mealManager,
+                                       Second previousMealTime, Second currentMealTime)
+    {
+        //####################################################################
+        // MealPlanScreen
+        //####################################################################
+        if (mealPlanScreen_Action)
+        {
+            if (action.equals("clear")) // Delete Button requested on MealPlanScreen
+            {
+                // Clear LineChart Data
+                clearLineChartDataSet();
+                
+            }
+            else if (action.equals("refresh"))
+            {
+                // Clear LineChart Data
+                refresh_LineChart_Data();
+                
+                /*if (is_PieChart_Screen_Open())
+                {
+                    pieChart_Meal_Plan_Screen.redraw_GUI();
+                }*/
+            }
+            
+            
+            //##########################
+            // Exit
+            //##########################
+            return;
+        }
+        
+        //####################################################################
+        // MealManager Requested Action
+        //####################################################################
+        if (action.equals("update")) // Update MealManager Time
+        {
+            // Update LineChart Data
+            updateLineChartData(mealManager, previousMealTime, currentMealTime);
+        }
+        else if (action.equals("delete")) // Deleted MealManager
+        {
+            // Delete LineChart Data
+            deleteLineChartData(currentMealTime);
+        }
+        else if (action.equals("mealTime")) // MealTime on MealManager Changed
+        {
+            // Change data points time on LineChart Data
+            updateLineChartData(mealManager, previousMealTime, currentMealTime);
+        }
+        else if (action.equals("refresh")) // Refresh mealPlan was requested
+        {
+            // Refresh MealManager
+            updateLineChartData(mealManager, previousMealTime, currentMealTime);
+        }
+    }
+    
     
     //##################################################################################################################
     //  Macro Targets/Left Table Methods
