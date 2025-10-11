@@ -505,12 +505,12 @@ public class MealManager
     public void removePieChartScreen()
     {
         pie_chart_meal_manager_screen = null;
-        
+    
         //############################################
-        // External
+        // External DATA if not USED
         //############################################
         if (meal_plan_screen.is_PieChart_Screen_Open()) { return; }
-        
+    
         mealManagerRegistry.remove_PieChart_DatasetValues(mealInPlanID);
     }
     

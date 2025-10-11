@@ -124,12 +124,12 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
         // Remove Attachment to MealPlanScreen
         // ####################################
         meal_plan_screen.removePieChartScreen();
-    
+        
         // ####################################
         // Remove GUI DATA
         // ####################################
         mealManagerRegistry.remove_Unused_PieData();
-    
+        
         // ####################################
         // Close JFrame
         // ####################################
@@ -186,23 +186,31 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
         }
     }
     
-    public Pie_Chart add_MealManagerToGUI(MealManager mealManager)
+    public void add_MealManager_To_GUI(MealManager mealManager)
     {
-        Integer mealPlanID = mealManager.getMealInPlanID();
-    
         //##############################
         // Get / Create PieChart Data
         //##############################
+        Integer mealPlanID = mealManager.getMealInPlanID();
         DefaultPieDataset<String> pieDataset = mealManagerRegistry.get_OR_Create_PieChart_Dataset(mealPlanID);
-    
+        
         //##############################
         // Create PieChart & Add to List
         //##############################
         String title = String.format("[%s]      %s Macros", mealManager.getCurrentMealTimeGUI(), mealManager.getCurrentMealName());
-    
+        
         Pie_Chart pieChart = new Pie_Chart(title, pieWidth, pieHeight, rotateDelay, titleFont, labelFont, legendFont, pieDataset);
         pieChart_MPS_Entries.add(new PieChart_Entry_MPS(mealPlanID, mealManager, pieChart));
         
-        return pieChart;
+        //Set MSG
+        //##############################
+        // Sort Meals in Pie MPS
+        //##############################
+        mealManagerRegistry.sort_PieChartEntry_AL();
+        
+        //##############################
+        // Redraw GUI
+        //##############################
+        redraw_GUI();
     }
 }

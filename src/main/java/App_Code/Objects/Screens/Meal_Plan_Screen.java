@@ -144,6 +144,7 @@ public class Meal_Plan_Screen extends Screen
         put("total_saturated_fat", null);
         put("total_salt", null);
         put("total_fibre", null);
+        put("total_calories", null);
     }};
     
     //##################################################################################################################
@@ -1252,6 +1253,26 @@ public class Meal_Plan_Screen extends Screen
         pieChart_Meal_Plan_Screen.update_PieChart_MealName(mealInPlanID);
     }
     
+    public void refresh_PieChart_DATA_MPS()
+    {
+        if (is_PieChart_Screen_Open())
+        {
+            pieChart_Meal_Plan_Screen.redraw_GUI();
+        }
+    }
+    
+    public void delete_MealManager_PieChart(MealManager mealManager)
+    {
+    
+    }
+    
+    public void add_Meal_Manager_PieChart(MealManager mealManager)
+    {
+        if (! is_PieChart_Screen_Open()) { return; }
+        
+        pieChart_Meal_Plan_Screen.add_MealManager_To_GUI(mealManager);
+    }
+    
     // ###############################################################
     // Line Chart BTN Actions
     // ###############################################################
@@ -1297,6 +1318,13 @@ public class Meal_Plan_Screen extends Screen
         if (! is_LineChart_Screen_Open()) { return; }
         
         lineChartMealPlanScreen.refresh_Data();
+    }
+    
+    private void add_Meal_To_LineChart(MealManager mealManager)
+    {
+        if (! is_LineChart_Screen_Open()) { return; }
+        
+        
     }
     
     private boolean is_LineChart_Screen_Open()
@@ -1382,18 +1410,26 @@ public class Meal_Plan_Screen extends Screen
             return;
         }
         //##############################################################################################################
-        //
+        // Add MealManager To GUI & Charts
         //##############################################################################################################
-        addMealMangerToGUI(new MealManager(this), true, false, true);
-    }
+        MealManager mealManager = new MealManager(this);
     
-    public void addMealMangerToGUI(MealManager mealManager, boolean clearThanAdd, boolean skipMealRegistry, boolean expandView)
-    {
         //###############################################
         // If Object Creation Failed Exit
         //###############################################
         if (! mealManager.isObjectCreated()) { return; }
+    
+        //###############################################
+        // ADD to GUI & Charts
+        //###############################################
+        addMealMangerToGUI(mealManager, true, false, true); // Add to GUI
         
+        // Add to External Charts
+        update_External_Charts(true, "add", mealManager, null, mealManager.getCurrentMealTime());
+    }
+    
+    public void addMealMangerToGUI(MealManager mealManager, boolean clearThanAdd, boolean skipMealRegistry, boolean expandView)
+    {
         Integer meal_in_plan_id = mealManager.getMealInPlanID();
         
         //###############################################
@@ -1700,7 +1736,12 @@ public class Meal_Plan_Screen extends Screen
         //####################################################################
         if (mealPlanScreen_Action)
         {
-            if (action.equals("clear")) // Delete Button requested on MealPlanScreen
+            if (action.equals("add")) // New MealManager Added to GUI
+            {
+                // PieChart MPS Screen
+                add_Meal_Manager_PieChart(mealManager);
+            }
+            else if (action.equals("clear")) // Delete Button requested on MealPlanScreen
             {
                 // Clear LineChart Data
                 clearLineChartDataSet();
@@ -1708,15 +1749,12 @@ public class Meal_Plan_Screen extends Screen
             }
             else if (action.equals("refresh"))
             {
-                // Clear LineChart Data
+                // Refresh LineChart Data
                 refresh_LineChart_Data();
                 
-                /*if (is_PieChart_Screen_Open())
-                {
-                    pieChart_Meal_Plan_Screen.redraw_GUI();
-                }*/
+                //Refresh PieChart Screen
+                refresh_PieChart_DATA_MPS();
             }
-            
             
             //##########################
             // Exit

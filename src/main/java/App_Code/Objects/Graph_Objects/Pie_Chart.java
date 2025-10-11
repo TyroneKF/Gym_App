@@ -3,7 +3,9 @@ package App_Code.Objects.Graph_Objects;
 
 import javax.swing.*;
 import java.awt.*;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -12,8 +14,11 @@ import org.jfree.chart.plot.PiePlot3D;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.chart.util.Rotation;
 import org.jfree.data.general.DefaultPieDataset;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Iterator;
+
 import org.jfree.chart.labels.PieSectionLabelGenerator;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
 
@@ -24,25 +29,28 @@ public class Pie_Chart extends JPanel
     // Variables
     // ############################################################################################
     protected JFreeChart chart;
+    protected DefaultPieDataset<String> dataset;
+    protected PiePlot3D plot;
     
     // ############################################################################################
     // Constructor
     // ############################################################################################
     public Pie_Chart(String title, int frameWidth, int frameHeight, int rotateDelay, Font titleFont, Font labelFont,
-                     Font legendFont,  DefaultPieDataset dataset)
+                     Font legendFont, DefaultPieDataset<String> datasetInput)
     {
         //############################################
         // Set Layout Dimensions
         //############################################
         setPreferredSize(new Dimension(frameWidth, frameHeight));
         setLayout(new GridLayout(1, 1));
-        
+        this.dataset = datasetInput;
+      
         //############################################
         // Create Plot with Data & Configurations
         //############################################
         chart = ChartFactory.createPieChart3D(title, dataset, true, true, false);
         
-        PiePlot3D plot = (PiePlot3D) chart.getPlot();
+        plot = (PiePlot3D) chart.getPlot();
         plot.setStartAngle(290);
         plot.setDirection(Rotation.CLOCKWISE);
         plot.setForegroundAlpha(0.6f);
@@ -88,6 +96,22 @@ public class Pie_Chart extends JPanel
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new Dimension(frameWidth, frameHeight));
         
+        //############################################
+        // Create Plot with Data & Configurations
+        //############################################
+        /**
+         * Event Listener cannot be added to the pieCharts themselves.
+         * To detect where the data is empty etc; new meal or values equate to 0, the chart will go blank.
+         * To identify this we have to add an eventListener to the data as the dataset is new re-initialized once created
+         */
+        
+        dataset.addChangeListener(event -> {
+            is_PieChart_Empty_MSG();
+        });
+        
+        // Event above is only triggered when values change & we need to do check on initialization too
+        is_PieChart_Empty_MSG();
+        
         // #############################################
         // Add Plot to Panel
         //#############################################
@@ -100,6 +124,30 @@ public class Pie_Chart extends JPanel
     public void setTitle(String txt)
     {
         chart.setTitle(txt);
+    }
+    
+    public void is_PieChart_Empty_MSG()
+    {
+        Iterator it = dataset.getKeys().iterator();
+    
+        boolean emptyValues = true;
+        while (it.hasNext())
+        {
+            String key = (String) it.next();
+            Number value = dataset.getValue(key);
+            BigDecimal bd_Value = BigDecimal.valueOf(value.doubleValue());
+        
+            if (bd_Value.compareTo(BigDecimal.ZERO) > 0) { emptyValues = false; break; }
+        }
+    
+        if (! emptyValues) { return; }
+    
+        //#####################################################
+        // Set the no-data message
+        //#####################################################
+        plot.setNoDataMessage("No data to display");
+        plot.setNoDataMessageFont(new Font("SansSerif", Font.BOLD, 18));
+        plot.setNoDataMessagePaint(Color.RED);
     }
     
     //############################################################################################
