@@ -1431,7 +1431,7 @@ public class Meal_Plan_Screen extends Screen
                 {
                     // remove from old position in GUI
                     m.getCollapsibleJpObj().collapseJPanel(); // Minimise Meal
-                    m.removeMealManagerFromGUI();
+                    m.completely_Delete_MealManager();
                 }
                 
                 // Add to GUI Meal Manager & Its Space Divider

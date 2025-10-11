@@ -29,7 +29,7 @@ public class MealManagerRegistry
      * <Key: MacroName | Value: Map <Key: MealManagerID, Value: < MealTime, Quantity>>
      * Etc;  <Key: Salt | Value: <MealManagerID: 1, <MealTime: 14:00 , Quantity: 300g >>
      */
-    private HashMap<String, HashMap<Integer, Pair<Second, BigDecimal>>> mealManagers_TotalMeal_MacroValues; // Can be refactored to include mealManager
+    private HashMap<String, HashMap<Integer, Pair<Second, BigDecimal>>> mealManagers_TotalMeal_MacroValues = new HashMap<>(); // Can be refactored to include mealManager
     
     private ArrayList<MealManager> mealManager_ArrayList = new ArrayList<>();
     
@@ -62,7 +62,7 @@ public class MealManagerRegistry
     //##################################################################################################################
     public void initialize_MealManagers_MacrosValues()
     {
-        mealManagers_TotalMeal_MacroValues = new HashMap<>();
+        mealManagers_TotalMeal_MacroValues.clear();
         
         //##################################
         // Create Macros Collection

@@ -1025,11 +1025,6 @@ public class MealManager
     //################################################
     public void completely_Delete_MealManager()
     {
-        removeMealManagerFromGUI();
-    }
-    
-    public void removeMealManagerFromGUI()
-    {
         container.remove(collapsibleJpObj); // remove the GUI elements from GUI
         container.remove(spaceDividerForMealManager);    // remove space divider from GUI
     }
