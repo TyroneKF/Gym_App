@@ -34,9 +34,14 @@ public class Line_Chart extends JPanel
         //############################################
         setPreferredSize(new Dimension(frameWidth, frameHeight));
         setLayout(new GridLayout(1, 1));
-    
+
         //############################################
-        // Create Empty Plot
+        // Add Data to Dataset to represent
+        //############################################
+        update_dataset(dataset);
+
+        //############################################
+        // Create Plot
         //############################################
         chart = ChartFactory.createTimeSeriesChart(
                 title,
@@ -45,14 +50,9 @@ public class Line_Chart extends JPanel
                 dataset,
                 true, true, false
         );
-        
+
         XYPlot plot = chart.getXYPlot();
-        
-        //############################################
-        // Add Data to Dataset to represent
-        //############################################
-        update_dataset(dataset);
-        
+
         // ################################################
         // Edit Colour Pallet to avoid repeating colours
         //#################################################
@@ -127,12 +127,22 @@ public class Line_Chart extends JPanel
         // Change Dataset
         // ########################################
         this.dataset = dataset;
-        chart.getXYPlot().setDataset(dataset);
+    }
     
+    public void update_dataset2(TimeSeriesCollection dataset)
+    {
+        // ########################################
+        // Change Dataset
+        // ########################################
+        this.dataset = dataset;
+        chart.getXYPlot().setDataset(dataset);
+        
         // ########################################
         // Update Changes on GUI
         // ########################################
         chart.fireChartChanged();
         repaint();
     }
+    
+    
 }
