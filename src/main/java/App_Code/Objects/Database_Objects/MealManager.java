@@ -965,7 +965,7 @@ public class MealManager
         //##########################################
         // Update Registry Data
         //##########################################
-        if (! useRegistry)
+        if ( useRegistry)
         {
             mealManagerRegistry.delete_MealManager(this);
         }
