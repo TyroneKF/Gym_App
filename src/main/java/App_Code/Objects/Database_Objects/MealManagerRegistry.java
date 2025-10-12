@@ -400,7 +400,6 @@ public class MealManagerRegistry
         {
             data = new LinkedHashMap<String, BigDecimal>()
             {{
-        
                 // ###########################
                 // Protein
                 // ###########################
