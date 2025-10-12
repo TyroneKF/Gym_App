@@ -57,6 +57,7 @@ MealManager -
 
 Pie_Chart
 pie_Chart empty is out of line with others
+Refactor data parts of pieChartMPS Screen into registry
 ######################################################################################
 New Features:
 ######################################################################################

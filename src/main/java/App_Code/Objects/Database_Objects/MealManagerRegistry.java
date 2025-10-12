@@ -95,7 +95,7 @@ public class MealManagerRegistry
     //###############################################################################
     // ADD Methods
     ///###############################################################################
-    public void addMealManager(MealManager mealManager)
+    public void addMealManager(MealManager mealManager) // ADD Pie DATA
     {
         //##########################################
         // Add MealManager to Collection & Sort
@@ -105,10 +105,63 @@ public class MealManagerRegistry
         //###############################################
         // Add MealManager Macro Values
         //###############################################
-        add_OR_Replace_MealManager_Macros_DATA(mealManager, false);
+        add_OR_Replace_MealManager_Macros_DATA(mealManager);
+        
+        //###############################################
+        // Add MealManager To PieChart DATA
+        //###############################################
+        if (! meal_plan_screen.is_PieChart_Screen_Open())  // Exit if not open
+        {
+        
+        }
+        
+        //###############################################
+        // Sort LISTS
+        //###############################################
+        sortLists();
     }
     
-    public void add_OR_Replace_MealManager_Macros_DATA(MealManager mealManager, Boolean skipSorting) // Update done by replacing data
+    public void add_OR_Replace_MealManager_Macros_DATA(MealManager mealManager) // Update done by replacing data
+    {
+        //##########################################
+        // mealManager Info
+        //##########################################
+        int mealManagerID = mealManager.getMealInPlanID();
+        Second mealManagerTime = mealManager.getCurrentMealTime();
+        TotalMealTable totalMealTable = mealManager.getTotalMealTable();
+        
+        System.out.printf("\n\nMealManagerRegistry.java : replaceMealManagerDATA() \nMealInPlanID :  %s", mealManagerID);
+        
+        //##########################################
+        // Remove MealManager Results to Collection
+        //##########################################
+        /**
+         * HashMap<String, Map<Integer, Pair<LocalTime, BigDecimal>>> mealManagersMacroValues = new HashMap<>();
+         * Stores all the mealManagers TotalMealValues in collections by the macroName
+         * <Key: MacroName | Value: Map <Key: MealManagerID, Value: < MealTime, Quantity>>
+         * Etc;  <Key: Salt | Value: <MealManagerID: 1, <MealTime: 14:00 , Quantity: 300g >>
+         */
+        
+        Iterator<Map.Entry<String, Integer>> it = totalMeal_macroColNamePos.entrySet().iterator();
+        
+        while (it.hasNext())
+        {
+            Map.Entry<String, Integer> mapEntry = it.next();
+            String macroName = mapEntry.getKey();
+            Integer macroPos = mapEntry.getValue();
+            
+            BigDecimal macroValue = totalMealTable.get_ValueOnTable(0, macroPos);
+            
+            /**
+             *  <Key: MacroName | Value: Map<Key: MealManagerID, Value: < MealTime, Quantity>>
+             *   Put, Replace
+             */
+            
+            mealManagers_TotalMeal_MacroValues.get(macroName).put(mealManagerID, new Pair<>(mealManagerTime, macroValue));
+        }
+    }
+    
+    public void add_OR_Replace_MealManager_Macros_DATA_V2(MealManager mealManager, Boolean skipSorting) // Update done by replacing data
     {
         //##########################################
         // mealManager Info
@@ -269,13 +322,13 @@ public class MealManagerRegistry
             //#################################################################
             // Re-Upload Or, Change Meal MacroData
             //#################################################################
-            add_OR_Replace_MealManager_Macros_DATA(mealManager, true);
+            add_OR_Replace_MealManager_Macros_DATA_V2(mealManager, true);
         }
         
         //#################################################################
         // Sort MealManager Order
         //#################################################################
-        sort_MealManager_AL();
+        sortLists();
     }
     
     ///#################################################################################################################
@@ -285,7 +338,7 @@ public class MealManagerRegistry
     /**
      * @param mealInPlanID - ID of MealManager
      * @return PieChart Dataset
-     *
+     * <p>
      * This method is used to retrieve pieChart Data based on MealInPlanID
      * if it exists it is returned. Otherwise, it's created and added to DATA (Collection) and then it's returned.
      */
@@ -361,9 +414,9 @@ public class MealManagerRegistry
         BigDecimal proteinValue = mealManagers_TotalMeal_MacroValues.get("total_protein").get(mealInPlanID).getValue1();
         BigDecimal carbsValue = mealManagers_TotalMeal_MacroValues.get("total_carbohydrates").get(mealInPlanID).getValue1();
         BigDecimal fatsValue = mealManagers_TotalMeal_MacroValues.get("total_fats").get(mealInPlanID).getValue1();
-    
+        
         BigDecimal total = proteinValue.add(carbsValue).add(fatsValue);
-    
+        
         //###################################################
         // Produce Output
         //###################################################
@@ -378,20 +431,20 @@ public class MealManagerRegistry
                 // Protein
                 // ###########################
                 put(String.format("Protein [ %d%% ] ", percent_Calculator(proteinValue, total)), proteinValue);
-        
+                
                 // ###########################
                 // Carbs
                 // ###########################
                 BigDecimal sugarCarbsValue = mealManagers_TotalMeal_MacroValues.get("total_sugars_of_carbs").get(mealInPlanID).getValue1();
-        
+                
                 put(String.format("Carbohydrates [ %d%% ] ", percent_Calculator(carbsValue, total)), carbsValue.subtract(sugarCarbsValue));
                 put("Sugars Of Carbs", sugarCarbsValue);
-        
+                
                 // ###########################
                 // Fats
                 // ###########################
                 BigDecimal satFatsValue = mealManagers_TotalMeal_MacroValues.get("total_saturated_fat").get(mealInPlanID).getValue1();
-        
+                
                 put(String.format("Fats [ %d%% ] ", percent_Calculator(fatsValue, total)), fatsValue.subtract(satFatsValue));
                 put("Saturated Fats", satFatsValue);
             }};

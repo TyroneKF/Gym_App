@@ -998,6 +998,12 @@ public class MealManager
         close_PieChartScreen();
     }
     
+    public void collapse_MealManager()
+    {
+        getCollapsibleJpObj().collapseJPanel();
+    }
+    
+    
     private void unHideMealManager()
     {
         setVisibility(true); // hide collapsible Object
@@ -1403,7 +1409,7 @@ public class MealManager
         update_TotalMeal_Table();
         
         // Update Registry Data (Second)
-        mealManagerRegistry.add_OR_Replace_MealManager_Macros_DATA(this, skipSorting);
+        mealManagerRegistry.add_OR_Replace_MealManager_Macros_DATA_V2(this, skipSorting);
         
         // Update Charts
         updateCharts(updateInternalCharts, updateExternalCharts);
