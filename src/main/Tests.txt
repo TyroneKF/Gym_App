@@ -1,4 +1,26 @@
 #####################################################
+LineChart Screen
+#####################################################
+
+Meals:
+.) Meal Deleted - Remove values from meal
+.) Meal Time Changed - values moved
+.) Meal Refresh
+
+IngredientsTable:
+.) Delete IngredientsTable
+.) Refresh IngredientsTable
+.) Ingredient Values Changed: Ingredients / Quantity
+.) Delete ingredient should change meal total = changed chart value
+.) Add Ingredient & Change Values
+
+MealPlanScreen:
+.) Clear Screen
+.) Refresh Screen
+.) Add Meal
+
+
+#####################################################
 IngredientsTable
 #####################################################
 Add Ingredient
