@@ -89,7 +89,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
      *
      * @param previousTime - old meal time
      * @param currentTime  - current meal time
-     *
+     *                     <p>
      *                     For Loop through each macroNutrient Name in HashMap (Outer)
      *                     (Inner HashMap) Contains all the values for all the MealManagers
      *                     Update the values specific to this mealManager
@@ -161,7 +161,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
     // Methods
     // #################################################################################################################
     @Override
-    public void windowClosedEvent() { meal_plan_screen.removeLineChartScreen(); closeJFrame();}
+    public void windowClosedEvent() { meal_plan_screen.removeLineChartScreen(); closeJFrame(); }
     
     //##################################################
     // Conversion Methods
@@ -182,7 +182,24 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
     }
     
     //##################################################
-    //  Clear Dataset Methods
+    //  Add
+    //##################################################
+    public void add_New_MealManager_Data(MealManager mealManager)
+    {
+        
+        // Add MealTime with value of 0 for each Macro because it's essentially initialised null
+        Second mealTime = mealManager.getCurrentMealTime();
+        
+        for (Object objectSeries : dataset.getSeries())
+        {
+            TimeSeries series = (TimeSeries) objectSeries;
+            
+            series.add(mealTime, 0);
+        }
+    }
+    
+    //##################################################
+    //  Clear
     //##################################################
     public void clear_LineChart_Dataset()
     {
@@ -193,6 +210,9 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
         line_chart.update_dataset(dataset);
     }
     
+    //##################################################
+    //  Refresh
+    //##################################################
     public void refresh_Data()
     {
         //####################################
@@ -202,10 +222,13 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
         line_chart.update_dataset(dataset);
     }
     
+    //##################################################
+    //  Delete
+    //##################################################
     /*
        Based on MealManagers time the data is deleted in the series collection
      */
-    public void deleteMealManagerData(Second mealTime)
+    public void delete_MealManager_Data(Second mealTime)
     {
         for (String macroName : macronutrientsToCheckAndPos.keySet())
         {
