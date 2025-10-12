@@ -17,12 +17,8 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
     // #################################################################################################################
     // Variables
     // #################################################################################################################
-    private String planName;
-    private ArrayList<PieChart_Entry_MPS> pieChartEntry_MPS_AL = new ArrayList<>();
-    
-    //#####################################
     // Graph Preferences
-    //#####################################
+
     private int
             col = 3,
             pieWidth = (frameWidth / col) - 30,
@@ -53,7 +49,7 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
         // ################################################################
         // Super Constructor
         // ################################################################
-        super(db, true, "Pie Chart: Plan Macros", 1935, 1200, 0, 0);
+        super(db, true, String.format(" %s Pie Chart: Plan Macros", meal_plan_screen.getPlanName()), 1935, 1200, 0, 0);
         
         getScrollPaneJPanel().setBackground(Color.WHITE);
         setResizable(true);
@@ -62,7 +58,6 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
         // Variables
         // ################################################################
         this.meal_plan_screen = meal_plan_screen;
-        this.planName = meal_plan_screen.getPlanName();
         this.mealManagerRegistry = meal_plan_screen.get_MealManagerRegistry();
         
         // #####################################

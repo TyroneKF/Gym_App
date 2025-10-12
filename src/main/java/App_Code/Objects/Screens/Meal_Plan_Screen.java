@@ -144,7 +144,6 @@ public class Meal_Plan_Screen extends Screen
         put("total_saturated_fat", null);
         put("total_salt", null);
         put("total_fibre", null);
-        put("total_calories", null);
     }};
     
     //##################################################################################################################
@@ -1227,13 +1226,13 @@ public class Meal_Plan_Screen extends Screen
     // ###############################################################
     private void pieChart_BtnAction_OpenScreen()
     {
-        if (! is_PieChart_Screen_Open())
+        if (is_PieChart_Screen_Open())
         {
-            pieChart_Meal_Plan_Screen = new Pie_Chart_Meal_Plan_Screen(db, this);
+            pieChart_Meal_Plan_Screen.makeJFrameVisible();
             return;
         }
         
-        pieChart_Meal_Plan_Screen.makeJFrameVisible();
+        pieChart_Meal_Plan_Screen = new Pie_Chart_Meal_Plan_Screen(db, this);
     }
     
     public void removePieChartScreen()
@@ -1255,15 +1254,17 @@ public class Meal_Plan_Screen extends Screen
     
     public void refresh_PieChart_DATA_MPS()
     {
-        if (is_PieChart_Screen_Open())
-        {
-            pieChart_Meal_Plan_Screen.redraw_GUI();
-        }
+        if (! is_PieChart_Screen_Open()) { return; }
+        
+        pieChart_Meal_Plan_Screen.redraw_GUI();
     }
     
-    public void delete_MealManager_PieChart(MealManager mealManager)
+    public void deleted_MealManager_PieChart(MealManager mealManager)
     {
-    
+        if (! is_PieChart_Screen_Open()) { return; }
+        
+        // Data Handling already been processed, screen just needs to be re-drawn
+        pieChart_Meal_Plan_Screen.redraw_GUI();
     }
     
     public void add_Meal_Manager_PieChart(MealManager mealManager)
@@ -1413,12 +1414,12 @@ public class Meal_Plan_Screen extends Screen
         // Add MealManager To GUI & Charts
         //##############################################################################################################
         MealManager mealManager = new MealManager(this);
-    
+        
         //###############################################
         // If Object Creation Failed Exit
         //###############################################
         if (! mealManager.isObjectCreated()) { return; }
-    
+        
         //###############################################
         // ADD to GUI & Charts
         //###############################################
@@ -1773,7 +1774,10 @@ public class Meal_Plan_Screen extends Screen
         else if (action.equals("delete")) // Deleted MealManager
         {
             // Delete LineChart Data
-            deleteLineChartData(currentMealTime);
+            deleteLineChartData(previousMealTime);
+    
+            // Delete PieChart AKA Re-draw GUI
+            deleted_MealManager_PieChart(mealManager);
         }
         else if (action.equals("mealTime")) // MealTime on MealManager Changed
         {

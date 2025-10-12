@@ -28,9 +28,12 @@ public class Pie_Chart extends JPanel
     // ############################################################################################
     // Variables
     // ############################################################################################
+ 
+    // Objects
     protected JFreeChart chart;
     protected DefaultPieDataset<String> dataset;
     protected PiePlot3D plot;
+    protected ChartPanel chartPanel;
     
     // ############################################################################################
     // Constructor
@@ -41,10 +44,14 @@ public class Pie_Chart extends JPanel
         //############################################
         // Set Layout Dimensions
         //############################################
+        this.dataset = datasetInput;
+        
+        //############################################
+        // Set Layout Dimensions
+        //############################################
         setPreferredSize(new Dimension(frameWidth, frameHeight));
         setLayout(new GridLayout(1, 1));
-        this.dataset = datasetInput;
-      
+        
         //############################################
         // Create Plot with Data & Configurations
         //############################################
@@ -77,7 +84,7 @@ public class Pie_Chart extends JPanel
         
         // Label font size on diagram
         plot.setLabelFont(labelFont);
-        plot.setLabelPaint(Color.BLACK);   // Black stands out better than white
+        plot.setLabelPaint(Color.BLACK);
         
         // Legend Font Size
         chart.getLegend().setItemFont(legendFont);
@@ -129,19 +136,19 @@ public class Pie_Chart extends JPanel
     public void is_PieChart_Empty_MSG()
     {
         Iterator it = dataset.getKeys().iterator();
-    
+        
         boolean emptyValues = true;
         while (it.hasNext())
         {
             String key = (String) it.next();
             Number value = dataset.getValue(key);
             BigDecimal bd_Value = BigDecimal.valueOf(value.doubleValue());
-        
+            
             if (bd_Value.compareTo(BigDecimal.ZERO) > 0) { emptyValues = false; break; }
         }
-    
+        
         if (! emptyValues) { return; }
-    
+        
         //#####################################################
         // Set the no-data message
         //#####################################################

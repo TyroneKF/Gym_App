@@ -108,10 +108,6 @@ public class MealManagerRegistry
         add_OR_Replace_MealManager_Macros_DATA(mealManager, false);
     }
     
-    
-    //###############################################################################
-    // Replace Methods
-    //###############################################################################
     public void add_OR_Replace_MealManager_Macros_DATA(MealManager mealManager, Boolean skipSorting) // Update done by replacing data
     {
         //##########################################
@@ -167,6 +163,16 @@ public class MealManagerRegistry
         //###########################################
         int mealManagerID = mealManager.getMealInPlanID();
         remove_MealManagers_MacroValues(mealManagerID);
+        
+        //###########################################
+        // Remove MealManager PieChart Data
+        //###########################################
+        remove_PieChart_DatasetValues(mealManagerID);
+        
+        //############################################
+        // Remove from PieChart Screen Objects
+        //############################################
+        pieChartEntry_MPS_AL.removeIf(e -> e.get_MealInPlanID() == mealManagerID);
     }
     
     private void remove_MealManagers_MacroValues(Integer mealManagerID)
@@ -208,7 +214,7 @@ public class MealManagerRegistry
         {
             it.next().delete_MealManager(false, false, false); // Hide Meal Managers
         }
-    
+        
         //###########################################################
         // Clear / Recreate EMPTY Collection
         //###########################################################
@@ -259,7 +265,7 @@ public class MealManagerRegistry
             // Reload MealManager Data
             //#################################################################
             mealManager.reloadTableAndChartsData(false, false, true);
-    
+            
             //#################################################################
             // Re-Upload Or, Change Meal MacroData
             //#################################################################
@@ -275,6 +281,7 @@ public class MealManagerRegistry
     ///#################################################################################################################
     // Pie Chart
     ///#################################################################################################################
+    
     /**
      * @param mealInPlanID - ID of MealManager
      * @return PieChart Dataset
@@ -346,40 +353,65 @@ public class MealManagerRegistry
      */
     private DefaultPieDataset<String> get_Updated_PieChart_Dataset(Integer mealInPlanID)
     {
-        /**
-         *  mealManagersMacroValues : <Key: Salt | Value: <MealManagerID: 1, <MealTime: 14:00 , Quantity: 300g >>
-         */
-        LinkedHashMap<String, BigDecimal> data = new LinkedHashMap<>()
-        {{
-            // ###########################
-            // Overall Components
-            // ###########################
-            BigDecimal proteinValue = mealManagers_TotalMeal_MacroValues.get("total_protein").get(mealInPlanID).getValue1();
-            BigDecimal carbsValue = mealManagers_TotalMeal_MacroValues.get("total_carbohydrates").get(mealInPlanID).getValue1();
-            BigDecimal fatsValue = mealManagers_TotalMeal_MacroValues.get("total_fats").get(mealInPlanID).getValue1();
-            
-            BigDecimal total = proteinValue.add(carbsValue).add(fatsValue);
-            // ###########################
-            // Protein
-            // ###########################
-            put(String.format("Protein [ %d%% ] ", percent_Calculator(proteinValue, total)), proteinValue);
-            
-            // ###########################
-            // Carbs
-            // ###########################
-            BigDecimal sugarCarbsValue = mealManagers_TotalMeal_MacroValues.get("total_sugars_of_carbs").get(mealInPlanID).getValue1();
-            
-            put(String.format("Carbohydrates [ %d%% ] ", percent_Calculator(carbsValue, total)), carbsValue.subtract(sugarCarbsValue));
-            put("Sugars Of Carbs", sugarCarbsValue);
-            
-            // ###########################
-            // Fats
-            // ###########################
-            BigDecimal satFatsValue = mealManagers_TotalMeal_MacroValues.get("total_saturated_fat").get(mealInPlanID).getValue1();
-            
-            put(String.format("Fats [ %d%% ] ", percent_Calculator(fatsValue, total)), fatsValue.subtract(satFatsValue));
-            put("Saturated Fats", satFatsValue);
-        }};
+        //###################################################
+        // Get Macros
+        //###################################################
+        LinkedHashMap<String, BigDecimal> data;
+        
+        BigDecimal proteinValue = mealManagers_TotalMeal_MacroValues.get("total_protein").get(mealInPlanID).getValue1();
+        BigDecimal carbsValue = mealManagers_TotalMeal_MacroValues.get("total_carbohydrates").get(mealInPlanID).getValue1();
+        BigDecimal fatsValue = mealManagers_TotalMeal_MacroValues.get("total_fats").get(mealInPlanID).getValue1();
+    
+        BigDecimal total = proteinValue.add(carbsValue).add(fatsValue);
+    
+        //###################################################
+        // Produce Output
+        //###################################################
+        if (total.compareTo(BigDecimal.ZERO) > 0) // IF totalCalories > 0, it's not a new meal  / empty
+        {
+            /**
+             *  mealManagersMacroValues : <Key: Salt | Value: <MealManagerID: 1, <MealTime: 14:00 , Quantity: 300g >>
+             */
+            data = new LinkedHashMap<String, BigDecimal>()
+            {{
+                // ###########################
+                // Protein
+                // ###########################
+                put(String.format("Protein [ %d%% ] ", percent_Calculator(proteinValue, total)), proteinValue);
+        
+                // ###########################
+                // Carbs
+                // ###########################
+                BigDecimal sugarCarbsValue = mealManagers_TotalMeal_MacroValues.get("total_sugars_of_carbs").get(mealInPlanID).getValue1();
+        
+                put(String.format("Carbohydrates [ %d%% ] ", percent_Calculator(carbsValue, total)), carbsValue.subtract(sugarCarbsValue));
+                put("Sugars Of Carbs", sugarCarbsValue);
+        
+                // ###########################
+                // Fats
+                // ###########################
+                BigDecimal satFatsValue = mealManagers_TotalMeal_MacroValues.get("total_saturated_fat").get(mealInPlanID).getValue1();
+        
+                put(String.format("Fats [ %d%% ] ", percent_Calculator(fatsValue, total)), fatsValue.subtract(satFatsValue));
+                put("Saturated Fats", satFatsValue);
+            }};
+        }
+        else
+        {
+            data = new LinkedHashMap<String, BigDecimal>()
+            {{
+        
+                // ###########################
+                // Protein
+                // ###########################
+                put(String.format("Protein [ %d%% ] ", 0), new BigDecimal(0));
+                put(String.format("Carbohydrates [ %d%% ] ", 0), new BigDecimal(0));
+                put("Sugars Of Carbs", new BigDecimal(0));
+                put(String.format("Fats [ %d%%] ", 0), new BigDecimal(0));
+                put("Saturated Fats", new BigDecimal(0));
+                put("Dummy Row", new BigDecimal(0));
+            }};
+        }
         
         //#############################################
         // Add Data to Dataset to represent

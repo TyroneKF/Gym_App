@@ -54,6 +54,9 @@ PieChartScreen MPS - Ordered by time:
 MealManager -
 .) Check time comparison methods with get currentTime
 
+
+Pie_Chart
+pie_Chart empty is out of line with others
 ######################################################################################
 New Features:
 ######################################################################################
