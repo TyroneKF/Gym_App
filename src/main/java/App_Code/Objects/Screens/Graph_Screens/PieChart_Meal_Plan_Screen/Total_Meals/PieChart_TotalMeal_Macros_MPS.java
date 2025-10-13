@@ -4,7 +4,7 @@ import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.MealManager;
 import App_Code.Objects.Database_Objects.MealManagerRegistry;
 import App_Code.Objects.Graph_Objects.Pie_Chart;
-import App_Code.Objects.Gui_Objects.Screen;
+import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 import org.jfree.data.general.DefaultPieDataset;
 
@@ -12,7 +12,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 
-public class PieChart_TotalMeal_Macros_MPS extends Screen
+public class PieChart_TotalMeal_Macros_MPS extends Screen_JFrame
 {
     // #################################################################################################################
     // Variables
@@ -53,7 +53,7 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen
         super(db, true, String.format(" %s Pie Chart: Plan Macros", meal_plan_screen.getPlanName()), 1935, 1200, 0, 0);
         
         getScrollPaneJPanel().setBackground(Color.WHITE);
-        setResizable(true);
+        set_Resizable(true);
         
         // ################################################################
         // Variables

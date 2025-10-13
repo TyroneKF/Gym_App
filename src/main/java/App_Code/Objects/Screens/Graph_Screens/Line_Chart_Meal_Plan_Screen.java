@@ -4,7 +4,7 @@ import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.MealManager;
 import App_Code.Objects.Database_Objects.MealManagerRegistry;
 import App_Code.Objects.Graph_Objects.Line_Chart;
-import App_Code.Objects.Gui_Objects.Screen;
+import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 import org.javatuples.Pair;
 import org.jfree.data.time.Second;
@@ -14,7 +14,7 @@ import java.awt.*;
 import java.math.BigDecimal;
 import java.util.*;
 
-public class Line_Chart_Meal_Plan_Screen extends Screen
+public class Line_Chart_Meal_Plan_Screen extends Screen_JFrame
 {
     //#################################################################################################################
     // Variables
@@ -48,7 +48,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen
         // ##########################################
         super(db, true, "Line Chart: Plan Macros", 1000, 900, 0, 0);
         getScrollPaneJPanel().setBackground(Color.WHITE);
-        setResizable(true);
+        set_Resizable(true);
         
         // ##########################################
         // Variables

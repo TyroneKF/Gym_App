@@ -3,14 +3,13 @@ package App_Code.Objects.Screens.Graph_Screens;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.MealManager;
 import App_Code.Objects.Database_Objects.MealManagerRegistry;
-import App_Code.Objects.Gui_Objects.Screen;
+import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
 import App_Code.Objects.Graph_Objects.Pie_Chart;
-import App_Code.Objects.Screens.Meal_Plan_Screen;
 import org.jfree.data.general.DefaultPieDataset;
 
 import java.awt.*;
 
-public class Pie_Chart_Meal_Manager_Screen extends Screen
+public class Pie_Chart_Meal_Manager_Screen extends Screen_JFrame
 {
     //###########################################################################################
     // Variables
@@ -48,7 +47,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
         super(db, false, "Pie Chart : Macronutrients ", 850, 700, 0, 0);
         
         getScrollPaneJPanel().setBackground(Color.WHITE);
-        setResizable(false);
+        set_Resizable(false);
         
         // ##########################################
         // Variables

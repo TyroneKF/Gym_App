@@ -1,13 +1,14 @@
-package App_Code.Objects.Gui_Objects;
+package App_Code.Objects.Gui_Objects.Screens;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
+import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class Screen
+public class Screen_JFrame extends JFrame
 {
     //##################################################################################################################
     // Variables
@@ -21,14 +22,13 @@ public class Screen
     protected String title;
     
     // Booleans
-    Boolean addScrollPane;
+    private Boolean addScrollPane;
     
     //##############################################
     // Objects
     //##############################################
     protected MyJDBC db;
-    protected GridBagConstraints gbc = new GridBagConstraints();
-    protected JFrame frame = new JFrame();
+    protected GridBagConstraints gbc = new GridBagConstraints();    
     protected Container contentPane;
     protected ScrollPaneCreator scrollPane = new ScrollPaneCreator();
     
@@ -44,7 +44,7 @@ public class Screen
     //##################################################################################################################
     // Constructors
     //##################################################################################################################
-    public Screen(MyJDBC db, Boolean addScrollPane, String title, int frameWidth, int frameHeight, int xPos, int yPos)
+    public Screen_JFrame(MyJDBC db, Boolean addScrollPane, String title, int frameWidth, int frameHeight, int xPos, int yPos)
     {
         //##############################################
         // Variables
@@ -63,7 +63,7 @@ public class Screen
         setup();
     }
     
-    public Screen(Boolean addScrollPane, String title, int frameWidth, int frameHeight, int xPos, int yPos)
+    public Screen_JFrame(Boolean addScrollPane, String title, int frameWidth, int frameHeight, int xPos, int yPos)
     {
         //##############################################
         // Variables
@@ -87,16 +87,14 @@ public class Screen
     private void setup()
     {
         //########################################################
-        //
-        //########################################################
-        frame.setVisible(false);
-        frame.setResizable(true);
-        frame.setSize(frameWidth, frameHeight);
-        frame.setTitle(title);
-        frame.setLocation(xPos, yPos);
+        setVisible(false);
+        set_Resizable(true);
+        setSize(frameWidth, frameHeight);
+        set_Title(title);
+        setLocation(xPos, yPos);
         
         // Container (ContentPane)
-        contentPane = frame.getContentPane();
+        contentPane = getContentPane();
         contentPane.setLayout(new GridBagLayout());
         contentPane.setVisible(true);
         
@@ -135,10 +133,10 @@ public class Screen
         }
         
         //##########################################################
-        // Closing Events on Screen
+        // Closing Events on Screen_JFrame
         //##########################################################
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.addWindowListener(new java.awt.event.WindowAdapter()
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter()
         {
             @Override //HELLO Causes Error
             public void windowClosed(java.awt.event.WindowEvent windowEvent)
@@ -158,7 +156,7 @@ public class Screen
     //##################################################################################################################
     protected Boolean areYouSure(String title, String msg)
     {
-        int reply = JOptionPane.showConfirmDialog(frame, msg, title, JOptionPane.YES_NO_OPTION); //HELLO Edit
+        int reply = JOptionPane.showConfirmDialog(this, msg, title, JOptionPane.YES_NO_OPTION); //HELLO Edit
         
         if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
         {
@@ -166,19 +164,19 @@ public class Screen
         }
         return true;
     }
-
+    
     public void windowClosedEvent()
     {
-
+    
     }
-
+    
     public void closeJFrame()
     {
-        frame.dispose();
+        dispose();
     }
-
+    
     //##############################################
-    // Screen Positioning
+    // Screen_JFrame Positioning
     //##############################################
     protected void scrollToJPanelOnScreen(JPanel panel) // Only Works With JPanels
     {
@@ -213,17 +211,17 @@ public class Screen
     //##################################################################################################################
     public void setFrameVisibility(boolean x)
     {
-        frame.setVisible(x);
+        setVisible(x);
     }
     
-    public void setTitle(String title)
+    public void set_Title(String title)
     {
-        if (title.length() > 0) { frame.setTitle(title); }
+        if (title.length() > 0) { setTitle(title); }
     }
     
-    public void setResizable(boolean x)
+    public void set_Resizable(boolean x)
     {
-        frame.setResizable(x);
+        setResizable(x);
     }
     
     protected String formatStrings(String txt, boolean separateWords)
@@ -257,7 +255,7 @@ public class Screen
     
     public JFrame getFrame()
     {
-        return frame;
+        return this;
     }
     
     // ##################################
@@ -303,7 +301,7 @@ public class Screen
     public void makeJFrameVisible()
     {
         setFrameVisibility(true);
-        getFrame().setExtendedState(JFrame.NORMAL); // makes frames visible
+        setExtendedState(JFrame.NORMAL); // makes frames visible
         
         getFrame().setLocation(0, 0);
     }
@@ -316,8 +314,6 @@ public class Screen
     
     public void resizeGUI()
     {
-        if (frame != null) { frame.revalidate(); }
-        
         scrollPaneJPanel.revalidate();
         contentPane.revalidate();
     }

@@ -1,11 +1,11 @@
 package App_Code.Objects.Screens.Loading_Screen;
 
-import App_Code.Objects.Gui_Objects.Screen;
+import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
 
-public class Loading_Screen extends Screen
+public class Loading_Screen extends Screen_JFrame
 {
     //##################################################################################################################
     // Variables
@@ -85,7 +85,7 @@ public class Loading_Screen extends Screen
     @Override
     public void windowClosedEvent()
     {
-        if (frame != null) { frame.dispose(); }
+      dispose();
     }
 
     //##################################################################################################################

@@ -6,7 +6,9 @@ import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.Mac
 import App_Code.Objects.Database_Objects.MealManager;
 import App_Code.Objects.Database_Objects.MealManagerRegistry;
 import App_Code.Objects.Gui_Objects.*;
+import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
 import App_Code.Objects.Screens.Graph_Screens.Line_Chart_Meal_Plan_Screen;
+import App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.PieChart_Screen_MPS;
 import App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Meals.PieChart_TotalMeal_Macros_MPS;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Edit_Ingredients_Info.Ingredients_Info_Screen;
 import App_Code.Objects.Screens.Loading_Screen.Loading_Screen;
@@ -19,7 +21,7 @@ import java.io.File;
 import java.util.*;
 import java.util.List;
 
-public class Meal_Plan_Screen extends Screen
+public class Meal_Plan_Screen extends Screen_JFrame
 {
     //##################################################################################################################
     // Variables
@@ -84,6 +86,8 @@ public class Meal_Plan_Screen extends Screen
     private Macros_Targets_Screen macrosTargets_Screen = null;
     private Ingredients_Info_Screen ingredientsInfoScreen = null;
     private Line_Chart_Meal_Plan_Screen lineChartMealPlanScreen = null;
+    
+    private PieChart_Screen_MPS pieChart_Screen_MPS;
     private PieChart_TotalMeal_Macros_MPS pieChart_Meal_Plan_Screen = null;
     
     //##################################################
@@ -303,7 +307,7 @@ public class Meal_Plan_Screen extends Screen
             
             System.err.printf("\n%s \nQuery 1: %s \nQuery 2: %s", msg, query1, query2);
             
-            JOptionPane.showMessageDialog(getFrame(), msg);
+            JOptionPane.showMessageDialog(this, msg);
             return;
         }
         
@@ -425,7 +429,7 @@ public class Meal_Plan_Screen extends Screen
                     tablePlanMacrosLeftName, macrosLeft_columnNames
             );
             
-            JOptionPane.showMessageDialog(getFrame(), "Error, Getting Column Names For Tables In GUI !!");
+            JOptionPane.showMessageDialog(this, "Error, Getting Column Names For Tables In GUI !!");
             windowClosedEvent();
             return;
         }
@@ -443,7 +447,7 @@ public class Meal_Plan_Screen extends Screen
             
             if (meals_Info_In_Plan == null)
             {
-                JOptionPane.showMessageDialog(getFrame(), "Error, getting meal_in_plan_id, meal_name, meal_time from Meals in plan");
+                JOptionPane.showMessageDialog(this, "Error, getting meal_in_plan_id, meal_name, meal_time from Meals in plan");
                 System.err.printf("\n\nMeal_Plan_Screen.java Meal_Plan_Screen() Error with script \n%s", query);
                 return;
             }
@@ -595,7 +599,7 @@ public class Meal_Plan_Screen extends Screen
             // If Object Creation Failed Exit
             if (! mealManager.isObjectCreated())
             {
-                JOptionPane.showMessageDialog(getFrame(), String.format("Error, Creating MealManager : %s [%s]", mealName, mealTime));
+                JOptionPane.showMessageDialog(this, String.format("Error, Creating MealManager : %s [%s]", mealName, mealTime));
                 return;
             }
             
@@ -859,7 +863,7 @@ public class Meal_Plan_Screen extends Screen
         
         if (errorFound)
         {
-            JOptionPane.showMessageDialog(frame, String.format("\n\nError \n%s", errorTxt));
+            JOptionPane.showMessageDialog(this, String.format("\n\nError \n%s", errorTxt));
             return false;
         }
         
@@ -1210,7 +1214,7 @@ public class Meal_Plan_Screen extends Screen
             return;
         }
         
-        JOptionPane.showMessageDialog(getFrame(), "\n\nSuccessfully, DELETED all meals in plan!");
+        JOptionPane.showMessageDialog(this, "\n\nSuccessfully, DELETED all meals in plan!");
         
         //###########################################################
         // DELETE all the meals in Memory
@@ -1244,20 +1248,25 @@ public class Meal_Plan_Screen extends Screen
         if (is_PieChart_Screen_Open())
         {
             pieChart_Meal_Plan_Screen.makeJFrameVisible();
+            //pieChart_Screen_MPS.makeJFrameVisible();
             return;
         }
         
         pieChart_Meal_Plan_Screen = new PieChart_TotalMeal_Macros_MPS(db, this);
+        //pieChart_Screen_MPS = new PieChart_Screen_MPS(db, this);
+        
     }
     
     public void removePieChartScreen()
     {
         pieChart_Meal_Plan_Screen = null;
+        //pieChart_Screen_MPS = null;
     }
     
     public Boolean is_PieChart_Screen_Open()
     {
         return pieChart_Meal_Plan_Screen != null;
+//        return pieChart_Screen_MPS != null;
     }
     
     private void update_PieChart_Title(Integer mealInPlanID)
@@ -1369,7 +1378,7 @@ public class Meal_Plan_Screen extends Screen
         //####################################################################
         if (! (transferMealIngredients(planID, tempPlanID))) // transfer meals and ingredients from temp plan to original plan
         {
-            JOptionPane.showMessageDialog(frame, "`\n\nError couldn't transfer ingredients data from temp to real plan !!");
+            JOptionPane.showMessageDialog(this, "`\n\nError couldn't transfer ingredients data from temp to real plan !!");
             return;
         }
         
@@ -1548,7 +1557,7 @@ public class Meal_Plan_Screen extends Screen
             
             if (! (db.uploadData_Batch_Altogether(new String[]{ query0, query1, query2, query3, query4 })))
             {
-                JOptionPane.showMessageDialog(frame, "\n\n1.)  Error \nUnable to save meals in plan!");
+                JOptionPane.showMessageDialog(this, "\n\n1.)  Error \nUnable to save meals in plan!");
                 return;
             }
         }
@@ -1558,7 +1567,7 @@ public class Meal_Plan_Screen extends Screen
             {
                 System.out.println("\n\n#################################### \n2.) saveMealData() Meals Transferred to Original Plan");
                 
-                JOptionPane.showMessageDialog(frame, "\n\n2.)  Error \nUnable to save meals in plan!");
+                JOptionPane.showMessageDialog(this, "\n\n2.)  Error \nUnable to save meals in plan!");
                 return;
             }
             
@@ -1577,7 +1586,7 @@ public class Meal_Plan_Screen extends Screen
         // ##############################################################################
         // Successful Message
         // ##############################################################################
-        if (showMsg) { JOptionPane.showMessageDialog(frame, "\n\nAll Meals Are Successfully Saved!"); }
+        if (showMsg) { JOptionPane.showMessageDialog(this, "\n\nAll Meals Are Successfully Saved!"); }
     }
     
     // ###############################################################
@@ -1676,7 +1685,7 @@ public class Meal_Plan_Screen extends Screen
         // ################################################
         if (askPermission)
         {
-            int reply = JOptionPane.showConfirmDialog(frame, String.format("Would you like to save your MacroTarget  Changes Too?"),
+            int reply = JOptionPane.showConfirmDialog(this, String.format("Would you like to save your MacroTarget  Changes Too?"),
                     "Save Macro Targets", JOptionPane.YES_NO_OPTION); //HELLO Edit
             
             if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
@@ -1853,14 +1862,14 @@ public class Meal_Plan_Screen extends Screen
         // ##############################################
         if (hasMacroTargetsChanged())
         {
-            int reply = JOptionPane.showConfirmDialog(frame, String.format("Would you like to refresh your MacroTargets Too?"),
+            int reply = JOptionPane.showConfirmDialog(this, String.format("Would you like to refresh your MacroTargets Too?"),
                     "Refresh Macro Targets", JOptionPane.YES_NO_OPTION); //HELLO Edit
             
             if (reply == JOptionPane.YES_OPTION)
             {
                 if (transferTargets(planID, tempPlanID, true, false))
                 {
-                    JOptionPane.showMessageDialog(frame, "\n\nMacro-Targets Successfully Refreshed!!");
+                    JOptionPane.showMessageDialog(this, "\n\nMacro-Targets Successfully Refreshed!!");
                     macrosTargetsChanged(false);
                     
                     macros_Targets_Table.refreshData();
@@ -1889,7 +1898,7 @@ public class Meal_Plan_Screen extends Screen
     {
         if (planID == null)
         {
-            JOptionPane.showMessageDialog(frame, "Please Select A Plan First!");
+            JOptionPane.showMessageDialog(this, "Please Select A Plan First!");
             return false;
         }
         return true;

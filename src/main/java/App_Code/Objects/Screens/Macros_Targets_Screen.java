@@ -2,14 +2,14 @@ package App_Code.Objects.Screens;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Gui_Objects.JTextFieldLimit;
-import App_Code.Objects.Gui_Objects.Screen;
+import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
 
 import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-public class Macros_Targets_Screen extends Screen
+public class Macros_Targets_Screen extends Screen_JFrame
 {
     // ################################################################################################################
     // Variables
@@ -39,7 +39,7 @@ public class Macros_Targets_Screen extends Screen
         // #############################################################################################################
         super(db, false, "Macro-Nutrients Screen", 650, 550, 0, 0);
         getScrollPaneJPanel().setBackground(Color.WHITE);
-        setResizable(true);
+        set_Resizable(true);
         
         // ##########################################
         // Variables
