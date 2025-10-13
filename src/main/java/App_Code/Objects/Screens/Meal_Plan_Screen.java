@@ -7,7 +7,7 @@ import App_Code.Objects.Database_Objects.MealManager;
 import App_Code.Objects.Database_Objects.MealManagerRegistry;
 import App_Code.Objects.Gui_Objects.*;
 import App_Code.Objects.Screens.Graph_Screens.Line_Chart_Meal_Plan_Screen;
-import App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Pie_Chart_Meal_Plan_Screen;
+import App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Meals.PieChart_TotalMeal_Macros_MPS;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Edit_Ingredients_Info.Ingredients_Info_Screen;
 import App_Code.Objects.Screens.Loading_Screen.Loading_Screen;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -84,7 +84,7 @@ public class Meal_Plan_Screen extends Screen
     private Macros_Targets_Screen macrosTargets_Screen = null;
     private Ingredients_Info_Screen ingredientsInfoScreen = null;
     private Line_Chart_Meal_Plan_Screen lineChartMealPlanScreen = null;
-    private Pie_Chart_Meal_Plan_Screen pieChart_Meal_Plan_Screen = null;
+    private PieChart_TotalMeal_Macros_MPS pieChart_Meal_Plan_Screen = null;
     
     //##################################################
     // Database Table Names
@@ -1247,7 +1247,7 @@ public class Meal_Plan_Screen extends Screen
             return;
         }
         
-        pieChart_Meal_Plan_Screen = new Pie_Chart_Meal_Plan_Screen(db, this);
+        pieChart_Meal_Plan_Screen = new PieChart_TotalMeal_Macros_MPS(db, this);
     }
     
     public void removePieChartScreen()

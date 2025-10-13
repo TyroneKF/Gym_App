@@ -1,4 +1,4 @@
-package App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen;
+package App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Meals;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.MealManager;
@@ -12,7 +12,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 
-public class Pie_Chart_Meal_Plan_Screen extends Screen
+public class PieChart_TotalMeal_Macros_MPS extends Screen
 {
     // #################################################################################################################
     // Variables
@@ -45,7 +45,7 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
-    public Pie_Chart_Meal_Plan_Screen(MyJDBC db, Meal_Plan_Screen meal_plan_screen)
+    public PieChart_TotalMeal_Macros_MPS(MyJDBC db, Meal_Plan_Screen meal_plan_screen)
     {
         // ################################################################
         // Super Constructor

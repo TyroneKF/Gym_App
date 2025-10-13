@@ -1,4 +1,4 @@
-package App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen;
+package App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Meals;
 
 import App_Code.Objects.Database_Objects.MealManager;
 import App_Code.Objects.Graph_Objects.Pie_Chart;
