@@ -730,11 +730,6 @@ public class MealManager
         // Update External Charts
         //#######################################
         meal_plan_screen.update_External_Charts(false, "mealTime", this, oldMealSeconds, newMealSecond);
-        
-        //#########################################################################################################
-        // Change External Graphs Of this Pie Title
-        //#########################################################################################################
-        meal_plan_screen.update_PieChart_Title(getMealInPlanID());
     }
     
     private LocalTime promptUserForMealTime(boolean skipConfirmation, boolean comparison)

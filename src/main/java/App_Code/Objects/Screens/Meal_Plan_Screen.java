@@ -1846,6 +1846,9 @@ public class Meal_Plan_Screen extends Screen
         {
             // Change data points time on LineChart Data
             updateLineChartData(mealManager, previousMealTime, currentMealTime);
+            
+            // Update PieChart Title OF Meal
+            update_PieChart_Title(mealManager.getMealInPlanID());
         }
         else if (action.equals("refresh")) // Refresh mealPlan was requested
         {
