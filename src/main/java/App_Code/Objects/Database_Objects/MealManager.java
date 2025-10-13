@@ -1269,7 +1269,7 @@ public class MealManager
         
     }
     
-    public void reloadTableAndChartsData(boolean updateMacrosLeft, boolean updateExternalCharts, boolean skip_ReOrdering)
+    public void reloadTableAndChartsData(boolean updateMacrosLeft, boolean updateExternalCharts, boolean skip_GUI_Positioning)
     {
         //#############################################################################################
         // Reset GUI  & Variables
@@ -1305,14 +1305,14 @@ public class MealManager
         //##############################################################################################
         // Refresh TotalMealTable DATA & Charts
         //##############################################################################################
-        update_MealManager_DATA(true, updateExternalCharts, skip_ReOrdering);
+        update_MealManager_DATA(true, updateExternalCharts, skip_GUI_Positioning);
         
         pieChart_UpdateMealName(); // Update PieChart Name
         
         //##############################################################################################
         // Remove & Re-add to GUI & RegistryDATA
         ///##############################################################################################
-        if (! skip_ReOrdering)
+        if (! skip_GUI_Positioning)
         {
             meal_plan_screen.add_And_Replace_MealManger_POS_GUI(this, true, true);
         }

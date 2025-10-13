@@ -1362,21 +1362,11 @@ public class Meal_Plan_Screen extends Screen
         // Refresh MealManagers Collections
         //####################################################################
         mealManagerRegistry.refresh_MealManagers_MPS();
-        
-        //##################################
-        // Clear GUI Screen
-        //##################################
-        scrollJPanelCenter.removeAll(); // Clear Screen
-        
-        // Re-add all MealManager to GUI
-        ArrayList<MealManager> mealManager_ArrayList = mealManagerRegistry.get_MealManager_ArrayList();
-        for (MealManager mealManager : mealManager_ArrayList)
-        {
-            addMealMangerToGUI(mealManager, false, true, false);
-        }
-        
-        resizeGUI();
-        scrollJPanelCenter.repaint();
+    
+        //####################################################################
+        // Re-draw GUI Screen
+        //####################################################################
+        reDraw_GUI();
         
         //####################################################################
         // Refresh Macro-Targets Table
