@@ -65,9 +65,9 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
         // ######################################
         ArrayList<MealManager> mealManager_ArrayList = mealManagerRegistry.get_MealManager_ArrayList();
         pieChart_MPS_Entries = mealManagerRegistry.get_PieChart_MPS_Entries();
-        
-        int rows = (int) mealManager_ArrayList.size() / col;
-        getScrollPaneJPanel().setLayout(new GridLayout(col, rows));
+    
+        int rows = (int) Math.ceil((double) pieChart_MPS_Entries.size() / col);
+        getScrollPaneJPanel().setLayout(new GridLayout(rows, col));
         
         // ################################################################
         // Build DATA
@@ -140,9 +140,9 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
         // Clear GUI
         // ####################################################
         getScrollPaneJPanel().removeAll();
-        
-        int rows = (int) pieChart_MPS_Entries.size() / col;
-        getScrollPaneJPanel().setLayout(new GridLayout(col, rows));
+    
+        int rows = (int) Math.ceil((double) pieChart_MPS_Entries.size() / col);
+        getScrollPaneJPanel().setLayout(new GridLayout(rows, col));
         
         // ####################################################
         // Paint GUI

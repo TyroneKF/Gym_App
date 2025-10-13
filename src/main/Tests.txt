@@ -25,8 +25,6 @@ Meal_Plan_Screen
 #####################################################
 Delete All Meals:
 
-PieChart Screen:
-
 ScrollUP:
 
 Refresh:
@@ -38,7 +36,6 @@ ADD New Meal
 Save:
 
 Add_Ingredients
-
 
 MacroTargets:
 
@@ -63,7 +60,10 @@ Change MealName - changes pieChart names
 Change MealTime - changes order
 Add
 Save
-Refresh
+Refresh:
+.) MealTime
+.) MealName
+.) Unsaved Meal - should be deleted
 Delete Ingredient
 Delete Table
 

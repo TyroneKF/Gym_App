@@ -1791,6 +1791,8 @@ public class Meal_Plan_Screen extends Screen
         {
             // Update LineChart Data
             updateLineChartData(mealManager, previousMealTime, currentMealTime);
+            
+            // PieChart DATA is automatically updated from the MealManager
         }
         else if (action.equals("delete")) // Deleted MealManager
         {
@@ -1805,8 +1807,12 @@ public class Meal_Plan_Screen extends Screen
             // Change data points time on LineChart Data
             updateLineChartData(mealManager, previousMealTime, currentMealTime);
             
-            // Update PieChart Title OF Meal
+            // Update PieChart Title OF Meal & Refresh Interface
             update_PieChart_Title(mealManager.getMealInPlanID());
+            
+            //  Refresh Interface to adjust new order
+            refresh_PieChart_DATA_MPS();
+            
         }
         else if (action.equals("refresh")) // Refresh mealPlan was requested
         {
