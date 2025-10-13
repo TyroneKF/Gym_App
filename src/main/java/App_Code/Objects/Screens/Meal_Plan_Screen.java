@@ -588,11 +588,11 @@ public class Meal_Plan_Screen extends Screen
             }
             
             //#####################################################
-            // Create Meal Component
+            // Create / Add Meal to GUI
             //#####################################################
-            System.out.printf("\n\n%s \nMeal_Plan_Screen.java | MealManager \nmeal_in_plan_id : %s \nmeal_name : %s \nmeal_time : %s \nSub-Meals In MealManager (ID) : %s%n",
-                    lineSeparator, mealInPlanID, mealName, mealTime, subMealsInMealArrayList);//HELLO DELETE
             addMealMangerToGUI(new MealManager(this, mealInPlanID, mealName, mealTime, subMealsInMealArrayList), false, false, false);
+    
+          //  add_And_Replace_MealManger_POS_GUI(new MealManager(this, mealInPlanID, mealName, mealTime, subMealsInMealArrayList), false, false);
             
             //######################################################
             // Update Progress
@@ -1428,6 +1428,11 @@ public class Meal_Plan_Screen extends Screen
     
     public void add_And_Replace_MealManger_POS_GUI(MealManager mealManager, boolean reOrder, boolean expandView)
     {
+        //###############################################
+        // Exit Clause
+        //###############################################
+        if (! mealManager.isObjectCreated()) { return; }
+        
         //###############################################
         // Add to GUI Meal Manager & Its Space Divider
         //###############################################
