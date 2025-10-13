@@ -32,7 +32,7 @@ public class MealManager
     private boolean
             isObjectCreated = false,
             mealManagerInDB = false,
-            hasMealPlannerBeenDeleted = false,
+            hasMealBeenDeleted = false,
             hasMealNameBeenChanged = false,
             hasMealTimeBeenChanged = false;
     
@@ -928,8 +928,6 @@ public class MealManager
         
         String query5 = "SET FOREIGN_KEY_CHECKS = 1;"; // Enable Foreign Key Checks
         
-        System.out.printf("\n\n%s \n\n%s \n\n%s \n\n%s \n\n%s", query1, query2, query3, query4, query5);
-        
         if (! db.uploadData_Batch_Altogether(new String[]{ query1, query2, query3, query4, query5 }))
         {
             JOptionPane.showMessageDialog(null, "Table Un-Successfully Deleted! ");
@@ -973,7 +971,7 @@ public class MealManager
     private void hideMealManager()
     {
         setVisibility(false); // hide collapsible Object
-        setHasMealPlannerBeenDeleted(true); // set this object as deleted
+        set_Has_Meal_Been_Deleted(true); // set this object as deleted
         
         //##########################################
         // Delete PieChart (Meal is Gone)
@@ -984,7 +982,7 @@ public class MealManager
     private void unHideMealManager()
     {
         setVisibility(true); // hide collapsible Object
-        setHasMealPlannerBeenDeleted(false); // set this object as deleted
+        set_Has_Meal_Been_Deleted(false); // set this object as deleted
     }
     
     private void setVisibility(boolean condition)
@@ -993,14 +991,14 @@ public class MealManager
         spaceDividerForMealManager.setVisible(condition);
     }
     
-    private void setHasMealPlannerBeenDeleted(boolean x)
+    private void set_Has_Meal_Been_Deleted(boolean x)
     {
-        hasMealPlannerBeenDeleted = x;
+        hasMealBeenDeleted = x;
     }
     
-    public boolean getHasMealPlannerBeenDeleted()
+    public boolean is_Meal_Deleted()
     {
-        return hasMealPlannerBeenDeleted;
+        return hasMealBeenDeleted;
     }
     
     //################################################

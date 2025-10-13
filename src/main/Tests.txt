@@ -3,31 +3,69 @@ LineChart Screen
 #####################################################
 
 Meals:
-.) Meal Deleted - Remove values from meal
-.) Meal Time Changed - values moved
-.) Meal Refresh
+.) PieChart Btn = nothing
+.) Change meal name BTN = nothing
+.) Change Meal Time BTN  - graph values moved correlated to meal
+.) Meal Refresh BTN - graph values correlated to meals refreshed
+.) Meal Saved BTN - nothing
+.) Meal Deleted BTN - Graph values removed
+
 
 IngredientsTable:
-.) Delete IngredientsTable
-.) Refresh IngredientsTable
+.) Add Ingredient & Change Values = graph values changed
+.) Refresh IngredientsTable - graph values changed
+.) Sub-Meal Saved BTN - nothing
+.) Delete IngredientsTable - graph values changed
+
 .) Ingredient Values Changed: Ingredients / Quantity
 .) Delete ingredient should change meal total = changed chart value
-.) Add Ingredient & Change Values
+
 
 MealPlanScreen:
-.) Clear Screen
-.) Refresh Screen
-.) Add Meal
+.) Clear Screen - empty screen
+.) Refresh Screen - reload graph
+.) Add Meal - new point added to 0
+.) Save meal - nothing
 .) Close Program - screen should be closed too
+
+#####################################################
+PieChart Screen
+#####################################################
+
+Meals:
+.) PieChart Btn = Data should be reflected on correlated graph in sync
+.) Change meal name BTN = Reflects on correlated graph title
+.) Change Meal Time BTN  - Reflects on correlated graph title
+.) Meal Refresh BTN - graph values correlated to meals refreshed
+.) Meal Saved BTN - nothing
+.) Meal Deleted BTN - Pie Graph correlated to meal is removed
+
+
+IngredientsTable:
+.) Add Ingredient & Change Values = graph values changed
+.) Refresh IngredientsTable - graph values changed
+.) Sub-Meal Saved BTN - nothing
+.) Delete IngredientsTable - graph values changed
+
+.) Ingredient Values Changed: Ingredients / Quantity
+.) Delete ingredient should change meal total = changed chart value
+
+
+MealPlanScreen:
+.) Clear Screen - empty screen
+.) Refresh Screen - reload graph
+.) Add Meal - Empty Chart added to GUI
+.) Save meal - nothing
+.) Close Program - internal graphs not open their data should be removed
 
 #####################################################
 Meal_Plan_Screen
 #####################################################
-Delete All Meals:
-
+Clear BTN - removed GUI Screen
+Refresh - reload data
 ScrollUP:
 
-Refresh:
+
 
 ADD New Meal
 .) Add new Meal with time at the start / end / middle is it positioned correctly

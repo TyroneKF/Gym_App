@@ -16,8 +16,6 @@ public class MacrosLeftTable extends MyJTable_DisplayData
     {
         super(db, parentContainer, data, columnNames, planID, temp_PlanID, tableName, unEditableColumns, colAvoidCentering, columnsToHide);
         super.query = String.format("SELECT * FROM %s WHERE plan_id = %s;", tableName, temp_PlanID);
-
-        System.out.printf("\n\nMacrosLeftTable() %s \nQuery: %s", temp_PlanID, query);
     }
 
     public void updateMacrosLeftTable()

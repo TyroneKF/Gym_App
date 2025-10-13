@@ -130,8 +130,6 @@ public class MealManagerRegistry
         Second mealManagerTime = mealManager.getCurrentMealTime();
         TotalMealTable totalMealTable = mealManager.getTotalMealTable();
         
-        System.out.printf("\n\nMealManagerRegistry.java : replaceMealManagerDATA() \nMealInPlanID :  %s", mealManagerID);
-        
         //##########################################
         // Remove MealManager Results to Collection
         //##########################################
@@ -260,7 +258,7 @@ public class MealManagerRegistry
                 }
                 
                 pieChart_Dataset_HashMap.remove(mealManagerID);
-                pieChartEntry_MPS_AL.remove(mealManager);
+                pieChartEntry_MPS_AL.removeIf(e -> e.get_MealInPlanID() == mealManagerID);
                 
                 // ###########################################
                 // Remove & Continue

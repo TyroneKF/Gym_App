@@ -18,7 +18,7 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
     // Variables
     // #################################################################################################################
     // Graph Preferences
-
+    
     private int
             col = 3,
             pieWidth = (frameWidth / col) - 30,
@@ -40,6 +40,7 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
     // Collections
     //##############################################
     private ArrayList<PieChart_Entry_MPS> pieChart_MPS_Entries;
+    private ArrayList<MealManager> mealManager_ArrayList;
     
     // #################################################################################################################
     // Constructor
@@ -63,10 +64,55 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
         // #####################################
         /// Collections
         // ######################################
-        ArrayList<MealManager> mealManager_ArrayList = mealManagerRegistry.get_MealManager_ArrayList();
+        mealManager_ArrayList = mealManagerRegistry.get_MealManager_ArrayList();
         pieChart_MPS_Entries = mealManagerRegistry.get_PieChart_MPS_Entries();
+        
+        // #####################################
+        /// Collections
+        // ######################################
+        create_And_Draw_GUI();
+        
+        // ################################################################
+        // Make Frame Visible
+        // ################################################################
+        setFrameVisibility(true);
+    }
     
-        int rows = (int) Math.ceil((double) pieChart_MPS_Entries.size() / col);
+    @Override
+    public void windowClosedEvent()
+    {
+        // ####################################
+        // Remove Attachment to MealPlanScreen
+        // ####################################
+        meal_plan_screen.removePieChartScreen();
+        
+        // ####################################
+        // Remove GUI DATA
+        // ####################################
+        mealManagerRegistry.remove_Unused_PieData();
+        
+        // ####################################
+        // Close JFrame
+        // ####################################
+        closeJFrame();
+    }
+    
+    private int get_PieChart_Count()
+    {
+        return (int) mealManager_ArrayList.stream().filter(mealManager -> ! mealManager.is_Meal_Deleted()).count();
+    }
+    
+    // #################################################################################################################
+    //  Update / Draw GUI Methods
+    // #################################################################################################################
+    public void create_And_Draw_GUI()
+    {
+        // ################################################################
+        // Clean & Build
+        // ################################################################
+        getScrollPaneJPanel().removeAll();
+        
+        int rows = (int) Math.ceil((double) get_PieChart_Count() / col);
         getScrollPaneJPanel().setLayout(new GridLayout(rows, col));
         
         // ################################################################
@@ -80,6 +126,11 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
             //##############################
             MealManager mealManager = it.next();
             Integer mealPlanID = mealManager.getMealInPlanID();
+    
+            //##############################
+            // IF Meal is Deleted: Continue
+            //##############################
+            if (mealManager.is_Meal_Deleted()) { continue; }
             
             //##############################
             // Get / Create PieChart Data
@@ -102,45 +153,21 @@ public class Pie_Chart_Meal_Plan_Screen extends Screen
             
             addToContainer(x, createSpaceDivider(20, 50), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
             getScrollPaneJPanel().add(x);
+            
+            //##############################
+            // Re-paint GUI
+            //##############################
+            resizeGUI();
         }
-        
-        
-        // ################################################################
-        // Make Frame Visible
-        // ################################################################
-        setFrameVisibility(true);
-        resizeGUI();
     }
     
-    @Override
-    public void windowClosedEvent()
-    {
-        // ####################################
-        // Remove Attachment to MealPlanScreen
-        // ####################################
-        meal_plan_screen.removePieChartScreen();
-        
-        // ####################################
-        // Remove GUI DATA
-        // ####################################
-        mealManagerRegistry.remove_Unused_PieData();
-        
-        // ####################################
-        // Close JFrame
-        // ####################################
-        closeJFrame();
-    }
-    
-    // #################################################################################################################
-    //  Update / Draw GUI Methods
-    // #################################################################################################################
     public void redraw_GUI()
     {
         // ####################################################
         // Clear GUI
         // ####################################################
         getScrollPaneJPanel().removeAll();
-    
+        
         int rows = (int) Math.ceil((double) pieChart_MPS_Entries.size() / col);
         getScrollPaneJPanel().setLayout(new GridLayout(rows, col));
         

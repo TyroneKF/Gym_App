@@ -1271,7 +1271,7 @@ public class Meal_Plan_Screen extends Screen
     {
         if (! is_PieChart_Screen_Open()) { return; }
         
-        pieChart_Meal_Plan_Screen.redraw_GUI();
+        pieChart_Meal_Plan_Screen.create_And_Draw_GUI();
     }
     
     private void delete_MealManager_PieChart(MealManager mealManager)
@@ -1523,7 +1523,7 @@ public class Meal_Plan_Screen extends Screen
         while (it.hasNext())
         {
             MealManager mealManager = it.next();
-            if (mealManager.getHasMealPlannerBeenDeleted())
+            if (mealManager.is_Meal_Deleted())
             {
                 mealManager.completely_Delete_MealManager(); // delete from GUI
                 
