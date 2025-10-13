@@ -590,7 +590,8 @@ public class Meal_Plan_Screen extends Screen
             //#####################################################
             // Create / Add Meal to GUI
             //#####################################################
-            addMealMangerToGUI(new MealManager(this, mealInPlanID, mealName, mealTime, subMealsInMealArrayList), false, false, false);
+            addMealMangerToGUI(new MealManager(this, mealInPlanID, mealName, mealTime, subMealsInMealArrayList),
+                    false, false, false);
     
           //  add_And_Replace_MealManger_POS_GUI(new MealManager(this, mealInPlanID, mealName, mealTime, subMealsInMealArrayList), false, false);
             

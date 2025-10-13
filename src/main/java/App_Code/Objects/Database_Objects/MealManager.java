@@ -993,12 +993,6 @@ public class MealManager
         close_PieChartScreen();
     }
     
-    public void collapse_MealManager()
-    {
-        getCollapsibleJpObj().collapseJPanel();
-    }
-    
-    
     private void unHideMealManager()
     {
         setVisibility(true); // hide collapsible Object
@@ -1401,6 +1395,11 @@ public class MealManager
     public void expand_JPanel()
     {
         getCollapsibleJpObj().expandJPanel();
+    }
+    
+    public void collapse_MealManager()
+    {
+        getCollapsibleJpObj().collapseJPanel();
     }
     
     //##################################################################################################################
