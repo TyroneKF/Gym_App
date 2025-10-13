@@ -93,19 +93,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
     // Methods
     //###########################################################################################
     @Override
-    public void windowClosedEvent()
-    {
-        //############################################
-        // Remove Itself / External DATA if not USED
-        //############################################
-        mealManager.removePieChartScreen();
-        mealManagerRegistry.remove_PieChart_DatasetValues(mealInPlanID);
-    
-        //############################################
-        // Exit
-        //############################################
-        closeJFrame();
-    }
+    public void windowClosedEvent() { mealManager.removePieChartScreen(); closeJFrame(); }
     
     //####################################
     // Update Methods

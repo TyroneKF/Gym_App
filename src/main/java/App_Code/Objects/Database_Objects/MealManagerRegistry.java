@@ -438,7 +438,7 @@ public class MealManagerRegistry
     ///########################################
     public void remove_PieChart_DatasetValues(Integer mealInPlanID)
     {
-        System.out.printf("\n\nRemoved PieChart Data %s", mealInPlanID);
+        System.out.printf("\n\nremove_PieChart_DatasetValues() Removed PieChart Data %s", mealInPlanID);
         pieChart_Dataset_HashMap.remove(mealInPlanID);
     }
     
@@ -465,6 +465,7 @@ public class MealManagerRegistry
             {
                 if (pieChart_Dataset_HashMap.containsKey(mealManagerID))
                 {
+                    System.out.printf("\n\nremove_Unused_PieData() Removed PieChart Data %s", mealManagerID);
                     pieChart_Dataset_HashMap.remove(mealManagerID);
                 }
             }
