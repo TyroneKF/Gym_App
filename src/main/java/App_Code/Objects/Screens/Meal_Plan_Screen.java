@@ -1407,15 +1407,10 @@ public class Meal_Plan_Screen extends Screen
         //##############################################################################################################
         if (! (get_IsPlanSelected()))
         {
-            return;
-        }
-        
-        // If No Plan Is Selected
-        if (planID == null)
-        {
             JOptionPane.showMessageDialog(null, "\n\nCannot Add A  Meal As A Plan Is Not Selected! \nPlease Select A Plan First!!");
             return;
         }
+        
         //##############################################################################################################
         // Add MealManager To GUI & Charts
         //##############################################################################################################
