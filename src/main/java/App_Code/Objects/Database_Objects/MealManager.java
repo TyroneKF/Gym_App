@@ -722,9 +722,9 @@ public class MealManager
         setTimeVariables(true, savedMealTime, newMealSecond); // Set Meal Time Variables
         
         //#######################################
-        // Update GUI & DATA Registry
+        //  Update GUI
         //#######################################
-        meal_plan_screen.addMealMangerToGUI(this, true, false, false); // Update Meal Plan Screen
+        meal_plan_screen.add_And_Replace_MealManger_POS_GUI(this, true, true);
         
         //#######################################
         // Update External Charts
@@ -1398,6 +1398,14 @@ public class MealManager
     public boolean isMealManagerInDB()
     {
         return mealManagerInDB;
+    }
+    
+    //######################################
+    // Others
+    //######################################
+    public void expand_JPanel()
+    {
+        getCollapsibleJpObj().expandJPanel();
     }
     
     //##################################################################################################################

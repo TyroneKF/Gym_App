@@ -76,7 +76,7 @@ public class MealManagerRegistry
     //###############################################################################
     // Sort Methods
     ///###############################################################################
-    private void sortLists()
+    public void sortLists()
     {
         sort_MealManager_AL();
         if (meal_plan_screen.is_PieChart_Screen_Open()) { sort_PieChartEntry_AL(); }

@@ -1428,7 +1428,7 @@ public class Meal_Plan_Screen extends Screen
         //###############################################
         // ADD to GUI & Charts
         //###############################################
-        add_MealManger_To_GUI(mealManager, true, true); // Add to GUI
+        add_And_Replace_MealManger_POS_GUI(mealManager, true, true); // Add to GUI
         
         //###############################################
         // Add to External Charts
@@ -1436,13 +1436,8 @@ public class Meal_Plan_Screen extends Screen
         update_External_Charts(true, "add", mealManager, null, mealManager.getCurrentMealTime());
     }
     
-    public void add_MealManger_To_GUI(MealManager mealManager, boolean reOrder, boolean expandView)
+    public void add_And_Replace_MealManger_POS_GUI(MealManager mealManager, boolean reOrder, boolean expandView)
     {
-        //###############################################
-        // Expand Meal ?
-        //###############################################
-        if (expandView) { mealManager.getCollapsibleJpObj().expandJPanel(); }
-        
         //###############################################
         // Add to GUI Meal Manager & Its Space Divider
         //###############################################
@@ -1457,31 +1452,43 @@ public class Meal_Plan_Screen extends Screen
         //###############################################
         else
         {
-            scrollJPanelCenter.removeAll(); // Clear Screen
-            
-            // Re-Draw all MealManager to GUI
-            ArrayList<MealManager> mealManager_ArrayList = mealManagerRegistry.get_MealManager_ArrayList();
-            for (MealManager mm : mealManager_ArrayList)
-            {
-                // Collapse all meals but, the meal we just added
-                if (mm.getMealInPlanID() != mealManager.getMealInPlanID()) { mm.collapse_MealManager(); }
-                
-                // Add MealManager and its Space Seperator to GUI
-                addToContainer(scrollJPanelCenter, mm.getCollapsibleJpObj(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
-                addToContainer(scrollJPanelCenter, mm.getSpaceDividerForMealManager(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 50, 0, null);
-            }
-            
-            scrollJPanelCenter.repaint();
+            reDraw_GUI();
         }
+        
+        //###############################################
+        // Expand Meal ?
+        //###############################################
+        if (expandView) { mealManager.expand_JPanel(); }
+        
         //###############################################
         // Add to GUI Meal Manager & Its Space Divider
         //###############################################
         resizeGUI();
-    
+        
         //###############################################
         // Scroll to MealManager
         //###############################################
         scrollToJPanelOnScreen(mealManager.getCollapsibleJpObj());
+    }
+    
+    public void reDraw_GUI()
+    {
+        mealManagerRegistry.sortLists(); // Sort
+        
+        scrollJPanelCenter.removeAll(); // Clear Screen
+        
+        // Re-Draw all MealManager to GUI
+        ArrayList<MealManager> mealManager_ArrayList = mealManagerRegistry.get_MealManager_ArrayList();
+        for (MealManager mm : mealManager_ArrayList)
+        {
+            mm.collapse_MealManager(); // Collapse all meals
+            
+            // Add MealManager and its Space Separator to GUI
+            addToContainer(scrollJPanelCenter, mm.getCollapsibleJpObj(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
+            addToContainer(scrollJPanelCenter, mm.getSpaceDividerForMealManager(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 50, 0, null);
+        }
+        
+        scrollJPanelCenter.repaint();
     }
     
     public void addMealMangerToGUI(MealManager mealManager, boolean clearThanAdd, boolean skipMealRegistry, boolean expandView)
@@ -1508,7 +1515,10 @@ public class Meal_Plan_Screen extends Screen
         else
         {
             // Replace MealMangers Info in Collections
-            if (! skipMealRegistry) { mealManagerRegistry.add_OR_Replace_MealManager_Macros_DATA_V2(mealManager, false); }
+            if (! skipMealRegistry)
+            {
+                mealManagerRegistry.add_OR_Replace_MealManager_Macros_DATA_V2(mealManager, false);
+            }
             
             // Re-add all the MealManagers to GUI
             ArrayList<MealManager> mealManager_ArrayList = mealManagerRegistry.get_MealManager_ArrayList();
