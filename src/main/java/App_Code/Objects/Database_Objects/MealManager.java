@@ -505,13 +505,6 @@ public class MealManager
     public void removePieChartScreen()
     {
         pie_chart_meal_manager_screen = null;
-    
-        //############################################
-        // External DATA if not USED
-        //############################################
-        if (meal_plan_screen.is_PieChart_Screen_Open()) { return; }
-    
-        mealManagerRegistry.remove_PieChart_DatasetValues(mealInPlanID);
     }
     
     // External Call Usage
@@ -714,12 +707,17 @@ public class MealManager
         //#######################################
         // Update total Meal View
         //#######################################
-        update_MealManager_DATA(false, false, false); // Add External is false for now because its dealt with below
+        update_MealManager_DATA(false, false); // Add External is false for now because its dealt with below
         
         //#######################################
         // Update Time Variables
         //#######################################
         setTimeVariables(true, savedMealTime, newMealSecond); // Set Meal Time Variables
+        
+        //#######################################
+        // Update Internal PieChart Name
+        //#######################################
+        pieChart_UpdateMealName();
         
         //#######################################
         //  Update GUI
@@ -940,9 +938,24 @@ public class MealManager
         }
         
         //##########################################
-        // Delete
+        // Remove from GUI
         //##########################################
-        delete_MealManager(true, true, true);
+        delete_MealManager();
+        
+        //##########################################
+        // Update Registry Data
+        //##########################################
+        mealManagerRegistry.delete_MealManager(this);
+        
+        //##########################################
+        // Update MacrosLeftTable
+        //##########################################
+        update_MacrosLeft_Table();// update macrosLeft table, due to number deductions from this meal
+        
+        //##########################################
+        // Delete in External Charts
+        //##########################################
+        meal_plan_screen.update_External_Charts(false, "delete", this, getCurrentMealTime(), getCurrentMealTime());
         
         //##########################################
         // Show MSG
@@ -950,36 +963,12 @@ public class MealManager
         JOptionPane.showMessageDialog(null, "Table Successfully Deleted!");
     }
     
-    public void delete_MealManager(boolean updateMacrosLeft, boolean update_External_Charts, boolean useRegistry)
+    public void delete_MealManager()
     {
         //##########################################
         // Hide JTable object & Collapsible OBJ
         //##########################################
         hideMealManager();
-        
-        //##########################################
-        // Update Registry Data
-        //##########################################
-        if ( useRegistry)
-        {
-            mealManagerRegistry.delete_MealManager(this);
-        }
-        
-        //##########################################
-        // Update MacrosLeftTable
-        //##########################################
-        if (updateMacrosLeft)
-        {
-            update_MacrosLeft_Table();// update macrosLeft table, due to number deductions from this meal
-        }
-        
-        //##########################################
-        // Delete in External Charts
-        //##########################################
-        if (update_External_Charts)
-        {
-            meal_plan_screen.update_External_Charts(false, "delete", this, getCurrentMealTime(), getCurrentMealTime());
-        }
     }
     
     private void hideMealManager()
@@ -1050,7 +1039,7 @@ public class MealManager
             return;
         }
         
-        hideMealManager();
+        delete_MealManager();
     }
     
     public boolean areAllTableBeenDeleted()
@@ -1254,11 +1243,15 @@ public class MealManager
         //##############################################################################################
         // RELOAD IngredientsTable & TotalMeal Table & Update  Chart DATA
         //##############################################################################################
-        reloadTableAndChartsData(true, true, false);
+        reloadTableAndChartsData(true, true);
         
+        //##############################################################################################
+        // Remove & Re-add to GUI
+        ///##############################################################################################
+        meal_plan_screen.add_And_Replace_MealManger_POS_GUI(this, true, true);
     }
     
-    public void reloadTableAndChartsData(boolean updateMacrosLeft, boolean updateExternalCharts, boolean skip_GUI_Positioning)
+    public void reloadTableAndChartsData(boolean updateMacrosLeft, boolean updateExternalCharts)
     {
         //#############################################################################################
         // Reset GUI  & Variables
@@ -1294,17 +1287,9 @@ public class MealManager
         //##############################################################################################
         // Refresh TotalMealTable DATA & Charts
         //##############################################################################################
-        update_MealManager_DATA(true, updateExternalCharts, skip_GUI_Positioning);
+        update_MealManager_DATA(true, updateExternalCharts);
         
-        pieChart_UpdateMealName(); // Update PieChart Name
-        
-        //##############################################################################################
-        // Remove & Re-add to GUI & RegistryDATA
-        ///##############################################################################################
-        if (! skip_GUI_Positioning)
-        {
-            meal_plan_screen.add_And_Replace_MealManger_POS_GUI(this, true, true);
-        }
+        pieChart_UpdateMealName(); // Update Internal PieChart Name
         
         //##############################################################################################
         // Refresh MacrosLeft
@@ -1405,13 +1390,13 @@ public class MealManager
     //##################################################################################################################
     // Updating Other Tables
     //##################################################################################################################
-    public void update_MealManager_DATA(Boolean updateInternalCharts, Boolean updateExternalCharts, Boolean skipSorting)
+    public void update_MealManager_DATA(Boolean updateInternalCharts, Boolean updateExternalCharts)
     {
         // Update TotalMealView (Has to be first)
         update_TotalMeal_Table();
         
         // Update Registry Data (Second)
-        mealManagerRegistry.add_OR_Replace_MealManager_Macros_DATA_V2(this, skipSorting);
+        mealManagerRegistry.add_OR_Replace_MealManager_Macros_DATA(this);
         
         // Update Charts
         updateCharts(updateInternalCharts, updateExternalCharts);

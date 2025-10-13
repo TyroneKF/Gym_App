@@ -21,7 +21,6 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
     // Objects
     //#####################################
     private MealManager mealManager;
-    private Meal_Plan_Screen meal_plan_screen;
     private Pie_Chart pieChart;
     private MealManagerRegistry mealManagerRegistry;
     
@@ -56,7 +55,6 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
         // ##########################################
         this.mealManager = mealManager;
         this.mealManagerRegistry = mealManager.getMealManagerRegistry();
-        this.meal_plan_screen = mealManager.getMeal_plan_screen();
         
         this.mealInPlanID = mealManager.getMealInPlanID();
         this.meal_name = mealManager.getCurrentMealName();
@@ -69,7 +67,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
         //#####################################
         // Graph Preferences
         //#####################################
-        String title = String.format("%s Macros", meal_name);
+        String title = String.format("[%s]      %s Macros", mealManager.getCurrentMealTimeGUI(), mealManager.getCurrentMealName());
         int
                 pieWidth = frameWidth - 50,
                 pieHeight = frameHeight - 20;
@@ -78,7 +76,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
                 titleFont = new Font("Serif", Font.PLAIN, 27),
                 labelFont = new Font("SansSerif", Font.BOLD, 22),
                 legendFont = new Font("Serif", Font.PLAIN, 23);
-    
+        
         //#####################################
         // Create PieChart
         //#####################################
@@ -95,13 +93,26 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen
     // Methods
     //###########################################################################################
     @Override
-    public void windowClosedEvent() { mealManager.removePieChartScreen(); closeJFrame(); }
+    public void windowClosedEvent()
+    {
+        //############################################
+        // Remove Itself / External DATA if not USED
+        //############################################
+        mealManager.removePieChartScreen();
+        mealManagerRegistry.remove_PieChart_DatasetValues(mealInPlanID);
+    
+        //############################################
+        // Exit
+        //############################################
+        closeJFrame();
+    }
     
     //####################################
     // Update Methods
     //####################################
     public void update_PieChart_Title()
     {
-        pieChart.setTitle(String.format("%s Macros", mealManager.getCurrentMealName()));
+        String title = String.format("[%s]      %s Macros", mealManager.getCurrentMealTimeGUI(), mealManager.getCurrentMealName());
+        pieChart.setTitle(title);
     }
 }

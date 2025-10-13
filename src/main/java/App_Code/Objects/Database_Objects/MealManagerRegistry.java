@@ -160,52 +160,7 @@ public class MealManagerRegistry
             mealManagers_TotalMeal_MacroValues.get(macroName).put(mealManagerID, new Pair<>(mealManagerTime, macroValue));
         }
     }
-    
-    public void add_OR_Replace_MealManager_Macros_DATA_V2(MealManager mealManager, Boolean skipSorting) // Update done by replacing data
-    {
-        //##########################################
-        // mealManager Info
-        //##########################################
-        int mealManagerID = mealManager.getMealInPlanID();
-        Second mealManagerTime = mealManager.getCurrentMealTime();
-        TotalMealTable totalMealTable = mealManager.getTotalMealTable();
-        
-        System.out.printf("\n\nMealManagerRegistry.java : replaceMealManagerDATA() \nMealInPlanID :  %s", mealManagerID);
-        
-        //##########################################
-        // Remove / ADD MealManager to Collection
-        //##########################################
-        if (! skipSorting) { sortLists(); }
-        
-        //##########################################
-        // Remove MealManager Results to Collection
-        //##########################################
-        /**
-         * HashMap<String, Map<Integer, Pair<LocalTime, BigDecimal>>> mealManagersMacroValues = new HashMap<>();
-         * Stores all the mealManagers TotalMealValues in collections by the macroName
-         * <Key: MacroName | Value: Map <Key: MealManagerID, Value: < MealTime, Quantity>>
-         * Etc;  <Key: Salt | Value: <MealManagerID: 1, <MealTime: 14:00 , Quantity: 300g >>
-         */
-        
-        Iterator<Map.Entry<String, Integer>> it = totalMeal_macroColNamePos.entrySet().iterator();
-        
-        while (it.hasNext())
-        {
-            Map.Entry<String, Integer> mapEntry = it.next();
-            String macroName = mapEntry.getKey();
-            Integer macroPos = mapEntry.getValue();
-            
-            BigDecimal macroValue = totalMealTable.get_ValueOnTable(0, macroPos);
-            
-            /**
-             *  <Key: MacroName | Value: Map<Key: MealManagerID, Value: < MealTime, Quantity>>
-             *   Put, Replace
-             */
-            
-            mealManagers_TotalMeal_MacroValues.get(macroName).put(mealManagerID, new Pair<>(mealManagerTime, macroValue));
-        }
-    }
-    
+  
     //###############################################################################
     // DELETE Methods
     //###############################################################################
@@ -265,7 +220,7 @@ public class MealManagerRegistry
         Iterator<MealManager> it = mealManager_ArrayList.iterator();
         while (it.hasNext())
         {
-            it.next().delete_MealManager(false, false, false); // Hide Meal Managers
+            it.next().delete_MealManager(); // Hide Meal Managers
         }
         
         //###########################################################
@@ -317,12 +272,12 @@ public class MealManagerRegistry
             //#################################################################
             // Reload MealManager Data
             //#################################################################
-            mealManager.reloadTableAndChartsData(false, false, true);
+            mealManager.reloadTableAndChartsData(false, false);
             
             //#################################################################
             // Re-Upload Or, Change Meal MacroData
             //#################################################################
-            add_OR_Replace_MealManager_Macros_DATA_V2(mealManager, true);
+            add_OR_Replace_MealManager_Macros_DATA(mealManager);
         }
         
         //#################################################################
