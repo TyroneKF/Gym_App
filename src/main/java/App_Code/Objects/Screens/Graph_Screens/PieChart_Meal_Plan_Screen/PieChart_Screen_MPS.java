@@ -18,6 +18,7 @@ public class PieChart_Screen_MPS extends Screen_JFrame
     private MealManagerRegistry mealManagerRegistry;
     
     private PieChart_TotalMeal_Macros_MPS pieChart_Total_MPS;
+    
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
@@ -27,43 +28,49 @@ public class PieChart_Screen_MPS extends Screen_JFrame
         // Super Constructor
         // ################################################################
         super(db, false, String.format(" %s Pie Chart: Plan Macros", meal_plan_screen.getPlanName()), 1935, 1200, 0, 0);
-    
+        
         getScrollPaneJPanel().setBackground(Color.WHITE);
         set_Resizable(true);
-    
+        
         // ################################################################
         // Variables
         // ################################################################
         this.meal_plan_screen = meal_plan_screen;
         this.mealManagerRegistry = meal_plan_screen.get_MealManagerRegistry();
-    
+        
         //###################################################################################
         // Create ContentPane
         //###################################################################################
-        contentPane.setLayout(new GridLayout(1, 1));
-        contentPane.setVisible(true);
-    
+        getScrollPaneJPanel().setLayout(new GridLayout(1, 1));
+        
+        
         //##################################################################################
         // Creating TabbedPane
         //##################################################################################
         JTabbedPane tp = new JTabbedPane();
-        contentPane.add(tp);
-    
+        getScrollPaneJPanel().add(tp);
+        
         //#################################################
-        // Creating Add Ingredients Screen_JFrame
+        // Creating TotalMeal Macros Screen
         //#################################################
-        JPanel addIngredientsFormJPanel = new JPanel(new GridBagLayout());
-        tp.add("Add Ingredients", addIngredientsFormJPanel);
-    
-        /*pieChart_Total_MPS = new PieChart_TotalMeal_Macros_MPS (db, meal_plan_screen);
-        addToContainer(addIngredientsFormJPanel, pieChart_Total_MPS, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
-    
-    */
-    
-    
+        JPanel totalMeal_JPanel = new JPanel(new GridBagLayout());
+        tp.add("Total Meal Macros", totalMeal_JPanel);
+        
+        //pieChart_Total_MPS = new PieChart_TotalMeal_Macros_MPS (db, meal_plan_screen);
+        addToContainer(totalMeal_JPanel, new JPanel(), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        
+        //#################################################
+        // Creating Macro Totals Screen
+        //#################################################
+        JPanel macros_JPanel = new JPanel(new GridBagLayout());
+        tp.add("Plan Macros", macros_JPanel);
+        
+        addToContainer(macros_JPanel, new JPanel(), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        
         // ################################################################
         // Make Frame Visible
         // ################################################################
         setFrameVisibility(true);
+        resizeGUI();
     }
 }
