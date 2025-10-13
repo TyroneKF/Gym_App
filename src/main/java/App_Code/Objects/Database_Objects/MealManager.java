@@ -489,11 +489,6 @@ public class MealManager
         {
             pie_chart_meal_manager_screen.update_PieChart_Title();
         }
-        
-        //#########################################################################################################
-        // Change External Graphs Of this Pie Title
-        //#########################################################################################################
-        meal_plan_screen.update_PieChart_Title(getMealInPlanID());
     }
     
     /**
@@ -808,16 +803,14 @@ public class MealManager
         //#########################################################################################################
         // Validation Checks
         //#########################################################################################################
-        
         // Get User Input
         String inputMealName = promptUserForMealName(false, true);
         
         if (inputMealName == null) { return; } // Error occurred in validation checks above
         
         //#########################################################################################################
-        // Update
+        // Update DB
         //#########################################################################################################
-        
         String uploadQuery = String.format("""
                 UPDATE meals_in_plan
                 SET meal_name = '%s'
@@ -828,20 +821,26 @@ public class MealManager
             JOptionPane.showMessageDialog(getFrame(), "\n\nUnable to successfully change this  meals name! \n\nMaybe he selected meal name already exists within this meal plan!!");
             return;
         }
+    
+        //#########################################################################################################
+        // Change Variable DATA & Object
+        //#########################################################################################################
+        collapsibleJpObj.setIconBtnText(inputMealName);
+        setMealNameVariables(true, savedMealName, inputMealName);  // Set Meal Name Variables
+        
+        //#########################################################################################################
+        // Internal / External Graphs
+        //#########################################################################################################
+        pieChart_UpdateMealName(); // Change Internal Graph Title if exists
+        
+        // Update External
+        meal_plan_screen.update_External_Charts(false, "mealTime", this, null, null);
         
         //#########################################################################################################
         // Change Button Text & Related Variables
         //#########################################################################################################
         // Success MSG
         JOptionPane.showMessageDialog(getFrame(), String.format("Successfully, changed meal name from ' %s ' to ' %s ' ", currentMealName, inputMealName));
-        
-        collapsibleJpObj.setIconBtnText(inputMealName);
-        setMealNameVariables(true, savedMealName, inputMealName);  // Set Meal Name Variables
-        
-        //#########################################################################################################
-        // Change Graph Title if exists
-        //#########################################################################################################
-        pieChart_UpdateMealName();
     }
     
     private String promptUserForMealName(boolean skipConfirmation, boolean comparison)

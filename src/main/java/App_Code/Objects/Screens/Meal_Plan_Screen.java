@@ -1260,21 +1260,21 @@ public class Meal_Plan_Screen extends Screen
         return pieChart_Meal_Plan_Screen != null;
     }
     
-    public void update_PieChart_Title(Integer mealInPlanID)
+    private void update_PieChart_Title(Integer mealInPlanID)
     {
         if (! is_PieChart_Screen_Open()) { return; }
         
         pieChart_Meal_Plan_Screen.update_PieChart_MealName(mealInPlanID);
     }
     
-    public void refresh_PieChart_DATA_MPS()
+    private void refresh_PieChart_DATA_MPS()
     {
         if (! is_PieChart_Screen_Open()) { return; }
         
         pieChart_Meal_Plan_Screen.redraw_GUI();
     }
     
-    public void deleted_MealManager_PieChart(MealManager mealManager)
+    private void delete_MealManager_PieChart(MealManager mealManager)
     {
         if (! is_PieChart_Screen_Open()) { return; }
         
@@ -1282,7 +1282,7 @@ public class Meal_Plan_Screen extends Screen
         pieChart_Meal_Plan_Screen.redraw_GUI();
     }
     
-    public void add_Meal_Manager_PieChart(MealManager mealManager)
+    private void add_Meal_Manager_PieChart(MealManager mealManager)
     {
         if (! is_PieChart_Screen_Open()) { return; }
         
@@ -1800,7 +1800,7 @@ public class Meal_Plan_Screen extends Screen
             deleteLineChartData(previousMealTime);
             
             // Delete PieChart AKA Re-draw GUI
-            deleted_MealManager_PieChart(mealManager);
+            delete_MealManager_PieChart(mealManager);
         }
         else if (action.equals("mealTime")) // MealTime on MealManager Changed
         {
@@ -1812,12 +1812,19 @@ public class Meal_Plan_Screen extends Screen
             
             //  Refresh Interface to adjust new order
             refresh_PieChart_DATA_MPS();
-            
+        }
+        else if (action.equals("mealName")) // MealTime on MealManager Changed
+        {
+            // Change PieChart MealName
+            update_PieChart_Title(mealManager.getMealInPlanID());
         }
         else if (action.equals("refresh")) // Refresh mealPlan was requested
         {
             // Refresh MealManager
             updateLineChartData(mealManager, previousMealTime, currentMealTime);
+    
+            // Change PieChart MealName
+            update_PieChart_Title(mealManager.getMealInPlanID());
         }
     }
     
