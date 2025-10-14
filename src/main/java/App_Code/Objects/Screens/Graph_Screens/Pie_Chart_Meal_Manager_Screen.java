@@ -61,7 +61,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen_JFrame
         //############################################
         // Creating Macros / Dataset
         //############################################
-        DefaultPieDataset<String> dataset = mealManagerRegistry.get_OR_Create_PieChart_Dataset(mealInPlanID);
+        DefaultPieDataset<String> dataset = mealManagerRegistry.get_OR_Create_PieChart_Dataset(mealManager);
         
         //#####################################
         // Graph Preferences

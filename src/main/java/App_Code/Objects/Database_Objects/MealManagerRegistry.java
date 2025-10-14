@@ -24,12 +24,13 @@ public class MealManagerRegistry
     private Map<String, Integer> totalMeal_macroColNamePos;
     
     /**
-     * HashMap<String, Map<Integer, Pair<LocalTime, BigDecimal>>> mealManagersMacroValues = new HashMap<>();
+     * HashMap<String, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues = new HashMap<>();
      * Stores all the mealManagers TotalMealValues in collections by the macroName
-     * <Key: MacroName | Value: Map <Key: MealManagerID, Value: < MealTime, Quantity>>
-     * Etc;  <Key: Salt | Value: <MealManagerID: 1, <MealTime: 14:00 , Quantity: 300g >>
+     * <p>
+     * <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
+     * Etc;  <Key: Salt | Value: HashMap<MealManager, Quantity: 300g >>
      */
-    private HashMap<String, HashMap<Integer, Pair<Second, BigDecimal>>> mealManagers_TotalMeal_MacroValues = new HashMap<>(); // Can be refactored to include mealManager
+    private HashMap<String, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues = new HashMap<>(); // Can be refactored to include mealManager
     
     private ArrayList<MealManager> mealManager_ArrayList = new ArrayList<>();
     
@@ -126,18 +127,17 @@ public class MealManagerRegistry
         //##########################################
         // mealManager Info
         //##########################################
-        int mealManagerID = mealManager.getMealInPlanID();
-        Second mealManagerTime = mealManager.getCurrentMealTime();
         TotalMealTable totalMealTable = mealManager.getTotalMealTable();
         
         //##########################################
         // Remove MealManager Results to Collection
         //##########################################
         /**
-         * HashMap<String, Map<Integer, Pair<LocalTime, BigDecimal>>> mealManagersMacroValues = new HashMap<>();
+         * HashMap<String, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues = new HashMap<>();
          * Stores all the mealManagers TotalMealValues in collections by the macroName
-         * <Key: MacroName | Value: Map <Key: MealManagerID, Value: < MealTime, Quantity>>
-         * Etc;  <Key: Salt | Value: <MealManagerID: 1, <MealTime: 14:00 , Quantity: 300g >>
+         *
+         * <Key:  MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
+         * Etc;  <Key: Salt | Value: HashMap<MealManager, Quantity: 300g >>
          */
         
         Iterator<Map.Entry<String, Integer>> it = totalMeal_macroColNamePos.entrySet().iterator();
@@ -151,14 +151,14 @@ public class MealManagerRegistry
             BigDecimal macroValue = totalMealTable.get_ValueOnTable(0, macroPos);
             
             /**
-             *  <Key: MacroName | Value: Map<Key: MealManagerID, Value: < MealTime, Quantity>>
-             *   Put, Replace
+             *  <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
+             *   Put, Replace have the same effect
              */
             
-            mealManagers_TotalMeal_MacroValues.get(macroName).put(mealManagerID, new Pair<>(mealManagerTime, macroValue));
+            mealManagers_TotalMeal_MacroValues.get(macroName).put(mealManager, macroValue);
         }
     }
-  
+    
     //###############################################################################
     // DELETE Methods
     //###############################################################################
@@ -168,7 +168,24 @@ public class MealManagerRegistry
         // Remove MealManager TotalMeal Macro Values
         //###########################################
         int mealManagerID = mealManager.getMealInPlanID();
-        remove_MealManagers_MacroValues(mealManagerID);
+        
+        /**
+         * HashMap<String, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues = new HashMap<>();
+         * Stores all the mealManagers TotalMealValues in collections by the macroName
+         *
+         * <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
+         * Etc;  <Key: Salt | Value: HashMap<MealManager, Quantity: 300g >>
+         */
+        
+        Iterator<String> it = totalMeal_macroColNamePos.keySet().iterator();
+        
+        while (it.hasNext())
+        {
+            String macroName = it.next();
+            
+            // <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
+            mealManagers_TotalMeal_MacroValues.get(macroName).remove(mealManager);
+        }
         
         //###########################################
         // Remove MealManager PieChart Data
@@ -179,32 +196,6 @@ public class MealManagerRegistry
         // Remove from PieChart Screen Objects
         //############################################
         pieChartEntry_MPS_AL.removeIf(e -> e.get_MealInPlanID() == mealManagerID);
-    }
-    
-    private void remove_MealManagers_MacroValues(Integer mealManagerID)
-    {
-        //##########################################
-        // Remove MealManager Results to Collection
-        //##########################################
-        /**
-         * HashMap<String, Map<Integer, Pair<LocalTime, BigDecimal>>> mealManagersMacroValues = new HashMap<>();
-         * Stores all the mealManagers TotalMealValues in collections by the macroName
-         * <Key: MacroName | Value: Map <Key: MealManagerID, Value: < MealTime, Quantity>>
-         * Etc; <Key: Salt | Value: <MealManagerID: 1, <MealTime: 14:00 , Quantity: 300g >>
-         */
-        
-        Iterator<Map.Entry<String, Integer>> it = totalMeal_macroColNamePos.entrySet().iterator();
-        
-        while (it.hasNext())
-        {
-            Map.Entry<String, Integer> mapEntry = it.next();
-            
-            // Relative to TotalMealTable
-            String macroName = mapEntry.getKey();
-            
-            // <Key: MacroName | Value: ArrayList<Key: MealManagerID, Value: < MealTime, Quantity>>
-            mealManagers_TotalMeal_MacroValues.get(macroName).remove(mealManagerID);
-        }
     }
     
     //################################################
@@ -254,7 +245,8 @@ public class MealManagerRegistry
                 // Remove this mealManagers MacrosValues
                 for (String macroName : totalMeal_macroColNamePos.keySet())
                 {
-                    mealManagers_TotalMeal_MacroValues.get(macroName).remove(mealManagerID);
+                    // <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
+                    mealManagers_TotalMeal_MacroValues.get(macroName).remove(mealManager);
                 }
                 
                 pieChart_Dataset_HashMap.remove(mealManagerID);
@@ -289,14 +281,18 @@ public class MealManagerRegistry
     ///#################################################################################################################
     
     /**
-     * @param mealInPlanID - ID of MealManager
      * @return PieChart Dataset
      * <p>
      * This method is used to retrieve pieChart Data based on MealInPlanID
      * if it exists it is returned. Otherwise, it's created and added to DATA (Collection) and then it's returned.
      */
-    public DefaultPieDataset<String> get_OR_Create_PieChart_Dataset(Integer mealInPlanID)
+    public DefaultPieDataset<String> get_OR_Create_PieChart_Dataset(MealManager mealManager)
     {
+        //#########################################
+        // MealManager Info
+        //#########################################
+        int mealInPlanID = mealManager.getMealInPlanID();
+        
         //##############################################
         // Add to HashMapDataset
         //##############################################
@@ -309,7 +305,7 @@ public class MealManagerRegistry
         //##############################################
         // Add to HashMapDataset
         //##############################################
-        pieChart_Dataset_HashMap.put(mealInPlanID, get_Updated_PieChart_Dataset(mealInPlanID));
+        pieChart_Dataset_HashMap.put(mealInPlanID, get_Updated_PieChart_Dataset(mealManager));
         
         //##############################################
         // Add to HashMapDataset
@@ -327,8 +323,13 @@ public class MealManagerRegistry
     ///########################################
     // Update Methods
     ///########################################
-    public Boolean update_PieChart_Values(Integer mealInPlanID)
+    public Boolean update_PieChart_Values(MealManager mealManager)
     {
+        //#########################################
+        //
+        //#########################################
+        int mealInPlanID = mealManager.getMealInPlanID();
+        
         //#########################################
         // IF PieChart Not Open Exit
         //#########################################
@@ -337,7 +338,7 @@ public class MealManagerRegistry
         //#########################################
         // Updated Saved Dataset With New Values
         //#########################################
-        DefaultPieDataset<String> newGenerated = get_Updated_PieChart_Dataset(mealInPlanID);
+        DefaultPieDataset<String> newGenerated = get_Updated_PieChart_Dataset(mealManager);
         DefaultPieDataset<String> mm_PieData = pieChart_Dataset_HashMap.get(mealInPlanID);
         
         // Clear Data First
@@ -357,16 +358,16 @@ public class MealManagerRegistry
     /**
      *
      */
-    private DefaultPieDataset<String> get_Updated_PieChart_Dataset(Integer mealInPlanID)
+    private DefaultPieDataset<String> get_Updated_PieChart_Dataset(MealManager mealManager)
     {
         //###################################################
         // Get Macros
         //###################################################
         LinkedHashMap<String, BigDecimal> data;
         
-        BigDecimal proteinValue = mealManagers_TotalMeal_MacroValues.get("total_protein").get(mealInPlanID).getValue1();
-        BigDecimal carbsValue = mealManagers_TotalMeal_MacroValues.get("total_carbohydrates").get(mealInPlanID).getValue1();
-        BigDecimal fatsValue = mealManagers_TotalMeal_MacroValues.get("total_fats").get(mealInPlanID).getValue1();
+        BigDecimal proteinValue = mealManagers_TotalMeal_MacroValues.get("total_protein").get(mealManager);
+        BigDecimal carbsValue = mealManagers_TotalMeal_MacroValues.get("total_carbohydrates").get(mealManager);
+        BigDecimal fatsValue = mealManagers_TotalMeal_MacroValues.get("total_fats").get(mealManager);
         
         BigDecimal total = proteinValue.add(carbsValue).add(fatsValue);
         
@@ -388,7 +389,7 @@ public class MealManagerRegistry
                 // ###########################
                 // Carbs
                 // ###########################
-                BigDecimal sugarCarbsValue = mealManagers_TotalMeal_MacroValues.get("total_sugars_of_carbs").get(mealInPlanID).getValue1();
+                BigDecimal sugarCarbsValue = mealManagers_TotalMeal_MacroValues.get("total_sugars_of_carbs").get(mealManager);
                 
                 put(String.format("Carbohydrates [ %d%% ] ", percent_Calculator(carbsValue, total)), carbsValue.subtract(sugarCarbsValue));
                 put("Sugars Of Carbs", sugarCarbsValue);
@@ -396,7 +397,7 @@ public class MealManagerRegistry
                 // ###########################
                 // Fats
                 // ###########################
-                BigDecimal satFatsValue = mealManagers_TotalMeal_MacroValues.get("total_saturated_fat").get(mealInPlanID).getValue1();
+                BigDecimal satFatsValue = mealManagers_TotalMeal_MacroValues.get("total_saturated_fat").get(mealManager);
                 
                 put(String.format("Fats [ %d%% ] ", percent_Calculator(fatsValue, total)), fatsValue.subtract(satFatsValue));
                 put("Saturated Fats", satFatsValue);
@@ -494,16 +495,18 @@ public class MealManagerRegistry
              * Etc;  <Key: Salt | Value: <MealManagerID: 1, <MealTime: 14:00 , Quantity: 300g >>
              */
             
-            Map<Integer, Pair<Second, BigDecimal>> macroValues = mealManagers_TotalMeal_MacroValues.get(macroName);
-            Iterator<Map.Entry<Integer, Pair<Second, BigDecimal>>> it = macroValues.entrySet().iterator();
+            HashMap<MealManager, BigDecimal> macroValues = mealManagers_TotalMeal_MacroValues.get(macroName);
+            Iterator<Map.Entry<MealManager, BigDecimal>> it = macroValues.entrySet().iterator();
             
             while (it.hasNext()) // Iterate through the recorded MealManager Values for this macro
             {
-                Map.Entry<Integer, Pair<Second, BigDecimal>> mealManagers_Info = it.next();
-                Pair<Second, BigDecimal> mealManagerValues = mealManagers_Info.getValue();
+                Map.Entry<MealManager, BigDecimal> mealManagers_Info = it.next();
                 
                 // Add time and Value for MealManager
-                macroTimeSeries.add(mealManagerValues.getValue0(), mealManagerValues.getValue1());
+                MealManager mealManager = mealManagers_Info.getKey();
+                BigDecimal macroValue = mealManagers_Info.getValue();
+                
+                macroTimeSeries.add(mealManager.getCurrentMealTime(), macroValue);
             }
         }
         
@@ -541,7 +544,7 @@ public class MealManagerRegistry
         return mealManager_ArrayList;
     }
     
-    public Map<String, HashMap<Integer, Pair<Second, BigDecimal>>> get_MealManagers_MacroValues()
+    public HashMap<String, HashMap<MealManager, BigDecimal>> get_MealManagers_MacroValues()
     {
         return mealManagers_TotalMeal_MacroValues;
     }

@@ -523,7 +523,7 @@ public class MealManager
          * Update data behind pieCharts which will effectively update all pieCharts actively using this data
          * */
         
-        if (! mealManagerRegistry.update_PieChart_Values(getMealInPlanID()))
+        if (! mealManagerRegistry.update_PieChart_Values(this))
         {
             System.err.printf("\n\nMealManagerRegistry.java : updatePieChart_MM_Values() \nPieChart not Open %s", mealInPlanID);
         }
@@ -709,7 +709,7 @@ public class MealManager
         //#######################################
         // Update total Meal View
         //#######################################
-        update_MealManager_DATA(false, false); // Add External is false for now because its dealt with below
+        update_TotalMeal_Table(); // HELLO Could be just simplified to
         
         //#######################################
         // Update Time Variables

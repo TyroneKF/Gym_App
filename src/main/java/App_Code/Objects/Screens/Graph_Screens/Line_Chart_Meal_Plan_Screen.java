@@ -94,7 +94,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen_JFrame
      *                     (Inner HashMap) Contains all the values for all the MealManagers
      *                     Update the values specific to this mealManager
      */
-    public void updateMealManagerData(MealManager mealManager, Second previousTime, Second currentTime)
+    public void update_MealManager_ChartData(MealManager mealManager, Second previousTime, Second currentTime)
     {
         // ####################################################
         // Get MealManager Info
@@ -106,8 +106,8 @@ public class Line_Chart_Meal_Plan_Screen extends Screen_JFrame
         // ####################################################
         // Get MealManager MacroInfo & Replace
         // ####################################################
-        Iterator<Map.Entry<String, HashMap<Integer, Pair<Second, BigDecimal>>>> it
-                = mealManagerRegistry.get_MealManagers_MacroValues().entrySet().iterator();
+        Iterator<Map.Entry<String, HashMap<MealManager, BigDecimal>>> it =
+                mealManagerRegistry.get_MealManagers_MacroValues().entrySet().iterator();
         
         /**
          *  <Key: MacroName | Value: HashMap<Key: MealManagerID, Value: < MealTime, Quantity>>
@@ -122,7 +122,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen_JFrame
             /**
              *   Map<Key: MealManagerID, Value: < MealTime, Quantity>>
              */
-            Map.Entry<String, HashMap<Integer, Pair<Second, BigDecimal>>> macroEntry = it.next();
+            Map.Entry<String, HashMap<MealManager, BigDecimal>> macroEntry = it.next();
             String macroName = macroEntry.getKey();
             
             // ########################################
@@ -138,7 +138,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen_JFrame
             // Get Macronutrient Info
             // ########################################
             // Get Macro Info Specific to this mealManager correlating to macroName
-            BigDecimal newMacroValue = macroEntry.getValue().get(mealInPlanID).getValue1();
+            BigDecimal newMacroValue = macroEntry.getValue().get(mealManager);
             
             // #######################################
             // Same Time: Update MacroValue

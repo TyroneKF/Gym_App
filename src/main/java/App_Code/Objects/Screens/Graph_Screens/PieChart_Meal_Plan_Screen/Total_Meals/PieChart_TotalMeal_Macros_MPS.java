@@ -20,7 +20,6 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
     // Variables
     // #################################################################################################################
     // Graph Preferences
-    
     private int
             col = 3,
             pieWidth = (frameWidth / col) - 30,
@@ -54,7 +53,6 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
         super(null, true, frameWidth, frameHeight);
         
         setVisible(true);
-        setBackground(Color.PINK);
         
         // ################################################################
         // Variables
@@ -113,7 +111,7 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
             //##############################
             // Get / Create PieChart Data
             //##############################
-            DefaultPieDataset<String> pieDataset = mealManagerRegistry.get_OR_Create_PieChart_Dataset(mealPlanID);
+            DefaultPieDataset<String> pieDataset = mealManagerRegistry.get_OR_Create_PieChart_Dataset(mealManager);
             
             //##############################
             // Create PieChart & Add to List
@@ -195,7 +193,7 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
         // Get / Create PieChart Data
         //##############################
         Integer mealPlanID = mealManager.getMealInPlanID();
-        DefaultPieDataset<String> pieDataset = mealManagerRegistry.get_OR_Create_PieChart_Dataset(mealPlanID);
+        DefaultPieDataset<String> pieDataset = mealManagerRegistry.get_OR_Create_PieChart_Dataset(mealManager);
         
         //##############################
         // Create PieChart & Add to List
@@ -205,7 +203,6 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
         Pie_Chart pieChart = new Pie_Chart(title, pieWidth, pieHeight, rotateDelay, titleFont, labelFont, legendFont, pieDataset);
         pieChart_MPS_Entries.add(new PieChart_Entry_MPS(mealPlanID, mealManager, pieChart));
         
-        //Set MSG
         //##############################
         // Sort Meals in Pie MPS
         //##############################

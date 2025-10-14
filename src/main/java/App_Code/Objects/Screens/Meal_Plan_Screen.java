@@ -1323,7 +1323,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     {
         if (! is_LineChart_Screen_Open()) { return; }
         
-        lineChartMealPlanScreen.updateMealManagerData(mealManager, previousTime, currentTime);
+        lineChartMealPlanScreen.update_MealManager_ChartData(mealManager, previousTime, currentTime);
     }
     
     private void deleteLineChartData(Second currentTime)
