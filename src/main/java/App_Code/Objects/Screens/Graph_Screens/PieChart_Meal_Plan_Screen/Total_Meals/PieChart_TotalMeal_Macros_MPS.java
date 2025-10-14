@@ -75,57 +75,13 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
         create_And_Draw_GUI();
     }
     
-    
+    // #################################################################################################################
+    //  Update / Draw GUI Methods
+    // #################################################################################################################
     private int get_PieChart_Count()
     {
         return (int) mealManager_ArrayList.stream().filter(mealManager -> ! mealManager.is_Meal_Deleted()).count();
     }
-    
-    // #################################################################################################################
-    //  Update / Draw GUI Methods
-    // #################################################################################################################
-    
-    @Override
-    protected void setup()
-    {
-        //########################################################
-        // Create Interface With Sections
-        //########################################################
-        setLayout(new GridLayout(1, 1));
-        
-        screenSectioned = new JPanel(new BorderLayout());
-        addToContainer(this, screenSectioned, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
-        
-        // Top of GUI
-        mainNorthPanel = new JPanel(new GridBagLayout());
-        screenSectioned.add(mainNorthPanel, BorderLayout.NORTH);
-        
-        // Centre of GUI
-        mainCenterPanel = new JPanel(new GridBagLayout());
-        screenSectioned.add(mainCenterPanel, BorderLayout.CENTER);
-        
-        // South of GUI
-        mainSouthPanel = new JPanel(new GridBagLayout());
-        screenSectioned.add(mainSouthPanel, BorderLayout.SOUTH);
-        
-        //##########################################################
-        // Create ScrollPane & Add it to Centre of GUI
-        //##########################################################
-        
-        if (addScrollPane)
-        {
-            // Attach ScrollPane to the centre of the screen
-            addToContainer(mainCenterPanel, scrollPane, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
-            scrollPaneJPanel = scrollPane.getJPanel();
-            scrollPaneJPanel.setBackground(Color.BLACK);
-            scrollPaneJPanel.setLayout(new GridBagLayout());
-        }
-        else
-        {
-            scrollPaneJPanel = mainCenterPanel;
-        }
-    }
-    
     
     public void create_And_Draw_GUI()
     {
@@ -217,6 +173,9 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
         resizeGUI();
     }
     
+    // #################################################################################################################
+    //  Methods
+    // #################################################################################################################
     public void update_PieChart_MealName(int mealInPlanID)
     {
         ArrayList<PieChart_Entry_MPS> pieChartEntry_MPS_AL = mealManagerRegistry.get_PieChart_MPS_Entries();
