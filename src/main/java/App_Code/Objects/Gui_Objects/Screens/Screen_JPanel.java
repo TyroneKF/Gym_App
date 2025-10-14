@@ -1,6 +1,7 @@
 package App_Code.Objects.Gui_Objects.Screens;
 
 import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
@@ -20,7 +21,7 @@ public class Screen_JPanel extends JPanel
     protected String title;
     
     // Booleans
-    private Boolean addScrollPane;
+    protected Boolean addScrollPane;
     
     //##############################################
     // Objects
@@ -35,7 +36,7 @@ public class Screen_JPanel extends JPanel
     protected JPanel mainNorthPanel, mainSouthPanel, scrollPaneJPanel;
     
     // Private: JPanels
-    private JPanel screenSectioned, mainCenterPanel;
+    protected JPanel screenSectioned, mainCenterPanel;
     private Container container;
     
     //##################################################################################################################
@@ -51,19 +52,19 @@ public class Screen_JPanel extends JPanel
         this.addScrollPane = addScrollPane;
         this.frameHeight = frameHeight;
         this.frameWidth = frameWidth;
-       
+        
         //##############################################
         // Setup
         //##############################################
-        setup();
+      //  setup();
     }
     
     //##################################################################################################################
     // GUI Setup
     //##################################################################################################################
-    private void setup()
+    protected void setup()
     {
-        setSize(frameWidth, frameHeight);
+        setLayout(new GridLayout(1,1));
         
         //########################################################
         // Create Interface With Sections
@@ -153,7 +154,7 @@ public class Screen_JPanel extends JPanel
     //##################################################################################################################
     // Mutator Methods
     //##################################################################################################################
-     protected String formatStrings(String txt, boolean separateWords)
+    protected String formatStrings(String txt, boolean separateWords)
     {
         // Re-assign Re-Capitalised Value into list
         return txt =
@@ -178,7 +179,7 @@ public class Screen_JPanel extends JPanel
     
     public Container get_Container()
     {
-        return container;
+        return (container == null) ? this : container;
     }
     
     // ##################################
@@ -230,8 +231,8 @@ public class Screen_JPanel extends JPanel
     public void resizeGUI()
     {
         scrollPaneJPanel.revalidate();
-        container.revalidate();
-       revalidate();
+        revalidate();
+        if (container != null) { container.revalidate(); }
     }
     
     protected void addToContainer(Container container, Component addToContainer,

@@ -14,13 +14,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 
-public class PieChart_TotalMeal_Macros_MPS extends JPanel
+public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
 {
     // #################################################################################################################
     // Variables
     // #################################################################################################################
     // Graph Preferences
-    protected int containerYPos = 0, frameWidth, frameHeight;
+    
     private int
             col = 3,
             pieWidth = (frameWidth / col) - 30,
@@ -31,15 +31,6 @@ public class PieChart_TotalMeal_Macros_MPS extends JPanel
             labelFont = new Font("SansSerif", Font.BOLD, 22),
             legendFont = new Font("Serif", Font.PLAIN, 20);
     
-    //##############################################
-    // Private: JPanels
-    //##############################################
-    protected JPanel mainNorthPanel, mainSouthPanel, scrollPaneJPanel;
-    private JPanel screenSectioned, mainCenterPanel;
-    protected GridBagConstraints gbc = new GridBagConstraints();
-    protected ScrollPaneCreator scrollPane = new ScrollPaneCreator();
-    boolean addScrollPane = true;
-
     //##############################################
     // Objects
     //##############################################
@@ -57,7 +48,13 @@ public class PieChart_TotalMeal_Macros_MPS extends JPanel
     // #################################################################################################################
     public PieChart_TotalMeal_Macros_MPS(Meal_Plan_Screen meal_plan_screen, int frameWidth, int frameHeight)
     {
-        // super(container, true, frameWidth, frameHeight);
+        // ################################################################
+        // Super
+        // ################################################################
+        super(null, true, frameWidth, frameHeight);
+        
+        setVisible(true);
+        setBackground(Color.PINK);
         
         // ################################################################
         // Variables
@@ -65,11 +62,6 @@ public class PieChart_TotalMeal_Macros_MPS extends JPanel
         this.meal_plan_screen = meal_plan_screen;
         this.mealManagerRegistry = meal_plan_screen.get_MealManagerRegistry();
         
-        this.frameHeight = frameHeight;
-        this.frameWidth = frameWidth;
-        
-        setVisible(true);
-        setBackground(Color.PINK);
         // #####################################
         /// Collections
         // ######################################
@@ -92,47 +84,49 @@ public class PieChart_TotalMeal_Macros_MPS extends JPanel
     // #################################################################################################################
     //  Update / Draw GUI Methods
     // #################################################################################################################
-   private void setup()
-   {
-       //########################################################
-       // Create Interface With Sections
-       //########################################################
-       setLayout(new GridLayout(1,1));
-       
-       screenSectioned = new JPanel(new BorderLayout());
-       addToContainer(this, screenSectioned, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
     
-       // Top of GUI
-       mainNorthPanel = new JPanel(new GridBagLayout());
-       screenSectioned.add(mainNorthPanel, BorderLayout.NORTH);
+    @Override
+    protected void setup()
+    {
+        //########################################################
+        // Create Interface With Sections
+        //########################################################
+        setLayout(new GridLayout(1, 1));
+        
+        screenSectioned = new JPanel(new BorderLayout());
+        addToContainer(this, screenSectioned, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        
+        // Top of GUI
+        mainNorthPanel = new JPanel(new GridBagLayout());
+        screenSectioned.add(mainNorthPanel, BorderLayout.NORTH);
+        
+        // Centre of GUI
+        mainCenterPanel = new JPanel(new GridBagLayout());
+        screenSectioned.add(mainCenterPanel, BorderLayout.CENTER);
+        
+        // South of GUI
+        mainSouthPanel = new JPanel(new GridBagLayout());
+        screenSectioned.add(mainSouthPanel, BorderLayout.SOUTH);
+        
+        //##########################################################
+        // Create ScrollPane & Add it to Centre of GUI
+        //##########################################################
+        
+        if (addScrollPane)
+        {
+            // Attach ScrollPane to the centre of the screen
+            addToContainer(mainCenterPanel, scrollPane, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+            scrollPaneJPanel = scrollPane.getJPanel();
+            scrollPaneJPanel.setBackground(Color.BLACK);
+            scrollPaneJPanel.setLayout(new GridBagLayout());
+        }
+        else
+        {
+            scrollPaneJPanel = mainCenterPanel;
+        }
+    }
     
-       // Centre of GUI
-       mainCenterPanel = new JPanel(new GridBagLayout());
-       screenSectioned.add(mainCenterPanel, BorderLayout.CENTER);
     
-       // South of GUI
-       mainSouthPanel = new JPanel(new GridBagLayout());
-       screenSectioned.add(mainSouthPanel, BorderLayout.SOUTH);
-    
-       //##########################################################
-       // Create ScrollPane & Add it to Centre of GUI
-       //##########################################################
-    
-       if (addScrollPane)
-       {
-           // Attach ScrollPane to the centre of the screen
-           addToContainer(mainCenterPanel, scrollPane, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
-           scrollPaneJPanel = scrollPane.getJPanel();
-           scrollPaneJPanel.setBackground(Color.BLACK);
-           scrollPaneJPanel.setLayout(new GridBagLayout());
-       }
-       else
-       {
-           scrollPaneJPanel = mainCenterPanel;
-       }
-   }
-   
-   
     public void create_And_Draw_GUI()
     {
         // ################################################################
@@ -262,86 +256,5 @@ public class PieChart_TotalMeal_Macros_MPS extends JPanel
         // Redraw GUI
         //##############################
         redraw_GUI();
-    }
-    
-    // #################################################################################################################
-    //
-    // #################################################################################################################
-    protected JPanel getScrollPaneJPanel()
-    {
-        return scrollPaneJPanel;
-    }
-    
-    
-    protected int getAndIncreaseContainerYPos()
-    {
-        containerYPos++;
-        return containerYPos;
-    }
-    
-    protected JPanel createSpaceDivider(int width, int height)
-    {
-        JPanel spaceDivider = new JPanel(new GridBagLayout());
-        spaceDivider.setBackground(Color.WHITE);
-        spaceDivider.setPreferredSize(new Dimension(width, height));
-        
-        return spaceDivider;
-    }
-    
-    public void resizeGUI()
-    {
-        scrollPaneJPanel.revalidate();
-        revalidate();
-    }
-    
-    protected void addToContainer(Container container, Component addToContainer,
-                                  Integer gridx, Integer gridy, Integer gridwidth, Integer gridheight, Double weightx,
-                                  Double weighty, String fill, Integer ipady, Integer ipadx, String anchor)
-    {
-        if (gridx != null)
-        {
-            gbc.gridx = gridx;
-        }
-        if (gridy != null)
-        {
-            gbc.gridy = gridy;
-        }
-        
-        gbc.gridwidth = gridwidth;
-        gbc.gridheight = gridheight;
-        gbc.weightx = weightx;
-        gbc.weighty = weighty;
-        
-        gbc.ipady = ipady;
-        gbc.ipadx = ipadx;
-        
-        switch (fill.toLowerCase())
-        {
-            case "horizontal":
-                gbc.fill = GridBagConstraints.HORIZONTAL;
-                break;
-            case "vertical":
-                gbc.fill = GridBagConstraints.VERTICAL;
-                break;
-            
-            case "both":
-                gbc.fill = GridBagConstraints.BOTH;
-                break;
-        }
-        
-        if (anchor != null)
-        {
-            switch (anchor.toLowerCase())
-            {
-                case "start":
-                    gbc.anchor = GridBagConstraints.PAGE_START;
-                    break;
-                
-                case "end":
-                    gbc.anchor = GridBagConstraints.PAGE_END;
-                    break;
-            }
-        }
-        container.add(addToContainer, gbc);
     }
 }
