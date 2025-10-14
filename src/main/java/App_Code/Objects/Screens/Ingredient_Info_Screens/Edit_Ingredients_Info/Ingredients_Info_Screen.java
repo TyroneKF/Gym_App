@@ -97,7 +97,6 @@ public class Ingredients_Info_Screen extends JFrame
                 //###################################################################################
                 // Create ContentPane
                 //###################################################################################
-
                 contentPane = super.getContentPane();
                 contentPane.setLayout(new GridLayout(1, 1));
                 contentPane.setVisible(true);
@@ -107,43 +106,35 @@ public class Ingredients_Info_Screen extends JFrame
                 //##################################################################################
                 JTabbedPane tp = new JTabbedPane();
                 contentPane.add(tp);
-
-
+                
                 //#################################################
                 // Creating Add Ingredients Screen
                 //#################################################
-                JPanel addIngredientsFormJPanel = new JPanel(new GridBagLayout());
-                tp.add("Add Ingredients", addIngredientsFormJPanel);
-
                 addIngredientsInfo = new Add_Ingredients_Screen(this, db);
-                addToContainer(addIngredientsFormJPanel, addIngredientsInfo, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
-
+                tp.add("Add Ingredients", addIngredientsInfo);
+                
                 //#################################################
                 // Creating Edit Ingredients Screen
                 //##################################################
-                JPanel editIngredientsFormJPanel = new JPanel(new GridBagLayout());
-                tp.add("Edit Ingredients", editIngredientsFormJPanel);
-
                 editIngredientsInfo = new Edit_IngredientsScreen(this, db);
-                addToContainer(editIngredientsFormJPanel, editIngredientsInfo, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
+                tp.add("Edit Ingredients", editIngredientsInfo);
+                
                 //#################################################
                 // Creating Edit Ingredient Types Screen
                 //##################################################
-                JPanel editIngredientsTypesJPanel = new JPanel(new GridBagLayout());
-                tp.add("Edit Ingredient Types", editIngredientsTypesJPanel);
-
-                addToContainer(editIngredientsTypesJPanel, new Edit_Ingredients_Types_Screen(db, this, ingredientsTypesList), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
-
+                Edit_Ingredients_Types_Screen edit_IngredientTypes = new Edit_Ingredients_Types_Screen(db, this, ingredientsTypesList);
+                tp.add("Edit Ingredient Types", edit_IngredientTypes);
+                
                 //#################################################
                 // Creating Edit Ingredients Stores Screen
                 //##################################################
-                JPanel editIngredientsStoreJPanel = new JPanel(new GridBagLayout());
-                tp.add("Edit Ingredient Stores", editIngredientsStoreJPanel);
-
-                addToContainer(editIngredientsStoreJPanel, new Edit_Ingredient_Stores_Screen(db, this, storesNamesList), 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
-
+                Edit_Ingredient_Stores_Screen edit_Stores_Screen = new Edit_Ingredient_Stores_Screen(db, this, storesNamesList);
+                tp.add("Edit Ingredient Stores", edit_Stores_Screen);
+                
+                //#################################################
+                //
+                //#################################################
                 contentPane.revalidate();
-
             }
             else
             {
