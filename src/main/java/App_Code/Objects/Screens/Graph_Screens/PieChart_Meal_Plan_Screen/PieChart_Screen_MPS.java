@@ -29,8 +29,6 @@ public class PieChart_Screen_MPS extends Screen_JFrame
         // Super Constructor
         // ################################################################
         super(db, false, String.format(" %s Pie Chart: Plan Macros", meal_plan_screen.getPlanName()), 1935, 1200, 0, 0);
-        
-        getScrollPaneJPanel().setBackground(Color.RED);
         set_Resizable(true);
         
         // ################################################################
@@ -42,7 +40,6 @@ public class PieChart_Screen_MPS extends Screen_JFrame
         //###################################################################################
         // Create ContentPane
         //###################################################################################
-        getScrollPaneJPanel().setPreferredSize(new Dimension(frameWidth, frameHeight));
         getScrollPaneJPanel().setLayout(new GridLayout(1, 1));
         
         JTabbedPane tp = new JTabbedPane();
