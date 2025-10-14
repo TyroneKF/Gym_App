@@ -55,10 +55,16 @@ MealManager -
 .) Check time comparison methods with get currentTime
 
 
-Pie_Chart
-pie_Chart empty is out of line with others
-Refactor data parts of pieChartMPS Screen into registry
-MealManager Update mealTime could just change time field on TotalMeal Vs reloading whole table
+Pie_Chart:
+.) MacroMealNames sorted by time
+.) PieChart miniMacros Similar Colour
+.) PiEchart values line by
+.) pie_Chart empty is out of line with others
+.) Refactor data parts of pieChartMPS Screen into registry
+.) MealManager Update mealTime could just change time field on TotalMeal Vs reloading whole table
+.) LineChart tabbedPane for Water & Total Calories
+.) Let Pie MPS handle updates across both screens vs having both screens on MPS
+
 
 ######################################################################################
 New Features:
