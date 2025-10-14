@@ -280,9 +280,10 @@ public class MealManagerRegistry
     ///#################################################################################################################
     // Pie Chart [TotalMeal] :
     ///#################################################################################################################
+    
     /**
      * @return PieChart Dataset
-     *
+     * <p>
      * This method is used to retrieve pieChart Data based on MealInPlanID
      * if it exists it is returned. Otherwise, it's created and added to DATA (Collection) and then it's returned.
      */
@@ -473,24 +474,37 @@ public class MealManagerRegistry
     //##################################################################################################################
     public DefaultPieDataset<String> create_Macro_PieChart_Dataset(String macroName)
     {
+        //##############################################
+        // Collections
+        //##############################################
         DefaultPieDataset<String> macroDataset = new DefaultPieDataset<>();
-    
-        //##############################################
-        // Iterate through Macro Values for Macro
-        //##############################################
-        HashMap<MealManager, BigDecimal> macroValues = mealManagers_TotalMeal_MacroValues.get(macroName);
-        Iterator<Map.Entry<MealManager, BigDecimal>> it = macroValues.entrySet().iterator();
+        Map<MealManager, BigDecimal> macroValues = mealManagers_TotalMeal_MacroValues.get(macroName);
         
-        while(it.hasNext())
+        //##############################################
+        // Get Total
+        //##############################################
+        BigDecimal total = new BigDecimal(0);
+        for ( BigDecimal x : macroValues.values())
         {
-            Map.Entry<MealManager, BigDecimal> totalMeal_Values = it.next();
-            
-            MealManager mealManager = totalMeal_Values.getKey();
-            BigDecimal totalMeal_MacroValue = totalMeal_Values.getValue();
-            
-            String title = String.format("  %s [ %s ] - %s g ",mealManager.getCurrentMealName(), mealManager.getCurrentMealTimeGUI(), totalMeal_MacroValue);
-            macroDataset.setValue(title, totalMeal_MacroValue);
+            total = total.add(x);
         }
+        
+        //##############################################
+        //  Sort Data & Create Dataset
+        //##############################################
+        BigDecimal finalTotal = total;
+        macroValues.entrySet().stream()
+                .sorted(Comparator.comparingLong(e -> e.getKey().getCurrentMealTime().getFirstMillisecond()))
+                .forEachOrdered(totalMeal_Values ->
+                {
+                    MealManager mealManager = totalMeal_Values.getKey();
+                    BigDecimal macroValue = totalMeal_Values.getValue();
+                    
+                    String title = String.format(" [%s]  %s  - (%d%%)  %s g  ", mealManager.getCurrentMealTimeGUI(),
+                            mealManager.getCurrentMealName(),percent_Calculator(macroValue, finalTotal), macroValue);
+                    
+                    macroDataset.setValue(title, macroValue);
+                });
         
         //##############################################
         // Return Values

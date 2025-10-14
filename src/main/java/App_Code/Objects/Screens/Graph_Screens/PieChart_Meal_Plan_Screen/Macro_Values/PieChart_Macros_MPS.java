@@ -30,7 +30,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
     private int
             col = 3,
             pieWidth = (frameWidth / col) - 30,
-            pieHeight = 650,
+            pieHeight = 630,
             rotateDelay = 200; //580
     private Font
             titleFont = new Font("Serif", Font.PLAIN, 27),
@@ -112,7 +112,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
             //##############################
             // Create PieChart & Add to List
             //##############################
-            String title = String.format(" %s Across Meals", formatStrings(macroName, true));
+            String title = String.format(" %s  Across Meals", formatStrings(macroName, true));
             DefaultPieDataset<String> pieDataset = mealManagerRegistry.create_Macro_PieChart_Dataset(macroName);
             
             Pie_Chart pieChart = new Pie_Chart(title, pieWidth, pieHeight, rotateDelay, titleFont, labelFont, legendFont, pieDataset);
