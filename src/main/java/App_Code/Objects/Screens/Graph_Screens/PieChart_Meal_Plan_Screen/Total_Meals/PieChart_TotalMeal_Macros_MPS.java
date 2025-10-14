@@ -67,9 +67,8 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
         pieChart_MPS_Entries = mealManagerRegistry.get_PieChart_MPS_Entries();
         
         // #####################################
-        /// Collections
+        /// Create GUI
         // ######################################
-        setup();
         create_And_Draw_GUI();
     }
     
@@ -125,16 +124,18 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
             // Add PieChart to GUI
             //##############################
             JPanel x = new JPanel(new GridBagLayout());
+            getScrollPaneJPanel().add(x);
+            
             addToContainer(x, pieChart, 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 10, 10, null);
             
             addToContainer(x, createSpaceDivider(20, 50), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
-            getScrollPaneJPanel().add(x);
             
-            //##############################
-            // Re-paint GUI
-            //##############################
-            resizeGUI();
         }
+    
+        //##############################
+        // Re-paint GUI
+        //##############################
+        resizeGUI();
     }
     
     public void redraw_GUI()

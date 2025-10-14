@@ -30,7 +30,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen_JFrame
     //##############################################
     // Collections
     //##############################################
-    private Map<String, Integer> macronutrientsToCheckAndPos;
+    private LinkedHashMap<String, Integer> macronutrientsToCheckAndPos;
     
     //##############################################
     // Datasets Objects

@@ -3,6 +3,7 @@ package App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.MealManagerRegistry;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
+import App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Macro_Values.PieChart_Macros_MPS;
 import App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Meals.PieChart_TotalMeal_Macros_MPS;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 
@@ -18,7 +19,9 @@ public class PieChart_Screen_MPS extends Screen_JFrame
     // Objects
     private Meal_Plan_Screen meal_plan_screen;
     private MealManagerRegistry mealManagerRegistry;
+    
     private PieChart_TotalMeal_Macros_MPS pieChart_Total_MPS;
+    private PieChart_Macros_MPS pieChart_Macros_MPS;
     
     // #################################################################################################################
     // Constructor
@@ -28,7 +31,7 @@ public class PieChart_Screen_MPS extends Screen_JFrame
         // ################################################################
         // Super Constructor
         // ################################################################
-        super(db, false, String.format(" %s Pie Chart: Plan Macros", meal_plan_screen.getPlanName()), 1935, 1200, 0, 0);
+        super(db, false, String.format(" %s Pie Chart: Plan Macros", meal_plan_screen.getPlanName()), 2035, 1200, 0, 0);
         set_Resizable(true);
         
         // ################################################################
@@ -54,7 +57,8 @@ public class PieChart_Screen_MPS extends Screen_JFrame
         //#################################################
         // Creating Macros Screen
         //#################################################
-        tp.add("Macros Meal Plan ", new JPanel());
+        pieChart_Macros_MPS = new PieChart_Macros_MPS(meal_plan_screen, frameWidth, frameHeight+200);
+        tp.add("Macros Meal Plan ", pieChart_Macros_MPS);
         
         // ################################################################
         // Make Frame Visible

@@ -227,8 +227,7 @@ public class Screen_JFrame extends JFrame
     protected String formatStrings(String txt, boolean separateWords)
     {
         // Re-assign Re-Capitalised Value into list
-        return txt =
-                separateWords ?
+        return  separateWords ?
                         Arrays.stream(txt.split("[ _]+"))
                                 .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
                                 .collect(Collectors.joining(" "))

@@ -21,7 +21,7 @@ public class MealManagerRegistry
     //##################################################################################################################
     // Collections
     //##################################################################################################################
-    private Map<String, Integer> totalMeal_macroColNamePos;
+    private LinkedHashMap<String, Integer> totalMeal_macroColNamePos;
     
     /**
      * HashMap<String, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues = new HashMap<>();
@@ -30,7 +30,7 @@ public class MealManagerRegistry
      * <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
      * Etc;  <Key: Salt | Value: HashMap<MealManager, Quantity: 300g >>
      */
-    private HashMap<String, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues = new HashMap<>(); // Can be refactored to include mealManager
+    private LinkedHashMap<String, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues = new LinkedHashMap<>(); // Can be refactored to include mealManager
     
     private ArrayList<MealManager> mealManager_ArrayList = new ArrayList<>();
     
@@ -44,7 +44,7 @@ public class MealManagerRegistry
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public MealManagerRegistry(Meal_Plan_Screen meal_plan_screen, Map<String, Integer> totalMeal_macroColNamePos)
+    public MealManagerRegistry(Meal_Plan_Screen meal_plan_screen, LinkedHashMap<String, Integer> totalMeal_macroColNamePos)
     {
         //##################################
         // Variables
@@ -74,9 +74,9 @@ public class MealManagerRegistry
         }
     }
     
-    //###############################################################################
+    //##################################################################################################################
     // Sort Methods
-    ///###############################################################################
+    //##################################################################################################################
     public void sortLists()
     {
         sort_MealManager_AL();
@@ -92,6 +92,7 @@ public class MealManagerRegistry
     {
         pieChartEntry_MPS_AL.sort((a, b) -> a.get_MealTime().compareTo(b.get_MealTime()));
     }
+    
     
     //###############################################################################
     // ADD Methods
@@ -277,12 +278,11 @@ public class MealManagerRegistry
     }
     
     ///#################################################################################################################
-    // Pie Chart
+    // Pie Chart [TotalMeal] :
     ///#################################################################################################################
-    
     /**
      * @return PieChart Dataset
-     * <p>
+     *
      * This method is used to retrieve pieChart Data based on MealInPlanID
      * if it exists it is returned. Otherwise, it's created and added to DATA (Collection) and then it's returned.
      */
@@ -320,44 +320,6 @@ public class MealManagerRegistry
         return percent.setScale(0, RoundingMode.HALF_DOWN).intValueExact();
     }
     
-    ///########################################
-    // Update Methods
-    ///########################################
-    public Boolean update_PieChart_Values(MealManager mealManager)
-    {
-        //#########################################
-        //
-        //#########################################
-        int mealInPlanID = mealManager.getMealInPlanID();
-        
-        //#########################################
-        // IF PieChart Not Open Exit
-        //#########################################
-        if (! pieChart_Dataset_HashMap.containsKey(mealInPlanID)) { return false; }
-        
-        //#########################################
-        // Updated Saved Dataset With New Values
-        //#########################################
-        DefaultPieDataset<String> newGenerated = get_Updated_PieChart_Dataset(mealManager);
-        DefaultPieDataset<String> mm_PieData = pieChart_Dataset_HashMap.get(mealInPlanID);
-        
-        // Clear Data First
-        mm_PieData.clear();
-        
-        // Transfer Data Over into this dataset
-        newGenerated.getKeys().forEach(key -> {
-            mm_PieData.setValue(key, newGenerated.getValue(key));
-        });
-        
-        //#########################################
-        // Updated Saved Dataset With New Values
-        //#########################################
-        return true;
-    }
-    
-    /**
-     *
-     */
     private DefaultPieDataset<String> get_Updated_PieChart_Dataset(MealManager mealManager)
     {
         //###################################################
@@ -434,18 +396,44 @@ public class MealManagerRegistry
         return dataset;
     }
     
-    ///########################################
-    // Remove Methods
-    ///########################################
-    public void remove_PieChart_DatasetValues(Integer mealInPlanID)
+    ///############################
+    //  Update Methods
+    ///############################
+    public Boolean update_PieChart_Values(MealManager mealManager)
     {
-        pieChart_Dataset_HashMap.remove(mealInPlanID);
+        //#########################################
+        //
+        //#########################################
+        int mealInPlanID = mealManager.getMealInPlanID();
+        
+        //#########################################
+        // IF PieChart Not Open Exit
+        //#########################################
+        if (! pieChart_Dataset_HashMap.containsKey(mealInPlanID)) { return false; }
+        
+        //#########################################
+        // Updated Saved Dataset With New Values
+        //#########################################
+        DefaultPieDataset<String> newGenerated = get_Updated_PieChart_Dataset(mealManager);
+        DefaultPieDataset<String> mm_PieData = pieChart_Dataset_HashMap.get(mealInPlanID);
+        
+        // Clear Data First
+        mm_PieData.clear();
+        
+        // Transfer Data Over into this dataset
+        newGenerated.getKeys().forEach(key -> {
+            mm_PieData.setValue(key, newGenerated.getValue(key));
+        });
+        
+        //#########################################
+        // Updated Saved Dataset With New Values
+        //#########################################
+        return true;
     }
     
-    //###############################################################################
-    // PieChart [MealPlanScreen]
-    //###############################################################################
-    
+    ///############################
+    //  Remove Methods
+    ///############################
     /**
      * This is requested by the Meal_Plan_Screen when the pieChart screen is closed!
      * Remove the pieChart data which doesn't have a MealManager pie chart actively using it.
@@ -472,6 +460,42 @@ public class MealManagerRegistry
             // Remove this item from the MPS PieChart Screen
             it.remove();
         }
+    }
+    
+    // PieChart: Remove Methods
+    public void remove_PieChart_DatasetValues(Integer mealInPlanID)
+    {
+        pieChart_Dataset_HashMap.remove(mealInPlanID);
+    }
+    
+    //##################################################################################################################
+    // PieChart [ Plan Macros ]
+    //##################################################################################################################
+    public DefaultPieDataset<String> create_Macro_PieChart_Dataset(String macroName)
+    {
+        DefaultPieDataset<String> macroDataset = new DefaultPieDataset<>();
+    
+        //##############################################
+        // Iterate through Macro Values for Macro
+        //##############################################
+        HashMap<MealManager, BigDecimal> macroValues = mealManagers_TotalMeal_MacroValues.get(macroName);
+        Iterator<Map.Entry<MealManager, BigDecimal>> it = macroValues.entrySet().iterator();
+        
+        while(it.hasNext())
+        {
+            Map.Entry<MealManager, BigDecimal> totalMeal_Values = it.next();
+            
+            MealManager mealManager = totalMeal_Values.getKey();
+            BigDecimal totalMeal_MacroValue = totalMeal_Values.getValue();
+            
+            String title = String.format("  %s [ %s ] - %s g ",mealManager.getCurrentMealName(), mealManager.getCurrentMealTimeGUI(), totalMeal_MacroValue);
+            macroDataset.setValue(title, totalMeal_MacroValue);
+        }
+        
+        //##############################################
+        // Return Values
+        //##############################################
+        return macroDataset;
     }
     
     //##################################################################################################################
@@ -544,7 +568,7 @@ public class MealManagerRegistry
         return mealManager_ArrayList;
     }
     
-    public HashMap<String, HashMap<MealManager, BigDecimal>> get_MealManagers_MacroValues()
+    public LinkedHashMap<String, HashMap<MealManager, BigDecimal>> get_MealManagers_MacroValues()
     {
         return mealManagers_TotalMeal_MacroValues;
     }

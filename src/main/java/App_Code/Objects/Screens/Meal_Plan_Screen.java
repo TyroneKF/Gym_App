@@ -139,7 +139,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             totalMeal_Table_ColToHide = new ArrayList<String>(Arrays.asList("plan_id", "meal_name", "meal_in_plan_id",
             "weight_of_meal"));
     
-    private Map<String, Integer> totalMeal_macroColNamePos = new HashMap<>()
+    private LinkedHashMap<String, Integer> totalMeal_macroColNamePos = new LinkedHashMap<>()
     {{
         put("total_protein", null);
         put("total_carbohydrates", null);
@@ -629,6 +629,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
         resizeGUI();
         setFrameVisibility(true);
         scroll_To_Top_of_ScrollPane();
+        
+        
     }
     
     //##################################################################################################################
@@ -1949,7 +1951,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         return map_ingredientTypesToNames;
     }
     
-    public Map<String, Integer> getTotalMeal_MacroColNamePos()
+    public LinkedHashMap<String, Integer> getTotalMeal_MacroColNamePos()
     {
         return totalMeal_macroColNamePos;
     }

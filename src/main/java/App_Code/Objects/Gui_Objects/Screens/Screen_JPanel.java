@@ -158,15 +158,14 @@ public class Screen_JPanel extends JPanel
     protected String formatStrings(String txt, boolean separateWords)
     {
         // Re-assign Re-Capitalised Value into list
-        return txt =
-                separateWords ?
-                        Arrays.stream(txt.split("[ _]+"))
-                                .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
-                                .collect(Collectors.joining(" "))
-                        :
-                        Arrays.stream(txt.split("[ _]+"))
-                                .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
-                                .collect(Collectors.joining("_"));
+        return  separateWords ?
+                Arrays.stream(txt.split("[ _]+"))
+                        .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
+                        .collect(Collectors.joining(" "))
+                :
+                Arrays.stream(txt.split("[ _]+"))
+                        .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
+                        .collect(Collectors.joining("_"));
     }
     
     //##################################################################################################################
