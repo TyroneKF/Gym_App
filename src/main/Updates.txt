@@ -64,7 +64,7 @@ Pie_Chart:
 .) MealManager Update mealTime could just change time field on TotalMeal Vs reloading whole table
 .) LineChart tabbedPane for Water & Total Calories
 .) Let Pie MPS handle updates across both screens vs having both screens on MPS
-
+.) Update legend if dataset size increases
 
 ######################################################################################
 New Features:

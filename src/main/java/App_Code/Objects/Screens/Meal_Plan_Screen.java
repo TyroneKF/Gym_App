@@ -148,6 +148,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
         put("total_saturated_fat", null);
         put("total_salt", null);
         put("total_fibre", null);
+        //put("total_water", null);
+        //put("total_calories", null);
     }};
     
     //##################################################################################################################
@@ -630,7 +632,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         setFrameVisibility(true);
         scroll_To_Top_of_ScrollPane();
         
-        
+        pieChart_BtnAction_OpenScreen();
     }
     
     //##################################################################################################################

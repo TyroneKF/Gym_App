@@ -348,8 +348,8 @@ IFNULL(ROUND(SUM(di.total_fibre),2),0) as total_fibre,
 IFNULL(ROUND(SUM(di.total_fats),2),0) as total_fats,
 IFNULL(ROUND(SUM(di.total_saturated_fat),2),0) as total_saturated_fat,
 IFNULL(ROUND(SUM(di.total_salt),2),0) as total_salt,
-IFNULL(ROUND(SUM(di.total_water_content),2),0) as total_water_content,
-IFNULL(ROUND(SUM(di.total_liquid_content),2),0) as total_liquid_content,
+IFNULL(ROUND(SUM(di.total_water_content),2),0) as total_water,
+IFNULL(ROUND(SUM(di.total_liquid_content),2),0) as total_liquid,
 IFNULL(ROUND(SUM(di.total_calories),2),0) as total_calories
 
 FROM  meals_in_plan m
@@ -382,8 +382,8 @@ IFNULL(ROUND(SUM(T.total_fibre),2),0) AS fibre_in_plan,
 IFNULL(ROUND(SUM(T.total_fats),2),0) AS fats_in_plan,
 IFNULL(ROUND(SUM(T.total_saturated_fat),2),0) AS saturated_fat_in_plan,
 IFNULL(ROUND(SUM(T.total_salt),2),0) AS salt_in_plan,
-IFNULL(ROUND(SUM(T.total_water_content),2),0) AS water_content_in_plan,
-IFNULL(ROUND(SUM(T.total_liquid_content),2),0) AS liquid_content_in_plan,
+IFNULL(ROUND(SUM(T.total_water),2),0) AS water_content_in_plan,
+IFNULL(ROUND(SUM(T.total_liquid),2),0) AS liquid_content_in_plan,
 IFNULL(ROUND(SUM(T.total_calories),2),0) AS total_calories_in_plan
 
 FROM plans P

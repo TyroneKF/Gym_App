@@ -31,7 +31,7 @@ public class PieChart_Screen_MPS extends Screen_JFrame
         // ################################################################
         // Super Constructor
         // ################################################################
-        super(db, false, String.format(" %s Pie Chart: Plan Macros", meal_plan_screen.getPlanName()), 2035, 1200, 0, 0);
+        super(db, false, String.format(" %s Pie Chart: Plan Macros", meal_plan_screen.getPlanName()), 1900, 1200, 0, 0);
         set_Resizable(true);
         
         // ################################################################
@@ -57,7 +57,7 @@ public class PieChart_Screen_MPS extends Screen_JFrame
         //#################################################
         // Creating Macros Screen
         //#################################################
-        pieChart_Macros_MPS = new PieChart_Macros_MPS(meal_plan_screen, frameWidth, frameHeight+200);
+        pieChart_Macros_MPS = new PieChart_Macros_MPS(meal_plan_screen, frameWidth, frameHeight);
         tp.add("Macros Meal Plan ", pieChart_Macros_MPS);
         
         // ################################################################

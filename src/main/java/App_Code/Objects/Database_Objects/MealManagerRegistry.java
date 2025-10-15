@@ -378,7 +378,6 @@ public class MealManagerRegistry
                 put("Sugars Of Carbs", new BigDecimal(0));
                 put(String.format("Fats [ %d%%] ", 0), new BigDecimal(0));
                 put("Saturated Fats", new BigDecimal(0));
-                put("Dummy Row", new BigDecimal(0));
             }};
         }
         
@@ -500,7 +499,7 @@ public class MealManagerRegistry
                     MealManager mealManager = totalMeal_Values.getKey();
                     BigDecimal macroValue = totalMeal_Values.getValue();
                     
-                    String title = String.format(" [%s]  %s  - (%d%%)  %s g  ", mealManager.getCurrentMealTimeGUI(),
+                    String title = String.format(" [%s]  %s  (%d%%) -  %s g  ", mealManager.getCurrentMealTimeGUI(),
                             mealManager.getCurrentMealName(),percent_Calculator(macroValue, finalTotal), macroValue);
                     
                     macroDataset.setValue(title, macroValue);

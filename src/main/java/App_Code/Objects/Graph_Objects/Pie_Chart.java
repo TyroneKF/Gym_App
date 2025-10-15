@@ -5,16 +5,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.block.GridArrangement;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.PiePlot3D;
+import org.jfree.chart.title.LegendTitle;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.chart.util.Rotation;
 import org.jfree.data.general.DefaultPieDataset;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
@@ -22,13 +22,12 @@ import java.util.Iterator;
 import org.jfree.chart.labels.PieSectionLabelGenerator;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
 
-
 public class Pie_Chart extends JPanel
 {
     // ############################################################################################
     // Variables
     // ############################################################################################
- 
+    
     // Objects
     protected JFreeChart chart;
     protected DefaultPieDataset<String> dataset;
@@ -88,6 +87,21 @@ public class Pie_Chart extends JPanel
         
         // Legend Font Size
         chart.getLegend().setItemFont(legendFont);
+        
+        // #############################################
+        //
+        //#############################################
+        chart.removeLegend(); // remove default legend
+    
+       int rows = (int) Math.ceil((double) datasetInput.getItemCount() / 2);
+    
+        LegendTitle legend = new LegendTitle(plot, new GridArrangement(rows, 2), new GridArrangement(rows, 2));
+    
+        legend.setPosition(org.jfree.chart.ui.RectangleEdge.BOTTOM);
+        legend.setHorizontalAlignment(org.jfree.chart.ui.HorizontalAlignment.LEFT);
+        
+        legend.setItemFont(legendFont);
+        chart.addLegend(legend);
         
         // #############################################
         // Auto Rotate Features

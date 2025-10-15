@@ -28,14 +28,14 @@ public class PieChart_Macros_MPS extends Screen_JPanel
     // Graph Preferences
     
     private int
-            col = 3,
+            col = 2,
             pieWidth = (frameWidth / col) - 30,
-            pieHeight = 630,
+            pieHeight = 730,
             rotateDelay = 200; //580
     private Font
             titleFont = new Font("Serif", Font.PLAIN, 27),
             labelFont = new Font("SansSerif", Font.BOLD, 22),
-            legendFont = new Font("Serif", Font.PLAIN, 20);
+            legendFont = new Font("Serif", Font.PLAIN, 21);
     
     private String planName;
     
