@@ -1,16 +1,11 @@
 package App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Macro_Values;
 
-import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.MealManager;
 import App_Code.Objects.Database_Objects.MealManagerRegistry;
 import App_Code.Objects.Graph_Objects.Pie_Chart;
-import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
-import App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Meals.PieChart_Entry_MPS;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
-import org.javatuples.Pair;
 import org.jfree.data.general.DefaultPieDataset;
-import org.jfree.data.time.Second;
 
 import javax.swing.*;
 import java.awt.*;
@@ -50,7 +45,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
      */
     private LinkedHashMap<String, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues;
     
-    private HashMap<String, DefaultPieDataset<String>> macro_Dataset = new HashMap<>();
+    private HashMap<String, DefaultPieDataset<String>> pieChart_Dataset = new HashMap<>();
     
     //##################################################################################################################
     // Constructors
@@ -86,17 +81,17 @@ public class PieChart_Macros_MPS extends Screen_JPanel
         return (int) mealManagers_TotalMeal_MacroValues.size();
     }
     
-    private void create_And_Draw_GUI()
+    public void create_And_Draw_GUI()
     {
         // ################################################################
         // Clean & Build / Clear
         // ################################################################
-        int rows = (int) Math.ceil((double) get_PieChart_Count() / col);
+        int rows = get_RowsCount();
         
         getScrollPaneJPanel().removeAll();
         getScrollPaneJPanel().setLayout(new GridLayout(rows, col));
     
-        macro_Dataset.clear(); // Clear Storage
+        pieChart_Dataset.clear(); // Clear Storage
         
         // ################################################################
         // Build DATA
@@ -115,7 +110,10 @@ public class PieChart_Macros_MPS extends Screen_JPanel
             String title = String.format(" %s  Across Meals", formatStrings(macroName, true));
             DefaultPieDataset<String> pieDataset = mealManagerRegistry.create_Macro_PieChart_Dataset(macroName);
             
-            Pie_Chart pieChart = new Pie_Chart(title, pieWidth, pieHeight, rotateDelay, titleFont, labelFont, legendFont, pieDataset);
+            pieChart_Dataset.put(macroName, pieDataset); // Put Data into meory
+            
+            Pie_Chart pieChart = new Pie_Chart(title, pieWidth, pieHeight, rotateDelay, titleFont, labelFont, legendFont,
+                    pieChart_Dataset.get(macroName));
             
             //##############################
             // Add PieChart to GUI
@@ -127,11 +125,6 @@ public class PieChart_Macros_MPS extends Screen_JPanel
             
             addToContainer(x, createSpaceDivider(20, 50), 0, getAndIncreaseContainerYPos(), 1, 1,
                     0.25, 0.25, "both", 0, 0, null);
-    
-            //##############################
-            // Add to DATA
-            //##############################
-            macro_Dataset.put(macroName, pieDataset);
         }
     
         //##############################
@@ -140,37 +133,44 @@ public class PieChart_Macros_MPS extends Screen_JPanel
         resizeGUI();
     }
     
-    public void redraw_GUI()
+    private int get_RowsCount()
     {
-        /*// ####################################################
-        // Clear GUI
-        // ####################################################
-        getScrollPaneJPanel().removeAll();
-        
-        int rows = (int) Math.ceil((double) pieChart_MPS_Entries.size() / col);
-        getScrollPaneJPanel().setLayout(new GridLayout(rows, col));
-        
-        // ####################################################
+        return (int) Math.ceil((double) get_PieChart_Count() / col);
+    }
+    
+    public void update_DATA()
+    {
+        // ############################################################################
         // Paint GUI
-        // ####################################################
-        Iterator<PieChart_Entry_MPS> it = pieChart_MPS_Entries.iterator();
+        // ############################################################################
+        Iterator<Map.Entry<String, DefaultPieDataset<String>>> it = pieChart_Dataset.entrySet().iterator();
         while (it.hasNext())
         {
-            //##############################
-            // GET Pie_Entry Object
-            //##############################
-            Pie_Chart pieChart = it.next().get_PieChart();
+            // #########################################
+            // Get Info
+            // #########################################
+            Map.Entry<String, DefaultPieDataset<String>> pieEntry = it.next();
             
-            //##############################
-            // Add PieChart to GUI
-            //##############################
-            JPanel x = new JPanel(new GridBagLayout());
-            addToContainer(x, pieChart, 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 10, 10, null);
+            String macroName = pieEntry.getKey();
+            DefaultPieDataset<String> pieDataset = pieEntry.getValue();
             
-            addToContainer(x, createSpaceDivider(20, 50), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
-            getScrollPaneJPanel().add(x);
+            // #########################################
+            // Get Updated Data
+            // #########################################
+            DefaultPieDataset<String>  updated_Dataset = mealManagerRegistry.create_Macro_PieChart_Dataset(macroName);
+            
+            // #########################################
+            // Transfer Data Over into PieChart Dataset
+            // #########################################
+            pieDataset.clear(); // Clear
+            updated_Dataset.getKeys().forEach(key -> {
+                pieDataset.setValue(key, updated_Dataset.getValue(key));
+            });
         }
-        
-        resizeGUI();*/
+    
+        // ############################################################################
+        // Resize GUI
+        // ############################################################################
+        resizeGUI();
     }
 }

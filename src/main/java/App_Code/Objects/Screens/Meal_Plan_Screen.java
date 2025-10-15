@@ -596,7 +596,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             // Create MealManager
             //#####################################################
             MealManager mealManager = new MealManager(this, mealInPlanID, mealName, mealTime, subMealsInMealArrayList);
-    
+            
             // If Object Creation Failed Exit
             if (! mealManager.isObjectCreated())
             {
@@ -1253,7 +1253,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             pieChart_Screen_MPS.makeJFrameVisible();
             return;
         }
-    
+        
         pieChart_Screen_MPS = new PieChart_Screen_MPS(db, this);
     }
     
@@ -1270,14 +1270,14 @@ public class Meal_Plan_Screen extends Screen_JFrame
     private void update_PieChart_Title(Integer mealInPlanID)
     {
         if (! is_PieChart_Screen_Open()) { return; }
-    
+        
         pieChart_Screen_MPS.update_PieChart_MealName(mealInPlanID);
     }
     
     private void refresh_PieChart_DATA_MPS()
     {
         if (! is_PieChart_Screen_Open()) { return; }
-    
+        
         pieChart_Screen_MPS.refresh();
     }
     
@@ -1294,6 +1294,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
         if (! is_PieChart_Screen_Open()) { return; }
         
         pieChart_Screen_MPS.add_MealManager_To_GUI(mealManager);
+    }
+    
+    private void update_PieChart_DATA()
+    {
+        pieChart_Screen_MPS.updateData();
     }
     
     // ###############################################################
@@ -1506,7 +1511,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         
         scrollJPanelCenter.repaint();
     }
-
+    
     // ###############################################################
     // Save Plan BTN
     // ###############################################################
@@ -1799,7 +1804,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
             // Update LineChart Data
             updateLineChartData(mealManager, previousMealTime, currentMealTime);
             
-            // PieChart DATA is automatically updated from the MealManager
+            /**
+             *  TotalMeal_MPS : PieChart DATA is automatically updated from the MealManager
+             *  PlanMacros_PieChart : Update
+             */
+            update_PieChart_DATA();
         }
         else if (action.equals("delete")) // Deleted MealManager
         {
@@ -1829,7 +1838,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         {
             // Refresh MealManager
             updateLineChartData(mealManager, previousMealTime, currentMealTime);
-    
+            
             // Change PieChart MealName
             update_PieChart_Title(mealManager.getMealInPlanID());
         }

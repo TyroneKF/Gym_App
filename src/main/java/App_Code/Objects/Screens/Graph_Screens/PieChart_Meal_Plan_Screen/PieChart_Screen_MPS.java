@@ -90,6 +90,19 @@ public class PieChart_Screen_MPS extends Screen_JFrame
     // #################################################################################################################
     // Methods
     // #################################################################################################################
+    public void updateData()
+    {
+        //######################################
+        // TotalMeal PieChart MPS
+        //######################################
+        // No Update needed, mealManager handles it
+    
+        //######################################
+        // Macros PieChart MPS
+        //######################################
+        pieChart_Macros_MPS.update_DATA();
+    }
+    
     public void update_PieChart_MealName(int mealInPlanID)
     {
         //######################################
@@ -100,7 +113,7 @@ public class PieChart_Screen_MPS extends Screen_JFrame
         //######################################
         // Macros PieChart MPS
         //######################################
-        
+        pieChart_Macros_MPS.update_DATA();
     }
     
     public void refresh()
@@ -113,6 +126,7 @@ public class PieChart_Screen_MPS extends Screen_JFrame
         //######################################
         // Macros PieChart MPS
         //######################################
+        pieChart_Macros_MPS.update_DATA();
         
     }
     
@@ -126,7 +140,7 @@ public class PieChart_Screen_MPS extends Screen_JFrame
         //######################################
         // Macros PieChart MPS
         //######################################
-        
+        pieChart_Macros_MPS.update_DATA();
     }
     
     
@@ -140,5 +154,6 @@ public class PieChart_Screen_MPS extends Screen_JFrame
         //######################################
         // Macros PieChart MPS
         //######################################
+        pieChart_Macros_MPS.update_DATA();
     }
 }
