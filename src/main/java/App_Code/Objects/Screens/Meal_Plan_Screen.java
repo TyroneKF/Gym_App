@@ -88,7 +88,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
     private Line_Chart_Meal_Plan_Screen lineChartMealPlanScreen = null;
     
     private PieChart_Screen_MPS pieChart_Screen_MPS = null;
-    private PieChart_TotalMeal_Macros_MPS pieChart_TotalMeal_Screen = null;
     
     //##################################################
     // Database Table Names
@@ -1247,11 +1246,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // ###############################################################
     // Pie Chart BTN Actions
     // ###############################################################
-    
-    
-    // ####################################
-    // TotalMeal PieChart
-    // ####################################
     private void pieChart_BtnAction_OpenScreen()
     {
         if (is_PieChart_Screen_Open())
@@ -1261,12 +1255,10 @@ public class Meal_Plan_Screen extends Screen_JFrame
         }
     
         pieChart_Screen_MPS = new PieChart_Screen_MPS(db, this);
-        pieChart_TotalMeal_Screen = pieChart_Screen_MPS.get_PieChart_Total_MPS();
     }
     
     public void removePieChartScreen()
     {
-        pieChart_TotalMeal_Screen = null;
         pieChart_Screen_MPS = null;
     }
     
@@ -1278,15 +1270,15 @@ public class Meal_Plan_Screen extends Screen_JFrame
     private void update_PieChart_Title(Integer mealInPlanID)
     {
         if (! is_PieChart_Screen_Open()) { return; }
-        
-        pieChart_TotalMeal_Screen.update_PieChart_MealName(mealInPlanID);
+    
+        pieChart_Screen_MPS.update_PieChart_MealName(mealInPlanID);
     }
     
     private void refresh_PieChart_DATA_MPS()
     {
         if (! is_PieChart_Screen_Open()) { return; }
-        
-        pieChart_TotalMeal_Screen.create_And_Draw_GUI();
+    
+        pieChart_Screen_MPS.refresh();
     }
     
     private void delete_MealManager_PieChart(MealManager mealManager)
@@ -1294,14 +1286,14 @@ public class Meal_Plan_Screen extends Screen_JFrame
         if (! is_PieChart_Screen_Open()) { return; }
         
         // Data Handling already been processed, screen just needs to be re-drawn
-        pieChart_TotalMeal_Screen.redraw_GUI();
+        pieChart_Screen_MPS.deleted_MealManager_PieChart(mealManager);
     }
     
     private void add_Meal_Manager_PieChart(MealManager mealManager)
     {
         if (! is_PieChart_Screen_Open()) { return; }
         
-        pieChart_TotalMeal_Screen.add_MealManager_To_GUI(mealManager);
+        pieChart_Screen_MPS.add_MealManager_To_GUI(mealManager);
     }
     
     // ###############################################################

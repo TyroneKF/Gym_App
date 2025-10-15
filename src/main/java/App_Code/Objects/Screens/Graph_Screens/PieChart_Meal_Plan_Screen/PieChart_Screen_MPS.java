@@ -1,6 +1,7 @@
 package App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
+import App_Code.Objects.Database_Objects.MealManager;
 import App_Code.Objects.Database_Objects.MealManagerRegistry;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
 import App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Macro_Values.PieChart_Macros_MPS;
@@ -86,8 +87,58 @@ public class PieChart_Screen_MPS extends Screen_JFrame
         closeJFrame();
     }
     
-    public PieChart_TotalMeal_Macros_MPS get_PieChart_Total_MPS()
+    // #################################################################################################################
+    // Methods
+    // #################################################################################################################
+    public void update_PieChart_MealName(int mealInPlanID)
     {
-        return pieChart_Total_MPS;
+        //######################################
+        // TotalMeal PieChart MPS
+        //######################################
+        pieChart_Total_MPS.update_PieChart_MealName(mealInPlanID);
+    
+        //######################################
+        // Macros PieChart MPS
+        //######################################
+        
+    }
+    
+    public void refresh()
+    {
+        //######################################
+        // TotalMeal PieChart MPS
+        //######################################
+        pieChart_Total_MPS.create_And_Draw_GUI();
+    
+        //######################################
+        // Macros PieChart MPS
+        //######################################
+        
+    }
+    
+    public void deleted_MealManager_PieChart(MealManager mealManager)
+    {
+        //######################################
+        // TotalMeal PieChart MPS
+        //######################################
+        pieChart_Total_MPS.redraw_GUI();
+    
+        //######################################
+        // Macros PieChart MPS
+        //######################################
+        
+    }
+    
+    
+    public void add_MealManager_To_GUI(MealManager mealManager)
+    {
+        //######################################
+        // TotalMeal PieChart MPS
+        //######################################
+        pieChart_Total_MPS.add_MealManager_To_GUI(mealManager);
+    
+        //######################################
+        // Macros PieChart MPS
+        //######################################
     }
 }
