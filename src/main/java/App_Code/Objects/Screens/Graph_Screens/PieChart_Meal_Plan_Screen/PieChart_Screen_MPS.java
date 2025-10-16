@@ -5,11 +5,14 @@ import App_Code.Objects.Database_Objects.MealManager;
 import App_Code.Objects.Database_Objects.MealManagerRegistry;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
 import App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Macro_Values.PieChart_Macros_MPS;
+import App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Meals.PieChart_Entry_MPS;
 import App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Meals.PieChart_TotalMeal_Macros_MPS;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class PieChart_Screen_MPS extends Screen_JFrame
 {
@@ -21,7 +24,7 @@ public class PieChart_Screen_MPS extends Screen_JFrame
     private Meal_Plan_Screen meal_plan_screen;
     private MealManagerRegistry mealManagerRegistry;
     
-    private PieChart_TotalMeal_Macros_MPS pieChart_Total_MPS;
+    private PieChart_TotalMeal_Macros_MPS pieChart_TotalMeal_MPS;
     private PieChart_Macros_MPS pieChart_Macros_MPS;
     
     // #################################################################################################################
@@ -52,9 +55,9 @@ public class PieChart_Screen_MPS extends Screen_JFrame
         //#################################################
         // Creating TotalMeal Macros Screen
         //#################################################
-        pieChart_Total_MPS = new PieChart_TotalMeal_Macros_MPS (meal_plan_screen, frameWidth, frameHeight);
-        tp.add("Macros Per Meal ", pieChart_Total_MPS);
-    
+        pieChart_TotalMeal_MPS = new PieChart_TotalMeal_Macros_MPS(meal_plan_screen, frameWidth, frameHeight);
+        tp.add("Macros Per Meal ", pieChart_TotalMeal_MPS);
+        
         //#################################################
         // Creating Macros Screen
         //#################################################
@@ -79,7 +82,29 @@ public class PieChart_Screen_MPS extends Screen_JFrame
         // ####################################
         // Remove GUI DATA
         // ####################################
-        mealManagerRegistry.remove_Unused_PieData();
+        ArrayList<PieChart_Entry_MPS> pieChartEntry_MPS_AL = pieChart_TotalMeal_MPS.get_PieChart_Entry_MPS();
+        
+        /**
+         * This is requested by the Meal_Plan_Screen when the pieChart screen is closed!
+         * Remove the pieChart data which doesn't have a MealManager pie chart actively using it.
+         */
+        Iterator<PieChart_Entry_MPS> it = pieChartEntry_MPS_AL.iterator();
+        while (it.hasNext())
+        {
+            PieChart_Entry_MPS pieChart_entry_mps = it.next();
+            MealManager mealManager = pieChart_entry_mps.get_MealManager();
+            
+            int mealManagerID = mealManager.getMealInPlanID();
+            
+            // IF MealManager Associated with Entry isn't open, remove its dataset
+            if (! mealManager.is_PieChartOpen())
+            {
+                mealManagerRegistry.remove_PieChart_DatasetValues(mealManagerID);
+            }
+            
+            // Remove this item from the MPS PieChart Screen
+            it.remove();
+        }
         
         // ####################################
         // Close JFrame
@@ -90,26 +115,43 @@ public class PieChart_Screen_MPS extends Screen_JFrame
     // #################################################################################################################
     // Methods
     // #################################################################################################################
-    public void updateData()
+    public void update_PieChart_MealName(int mealInPlanID)
     {
         //######################################
         // TotalMeal PieChart MPS
         //######################################
-        // No Update needed, mealManager handles it
-    
+        pieChart_TotalMeal_MPS.update_PieChart_MealName(mealInPlanID);
+        
         //######################################
         // Macros PieChart MPS
         //######################################
         pieChart_Macros_MPS.update_DATA();
     }
     
-    public void update_PieChart_MealName(int mealInPlanID)
+    /**
+     * @param mealInPlanID
+     */
+    public void update_PieChart_MealTime(int mealInPlanID)
     {
         //######################################
         // TotalMeal PieChart MPS
         //######################################
-        pieChart_Total_MPS.update_PieChart_MealName(mealInPlanID);
+        pieChart_TotalMeal_MPS.update_PieChart_MealName(mealInPlanID);
+        pieChart_TotalMeal_MPS.redraw_GUI();
+        
+        //######################################
+        // Macros PieChart MPS
+        //######################################
+        pieChart_Macros_MPS.update_DATA();
+    }
     
+    public void updateData()
+    {
+        //######################################
+        // TotalMeal PieChart MPS
+        //######################################
+        // No Update needed, mealManager handles it
+        
         //######################################
         // Macros PieChart MPS
         //######################################
@@ -121,13 +163,38 @@ public class PieChart_Screen_MPS extends Screen_JFrame
         //######################################
         // TotalMeal PieChart MPS
         //######################################
-        pieChart_Total_MPS.create_And_Draw_GUI();
-    
+        pieChart_TotalMeal_MPS.create_And_Draw_GUI();
+        
         //######################################
         // Macros PieChart MPS
         //######################################
         pieChart_Macros_MPS.update_DATA();
+    }
+    
+    public void clear()
+    {
+        //######################################
+        // TotalMeal PieChart MPS
+        //######################################
+        pieChart_TotalMeal_MPS.clear();
         
+        //######################################
+        // Macros PieChart MPS
+        //######################################
+        pieChart_Macros_MPS.update_DATA();
+    }
+    
+    public void add_MealManager_To_GUI(MealManager mealManager)
+    {
+        //######################################
+        // TotalMeal PieChart MPS
+        //######################################
+        pieChart_TotalMeal_MPS.add_MealManager_To_GUI(mealManager);
+        
+        //######################################
+        // Macros PieChart MPS
+        //######################################
+        pieChart_Macros_MPS.update_DATA();
     }
     
     public void deleted_MealManager_PieChart(MealManager mealManager)
@@ -135,22 +202,8 @@ public class PieChart_Screen_MPS extends Screen_JFrame
         //######################################
         // TotalMeal PieChart MPS
         //######################################
-        pieChart_Total_MPS.redraw_GUI();
-    
-        //######################################
-        // Macros PieChart MPS
-        //######################################
-        pieChart_Macros_MPS.update_DATA();
-    }
-    
-    
-    public void add_MealManager_To_GUI(MealManager mealManager)
-    {
-        //######################################
-        // TotalMeal PieChart MPS
-        //######################################
-        pieChart_Total_MPS.add_MealManager_To_GUI(mealManager);
-    
+        pieChart_TotalMeal_MPS.delete_MealManager(mealManager);
+        
         //######################################
         // Macros PieChart MPS
         //######################################

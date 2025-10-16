@@ -76,12 +76,12 @@ public class PieChart_Macros_MPS extends Screen_JPanel
     // #################################################################################################################
     //  Update / Draw GUI Methods
     // #################################################################################################################
-    private int get_PieChart_Count()
+    private int get_RowsCount()
     {
-        return (int) mealManagers_TotalMeal_MacroValues.size();
+        return (int) Math.ceil((double) mealManagers_TotalMeal_MacroValues.size() / col);
     }
     
-    public void create_And_Draw_GUI()
+    private void create_And_Draw_GUI()
     {
         // ################################################################
         // Clean & Build / Clear
@@ -131,11 +131,6 @@ public class PieChart_Macros_MPS extends Screen_JPanel
         // Re-paint GUI
         //##############################
         resizeGUI();
-    }
-    
-    private int get_RowsCount()
-    {
-        return (int) Math.ceil((double) get_PieChart_Count() / col);
     }
     
     public void update_DATA()

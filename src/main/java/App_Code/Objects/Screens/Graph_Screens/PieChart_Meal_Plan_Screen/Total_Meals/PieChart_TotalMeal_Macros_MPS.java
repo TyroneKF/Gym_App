@@ -1,12 +1,9 @@
 package App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Meals;
 
-import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.MealManager;
 import App_Code.Objects.Database_Objects.MealManagerRegistry;
 import App_Code.Objects.Graph_Objects.Pie_Chart;
-import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
-import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 import org.jfree.data.general.DefaultPieDataset;
 
@@ -39,7 +36,7 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
     //##############################################
     // Collections
     //##############################################
-    private ArrayList<PieChart_Entry_MPS> pieChart_MPS_Entries;
+    private ArrayList<PieChart_Entry_MPS> pieChart_MPS_Entries = new ArrayList<>();
     private ArrayList<MealManager> mealManager_ArrayList;
     
     // #################################################################################################################
@@ -64,7 +61,6 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
         /// Collections
         // ######################################
         mealManager_ArrayList = mealManagerRegistry.get_MealManager_ArrayList();
-        pieChart_MPS_Entries = mealManagerRegistry.get_PieChart_MPS_Entries();
         
         // #####################################
         /// Create GUI
@@ -78,6 +74,11 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
     private int get_PieChart_Count()
     {
         return (int) mealManager_ArrayList.stream().filter(mealManager -> ! mealManager.is_Meal_Deleted()).count();
+    }
+    
+    private void sort_PieChartEntry_AL()
+    {
+        pieChart_MPS_Entries.sort((a, b) -> a.get_MealTime().compareTo(b.get_MealTime()));
     }
     
     public void create_And_Draw_GUI()
@@ -147,6 +148,11 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
         
         int rows = (int) Math.ceil((double) pieChart_MPS_Entries.size() / col);
         getScrollPaneJPanel().setLayout(new GridLayout(rows, col));
+    
+        // ####################################################
+        // Sort List by MealTime
+        // ####################################################
+        sort_PieChartEntry_AL();
         
         // ####################################################
         // Paint GUI
@@ -172,14 +178,25 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
         resizeGUI();
     }
     
+    public void clear()
+    {
+        //#####################################
+        // Clear Collection Data
+        //#####################################
+        pieChart_MPS_Entries.clear();
+    
+        //#####################################
+        // Clear GUI
+        //#####################################
+        getScrollPaneJPanel().removeAll();
+    }
+    
     // #################################################################################################################
     //  Methods
     // #################################################################################################################
     public void update_PieChart_MealName(int mealInPlanID)
     {
-        ArrayList<PieChart_Entry_MPS> pieChartEntry_MPS_AL = mealManagerRegistry.get_PieChart_MPS_Entries();
-        
-        Iterator<PieChart_Entry_MPS> it = pieChartEntry_MPS_AL.iterator();
+        Iterator<PieChart_Entry_MPS> it = pieChart_MPS_Entries.iterator();
         while (it.hasNext())
         {
             PieChart_Entry_MPS pieChart_Entry = it.next();
@@ -207,11 +224,32 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
         //##############################
         // Sort Meals in Pie MPS
         //##############################
-        mealManagerRegistry.sort_PieChartEntry_AL();
+        sort_PieChartEntry_AL();
         
         //##############################
         // Redraw GUI
         //##############################
         redraw_GUI();
+    }
+    
+    public void delete_MealManager(MealManager mealManager)
+    {
+        //############################################
+        // Remove from PieChart Screen Objects
+        //############################################
+        pieChart_MPS_Entries.removeIf(e -> e.get_MealInPlanID() == mealManager.getMealInPlanID());
+    
+        //############################################
+        // Re-Draw GUI
+        //############################################
+        redraw_GUI();
+    }
+    
+    // #################################################################################################################
+    // Accessor Methods
+    // #################################################################################################################
+    public ArrayList<PieChart_Entry_MPS> get_PieChart_Entry_MPS()
+    {
+        return pieChart_MPS_Entries;
     }
 }

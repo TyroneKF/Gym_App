@@ -65,6 +65,9 @@ Pie_Chart:
 .) Into charts but, separate line graph
      put("total_water", null);
      put("total_calories", null);
+     
+.) MPS External Chart Methods
+
 
 ######################################################################################
 New Features:
