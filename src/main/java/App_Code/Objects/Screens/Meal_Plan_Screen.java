@@ -7,7 +7,7 @@ import App_Code.Objects.Database_Objects.MealManager;
 import App_Code.Objects.Database_Objects.MealManagerRegistry;
 import App_Code.Objects.Gui_Objects.*;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
-import App_Code.Objects.Screens.Graph_Screens.Line_Chart_Meal_Plan_Screen;
+import App_Code.Objects.Screens.Graph_Screens.LineChart_Meal_Plan_Screen.LineChart_MPS;
 import App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.PieChart_Screen_MPS;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Edit_Ingredients_Info.Ingredients_Info_Screen;
 import App_Code.Objects.Screens.Loading_Screen.Loading_Screen;
@@ -84,9 +84,10 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // Screen Objects
     private Macros_Targets_Screen macrosTargets_Screen = null;
     private Ingredients_Info_Screen ingredientsInfoScreen = null;
-    private Line_Chart_Meal_Plan_Screen lineChartMealPlanScreen = null;
+    
     
     private PieChart_Screen_MPS pieChart_Screen_MPS = null;
+    private LineChart_MPS lineChart_MPS = null;
     
     //##################################################
     // Database Table Names
@@ -1320,60 +1321,63 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // ###############################################################
     // Line Chart BTN Actions
     // ###############################################################
-    private void lineChart_Btn_Action_OpenScreen()
+    private boolean is_LineChart_Screen_Open()
     {
-        if (! is_LineChart_Screen_Open())
-        {
-            lineChartMealPlanScreen = new Line_Chart_Meal_Plan_Screen(db, this);
-            return;
-        }
-        
-        lineChartMealPlanScreen.makeJFrameVisible();
+        return lineChart_MPS != null;
     }
     
     public void removeLineChartScreen()
     {
-        lineChartMealPlanScreen = null;
+        lineChart_MPS = null;
     }
     
+    private void lineChart_Btn_Action_OpenScreen()
+    {
+        if (! is_LineChart_Screen_Open())
+        {
+            lineChart_MPS = new LineChart_MPS(db, this);
+            return;
+        }
+        
+        lineChart_MPS.makeJFrameVisible();
+    }
+    
+    // #############################
+    // LineChart DATA Methods
+    // #############################
     private void updateLineChartData(MealManager mealManager, Second previousTime, Second currentTime)
     {
         if (! is_LineChart_Screen_Open()) { return; }
-        
-        lineChartMealPlanScreen.update_MealManager_ChartData(mealManager, previousTime, currentTime);
-    }
     
-    private void deleteLineChartData(Second currentTime)
-    {
-        if (! is_LineChart_Screen_Open()) { return; }
-        
-        lineChartMealPlanScreen.delete_MealManager_Data(currentTime);
-    }
-    
-    private void clearLineChartDataSet()
-    {
-        if (! is_LineChart_Screen_Open()) { return; }
-        
-        lineChartMealPlanScreen.clear_LineChart_Dataset();
-    }
-    
-    private void refresh_LineChart_Data()
-    {
-        if (! is_LineChart_Screen_Open()) { return; }
-        
-        lineChartMealPlanScreen.refresh_Data();
+        lineChart_MPS.update_MealManager_ChartData(mealManager, previousTime, currentTime);
     }
     
     private void add_Meal_To_LineChart(MealManager mealManager)
     {
         if (! is_LineChart_Screen_Open()) { return; }
-        
-        lineChartMealPlanScreen.add_New_MealManager_Data(mealManager);
+    
+        lineChart_MPS.add_New_MealManager_Data(mealManager);
     }
     
-    private boolean is_LineChart_Screen_Open()
+    private void deleteLineChartData(Second currentTime)
     {
-        return lineChartMealPlanScreen != null;
+        if (! is_LineChart_Screen_Open()) { return; }
+    
+        lineChart_MPS.delete_MealManager_Data(currentTime);
+    }
+    
+    private void clearLineChartDataSet()
+    {
+        if (! is_LineChart_Screen_Open()) { return; }
+    
+        lineChart_MPS.clear_LineChart_Dataset();
+    }
+    
+    private void refresh_LineChart_Data()
+    {
+        if (! is_LineChart_Screen_Open()) { return; }
+    
+        lineChart_MPS.refresh_Data();
     }
     
     // ###############################################################
@@ -1761,7 +1765,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         }
         if (is_LineChart_Screen_Open())
         {
-            lineChartMealPlanScreen.windowClosedEvent();
+            lineChart_MPS.windowClosedEvent();
         }
         
         // ##########################################

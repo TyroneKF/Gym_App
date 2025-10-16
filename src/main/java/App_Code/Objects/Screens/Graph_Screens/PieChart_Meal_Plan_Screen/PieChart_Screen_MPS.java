@@ -24,6 +24,7 @@ public class PieChart_Screen_MPS extends Screen_JFrame
     private Meal_Plan_Screen meal_plan_screen;
     private MealManagerRegistry mealManagerRegistry;
     
+    // Screens
     private PieChart_TotalMeal_Macros_MPS pieChart_TotalMeal_MPS;
     private PieChart_Macros_MPS pieChart_Macros_MPS;
     

@@ -457,6 +457,7 @@ public class MealManagerRegistry
         
         for (String macroName : totalMeal_macroColNamePos.keySet())
         {
+            // Exit Clause
             if (macroName.equals("total_water") | macroName.equals("total_calories")) { continue; }
             
             // Create a series for each macroName

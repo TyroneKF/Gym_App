@@ -62,11 +62,9 @@ Pie_Chart:
 .) MealManager Update mealTime could just change time field on TotalMeal Vs reloading whole table
 .) LineChart tabbedPane for Water & Total Calories
 .) Update legend if dataset size increases
-.) Into charts but, separate line graph
-     put("total_water", null);
-     put("total_calories", null);
+.) Duplicate Meals shown in Macros per Meal
      
-.) MPS External Chart Methods
+
 
 
 ######################################################################################

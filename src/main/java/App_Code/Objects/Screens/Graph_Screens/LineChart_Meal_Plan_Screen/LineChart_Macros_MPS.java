@@ -1,20 +1,22 @@
-package App_Code.Objects.Screens.Graph_Screens;
+package App_Code.Objects.Screens.Graph_Screens.LineChart_Meal_Plan_Screen;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.MealManager;
 import App_Code.Objects.Database_Objects.MealManagerRegistry;
 import App_Code.Objects.Graph_Objects.Line_Chart;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
+import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 import org.javatuples.Pair;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
+
 import java.awt.*;
 import java.math.BigDecimal;
 import java.util.*;
 
-public class Line_Chart_Meal_Plan_Screen extends Screen_JFrame
+class LineChart_Macros_MPS extends Screen_JPanel
 {
     //#################################################################################################################
     // Variables
@@ -27,10 +29,13 @@ public class Line_Chart_Meal_Plan_Screen extends Screen_JFrame
     private Meal_Plan_Screen meal_plan_screen;
     private MealManagerRegistry mealManagerRegistry;
     
+    private MyJDBC db;
+    
     //##############################################
     // Collections
     //##############################################
     private LinkedHashMap<String, Integer> macronutrientsToCheckAndPos;
+    private ArrayList<String> skip_Macros = new ArrayList<>(Arrays.asList("total_water","total_calories"));
     
     //##############################################
     // Datasets Objects
@@ -41,14 +46,13 @@ public class Line_Chart_Meal_Plan_Screen extends Screen_JFrame
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
-    public Line_Chart_Meal_Plan_Screen(MyJDBC db, Meal_Plan_Screen meal_plan_screen)
+    public LineChart_Macros_MPS(MyJDBC db, Meal_Plan_Screen meal_plan_screen, int frameWidth, int frameHeight)
     {
         // ##########################################
         // Super Constructors & Variables
         // ##########################################
-        super(db, true, "Line Chart: Plan Macros", 1000, 900, 0, 0);
+        super(null, true, frameWidth, frameHeight);
         getScrollPaneJPanel().setBackground(Color.WHITE);
-        set_Resizable(true);
         
         // ##########################################
         // Variables
@@ -69,11 +73,6 @@ public class Line_Chart_Meal_Plan_Screen extends Screen_JFrame
         // ##########################################
         line_chart = new Line_Chart(String.format("%s : Macros Over 24 Hours", planName), frameWidth - 100, frameHeight - 60, dataset);
         addToContainer(getScrollPaneJPanel(), line_chart, 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
-        
-        // ##########################################
-        // Make Frame Visible
-        // ##########################################
-        setFrameVisibility(true);
     }
     
     // ##################################################
@@ -110,7 +109,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen_JFrame
                 mealManagerRegistry.get_MealManagers_MacroValues().entrySet().iterator();
         
         /**
-         *  <Key: MacroName | Value: HashMap<Key: MealManagerID, Value: < MealTime, Quantity>>
+         *  <Key: MacroName | Value: HashMap<Key: MealManagerID, Value: < MealManager, Quantity>>
          *   Put, Replace
          */
         
@@ -120,10 +119,13 @@ public class Line_Chart_Meal_Plan_Screen extends Screen_JFrame
             // Create TimeSeries For Macros
             // ############################################
             /**
-             *   Map<Key: MealManagerID, Value: < MealTime, Quantity>>
+             *   Map<Key: MealManagerID, Value: < MealManager, Quantity>>
              */
             Map.Entry<String, HashMap<MealManager, BigDecimal>> macroEntry = it.next();
             String macroName = macroEntry.getKey();
+            
+            // Exit Clause
+            if (skip_Macros.contains(macroName)) { continue; }
             
             // ########################################
             // Get Correlated Macro TimeSeries
@@ -160,8 +162,7 @@ public class Line_Chart_Meal_Plan_Screen extends Screen_JFrame
     // #################################################################################################################
     // Methods
     // #################################################################################################################
-    @Override
-    public void windowClosedEvent() { meal_plan_screen.removeLineChartScreen(); closeJFrame(); }
+    
     
     //##################################################
     // Conversion Methods
@@ -232,6 +233,11 @@ public class Line_Chart_Meal_Plan_Screen extends Screen_JFrame
     {
         for (String macroName : macronutrientsToCheckAndPos.keySet())
         {
+            // ###########################################
+            // Exit Clause
+            // ###########################################
+            if (skip_Macros.contains(macroName)) { continue; }
+            
             // ###########################################
             // Get Correlated Macro TimeSeries
             // ############################################
