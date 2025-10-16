@@ -314,6 +314,7 @@ public class Screen_JFrame extends JFrame
     public void resizeGUI()
     {
         scrollPaneJPanel.revalidate();
+        scrollPaneJPanel.repaint();
         contentPane.revalidate();
     }
     

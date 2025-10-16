@@ -130,9 +130,8 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
             addToContainer(x, pieChart, 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 10, 10, null);
             
             addToContainer(x, createSpaceDivider(20, 50), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
-            
         }
-    
+        
         //##############################
         // Re-paint GUI
         //##############################
@@ -145,10 +144,11 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
         // Clear GUI
         // ####################################################
         getScrollPaneJPanel().removeAll();
+        resetYPos();
         
-        int rows = (int) Math.ceil((double) pieChart_MPS_Entries.size() / col);
+        int rows = (int) Math.ceil((double) get_PieChart_Count() / col);
         getScrollPaneJPanel().setLayout(new GridLayout(rows, col));
-    
+        
         // ####################################################
         // Sort List by MealTime
         // ####################################################
@@ -175,6 +175,9 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
             getScrollPaneJPanel().add(x);
         }
         
+        //#####################################
+        // Reset GUI Graphics
+        //#####################################
         resizeGUI();
     }
     
@@ -184,11 +187,16 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
         // Clear Collection Data
         //#####################################
         pieChart_MPS_Entries.clear();
-    
+        
         //#####################################
         // Clear GUI
         //#####################################
         getScrollPaneJPanel().removeAll();
+        
+        //#####################################
+        // Reset GUI Graphics
+        //#####################################
+        resizeGUI();
     }
     
     // #################################################################################################################
@@ -237,8 +245,13 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
         //############################################
         // Remove from PieChart Screen Objects
         //############################################
+        System.out.printf("\n\ndelete_MealManager() %s",
+                pieChart_MPS_Entries.stream()
+                        .anyMatch(m -> m.get_MealInPlanID() == mealManager.getMealInPlanID()));
+        
         pieChart_MPS_Entries.removeIf(e -> e.get_MealInPlanID() == mealManager.getMealInPlanID());
-    
+        
+        
         //############################################
         // Re-Draw GUI
         //############################################

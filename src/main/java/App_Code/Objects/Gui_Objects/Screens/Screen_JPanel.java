@@ -68,26 +68,26 @@ public class Screen_JPanel extends JPanel
         // Create Interface With Sections
         //########################################################
         setLayout(new GridLayout(1, 1));
-    
+        
         screenSectioned = new JPanel(new BorderLayout());
         addToContainer(this, screenSectioned, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
-    
+        
         // Top of GUI
         mainNorthPanel = new JPanel(new GridBagLayout());
         screenSectioned.add(mainNorthPanel, BorderLayout.NORTH);
-    
+        
         // Centre of GUI
         mainCenterPanel = new JPanel(new GridBagLayout());
         screenSectioned.add(mainCenterPanel, BorderLayout.CENTER);
-    
+        
         // South of GUI
         mainSouthPanel = new JPanel(new GridBagLayout());
         screenSectioned.add(mainSouthPanel, BorderLayout.SOUTH);
-    
+        
         //##########################################################
         // Create ScrollPane & Add it to Centre of GUI
         //##########################################################
-    
+        
         if (addScrollPane)
         {
             // Attach ScrollPane to the centre of the screen
@@ -158,7 +158,7 @@ public class Screen_JPanel extends JPanel
     protected String formatStrings(String txt, boolean separateWords)
     {
         // Re-assign Re-Capitalised Value into list
-        return  separateWords ?
+        return separateWords ?
                 Arrays.stream(txt.split("[ _]+"))
                         .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
                         .collect(Collectors.joining(" "))
@@ -228,9 +228,16 @@ public class Screen_JPanel extends JPanel
         return containerYPos;
     }
     
+    public void resetYPos()
+    {
+        containerYPos = 0;
+    }
+    
     public void resizeGUI()
     {
         scrollPaneJPanel.revalidate();
+        scrollPaneJPanel.repaint();
+        
         revalidate();
         if (container != null) { container.revalidate(); }
     }
