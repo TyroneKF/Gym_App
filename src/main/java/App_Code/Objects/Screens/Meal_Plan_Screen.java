@@ -132,11 +132,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //##################################################################################################################
     // TotalMealView Table
     //##################################################################################################################
-    private final ArrayList<String>
-            
-            // Table : total_meal_view Table
-            totalMeal_Table_ColToHide = new ArrayList<String>(Arrays.asList("plan_id", "meal_name", "meal_in_plan_id",
-            "weight_of_meal"));
+    private final ArrayList<String> totalMeal_Table_ColToHide = new ArrayList<String>(Arrays.asList(
+            "plan_id", "meal_name", "meal_in_plan_id", "weight_of_meal"
+    ));
     
     private LinkedHashMap<String, Integer> totalMeal_macroColNamePos = new LinkedHashMap<>()
     {{
@@ -149,6 +147,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         put("total_fibre", null);
         put("total_water", null);
         put("total_calories", null);
+       // put("total_liquid", null);
     }};
     
     //##################################################################################################################

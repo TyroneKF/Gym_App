@@ -451,14 +451,14 @@ public class MealManagerRegistry
     //##################################################################################################################
     // LineChart Methods [Meal_Plan_Screen]
     //##################################################################################################################
-    public TimeSeriesCollection create_Plan_MacroValues_LineChart()
+    
+    // Pass in list of variables macros data needs to be checked on
+    public TimeSeriesCollection create_Plan_MacroValues_LineChart(ArrayList<String> macroToCheck)
     {
         TimeSeriesCollection timeSeriesCollection = new TimeSeriesCollection();
         
-        for (String macroName : totalMeal_macroColNamePos.keySet())
+        for (String macroName : macroToCheck)
         {
-            // Exit Clause
-            if (macroName.equals("total_water") | macroName.equals("total_calories")) { continue; }
             
             // Create a series for each macroName
             TimeSeries macroTimeSeries = new TimeSeries(convert_MacroName_To_GUI_Version(macroName));
@@ -500,15 +500,15 @@ public class MealManagerRegistry
     private String format_Strings(String txt, boolean separateWords)
     {
         // Re-assign Re-Capitalised Value into list
-        return txt =
-                separateWords ?
-                        Arrays.stream(txt.split("[ _]+"))
-                                .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
-                                .collect(Collectors.joining(" "))
-                        :
-                        Arrays.stream(txt.split("[ _]+"))
-                                .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
-                                .collect(Collectors.joining("_"));
+        return separateWords
+                ?
+                Arrays.stream(txt.split("[ _]+"))
+                        .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
+                        .collect(Collectors.joining(" "))
+                :
+                Arrays.stream(txt.split("[ _]+"))
+                        .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
+                        .collect(Collectors.joining("_"));
     }
     
     //##################################################################################################################

@@ -4,10 +4,8 @@ import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.MealManager;
 import App_Code.Objects.Database_Objects.MealManagerRegistry;
 import App_Code.Objects.Graph_Objects.Line_Chart;
-import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
-import org.javatuples.Pair;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
@@ -34,8 +32,7 @@ class LineChart_Macros_MPS extends Screen_JPanel
     //##############################################
     // Collections
     //##############################################
-    private LinkedHashMap<String, Integer> macronutrientsToCheckAndPos;
-    private ArrayList<String> skip_Macros = new ArrayList<>(Arrays.asList("total_water","total_calories"));
+    private ArrayList<String> macros_To_Check;
     
     //##############################################
     // Datasets Objects
@@ -46,7 +43,8 @@ class LineChart_Macros_MPS extends Screen_JPanel
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
-    public LineChart_Macros_MPS(MyJDBC db, Meal_Plan_Screen meal_plan_screen, int frameWidth, int frameHeight)
+    public LineChart_Macros_MPS(MyJDBC db, Meal_Plan_Screen meal_plan_screen, String title, ArrayList<String> macros_To_Check,
+                                int frameWidth, int frameHeight)
     {
         // ##########################################
         // Super Constructors & Variables
@@ -61,7 +59,7 @@ class LineChart_Macros_MPS extends Screen_JPanel
         this.meal_plan_screen = meal_plan_screen;
         this.mealManagerRegistry = meal_plan_screen.get_MealManagerRegistry();
         this.planName = meal_plan_screen.getPlanName();
-        this.macronutrientsToCheckAndPos = meal_plan_screen.getTotalMeal_MacroColNamePos();
+        this.macros_To_Check = macros_To_Check;
         
         //############################################
         // Creating Macros / Dataset
@@ -71,16 +69,16 @@ class LineChart_Macros_MPS extends Screen_JPanel
         // ##########################################
         // Create Graph Object & Adding to GUI
         // ##########################################
-        line_chart = new Line_Chart(String.format("%s : Macros Over 24 Hours", planName), frameWidth - 100, frameHeight - 60, dataset);
+        line_chart = new Line_Chart(title, frameWidth - 100, frameHeight - 60, dataset);
         addToContainer(getScrollPaneJPanel(), line_chart, 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
     }
     
     // ##################################################
     // Build Methods
     // ##################################################
-    public void createDataSet()
+    private void createDataSet()
     {
-        dataset = mealManagerRegistry.create_Plan_MacroValues_LineChart();
+        dataset = mealManagerRegistry.create_Plan_MacroValues_LineChart(macros_To_Check);
     }
     
     /**
@@ -100,51 +98,38 @@ class LineChart_Macros_MPS extends Screen_JPanel
         // ####################################################
         Boolean timeChanged = ! previousTime.equals(currentTime);
         
-        int mealInPlanID = mealManager.getMealInPlanID();
-        
         // ####################################################
         // Get MealManager MacroInfo & Replace
         // ####################################################
-        Iterator<Map.Entry<String, HashMap<MealManager, BigDecimal>>> it =
-                mealManagerRegistry.get_MealManagers_MacroValues().entrySet().iterator();
-        
-        /**
-         *  <Key: MacroName | Value: HashMap<Key: MealManagerID, Value: < MealManager, Quantity>>
-         *   Put, Replace
-         */
+        LinkedHashMap<String, HashMap<MealManager, BigDecimal>> updated_Data = mealManagerRegistry.get_MealManagers_MacroValues();
+        Iterator<String> it = macros_To_Check.iterator();
         
         while (it.hasNext())
         {
             // ############################################
-            // Create TimeSeries For Macros
+            // Macro Info
+            // ############################################
+            String macroName = it.next();
+            
+            // ############################################
+            // Create TimeSeries New Info For Macro
             // ############################################
             /**
-             *   Map<Key: MealManagerID, Value: < MealManager, Quantity>>
+             *  <Key: MacroName | Value: HashMap<Key: MealManagerID, Value: < MealManager, Quantity>>
              */
-            Map.Entry<String, HashMap<MealManager, BigDecimal>> macroEntry = it.next();
-            String macroName = macroEntry.getKey();
-            
-            // Exit Clause
-            if (skip_Macros.contains(macroName)) { continue; }
-            
-            // ########################################
-            // Get Correlated Macro TimeSeries
-            // ########################################
+    
+            // Get Macro Info Specific to this mealManager correlating to macroName
+            BigDecimal newMacroValue = updated_Data.get(macroName).get(mealManager);
+      
             // Convert Table Column to Key in TimeSeries Collection
             String macroNameGUI = convertMacroNameToGuiVersion(macroName);
-            
-            // Get TimeSeries correlated to MacroName in collection
-            TimeSeries macroSeries = dataset.getSeries(macroNameGUI);
-            
-            // ########################################
-            // Get Macronutrient Info
-            // ########################################
-            // Get Macro Info Specific to this mealManager correlating to macroName
-            BigDecimal newMacroValue = macroEntry.getValue().get(mealManager);
             
             // #######################################
             // Same Time: Update MacroValue
             // #######################################
+            // Get TimeSeries correlated to MacroName in collection
+            TimeSeries macroSeries = dataset.getSeries(macroNameGUI);
+            
             if (! timeChanged) // IF the time hasn't changed just update the series value with the old time
             {
                 macroSeries.addOrUpdate(previousTime, newMacroValue); // update value
@@ -231,26 +216,13 @@ class LineChart_Macros_MPS extends Screen_JPanel
      */
     public void delete_MealManager_Data(Second mealTime)
     {
-        for (String macroName : macronutrientsToCheckAndPos.keySet())
+        //###############################################
+        // Delete time point from all series
+        //###############################################
+        for (int i = 0; i < dataset.getSeriesCount(); i++)
         {
-            // ###########################################
-            // Exit Clause
-            // ###########################################
-            if (skip_Macros.contains(macroName)) { continue; }
-            
-            // ###########################################
-            // Get Correlated Macro TimeSeries
-            // ############################################
-            // Convert Table Column to Key in TimeSeries Collection
-            String macroNameGUI = convertMacroNameToGuiVersion(macroName);
-            
-            // Get TimeSeries correlated to MacroName in collection
-            TimeSeries macroSeries = dataset.getSeries(macroNameGUI);
-            
-            // #############################################
-            // Delete MealManagers Correlated Macro Value
-            // #############################################
-            macroSeries.delete(mealTime);
+            TimeSeries series = dataset.getSeries(i);
+            series.delete(mealTime);
         }
     }
 }

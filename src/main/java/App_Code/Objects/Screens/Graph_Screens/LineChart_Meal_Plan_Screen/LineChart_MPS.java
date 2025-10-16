@@ -6,8 +6,11 @@ import App_Code.Objects.Database_Objects.MealManagerRegistry;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 import org.jfree.data.time.Second;
+
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class LineChart_MPS extends Screen_JFrame
 {
@@ -20,7 +23,7 @@ public class LineChart_MPS extends Screen_JFrame
     private MealManagerRegistry mealManagerRegistry;
     
     // Screens
-    LineChart_Macros_MPS lineChart_Macros_MPS;
+    private LineChart_Macros_MPS lineChart_Main_Macros_MPS, lineChart_Bigger_Macros_MPS;
     
     
     // #################################################################################################################
@@ -51,16 +54,39 @@ public class LineChart_MPS extends Screen_JFrame
         //#################################################
         // Creating Macros LineChart Screen
         //#################################################
-        lineChart_Macros_MPS = new LineChart_Macros_MPS(db, meal_plan_screen, 1000, 900);
-        tp.add("Macros Per Meal ", lineChart_Macros_MPS);
+        ArrayList<String> macros_To_Check = new ArrayList<>(Arrays.asList(
+                "total_protein",
+                "total_carbohydrates",
+                "total_sugars_of_carbs",
+                "total_fats",
+                "total_saturated_fat",
+                "total_salt",
+                "total_fibre"
+        ));
+        
+        String title = String.format("%s : Macros Over 24 Hours", meal_plan_screen.getPlanName());
+        
+        lineChart_Main_Macros_MPS = new LineChart_Macros_MPS(db, meal_plan_screen, title, macros_To_Check, 1000, 900);
+        
+        tp.add("Macros Per Meal ", lineChart_Main_Macros_MPS);
         
         //#################################################
         // Creating Macros Screen
         //#################################################
-        /*
-        pieChart_Macros_MPS = new PieChart_Macros_MPS(meal_plan_screen, frameWidth, frameHeight);
-        tp.add("Macros Meal Plan ", pieChart_Macros_MPS);
-        */
+        /**
+         *  Create and override methods that display data as we're just interested in calories and water in this chart
+         */
+        
+        ArrayList<String> macros_To_Check2 = new ArrayList<>(Arrays.asList(
+                "total_water", "total_calories"
+                //,"total_liquid"
+        ));
+    
+        String title2 = String.format("%s : Calories & Water Over 24 Hours", meal_plan_screen.getPlanName());
+        
+        lineChart_Bigger_Macros_MPS = new LineChart_Macros_MPS(db, meal_plan_screen, title2, macros_To_Check2, 1000, 900);
+        
+        tp.add("Calories & Water Per Meal ", lineChart_Bigger_Macros_MPS);
         
         // ################################################################
         // Make Frame Visible
@@ -81,7 +107,11 @@ public class LineChart_MPS extends Screen_JFrame
     // #################################################################################################################
     public void update_MealManager_ChartData(MealManager mealManager, Second previousTime, Second currentTime)
     {
-        lineChart_Macros_MPS.update_MealManager_ChartData(mealManager, previousTime, currentTime);
+        // LineChart Main Macros
+        lineChart_Main_Macros_MPS.update_MealManager_ChartData(mealManager, previousTime, currentTime);
+        
+        // LineChart Water & Calories Macros
+        lineChart_Bigger_Macros_MPS.update_MealManager_ChartData(mealManager, previousTime, currentTime);
     }
     
     //##################################################
@@ -89,7 +119,11 @@ public class LineChart_MPS extends Screen_JFrame
     //##################################################
     public void update_LineChart_Title()
     {
-        lineChart_Macros_MPS.update_LineChart_Title();
+        // LineChart Main Macros
+        lineChart_Main_Macros_MPS.update_LineChart_Title();
+        
+        // LineChart Water & Calories Macros
+        lineChart_Bigger_Macros_MPS.update_LineChart_Title();
     }
     
     //##################################################
@@ -97,7 +131,11 @@ public class LineChart_MPS extends Screen_JFrame
     //##################################################
     public void add_New_MealManager_Data(MealManager mealManager)
     {
-        lineChart_Macros_MPS.add_New_MealManager_Data(mealManager);
+        // LineChart Main Macros
+        lineChart_Main_Macros_MPS.add_New_MealManager_Data(mealManager);
+        
+        // LineChart Water & Calories Macros
+        lineChart_Bigger_Macros_MPS.add_New_MealManager_Data(mealManager);
     }
     
     //##################################################
@@ -105,7 +143,11 @@ public class LineChart_MPS extends Screen_JFrame
     //##################################################
     public void clear_LineChart_Dataset()
     {
-        lineChart_Macros_MPS.clear_LineChart_Dataset();
+        // LineChart Main Macros
+        lineChart_Main_Macros_MPS.clear_LineChart_Dataset();
+        
+        // LineChart Water & Calories Macros
+        lineChart_Bigger_Macros_MPS.clear_LineChart_Dataset();
     }
     
     //##################################################
@@ -113,7 +155,11 @@ public class LineChart_MPS extends Screen_JFrame
     //##################################################
     public void refresh_Data()
     {
-        lineChart_Macros_MPS.refresh_Data();
+        // LineChart Main Macros
+        lineChart_Main_Macros_MPS.refresh_Data();
+        
+        // LineChart Water & Calories Macros
+        lineChart_Bigger_Macros_MPS.refresh_Data();
     }
     
     //##################################################
@@ -124,6 +170,10 @@ public class LineChart_MPS extends Screen_JFrame
     */
     public void delete_MealManager_Data(Second mealTime)
     {
-        lineChart_Macros_MPS.delete_MealManager_Data(mealTime);
+        // LineChart Main Macros
+        lineChart_Main_Macros_MPS.delete_MealManager_Data(mealTime);
+        
+        // LineChart Water & Calories Macros
+        lineChart_Bigger_Macros_MPS.delete_MealManager_Data(mealTime);
     }
 }

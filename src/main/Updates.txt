@@ -64,7 +64,7 @@ Pie_Chart:
 .) Update legend if dataset size increases
 .) Duplicate Meals shown in Macros per Meal
      
-
+.) Ingredient Count
 
 
 ######################################################################################
@@ -83,7 +83,7 @@ New Features:
 ######################################################################################
 OVERALL:
 ######################################################################################
-.) Add meassurments table field to App
+.) Add measurements table field to App
 .) Factor out NutritionIx API key into .env file
 .) GRAPHS
 .) Columns in table sizes
