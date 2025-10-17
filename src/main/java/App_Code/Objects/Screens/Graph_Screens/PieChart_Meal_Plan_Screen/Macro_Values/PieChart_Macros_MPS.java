@@ -200,7 +200,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
         // Generate Color Palette
         // ################################################################
         // Generate a random integer between 0 (inclusive) and 100 (exclusive)
-        int randomStart = randomIntGenerator.nextInt(colors.length - 1);
+        int randomStart = randomIntGenerator.nextInt(colors.length );
         int mealCount = mealManagerRegistry.get_Active_MealCount();
         
         Color[] output = new Color[mealCount];
