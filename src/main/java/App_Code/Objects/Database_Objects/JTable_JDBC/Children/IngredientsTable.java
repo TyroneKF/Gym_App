@@ -595,10 +595,7 @@ public class IngredientsTable extends JDBC_JTable
                 SET quantity = %s 
                 WHERE plan_id = %s  AND ingredients_index = %s;""", quantity, temp_PlanID, ingredients_Index);
         
-        //HELLO DELETE
-        System.out.printf("\n\nupdateTableValuesByQuantity() \nQuery: \n\n%s", query1);
-        
-        if (! (db.uploadData_Batch_Altogether(new String[]{ query1 })))
+        if (! (db.uploadData(query1, false)))
         {
             JOptionPane.showMessageDialog(frame, "Un-able to Update row based on cell value!");
             
@@ -617,12 +614,7 @@ public class IngredientsTable extends JDBC_JTable
         
         String query = String.format("SELECT * FROM ingredients_in_sections_of_meal_calculation WHERE ingredients_index = %s AND plan_id = %s;", ingredients_Index, temp_PlanID);
         
-        // HELLO REMOVE
-        System.out.printf("\n\n%s", query);
-        
         ArrayList<ArrayList<Object>> ingredientsUpdateData = db.getTableDataObject_AL(query, tableName);
-        
-        System.out.printf("\n\n\n\nUpdate DATA: \n%s\n\n", ingredientsUpdateData);  // HELLO REMOVE
         
         if (ingredientsUpdateData == null)
         {
