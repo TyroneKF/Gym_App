@@ -942,14 +942,9 @@ public class MealManager
         }
         
         //##########################################
-        // Remove from GUI
+        // Delete MealManager Actions
         //##########################################
         delete_MealManager();
-        
-        //##########################################
-        // Update Registry Data
-        //##########################################
-        mealManagerRegistry.delete_MealManager(this);
         
         //##########################################
         // Update MacrosLeftTable
@@ -970,6 +965,11 @@ public class MealManager
     public void delete_MealManager()
     {
         //##########################################
+        // Update Registry Data
+        //##########################################
+        mealManagerRegistry.delete_MealManager(this);
+    
+        //##########################################
         // Hide JTable object & Collapsible OBJ
         //##########################################
         hideMealManager();
@@ -977,9 +977,15 @@ public class MealManager
     
     private void hideMealManager()
     {
+        //##########################################
+        // Set Variables
+        //##########################################
         setVisibility(false); // hide collapsible Object
         set_Has_Meal_Been_Deleted(true); // set this object as deleted
-    
+        
+        //##########################################
+        // Remove From GUI
+        //##########################################
         container.remove(collapsibleJpObj); // remove the GUI elements from GUI
         container.remove(spaceDividerForMealManager);    // remove space divider from GUI
         

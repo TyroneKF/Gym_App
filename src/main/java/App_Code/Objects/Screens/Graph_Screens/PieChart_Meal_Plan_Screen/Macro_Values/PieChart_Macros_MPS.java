@@ -19,7 +19,6 @@ public class PieChart_Macros_MPS extends Screen_JPanel
     //##################################################################################################################
     private Meal_Plan_Screen meal_plan_screen;
     private MealManagerRegistry mealManagerRegistry;
-    private Random randomIntGenerator = new Random();
     
     // Graph Preferences
     
@@ -199,6 +198,8 @@ public class PieChart_Macros_MPS extends Screen_JPanel
         // ################################################################
         // Generate Color Palette
         // ################################################################
+        Random randomIntGenerator = new Random();
+        
         // Generate a random integer between 0 (inclusive) and 100 (exclusive)
         int randomStart = randomIntGenerator.nextInt(colors.length );
         int mealCount = mealManagerRegistry.get_Active_MealCount();

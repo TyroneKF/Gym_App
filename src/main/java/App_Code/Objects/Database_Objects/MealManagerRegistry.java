@@ -215,7 +215,10 @@ public class MealManagerRegistry
             //#################################################################
             if (! mealManager.isMealManagerInDB()) // IF MealManager isn't saved Remove it
             {
-                mealManager.completely_Delete_MealManager();  // mealManager is not in the DB erase it from the GUI
+                if( ! mealManager.is_Meal_Deleted()) // if the meal hasn't beene deleted, delete its data & GUI
+                {
+                    mealManager.delete_MealManager();
+                }
                 
                 it.remove(); continue;
             }
@@ -387,10 +390,13 @@ public class MealManagerRegistry
         
         // Clear Data First
         mm_PieData.clear();
+    
+        System.out.printf("\n\nChart Updated: %s", mealManager.getCurrentMealName());
         
         // Transfer Data Over into this dataset
         newGenerated.getKeys().forEach(key -> {
             mm_PieData.setValue(key, newGenerated.getValue(key));
+            System.out.printf("\n%s - %s", key, newGenerated.getValue(key));
         });
         
         //#########################################
