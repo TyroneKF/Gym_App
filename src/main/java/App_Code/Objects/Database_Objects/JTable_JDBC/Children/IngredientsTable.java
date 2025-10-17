@@ -711,9 +711,6 @@ public class IngredientsTable extends JDBC_JTable
             //#################################################
             // Delete Ingredient From Temp Meal
             //#################################################
-            
-            System.out.printf("\n\nDeleting Row in table %s \ningredientIndex: %s | meal_in_plan_id: %s", mealName, ingredientIndex, mealInPlanID);
-            
             String query = String.format("DELETE FROM ingredients_in_sections_of_meal WHERE ingredients_index = %s AND plan_id = %s;", ingredientIndex, temp_PlanID);
             
             String[] queryUpload = new String[]{ query };
