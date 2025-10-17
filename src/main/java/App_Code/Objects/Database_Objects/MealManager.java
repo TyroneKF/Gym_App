@@ -979,6 +979,9 @@ public class MealManager
     {
         setVisibility(false); // hide collapsible Object
         set_Has_Meal_Been_Deleted(true); // set this object as deleted
+    
+        container.remove(collapsibleJpObj); // remove the GUI elements from GUI
+        container.remove(spaceDividerForMealManager);    // remove space divider from GUI
         
         //##########################################
         // Delete PieChart (Meal is Gone)
@@ -1006,15 +1009,6 @@ public class MealManager
     public boolean is_Meal_Deleted()
     {
         return hasMealBeenDeleted;
-    }
-    
-    //################################################
-    // Completely Delete Table Through Processing
-    //################################################
-    public void completely_Delete_MealManager()
-    {
-        container.remove(collapsibleJpObj); // remove the GUI elements from GUI
-        container.remove(spaceDividerForMealManager);    // remove space divider from GUI
     }
     
     //################################################

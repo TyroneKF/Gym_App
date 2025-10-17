@@ -1556,9 +1556,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
             MealManager mealManager = it.next();
             if (mealManager.is_Meal_Deleted())
             {
-                mealManager.completely_Delete_MealManager(); // delete from GUI
-                
-                it.remove(); continue;
+                it.remove();
+                continue;
             }
             noMealsLeft = false; // if this line is reached there is a  MealManager (for loop) that hasn't been deleted
         }
