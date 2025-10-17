@@ -168,11 +168,6 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
     // #################################################################################################################
     //  Update / Draw GUI Methods
     // #################################################################################################################
-    private int get_PieChart_Count()
-    {
-        return (int) mealManager_ArrayList.stream().filter(mealManager -> ! mealManager.is_Meal_Deleted()).count();
-    }
-    
     private void sort_PieChartEntry_AL()
     {
         pieChart_MPS_Entries.sort((a, b) -> a.get_MealTime().compareTo(b.get_MealTime()));
@@ -183,7 +178,7 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
         // ################################################################
         // Clean & Build
         // ################################################################
-        int rows = (int) Math.ceil((double) get_PieChart_Count() / col);
+        int rows = (int) Math.ceil((double) mealManagerRegistry.get_Active_MealCount() / col);
         
         getScrollPaneJPanel().removeAll();
         getScrollPaneJPanel().setLayout(new GridLayout(rows, col));
@@ -251,7 +246,7 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
         getScrollPaneJPanel().removeAll();
         resetYPos();
         
-        int rows = (int) Math.ceil((double) get_PieChart_Count() / col);
+        int rows = (int) Math.ceil((double) mealManagerRegistry.get_Active_MealCount() / col);
         getScrollPaneJPanel().setLayout(new GridLayout(rows, col));
         
         // ####################################################

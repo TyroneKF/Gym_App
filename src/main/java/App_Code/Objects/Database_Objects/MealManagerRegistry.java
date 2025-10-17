@@ -524,4 +524,9 @@ public class MealManagerRegistry
     {
         return mealManagers_TotalMeal_MacroValues;
     }
+    
+    public int get_Active_MealCount()
+    {
+        return (int) mealManager_ArrayList.stream().filter(mealManager -> ! mealManager.is_Meal_Deleted()).count();
+    }
 }
