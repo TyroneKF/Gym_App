@@ -19,6 +19,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
     //##################################################################################################################
     private Meal_Plan_Screen meal_plan_screen;
     private MealManagerRegistry mealManagerRegistry;
+    private Random randomIntGenerator = new Random();
     
     // Graph Preferences
     
@@ -33,6 +34,61 @@ public class PieChart_Macros_MPS extends Screen_JPanel
             legendFont = new Font("Serif", Font.PLAIN, 21);
     
     private String planName;
+    //##############################################
+    // Colors
+    //##############################################
+    Color[] colors = {
+            new Color(0xFF3366), // 1 - pink red
+            new Color(0x33CC33), // 2 - green
+            new Color(0x3399FF), // 3 - sky blue
+            new Color(0xFFCC33), // 4 - yellow
+            new Color(0x9933FF), // 5 - violet
+            new Color(0xFF6600), // 6 - orange
+            new Color(0x00CCCC), // 7 - teal
+            new Color(0xFF3399), // 8 - magenta
+            new Color(0x66FF66), // 9 - bright lime
+            new Color(0x3366FF), // 10 - vivid blue
+            new Color(0xFF9933), // 11 - warm orange
+            new Color(0xCC33FF), // 12 - purple
+            new Color(0xFF3333), // 13 - bright red
+            new Color(0x33FFCC), // 14 - aqua mint
+            new Color(0xFF66CC), // 15 - pink
+            new Color(0x99FF33), // 16 - lime
+            new Color(0x0099FF), // 17 - blue cyan
+            new Color(0xFFCC00), // 18 - golden
+            new Color(0x9900FF), // 19 - deep violet
+            new Color(0xFF6633), // 20 - coral orange
+            new Color(0x00FF99), // 21 - mint green
+            new Color(0xFF99FF), // 22 - light pink
+            new Color(0x66CCFF), // 23 - soft sky blue
+            new Color(0xCCFF33), // 24 - chartreuse
+            new Color(0xFF0066), // 25 - fuchsia red
+            new Color(0x33FF66), // 26 - neon green
+            new Color(0x0066FF), // 27 - bright blue
+            new Color(0xFFCC66), // 28 - light orange
+            new Color(0xCC33CC), // 29 - magenta purple
+            new Color(0xFF5050), // 30 - tomato
+            new Color(0x33FFFF), // 31 - cyan
+            new Color(0xFF6699), // 32 - rose pink
+            new Color(0x99FF66), // 33 - fresh lime
+            new Color(0x3366CC), // 34 - medium blue
+            new Color(0xFFB266), // 35 - orange brown
+            new Color(0x9933CC), // 36 - purple plum
+            new Color(0xFF0000), // 37 - pure red
+            new Color(0x00FFCC), // 38 - turquoise
+            new Color(0xFF66FF), // 39 - pink magenta
+            new Color(0x66FF33), // 40 - green lime
+            new Color(0x3399CC), // 41 - light azure
+            new Color(0xFFD633), // 42 - saffron
+            new Color(0xCC00FF), // 43 - intense violet
+            new Color(0xFF704D), // 44 - salmon
+            new Color(0x00FF66), // 45 - neon green
+            new Color(0xFF99CC), // 46 - pastel pink
+            new Color(0x6699FF), // 47 - medium blue
+            new Color(0xFFFF66), // 48 - lemon
+            new Color(0xCC66FF), // 49 - lilac
+            new Color(0xFF3300)  // 50 - bright red-orange
+    };
     
     //##############################################
     // Collections
@@ -112,7 +168,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
             
             pieChart_Dataset.put(macroName, pieDataset); // Put Data into meory
             
-            Pie_Chart pieChart = new Pie_Chart(title, pieWidth, pieHeight, rotateDelay, titleFont, labelFont, legendFont,
+            Pie_Chart pieChart = new Pie_Chart(title, colors, pieWidth, pieHeight, rotateDelay, titleFont, labelFont, legendFont,
                     pieChart_Dataset.get(macroName));
             
             //##############################

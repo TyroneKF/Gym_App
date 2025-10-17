@@ -18,7 +18,6 @@ import org.jfree.data.general.DefaultPieDataset;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
-
 import org.jfree.chart.labels.PieSectionLabelGenerator;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
 
@@ -33,17 +32,19 @@ public class Pie_Chart extends JPanel
     protected DefaultPieDataset<String> dataset;
     protected PiePlot3D plot;
     protected ChartPanel chartPanel;
+    protected Color[] colors;
     
     // ############################################################################################
     // Constructor
     // ############################################################################################
-    public Pie_Chart(String title, int frameWidth, int frameHeight, int rotateDelay, Font titleFont, Font labelFont,
+    public Pie_Chart(String title, Color[] colors, int frameWidth, int frameHeight, int rotateDelay, Font titleFont, Font labelFont,
                      Font legendFont, DefaultPieDataset<String> datasetInput)
     {
         //############################################
         // Set Layout Dimensions
         //############################################
         this.dataset = datasetInput;
+        this.colors = colors;
         
         //############################################
         // Set Layout Dimensions
@@ -85,23 +86,40 @@ public class Pie_Chart extends JPanel
         plot.setLabelFont(labelFont);
         plot.setLabelPaint(Color.BLACK);
         
-        // Legend Font Size
-        chart.getLegend().setItemFont(legendFont);
-        
         // #############################################
-        //
+        // Legend Positioning & Grid
         //#############################################
         chart.removeLegend(); // remove default legend
-    
-       int rows = (int) Math.ceil((double) datasetInput.getItemCount() / 2);
-    
+        
+        int rows = (int) Math.ceil((double) datasetInput.getItemCount() / 2);
+        
         LegendTitle legend = new LegendTitle(plot, new GridArrangement(rows, 2), new GridArrangement(rows, 2));
-    
+        
         legend.setPosition(org.jfree.chart.ui.RectangleEdge.BOTTOM);
         legend.setHorizontalAlignment(org.jfree.chart.ui.HorizontalAlignment.LEFT);
         
-        legend.setItemFont(legendFont);
+        legend.setItemFont(legendFont); // Set Legend Font
         chart.addLegend(legend);
+    
+        // #############################################
+        // Color Palette
+        //##############################################
+        /**
+         * Using % as the remainder allows us to loop back around in case there are more items than colors
+         * We currently have a total of 50 unique colours which limits the odds of repeats.
+         */
+        
+        int pos = 0;
+        for (Comparable key : dataset.getKeys())
+        {
+            plot.setSectionPaint(key, colors[pos % colors.length]);
+            pos++;
+        }
+    
+        // Optional styling
+        plot.setSectionOutlinesVisible(false);
+        plot.setSimpleLabels(true);
+        plot.setForegroundAlpha(0.9f);
         
         // #############################################
         // Auto Rotate Features

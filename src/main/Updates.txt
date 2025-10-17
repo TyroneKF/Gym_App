@@ -65,7 +65,8 @@ Pie_Chart:
 .) Duplicate Meals shown in Macros per Meal
      
 .) Ingredient Count
-
+.) pie similar colours
+.) extra rows
 
 ######################################################################################
 New Features:
