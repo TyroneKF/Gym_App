@@ -246,7 +246,7 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
         getScrollPaneJPanel().removeAll();
         resetYPos();
         
-        int rows = (int) Math.ceil((double) mealManagerRegistry.get_Active_MealCount() / col);
+        int rows = (int) Math.ceil((double) pieChart_MPS_Entries.size() / col);
         getScrollPaneJPanel().setLayout(new GridLayout(rows, col));
         
         // ####################################################
