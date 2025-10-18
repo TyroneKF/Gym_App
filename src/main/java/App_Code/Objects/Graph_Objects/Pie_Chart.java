@@ -36,13 +36,13 @@ public class Pie_Chart extends JPanel
     protected Color[] colors;
     
     // Font
-    private Font titleFont, labelFont, legendFont;
+    protected Font titleFont, labelFont, legendFont;
     
     // String
-    private String title;
+    protected String title;
     
     // int
-    int rows, cols = 2;
+    protected int rows, cols = 2;
     
     // ############################################################################################
     // Constructor
@@ -78,13 +78,17 @@ public class Pie_Chart extends JPanel
         plot.setDirection(Rotation.CLOCKWISE);
         plot.setForegroundAlpha(0.6f);
         plot.setInteriorGap(0.02);
-        
+    
+        //############################################
+        // Label Generations
+        //############################################
         // Format: "{0}" = key, "{1}" = value, "{2}" = percentage
         PieSectionLabelGenerator labelGenerator =
                 new StandardPieSectionLabelGenerator(
                         "{2}",  // show key = value (percentage)
                         new DecimalFormat("0.0"),   // one decimal place for values
                         new DecimalFormat("0%"));   // percentage
+        
         plot.setLabelGenerator(labelGenerator);
         
         // Place labels inside slices
@@ -178,7 +182,7 @@ public class Pie_Chart extends JPanel
         chart.setTitle(txt);
     }
     
-    private void is_PieChart_Empty_MSG()
+    protected void is_PieChart_Empty_MSG()
     {
         Iterator it = dataset.getKeys().iterator();
         
@@ -202,7 +206,7 @@ public class Pie_Chart extends JPanel
         plot.setNoDataMessagePaint(Color.RED);
     }
     
-    private void reDraw_Legend()
+    protected void reDraw_Legend()
     {
         //##############################################
         // If Item Count Has Increased Re-Draw Grid
@@ -230,7 +234,7 @@ public class Pie_Chart extends JPanel
     //############################################################################################
     // Rotator Class
     //############################################################################################
-    public class Rotator extends Timer implements ActionListener
+    protected class Rotator extends Timer implements ActionListener
     {
         private final PiePlot plot;
         private int angle = 270; // starting angle

@@ -100,7 +100,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
      */
     private LinkedHashMap<String, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues;
     
-    private HashMap<String, DefaultPieDataset<String>> pieChart_Dataset = new HashMap<>();
+    private LinkedHashMap<String, DefaultPieDataset<String>> macroValue_Dataset_Map = new LinkedHashMap<>();
     
     //##################################################################################################################
     // Constructors
@@ -146,7 +146,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
         getScrollPaneJPanel().removeAll();
         getScrollPaneJPanel().setLayout(new GridLayout(rows, col));
         
-        pieChart_Dataset.clear(); // Clear Storage
+        macroValue_Dataset_Map.clear(); // Clear Storage
         
         // ################################################################
         // Generate Color Palette
@@ -169,11 +169,11 @@ public class PieChart_Macros_MPS extends Screen_JPanel
             //##################################
             String title = String.format(" %s  Across Meals", formatStrings(macroName, true));
             DefaultPieDataset<String> pieDataset = mealManagerRegistry.create_Macro_PieChart_Dataset(macroName);
-            pieChart_Dataset.put(macroName, pieDataset); // Put Data into memory
+            macroValue_Dataset_Map.put(macroName, pieDataset); // Put Data into memory
             
             
             Pie_Chart pieChart = new Pie_Chart(title, colorPalette, pieWidth, pieHeight, rotateDelay, titleFont,
-                    labelFont, legendFont, pieChart_Dataset.get(macroName));
+                    labelFont, legendFont, macroValue_Dataset_Map.get(macroName));
             
             //##################################
             // Add PieChart to GUI
@@ -202,12 +202,12 @@ public class PieChart_Macros_MPS extends Screen_JPanel
         
         // Generate a random integer between 0 (inclusive) and 100 (exclusive)
         int randomStart = randomIntGenerator.nextInt(colors.length );
-        int mealCount = mealManagerRegistry.get_Active_MealCount();
+        int colorCount = mealManagerRegistry.get_Active_MealCount() + 20;
         
-        Color[] output = new Color[mealCount];
+        Color[] output = new Color[colorCount];
         
         // Generate x amount of colors to match meals count
-        for (int i = 0; i < mealCount; i++)
+        for (int i = 0; i < colorCount; i++)
         {
             output[i] = colors[randomStart % colors.length];
             randomStart += 1;
@@ -224,7 +224,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
         // ############################################################################
         // Paint GUI
         // ############################################################################
-        Iterator<Map.Entry<String, DefaultPieDataset<String>>> it = pieChart_Dataset.entrySet().iterator();
+        Iterator<Map.Entry<String, DefaultPieDataset<String>>> it = macroValue_Dataset_Map.entrySet().iterator();
         while (it.hasNext())
         {
             // #########################################
