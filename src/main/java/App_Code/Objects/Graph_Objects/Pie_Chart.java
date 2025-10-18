@@ -9,6 +9,7 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.block.GridArrangement;
+import org.jfree.chart.plot.DefaultDrawingSupplier;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.PiePlot3D;
 import org.jfree.chart.title.LegendTitle;
@@ -34,6 +35,15 @@ public class Pie_Chart extends JPanel
     protected ChartPanel chartPanel;
     protected Color[] colors;
     
+    // Font
+    private Font titleFont, labelFont, legendFont;
+    
+    // String
+    private String title;
+    
+    // int
+    int rows, cols = 2;
+    
     // ############################################################################################
     // Constructor
     // ############################################################################################
@@ -45,6 +55,12 @@ public class Pie_Chart extends JPanel
         //############################################
         this.dataset = datasetInput;
         this.colors = colors;
+    
+        this.title = title;
+        
+        this.titleFont = titleFont;
+        this.labelFont = labelFont;
+        this.legendFont = legendFont;
         
         //############################################
         // Set Layout Dimensions
@@ -90,36 +106,32 @@ public class Pie_Chart extends JPanel
         // Legend Positioning & Grid
         //#############################################
         chart.removeLegend(); // remove default legend
+        rows = (int) Math.ceil((double) dataset.getKeys().size() / cols);
         
-        int rows = (int) Math.ceil((double) datasetInput.getItemCount() / 2);
-        
-        LegendTitle legend = new LegendTitle(plot, new GridArrangement(rows, 2), new GridArrangement(rows, 2));
+        LegendTitle legend = new LegendTitle(plot, new GridArrangement(rows, cols), new GridArrangement(rows, cols));
         
         legend.setPosition(org.jfree.chart.ui.RectangleEdge.BOTTOM);
         legend.setHorizontalAlignment(org.jfree.chart.ui.HorizontalAlignment.LEFT);
         
         legend.setItemFont(legendFont); // Set Legend Font
         chart.addLegend(legend);
-    
-        // #############################################
+        
+        //#############################################
         // Color Palette
         //##############################################
         /**
-         * Using % as the remainder allows us to loop back around in case there are more items than colors
-         * We currently have a total of 50 unique colours which limits the odds of repeats.
+         * Lock this pieChart to using the same colours in the same sequence
+         * Caused mismatch with other charts when the dataset was updated as the order of colours was randomised
          */
+        DefaultDrawingSupplier fixedDrawingSupplier = new DefaultDrawingSupplier(
+                colors,
+                DefaultDrawingSupplier.DEFAULT_OUTLINE_PAINT_SEQUENCE,
+                DefaultDrawingSupplier.DEFAULT_STROKE_SEQUENCE,
+                DefaultDrawingSupplier.DEFAULT_OUTLINE_STROKE_SEQUENCE,
+                DefaultDrawingSupplier.DEFAULT_SHAPE_SEQUENCE
+        );
         
-        int pos = 0;
-        for (Comparable key : dataset.getKeys())
-        {
-            plot.setSectionPaint(key, colors[pos % colors.length]);
-            pos++;
-        }
-    
-        // Optional styling
-        plot.setSectionOutlinesVisible(false);
-        plot.setSimpleLabels(true);
-        plot.setForegroundAlpha(0.9f);
+        plot.setDrawingSupplier(fixedDrawingSupplier);
         
         // #############################################
         // Auto Rotate Features
@@ -146,6 +158,7 @@ public class Pie_Chart extends JPanel
         
         dataset.addChangeListener(event -> {
             is_PieChart_Empty_MSG();
+            reDraw_Legend();
         });
         
         // Event above is only triggered when values change & we need to do check on initialization too
@@ -165,7 +178,7 @@ public class Pie_Chart extends JPanel
         chart.setTitle(txt);
     }
     
-    public void is_PieChart_Empty_MSG()
+    private void is_PieChart_Empty_MSG()
     {
         Iterator it = dataset.getKeys().iterator();
         
@@ -187,6 +200,31 @@ public class Pie_Chart extends JPanel
         plot.setNoDataMessage("No data to display");
         plot.setNoDataMessageFont(new Font("SansSerif", Font.BOLD, 18));
         plot.setNoDataMessagePaint(Color.RED);
+    }
+    
+    private void reDraw_Legend()
+    {
+        //##############################################
+        // If Item Count Has Increased Re-Draw Grid
+        //##############################################
+        if (((rows * cols) - dataset.getKeys().size()) > 0) { return; } // if there is space for an additional legend item, return
+        
+        System.out.printf("\n\nRedrawing Legends: %s",title );
+        
+        // #############################################
+        // Legend Positioning & Grid
+        //#############################################
+        chart.removeLegend(); // remove default legend
+        
+        rows = (int) Math.ceil((double) dataset.getItemCount() / cols);
+        
+        LegendTitle legend = new LegendTitle(plot, new GridArrangement(rows, cols), new GridArrangement(rows, cols));
+        
+        legend.setPosition(org.jfree.chart.ui.RectangleEdge.BOTTOM);
+        legend.setHorizontalAlignment(org.jfree.chart.ui.HorizontalAlignment.LEFT);
+        
+        legend.setItemFont(legendFont); // Set Legend Font
+        chart.addLegend(legend);
     }
     
     //############################################################################################

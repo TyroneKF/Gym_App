@@ -311,7 +311,7 @@ public class MealManagerRegistry
         if (total.compareTo(BigDecimal.ZERO) > 0) // IF totalCalories > 0, it's not a new meal  / empty
         {
             /**
-             *  mealManagersMacroValues : <Key: Salt | Value: <MealManagerID: 1, <MealTime: 14:00 , Quantity: 300g >>
+             *  mealManagersMacroValues : <Key: Salt | Value: <MealManager: mealManager, Quantity: 300g >>
              */
             data = new LinkedHashMap<String, BigDecimal>()
             {{

@@ -172,7 +172,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen_JFrame
         // Generate Color Palette
         // ################################################################
         // Generate a random integer between 0 (inclusive) and 100 (exclusive)
-        int randomInRange = randomIntGenerator.nextInt(colors.length - 1);
+        int randomInRange = randomIntGenerator.nextInt(colors.length);
         Color[] colorPalette = colors[randomInRange];
         
         //#####################################
