@@ -165,7 +165,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
             //##################################
             // Get PieChart DATA & Add to List
             //##################################
-            String title = String.format(" %s  Across Meals", formatStrings(macroName, true));
+            String title = String.format("%s", formatStrings(macroName, true));
             DefaultPieDataset<MacroKey> pieDataset = create_Macro_PieChart_Dataset(macroName);
             macroValue_Dataset_Map.put(macroName, pieDataset); // Put Data into memory
         

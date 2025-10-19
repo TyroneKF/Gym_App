@@ -169,12 +169,8 @@ public class Pie_Chart<K extends Comparable<K>> extends JPanel
          */
         
         dataset.addChangeListener(event -> {
-            calculate_Dataset_Total();
-            is_PieChart_Empty_MSG();
-            reDraw_Legend();
+            dataset_ActionEvents();
         });
-        
-        
         
         //############################################
         // Events Need to be triggered at runtime
@@ -182,8 +178,7 @@ public class Pie_Chart<K extends Comparable<K>> extends JPanel
         /**
          Event above is only triggered when values change & we need to do check on initialization too
          */
-        calculate_Dataset_Total();
-        is_PieChart_Empty_MSG();
+        first_RunTime_Events();
         
         // #############################################
         // Add Plot to Panel
@@ -194,6 +189,19 @@ public class Pie_Chart<K extends Comparable<K>> extends JPanel
     // #################################################################################################################
     // Methods
     // #################################################################################################################
+    protected void dataset_ActionEvents()
+    {
+        calculate_Dataset_Total();
+        is_PieChart_Empty_MSG();
+        reDraw_Legend();
+    }
+    
+    protected void first_RunTime_Events()
+    {
+        calculate_Dataset_Total();
+        is_PieChart_Empty_MSG();
+    }
+    
     protected void calculate_Dataset_Total()
     {
         // ###################################
@@ -275,7 +283,7 @@ public class Pie_Chart<K extends Comparable<K>> extends JPanel
     {
         chart.setTitle(txt);
     }
-    
+
     //############################################################################################
     // Rotator Class
     //############################################################################################

@@ -12,11 +12,6 @@ import java.text.AttributedString;
 public class Pie_Chart_Macros extends Pie_Chart
 {
     // #################################################################################################################
-    // Variables
-    // #################################################################################################################
-    
-    
-    // #################################################################################################################
     // Constructor
     // #################################################################################################################
     public Pie_Chart_Macros(String title, Color[] colors, int frameWidth, int frameHeight, int rotateDelay, Font titleFont,
@@ -62,6 +57,26 @@ public class Pie_Chart_Macros extends Pie_Chart
         // Set Label Generator
         //#################################################################
         plot.setLegendLabelGenerator(labelGen);
+    }
+    
+    // #################################################################################################################
+    // Methods
+    // #################################################################################################################
+    @Override
+    protected void dataset_ActionEvents()
+    {
+        calculate_Dataset_Total();
+        is_PieChart_Empty_MSG();
+        reDraw_Legend();
+        setTitle(String.format(" %s Across Meals  [ %s g ]", title, get_DatasetTotal()));
+    }
+    
+    @Override
+    protected void first_RunTime_Events()
+    {
+        calculate_Dataset_Total();
+        is_PieChart_Empty_MSG();
+        setTitle(String.format(" %s Across Meals  [ %s g ]", title, get_DatasetTotal()));
     }
 }
 

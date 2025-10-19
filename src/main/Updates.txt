@@ -36,40 +36,19 @@ Check for
 ######################################################################################
 Work On:
 ######################################################################################
-.) All MealManager PieCharts in one Screen
-.) Meal_Plan_Screen per macro %s
-.) MealManagers & All pie charts share the same piechart object
 
-.) isOpenMethods for external screens
+TotalMeal:
+.) Ingredient Count
+.) Refresh Meal - Redraws screen and what's happens to pie charts open from unsaved meals it should be removed
 
-PieChartScreen MPS - Ordered by time:
-.) Change Meal Time - changes order & title
-.) Add Meal = new pie chart
-.) Delete Meal = new pie chart
-.) Are deleted meals drawn on GUI
-.) Close method triggers errors when screens are open
-
-.) Refresh Meal - Redraws screen and whats happens to pie charts open from unsaved meals it should be removed
-
-MealManager -
+MealManager
 .) Check time comparison methods with get currentTime
-
+.) MealManager Update mealTime could just change time field on TotalMeal Vs reloading whole table
 
 Pie_Chart:
-.) PieChart miniMacros Similar Colour
 .) pie_Chart empty is out of line with others
-.) Refactor data parts of pieChartMPS Screen into registry
-.) MealManager Update mealTime could just change time field on TotalMeal Vs reloading whole table
-.) LineChart tabbedPane for Water & Total Calories
-.) Update legend if dataset size increases
-.) Duplicate Meals shown in Macros per Meal
-     
-.) Ingredient Count
-.) pie similar colours
-.) extra rows
-
-.) Remove  private int percent_Calculator() from MealManagerRegistry.java
-.) if carbs & sugars are the same = 0%
+.) PieChart empty values if left side bound results
+.) Units
 
 ######################################################################################
 New Features:
