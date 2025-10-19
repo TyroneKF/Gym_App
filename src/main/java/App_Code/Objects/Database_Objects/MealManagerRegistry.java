@@ -215,7 +215,7 @@ public class MealManagerRegistry
             //#################################################################
             if (! mealManager.isMealManagerInDB()) // IF MealManager isn't saved Remove it
             {
-                if( ! mealManager.is_Meal_Deleted()) // if the meal hasn't beene deleted, delete its data & GUI
+                if (! mealManager.is_Meal_Deleted()) // if the meal hasn't beene deleted, delete its data & GUI
                 {
                     mealManager.delete_MealManager();
                 }
@@ -297,60 +297,31 @@ public class MealManagerRegistry
         //###################################################
         // Get Macros
         //###################################################
-        LinkedHashMap<String, BigDecimal> data;
-        
-        BigDecimal proteinValue = mealManagers_TotalMeal_MacroValues.get("total_protein").get(mealManager);
-        BigDecimal carbsValue = mealManagers_TotalMeal_MacroValues.get("total_carbohydrates").get(mealManager);
-        BigDecimal fatsValue = mealManagers_TotalMeal_MacroValues.get("total_fats").get(mealManager);
-        
-        BigDecimal total = proteinValue.add(carbsValue).add(fatsValue);
-        
-        //###################################################
-        // Produce Output
-        //###################################################
-        if (total.compareTo(BigDecimal.ZERO) > 0) // IF totalCalories > 0, it's not a new meal  / empty
-        {
-            /**
-             *  mealManagersMacroValues : <Key: Salt | Value: <MealManager: mealManager, Quantity: 300g >>
-             */
-            data = new LinkedHashMap<String, BigDecimal>()
-            {{
-                // ###########################
-                // Protein
-                // ###########################
-                put(String.format("Protein [ %d%% ] ", percent_Calculator(proteinValue, total)), proteinValue);
-                
-                // ###########################
-                // Carbs
-                // ###########################
-                BigDecimal sugarCarbsValue = mealManagers_TotalMeal_MacroValues.get("total_sugars_of_carbs").get(mealManager);
-                
-                put(String.format("Carbohydrates [ %d%% ] ", percent_Calculator(carbsValue, total)), carbsValue.subtract(sugarCarbsValue));
-                put("Sugars Of Carbs", sugarCarbsValue);
-                
-                // ###########################
-                // Fats
-                // ###########################
-                BigDecimal satFatsValue = mealManagers_TotalMeal_MacroValues.get("total_saturated_fat").get(mealManager);
-                
-                put(String.format("Fats [ %d%% ] ", percent_Calculator(fatsValue, total)), fatsValue.subtract(satFatsValue));
-                put("Saturated Fats", satFatsValue);
-            }};
-        }
-        else
-        {
-            data = new LinkedHashMap<String, BigDecimal>()
-            {{
-                // ###########################
-                // Protein
-                // ###########################
-                put(String.format("Protein [ %d%% ] ", 0), new BigDecimal(0));
-                put(String.format("Carbohydrates [ %d%% ] ", 0), new BigDecimal(0));
-                put("Sugars Of Carbs", new BigDecimal(0));
-                put(String.format("Fats [ %d%%] ", 0), new BigDecimal(0));
-                put("Saturated Fats", new BigDecimal(0));
-            }};
-        }
+        LinkedHashMap<String, BigDecimal> data = new LinkedHashMap<String, BigDecimal>()
+        {{
+            // ###########################
+            // Protein
+            // ###########################
+            put("Protein",  mealManagers_TotalMeal_MacroValues.get("total_protein").get(mealManager));
+    
+            // ###########################
+            // Carbs
+            // ###########################
+            BigDecimal sugarCarbsValue = mealManagers_TotalMeal_MacroValues.get("total_sugars_of_carbs").get(mealManager);
+            BigDecimal carbsValue = mealManagers_TotalMeal_MacroValues.get("total_carbohydrates").get(mealManager);
+            
+            put("Carbohydrates", carbsValue.subtract(sugarCarbsValue));
+            put("Sugars Of Carbs", sugarCarbsValue);
+    
+            // ###########################
+            // Fats
+            // ###########################
+            BigDecimal satFatsValue = mealManagers_TotalMeal_MacroValues.get("total_saturated_fat").get(mealManager);
+            BigDecimal fatsValue = mealManagers_TotalMeal_MacroValues.get("total_fats").get(mealManager);
+    
+            put("Fats", fatsValue.subtract(satFatsValue));
+            put("Saturated Fats", satFatsValue);
+        }};
         
         //#############################################
         // Add Data to Dataset to represent
@@ -358,7 +329,7 @@ public class MealManagerRegistry
         DefaultPieDataset<String> dataset = new DefaultPieDataset<>();
         for (Map.Entry<String, BigDecimal> macroValues : data.entrySet())
         {
-            dataset.setValue(String.format("  %s - %s g   ", macroValues.getKey(), macroValues.getValue()), macroValues.getValue());
+            dataset.setValue(macroValues.getKey(), macroValues.getValue());
         }
         
         //#############################################
@@ -387,17 +358,20 @@ public class MealManagerRegistry
         //#########################################
         DefaultPieDataset<String> newGenerated = get_Updated_PieChart_Dataset(mealManager);
         DefaultPieDataset<String> mm_PieData = pieChart_Dataset_HashMap.get(mealInPlanID);
-        
+    
+        // Stop PieDataset event listener from being triggered on each key update and instead on batch (avoids key races)
+        mm_PieData.setNotify(false);
+
         // Clear Data First
         mm_PieData.clear();
-    
-        System.out.printf("\n\nChart Updated: %s", mealManager.getCurrentMealName());
         
         // Transfer Data Over into this dataset
         newGenerated.getKeys().forEach(key -> {
             mm_PieData.setValue(key, newGenerated.getValue(key));
-            System.out.printf("\n%s - %s", key, newGenerated.getValue(key));
         });
+    
+        // Turn Notifications back on
+        mm_PieData.setNotify(true);
         
         //#########################################
         // Updated Saved Dataset With New Values

@@ -4,7 +4,7 @@ import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.MealManager;
 import App_Code.Objects.Database_Objects.MealManagerRegistry;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
-import App_Code.Objects.Graph_Objects.Pie_Chart;
+import App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Meals.Pie_Chart_Totals;
 import org.jfree.data.general.DefaultPieDataset;
 
 import java.awt.*;
@@ -21,7 +21,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen_JFrame
     // Objects
     //#####################################
     private MealManager mealManager;
-    private Pie_Chart pieChart;
+    private Pie_Chart_Totals pieChart;
     private MealManagerRegistry mealManagerRegistry;
     
     //#####################################
@@ -178,7 +178,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen_JFrame
         //#####################################
         // Create PieChart
         //#####################################
-        pieChart = new Pie_Chart(title, colorPalette, pieWidth, pieHeight, 150, titleFont, labelFont, legendFont, dataset);
+        pieChart = new Pie_Chart_Totals(title, colorPalette, pieWidth, pieHeight, 150, titleFont, labelFont, legendFont, dataset);
         addToContainer(getScrollPaneJPanel(), pieChart, 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
         
         //#####################################

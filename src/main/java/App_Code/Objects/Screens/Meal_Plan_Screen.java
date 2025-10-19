@@ -1299,6 +1299,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
     
     private void update_PieChart_DATA()
     {
+        if (! is_PieChart_Screen_Open()) { return; }
+        
         pieChart_Screen_MPS.updateData();
     }
     

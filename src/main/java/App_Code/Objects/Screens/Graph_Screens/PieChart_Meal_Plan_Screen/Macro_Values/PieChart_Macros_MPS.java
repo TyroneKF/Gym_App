@@ -243,10 +243,16 @@ public class PieChart_Macros_MPS extends Screen_JPanel
             // #########################################
             // Transfer Data Over into PieChart Dataset
             // #########################################
+            // Stop PieDataset event listener from being triggered on each key update and instead on batch (avoids key races)
+            pieDataset.setNotify(false);
+            
             pieDataset.clear(); // Clear
             updated_Dataset.getKeys().forEach(key -> {
                 pieDataset.setValue(key, updated_Dataset.getValue(key));
             });
+    
+            // Turn Notifications back on
+            pieDataset.setNotify(true);
         }
         
         // ############################################################################

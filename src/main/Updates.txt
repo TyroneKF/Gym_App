@@ -68,6 +68,8 @@ Pie_Chart:
 .) pie similar colours
 .) extra rows
 
+.) Remove  private int percent_Calculator() from MealManagerRegistry.java
+
 ######################################################################################
 New Features:
 ######################################################################################

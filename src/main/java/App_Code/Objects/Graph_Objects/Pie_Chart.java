@@ -4,6 +4,7 @@ package App_Code.Objects.Graph_Objects;
 import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -44,9 +45,12 @@ public class Pie_Chart extends JPanel
     // int
     protected int rows, cols = 2;
     
-    // ############################################################################################
+    // BigDecimal
+    protected BigDecimal datasetTotal = new BigDecimal(0);
+    
+    // #################################################################################################################
     // Constructor
-    // ############################################################################################
+    // #################################################################################################################
     public Pie_Chart(String title, Color[] colors, int frameWidth, int frameHeight, int rotateDelay, Font titleFont, Font labelFont,
                      Font legendFont, DefaultPieDataset<String> datasetInput)
     {
@@ -55,7 +59,7 @@ public class Pie_Chart extends JPanel
         //############################################
         this.dataset = datasetInput;
         this.colors = colors;
-    
+        
         this.title = title;
         
         this.titleFont = titleFont;
@@ -78,7 +82,7 @@ public class Pie_Chart extends JPanel
         plot.setDirection(Rotation.CLOCKWISE);
         plot.setForegroundAlpha(0.6f);
         plot.setInteriorGap(0.02);
-    
+        
         //############################################
         // Label Generations
         //############################################
@@ -107,7 +111,7 @@ public class Pie_Chart extends JPanel
         plot.setLabelPaint(Color.BLACK);
         
         // #############################################
-        // Legend Positioning & Grid
+        // Legend Positioning & Grid //HELLO SHOULD BE REFACTORED TO METHOD
         //#############################################
         chart.removeLegend(); // remove default legend
         rows = (int) Math.ceil((double) dataset.getKeys().size() / cols);
@@ -161,11 +165,20 @@ public class Pie_Chart extends JPanel
          */
         
         dataset.addChangeListener(event -> {
+            calculate_Dataset_Total();
             is_PieChart_Empty_MSG();
             reDraw_Legend();
         });
         
-        // Event above is only triggered when values change & we need to do check on initialization too
+        
+        
+        //############################################
+        // Events Need to be triggered at runtime
+        //############################################
+        /**
+         Event above is only triggered when values change & we need to do check on initialization too
+         */
+        calculate_Dataset_Total();
         is_PieChart_Empty_MSG();
         
         // #############################################
@@ -174,16 +187,40 @@ public class Pie_Chart extends JPanel
         add(chartPanel);
     }
     
-    // ############################################################################################
+    // #################################################################################################################
     // Methods
-    // ############################################################################################
-    public void setTitle(String txt)
+    // #################################################################################################################
+    protected void calculate_Dataset_Total()
     {
-        chart.setTitle(txt);
+        // ###################################
+        // Reset Value
+        // ###################################
+        datasetTotal = BigDecimal.ZERO;
+    
+        // ###################################
+        // Calculate Sum
+        // ###################################
+        for (String macroName : dataset.getKeys())
+        {
+            datasetTotal = datasetTotal.add((BigDecimal) dataset.getValue(macroName));
+        }
+    }
+    
+    protected BigDecimal get_DatasetTotal()
+    {
+        return datasetTotal;
     }
     
     protected void is_PieChart_Empty_MSG()
     {
+        //#####################################################
+        // Set the no-data message
+        //#####################################################
+        //if (get_DatasetTotal().compareTo(BigDecimal.ZERO) > 0) { return; } // If the total is bigger than 0 exit
+        
+        //#####################################################
+        //
+        //#####################################################
         Iterator it = dataset.getKeys().iterator();
         
         boolean emptyValues = true;
@@ -211,9 +248,10 @@ public class Pie_Chart extends JPanel
         //##############################################
         // If Item Count Has Increased Re-Draw Grid
         //##############################################
-        if (((rows * cols) - dataset.getKeys().size()) > 0) { return; } // if there is space for an additional legend item, return
+        // if there is space for an additional legend item, return
+        if (((rows * cols) - dataset.getKeys().size()) > 0) { return; }
         
-        System.out.printf("\n\nRedrawing Legends: %s",title );
+        System.out.printf("\n\nRedrawing Legends: %s", title);
         
         // #############################################
         // Legend Positioning & Grid
@@ -229,6 +267,26 @@ public class Pie_Chart extends JPanel
         
         legend.setItemFont(legendFont); // Set Legend Font
         chart.addLegend(legend);
+    }
+    
+    protected int percent_Calculator(BigDecimal value, BigDecimal overall)
+    {
+        //#######################################
+        // Exit Clause
+        //#######################################
+        if (overall.compareTo(BigDecimal.ZERO) == 0) { return 0; }
+        
+        //#######################################
+        // Create % in int
+        //#######################################
+        BigDecimal ratio = value.divide(overall, 4, RoundingMode.DOWN); // 4 decimal places, rounded
+        BigDecimal percent = ratio.multiply(BigDecimal.valueOf(100));      // Convert to %
+        return percent.setScale(0, RoundingMode.HALF_DOWN).intValueExact();
+    }
+    
+    public void setTitle(String txt)
+    {
+        chart.setTitle(txt);
     }
     
     //############################################################################################
