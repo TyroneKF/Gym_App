@@ -216,24 +216,7 @@ public class Pie_Chart extends JPanel
         //#####################################################
         // Set the no-data message
         //#####################################################
-        //if (get_DatasetTotal().compareTo(BigDecimal.ZERO) > 0) { return; } // If the total is bigger than 0 exit
-        
-        //#####################################################
-        //
-        //#####################################################
-        Iterator it = dataset.getKeys().iterator();
-        
-        boolean emptyValues = true;
-        while (it.hasNext())
-        {
-            String key = (String) it.next();
-            Number value = dataset.getValue(key);
-            BigDecimal bd_Value = BigDecimal.valueOf(value.doubleValue());
-            
-            if (bd_Value.compareTo(BigDecimal.ZERO) > 0) { emptyValues = false; break; }
-        }
-        
-        if (! emptyValues) { return; }
+        if (get_DatasetTotal().compareTo(BigDecimal.ZERO) > 0) { return; } // If the total is bigger than 0 exit
         
         //#####################################################
         // Set the no-data message

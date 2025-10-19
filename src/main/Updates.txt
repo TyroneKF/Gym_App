@@ -69,6 +69,7 @@ Pie_Chart:
 .) extra rows
 
 .) Remove  private int percent_Calculator() from MealManagerRegistry.java
+.) if carbs & sugars are the same = 0%
 
 ######################################################################################
 New Features:

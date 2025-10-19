@@ -327,10 +327,7 @@ public class MealManagerRegistry
         // Add Data to Dataset to represent
         //#############################################
         DefaultPieDataset<String> dataset = new DefaultPieDataset<>();
-        for (Map.Entry<String, BigDecimal> macroValues : data.entrySet())
-        {
-            dataset.setValue(macroValues.getKey(), macroValues.getValue());
-        }
+        data.forEach(dataset::setValue); // Transfer data, preserves order too
         
         //#############################################
         // Return Value

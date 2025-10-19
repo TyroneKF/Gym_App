@@ -39,15 +39,32 @@ public class Pie_Chart_Totals extends Pie_Chart
                 //###############################
                 // Macro Info
                 //###############################
-                BigDecimal macroValue = (BigDecimal) dataset.getValue(macroName);
-    
+                BigDecimal
+                        macroValue = (BigDecimal) dataset.getValue(macroName),
+                        macrosTotal = get_DatasetTotal();
+                
                 //###############################
                 // Fats / Carbs / Protein Labels
                 //###############################
-                if (macroName.equals("Protein") | macroName.equals("Carbohydrates") | macroName.equals("Fats"))
+                if (macroName.equals("Protein"))
                 {
-                    BigDecimal total = get_DatasetTotal();
-                    int percent = percent_Calculator(macroValue, total);
+                    int percent = percent_Calculator(macroValue, macrosTotal);
+                    
+                    return String.format("%s [ %d%% ] - %s g ", macroName, percent, macroValue);
+                }
+                else if (macroName.equals("Carbohydrates"))
+                {
+                    BigDecimal sugarsMacroValue = (BigDecimal) dataset.getValue("Sugars Of Carbs");
+                    BigDecimal total_Carbs = macroValue.add(sugarsMacroValue);
+                    int percent = percent_Calculator(total_Carbs, macrosTotal);
+                    
+                    return String.format("%s [ %d%% ] - %s g ", macroName, percent, macroValue);
+                }
+                else if (macroName.equals("Fats"))
+                {
+                    BigDecimal satFatMacroValue = (BigDecimal) dataset.getValue("Saturated Fats");
+                    BigDecimal totalFats = macroValue.add(satFatMacroValue);
+                    int percent = percent_Calculator(totalFats, macrosTotal);
                     
                     return String.format("%s [ %d%% ] - %s g ", macroName, percent, macroValue);
                 }
@@ -70,22 +87,4 @@ public class Pie_Chart_Totals extends Pie_Chart
         //#################################################################
         plot.setLegendLabelGenerator(labelGen);
     }
-    
-    @Override
-    protected void calculate_Dataset_Total()
-    {
-        // ###################################
-        // Reset Value
-        // ###################################
-        datasetTotal = BigDecimal.ZERO;
-        
-        // ###################################
-        // Sum
-        // ###################################
-        datasetTotal = datasetTotal
-                .add((BigDecimal) dataset.getValue("Protein"))
-                .add((BigDecimal) dataset.getValue("Carbohydrates"))
-                .add((BigDecimal) dataset.getValue("Fats"));
-    }
-    
 }
