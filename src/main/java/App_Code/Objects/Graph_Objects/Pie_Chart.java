@@ -23,18 +23,22 @@ import java.util.Iterator;
 import org.jfree.chart.labels.PieSectionLabelGenerator;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
 
-public class Pie_Chart extends JPanel
+public class Pie_Chart<K extends Comparable<K>> extends JPanel
 {
     // ############################################################################################
     // Variables
     // ############################################################################################
     
+    // Collections
+    protected DefaultPieDataset<K> dataset;
+    protected Color[] colors;
+    
     // Objects
     protected JFreeChart chart;
-    protected DefaultPieDataset<String> dataset;
+
     protected PiePlot3D plot;
     protected ChartPanel chartPanel;
-    protected Color[] colors;
+   
     
     // Font
     protected Font titleFont, labelFont, legendFont;
@@ -51,8 +55,8 @@ public class Pie_Chart extends JPanel
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
-    public Pie_Chart(String title, Color[] colors, int frameWidth, int frameHeight, int rotateDelay, Font titleFont, Font labelFont,
-                     Font legendFont, DefaultPieDataset<String> datasetInput)
+    public Pie_Chart(String title, Color[] colors, int frameWidth, int frameHeight, int rotateDelay, Font titleFont,
+                     Font labelFont, Font legendFont, DefaultPieDataset<K> datasetInput)
     {
         //############################################
         // Set Layout Dimensions
@@ -200,9 +204,9 @@ public class Pie_Chart extends JPanel
         // ###################################
         // Calculate Sum
         // ###################################
-        for (String macroName : dataset.getKeys())
+        for (K macroKey : dataset.getKeys())
         {
-            datasetTotal = datasetTotal.add((BigDecimal) dataset.getValue(macroName));
+            datasetTotal = datasetTotal.add((BigDecimal) dataset.getValue(macroKey));
         }
     }
     

@@ -2,11 +2,9 @@ package App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Macro_V
 
 import App_Code.Objects.Database_Objects.MealManager;
 import App_Code.Objects.Database_Objects.MealManagerRegistry;
-import App_Code.Objects.Graph_Objects.Pie_Chart;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 import org.jfree.data.general.DefaultPieDataset;
-
 import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
@@ -33,6 +31,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
             legendFont = new Font("Serif", Font.PLAIN, 21);
     
     private String planName;
+    
     //##############################################
     // Colors
     //##############################################
@@ -93,14 +92,15 @@ public class PieChart_Macros_MPS extends Screen_JPanel
     // Collections
     //##############################################
     /**
-     * HashMap<String, Map<Integer, Pair<LocalTime, BigDecimal>>> mealManagersMacroValues = new HashMap<>();
+     * HashMap<String, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues = new HashMap<>();
      * Stores all the mealManagers TotalMealValues in collections by the macroName
-     * <Key: MacroName | Value: Map <Key: MealManagerID, Value: < MealTime, Quantity>>
-     * Etc;  <Key: Salt | Value: <MealManagerID: 1, <MealTime: 14:00 , Quantity: 300g >>
+     * <p>
+     * <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
+     * Etc;  <Key: Salt | Value: HashMap<MealManager, Quantity: 300g >>
      */
     private LinkedHashMap<String, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues;
     
-    private LinkedHashMap<String, DefaultPieDataset<String>> macroValue_Dataset_Map = new LinkedHashMap<>();
+    private LinkedHashMap<String, DefaultPieDataset<MacroKey>> macroValue_Dataset_Map = new LinkedHashMap<>();
     
     //##################################################################################################################
     // Constructors
@@ -131,31 +131,29 @@ public class PieChart_Macros_MPS extends Screen_JPanel
     // #################################################################################################################
     //  Update / Draw GUI Methods
     // #################################################################################################################
-    private int get_RowsCount()
-    {
-        return (int) Math.ceil((double) mealManagers_TotalMeal_MacroValues.size() / col);
-    }
-    
     private void create_And_Draw_GUI()
     {
         // ################################################################
         // Clean & Build / Clear
         // ################################################################
         int rows = get_RowsCount();
-        
+    
         getScrollPaneJPanel().removeAll();
         getScrollPaneJPanel().setLayout(new GridLayout(rows, col));
-        
+    
         macroValue_Dataset_Map.clear(); // Clear Storage
-        
+    
         // ################################################################
         // Generate Color Palette
         // ################################################################
-        Color[] colorPalette = generate_ColorPalette();
-        
+        Color[] colorPalette = generate_Random_Palette_Order();
+    
         // ################################################################
         // Build DATA
         // ################################################################
+        /**
+         *   <Key: Salt | Value: HashMap<MealManager, Quantity: 300g >>
+         */
         Iterator<String> it = mealManagers_TotalMeal_MacroValues.keySet().iterator();
         while (it.hasNext())
         {
@@ -163,60 +161,81 @@ public class PieChart_Macros_MPS extends Screen_JPanel
             // Macro Info
             //##################################
             String macroName = it.next();
-            
+        
             //##################################
             // Get PieChart DATA & Add to List
             //##################################
             String title = String.format(" %s  Across Meals", formatStrings(macroName, true));
-            DefaultPieDataset<String> pieDataset = mealManagerRegistry.create_Macro_PieChart_Dataset(macroName);
+            DefaultPieDataset<MacroKey> pieDataset = create_Macro_PieChart_Dataset(macroName);
             macroValue_Dataset_Map.put(macroName, pieDataset); // Put Data into memory
-            
-            
-            Pie_Chart pieChart = new Pie_Chart(title, colorPalette, pieWidth, pieHeight, rotateDelay, titleFont,
+        
+            Pie_Chart_Macros pieChart = new Pie_Chart_Macros(title, colorPalette, pieWidth, pieHeight, rotateDelay, titleFont,
                     labelFont, legendFont, macroValue_Dataset_Map.get(macroName));
-            
+        
             //##################################
             // Add PieChart to GUI
             //##################################
             JPanel x = new JPanel(new GridBagLayout());
             getScrollPaneJPanel().add(x);
-            
+        
             addToContainer(x, pieChart, 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 10, 10, null);
-            
+        
             addToContainer(x, createSpaceDivider(20, 50), 0, getAndIncreaseContainerYPos(), 1, 1,
                     0.25, 0.25, "both", 0, 0, null);
         }
-        
+    
         //##################################
         // Re-paint GUI
         ///##################################
         resizeGUI();
     }
     
-    public Color[] generate_ColorPalette()
+    private DefaultPieDataset<MacroKey> create_Macro_PieChart_Dataset(String macroName)
     {
-        // ################################################################
-        // Generate Color Palette
-        // ################################################################
-        Random randomIntGenerator = new Random();
+        //##############################################
+        // Collections
+        //##############################################
+        /**
+         *   <Key: MealManager, Value: Quantity >>
+         */
+        Map<MealManager, BigDecimal> macroValues = mealManagers_TotalMeal_MacroValues.get(macroName);
         
-        // Generate a random integer between 0 (inclusive) and 100 (exclusive)
-        int randomStart = randomIntGenerator.nextInt(colors.length );
-        int colorCount = mealManagerRegistry.get_Active_MealCount() + 20;
+        //##############################################
+        // Get Total
+        //##############################################
+        /**
+         *  Starting a 0, accumulate and add
+         *  BigDecimal.ZERO = initial start result
+         *  BigDecimal::add = accumulator calculates the sum
+         */
         
-        Color[] output = new Color[colorCount];
+        BigDecimal total = macroValues.values().stream().reduce(BigDecimal.ZERO, BigDecimal :: add);
+        BigDecimal finalTotal = total; // In order for this to be used below, created a final version
         
-        // Generate x amount of colors to match meals count
-        for (int i = 0; i < colorCount; i++)
-        {
-            output[i] = colors[randomStart % colors.length];
-            randomStart += 1;
-        }
+        //##############################################
+        //  Sort Data & Create Dataset
+        //##############################################
+        DefaultPieDataset<MacroKey> macroDataset = new DefaultPieDataset<>();
         
-        // ################################################################
-        // Output
-        // ################################################################
-        return output;
+        /**
+         * Sort List by time values
+         * <Key: MealManager, Value: Quantity >>
+         */
+        macroValues.entrySet().stream()
+                .sorted(Comparator.comparingLong(e -> e.getKey().getCurrentMealTime().getFirstMillisecond()))
+                .forEachOrdered(totalMeal_Values ->
+                {
+                    MealManager mealManager = totalMeal_Values.getKey();
+                    BigDecimal macroValue = totalMeal_Values.getValue();
+                    
+                   // macroDataset.setValue(new MacroKey(mealManager, macroName), macroValue);
+                    macroDataset.setValue(new MacroKey(mealManager, macroName), macroValue);
+                });
+        
+        //##############################################
+        // Return Values
+        //##############################################
+        return macroDataset;
     }
     
     public void update_DATA()
@@ -224,21 +243,21 @@ public class PieChart_Macros_MPS extends Screen_JPanel
         // ############################################################################
         // Paint GUI
         // ############################################################################
-        Iterator<Map.Entry<String, DefaultPieDataset<String>>> it = macroValue_Dataset_Map.entrySet().iterator();
+        Iterator<Map.Entry<String, DefaultPieDataset<MacroKey>>> it = macroValue_Dataset_Map.entrySet().iterator();
         while (it.hasNext())
         {
             // #########################################
             // Get Info
             // #########################################
-            Map.Entry<String, DefaultPieDataset<String>> pieEntry = it.next();
+            Map.Entry<String, DefaultPieDataset<MacroKey>> pieEntry = it.next();
             
             String macroName = pieEntry.getKey();
-            DefaultPieDataset<String> pieDataset = pieEntry.getValue();
+            DefaultPieDataset<MacroKey> pieDataset = pieEntry.getValue();
             
             // #########################################
             // Get Updated Data
             // #########################################
-            DefaultPieDataset<String> updated_Dataset = mealManagerRegistry.create_Macro_PieChart_Dataset(macroName);
+            DefaultPieDataset<MacroKey> updated_Dataset = create_Macro_PieChart_Dataset(macroName);
             
             // #########################################
             // Transfer Data Over into PieChart Dataset
@@ -250,7 +269,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
             updated_Dataset.getKeys().forEach(key -> {
                 pieDataset.setValue(key, updated_Dataset.getValue(key));
             });
-    
+            
             // Turn Notifications back on
             pieDataset.setNotify(true);
         }
@@ -260,4 +279,39 @@ public class PieChart_Macros_MPS extends Screen_JPanel
         // ############################################################################
         resizeGUI();
     }
+    
+    // #################################################################################################################
+    //  Methods
+    // #################################################################################################################
+    public Color[] generate_Random_Palette_Order()
+    {
+        // ################################################################
+        // Generate Color Palette
+        // ################################################################
+        Random randomIntGenerator = new Random();
+        
+        // Generate a random integer between 0 (inclusive) and 100 (exclusive)
+        int randomStart = randomIntGenerator.nextInt(colors.length);
+        int colorSize = colors.length;
+        
+        Color[] output = new Color[colorSize];
+        
+        // Generate x amount of colors to match meals count
+        for (int i = 0; i < colorSize; i++)
+        {
+            output[i] = colors[randomStart % colorSize];
+            randomStart += 1;
+        }
+        
+        // ################################################################
+        // Output
+        // ################################################################
+        return output;
+    }
+    
+    private int get_RowsCount()
+    {
+        return (int) Math.ceil((double) mealManagers_TotalMeal_MacroValues.size() / col);
+    }
+  
 }

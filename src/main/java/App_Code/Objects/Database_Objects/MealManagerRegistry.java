@@ -277,21 +277,6 @@ public class MealManagerRegistry
         return pieChart_Dataset_HashMap.get(mealInPlanID);
     }
     
-    private int percent_Calculator(BigDecimal value, BigDecimal overall)
-    {
-        //#######################################
-        // Exit Clause
-        //#######################################
-        if (overall.compareTo(BigDecimal.ZERO) == 0) { return 0; }
-        
-        //#######################################
-        // Create % in int
-        //#######################################
-        BigDecimal ratio = value.divide(overall, 4, RoundingMode.DOWN); // 4 decimal places, rounded
-        BigDecimal percent = ratio.multiply(BigDecimal.valueOf(100));      // Convert to %
-        return percent.setScale(0, RoundingMode.HALF_DOWN).intValueExact();
-    }
-    
     private DefaultPieDataset<String> get_Updated_PieChart_Dataset(MealManager mealManager)
     {
         //###################################################
@@ -382,49 +367,7 @@ public class MealManagerRegistry
         if (pieChart_Dataset_HashMap.containsKey(mealInPlanID)) { pieChart_Dataset_HashMap.remove(mealInPlanID); }
     }
     
-    //##################################################################################################################
-    // PieChart [ Plan Macros ]
-    //##################################################################################################################
-    public DefaultPieDataset<String> create_Macro_PieChart_Dataset(String macroName)
-    {
-        //##############################################
-        // Collections
-        //##############################################
-        DefaultPieDataset<String> macroDataset = new DefaultPieDataset<>();
-        Map<MealManager, BigDecimal> macroValues = mealManagers_TotalMeal_MacroValues.get(macroName);
-        
-        //##############################################
-        // Get Total
-        //##############################################
-        BigDecimal total = new BigDecimal(0);
-        for (BigDecimal x : macroValues.values())
-        {
-            total = total.add(x);
-        }
-        
-        //##############################################
-        //  Sort Data & Create Dataset
-        //##############################################
-        BigDecimal finalTotal = total;
-        macroValues.entrySet().stream()
-                .sorted(Comparator.comparingLong(e -> e.getKey().getCurrentMealTime().getFirstMillisecond()))
-                .forEachOrdered(totalMeal_Values ->
-                {
-                    MealManager mealManager = totalMeal_Values.getKey();
-                    BigDecimal macroValue = totalMeal_Values.getValue();
-                    
-                    String title = String.format(" [%s]  %s  (%d%%) -  %s g  ", mealManager.getCurrentMealTimeGUI(),
-                            mealManager.getCurrentMealName(), percent_Calculator(macroValue, finalTotal), macroValue);
-                    
-                    macroDataset.setValue(title, macroValue);
-                });
-        
-        //##############################################
-        // Return Values
-        //##############################################
-        return macroDataset;
-    }
-    
+   
     //##################################################################################################################
     // LineChart Methods [Meal_Plan_Screen]
     //##################################################################################################################
