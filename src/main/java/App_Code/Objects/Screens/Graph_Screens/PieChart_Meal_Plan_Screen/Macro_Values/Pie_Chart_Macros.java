@@ -12,18 +12,25 @@ import java.text.AttributedString;
 public class Pie_Chart_Macros extends Pie_Chart
 {
     // #################################################################################################################
+    // Variable
+    // #################################################################################################################
+    private String macroName, measurementSymbol;
+    
+    // #################################################################################################################
     // Constructor
     // #################################################################################################################
-    public Pie_Chart_Macros(String title, Color[] colors, int frameWidth, int frameHeight, int rotateDelay, Font titleFont,
-                            Font labelFont, Font legendFont, DefaultPieDataset<MacroKey> datasetInput)
+    public Pie_Chart_Macros(String macroName, String measurementSymbol, Color[] colors, int frameWidth, int frameHeight, int rotateDelay,
+                            Font titleFont, Font labelFont, Font legendFont, DefaultPieDataset<MacroKey> datasetInput)
 
     {
         //#################################################################
-        // Super Constructor
+        // Super Constructor & Variables
         //#################################################################
-        super(title, colors, frameWidth, frameHeight, rotateDelay, titleFont, labelFont, legendFont, datasetInput);
+        super(macroName, colors, frameWidth, frameHeight, rotateDelay, titleFont, labelFont, legendFont, datasetInput);
     
-    
+        this.macroName = macroName;
+        this.measurementSymbol = measurementSymbol;
+        
         //#################################################################
         // Override Generic Label Generator
         //#################################################################
@@ -41,9 +48,9 @@ public class Pie_Chart_Macros extends Pie_Chart
                 ///#######################################
                 // Return Label
                 //#######################################
-                return String.format(" [%s]  %s  (%d%%) -  %s g  ",
+                return String.format(" [%s]  %s  (%d%%) -  %s %s ",
                         macroKey.get_MealTime_GUI(), macroKey.get_MealName(),
-                        percent_Calculator(macroValue, get_DatasetTotal()), macroValue);
+                        percent_Calculator(macroValue, get_DatasetTotal()), macroValue, macroKey.get_MacroSymbol());
             }
         
             @Override
@@ -57,6 +64,11 @@ public class Pie_Chart_Macros extends Pie_Chart
         // Set Label Generator
         //#################################################################
         plot.setLegendLabelGenerator(labelGen);
+    
+        //#################################################################
+        // Update Title On Initialization
+        //#################################################################
+        updateChartTitle();
     }
     
     // #################################################################################################################
@@ -68,15 +80,12 @@ public class Pie_Chart_Macros extends Pie_Chart
         calculate_Dataset_Total();
         is_PieChart_Empty_MSG();
         reDraw_Legend();
-        setTitle(String.format(" %s Across Meals  [ %s g ]", title, get_DatasetTotal()));
+        updateChartTitle();
     }
     
-    @Override
-    protected void first_RunTime_Events()
+    public void updateChartTitle()
     {
-        calculate_Dataset_Total();
-        is_PieChart_Empty_MSG();
-        setTitle(String.format(" %s Across Meals  [ %s g ]", title, get_DatasetTotal()));
+        setTitle(String.format(" %s Across Meals  [ %s %s ]", macroName, get_DatasetTotal(), measurementSymbol));
     }
 }
 

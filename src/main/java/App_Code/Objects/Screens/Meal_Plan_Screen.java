@@ -12,6 +12,7 @@ import App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.PieChart
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Edit_Ingredients_Info.Ingredients_Info_Screen;
 import App_Code.Objects.Screens.Loading_Screen.Loading_Screen;
 import io.github.cdimascio.dotenv.Dotenv;
+import org.javatuples.Pair;
 import org.jfree.data.time.Second;
 
 import javax.swing.*;
@@ -136,18 +137,22 @@ public class Meal_Plan_Screen extends Screen_JFrame
             "plan_id", "meal_name", "meal_in_plan_id", "weight_of_meal"
     ));
     
-    private LinkedHashMap<String, Integer> totalMeal_macroColNamePos = new LinkedHashMap<>()
+    /**
+     * LinkedHashMap<String, Pair<Integer, String>> totalMeal_macroColNamePos
+     * LinkedHashMap<TotalMeal_MacroName, Pair< Position, Measurement>> totalMeal_macroColNamePos
+     */
+    private LinkedHashMap<String, Pair<Integer, String>> totalMeal_macroColNamePos = new LinkedHashMap<>()
     {{
-        put("total_protein", null);
-        put("total_carbohydrates", null);
-        put("total_sugars_of_carbs", null);
-        put("total_fats", null);
-        put("total_saturated_fat", null);
-        put("total_salt", null);
-        put("total_fibre", null);
-        put("total_water", null);
-        put("total_calories", null);
-       // put("total_liquid", null);
+        put("total_protein", new Pair<>(null, "g"));
+        put("total_carbohydrates", new Pair<>(null, "g"));
+        put("total_sugars_of_carbs", new Pair<>(null, "g"));
+        put("total_fats", new Pair<>(null, "g"));
+        put("total_saturated_fat", new Pair<>(null, "g"));
+        put("total_salt", new Pair<>(null, "g"));
+        put("total_fibre", new Pair<>(null, "g"));
+        put("total_water", new Pair<>(null, "ml"));
+        put("total_calories", new Pair<>(null, "kcal"));
+        // put("total_liquid",new Pair<>(null, "g"));
     }};
     
     //##################################################################################################################
@@ -410,7 +415,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
             {
                 if (totalMeal_macroColNamePos.containsKey(columnName))
                 {
-                    totalMeal_macroColNamePos.put(columnName, pos);
+                    String symbol = totalMeal_macroColNamePos.get(columnName).getValue1();
+                    totalMeal_macroColNamePos.put(columnName, new Pair<>(pos, symbol));
                 }
                 pos++;
             }
@@ -1349,35 +1355,35 @@ public class Meal_Plan_Screen extends Screen_JFrame
     private void updateLineChartData(MealManager mealManager, Second previousTime, Second currentTime)
     {
         if (! is_LineChart_Screen_Open()) { return; }
-    
+        
         lineChart_MPS.update_MealManager_ChartData(mealManager, previousTime, currentTime);
     }
     
     private void add_Meal_To_LineChart(MealManager mealManager)
     {
         if (! is_LineChart_Screen_Open()) { return; }
-    
+        
         lineChart_MPS.add_New_MealManager_Data(mealManager);
     }
     
     private void deleteLineChartData(Second currentTime)
     {
         if (! is_LineChart_Screen_Open()) { return; }
-    
+        
         lineChart_MPS.delete_MealManager_Data(currentTime);
     }
     
     private void clearLineChartDataSet()
     {
         if (! is_LineChart_Screen_Open()) { return; }
-    
+        
         lineChart_MPS.clear_LineChart_Dataset();
     }
     
     private void refresh_LineChart_Data()
     {
         if (! is_LineChart_Screen_Open()) { return; }
-    
+        
         lineChart_MPS.refresh_Data();
     }
     
@@ -1972,15 +1978,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //####################################################################
     // Collections :  Accessor Methods
     //#####################################################################
+    
     // Others
     public TreeMap<String, Collection<String>> getMap_ingredientTypesToNames()
     {
         return map_ingredientTypesToNames;
-    }
-    
-    public LinkedHashMap<String, Integer> getTotalMeal_MacroColNamePos()
-    {
-        return totalMeal_macroColNamePos;
     }
     
     //###########################################

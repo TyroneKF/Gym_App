@@ -1,16 +1,13 @@
 package App_Code.Objects.Database_Objects;
 
 import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.TotalMealTable;
-import App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Meals.PieChart_Entry_MPS;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 import org.javatuples.Pair;
 import org.jfree.data.general.DefaultPieDataset;
-import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -21,7 +18,11 @@ public class MealManagerRegistry
     //##################################################################################################################
     // Collections
     //##################################################################################################################
-    private LinkedHashMap<String, Integer> totalMeal_macroColNamePos;
+    /**
+     * LinkedHashMap<String, Pair<Integer, String>> totalMeal_macroColNamePos
+     * LinkedHashMap<TotalMeal_MacroName, Pair< Position, Measurement>> totalMeal_macroColNamePos
+     */
+    private LinkedHashMap<String, Pair<Integer, String>> totalMeal_Macro_Pos_And_Symbol;
     
     /**
      * HashMap<String, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues = new HashMap<>();
@@ -42,12 +43,12 @@ public class MealManagerRegistry
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public MealManagerRegistry(Meal_Plan_Screen meal_plan_screen, LinkedHashMap<String, Integer> totalMeal_macroColNamePos)
+    public MealManagerRegistry(Meal_Plan_Screen meal_plan_screen, LinkedHashMap<String, Pair<Integer, String>> totalMeal_Macro_Pos_And_Symbol)
     {
         //##################################
         // Variables
         //##################################
-        this.totalMeal_macroColNamePos = totalMeal_macroColNamePos;
+        this.totalMeal_Macro_Pos_And_Symbol = totalMeal_Macro_Pos_And_Symbol;
         this.meal_plan_screen = meal_plan_screen;
         
         //##################################
@@ -66,7 +67,7 @@ public class MealManagerRegistry
         //##################################
         // Create Macros Collection
         //##################################
-        for (String macroName : totalMeal_macroColNamePos.keySet())
+        for (String macroName : totalMeal_Macro_Pos_And_Symbol.keySet())
         {
             mealManagers_TotalMeal_MacroValues.put(macroName, new HashMap<>());
         }
@@ -119,13 +120,13 @@ public class MealManagerRegistry
          * Etc;  <Key: Salt | Value: HashMap<MealManager, Quantity: 300g >>
          */
         
-        Iterator<Map.Entry<String, Integer>> it = totalMeal_macroColNamePos.entrySet().iterator();
+        Iterator<Map.Entry<String, Pair<Integer, String>>> it = totalMeal_Macro_Pos_And_Symbol.entrySet().iterator();
         
         while (it.hasNext())
         {
-            Map.Entry<String, Integer> mapEntry = it.next();
+            Map.Entry<String, Pair<Integer, String>> mapEntry = it.next();
             String macroName = mapEntry.getKey();
-            Integer macroPos = mapEntry.getValue();
+            Integer macroPos = mapEntry.getValue().getValue0();
             
             BigDecimal macroValue = totalMealTable.get_ValueOnTable(0, macroPos);
             
@@ -165,7 +166,7 @@ public class MealManagerRegistry
          * Etc;  <Key: Salt | Value: HashMap<MealManager, Quantity: 300g >>
          */
         
-        Iterator<String> it = totalMeal_macroColNamePos.keySet().iterator();
+        Iterator<String> it = totalMeal_Macro_Pos_And_Symbol.keySet().iterator();
         
         while (it.hasNext())
         {
@@ -208,7 +209,6 @@ public class MealManagerRegistry
             // MealManager Info
             //#################################################################
             MealManager mealManager = it.next();
-            int mealManagerID = mealManager.getMealInPlanID();
             
             //#################################################################
             // Remove MealManager (Not Saved)
@@ -287,8 +287,8 @@ public class MealManagerRegistry
             // ###########################
             // Protein
             // ###########################
-            put("Protein",  mealManagers_TotalMeal_MacroValues.get("total_protein").get(mealManager));
-    
+            put("Protein", mealManagers_TotalMeal_MacroValues.get("total_protein").get(mealManager));
+            
             // ###########################
             // Carbs
             // ###########################
@@ -297,13 +297,13 @@ public class MealManagerRegistry
             
             put("Carbohydrates", carbsValue.subtract(sugarCarbsValue));
             put("Sugars Of Carbs", sugarCarbsValue);
-    
+            
             // ###########################
             // Fats
             // ###########################
             BigDecimal satFatsValue = mealManagers_TotalMeal_MacroValues.get("total_saturated_fat").get(mealManager);
             BigDecimal fatsValue = mealManagers_TotalMeal_MacroValues.get("total_fats").get(mealManager);
-    
+            
             put("Fats", fatsValue.subtract(satFatsValue));
             put("Saturated Fats", satFatsValue);
         }};
@@ -312,7 +312,7 @@ public class MealManagerRegistry
         // Add Data to Dataset to represent
         //#############################################
         DefaultPieDataset<String> dataset = new DefaultPieDataset<>();
-        data.forEach(dataset::setValue); // Transfer data, preserves order too
+        data.forEach(dataset :: setValue); // Transfer data, preserves order too
         
         //#############################################
         // Return Value
@@ -340,10 +340,10 @@ public class MealManagerRegistry
         //#########################################
         DefaultPieDataset<String> newGenerated = get_Updated_PieChart_Dataset(mealManager);
         DefaultPieDataset<String> mm_PieData = pieChart_Dataset_HashMap.get(mealInPlanID);
-    
+        
         // Stop PieDataset event listener from being triggered on each key update and instead on batch (avoids key races)
         mm_PieData.setNotify(false);
-
+        
         // Clear Data First
         mm_PieData.clear();
         
@@ -351,7 +351,7 @@ public class MealManagerRegistry
         newGenerated.getKeys().forEach(key -> {
             mm_PieData.setValue(key, newGenerated.getValue(key));
         });
-    
+        
         // Turn Notifications back on
         mm_PieData.setNotify(true);
         
@@ -367,7 +367,7 @@ public class MealManagerRegistry
         if (pieChart_Dataset_HashMap.containsKey(mealInPlanID)) { pieChart_Dataset_HashMap.remove(mealInPlanID); }
     }
     
-   
+    
     //##################################################################################################################
     // LineChart Methods [Meal_Plan_Screen]
     //##################################################################################################################
@@ -443,6 +443,11 @@ public class MealManagerRegistry
     public LinkedHashMap<String, HashMap<MealManager, BigDecimal>> get_MealManagers_MacroValues()
     {
         return mealManagers_TotalMeal_MacroValues;
+    }
+    
+    public LinkedHashMap<String, Pair<Integer, String>> get_TotalMeal_Macro_Pos_And_Symbol()
+    {
+        return totalMeal_Macro_Pos_And_Symbol;
     }
     
     public int get_Active_MealCount()

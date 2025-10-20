@@ -17,12 +17,12 @@ public class MacroKey implements Comparable<MacroKey>
     
     // Integers
     private int mealInPlanID;
-    private String macroName;
+    private String macroName, macroSymbol;
     
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
-    public MacroKey(MealManager mealManager, String macroName)
+    public MacroKey(MealManager mealManager, String macroName, String macroSymbol)
     {
         //############################################
         // Variables
@@ -31,6 +31,7 @@ public class MacroKey implements Comparable<MacroKey>
         
         this.mealInPlanID = mealManager.getMealInPlanID();
         this.macroName = macroName;
+        this.macroSymbol = macroSymbol;
     }
     
     // #################################################################################################################
@@ -52,6 +53,16 @@ public class MacroKey implements Comparable<MacroKey>
     }
     
     public String get_MealName() { return mealManager.getCurrentMealName(); }
+    
+    public String get_MacroSymbol()
+    {
+        return macroSymbol;
+    }
+    
+    public String get_MacroName()
+    {
+        return macroName;
+    }
     
     // #################################################################################################################
     // Default Methods
