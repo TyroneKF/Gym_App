@@ -2,6 +2,8 @@ package App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Macro_V
 
 import App_Code.Objects.Graph_Objects.Pie_Chart;
 import org.jfree.chart.labels.PieSectionLabelGenerator;
+import org.jfree.chart.title.LegendTitle;
+import org.jfree.chart.ui.HorizontalAlignment;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.general.PieDataset;
 
@@ -81,6 +83,14 @@ public class Pie_Chart_Macros extends Pie_Chart
         is_PieChart_Empty_MSG();
         reDraw_Legend();
         updateChartTitle();
+    }
+    
+    @Override
+    protected void set_Horizontal_LegendAlignment()
+    {
+        LegendTitle legend = plot.getChart().getLegend();
+        legend.setPosition(org.jfree.chart.ui.RectangleEdge.BOTTOM);
+        legend.setHorizontalAlignment(HorizontalAlignment.LEFT);
     }
     
     public void updateChartTitle()

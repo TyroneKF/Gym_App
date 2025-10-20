@@ -34,11 +34,13 @@ public class Pie_Chart_Totals extends Pie_Chart
         PieSectionLabelGenerator labelGen = new PieSectionLabelGenerator()
         {
             @Override
-            public String generateSectionLabel(PieDataset dataset, Comparable macroName)
+            public String generateSectionLabel(PieDataset dataset, Comparable macroKey)
             {
                 //###############################
                 // Macro Info
                 //###############################
+                String macroName = (String) macroKey;
+                
                 BigDecimal
                         macroValue = (BigDecimal) dataset.getValue(macroName),
                         macrosTotal = get_DatasetTotal();
