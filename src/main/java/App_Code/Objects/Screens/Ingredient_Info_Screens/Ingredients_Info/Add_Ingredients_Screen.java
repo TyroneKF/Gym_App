@@ -48,11 +48,11 @@ public class Add_Ingredients_Screen extends JPanel
         //###################################################################################
         //   Parent Stuff
         //###################################################################################
-        this.planID = ingredients_info_screen.getPlanID();
-        this.tempPlanID = ingredients_info_screen.getTempPlanID();
-        this.planName = ingredients_info_screen.getPlanName();
+        this.planID = ingredients_info_screen.get_PlanID();
+        this.tempPlanID = ingredients_info_screen.get_TempPlanID();
+        this.planName = ingredients_info_screen.get_PlanName();
 
-        this.mealPlanScreen = ingredients_info_screen.getMealPlanScreen();
+        this.mealPlanScreen = ingredients_info_screen.get_MealPlan_Screen();
 
         //###################################################################################
         //   Create Screen for Interface
@@ -264,7 +264,7 @@ public class Add_Ingredients_Screen extends JPanel
     protected boolean addOrDeleteIngredientFromMap(String process, String ingredientType, String ingredientName)
     {
         // Storing
-        Collection<String> ingredientTypeList = ingredients_info_screen.getMapIngredientTypesToNames().get(ingredientType);
+        Collection<String> ingredientTypeList = ingredients_info_screen.get_Map_IngredientTypes_To_Names().get(ingredientType);
         if (process.equals("add"))// if key exists add the ingredientName in
         {
             if (ingredientTypeList != null)
@@ -276,7 +276,7 @@ public class Add_Ingredients_Screen extends JPanel
             {
                 ingredientTypeList = new TreeSet<>(Collator.getInstance());
                 ingredientTypeList.add(ingredientName);
-                ingredients_info_screen.getMapIngredientTypesToNames().put(ingredientType, ingredientTypeList);
+                ingredients_info_screen.get_Map_IngredientTypes_To_Names().put(ingredientType, ingredientTypeList);
             }
         }
         else if (process.equals("delete"))
@@ -286,7 +286,7 @@ public class Add_Ingredients_Screen extends JPanel
             // Remove List as there is no items in it
             if (ingredientTypeList.size() == 0)
             {
-                ingredients_info_screen.getMapIngredientTypesToNames().remove(ingredientType);
+                ingredients_info_screen.get_Map_IngredientTypes_To_Names().remove(ingredientType);
             }
         }
 
@@ -373,7 +373,7 @@ public class Add_Ingredients_Screen extends JPanel
 
     protected void resize_GUI()
     {
-        ingredients_info_screen.resize_GUI();
+        ingredients_info_screen.resizeGUI();
         scrollPaneJPanel.revalidate();
         revalidate();
     }

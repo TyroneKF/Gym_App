@@ -294,7 +294,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
     protected void loadIngredientsTypeJComboBox()
     {
         ingredientsType_JComboBox.removeAllItems();
-        for (String ingredientType : ingredients_info_screen.getIngredientsTypesList())
+        for (String ingredientType : ingredients_info_screen.get_IngredientsTypes_List())
         {
             if (ingredientType.equals("None Of The Above"))
             {

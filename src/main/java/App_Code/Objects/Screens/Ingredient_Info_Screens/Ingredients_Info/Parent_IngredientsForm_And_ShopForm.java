@@ -41,10 +41,10 @@ public class Parent_IngredientsForm_And_ShopForm extends CollapsibleJPanel
         //##################################################
         this.ingredients_info_screen = ingredients_info_screen;
         this.db = ingredients_info_screen.getDb();
-        this.planID = ingredients_info_screen.getPlanID();
-        this.tempPlanID = ingredients_info_screen.getTempPlanID();
-        this.planName = ingredients_info_screen.getPlanName();
-        this.mealPlanScreen = ingredients_info_screen.getMealPlanScreen();
+        this.planID = ingredients_info_screen.get_PlanID();
+        this.tempPlanID = ingredients_info_screen.get_TempPlanID();
+        this.planName = ingredients_info_screen.get_PlanName();
+        this.mealPlanScreen = ingredients_info_screen.get_MealPlan_Screen();
     }
 
     //##################################################

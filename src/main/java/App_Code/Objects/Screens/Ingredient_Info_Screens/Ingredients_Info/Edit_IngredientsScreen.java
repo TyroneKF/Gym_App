@@ -47,11 +47,11 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //###################################################################################
         //   Parent Stuff
         //###################################################################################
-        this.planID = parent.getPlanID();
-        this.tempPlanID = parent.getTempPlanID();
-        this.planName = parent.getPlanName();
+        this.planID = parent.get_PlanID();
+        this.tempPlanID = parent.get_TempPlanID();
+        this.planName = parent.get_PlanName();
 
-        this.mealPlanScreen = parent.getMealPlanScreen();
+        this.mealPlanScreen = parent.get_MealPlan_Screen();
 
         //###################################################################################
         //   Create Screen for Interface
@@ -346,7 +346,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
     {
         ingredientsTypesJComboBox.removeAllItems(); // clearList
 
-        TreeMap<String, Collection<String>> mapIngredientTypesToNames = ingredients_info_screen.getMapIngredientTypesToNames();
+        TreeMap<String, Collection<String>> mapIngredientTypesToNames = ingredients_info_screen.get_Map_IngredientTypes_To_Names();
         for (String key : mapIngredientTypesToNames.keySet())
         {
             if (!key.equals("None Of The Above"))
@@ -367,7 +367,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //###########################################################
         // Clear List
         //###########################################################
-        TreeMap<String, Collection<String>> map_ingredientTypesToIngredientNames = ingredients_info_screen.getMapIngredientTypesToNames();
+        TreeMap<String, Collection<String>> map_ingredientTypesToIngredientNames = ingredients_info_screen.get_Map_IngredientTypes_To_Names();
         map_ingredientTypesToIngredientNames.clear();
 
         //###########################################################
@@ -438,7 +438,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //##################################
         setUpdateStatusOfIngredientNames(true); // stops ingredientName JComboBox from triggering any  actionListener events
 
-        TreeMap<String, Collection<String>> map_ingredientTypesToIngredientNames = ingredients_info_screen.getMapIngredientTypesToNames();
+        TreeMap<String, Collection<String>> map_ingredientTypesToIngredientNames = ingredients_info_screen.get_Map_IngredientTypes_To_Names();
         for (String item : map_ingredientTypesToIngredientNames.get(selected_IngredientType))
         {
             if (!item.equals("None Of The Above"))
@@ -454,7 +454,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
     public void updateIngredientNamesToTypesJComboBox()
     {
         ingredientsTypesJComboBox.removeAllItems();
-        TreeMap<String, Collection<String>> map_ingredientTypesToIngredientNames = ingredients_info_screen.getMapIngredientTypesToNames();
+        TreeMap<String, Collection<String>> map_ingredientTypesToIngredientNames = ingredients_info_screen.get_Map_IngredientTypes_To_Names();
 
         for (String key : map_ingredientTypesToIngredientNames.keySet())
         {

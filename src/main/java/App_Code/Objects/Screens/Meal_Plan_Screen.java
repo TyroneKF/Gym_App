@@ -645,6 +645,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
         resizeGUI();
         setFrameVisibility(true);
         scroll_To_Top_of_ScrollPane();
+        
+        open_Ingredients_Screen();
     }
     
     //##################################################################################################################
@@ -1159,7 +1161,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         
         add_Ingredients_Btn.addActionListener(ae -> {
             
-            open_AddIngredients_Screen();
+            open_Ingredients_Screen();
         });
         
         iconPanelInsert.add(add_Ingredients_Btn);
@@ -1629,11 +1631,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // ###############################################################
     // Add Ingredients Screen & Ingredient Methods
     // ###############################################################
-    private void open_AddIngredients_Screen()
+    private void open_Ingredients_Screen()
     {
         if (is_IngredientScreen_Open())
         {
-            ingredientsInfoScreen.makeFrameVisible();
+            ingredientsInfoScreen.makeJFrameVisible();
             return;
         }
         
@@ -1766,7 +1768,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         }
         if (is_IngredientScreen_Open()) // HELLO Refactor into screen method
         {
-            ingredientsInfoScreen.closeWindow();
+            ingredientsInfoScreen.windowClosedEvent();
         }
         if (is_PieChart_Screen_Open())
         {

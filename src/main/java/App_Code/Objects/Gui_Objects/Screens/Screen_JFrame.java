@@ -28,7 +28,7 @@ public class Screen_JFrame extends JFrame
     // Objects
     //##############################################
     protected MyJDBC db;
-    protected GridBagConstraints gbc = new GridBagConstraints();    
+    protected GridBagConstraints gbc = new GridBagConstraints();
     protected Container contentPane;
     protected ScrollPaneCreator scrollPane = new ScrollPaneCreator();
     
@@ -94,7 +94,7 @@ public class Screen_JFrame extends JFrame
         setLocation(xPos, yPos);
         
         // Container (ContentPane)
-        contentPane = getContentPane();
+        contentPane = super.getContentPane();
         contentPane.setLayout(new GridBagLayout());
         contentPane.setVisible(true);
         
@@ -303,6 +303,7 @@ public class Screen_JFrame extends JFrame
         setExtendedState(JFrame.NORMAL); // makes frames visible
         
         getFrame().setLocation(0, 0);
+        setLocationRelativeTo(null);
     }
     
     protected int getAndIncreaseContainerYPos()

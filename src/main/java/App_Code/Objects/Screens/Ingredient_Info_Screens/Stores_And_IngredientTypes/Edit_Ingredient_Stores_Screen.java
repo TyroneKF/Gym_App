@@ -111,7 +111,7 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
         protected void updateOtherScreens()
         {
             parentIngredientsScreen.addOrRemoveSupplierFromList("add",jTextfieldTXT, null); // add to list
-            parentIngredientsScreen.updateIngredientSuppliersJComboBoxes();
+            parentIngredientsScreen.update_Ingredient_Suppliers_JComboBoxes();
         }
     }
 
@@ -162,7 +162,7 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
         protected void updateOtherScreens()
         {
             // this doesn't have to be in  a particular position, since all objects are deleted
-            parentIngredientsScreen.updateIngredientSuppliersJComboBoxes();  // Clear shop GUI in app
+            parentIngredientsScreen.update_Ingredient_Suppliers_JComboBoxes();  // Clear shop GUI in app
 
             if (itemDeleted) // go through with the deleting process
             {

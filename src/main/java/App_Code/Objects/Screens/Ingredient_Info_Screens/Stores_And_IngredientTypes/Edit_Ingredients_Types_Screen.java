@@ -106,8 +106,8 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
         @Override
         protected void updateOtherScreens()
         {
-            parentIngredientsScreen.addChangeOrRemoveIngredientsTypeName("addKey", jTextfieldTXT, null);
-            parentIngredientsScreen.updateIngredientsFormTypeJComboBoxes();
+            parentIngredientsScreen.add_Change_Or_Remove_IngredientsTypeName("addKey", jTextfieldTXT, null);
+            parentIngredientsScreen.update_IngredientsForm_Type_JComboBoxes();
         }
     }
 
@@ -164,7 +164,7 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
             //#################################################################
             // Reset EditCreateForm
             //#################################################################
-            Edit_IngredientsScreen editingIngredientsInfo = parentIngredientsScreen.getEditIngredientsForm();
+            Edit_IngredientsScreen editingIngredientsInfo = parentIngredientsScreen.get_Edit_Ingredients_Form();
             editingIngredientsInfo.refreshInterface(true, true);  // reset form`
 
             //###################################################################
@@ -172,7 +172,7 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
             //###################################################################
             if (itemDeleted)
             {
-                if (parentIngredientsScreen.addChangeOrRemoveIngredientsTypeName("removeKey", null, selectedJComboBoxItemTxt)) // change key
+                if (parentIngredientsScreen.add_Change_Or_Remove_IngredientsTypeName("removeKey", null, selectedJComboBoxItemTxt)) // change key
                 {
                     editingIngredientsInfo.updateIngredientNamesToTypesJComboBox(); // update IngredientsTypeToNames JComboBox
                 }
@@ -184,7 +184,7 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
             }
             else
             {
-                if (parentIngredientsScreen.addChangeOrRemoveIngredientsTypeName("changeKeyName", jTextfieldTXT, selectedJComboBoxItemTxt)) // change key
+                if (parentIngredientsScreen.add_Change_Or_Remove_IngredientsTypeName("changeKeyName", jTextfieldTXT, selectedJComboBoxItemTxt)) // change key
                 {
                     editingIngredientsInfo.updateIngredientNamesToTypesJComboBox(); // update IngredientsTypeToNames JComboBox
                 }
@@ -198,7 +198,7 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
             //#################################################################
             // Update CreateForm ingredientsForm  Type JComboBoxes
             //##################################################################
-            parentIngredientsScreen.updateIngredientsFormTypeJComboBoxes();
+            parentIngredientsScreen.update_IngredientsForm_Type_JComboBoxes();
             parentIngredientsScreen.setUpdateIngredientInfo(true);
         }
 

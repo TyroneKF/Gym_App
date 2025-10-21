@@ -3,17 +3,17 @@ package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info;
 import java.text.Collator;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
+import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_IngredientTypes.Edit_Ingredient_Stores_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_IngredientTypes.Edit_Ingredients_Types_Screen;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowEvent;
 import java.util.*;
 
 
-public class Ingredients_Info_Screen extends JFrame
+public class Ingredients_Info_Screen extends Screen_JFrame
 {
     //##################################################################################################################
     // Variables
@@ -65,6 +65,11 @@ public class Ingredients_Info_Screen extends JFrame
                                    Collection<String> ingredientsTypesList, Collection<String> storesNamesList)
     {
         //###################################################################################
+        // Super Constructor
+        //###################################################################################
+        super(db, false,"Add/Edit Ingredients Screen", 800, 850, 0,0 );
+    
+        //###################################################################################
         // Variables
         //###################################################################################
         this.db = db;
@@ -89,32 +94,18 @@ public class Ingredients_Info_Screen extends JFrame
         //###################################################################################
         // Frame Set-Up
         //###################################################################################
-        setTitle("Add/Edit Ingredients Screen");
-        makeFrameVisible();
-        
-        //Delete all temp data on close
-        addWindowListener(new java.awt.event.WindowAdapter()
-        {
-            @Override //HELLO Causes Error
-            public void windowClosing(WindowEvent windowEvent)
-            {
-                closeWindowEvent();
-                mealPlanScreen.updateIngredientsNameAndTypesInJTables(updateIngredientInfo);
-            }
-        });
-        
+        set_Resizable(false);
+     
         //###################################################################################
         // Create ContentPane
         //###################################################################################
-        contentPane = super.getContentPane();
-        contentPane.setLayout(new GridLayout(1, 1));
-        contentPane.setVisible(true);
+        getScrollPaneJPanel().setLayout(new GridLayout(1, 1));
         
         //##################################################################################
         // Creating TabbedPane
         //##################################################################################
         JTabbedPane tp = new JTabbedPane();
-        contentPane.add(tp);
+        getScrollPaneJPanel().add(tp);
         
         //#################################################
         // Creating Add Ingredients Screen
@@ -139,84 +130,33 @@ public class Ingredients_Info_Screen extends JFrame
         //##################################################
         Edit_Ingredient_Stores_Screen edit_Stores_Screen = new Edit_Ingredient_Stores_Screen(db, this, storesNamesList);
         tp.add("Edit Ingredient Stores", edit_Stores_Screen);
-        
-        //#################################################
-        //
-        //#################################################
-        contentPane.revalidate();
-        
+    
+        // ################################################################
+        // Make Frame Visible
+        // ################################################################
+        setFrameVisibility(true);
+        resizeGUI();
     }
     
-    //##################################################################################################################
-    // Accessor Methods (Get) Methods
-    //##################################################################################################################
-    
-    // Objects
-    public Edit_IngredientsScreen getEditIngredientsForm()
+    @Override
+    public void windowClosedEvent()
     {
-        return editIngredientsInfo;
-    }
-    
-    public Meal_Plan_Screen getMealPlanScreen()
-    {
-        return mealPlanScreen;
-    }
-    
-    public TreeMap<String, Collection<String>> getMapIngredientTypesToNames()
-    {
-        return map_ingredientTypesToNames;
-    }
-    
-    public Container getContentPane()
-    {
-        return contentPane;
-    }
-    
-    public MyJDBC getDb()
-    {
-        return db;
-    }
-    
-    //############################################
-    // Get Values & Memory
-    //############################################
-    public Collection<String> getIngredientsTypesList()
-    {
-        return ingredientsTypesList;
-    }
-    
-    public Collection<String> getStoresNamesList()
-    {
-        return storesNamesList;
-    }
-    
-    public Integer getTempPlanID()
-    {
-        return tempPlanID;
-    }
-    
-    public Integer getPlanID()
-    {
-        return planID;
-    }
-    
-    public String getPlanName()
-    {
-        return planName;
+        mealPlanScreen.remove_Ingredients_Info_Screen();
+        mealPlanScreen.updateIngredientsNameAndTypesInJTables(updateIngredientInfo);
+        closeJFrame();
     }
     
     //##################################################################################################################
     // Update Methods
     //##################################################################################################################
-    public void updateIngredientsFormTypeJComboBoxes()
+    public void update_IngredientsForm_Type_JComboBoxes()
     {
         addIngredientsInfo.updateIngredientForm_Type_JComboBox();
         editIngredientsInfo.updateIngredientForm_Type_JComboBox();
     }
     
-    public void updateIngredientSuppliersJComboBoxes()
+    public void update_Ingredient_Suppliers_JComboBoxes()
     {
-        System.out.printf("\n\nUpdating Suppliers GUI");
         addIngredientsInfo.clearShopForm();
         editIngredientsInfo.refreshInterface(true, true);
     }
@@ -226,39 +166,16 @@ public class Ingredients_Info_Screen extends JFrame
         editIngredientsInfo.updateIngredientsTypeJComboBox();
     }
     
-    //FIX
-    /*  public JComboBox<String> getEdit_IngredientTypes_InPlan_JComboBox()
-    {
-        return editIngredientsInfo.getIngredientsTypesJComboBox();
-    }*/
-    
     //##################################################################################################################
     // Mutator Methods
     //##################################################################################################################
     
     // Ingredient Types
-    public boolean addChangeOrRemoveIngredientsTypeName(String process, String newKey, String oldKey)// HELLO CHECKA
+    public boolean add_Change_Or_Remove_IngredientsTypeName(String process, String newKey, String oldKey)
     {
-        /*//####################################################################
-        System.out.printf("\n\n##################################### \n\naddChangeOrRemoveIngredientsTypeName() \nprocess: %s \nnewKey: %s \noldKey: %s \n\nMap:",
-                process, newKey, oldKey);
-
-        for (String key : map_ingredientTypesToNames.keySet())
-        {
-            System.out.printf("\n%s", key);
-        }
-
-        System.out.println("\n\nList:");
-        for (String key : ingredientsTypesList)
-        {
-            System.out.printf("\n%s", key);
-        }
-        //####################################################################
-*/
-        
         if (process.equals("addKey"))
         {
-            return addOrRemoveIngredientsTypeNameFromList(process, newKey, oldKey);
+            return edit_IngredientsType_List(process, newKey, oldKey);
         }
         else if (map_ingredientTypesToNames.containsKey(oldKey)) // if the key had no ingredientNames attached to it, do nothing
         {
@@ -287,32 +204,15 @@ public class Ingredients_Info_Screen extends JFrame
                 if (map_ingredientTypesToNames.containsKey(oldKey))
                 {
                     map_ingredientTypesToNames.put(newKey, map_ingredientTypesToNames.remove(oldKey));
-                    
                 }
             }
         }
         
-        return addOrRemoveIngredientsTypeNameFromList(process, newKey, oldKey);
+        return edit_IngredientsType_List(process, newKey, oldKey);
     }
     
-    private boolean addOrRemoveIngredientsTypeNameFromList(String process, String newKey, String oldKey)
+    private boolean edit_IngredientsType_List(String process, String newKey, String oldKey)
     {
-        //####################################################################
-        System.out.printf("\n\n##################################### \n\naddOrRemoveIngredientsTypeNameFromList() \nprocess: %s \nnewKey: %s \noldKey: %s \n\nMap:",
-                process, newKey, oldKey);
-        
-        for (String key : map_ingredientTypesToNames.keySet())
-        {
-            System.out.printf("\n%s", key);
-        }
-        
-        System.out.println("\n\nList:");
-        for (String key : ingredientsTypesList)
-        {
-            System.out.printf("\n%s", key);
-        }
-        //####################################################################
-        
         //#########################################
         // addKey
         //#########################################
@@ -343,22 +243,10 @@ public class Ingredients_Info_Screen extends JFrame
             ingredientsTypesList.remove(oldKey);
             ingredientsTypesList.add(newKey);
         }
-        
-        //####################################################################
-        System.out.printf("\n\n##################################### \n\naddOrRemoveIngredientsTypeNameFromList() \nprocess: %s \nnewKey: %s \noldKey: %s \n\nMap:",
-                process, newKey, oldKey);
-        
-        for (String key : map_ingredientTypesToNames.keySet())
-        {
-            System.out.printf("\n%s", key);
-        }
-        
-        System.out.println("\n\nList:");
-        for (String key : ingredientsTypesList)
-        {
-            System.out.printf("\n%s", key);
-        }
-        //####################################################################
+    
+        //#########################################
+        // removeKey / changeKey
+        //#########################################
         
         return true;
     }
@@ -392,62 +280,57 @@ public class Ingredients_Info_Screen extends JFrame
     }
     
     //##################################################################################################################
-    // Resizing Methods
+    // Accessor Methods (Get) Methods
     //##################################################################################################################
-    // HELLO! Stay in Parent
-    public void makeFrameVisible()
+    
+    // Objects
+    public Edit_IngredientsScreen get_Edit_Ingredients_Form()
     {
-        setExtendedState(JFrame.NORMAL);
-        setSize(new Dimension(jFrameWidth, jFrameHeight));
-        setLocation(0, 0);
-        setVisible(true);
-        setResizable(false);
-        
-        setLocationRelativeTo(null);
+        return editIngredientsInfo;
     }
     
-    public void closeWindowEvent()
+    public Meal_Plan_Screen get_MealPlan_Screen()
     {
-        mealPlanScreen.remove_Ingredients_Info_Screen();
+        return mealPlanScreen;
     }
     
-    public void closeWindow()
+    //#############################################
+    // Collections
+    //#############################################
+    public TreeMap<String, Collection<String>> get_Map_IngredientTypes_To_Names()
     {
-        this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+        return map_ingredientTypesToNames;
     }
     
-    public void addToContainer(Container container, Component addToContainer, int gridx, int gridy, int gridwidth,
-                               int gridheight, double weightx, double weighty, String fill, int ipady, int ipadx)
+  
+    public Collection<String> get_IngredientsTypes_List()
     {
-        gbc.gridx = gridx;
-        gbc.gridy = gridy;
-        gbc.gridwidth = gridwidth;
-        gbc.gridheight = gridheight;
-        gbc.weightx = weightx;
-        gbc.weighty = weighty;
-        
-        gbc.ipady = ipady;
-        gbc.ipadx = ipadx;
-        
-        switch (fill.toLowerCase())
-        {
-            case "horizontal":
-                gbc.fill = GridBagConstraints.HORIZONTAL;
-                break;
-            case "vertical":
-                gbc.fill = GridBagConstraints.VERTICAL;
-                break;
-            
-            case "both":
-                gbc.fill = GridBagConstraints.BOTH;
-                break;
-        }
-        
-        container.add(addToContainer, gbc);
+        return ingredientsTypesList;
     }
     
-    public void resize_GUI()
+    public Collection<String> get_StoresNames_List()
     {
-        getContentPane().revalidate();
+        return storesNamesList;
+    }
+    
+    //############################################
+    // Integer
+    //############################################
+    public Integer get_TempPlanID()
+    {
+        return tempPlanID;
+    }
+    
+    public Integer get_PlanID()
+    {
+        return planID;
+    }
+    
+    //############################################
+    // String
+    //############################################
+    public String get_PlanName()
+    {
+        return planName;
     }
 }

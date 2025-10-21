@@ -413,7 +413,7 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
             //###############################
             // Creating Sections for GUI
             //###############################
-            if (ingredients_info_screen.getStoresNamesList()==null)
+            if (ingredients_info_screen.get_StoresNames_List()==null)
             {
                 JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Unable To Get ShopNames From DB; \nEither No Shops Exist. \nOr, Internal DB Error");
                 return;
@@ -533,7 +533,7 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
         protected void loadStoresInJComboBox()
         {
             productShops_JComboBox.removeAllItems();
-            Collection<String> storesNamesList = ingredients_info_screen.getStoresNamesList();
+            Collection<String> storesNamesList = ingredients_info_screen.get_StoresNames_List();
 
             for (String storeName : storesNamesList)
             {
