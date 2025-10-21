@@ -15,11 +15,11 @@ import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.PiePlot3D;
 import org.jfree.chart.title.LegendTitle;
 import org.jfree.chart.title.TextTitle;
+import org.jfree.chart.ui.HorizontalAlignment;
 import org.jfree.chart.util.Rotation;
 import org.jfree.data.general.DefaultPieDataset;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Iterator;
 import org.jfree.chart.labels.PieSectionLabelGenerator;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
 
@@ -35,10 +35,9 @@ public class Pie_Chart<K extends Comparable<K>> extends JPanel
     
     // Objects
     protected JFreeChart chart;
-
     protected PiePlot3D plot;
     protected ChartPanel chartPanel;
-   
+    
     
     // Font
     protected Font titleFont, labelFont, legendFont;
@@ -115,18 +114,9 @@ public class Pie_Chart<K extends Comparable<K>> extends JPanel
         plot.setLabelPaint(Color.BLACK);
         
         // #############################################
-        // Legend Positioning & Grid //HELLO SHOULD BE REFACTORED TO METHOD
+        // Legend Positioning & Grid
         //#############################################
-        chart.removeLegend(); // remove default legend
-        rows = (int) Math.ceil((double) dataset.getKeys().size() / cols);
-        
-        LegendTitle legend = new LegendTitle(plot, new GridArrangement(rows, cols), new GridArrangement(rows, cols));
-        
-        legend.setPosition(org.jfree.chart.ui.RectangleEdge.BOTTOM);
-        legend.setHorizontalAlignment(org.jfree.chart.ui.HorizontalAlignment.LEFT);
-        
-        legend.setItemFont(legendFont); // Set Legend Font
-        chart.addLegend(legend);
+        reDraw_Legend();
         
         //#############################################
         // Color Palette
@@ -208,7 +198,7 @@ public class Pie_Chart<K extends Comparable<K>> extends JPanel
         // Reset Value
         // ###################################
         datasetTotal = BigDecimal.ZERO;
-    
+        
         // ###################################
         // Calculate Sum
         // ###################################
@@ -228,7 +218,8 @@ public class Pie_Chart<K extends Comparable<K>> extends JPanel
         //#####################################################
         // Set the no-data message
         //#####################################################
-        if (get_DatasetTotal().compareTo(BigDecimal.ZERO) > 0) { return; } // If the total is bigger than 0 exit
+        // If the total is bigger than 0 exit
+        if (get_DatasetTotal().compareTo(BigDecimal.ZERO) > 0) { plot.setNoDataMessage(null); return; }
         
         //#####################################################
         // Set the no-data message
@@ -240,28 +231,34 @@ public class Pie_Chart<K extends Comparable<K>> extends JPanel
     
     protected void reDraw_Legend()
     {
-        //##############################################
-        // If Item Count Has Increased Re-Draw Grid
-        //##############################################
-        // if there is space for an additional legend item, return
-        if (((rows * cols) - dataset.getKeys().size()) > 0) { return; }
-        
-        System.out.printf("\n\nRedrawing Legends: %s", title);
-        
         // #############################################
         // Legend Positioning & Grid
         //#############################################
-        chart.removeLegend(); // remove default legend
+        if (chart.getLegend() != null) { chart.removeLegend(); } // remove default legend
         
         rows = (int) Math.ceil((double) dataset.getItemCount() / cols);
         
         LegendTitle legend = new LegendTitle(plot, new GridArrangement(rows, cols), new GridArrangement(rows, cols));
         
-        legend.setPosition(org.jfree.chart.ui.RectangleEdge.BOTTOM);
-        legend.setHorizontalAlignment(org.jfree.chart.ui.HorizontalAlignment.LEFT);
-        
         legend.setItemFont(legendFont); // Set Legend Font
         chart.addLegend(legend);
+        
+        // #############################################
+        // Set Horizontal Legend Alignment
+        //#############################################
+        set_Horizontal_LegendAlignment();
+        
+        // #############################################
+        // Update Chart
+        //#############################################
+        chart.fireChartChanged(); // repaints Chart
+    }
+    
+    protected void set_Horizontal_LegendAlignment()
+    {
+        LegendTitle legend = plot.getChart().getLegend();
+        legend.setPosition(org.jfree.chart.ui.RectangleEdge.BOTTOM);
+        legend.setHorizontalAlignment(HorizontalAlignment.CENTER);
     }
     
     protected int percent_Calculator(BigDecimal value, BigDecimal overall)
@@ -283,7 +280,7 @@ public class Pie_Chart<K extends Comparable<K>> extends JPanel
     {
         chart.setTitle(txt);
     }
-
+    
     //############################################################################################
     // Rotator Class
     //############################################################################################

@@ -5,7 +5,7 @@ import App_Code.Objects.Database_Objects.MealManagerRegistry;
 
 import java.util.Objects;
 
-public class MacroKey implements Comparable<MacroKey>
+public class PieChart_MacroKey implements Comparable<PieChart_MacroKey>
 {
     // ############################################################################################
     // Variables
@@ -22,7 +22,7 @@ public class MacroKey implements Comparable<MacroKey>
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
-    public MacroKey(MealManager mealManager, String macroName, String macroSymbol)
+    public PieChart_MacroKey(MealManager mealManager, String macroName, String macroSymbol)
     {
         //############################################
         // Variables
@@ -68,7 +68,7 @@ public class MacroKey implements Comparable<MacroKey>
     // Default Methods
     // #################################################################################################################
     @Override
-    public int compareTo(MacroKey other)
+    public int compareTo(PieChart_MacroKey other)
     {
         return Long.compare(this.get_MealTime(), other.get_MealTime());
     }
@@ -79,7 +79,7 @@ public class MacroKey implements Comparable<MacroKey>
         if (this == obj) { return true; }
         if (obj == null || getClass() != obj.getClass()) { return false; }
         
-        MacroKey other = (MacroKey) obj;
+        PieChart_MacroKey other = (PieChart_MacroKey) obj;
         return get_MealInPlanID() == other.get_MealInPlanID();
     }
     
@@ -92,6 +92,6 @@ public class MacroKey implements Comparable<MacroKey>
     @Override
     public String toString()
     {
-        return String.format("MacroKey{MealManagerID=%s}", get_MealInPlanID());
+        return String.format("PieChart_MacroKey{MealManagerID=%s}", get_MealInPlanID());
     }
 }

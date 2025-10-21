@@ -52,7 +52,7 @@ public class Pie_Chart_Totals extends Pie_Chart
                 {
                     int percent = percent_Calculator(macroValue, macrosTotal);
                     
-                    return String.format("%s [ %d%% ] - %s g ", macroName, percent, macroValue);
+                    return String.format("\u00A0\u00A0\u00A0%s [ %d%% ] - %s g ", macroName, percent, macroValue);
                 }
                 else if (macroName.equals("Carbohydrates"))
                 {
@@ -60,7 +60,7 @@ public class Pie_Chart_Totals extends Pie_Chart
                     BigDecimal total_Carbs = macroValue.add(sugarsMacroValue);
                     int percent = percent_Calculator(total_Carbs, macrosTotal);
                     
-                    return String.format("%s [ %d%% ] - %s g ", macroName, percent, macroValue);
+                    return String.format("\u00A0\u00A0\u00A0%s [ %d%% ] - %s g ", macroName, percent, macroValue);
                 }
                 else if (macroName.equals("Fats"))
                 {
@@ -68,13 +68,13 @@ public class Pie_Chart_Totals extends Pie_Chart
                     BigDecimal totalFats = macroValue.add(satFatMacroValue);
                     int percent = percent_Calculator(totalFats, macrosTotal);
                     
-                    return String.format("%s [ %d%% ] - %s g ", macroName, percent, macroValue);
+                    return String.format("\u00A0\u00A0\u00A0\u00A0%s [ %d%% ] - %s g ", macroName, percent, macroValue);
                 }
                 
                 //###############################
                 // Generic Label
                 //###############################
-                return String.format("%s - %s g", macroName, macroValue);
+                return String.format("\u00A0\u00A0\u00A0%s - %s g", macroName, macroValue);
             }
             
             @Override

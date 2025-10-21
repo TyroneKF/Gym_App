@@ -23,7 +23,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
     
     private int
             col = 2,
-            pieWidth = (frameWidth / col) - 30,
+            pieWidth = (frameWidth / col) - 50,
             pieHeight = 730,
             rotateDelay = 200; //580
     private Font
@@ -101,7 +101,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
      */
     private LinkedHashMap<String, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues;
     
-    private LinkedHashMap<String, DefaultPieDataset<MacroKey>> macroValue_Dataset_Map = new LinkedHashMap<>();
+    private LinkedHashMap<String, DefaultPieDataset<PieChart_MacroKey>> macroValue_Dataset_Map = new LinkedHashMap<>();
     
     /**
      * LinkedHashMap<String, Pair<Integer, String>> totalMeal_macroColNamePos
@@ -181,10 +181,10 @@ public class PieChart_Macros_MPS extends Screen_JPanel
             //##################################
             // Get PieChart DATA & Add to List
             //##################################
-            DefaultPieDataset<MacroKey> pieDataset = create_Macro_PieChart_Dataset(macroKey);
+            DefaultPieDataset<PieChart_MacroKey> pieDataset = create_Macro_PieChart_Dataset(macroKey);
             macroValue_Dataset_Map.put(macroKey, pieDataset); // Put Data into memory
         
-            Pie_Chart_Macros pieChart = new Pie_Chart_Macros(macroName, macroSymbol, colorPalette, pieWidth, pieHeight, rotateDelay, titleFont,
+            PieChart_Macros pieChart = new PieChart_Macros(macroName, macroSymbol, colorPalette, pieWidth, pieHeight, rotateDelay, titleFont,
                     labelFont, legendFont, macroValue_Dataset_Map.get(macroKey));
         
             //##################################
@@ -204,7 +204,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
         resizeGUI();
     }
     
-    private DefaultPieDataset<MacroKey> create_Macro_PieChart_Dataset(String macroName)
+    private DefaultPieDataset<PieChart_MacroKey> create_Macro_PieChart_Dataset(String macroName)
     {
         //##############################################
         // Macro Info
@@ -223,7 +223,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
         //##############################################
         //  Sort Data & Create Dataset
         //##############################################
-        DefaultPieDataset<MacroKey> macroDataset = new DefaultPieDataset<>();
+        DefaultPieDataset<PieChart_MacroKey> macroDataset = new DefaultPieDataset<>();
         
         /**
          * Sort List by time values
@@ -236,7 +236,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
                     MealManager mealManager = totalMeal_Values.getKey();
                     BigDecimal macroValue = totalMeal_Values.getValue();
                    
-                    macroDataset.setValue(new MacroKey(mealManager, macroName, macroSymbol), macroValue);
+                    macroDataset.setValue(new PieChart_MacroKey(mealManager, macroName, macroSymbol), macroValue);
                 });
         
         //##############################################
@@ -250,21 +250,21 @@ public class PieChart_Macros_MPS extends Screen_JPanel
         // ############################################################################
         // Paint GUI
         // ############################################################################
-        Iterator<Map.Entry<String, DefaultPieDataset<MacroKey>>> it = macroValue_Dataset_Map.entrySet().iterator();
+        Iterator<Map.Entry<String, DefaultPieDataset<PieChart_MacroKey>>> it = macroValue_Dataset_Map.entrySet().iterator();
         while (it.hasNext())
         {
             // #########################################
             // Get Info
             // #########################################
-            Map.Entry<String, DefaultPieDataset<MacroKey>> pieEntry = it.next();
+            Map.Entry<String, DefaultPieDataset<PieChart_MacroKey>> pieEntry = it.next();
             
             String macroName = pieEntry.getKey();
-            DefaultPieDataset<MacroKey> pieDataset = pieEntry.getValue();
+            DefaultPieDataset<PieChart_MacroKey> pieDataset = pieEntry.getValue();
             
             // #########################################
             // Get Updated Data
             // #########################################
-            DefaultPieDataset<MacroKey> updated_Dataset = create_Macro_PieChart_Dataset(macroName);
+            DefaultPieDataset<PieChart_MacroKey> updated_Dataset = create_Macro_PieChart_Dataset(macroName);
             
             // #########################################
             // Transfer Data Over into PieChart Dataset

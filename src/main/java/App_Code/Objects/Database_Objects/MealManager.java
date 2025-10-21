@@ -625,8 +625,6 @@ public class MealManager
         // #########################################
         // Execute Query
         // #########################################
-        System.out.printf("\n\nQuery: \n%s", query);
-        
         ArrayList<String> results = db.getSingleColumnQuery_ArrayList(query);
         
         if (results == null) { return null; } // Error occurred during script

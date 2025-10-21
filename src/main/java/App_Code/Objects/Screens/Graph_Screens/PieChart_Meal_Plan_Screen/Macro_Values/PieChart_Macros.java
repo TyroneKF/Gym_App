@@ -11,7 +11,7 @@ import java.awt.*;
 import java.math.BigDecimal;
 import java.text.AttributedString;
 
-public class Pie_Chart_Macros extends Pie_Chart
+public class PieChart_Macros extends Pie_Chart
 {
     // #################################################################################################################
     // Variable
@@ -21,8 +21,8 @@ public class Pie_Chart_Macros extends Pie_Chart
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
-    public Pie_Chart_Macros(String macroName, String measurementSymbol, Color[] colors, int frameWidth, int frameHeight, int rotateDelay,
-                            Font titleFont, Font labelFont, Font legendFont, DefaultPieDataset<MacroKey> datasetInput)
+    public PieChart_Macros(String macroName, String measurementSymbol, Color[] colors, int frameWidth, int frameHeight, int rotateDelay,
+                           Font titleFont, Font labelFont, Font legendFont, DefaultPieDataset<PieChart_MacroKey> datasetInput)
 
     {
         //#################################################################
@@ -44,13 +44,13 @@ public class Pie_Chart_Macros extends Pie_Chart
                 //#######################################
                 // Generic Label
                 //#######################################
-                MacroKey macroKey = (MacroKey) key;
+                PieChart_MacroKey macroKey = (PieChart_MacroKey) key;
                 BigDecimal macroValue = (BigDecimal) dataset.getValue(key);
                 
                 ///#######################################
                 // Return Label
                 //#######################################
-                return String.format(" [%s]  %s  (%d%%) -  %s %s ",
+                return String.format("\u00A0\u00A0\u00A0[%s]\u00A0%s  (%d%%) -  %s %s\u00A0\u00A0",
                         macroKey.get_MealTime_GUI(), macroKey.get_MealName(),
                         percent_Calculator(macroValue, get_DatasetTotal()), macroValue, macroKey.get_MacroSymbol());
             }
@@ -83,6 +83,14 @@ public class Pie_Chart_Macros extends Pie_Chart
         is_PieChart_Empty_MSG();
         reDraw_Legend();
         updateChartTitle();
+    }
+    
+    @Override
+    protected void first_RunTime_Events()
+    {
+        calculate_Dataset_Total();
+        is_PieChart_Empty_MSG();
+        reDraw_Legend();
     }
     
     @Override
