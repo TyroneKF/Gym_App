@@ -689,7 +689,7 @@ public class IngredientsTable extends JDBC_JTable
             {
                 deleteTableAction();
             }
-            else if (reply == JOptionPane.NO_OPTION) // instead of delete last ingredient, replace with ingredient None Of Above
+            else // instead of delete last ingredient, replace with ingredient None Of Above
             {
                 return;
             }
