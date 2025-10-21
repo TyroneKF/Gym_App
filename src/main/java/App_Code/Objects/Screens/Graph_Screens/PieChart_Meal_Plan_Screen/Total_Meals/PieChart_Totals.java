@@ -39,7 +39,9 @@ public class PieChart_Totals extends Pie_Chart
                 //###############################
                 // Macro Info
                 //###############################
-                String macroName = (String) macroKey;
+                String
+                        macroName = (String) macroKey,
+                        space = getSpace();
                 
                 BigDecimal
                         macroValue = (BigDecimal) dataset.getValue(macroName),
@@ -52,7 +54,7 @@ public class PieChart_Totals extends Pie_Chart
                 {
                     int percent = percent_Calculator(macroValue, macrosTotal);
                     
-                    return String.format("\u00A0\u00A0\u00A0%s [ %d%% ] - %s g ", macroName, percent, macroValue);
+                    return String.format("%s%s [ %d%% ] - %s g%s", space, macroName, percent, macroValue, space);
                 }
                 else if (macroName.equals("Carbohydrates"))
                 {
@@ -60,7 +62,7 @@ public class PieChart_Totals extends Pie_Chart
                     BigDecimal total_Carbs = macroValue.add(sugarsMacroValue);
                     int percent = percent_Calculator(total_Carbs, macrosTotal);
                     
-                    return String.format("\u00A0\u00A0\u00A0%s [ %d%% ] - %s g ", macroName, percent, macroValue);
+                    return String.format("%s%s [ %d%% ] - %s g", space, macroName, percent, macroValue);
                 }
                 else if (macroName.equals("Fats"))
                 {
@@ -68,13 +70,13 @@ public class PieChart_Totals extends Pie_Chart
                     BigDecimal totalFats = macroValue.add(satFatMacroValue);
                     int percent = percent_Calculator(totalFats, macrosTotal);
                     
-                    return String.format("\u00A0\u00A0\u00A0\u00A0%s [ %d%% ] - %s g ", macroName, percent, macroValue);
+                    return String.format("%s%s [ %d%% ] - %s g%s", space, macroName, percent, macroValue, space);
                 }
                 
                 //###############################
                 // Generic Label
                 //###############################
-                return String.format("\u00A0\u00A0\u00A0%s - %s g", macroName, macroValue);
+                return String.format("%s%s - %s g%s", space, macroName, macroValue, space);
             }
             
             @Override
@@ -88,5 +90,10 @@ public class PieChart_Totals extends Pie_Chart
         // Set Label Generator
         //#################################################################
         plot.setLegendLabelGenerator(labelGen);
+    }
+    
+    protected String getSpace()
+    {
+        return "\u00A0\u00A0";
     }
 }

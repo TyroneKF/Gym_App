@@ -5,6 +5,8 @@ import App_Code.Objects.Database_Objects.MealManager;
 import App_Code.Objects.Database_Objects.MealManagerRegistry;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
 import App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Meals.PieChart_Totals;
+import org.jfree.chart.title.LegendTitle;
+import org.jfree.chart.ui.HorizontalAlignment;
 import org.jfree.data.general.DefaultPieDataset;
 
 import java.awt.*;
@@ -178,7 +180,23 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen_JFrame
         //#####################################
         // Create PieChart
         //#####################################
-        pieChart = new PieChart_Totals(title, colorPalette, pieWidth, pieHeight, 150, titleFont, labelFont, legendFont, dataset);
+        pieChart = new PieChart_Totals(title, colorPalette, pieWidth, pieHeight, 150, titleFont, labelFont, legendFont, dataset){
+           
+            @Override
+            protected String getSpace()
+            {
+                return "\u00A0\u00A0\u00A0";
+            }
+            
+            @Override
+            protected void set_Horizontal_LegendAlignment()
+            {
+                LegendTitle legend = plot.getChart().getLegend();
+                legend.setPosition(org.jfree.chart.ui.RectangleEdge.BOTTOM);
+                legend.setHorizontalAlignment(HorizontalAlignment.CENTER);
+            }
+        };
+       
         addToContainer(getScrollPaneJPanel(), pieChart, 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
         
         //#####################################

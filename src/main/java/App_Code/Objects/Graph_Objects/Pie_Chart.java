@@ -258,7 +258,7 @@ public class Pie_Chart<K extends Comparable<K>> extends JPanel
     {
         LegendTitle legend = plot.getChart().getLegend();
         legend.setPosition(org.jfree.chart.ui.RectangleEdge.BOTTOM);
-        legend.setHorizontalAlignment(HorizontalAlignment.CENTER);
+        legend.setHorizontalAlignment(HorizontalAlignment.LEFT);
     }
     
     protected int percent_Calculator(BigDecimal value, BigDecimal overall)

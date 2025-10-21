@@ -93,14 +93,6 @@ public class PieChart_Macros extends Pie_Chart
         reDraw_Legend();
     }
     
-    @Override
-    protected void set_Horizontal_LegendAlignment()
-    {
-        LegendTitle legend = plot.getChart().getLegend();
-        legend.setPosition(org.jfree.chart.ui.RectangleEdge.BOTTOM);
-        legend.setHorizontalAlignment(HorizontalAlignment.LEFT);
-    }
-    
     public void updateChartTitle()
     {
         setTitle(String.format(" %s Across Meals  [ %s %s ]", macroName, get_DatasetTotal(), measurementSymbol));
