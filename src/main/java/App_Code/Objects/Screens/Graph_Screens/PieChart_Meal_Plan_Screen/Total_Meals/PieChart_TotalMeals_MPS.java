@@ -14,17 +14,22 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 
-public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
+public class PieChart_TotalMeals_MPS extends Screen_JPanel
 {
     // #################################################################################################################
     // Variables
     // #################################################################################################################
+    
+    // Int
+    private int mealCount;
+    
     // Graph Preferences
     private int
-            col = 3,
-            pieWidth = (frameWidth / col) - 30,
+            col = 3, desiredGridCount = 6,
+            pieWidth = (frameWidth / col) - 50,
             pieHeight = 500,
             rotateDelay = 200; //580
+    
     private Font
             titleFont = new Font("Serif", Font.PLAIN, 27),
             labelFont = new Font("SansSerif", Font.BOLD, 22),
@@ -41,7 +46,7 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
     //##############################################
     // Collections
     //##############################################
-    private ArrayList<PieChart_Entry_MPS> pieChart_MPS_Entries = new ArrayList<>();
+    private ArrayList<PieChart_Totals_Entry_MPS> pieChart_MPS_Entries = new ArrayList<>();
     private ArrayList<MealManager> mealManager_ArrayList;
     
     //##############################################
@@ -139,7 +144,7 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
-    public PieChart_TotalMeal_Macros_MPS(Meal_Plan_Screen meal_plan_screen, int frameWidth, int frameHeight)
+    public PieChart_TotalMeals_MPS(Meal_Plan_Screen meal_plan_screen, int frameWidth, int frameHeight)
     {
         // ################################################################
         // Super
@@ -176,12 +181,9 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
     public void create_And_Draw_GUI()
     {
         // ################################################################
-        // Clean & Build
+        // Set GridLayout
         // ################################################################
-        int rows = (int) Math.ceil((double) mealManagerRegistry.get_Active_MealCount() / col);
-        
-        getScrollPaneJPanel().removeAll();
-        getScrollPaneJPanel().setLayout(new GridLayout(rows, col));
+        set_GridLayout();
         
         // ################################################################
         // Generate Color Palette
@@ -217,9 +219,9 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
             //##############################
             String title = String.format("[%s]      %s Macros", mealManager.getCurrentMealTimeGUI(), mealManager.getCurrentMealName());
             
-            Pie_Chart_Totals pieChart = new Pie_Chart_Totals(title, colorPalette, pieWidth, pieHeight, rotateDelay, titleFont, labelFont, legendFont, pieDataset);
+            PieChart_Totals pieChart = new PieChart_Totals(title, colorPalette, pieWidth, pieHeight, rotateDelay, titleFont, labelFont, legendFont, pieDataset);
             
-            pieChart_MPS_Entries.add(new PieChart_Entry_MPS(mealPlanID, mealManager, pieChart));
+            pieChart_MPS_Entries.add(new PieChart_Totals_Entry_MPS(mealPlanID, mealManager, pieChart));
             
             //##############################
             // Add PieChart to GUI
@@ -233,6 +235,11 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
         }
         
         //##############################
+        // Exception for 1 meal
+        //##############################
+        fill_GUI_Grid();
+        
+        //##############################
         // Re-paint GUI
         //##############################
         resizeGUI();
@@ -241,13 +248,9 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
     public void redraw_GUI()
     {
         // ####################################################
-        // Clear GUI
+        // Reset GridLayout
         // ####################################################
-        getScrollPaneJPanel().removeAll();
-        resetYPos();
-        
-        int rows = (int) Math.ceil((double) pieChart_MPS_Entries.size() / col);
-        getScrollPaneJPanel().setLayout(new GridLayout(rows, col));
+        set_GridLayout();
         
         // ####################################################
         // Sort List by MealTime
@@ -257,7 +260,7 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
         // ####################################################
         // Paint GUI
         // ####################################################
-        Iterator<PieChart_Entry_MPS> it = pieChart_MPS_Entries.iterator();
+        Iterator<PieChart_Totals_Entry_MPS> it = pieChart_MPS_Entries.iterator();
         while (it.hasNext())
         {
             //##############################
@@ -275,10 +278,64 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
             getScrollPaneJPanel().add(x);
         }
         
+        //##############################
+        // Exception for 1 meal
+        //##############################
+        fill_GUI_Grid();
+        
         //#####################################
         // Reset GUI Graphics
         //#####################################
         resizeGUI();
+    }
+    
+    public void set_GridLayout()
+    {
+        // ####################################################
+        // Reset GUI
+        // ####################################################
+        getScrollPaneJPanel().removeAll();
+        resetYPos();
+        
+        // ####################################################
+        // Set GridLayout
+        // ####################################################
+        mealCount = mealManagerRegistry.get_Active_MealCount();
+        
+        int calc = (int) Math.ceil((double) mealCount / col);
+        int rows = Math.max(calc, 2); // returns the larger out of the 2
+        
+        getScrollPaneJPanel().setLayout(new GridLayout(rows, col));
+        
+        System.out.printf("\n\nRows: %s | Col : %s \nMeals in GUI: %s", rows, col, mealCount);
+    }
+    
+    public void fill_GUI_Grid()
+    {
+        //##############################
+        // Exception for 1 meal
+        //##############################
+        /**
+         *  If there's one meal in the plan the graph get distorted and stretched because its dragged across the screen
+         *  The gui needs atleast 4 objects added to the gui panel to look good
+         */
+        //##############################
+        // Add Blank White JPanel
+        //##############################
+        
+        if (mealCount < desiredGridCount)
+        {
+            
+            for (int i = 1; i <= (desiredGridCount - mealCount); i++)
+            {
+                JPanel blankJP = new JPanel();
+                //  blankJP.setPreferredSize(new Dimension(pieWidth,pieHeight));
+                blankJP.setBackground(colorPalette[i]);
+                
+                getScrollPaneJPanel().add(blankJP);
+                System.out.println("\n\nyabbab");
+            }
+        }
     }
     
     public void clear()
@@ -304,10 +361,10 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
     // #################################################################################################################
     public void update_PieChart_MealName(int mealInPlanID)
     {
-        Iterator<PieChart_Entry_MPS> it = pieChart_MPS_Entries.iterator();
+        Iterator<PieChart_Totals_Entry_MPS> it = pieChart_MPS_Entries.iterator();
         while (it.hasNext())
         {
-            PieChart_Entry_MPS pieChart_Entry = it.next();
+            PieChart_Totals_Entry_MPS pieChart_Entry = it.next();
             
             if (pieChart_Entry.get_MealInPlanID() == mealInPlanID) { pieChart_Entry.update_PieChart_Title(); break; }
         }
@@ -326,8 +383,8 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
         //##############################
         String title = String.format("[%s]      %s Macros", mealManager.getCurrentMealTimeGUI(), mealManager.getCurrentMealName());
         
-        Pie_Chart_Totals pieChart = new Pie_Chart_Totals(title, colorPalette, pieWidth, pieHeight, rotateDelay, titleFont, labelFont, legendFont, pieDataset);
-        pieChart_MPS_Entries.add(new PieChart_Entry_MPS(mealPlanID, mealManager, pieChart));
+        PieChart_Totals pieChart = new PieChart_Totals(title, colorPalette, pieWidth, pieHeight, rotateDelay, titleFont, labelFont, legendFont, pieDataset);
+        pieChart_MPS_Entries.add(new PieChart_Totals_Entry_MPS(mealPlanID, mealManager, pieChart));
         
         //##############################
         // Sort Meals in Pie MPS
@@ -361,7 +418,7 @@ public class PieChart_TotalMeal_Macros_MPS extends Screen_JPanel
     // #################################################################################################################
     // Accessor Methods
     // #################################################################################################################
-    public ArrayList<PieChart_Entry_MPS> get_PieChart_Entry_MPS()
+    public ArrayList<PieChart_Totals_Entry_MPS> get_PieChart_Entry_MPS()
     {
         return pieChart_MPS_Entries;
     }

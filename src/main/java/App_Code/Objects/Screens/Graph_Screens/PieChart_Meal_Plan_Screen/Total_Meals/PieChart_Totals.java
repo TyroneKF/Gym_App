@@ -9,7 +9,7 @@ import java.awt.*;
 import java.math.BigDecimal;
 import java.text.AttributedString;
 
-public class Pie_Chart_Totals extends Pie_Chart
+public class PieChart_Totals extends Pie_Chart
 {
     // #################################################################################################################
     // Variables
@@ -19,8 +19,8 @@ public class Pie_Chart_Totals extends Pie_Chart
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
-    public Pie_Chart_Totals(String title, Color[] colors, int frameWidth, int frameHeight, int rotateDelay, Font titleFont,
-                            Font labelFont, Font legendFont, DefaultPieDataset<String> datasetInput)
+    public PieChart_Totals(String title, Color[] colors, int frameWidth, int frameHeight, int rotateDelay, Font titleFont,
+                           Font labelFont, Font legendFont, DefaultPieDataset<String> datasetInput)
     
     {
         //#################################################################

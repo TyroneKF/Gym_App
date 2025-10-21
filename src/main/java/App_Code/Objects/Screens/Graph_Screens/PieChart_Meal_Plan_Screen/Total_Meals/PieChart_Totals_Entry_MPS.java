@@ -4,7 +4,7 @@ import App_Code.Objects.Database_Objects.MealManager;
 import App_Code.Objects.Graph_Objects.Pie_Chart;
 import org.jfree.data.time.Second;
 
-public class PieChart_Entry_MPS
+public class PieChart_Totals_Entry_MPS
 {
     
     //##################################################################################################################
@@ -21,7 +21,7 @@ public class PieChart_Entry_MPS
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    PieChart_Entry_MPS(Integer mealInPlanID, MealManager mealManager, Pie_Chart pieChart)
+    PieChart_Totals_Entry_MPS(Integer mealInPlanID, MealManager mealManager, Pie_Chart pieChart)
     {
         this.mealManager = mealManager;
         this.mealInPlanID = mealInPlanID;

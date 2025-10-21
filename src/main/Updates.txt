@@ -48,7 +48,7 @@ MealManager
 Pie_Chart:
 .) pie_Chart empty is out of line with others
 .) PieChart empty values if left side bound results
-.) Units
+.) Empty added meal to gui doesn't update legends but, chart is updated
 
 ######################################################################################
 New Features:
