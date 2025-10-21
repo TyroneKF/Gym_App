@@ -9,7 +9,7 @@ import App_Code.Objects.Gui_Objects.*;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
 import App_Code.Objects.Screens.Graph_Screens.LineChart_Meal_Plan_Screen.LineChart_MPS;
 import App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.PieChart_Screen_MPS;
-import App_Code.Objects.Screens.Ingredient_Info_Screens.Edit_Ingredients_Info.Ingredients_Info_Screen;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
 import App_Code.Objects.Screens.Loading_Screen.Loading_Screen;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.javatuples.Pair;
@@ -645,8 +645,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
         resizeGUI();
         setFrameVisibility(true);
         scroll_To_Top_of_ScrollPane();
-        
-        pieChart_BtnAction_OpenScreen();
     }
     
     //##################################################################################################################
@@ -1633,19 +1631,14 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // ###############################################################
     private void open_AddIngredients_Screen()
     {
-        if (! (get_IsPlanSelected()))
-        {
-            return;
-        }
-        
         if (is_IngredientScreen_Open())
         {
             ingredientsInfoScreen.makeFrameVisible();
             return;
         }
         
-        ingredientsInfoScreen = new Ingredients_Info_Screen(db, this, planID, tempPlanID, planName,
-                map_ingredientTypesToNames, ingredientsTypesList, storesNamesList);
+        ingredientsInfoScreen = new Ingredients_Info_Screen(db, this,map_ingredientTypesToNames,
+                ingredientsTypesList, storesNamesList);
     }
     
     private Boolean is_IngredientScreen_Open()
