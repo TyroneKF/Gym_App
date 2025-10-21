@@ -42,13 +42,10 @@ TotalMeal:
 .) Refresh Meal - Redraws screen and what's happens to pie charts open from unsaved meals it should be removed
 
 MealManager
-.) Check time comparison methods with get currentTime
 .) MealManager Update mealTime could just change time field on TotalMeal Vs reloading whole table
 
-Pie_Chart:
-.) pie_Chart empty is out of line with others
-.) PieChart empty values if left side bound results
-.) Empty added meal to gui doesn't update legends but, chart is updated
+.) Change all | or || bitwise or vs logical or
+.) Sql statements
 
 ######################################################################################
 New Features:

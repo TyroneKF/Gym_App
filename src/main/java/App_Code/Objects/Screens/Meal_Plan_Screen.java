@@ -141,7 +141,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
      * LinkedHashMap<String, Pair<Integer, String>> totalMeal_macroColNamePos
      * LinkedHashMap<TotalMeal_MacroName, Pair< Position, Measurement>> totalMeal_macroColNamePos
      */
-    private LinkedHashMap<String, Pair<Integer, String>> totalMeal_macroColNamePos = new LinkedHashMap<>()
+    private LinkedHashMap<String, Pair<Integer, String>> totalMeal_macroColName_And_Pos = new LinkedHashMap<>()
     {{
         put("total_protein", new Pair<>(null, "g"));
         put("total_carbohydrates", new Pair<>(null, "g"));
@@ -153,6 +153,12 @@ public class Meal_Plan_Screen extends Screen_JFrame
         put("total_water", new Pair<>(null, "ml"));
         put("total_calories", new Pair<>(null, "kcal"));
         // put("total_liquid",new Pair<>(null, "g"));
+    }};
+    
+    private HashMap<String, Integer> totalMeal_Other_Cols_Pos = new HashMap<>()
+    {{
+        put("meal_time", null);
+        put("meal_name", null);
     }};
     
     //##################################################################################################################
@@ -413,10 +419,14 @@ public class Meal_Plan_Screen extends Screen_JFrame
             int pos = 0;
             for (String columnName : meal_total_columnNames)
             {
-                if (totalMeal_macroColNamePos.containsKey(columnName))
+                if (totalMeal_macroColName_And_Pos.containsKey(columnName))
                 {
-                    String symbol = totalMeal_macroColNamePos.get(columnName).getValue1();
-                    totalMeal_macroColNamePos.put(columnName, new Pair<>(pos, symbol));
+                    String symbol = totalMeal_macroColName_And_Pos.get(columnName).getValue1();
+                    totalMeal_macroColName_And_Pos.put(columnName, new Pair<>(pos, symbol));
+                }
+                else if (totalMeal_Other_Cols_Pos.containsKey(columnName))
+                {
+                    totalMeal_Other_Cols_Pos.put(columnName, pos);
                 }
                 pos++;
             }
@@ -565,7 +575,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //##############################################################################################################
         
         // Create MealRegistry's for MealManagers
-        mealManagerRegistry = new MealManagerRegistry(this, totalMeal_macroColNamePos);
+        mealManagerRegistry = new MealManagerRegistry(this, totalMeal_macroColName_And_Pos);
         
         // #####################################
         // Add MealManagers to GUI
@@ -1996,6 +2006,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
     public ArrayList<String> getMeal_total_columnNames()
     {
         return meal_total_columnNames;
+    }
+    
+    public HashMap<String, Integer> get_TotalMeal_Other_Cols_Pos()
+    {
+        return totalMeal_Other_Cols_Pos;
     }
     
     //###########################################

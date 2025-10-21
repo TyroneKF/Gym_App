@@ -29,9 +29,14 @@ public class TotalMealTable extends MyJTable_DisplayData
         super.updateTable();
     }
     
-    public BigDecimal get_ValueOnTable(int row, int col )
+    public Object get_ValueOnTable(int row, int col )
     {
-        return (BigDecimal) super.getValueOnTable(row, col);
+        return super.getValueOnTable(row, col);
+    }
+    
+   public void set_Value_On_Table(Object data, int row, int col)
+    {
+        super.update_Table_Cell_Value(data, row,  col);
     }
     
     public ArrayList<Object> getTableData()

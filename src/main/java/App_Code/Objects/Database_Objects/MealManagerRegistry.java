@@ -128,7 +128,7 @@ public class MealManagerRegistry
             String macroName = mapEntry.getKey();
             Integer macroPos = mapEntry.getValue().getValue0();
             
-            BigDecimal macroValue = totalMealTable.get_ValueOnTable(0, macroPos);
+            BigDecimal macroValue = (BigDecimal) totalMealTable.get_ValueOnTable(0, macroPos);
             
             /**
              *  <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>

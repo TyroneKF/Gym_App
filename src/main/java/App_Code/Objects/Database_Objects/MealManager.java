@@ -53,6 +53,7 @@ public class MealManager
             ingredientsInMeal_Table_ColToHide;
     private TreeMap<String, Collection<String>> map_ingredientTypesToNames;
     private ArrayList<IngredientsTable> ingredientsTables = new ArrayList<>();
+    private HashMap<String, Integer> totalMeal_Other_Cols_Pos;
     
     //################################################################################
     // Objects
@@ -210,6 +211,7 @@ public class MealManager
         this.ingredients_Table_Col_Avoid_Centering = meal_plan_screen.getIngredients_Table_Col_Avoid_Centering();
         this.ingredientsInMeal_Table_ColToHide = meal_plan_screen.getIngredientsInMeal_Table_ColToHide();
         this.ingredientsTable_ColumnNames = meal_plan_screen.getIngredients_ColumnNames();
+        this.totalMeal_Other_Cols_Pos = meal_plan_screen.get_TotalMeal_Other_Cols_Pos();
         
         //##############################################################################################################
         // Create Collapsible Object
@@ -705,9 +707,9 @@ public class MealManager
                 getCurrentMealTimeGUI(), newMealTime)); // Success MSG
         
         //#######################################
-        // Update total Meal View
+        // Update total Meal View Time Col
         //#######################################
-        update_TotalMeal_Table(); // HELLO Could be just simplified to
+        totalMealTable.set_Value_On_Table(newMealTime, 0, totalMeal_Other_Cols_Pos.get("meal_time"));
         
         //#######################################
         // Update Time Variables
@@ -826,7 +828,7 @@ public class MealManager
             JOptionPane.showMessageDialog(getFrame(), "\n\nUnable to successfully change this  meals name! \n\nMaybe he selected meal name already exists within this meal plan!!");
             return;
         }
-    
+        
         //#########################################################################################################
         // Change Variable DATA & Object
         //#########################################################################################################
@@ -966,7 +968,7 @@ public class MealManager
         // Update Registry Data
         //##########################################
         mealManagerRegistry.delete_MealManager(this);
-    
+        
         //##########################################
         // Hide JTable object & Collapsible OBJ
         //##########################################

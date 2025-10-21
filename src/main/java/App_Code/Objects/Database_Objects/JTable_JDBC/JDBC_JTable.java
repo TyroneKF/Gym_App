@@ -445,7 +445,15 @@ public class JDBC_JTable extends JPanel
     
     }
     
-    public void updateTable(ArrayList<Object> updateData, int updateRow)
+    protected void update_Table_Cell_Value(Object data, int row, int col)
+    {
+        //####################################
+        // Update Cell
+        //####################################
+        tableModel.setValueAt(data, row, col);
+    }
+    
+    protected void updateTable(ArrayList<Object> updateData, int updateRow)
     {
         //########################################################################
         // Updating Table Info
