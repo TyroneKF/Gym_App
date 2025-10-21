@@ -329,11 +329,8 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
             for (int i = 1; i <= (desiredGridCount - mealCount); i++)
             {
                 JPanel blankJP = new JPanel();
-                //  blankJP.setPreferredSize(new Dimension(pieWidth,pieHeight));
-                blankJP.setBackground(colorPalette[i]);
-                
+                blankJP.setBackground(Color.WHITE);
                 getScrollPaneJPanel().add(blankJP);
-                System.out.println("\n\nyabbab");
             }
         }
     }
