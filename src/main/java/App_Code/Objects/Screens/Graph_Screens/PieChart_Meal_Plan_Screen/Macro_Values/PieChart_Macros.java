@@ -2,11 +2,8 @@ package App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Macro_V
 
 import App_Code.Objects.Graph_Objects.Pie_Chart;
 import org.jfree.chart.labels.PieSectionLabelGenerator;
-import org.jfree.chart.title.LegendTitle;
-import org.jfree.chart.ui.HorizontalAlignment;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.general.PieDataset;
-
 import java.awt.*;
 import java.math.BigDecimal;
 import java.text.AttributedString;
