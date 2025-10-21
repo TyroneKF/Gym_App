@@ -121,7 +121,7 @@ public class PieChart_Screen_MPS extends Screen_JFrame
         //######################################
         // TotalMeal PieChart MPS
         //######################################
-        pieChart_TotalMeals_MPS.update_PieChart_MealName(mealInPlanID);
+        pieChart_TotalMeals_MPS.update_PieChart_Title(mealInPlanID);
         
         //######################################
         // Macros PieChart MPS
@@ -137,7 +137,7 @@ public class PieChart_Screen_MPS extends Screen_JFrame
         //######################################
         // TotalMeal PieChart MPS
         //######################################
-        pieChart_TotalMeals_MPS.update_PieChart_MealName(mealInPlanID);
+        pieChart_TotalMeals_MPS.update_PieChart_Title(mealInPlanID);
         pieChart_TotalMeals_MPS.redraw_GUI();
         
         //######################################

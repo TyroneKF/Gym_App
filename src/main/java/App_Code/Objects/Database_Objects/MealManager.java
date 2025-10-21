@@ -834,6 +834,11 @@ public class MealManager
         //#########################################################################################################
         collapsibleJpObj.setIconBtnText(inputMealName);
         setMealNameVariables(true, savedMealName, inputMealName);  // Set Meal Name Variables
+    
+        //#########################################################################################################
+        // Update total Meal View Time Col
+        //#########################################################################################################
+        totalMealTable.set_Value_On_Table(inputMealName, 0, totalMeal_Other_Cols_Pos.get("meal_name"));
         
         //#########################################################################################################
         // Internal / External Graphs
@@ -841,7 +846,7 @@ public class MealManager
         pieChart_UpdateMealName(); // Change Internal Graph Title if exists
         
         // Update External
-        meal_plan_screen.update_External_Charts(false, "mealTime", this, null, null);
+        meal_plan_screen.update_External_Charts(false, "mealName", this, null, null);
         
         //#########################################################################################################
         // Change Button Text & Related Variables

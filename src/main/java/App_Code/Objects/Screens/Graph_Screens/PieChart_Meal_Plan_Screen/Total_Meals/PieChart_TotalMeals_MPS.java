@@ -356,7 +356,7 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
     // #################################################################################################################
     //  Methods
     // #################################################################################################################
-    public void update_PieChart_MealName(int mealInPlanID)
+    public void update_PieChart_Title(int mealInPlanID)
     {
         Iterator<PieChart_Totals_Entry_MPS> it = pieChart_MPS_Entries.iterator();
         while (it.hasNext())

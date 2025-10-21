@@ -1858,10 +1858,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
             // Change data points time on LineChart Data
             updateLineChartData(mealManager, previousMealTime, currentMealTime);
             
-            
             // Update PieChart Title OF Meal & Refresh Interface
             update_PieChart_MealTime(mealManager.getMealInPlanID());
-            
         }
         else if (action.equals("mealName")) // MealTime on MealManager Changed
         {
