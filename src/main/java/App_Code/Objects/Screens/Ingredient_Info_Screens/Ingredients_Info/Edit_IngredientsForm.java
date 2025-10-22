@@ -35,7 +35,7 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
     //##################################################################################################################
     public void updateIngredientsInfoFromDB()
     {
-        if (edit_ingredientsScreen.getUpdateStatusOfIngredientNames())
+        if (edit_ingredientsScreen.get_Update_Status_Of_Ingredient_Names())
         {
             return;
         }
@@ -43,7 +43,7 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
         //############################################################
         // Get Selected Ingredient Name
         //############################################################
-        selectedIngredientName = edit_ingredientsScreen.getSelectedIngredientName();
+        selectedIngredientName = edit_ingredientsScreen.get_Selected_Ingredient_Name();
 
         if (selectedIngredientName==null)
         {
@@ -182,7 +182,7 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
         //##############################################################################################################
         String
                 tableName = "ingredients_info",
-                ingredientIDColName = "IngredientID",
+                ingredientIDColName = "ingredient_id",
                 setQuery = String.format("UPDATE %s \nSET", tableName);
 
         //##############################################################################################################
@@ -219,7 +219,7 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
             //####################################
             if (rowLabel.equals("Ingredient Type"))
             {
-                String ingredientTypeSet = "SELECT ingredient_type_id FROM ingredientTypes WHERE ingredient_type_name = \"";
+                String ingredientTypeSet = "SELECT ingredient_type_id FROM ingredient_types WHERE ingredient_type_name = \"";
                 formFieldValue = String.format("(%s%s\")", ingredientTypeSet, formFieldValue);
             }
             else if (mysqlColumnDataType.equals("String"))
@@ -262,11 +262,11 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
             //##############################
 
             String
-                    sqlIngredientIDNameCol = "IngredientID",
+                    sqlIngredientIDNameCol = "ingredient_id",
                     tableName = "ingredients_info",
                     tableReference = "info",
                     sqlIngredientTypeNameCol = "ingredient_type_name",
-                    sqlIngredientTypeTable = "ingredientTypes",
+                    sqlIngredientTypeTable = "ingredient_types",
                     selectStatement = String.format("SELECT \n%s.%s,", tableReference, sqlIngredientIDNameCol);
 
             int pos = -1, listSize = ingredientsFormLabelsMapsToValues.size();
@@ -293,7 +293,7 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
                 if (formLabelName.equals("Ingredient Type"))
                 {
                     stringToAdd = String.format("""
-                                    \n(SELECT t.%s FROM %s t  WHERE t.%s = %s.%s)  AS Ingredient_Type""",
+                                    \n(SELECT t.%s FROM %s t  WHERE t.%s = %s.%s)  AS ingredient_type""",
                             sqlIngredientTypeNameCol, sqlIngredientTypeTable, sqlColumnName, tableReference, sqlColumnName);
                 }
                 else if (formLabelName.equals("Ingredient Name"))

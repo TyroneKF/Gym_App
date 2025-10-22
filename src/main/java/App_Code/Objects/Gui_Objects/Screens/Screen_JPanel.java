@@ -33,10 +33,10 @@ public class Screen_JPanel extends JPanel
     // JPanels
     //##############################################
     // Public: JPanels
-    protected JPanel mainNorthPanel, mainSouthPanel, scrollPaneJPanel;
+    protected JPanel mainNorthJPanel, mainSouthJPanel, scrollPaneJPanel;
     
     // Private: JPanels
-    protected JPanel screenSectioned, mainCenterPanel;
+    private JPanel screenSectioned, mainCenterPanel;
     private Container container;
     
     //##################################################################################################################
@@ -56,7 +56,7 @@ public class Screen_JPanel extends JPanel
         //##############################################
         // Setup
         //##############################################
-        setup();
+        setup(); // Main GUI
     }
     
     //##################################################################################################################
@@ -70,19 +70,19 @@ public class Screen_JPanel extends JPanel
         setLayout(new GridLayout(1, 1));
         
         screenSectioned = new JPanel(new BorderLayout());
-        addToContainer(this, screenSectioned, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        add_To_Container(this, screenSectioned, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
         
         // Top of GUI
-        mainNorthPanel = new JPanel(new GridBagLayout());
-        screenSectioned.add(mainNorthPanel, BorderLayout.NORTH);
+        mainNorthJPanel = new JPanel(new GridBagLayout());
+        screenSectioned.add(mainNorthJPanel, BorderLayout.NORTH);
         
         // Centre of GUI
         mainCenterPanel = new JPanel(new GridBagLayout());
         screenSectioned.add(mainCenterPanel, BorderLayout.CENTER);
         
         // South of GUI
-        mainSouthPanel = new JPanel(new GridBagLayout());
-        screenSectioned.add(mainSouthPanel, BorderLayout.SOUTH);
+        mainSouthJPanel = new JPanel(new GridBagLayout());
+        screenSectioned.add(mainSouthJPanel, BorderLayout.SOUTH);
         
         //##########################################################
         // Create ScrollPane & Add it to Centre of GUI
@@ -91,7 +91,7 @@ public class Screen_JPanel extends JPanel
         if (addScrollPane)
         {
             // Attach ScrollPane to the centre of the screen
-            addToContainer(mainCenterPanel, scrollPane, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+            add_To_Container(mainCenterPanel, scrollPane, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
             scrollPaneJPanel = scrollPane.getJPanel();
             scrollPaneJPanel.setBackground(Color.WHITE);
             scrollPaneJPanel.setLayout(new GridBagLayout());
@@ -102,7 +102,7 @@ public class Screen_JPanel extends JPanel
         }
     }
     
-    protected void iconSetup(Container mainNorthPanel)
+    protected void icon_Setup(Container container)
     {
     
     }
@@ -110,7 +110,7 @@ public class Screen_JPanel extends JPanel
     //##################################################################################################################
     // Actions
     //##################################################################################################################
-    protected Boolean areYouSure(String title, String msg)
+    protected Boolean are_You_Sure(String title, String msg)
     {
         int reply = JOptionPane.showConfirmDialog(this, msg, title, JOptionPane.YES_NO_OPTION); //HELLO Edit
         
@@ -124,7 +124,7 @@ public class Screen_JPanel extends JPanel
     //##############################################
     // Screen_JFrame Positioning
     //##############################################
-    protected void scrollToJPanelOnScreen(JPanel panel) // Only Works With JPanels
+    protected void scroll_To_JPanel_On_Screen(JPanel panel) // Only Works With JPanels
     {
         // Scroll to that panel AFTER layout has finished
         SwingUtilities.invokeLater(() -> {
@@ -134,7 +134,7 @@ public class Screen_JPanel extends JPanel
         });
     }
     
-    protected void scroll_To_Top_of_ScrollPane()
+    protected void scroll_To_Top_Of_ScrollPane()
     {
         //##############################################
         // Set ScrollPane to the Bottom Straight Away
@@ -155,7 +155,7 @@ public class Screen_JPanel extends JPanel
     //##################################################################################################################
     // Mutator Methods
     //##################################################################################################################
-    protected String formatStrings(String txt, boolean separateWords)
+    protected String format_Strings(String txt, boolean separateWords)
     {
         // Re-assign Re-Capitalised Value into list
         return separateWords ?
@@ -171,12 +171,6 @@ public class Screen_JPanel extends JPanel
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
-    
-    public GridBagConstraints getGbc()
-    {
-        return gbc;
-    }
-    
     public Container get_Container()
     {
         return (container == null) ? this : container;
@@ -185,19 +179,19 @@ public class Screen_JPanel extends JPanel
     // ##################################
     // Get JPanels Methods
     // ##################################
-    protected JPanel getMainNorthPanel()
+    protected JPanel get_Main_North_JPanel()
     {
-        return mainNorthPanel;
+        return mainNorthJPanel;
     }
     
-    protected JPanel getScrollPaneJPanel()
+    protected JPanel get_ScrollPane_JPanel()
     {
         return scrollPaneJPanel;
     }
     
-    protected JPanel getMainSouthPanel() { return mainSouthPanel; }
+    protected JPanel get_Main_South_JPanel() { return mainSouthJPanel; }
     
-    protected JPanel createSpaceDivider(int width, int height)
+    protected JPanel create_Space_Divider(int width, int height)
     {
         JPanel spaceDivider = new JPanel(new GridBagLayout());
         spaceDivider.setBackground(Color.WHITE);
@@ -209,12 +203,12 @@ public class Screen_JPanel extends JPanel
     // ##################################
     // Get Int Methods
     // ##################################
-    protected int getFrameWidth()
+    protected int get_FrameWidth()
     {
         return frameWidth;
     }
     
-    protected int getFrameHeight()
+    protected int get_FrameHeight()
     {
         return frameHeight;
     }
@@ -222,18 +216,18 @@ public class Screen_JPanel extends JPanel
     //##################################################################################################################
     // Sizing & Adding to GUI Methods
     //##################################################################################################################
-    protected int getAndIncreaseContainerYPos()
+    protected int get_And_Increase_YPos()
     {
         containerYPos++;
         return containerYPos;
     }
     
-    public void resetYPos()
+    public void reset_YPos()
     {
         containerYPos = 0;
     }
     
-    public void resizeGUI()
+    public void resize_GUI()
     {
         scrollPaneJPanel.revalidate();
         scrollPaneJPanel.repaint();
@@ -242,9 +236,9 @@ public class Screen_JPanel extends JPanel
         if (container != null) { container.revalidate(); }
     }
     
-    protected void addToContainer(Container container, Component addToContainer,
-                                  Integer gridx, Integer gridy, Integer gridwidth, Integer gridheight, Double weightx,
-                                  Double weighty, String fill, Integer ipady, Integer ipadx, String anchor)
+    protected void add_To_Container(Container container, Component addToContainer,
+                                    Integer gridx, Integer gridy, Integer gridwidth, Integer gridheight, Double weightx,
+                                    Double weighty, String fill, Integer ipady, Integer ipadx, String anchor)
     {
         if (gridx != null)
         {
@@ -292,5 +286,4 @@ public class Screen_JPanel extends JPanel
         }
         container.add(addToContainer, gbc);
     }
-    
 }

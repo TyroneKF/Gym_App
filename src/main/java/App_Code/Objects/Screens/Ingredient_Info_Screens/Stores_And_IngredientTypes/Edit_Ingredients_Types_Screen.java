@@ -165,7 +165,7 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
             // Reset EditCreateForm
             //#################################################################
             Edit_IngredientsScreen editingIngredientsInfo = parentIngredientsScreen.get_Edit_Ingredients_Form();
-            editingIngredientsInfo.refreshInterface(true, true);  // reset form`
+            editingIngredientsInfo.refresh_Interface(true, true);  // reset form`
 
             //###################################################################
             // Change IngredientsTypeToNames JComboBox & List in  EditCreateForm
@@ -174,7 +174,7 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
             {
                 if (parentIngredientsScreen.add_Change_Or_Remove_IngredientsTypeName("removeKey", null, selectedJComboBoxItemTxt)) // change key
                 {
-                    editingIngredientsInfo.updateIngredientNamesToTypesJComboBox(); // update IngredientsTypeToNames JComboBox
+                    editingIngredientsInfo.update_IngredientNames_To_Types_JComboBox(); // update IngredientsTypeToNames JComboBox
                 }
                 else
                 {
@@ -186,7 +186,7 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
             {
                 if (parentIngredientsScreen.add_Change_Or_Remove_IngredientsTypeName("changeKeyName", jTextfieldTXT, selectedJComboBoxItemTxt)) // change key
                 {
-                    editingIngredientsInfo.updateIngredientNamesToTypesJComboBox(); // update IngredientsTypeToNames JComboBox
+                    editingIngredientsInfo.update_IngredientNames_To_Types_JComboBox(); // update IngredientsTypeToNames JComboBox
                 }
                 else
                 {

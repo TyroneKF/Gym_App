@@ -329,7 +329,7 @@ public class Add_ShopForm extends Parent_IngredientsForm_And_ShopForm
         //############################################################
         String mysqlVariableReference = "@newIngredientID";
         String createMysqlVariable = String.format("SET %s = (SELECT MAX(IngredientID) FROM ingredients_info);", mysqlVariableReference);
-        String updateString = String.format("INSERT INTO ingredientInShops (ingredient_id, product_name, volume_per_unit, cost_per_unit, store_id) VALUES ");
+        String updateString = String.format("INSERT INTO ingredient_in_shops (ingredient_id, product_name, volume_per_unit, cost_per_unit, store_id) VALUES ");
 
         ///#################################
         // Creating String for Add Values

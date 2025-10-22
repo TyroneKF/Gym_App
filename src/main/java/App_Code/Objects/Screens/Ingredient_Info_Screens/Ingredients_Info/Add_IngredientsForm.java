@@ -623,7 +623,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
         // Creating Upload Query
         //##############################################################################################################
         String
-                ingredientTypeSet = "SELECT ingredient_type_id FROM ingredientTypes WHERE ingredient_type_name = \"",
+                ingredientTypeSet = "SELECT ingredient_type_id FROM ingredient_types WHERE ingredient_type_name = \"",
                 insertQuery = "INSERT INTO ingredients_info VALUES";
 
         ingredientsValuesBeingAdded = "(null,";

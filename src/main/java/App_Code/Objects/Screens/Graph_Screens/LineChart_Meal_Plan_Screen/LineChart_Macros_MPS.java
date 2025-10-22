@@ -60,7 +60,7 @@ class LineChart_Macros_MPS extends Screen_JPanel
         // Super Constructors & Variables
         // ##########################################
         super(null, true, frameWidth, frameHeight);
-        getScrollPaneJPanel().setBackground(Color.WHITE);
+        get_ScrollPane_JPanel().setBackground(Color.WHITE);
         
         // ##########################################
         // Variables
@@ -86,7 +86,7 @@ class LineChart_Macros_MPS extends Screen_JPanel
         // Create Graph Object & Adding to GUI
         // ##########################################
         line_chart = new Line_Chart(title, frameWidth - 100, frameHeight - 60, dataset);
-        addToContainer(getScrollPaneJPanel(), line_chart, 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        add_To_Container(get_ScrollPane_JPanel(), line_chart, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
     }
     
     // #################################################################################################################

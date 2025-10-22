@@ -19,7 +19,7 @@ public class Edit_ShopForm extends Add_ShopForm
     public Edit_ShopForm(Container parentContainer, Ingredients_Info_Screen ingredients_info_screen, Edit_IngredientsScreen edit_ingredients, String btnText, int btnWidth, int btnHeight)
     {
         super(parentContainer, ingredients_info_screen, edit_ingredients, btnText, btnWidth, btnHeight);
-        this.edit_IngredientsForm = edit_ingredients.getIngredientsForm();
+        this.edit_IngredientsForm = edit_ingredients.get_Ingredients_Form();
     }
 
     //##################################################################################################################
@@ -40,7 +40,7 @@ public class Edit_ShopForm extends Add_ShopForm
         //###########################
         ArrayList<ArrayList<String>> temp_ShopsFormDBData = db.getMultiColumnQuery(String.format("""                    
                 SELECT i.pdid, s.store_name, i.product_name, i.cost_per_unit, i.volume_per_unit
-                FROM  ingredientInShops i
+                FROM  ingredient_in_shops i
                 INNER JOIN
                 (
                   SELECT store_id, store_name FROM stores
@@ -113,7 +113,7 @@ public class Edit_ShopForm extends Add_ShopForm
 
         String
                 insertValues = "",
-                insertStatement = "INSERT INTO ingredientInShops (ingredient_id, product_name, volume_per_unit, cost_per_unit, store_id) VALUES";
+                insertStatement = "INSERT INTO ingredient_in_shops (ingredient_id, product_name, volume_per_unit, cost_per_unit, store_id) VALUES";
 
         String[] updates = new String[shopFormObjects.size()];
 
@@ -148,7 +148,7 @@ public class Edit_ShopForm extends Add_ShopForm
 
                 //Update String
                 updates[pos += 1] = String.format("""
-                                UPDATE ingredientInShops
+                                UPDATE ingredient_in_shops
                                 SET  product_name = '%s', volume_per_unit = %s, cost_per_unit = %s, store_id = (SELECT store_id FROM stores WHERE store_name = '%s')
                                 WHERE pdid = %s;""",
                         editShopForm_Object.getProductName_Txt(),
@@ -308,9 +308,7 @@ public class Edit_ShopForm extends Add_ShopForm
                 //###################################################
                 // Delete Supplier From ingredientInShops
                 //###################################################
-                String updateQuery2 = String.format("""
-                        DELETE FROM ingredientInShops
-                        WHERE pdid = %s; """, PDID);
+                String updateQuery2 = String.format("DELETE FROM ingredient_in_shops  WHERE pdid = %s;", PDID);
 
                 System.out.printf("\n\n%s", updateQuery2);
 

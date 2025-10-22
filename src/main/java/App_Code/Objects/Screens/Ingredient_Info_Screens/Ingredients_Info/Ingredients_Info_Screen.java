@@ -67,8 +67,8 @@ public class Ingredients_Info_Screen extends Screen_JFrame
         //###################################################################################
         // Super Constructor
         //###################################################################################
-        super(db, false,"Add/Edit Ingredients Screen", 800, 850, 0,0 );
-    
+        super(db, false, "Add/Edit Ingredients Screen", 800, 850, 0, 0);
+        
         //###################################################################################
         // Variables
         //###################################################################################
@@ -95,7 +95,7 @@ public class Ingredients_Info_Screen extends Screen_JFrame
         // Frame Set-Up
         //###################################################################################
         set_Resizable(false);
-     
+        
         //###################################################################################
         // Create ContentPane
         //###################################################################################
@@ -130,7 +130,7 @@ public class Ingredients_Info_Screen extends Screen_JFrame
         //##################################################
         Edit_Ingredient_Stores_Screen edit_Stores_Screen = new Edit_Ingredient_Stores_Screen(db, this, storesNamesList);
         tp.add("Edit Ingredient Stores", edit_Stores_Screen);
-    
+        
         // ################################################################
         // Make Frame Visible
         // ################################################################
@@ -151,19 +151,19 @@ public class Ingredients_Info_Screen extends Screen_JFrame
     //##################################################################################################################
     public void update_IngredientsForm_Type_JComboBoxes()
     {
-        addIngredientsInfo.updateIngredientForm_Type_JComboBox();
-        editIngredientsInfo.updateIngredientForm_Type_JComboBox();
+        addIngredientsInfo.update_IngredientForm_Type_JComboBox();
+        editIngredientsInfo.update_IngredientForm_Type_JComboBox();
     }
     
     public void update_Ingredient_Suppliers_JComboBoxes()
     {
         addIngredientsInfo.clearShopForm();
-        editIngredientsInfo.refreshInterface(true, true);
+        editIngredientsInfo.refresh_Interface(true, true);
     }
     
     public void update_EditIngredientsInfo_IngredientsTypes()
     {
-        editIngredientsInfo.updateIngredientsTypeJComboBox();
+        editIngredientsInfo.update_IngredientsType_JComboBox();
     }
     
     //##################################################################################################################
@@ -243,7 +243,7 @@ public class Ingredients_Info_Screen extends Screen_JFrame
             ingredientsTypesList.remove(oldKey);
             ingredientsTypesList.add(newKey);
         }
-    
+        
         //#########################################
         // removeKey / changeKey
         //#########################################
@@ -302,7 +302,7 @@ public class Ingredients_Info_Screen extends Screen_JFrame
         return map_ingredientTypesToNames;
     }
     
-  
+    
     public Collection<String> get_IngredientsTypes_List()
     {
         return ingredientsTypesList;

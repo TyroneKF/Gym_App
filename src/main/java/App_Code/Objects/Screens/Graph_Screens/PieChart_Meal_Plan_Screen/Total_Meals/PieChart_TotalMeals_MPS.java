@@ -227,11 +227,11 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
             // Add PieChart to GUI
             //##############################
             JPanel x = new JPanel(new GridBagLayout());
-            getScrollPaneJPanel().add(x);
+            get_ScrollPane_JPanel().add(x);
             
-            addToContainer(x, pieChart, 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 10, 10, null);
+            add_To_Container(x, pieChart, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 10, 10, null);
             
-            addToContainer(x, createSpaceDivider(20, 50), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
+            add_To_Container(x, create_Space_Divider(20, 50), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
         }
         
         //##############################
@@ -242,7 +242,7 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
         //##############################
         // Re-paint GUI
         //##############################
-        resizeGUI();
+        resize_GUI();
     }
     
     public void redraw_GUI()
@@ -272,10 +272,10 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
             // Add PieChart to GUI
             //##############################
             JPanel x = new JPanel(new GridBagLayout());
-            addToContainer(x, pieChart, 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 10, 10, null);
+            add_To_Container(x, pieChart, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 10, 10, null);
             
-            addToContainer(x, createSpaceDivider(20, 50), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
-            getScrollPaneJPanel().add(x);
+            add_To_Container(x, create_Space_Divider(20, 50), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
+            get_ScrollPane_JPanel().add(x);
         }
         
         //##############################
@@ -286,7 +286,7 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
         //#####################################
         // Reset GUI Graphics
         //#####################################
-        resizeGUI();
+        resize_GUI();
     }
     
     public void set_GridLayout()
@@ -294,8 +294,8 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
         // ####################################################
         // Reset GUI
         // ####################################################
-        getScrollPaneJPanel().removeAll();
-        resetYPos();
+        get_ScrollPane_JPanel().removeAll();
+        reset_YPos();
         
         // ####################################################
         // Set GridLayout
@@ -305,7 +305,7 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
         int calc = (int) Math.ceil((double) mealCount / col);
         int rows = Math.max(calc, 2); // returns the larger out of the 2
         
-        getScrollPaneJPanel().setLayout(new GridLayout(rows, col));
+        get_ScrollPane_JPanel().setLayout(new GridLayout(rows, col));
         
         System.out.printf("\n\nRows: %s | Col : %s \nMeals in GUI: %s", rows, col, mealCount);
     }
@@ -330,7 +330,7 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
             {
                 JPanel blankJP = new JPanel();
                 blankJP.setBackground(Color.WHITE);
-                getScrollPaneJPanel().add(blankJP);
+                get_ScrollPane_JPanel().add(blankJP);
             }
         }
     }
@@ -345,12 +345,12 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
         //#####################################
         // Clear GUI
         //#####################################
-        getScrollPaneJPanel().removeAll();
+        get_ScrollPane_JPanel().removeAll();
         
         //#####################################
         // Reset GUI Graphics
         //#####################################
-        resizeGUI();
+        resize_GUI();
     }
     
     // #################################################################################################################
