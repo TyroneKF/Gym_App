@@ -110,7 +110,7 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
         @Override
         protected void updateOtherScreens()
         {
-            parentIngredientsScreen.addOrRemoveSupplierFromList("add",jTextfieldTXT, null); // add to list
+            parentIngredientsScreen.add_Or_Remove_Supplier_From_List("add",jTextfieldTXT, null); // add to list
             parentIngredientsScreen.update_Ingredient_Suppliers_JComboBoxes();
         }
     }
@@ -166,12 +166,12 @@ public class Edit_Ingredient_Stores_Screen extends Parent_For_Types_And_Stores_S
 
             if (itemDeleted) // go through with the deleting process
             {
-                parentIngredientsScreen.addOrRemoveSupplierFromList("delete", null, selectedJComboBoxItemTxt);
+                parentIngredientsScreen.add_Or_Remove_Supplier_From_List("delete", null, selectedJComboBoxItemTxt);
                 return;
             }
 
             //  Must be the replace process requested
-            parentIngredientsScreen.addOrRemoveSupplierFromList("replace", jTextfieldTXT, selectedJComboBoxItemTxt);
+            parentIngredientsScreen.add_Or_Remove_Supplier_From_List("replace", jTextfieldTXT, selectedJComboBoxItemTxt);
         }
 
         @Override

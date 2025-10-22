@@ -44,7 +44,7 @@ public class Macros_Targets_Screen extends Screen_JFrame
         // ##########################################
         // Variables
         // ##########################################
-        if (! db.get_DB_Connection_Status()) { windowClosedEvent(); return; }
+        if (! db.get_DB_Connection_Status()) { window_Closed_Event(); return; }
         
         // ##########################################
         // Variables
@@ -162,7 +162,7 @@ public class Macros_Targets_Screen extends Screen_JFrame
     // ################################################################################################################
     
     @Override
-    public void windowClosedEvent()
+    public void window_Closed_Event()
     {
         meal_plan_screen.remove_macrosTargets_Screen();
         closeJFrame(); // Destroy Window
@@ -221,7 +221,7 @@ public class Macros_Targets_Screen extends Screen_JFrame
         meal_plan_screen.update_Targets_And_MacrosLeftTables();
         meal_plan_screen.macrosTargetsChanged(true);
         
-        windowClosedEvent(); // Trigger Events to call on exit
+        window_Closed_Event(); // Trigger Events to call on exit
     }
     
     public boolean validateForm()
@@ -276,7 +276,7 @@ public class Macros_Targets_Screen extends Screen_JFrame
         if (! hasDataChanged)
         {
             String txt = "\nMacroTarget haven't changed!\nDo you want exit this screen instead?";
-            if (areYouSure("Exit Screen", txt)) { windowClosedEvent(); }
+            if (areYouSure("Exit Screen", txt)) { window_Closed_Event(); }
             return false;
         }
         

@@ -29,7 +29,7 @@ public class Loading_Screen extends Screen_JFrame
 
         this.endCount = endCount;
 
-        if (endCount == 0) { windowClosedEvent(); return; }
+        if (endCount == 0) { window_Closed_Event(); return; }
 
         //##############################################
         //  Centre GUI : Image Setup
@@ -74,7 +74,7 @@ public class Loading_Screen extends Screen_JFrame
 
             progressBar.setValue(percentage); //Setting value of Progress Bar
 
-            if (currentCount == endCount) { windowClosedEvent(); }
+            if (currentCount == endCount) { window_Closed_Event(); }
         }
         catch (Exception e)
         {
@@ -83,7 +83,7 @@ public class Loading_Screen extends Screen_JFrame
     }
 
     @Override
-    public void windowClosedEvent()
+    public void window_Closed_Event()
     {
       dispose();
     }

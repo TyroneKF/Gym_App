@@ -4,6 +4,8 @@ import java.text.Collator;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Add_Ingredients_Screen;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients.Edit_Ingredients_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_IngredientTypes.Edit_Ingredient_Stores_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_IngredientTypes.Edit_Ingredients_Types_Screen;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
@@ -26,8 +28,8 @@ public class Ingredients_Info_Screen extends Screen_JFrame
     protected GridBagConstraints gbc = new GridBagConstraints();
     
     // Screen Objects
-    private Add_Ingredients_Screen addIngredientsInfo;
-    private Edit_IngredientsScreen editIngredientsInfo;
+    private Add_Ingredients_Screen add_IngredientsInfo_Screen;
+    private Edit_Ingredients_Screen edit_IngredientsInfo_Screen;
     
     // Int
     private int
@@ -110,14 +112,14 @@ public class Ingredients_Info_Screen extends Screen_JFrame
         //#################################################
         // Creating Add Ingredients Screen
         //#################################################
-        addIngredientsInfo = new Add_Ingredients_Screen(this, db);
-        tp.add("Add Ingredients", addIngredientsInfo);
+        add_IngredientsInfo_Screen = new Add_Ingredients_Screen(this, db);
+        tp.add("Add Ingredients", add_IngredientsInfo_Screen);
         
         //#################################################
         // Creating Edit Ingredients Screen
         //##################################################
-        editIngredientsInfo = new Edit_IngredientsScreen(this, db);
-        tp.add("Edit Ingredients", editIngredientsInfo);
+        edit_IngredientsInfo_Screen = new Edit_Ingredients_Screen(this, db);
+        tp.add("Edit Ingredients", edit_IngredientsInfo_Screen);
         
         //#################################################
         // Creating Edit Ingredient Types Screen
@@ -139,7 +141,7 @@ public class Ingredients_Info_Screen extends Screen_JFrame
     }
     
     @Override
-    public void windowClosedEvent()
+    public void window_Closed_Event()
     {
         mealPlanScreen.remove_Ingredients_Info_Screen();
         mealPlanScreen.updateIngredientsNameAndTypesInJTables(updateIngredientInfo);
@@ -151,19 +153,19 @@ public class Ingredients_Info_Screen extends Screen_JFrame
     //##################################################################################################################
     public void update_IngredientsForm_Type_JComboBoxes()
     {
-        addIngredientsInfo.update_IngredientForm_Type_JComboBox();
-        editIngredientsInfo.update_IngredientForm_Type_JComboBox();
+        add_IngredientsInfo_Screen.update_IngredientForm_Type_JComboBox();
+        edit_IngredientsInfo_Screen.update_IngredientForm_Type_JComboBox();
     }
     
     public void update_Ingredient_Suppliers_JComboBoxes()
     {
-        addIngredientsInfo.clearShopForm();
-        editIngredientsInfo.refresh_Interface(true, true);
+        add_IngredientsInfo_Screen.clear_ShopForm();
+        edit_IngredientsInfo_Screen.refresh_Interface(true, true);
     }
     
     public void update_EditIngredientsInfo_IngredientsTypes()
     {
-        editIngredientsInfo.update_IngredientsType_JComboBox();
+        edit_IngredientsInfo_Screen.update_IngredientsType_JComboBox();
     }
     
     //##################################################################################################################
@@ -252,7 +254,7 @@ public class Ingredients_Info_Screen extends Screen_JFrame
     }
     
     //
-    public void addOrRemoveSupplierFromList(String process, String newKey, String oldKey)
+    public void add_Or_Remove_Supplier_From_List(String process, String newKey, String oldKey)
     {
         // Validate input value
         Set<String> processes = Set.of("add", "replace", "delete");
@@ -274,7 +276,7 @@ public class Ingredients_Info_Screen extends Screen_JFrame
         storesNamesList.add(newKey);
     }
     
-    public void setUpdateIngredientInfo(boolean status)
+    public void set_Update_IngredientInfo(boolean status)
     {
         updateIngredientInfo = status;
     }
@@ -284,9 +286,9 @@ public class Ingredients_Info_Screen extends Screen_JFrame
     //##################################################################################################################
     
     // Objects
-    public Edit_IngredientsScreen get_Edit_Ingredients_Form()
+    public Edit_Ingredients_Screen get_Edit_Ingredients_Form()
     {
-        return editIngredientsInfo;
+        return edit_IngredientsInfo_Screen;
     }
     
     public Meal_Plan_Screen get_MealPlan_Screen()

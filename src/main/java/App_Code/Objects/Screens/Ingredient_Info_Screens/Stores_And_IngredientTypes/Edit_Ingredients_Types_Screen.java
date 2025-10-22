@@ -1,7 +1,7 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_IngredientTypes;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
-import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_IngredientsScreen;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients.Edit_Ingredients_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
 
 import javax.swing.*;
@@ -164,7 +164,7 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
             //#################################################################
             // Reset EditCreateForm
             //#################################################################
-            Edit_IngredientsScreen editingIngredientsInfo = parentIngredientsScreen.get_Edit_Ingredients_Form();
+            Edit_Ingredients_Screen editingIngredientsInfo = parentIngredientsScreen.get_Edit_Ingredients_Form();
             editingIngredientsInfo.refresh_Interface(true, true);  // reset form`
 
             //###################################################################
@@ -199,7 +199,7 @@ public class Edit_Ingredients_Types_Screen extends Parent_For_Types_And_Stores_S
             // Update CreateForm ingredientsForm  Type JComboBoxes
             //##################################################################
             parentIngredientsScreen.update_IngredientsForm_Type_JComboBoxes();
-            parentIngredientsScreen.setUpdateIngredientInfo(true);
+            parentIngredientsScreen.set_Update_IngredientInfo(true);
         }
 
         @Override

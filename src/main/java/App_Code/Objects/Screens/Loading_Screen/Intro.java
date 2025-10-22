@@ -1,4 +1,4 @@
-package App_Code.Objects.Screens;
+package App_Code.Objects.Screens.Loading_Screen;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 //import org.imgscalr.Scalr;

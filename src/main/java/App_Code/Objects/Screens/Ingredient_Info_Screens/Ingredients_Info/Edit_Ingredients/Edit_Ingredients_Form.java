@@ -1,5 +1,7 @@
-package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info;
+package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients;
 
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Add_Ingredients_Form;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
 import org.javatuples.Triplet;
 
 import javax.swing.*;
@@ -11,7 +13,7 @@ import java.util.Map;
 //########################################################################
 // Ingredients Form
 //########################################################################
-public class Edit_IngredientsForm extends Add_IngredientsForm
+public class Edit_Ingredients_Form extends Add_Ingredients_Form
 {
     //##################################################
     // Variables
@@ -19,12 +21,12 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
     // DELETE Use Smarter Method
     private String selectedIngredientID, selectedIngredientName;
 
-    private Edit_IngredientsScreen edit_ingredientsScreen;
+    private Edit_Ingredients_Screen edit_ingredientsScreen;
 
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Edit_IngredientsForm(Container parentContainer, Ingredients_Info_Screen ingredients_info_screen, Edit_IngredientsScreen edit_ingredientsScreen, String btnText, int btnWidth, int btnHeight)
+    public Edit_Ingredients_Form(Container parentContainer, Ingredients_Info_Screen ingredients_info_screen, Edit_Ingredients_Screen edit_ingredientsScreen, String btnText, int btnWidth, int btnHeight)
     {
         super(parentContainer, ingredients_info_screen, btnText, btnWidth, btnHeight);
         this.edit_ingredientsScreen = edit_ingredientsScreen;
@@ -33,7 +35,7 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
     //##################################################################################################################
     // DB Info & Loading
     //##################################################################################################################
-    public void updateIngredientsInfoFromDB()
+    public void update_Ingredients_Info_From_DB()
     {
         if (edit_ingredientsScreen.get_Update_Status_Of_Ingredient_Names())
         {
@@ -54,7 +56,7 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
         //###############################
         // Get Ingredient info from DB
         //###############################
-        String getIngredientInfoString = getIngredientInfoSelectStatement(selectedIngredientName);
+        String getIngredientInfoString = get_Ingredient_Info_Select_Statement(selectedIngredientName);
 
         ArrayList<ArrayList<String>> ingredientInfo_Results = db.getMultiColumnQuery(getIngredientInfoString);
 
@@ -83,7 +85,7 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
             String fieldValue = ingredientInfoInDB.get(pos);
 
             // Set DB Value for Row in memory
-            setIngredientsFormObjectAndValues(rowLabel, 2, fieldValue);
+            set_Ingredients_Form_Object_And_Values(rowLabel, 2, fieldValue);
 
             if (comp instanceof JComboBox)
             {
@@ -101,7 +103,7 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
         saltMeasurement_JComboBox.setSelectedItem("g");
     }
 
-    public void loadIngredientsFormData()
+    public void load_Ingredients_Form_Data()
     {
         //##############################
         // Set Form With Ingredient Info
@@ -131,22 +133,22 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
     // Override Methods
     //##################################################################################################################
     @Override
-    protected void createIconBar()
+    protected void create_Icon_Bar()
     {
-        createIconBarOnGUI(false);
+        create_Icon_Bar_On_GUI(false);
     }
 
     @Override
-    protected String extra_Validation_IngredientName(String errorTxt, String makeIngredientName)
+    protected String extra_Validation_Ingredient_Name(String errorTxt, String makeIngredientName)
     {
-        makeIngredientName = removeSpaceAndHiddenChars(makeIngredientName);
-        String previousIngredientName = removeSpaceAndHiddenChars(selectedIngredientName);
+        makeIngredientName = remove_Space_And_Hidden_Chars(makeIngredientName);
+        String previousIngredientName = remove_Space_And_Hidden_Chars(selectedIngredientName);
 
         System.out.printf("\n\nextra_Validation_IngredientName() \nName 1: %s || Name2: %s", makeIngredientName, previousIngredientName);
 
         if (!(previousIngredientName.equals(makeIngredientName)))
         {
-            if (checkIfIngredientNameInDB(makeIngredientName))
+            if (check_IF_IngredientName_In_DB(makeIngredientName))
             {
                 errorTxt += String.format("\n\n@@  Ingredient named %s already exists within the database!", makeIngredientName);
             }
@@ -156,7 +158,7 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
     }
 
     @Override
-    protected void extraClearIngredientsForm()
+    protected void extra_Clear_Ingredients_Form()
     {
         // Reset Variables
         selectedIngredientID = "";
@@ -175,7 +177,7 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
     }
 
     @Override
-    protected String get_IngredientsForm_UpdateString(String ingredientID) // HELLO needs further update methods created for gui
+    public String get_Ingredients_Form_Update_String(String ingredientID) // HELLO needs further update methods created for gui
     {
         //##############################################################################################################
         //
@@ -253,7 +255,7 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
-    private String getIngredientInfoSelectStatement(String ingredientName)
+    private String get_Ingredient_Info_Select_Statement(String ingredientName)
     {
         try
         {
@@ -326,12 +328,12 @@ public class Edit_IngredientsForm extends Add_IngredientsForm
         return null;
     }
 
-    public String getSelectedIngredientID()
+    public String get_Selected_IngredientID()
     {
         return selectedIngredientID;
     }
 
-    public String getSelectedIngredientName()
+    public String get_Selected_IngredientName()
     {
         return selectedIngredientName;
     }

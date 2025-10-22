@@ -516,7 +516,7 @@ public class MealManager
     {
         if (! is_PieChartOpen()) { return; }
         
-        pie_chart_meal_manager_screen.windowClosedEvent();
+        pie_chart_meal_manager_screen.window_Closed_Event();
     }
     
     private void update_Pie_Chart_Screen()

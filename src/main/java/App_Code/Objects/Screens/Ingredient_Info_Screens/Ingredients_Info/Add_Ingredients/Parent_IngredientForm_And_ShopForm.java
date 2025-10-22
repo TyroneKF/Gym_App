@@ -1,7 +1,8 @@
-package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info;
+package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 
 import javax.swing.*;
@@ -13,7 +14,7 @@ import java.util.regex.Pattern;
 
 
 // Shop Form and Ingredients Form
-public class Parent_IngredientsForm_And_ShopForm extends CollapsibleJPanel
+public class Parent_IngredientForm_And_ShopForm extends CollapsibleJPanel
 {
     //##################################################
     // Variables
@@ -32,7 +33,7 @@ public class Parent_IngredientsForm_And_ShopForm extends CollapsibleJPanel
     //##################################################
     // Constructor
     //##################################################
-    public Parent_IngredientsForm_And_ShopForm(Container parentContainer, Ingredients_Info_Screen ingredients_info_screen, String btnText, int btnWidth, int btnHeight)
+    public Parent_IngredientForm_And_ShopForm(Container parentContainer, Ingredients_Info_Screen ingredients_info_screen, String btnText, int btnWidth, int btnHeight)
     {
         super(parentContainer, btnText, btnWidth, btnHeight);
 
@@ -50,7 +51,7 @@ public class Parent_IngredientsForm_And_ShopForm extends CollapsibleJPanel
     //##################################################
     // Methods
     //##################################################
-    protected String convertToBigDecimal(String value, String rowLabel, int rowNumber, JTextField jTextField, boolean checkIfValueEquals0)
+    protected String convert_To_Big_Decimal(String value, String rowLabel, int rowNumber, JTextField jTextField, boolean checkIfValueEquals0)
     {
         String errorTxt = "";
 
@@ -124,7 +125,7 @@ public class Parent_IngredientsForm_And_ShopForm extends CollapsibleJPanel
         return errorTxt;
     }
 
-    protected boolean doesStringContainGivenCharacters(String stringToCheck, String condition)
+    protected boolean does_String_Contain_Given_Characters(String stringToCheck, String condition)
     {
         Pattern p1 =
                 (condition==null || condition.equals("")) ?
@@ -142,8 +143,8 @@ public class Parent_IngredientsForm_And_ShopForm extends CollapsibleJPanel
         return false;
     }
 
-    protected void addToContainer(Container container, Component addToContainer, int gridx, int gridy, int gridwidth,
-                               int gridheight, double weightx, double weighty, String fill, int ipady, int ipadx)
+    protected void add_To_Container(Container container, Component addToContainer, int gridx, int gridy, int gridwidth,
+                                    int gridheight, double weightx, double weighty, String fill, int ipady, int ipadx)
     {
         gbc.gridx = gridx;
         gbc.gridy = gridy;

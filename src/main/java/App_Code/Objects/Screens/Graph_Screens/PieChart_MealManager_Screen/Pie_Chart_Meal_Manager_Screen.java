@@ -209,7 +209,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen_JFrame
     // Methods
     //###########################################################################################
     @Override
-    public void windowClosedEvent() { mealManager.removePieChartScreen(); closeJFrame(); }
+    public void window_Closed_Event() { mealManager.removePieChartScreen(); closeJFrame(); }
     
     //####################################
     // Update Methods

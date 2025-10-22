@@ -1,8 +1,10 @@
-package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info;
+package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Add_Ingredients_Screen;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.SearchForFoodInfo;
 
 import javax.swing.*;
@@ -11,13 +13,13 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.*;
 
-public class Edit_IngredientsScreen extends Add_Ingredients_Screen
+public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
 {
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    private Edit_IngredientsForm ingredientsForm;
-    private Edit_ShopForm shopForm;
+    private Edit_Ingredients_Form ingredientsForm;
+    private Edit_Shop_Form shopForm;
     
     private JComboBox<String>
             ingredientsName_JComboBox = new JComboBox(),
@@ -34,7 +36,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
     ///##################################################################################################################
     // Constructor
     ///##################################################################################################################
-    Edit_IngredientsScreen(Ingredients_Info_Screen parent, MyJDBC db)
+    public Edit_Ingredients_Screen(Ingredients_Info_Screen parent, MyJDBC db)
     {
         //##########################################################
         // Super Constructor
@@ -164,7 +166,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //##########################################################
         //  Add Other GUI Components
         //##########################################################
-        createForms(ingredientsForm, shopForm, searchForIngredientInfo);
+        create_Forms(ingredientsForm, shopForm, searchForIngredientInfo);
     }
     
     //##################################################################################################################
@@ -174,8 +176,8 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
     @Override
     protected void create_GUI_Objects()
     {
-        ingredientsForm = new Edit_IngredientsForm(scroll_JPanel, ingredients_info_screen, this, "Edit Ingredients Info", 250, 50);
-        shopForm = new Edit_ShopForm(scroll_JPanel, ingredients_info_screen, this, "Edit Ingredient Suppliers", 250, 50);
+        ingredientsForm = new Edit_Ingredients_Form(scroll_JPanel, ingredients_info_screen, this, "Edit Ingredients Info", 250, 50);
+        shopForm = new Edit_Shop_Form(scroll_JPanel, ingredients_info_screen, this, "Edit Ingredient Suppliers", 250, 50);
         searchForIngredientInfo = new SearchForFoodInfo(scroll_JPanel, ingredientsForm, "Search For Food Info", 250, 50);
         
         //shopForm.expandJPanel();//HELLO GET THIS TO WORK
@@ -241,12 +243,12 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
     //#############################################################################################################
     private void refresh_Form_BTN_Action()
     {
-        if (ingredientsForm.getSelectedIngredientName() == null)
+        if (ingredientsForm.get_Selected_IngredientName() == null)
         {
             return;
         }
         
-        if (areYouSure("refresh this page, all data on the form will be reset \nhowever, this will not reset deleted Supplier Shop Info as this is permanently deleted"))
+        if (are_You_Sure("refresh this page, all data on the form will be reset \nhowever, this will not reset deleted Supplier Shop Info as this is permanently deleted"))
         {
             reload_Form_With_IngredientInfo();
         }
@@ -257,12 +259,12 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //#####################################
         // Update IngredientsForms
         //####################################
-        ingredientsForm.loadIngredientsFormData();
+        ingredientsForm.load_Ingredients_Form_Data();
         
         //#####################################
         // Update ShopForm
         //####################################
-        shopForm.loadShopFormData();
+        shopForm.load_ShopForm_Data();
     }
     
     public void refresh_Interface(boolean resetIngredientNameJCombo, boolean resetIngredientTypeJComBox) // only available to reset screen
@@ -270,8 +272,8 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //##################################
         // Clear both forms of info
         //##################################
-        ingredientsForm.clearIngredientsForm();
-        shopForm.clearShopForm();
+        ingredientsForm.clear_Ingredients_Form();
+        shopForm.clear_Shop_Form();
         searchForIngredientInfo.resetFullDisplay();
         searchForIngredientInfo.collapseJPanel();
         
@@ -302,12 +304,12 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //#####################################
         // Update IngredientsForms
         //####################################
-        ingredientsForm.updateIngredientsInfoFromDB();
+        ingredientsForm.update_Ingredients_Info_From_DB();
         
         //#####################################
         // Update ShopForm
         //####################################
-        shopForm.updateShopFormWithInfoFromDB();
+        shopForm.update_ShopForm_With_Info_From_DB();
     }
     
     public void update_IngredientsType_JComboBox()
@@ -325,9 +327,9 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
     }
     
     @Override
-    protected void update_IngredientForm_Type_JComboBox()
+    public void update_IngredientForm_Type_JComboBox()
     {
-        ingredientsForm.loadIngredientsTypeJComboBox();
+        ingredientsForm.load_Ingredients_Type_JComboBox();
     }
     
     public void update_Map_IngredientsTypes_And_Names() // HELLO REFACTOR INTO PARENT
@@ -461,7 +463,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //##############################################################################################################
         //
         //##############################################################################################################
-        if (! (areYouSure("update this Ingredients information - this will cause the mealPlan to save its data to the DB")))
+        if (! (are_You_Sure("update this Ingredients information - this will cause the mealPlan to save its data to the DB")))
         {
             return;
         }
@@ -469,7 +471,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //##############################################################################################################
         //
         //##############################################################################################################
-        if (! (ingredientsForm.validate_IngredientsForm()) || ! (shopForm.validateForm()))
+        if (! (ingredientsForm.validate_Ingredients_Form()) || ! (shopForm.validate_Form()))
         {
             return;
         }
@@ -477,7 +479,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //##############################################################################################################
         //
         //##############################################################################################################
-        String selectedIngredientID = ingredientsForm.getSelectedIngredientID();
+        String selectedIngredientID = ingredientsForm.get_Selected_IngredientID();
         
         if (selectedIngredientID == null)
         {
@@ -488,8 +490,8 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //###############################################################
         // Update Database Only if Data on form has changed
         //###############################################################
-        String ingredientsFormUpdateString = ingredientsForm.get_IngredientsForm_UpdateString(selectedIngredientID);
-        String[] shopFormUpdateString = shopForm.get_ShopForm_UpdateString(selectedIngredientID);
+        String ingredientsFormUpdateString = ingredientsForm.get_Ingredients_Form_Update_String(selectedIngredientID);
+        String[] shopFormUpdateString = shopForm.get_ShopForm_Update_String(selectedIngredientID);
         
         if (ingredientsFormUpdateString == null && shopFormUpdateString == null)
         {
@@ -531,8 +533,8 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //
         //##############################################################################################################
         // Check if ingredientsName or IngredientType changed
-        String currentIngredientName = ingredientsForm.getIngredientNameFormValue();
-        String currentIngredientType = ingredientsForm.getIngredientTypeFormValue();
+        String currentIngredientName = ingredientsForm.get_Ingredient_Name_Form_Value();
+        String currentIngredientType = ingredientsForm.get_Ingredient_Type_Form_Value();
         
         String previousIngredientName = selected_IngredientName;
         String previousIngredientType = selected_IngredientType;
@@ -543,11 +545,11 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         
         if ((! currentIngredientName.equals(previousIngredientName) || (! currentIngredientType.equals(previousIngredientType))))
         {
-            ingredients_info_screen.setUpdateIngredientInfo(true);
+            ingredients_info_screen.set_Update_IngredientInfo(true);
             
             // if there is an error trying to add or remove ingredientType throw an error
-            if (! addOrDeleteIngredientFromMap("delete", previousIngredientType, previousIngredientName) // remove old info ingredient
-                    || ! addOrDeleteIngredientFromMap("add", currentIngredientType, currentIngredientName))// add new info ingredient
+            if (! add_Or_Delete_Ingredient_From_Map("delete", previousIngredientType, previousIngredientName) // remove old info ingredient
+                    || ! add_Or_Delete_Ingredient_From_Map("add", currentIngredientType, currentIngredientName))// add new info ingredient
             {
                 JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "\n\nUnable to perform local update for ingredient Info");
                 return;
@@ -620,7 +622,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
     protected boolean backup_Data_In_SQL_File() //HELLO Iteration has next can predict last loop
     {
         String replacementData = "(null,";
-        for (Map.Entry<String, Object[]> entry : ingredientsForm.getIngredientsFormObjectAndValues().entrySet())
+        for (Map.Entry<String, Object[]> entry : ingredientsForm.get_Ingredients_Form_Object_And_Values().entrySet())
         {
             String rowLabel = entry.getKey();
             String formValue = (String) entry.getValue()[1];
@@ -672,8 +674,8 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //##############################################################################################################
         //
         //##############################################################################################################
-        String selectedIngredientID = ingredientsForm.getSelectedIngredientID();
-        String selectedIngredientName = ingredientsForm.getSelectedIngredientName();
+        String selectedIngredientID = ingredientsForm.get_Selected_IngredientID();
+        String selectedIngredientName = ingredientsForm.get_Selected_IngredientName();
         
         //HELLO should be removed as N/A is never in the JComboBox
         if (selectedIngredientName.equals("N/A"))
@@ -686,7 +688,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         //##############################################################################################################
         //
         //##############################################################################################################
-        if (! (areYouSure(String.format("delete ingredient named '%s' from the database", selectedIngredientName))))
+        if (! (are_You_Sure(String.format("delete ingredient named '%s' from the database", selectedIngredientName))))
         {
             return;
         }
@@ -710,9 +712,9 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         if (db.uploadData_Batch_Altogether(new String[]{ query0, query1, query2 }))
         {
             JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("Successfully Deleted '%s' From DB!", selectedIngredientName));
-            addOrDeleteIngredientFromMap("delete", selected_IngredientType, selectedIngredientName); // delete ingredient
+            add_Or_Delete_Ingredient_From_Map("delete", selected_IngredientType, selectedIngredientName); // delete ingredient
             refresh_Interface(true, true);
-            ingredients_info_screen.setUpdateIngredientInfo(true);
+            ingredients_info_screen.set_Update_IngredientInfo(true);
         }
         else
         {
@@ -771,7 +773,7 @@ public class Edit_IngredientsScreen extends Add_Ingredients_Screen
         return selected_IngredientName;
     }
     
-    public Edit_IngredientsForm get_Ingredients_Form()
+    public Edit_Ingredients_Form get_Ingredients_Form()
     {
         return ingredientsForm;
     }

@@ -1,7 +1,8 @@
-package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info;
+package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.SearchForFoodInfo;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 
@@ -34,15 +35,15 @@ public class Add_Ingredients_Screen extends Screen_JPanel
     protected MyJDBC db;
     
     // Screen Objects
-    protected Add_IngredientsForm addIngredientsForm;
-    private Add_ShopForm addShopForm;
+    protected Add_Ingredients_Form add_Ingredients_Form;
+    private Add_Shop_Form add_Shop_Form;
     protected SearchForFoodInfo searchForIngredientInfo;
     protected Ingredients_Info_Screen ingredients_info_screen;
     
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    Add_Ingredients_Screen(Ingredients_Info_Screen ingredients_info_screen, MyJDBC db)
+    public Add_Ingredients_Screen(Ingredients_Info_Screen ingredients_info_screen, MyJDBC db)
     {
         //##########################################################
         // Super Constructor
@@ -82,19 +83,19 @@ public class Add_Ingredients_Screen extends Screen_JPanel
     
     protected void create_GUI_Objects()
     {
-        addIngredientsForm = new Add_IngredientsForm(scroll_JPanel, ingredients_info_screen, "Add Ingredients Info", 250, 50);
+        add_Ingredients_Form = new Add_Ingredients_Form(scroll_JPanel, ingredients_info_screen, "Add Ingredients Info", 250, 50);
     
-        addShopForm = new Add_ShopForm(scroll_JPanel, ingredients_info_screen, this, "Add Ingredient Suppliers", 250, 50);
+        add_Shop_Form = new Add_Shop_Form(scroll_JPanel, ingredients_info_screen, this, "Add Ingredient Suppliers", 250, 50);
     
-        searchForIngredientInfo = new SearchForFoodInfo(scroll_JPanel, addIngredientsForm, "Search For Food Info", 250, 50);
+        searchForIngredientInfo = new SearchForFoodInfo(scroll_JPanel, add_Ingredients_Form, "Search For Food Info", 250, 50);
     
-        createForms(addIngredientsForm, addShopForm, searchForIngredientInfo);
+        create_Forms(add_Ingredients_Form, add_Shop_Form, searchForIngredientInfo);
     }
     
     //####################################################
     // Clearing GUI Methods
     //####################################################
-    protected void createForms(Add_IngredientsForm addIngredientsForm, Add_ShopForm addShopForm, SearchForFoodInfo searchForFoodInfo)
+    protected void create_Forms(Add_Ingredients_Form addIngredientsForm, Add_Shop_Form addShopForm, SearchForFoodInfo searchForFoodInfo)
     {
         //##################################################################################
         // Creating Parts of screen & adding it to interface
@@ -163,7 +164,7 @@ public class Add_Ingredients_Screen extends Screen_JPanel
         //###############################
         //
         //###############################
-        if (! areYouSure("add this new Ingredient - this will cause the mealPlan to save its data to the DB"))
+        if (! are_You_Sure("add this new Ingredient - this will cause the mealPlan to save its data to the DB"))
         {
             return;
         }
@@ -171,7 +172,7 @@ public class Add_Ingredients_Screen extends Screen_JPanel
         //###############################
         // IngredientsForm
         //###############################
-        if (! (addIngredientsForm.validate_IngredientsForm()))
+        if (! (add_Ingredients_Form.validate_Ingredients_Form()))
         {
             return;
         }
@@ -179,7 +180,7 @@ public class Add_Ingredients_Screen extends Screen_JPanel
         //###############################
         // ShopForm
         //###############################
-        if (! (addShopForm.validateForm()))
+        if (! (add_Shop_Form.validate_Form()))
         {
             return;
         }
@@ -187,7 +188,7 @@ public class Add_Ingredients_Screen extends Screen_JPanel
         //###############################
         // Data Formatting
         //###############################
-        if (! areYouSure("upload these values as they may have been changed / adapted to fit our data type format"))
+        if (! are_You_Sure("upload these values as they may have been changed / adapted to fit our data type format"))
         {
             return;
         }
@@ -195,20 +196,20 @@ public class Add_Ingredients_Screen extends Screen_JPanel
         //###############################
         // ShopForm
         //###############################
-        if (update_Both_Forms(addIngredientsForm.get_IngredientsForm_UpdateString(null), addShopForm.get_ShopForm_UpdateString()))
+        if (update_Both_Forms(add_Ingredients_Form.get_Ingredients_Form_Update_String(null), add_Shop_Form.get_ShopForm_Update_String()))
         {
-            ingredients_info_screen.setUpdateIngredientInfo(true);
+            ingredients_info_screen.set_Update_IngredientInfo(true);
             JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "The ingredient updates won't appear on the mealPlan screen until this window is closed!");
             
             //#####################################
             // Reset Ingredient Names/Types
             //####################################
-            String ingredientName = addIngredientsForm.getIngredientNameFormValue();
-            String ingredientType = addIngredientsForm.getIngredientTypeFormValue();
+            String ingredientName = add_Ingredients_Form.get_Ingredient_Name_Form_Value();
+            String ingredientType = add_Ingredients_Form.get_Ingredient_Type_Form_Value();
             
             System.out.printf("\n\nsubmissionBtnAction() \n%s %s", ingredientName, ingredientType);
             
-            addOrDeleteIngredientFromMap("add", ingredientType, ingredientName);
+            add_Or_Delete_Ingredient_From_Map("add", ingredientType, ingredientName);
             
             //#####################################
             // Write Ingredients Value To File
@@ -221,13 +222,13 @@ public class Add_Ingredients_Screen extends Screen_JPanel
             //#####################################
             // Reset Form & Update GUI
             //####################################
-            refreshInterface();
+            refresh_Interface();
             resize_GUI();
         }
         
     }
     
-    protected Boolean areYouSure(String process)
+    protected Boolean are_You_Sure(String process)
     {
         int reply = JOptionPane.showConfirmDialog(mealPlanScreen.getFrame(), String.format("Are you sure you want to: %s?", process, process),
                 "Confirmation", JOptionPane.YES_NO_OPTION); //HELLO Edit
@@ -266,7 +267,7 @@ public class Add_Ingredients_Screen extends Screen_JPanel
         return true;
     }
     
-    protected boolean addOrDeleteIngredientFromMap(String process, String ingredientType, String ingredientName)
+    protected boolean add_Or_Delete_Ingredient_From_Map(String process, String ingredientType, String ingredientName)
     {
         // Storing
         Collection<String> ingredientTypeList = ingredients_info_screen.get_Map_IngredientTypes_To_Names().get(ingredientType);
@@ -301,7 +302,7 @@ public class Add_Ingredients_Screen extends Screen_JPanel
     
     protected boolean backup_Data_In_SQL_File()
     {
-        String ingredientsValuesBeingAdded = addIngredientsForm.getIngredientsValuesBeingAdded();
+        String ingredientsValuesBeingAdded = add_Ingredients_Form.get_Ingredients_Values_Being_Added();
         System.out.printf("\n\nbackupDataInSQLFile() \n%s", ingredientsValuesBeingAdded);
         if (! (db.writeTxtToSQLFile(sqlBackUpPath, ingredientsValuesBeingAdded)))
         {
@@ -313,34 +314,34 @@ public class Add_Ingredients_Screen extends Screen_JPanel
     //####################################################
     // Clearing GUI Methods
     //####################################################
-    private void refreshInterface() // only available to reset screen
+    private void refresh_Interface() // only available to reset screen
     {
-        clearSearchForIngredientInfoForm();
-        clearIngredientsForm();
-        clearShopForm();
+        clear_Search_For_Ingredient_Info_Form();
+        clear_IngredientsForm();
+        clear_ShopForm();
     }
     
-    protected void clearSearchForIngredientInfoForm()
+    protected void clear_Search_For_Ingredient_Info_Form()
     {
         searchForIngredientInfo.resetFullDisplay();
     }
     
-    protected void clearIngredientsForm()
+    protected void clear_IngredientsForm()
     {
-        addIngredientsForm.clearIngredientsForm();
+        add_Ingredients_Form.clear_Ingredients_Form();
     }
     
-    protected void clearShopForm()
+    public void clear_ShopForm()
     {
-        addShopForm.clearShopForm();
+        add_Shop_Form.clear_Shop_Form();
     }
     
     //####################################################
     // Update Methods
     //####################################################
-    protected void update_IngredientForm_Type_JComboBox()
+    public void update_IngredientForm_Type_JComboBox()
     {
-        addIngredientsForm.loadIngredientsTypeJComboBox();
+        add_Ingredients_Form.load_Ingredients_Type_JComboBox();
     }
 }
 

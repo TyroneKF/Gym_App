@@ -351,7 +351,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################################
         if (! transferPlanData(planID, tempPlanID))
         {
-            loadingScreen.windowClosedEvent();
+            loadingScreen.window_Closed_Event();
             return;
         }
         
@@ -363,7 +363,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################################
         if (! transferTargets(planID, tempPlanID, true, false))
         {
-            loadingScreen.windowClosedEvent();
+            loadingScreen.window_Closed_Event();
             return;
         }
         
@@ -374,7 +374,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################################
         if (! (transferMealIngredients(planID, tempPlanID)))
         {
-            loadingScreen.windowClosedEvent();
+            loadingScreen.window_Closed_Event();
             JOptionPane.showMessageDialog(null, "\n\nCannot Create Temporary Plan In DB to Allow Editing");
             return;
         }
@@ -386,7 +386,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################################
         if (! (getIngredientsTypesAndStoresData(true, true, true)))
         {
-            loadingScreen.windowClosedEvent();
+            loadingScreen.window_Closed_Event();
             JOptionPane.showMessageDialog(null, "\n\nCannot Get Ingredients_Types & Stores Info \n\ngetIngredientsTypesAndStoresData()");
             return;
         }
@@ -446,7 +446,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             );
             
             JOptionPane.showMessageDialog(this, "Error, Getting Column Names For Tables In GUI !!");
-            windowClosedEvent();
+            window_Closed_Event();
             return;
         }
         
@@ -1747,7 +1747,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // Other Methods
     //##################################################################################################################
     @Override
-    public void windowClosedEvent()
+    public void window_Closed_Event()
     {
         // ##########################################
         // Ask to Save DATA
@@ -1764,19 +1764,19 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // ##########################################
         if (is_MacroTargetsScreen_Open())
         {
-            macrosTargets_Screen.windowClosedEvent();
+            macrosTargets_Screen.window_Closed_Event();
         }
         if (is_IngredientScreen_Open()) // HELLO Refactor into screen method
         {
-            ingredientsInfoScreen.windowClosedEvent();
+            ingredientsInfoScreen.window_Closed_Event();
         }
         if (is_PieChart_Screen_Open())
         {
-            pieChart_Screen_MPS.windowClosedEvent();
+            pieChart_Screen_MPS.window_Closed_Event();
         }
         if (is_LineChart_Screen_Open())
         {
-            lineChart_MPS.windowClosedEvent();
+            lineChart_MPS.window_Closed_Event();
         }
         
         // ##########################################

@@ -1,8 +1,9 @@
-package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info;
+package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients;
 
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Gui_Objects.JTextFieldLimit;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
 import org.javatuples.Triplet;
 
 import javax.swing.*;
@@ -11,7 +12,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 
-public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
+public class Add_Ingredients_Form extends Parent_IngredientForm_And_ShopForm
 {
     //##################################################
     // Variables
@@ -73,18 +74,18 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Add_IngredientsForm(Container parentContainer, Ingredients_Info_Screen ingredients_info_screen, String btnText, int btnWidth, int btnHeight)
+    public Add_Ingredients_Form(Container parentContainer, Ingredients_Info_Screen ingredients_info_screen, String btnText, int btnWidth, int btnHeight)
     {
         super(parentContainer, ingredients_info_screen, btnText, btnWidth, btnHeight);
 
-        createIngredientsForm();
+        create_Ingredients_Form();
         expandJPanel();
     }
 
     //##################################################################################################################
     // Creating GUI Methods
     //##################################################################################################################
-    private void createIngredientsForm()
+    private void create_Ingredients_Form()
     {
         JPanel mainJPanel = getCentreJPanel();
         mainJPanel.setLayout(new BorderLayout());
@@ -108,12 +109,12 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
         titlePanel.add(titleLabel);
 
         // Add title JPanel to North Panel Area
-        addToContainer(northPanel, titlePanel, 0, 2, 1, 1, 0.25, 0.25, "both", 0, 0);
+        add_To_Container(northPanel, titlePanel, 0, 2, 1, 1, 0.25, 0.25, "both", 0, 0);
 
         //#################################################################
         // Create Icon Bar
         //#################################################################
-        createIconBar();
+        create_Icon_Bar();
 
         //#################################################################
         // Centre Frame
@@ -147,7 +148,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
             label.setHorizontalAlignment(JLabel.LEFT);
             label.setFont(new Font("Verdana", Font.BOLD, 14));
 
-            addToContainer(inputArea, label, xPos += 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+            add_To_Container(inputArea, label, xPos += 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
 
             //##########################################################################################################
             // JComboFields (Column 2)
@@ -166,7 +167,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
                 ingredientsType_JComboBox = new JComboBox();
                 comboBox = ingredientsType_JComboBox;
 
-                loadIngredientsTypeJComboBox();
+                load_Ingredients_Type_JComboBox();
             }
             else if (formLabel.equals("Salt"))
             {
@@ -199,9 +200,9 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
                 //############################################
                 //
                 //############################################
-                setIngredientsFormObjectAndValues(formLabel, 0, textField);
+                set_Ingredients_Form_Object_And_Values(formLabel, 0, textField);
 
-                addToContainer(inputArea, saltJPanelArea, xPos += 1, yPos, 1, 1, 0.25, 0.25, "both", 0, 0); // Adding JPanel to GUI
+                add_To_Container(inputArea, saltJPanelArea, xPos += 1, yPos, 1, 1, 0.25, 0.25, "both", 0, 0); // Adding JPanel to GUI
                 continue;
             }
 
@@ -218,9 +219,9 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
                 // Set Selected Item To Nothing
                 comboBox.setSelectedIndex(-1);
 
-               setIngredientsFormObjectAndValues(formLabel, 0, comboBox);
+               set_Ingredients_Form_Object_And_Values(formLabel, 0, comboBox);
 
-                addToContainer(inputArea, comboBox, xPos += 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+                add_To_Container(inputArea, comboBox, xPos += 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
                 continue;
             }
 
@@ -237,20 +238,20 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
                 textField.setDocument(new JTextFieldLimit(charLimit));
             }
 
-            setIngredientsFormObjectAndValues(formLabel, 0, textField);
+            set_Ingredients_Form_Object_And_Values(formLabel, 0, textField);
 
-            addToContainer(inputArea, textField, xPos += 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+            add_To_Container(inputArea, textField, xPos += 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
         }
 
         mainJPanel.add(inputArea, BorderLayout.CENTER);
     }
 
-    protected void createIconBar()
+    protected void create_Icon_Bar()
     {
-        createIconBarOnGUI(true);
+        create_Icon_Bar_On_GUI(true);
     }
 
-    protected void createIconBarOnGUI(boolean createIconBar)
+    protected void create_Icon_Bar_On_GUI(boolean createIconBar)
     {
         //#####################################################
         // Exit Clause
@@ -265,12 +266,12 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
         //#####################################################
 
         JPanel iconArea = new JPanel(new GridBagLayout());
-        addToContainer(northPanel, iconArea, 0, 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+        add_To_Container(northPanel, iconArea, 0, 1, 1, 1, 0.25, 0.25, "both", 0, 0);
 
         IconPanel iconPanel = new IconPanel(1, 10, "East");
         JPanel iconPanelInsert = iconPanel.getIconJpanel();
 
-        addToContainer(iconArea, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0);
+        add_To_Container(iconArea, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0);
 
         //##########################
         // Refresh Icon
@@ -285,13 +286,13 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
 
         refresh_Btn.addActionListener(ae -> {
 
-            clearIngredientsForm();
+            clear_Ingredients_Form();
         });
 
         iconPanelInsert.add(refresh_Icon_Btn);
     }
 
-    protected void loadIngredientsTypeJComboBox()
+    public void load_Ingredients_Type_JComboBox()
     {
         ingredientsType_JComboBox.removeAllItems();
         for (String ingredientType : ingredients_info_screen.get_IngredientsTypes_List())
@@ -310,7 +311,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
     //##################################################################################################################
     // Clear GUI Methods
     //##################################################################################################################
-    protected void clearIngredientsForm()
+    public void clear_Ingredients_Form()
     {
         for (Map.Entry<String, Object[]> info : ingredientsFormObjectAndValues.entrySet())
         {
@@ -328,14 +329,14 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
             }
 
             // Remove FormField Values in Memory to null
-            setIngredientsFormObjectAndValues(rowLabel, 1, null);
+            set_Ingredients_Form_Object_And_Values(rowLabel, 1, null);
         }
 
         saltMeasurement_JComboBox.setSelectedIndex(-1);
-        extraClearIngredientsForm();
+        extra_Clear_Ingredients_Form();
     }
 
-    protected void extraClearIngredientsForm()
+    protected void extra_Clear_Ingredients_Form()
     {
 
     }
@@ -343,11 +344,11 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
     //##################################################################################################################
     // API Methods
     //##################################################################################################################
-    public void update_Form_WithNutritionIXSearch(LinkedHashMap<String, Object> foodInfo)//HELLO EDITED NOW
+    public void update_Form_With_Nutrition_IX_Search(LinkedHashMap<String, Object> foodInfo)//HELLO EDITED NOW
     {
         if (foodInfo!=null)
         {
-            clearIngredientsForm();
+            clear_Ingredients_Form();
 
             //#######################################################################
             // Set Form Values to 0 in case no value match below
@@ -443,7 +444,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
     //##################################################################################################################
     // Validate Form
     //##################################################################################################################
-    protected boolean validate_IngredientsForm()//HELLO EDITED NOW
+    public boolean validate_Ingredients_Form()//HELLO EDITED NOW
     {
         String errorTxt = "", ingredientName_Txt = "";
 
@@ -473,7 +474,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
 
                 // Store current JComboBox form Values into store
                 value = comboBox.getSelectedItem().toString();
-                setIngredientsFormObjectAndValues(rowLabel, 1, value);
+                set_Ingredients_Form_Object_And_Values(rowLabel, 1, value);
 
                 continue;
             }
@@ -499,16 +500,16 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
                 {
                     ingredientName_Txt = value;
 
-                    if (doesStringContainGivenCharacters(ingredientName_Txt, "'"))
+                    if (does_String_Contain_Given_Characters(ingredientName_Txt, "'"))
                     {
                         errorTxt += String.format("\n\n  Ingredient named \"%s\" cannot contain the symbol \" ' \"!", ingredientName_Txt);
                     }
                     else
                     {
-                        errorTxt = extra_Validation_IngredientName(errorTxt, ingredientName_Txt);
+                        errorTxt = extra_Validation_Ingredient_Name(errorTxt, ingredientName_Txt);
                     }
 
-                    setIngredientsFormObjectAndValues(rowLabel, 1, ingredientName_Txt);
+                    set_Ingredients_Form_Object_And_Values(rowLabel, 1, ingredientName_Txt);
                     continue;
                 }
 
@@ -526,7 +527,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
                             throw new Exception();
                         }
 
-                        setIngredientsFormObjectAndValues(rowLabel, 1, value);
+                        set_Ingredients_Form_Object_And_Values(rowLabel, 1, value);
                     }
                     catch (Exception e)
                     {
@@ -565,11 +566,11 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
                 //#########################################
                 // Do BigDecimal Processing on Everything
                 //#########################################
-                errorTxt += convertToBigDecimal(value, rowLabel, rowPos, jTextField, false);
+                errorTxt += convert_To_Big_Decimal(value, rowLabel, rowPos, jTextField, false);
 
                 //######################################################################################################
                 // After converting values, save it in memories
-                setIngredientsFormObjectAndValues(rowLabel, 1, jTextField.getText().trim());
+                set_Ingredients_Form_Object_And_Values(rowLabel, 1, jTextField.getText().trim());
             }
         }
 
@@ -585,12 +586,12 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
         return false;
     }
 
-    protected String extra_Validation_IngredientName(String errorTxt, String ingredientName)
+    protected String extra_Validation_Ingredient_Name(String errorTxt, String ingredientName)
     {
         //####################################################
         //Check if IngredientName Already exists in DB
         //####################################################
-        if (checkIfIngredientNameInDB(ingredientName))
+        if (check_IF_IngredientName_In_DB(ingredientName))
         {
             errorTxt += String.format("\n\n  Ingredient named %s already exists within the database!", ingredientName);
         }
@@ -598,9 +599,9 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
         return errorTxt;
     }
 
-    protected boolean checkIfIngredientNameInDB(String ingredientName)
+    protected boolean check_IF_IngredientName_In_DB(String ingredientName)
     {
-        ingredientName = removeSpaceAndHiddenChars(ingredientName);
+        ingredientName = remove_Space_And_Hidden_Chars(ingredientName);
         String query = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Name = \"%s\";", ingredientName);
 
         System.out.printf("\n\n%s", query);
@@ -612,12 +613,12 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
         return false;
     }
 
-    protected String removeSpaceAndHiddenChars(String stringToBeEdited)
+    protected String remove_Space_And_Hidden_Chars(String stringToBeEdited)
     {
         return stringToBeEdited.trim().replaceAll("\\p{C}", ""); // remove all whitespace & hidden characters like \n
     }
 
-    protected String get_IngredientsForm_UpdateString(String ingredientID) // HELLO needs further update methods created for gui
+    public String get_Ingredients_Form_Update_String(String ingredientID) // HELLO needs further update methods created for gui
     {
         //##############################################################################################################
         // Creating Upload Query
@@ -687,7 +688,7 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
     // Mutator Methods
     //##################################################################################################################
     // ingredientsFormLabel Key -> [Component, FormValue, DB Value]
-    protected void setIngredientsFormObjectAndValues(String key, int pos, Object valueToChange)
+    protected void set_Ingredients_Form_Object_And_Values(String key, int pos, Object valueToChange)
     {
         Object[] list = ingredientsFormObjectAndValues.get(key);
         list[pos] = valueToChange;
@@ -697,22 +698,22 @@ public class Add_IngredientsForm extends Parent_IngredientsForm_And_ShopForm
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
-    protected String getIngredientTypeFormValue()
+    public String get_Ingredient_Type_Form_Value()
     {
         return (String) ingredientsFormObjectAndValues.get("Ingredient Type")[1];
     }
 
-    protected String getIngredientNameFormValue()
+    public String get_Ingredient_Name_Form_Value()
     {
         return (String) ingredientsFormObjectAndValues.get("Ingredient Name")[1];
     }
 
-    protected String getIngredientsValuesBeingAdded()
+    public String get_Ingredients_Values_Being_Added()
     {
         return ingredientsValuesBeingAdded;
     }
 
-    protected LinkedHashMap<String, Object[]> getIngredientsFormObjectAndValues()
+    public LinkedHashMap<String, Object[]> get_Ingredients_Form_Object_And_Values()
     {
         return ingredientsFormObjectAndValues;
     }

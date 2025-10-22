@@ -141,7 +141,7 @@ public class Screen_JFrame extends JFrame
             @Override //HELLO Causes Error
             public void windowClosed(java.awt.event.WindowEvent windowEvent)
             {
-                windowClosedEvent();
+                window_Closed_Event();
             }
         });
     }
@@ -165,7 +165,7 @@ public class Screen_JFrame extends JFrame
         return true;
     }
     
-    public void windowClosedEvent()
+    public void window_Closed_Event()
     {
     
     }

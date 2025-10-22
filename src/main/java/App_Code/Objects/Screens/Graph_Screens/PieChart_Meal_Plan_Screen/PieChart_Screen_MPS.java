@@ -73,7 +73,7 @@ public class PieChart_Screen_MPS extends Screen_JFrame
     }
     
     @Override
-    public void windowClosedEvent()
+    public void window_Closed_Event()
     {
         // ####################################
         // Remove Attachment to MealPlanScreen
