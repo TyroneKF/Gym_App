@@ -84,11 +84,11 @@ public class Add_Ingredients_Screen extends Screen_JPanel
     protected void create_GUI_Objects()
     {
         add_Ingredients_Form = new Add_Ingredients_Form(scroll_JPanel, ingredients_info_screen, "Add Ingredients Info", 250, 50);
-    
+        
         add_Shop_Form = new Add_Shop_Form(scroll_JPanel, ingredients_info_screen, this, "Add Ingredient Suppliers", 250, 50);
-    
+        
         searchForIngredientInfo = new SearchForFoodInfo(scroll_JPanel, add_Ingredients_Form, "Search For Food Info", 250, 50);
-    
+        
         create_Forms(add_Ingredients_Form, add_Shop_Form, searchForIngredientInfo);
     }
     
@@ -126,12 +126,13 @@ public class Add_Ingredients_Screen extends Screen_JPanel
         //###########################
         // Add shop
         //###########################
-        add_To_Container(mainCentre_JPanel, addShopForm, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null); ;
+        add_To_Container(mainCentre_JPanel, addShopForm, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
+      
         
         //###########################
         //Space Divider
         //###########################
-        add_To_Container(mainCentre_JPanel, new JPanel(), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 10, 0, null); ;
+        add_To_Container(mainCentre_JPanel, new JPanel(), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 10, 0, null);
         
         //###################################################################################
         // South Screen for Interface
@@ -146,8 +147,8 @@ public class Add_Ingredients_Screen extends Screen_JPanel
         submitButton.addActionListener(ae -> {
             submission_Btn_Action();
         });
-    
-        get_Main_South_JPanel().setLayout(new GridLayout(1,1));
+        
+        get_Main_South_JPanel().setLayout(new GridLayout(1, 1));
         get_Main_South_JPanel().add(submitButton, BorderLayout.SOUTH);
         
         //###################################################################################
@@ -225,7 +226,6 @@ public class Add_Ingredients_Screen extends Screen_JPanel
             refresh_Interface();
             resize_GUI();
         }
-        
     }
     
     protected Boolean are_You_Sure(String process)
@@ -233,10 +233,8 @@ public class Add_Ingredients_Screen extends Screen_JPanel
         int reply = JOptionPane.showConfirmDialog(mealPlanScreen.getFrame(), String.format("Are you sure you want to: %s?", process, process),
                 "Confirmation", JOptionPane.YES_NO_OPTION); //HELLO Edit
         
-        if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
-        {
-            return false;
-        }
+        if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION) { return false; }
+        
         return true;
     }
     
