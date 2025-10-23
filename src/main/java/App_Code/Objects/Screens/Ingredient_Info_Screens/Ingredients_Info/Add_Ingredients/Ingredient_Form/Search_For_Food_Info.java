@@ -1,4 +1,4 @@
-package App_Code.Objects.Screens.Ingredient_Info_Screens;
+package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredient_Form;
 
 //#################################################################################################################
 //
@@ -13,7 +13,7 @@ import App_Code.Objects.API.Nutritionix.NutritionIx_API;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.JTextFieldLimit;
 import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
-import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Add_Ingredients_Form;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredient_Form.Add_Ingredients_Form;
 
 import javax.imageio.ImageIO;
 
@@ -22,7 +22,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-public class SearchForFoodInfo extends CollapsibleJPanel
+public class Search_For_Food_Info extends CollapsibleJPanel
 {
     private Add_Ingredients_Form addIngredientsForm;
 
@@ -56,7 +56,7 @@ public class SearchForFoodInfo extends CollapsibleJPanel
             searchBarIconHeight = searchBarButtonHeight - 10,
             searchBarJPanelXPos = 0, searchBarJPanelYPos = 0;
 
-    public SearchForFoodInfo(Container parentContainer, Add_Ingredients_Form addIngredientsForm, String btnText, int btnWidth, int btnHeight)
+    public Search_For_Food_Info(Container parentContainer, Add_Ingredients_Form addIngredientsForm, String btnText, int btnWidth, int btnHeight)
     {
         super(parentContainer, btnText, btnWidth, btnHeight);
 

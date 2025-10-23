@@ -2,8 +2,10 @@ package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_In
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredient_Form.Add_Ingredients_Form;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredient_Form.Search_For_Food_Info;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.Add_Shop_Form;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
-import App_Code.Objects.Screens.Ingredient_Info_Screens.SearchForFoodInfo;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 
 import javax.swing.*;
@@ -37,7 +39,7 @@ public class Add_Ingredients_Screen extends Screen_JPanel
     // Screen Objects
     protected Add_Ingredients_Form add_Ingredients_Form;
     private Add_Shop_Form add_Shop_Form;
-    protected SearchForFoodInfo searchForIngredientInfo;
+    protected Search_For_Food_Info searchForIngredientInfo;
     protected Ingredients_Info_Screen ingredients_info_screen;
     
     //##################################################################################################################
@@ -87,7 +89,7 @@ public class Add_Ingredients_Screen extends Screen_JPanel
         
         add_Shop_Form = new Add_Shop_Form(scroll_JPanel, ingredients_info_screen, this, "Add Ingredient Suppliers", 250, 50);
         
-        searchForIngredientInfo = new SearchForFoodInfo(scroll_JPanel, add_Ingredients_Form, "Search For Food Info", 250, 50);
+        searchForIngredientInfo = new Search_For_Food_Info(scroll_JPanel, add_Ingredients_Form, "Search For Food Info", 250, 50);
         
         create_Forms(add_Ingredients_Form, add_Shop_Form, searchForIngredientInfo);
     }
@@ -95,7 +97,7 @@ public class Add_Ingredients_Screen extends Screen_JPanel
     //####################################################
     // Clearing GUI Methods
     //####################################################
-    protected void create_Forms(Add_Ingredients_Form addIngredientsForm, Add_Shop_Form addShopForm, SearchForFoodInfo searchForFoodInfo)
+    protected void create_Forms(Add_Ingredients_Form addIngredientsForm, Add_Shop_Form addShopForm, Search_For_Food_Info searchForFoodInfo)
     {
         //##################################################################################
         // Creating Parts of screen & adding it to interface

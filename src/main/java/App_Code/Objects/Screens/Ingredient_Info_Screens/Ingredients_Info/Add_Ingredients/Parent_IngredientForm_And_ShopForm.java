@@ -27,7 +27,6 @@ public class Parent_IngredientForm_And_ShopForm extends Screen_JPanel
     protected MyJDBC db;
     protected Integer planID, tempPlanID;
     protected String planName;
-    protected GridBagConstraints gbc = new GridBagConstraints();
     
     protected final int totalNumbersAllowed = 7, decimalScale = 2, decimalPrecision = totalNumbersAllowed - decimalScale, charLimit = 8;
     

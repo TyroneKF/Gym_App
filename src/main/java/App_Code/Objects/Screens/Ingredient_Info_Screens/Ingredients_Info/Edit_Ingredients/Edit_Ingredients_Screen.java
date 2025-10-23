@@ -4,8 +4,10 @@ import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Add_Ingredients_Screen;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients.Ingredients_Form.Edit_Ingredients_Form;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients.Shop_Form.Edit_Shop_Form;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
-import App_Code.Objects.Screens.Ingredient_Info_Screens.SearchForFoodInfo;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredient_Form.Search_For_Food_Info;
 
 import javax.swing.*;
 import java.awt.*;
@@ -178,7 +180,7 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
     {
         ingredientsForm = new Edit_Ingredients_Form(scroll_JPanel, ingredients_info_screen, this, "Edit Ingredients Info", 250, 50);
         shopForm = new Edit_Shop_Form(scroll_JPanel, ingredients_info_screen, this, "Edit Ingredient Suppliers", 250, 50);
-        searchForIngredientInfo = new SearchForFoodInfo(scroll_JPanel, ingredientsForm, "Search For Food Info", 250, 50);
+        searchForIngredientInfo = new Search_For_Food_Info(scroll_JPanel, ingredientsForm, "Search For Food Info", 250, 50);
         
         //shopForm.expandJPanel();//HELLO GET THIS TO WORK
         searchForIngredientInfo.collapse_JPanel();
