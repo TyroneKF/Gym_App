@@ -3,7 +3,7 @@ package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_In
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Add_Ingredients_Screen;
-import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Parent_IngredientForm_And_ShopForm;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Parent_IngredientForm_And_ShopForm;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
 
 import javax.swing.*;
@@ -339,7 +339,7 @@ public class Add_Shop_Form extends Parent_IngredientForm_And_ShopForm
         // Create Update  String
         //############################################################
         String mysqlVariableReference = "@newIngredientID";
-        String createMysqlVariable = String.format("SET %s = (SELECT MAX(IngredientID) FROM ingredients_info);", mysqlVariableReference);
+        String createMysqlVariable = String.format("SET %s = (SELECT MAX(ingredient_id) FROM ingredients_info);", mysqlVariableReference);
         String updateString = String.format("INSERT INTO ingredient_in_shops (ingredient_id, product_name, volume_per_unit, cost_per_unit, store_id) VALUES ");
         
         ///#################################
