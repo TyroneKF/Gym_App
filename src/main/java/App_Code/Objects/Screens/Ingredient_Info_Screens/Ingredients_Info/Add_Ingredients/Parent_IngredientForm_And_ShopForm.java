@@ -17,9 +17,9 @@ import java.util.regex.Pattern;
 // Shop Form and Ingredients Form
 public class Parent_IngredientForm_And_ShopForm extends Screen_JPanel
 {
-    //##################################################
+    //##################################################################################################################
     // Variables
-    //##################################################
+    //##################################################################################################################
     protected JPanel northPanel = new JPanel(new GridBagLayout());
     protected Ingredients_Info_Screen ingredients_info_screen;
     
@@ -28,13 +28,14 @@ public class Parent_IngredientForm_And_ShopForm extends Screen_JPanel
     protected Integer planID, tempPlanID;
     protected String planName;
     
-    protected final int totalNumbersAllowed = 7, decimalScale = 2, decimalPrecision = totalNumbersAllowed - decimalScale, charLimit = 8;
+    protected final int totalNumbersAllowed = 7, decimalScale = 2, decimalPrecision = totalNumbersAllowed - decimalScale,
+            charLimit = 8;
     
     protected CollapsibleJPanel collapsibleJPanel;
     
-    //##################################################
+    //##################################################################################################################
     // Constructor
-    //##################################################
+    //##################################################################################################################
     public Parent_IngredientForm_And_ShopForm(
             Container parentContainer, Ingredients_Info_Screen ingredients_info_screen, String btnText, int btnWidth, int btnHeight)
     {
@@ -42,16 +43,23 @@ public class Parent_IngredientForm_And_ShopForm extends Screen_JPanel
         // Super & Variables
         //##################################################
         super(parentContainer, false);
-    
-        this.ingredients_info_screen = ingredients_info_screen;
+        
+        // Objects
         this.db = ingredients_info_screen.getDb();
+        this.mealPlanScreen = ingredients_info_screen.get_MealPlan_Screen();
+    
+        // Screens
+        this.ingredients_info_screen = ingredients_info_screen;
+        
+        // Integer
         this.planID = ingredients_info_screen.get_PlanID();
         this.tempPlanID = ingredients_info_screen.get_TempPlanID();
+        
+        // String
         this.planName = ingredients_info_screen.get_PlanName();
-        this.mealPlanScreen = ingredients_info_screen.get_MealPlan_Screen();
         
         //##################################################
-        // Collapsible JPanel
+        // Collapsible JPanel Creation
         //##################################################
         collapsibleJPanel = new CollapsibleJPanel(parentContainer, btnText, btnWidth, btnHeight);
         get_ScrollPane_JPanel().setLayout(new GridLayout(1, 1));
@@ -59,9 +67,9 @@ public class Parent_IngredientForm_And_ShopForm extends Screen_JPanel
         get_ScrollPane_JPanel().add(collapsibleJPanel);
     }
     
-    //##################################################
+    //##################################################################################################################
     // Methods
-    //##################################################
+    //##################################################################################################################
     protected String convert_To_Big_Decimal(String value, String rowLabel, int rowNumber, JTextField jTextField, boolean checkIfValueEquals0)
     {
         String errorTxt = "";
@@ -152,5 +160,25 @@ public class Parent_IngredientForm_And_ShopForm extends Screen_JPanel
         }
         
         return false;
+    }
+    
+    //##################################################
+    // Get Methods
+    //##################################################
+    // Integer
+    public int get_Char_Limit()
+    {
+        return charLimit;
+    }
+    
+    // Objects
+    public Meal_Plan_Screen get_MealPlan_Screen()
+    {
+        return mealPlanScreen;
+    }
+    
+    public Ingredients_Info_Screen get_Ingredients_info_screen()
+    {
+        return ingredients_info_screen;
     }
 }

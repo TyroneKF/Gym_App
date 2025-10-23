@@ -187,12 +187,10 @@ public class Search_For_Food_Info extends CollapsibleJPanel
         searchBarResults = new JPanel(new GridBagLayout());
         mainCenterPanel.add(searchBarResults, BorderLayout.CENTER);
         searchBarResults.setBackground(Color.RED);
-
-
+        
         //##############################################################################################################
         //  Resizing GUI
         //##############################################################################################################
-
         resizeGUI(); // Resize GUI
     }
 

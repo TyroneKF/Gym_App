@@ -1,33 +1,62 @@
-/*
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form;
 
 import App_Code.Objects.Gui_Objects.JTextFieldLimit;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Add_Ingredients_Screen;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
+import App_Code.Objects.Screens.Meal_Plan_Screen;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Collection;
 
 
-//#############################################################################################################
-// NEW CLASS
-//#############################################################################################################
+
 public class Add_ShopForm_Object extends JPanel
 {
-    Integer PDID = null;  //EDIT NOW
-    Container parentContainer;
-    JComboBox<String> productShops_JComboBox;
-    JTextField productName_TxtField, productPrice_TxtField, quantityPerPack_TxtField;
+    //##################################################################################################################
+    // Variables
+    //##################################################################################################################
+    // Integers
+    protected Integer pdid = null;  //EDIT NOW
+    protected int charLimit;
     
-    //#############################################################################################################
+    // GUI Objects
+    protected JComboBox<String> productShops_JComboBox;
+    protected JTextField productName_TxtField, productPrice_TxtField, quantityPerPack_TxtField;
+    protected Container parentContainer;
+    
+    // Objects
+    protected Meal_Plan_Screen mealPlanScreen;
+    protected Ingredients_Info_Screen ingredients_info_screen;
+    protected Add_Shop_Form add_shop_form;
+    protected Add_Ingredients_Screen add_Ingredient_Screen;
+    
+    // Collections
+    protected ArrayList<Add_ShopForm_Object> shop_Form_Objects;
+    
+    //##################################################################################################################
     // Constructor
-    //#############################################################################################################
-    Add_ShopForm_Object()
-    { }
-    
-    public Add_ShopForm_Object(Container parentContainer)// Remove
+    //##################################################################################################################
+    public Add_ShopForm_Object(Container parentContainer, Add_Shop_Form add_shop_form)// Remove
     {
+        //###############################
+        // Variables
+        //###############################
         this.parentContainer = parentContainer;
+        
+        this.add_shop_form = add_shop_form;
+    
+        add_Ingredient_Screen = add_shop_form.get_Add_IngredientScreen();
+        mealPlanScreen = add_shop_form.get_MealPlan_Screen();
+        ingredients_info_screen = add_shop_form.get_Ingredients_info_screen();
+        
+        // Integer
+        charLimit = add_shop_form.get_Char_Limit();
+        
+        // Collections
+        shop_Form_Objects = add_shop_form.get_ShopForm_Objects();
         
         //###############################
         // Creating Sections for GUI
@@ -38,11 +67,11 @@ public class Add_ShopForm_Object extends JPanel
             return;
         }
         
-        //#########################################################################################################
+        //#########################################################
         //Creating JPanel
-        //#########################################################################################################
+        //#########################################################
         
-        this.setLayout(new BorderLayout());
+        setLayout(new BorderLayout());
         
         //###############################
         // Creating Sections for GUI
@@ -52,18 +81,18 @@ public class Add_ShopForm_Object extends JPanel
         JPanel westPanel = new JPanel(new GridLayout(1, 1));
         westPanel.setBorder(new EmptyBorder(0, 0, 0, 10));
         westPanel.setPreferredSize(new Dimension(150, 25)); // width, height
-        this.add(westPanel, BorderLayout.WEST);
+        add(westPanel, BorderLayout.WEST);
         
         //
         JPanel centrePanel = new JPanel(new BorderLayout());
         centrePanel.setBackground(Color.BLUE);
-        this.add(centrePanel, BorderLayout.CENTER);
+        add(centrePanel, BorderLayout.CENTER);
         
         // Delete row button section
         JPanel eastPanel = new JPanel(new GridLayout(1, 1));
         eastPanel.setBorder(new EmptyBorder(0, 5, 0, 0));
         eastPanel.setPreferredSize(new Dimension(110, 34)); // width, height
-        this.add(eastPanel, BorderLayout.EAST);
+        add(eastPanel, BorderLayout.EAST);
         
         //#####################################################
         // West Side
@@ -79,7 +108,6 @@ public class Add_ShopForm_Object extends JPanel
         //#####################################################
         // Centre Side
         //######################################################
-        
         //Product Name JTextField
         productName_TxtField = new JTextField();
         productName_TxtField.setDocument(new JTextFieldLimit(100));
@@ -132,23 +160,11 @@ public class Add_ShopForm_Object extends JPanel
         jp4.setBorder(new EmptyBorder(0, 0, 0, 0)); //Pushes object inside further along
         jp4.add(deleteRowBtn);
         eastPanel.add(jp4);
-        
-        //#####################################################
-        // Adding row to memory
-        //######################################################
-        shopFormObjects.add(this);
-        
-        //#########################################################################################################
-        // Adding Object To GUI
-        //#########################################################################################################
-        add_To_Container(parentContainer, this, 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0, null);
-        parentContainer.revalidate();
-        
     }
     
-    //#############################################################################################################
+    //##################################################################################################################
     // Other Methods
-    //#############################################################################################################
+    //##################################################################################################################
     protected void load_Stores_In_JComboBox()
     {
         productShops_JComboBox.removeAllItems();
@@ -165,7 +181,7 @@ public class Add_ShopForm_Object extends JPanel
     protected void delete_Row_Action()
     {
         remove_From_Parent_Container(); // remove all the  input GUI objects from memory
-        shopFormObjects.remove(this);
+        shop_Form_Objects.remove(this);
     }
     
     protected void remove_From_Parent_Container()
@@ -177,23 +193,23 @@ public class Add_ShopForm_Object extends JPanel
         parentContainer.revalidate();
         
         //Resizing Form
-        add_ingredientsScreen.resize_GUI();
+        add_Ingredient_Screen.resize_GUI();
     }
     
-    //#############################################################################################################
+    //##################################################################################################################
     // Mutator Methods
-    //#############################################################################################################
+    //##################################################################################################################
     protected void set_PDID(Integer PDID)
     {
-        this.PDID = PDID;
+        this.pdid = PDID;
     }
     
-    //#############################################################################################################
+    //##################################################################################################################
     // Accessor Methods
-    //#############################################################################################################
+    //##################################################################################################################
     public Integer get_PDID()
     {
-        return PDID;
+        return pdid;
     }
     
     //########################################
@@ -243,4 +259,3 @@ public class Add_ShopForm_Object extends JPanel
     }
 }
 
-*/

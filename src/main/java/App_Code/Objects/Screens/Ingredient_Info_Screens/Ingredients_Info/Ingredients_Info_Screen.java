@@ -22,20 +22,15 @@ public class Ingredients_Info_Screen extends Screen_JFrame
     //##################################################################################################################
     
     // Objects
-    private MyJDBC db;
-    private Container contentPane;
     private Meal_Plan_Screen mealPlanScreen;
-    protected GridBagConstraints gbc = new GridBagConstraints();
-    
+
     // Screen Objects
     private Add_Ingredients_Screen add_IngredientsInfo_Screen;
     private Edit_Ingredients_Screen edit_IngredientsInfo_Screen;
     
     // Int
     private int
-            tempPlanID, planID,
-            jFrameWidth = 800,
-            jFrameHeight = 850;
+            tempPlanID, planID;
     
     // String
     private String planName;
@@ -74,7 +69,6 @@ public class Ingredients_Info_Screen extends Screen_JFrame
         //###################################################################################
         // Variables
         //###################################################################################
-        this.db = db;
         this.mealPlanScreen = mealPlanScreen;
         this.planID = mealPlanScreen.getPlanID();
         this.tempPlanID = mealPlanScreen.getTempPlanID();
