@@ -91,9 +91,9 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
                 {
                     // Get ingredientType
                     selected_IngredientType = (String) ie.getItem();
-    
+                    
                     // Exit Clause in case nothing is selected
-                    if (selected_IngredientType ==  null || selected_IngredientType.isEmpty()) { return; }
+                    if (selected_IngredientType == null || selected_IngredientType.isEmpty()) { return; }
                     
                     // clear ingredientsNames JCombo
                     refresh_Interface(true, false);
@@ -102,12 +102,12 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
                 }
             }
         });
-    
+        
         //##########################################################
         //  Add Space Divider
         //##########################################################
         add_To_Container(mainCentre_JPanel, new JPanel(), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 10, 0, null);
-    
+        
         
         //##########################################################
         //  IngredientName JComboBox Setup
@@ -157,12 +157,12 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
         });
         
         ingredientName_JC_JP.add(ingredientsName_JComboBox);
-    
+        
         //##########################################################
         //  Add Space Divider
         //##########################################################
         add_To_Container(mainCentre_JPanel, new JPanel(), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 10, 0, null);
-    
+        
         //##########################################################
         //  Add Other GUI Components
         //##########################################################
@@ -181,7 +181,7 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
         searchForIngredientInfo = new SearchForFoodInfo(scroll_JPanel, ingredientsForm, "Search For Food Info", 250, 50);
         
         //shopForm.expandJPanel();//HELLO GET THIS TO WORK
-        searchForIngredientInfo.collapseJPanel();
+        searchForIngredientInfo.collapse_JPanel();
     }
     
     @Override
@@ -190,51 +190,51 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
         //###########################################
         // Icon Setup
         //###########################################
-    
+        
         JPanel iconArea = new JPanel(new GridBagLayout());
         add_To_Container(container, iconArea, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
-    
+        
         IconPanel iconPanel = new IconPanel(2, 10, "East");
         JPanel iconPanelInsert = iconPanel.getIconJpanel();
-    
+        
         add_To_Container(iconArea, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0, null);
-    
+        
         //###########################################
         // DELETE Icon
         //###########################################
         int width = 35;
         int height = 35;
-    
+        
         IconButton delete_Icon_Btn = new IconButton("/images/x/x.png", width, height, width, height,
                 "centre", "right"); // btn text is useless here , refactor
-    
+        
         JButton delete_Btn = delete_Icon_Btn.returnJButton();
         delete_Icon_Btn.makeBTntransparent();
-    
-        delete_Btn.addActionListener(ae -> {
         
+        delete_Btn.addActionListener(ae -> {
+            
             delete_Ingredient_BTN_Action();
         });
-    
+        
         iconPanelInsert.add(delete_Icon_Btn);
-    
+        
         //###########################################
         // Refresh Icon
         //###########################################
         width = 35;
         height = 40;
-    
+        
         IconButton refresh_Icon_Btn = new IconButton("/images/refresh/+++++refresh.png", width, height, width, height,
                 "centre", "right"); // btn text is useless here , refactor
-    
+        
         JButton refresh_Btn = refresh_Icon_Btn.returnJButton();
         refresh_Icon_Btn.makeBTntransparent();
-    
-        refresh_Btn.addActionListener(ae -> {
         
+        refresh_Btn.addActionListener(ae -> {
+            
             refresh_Form_BTN_Action();
         });
-    
+        
         iconPanelInsert.add(refresh_Icon_Btn);
     }
     
@@ -275,7 +275,7 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
         ingredientsForm.clear_Ingredients_Form();
         shopForm.clear_Shop_Form();
         searchForIngredientInfo.resetFullDisplay();
-        searchForIngredientInfo.collapseJPanel();
+        searchForIngredientInfo.collapse_JPanel();
         
         //##################################
         // Reset JComboBox's

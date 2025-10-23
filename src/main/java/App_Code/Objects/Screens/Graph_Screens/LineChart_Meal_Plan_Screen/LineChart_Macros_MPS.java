@@ -59,7 +59,7 @@ class LineChart_Macros_MPS extends Screen_JPanel
         // ##########################################
         // Super Constructors & Variables
         // ##########################################
-        super(null, true, frameWidth, frameHeight);
+        super(null, true);
         get_ScrollPane_JPanel().setBackground(Color.WHITE);
         
         // ##########################################
@@ -69,10 +69,10 @@ class LineChart_Macros_MPS extends Screen_JPanel
         this.db = db;
         this.meal_plan_screen = meal_plan_screen;
         this.mealManagerRegistry = meal_plan_screen.get_MealManagerRegistry();
-       
+        
         // String
         this.planName = meal_plan_screen.getPlanName();
-       
+        
         // Collections
         this.macros_To_Check = macros_To_Check;
         this.mealManagers_TotalMeal_MacroValues = mealManagerRegistry.get_MealManagers_MacroValues();
@@ -138,7 +138,7 @@ class LineChart_Macros_MPS extends Screen_JPanel
         // Reformat macroName for GUI purposes  "\u00A0" is like space because \t doesn't work in this label format
         return String.format("\u00A0\u00A0%s\u00A0\u00A0", macroName);
     }
-
+    
     // #################################################################################################################
     // Methods
     // #################################################################################################################

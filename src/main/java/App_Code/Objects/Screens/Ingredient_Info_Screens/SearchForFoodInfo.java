@@ -66,12 +66,12 @@ public class SearchForFoodInfo extends CollapsibleJPanel
         this.frameHeight = 350;
 
         nutritionIx_api = new NutritionIx_API();
-        expandJPanel();
+        expand_JPanel();
 
         //###################################################################
         //
         //###################################################################
-        JPanel mainJPanel = getCentreJPanel();
+        JPanel mainJPanel = get_Centre_JPanel();
         mainJPanel.setLayout(new BorderLayout());
 
         centrePanel = new JPanel(new GridBagLayout());

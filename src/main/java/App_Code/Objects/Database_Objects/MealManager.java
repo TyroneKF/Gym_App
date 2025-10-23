@@ -218,7 +218,7 @@ public class MealManager
         //##############################################################################################################
         //collapsibleJpObj = new CollapsibleJPanel(container, removeSecondsOnTimeString(savedMealTime), 150, 50); // time as btn txt
         collapsibleJpObj = new CollapsibleJPanel(container, savedMealName, 180, 50); // time as btn txt
-        collapsibleCenterJPanel = collapsibleJpObj.getCentreJPanel();
+        collapsibleCenterJPanel = collapsibleJpObj.get_Centre_JPanel();
         collapsibleCenterJPanel.setBackground(Color.YELLOW);
         
         //##############################################################################################################
@@ -231,7 +231,7 @@ public class MealManager
         //##############################################################################################################
         String tableName = "total_meal_view";
         
-        JPanel southPanel = collapsibleJpObj.getSouthJPanel();
+        JPanel southPanel = collapsibleJpObj.get_South_JPanel();
         
         String query = String.format("SELECT * FROM total_meal_view WHERE meal_in_plan_id = %s AND plan_id = %s;", mealInPlanID, tempPlanID);
         ArrayList<ArrayList<Object>> result = db.getTableDataObject_AL(query, tableName);
@@ -268,7 +268,7 @@ public class MealManager
         //########################################################################
         // Icons Top RIGHT
         //########################################################################
-        JPanel eastJPanel = collapsibleJpObj.getEastJPanel();
+        JPanel eastJPanel = collapsibleJpObj.get_East_JPanel();
         eastJPanel.setLayout(new GridBagLayout());
         
         IconPanel iconPanel = new IconPanel(2, 10, "East");
@@ -832,9 +832,9 @@ public class MealManager
         //#########################################################################################################
         // Change Variable DATA & Object
         //#########################################################################################################
-        collapsibleJpObj.setIconBtnText(inputMealName);
+        collapsibleJpObj.set_Icon_Btn_Text(inputMealName);
         setMealNameVariables(true, savedMealName, inputMealName);  // Set Meal Name Variables
-    
+        
         //#########################################################################################################
         // Update total Meal View Time Col
         //#########################################################################################################
@@ -1269,7 +1269,7 @@ public class MealManager
         setTimeVariables(false, savedMealTime, savedMealTime);
         setMealNameVariables(false, savedMealName, savedMealName);
         
-        collapsibleJpObj.setIconBtnText(savedMealName); // Reset Meal Name in GUI to Old Txt
+        collapsibleJpObj.set_Icon_Btn_Text(savedMealName); // Reset Meal Name in GUI to Old Txt
         
         //##############################################################################################
         // Refresh IngredientTables
@@ -1388,12 +1388,12 @@ public class MealManager
     //######################################
     public void expand_JPanel()
     {
-        getCollapsibleJpObj().expandJPanel();
+        getCollapsibleJpObj().expand_JPanel();
     }
     
     public void collapse_MealManager()
     {
-        getCollapsibleJpObj().collapseJPanel();
+        getCollapsibleJpObj().collapse_JPanel();
     }
     
     //##################################################################################################################

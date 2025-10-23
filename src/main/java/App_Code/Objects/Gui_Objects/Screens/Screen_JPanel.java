@@ -59,6 +59,21 @@ public class Screen_JPanel extends JPanel
         setup(); // Main GUI
     }
     
+    public Screen_JPanel(Container container, boolean addScrollPane)
+    {
+        //##############################################
+        // Variables
+        //##############################################
+        this.container = container;
+        this.addScrollPane = addScrollPane;
+        
+        //##############################################
+        // Setup
+        //##############################################
+        setup(); // Main GUI
+    }
+    
+    
     //##################################################################################################################
     // GUI Setup
     //##################################################################################################################
@@ -68,6 +83,7 @@ public class Screen_JPanel extends JPanel
         // Create Interface With Sections
         //########################################################
         setLayout(new GridLayout(1, 1));
+        setVisible(true);
         
         screenSectioned = new JPanel(new BorderLayout());
         add_To_Container(this, screenSectioned, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);

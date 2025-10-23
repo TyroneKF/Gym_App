@@ -41,11 +41,11 @@ public class CollapsibleJPanel extends JPanel
 
             if (isCollapsed) // expand window
             {
-                expandJPanel();
+                expand_JPanel();
             }
             else // close window
             {
-                collapseJPanel();
+                collapse_JPanel();
             }
         });
 
@@ -69,25 +69,25 @@ public class CollapsibleJPanel extends JPanel
         //####################################################
         // Collapsing JPanel
 
-        collapseJPanel(); //HELLO Remove
+        collapse_JPanel(); //HELLO Remove
     }
 
-    public JPanel getEastJPanel()
+    public JPanel get_East_JPanel()
     {
         return eastJPanel;
     }
 
-    public JPanel getCentreJPanel()
+    public JPanel get_Centre_JPanel()
     {
         return collapsibleJPanel;
     }
 
-    public JPanel getSouthJPanel()
+    public JPanel get_South_JPanel()
     {
         return southPanel;
     }
 
-    public void setIconBtnText(String txt)
+    public void set_Icon_Btn_Text(String txt)
     {
         if (txt!=null || txt.length() > 0)
         {
@@ -96,13 +96,13 @@ public class CollapsibleJPanel extends JPanel
         }
     }
 
-    public String getBtnText()
+    public String get_Btn_Text()
     {
         return btnText;
     }
 
 
-    public void expandJPanel()
+    public void expand_JPanel()
     {
         isCollapsed = false;
 
@@ -113,7 +113,7 @@ public class CollapsibleJPanel extends JPanel
         collapse_And_Expand_Btn.setIconIMG("/images/+collapse2.png", 40, 40);
     }
 
-    public void collapseJPanel()
+    public void collapse_JPanel()
     {
         isCollapsed = true;
 
@@ -122,16 +122,5 @@ public class CollapsibleJPanel extends JPanel
 
         // iconBtn.setText(String.format("Expand %s", btnText));
         collapse_And_Expand_Btn.setIconIMG("/images/expand2.png", 40, 40);
-    }
-
-    public void removeCollapsibleJPanel()
-    {   parentContainer.setSize(new Dimension(0,0));
-        parentContainer.revalidate();
-        parentContainer.remove(this);
-    }
-
-    public Container getParentContainer()
-    {
-        return parentContainer;
     }
 }

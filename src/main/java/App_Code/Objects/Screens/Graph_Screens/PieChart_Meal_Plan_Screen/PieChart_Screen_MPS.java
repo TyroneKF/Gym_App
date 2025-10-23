@@ -56,13 +56,13 @@ public class PieChart_Screen_MPS extends Screen_JFrame
         //#################################################
         // Creating TotalMeal Macros Screen
         //#################################################
-        pieChart_TotalMeals_MPS = new PieChart_TotalMeals_MPS(meal_plan_screen, frameWidth, frameHeight);
+        pieChart_TotalMeals_MPS = new PieChart_TotalMeals_MPS(meal_plan_screen);
         tp.add("Macros Per Meal ", pieChart_TotalMeals_MPS);
         
         //#################################################
         // Creating Macros Screen
         //#################################################
-        pieChart_Macros_MPS = new PieChart_Macros_MPS(meal_plan_screen, frameWidth, frameHeight);
+        pieChart_Macros_MPS = new PieChart_Macros_MPS(meal_plan_screen);
         tp.add("Macros Meal Plan ", pieChart_Macros_MPS);
         
         // ################################################################

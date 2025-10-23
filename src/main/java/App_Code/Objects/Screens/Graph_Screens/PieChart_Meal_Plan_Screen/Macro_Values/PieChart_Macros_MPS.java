@@ -112,9 +112,9 @@ public class PieChart_Macros_MPS extends Screen_JPanel
     //##################################################################################################################
     // Constructors
     //##################################################################################################################
-    public PieChart_Macros_MPS(Meal_Plan_Screen meal_plan_screen, int frameWidth, int frameHeight)
+    public PieChart_Macros_MPS(Meal_Plan_Screen meal_plan_screen)
     {
-        super(null, true, frameWidth, frameHeight);
+        super(null, true);
         
         // ################################################################
         // Variables

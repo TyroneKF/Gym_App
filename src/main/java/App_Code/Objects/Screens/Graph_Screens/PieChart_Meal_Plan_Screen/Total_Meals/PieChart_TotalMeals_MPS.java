@@ -144,12 +144,12 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
-    public PieChart_TotalMeals_MPS(Meal_Plan_Screen meal_plan_screen, int frameWidth, int frameHeight)
+    public PieChart_TotalMeals_MPS(Meal_Plan_Screen meal_plan_screen)
     {
         // ################################################################
         // Super
         // ################################################################
-        super(null, true, frameWidth, frameHeight);
+        super(null, true);
         
         setVisible(true);
         
