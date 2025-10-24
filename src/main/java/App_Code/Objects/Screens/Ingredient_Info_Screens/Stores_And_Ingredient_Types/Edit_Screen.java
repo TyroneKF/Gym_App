@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-public class Edit_Screen extends Add_Screen
+public abstract class Edit_Screen extends Add_Screen
 {
     //##################################################################################################################
     // Variables
@@ -279,8 +279,5 @@ public class Edit_Screen extends Add_Screen
         }
     }
     
-    protected ArrayList<String> delete_Btn_Queries(String mysqlVariableReference1, ArrayList<String> queries)
-    {
-        return queries;
-    }
+    protected abstract ArrayList<String> delete_Btn_Queries(String mysqlVariableReference1, ArrayList<String> queries);
 }

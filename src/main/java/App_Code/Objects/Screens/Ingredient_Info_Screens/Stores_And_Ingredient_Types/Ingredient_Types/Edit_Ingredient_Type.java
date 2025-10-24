@@ -8,13 +8,14 @@ import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Ty
 import javax.swing.*;
 import java.util.ArrayList;
 
-public class Edit_Ingredient_Type extends Edit_Screen
+public  class Edit_Ingredient_Type extends Edit_Screen
 {
     public Edit_Ingredient_Type(MyJDBC db, Parent_Screen parent_Screen, String btnText, int btnWidth, int btnHeight)
     {
         super(db, parent_Screen, btnText, btnWidth, btnHeight);
     }
     
+    @Override
     protected void set_Screen_Variables()
     {
         super.lable1 = "Select Ingredient Type Name To Edit";

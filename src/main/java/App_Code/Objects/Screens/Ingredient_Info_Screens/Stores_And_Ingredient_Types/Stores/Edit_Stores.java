@@ -23,7 +23,7 @@ public class Edit_Stores extends Edit_Screen
         
         super.data_Gathering_Name = "Supplier Name";
         super.db_ColumnName_Field = "Store_Name";
-        super.db_TableName = "stores";
+        super.db_TableName = "images/stores";
         
         super.id_ColumnName = "store_id";
         super.fk_Table = "ingredients_info";

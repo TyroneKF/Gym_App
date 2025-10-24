@@ -12,7 +12,7 @@ import java.awt.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Add_Screen extends CollapsibleJPanel
+public abstract class Add_Screen extends CollapsibleJPanel
 {
     //##################################################################################################################
     // Variable
@@ -77,10 +77,7 @@ public class Add_Screen extends CollapsibleJPanel
         create_Form();
     }
     
-    protected void set_Screen_Variables()
-    {
-    
-    }
+    protected abstract void set_Screen_Variables();
     
     //##################################################################################################################
     // GUI Methods
@@ -342,11 +339,6 @@ public class Add_Screen extends CollapsibleJPanel
         return false;
     }
     
-    protected void update_Other_Screens()
-    {
-        System.out.printf("\n\nDefault updateOtherScreens()");
-    }
-    
     protected boolean backup_Data_In_SQL_File()
     {
         String txtToAdd = String.format("('%s')", jTextField_TXT);
@@ -362,17 +354,11 @@ public class Add_Screen extends CollapsibleJPanel
     //########################
     // Messages
     //########################
-    protected void success_Upload_Message()
-    {
-        String text = "";
-        JOptionPane.showMessageDialog(null, text);
-    }
+    protected abstract void success_Upload_Message();
     
-    protected void failure_Message()
-    {
-        String text = "";
-        JOptionPane.showMessageDialog(null, text);
-    }
+    protected abstract void failure_Message();
+    
+    protected abstract void update_Other_Screens();
     
     //##################################################################################################################
     // Create GUI Methods

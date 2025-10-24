@@ -105,7 +105,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             tablePlanMacroTargetsNameCalc = "plan_macro_target_calculations",
             tableIngredientsInfoName = "ingredients_info",
             tableIngredientsTypeName = "ingredient_types",
-            tableStoresName = "stores",
+            tableStoresName = "images/stores",
     
     tableMealsInPlanName = "meals_in_plan",
             tableSub_MealsName = "divided_meal_sections",

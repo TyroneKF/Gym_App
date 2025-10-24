@@ -64,12 +64,6 @@ public abstract class Parent_Screen extends JPanel
         // String
         this.process = process;
         this.sql_File_Path = sql_File_Path;
-        /*
-        //####################################
-        // Create GUI
-        //####################################
-        create_Interface();
-    */
     }
     
     protected abstract void initialize_Screens(MyJDBC db);
