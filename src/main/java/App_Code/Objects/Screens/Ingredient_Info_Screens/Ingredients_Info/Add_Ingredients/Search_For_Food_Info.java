@@ -104,7 +104,7 @@ public class Search_For_Food_Info extends CollapsibleJPanel
         //  North JPanel
         //#####################################################################
         JPanel mainNorthPanel = new JPanel(new BorderLayout());
-        mainNorthPanel.setBackground(Color.RED);
+        //mainNorthPanel.setBackground(Color.RED);
         scrollPaneJPanel.add(mainNorthPanel, BorderLayout.NORTH);
 
         //####################################

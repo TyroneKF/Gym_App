@@ -20,7 +20,7 @@ public class Add_Stores extends Add_Screen
         
         super.data_Gathering_Name = "Supplier Name";
         super.db_ColumnName_Field = "store_name";
-        super.db_TableName = "images/stores";
+        super.db_TableName = "stores";
     }
     
     @Override

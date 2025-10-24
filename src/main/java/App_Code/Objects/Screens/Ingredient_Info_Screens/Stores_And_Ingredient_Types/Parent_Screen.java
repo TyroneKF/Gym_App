@@ -83,6 +83,13 @@ public abstract class Parent_Screen extends JPanel
         //##################################################################################
         JPanel mainCentreScreen = new JPanel(new GridBagLayout());
         add(mainCentreScreen, BorderLayout.CENTER);
+    
+        //###########################
+        // Picture
+        //###########################
+        
+        
+        
         
         //###########################
         // Add  Form
