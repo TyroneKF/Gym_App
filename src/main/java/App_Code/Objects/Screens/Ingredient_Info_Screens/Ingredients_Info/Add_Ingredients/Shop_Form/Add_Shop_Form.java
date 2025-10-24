@@ -18,8 +18,6 @@ public class Add_Shop_Form extends Parent_IngredientForm_And_ShopForm
     //#######################################################
     protected Add_Ingredients_Screen add_Ingredient_Screen;
     
-    protected int yPos = 0;
-    
     protected ArrayList<Add_ShopForm_Object> shopFormObjects = new ArrayList<>();
     
     protected Container parentContainer;

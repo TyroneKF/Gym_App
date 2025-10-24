@@ -6,8 +6,8 @@ import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Add_Ingredients_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients.Edit_Ingredients_Screen;
-import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_IngredientTypes.Stores.Ingredient_Stores_Screen;
-import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_IngredientTypes.Ingredient_Types.Ingredients_Types_Screen;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Stores.Ingredient_Stores_Screen;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Ingredient_Types.Ingredients_Types_Screen;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 
 import javax.swing.*;

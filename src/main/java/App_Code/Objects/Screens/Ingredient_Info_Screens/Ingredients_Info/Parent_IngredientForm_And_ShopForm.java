@@ -62,8 +62,9 @@ public class Parent_IngredientForm_And_ShopForm extends Screen_JPanel
         // Collapsible JPanel Creation
         //##################################################
         collapsibleJPanel = new CollapsibleJPanel(parentContainer, btnText, btnWidth, btnHeight);
-        get_ScrollPane_JPanel().setLayout(new GridLayout(1, 1));
+        collapsibleJPanel.expand_JPanel();
         
+        get_ScrollPane_JPanel().setLayout(new GridLayout(1, 1));
         get_ScrollPane_JPanel().add(collapsibleJPanel);
     }
     

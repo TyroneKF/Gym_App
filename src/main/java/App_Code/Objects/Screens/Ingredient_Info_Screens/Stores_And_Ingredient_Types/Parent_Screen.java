@@ -1,4 +1,4 @@
-package App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_IngredientTypes;
+package App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types;
 
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
@@ -8,7 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
 
-public class Parent_Screen extends JPanel
+public abstract class Parent_Screen extends JPanel
 {
     //##################################################################################################################
     // Variables
@@ -46,36 +46,38 @@ public class Parent_Screen extends JPanel
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Parent_Screen(MyJDBC db, Ingredients_Info_Screen ingredients_Info_Screen, String process,
-                         String collapsible_BTN_Txt1, String collapsible_BTN_Txt2,
-                         Collection<String> jComboBox_List, String sql_File_Path)
+    public Parent_Screen(MyJDBC db, Ingredients_Info_Screen ingredients_Info_Screen,
+                         String process, Collection<String> jComboBox_List, String sql_File_Path)
     {
         //####################################
         // Variables
         //####################################
-        this.db = db;      // Object
-        this.ingredient_Info_Screen = ingredients_Info_Screen;     // Screen Objects
-        this.jComboBox_List = jComboBox_List;  // Collections
-        this.process = process;  // String
-        this.sql_File_Path = sql_File_Path; // String
-        this.collapsible_BTN_Txt1 = collapsible_BTN_Txt1; // String
-        this.collapsible_BTN_Txt2 = collapsible_BTN_Txt2; // String
+        // Object
+        this.db = db;
         
+        // Screen Objects
+        this.ingredient_Info_Screen = ingredients_Info_Screen;
+        
+        // Collections
+        this.jComboBox_List = jComboBox_List;
+        
+        // String
+        this.process = process;
+        this.sql_File_Path = sql_File_Path;
+        /*
         //####################################
         // Create GUI
         //####################################
-        set_Screen_Variables();
         create_Interface();
+    */
     }
+    
+    protected abstract void initialize_Screens(MyJDBC db);
+    
     
     //##################################################################################################################
     // Create GUI Methods
     //##################################################################################################################
-    protected void set_Screen_Variables()
-    {
-    
-    }
-    
     protected void create_Interface()
     {
         //###################################################################################
@@ -128,6 +130,12 @@ public class Parent_Screen extends JPanel
     public JPanel get_Container()
     {
         return this;
+    }
+    
+    // Screen Objects
+    public Ingredients_Info_Screen get_Ingredient_Info_Screen()
+    {
+        return ingredient_Info_Screen;
     }
     
     // String

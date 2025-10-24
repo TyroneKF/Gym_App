@@ -1,10 +1,11 @@
-package App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_IngredientTypes;
+package App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Gui_Objects.JTextFieldLimit;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
 
 import javax.swing.*;
 import java.awt.*;
@@ -42,6 +43,8 @@ public class Add_Screen extends CollapsibleJPanel
             sql_File_Path,
             process;
     
+    protected Ingredients_Info_Screen ingredient_Info_Screen;
+    
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
@@ -59,6 +62,8 @@ public class Add_Screen extends CollapsibleJPanel
         this.parent_Screen = parent_Screen;
         sql_File_Path = parent_Screen.get_SQL_File_Path();
         process = parent_Screen.get_Process();
+        
+        ingredient_Info_Screen = parent_Screen.get_Ingredient_Info_Screen();
         
         //########################################
         //
@@ -187,7 +192,7 @@ public class Add_Screen extends CollapsibleJPanel
     //##############################################
     protected void creating_Additional_Add_Screen_Objects()
     {
-        
+    
     }
     
     //##############################################
@@ -238,7 +243,7 @@ public class Add_Screen extends CollapsibleJPanel
     protected void reset_Actions()
     {
         refresh_Btn_Action();
-    }    
+    }
     
     //##########################################################
     // Text Formatting Methods
