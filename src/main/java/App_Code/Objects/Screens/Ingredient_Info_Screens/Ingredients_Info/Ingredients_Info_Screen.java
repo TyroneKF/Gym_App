@@ -6,8 +6,8 @@ import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Add_Ingredients_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients.Edit_Ingredients_Screen;
-import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_IngredientTypes.Edit_Ingredient_Stores_Screen;
-import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_IngredientTypes.Edit_Ingredients_Types_Screen;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_IngredientTypes.Stores.Ingredient_Stores_Screen;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_IngredientTypes.Ingredient_Types.Ingredients_Types_Screen;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 
 import javax.swing.*;
@@ -118,13 +118,13 @@ public class Ingredients_Info_Screen extends Screen_JFrame
         //#################################################
         // Creating Edit Ingredient Types Screen
         //##################################################
-        Edit_Ingredients_Types_Screen edit_IngredientTypes = new Edit_Ingredients_Types_Screen(db, this, ingredientsTypesList);
+        Ingredients_Types_Screen edit_IngredientTypes = new Ingredients_Types_Screen(db, this, ingredientsTypesList);
         tp.add("Edit Ingredient Types", edit_IngredientTypes);
         
         //#################################################
         // Creating Edit Ingredients Stores Screen
         //##################################################
-        Edit_Ingredient_Stores_Screen edit_Stores_Screen = new Edit_Ingredient_Stores_Screen(db, this, storesNamesList);
+        Ingredient_Stores_Screen edit_Stores_Screen = new Ingredient_Stores_Screen(db, this, storesNamesList);
         tp.add("Edit Ingredient Stores", edit_Stores_Screen);
         
         // ################################################################
