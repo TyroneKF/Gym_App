@@ -138,6 +138,41 @@ public class Screen_JPanel extends JPanel
     }
     
     //##############################################
+    // Drawing Methods
+    //##############################################
+//    public void set_Panel_IMG(JPanel jPanel, String iconPath, int width, int height)
+//    {
+//        //#############################
+//        //
+//        //#############################
+//        JPanel jp = new JPanel(new GridLayout(1,1));
+//        jp.setPreferredSize(new Dimension(width, height));
+//
+//        //#############################
+//        //
+//        //#############################
+//        URL imageUrl = getClass().getResource(iconPath);
+//
+//        if (imageUrl == null)
+//        {
+//            System.err.println("Could not load icon: " + iconPath);
+//            return;
+//        }
+//
+//        ImageIcon originalIcon = new ImageIcon(imageUrl);
+//        Image img = originalIcon.getImage();
+//        Image scaledImg = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+//
+//        ImageIcon scaledIcon = new ImageIcon(scaledImg);
+//
+//        //#############################
+//        //
+//        //#############################
+//        jp.add(scaledIcon);
+//    }
+//
+    
+    //##############################################
     // Screen_JFrame Positioning
     //##############################################
     protected void scroll_To_JPanel_On_Screen(JPanel panel) // Only Works With JPanels

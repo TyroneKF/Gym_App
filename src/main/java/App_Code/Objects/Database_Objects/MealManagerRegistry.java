@@ -2,6 +2,7 @@ package App_Code.Objects.Database_Objects;
 
 import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.TotalMealTable;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
+
 import org.javatuples.Pair;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.time.TimeSeries;

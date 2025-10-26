@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="javatuples-1.2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/javatuples-1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/json-20220320.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/mysql-connector-java-8.0.23.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

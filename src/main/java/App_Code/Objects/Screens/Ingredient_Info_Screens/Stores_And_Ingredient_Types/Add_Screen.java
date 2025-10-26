@@ -12,7 +12,7 @@ import java.awt.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class Add_Screen extends CollapsibleJPanel
+public abstract class Add_Screen extends JPanel
 {
     //##################################################################################################################
     // Variable
@@ -53,11 +53,6 @@ public abstract class Add_Screen extends CollapsibleJPanel
         //########################################
         //
         //########################################
-        super(parent_Screen.get_Container(), btnText, btnWidth, btnHeight);
-    
-        //########################################
-        //
-        //########################################
         this.db = db;
         this.parent_Screen = parent_Screen;
         sql_File_Path = parent_Screen.get_SQL_File_Path();
@@ -68,11 +63,7 @@ public abstract class Add_Screen extends CollapsibleJPanel
         //########################################
         //
         //########################################
-        expand_JPanel();
-    
-        //########################################
-        //
-        //########################################
+        setPreferredSize(new Dimension(200,200));
         set_Screen_Variables();
         create_Form();
     }
@@ -97,7 +88,8 @@ public abstract class Add_Screen extends CollapsibleJPanel
     //##############################################
     protected void create_Add_Screen_Objects()
     {
-        main_JPanel = get_Centre_JPanel();
+        main_JPanel = this;
+        setBorder(BorderFactory.createLineBorder(Color.red, 3));
         main_JPanel.setLayout(new GridBagLayout());
         
         main_JPanel2 = new JPanel(new GridBagLayout());
@@ -107,13 +99,13 @@ public abstract class Add_Screen extends CollapsibleJPanel
         //#######################
         // Create Icon Bar
         //#######################
-        create_Icon_Bar();
+        //create_Icon_Bar();
         
         //#################################################################
         //  Centre & Create Form
         //#################################################################
         jTextField_JP = new JPanel(new GridLayout());
-        jTextField_JP.setPreferredSize(new Dimension(630, 50));
+        jTextField_JP.setPreferredSize(new Dimension(630, 25));
         jTextField_JP.setBackground(Color.red);
         
         //#######################
@@ -121,7 +113,7 @@ public abstract class Add_Screen extends CollapsibleJPanel
         //#######################
         
         jTextField = new JTextField("");
-        jTextField.setFont(new Font("Verdana", Font.PLAIN, 15));
+        jTextField.setFont(new Font("Verdana", Font.PLAIN, 10));
         jTextField.setHorizontalAlignment(JTextField.CENTER);
         jTextField.setDocument(new JTextFieldLimit(charLimit));
         jTextField_JP.add(jTextField);

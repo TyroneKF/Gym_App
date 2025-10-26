@@ -1,6 +1,7 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Ingredient_Types;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
+import App_Code.Objects.Gui_Objects.Image_JPanel;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Parent_Screen;
 
@@ -30,5 +31,6 @@ public class Ingredients_Types_Screen extends Parent_Screen
     {
         this.add_Screen = new Add_Ingredient_Type(db, this, "ingredients types", 250, 50);
         this.edit_Screen = new Edit_Ingredient_Type(db, this, "Edit Ingredients Type", 250, 50);
+        this.screenImage = new Image_JPanel("/images/stores/store1.png", 500, 450);
     }
 }

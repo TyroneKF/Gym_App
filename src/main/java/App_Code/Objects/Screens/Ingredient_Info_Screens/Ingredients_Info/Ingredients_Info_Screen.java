@@ -103,12 +103,12 @@ public class Ingredients_Info_Screen extends Screen_JFrame
         JTabbedPane tp = new JTabbedPane();
         getScrollPaneJPanel().add(tp);
         
-        //#################################################
+      /*  //#################################################
         // Creating Add Ingredients Screen
         //#################################################
         add_IngredientsInfo_Screen = new Add_Ingredients_Screen(this, db);
         tp.add("Add Ingredients", add_IngredientsInfo_Screen);
-        
+        */
         //#################################################
         // Creating Edit Ingredients Screen
         //##################################################
@@ -124,9 +124,9 @@ public class Ingredients_Info_Screen extends Screen_JFrame
         //#################################################
         // Creating Edit Ingredients Stores Screen
         //##################################################
-        Ingredient_Stores_Screen edit_Stores_Screen = new Ingredient_Stores_Screen(db, this, storesNamesList);
+       /* Ingredient_Stores_Screen edit_Stores_Screen = new Ingredient_Stores_Screen(db, this, storesNamesList);
         tp.add("Edit Ingredient Stores", edit_Stores_Screen);
-        
+        */
         // ################################################################
         // Make Frame Visible
         // ################################################################

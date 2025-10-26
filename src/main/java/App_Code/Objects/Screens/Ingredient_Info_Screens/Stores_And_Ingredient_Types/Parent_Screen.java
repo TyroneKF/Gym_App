@@ -2,11 +2,13 @@ package App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_T
 
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
+import App_Code.Objects.Gui_Objects.Image_JPanel;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
+
 
 public abstract class Parent_Screen extends JPanel
 {
@@ -39,9 +41,10 @@ public abstract class Parent_Screen extends JPanel
     //############################
     // Screen Objects
     //############################
+    protected Ingredients_Info_Screen ingredient_Info_Screen;
     protected Edit_Screen edit_Screen;
     protected Add_Screen add_Screen;
-    protected Ingredients_Info_Screen ingredient_Info_Screen;
+    protected Image_JPanel screenImage;
     
     //##################################################################################################################
     // Constructor
@@ -71,7 +74,7 @@ public abstract class Parent_Screen extends JPanel
     //##################################################################################################################
     // Create GUI Methods
     //##################################################################################################################
-    protected void create_Interface()
+    protected void create_Interface() // 850
     {
         //###################################################################################
         //   Create Screen for Interface
@@ -87,9 +90,17 @@ public abstract class Parent_Screen extends JPanel
         //###########################
         // Picture
         //###########################
+        // 500 W, 400 L
+        add_To_Container(mainCentreScreen, screenImage, 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
         
+        //###########################
+        // Add  Form
+        //###########################
+        JPanel jp = new JPanel();
+        jp.setPreferredSize(new Dimension(500, 60));
+        jp.setBorder(BorderFactory.createLineBorder(Color.red, 3));
         
-        
+        add_To_Container(mainCentreScreen, jp, 0, yPos += 1, 1, 1, 0.25, 0.1, "horizontal", 0, 0);
         
         //###########################
         // Add  Form
@@ -99,14 +110,7 @@ public abstract class Parent_Screen extends JPanel
         //###########################
         // Edit  Form
         //###########################
-        add_To_Container(mainCentreScreen, edit_Screen, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
-        
-        //###########################
-        // Space Divider
-        //###########################
-        JPanel jPanel = new JPanel();
-        jPanel.setPreferredSize(new Dimension(630, 50));
-        add_To_Container(mainCentreScreen, jPanel, 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 10, 0);
+       // add_To_Container(mainCentreScreen, edit_Screen, 0, yPos += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
         
         //###########################
         // Re-Draw GUI
