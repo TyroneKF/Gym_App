@@ -1,7 +1,6 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
-import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Gui_Objects.JTextFieldLimit;
@@ -26,7 +25,7 @@ public abstract class Add_Screen extends JPanel
     protected GridBagConstraints gbc = new GridBagConstraints();
     protected JTextField jTextField;
     protected JButton submitButton;
-    protected JPanel jTextField_JP, main_JPanel, main_JPanel2;
+    protected JPanel jTextField_JP,  centre_JPanel;
     
     // Integer
     protected int
@@ -60,10 +59,11 @@ public abstract class Add_Screen extends JPanel
         
         ingredient_Info_Screen = parent_Screen.get_Ingredient_Info_Screen();
         
+        setPreferredSize(new Dimension(200,125));
+      
         //########################################
         //
         //########################################
-        setPreferredSize(new Dimension(200,200));
         set_Screen_Variables();
         create_Form();
     }
@@ -88,13 +88,13 @@ public abstract class Add_Screen extends JPanel
     //##############################################
     protected void create_Add_Screen_Objects()
     {
-        main_JPanel = this;
-        setBorder(BorderFactory.createLineBorder(Color.red, 3));
-        main_JPanel.setLayout(new GridBagLayout());
         
-        main_JPanel2 = new JPanel(new GridBagLayout());
-        main_JPanel2.setBackground(Color.black);
-        add_To_Container(main_JPanel, main_JPanel2, 0, 0, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+        setBorder(BorderFactory.createLineBorder(Color.red, 3));
+        this.setLayout(new GridBagLayout());
+        
+        centre_JPanel = new JPanel(new GridBagLayout());
+        centre_JPanel.setBackground(Color.black);
+        add_To_Container(this, centre_JPanel, 0, 0, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
         
         //#######################
         // Create Icon Bar
@@ -105,7 +105,7 @@ public abstract class Add_Screen extends JPanel
         //  Centre & Create Form
         //#################################################################
         jTextField_JP = new JPanel(new GridLayout());
-        jTextField_JP.setPreferredSize(new Dimension(630, 25));
+        jTextField_JP.setPreferredSize(new Dimension(630, 40));
         jTextField_JP.setBackground(Color.red);
         
         //#######################
@@ -113,7 +113,7 @@ public abstract class Add_Screen extends JPanel
         //#######################
         
         jTextField = new JTextField("");
-        jTextField.setFont(new Font("Verdana", Font.PLAIN, 10));
+        jTextField.setFont(new Font("Verdana", Font.PLAIN, 18));
         jTextField.setHorizontalAlignment(JTextField.CENTER);
         jTextField.setDocument(new JTextFieldLimit(charLimit));
         jTextField_JP.add(jTextField);
@@ -125,7 +125,7 @@ public abstract class Add_Screen extends JPanel
         // Creating submit button
         submitButton = new JButton("Submit");
         submitButton.setFont(new Font("Arial", Font.BOLD, 15)); // setting font
-        submitButton.setPreferredSize(new Dimension(50, 50)); // width, height
+        submitButton.setPreferredSize(new Dimension(50, 35)); // width, height
         
         // creating commands for submit button to execute on
         submitButton.addActionListener(ae -> {
@@ -168,7 +168,7 @@ public abstract class Add_Screen extends JPanel
         
         iconPanelInsert.add(refresh_Icon_Btn);
         
-        add_To_Container(main_JPanel2, iconArea, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+        add_To_Container(centre_JPanel, iconArea, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
         
         additional_Icon_Setup(iconPanelInsert);
     }
@@ -178,21 +178,18 @@ public abstract class Add_Screen extends JPanel
     }
     
     //##############################################
-    protected void creating_Additional_Add_Screen_Objects()
-    {
-    
-    }
+    protected abstract void creating_Additional_Add_Screen_Objects();
     
     //##############################################
     protected void add_Screen_Objects()
     {
-        add_To_Container(main_JPanel2, create_Label_Panel(main_Label), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
-        add_To_Container(main_JPanel2, jTextField_JP, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+        add_To_Container(centre_JPanel, create_Label_Panel(main_Label), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+        add_To_Container(centre_JPanel, jTextField_JP, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
         
-        add_To_Container(main_JPanel2, submitButton, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+        add_To_Container(centre_JPanel, submitButton, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
         
-        main_JPanel.revalidate();
-        main_JPanel2.revalidate();
+        revalidate();
+        centre_JPanel.revalidate();
     }
     
     protected JPanel create_Label_Panel(String labelTXT)
@@ -201,14 +198,14 @@ public abstract class Add_Screen extends JPanel
         // Create JPanel
         //###########################
         JPanel jpanel = new JPanel(new GridBagLayout());
-        jpanel.setPreferredSize(new Dimension(630, 50));
+        jpanel.setPreferredSize(new Dimension(630, 35));
         jpanel.setBackground(Color.GREEN);
         
         //###########################
         // Creating Label
         //###########################
         JLabel jLabel = new JLabel(labelTXT);
-        jLabel.setFont(new Font("Verdana", Font.PLAIN, 24));
+        jLabel.setFont(new Font("Verdana", Font.PLAIN, 20));
         jLabel.setHorizontalAlignment(JLabel.CENTER);
         
         // Add title JPanel to North Panel Area

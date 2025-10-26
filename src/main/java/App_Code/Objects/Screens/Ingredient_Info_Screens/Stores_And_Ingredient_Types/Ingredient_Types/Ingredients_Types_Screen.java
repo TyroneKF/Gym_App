@@ -31,6 +31,6 @@ public class Ingredients_Types_Screen extends Parent_Screen
     {
         this.add_Screen = new Add_Ingredient_Type(db, this, "ingredients types", 250, 50);
         this.edit_Screen = new Edit_Ingredient_Type(db, this, "Edit Ingredients Type", 250, 50);
-        this.screenImage = new Image_JPanel("/images/stores/store1.png", 500, 450);
+        this.screenImage = new Image_JPanel("/images/stores/store0.png", 500, 470);
     }
 }

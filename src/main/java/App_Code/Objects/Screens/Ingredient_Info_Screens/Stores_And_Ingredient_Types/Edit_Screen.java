@@ -55,11 +55,13 @@ public abstract class Edit_Screen extends Add_Screen
         jComboBox_List = parent_Screen.get_JComboBox_List();
         
         jComboBox_JPanel = new JPanel(new GridLayout(1, 1));
+        jComboBox_JPanel.setPreferredSize(new Dimension(650, 45));
+        
         jCombo_Box_Object = new JComboBox<String>();
         
         load_JComboBox();
         
-        jCombo_Box_Object.setFont(new Font("Arial", Font.PLAIN, 15)); // setting font
+        jCombo_Box_Object.setFont(new Font("Arial", Font.PLAIN, 17)); // setting font
         ((JLabel) jCombo_Box_Object.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER); // centre text
     
         jCombo_Box_Object.addItemListener(new ItemListener()
@@ -74,25 +76,22 @@ public abstract class Edit_Screen extends Add_Screen
         });
     
         jComboBox_JPanel.add(jCombo_Box_Object);
-        jComboBox_JPanel.setPreferredSize(new Dimension(650, 50));
     }
     
     @Override
     protected void add_Screen_Objects()
     {
-        add_To_Container(main_JPanel2, create_Label_Panel(lable1), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
-        add_To_Container(main_JPanel2, jComboBox_JPanel, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+        add_To_Container(centre_JPanel, create_Label_Panel(lable1), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+        add_To_Container(centre_JPanel, jComboBox_JPanel, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
         
-        add_To_Container(main_JPanel2, new JPanel(), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 10, 0);
+        add_To_Container(centre_JPanel, new JPanel(), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "horizontal", 10, 0);
         
-        add_To_Container(main_JPanel2, create_Label_Panel(label2), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
-        add_To_Container(main_JPanel2, jTextField_JP, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
-        add_To_Container(main_JPanel2, submitButton, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+        add_To_Container(centre_JPanel, create_Label_Panel(label2), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+        add_To_Container(centre_JPanel, jTextField_JP, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+        add_To_Container(centre_JPanel, submitButton, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
         
-        main_JPanel.revalidate();
-        main_JPanel2.revalidate();
-    
-        // load_JComboBox();
+        revalidate();
+        centre_JPanel.revalidate();
     }
     
     @Override
@@ -260,7 +259,7 @@ public abstract class Edit_Screen extends Add_Screen
     
     private void delete_Btn_Action_Listener()
     {
-        if (selected_JComboBox_Item_Txt.equals(""))
+        if (selected_JComboBox_Item_Txt.isEmpty())
         {
             JOptionPane.showMessageDialog(null, String.format("Select An ' %s 'To Delete It !!!", data_Gathering_Name));
             return;

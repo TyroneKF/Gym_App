@@ -70,6 +70,14 @@
             <version>25.0.1</version>
         </dependency>
 
+        <!-- 🧩 JavaFX Swing Bridge: allows embedding FX inside Swing (JFXPanel) -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-swing</artifactId>
+            <version>25.0.1</version>
+        </dependency>
+
+
         <!-- 🧩 JavaFX FXML: Enables use of .fxml files for declarative UI layout -->
         <dependency>
             <groupId>org.openjfx</groupId>

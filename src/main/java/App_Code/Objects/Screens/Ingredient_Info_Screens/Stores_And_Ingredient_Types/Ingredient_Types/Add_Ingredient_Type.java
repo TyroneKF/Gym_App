@@ -24,6 +24,12 @@ public class Add_Ingredient_Type extends Add_Screen
     }
     
     @Override
+    protected void creating_Additional_Add_Screen_Objects()
+    {
+    
+    }
+    
+    @Override
     protected void success_Upload_Message()
     {
         String text = String.format("\n\nSuccessfully Added New Ingredient Type: '%s'", jTextField_TXT);
