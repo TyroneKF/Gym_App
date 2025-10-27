@@ -4,6 +4,7 @@ import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Gui_Objects.JTextFieldLimit;
+import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
 
 import javax.swing.*;
@@ -11,7 +12,7 @@ import java.awt.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class Add_Screen extends JPanel
+public abstract class Add_Screen extends Screen_JPanel
 {
     //##################################################################################################################
     // Variable
@@ -25,7 +26,7 @@ public abstract class Add_Screen extends JPanel
     protected GridBagConstraints gbc = new GridBagConstraints();
     protected JTextField jTextField;
     protected JButton submitButton;
-    protected JPanel jTextField_JP,  centre_JPanel;
+    protected JPanel jTextField_JP, centre_JPanel;
     
     // Integer
     protected int
@@ -52,6 +53,11 @@ public abstract class Add_Screen extends JPanel
         //########################################
         //
         //########################################
+        super(parent_Screen.get_Container(), false);
+        
+        //########################################
+        //
+        //########################################
         this.db = db;
         this.parent_Screen = parent_Screen;
         sql_File_Path = parent_Screen.get_SQL_File_Path();
@@ -59,8 +65,8 @@ public abstract class Add_Screen extends JPanel
         
         ingredient_Info_Screen = parent_Screen.get_Ingredient_Info_Screen();
         
-        setPreferredSize(new Dimension(200,125));
-      
+        setPreferredSize(new Dimension(200, 125));
+        
         //########################################
         //
         //########################################
@@ -83,16 +89,19 @@ public abstract class Add_Screen extends JPanel
         add_Screen_Objects(); // adding all objects to the screen
     }
     
-    //##############################################
+    //####################################################################################
     //
-    //##############################################
+    //####################################################################################
     protected void create_Add_Screen_Objects()
     {
-        this.setLayout(new GridBagLayout());
+        //#################################################
+        //  Centre & Create Form
+        //#################################################
+        get_ScrollPane_JPanel().setLayout(new GridBagLayout());
         
         centre_JPanel = new JPanel(new GridBagLayout());
         centre_JPanel.setBackground(Color.black);
-        add_To_Container(this, centre_JPanel, 0, 0, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+        add_To_Container(get_ScrollPane_JPanel(), centre_JPanel, 0, 0, 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
         
         //#######################
         // Create Icon Bar
@@ -145,7 +154,7 @@ public abstract class Add_Screen extends JPanel
         IconPanel iconPanel = new IconPanel(1, 10, "East");
         JPanel iconPanelInsert = iconPanel.getIconJpanel();
         
-        add_To_Container(iconArea, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0);
+        add_To_Container(iconArea, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0, null);
         
         //##########################
         // Refresh Icon
@@ -166,7 +175,7 @@ public abstract class Add_Screen extends JPanel
         
         iconPanelInsert.add(refresh_Icon_Btn);
         
-        add_To_Container(centre_JPanel, iconArea, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+        add_To_Container(centre_JPanel, iconArea, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0, null);
         
         additional_Icon_Setup(iconPanelInsert);
     }
@@ -181,10 +190,10 @@ public abstract class Add_Screen extends JPanel
     //##############################################
     protected void add_Screen_Objects()
     {
-        add_To_Container(centre_JPanel, create_Label_Panel(main_Label), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
-        add_To_Container(centre_JPanel, jTextField_JP, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+        add_To_Container(centre_JPanel, create_Label_Panel(main_Label), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
+        add_To_Container(centre_JPanel, jTextField_JP, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0, null);
         
-        add_To_Container(centre_JPanel, submitButton, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+        add_To_Container(centre_JPanel, submitButton, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
         
         revalidate();
         centre_JPanel.revalidate();
@@ -207,7 +216,7 @@ public abstract class Add_Screen extends JPanel
         jLabel.setHorizontalAlignment(JLabel.CENTER);
         
         // Add title JPanel to North Panel Area
-        add_To_Container(jpanel, jLabel, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0);
+        add_To_Container(jpanel, jLabel, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
         
         //###########################
         // Return Label
@@ -346,38 +355,5 @@ public abstract class Add_Screen extends JPanel
     protected abstract void failure_Message();
     
     protected abstract void update_Other_Screens();
-    
-    //##################################################################################################################
-    // Create GUI Methods
-    //##################################################################################################################
-    protected void add_To_Container(Container container, Component addToContainer, int gridx, int gridy, int gridwidth,
-                                    int gridheight, double weightx, double weighty, String fill, int ipady, int ipadx)
-    {
-        gbc.gridx = gridx;
-        gbc.gridy = gridy;
-        gbc.gridwidth = gridwidth;
-        gbc.gridheight = gridheight;
-        gbc.weightx = weightx;
-        gbc.weighty = weighty;
-        
-        gbc.ipady = ipady;
-        gbc.ipadx = ipadx;
-        
-        switch (fill.toLowerCase())
-        {
-            case "horizontal":
-                gbc.fill = GridBagConstraints.HORIZONTAL;
-                break;
-            case "vertical":
-                gbc.fill = GridBagConstraints.VERTICAL;
-                break;
-            
-            case "both":
-                gbc.fill = GridBagConstraints.BOTH;
-                break;
-        }
-        
-        container.add(addToContainer, gbc);
-    }
 }
 

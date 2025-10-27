@@ -150,7 +150,7 @@ public abstract class Parent_Screen extends Screen_JPanel
             //###########################
             // Horizontal Padding
             //###########################
-            // Add padding for the label text, the padding isnt for the container itself
+            // Add padding for the label text, the padding isn't for the container itself
             StackPane.setMargin(add_Label, new Insets(0, 35, 0, 35));
             
             //###########################
