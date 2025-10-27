@@ -26,7 +26,9 @@ public abstract class Add_Screen extends Screen_JPanel
     protected GridBagConstraints gbc = new GridBagConstraints();
     protected JTextField jTextField;
     protected JButton submitButton;
-    protected JPanel jTextField_JP, centre_JPanel;
+    protected JPanel
+            centre_JPanel,
+            jTextField_JP;
     
     // Integer
     protected int
@@ -85,7 +87,7 @@ public abstract class Add_Screen extends Screen_JPanel
         // Drawing interface
         //####################################################################
         create_Add_Screen_Objects();
-        creating_Additional_Add_Screen_Objects(); // for overwrite purposes
+        additional_Add_Screen_Objects(); // for overwrite purposes
         add_Screen_Objects(); // adding all objects to the screen
     }
     
@@ -102,11 +104,6 @@ public abstract class Add_Screen extends Screen_JPanel
         centre_JPanel = new JPanel(new GridBagLayout());
         centre_JPanel.setBackground(Color.black);
         add_To_Container(get_ScrollPane_JPanel(), centre_JPanel, 0, 0, 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
-        
-        //#######################
-        // Create Icon Bar
-        //#######################
-        //create_Icon_Bar();
         
         //#################################################################
         //  Centre & Create Form
@@ -140,52 +137,8 @@ public abstract class Add_Screen extends Screen_JPanel
         });
     }
     
-    //#################
-    // Icon Setup
-    //#################
-    private void create_Icon_Bar()
-    {
-        //#####################################################
-        // Creating area for North JPanel (Refresh Icon)
-        //#####################################################
-        
-        JPanel iconArea = new JPanel(new GridBagLayout());
-        
-        IconPanel iconPanel = new IconPanel(1, 10, "East");
-        JPanel iconPanelInsert = iconPanel.getIconJpanel();
-        
-        add_To_Container(iconArea, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0, null);
-        
-        //##########################
-        // Refresh Icon
-        //##########################
-        int width = 35;
-        int height = 35;
-        
-        IconButton refresh_Icon_Btn = new IconButton("/images/refresh/++refresh.png", width, height, width, height,
-                "centre", "right"); // btn text is useless here , refactor
-        
-        JButton refresh_Btn = refresh_Icon_Btn.returnJButton();
-        refresh_Icon_Btn.makeBTntransparent();
-        
-        refresh_Btn.addActionListener(ae -> {
-            
-            refresh_Btn_Action();
-        });
-        
-        iconPanelInsert.add(refresh_Icon_Btn);
-        
-        add_To_Container(centre_JPanel, iconArea, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0, null);
-        
-        additional_Icon_Setup(iconPanelInsert);
-    }
-    
-    protected void additional_Icon_Setup(JPanel iconPanelInsert)
-    {
-    }
-    
     //##############################################
-    protected abstract void creating_Additional_Add_Screen_Objects();
+    protected abstract void additional_Add_Screen_Objects();
     
     //##############################################
     protected void add_Screen_Objects()
@@ -195,8 +148,7 @@ public abstract class Add_Screen extends Screen_JPanel
         
         add_To_Container(centre_JPanel, submitButton, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
         
-        revalidate();
-        centre_JPanel.revalidate();
+        resize_GUI();
     }
     
     protected JPanel create_Label_Panel(String labelTXT)

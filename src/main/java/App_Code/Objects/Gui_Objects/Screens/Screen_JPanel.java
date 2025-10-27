@@ -242,10 +242,10 @@ public class Screen_JPanel extends JPanel
     
     protected JPanel get_Main_South_JPanel() { return mainSouthJPanel; }
     
-    protected JPanel create_Space_Divider(int width, int height)
+    protected JPanel create_Space_Divider(int width, int height, Color color)
     {
         JPanel spaceDivider = new JPanel(new GridBagLayout());
-        spaceDivider.setBackground(Color.WHITE);
+        spaceDivider.setBackground(color);
         spaceDivider.setPreferredSize(new Dimension(width, height));
         
         return spaceDivider;

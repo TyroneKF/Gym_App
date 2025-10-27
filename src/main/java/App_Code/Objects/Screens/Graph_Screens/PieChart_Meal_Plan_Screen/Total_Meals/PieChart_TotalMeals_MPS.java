@@ -231,7 +231,7 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
             
             add_To_Container(x, pieChart, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 10, 10, null);
             
-            add_To_Container(x, create_Space_Divider(20, 50), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
+            add_To_Container(x, create_Space_Divider(20, 50, java.awt.Color.WHITE), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
         }
         
         //##############################
@@ -274,7 +274,7 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
             JPanel x = new JPanel(new GridBagLayout());
             add_To_Container(x, pieChart, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 10, 10, null);
             
-            add_To_Container(x, create_Space_Divider(20, 50), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
+            add_To_Container(x, create_Space_Divider(20, 50, java.awt.Color.WHITE), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
             get_ScrollPane_JPanel().add(x);
         }
         

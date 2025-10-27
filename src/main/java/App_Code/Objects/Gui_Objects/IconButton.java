@@ -89,6 +89,11 @@ public class IconButton extends JPanel
     
     }
     
+    public void set_Btn_Visibility(boolean visibility)
+    {
+        button.setVisible(visibility);
+    }
+    
     public void setIconIMG(String iconPath, int iconWidth, int iconHeight)
     {
         URL imageUrl = getClass().getResource(iconPath);

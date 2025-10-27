@@ -24,7 +24,7 @@ public class Add_Ingredient_Type extends Add_Screen
     }
     
     @Override
-    protected void creating_Additional_Add_Screen_Objects()
+    protected void additional_Add_Screen_Objects()
     {
     
     }

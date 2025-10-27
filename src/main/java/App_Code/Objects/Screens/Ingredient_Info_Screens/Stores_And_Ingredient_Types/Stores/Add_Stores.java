@@ -22,9 +22,9 @@ public class Add_Stores extends Add_Screen
         super.db_ColumnName_Field = "store_name";
         super.db_TableName = "stores";
     }
-    
+  
     @Override
-    protected void creating_Additional_Add_Screen_Objects()
+    protected void additional_Add_Screen_Objects()
     {
     
     }

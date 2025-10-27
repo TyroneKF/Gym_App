@@ -50,7 +50,7 @@ public abstract class Edit_Screen extends Add_Screen
     // GUI Setup Methods
     //##################################################################################################################
     @Override
-    protected void creating_Additional_Add_Screen_Objects()
+    protected void additional_Add_Screen_Objects()
     {
         //########################################################################################################
         //  JComboBox
@@ -94,29 +94,6 @@ public abstract class Edit_Screen extends Add_Screen
         add_To_Container(centre_JPanel, submitButton, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
         
         resize_GUI();
-    }
-    
-    @Override
-    protected void additional_Icon_Setup(JPanel iconPanelInsert)
-    {
-        //###########################################
-        // DELETE Icon
-        //###########################################
-        int width = 35;
-        int height = 35;
-        
-        IconButton delete_Icon_Btn = new IconButton("/images/x/x.png", width, height, width, height,
-                "centre", "right"); // btn text is useless here , refactor
-        
-        JButton delete_Btn = delete_Icon_Btn.returnJButton();
-        delete_Icon_Btn.makeBTntransparent();
-        
-        delete_Btn.addActionListener(ae -> {
-            
-            delete_Btn_Action_Listener();
-        });
-        
-        iconPanelInsert.add(delete_Icon_Btn);
     }
     
     protected void load_JComboBox()
@@ -205,28 +182,19 @@ public abstract class Edit_Screen extends Add_Screen
     @Override
     protected void refresh_Btn_Action()
     {
-        try
-        {
-            jTextField.setText("");
-            jCombo_Box_Object.setSelectedIndex(- 1);
-            selected_JComboBox_Item_Txt = "";
-        }
-        catch (Exception e)
-        {
-            System.out.printf("\n\n%s", e);
-        }
+        jTextField.setText("");
+        jCombo_Box_Object.setSelectedIndex(- 1);
+        selected_JComboBox_Item_Txt = "";
     }
     
     //#############################################################
     // Delete Methods
     //#############################################################
-    protected boolean delete_Btn_Action()
+    private boolean delete_Btn_Action()
     {
         //##########################################################################################################
         // Delete From SQL Database
         //##########################################################################################################
-        System.out.printf("\n#################################################################################");
-        
         String mysqlVariableReference1 = "@CurrentID";
         String createMysqlVariable1 = String.format("SET %s = (SELECT %s FROM %s WHERE %s = '%s');",
                 mysqlVariableReference1, id_ColumnName, db_TableName, db_ColumnName_Field, selected_JComboBox_Item_Txt);
@@ -259,25 +227,33 @@ public abstract class Edit_Screen extends Add_Screen
         return true;
     }
     
-    private void delete_Btn_Action_Listener()
+    protected void delete_Btn_Action_Listener()
     {
+        //##################################
+        //
+        //##################################
         if (selected_JComboBox_Item_Txt.isEmpty())
         {
             JOptionPane.showMessageDialog(null, String.format("Select An ' %s 'To Delete It !!!", data_Gathering_Name));
             return;
         }
         
-        if (delete_Btn_Action())
-        {
-            JOptionPane.showMessageDialog(null, String.format("\n\nSelected Item ''%s'' Has Successfully Been Deleted!!!", selected_JComboBox_Item_Txt));
-            
-            update_Other_Screens();
-            reset_Actions();
-        }
-        else
+        //##################################
+        //
+        //##################################
+        if (! delete_Btn_Action())
         {
             JOptionPane.showMessageDialog(null, String.format("\n\nFailed To Delete Selected Item ''%s'' !!", selected_JComboBox_Item_Txt));
+            return;
         }
+        
+        //##################################
+        //
+        //##################################
+        JOptionPane.showMessageDialog(null, String.format("\n\nSelected Item ''%s'' Has Successfully Been Deleted!!!", selected_JComboBox_Item_Txt));
+        
+        update_Other_Screens();
+        reset_Actions();
     }
     
     protected abstract ArrayList<String> delete_Btn_Queries(String mysqlVariableReference1, ArrayList<String> queries);
