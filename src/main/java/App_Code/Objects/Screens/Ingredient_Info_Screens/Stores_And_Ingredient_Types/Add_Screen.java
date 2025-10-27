@@ -88,8 +88,6 @@ public abstract class Add_Screen extends JPanel
     //##############################################
     protected void create_Add_Screen_Objects()
     {
-        
-        setBorder(BorderFactory.createLineBorder(Color.red, 3));
         this.setLayout(new GridBagLayout());
         
         centre_JPanel = new JPanel(new GridBagLayout());

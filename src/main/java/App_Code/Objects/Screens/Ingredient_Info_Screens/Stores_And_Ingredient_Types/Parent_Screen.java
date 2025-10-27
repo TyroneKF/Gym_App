@@ -2,6 +2,7 @@ package App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_T
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Gui_Objects.Image_JPanel;
+import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
 
 import javax.swing.*;
@@ -20,7 +21,7 @@ import javafx.animation.TranslateTransition;
 import javafx.util.Duration;
 
 
-public abstract class Parent_Screen extends JPanel
+public abstract class Parent_Screen extends Screen_JPanel
 {
     //##################################################################################################################
     // Variables
@@ -55,7 +56,10 @@ public abstract class Parent_Screen extends JPanel
     protected Ingredients_Info_Screen ingredient_Info_Screen;
     protected Edit_Screen edit_Screen;
     protected Add_Screen add_Screen;
+    
+    // JPanels
     protected Image_JPanel screenImage;
+    protected JPanel addScreen_Divider;
     
     //##################################################################################################################
     // Constructor
@@ -63,6 +67,8 @@ public abstract class Parent_Screen extends JPanel
     public Parent_Screen(MyJDBC db, Ingredients_Info_Screen ingredients_Info_Screen,
                          String process, Collection<String> jComboBox_List, String sql_File_Path)
     {
+        super(null, false);
+        
         //####################################
         // Variables
         //####################################
@@ -94,23 +100,20 @@ public abstract class Parent_Screen extends JPanel
         //###################################################################################
         //   Create Screen for Interface
         //###################################################################################
-        setLayout(new BorderLayout());
+        get_ScrollPane_JPanel().setLayout(new BorderLayout());
         
         //###################################################################################
         //   Create Main Centre Screen for Interface
         //##################################################################################
         JPanel mainCentreScreen = new JPanel(new GridBagLayout());
-        mainCentreScreen.setBorder(BorderFactory.createLineBorder(java.awt.Color.BLACK, 8));
-        add(mainCentreScreen, BorderLayout.CENTER);
+        get_ScrollPane_JPanel().add(mainCentreScreen, BorderLayout.CENTER);
         
         //##################################################################################
         //
         //##################################################################################
         JPanel toggleSwitch_JP = new JPanel();
-        toggleSwitch_JP.setPreferredSize(new Dimension(500, 55));
-        toggleSwitch_JP.setBorder(BorderFactory.createLineBorder(java.awt.Color.GREEN, 3));
+        toggleSwitch_JP.setPreferredSize(new Dimension(500, 75));
         
-
         //##########################################
         // JavaFX Toggle Switch in toggleSwitch_JP
         //##########################################
@@ -158,7 +161,7 @@ public abstract class Parent_Screen extends JPanel
              *   The toggle itself takes its size from its largest child, which is the background
              *   (since it has setPrefSize(110, 40)).
              */
-          
+            
             StackPane toggle = new StackPane(background, add_Label, circle);
             
             //###########################
@@ -189,6 +192,8 @@ public abstract class Parent_Screen extends JPanel
                     moveRight.play();
                 }
                 isEditMode[0] = ! isEditMode[0];
+                
+                switchPanel(isEditMode[0]);
             });
             
             fxPanel.setScene(new Scene(new StackPane(toggle), Color.TRANSPARENT));
@@ -198,31 +203,35 @@ public abstract class Parent_Screen extends JPanel
         // Adding Component To GUI
         //##################################################################################
         
-        // 500 W, 400 L
+      
         //############################
         // Screen Image
         //############################
-        add_To_Container(mainCentreScreen, screenImage, 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+        add_To_Container(mainCentreScreen, screenImage, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
         
         //############################
         // ToggleSwitch
         //############################
-        add_To_Container(mainCentreScreen, toggleSwitch_JP, 0, yPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
+        add_To_Container(mainCentreScreen, toggleSwitch_JP, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
         
         //############################
         // Add Screen
         //############################
-        add_To_Container(mainCentreScreen, add_Screen, 0, yPos += 1, 1, 1, 0.25, 0.1, "horizontal", 0, 0);
+        add_To_Container(mainCentreScreen, add_Screen, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.1, "horizontal", 0, 0, null);
+        
+        // Add Screen Divider to fill bottom of GUI Space
+        add_To_Container(mainCentreScreen, addScreen_Divider = create_Space_Divider(10, 50), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.1, "horizontal", 0, 0, null);
         
         //############################
         // Edit Screen
         //############################
-       // add_To_Container(mainCentreScreen, edit_Screen, 0, yPos += 1, 1, 1, 0.25, 0.20, "both", 0, 0);
+        edit_Screen.setVisible(false);
+        add_To_Container(mainCentreScreen, edit_Screen, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.20, "both", 0, 0, null);
         
         //##################################################################################
         // resize
         //##################################################################################
-        revalidate(); // Replace with resize when screen_JP
+        resize_GUI();
     }
     
     //##################################################################################################################
@@ -232,6 +241,28 @@ public abstract class Parent_Screen extends JPanel
     {
         add_Screen.refresh_Btn_Action();
         edit_Screen.load_JComboBox();
+    }
+    
+    /**
+     * @param isEditable is the opposite, if true = Edit Mode
+     *                   if false = Add Mode
+     */
+    protected void switchPanel(boolean isEditable)
+    {
+        if (isEditable) // ADD Mode
+        {
+            add_Screen.setVisible(false);
+            addScreen_Divider.setVisible(false);
+            edit_Screen.setVisible(true);
+        }
+        else // Edit Mode
+        {
+            add_Screen.setVisible(true);
+            addScreen_Divider.setVisible(true);
+            edit_Screen.setVisible(false);
+        }
+        
+        resize_GUI();
     }
     
     //#########################################
@@ -275,38 +306,5 @@ public abstract class Parent_Screen extends JPanel
     public Collection<String> get_JComboBox_List()
     {
         return jComboBox_List;
-    }
-    
-    //##################################################################################################################
-    // Resizing & Add to GUI Methods
-    //##################################################################################################################
-    protected void add_To_Container(Container container, Component addToContainer, int gridx, int gridy, int gridwidth,
-                                    int gridheight, double weightx, double weighty, String fill, int ipady, int ipadx)
-    {
-        gbc.gridx = gridx;
-        gbc.gridy = gridy;
-        gbc.gridwidth = gridwidth;
-        gbc.gridheight = gridheight;
-        gbc.weightx = weightx;
-        gbc.weighty = weighty;
-        
-        gbc.ipady = ipady;
-        gbc.ipadx = ipadx;
-        
-        switch (fill.toLowerCase())
-        {
-            case "horizontal":
-                gbc.fill = GridBagConstraints.HORIZONTAL;
-                break;
-            case "vertical":
-                gbc.fill = GridBagConstraints.VERTICAL;
-                break;
-            
-            case "both":
-                gbc.fill = GridBagConstraints.BOTH;
-                break;
-        }
-        
-        container.add(addToContainer, gbc);
     }
 }

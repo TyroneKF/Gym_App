@@ -37,6 +37,6 @@ public class Ingredient_Stores_Screen extends Parent_Screen
     {
         this.add_Screen = new Add_Stores(db, this, "Add Suppliers", 250, 50);
         this.edit_Screen = new Edit_Stores(db, this, "Edit Suppliers", 250, 50);
-        this.screenImage = new Image_JPanel("/images/stores/store1.png", 500, 450);
+        this.screenImage = new Image_JPanel("/images/stores/store0.png", 500, 470);
     }
 }

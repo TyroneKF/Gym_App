@@ -20,7 +20,6 @@ public class Image_JPanel extends JPanel
         }
         
         setPreferredSize(new Dimension(width, height));
-        setBorder(BorderFactory.createLineBorder(Color.red, 3));
         
         image = new ImageIcon(imageUrl).getImage();
     }
@@ -29,6 +28,7 @@ public class Image_JPanel extends JPanel
     protected void paintComponent(Graphics g)
     {
         super.paintComponent(g);
+        
         // Draw image scaled to panel size
         g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
     }

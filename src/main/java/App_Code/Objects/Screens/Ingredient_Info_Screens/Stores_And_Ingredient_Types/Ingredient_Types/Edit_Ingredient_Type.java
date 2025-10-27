@@ -19,7 +19,7 @@ public  class Edit_Ingredient_Type extends Edit_Screen
     protected void set_Screen_Variables()
     {
         super.lable1 = "Select Ingredient Type Name To Edit";
-        super.label2 = "Change Ingredient Type Name";
+        super.label2 = "Change Ingredient Type Name To";
         
         super.data_Gathering_Name = "Ingredient Type Name";
         super.db_ColumnName_Field = "ingredient_type_name";

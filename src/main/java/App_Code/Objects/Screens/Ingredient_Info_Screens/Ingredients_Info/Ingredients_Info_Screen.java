@@ -23,7 +23,7 @@ public class Ingredients_Info_Screen extends Screen_JFrame
     
     // Objects
     private Meal_Plan_Screen mealPlanScreen;
-
+    
     // Screen Objects
     private Add_Ingredients_Screen add_IngredientsInfo_Screen;
     private Edit_Ingredients_Screen edit_IngredientsInfo_Screen;
@@ -64,15 +64,15 @@ public class Ingredients_Info_Screen extends Screen_JFrame
         //###################################################################################
         // Super Constructor
         //###################################################################################
-        super(db, false, "Add/Edit Ingredients Screen", 800, 850, 0, 0);
+        super(db, false, "Add/Edit Ingredients Screen", 800, 880, 0, 0);
         
         //###################################################################################
         // Variables
         //###################################################################################
         this.mealPlanScreen = mealPlanScreen;
-        this.planID = mealPlanScreen.getPlanID();
-        this.tempPlanID = mealPlanScreen.getTempPlanID();
-        this.planName = mealPlanScreen.getPlanName();
+        planID = mealPlanScreen.getPlanID();
+        tempPlanID = mealPlanScreen.getTempPlanID();
+        planName = mealPlanScreen.getPlanName();
         
         this.map_ingredientTypesToNames = map_ingredientTypesToNames;
         this.ingredientsTypesList = ingredientsTypesList;
@@ -103,12 +103,12 @@ public class Ingredients_Info_Screen extends Screen_JFrame
         JTabbedPane tp = new JTabbedPane();
         getScrollPaneJPanel().add(tp);
         
-      /*  //#################################################
+        //#################################################
         // Creating Add Ingredients Screen
         //#################################################
         add_IngredientsInfo_Screen = new Add_Ingredients_Screen(this, db);
         tp.add("Add Ingredients", add_IngredientsInfo_Screen);
-        */
+        
         //#################################################
         // Creating Edit Ingredients Screen
         //##################################################
@@ -124,9 +124,9 @@ public class Ingredients_Info_Screen extends Screen_JFrame
         //#################################################
         // Creating Edit Ingredients Stores Screen
         //##################################################
-       /* Ingredient_Stores_Screen edit_Stores_Screen = new Ingredient_Stores_Screen(db, this, storesNamesList);
+        Ingredient_Stores_Screen edit_Stores_Screen = new Ingredient_Stores_Screen(db, this, storesNamesList);
         tp.add("Edit Ingredient Stores", edit_Stores_Screen);
-        */
+        
         // ################################################################
         // Make Frame Visible
         // ################################################################

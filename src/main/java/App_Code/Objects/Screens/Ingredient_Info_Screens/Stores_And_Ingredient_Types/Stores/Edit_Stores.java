@@ -19,7 +19,7 @@ public class Edit_Stores extends Edit_Screen
     protected void set_Screen_Variables()
     {
         super.lable1 = "Select Supplier Name To Edit";
-        super.label2 = "Change Supplier Name";
+        super.label2 = "Change Supplier Name To";
         
         super.data_Gathering_Name = "Supplier Name";
         super.db_ColumnName_Field = "Store_Name";
