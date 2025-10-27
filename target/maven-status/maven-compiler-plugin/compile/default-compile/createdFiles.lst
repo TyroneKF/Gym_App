@@ -25,6 +25,7 @@ Tests\JTables\JButton\Others\ButtonEditor$1.class
 App_Code\Objects\Screens\Meal_Plan_Screen$3.class
 App_Code\Objects\Gui_Objects\ScrollPaneCreator.class
 Tests\JTables\JButton\understood\TableRenderDemo$1.class
+Tests\ToggleSwitchDemo.class
 Tests\JTables\JButton\understood\JTbable_JButton2.class
 Tests\JTables\JButton\Others\ButtonEditor.class
 App_Code\Objects\Screens\Ingredient_Info_Screens\Ingredients_Info\Edit_Ingredients\Ingredients_Form\Edit_Ingredients_Form.class
