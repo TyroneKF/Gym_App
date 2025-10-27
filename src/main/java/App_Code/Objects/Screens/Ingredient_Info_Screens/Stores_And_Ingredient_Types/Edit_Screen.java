@@ -84,14 +84,14 @@ public abstract class Edit_Screen extends Add_Screen
     @Override
     protected void add_Screen_Objects()
     {
-        add_To_Container(centre_JPanel, create_Label_Panel(lable1), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
-        add_To_Container(centre_JPanel, jComboBox_JPanel, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+        add_To_Container(centre_JPanel, create_Label_Panel(lable1), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
+        add_To_Container(centre_JPanel, jComboBox_JPanel, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
         
-        add_To_Container(centre_JPanel, new JPanel(), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "horizontal", 10, 0);
+        add_To_Container(centre_JPanel, new JPanel(), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "horizontal", 10, 0, null);
         
-        add_To_Container(centre_JPanel, create_Label_Panel(label2), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
-        add_To_Container(centre_JPanel, jTextField_JP, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0);
-        add_To_Container(centre_JPanel, submitButton, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0);
+        add_To_Container(centre_JPanel, create_Label_Panel(label2), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
+        add_To_Container(centre_JPanel, jTextField_JP, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        add_To_Container(centre_JPanel, submitButton, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
         
         revalidate();
         centre_JPanel.revalidate();
