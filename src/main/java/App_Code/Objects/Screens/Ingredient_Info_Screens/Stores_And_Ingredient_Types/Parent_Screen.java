@@ -37,7 +37,6 @@ public abstract class Parent_Screen extends Screen_JPanel
     // Integer
     //############################
     protected int
-            yPos = 0,
             frameHeight,
             frameWidth;
     

@@ -32,8 +32,7 @@ public abstract class Add_Screen extends Screen_JPanel
     
     // Integer
     protected int
-            charLimit = 55,
-            ypos2 = 0;
+            charLimit = 55;
     
     // String
     protected String
@@ -143,10 +142,10 @@ public abstract class Add_Screen extends Screen_JPanel
     //##############################################
     protected void add_Screen_Objects()
     {
-        add_To_Container(centre_JPanel, create_Label_Panel(main_Label), 0, ypos2 += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
-        add_To_Container(centre_JPanel, jTextField_JP, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        add_To_Container(centre_JPanel, create_Label_Panel(main_Label), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
+        add_To_Container(centre_JPanel, jTextField_JP, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
         
-        add_To_Container(centre_JPanel, submitButton, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
+        add_To_Container(centre_JPanel, submitButton, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
         
         resize_GUI();
     }
