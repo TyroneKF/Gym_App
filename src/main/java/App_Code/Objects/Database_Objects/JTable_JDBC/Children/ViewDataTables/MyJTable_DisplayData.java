@@ -95,7 +95,7 @@ public class MyJTable_DisplayData extends JDBC_JTable
         //###########################################################################
         //   Updating MacrosLeft_Table
         ///##########################################################################
-        ArrayList<ArrayList<Object>> tableDataObject = db.getTableDataObject_AL(query, tableName);
+        ArrayList<ArrayList<Object>> tableDataObject = db.get_TableData_Objects_AL(query, tableName);
         
         if (tableDataObject == null)
         {
@@ -114,7 +114,7 @@ public class MyJTable_DisplayData extends JDBC_JTable
         // Changing Table Model
         //##########################################
         
-        ArrayList<ArrayList<Object>> data = db.getTableDataObject_AL(query, tableName);
+        ArrayList<ArrayList<Object>> data = db.get_TableData_Objects_AL(query, tableName);
         
         if (data == null)
         {

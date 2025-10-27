@@ -434,7 +434,7 @@ public class IngredientsTable extends JDBC_JTable
             String query = String.format("Select ingredient_id From ingredients_info WHERE ingredient_name = '%s';", selected_IngredientName_JCombo_Item);
             System.out.printf("\n\n Query:\n\n %s", query);
             
-            ArrayList<ArrayList<Object>> results_Ingredient_ID = db.get_Multi_ColumnQuery_Object(query);
+            ArrayList<ArrayList<Object>> results_Ingredient_ID = db.get_Multi_Column_Query_Object(query);
             
             if (results_Ingredient_ID == null)
             {
@@ -465,7 +465,7 @@ public class IngredientsTable extends JDBC_JTable
             
             // Upload IngredientName & NEW PDID
             
-            if (! (db.uploadData_Batch_Altogether(new String[]{ uploadQuery })))
+            if (! (db.upload_Data_Batch_Altogether(new String[]{ uploadQuery })))
             {
                 JOptionPane.showMessageDialog(frame, "\n\n ERROR:\n\nUnable to update Ingredient In DB!");
                 
@@ -529,7 +529,7 @@ public class IngredientsTable extends JDBC_JTable
                         ON i.store_id = s.store_id
                         WHERE i.product_name = '%s' AND s.store_name = '%s';""", ingredientID, cellValue, storeName);
                 
-                ArrayList<String> newPDIDResults = db.getSingleColumnQuery_ArrayList(getPDIDQuery);
+                ArrayList<String> newPDIDResults = db.get_Single_Column_Query_AL(getPDIDQuery);
                 if (newPDIDResults == null)
                 {
                     JOptionPane.showMessageDialog(frame, "\n\n ERROR:\n\nUnable to retrieve  Ingredient In Shop PDID info!");
@@ -565,7 +565,7 @@ public class IngredientsTable extends JDBC_JTable
             //##################################################################################################
             // Upload Selected Product Name for Ingredient
             //##################################################################################################
-            if (! (db.uploadData_Batch_Altogether(new String[]{ uploadQuery })))
+            if (! (db.upload_Data_Batch_Altogether(new String[]{ uploadQuery })))
             {
                 JOptionPane.showMessageDialog(frame, "\n\n ERROR:\n\nUnable to update Ingredient Store In DB!");
                 
@@ -595,7 +595,7 @@ public class IngredientsTable extends JDBC_JTable
                 SET quantity = %s 
                 WHERE plan_id = %s  AND ingredients_index = %s;""", quantity, temp_PlanID, ingredients_Index);
         
-        if (! (db.uploadData(query1, false)))
+        if (! (db.upload_Data(query1, false)))
         {
             JOptionPane.showMessageDialog(frame, "Un-able to Update row based on cell value!");
             
@@ -614,7 +614,7 @@ public class IngredientsTable extends JDBC_JTable
         
         String query = String.format("SELECT * FROM ingredients_in_sections_of_meal_calculation WHERE ingredients_index = %s AND plan_id = %s;", ingredients_Index, temp_PlanID);
         
-        ArrayList<ArrayList<Object>> ingredientsUpdateData = db.getTableDataObject_AL(query, tableName);
+        ArrayList<ArrayList<Object>> ingredientsUpdateData = db.get_TableData_Objects_AL(query, tableName);
         
         if (ingredientsUpdateData == null)
         {
@@ -707,7 +707,7 @@ public class IngredientsTable extends JDBC_JTable
             
             String[] queryUpload = new String[]{ query };
             
-            if (! (db.uploadData_Batch_Altogether(queryUpload)))
+            if (! (db.upload_Data_Batch_Altogether(queryUpload)))
             {
                 JOptionPane.showMessageDialog(frame, "Unable To delete Ingredient from Meal in Database");
                 return;
@@ -742,7 +742,7 @@ public class IngredientsTable extends JDBC_JTable
         String query4 = String.format("DELETE FROM divided_meal_sections WHERE div_meal_sections_id = %s AND plan_id = %s;", divMealSectionsID, temp_PlanID);
         String query5 = "SET FOREIGN_KEY_CHECKS = 1;"; // Enable Foreign Key Checks
         
-        if (! db.uploadData_Batch_Altogether(new String[]{ query1, query2, query4, query5 }))
+        if (! db.upload_Data_Batch_Altogether(new String[]{ query1, query2, query4, query5 }))
         {
             JOptionPane.showMessageDialog(frame, "Table Un-Successfully Deleted! ");
             return;
@@ -821,7 +821,7 @@ public class IngredientsTable extends JDBC_JTable
         //#########################################################
         String getNextIndexQuery = "SELECT IFNULL(MAX(`ingredients_index`),0) + 1 AS nextId FROM `ingredients_in_sections_of_meal`;";
         
-        String[] newIngredientsIndex = db.getSingleColumnQuery(getNextIndexQuery);
+        String[] newIngredientsIndex = db.get_Single_Column_Query(getNextIndexQuery);
         
         if (newIngredientsIndex == null)
         {
@@ -842,7 +842,7 @@ public class IngredientsTable extends JDBC_JTable
                 (ingredients_index, div_meal_sections_id, plan_id, ingredient_id, quantity, pdid)                                        
                 VALUES (%s, %s, %s, %s, %s, %s);""", newIngredientsIndex2, divMealSectionsID, temp_PlanID, ingredientID, quantity, NoneOfTheAbove_PDID);
         
-        if (! (db.uploadData_Batch_Altogether(new String[]{ query1 })))
+        if (! (db.upload_Data_Batch_Altogether(new String[]{ query1 })))
         {
             JOptionPane.showMessageDialog(frame, "Un-able to Insert new row into the Database!");
             return;
@@ -855,7 +855,7 @@ public class IngredientsTable extends JDBC_JTable
                 SELECT * FROM ingredients_in_sections_of_meal_calculation
                 WHERE ingredients_index = %s AND plan_id = %s;""", newIngredientsIndex2, temp_PlanID);
         
-        ArrayList<ArrayList<Object>> results = db.getTableDataObject_AL(query, tableName);
+        ArrayList<ArrayList<Object>> results = db.get_TableData_Objects_AL(query, tableName);
         
         if (results == null)
         {
@@ -1043,7 +1043,7 @@ public class IngredientsTable extends JDBC_JTable
         //####################################################
         String[] query_Temp_Data = new String[]{ query0, query1, query2, query3, query4, query5, query6, query7, query8 };
         
-        if (! (db.uploadData_Batch_Altogether(query_Temp_Data)))
+        if (! (db.upload_Data_Batch_Altogether(query_Temp_Data)))
         {
             JOptionPane.showMessageDialog(frame, "\n\ntransferMealIngredients() Cannot Create Temporary Plan In DB to Allow Editing");
             return false;
@@ -1159,7 +1159,7 @@ public class IngredientsTable extends JDBC_JTable
                         WHERE I.ingredient_id = %s
                         ORDER BY S.product_name ASC;""", ingredientSupplier, ingredientID);
                 
-                ArrayList<String> productNameResults = db.getSingleColumnQuery_ArrayList(queryStore);
+                ArrayList<String> productNameResults = db.get_Single_Column_Query_AL(queryStore);
                 
                 //HELLO REMOVE
                 String seperator = "#######################################################################";
@@ -1295,7 +1295,7 @@ public class IngredientsTable extends JDBC_JTable
                         WHERE T.ingredient_id = %s
                         ORDER BY D.store_name ASC;""", ingredientID);
                 
-                ArrayList<String> storesResults = db.getSingleColumnQuery_ArrayList(queryStore);
+                ArrayList<String> storesResults = db.get_Single_Column_Query_AL(queryStore);
                 
                 //HELLO REMOVE
                 

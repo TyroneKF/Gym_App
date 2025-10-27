@@ -59,7 +59,7 @@ public class Edit_Ingredients_Form extends Add_Ingredients_Form
         //###############################
         String getIngredientInfoString = get_Ingredient_Info_Select_Statement(selectedIngredientName);
 
-        ArrayList<ArrayList<String>> ingredientInfo_Results = db.getMultiColumnQuery(getIngredientInfoString);
+        ArrayList<ArrayList<String>> ingredientInfo_Results = db.get_Multi_Column_Query(getIngredientInfoString);
 
         if (ingredientInfo_Results==null)
         {

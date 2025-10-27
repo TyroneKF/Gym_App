@@ -1,8 +1,6 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
-import App_Code.Objects.Gui_Objects.IconButton;
-import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Gui_Objects.JTextFieldLimit;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
@@ -266,7 +264,7 @@ public abstract class Add_Screen extends Screen_JPanel
     {
         String query = String.format("SELECT %s  FROM %s WHERE %s = '%s';", db_ColumnName_Field, db_TableName, db_ColumnName_Field, jTextField_TXT);
         
-        if (db.getSingleColumnQuery(query) != null)
+        if (db.get_Single_Column_Query(query) != null)
         {
             JOptionPane.showMessageDialog(null, String.format("\n\n%s '' %s '' Already Exists!", data_Gathering_Name, jTextField_TXT));
             return false;
@@ -278,7 +276,7 @@ public abstract class Add_Screen extends Screen_JPanel
                 ('%s');
                 """, db_TableName, db_ColumnName_Field, jTextField_TXT);
         
-        if (db.uploadData_Batch_Altogether(new String[]{ uploadString }))
+        if (db.upload_Data_Batch_Altogether(new String[]{ uploadString }))
         {
             return true;
         }
@@ -290,7 +288,7 @@ public abstract class Add_Screen extends Screen_JPanel
     {
         String txtToAdd = String.format("('%s')", jTextField_TXT);
         
-        if (! (db.writeTxtToSQLFile(sql_File_Path, txtToAdd)))
+        if (! (db.write_Txt_To_SQL_File(sql_File_Path, txtToAdd)))
         {
             JOptionPane.showMessageDialog(null, String.format("Error, backing up new %s to SQL file!", process));
             return false;

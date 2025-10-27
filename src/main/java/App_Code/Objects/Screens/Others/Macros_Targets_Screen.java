@@ -67,7 +67,7 @@ public class Macros_Targets_Screen extends Screen_JFrame
                 FROM %s                                
                 WHERE plan_id = %s;""", tableName, temp_PlanID);
         
-        ArrayList<ArrayList<String>> data = db.getMultiColumnQuery(query);
+        ArrayList<ArrayList<String>> data = db.get_Multi_Column_Query(query);
         
         if (data == null)
         {
@@ -322,7 +322,7 @@ public class Macros_Targets_Screen extends Screen_JFrame
         // ##############################################
         // Execute Query
         // ##############################################
-        if (! (db.uploadData_Batch_Altogether(new String[]{ updateTargets_Query })))
+        if (! (db.upload_Data_Batch_Altogether(new String[]{ updateTargets_Query })))
         {
             JOptionPane.showMessageDialog(meal_plan_screen.getFrame(), "Un-able to Update Macro Targets In DB");
             return false;

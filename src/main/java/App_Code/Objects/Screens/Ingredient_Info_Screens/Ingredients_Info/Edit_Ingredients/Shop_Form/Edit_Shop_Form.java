@@ -48,7 +48,7 @@ public class Edit_Shop_Form extends Add_Shop_Form
         //###########################
         // Get New Ingredient Shop Info
         //###########################
-        ArrayList<ArrayList<String>> temp_ShopsFormDBData = db.getMultiColumnQuery(String.format("""                    
+        ArrayList<ArrayList<String>> temp_ShopsFormDBData = db.get_Multi_Column_Query(String.format("""
                 SELECT i.pdid, s.store_name, i.product_name, i.cost_per_unit, i.volume_per_unit
                 FROM  ingredient_in_shops i
                 INNER JOIN

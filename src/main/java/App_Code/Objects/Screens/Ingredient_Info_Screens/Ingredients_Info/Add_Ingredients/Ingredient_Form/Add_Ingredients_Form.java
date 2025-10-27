@@ -607,7 +607,7 @@ public class Add_Ingredients_Form extends Parent_IngredientForm_And_ShopForm
         
         System.out.printf("\n\n%s", query);
         
-        if (db.getSingleColumnQuery(query) != null)
+        if (db.get_Single_Column_Query(query) != null)
         {
             return true;
         }

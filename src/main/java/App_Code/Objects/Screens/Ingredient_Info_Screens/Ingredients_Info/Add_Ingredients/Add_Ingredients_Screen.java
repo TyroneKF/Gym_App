@@ -246,7 +246,7 @@ public class Add_Ingredients_Screen extends Screen_JPanel
         //####################################
         // Uploading Query
         //####################################
-        if (! (db.uploadData_Batch_Altogether(new String[]{ updateIngredients_String })))
+        if (! (db.upload_Data_Batch_Altogether(new String[]{ updateIngredients_String })))
         {
             JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Failed 2/2 Updates - Unable To Add Ingredient Info In DB!");
             return false;
@@ -254,7 +254,7 @@ public class Add_Ingredients_Screen extends Screen_JPanel
         
         if (updateIngredientShops_String != null)
         {
-            if (! (db.uploadData_Batch_Independently(updateIngredientShops_String)))
+            if (! (db.upload_Data_Batch_Independently(updateIngredientShops_String)))
             {
                 JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Failed 1/2 Updates - Unable To Add Shop Supplier For Ingredient In DB!");
                 return false;
@@ -303,7 +303,7 @@ public class Add_Ingredients_Screen extends Screen_JPanel
     {
         String ingredientsValuesBeingAdded = add_Ingredients_Form.get_Ingredients_Values_Being_Added();
         System.out.printf("\n\nbackupDataInSQLFile() \n%s", ingredientsValuesBeingAdded);
-        if (! (db.writeTxtToSQLFile(sqlBackUpPath, ingredientsValuesBeingAdded)))
+        if (! (db.write_Txt_To_SQL_File(sqlBackUpPath, ingredientsValuesBeingAdded)))
         {
             return false;
         }

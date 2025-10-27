@@ -143,7 +143,7 @@ public class Edit_ShopForm_Object extends Add_ShopForm_Object
             //###################################################
             // Update
             //###################################################
-            if (! (db.uploadData_Batch_Altogether(new String[]{ updateQuery, updateQuery2 })))
+            if (! (db.upload_Data_Batch_Altogether(new String[]{ updateQuery, updateQuery2 })))
             {
                 JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("Unable to remove product: \"%s\" from \"%s\" as a Supplier for this ingredient.", productName, chosenShop));
                 return;

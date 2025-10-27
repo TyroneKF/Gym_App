@@ -138,7 +138,7 @@ public class MealManager
         //##############################################################################################################
         String uploadQuery = String.format("INSERT INTO meals_in_plan (plan_id, meal_name, meal_time) VALUES (%s,'%s','%s')", tempPlanID, newMealName, newMealTime);
         
-        if (! (db.uploadData_Batch_Altogether(new String[]{ uploadQuery })))
+        if (! (db.upload_Data_Batch_Altogether(new String[]{ uploadQuery })))
         {
             JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nCreating Meal In DB!");
             return;
@@ -148,14 +148,14 @@ public class MealManager
         // Get mealInPlanID
         //##############################################################################################################
         String query = String.format("Select meal_in_plan_id FROM meals_in_plan WHERE plan_id = %s AND meal_name = '%s';", tempPlanID, newMealName);
-        String[] results = db.getSingleColumnQuery(query);
+        String[] results = db.get_Single_Column_Query(query);
         
         if (results == null)
         {
             JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nCannot Get Created Meals ID!!");
             
             String deleteQuery = String.format("DELETE FROM meals_in_plan WHERE plan_id = %s AND meal_name = '%s';)", tempPlanID, newMealName);
-            if (! (db.uploadData_Batch_Altogether(new String[]{ deleteQuery })))
+            if (! (db.upload_Data_Batch_Altogether(new String[]{ deleteQuery })))
             {
                 JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nUnable To Undo Errors Made!\n\nRecommendation Action: Refresh This Plan");
             }
@@ -234,7 +234,7 @@ public class MealManager
         JPanel southPanel = collapsibleJpObj.get_South_JPanel();
         
         String query = String.format("SELECT * FROM total_meal_view WHERE meal_in_plan_id = %s AND plan_id = %s;", mealInPlanID, tempPlanID);
-        ArrayList<ArrayList<Object>> result = db.getTableDataObject_AL(query, tableName);
+        ArrayList<ArrayList<Object>> result = db.get_TableData_Objects_AL(query, tableName);
         
         ArrayList<ArrayList<Object>> meal_Total_Data = result != null ? result : new ArrayList<>();
         
@@ -431,7 +431,7 @@ public class MealManager
         {
             // Getting Ingredients In Meal
             String query = String.format("SELECT * FROM %s WHERE div_meal_sections_id = %s AND plan_id = %s ORDER BY ingredients_index;", tableName, divMealSectionsID, tempPlanID);
-            mealData = db.getTableDataObject(query, tableName) != null ? db.getTableDataObject_AL(query, tableName) : mealData;
+            mealData = db.get_TableData_Objects(query, tableName) != null ? db.get_TableData_Objects_AL(query, tableName) : mealData;
         }
         
         //##############################################
@@ -627,7 +627,7 @@ public class MealManager
         // #########################################
         // Execute Query
         // #########################################
-        ArrayList<String> results = db.getSingleColumnQuery_ArrayList(query);
+        ArrayList<String> results = db.get_Single_Column_Query_AL(query);
         
         if (results == null) { return null; } // Error occurred during script
         
@@ -693,7 +693,7 @@ public class MealManager
         //##########################################
         // Upload Into Database Table
         //##########################################
-        if (! db.uploadData(uploadQuery, false))
+        if (! db.upload_Data(uploadQuery, false))
         {
             JOptionPane.showMessageDialog(null, "\n\nUnable to successfully change this  meals time! \n\nMaybe he selected timeframe  meal name already exists within this meal plan!!");
             return;
@@ -823,7 +823,7 @@ public class MealManager
                 SET meal_name = '%s'
                 WHERE plan_id = %s AND meal_in_plan_id = %s;""", inputMealName, tempPlanID, mealInPlanID);
         
-        if (! db.uploadData(uploadQuery, false))
+        if (! db.upload_Data(uploadQuery, false))
         {
             JOptionPane.showMessageDialog(getFrame(), "\n\nUnable to successfully change this  meals name! \n\nMaybe he selected meal name already exists within this meal plan!!");
             return;
@@ -890,7 +890,7 @@ public class MealManager
         //##########################################
         String getNextIndexQuery = "SELECT IFNULL(MAX(`div_meal_sections_id`),0) + 1 AS nextId FROM `divided_meal_sections`;";
         
-        String[] divMealSectionsIDResult = db.getSingleColumnQuery(getNextIndexQuery);
+        String[] divMealSectionsIDResult = db.get_Single_Column_Query(getNextIndexQuery);
         
         if (divMealSectionsIDResult == null)
         {
@@ -905,7 +905,7 @@ public class MealManager
         //##########################################
         String uploadQuery = String.format("INSERT INTO divided_meal_sections (div_meal_sections_id, meal_in_plan_id, plan_id) VALUES (%s, %s, %s)", divMealSectionsID, mealInPlanID, tempPlanID);
         
-        if (! db.uploadData_Batch_Altogether(new String[]{ uploadQuery }))
+        if (! db.upload_Data_Batch_Altogether(new String[]{ uploadQuery }))
         {
             JOptionPane.showMessageDialog(null, "Unable to successfully add subMeal to meal! ");
             return;
@@ -940,7 +940,7 @@ public class MealManager
         
         String query5 = "SET FOREIGN_KEY_CHECKS = 1;"; // Enable Foreign Key Checks
         
-        if (! db.uploadData_Batch_Altogether(new String[]{ query1, query2, query3, query4, query5 }))
+        if (! db.upload_Data_Batch_Altogether(new String[]{ query1, query2, query3, query4, query5 }))
         {
             JOptionPane.showMessageDialog(null, "Table Un-Successfully Deleted! ");
             return;
@@ -1042,7 +1042,7 @@ public class MealManager
         String query2 = String.format("DELETE FROM meals_in_plan WHERE meal_in_plan_id = %s AND plan_id = %s;", mealInPlanID, tempPlanID);
         String query3 = "SET FOREIGN_KEY_CHECKS = 1;"; // Enable Foreign Key Checks
         
-        if (! (db.uploadData_Batch_Altogether(new String[]{ query1, query2, query3 })))
+        if (! (db.upload_Data_Batch_Altogether(new String[]{ query1, query2, query3 })))
         {
             JOptionPane.showMessageDialog(getFrame(), "\n\n1.)  Error MealManager.ingredientsTableHasBeenDeleted() \nUnable to Delete Selected Meal From DB!");
             return;
@@ -1159,7 +1159,7 @@ public class MealManager
         //####################################################
         // Update
         //####################################################
-        if (! (db.uploadData_Batch_Altogether(query_Temp_Data)))
+        if (! (db.upload_Data_Batch_Altogether(query_Temp_Data)))
         {
             JOptionPane.showMessageDialog(null, "\n\ntransferMealDataToPlan() Error");
             return false;
@@ -1206,7 +1206,7 @@ public class MealManager
         // Execute Query
         System.out.printf("\n\nQuery: \n %s", query);
         
-        ArrayList<ArrayList<String>> results = db.getMultiColumnQuery(query);
+        ArrayList<ArrayList<String>> results = db.get_Multi_Column_Query(query);
         if (results == null)
         {
             JOptionPane.showMessageDialog(getFrame(), "\n\nError, unable to use DB to gather whether old meal time/name are \nattached to another meal in plan right now!");

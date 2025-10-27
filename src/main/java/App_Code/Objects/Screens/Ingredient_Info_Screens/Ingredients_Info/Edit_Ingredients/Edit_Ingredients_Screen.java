@@ -358,7 +358,7 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
                 ON I.ingredient_type_id = N.ingredient_type_id
                 ORDER BY N.ingredient_type_name;""");
         
-        ArrayList<ArrayList<String>> ingredientTypesNameAndIDResults = db.getMultiColumnQuery(queryIngredientsType);
+        ArrayList<ArrayList<String>> ingredientTypesNameAndIDResults = db.get_Multi_Column_Query(queryIngredientsType);
         
         if (ingredientTypesNameAndIDResults == null)
         {
@@ -381,7 +381,7 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
             // Get IngredientNames for Type
             //########################################
             String queryTypeIngredientNames = String.format("SELECT ingredient_name FROM ingredients_info WHERE ingredient_type_id = %s ORDER BY ingredient_name;", ID);
-            Collection<String> ingredientNames = db.getSingleColumnQuery_AlphabeticallyOrderedTreeSet(queryTypeIngredientNames);
+            Collection<String> ingredientNames = db.get_SingleColumnQuery_AlphabeticallyOrderedTreeSet(queryTypeIngredientNames);
             
             if (ingredientNames == null)
             {
@@ -582,7 +582,7 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
         //####################################
         // Uploading Ingredient Info Query
         //####################################
-        if (updateIngredients_String != null && ! (db.uploadData_Batch_Altogether(new String[]{ updateIngredients_String })))
+        if (updateIngredients_String != null && ! (db.upload_Data_Batch_Altogether(new String[]{ updateIngredients_String })))
         {
             JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Failed Upload - Unable To Add Ingredient Info & Shop Info & Ingredient Suppliers In DB!");
             return false;
@@ -599,7 +599,7 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
             
             for (int x = 0; x < noOfUpdateProcesses; x++)
             {
-                if (! (db.uploadData_Batch_Altogether(new String[]{ updateIngredientShops_String[x] })))
+                if (! (db.upload_Data_Batch_Altogether(new String[]{ updateIngredientShops_String[x] })))
                 {
                     JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("Failed %s/%s Updates - Unable To Add Ingredient Supplier!",
                             x + 1, noOfUpdateProcesses));
@@ -650,7 +650,7 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
         //
         //##############################################################################################################
         String oldIngredientName = String.format("(\"%s\")", get_Selected_Ingredient_Name().trim());
-        if (! (db.replaceTxtInSQLFile(sqlBackUpPath, false, oldIngredientName, replacementData)))
+        if (! (db.replace_Txt_In_SQL_File(sqlBackUpPath, false, oldIngredientName, replacementData)))
         {
             JOptionPane.showMessageDialog(null, String.format("Error, changing back-up of %s in SQL file of ingredient info!", oldIngredientName));
             return false;
@@ -711,7 +711,7 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
         String query1 = String.format("DELETE FROM `ingredient_in_shops` WHERE ingredient_id  = %s;", selectedIngredientID);
         String query2 = String.format("DELETE FROM `ingredients_info` WHERE ingredient_id  = %s;", selectedIngredientID);
         
-        if (db.uploadData_Batch_Altogether(new String[]{ query0, query1, query2 }))
+        if (db.upload_Data_Batch_Altogether(new String[]{ query0, query1, query2 }))
         {
             JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("Successfully Deleted '%s' From DB!", selectedIngredientName));
             add_Or_Delete_Ingredient_From_Map("delete", selected_IngredientType, selectedIngredientName); // delete ingredient
@@ -728,7 +728,7 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
         // Delete From BackUp SQL File
         //##############################################################################################################
         
-        if (! (db.deleteTxtInFile(super.sqlBackUpPath, String.format("(\"%s\"),", selectedIngredientName))))
+        if (! (db.delete_Txt_In_File(super.sqlBackUpPath, String.format("(\"%s\"),", selectedIngredientName))))
         {
             JOptionPane.showMessageDialog(null, String.format("\n\nError, deleteBTNAction() deleting ingredient '%s' from backup files!", selectedIngredientName));
         }

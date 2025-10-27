@@ -73,7 +73,7 @@ public class JDBC_JTable extends JPanel
         this.addJTableAction = addJTableAction;
         this.tableName = tableName;
         
-        this.columnDataTypes = db.getColumnDataTypes(tableName); //Column Data Types
+        this.columnDataTypes = db.get_Column_DataTypes(tableName); //Column Data Types
         
         //##############################################################
         // Column Names & Their Original Positions

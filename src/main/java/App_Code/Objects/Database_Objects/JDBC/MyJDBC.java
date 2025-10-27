@@ -21,6 +21,9 @@ import java.sql.DriverManager;
 
 public class MyJDBC
 {
+    //##################################################################################################################
+    // Variable
+    //##################################################################################################################
     private String
             databaseName, // must be in lowercase
             userName,
@@ -41,9 +44,10 @@ public class MyJDBC
             override = true; // ERROR surrounding this
     
     //##################################################################################################################
-    //
+    // Constructor
     //##################################################################################################################
-    public MyJDBC(Boolean productionMode, String host, String port, String userName, String password, String databaseName, String db_Script_Folder_Address, String script_List_Name, String databaseNamesFileName)
+    public MyJDBC(Boolean productionMode, String host, String port, String userName, String password, String databaseName,
+                  String db_Script_Folder_Address, String script_List_Name, String databaseNamesFileName)
     {
         //####################################################################
         //  Setting Variables
@@ -106,7 +110,7 @@ public class MyJDBC
             //#################################################################
             //  Db Check How Many Tables There Are VS Expected Count
             //#################################################################
-            ArrayList<String> queryResults = getSingleColumnQuery_ArrayList(sql_Statement);
+            ArrayList<String> queryResults = get_Single_Column_Query_AL(sql_Statement);
             if (queryResults == null) // error return invalid results
             {
                 System.err.printf("\n\nMyJDBC() Error, executing SQL Statement == NULL: \n\n%s", sql_Statement);
@@ -363,7 +367,7 @@ public class MyJDBC
     //############################################################################ ######################################
     // Write Methods With BackUp Files
     //##################################################################################################################
-    public boolean writeTxtToSQLFile(String sqlFilePath, String txt_To_Write_To_SQL_File)
+    public boolean write_Txt_To_SQL_File(String sqlFilePath, String txt_To_Write_To_SQL_File)
     {
         //########################################
         // Creating Temp File
@@ -419,7 +423,7 @@ public class MyJDBC
         }
     }
     
-    public boolean replaceTxtInSQLFile(String sqlFilePath, boolean multiValues, String txt_To_Find, String
+    public boolean replace_Txt_In_SQL_File(String sqlFilePath, boolean multiValues, String txt_To_Find, String
             txt_Replacement)
     {
         
@@ -505,7 +509,7 @@ public class MyJDBC
      * @param txtToDelete
      * @return
      */
-    public boolean deleteTxtInFile(String filePath, String txtToDelete)
+    public boolean delete_Txt_In_File(String filePath, String txtToDelete)
     {
         //########################################
         // Creating Temp File
@@ -608,7 +612,7 @@ public class MyJDBC
         
         String sql = String.format("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '%s'", databaseName);
         
-        if (getMultiColumnQuery(sql) != null) // database exists
+        if (get_Multi_Column_Query(sql) != null) // database exists
         {
             return true;
         }
@@ -622,7 +626,7 @@ public class MyJDBC
     /**
      * This method can upload one statement or, multiple queries within a single String after each statement in the string is separated by a ;
      */
-    public Boolean uploadData(String query, boolean multipleQueries)
+    public Boolean upload_Data(String query, boolean multipleQueries)
     {
         if (! (get_DB_Connection_Status()))
         {
@@ -654,7 +658,7 @@ public class MyJDBC
       If one query fails the whole queries fails
       The changes made by a previous query in the list isn't visible to the query after it, the updates are made altogether
      */
-    public Boolean uploadData_Batch_Altogether(String[] queries)
+    public Boolean upload_Data_Batch_Altogether(String[] queries)
     {
         if (! (get_DB_Connection_Status()))
         {
@@ -704,7 +708,7 @@ public class MyJDBC
     /*
       Each query upload is executed separately and the query after, it can notice the changes
      */
-    public Boolean uploadData_Batch_Independently(String[] queries) // HELLO Can't this method and the one below refactored
+    public Boolean upload_Data_Batch_Independently(String[] queries) // HELLO Can't this method and the one below refactored
     {
         if (! (get_DB_Connection_Status()))
         {
@@ -750,7 +754,7 @@ public class MyJDBC
         return false;
     }
     
-    public Boolean uploadData_Batch_Independently(ArrayList<String> queries)
+    public Boolean upload_Data_Batch_Independently(ArrayList<String> queries)
     {
         if (! (get_DB_Connection_Status()))
         {
@@ -807,7 +811,7 @@ public class MyJDBC
       @param the sql statement
       @return ArrayList of ArrayLists storing the output of the SQL request
      */
-    public ArrayList<ArrayList<String>> getMultiColumnQuery(String query)
+    public ArrayList<ArrayList<String>> get_Multi_Column_Query(String query)
     {
         if (! (get_DB_Connection_Status()) && ! (override))
         {
@@ -858,7 +862,7 @@ public class MyJDBC
         return null;
     }
     
-    public ArrayList<ArrayList<Object>> get_Multi_ColumnQuery_Object(String query)
+    public ArrayList<ArrayList<Object>> get_Multi_Column_Query_Object(String query)
     {
         if (! (get_DB_Connection_Status()))
         {
@@ -909,7 +913,7 @@ public class MyJDBC
         return null;
     }
     
-    public String[] getSingleColumnQuery(String query)
+    public String[] get_Single_Column_Query(String query)
     {
         if (! (get_DB_Connection_Status()))
         {
@@ -951,7 +955,7 @@ public class MyJDBC
                     sub-query cannot have a ";" in in the middle sub-query
                      */
                 
-                Integer rowCount = getRowsInQuery(query); // get row count of query to this method "query"
+                Integer rowCount = get_Rows_In_Query(query); // get row count of query to this method "query"
                 
                 if (rowCount != null)
                 {
@@ -985,7 +989,7 @@ public class MyJDBC
         return null;
     }
     
-    public ArrayList<String> getSingleColumnQuery_ArrayList(String query)
+    public ArrayList<String> get_Single_Column_Query_AL(String query)
     {
         try
         {
@@ -1042,7 +1046,7 @@ public class MyJDBC
         }
     }
     
-    public Collection<String> getSingleColumnQuery_AlphabeticallyOrderedTreeSet(String query)
+    public Collection<String> get_SingleColumnQuery_AlphabeticallyOrderedTreeSet(String query)
     {
         if (! (get_DB_Connection_Status()))
         {
@@ -1083,7 +1087,7 @@ public class MyJDBC
                     sub-query cannot have a ";" in in the middle sub-query
                      */
                 
-                Integer rowCount = getRowsInQuery(query); // get row count of query to this method "query"
+                Integer rowCount = get_Rows_In_Query(query); // get row count of query to this method "query"
                 
                 if (rowCount != null)
                 {
@@ -1115,7 +1119,7 @@ public class MyJDBC
     }
     
     //################################################################
-    public Object[][] getTableDataObject(String query, String tableName)
+    public Object[][] get_TableData_Objects(String query, String tableName)
     {
         if (! (get_DB_Connection_Status()))
         {
@@ -1140,12 +1144,12 @@ public class MyJDBC
                 // Getting Query Data Info
                 //##################################
                 
-                String[] columnDataTypes = getColumnDataTypes(tableName);
+                String[] columnDataTypes = get_Column_DataTypes(tableName);
                 // System.out.println("\n\n"+Arrays.toString(columnDataTypes));
                 
                 int noOfColumns = columnDataTypes.length;
                 
-                Integer rowsInQuery = getRowsInQuery(query);
+                Integer rowsInQuery = get_Rows_In_Query(query);
                 
                 //####################################################################
                 // Creating Data Object for JTable
@@ -1229,7 +1233,7 @@ public class MyJDBC
         return null;
     }
     
-    public ArrayList<ArrayList<Object>> getTableDataObject_AL(String query, String tableName)
+    public ArrayList<ArrayList<Object>> get_TableData_Objects_AL(String query, String tableName)
     {
         ResultSet resultSet = null;
         Integer rowsInQuery = 0;
@@ -1250,11 +1254,11 @@ public class MyJDBC
             //#####################################################################
             // Getting Query Data Info
             //#####################################################################
-            tableColumnDataTypes = getColumnDataTypes_AL(tableName);
+            tableColumnDataTypes = get_Column_DataTypes_AL(tableName);
             //System.out.printf("\n\nQuery: %s \nColumn DataTypes: %s", query, tableColumnDataTypes);
             
             noOfColumnsInTable = tableColumnDataTypes.size();
-            rowsInQuery = getRowsInQuery(query);
+            rowsInQuery = get_Rows_In_Query(query);
             
             if (rowsInQuery == null) { throw new Exception("\n\nRows in Query returned null"); }
         }
@@ -1340,7 +1344,7 @@ public class MyJDBC
     //##################################################################################################################
     //  Get data about a query methods
     //##################################################################################################################
-    public String[] getColumnDataTypes(String tableName)
+    public String[] get_Column_DataTypes(String tableName)
     {
         if (! (get_DB_Connection_Status()))
         {
@@ -1355,10 +1359,10 @@ public class MyJDBC
                 and table_name = '%s'
                 order by ordinal_position;""", databaseName, tableName);
         
-        return getSingleColumnQuery(columnDataTypesQuery);
+        return get_Single_Column_Query(columnDataTypesQuery);
     }
     
-    public ArrayList<String> getColumnDataTypes_AL(String tableName)
+    public ArrayList<String> get_Column_DataTypes_AL(String tableName)
     {
         if (! (get_DB_Connection_Status()))
         {
@@ -1374,28 +1378,10 @@ public class MyJDBC
                 order by ordinal_position;                      
                                        """, databaseName, tableName);
         
-        return getSingleColumnQuery_ArrayList(columnDataTypesQuery);
+        return get_Single_Column_Query_AL(columnDataTypesQuery);
     }
     
-    public String[] getColumnNames(String tableName)
-    {
-        if (! (get_DB_Connection_Status()))
-        {
-            System.out.printf("\n\n  getColumnNames() DB couldn't successfully connect to DB '%s'!", databaseName);
-            return null;
-        }
-        
-        String columnNamesQuery = String.format("""                    
-                SELECT column_name
-                FROM information_schema.columns
-                WHERE table_schema = '%s'
-                AND table_name = '%s'
-                ORDER BY ordinal_position;                      
-                                       """, databaseName, tableName);
-        return getSingleColumnQuery(columnNamesQuery);
-    }
-    
-    public ArrayList<String> getColumnNames_AL(String tableName)
+    public ArrayList<String> get_Column_Names_AL(String tableName)
     {
         if (! (get_DB_Connection_Status()))
         {
@@ -1410,10 +1396,10 @@ public class MyJDBC
                 AND table_name = '%s'
                 ORDER BY ordinal_position;
                                        """, databaseName, tableName);
-        return getSingleColumnQuery_ArrayList(columnNamesQuery);
+        return get_Single_Column_Query_AL(columnNamesQuery);
     }
     
-    public Integer getRowsInQuery(String query)
+    public Integer get_Rows_In_Query(String query)
     {
         if (! (get_DB_Connection_Status()))
         {
