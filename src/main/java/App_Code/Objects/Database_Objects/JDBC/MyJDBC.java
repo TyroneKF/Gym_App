@@ -804,7 +804,7 @@ public class MyJDBC
     // DB Get Methods
     //##################################################################################################################
     
-    /*
+    /**
       Give this method an SQL command and this method will return an arraylist storing other arraylists which are rows
       of the SQL query
 
