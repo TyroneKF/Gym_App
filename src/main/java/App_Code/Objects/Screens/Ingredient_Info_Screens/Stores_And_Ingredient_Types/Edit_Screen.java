@@ -93,8 +93,7 @@ public abstract class Edit_Screen extends Add_Screen
         add_To_Container(centre_JPanel, jTextField_JP, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "both", 0, 0, null);
         add_To_Container(centre_JPanel, submitButton, 0, ypos2 += 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
         
-        revalidate();
-        centre_JPanel.revalidate();
+        resize_GUI();
     }
     
     @Override
