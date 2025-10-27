@@ -8,9 +8,9 @@ import javax.swing.*;
 
 public class Add_Ingredient_Type extends Add_Screen
 {
-    public Add_Ingredient_Type(MyJDBC db, Parent_Screen parent_Screen, String btnText, int btnWidth, int btnHeight)
+    public Add_Ingredient_Type(MyJDBC db, Parent_Screen parent_Screen)
     {
-        super(db, parent_Screen, btnText, btnWidth, btnHeight);
+        super(db, parent_Screen);
     }
     
     @Override

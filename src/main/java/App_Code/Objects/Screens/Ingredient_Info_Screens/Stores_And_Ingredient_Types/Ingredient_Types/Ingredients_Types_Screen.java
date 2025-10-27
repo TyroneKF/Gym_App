@@ -29,8 +29,8 @@ public class Ingredients_Types_Screen extends Parent_Screen
     @Override
     protected void initialize_Screens(MyJDBC db)
     {
-        this.add_Screen = new Add_Ingredient_Type(db, this, "ingredients types", 250, 50);
-        this.edit_Screen = new Edit_Ingredient_Type(db, this, "Edit Ingredients Type", 250, 50);
+        this.add_Screen = new Add_Ingredient_Type(db, this);
+        this.edit_Screen = new Edit_Ingredient_Type(db, this);
         this.screenImage = new Image_JPanel("/images/ingredient_Type/ingredientType0.png", 500, 500);
     }
 }

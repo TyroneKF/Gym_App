@@ -162,40 +162,11 @@ public abstract class Parent_Screen extends Screen_JPanel
              *   (since it has setPrefSize(110, 40)).
              */
             
-            StackPane toggle = new StackPane(background, add_Label, circle);
+            StackPane toggle = getStackPane(background, add_Label, circle);
             
             //###########################
-            // Define Toggle Movements
+            //
             //###########################
-            TranslateTransition moveRight = new TranslateTransition(Duration.seconds(0.25), circle);
-            moveRight.setToX(35);
-            
-            TranslateTransition moveLeft = new TranslateTransition(Duration.seconds(0.25), circle);
-            moveLeft.setToX(- 35);
-            
-            //###########################
-            // Toggle ActionListener EVT
-            //###########################
-            final boolean[] isEditMode = { false };
-            
-            toggle.setOnMouseClicked(e -> {
-                if (isEditMode[0])
-                {
-                    background.setStyle("-fx-background-color: #ccc; -fx-background-radius: 30px;");
-                    add_Label.setText("ADD");
-                    moveLeft.play();
-                }
-                else
-                {
-                    background.setStyle("-fx-background-color: #4cd964; -fx-background-radius: 30px;");
-                    add_Label.setText("EDIT");
-                    moveRight.play();
-                }
-                isEditMode[0] = ! isEditMode[0];
-                
-                switchPanel(isEditMode[0]);
-            });
-            
             fxPanel.setScene(new Scene(new StackPane(toggle), Color.TRANSPARENT));
         });
         
@@ -232,6 +203,48 @@ public abstract class Parent_Screen extends Screen_JPanel
         // resize
         //##################################################################################
         resize_GUI();
+    }
+    
+    private StackPane getStackPane(StackPane background, Label add_Label, Circle circle)
+    {
+        StackPane toggle = new StackPane(background, add_Label, circle);
+        
+        //###########################
+        // Define Toggle Movements
+        //###########################
+        TranslateTransition moveRight = new TranslateTransition(Duration.seconds(0.25), circle);
+        moveRight.setToX(35);
+        
+        TranslateTransition moveLeft = new TranslateTransition(Duration.seconds(0.25), circle);
+        moveLeft.setToX(- 35);
+        
+        //###########################
+        // Toggle ActionListener EVT
+        //###########################
+        final boolean[] isEditMode = { false };
+        
+        toggle.setOnMouseClicked(e -> {
+            if (isEditMode[0])
+            {
+                background.setStyle("-fx-background-color: #ccc; -fx-background-radius: 30px;");
+                add_Label.setText("ADD");
+                moveLeft.play();
+            }
+            else
+            {
+                background.setStyle("-fx-background-color: #4cd964; -fx-background-radius: 30px;");
+                add_Label.setText("EDIT");
+                moveRight.play();
+            }
+            isEditMode[0] = ! isEditMode[0];
+            
+            switchPanel(isEditMode[0]);
+        });
+        
+        //###########################
+        //
+        //###########################
+        return toggle;
     }
     
     //##################################################################################################################

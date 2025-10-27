@@ -48,7 +48,7 @@ public abstract class Add_Screen extends Screen_JPanel
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Add_Screen(MyJDBC db, Parent_Screen parent_Screen, String btnText, int btnWidth, int btnHeight)
+    public Add_Screen(MyJDBC db, Parent_Screen parent_Screen)
     {
         //########################################
         //

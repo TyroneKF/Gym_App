@@ -38,9 +38,9 @@ public abstract class Edit_Screen extends Add_Screen
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Edit_Screen(MyJDBC db, Parent_Screen parent_Screen, String btnText, int btnWidth, int btnHeight)
+    public Edit_Screen(MyJDBC db, Parent_Screen parent_Screen)
     {
-        super(db, parent_Screen, btnText, btnWidth, btnHeight);
+        super(db, parent_Screen);
         
         // Adjust Screen Size
         setPreferredSize(new Dimension(200, 160));

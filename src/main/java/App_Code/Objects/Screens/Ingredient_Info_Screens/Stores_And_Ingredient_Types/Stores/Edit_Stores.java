@@ -10,9 +10,9 @@ import java.util.ArrayList;
 
 public class Edit_Stores extends Edit_Screen
 {
-    public Edit_Stores(MyJDBC db, Parent_Screen parent_Screen, String btnText, int btnWidth, int btnHeight)
+    public Edit_Stores(MyJDBC db, Parent_Screen parent_Screen)
     {
-        super(db, parent_Screen, btnText, btnWidth, btnHeight);
+        super(db, parent_Screen);
     }
     
     @Override
