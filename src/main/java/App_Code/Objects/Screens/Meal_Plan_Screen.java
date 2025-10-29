@@ -1647,8 +1647,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             return;
         }
         
-        ingredientsInfoScreen = new Ingredients_Info_Screen(db, this, map_ingredientTypesToNames,
-                ingredientsTypesList, storesNamesList);
+        ingredientsInfoScreen = new Ingredients_Info_Screen(db, this);
     }
     
     private Boolean is_IngredientScreen_Open()
@@ -1994,6 +1993,16 @@ public class Meal_Plan_Screen extends Screen_JFrame
     public TreeMap<String, Collection<String>> getMap_ingredientTypesToNames()
     {
         return map_ingredientTypesToNames;
+    }
+  
+    public Collection<String> get_IngredientsTypes_List()
+    {
+        return ingredientsTypesList;
+    }
+    
+    public Collection<String> get_StoresNames_List()
+    {
+        return storesNamesList;
     }
     
     //###########################################

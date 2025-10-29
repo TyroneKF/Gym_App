@@ -57,9 +57,7 @@ public class Ingredients_Info_Screen extends Screen_JFrame
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Ingredients_Info_Screen(MyJDBC db, Meal_Plan_Screen mealPlanScreen,
-                                   TreeMap<String, Collection<String>> map_ingredientTypesToNames,
-                                   Collection<String> ingredientsTypesList, Collection<String> storesNamesList)
+    public Ingredients_Info_Screen(MyJDBC db, Meal_Plan_Screen mealPlanScreen)
     {
         //###################################################################################
         // Super Constructor
@@ -69,14 +67,20 @@ public class Ingredients_Info_Screen extends Screen_JFrame
         //###################################################################################
         // Variables
         //###################################################################################
+        // Objects
         this.mealPlanScreen = mealPlanScreen;
+        
+        // Integer
         planID = mealPlanScreen.getPlanID();
         tempPlanID = mealPlanScreen.getTempPlanID();
+        
+        // String
         planName = mealPlanScreen.getPlanName();
         
-        this.map_ingredientTypesToNames = map_ingredientTypesToNames;
-        this.ingredientsTypesList = ingredientsTypesList;
-        this.storesNamesList = storesNamesList;
+        // Collections
+        this.map_ingredientTypesToNames = mealPlanScreen.getMap_ingredientTypesToNames();
+        this.ingredientsTypesList =  mealPlanScreen.get_IngredientsTypes_List();
+        this.storesNamesList = mealPlanScreen.get_StoresNames_List();
         
         //###################################################################################
         // Check DB Connection

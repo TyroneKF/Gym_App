@@ -27,11 +27,11 @@ public abstract class Edit_Screen extends Add_Screen
     protected boolean item_Deleted = false;
     
     // Collections
-    protected String[] remove_JComboBox_Items = new String[]{};
+    protected ArrayList<String> remove_JComboBox_Items = new ArrayList<>();
     protected Collection<String> jComboBox_List;
     
     // GUI Objects
-    protected JComboBox<String> jCombo_Box_Object;
+    protected JComboBox<String> jCombo_Box;
     protected JPanel jComboBox_JPanel;
     
     //##################################################################################################################
@@ -59,25 +59,25 @@ public abstract class Edit_Screen extends Add_Screen
         jComboBox_JPanel = new JPanel(new GridLayout(1, 1));
         jComboBox_JPanel.setPreferredSize(new Dimension(650, 45));
         
-        jCombo_Box_Object = new JComboBox<String>();
+        jCombo_Box = new JComboBox<String>();
         
         load_JComboBox();
         
-        jCombo_Box_Object.setFont(new Font("Arial", Font.PLAIN, 17)); // setting font
-        ((JLabel) jCombo_Box_Object.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER); // centre text
+        jCombo_Box.setFont(new Font("Arial", Font.PLAIN, 17)); // setting font
+        ((JLabel) jCombo_Box.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER); // centre text
         
-        jCombo_Box_Object.addItemListener(new ItemListener()
+        jCombo_Box.addItemListener(new ItemListener()
         {
             public void itemStateChanged(ItemEvent ie)
             {
                 if (ie.getStateChange() == ItemEvent.SELECTED)
                 {
-                    selected_JComboBox_Item_Txt = (String) jCombo_Box_Object.getSelectedItem();
+                    selected_JComboBox_Item_Txt = (String) jCombo_Box.getSelectedItem();
                 }
             }
         });
         
-        jComboBox_JPanel.add(jCombo_Box_Object);
+        jComboBox_JPanel.add(jCombo_Box);
     }
     
     @Override
@@ -97,12 +97,27 @@ public abstract class Edit_Screen extends Add_Screen
     
     protected void load_JComboBox()
     {
-        jCombo_Box_Object.removeAllItems();
-        for (String object : jComboBox_List)
+        //###############################
+        // Clear List
+        //###############################
+        jCombo_Box.removeAllItems();
+        
+        //###############################
+        // Populate List
+        //###############################
+        for (String list_Item : jComboBox_List)
         {
-            jCombo_Box_Object.addItem(object);
+            // If Item is in List to avoid then skip
+            if (remove_JComboBox_Items.contains(list_Item)) { continue; }
+            
+            // Add Item
+            jCombo_Box.addItem(list_Item);
         }
-        jCombo_Box_Object.setSelectedIndex(- 1);
+        
+        //###############################
+        // Reset JComboBox
+        //###############################
+        jCombo_Box.setSelectedIndex(- 1);
     }
     
     //##################################################################################################################
@@ -128,7 +143,7 @@ public abstract class Edit_Screen extends Add_Screen
     @Override
     protected boolean additional_Validate_Form()
     {
-        if (jCombo_Box_Object.getSelectedIndex() == - 1)
+        if (jCombo_Box.getSelectedIndex() == - 1)
         {
             JOptionPane.showMessageDialog(null, String.format("\n\nSelect An %s To Edit!", data_Gathering_Name));
             return false;
@@ -182,7 +197,7 @@ public abstract class Edit_Screen extends Add_Screen
     protected void clear_Btn_Action()
     {
         jTextField.setText("");
-        jCombo_Box_Object.setSelectedIndex(- 1);
+        jCombo_Box.setSelectedIndex(- 1);
         selected_JComboBox_Item_Txt = "";
     }
     

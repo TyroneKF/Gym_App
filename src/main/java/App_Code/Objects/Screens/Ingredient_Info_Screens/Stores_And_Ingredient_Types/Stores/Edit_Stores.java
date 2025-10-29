@@ -7,6 +7,7 @@ import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Ty
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Edit_Stores extends Edit_Screen
 {
@@ -27,7 +28,7 @@ public class Edit_Stores extends Edit_Screen
         
         super.id_ColumnName = "store_id";
         super.fk_Table = "ingredients_info";
-        super.remove_JComboBox_Items = new String[]{ "No Shop" };
+        super.remove_JComboBox_Items = new ArrayList<>(List.of("No Shop"));
     }
     
     @Override
@@ -67,9 +68,9 @@ public class Edit_Stores extends Edit_Screen
         // Update ingredients_in_meal
         //######################################
         String query1 = String.format("""
-                    UPDATE ingredients_in_sections_of_meal
-                    SET pdid = NULL
-                    WHERE pdid IN (SELECT pdid FROM ingredient_in_shops WHERE store_id = %s);""", mysqlVariableReference1);
+                UPDATE ingredients_in_sections_of_meal
+                SET pdid = NULL
+                WHERE pdid IN (SELECT pdid FROM ingredient_in_shops WHERE store_id = %s);""", mysqlVariableReference1);
         
         //######################################
         // Update  ingredientInShops & Stores

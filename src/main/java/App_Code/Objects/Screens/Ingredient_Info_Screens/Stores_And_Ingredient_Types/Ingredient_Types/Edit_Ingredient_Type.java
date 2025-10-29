@@ -7,8 +7,9 @@ import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Ty
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
-public  class Edit_Ingredient_Type extends Edit_Screen
+public class Edit_Ingredient_Type extends Edit_Screen
 {
     public Edit_Ingredient_Type(MyJDBC db, Parent_Screen parent_Screen)
     {
@@ -27,7 +28,7 @@ public  class Edit_Ingredient_Type extends Edit_Screen
         
         super.id_ColumnName = "ingredient_type_id";
         super.fk_Table = "ingredients_info";
-        super.remove_JComboBox_Items = new String[]{"None Of The Above", "UnAssigned"};
+        super.remove_JComboBox_Items = new ArrayList<>(Arrays.asList("None Of The Above", "UnAssigned"));
     }
     
     @Override
@@ -100,9 +101,9 @@ public  class Edit_Ingredient_Type extends Edit_Screen
         String changeToValue = String.format("(SELECT %s FROM %s WHERE %s = 'UnAssigned')", id_ColumnName, db_TableName, db_ColumnName_Field);
         
         String query1 = String.format("""
-                    UPDATE %s
-                    SET %s =  %s
-                    WHERE %s = %s;""", fk_Table, id_ColumnName, changeToValue, id_ColumnName, mysqlVariableReference1);
+                UPDATE %s
+                SET %s =  %s
+                WHERE %s = %s;""", fk_Table, id_ColumnName, changeToValue, id_ColumnName, mysqlVariableReference1);
         
         String query2 = String.format("DELETE FROM %s WHERE %s = %s;", db_TableName, id_ColumnName, mysqlVariableReference1);
         
