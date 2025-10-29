@@ -17,7 +17,6 @@ public class Ingredient_Stores_Screen extends Parent_Screen
     //##################################################################################################################
     public Ingredient_Stores_Screen(MyJDBC db, Ingredients_Info_Screen ingredient_Info_screen, Collection<String> jComboBox_List)
     {
-        
         //####################################
         // Super Constructor
         //####################################

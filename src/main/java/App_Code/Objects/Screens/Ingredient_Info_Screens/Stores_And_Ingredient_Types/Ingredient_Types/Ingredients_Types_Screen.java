@@ -23,8 +23,11 @@ public class Ingredients_Types_Screen extends Parent_Screen
                 jComboBox_List,
                 "src/main/java/Documentation_And_Scripts/Database/Scripts/Editable_DB_Scripts/5.) IngredientTypes.sql");
         
-      initialize_Screens(db);
-      create_Interface();
+        //####################################
+        // Create Interface
+        //####################################
+        initialize_Screens(db);
+        create_Interface();
     }
     
     @Override

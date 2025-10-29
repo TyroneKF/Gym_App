@@ -4,6 +4,7 @@ import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -140,37 +141,37 @@ public class Screen_JPanel extends JPanel
     //##############################################
     // Drawing Methods
     //##############################################
-//    public void set_Panel_IMG(JPanel jPanel, String iconPath, int width, int height)
-//    {
-//        //#############################
-//        //
-//        //#############################
-//        JPanel jp = new JPanel(new GridLayout(1,1));
-//        jp.setPreferredSize(new Dimension(width, height));
-//
-//        //#############################
-//        //
-//        //#############################
-//        URL imageUrl = getClass().getResource(iconPath);
-//
-//        if (imageUrl == null)
-//        {
-//            System.err.println("Could not load icon: " + iconPath);
-//            return;
-//        }
-//
-//        ImageIcon originalIcon = new ImageIcon(imageUrl);
-//        Image img = originalIcon.getImage();
-//        Image scaledImg = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-//
-//        ImageIcon scaledIcon = new ImageIcon(scaledImg);
-//
-//        //#############################
-//        //
-//        //#############################
-//        jp.add(scaledIcon);
-//    }
-//
+/*    public void set_Panel_IMG(JPanel jPanel, String iconPath, int width, int height)
+    {
+        //#############################
+        //
+        //#############################
+        JPanel jp = new JPanel(new GridLayout(1,1));
+        jp.setPreferredSize(new Dimension(width, height));
+
+        //#############################
+        //
+        //#############################
+        URL imageUrl = getClass().getResource(iconPath);
+
+        if (imageUrl == null)
+        {
+            System.err.println("Could not load icon: " + iconPath);
+            return;
+        }
+
+        ImageIcon originalIcon = new ImageIcon(imageUrl);
+        Image img = originalIcon.getImage();
+        Image scaledImg = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+
+        ImageIcon scaledIcon = new ImageIcon(scaledImg);
+
+        //#############################
+        //
+        //#############################
+        jp.add(scaledIcon);
+    }*/
+
     
     //##############################################
     // Screen_JFrame Positioning

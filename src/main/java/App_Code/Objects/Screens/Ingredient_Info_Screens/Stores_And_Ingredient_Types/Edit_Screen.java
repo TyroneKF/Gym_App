@@ -173,13 +173,13 @@ public abstract class Edit_Screen extends Add_Screen
     @Override
     protected void reset_Actions()
     {
-        refresh_Btn_Action();
+        clear_Btn_Action();
         load_JComboBox();
         item_Deleted = false;
     }
     
     @Override
-    protected void refresh_Btn_Action()
+    protected void clear_Btn_Action()
     {
         jTextField.setText("");
         jCombo_Box_Object.setSelectedIndex(- 1);

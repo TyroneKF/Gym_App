@@ -260,7 +260,6 @@ public class MyJDBC
         db_Connection_Status = true;
     }
     
-    
     public MyJDBC(String userName, String password, String databaseName, String db_Script_Folder_Address, String script_List_Name)
     {
         this.userName = userName;
@@ -654,7 +653,7 @@ public class MyJDBC
         return false;
     }
     
-    /*
+    /**
       If one query fails the whole queries fails
       The changes made by a previous query in the list isn't visible to the query after it, the updates are made altogether
      */
@@ -1432,13 +1431,5 @@ public class MyJDBC
         }
         
         return null;
-    }
-    
-    //##################################################################################################################
-    //
-    //##################################################################################################################
-    public static void main(String[] args)
-    {
-        
     }
 }

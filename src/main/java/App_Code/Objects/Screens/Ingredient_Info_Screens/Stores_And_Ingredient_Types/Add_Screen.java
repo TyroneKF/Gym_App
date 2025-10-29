@@ -78,20 +78,20 @@ public abstract class Add_Screen extends Screen_JPanel
     //##################################################################################################################
     // GUI Methods
     //##################################################################################################################
-    protected void create_Form()
+    private void create_Form()
     {
         //###################################################################
         // Drawing interface
         //####################################################################
         create_Add_Screen_Objects();
         additional_Add_Screen_Objects(); // for overwrite purposes
-        add_Screen_Objects(); // adding all objects to the screen
+        add_Screen_Objects(); // override purposes /  adding all objects to the screen
     }
     
     //####################################################################################
     //
     //####################################################################################
-    protected void create_Add_Screen_Objects()
+    private void create_Add_Screen_Objects()
     {
         //#################################################
         //  Centre & Create Form
@@ -176,20 +176,20 @@ public abstract class Add_Screen extends Screen_JPanel
     //##################################################################################################################
     // GUI Methods
     //##################################################################################################################
-    protected void refresh_Btn_Action()
+    protected void clear_Btn_Action()
     {
         jTextField.setText("");
     }
     
     protected void reset_Actions()
     {
-        refresh_Btn_Action();
+        clear_Btn_Action();
     }
     
     //##########################################################
     // Text Formatting Methods
     //##########################################################
-    protected boolean does_String_Contain_Characters(String input)
+    private boolean does_String_Contain_Characters(String input)
     {
         Pattern p1 = Pattern.compile("[^a-zA-Z]", Pattern.CASE_INSENSITIVE);
         Matcher m1 = p1.matcher(input.replaceAll("\\s+", ""));
@@ -203,7 +203,7 @@ public abstract class Add_Screen extends Screen_JPanel
         return false;
     }
     
-    protected String remove_Space_And_Hidden_Chars(String stringToBeEdited)
+    private String remove_Space_And_Hidden_Chars(String stringToBeEdited)
     {
         return stringToBeEdited.trim().replaceAll("\\p{C}", ""); // remove all whitespace & hidden characters like \n
     }
@@ -211,7 +211,7 @@ public abstract class Add_Screen extends Screen_JPanel
     //##########################################################
     // Submission Actions
     //##########################################################
-    protected void submission_Btn_Action()
+    private void submission_Btn_Action()
     {
         if (validate_Form())
         {
@@ -229,7 +229,7 @@ public abstract class Add_Screen extends Screen_JPanel
         }
     }
     
-    protected boolean validate_Form()
+    private boolean validate_Form()
     {
         jTextField_TXT = jTextField.getText();
         
@@ -255,10 +255,10 @@ public abstract class Add_Screen extends Screen_JPanel
         return true;
     }
     
-    protected boolean additional_Validate_Form()
-    {
-        return true;
-    }
+    /**
+     * This is Override by child class
+     */
+    protected abstract boolean additional_Validate_Form();
     
     protected boolean upload_Form()
     {
@@ -299,6 +299,9 @@ public abstract class Add_Screen extends Screen_JPanel
     //########################
     // Messages
     //########################
+    /**
+     * All the methods are Override by child class
+     */
     protected abstract void success_Upload_Message();
     
     protected abstract void failure_Message();

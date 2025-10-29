@@ -30,6 +30,12 @@ public class Add_Ingredient_Type extends Add_Screen
     }
     
     @Override
+    protected boolean additional_Validate_Form()
+    {
+        return true;
+    }
+    
+    @Override
     protected void success_Upload_Message()
     {
         String text = String.format("\n\nSuccessfully Added New Ingredient Type: '%s'", jTextField_TXT);

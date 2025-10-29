@@ -30,6 +30,12 @@ public class Add_Stores extends Add_Screen
     }
     
     @Override
+    protected boolean additional_Validate_Form()
+    {
+        return true;
+    }
+    
+    @Override
     protected void success_Upload_Message()
     {
         String text = "\n\nSuccessfully Added New Supplier!";

@@ -243,25 +243,25 @@ public abstract class Parent_Screen extends Screen_JPanel
         add_To_Container(iconArea, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0, null);
         
         //##########################
-        // Refresh Icon
+        // Clear Icon
         //##########################
-        IconButton refresh_Icon_Btn = new IconButton("/images/refresh/++refresh.png", width, height, width, height,
+        IconButton clear_Icon_Btn = new IconButton("/images/refresh/++refresh.png", width, height, width, height,
                 "centre", "right"); // btn text is useless here , refactor
         
-        JButton refresh_Btn = refresh_Icon_Btn.returnJButton();
-        iconPanelInsert.add(refresh_Icon_Btn);
+        JButton clear_Btn = clear_Icon_Btn.returnJButton();
+        iconPanelInsert.add(clear_Icon_Btn);
         
-        refresh_Icon_Btn.makeBTntransparent();
+        clear_Icon_Btn.makeBTntransparent();
         
-        refresh_Btn.addActionListener(ae -> {
-            refresh_BTN_Action();
+        clear_Btn.addActionListener(ae -> {
+            clear_BTN_Action();
         });
         
         //##########################
         // Delete Icon
         //##########################
         delete_Icon_Btn = new IconButton("/images/x/x.png", width, height, width, height,
-                "centre", "right"); // btn text is useless here , refactor
+                "centre", "right");
         
         JButton delete_Btn = delete_Icon_Btn.returnJButton();
         iconPanelInsert.add(delete_Icon_Btn);
@@ -325,15 +325,15 @@ public abstract class Parent_Screen extends Screen_JPanel
     //#######################################################################
     // Icon BTN Actions
     //#######################################################################
-    private void refresh_BTN_Action()
+    private void clear_BTN_Action()
     {
         if(is_Editable())
         {
-            edit_Screen.refresh_Btn_Action();
+            edit_Screen.clear_Btn_Action();
             return;
         }
         
-        add_Screen.refresh_Btn_Action();
+        add_Screen.clear_Btn_Action();
     }
     
     private void delete_BTN_Action()
@@ -346,34 +346,38 @@ public abstract class Parent_Screen extends Screen_JPanel
     //##################################################################################################################
     protected void reset_Actions()
     {
-        add_Screen.refresh_Btn_Action();
-        edit_Screen.load_JComboBox();
+        add_Screen.reset_Actions();
+        edit_Screen.reset_Actions();
     }
     
     //####################################################
     // ToggleSwitch Methods
     //####################################################
-    protected boolean is_Editable()
+    private boolean is_Editable()
     {
         return isEditMode[0];
     }
     
-    protected void switchPanel()
+    private void switchPanel()
     {
         if ( is_Editable()) // Edit Mode
         {
+            add_Screen.clear_Btn_Action(); // clear form
+            
             add_Screen.setVisible(false);          // Set Add_Screen to invisible
             addScreen_Divider.setVisible(false);  //  Set Add_Screen Divider to invisible
-            edit_Screen.setVisible(true);         // Set Edit_Screen to Visible
             
+            edit_Screen.setVisible(true);         // Set Edit_Screen to Visible
             delete_Icon_Btn.set_Btn_Visibility(true);  // Set delete_Btn to Visible
         }
         else // ADD Mode
         {
+            edit_Screen.clear_Btn_Action(); // clear Form
+            
             add_Screen.setVisible(true);          // Set Add_Screen to visible
             addScreen_Divider.setVisible(true);   //  Set Add_Screen Divider to visible
-            edit_Screen.setVisible(false);        // Set Edit_Screen to invisible
             
+            edit_Screen.setVisible(false);        // Set Edit_Screen to invisible
             delete_Icon_Btn.set_Btn_Visibility(false);  // Set delete_Btn to  invisible
         }
         

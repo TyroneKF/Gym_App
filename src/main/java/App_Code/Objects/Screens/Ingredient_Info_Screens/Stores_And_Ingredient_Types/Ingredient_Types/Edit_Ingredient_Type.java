@@ -23,7 +23,7 @@ public  class Edit_Ingredient_Type extends Edit_Screen
         
         super.data_Gathering_Name = "Ingredient Type Name";
         super.db_ColumnName_Field = "ingredient_type_name";
-        super.db_TableName = "ingredientTypes";
+        super.db_TableName = "ingredient_types";
         
         super.id_ColumnName = "ingredient_type_id";
         super.fk_Table = "ingredients_info";

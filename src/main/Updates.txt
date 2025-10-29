@@ -1,42 +1,6 @@
 
 mvn javafx:run "-DmainClass=Tests.ToggleSwitchDemo"
 
-
-
-######################################################################################
-Refactored & Ordered Classes:
-######################################################################################
-.) MealManager.java
-.) Screen.java
-
-############################
-Graph Screens
-############################
-.) Pie_Chart_Meal_Manager_Screen.java
-.) Pie_Chart.java
-
-.) Line_Chart_Meal_Plan_Screen.java
-.) Line_Chart.java
-
-############################
-Other Screens
-############################
-.) Macros_Targets_Screen.java
-.) LoadingScreen.java
-
-################################################################
-Check for
-################################################################
-.) Public / Private Methods
-.) Refactoring
-.) Grouping Methods
-.) Foreign Keys Deleting
-.) SQL Injections
-.) Classes & Parents
-.) Screens Refactoring
-.) Database columns Checks
-.) Delete on keys should be simpler due to cascade now
-
 ######################################################################################
 Work On:
 ######################################################################################
@@ -52,12 +16,6 @@ MealManager
 .) Sql statements
 
 ######################################################################################
-Refactoring:
-######################################################################################
-.) Check Public / private methods
-.) Abstract class methods
-
-######################################################################################
 New Features:
 ######################################################################################
 .) SQL Injection
@@ -70,20 +28,31 @@ New Features:
 .) Mobile App that's aligns with meals one pc & tracks progress shows % of how much of your meals you eat on a daily
 .) Track body weight & body fat % in a graph to see meal plans efficiency
 
+.) Switch Fully to JAVAFX
+.) Switch to AWS RDS / AWS Cognito for login authentication
+.) Use.env
+
+.) Vegan mode for % of protein
+.) Vitamins
+
+.) Progress analytics:
+   Body Weight & Tracked Meals eaten
+   Size Measurements
+
 ######################################################################################
 OVERALL:
 ######################################################################################
 .) Add measurements table field to App
 .) Factor out NutritionIx API key into .env file
-.) GRAPHS
+
 .) Columns in table sizes
 .) Demo Screen
-.) Clear GUI Screen
+
 .) SQL injections on Input
-.) Ingredients_info page DB Update
+
 .) Has data changed in ingredients table
 .) Refactor db requests method if nulll into a method that return boolean
-.) Diagram of carbs and nutrients in line graph over the day
+
 .) Docked Window / side by side screens (diet planner  & Graphs)
 
 ######################################################################################
@@ -160,5 +129,39 @@ MYJDBC Updates FROM User inputs:
 .) SQL injections
 
 
+######################################################################################
+Refactored & Ordered Classes:
+######################################################################################
+.) MealManager.java
+.) Screen.java
 
+############################
+Graph Screens
+############################
+.) Pie_Chart_Meal_Manager_Screen.java
+.) Pie_Chart.java
 
+.) Line_Chart_Meal_Plan_Screen.java
+.) Line_Chart.java
+
+############################
+Other Screens
+############################
+.) Macros_Targets_Screen.java
+.) LoadingScreen.java
+
+################################################################
+Check for
+################################################################
+.) Public / Private Methods
+.) Refactoring
+.) Grouping Methods
+.) Foreign Keys Deleting
+.) SQL Injections
+.) Classes & Parents
+.) Screens Refactoring
+.) Database columns Checks
+.) Delete on keys should be simpler due to cascade now
+
+.) Abstract class methods
+.) Comments

@@ -38,11 +38,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //###############################################
     private static String
             version_no = "00001",
-            databaseName = "gymapp" + version_no,
+            database_Name = "gymapp" + version_no,
             user_name = "root",
             password = "password";
     
-    private String JFrameName = databaseName;
+    private String JFrameName = database_Name;
     
     private String
             planName,
@@ -182,22 +182,13 @@ public class Meal_Plan_Screen extends Screen_JFrame
         {
             try
             {
-                /*
-                // Using System Variables (OS LVL)
-                String host = System.getenv("GYM_APP_DB_HOST");
-                String port = System.getenv("GYM_APP_DB_PORT");
-                String user = System.getenv("GYM_APP_DB_USER");
-                String password = System.getenv("GYM_APP_DB_PASS");
-                String dbName = System.getenv("GYM_APP_DB_NAME");
-                */
-                
                 // #########################################
                 // Set Path Files
                 // #########################################
                 String userDirectory = new File("").getAbsolutePath(); // get path file of where this is being executed
                 
                 System.out.printf("\nDirectory: \n%s \n\n\nScripts Directory:\n%s", userDirectory, db_Scripts_Folder_Path);
-                System.out.println("\n\n\nReading ENV Variables: host, port, user, ****, db_name");
+                System.out.println("\n\n\nReading ENV Variables: host, port, user_name, ****, db_name");
                 
                 // #########################################
                 // Get .env variables
@@ -209,32 +200,40 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 
                 String host = dotenv.get("DB_HOST");
                 String port = dotenv.get("DB_PORT");
-                String user = dotenv.get("DB_USER");
+                
+                database_Name = dotenv.get("DB_NAME");
+                user_name = dotenv.get("DB_USER");
+                
                 String password = dotenv.get("DB_PASS");
                 
-                String dbName = dotenv.get("DB_NAME");
-                
-                if (host == null || port == null || user == null || password == null || dbName == null)
+                if (host == null || port == null || user_name == null || password == null || database_Name == null)
                 {
-                    System.err.printf("\n\nDB Values: \nhost: %s \nport: %s \nuser: %s \ndbName: %s",
-                            host, port, user, dbName);
+                    System.err.printf("\n\nDB Values: \nhost: %s \nport: %s \nuser_name: %s \ndatabase_Name: %s",
+                            host, port, user_name, database_Name);
                     
                     throw new RuntimeException("Missing one or more required DB environment variables.");
                 }
                 
-                System.out.println("\n\nSuccessfully retrieved ENV Variables: host, port, user, *****, db_name");
+                System.out.println("\n\nSuccessfully retrieved ENV Variables: host, port, user_name, *****, db_name");
                 
                 // #########################################
                 // Assigning values to variables &
                 // #########################################
                 
-                databaseName = dbName;
-                user_name = user;
-                
                 // #########################################
                 // Create DB Object & run SQL Scripts
                 // #########################################
-                MyJDBC db = new MyJDBC(true, host, port, user, password, dbName, db_Scripts_Folder_Path, db_File_Script_List_Name, db_File_Tables_Name);
+                
+                MyJDBC db = new MyJDBC(
+                        true,
+                        host,
+                        port,
+                        user_name,
+                        password,
+                        database_Name,
+                        db_Scripts_Folder_Path,
+                        db_File_Script_List_Name,
+                        db_File_Tables_Name);
                 
                 if (db.get_DB_Connection_Status())
                 {
@@ -258,16 +257,24 @@ public class Meal_Plan_Screen extends Screen_JFrame
             // Create DB Object & run SQL Script
             //#############################################################################################################
             
-            MyJDBC db = new MyJDBC(false, "localhost", "3306", user_name, password, databaseName, db_Scripts_Folder_Path, db_File_Script_List_Name, db_File_Tables_Name);
+            MyJDBC db = new MyJDBC(
+                    false,
+                    "localhost",
+                    "3306",
+                    user_name,
+                    password,
+                    database_Name,
+                    db_Scripts_Folder_Path,
+                    db_File_Script_List_Name,
+                    db_File_Tables_Name);
             
-            if (db.get_DB_Connection_Status())
-            {
-                new Meal_Plan_Screen(db);
-            }
-            else
+            if (! db.get_DB_Connection_Status())
             {
                 JOptionPane.showMessageDialog(null, "ERROR, Cannot Connect To Database!");
+                return;
             }
+            
+            new Meal_Plan_Screen(db);
         }
     }
     
@@ -661,7 +668,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 (
                 	SELECT plan_name, vegan FROM %s WHERE plan_id = %s
                 ) AS `SRC`
-                                    
+                
                 SET
                     `P`.`plan_name` = concat("(Temp) ",`SRC`.`plan_name`),`P`.`vegan` = `SRC`.`vegan`
                 WHERE
@@ -1640,7 +1647,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             return;
         }
         
-        ingredientsInfoScreen = new Ingredients_Info_Screen(db, this,map_ingredientTypesToNames,
+        ingredientsInfoScreen = new Ingredients_Info_Screen(db, this, map_ingredientTypesToNames,
                 ingredientsTypesList, storesNamesList);
     }
     

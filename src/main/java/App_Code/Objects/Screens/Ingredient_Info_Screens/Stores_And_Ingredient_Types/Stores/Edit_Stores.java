@@ -22,8 +22,8 @@ public class Edit_Stores extends Edit_Screen
         super.label2 = "Change Supplier Name To";
         
         super.data_Gathering_Name = "Supplier Name";
-        super.db_ColumnName_Field = "Store_Name";
-        super.db_TableName = "images/stores";
+        super.db_ColumnName_Field = "store_name";
+        super.db_TableName = "stores";
         
         super.id_ColumnName = "store_id";
         super.fk_Table = "ingredients_info";

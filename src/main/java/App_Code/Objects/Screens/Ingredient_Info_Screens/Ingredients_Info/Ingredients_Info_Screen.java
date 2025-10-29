@@ -171,7 +171,7 @@ public class Ingredients_Info_Screen extends Screen_JFrame
     {
         if (process.equals("addKey"))
         {
-            return edit_IngredientsType_List(process, newKey, oldKey);
+            return edit_IngredientsType_List(process, newKey, null);
         }
         else if (map_ingredientTypesToNames.containsKey(oldKey)) // if the key had no ingredientNames attached to it, do nothing
         {
