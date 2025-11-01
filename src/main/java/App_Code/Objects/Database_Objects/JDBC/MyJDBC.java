@@ -11,13 +11,14 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.sql.*;
 import java.text.Collator;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
-//######################################
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.util.stream.Collectors;
 
 public class MyJDBC
 {
@@ -29,7 +30,6 @@ public class MyJDBC
             userName,
             password,
             initial_db_connection = "jdbc:mysql://localhost:3306",
-            databaseNamesFile = "",
             db_Connection_Address = initial_db_connection;
     
     private Connection connection;
@@ -40,8 +40,7 @@ public class MyJDBC
             middle_line_Separator = "###########################################################################################";
     
     private boolean
-            db_Connection_Status = false,
-            override = true; // ERROR surrounding this
+            db_Connection_Status = false;
     
     //##################################################################################################################
     // Constructor
@@ -55,8 +54,7 @@ public class MyJDBC
         this.userName = userName;
         this.password = password;
         this.databaseName = databaseName.toLowerCase();
-        this.initial_db_connection = String.format("jdbc:mysql://%s:%s", host, port);
-        this.databaseNamesFile = databaseNamesFileName;
+        initial_db_connection = String.format("jdbc:mysql://%s:%s", host, port);
         db_Connection_Address = String.format("%s/%s", initial_db_connection, databaseName);
         
         try
@@ -70,6 +68,7 @@ public class MyJDBC
             connection = DriverManager.getConnection(db_Connection_Address, userName, password); // if connection fails, error is thrown, script stops here
             
             System.out.println("\nUser & Database Credentials are valid !");
+            db_Connection_Status = true;
             
             //#################################################################
             //  Checking Table Count of Current DB Against Tables in File Count
@@ -124,7 +123,6 @@ public class MyJDBC
             {
                 System.out.printf("\n\n%s \nDatabase '%s' Setup is OK !! \n%s ", line_Separator, databaseName, line_Separator);
                 
-                override = false;
                 db_Connection_Status = true;
                 return;
             }
@@ -256,7 +254,6 @@ public class MyJDBC
         // #################################################
         // Set DB Variables
         // #################################################
-        override = false;
         db_Connection_Status = true;
     }
     
@@ -283,10 +280,8 @@ public class MyJDBC
         
         System.out.printf("\n\n%s \nSuccessfully, created DB & Initialized Data! \n%s", line_Separator, line_Separator);
         
-        override = false;
         db_Connection_Status = true;
         db_Connection_Address = String.format("%s/%s", db_Connection_Address, databaseName);
-        
     }
     
     //##################################################################################################################
@@ -295,10 +290,14 @@ public class MyJDBC
     public boolean run_SQL_Script_Folder(String db_Connection_Path, String db_Script_Folder_Address, String script_List_Name)
     {
         // ####################################################
-        //  Getting Script_List Object
+        //  Variables
         // ####################################################
         String path = String.format("%s/%s", db_Script_Folder_Address, script_List_Name);
+        String methodName = "run_SQL_Script_Folder()";
         
+        // ####################################################
+        //  Get Folder Path
+        // ####################################################
         InputStream listStream = getClass().getResourceAsStream(path);
         
         if (listStream == null)
@@ -310,50 +309,63 @@ public class MyJDBC
         // ####################################################
         //  Reading Script List & Executing Each Script in List
         // ####################################################
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(listStream, StandardCharsets.UTF_8))) // resources automatically released in try block / no need for reader.close()
+        // Resources automatically released in try block / no need for reader.close()
+        try (
+                BufferedReader file_Names_Reader = new BufferedReader(new InputStreamReader(listStream, StandardCharsets.UTF_8));
+                Connection connection = DriverManager.getConnection(db_Connection_Path, userName, password)
+        )
         {
-            connection = DriverManager.getConnection(db_Connection_Path, userName, password);
-            
-            Iterator<String> it = br.lines().iterator();
-            while (it.hasNext())
+            //for(String file: file_Names_Reader.readAllLines())
+            Iterator<String> it = file_Names_Reader.lines().iterator() ;
+            while(it.hasNext())
             {
+                //##########################################################
+                // Get Path of File
+                //##########################################################
                 String fileName = it.next();
-                System.out.printf("\nrun_SQL_Script_Folder() Executing script: %s \n\n", fileName);
+                System.out.printf("\nMyJDBC.java %s Executing script: %s \n\n", methodName, fileName);
                 
-                try // Execute Script
+                try (InputStream scriptStream = getClass().getResourceAsStream(String.format("%s/%s", db_Script_Folder_Address, fileName)))
                 {
-                    InputStream scriptStream = getClass().getResourceAsStream(String.format("%s/%s", db_Script_Folder_Address, fileName));
-                    
                     if (scriptStream == null)
                     {
                         System.err.printf("\nrun_SQL_Script_Folder() Script not found: '%s'", fileName);
                         return false;
                     }
                     
-                    //InputStream scriptStream = new FileInputStream(String.format("%s/%s", db_Script_Folder_Address, fileName));
-                    Reader reader = new InputStreamReader(scriptStream, StandardCharsets.UTF_8);
-                    
-                    // Creating Script Runner to stop on errors
-                    ScriptRunner runner = new ScriptRunner(connection);
-                    runner.setStopOnError(true);
-                    runner.runScript(reader);
-                    
-                    System.out.printf("\nrun_SQL_Script_Folder() successfully executed script: %s", fileName);
+                    //##########################################################
+                    // Execute File Script
+                    //##########################################################
+                    try (
+                            Reader file_Reader = new InputStreamReader(scriptStream, StandardCharsets.UTF_8);
+                    )
+                    {
+                        ScriptRunner runner = new ScriptRunner(connection);
+                        runner.setStopOnError(true);
+                        runner.runScript(file_Reader);
+                        
+                        System.out.printf("\nMyJDBC.java %s successfully executed script: %s", methodName, fileName);
+                    }
                 }
+                
+                //##########################################################
+                // Error Handling
+                //##########################################################
                 catch (Exception e)
                 {
-                    System.err.printf("\n\nrun_SQL_Script_Folder(): error executing file: %s \n\n%s\n\n" +
-                            "", fileName, e.getMessage());
-                    
-                    throw new Exception(String.format("\nrun_SQL_Script_Folder() ERROR:  %s", fileName));
+                    handleException_File(e, methodName);
+                    return false;
                 }
             }
             
             return true;
         }
+        //##########################################################
+        // Error Handling
+        //##########################################################
         catch (Exception e)
         {
-            System.err.printf("\n\nrun_SQL_Script_Folder() Error Writing / Reading to file \n%s", e);
+            handleException_File(e, methodName);
             return false;
         }
     }
@@ -368,98 +380,93 @@ public class MyJDBC
     //##################################################################################################################
     public boolean write_Txt_To_SQL_File(String sqlFilePath, String txt_To_Write_To_SQL_File)
     {
-        //########################################
+        String methodName = "write_Txt_To_SQL_File()";
+        
+        //##########################################################
         // Creating Temp File
-        //########################################
+        //##########################################################
         String[] filenameAndExt = sqlFilePath.split("\\.(?=[^\\.]+$)"); // file name [0] & ext [1]
         String tempFilePath = String.format("%sTmp.%s", filenameAndExt[0], filenameAndExt[1]);
-        String filename = new File(sqlFilePath).getName();
         
-        //########################################
+        //##########################################################
         // Reading File & Writing
-        //########################################
-        
+        //##########################################################
         try (BufferedReader reader = new BufferedReader(new FileReader(sqlFilePath)); // resources automatically released in try block / no need for reader.close()
              BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFilePath), "UTF-8")))
         {
-            int count = 0;
+            boolean first = true;
+            
             Iterator<String> it = reader.lines().iterator();
             while (it.hasNext()) // iterate through txt file
             {
-                count++;
+                if (first) { first = false; writer.write(it.next().trim()); continue; }
                 
-                String line = count == 1 ? it.next() : System.getProperty("line.separator") + it.next();
+                String line = System.lineSeparator() + it.next();
                 
-                if (! it.hasNext()) // last line
-                {
-                    line = line.replace(";", ","); // replace ";" with ","
-                }
+                // IF Last Line : Format  last line to regular line as there's a new last line being appended afterward
+                if (! it.hasNext()) { line = line.replace(";", ","); }
                 
                 writer.write(line);
             }
             
-            writer.write(System.getProperty("line.separator") + txt_To_Write_To_SQL_File + ";"); // Add new line to file
-            
+            //#############################
+            // Write Last Line (New ADD)
+            //#############################
+            writer.write(System.lineSeparator() + txt_To_Write_To_SQL_File + ";");
         }
+        //##########################################################
+        // Error Handling
+        //##########################################################
         catch (Exception e)
         {
-            System.err.printf("\n\nwriteTxtToSQLFile() Error Writing / Reading to file \n%s", e);
+            handleException_File(e, methodName);
             return false;
         }
         
-        //########################################
+        //##########################################################
         // Renaming File
-        //########################################
-        try
-        {
-            Files.move(Paths.get(tempFilePath), Paths.get(sqlFilePath), StandardCopyOption.REPLACE_EXISTING);
-            return true;
-        }
-        catch (Exception e)
-        {
-            System.err.printf("\n\nwriteTxtToSQLFile() Error Replacing Temp File \n%s", e);
-            return false;
-        }
+        //##########################################################
+        return rename_File(tempFilePath, sqlFilePath, methodName);
     }
     
     public boolean replace_Txt_In_SQL_File(String sqlFilePath, boolean multiValues, String txt_To_Find, String
             txt_Replacement)
     {
+        String methodName = "replace_Txt_In_SQL_File()";
         
-        //########################################
+        //##########################################################
         // Creating Temp File
-        //########################################
+        //##########################################################
         String[] filenameAndExt = sqlFilePath.split("\\.(?=[^\\.]+$)"); // file name [0] & ext [1]
         String tempFilePath = String.format("%sTmp.%s", filenameAndExt[0], filenameAndExt[1]);
         
-        System.out.println("\n\n Here1"); //hello delete
-        
-        //########################################
+        //##########################################################
         // Reading File & Writing
-        //########################################
-        
+        //##########################################################
         try (BufferedReader reader = new BufferedReader(new FileReader(sqlFilePath)); // resources automatically released in try block / no need for reader.close()
              BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFilePath), "UTF-8")))
         {
-            int count = 0;
-            boolean replacementFound = false;
-            Iterator<String> it = reader.lines().iterator();
+            boolean first = true, replacementFound = false;
             
+            Iterator<String> it = reader.lines().iterator();
             while (it.hasNext()) // iterate through txt file
             {
-                count++;
+                // ###########################
+                // First Line Avoid Editing
+                // ###########################
+                if (first) { first = false; writer.write(it.next().trim()); continue; }
                 
-                // Processing next lines
-                String currentLine = it.next().trim(); // trim  current line
+                // ###########################
+                // General Line
+                // ###########################
+                String currentLine = System.lineSeparator() + it.next().trim();
                 
-                // if replacement found & there isn't multi values just write to the file
-                if (replacementFound && ! multiValues)
-                {
-                    currentLine = count == 1 ? currentLine : System.getProperty("line.separator") + currentLine;
-                    writer.write(currentLine);
-                    continue;
-                }
-                if (currentLine.contains(txt_To_Find)) // check if current line is the line to be deleted
+                /**
+                 *  Triggered in conditions:
+                 *    1.) If replacement has not been found & Current Line contains search txt execute
+                 *    2.) If replacement has been found and multi-values & line contains search txt execute
+                 */
+                if ((! replacementFound || multiValues) && currentLine.contains(txt_To_Find))
                 {
                     System.out.printf("\n\nReplacement made: %s", currentLine);
                     
@@ -468,41 +475,37 @@ public class MyJDBC
                     replacementFound = true;
                 }
                 
-                currentLine = count == 1 ? currentLine : System.getProperty("line.separator") + currentLine;
                 writer.write(currentLine);// Writing Line to File
             }
             
-            //########################################
-            // If replacement not found, exit
-            //########################################
-            if (! replacementFound)
+            //################################
+            // Not Found & Error Delete Temp
+            //################################
+            if (! replacementFound && ! new File(tempFilePath).delete())
             {
+                System.err.printf("\nMyJDBC.java %s \nError, SearchTxt Not Found ! Error, deleting Temp File \n' %s ' !",
+                        methodName, tempFilePath);
+                
                 return false;
             }
         }
+        //##########################################################
+        // Error Handling
+        //##########################################################
         catch (Exception e)
         {
-            System.err.printf("\n\nreplaceTxtInSQLFile() Error Writing / Reading to file \n%s", e);
+            handleException_File(e, methodName);
             return false;
         }
         
-        //########################################
+        //##########################################################
         // Renaming File
-        //########################################
-        try
-        {
-            Files.move(Paths.get(tempFilePath), Paths.get(sqlFilePath), StandardCopyOption.REPLACE_EXISTING);
-            return true;
-        }
-        catch (Exception e)
-        {
-            System.err.printf("\n\nreplaceTxtInSQLFile() Error Replacing Temp File \n%s", e);
-            return false;
-        }
+        //##########################################################
+        return rename_File(tempFilePath, sqlFilePath, methodName);
     }
     
     /**
-     * In most files there's atleast one insert value which avoids completely deleting all elements and the file no ending in an ';'
+     * In most files there's at least one insert value which avoids completely deleting all elements and the file no ending in an ';'
      *
      * @param filePath
      * @param txtToDelete
@@ -510,112 +513,118 @@ public class MyJDBC
      */
     public boolean delete_Txt_In_File(String filePath, String txtToDelete)
     {
-        //########################################
+        String methodName = "delete_Txt_In_File()";
+        
+        //#################################################################################
         // Creating Temp File
-        //########################################
+        //#################################################################################
         String[] filenameAndExt = filePath.split("\\.(?=[^\\.]+$)"); // file name [0] & ext [1]
         String tempFilePath = String.format("%sTmp.%s", filenameAndExt[0], filenameAndExt[1]);
         
-        //########################################
-        // Reading File & Writing
-        //########################################
-        
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath)); // resources automatically released in try block / no need for reader.close()
-             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFilePath), "UTF-8")))
+        //#################################################################################
+        // Reading File & Deleting
+        //#################################################################################
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), StandardCharsets.UTF_8)); // resources automatically released in try block / no need for reader.close()
+             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFilePath), StandardCharsets.UTF_8)))
         {
-            //#####################################
-            // Read For Deleted Txt
-            //#####################################
-            boolean found = false;
+            //###########################################
+            // Find TXT & Delete it
+            //###########################################
+            boolean first = true, found = false;
             
-            ArrayList<String> lines = new ArrayList<>();
-            Iterator<String> it = reader.lines().iterator();
+            List<String> lines = reader.lines().collect(Collectors.toList()); // Read File into memory
             
-            while (it.hasNext()) // iterate through txt file &
+            Iterator<String> it1 = lines.iterator();
+            while (it1.hasNext())
             {
-                String line = it.next().trim();
+                if (first) { first = false; continue; }
+                
+                String line = it1.next().trim();
                 
                 if (line.contains(txtToDelete))
                 {
-                    found = true;
-                    continue;
+                    found = true; it1.remove();
                 }
-                lines.add(line);
             }
             
-            //#####################################
-            // Check if deletion not made, dlt file
-            //#####################################
-            if (! found) // Check if txt to be found is
+            //############################################
+            // Not Found & Error Delete Temp
+            //############################################
+            if (! found && ! new File(tempFilePath).delete())
             {
-                if (new File(tempFilePath).delete()) // Delete temp file, Original file stays the same,
-                {
-                    System.out.printf("\nError, couldn't deleting temp file either!");
-                }
+                System.err.printf("\nMyJDBC.java %s \nError, SearchTxt Not Found ! Error, deleting Temp File \n' %s ' !",
+                        methodName, tempFilePath);
+                
                 return false;
             }
             
-            //#####################################
-            // Check if deletion not made, dlt file
-            //#####################################
-            Iterator<String> it2 = lines.iterator();
-            while (it2.hasNext())
+            //###########################################
+            // Add ";" at the end of the file
+            //###########################################
+            first = true;
+            
+            Iterator<String> it = lines.iterator();
+            while (it.hasNext()) // iterate through txt file
             {
-                String txtToWrite = it2.next();
+                // ###########################
+                // First Line Avoid Editing
+                // ###########################
+                if (first) { first = false; writer.write(it.next().trim()); continue; }
                 
-                if (! it2.hasNext()) // if there isn't another line
+                // ###########################
+                // General TXT
+                // ###########################
+                String currentLine = System.lineSeparator() + it.next().trim();
+                
+                //###########################
+                // Special Case Last Line
+                //###########################
+                if (! it.hasNext())
                 {
-                    txtToWrite = txtToWrite.substring(0, txtToWrite.length() - 1); // removes ',' at the end if its there potentially could be ';' too
-                    txtToWrite += ";"; // replaces with ';' because this is the new last line now
-                    
-                    writer.write(txtToWrite);
-                    break;
+                    currentLine = currentLine.substring(0, currentLine.length() - 1); // removes ',' at the end if its there potentially could be ';' too
+                    currentLine += ";"; // replaces with ';' because this is the new last line now
                 }
-                writer.write(txtToWrite + System.getProperty("line.separator"));
+                
+                //###########################
+                //  Write
+                //###########################
+                writer.write(currentLine);// Writing Line to File
             }
         }
+        //#################################################################################
+        // Error Handling
+        //#################################################################################
         catch (Exception e)
         {
-            System.err.printf("\n\ndeleteTxtInFile() Error Writing / Reading to file \n%s", e);
+            handleException_File(e, methodName);
             return false;
         }
         
-        //########################################
+        //#################################################################################
         // Renaming File
-        //########################################
+        //#################################################################################
+        return rename_File(tempFilePath, filePath, methodName);
+    }
+    
+    private boolean rename_File(String tempFilePath, String filePath, String methodName)
+    {
+        //##########################################################
+        // Renaming File
+        //##########################################################
         try
         {
+            // Replaces first file with the second
             Files.move(Paths.get(tempFilePath), Paths.get(filePath), StandardCopyOption.REPLACE_EXISTING);
             return true;
         }
+        //#################################
+        // Error Handling
+        //##################################
         catch (Exception e)
         {
-            System.err.printf("\n\ndeleteTxtInFile() Error Replacing Temp File \n%s", e);
+            handleException_File(e, methodName);
             return false;
         }
-    }
-    
-    //##################################################################################################################
-    //  Get Methods
-    //##################################################################################################################
-    public Boolean get_DB_Connection_Status()
-    {
-        return db_Connection_Status;
-    }
-    
-    public boolean check_IF_DB_Exists(String databaseName)
-    {
-        //####################################################################
-        // Checking if database exists
-        //####################################################################
-        
-        String sql = String.format("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '%s'", databaseName);
-        
-        if (get_Multi_Column_Query(sql) != null) // database exists
-        {
-            return true;
-        }
-        return false;
     }
     
     //##################################################################################################################
@@ -625,52 +634,62 @@ public class MyJDBC
     /**
      * This method can upload one statement or, multiple queries within a single String after each statement in the string is separated by a ;
      */
-    public Boolean upload_Data(String query, boolean multipleQueries)
+    public boolean upload_Data(String query, boolean multipleQueries)
     {
-        if (! (get_DB_Connection_Status()))
+        //##########################################################
+        // Check DB Status
+        //##########################################################
+        String methodName = "upload_Data()";
+        
+        if (! approve_DB_Status(methodName)) { return false; }
+        
+        //##########################################################
+        // Query Setup
+        //##########################################################
+        String fullAddress = multipleQueries
+                ? db_Connection_Address + "?autoReconnect=true&allowMultiQueries=true"
+                : db_Connection_Address;
+        
+        try (
+                Connection connection = multipleQueries ? DriverManager.getConnection(fullAddress, userName, password)
+                        : DriverManager.getConnection(db_Connection_Address, userName, password);
+                
+                Statement statement = connection.createStatement();
+        )
         {
-            System.out.printf("\n\n  @uploadData() DB couldn't successfully connect to DB '%s'!", databaseName);
-            return false;
-        }
-        try
-        {
-            //Query Setup
-            connection = multipleQueries ? DriverManager.getConnection(db_Connection_Address += "?autoReconnect=true&amp;allowMultiQueries=true", userName, password)
-                    : DriverManager.getConnection(db_Connection_Address, userName, password);
-            
-            Statement statement = connection.createStatement();
             statement.executeUpdate(query);
             
-            connection = DriverManager.getConnection(db_Connection_Address, userName, password); // reset back to default patterns
             return true;
         }
+        //##########################################################
+        // Error Handling
+        //##########################################################
         catch (Exception e)
         {
-            System.err.printf("\n\n  @uploadData() \nQuery: %s \n%s", query, e);
-            JOptionPane.showMessageDialog(null, "Database Error, uploading Query:\n\nCheck Output ", "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
+            handleException_MYSQL(e, methodName, query);
+            return false;
         }
-        
-        return false;
     }
     
     /**
-      If one query fails the whole queries fails
-      The changes made by a previous query in the list isn't visible to the query after it, the updates are made altogether
+     * If one query fails the whole queries fails
+     * The changes made by a previous query in the list isn't visible to the query after it, the updates are made altogether
      */
-    public Boolean upload_Data_Batch_Altogether(String[] queries)
+    public boolean upload_Data_Batch_Altogether(String[] queries)
     {
-        if (! (get_DB_Connection_Status()))
-        {
-            System.out.printf("\n\n  uploadData_Batch_Altogether() DB couldn't successfully connect to DB '%s'!", databaseName);
-            return false;
-        }
+        //##########################################################
+        // Check DB Status
+        //##########################################################
+        String methodName = "upload_Data_Batch_Altogether()";
         
-        try
+        if (! approve_DB_Status(methodName)) { return false; }
+        
+        //##########################################################
+        // Query Setup
+        //##########################################################
+        try (Statement statement = connection.createStatement();)
         {
-            Statement statement = connection.createStatement();
-            
-            //Setting auto-commit false
-            connection.setAutoCommit(false);
+            connection.setAutoCommit(false); //Setting auto-commit false
             
             //################################
             // Creating Batch
@@ -680,123 +699,59 @@ public class MyJDBC
                 statement.addBatch(query);
             }
             
-            //Executing the batch
-            statement.executeBatch();
-            
-            //Saving the changes
-            connection.commit();
             //################################
+            //Executing the Batch
+            //################################
+            statement.executeBatch();
+            connection.commit(); // Commit Changes beyond current driver
             
-            return true;
+            return true; // Return Output
         }
+        //##########################################################
+        // Error Handling
+        //##########################################################
         catch (Exception e)
         {
-            System.err.printf("\n\n @uploadData_Batch() \n\nQuery:\n ");
-            for (String query : queries)
-            {
-                System.err.printf("\n\n%s", query);
-            }
-            System.err.printf("\n\n%s", e);
-            
-            JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
+            handleException_MYSQL(e, methodName, queries);
+            return false;
         }
-        
-        return false;
     }
     
     /*
       Each query upload is executed separately and the query after, it can notice the changes
      */
-    public Boolean upload_Data_Batch_Independently(String[] queries) // HELLO Can't this method and the one below refactored
+    public boolean upload_Data_Batch_Independently(String[] queries)
     {
-        if (! (get_DB_Connection_Status()))
+        //##########################################################
+        // Check DB Status
+        //##########################################################
+        String methodName = "upload_Data_Batch_Independently()";
+        
+        if (! approve_DB_Status(methodName)) { return false; }
+        
+        //##########################################################
+        // Query Setup
+        //##########################################################
+        try (Statement statement = connection.createStatement();)
         {
-            System.out.printf("\n\n  uploadData_Batch_Independently() DB couldn't successfully connect to DB '%s'!", databaseName);
-            return false;
-        }
-        try
-        {
-            Statement statement = connection.createStatement();
+            connection.setAutoCommit(false); //Setting auto-commit false
             
-            //Setting auto-commit false
-            connection.setAutoCommit(false);
-            
-            //################################
-            // Creating Batch
-            //################################
-            for (String query : queries)
+            for (String query : queries)  // Creating Batch
             {
-                //statement.addBatch(query);
                 statement.executeUpdate(query);
             }
             
-            //Executing the batch
-            // statement.executeBatch();
-            
-            //Saving the changes
             connection.commit();
-            //################################
-            
             return true;
         }
+        //##########################################################
+        // Error Handling
+        //##########################################################
         catch (Exception e)
         {
-            System.err.printf("\n\n @uploadData_Batch() \n\nQuery:\n ");
-            for (String query : queries)
-            {
-                System.err.printf("\n\n%s", query);
-            }
-            System.err.printf("\n\n%s", e);
-            
-            JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
-        }
-        return false;
-    }
-    
-    public Boolean upload_Data_Batch_Independently(ArrayList<String> queries)
-    {
-        if (! (get_DB_Connection_Status()))
-        {
-            System.out.printf("\n\n  uploadData_Batch_Independently() DB couldn't successfully connect to DB '%s'!", databaseName);
+            handleException_MYSQL(e, methodName, queries);
             return false;
         }
-        try
-        {
-            Statement statement = connection.createStatement();
-            
-            //Setting auto-commit false
-            connection.setAutoCommit(false);
-            
-            //################################
-            // Creating Batch
-            //################################
-            for (String query : queries)
-            {
-                //statement.addBatch(query);
-                statement.executeUpdate(query);
-            }
-            
-            //Executing the batch
-            // statement.executeBatch();
-            
-            //Saving the changes
-            connection.commit();
-            //################################
-            
-            return true;
-        }
-        catch (Exception e)
-        {
-            System.err.printf("\n\n @uploadData_Batch() \n\nQuery:\n ");
-            for (String query : queries)
-            {
-                System.err.printf("\n\n%s", query);
-            }
-            System.err.printf("\n\n%s", e);
-            
-            JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
-        }
-        return false;
     }
     
     //##################################################################################################################
@@ -804,210 +759,118 @@ public class MyJDBC
     //##################################################################################################################
     
     /**
-      Give this method an SQL command and this method will return an arraylist storing other arraylists which are rows
-      of the SQL query
-
-      @param the sql statement
-      @return ArrayList of ArrayLists storing the output of the SQL request
+     * Give this method an SQL command and this method will return an arraylist storing other arraylists which are rows
+     * of the SQL query
+     *
+     * @return ArrayList of ArrayLists storing the output of the SQL request
      */
     public ArrayList<ArrayList<String>> get_Multi_Column_Query(String query)
     {
-        if (! (get_DB_Connection_Status()) && ! (override))
+        //##########################################################
+        // Check DB Status
+        //##########################################################
+        String methodName = "get_Multi_Column_Query()";
+        
+        if (! approve_DB_Status(methodName)) { return null; }
+        
+        //##########################################################
+        // Execute Query
+        //##########################################################
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(query))
         {
-            System.out.printf("\n\n  getMultiColumnQuery() DB couldn't successfully connect to DB '%s'!", databaseName);
-            return null;
-        }
-        try
-        {
-            //Query Setup
-            Statement statement = connection.createStatement();
+            if (! resultSet.isBeforeFirst()) { return null; } // checks if any data was returned
             
-            //Fetching Query
-            ResultSet resultSet = statement.executeQuery(query);
+            ArrayList<ArrayList<String>> queryResultsList = new ArrayList<ArrayList<String>>();  //creating an ArrayList to store all the rows of the query data
             
-            // Get size of query
-            ResultSetMetaData rsmd = resultSet.getMetaData();
-            int columnSize = rsmd.getColumnCount();
+            ResultSetMetaData rs_MetaData = resultSet.getMetaData();
+            int columnSize = rs_MetaData.getColumnCount(); // Get size of query
             
-            // checks if any data was returned, otherwise  the code will eventually return null
-            if (resultSet.isBeforeFirst())
+            while (resultSet.next())  // For each row of the query, compile results
             {
-                //creating an ArrayList to store all the rows of the query data
-                ArrayList<ArrayList<String>> queryResultsList = new ArrayList<ArrayList<String>>();
+                ArrayList<String> tempList = new ArrayList<>(); // storing  all the columns results of a record
                 
-                // for each row of the query
-                while (resultSet.next())
+                // Add each column of the query to an overall string which represents the query row
+                for (int i = 1; i <= columnSize; i++)
                 {
-                    ArrayList<String> tempList = new ArrayList<>(); // storing  all the columns results of a record
-                    
-                    // add each column of the query to an overall string which repressents the query row
-                    for (int i = 1; i <= columnSize; i++)
-                    {
-                        tempList.add(resultSet.getString(i));
-                    }
-                    queryResultsList.add(tempList);
+                    tempList.add(resultSet.getString(i));
                 }
-                
-                return queryResultsList;
+                queryResultsList.add(tempList);
             }
+            return queryResultsList;
         }
+        //##########################################################
+        // Error Handling
+        //##########################################################
         catch (Exception e)
         {
-            System.err.printf("\n\n@getQueryResults()\n ERROR from query: \n\n'' %s '' \n\nException Msg: \n\n'' %s ''", query, e);
-            JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
-            //System.exit(1);
-            
+            handleException_MYSQL(e, methodName, query);
+            return null;
         }
-        return null;
     }
     
     public ArrayList<ArrayList<Object>> get_Multi_Column_Query_Object(String query)
     {
-        if (! (get_DB_Connection_Status()))
-        {
-            System.out.printf("\n\n  get_Multi_ColumnQuery_Object() DB couldn't successfully connect to DB '%s'!", databaseName);
-            return null;
-        }
+        //##########################################################
+        // Check DB Status
+        //##########################################################
+        String methodName = "get_Multi_Column_Query_Object()";
         
-        try
+        if (! approve_DB_Status(methodName)) { return null; }
+        
+        //##########################################################
+        // Query Setup
+        //##########################################################
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(query))
         {
-            //Query Setup
-            Statement statement = connection.createStatement();
+            if (! resultSet.isBeforeFirst()) { return null; } // checks if any data was returned
             
-            //Fetching Query
-            ResultSet resultSet = statement.executeQuery(query);
+            ArrayList<ArrayList<Object>> queryResultsList = new ArrayList<ArrayList<Object>>();  //creating an ArrayList to store all the rows of the query data
             
-            // Get size of query
             ResultSetMetaData rsmd = resultSet.getMetaData();
-            int columnSize = rsmd.getColumnCount();
+            int columnSize = rsmd.getColumnCount();  // Get size of query
             
-            // checks if any data was returned, otherwise  the code will eventually return null
-            if (resultSet.isBeforeFirst())
+            // for each row of the query
+            while (resultSet.next())
             {
-                //creating an ArrayList to store all the rows of the query data
-                ArrayList<ArrayList<Object>> queryResultsList = new ArrayList<ArrayList<Object>>();
+                ArrayList<Object> tempList = new ArrayList<>(); // storing  all the columns results of a record
                 
-                // for each row of the query
-                while (resultSet.next())
+                // add each column of the query to an overall string which repressents the query row
+                for (int i = 1; i <= columnSize; i++)
                 {
-                    ArrayList<Object> tempList = new ArrayList<>(); // storing  all the columns results of a record
-                    
-                    // add each column of the query to an overall string which repressents the query row
-                    for (int i = 1; i <= columnSize; i++)
-                    {
-                        tempList.add(resultSet.getString(i));
-                    }
-                    queryResultsList.add(tempList);
+                    tempList.add(resultSet.getString(i));
                 }
-                return queryResultsList;
+                queryResultsList.add(tempList);
             }
+            return queryResultsList;
         }
+        //##########################################################
+        // Error Handling
+        //##########################################################
         catch (Exception e)
         {
-            System.err.printf("\n\n  @getQueryResults() ERROR from query %s \n\n  %s", query, e);
-            JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
-            //System.exit(1);
-        }
-        
-        return null;
-    }
-    
-    public String[] get_Single_Column_Query(String query)
-    {
-        if (! (get_DB_Connection_Status()))
-        {
-            System.out.printf("\n\ngetSingleColumnQuery() DB couldn't successfully connect to DB '%s'!", databaseName);
+            handleException_MYSQL(e, methodName, query);
             return null;
         }
-        
-        try
-        {
-            //Query Setup
-            Statement statement = connection.createStatement();
-            
-            //Fetching Query
-            String query2 = String.format("%s", query);
-            ResultSet resultSet = statement.executeQuery(query2);
-            
-            // checks if any data was returned, otherwise  the code will eventually return null
-            if (resultSet.isBeforeFirst())
-            {
-                //############################################
-                // Get number of  Columns in each query row
-                //############################################
-                ResultSetMetaData rsmd = resultSet.getMetaData();
-                int columnSize = rsmd.getColumnCount();
-                
-                // if query has multiple columnns this method cannot produce a 2d list results,
-                if (columnSize > 1)
-                {
-                    System.out.printf("\n\n!!! Query size bigger than one column, use multi-line query !!! \n\n");
-                    throw new Exception();
-                }
-                
-                //############################################
-                // Get the number of rows in the query
-                //############################################
-
-                    /*
-                    remove last char ";" for getRowsInQuery() method
-                    sub-query cannot have a ";" in in the middle sub-query
-                     */
-                
-                Integer rowCount = get_Rows_In_Query(query); // get row count of query to this method "query"
-                
-                if (rowCount != null)
-                {
-                    //############################################
-                    // Storing query data in String[]
-                    //############################################
-                    String[] queryData = new String[rowCount]; // storing  all the columns results of a record
-                    // System.out.printf("\nRow Count is %s", rowCount);
-                    
-                    // for each row of the query
-                    int i = 0;
-                    while (resultSet.next())
-                    {
-                        String result = resultSet.getString(1); // resultset is the row
-                        queryData[i] = result;
-                        i++;
-                    }
-                    return queryData;
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            System.err.printf("\n\n@getSingleColumnQuery() ERROR from query \n\n'%s' \n\n%s\n\n", query, e);
-            // e.printStackTrace();
-            
-            JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
-            //System.exit(1);
-        }
-        
-        return null;
     }
     
     public ArrayList<String> get_Single_Column_Query_AL(String query)
     {
-        try
+        //##########################################################
+        // Check DB Status
+        //##########################################################
+        String methodName = "get_Single_Column_Query_AL()";
+        
+        if (! approve_DB_Status(methodName)) { return null; }
+        
+        //##########################################################
+        // Query Setup
+        //##########################################################
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(query))
         {
-            //############################################
-            // Execute Query & Get Results
-            //############################################
-            Statement statement = connection.createStatement(); // Query Setup
-            
-            ResultSet resultSet = statement.executeQuery(query);  // Fetching Query Results
-            
-            //############################################
-            // Get number of  Columns in each query row
-            //############################################
-            if (! resultSet.isBeforeFirst()) // checks if any data wasn't returned, exit
-            {
-                System.err.printf("\n\ngetSingleColumnQuery_ArrayList() Returned NULL using query: \n\n%s", query);
-                JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
-                return null;
-            }
+            if (! resultSet.isBeforeFirst()) { return null; } // checks if any data was returned
             
             //############################################
             // Get number of  Columns in each query row
@@ -1017,8 +880,10 @@ public class MyJDBC
             
             if (columnSize > 1) // if query has multiple columns this method cannot produce a 2d list results,
             {
-                System.err.printf("\n\n!!! getSingleColumnQuery_ArrayList() Query size bigger than one column, use multi-line query !!!");
-                JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
+                System.err.printf("\n\n!!! MyJDBC.java %s \nQuery size bigger than one column, use multi-line query !!!", methodName);
+                
+                JOptionPane.showMessageDialog(null, "\n\nDatabase Error: \nCheck Output ", "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
+                
                 return null;
             }
             
@@ -1033,403 +898,293 @@ public class MyJDBC
                 queryData.add(result);
             }
             return queryData;
-            
         }
+        //##########################################################
+        // Error Handling
+        //##########################################################
         catch (Exception e)
         {
-            System.err.printf("\n\n@getSingleColumnQuery_ArrayList() ERROR from query: \n\n'%s' \n\n%s\n\n", query, e);
-            
-            JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
-            
+            handleException_MYSQL(e, methodName, query);
             return null;
         }
     }
     
-    public Collection<String> get_SingleColumnQuery_AlphabeticallyOrderedTreeSet(String query)
+    public TreeSet<String> get_Single_Col_Alphabetically_Sorted(String query)
     {
-        if (! (get_DB_Connection_Status()))
+        //##########################################################
+        // Check DB Status
+        //##########################################################
+        String methodName = "get_Single_Col_Alphabetically_Sorted()";
+        
+        if (! approve_DB_Status(methodName)) { return null; }
+        
+        //##########################################################
+        // Query Setup
+        //##########################################################
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(query))
         {
-            System.out.printf("\n\n  getSingleColumnQuery_AlphabeticallyOrderedTreeSet() DB couldn't successfully connect to DB '%s'!", databaseName);
-            return null;
-        }
-        try
-        {
-            //Query Setup
-            Statement statement = connection.createStatement();
+            if (! resultSet.isBeforeFirst()) { return null; } // checks if any data was returned
             
-            //Fetching Query
-            String query2 = String.format("%s", query);
-            ResultSet resultSet = statement.executeQuery(query2);
+            //############################################
+            // Get number of  Columns in each query row
+            //############################################
+            ResultSetMetaData rsmd = resultSet.getMetaData();
+            int columnSize = rsmd.getColumnCount();
             
-            // checks if any data was returned, otherwise  the code will eventually return null
-            if (resultSet.isBeforeFirst())
+            if (columnSize > 1) // if query has multiple columns this method cannot produce a 2d list results,
             {
-                //############################################
-                // Get number of  Columns in each query row
-                //############################################
-                ResultSetMetaData rsmd = resultSet.getMetaData();
-                int columnSize = rsmd.getColumnCount();
+                System.err.printf("\n\n!!! MyJDBC.java %s \nQuery size bigger than one column, use multi-line query !!!", methodName);
                 
-                // if query has multiple columnns this method cannot produce a 2d list results,
-                if (columnSize > 1)
-                {
-                    System.out.printf("\n\n!!! Query size bigger than one column, use multi-line query !!! \n\n");
-                    throw new Exception();
-                }
+                JOptionPane.showMessageDialog(null, "\n\nDatabase Error: \nCheck Output ", "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
                 
-                //############################################
-                // Get the number of rows in the query
-                //############################################
-
-                    /*
-                    remove last char ";" for getRowsInQuery() method
-                    sub-query cannot have a ";" in in the middle sub-query
-                     */
-                
-                Integer rowCount = get_Rows_In_Query(query); // get row count of query to this method "query"
-                
-                if (rowCount != null)
-                {
-                    //############################################
-                    // Storing query data in String[]
-                    //############################################
-                    Collection<String> queryData = new TreeSet<String>(Collator.getInstance());
-                    // System.out.printf("\nRow Count is %s", rowCount);
-                    
-                    // for each row of the query
-                    int i = 0;
-                    while (resultSet.next())
-                    {
-                        String result = resultSet.getString(1); // resultset is the row
-                        queryData.add(result);
-                        i++;
-                    }
-                    return queryData;
-                }
+                return null;
             }
+            
+            //############################################
+            // Storing query data in String[]
+            //############################################
+            TreeSet<String> queryData = new TreeSet<String>(Collator.getInstance());
+            
+            while (resultSet.next()) // for each row of the query
+            {
+                queryData.add(resultSet.getString(1));
+            }
+            return queryData;
         }
+        //##########################################################
+        // Error Handling
+        //##########################################################
         catch (Exception e)
         {
-            System.err.printf("\n\n@getSingleColumnQuery_AlphabeticallyOrderedTreeSet() ERROR from query \n\n'%s' \n\n%s\n", query, e);
-            // e.printStackTrace();
-            JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
-        }
-        return null;
-    }
-    
-    //################################################################
-    public Object[][] get_TableData_Objects(String query, String tableName)
-    {
-        if (! (get_DB_Connection_Status()))
-        {
-            System.out.printf("\n\n  getTableDataObject() DB couldn't successfully connect to DB '%s'!", databaseName);
+            handleException_MYSQL(e, methodName, query);
             return null;
         }
-        try
-        {
-            //Query Setup
-            Statement statement = connection.createStatement();
-            
-            //###################################
-            //Fetching Query
-            //###################################
-            
-            ResultSet resultSet = statement.executeQuery(query);
-            
-            // check if resultset is not empty
-            if (resultSet.isBeforeFirst())
-            {
-                //###################################
-                // Getting Query Data Info
-                //##################################
-                
-                String[] columnDataTypes = get_Column_DataTypes(tableName);
-                // System.out.println("\n\n"+Arrays.toString(columnDataTypes));
-                
-                int noOfColumns = columnDataTypes.length;
-                
-                Integer rowsInQuery = get_Rows_In_Query(query);
-                
-                //####################################################################
-                // Creating Data Object for JTable
-                //####################################################################
-                if (rowsInQuery != null)
-                {
-                    Object[][] Data = new Object[rowsInQuery][noOfColumns];
-                    
-                    for (int row = 0; row < rowsInQuery; row++)
-                    {
-                        resultSet.next(); // go to next row in query results
-                        
-                        // For each col in the row
-                        for (int col = 0; col < noOfColumns; col++)
-                        {
-                            String colData = resultSet.getString(col + 1);
-                            String colDataType = columnDataTypes[col];
-                            
-                            try
-                            {
-                                // Convert to appropriate datatype
-                                switch (colDataType)
-                                {
-                                    case "varchar":
-                                        Data[row][col] = colData;
-                                        break;
-                                    case "tinyint":
-                                        Data[row][col] = colData.equals("1") ? true : false;
-                                        break;
-                                    case "int":
-                                        Data[row][col] = Integer.valueOf(colData);
-                                        break;
-                                    case "decimal":
-                                        Data[row][col] = new BigDecimal(colData);
-                                        break;
-                                    case "bigint":
-                                        Data[row][col] = colData;
-                                        break;
-                                    
-                                    case "datetime":
-                                        
-                                        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                                        LocalDateTime result = LocalDateTime.parse(colData, format);
-                                        
-                                        Data[row][col] = result.toString().replaceAll("T", " ");
-                                        
-                                        break;
-                                    
-                                    case "time":
-                                        
-                                        // Remove :00 the seconds from the time
-                                        String time = String.format("%s", colData)
-                                                .replaceFirst(".$", "")
-                                                .replaceFirst(".$", "")
-                                                .replaceFirst(".$", "");
-                                        
-                                        Data[row][col] = time;
-                                        break;
-                                    
-                                    default:
-                                        System.out.printf("\n\n@getTableDataObject() Error With DataType '%s' = ' %s ' !", colDataType, colData);
-                                        throw new Exception();
-                                }
-                            }
-                            catch (Exception e)
-                            {
-                                System.err.printf("\n@getTableDataObject() \nUn-Accounted table data type! \n\n%s", e);
-                                JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
-                                return null;
-                            }
-                        }
-                    }
-                    return Data;
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            System.err.printf("\n\n@getTableDataObject() ERROR from query: \n'%s' \n\n %s", query, e);
-        }
-        return null;
     }
     
     public ArrayList<ArrayList<Object>> get_TableData_Objects_AL(String query, String tableName)
     {
-        ResultSet resultSet = null;
-        Integer rowsInQuery = 0;
-        int noOfColumnsInTable = 0;
-        ArrayList<String> tableColumnDataTypes = null;
+        //#########################################################################
+        // Check DB Status
+        //#########################################################################
+        String methodName = "get_TableData_Objects_AL()";
         
-        try
+        if (! approve_DB_Status(methodName)) { return null; }
+        
+        //#########################################################################
+        // Query Setup
+        //#########################################################################
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(query))
         {
-            //####################################################################
-            //Fetching Query
-            //####################################################################
-            Statement statement = connection.createStatement(); //Query Setup
-            resultSet = statement.executeQuery(query);
-            
-            // check if resultSet is not empty
-            if (! resultSet.isBeforeFirst()) { throw new Exception("\n\nQuery returned null"); }
+            if (! resultSet.isBeforeFirst()) { return null; } // checks if any data was returned
             
             //#####################################################################
             // Getting Query Data Info
             //#####################################################################
-            tableColumnDataTypes = get_Column_DataTypes_AL(tableName);
-            //System.out.printf("\n\nQuery: %s \nColumn DataTypes: %s", query, tableColumnDataTypes);
-            
-            noOfColumnsInTable = tableColumnDataTypes.size();
-            rowsInQuery = get_Rows_In_Query(query);
-            
-            if (rowsInQuery == null) { throw new Exception("\n\nRows in Query returned null"); }
-        }
-        catch (Exception e)
-        {
-            System.err.printf("\n\n@getTableDataObject() ERROR from query: \n'%s' \n\n %s", query, e);
-            return null;
-        }
-        
-        //####################################################################
-        // Creating DataSet to Be Returned
-        //####################################################################
-        try
-        {
             ArrayList<ArrayList<Object>> data = new ArrayList<>();
+            ArrayList<String> table_Col_DataTypes = get_Column_DataTypes_AL(tableName);
             
-            for (int row = 0; row < rowsInQuery; row++)
+            int noOfColumnsInTable = table_Col_DataTypes.size();
+            
+            //#####################################################################
+            // Compile Results
+            //#####################################################################
+            while (resultSet.next())
             {
-                resultSet.next(); // go to next row in query results
-                
                 ArrayList<Object> rowData = new ArrayList<>();
                 
-                // Filter Through Query Result Data 
-                for (int col = 0; col < noOfColumnsInTable; col++)
+                for (int col = 1; col <= noOfColumnsInTable; col++) // Filter Through Query Result Data
                 {
-                    String colData = resultSet.getString(col + 1);
-                    String colDataType = tableColumnDataTypes.get(col);
+                    String colData = resultSet.getString(col);
+                    String colDataType = table_Col_DataTypes.get(col - 1); // Index in regular list start at 0
                     
-                   // System.out.printf("\n\nRow: %s | Column: %s \nData: %s \nDataType : %s", row, col, colData, colDataType);
-    
                     //######################################
                     // Convert Data To Appropriate Datatype
                     //######################################
                     switch (colDataType)
                     {
                         case "varchar":
-                            rowData.add(colData);
-                            break;
+                            rowData.add(colData); break;
                         case "tinyint":
-                            rowData.add(colData.equals("1"));
-                            break;
+                            rowData.add(colData.equals("1")); break;
                         case "int":
-                            rowData.add(Integer.valueOf(colData));
-                            break;
+                            rowData.add(Integer.valueOf(colData)); break;
                         case "decimal":
-                            rowData.add(new BigDecimal(colData));
-                            break;
-                        case "bigint": //HELLO convert to long
-                            rowData.add(colData);
-                            break;
+                            rowData.add(new BigDecimal(colData)); break;
+                        case "bigint":
+                            rowData.add(resultSet.getLong(col)); break;
                         case "datetime":
                             DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                             LocalDateTime result = LocalDateTime.parse(colData, format);
                             rowData.add(result.toString().replaceAll("T", " "));
                             break;
                         case "time":
-                            
-                            // Remove :00 the seconds from the time
-                            String time = String.format("%s", colData)
-                                    .replaceFirst(".$", "")
-                                    .replaceFirst(".$", "")
-                                    .replaceFirst(".$", "");
-                            
-                            rowData.add(time);
-                            break;
-                        
+                            // parses "HH:mm:ss" & Removes :00 the seconds from the time
+                            rowData.add(LocalTime.parse(colData).truncatedTo(ChronoUnit.MINUTES)); break;
                         default:
-                            throw new Exception(String.format("\n\n@getTableDataObject() Error With DataType '%s' = ' %s ' !", colDataType, colData));
+                            throw new Exception(String.format("\n\n MyJDBC.java @getTableDataObject() Error With DataType '%s' = ' %s ' !", colDataType, colData));
                     }
                 }
                 data.add(rowData);
             }
             return data;
         }
+        //##########################################################
+        // Error Handling
+        //##########################################################
         catch (Exception e)
         {
-            System.err.printf("\n@getTableDataObject() \nUn-Accounted table data type! \n\n%s", e);
-            JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
+            handleException_MYSQL(e, methodName, query);
             return null;
         }
     }
     
     //##################################################################################################################
-    //  Get data about a query methods
+    //  MetaData Methods (Done)
     //##################################################################################################################
-    public String[] get_Column_DataTypes(String tableName)
-    {
-        if (! (get_DB_Connection_Status()))
-        {
-            System.out.printf("\n\n  getColumnDataTypes() DB couldn't successfully connect to DB '%s'!", databaseName);
-            return null;
-        }
-        
-        String columnDataTypesQuery = String.format("""                    
-                select data_type
-                from information_schema.columns
-                where table_schema = '%s'
-                and table_name = '%s'
-                order by ordinal_position;""", databaseName, tableName);
-        
-        return get_Single_Column_Query(columnDataTypesQuery);
-    }
-    
     public ArrayList<String> get_Column_DataTypes_AL(String tableName)
     {
-        if (! (get_DB_Connection_Status()))
-        {
-            System.out.printf("\n\n  getColumnDataTypes() DB couldn't successfully connect to DB '%s'!", databaseName);
-            return null;
-        }
+        //##########################################################
+        // Check DB Status
+        //##########################################################
+        if (! approve_DB_Status("get_Column_DataTypes_AL()")) { return null; }
         
-        String columnDataTypesQuery = String.format("""                    
-                select data_type
-                from information_schema.columns
-                where table_schema = '%s'
-                and table_name = '%s'
-                order by ordinal_position;                      
-                                       """, databaseName, tableName);
+        //##########################################################
+        // Query Setup
+        //##########################################################
+        String columnDataTypesQuery = String.format("""
+                SELECT data_type
+                FROM information_schema.columns
+                WHERE table_schema = '%s'
+                AND table_name = '%s'
+                ORDER BY ordinal_position;""", databaseName, tableName);
         
+        //##########################################################
+        // Return Query
+        //##########################################################
         return get_Single_Column_Query_AL(columnDataTypesQuery);
     }
     
     public ArrayList<String> get_Column_Names_AL(String tableName)
     {
-        if (! (get_DB_Connection_Status()))
-        {
-            System.out.printf("\n\n  getColumnNames() DB couldn't successfully connect to DB '%s'!", databaseName);
-            return null;
-        }
+        //##########################################################
+        // Check DB Status
+        //##########################################################
+        if (! approve_DB_Status("get_Column_Names_AL()")) { return null; }
         
+        //##########################################################
+        // Query Setup
+        //##########################################################
         String columnNamesQuery = String.format("""
                 SELECT column_name
                 FROM information_schema.columns
                 WHERE table_schema = '%s'
                 AND table_name = '%s'
-                ORDER BY ordinal_position;
-                                       """, databaseName, tableName);
+                ORDER BY ordinal_position;""", databaseName, tableName);
+        
+        //##########################################################
+        // Return Query
+        //##########################################################
         return get_Single_Column_Query_AL(columnNamesQuery);
     }
     
-    public Integer get_Rows_In_Query(String query)
+    //##################################################################################################################
+    // Validation Methods
+    //##################################################################################################################
+    public boolean is_DB_Connected()
     {
-        if (! (get_DB_Connection_Status()))
+        return db_Connection_Status;
+    }
+    
+    private boolean approve_DB_Status(String methodName)
+    {
+        if (! (is_DB_Connected()))
         {
-            System.out.printf("\n\n  getRowsInQuery() DB couldn't successfully connect to DB '%s'!", databaseName);
-            return null;
+            System.err.printf("\n\nMyJDBC.java : %s \nDB couldn't successfully connect to DB '%s'!", methodName, databaseName);
+            return false;
         }
         
-        try
-        {
-            //Query Setup
-            Statement statement = connection.createStatement();
-            
-            query = query.replaceFirst(".$", ""); //=> aaabc  ;
-            
-            //Fetching Query
-            String query3 = String.format("select count(*) from (%s) as count;", query);
-            ResultSet resultSet = statement.executeQuery(query3);
-            
-            if (resultSet.isBeforeFirst())
-            {
-                resultSet.next(); // move cursor to first query result
-                return resultSet.getInt(1);
-            }
-        }
-        catch (Exception e)
-        {
-            System.err.printf("\n\n@getRowsInQuery() ERROR \n%s\n%s", query, e);
-            JOptionPane.showMessageDialog(null, String.format("Database Error:\n\nCheck Output "), "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
-            //System.exit(1);
-        }
+        return true;
+    }
+    
+    //##################################################################################################################
+    // Quick Methods
+    //##################################################################################################################
+    
+    private void print_File_Not_Found_ERR_MSG(Exception e, String methodName)
+    {
+        System.err.printf("\n\nMyJDBC.java @%s Exception ERROR \n\nFile not found: %s%n", methodName, e.getMessage());
         
-        return null;
+        JOptionPane.showMessageDialog(null, "\n\nDatabase Error: \nCheck Output !!",
+                "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    private void print_IO_Exception_ERR_MSG(Exception e, String methodName)
+    {
+        System.err.printf("\n\nMyJDBC.java @%s Exception ERROR \n\nI/O error while processing files: %s%n", methodName, e.getMessage());
+        
+        JOptionPane.showMessageDialog(null, "\n\nDatabase Error: \nCheck Output !!",
+                "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    private void print_SQL_ERR_MSG(SQLException e, String methodName, Object query)
+    {
+        
+        System.err.printf("\n\nMyJDBC.java @%s SQL ERROR \nQuery: %s \nMessage: %s \nSQLState: %s \nErrorCode: %d\n",
+                methodName, query.toString(), e.getMessage(), e.getSQLState(), e.getErrorCode());
+        
+        JOptionPane.showMessageDialog(null, "\n\nDatabase Error: \nCheck Output !!",
+                "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    private void print_Exception_ERR_MSG(Exception e, String methodName, Object query)
+    {
+        System.err.printf("\n\nMyJDBC.java @%s Exception ERROR \n\n%s \n%s", methodName, query != null ? query.toString() : "", e);
+        
+        JOptionPane.showMessageDialog(null, "\n\nDatabase Error: \nCheck Output !!",
+                "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    private void print_Exception_ERR_MSG(Exception e, String methodName)
+    {
+        System.err.printf("\n\nMyJDBC.java @%s Exception ERROR \n\n%s", methodName, e);
+        
+        JOptionPane.showMessageDialog(null, "\n\nDatabase Error: \nCheck Output !!",
+                "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    //###########################################
+    // SQL Methods Error Handling
+    //###########################################
+    private void handleException_MYSQL(Exception e, String methodName, Object query)
+    {
+        if (e instanceof SQLException x)
+        {
+            print_SQL_ERR_MSG(x, methodName, query);
+        }
+        else
+        {
+            print_Exception_ERR_MSG(e, methodName, query);
+        }
+    }
+    
+    //###########################################
+    // File Methods for Error Handling
+    //###########################################
+    private void handleException_File(Exception e, String methodName)
+    {
+        if (e instanceof FileNotFoundException x)
+        {
+            print_File_Not_Found_ERR_MSG(x, methodName);
+        }
+        else if (e instanceof IOException x)
+        {
+            print_IO_Exception_ERR_MSG(x, methodName);
+        }
+        else
+        {
+            print_Exception_ERR_MSG(e, methodName);
+        }
     }
 }

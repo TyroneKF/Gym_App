@@ -602,16 +602,16 @@ public class Add_Ingredients_Form extends Parent_IngredientForm_And_ShopForm
     
     protected boolean check_IF_IngredientName_In_DB(String ingredientName)
     {
+        //####################################
+        // Create uery
+        //####################################
         ingredientName = remove_Space_And_Hidden_Chars(ingredientName);
         String query = String.format("SELECT Ingredient_Name FROM ingredients_info WHERE Ingredient_Name = \"%s\";", ingredientName);
         
-        System.out.printf("\n\n%s", query);
-        
-        if (db.get_Single_Column_Query(query) != null)
-        {
-            return true;
-        }
-        return false;
+        //####################################
+        // Return Result
+        //####################################
+        return db.get_Single_Column_Query_AL(query) != null;
     }
     
     protected String remove_Space_And_Hidden_Chars(String stringToBeEdited)

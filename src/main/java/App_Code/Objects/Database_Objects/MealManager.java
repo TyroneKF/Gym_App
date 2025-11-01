@@ -51,7 +51,7 @@ public class MealManager
     private ArrayList<String> mealTotalTable_ColumnNames, ingredientsTable_ColumnNames;
     private ArrayList<String> totalMeal_Table_ColToHide, ingredientsTableUnEditableCells, ingredients_Table_Col_Avoid_Centering,
             ingredientsInMeal_Table_ColToHide;
-    private TreeMap<String, Collection<String>> map_ingredientTypesToNames;
+    private TreeMap<String, TreeSet<String>> map_ingredientTypesToNames;
     private ArrayList<IngredientsTable> ingredientsTables = new ArrayList<>();
     private HashMap<String, Integer> totalMeal_Other_Cols_Pos;
     
@@ -148,7 +148,7 @@ public class MealManager
         // Get mealInPlanID
         //##############################################################################################################
         String query = String.format("Select meal_in_plan_id FROM meals_in_plan WHERE plan_id = %s AND meal_name = '%s';", tempPlanID, newMealName);
-        String[] results = db.get_Single_Column_Query(query);
+        ArrayList<String> results = db.get_Single_Column_Query_AL(query);
         
         if (results == null)
         {
@@ -163,7 +163,7 @@ public class MealManager
             return;
         }
         
-        mealInPlanID = Integer.valueOf(results[0]);
+        mealInPlanID = Integer.valueOf(results.getFirst());
         
         //##############################################################################################################
         // Set Name & Time Variables
@@ -431,7 +431,10 @@ public class MealManager
         {
             // Getting Ingredients In Meal
             String query = String.format("SELECT * FROM %s WHERE div_meal_sections_id = %s AND plan_id = %s ORDER BY ingredients_index;", tableName, divMealSectionsID, tempPlanID);
-            mealData = db.get_TableData_Objects(query, tableName) != null ? db.get_TableData_Objects_AL(query, tableName) : mealData;
+            
+            ArrayList<ArrayList<Object>> result_placeholder = db.get_TableData_Objects_AL(query, tableName) ;
+            
+            mealData = result_placeholder != null  ? result_placeholder : new ArrayList<>() ;
         }
         
         //##############################################
@@ -890,7 +893,7 @@ public class MealManager
         //##########################################
         String getNextIndexQuery = "SELECT IFNULL(MAX(`div_meal_sections_id`),0) + 1 AS nextId FROM `divided_meal_sections`;";
         
-        String[] divMealSectionsIDResult = db.get_Single_Column_Query(getNextIndexQuery);
+        ArrayList<String> divMealSectionsIDResult = db.get_Single_Column_Query_AL(getNextIndexQuery);
         
         if (divMealSectionsIDResult == null)
         {
@@ -898,7 +901,7 @@ public class MealManager
             return;
         }
         
-        Integer divMealSectionsID = Integer.valueOf(divMealSectionsIDResult[0]);
+        int divMealSectionsID = Integer.parseInt(divMealSectionsIDResult.getFirst());
         
         //##########################################
         // Insert Into Database Table
@@ -1478,7 +1481,7 @@ public class MealManager
     // ###########################
     // Collections
     // ###########################
-    public TreeMap<String, Collection<String>> getMap_ingredientTypesToNames()
+    public TreeMap<String, TreeSet<String>> getMap_ingredientTypesToNames()
     {
         return map_ingredientTypesToNames;
     }

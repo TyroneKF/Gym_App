@@ -269,7 +269,7 @@ public class Add_Ingredients_Screen extends Screen_JPanel
     protected boolean add_Or_Delete_Ingredient_From_Map(String process, String ingredientType, String ingredientName)
     {
         // Storing
-        Collection<String> ingredientTypeList = ingredients_info_screen.get_Map_IngredientTypes_To_Names().get(ingredientType);
+        TreeSet<String> ingredientTypeList = ingredients_info_screen.get_Map_IngredientTypes_To_Names().get(ingredientType);
         if (process.equals("add"))// if key exists add the ingredientName in
         {
             if (ingredientTypeList != null)
@@ -289,7 +289,7 @@ public class Add_Ingredients_Screen extends Screen_JPanel
             ingredientTypeList.remove(ingredientName);
             
             // Remove List as there is no items in it
-            if (ingredientTypeList.size() == 0)
+            if (ingredientTypeList.isEmpty())
             {
                 ingredients_info_screen.get_Map_IngredientTypes_To_Names().remove(ingredientType);
             }

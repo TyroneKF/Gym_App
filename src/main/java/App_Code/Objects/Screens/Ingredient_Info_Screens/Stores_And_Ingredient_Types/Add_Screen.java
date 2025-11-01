@@ -262,26 +262,29 @@ public abstract class Add_Screen extends Screen_JPanel
     
     protected boolean upload_Form()
     {
+        //################################
+        // Check if Value Already Exists
+        //################################
         String query = String.format("SELECT %s  FROM %s WHERE %s = '%s';", db_ColumnName_Field, db_TableName, db_ColumnName_Field, jTextField_TXT);
         
-        if (db.get_Single_Column_Query(query) != null)
+        if (db.get_Single_Column_Query_AL(query) != null)
         {
             JOptionPane.showMessageDialog(null, String.format("\n\n%s '' %s '' Already Exists!", data_Gathering_Name, jTextField_TXT));
             return false;
         }
         
-        
+        //################################
+        // Upload Query
+        //################################
         String uploadString = String.format("""
                 INSERT INTO %s (%s) VALUES
                 ('%s');
                 """, db_TableName, db_ColumnName_Field, jTextField_TXT);
         
-        if (db.upload_Data_Batch_Altogether(new String[]{ uploadString }))
-        {
-            return true;
-        }
-        
-        return false;
+        //################################
+        // Return Query Results
+        //################################
+        return db.upload_Data_Batch_Altogether(new String[]{ uploadString });
     }
     
     protected boolean backup_Data_In_SQL_File()

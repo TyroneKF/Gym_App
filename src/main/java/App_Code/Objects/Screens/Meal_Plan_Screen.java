@@ -59,10 +59,12 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //###############################################
     private ArrayList<String> meal_total_columnNames, ingredients_ColumnNames, macroTargetsTable_ColumnNames, macrosLeft_columnNames;
     
-    private Collection<String> ingredientsTypesList, storesNamesList;
+    private TreeSet<String>
+            ingredientsTypesList ,
+            storesNamesList;
     
     // Sorted Hashmap by key String
-    private TreeMap<String, Collection<String>> map_ingredientTypesToNames = new TreeMap<String, Collection<String>>(new Comparator<String>()
+    private TreeMap<String, TreeSet<String>> map_ingredientTypesToNames = new TreeMap<String, TreeSet<String>>(new Comparator<String>()
     {
         public int compare(String o1, String o2)
         {
@@ -235,7 +237,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                         db_File_Script_List_Name,
                         db_File_Tables_Name);
                 
-                if (db.get_DB_Connection_Status())
+                if (db.is_DB_Connected())
                 {
                     new Meal_Plan_Screen(db);
                 }
@@ -268,7 +270,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     db_File_Script_List_Name,
                     db_File_Tables_Name);
             
-            if (! db.get_DB_Connection_Status())
+            if (! db.is_DB_Connected())
             {
                 JOptionPane.showMessageDialog(null, "ERROR, Cannot Connect To Database!");
                 return;
@@ -315,10 +317,10 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // Getting Number Of Meals & Sub meals Count
         //##############################################################################################################
         String query1 = String.format("SELECT COUNT(meal_in_plan_id) AS total_meals FROM %s WHERE plan_id = %s;", tableMealsInPlanName, planID);
-        String[] mealsInPlanCount = db.get_Single_Column_Query(query1);
+        ArrayList<String> mealsInPlanCount = db.get_Single_Column_Query_AL(query1);
         
         String query2 = String.format("SELECT COUNT(div_meal_sections_id) AS total_sub_meals FROM %s WHERE plan_id = %s;", tableSub_MealsName, planID);
-        String[] dividedMealSectionsCount = db.get_Single_Column_Query(query2);
+        ArrayList<String> dividedMealSectionsCount = db.get_Single_Column_Query_AL(query2);
         
         if (mealsInPlanCount == null | dividedMealSectionsCount == null)
         {
@@ -331,8 +333,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
         }
         
         int
-                no_of_meals = Integer.parseInt(mealsInPlanCount[0]),
-                no_of_sub_meals = Integer.parseInt(dividedMealSectionsCount[0]);
+                no_of_meals = Integer.parseInt(mealsInPlanCount.getFirst()),
+                no_of_sub_meals = Integer.parseInt(dividedMealSectionsCount.getFirst());
         
         System.out.printf("\n\n%s \nMeals In Plan: %s\nSub-Meals In Plan: %s \n", lineSeparator, no_of_meals, no_of_sub_meals);
         
@@ -357,7 +359,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################################
         // Transferring PLan Data To Temp
         //####################################################
-        if (! transferPlanData(planID, tempPlanID))
+        if (! transfer_Plan_Data(planID, tempPlanID))
         {
             loadingScreen.window_Closed_Event();
             return;
@@ -369,7 +371,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################################
         // Transferring Targets From Chosen PLan to Temp
         //####################################################
-        if (! transferTargets(planID, tempPlanID, true, false))
+        if (! transfer_Targets(planID, tempPlanID, true, false))
         {
             loadingScreen.window_Closed_Event();
             return;
@@ -380,7 +382,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################################
         // Transferring this plans Meals  Info to Temp-Plan
         //####################################################
-        if (! (transferMealIngredients(planID, tempPlanID)))
+        if (! (transfer_Meal_Ingredients(planID, tempPlanID)))
         {
             loadingScreen.window_Closed_Event();
             JOptionPane.showMessageDialog(null, "\n\nCannot Create Temporary Plan In DB to Allow Editing");
@@ -392,7 +394,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################################
         // Get IngredientTypes & Store Data
         //####################################################
-        if (! (getIngredientsTypesAndStoresData(true, true, true)))
+        if (! (get_Ingredient_And_Store_Data()))
         {
             loadingScreen.window_Closed_Event();
             JOptionPane.showMessageDialog(null, "\n\nCannot Get Ingredients_Types & Stores Info \n\ngetIngredientsTypesAndStoresData()");
@@ -419,7 +421,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         
         //##############################
         // column names : total_meal_view
-        ////##############################
+        //##############################
         meal_total_columnNames = db.get_Column_Names_AL(tableTotalMealsTableName);
         
         if (meal_total_columnNames != null)
@@ -653,15 +655,13 @@ public class Meal_Plan_Screen extends Screen_JFrame
         resizeGUI();
         setFrameVisibility(true);
         scroll_To_Top_of_ScrollPane();
-        
-        open_Ingredients_Screen();
     }
     
     //##################################################################################################################
     // Transfer SQL Data & Get Data Methods
     //##################################################################################################################
     // Transfer Data Methods
-    private boolean transferPlanData(int fromPlan, int toPlan)
+    private boolean transfer_Plan_Data(int fromPlan, int toPlan)
     {
         String query0 = String.format("""
                 UPDATE `plans` AS `P`,
@@ -684,7 +684,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         return true;
     }
     
-    private boolean transferTargets(int fromPlan, int toPlan, boolean deleteFromToPlan, boolean showConfirmMsg)
+    private boolean transfer_Targets(int fromPlan, int toPlan, boolean deleteFromToPlan, boolean showConfirmMsg)
     {
         //####################################
         // Mysql Transferring Data
@@ -754,7 +754,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         return true;
     }
     
-    private boolean transferMealIngredients(int fromPlanID, int toPlanID)
+    private boolean transfer_Meal_Ingredients(int fromPlanID, int toPlanID)
     {
         //################################################################
         // Delete temp tables if they already exist
@@ -821,101 +821,72 @@ public class Meal_Plan_Screen extends Screen_JFrame
         return true;
     }
     
-    // Get Data Methods
-    public boolean getIngredientsTypesAndStoresData(boolean getMapIngredientsTypesToNames, boolean getIngredientsTypes, boolean getIngredientStores)
+    //#################################################
+    // Get / Update Methods
+    //#################################################
+    /**
+     *  Ingredient Types Mapped to Ingredient Names
+     *  IngredientTypes,
+     *  Stores
+     */
+    public boolean get_Ingredient_And_Store_Data()
     {
-        //#################################################################################
-        //
-        //#################################################################################
-        
-        boolean errorFound = false;
-        String errorTxt = "";
         //#################################################################################
         // Map IngredientTypes  To IngredientNames
         //#################################################################################
-        
-        if (getMapIngredientsTypesToNames)
+        if (! get_Ingredient_Types_Mapped_To_Names())
         {
-            if (! updateIngredientTypesMappedToIngredientsName())
-            {
-                errorTxt += "\n\nUnable to get IngredientTypesToNames";
-                errorFound = true;
-            }
+            JOptionPane.showMessageDialog(this, "\n\nUnable to get 'Ingredient Types To Names'!");
+            return false;
         }
         
         //#################################################################################
         // Get All The IngredientsType Inside The DB
         //#################################################################################
+        ingredientsTypesList = db.get_Single_Col_Alphabetically_Sorted(String.format("SELECT ingredient_type_name FROM %s ORDER BY ingredient_type_name ASC;", tableIngredientsTypeName));
         
-        if (getIngredientsTypes)
+        if (ingredientsTypesList == null)
         {
-            if (ingredientsTypesList != null)
-            {
-                ingredientsTypesList.clear();
-            }
-            
-            ingredientsTypesList = db.get_SingleColumnQuery_AlphabeticallyOrderedTreeSet(String.format("SELECT ingredient_type_name FROM %s ORDER BY ingredient_type_name ASC;", tableIngredientsTypeName));
-            
-            if (ingredientsTypesList == null)
-            {
-                errorTxt += "\n\nUnable to get ingredient_types";
-                errorFound = true;
-            }
+            JOptionPane.showMessageDialog(this, "\n\nUnable to get ingredient_types");
+            return false;
         }
         
         //#################################################################################
         // Get All The Store Names Inside The DB
         //#################################################################################
+        storesNamesList = db.get_Single_Col_Alphabetically_Sorted(String.format("SELECT store_name FROM %s ORDER BY store_name ASC;", tableStoresName));
         
-        if (getIngredientStores)
+        if (storesNamesList == null)
         {
-            if (storesNamesList != null)
-            {
-                storesNamesList.clear();
-            }
-            
-            storesNamesList = db.get_SingleColumnQuery_AlphabeticallyOrderedTreeSet(String.format("SELECT store_name FROM %s ORDER BY store_name ASC;", tableStoresName));
-            
-            if (storesNamesList == null)
-            {
-                errorTxt += "\n\nUnable to get storesList";
-                errorFound = true;
-            }
-        }
-        
-        //#################################################################################
-        //
-        //#################################################################################
-        
-        if (errorFound)
-        {
-            JOptionPane.showMessageDialog(this, String.format("\n\nError \n%s", errorTxt));
+            JOptionPane.showMessageDialog(this, "\n\nUnable to get storesList!");
             return false;
         }
         
+        //#################################################################################
+        // Success MSG
+        //#################################################################################
         System.out.printf("\nIngredient Types & Names Successfully transferred! \n\n%s", lineSeparator);
         return true;
     }
     
-    public boolean updateIngredientTypesMappedToIngredientsName()
+    public boolean get_Ingredient_Types_Mapped_To_Names()
     {
-        
         //###########################################################
         // Store ingredientTypes ID's & IngredientTypeName that occur
         //###########################################################
         String queryIngredientsType = String.format(
                 """
-                        SELECT I.ingredient_type_id, N.ingredient_type_name
-                        FROM
-                        (
-                          SELECT DISTINCT(ingredient_type_id) FROM %s
-                        ) AS I
-                        INNER JOIN
-                        (
-                          SELECT ingredient_type_id, ingredient_type_name FROM %s
-                        ) AS N
-                        ON I.ingredient_type_id = N.ingredient_type_id 
-                        ORDER BY N.ingredient_type_name;""", tableIngredientsInfoName, tableIngredientsTypeName);
+                SELECT I.ingredient_type_id, N.ingredient_type_name
+                FROM
+                (
+                   SELECT DISTINCT(ingredient_type_id) FROM %s
+                ) AS I
+                INNER JOIN
+                (
+                   SELECT ingredient_type_id, ingredient_type_name FROM %s
+                ) AS N
+                ON I.ingredient_type_id = N.ingredient_type_id
+                ORDER BY N.ingredient_type_name;""", tableIngredientsInfoName, tableIngredientsTypeName);
         
         ArrayList<ArrayList<String>> ingredientTypesNameAndIDResults = db.get_Multi_Column_Query(queryIngredientsType);
         
@@ -928,45 +899,34 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###########################################################
         // Clear List
         //###########################################################
-        
         map_ingredientTypesToNames.clear();
         
         //######################################
         // Store all ingredient types & names
         //######################################
-        String errorTxt = "";
-        int listSize = ingredientTypesNameAndIDResults.size();
-        
-        for (int i = 0; i < listSize; i++)
+       for (ArrayList<String> rowData : ingredientTypesNameAndIDResults)
         {
-            ArrayList<String> row = ingredientTypesNameAndIDResults.get(i);
-            String ID = row.get(0);
-            String ingredientType = row.get(1);
+            String ID = rowData.get(0);
+            String ingredientType = rowData.get(1);
             
             //########################################
             // Get IngredientNames for Type
             //########################################
-            String queryTypeIngredientNames = String.format("SELECT ingredient_name FROM %s WHERE ingredient_type_id = %s ORDER BY ingredient_name;", tableIngredientsInfoName, ID);
-            ArrayList<String> ingredientNames = db.get_Single_Column_Query_AL(queryTypeIngredientNames);
+            String queryTypeIngredientNames =
+                    String.format("SELECT ingredient_name FROM %s WHERE ingredient_type_id = %s ORDER BY ingredient_name;", tableIngredientsInfoName, ID);
+            
+            TreeSet<String> ingredientNames = db.get_Single_Col_Alphabetically_Sorted(queryTypeIngredientNames);
             
             if (ingredientNames == null)
             {
-                errorTxt += String.format("\nUnable to grab ingredient names for Type '%s'!", ingredientType);
-                continue;
+                System.err.printf("\nUnable to grab ingredient names for Type '%s'!", ingredientType);
+                return false;
             }
             
             //########################################
             // Mapping Ingredient Type to Names
             //########################################
             map_ingredientTypesToNames.put(ingredientType, ingredientNames);
-            
-            //System.out.printf("\n\nType %s\n%s",ingredientType, ingredientNames);
-        }
-        
-        if (errorTxt.length() > 0)
-        {
-            JOptionPane.showMessageDialog(null, String.format("Had Errors Trying to map ingredient_types to IngredientNames: \n\n%s", errorTxt));
-            return false;
         }
         
         return true;
@@ -1424,7 +1384,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################################################
         // Refresh DB Data
         //####################################################################
-        if (! (transferMealIngredients(planID, tempPlanID))) // transfer meals and ingredients from temp plan to original plan
+        if (! (transfer_Meal_Ingredients(planID, tempPlanID))) // transfer meals and ingredients from temp plan to original plan
         {
             JOptionPane.showMessageDialog(this, "`\n\nError couldn't transfer ingredients data from temp to real plan !!");
             return;
@@ -1610,7 +1570,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         }
         else // because there are meals save them
         {
-            if ((! (transferMealIngredients(tempPlanID, planID)))) // transfer meals and ingredients from temp plan to original plan
+            if ((! (transfer_Meal_Ingredients(tempPlanID, planID)))) // transfer meals and ingredients from temp plan to original plan
             {
                 System.out.println("\n\n#################################### \n2.) saveMealData() Meals Transferred to Original Plan");
                 
@@ -1735,7 +1695,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             }
         }
         
-        if (transferTargets(tempPlanID, planID, false, showUpdateMsg))
+        if (transfer_Targets(tempPlanID, planID, false, showUpdateMsg))
         {
             macrosTargetsChanged(false);
             update_Targets_And_MacrosLeftTables();
@@ -1914,7 +1874,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             
             if (reply == JOptionPane.YES_OPTION)
             {
-                if (transferTargets(planID, tempPlanID, true, false))
+                if (transfer_Targets(planID, tempPlanID, true, false))
                 {
                     JOptionPane.showMessageDialog(this, "\n\nMacro-Targets Successfully Refreshed!!");
                     macrosTargetsChanged(false);
@@ -1990,17 +1950,17 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //#####################################################################
     
     // Others
-    public TreeMap<String, Collection<String>> getMap_ingredientTypesToNames()
+    public TreeMap<String, TreeSet<String>> getMap_ingredientTypesToNames()
     {
         return map_ingredientTypesToNames;
     }
-  
-    public Collection<String> get_IngredientsTypes_List()
+    
+    public TreeSet<String> get_IngredientsTypes_List()
     {
         return ingredientsTypesList;
     }
     
-    public Collection<String> get_StoresNames_List()
+    public TreeSet<String> get_StoresNames_List()
     {
         return storesNamesList;
     }

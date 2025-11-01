@@ -22,7 +22,7 @@ public class IngredientsTable extends JDBC_JTable
     //#################################################################################################################
     // Collections
     //#################################################################################################################
-    private TreeMap<String, Collection<String>> map_ingredientTypesToNames;
+    private TreeMap<String, TreeSet<String>> map_ingredientTypesToNames;
     private ArrayList<Integer> triggerColumns;
     
     //#################################################################################################################
@@ -821,7 +821,7 @@ public class IngredientsTable extends JDBC_JTable
         //#########################################################
         String getNextIndexQuery = "SELECT IFNULL(MAX(`ingredients_index`),0) + 1 AS nextId FROM `ingredients_in_sections_of_meal`;";
         
-        String[] newIngredientsIndex = db.get_Single_Column_Query(getNextIndexQuery);
+        ArrayList<String> newIngredientsIndex = db.get_Single_Column_Query_AL(getNextIndexQuery);
         
         if (newIngredientsIndex == null)
         {
@@ -829,7 +829,7 @@ public class IngredientsTable extends JDBC_JTable
             return;
         }
         
-        int newIngredientsIndex2 = Integer.parseInt(newIngredientsIndex[0]);
+        int newIngredientsIndex2 = Integer.parseInt(newIngredientsIndex.getFirst());
         
         //#########################################################
         // Insert into Database

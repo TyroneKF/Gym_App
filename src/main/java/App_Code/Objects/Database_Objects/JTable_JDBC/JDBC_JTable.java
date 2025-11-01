@@ -33,7 +33,7 @@ public class JDBC_JTable extends JPanel
     
     protected String tableName;
     protected ArrayList<String> columnNames, guiColumnNames;
-    protected String[] columnDataTypes;
+    protected ArrayList<String> columnDataTypes;
     
     // Collection : Customisation Options
     protected ArrayList<String> colAvoidCentering = new ArrayList<>();
@@ -73,7 +73,7 @@ public class JDBC_JTable extends JPanel
         this.addJTableAction = addJTableAction;
         this.tableName = tableName;
         
-        this.columnDataTypes = db.get_Column_DataTypes(tableName); //Column Data Types
+        columnDataTypes = db.get_Column_DataTypes_AL(tableName); //Column Data Types
         
         //##############################################################
         // Column Names & Their Original Positions

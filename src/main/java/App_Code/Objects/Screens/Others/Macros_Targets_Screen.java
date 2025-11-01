@@ -45,7 +45,7 @@ public class Macros_Targets_Screen extends Screen_JFrame
         // ##########################################
         // Variables
         // ##########################################
-        if (! db.get_DB_Connection_Status()) { window_Closed_Event(); return; }
+        if (! db.is_DB_Connected()) { window_Closed_Event(); return; }
         
         // ##########################################
         // Variables

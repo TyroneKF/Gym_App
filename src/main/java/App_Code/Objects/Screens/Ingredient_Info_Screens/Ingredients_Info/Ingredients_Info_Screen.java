@@ -46,7 +46,7 @@ public class Ingredients_Info_Screen extends Screen_JFrame
     private Collection<String> ingredientsTypesList, storesNamesList;
     
     // Sorted Hashmap by key String
-    private TreeMap<String, Collection<String>> map_ingredientTypesToNames = new TreeMap<String, Collection<String>>(new Comparator<String>()
+    private TreeMap<String, TreeSet<String>> map_ingredientTypesToNames = new TreeMap<String, TreeSet<String>>(new Comparator<String>()
     {
         public int compare(String o1, String o2)
         {
@@ -85,7 +85,7 @@ public class Ingredients_Info_Screen extends Screen_JFrame
         //###################################################################################
         // Check DB Connection
         //###################################################################################
-        if (! db.get_DB_Connection_Status())
+        if (! db.is_DB_Connected())
         {
             JOptionPane.showMessageDialog(null, "Error bringing up screen to edit ingredients! Database Not Connected");
             return;
@@ -191,7 +191,7 @@ public class Ingredients_Info_Screen extends Screen_JFrame
                 }
                 
                 // Get Unassigned List Data
-                Collection<String> unassignedKeyListData = map_ingredientTypesToNames.remove(unAssignedKey); // get ingredientNames assigned with the key unassigned
+                TreeSet<String> unassignedKeyListData = map_ingredientTypesToNames.remove(unAssignedKey); // get ingredientNames assigned with the key unassigned
                 
                 // Add OldKey IngredientNames to Unassigned List
                 unassignedKeyListData.addAll(oldKeyListData);
@@ -297,11 +297,10 @@ public class Ingredients_Info_Screen extends Screen_JFrame
     //#############################################
     // Collections
     //#############################################
-    public TreeMap<String, Collection<String>> get_Map_IngredientTypes_To_Names()
+    public TreeMap<String, TreeSet<String>> get_Map_IngredientTypes_To_Names()
     {
         return map_ingredientTypesToNames;
     }
-    
     
     public Collection<String> get_IngredientsTypes_List()
     {

@@ -93,7 +93,7 @@ public class Edit_Ingredient_Type extends Edit_Screen
     }
     
     @Override
-    protected ArrayList<String> delete_Btn_Queries(String mysqlVariableReference1, ArrayList<String> queries)
+    protected String[] delete_Btn_Queries(String mysqlVariableReference1, ArrayList<String> queries)
     {
         //#############################################
         //
@@ -107,15 +107,9 @@ public class Edit_Ingredient_Type extends Edit_Screen
         
         String query2 = String.format("DELETE FROM %s WHERE %s = %s;", db_TableName, id_ColumnName, mysqlVariableReference1);
         
-        //#############################################
-        //
-        //#############################################
-        queries.add(query1);
-        queries.add(query2);
-        
-        //#############################################
-        //
-        //#############################################
-        return queries;
+        //######################################
+        //Return Results
+        //######################################
+        return new String[]{ query1, query2 };
     }
 }

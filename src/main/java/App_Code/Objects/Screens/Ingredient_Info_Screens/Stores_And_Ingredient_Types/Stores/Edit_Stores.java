@@ -62,7 +62,7 @@ public class Edit_Stores extends Edit_Screen
     }
     
     @Override
-    protected ArrayList<String> delete_Btn_Queries(String mysqlVariableReference1, ArrayList<String> queries)
+    protected String[] delete_Btn_Queries(String mysqlVariableReference1, ArrayList<String> queries)
     {
         //######################################
         // Update ingredients_in_meal
@@ -78,16 +78,9 @@ public class Edit_Stores extends Edit_Screen
         String query2 = String.format("DELETE FROM ingredient_in_shops WHERE store_id = %s;", mysqlVariableReference1);
         String query3 = String.format("DELETE FROM stores WHERE store_id = %s;", mysqlVariableReference1);
         
-        //#############################################
-        //
-        //#############################################
-        queries.add(query1);
-        queries.add(query2);
-        queries.add(query3);
-        
-        //#############################################
-        //
-        //#############################################
-        return queries;
+        //######################################
+        //Return Results
+        //######################################
+        return new String[]{ query1, query2, query3 };
     }
 }

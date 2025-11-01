@@ -35,9 +35,11 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
             selected_IngredientType = "",
             selected_IngredientName = "";
     
-    ///##################################################################################################################
+    private TreeMap<String, TreeSet<String>> map_ingredient_Types_To_Names;
+    
+    //##################################################################################################################
     // Constructor
-    ///##################################################################################################################
+    //##################################################################################################################
     public Edit_Ingredients_Screen(Ingredients_Info_Screen parent, MyJDBC db)
     {
         //##########################################################
@@ -45,6 +47,7 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
         //##########################################################
         super(parent, db);
         
+        map_ingredient_Types_To_Names = ingredients_info_screen.get_Map_IngredientTypes_To_Names();
         //##########################################################
         // Create GUI
         //##########################################################
@@ -317,9 +320,8 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
     public void update_IngredientsType_JComboBox()
     {
         ingredientsTypes_JComboBox.removeAllItems(); // clearList
-        
-        TreeMap<String, Collection<String>> mapIngredientTypesToNames = ingredients_info_screen.get_Map_IngredientTypes_To_Names();
-        for (String key : mapIngredientTypesToNames.keySet())
+       
+        for (String key : map_ingredient_Types_To_Names.keySet())
         {
             if (! key.equals("None Of The Above"))
             {
@@ -339,13 +341,12 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
         //###########################################################
         // Clear List
         //###########################################################
-        TreeMap<String, Collection<String>> map_ingredientTypesToIngredientNames = ingredients_info_screen.get_Map_IngredientTypes_To_Names();
-        map_ingredientTypesToIngredientNames.clear();
+        map_ingredient_Types_To_Names.clear();
         
         //###########################################################
         // Store ingredientTypes ID's & IngredientTypeName that occur
         //###########################################################
-        String queryIngredientsType = String.format("""
+        String queryIngredientsType = """
                 SELECT I.ingredient_type_id, N.ingredient_type_name
                 FROM
                 (
@@ -356,7 +357,7 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
                   SELECT ingredient_type_id, ingredient_type_name FROM ingredient_types
                 ) AS N
                 ON I.ingredient_type_id = N.ingredient_type_id
-                ORDER BY N.ingredient_type_name;""");
+                ORDER BY N.ingredient_type_name;""";
         
         ArrayList<ArrayList<String>> ingredientTypesNameAndIDResults = db.get_Multi_Column_Query(queryIngredientsType);
         
@@ -369,11 +370,10 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
         //######################################
         // Store all ingredient types & names
         //######################################
-        String errorTxt = "";
-        int listSize = ingredientTypesNameAndIDResults.size();
-        for (int i = 0; i < listSize; i++)
+        StringBuilder errorTxt = new StringBuilder();
+      
+        for (ArrayList<String> row : ingredientTypesNameAndIDResults)
         {
-            ArrayList<String> row = ingredientTypesNameAndIDResults.get(i);
             String ID = row.get(0);
             String ingredientType = row.get(1);
             
@@ -381,23 +381,23 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
             // Get IngredientNames for Type
             //########################################
             String queryTypeIngredientNames = String.format("SELECT ingredient_name FROM ingredients_info WHERE ingredient_type_id = %s ORDER BY ingredient_name;", ID);
-            Collection<String> ingredientNames = db.get_SingleColumnQuery_AlphabeticallyOrderedTreeSet(queryTypeIngredientNames);
+            TreeSet<String> ingredientNames = db.get_Single_Col_Alphabetically_Sorted(queryTypeIngredientNames);
             
             if (ingredientNames == null)
             {
-                errorTxt += String.format("\nUnable to grab ingredient names for Type '%s'!", ingredientType);
+                errorTxt.append(String.format("\nUnable to grab ingredient names for Type '%s'!", ingredientType));
                 continue;
             }
             
             //########################################
             // Mapping Ingredient Type to Names
             //########################################
-            map_ingredientTypesToIngredientNames.put(ingredientType, ingredientNames);
+            map_ingredient_Types_To_Names.put(ingredientType, ingredientNames);
             
             //System.out.printf("\n\nType %s\n%s",ingredientType, ingredientNames);
         }
         
-        if (errorTxt.length() > 0)
+        if (! errorTxt.isEmpty())
         {
             JOptionPane.showMessageDialog(null, String.format("Had Errors Trying to map ingredientTypes to IngredientNames: \n\n%s", errorTxt));
         }
@@ -410,8 +410,7 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
         //##################################
         set_Update_Status_Of_Ingredient_Names(true); // stops ingredientName JComboBox from triggering any  actionListener events
         
-        TreeMap<String, Collection<String>> map_ingredientTypesToIngredientNames = ingredients_info_screen.get_Map_IngredientTypes_To_Names();
-        for (String item : map_ingredientTypesToIngredientNames.get(selected_IngredientType))
+        for (String item : map_ingredient_Types_To_Names.get(selected_IngredientType))
         {
             if (! item.equals("None Of The Above"))
             {
@@ -426,9 +425,8 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
     public void update_IngredientNames_To_Types_JComboBox()
     {
         ingredientsTypes_JComboBox.removeAllItems();
-        TreeMap<String, Collection<String>> map_ingredientTypesToIngredientNames = ingredients_info_screen.get_Map_IngredientTypes_To_Names();
         
-        for (String key : map_ingredientTypesToIngredientNames.keySet())
+        for (String key : map_ingredient_Types_To_Names.keySet())
         {
             if (! key.equals("None Of The Above"))
             {

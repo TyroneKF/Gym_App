@@ -15,6 +15,11 @@ MealManager
 .) Change all | or || bitwise or vs logical or
 .) Sql statements
 
+Use ID's in collections on MealPlanScreen
+
+MYJDBC:
+.) Refactor method calls that check if null and return msg
+
 ######################################################################################
 New Features:
 ######################################################################################

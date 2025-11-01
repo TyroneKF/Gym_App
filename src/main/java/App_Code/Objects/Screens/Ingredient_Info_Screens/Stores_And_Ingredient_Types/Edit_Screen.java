@@ -154,32 +154,34 @@ public abstract class Edit_Screen extends Add_Screen
     @Override
     protected boolean upload_Form()
     {
+        //################################
+        // Check if Value Already Exists
+        //################################
         String query = String.format("SELECT %s  FROM %s WHERE %s = '%s';", db_ColumnName_Field, db_TableName, db_ColumnName_Field, jTextField_TXT);
         
-        if (db.get_Single_Column_Query(query) != null)
+        if (db.get_Single_Column_Query_AL(query) != null)
         {
             JOptionPane.showMessageDialog(null, String.format("\n\n%s '' %s '' Already Exists!", data_Gathering_Name, jTextField_TXT));
             return false;
         }
         
+        //################################
+        // Upload Query
+        //################################
         String mysqlVariableReference1 = "@CurrentID";
         String createMysqlVariable1 = String.format("SET %s = (SELECT %s FROM %s WHERE %s = '%s');",
-                
                 mysqlVariableReference1, id_ColumnName, db_TableName, db_ColumnName_Field, selected_JComboBox_Item_Txt);
         
         String uploadString = String.format("""
                         UPDATE %s
                         SET %s = '%s'
                         WHERE %s = %s;""",
-                
                 db_TableName, db_ColumnName_Field, jTextField_TXT, id_ColumnName, mysqlVariableReference1);
         
-        if (db.upload_Data_Batch_Independently(new String[]{ createMysqlVariable1, uploadString }))
-        {
-            return true;
-        }
-        
-        return false;
+        //################################
+        // Return Query Result
+        //################################
+        return db.upload_Data_Batch_Independently(new String[]{ createMysqlVariable1, uploadString });
     }
     
     //#############################################################
@@ -213,7 +215,7 @@ public abstract class Edit_Screen extends Add_Screen
         String createMysqlVariable1 = String.format("SET %s = (SELECT %s FROM %s WHERE %s = '%s');",
                 mysqlVariableReference1, id_ColumnName, db_TableName, db_ColumnName_Field, selected_JComboBox_Item_Txt);
         
-        ArrayList<String> queries = delete_Btn_Queries(mysqlVariableReference1, new ArrayList<>(Arrays.asList(createMysqlVariable1)));
+        String[] queries = delete_Btn_Queries(mysqlVariableReference1, new ArrayList<>(Arrays.asList(createMysqlVariable1)));
         
         //##########################################################################################################
         //
@@ -270,5 +272,5 @@ public abstract class Edit_Screen extends Add_Screen
         reset_Actions();
     }
     
-    protected abstract ArrayList<String> delete_Btn_Queries(String mysqlVariableReference1, ArrayList<String> queries);
+    protected abstract String[] delete_Btn_Queries(String mysqlVariableReference1, ArrayList<String> queries);
 }
