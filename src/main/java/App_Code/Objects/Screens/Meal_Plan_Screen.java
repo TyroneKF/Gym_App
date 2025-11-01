@@ -237,7 +237,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                         db_File_Script_List_Name,
                         db_File_Tables_Name);
                 
-                if (db.is_DB_Connected())
+                if (db.get_DB_Connection_Status())
                 {
                     new Meal_Plan_Screen(db);
                 }
@@ -270,7 +270,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     db_File_Script_List_Name,
                     db_File_Tables_Name);
             
-            if (! db.is_DB_Connected())
+            if (! db.get_DB_Connection_Status())
             {
                 JOptionPane.showMessageDialog(null, "ERROR, Cannot Connect To Database!");
                 return;

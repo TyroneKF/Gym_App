@@ -85,7 +85,7 @@ public class Ingredients_Info_Screen extends Screen_JFrame
         //###################################################################################
         // Check DB Connection
         //###################################################################################
-        if (! db.is_DB_Connected())
+        if (! db.get_DB_Connection_Status())
         {
             JOptionPane.showMessageDialog(null, "Error bringing up screen to edit ingredients! Database Not Connected");
             return;

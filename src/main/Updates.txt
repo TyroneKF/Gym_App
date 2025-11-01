@@ -18,7 +18,9 @@ MealManager
 Use ID's in collections on MealPlanScreen
 
 MYJDBC:
-.) Refactor method calls that check if null and return msg
+.) Refactor method calls that check if null and return msg use N/A
+.) Prepared statements
+.) Switch to
 
 ######################################################################################
 New Features:

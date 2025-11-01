@@ -641,7 +641,7 @@ public class MyJDBC
         //##########################################################
         String methodName = "upload_Data()";
         
-        if (! approve_DB_Status(methodName)) { return false; }
+        if (! is_DB_Connected(methodName)) { return false; }
         
         //##########################################################
         // Query Setup
@@ -682,7 +682,7 @@ public class MyJDBC
         //##########################################################
         String methodName = "upload_Data_Batch_Altogether()";
         
-        if (! approve_DB_Status(methodName)) { return false; }
+        if (! is_DB_Connected(methodName)) { return false; }
         
         //##########################################################
         // Query Setup
@@ -727,7 +727,7 @@ public class MyJDBC
         //##########################################################
         String methodName = "upload_Data_Batch_Independently()";
         
-        if (! approve_DB_Status(methodName)) { return false; }
+        if (! is_DB_Connected(methodName)) { return false; }
         
         //##########################################################
         // Query Setup
@@ -771,7 +771,7 @@ public class MyJDBC
         //##########################################################
         String methodName = "get_Multi_Column_Query()";
         
-        if (! approve_DB_Status(methodName)) { return null; }
+        if (! is_DB_Connected(methodName)) { return null; }
         
         //##########################################################
         // Execute Query
@@ -816,7 +816,7 @@ public class MyJDBC
         //##########################################################
         String methodName = "get_Multi_Column_Query_Object()";
         
-        if (! approve_DB_Status(methodName)) { return null; }
+        if (! is_DB_Connected(methodName)) { return null; }
         
         //##########################################################
         // Query Setup
@@ -862,7 +862,7 @@ public class MyJDBC
         //##########################################################
         String methodName = "get_Single_Column_Query_AL()";
         
-        if (! approve_DB_Status(methodName)) { return null; }
+        if (! is_DB_Connected(methodName)) { return null; }
         
         //##########################################################
         // Query Setup
@@ -916,7 +916,7 @@ public class MyJDBC
         //##########################################################
         String methodName = "get_Single_Col_Alphabetically_Sorted()";
         
-        if (! approve_DB_Status(methodName)) { return null; }
+        if (! is_DB_Connected(methodName)) { return null; }
         
         //##########################################################
         // Query Setup
@@ -969,7 +969,7 @@ public class MyJDBC
         //#########################################################################
         String methodName = "get_TableData_Objects_AL()";
         
-        if (! approve_DB_Status(methodName)) { return null; }
+        if (! is_DB_Connected(methodName)) { return null; }
         
         //#########################################################################
         // Query Setup
@@ -1048,7 +1048,7 @@ public class MyJDBC
         //##########################################################
         // Check DB Status
         //##########################################################
-        if (! approve_DB_Status("get_Column_DataTypes_AL()")) { return null; }
+        if (! is_DB_Connected("get_Column_DataTypes_AL()")) { return null; }
         
         //##########################################################
         // Query Setup
@@ -1071,7 +1071,7 @@ public class MyJDBC
         //##########################################################
         // Check DB Status
         //##########################################################
-        if (! approve_DB_Status("get_Column_Names_AL()")) { return null; }
+        if (! is_DB_Connected("get_Column_Names_AL()")) { return null; }
         
         //##########################################################
         // Query Setup
@@ -1092,14 +1092,14 @@ public class MyJDBC
     //##################################################################################################################
     // Validation Methods
     //##################################################################################################################
-    public boolean is_DB_Connected()
+    public boolean get_DB_Connection_Status()
     {
         return db_Connection_Status;
     }
     
-    private boolean approve_DB_Status(String methodName)
+    private boolean is_DB_Connected(String methodName)
     {
-        if (! (is_DB_Connected()))
+        if (! (get_DB_Connection_Status()))
         {
             System.err.printf("\n\nMyJDBC.java : %s \nDB couldn't successfully connect to DB '%s'!", methodName, databaseName);
             return false;
@@ -1112,20 +1112,22 @@ public class MyJDBC
     // Quick Methods
     //##################################################################################################################
     
-    private void print_File_Not_Found_ERR_MSG(Exception e, String methodName)
-    {
-        System.err.printf("\n\nMyJDBC.java @%s Exception ERROR \n\nFile not found: %s%n", methodName, e.getMessage());
-        
-        JOptionPane.showMessageDialog(null, "\n\nDatabase Error: \nCheck Output !!",
-                "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
-    }
     
-    private void print_IO_Exception_ERR_MSG(Exception e, String methodName)
+    
+    
+    //###########################################
+    // SQL Methods Error Handling
+    //###########################################
+    private void handleException_MYSQL(Exception e, String methodName, Object query)
     {
-        System.err.printf("\n\nMyJDBC.java @%s Exception ERROR \n\nI/O error while processing files: %s%n", methodName, e.getMessage());
-        
-        JOptionPane.showMessageDialog(null, "\n\nDatabase Error: \nCheck Output !!",
-                "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
+        if (e instanceof SQLException x)
+        {
+            print_SQL_ERR_MSG(x, methodName, query);
+        }
+        else
+        {
+            print_Exception_ERR_MSG(e, methodName, query);
+        }
     }
     
     private void print_SQL_ERR_MSG(SQLException e, String methodName, Object query)
@@ -1145,30 +1147,6 @@ public class MyJDBC
         JOptionPane.showMessageDialog(null, "\n\nDatabase Error: \nCheck Output !!",
                 "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
     }
-    
-    private void print_Exception_ERR_MSG(Exception e, String methodName)
-    {
-        System.err.printf("\n\nMyJDBC.java @%s Exception ERROR \n\n%s", methodName, e);
-        
-        JOptionPane.showMessageDialog(null, "\n\nDatabase Error: \nCheck Output !!",
-                "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
-    }
-    
-    //###########################################
-    // SQL Methods Error Handling
-    //###########################################
-    private void handleException_MYSQL(Exception e, String methodName, Object query)
-    {
-        if (e instanceof SQLException x)
-        {
-            print_SQL_ERR_MSG(x, methodName, query);
-        }
-        else
-        {
-            print_Exception_ERR_MSG(e, methodName, query);
-        }
-    }
-    
     //###########################################
     // File Methods for Error Handling
     //###########################################
@@ -1186,5 +1164,29 @@ public class MyJDBC
         {
             print_Exception_ERR_MSG(e, methodName);
         }
+    }
+    
+    private void print_Exception_ERR_MSG(Exception e, String methodName)
+    {
+        System.err.printf("\n\nMyJDBC.java @%s Exception ERROR \n\n%s", methodName, e);
+        
+        JOptionPane.showMessageDialog(null, "\n\nDatabase Error: \nCheck Output !!",
+                "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    private void print_File_Not_Found_ERR_MSG(Exception e, String methodName)
+    {
+        System.err.printf("\n\nMyJDBC.java @%s Exception ERROR \n\nFile not found: %s%n", methodName, e.getMessage());
+        
+        JOptionPane.showMessageDialog(null, "\n\nDatabase Error: \nCheck Output !!",
+                "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    private void print_IO_Exception_ERR_MSG(Exception e, String methodName)
+    {
+        System.err.printf("\n\nMyJDBC.java @%s Exception ERROR \n\nI/O error while processing files: %s%n", methodName, e.getMessage());
+        
+        JOptionPane.showMessageDialog(null, "\n\nDatabase Error: \nCheck Output !!",
+                "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
     }
 }
