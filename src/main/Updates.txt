@@ -204,3 +204,6 @@ Check for
 
 .) Abstract class methods
 .) Comments
+.) Null requests should always return N/A
+.) Paramters updates
+

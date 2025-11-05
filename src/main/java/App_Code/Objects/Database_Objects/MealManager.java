@@ -80,9 +80,9 @@ public class MealManager
     //##################################################################################################################
     public MealManager(Meal_Plan_Screen meal_plan_screen, int mealInPlanID, String mealName, String mealTime, ArrayList<ArrayList<String>> subMealsInMealArrayList)
     {
-        //##############################################################################################################
+        //################################################
         // Global Variables
-        //##############################################################################################################
+        //################################################
         this.meal_plan_screen = meal_plan_screen;
         
         this.db = meal_plan_screen.getDb();
@@ -99,7 +99,10 @@ public class MealManager
         
         setMealManagerInDB(true);  // Set Variable which identifies in this meal associated with this object is in the database
         
-        setup(); // GUI Setup of MealManager
+        //################################################
+        // Setup Methods
+        //################################################
+        if (! setup()) { return; } ;
         
         add_MultipleSubMealsToGUI(subMealsInMealArrayList); // Add Sub-Meal to GUI
     }
@@ -107,9 +110,9 @@ public class MealManager
     //
     public MealManager(Meal_Plan_Screen meal_plan_screen)
     {
-        //##############################################################################################################
-        // Setting Variable
-        //##############################################################################################################
+        //################################################
+        // Setting Variables
+        //################################################
         this.meal_plan_screen = meal_plan_screen;
         
         this.db = meal_plan_screen.getDb();
@@ -117,92 +120,85 @@ public class MealManager
         this.tempPlanID = meal_plan_screen.getTempPlanID();
         this.planID = meal_plan_screen.getPlanID();
         
-        //##############################################################################################################
+        //################################################
         // Getting user input for Meal Name & Time
-        //##############################################################################################################
-        
+        //################################################
         String newMealName = promptUserForMealName(true, false);
         
         if (newMealName == null) { return; } // Error occurred in validation checks above
         
-        //#######################################################
+        //################################################
         // Validating User Input
-        //#######################################################
-        
+        //################################################
         LocalTime newMealTime = promptUserForMealTime(true, false);
         
         if (newMealTime == null) { return; } // Error occurred in validation checks above
         
-        //##############################################################################################################
+        //################################################
         // Upload Meal To Temp Plan
-        //##############################################################################################################
-        String uploadQuery = String.format("INSERT INTO meals_in_plan (plan_id, meal_name, meal_time) VALUES (%s,'%s','%s')", tempPlanID, newMealName, newMealTime);
+        //################################################
+        String
+                uploadQuery = "INSERT INTO meals_in_plan (plan_id, meal_name, meal_time) VALUES (?,?,?)",
+                errorMSG = String.format("\n\nError Creating Meal \nMeal Name: '%s' \nMeal Time: %s!", newMealName, newMealTime);
         
-        if (! (db.upload_Data_Batch_Altogether(new String[]{ uploadQuery })))
-        {
-            JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nCreating Meal In DB!");
-            return;
-        }
+        mealInPlanID = db.insert_And_Get_ID(uploadQuery, new Object[]{ tempPlanID, newMealName, newMealTime}, errorMSG);
         
-        //##############################################################################################################
-        // Get mealInPlanID
-        //##############################################################################################################
-        String query = String.format("Select meal_in_plan_id FROM meals_in_plan WHERE plan_id = %s AND meal_name = '%s';", tempPlanID, newMealName);
-        ArrayList<String> results = db.get_Single_Column_Query_AL(query);
+        if (mealInPlanID == null) { return; } // Error MSG inside DB is returned if null, don't need to handle here
         
-        if (results == null)
-        {
-            JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nCannot Get Created Meals ID!!");
-            
-            String deleteQuery = String.format("DELETE FROM meals_in_plan WHERE plan_id = %s AND meal_name = '%s';)", tempPlanID, newMealName);
-            if (! (db.upload_Data_Batch_Altogether(new String[]{ deleteQuery })))
-            {
-                JOptionPane.showMessageDialog(null, "\n\n ERROR:\n\nUnable To Undo Errors Made!\n\nRecommendation Action: Refresh This Plan");
-            }
-            
-            return;
-        }
-        
-        mealInPlanID = Integer.valueOf(results.getFirst());
-        
-        //##############################################################################################################
+        //################################################
         // Set Name & Time Variables
-        //##############################################################################################################
+        //################################################
         
         setMealNameVariables(false, newMealName, newMealName); // Set MealName Variables
         
         Second convertedNewMealTime = localTimeToSecond(newMealTime);
+        
         setTimeVariables(false, convertedNewMealTime, convertedNewMealTime);     // Set MealTime Variables
         
         setMealManagerInDB(false);
         
-        //##############################################################################################################
-        // SetUP
-        //##############################################################################################################
-        setup();
+        //################################################
+        // Setup
+        //################################################
+        if (! setup()) { return; } ;
         
-        //##############################################################################################################
+        //################################################
         // Add A SubMeal To Meal
-        //##############################################################################################################
+        //################################################
         addButtonAction();
     }
     
     //##################################################################################################################
     // GUI Setup
     //##################################################################################################################
-    private void setup()
+    private boolean setup()
     {
-        ///############################
-        // Objects
-        ///############################
+        //################################################################
+        // Total_Meal DATA
+        //################################################################
+        String
+                tableName = "total_meal_view",
+                query = String.format("SELECT * FROM total_meal_view WHERE meal_in_plan_id = %s AND plan_id = %s;", mealInPlanID, tempPlanID),
+                errorMSG = String.format("Error, unable to get TotalMeal Data for %s at %s", currentMealName, getCurrentMealTimeGUI());
+        
+        ArrayList<ArrayList<Object>> meal_Total_Data = db.get_TableData_Objects_AL(query, tableName, errorMSG);
+        if (meal_Total_Data == null)
+        {
+            JOptionPane.showMessageDialog(getFrame(), errorMSG);
+            return false;
+        }
+        
+        //################################################################
+        // Variables
+        //################################################################
         this.gbc = new GridBagConstraints();
         this.container = meal_plan_screen.getScrollJPanelCenter();
         this.mealManagerRegistry = meal_plan_screen.get_MealManagerRegistry();
         this.macrosLeft_JTable = meal_plan_screen.getMacrosLeft_JTable();
         
-        ///############################
+        //############################
         // Lists & Arraylists & Maps
-        ///############################
+        //############################
         this.mealTotalTable_ColumnNames = meal_plan_screen.getMeal_total_columnNames();
         this.totalMeal_Table_ColToHide = meal_plan_screen.getTotalMeal_Table_ColToHide();
         
@@ -213,37 +209,29 @@ public class MealManager
         this.ingredientsTable_ColumnNames = meal_plan_screen.getIngredients_ColumnNames();
         this.totalMeal_Other_Cols_Pos = meal_plan_screen.get_TotalMeal_Other_Cols_Pos();
         
-        //##############################################################################################################
+        //################################################################
         // Create Collapsible Object
-        //##############################################################################################################
+        //################################################################
         //collapsibleJpObj = new CollapsibleJPanel(container, removeSecondsOnTimeString(savedMealTime), 150, 50); // time as btn txt
         collapsibleJpObj = new CollapsibleJPanel(container, savedMealName, 180, 50); // time as btn txt
         collapsibleCenterJPanel = collapsibleJpObj.get_Centre_JPanel();
         collapsibleCenterJPanel.setBackground(Color.YELLOW);
         
-        //##############################################################################################################
+        //################################################################
         // Icon Setup in Collapsible Object
-        //##############################################################################################################
+        //################################################################
         iconSetup();
         
-        //##############################################################################################################
-        //  Total Meal Calculation JTable
-        //##############################################################################################################
-        String tableName = "total_meal_view";
-        
-        JPanel southPanel = collapsibleJpObj.get_South_JPanel();
-        
-        String query = String.format("SELECT * FROM total_meal_view WHERE meal_in_plan_id = %s AND plan_id = %s;", mealInPlanID, tempPlanID);
-        ArrayList<ArrayList<Object>> result = db.get_TableData_Objects_AL(query, tableName);
-        
-        ArrayList<ArrayList<Object>> meal_Total_Data = result != null ? result : new ArrayList<>();
-        
+        //################################################################
+        // Create TotalMeal Objects
+        //################################################################
         totalMealTable = new TotalMealTable(db, collapsibleJpObj, meal_Total_Data, mealTotalTable_ColumnNames, planID, tempPlanID,
                 mealInPlanID, savedMealName, tableName, mealTotalTable_ColumnNames, null, totalMeal_Table_ColToHide);
         
-        //#############################################
+        //######################################
         // TotalMealTable to Collapsible Object
-        //#############################################
+        //######################################
+        JPanel southPanel = collapsibleJpObj.get_South_JPanel();
         
         // adds space between Ingredients_In_Meal_Calculation table and total_in_meal table
         addToContainer(southPanel, new JPanel(), 0, 1, 1, 1, 0.25, 0.25, "both", 50, 0, null);
@@ -251,15 +239,17 @@ public class MealManager
         // Adding total table to CollapsibleOBJ
         addToContainer(southPanel, totalMealTable, 0, 2, 1, 1, 0.25, 0.25, "both", 0, 0, null);
         
-        //##############################################################################################################
+        //################################################################
         // Add Initial Space Between For the First Divided Meal
-        //##############################################################################################################
+        //################################################################
         addToContainer(collapsibleCenterJPanel, new JPanel(), 0, yPoInternally++, 1, 1, 0.25, 0.25, "both", 10, 0, null);
         
-        //##############################################################################################################
+        //################################################################
         // Set Object Created
-        //##############################################################################################################
+        //################################################################
         isObjectCreated = true;
+        
+        return true;
     }
     
     private void iconSetup()
@@ -411,13 +401,13 @@ public class MealManager
     
     private void add_MultipleSubMealsToGUI(ArrayList<ArrayList<String>> subMealIDs)
     {
-        ///#############################################################################################################
+        //#############################################################################################################
         //  Ingredients_In_Meal_Calculation JTable
         //##############################################################################################################
         int no_Of_SubMealID = subMealIDs.size();
-        for (int i = 0; i < no_Of_SubMealID; i++)
+        for (ArrayList<String> subMealID : subMealIDs)
         {
-            int divMealSectionsID = Integer.parseInt(subMealIDs.get(i).get(0));
+            int divMealSectionsID = Integer.parseInt(subMealID.getFirst());
             add_SubMealToGUi(true, divMealSectionsID);
         }
     }
@@ -430,11 +420,17 @@ public class MealManager
         if (subMealInDB)
         {
             // Getting Ingredients In Meal
-            String query = String.format("SELECT * FROM %s WHERE div_meal_sections_id = %s AND plan_id = %s ORDER BY ingredients_index;", tableName, divMealSectionsID, tempPlanID);
+            String
+                    query = String.format("SELECT * FROM %s WHERE div_meal_sections_id = %s AND plan_id = %s ORDER BY ingredients_index;", tableName, divMealSectionsID, tempPlanID),
+                    errorMSG = String.format("Error, unable to get Ingredient Data for SubMeal %s in %s", divMealSectionsID, currentMealName);
             
-            ArrayList<ArrayList<Object>> result_placeholder = db.get_TableData_Objects_AL(query, tableName) ;
+            mealData = db.get_TableData_Objects_AL(query, tableName, errorMSG);
             
-            mealData = result_placeholder != null  ? result_placeholder : new ArrayList<>() ;
+            if(mealData == null)
+            {
+                JOptionPane.showMessageDialog(getFrame(), errorMSG);
+                return;
+            }
         }
         
         //##############################################
@@ -630,11 +626,11 @@ public class MealManager
         // #########################################
         // Execute Query
         // #########################################
-        ArrayList<String> results = db.get_Single_Column_Query_AL(query);
+        ArrayList<String> results = db.get_Single_Column_Query_AL(query, "Error, Validating Meal Name / Time!");
         
         if (results == null) { return null; } // Error occurred during script
         
-        if (! results.get(0).equals("N/A")) // Means value already exists, returns N/A if the value doesn't
+        if (! results.getFirst().equals("N/A")) // Means value already exists, returns N/A if the value doesn't
         {
             JOptionPane.showMessageDialog(getFrame(), String.format("A meal in this plan already has a meal %s of '%s' !!", variableName, input));
             return null;
@@ -696,11 +692,7 @@ public class MealManager
         //##########################################
         // Upload Into Database Table
         //##########################################
-        if (! db.upload_Data(uploadQuery, false))
-        {
-            JOptionPane.showMessageDialog(null, "\n\nUnable to successfully change this  meals time! \n\nMaybe he selected timeframe  meal name already exists within this meal plan!!");
-            return;
-        }
+        if (! db.upload_Data(uploadQuery, false, "Error, unable to change Meal Time!")) { return; }
         
         //#########################################################################################################
         // Update GUI & Variables
@@ -826,11 +818,7 @@ public class MealManager
                 SET meal_name = '%s'
                 WHERE plan_id = %s AND meal_in_plan_id = %s;""", inputMealName, tempPlanID, mealInPlanID);
         
-        if (! db.upload_Data(uploadQuery, false))
-        {
-            JOptionPane.showMessageDialog(getFrame(), "\n\nUnable to successfully change this  meals name! \n\nMaybe he selected meal name already exists within this meal plan!!");
-            return;
-        }
+        if (! db.upload_Data(uploadQuery, false, "Error, unable to change Meal Name!")) { return; }
         
         //#########################################################################################################
         // Change Variable DATA & Object
@@ -889,35 +877,22 @@ public class MealManager
     private void addButtonAction()
     {
         //##########################################
-        // Get New ID For SubMeal
-        //##########################################
-        String getNextIndexQuery = "SELECT IFNULL(MAX(`div_meal_sections_id`),0) + 1 AS nextId FROM `divided_meal_sections`;";
-        
-        ArrayList<String> divMealSectionsIDResult = db.get_Single_Column_Query_AL(getNextIndexQuery);
-        
-        if (divMealSectionsIDResult == null)
-        {
-            JOptionPane.showMessageDialog(null, "Unable to create new sub meal in table! \nUnable to generate new div_meal_sections_id !!");
-            return;
-        }
-        
-        int divMealSectionsID = Integer.parseInt(divMealSectionsIDResult.getFirst());
-        
-        //##########################################
         // Insert Into Database Table
         //##########################################
-        String uploadQuery = String.format("INSERT INTO divided_meal_sections (div_meal_sections_id, meal_in_plan_id, plan_id) VALUES (%s, %s, %s)", divMealSectionsID, mealInPlanID, tempPlanID);
+        String
+                uploadQuery = "INSERT INTO divided_meal_sections (meal_in_plan_id, plan_id) VALUES (?, ?)",
+                errorMSG = "Error, unable to add SubMeal to Meal!";
         
-        if (! db.upload_Data_Batch_Altogether(new String[]{ uploadQuery }))
-        {
-            JOptionPane.showMessageDialog(null, "Unable to successfully add subMeal to meal! ");
-            return;
-        }
+        String[] params = new String[]{ String.valueOf(mealInPlanID), String.valueOf(tempPlanID) };
+        
+        Integer divID = db.insert_And_Get_ID(uploadQuery, params, errorMSG);
+        
+        if (divID == null) { return; }
         
         //##########################################
         // Add Sub-Meal To Meal GUI
         //##########################################
-        add_SubMealToGUi(false, divMealSectionsID);
+        add_SubMealToGUi(false, divID);
     }
     
     //#################################################################################
@@ -928,26 +903,12 @@ public class MealManager
         //##########################################
         // Delete MealManager Queries
         //##########################################
-        String query1 = "SET FOREIGN_KEY_CHECKS = 0;"; // Disable Foreign Key Checks
+        String query = String.format("DELETE FROM meals_in_plan WHERE meal_in_plan_id = %s AND plan_id = %s", mealInPlanID, tempPlanID);
         
-        // DELETE ingredients_in_sections_of_meal
-        String query2 = String.format("""
-                DELETE FROM ingredients_in_sections_of_meal
-                WHERE div_meal_sections_id IN (SELECT div_meal_sections_id FROM divided_meal_sections WHERE meal_in_plan_id = %s AND plan_id = %s) AND plan_id = %s;""", mealInPlanID, tempPlanID, tempPlanID);
-        
-        // DELETE dividedMealSections
-        String query3 = String.format("DELETE FROM divided_meal_sections WHERE meal_in_plan_id = %s AND plan_id = %s;", mealInPlanID, tempPlanID);
-        
-        // DELETE mealsInPlan
-        String query4 = String.format("DELETE FROM meals_in_plan WHERE meal_in_plan_id = %s AND plan_id = %s", mealInPlanID, tempPlanID);
-        
-        String query5 = "SET FOREIGN_KEY_CHECKS = 1;"; // Enable Foreign Key Checks
-        
-        if (! db.upload_Data_Batch_Altogether(new String[]{ query1, query2, query3, query4, query5 }))
-        {
-            JOptionPane.showMessageDialog(null, "Table Un-Successfully Deleted! ");
-            return;
-        }
+        //##########################################
+        // Execute Update
+        //##########################################
+        if (! db.upload_Data(query, false, "Table Un-Successfully Deleted!")) { return; }
         
         //##########################################
         // Delete MealManager Actions
@@ -1041,15 +1002,9 @@ public class MealManager
         //##########################################
         // Delete Meal From DB
         //##########################################
-        String query1 = "SET FOREIGN_KEY_CHECKS = 0;"; // Disable Foreign Key Checks
-        String query2 = String.format("DELETE FROM meals_in_plan WHERE meal_in_plan_id = %s AND plan_id = %s;", mealInPlanID, tempPlanID);
-        String query3 = "SET FOREIGN_KEY_CHECKS = 1;"; // Enable Foreign Key Checks
+        String query1 = String.format("DELETE FROM meals_in_plan WHERE meal_in_plan_id = %s AND plan_id = %s;", mealInPlanID, tempPlanID);
         
-        if (! (db.upload_Data_Batch_Altogether(new String[]{ query1, query2, query3 })))
-        {
-            JOptionPane.showMessageDialog(getFrame(), "\n\n1.)  Error MealManager.ingredientsTableHasBeenDeleted() \nUnable to Delete Selected Meal From DB!");
-            return;
-        }
+        if (! (db.upload_Data(query1, false, "Error, Unable to DELETE IngredientsTable!!"))) { return; }
         
         delete_MealManager();
     }
@@ -1162,13 +1117,7 @@ public class MealManager
         //####################################################
         // Update
         //####################################################
-        if (! (db.upload_Data_Batch_Altogether(query_Temp_Data)))
-        {
-            JOptionPane.showMessageDialog(null, "\n\ntransferMealDataToPlan() Error");
-            return false;
-        }
-        
-        return true;
+        return db.upload_Data_Batch_Altogether(query_Temp_Data, "Error, Unable to Transfer Plan Data!");
     }
     
     //######################################
@@ -1179,53 +1128,51 @@ public class MealManager
         //#############################################################################################
         // Check IF OLD Table Name & Meal Time Are Available To Assign Back To This Meal
         //##############################################################################################
-        
+        String errorMSG = "Error, Unable to Refresh Meal!";
         String query = String.format("""
                 SELECT IFNULL(M.pos, "N/A") AS pos
                 FROM
                 (
                   -- This being the anchor had to restricted to make sure there's always a true value
                   -- to attach to for IFNULL to work
-                 
+                
                   SELECT plan_id FROM plans WHERE plan_id = %s
-                 
+                
                 ) AS P
                 LEFT JOIN
                 (
                 	-- Has to be restricted on plan_id then count as
-                	
+                
                 	SELECT
                 	ROW_NUMBER() OVER (ORDER BY meal_time ASC) AS pos,
                 	meal_in_plan_id, plan_id, meal_name, meal_time
                 	FROM meals_in_plan
                 	WHERE plan_id = %s
-                	
+                
                 ) AS M
                 
                 ON P.plan_id = M.plan_id
                 AND (M.meal_name = '%s' OR M.meal_time = '%s')
                 AND M.meal_in_plan_id != %s; """, tempPlanID, tempPlanID, savedMealName, get_SavedMealTime_GUI(), mealInPlanID);
         
-        // Execute Query
-        System.out.printf("\n\nQuery: \n %s", query);
         
-        ArrayList<ArrayList<String>> results = db.get_Multi_Column_Query(query);
+        ArrayList<ArrayList<String>> results = db.get_Multi_Column_Query(query, errorMSG);
         if (results == null)
         {
-            JOptionPane.showMessageDialog(getFrame(), "\n\nError, unable to use DB to gather whether old meal time/name are \nattached to another meal in plan right now!");
-            System.err.printf("\n\nError,MealManager.java: refresh_Btn_Action() \nUsing script: \n\n%s", query);
+            JOptionPane.showMessageDialog(getFrame(),errorMSG);
             return;
         }
+        
         
         //###########################################
         // IF TRUE Notify Meal Name/Time Taken
         //###########################################
         ArrayList<String> positions = new ArrayList<>();
         
-        if (results.size() >= 1 && ! results.get(0).get(0).equals("N/A")) { positions.add(results.get(0).get(0)); }
+        if (! results.isEmpty() && ! results.get(0).get(0).equals("N/A")) { positions.add(results.get(0).get(0)); }
         if (results.size() >= 2 && ! results.get(1).get(0).equals("N/A")) { positions.add(results.get(1).get(0)); }
         
-        if (positions.size() > 0)
+        if (! positions.isEmpty())
         {
             JOptionPane.showMessageDialog(getFrame(), String.format("""
                             \n\nA meal in this plan already has this meals saved info:

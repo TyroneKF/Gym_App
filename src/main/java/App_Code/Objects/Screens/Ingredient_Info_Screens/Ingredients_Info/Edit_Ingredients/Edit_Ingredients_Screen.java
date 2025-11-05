@@ -8,6 +8,7 @@ import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_In
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients.Shop_Form.Edit_Shop_Form;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Search_For_Food_Info;
+import org.apache.commons.lang3.ArrayUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -320,7 +321,7 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
     public void update_IngredientsType_JComboBox()
     {
         ingredientsTypes_JComboBox.removeAllItems(); // clearList
-       
+        
         for (String key : map_ingredient_Types_To_Names.keySet())
         {
             if (! key.equals("None Of The Above"))
@@ -346,7 +347,7 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
         //###########################################################
         // Store ingredientTypes ID's & IngredientTypeName that occur
         //###########################################################
-        String queryIngredientsType = """
+        String query_Types = """
                 SELECT I.ingredient_type_id, N.ingredient_type_name
                 FROM
                 (
@@ -359,7 +360,9 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
                 ON I.ingredient_type_id = N.ingredient_type_id
                 ORDER BY N.ingredient_type_name;""";
         
-        ArrayList<ArrayList<String>> ingredientTypesNameAndIDResults = db.get_Multi_Column_Query(queryIngredientsType);
+        String errorMSG1 = "Error, Edit_Ingredients_Screen Unable to get Ingredient Type Info";
+        
+        ArrayList<ArrayList<String>> ingredientTypesNameAndIDResults = db.get_Multi_Column_Query(query_Types, errorMSG1);
         
         if (ingredientTypesNameAndIDResults == null)
         {
@@ -371,7 +374,7 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
         // Store all ingredient types & names
         //######################################
         StringBuilder errorTxt = new StringBuilder();
-      
+        
         for (ArrayList<String> row : ingredientTypesNameAndIDResults)
         {
             String ID = row.get(0);
@@ -380,26 +383,22 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
             //########################################
             // Get IngredientNames for Type
             //########################################
-            String queryTypeIngredientNames = String.format("SELECT ingredient_name FROM ingredients_info WHERE ingredient_type_id = %s ORDER BY ingredient_name;", ID);
-            TreeSet<String> ingredientNames = db.get_Single_Col_Alphabetically_Sorted(queryTypeIngredientNames);
+            String
+                    queryTypeIngredientNames = String.format("SELECT ingredient_name FROM ingredients_info WHERE ingredient_type_id = %s ORDER BY ingredient_name;", ID),
+                    errorMSG = String.format("\nUnable to grab Ingredient Names for Type '%s'!", ingredientType);
+            
+            TreeSet<String> ingredientNames = db.get_Single_Col_Alphabetically_Sorted(queryTypeIngredientNames, errorMSG);
             
             if (ingredientNames == null)
             {
-                errorTxt.append(String.format("\nUnable to grab ingredient names for Type '%s'!", ingredientType));
-                continue;
+                JOptionPane.showMessageDialog(null, String.format("\nUnable to grab Ingredient Names for Type '%s'!", ingredientType));
+                break;
             }
             
             //########################################
             // Mapping Ingredient Type to Names
             //########################################
             map_ingredient_Types_To_Names.put(ingredientType, ingredientNames);
-            
-            //System.out.printf("\n\nType %s\n%s",ingredientType, ingredientNames);
-        }
-        
-        if (! errorTxt.isEmpty())
-        {
-            JOptionPane.showMessageDialog(null, String.format("Had Errors Trying to map ingredientTypes to IngredientNames: \n\n%s", errorTxt));
         }
     }
     
@@ -443,9 +442,9 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
     @Override
     protected void submission_Btn_Action()
     {
-        //##############################################################################################################
+        //###############################################
         //
-        //##############################################################################################################
+        //###############################################
         if (ingredientsName_JComboBox.getSelectedItem() == null)
         {
             JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Please select an ingredient please to edit it!");
@@ -460,25 +459,25 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
             return;
         }
         
-        //##############################################################################################################
+        //###############################################
         //
-        //##############################################################################################################
+        //###############################################
         if (! (are_You_Sure("update this Ingredients information - this will cause the mealPlan to save its data to the DB")))
         {
             return;
         }
         
-        //##############################################################################################################
+        //###############################################
         //
-        //##############################################################################################################
+        //###############################################
         if (! (ingredientsForm.validate_Ingredients_Form()) || ! (shopForm.validate_Form()))
         {
             return;
         }
         
-        //##############################################################################################################
+        //###############################################
         //
-        //##############################################################################################################
+        //###############################################
         String selectedIngredientID = ingredientsForm.get_Selected_IngredientID();
         
         if (selectedIngredientID == null)
@@ -487,9 +486,9 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
             return;
         }
         
-        //###############################################################
+        //###############################################
         // Update Database Only if Data on form has changed
-        //###############################################################
+        //###############################################
         String ingredientsFormUpdateString = ingredientsForm.get_Ingredients_Form_Update_String(selectedIngredientID);
         String[] shopFormUpdateString = shopForm.get_ShopForm_Update_String(selectedIngredientID);
         
@@ -510,28 +509,26 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
             }
         }
         
-        //###############################################################
-        // Get Update Strings & Update for both forms using ingredientID
-        //###############################################################
-        //System.out.printf("\n\nsubmissionBtnAction() \ninfo Update: \n%s \n\nshop Update: \n%s", ingredientsFormUpdateString, Arrays.toString(shopFormUpdateString));
-        
+        //###############################################
+        // Get Updates Strings
+        //###############################################
         if (! (update_Both_Forms(ingredientsFormUpdateString, shopFormUpdateString)))
         {
             JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "\n\nUnable To Update Ingredient Info !!");
             return;
         }
         
-        //##############################################################################################################
+        //###############################################
         // Write Ingredients Value To File
-        //##############################################################################################################
+        //###############################################
         if (! (backup_Data_In_SQL_File()))
         {
             JOptionPane.showMessageDialog(null, "Error, replacing ingredients info to SQL file!");
         }
         
-        //##############################################################################################################
+        //###############################################
         //
-        //##############################################################################################################
+        //###############################################
         // Check if ingredientsName or IngredientType changed
         String currentIngredientName = ingredientsForm.get_Ingredient_Name_Form_Value();
         String currentIngredientType = ingredientsForm.get_Ingredient_Type_Form_Value();
@@ -556,9 +553,9 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
             }
         }
         
-        //##############################################################################################################
+        //###############################################
         //
-        //##############################################################################################################
+        //###############################################
         JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "The ingredient updates won't appear on the mealPlan screen until this window is closed!");
         refresh_Interface(true, true);
         super.resize_GUI();
@@ -566,61 +563,51 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
     
     //EDITING NOW
     @Override
-    protected boolean update_Both_Forms(String updateIngredients_String, String[] updateIngredientShops_String)
+    protected boolean update_Both_Forms(String ingredients_Update, String[] shops_Update)
     {
         //####################################
         // Nothing to Update
         //####################################
-        if (updateIngredients_String == null && updateIngredientShops_String == null)
+        if (ingredients_Update == null && shops_Update == null)
         {
-            System.out.println("\n\nupdateBothForms() no ingredientInfo / shopInfo to Update");
+            System.err.println("\n\nupdateBothForms() No Ingredient / Shop Info to Update");
             return false;
         }
         
         //####################################
         // Uploading Ingredient Info Query
         //####################################
-        if (updateIngredients_String != null && ! (db.upload_Data_Batch_Altogether(new String[]{ updateIngredients_String })))
+        String errorMSG = "Error, Upload Shop / Ingredient Info";
+        
+        if (ingredients_Update != null && shops_Update != null)
         {
-            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Failed Upload - Unable To Add Ingredient Info & Shop Info & Ingredient Suppliers In DB!");
+            String[] combined = ArrayUtils.addAll(new String[]{ ingredients_Update }, shops_Update);
+            
+            if (! db.upload_Data_Batch_Independently(combined, errorMSG)) { return false; }
+            
+        }
+        else if (ingredients_Update != null && ! db.upload_Data(ingredients_Update, false, errorMSG))
+        {
+            return false;
+        }
+        else if (shops_Update != null && db.upload_Data_Batch_Altogether(shops_Update, errorMSG))
+        {
             return false;
         }
         
         //####################################
-        // Uploading Shop Info
+        // Output
         //####################################
-        boolean errorUploading = false;
-        
-        if (updateIngredientShops_String != null)
-        {
-            int noOfUpdateProcesses = updateIngredientShops_String.length;
-            
-            for (int x = 0; x < noOfUpdateProcesses; x++)
-            {
-                if (! (db.upload_Data_Batch_Altogether(new String[]{ updateIngredientShops_String[x] })))
-                {
-                    JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("Failed %s/%s Updates - Unable To Add Ingredient Supplier!",
-                            x + 1, noOfUpdateProcesses));
-                    
-                    errorUploading = true;
-                }
-            }
-            
-            if (errorUploading) // if there were errors, flag it (return false)
-            {
-                return false;
-            }
-            
-            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("\n\nUpdated Ingredient Info! \n\nAlso updated %s/%s -  Suppliers For Ingredient Updated In DB!!!",
-                    noOfUpdateProcesses, noOfUpdateProcesses));
-        }
-        
+        JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Successfully Updated Ingredient & Shop Info !!");
         return true;  // No Errors found
     }
     
     @Override
     protected boolean backup_Data_In_SQL_File() //HELLO Iteration has next can predict last loop
     {
+        //###############################################
+        //
+        //###############################################
         String replacementData = "(null,";
         for (Map.Entry<String, Object[]> entry : ingredientsForm.get_Ingredients_Form_Object_And_Values().entrySet())
         {
@@ -644,17 +631,14 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
         
         System.out.printf("\n\nbackupDataInSQLFile() Text to Replace \n%s", replacementData);
         
-        //##############################################################################################################
+        //###############################################
         //
-        //##############################################################################################################
-        String oldIngredientName = String.format("(\"%s\")", get_Selected_Ingredient_Name().trim());
-        if (! (db.replace_Txt_In_SQL_File(sqlBackUpPath, false, oldIngredientName, replacementData)))
-        {
-            JOptionPane.showMessageDialog(null, String.format("Error, changing back-up of %s in SQL file of ingredient info!", oldIngredientName));
-            return false;
-        }
+        //###############################################
+        String
+                oldIngredientName = String.format("(\"%s\")", get_Selected_Ingredient_Name().trim()),
+                errorMSG = "Error, Unable to replace Ingredient Info in BackUp file!";
         
-        return true;
+        return db.replace_Txt_In_SQL_File(sqlBackUpPath, false, oldIngredientName, replacementData, errorMSG);
     }
     
     //##################################################################################################################
@@ -662,74 +646,63 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
     //##################################################################################################################
     private void delete_Ingredient_BTN_Action()//HELLO PROGRAM DELETE BTN
     {
-        //##############################################################################################################
+        //###############################################
         //
-        //##############################################################################################################
+        //###############################################
         if (ingredientsName_JComboBox.getSelectedIndex() == - 1)
         {
             JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Please select an item first before attempting to delete an ingredient!");
             return;
         }
         
-        //##############################################################################################################
+        //###############################################
         //
-        //##############################################################################################################
+        //###############################################
         String selectedIngredientID = ingredientsForm.get_Selected_IngredientID();
         String selectedIngredientName = ingredientsForm.get_Selected_IngredientName();
         
-        //HELLO should be removed as N/A is never in the JComboBox
-        if (selectedIngredientName.equals("N/A"))
-        {
-            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "This item cannot be deleted from the list (its a placeholder) !");
-            refresh_Interface(true, true);
-            return;
-        }
-        
-        //##############################################################################################################
+        //###############################################
         //
-        //##############################################################################################################
-        if (! (are_You_Sure(String.format("delete ingredient named '%s' from the database", selectedIngredientName))))
-        {
-            return;
-        }
-        
-        //##############################################################################################################
-        //
-        //##############################################################################################################
+        //###############################################
         if (selectedIngredientID == null || selectedIngredientName == null)
         {
             JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Unable to grab Ingredient INFO to delete it!!");
             return;
         }
         
-        //##############################################################################################################
+        //###############################################
         //
-        //##############################################################################################################
-        String query0 = String.format("DELETE FROM `ingredients_in_sections_of_meal` WHERE Ingredient_id = %s;", selectedIngredientID);
-        String query1 = String.format("DELETE FROM `ingredient_in_shops` WHERE ingredient_id  = %s;", selectedIngredientID);
-        String query2 = String.format("DELETE FROM `ingredients_info` WHERE ingredient_id  = %s;", selectedIngredientID);
-        
-        if (db.upload_Data_Batch_Altogether(new String[]{ query0, query1, query2 }))
+        //###############################################
+        if (! (are_You_Sure(String.format("delete ingredient named '%s' from the database", selectedIngredientName))))
         {
-            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("Successfully Deleted '%s' From DB!", selectedIngredientName));
-            add_Or_Delete_Ingredient_From_Map("delete", selected_IngredientType, selectedIngredientName); // delete ingredient
-            refresh_Interface(true, true);
-            ingredients_info_screen.set_Update_IngredientInfo(true);
-        }
-        else
-        {
-            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Unable to delete item From DB!");
             return;
         }
         
-        //##############################################################################################################
-        // Delete From BackUp SQL File
-        //##############################################################################################################
+        //###############################################
+        // Execute Query
+        //###############################################
+        String query = String.format("DELETE FROM `ingredients_info` WHERE ingredient_id  = %s;", selectedIngredientID);
         
-        if (! (db.delete_Txt_In_File(super.sqlBackUpPath, String.format("(\"%s\"),", selectedIngredientName))))
-        {
-            JOptionPane.showMessageDialog(null, String.format("\n\nError, deleteBTNAction() deleting ingredient '%s' from backup files!", selectedIngredientName));
-        }
+        if (! db.upload_Data(query, false, "Error, Unable to delete item From DB!")) { return; }
+        
+        //###############################################
+        // Update Screens / Methods
+        //###############################################
+        JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("Successfully Deleted '%s' From DB!", selectedIngredientName));
+        
+        add_Or_Delete_Ingredient_From_Map("delete", selected_IngredientType, selectedIngredientName); // delete ingredient
+        refresh_Interface(true, true);
+        
+        ingredients_info_screen.set_Update_IngredientInfo(true);
+        
+        //###############################################
+        // Delete From BackUp SQL File
+        //###############################################
+        String
+                format_Ingredient = String.format("(\"%s\"),", selectedIngredientName),
+                errorMSG = String.format("\n\nError, deleteBTNAction() deleting ingredient '%s' from backup files!", selectedIngredientName);
+        
+        db.delete_Txt_In_File(sqlBackUpPath, format_Ingredient, errorMSG);
     }
     
     //##################################################################################################################

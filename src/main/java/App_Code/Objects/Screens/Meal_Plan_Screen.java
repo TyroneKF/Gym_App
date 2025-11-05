@@ -20,7 +20,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.util.*;
-import java.util.List;
 
 public class Meal_Plan_Screen extends Screen_JFrame
 {
@@ -57,10 +56,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //###############################################
     // Collections
     //###############################################
-    private ArrayList<String> meal_total_columnNames, ingredients_ColumnNames, macroTargetsTable_ColumnNames, macrosLeft_columnNames;
+    private ArrayList<String> meal_total_columnNames, ingredients_ColumnNames, macroTargets_ColumnNames,
+            macrosLeft_columnNames, macros_And_Limits_ColumnNames;
     
     private TreeSet<String>
-            ingredientsTypesList ,
+            ingredientsTypesList,
             storesNamesList;
     
     // Sorted Hashmap by key String
@@ -227,15 +227,14 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 // #########################################
                 
                 MyJDBC db = new MyJDBC(
-                        true,
                         host,
                         port,
                         user_name,
                         password,
                         database_Name,
                         db_Scripts_Folder_Path,
-                        db_File_Script_List_Name,
-                        db_File_Tables_Name);
+                        db_File_Script_List_Name
+                );
                 
                 if (db.get_DB_Connection_Status())
                 {
@@ -260,15 +259,14 @@ public class Meal_Plan_Screen extends Screen_JFrame
             //#############################################################################################################
             
             MyJDBC db = new MyJDBC(
-                    false,
                     "localhost",
                     "3306",
                     user_name,
                     password,
                     database_Name,
                     db_Scripts_Folder_Path,
-                    db_File_Script_List_Name,
-                    db_File_Tables_Name);
+                    db_File_Script_List_Name
+            );
             
             if (! db.get_DB_Connection_Status())
             {
@@ -288,45 +286,103 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // Getting Selected User & Plan Info
         //##############################################################################################################
         String queryX = String.format("""
-                SELECT U.user_id, P.plan_id, P.plan_name 
+                SELECT U.user_id, P.plan_id, P.plan_name
                 FROM
                 (
                   SELECT plan_id, plan_name, user_id, selected_plan_flag from %s
-                ) P     
-                LEFT JOIN users U 
-                ON U.user_id = P.user_id                                                
+                ) P
+                LEFT JOIN users U
+                ON U.user_id = P.user_id
                 WHERE P.selected_plan_flag = TRUE AND U.user_name = '%s';""", tablePlansName, user_name);
         
-        ArrayList<ArrayList<String>> results1 = db.get_Multi_Column_Query(queryX);
+        String errorMSG = "Error, Gathering Plan & Personal User Information!";
         
-        ArrayList<String> results = results1 != null ? results1.get(0) : null;
+        ArrayList<ArrayList<String>> results = db.get_Multi_Column_Query(queryX, errorMSG);
         
-        user_id = results != null ? Integer.parseInt(results.get(0)) : null;
-        planID = results != null ? Integer.parseInt(results.get(1)) : null;
-        planName = results != null ? results.get(2) : null;
+        ArrayList<String> results1 = results != null ? results.getFirst() : null;
+        
+        user_id = results1 != null ? Integer.parseInt(results1.get(0)) : null;
+        planID = results1 != null ? Integer.parseInt(results1.get(1)) : null;
+        planName = results1 != null ? results1.get(2) : null;
         
         if (planID == null || user_id == null || planName == null || user_name == null)
         {
             System.err.printf("\n\nUsername : %s \nUser ID : %s \n\nSelected Plan ID : %s  \nSelected Plan Name : %s\n", user_name, user_id, planID, planName);
-            
-            JOptionPane.showMessageDialog(null, "No Chosen Plan Or User");
             return;
+        }
+        
+        //#############################################################################################################
+        // 2.) Getting Table Column Names
+        //#############################################################################################################
+        
+        // column names : ingredients_in_sections_of_meal_calculation
+        ingredients_ColumnNames = db.get_Column_Names_AL(tableIngredientsCalName);
+        
+        // column names : total_meal_view
+        meal_total_columnNames = db.get_Column_Names_AL(tableTotalMealsTableName);
+        
+        // column names : plan_macro_target_calculations
+        macroTargets_ColumnNames = db.get_Column_Names_AL(tablePlanMacroTargetsNameCalc);
+        
+        // Get table column names for plan_macros_left
+        macrosLeft_columnNames = db.get_Column_Names_AL(tablePlanMacrosLeftName);
+        
+        // Get table column names for total_meal_view
+        meal_total_columnNames = db.get_Column_Names_AL(tableTotalMealsTableName);
+        
+        // Get table column names for macros_per_pound_and_limits
+        macros_And_Limits_ColumnNames = db.get_Column_Names_AL(tableMacrosPerPoundLimitName);
+        
+        //######################################################################
+        // Check IF Data Collections Are NULL
+        //######################################################################
+        if (ingredients_ColumnNames == null || meal_total_columnNames == null || macroTargets_ColumnNames == null ||
+                macrosLeft_columnNames == null || macros_And_Limits_ColumnNames == null)
+        {
+            System.err.printf("Error, Gathering Column Names for Tables: \n%s = %s%n \n%s = %s%n \n%s = %s%n \n%s = %s%n \n%s = %s%n",
+                    
+                    tableIngredientsCalName, ingredients_ColumnNames,
+                    tableTotalMealsTableName, meal_total_columnNames,
+                    tablePlanMacroTargetsNameCalc, macroTargets_ColumnNames,
+                    tablePlanMacrosLeftName, macrosLeft_columnNames,
+                    tableMacrosPerPoundLimitName, macros_And_Limits_ColumnNames
+            );
+            
+            JOptionPane.showMessageDialog(this, "Error, Getting Column Names For Tables In GUI !!");
+            window_Closed_Event();
+            return;
+        }
+        
+        //################################
+        // column names : total_meal_view
+        //################################
+        for (int pos = 0; pos < meal_total_columnNames.size(); pos++)
+        {
+            String columnName = meal_total_columnNames.get(pos);
+            
+            if (totalMeal_macroColName_And_Pos.containsKey(columnName))
+            {
+                String symbol = totalMeal_macroColName_And_Pos.get(columnName).getValue1();
+                totalMeal_macroColName_And_Pos.put(columnName, new Pair<>(pos, symbol));
+            }
+            else if (totalMeal_Other_Cols_Pos.containsKey(columnName))
+            {
+                totalMeal_Other_Cols_Pos.put(columnName, pos);
+            }
         }
         
         //##############################################################################################################
         // Getting Number Of Meals & Sub meals Count
         //##############################################################################################################
         String query1 = String.format("SELECT COUNT(meal_in_plan_id) AS total_meals FROM %s WHERE plan_id = %s;", tableMealsInPlanName, planID);
-        ArrayList<String> mealsInPlanCount = db.get_Single_Column_Query_AL(query1);
+        ArrayList<String> mealsInPlanCount = db.get_Single_Column_Query_AL(query1, "Error, getting Meal Counts!");
         
         String query2 = String.format("SELECT COUNT(div_meal_sections_id) AS total_sub_meals FROM %s WHERE plan_id = %s;", tableSub_MealsName, planID);
-        ArrayList<String> dividedMealSectionsCount = db.get_Single_Column_Query_AL(query2);
+        ArrayList<String> dividedMealSectionsCount = db.get_Single_Column_Query_AL(query2, "Error, getting Sub-Meal Counts!");
         
         if (mealsInPlanCount == null | dividedMealSectionsCount == null)
         {
             String msg = "\n\nError, Getting Meal Count Or, Sub Meals Count";
-            
-            System.err.printf("\n%s \nQuery 1: %s \nQuery 2: %s", msg, query1, query2);
             
             JOptionPane.showMessageDialog(this, msg);
             return;
@@ -404,76 +460,20 @@ public class Meal_Plan_Screen extends Screen_JFrame
         loadingScreen.increaseBar(10);
         
         //#############################################################################################################
-        // 2.) Getting Table Column Names
-        //#############################################################################################################
-        
-        // column names : ingredients_in_sections_of_meal_calculation
-        ingredients_ColumnNames = db.get_Column_Names_AL(tableIngredientsCalName);
-        
-        // column names : total_meal_view
-        meal_total_columnNames = db.get_Column_Names_AL(tableTotalMealsTableName);
-        
-        // column names : plan_macro_target_calculations
-        macroTargetsTable_ColumnNames = db.get_Column_Names_AL(tablePlanMacroTargetsNameCalc);
-        
-        // Get table column names for plan_macros_left
-        macrosLeft_columnNames = db.get_Column_Names_AL(tablePlanMacrosLeftName);
-        
-        //##############################
-        // column names : total_meal_view
-        //##############################
-        meal_total_columnNames = db.get_Column_Names_AL(tableTotalMealsTableName);
-        
-        if (meal_total_columnNames != null)
-        {
-            int pos = 0;
-            for (String columnName : meal_total_columnNames)
-            {
-                if (totalMeal_macroColName_And_Pos.containsKey(columnName))
-                {
-                    String symbol = totalMeal_macroColName_And_Pos.get(columnName).getValue1();
-                    totalMeal_macroColName_And_Pos.put(columnName, new Pair<>(pos, symbol));
-                }
-                else if (totalMeal_Other_Cols_Pos.containsKey(columnName))
-                {
-                    totalMeal_Other_Cols_Pos.put(columnName, pos);
-                }
-                pos++;
-            }
-        }
-        
-        //######################################################################
-        // Check IF Data Collections Are NULL
-        //######################################################################
-        if (ingredients_ColumnNames == null | meal_total_columnNames == null | macroTargetsTable_ColumnNames == null | macrosLeft_columnNames == null)
-        {
-            System.err.printf("Error, Gathering Column Names for Tables: \n%s = %s%n \n%s = %s%n \n%s = %s%n \n%s = %s%n",
-                    
-                    tableIngredientsCalName, ingredients_ColumnNames,
-                    tableTotalMealsTableName, meal_total_columnNames,
-                    tablePlanMacroTargetsNameCalc, macroTargetsTable_ColumnNames,
-                    tablePlanMacrosLeftName, macrosLeft_columnNames
-            );
-            
-            JOptionPane.showMessageDialog(this, "Error, Getting Column Names For Tables In GUI !!");
-            window_Closed_Event();
-            return;
-        }
-        
-        //#############################################################################################################
         // 2.) Getting Meals In Plan : ID , Name , Meal Times
         //#############################################################################################################
         ArrayList<ArrayList<String>> meals_Info_In_Plan = new ArrayList<>();
         
         if (no_of_meals > 0)
         {
-            String query = String.format("SELECT meal_in_plan_id, meal_name, meal_time FROM %s WHERE plan_id = %s ORDER BY meal_time ASC;", tableMealsInPlanName, tempPlanID);
+            String
+                    query = String.format("SELECT meal_in_plan_id, meal_name, meal_time FROM %s WHERE plan_id = %s ORDER BY meal_time ASC;", tableMealsInPlanName, tempPlanID),
+                    errorMSG1 = "Error, Unable to get Meals Info in this Plan!";
             
-            meals_Info_In_Plan = db.get_Multi_Column_Query(query);
+            meals_Info_In_Plan = db.get_Multi_Column_Query(query, errorMSG1);
             
             if (meals_Info_In_Plan == null)
             {
-                JOptionPane.showMessageDialog(this, "Error, getting meal_in_plan_id, meal_name, meal_time from Meals in plan");
                 System.err.printf("\n\nMeal_Plan_Screen.java Meal_Plan_Screen() Error with script \n%s", query);
                 return;
             }
@@ -542,16 +542,22 @@ public class Meal_Plan_Screen extends Screen_JFrame
         addToContainer(macrosInfoJPanel, createSpaceDivider(0, 20), 0, macrosInfoJP_YPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0, null);
 */
         //#########################################################################
-        // Setting up macroTargets Table
+        // Setting up MacroTargets Table
         //#########################################################################
         // Getting data for plan_macro_target_calculations
-        String planCalcQuery = String.format("SELECT * from %s WHERE plan_id = %s;", tablePlanMacroTargetsNameCalc, tempPlanID);
+        String
+                planCalcQuery = String.format("SELECT * from %s WHERE plan_id = %s;", tablePlanMacroTargetsNameCalc, tempPlanID),
+                errorMSG1 = "Error, Gathering Macros Targets Data!";
         
-        ArrayList<ArrayList<Object>> planData = db.get_TableData_Objects_AL(planCalcQuery, tablePlanMacroTargetsNameCalc);
-        planData = planData != null ? planData : new ArrayList<>();
+        ArrayList<ArrayList<Object>> planData = db.get_TableData_Objects_AL(planCalcQuery, tablePlanMacroTargetsNameCalc, errorMSG1);
+        if (planData == null)
+        {
+            JOptionPane.showMessageDialog(getFrame(),errorMSG1);
+            return;
+        }
         
-        macros_Targets_Table = new MacrosTargetsTable(db, macrosInfoJPanel, planData, macroTargetsTable_ColumnNames, planID, tempPlanID,
-                tablePlanMacroTargetsNameCalc, macroTargetsTable_ColumnNames, null, macrosTargets_Table_ColToHide);
+        macros_Targets_Table = new MacrosTargetsTable(db, macrosInfoJPanel, planData, macroTargets_ColumnNames, planID, tempPlanID,
+                tablePlanMacroTargetsNameCalc, macroTargets_ColumnNames, null, macrosTargets_Table_ColToHide);
         
         addToContainer(macrosInfoJPanel, macros_Targets_Table, 0, macrosInfoJP_YPos += 1, + 1, 1, 0.25, 0.25, "both", 40, 0, null);
         
@@ -565,10 +571,16 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###########################################################################
         
         // Get table data from plan_macros_left
-        String macrosQuery = String.format("SELECT * from %s WHERE plan_id = %s;", tablePlanMacrosLeftName, tempPlanID);
+        String
+                macrosQuery = String.format("SELECT * from %s WHERE plan_id = %s;", tablePlanMacrosLeftName, tempPlanID),
+                errorMSG_ML = "Error, Unable to get Plan Macros Left!";
         
-        ArrayList<ArrayList<Object>> macrosData = db.get_TableData_Objects_AL(macrosQuery, tablePlanMacrosLeftName);
-        macrosData = macrosData != null ? macrosData : new ArrayList<>();
+        ArrayList<ArrayList<Object>> macrosData = db.get_TableData_Objects_AL(macrosQuery, tablePlanMacrosLeftName, errorMSG_ML);
+        if (macrosData == null)
+        {
+            JOptionPane.showMessageDialog(getFrame(),errorMSG_ML);
+            return;
+        }
         
         macrosLeft_JTable = new MacrosLeftTable(db, macrosInfoJPanel, macrosData, macrosLeft_columnNames, planID, tempPlanID,
                 tablePlanMacrosLeftName, macrosLeft_columnNames, null, macrosLeft_Table_ColToHide);
@@ -603,18 +615,16 @@ public class Meal_Plan_Screen extends Screen_JFrame
             //#####################################################
             // Get MealID's Of SubMeals
             //#####################################################
-            String subDivQuery = String.format("SELECT div_meal_sections_id FROM %s WHERE meal_in_plan_id = %s AND plan_id = %s;", tableSub_MealsName, mealInPlanID, tempPlanID);
-            ArrayList<ArrayList<String>> subMealsInMealArrayList = db.get_Multi_Column_Query(subDivQuery);
+            String
+                    subDivQuery = String.format("SELECT div_meal_sections_id FROM %s WHERE meal_in_plan_id = %s AND plan_id = %s;", tableSub_MealsName, mealInPlanID, tempPlanID),
+                    errorMSG2 = String.format("Error, Unable to get Sub-Meal Info for: %s at %s", mealName, mealTime);
+            
+            ArrayList<ArrayList<String>> subMealsInMealArrayList = db.get_Multi_Column_Query(subDivQuery, errorMSG2);
             
             if (subMealsInMealArrayList == null)
             {
-                String message = String.format("\n\nError, gathering sub-meals ID for meal named ' %s ' ! \nA meal must have 1 sub-meal minimum!", mealName);
-                
-                System.err.printf("%s", message);
-                JOptionPane.showMessageDialog(null, message);
-                
-                errorFound = true;
-                break;
+                JOptionPane.showMessageDialog(null, errorMSG2);
+                return;
             }
             
             //#####################################################
@@ -645,10 +655,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
             loadingScreen.increaseBar(1 + subMealsInMealArrayList.size()); // + original meal + the sub-meal
         }
         
-        if (errorFound) { return; }
-        
-        System.out.printf("\n\n%s", lineSeparator);
-        
         //##############################################################################################################
         // GUI Alignments & Configurations
         //##############################################################################################################
@@ -663,7 +669,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // Transfer Data Methods
     private boolean transfer_Plan_Data(int fromPlan, int toPlan)
     {
-        String query0 = String.format("""
+        String query1 = String.format("""
                 UPDATE `plans` AS `P`,
                 (
                 	SELECT plan_name, vegan FROM %s WHERE plan_id = %s
@@ -674,11 +680,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 WHERE
                     `P`.`plan_id` = %s; """, tablePlansName, fromPlan, toPlan);
         
-        if (! (db.upload_Data_Batch_Altogether(new String[]{ query0 })))
-        {
-            JOptionPane.showMessageDialog(null, "\n\ntransferPlanData() Cannot Transfer Plan Data");
-            return false;
-        }
+        if (! (db.upload_Data(query1, false, "Unable to Load / Transfer Plan Data!"))) { return false; }
         
         System.out.printf("\nPlanData Successfully transferred! \n\n%s", lineSeparator);
         return true;
@@ -687,69 +689,46 @@ public class Meal_Plan_Screen extends Screen_JFrame
     private boolean transfer_Targets(int fromPlan, int toPlan, boolean deleteFromToPlan, boolean showConfirmMsg)
     {
         //####################################
-        // Mysql Transferring Data
+        // Perform Upload
         //####################################
         String query00 = String.format("DELETE FROM %s WHERE plan_id = %s;", tableMacrosPerPoundLimitName, toPlan);
         String query01 = String.format("DROP TABLE IF EXISTS temp_%s;", tableMacrosPerPoundLimitName);
-        String query02 = String.format("""
-                        CREATE TABLE temp_%s AS SELECT * FROM %s 
-                        WHERE plan_id = %s 
-                        AND date_time_of_creation = (SELECT MAX(date_time_of_creation) FROM %s);""",
-                tableMacrosPerPoundLimitName, tableMacrosPerPoundLimitName, fromPlan, tableMacrosPerPoundLimitName);
         
-        String query03 = String.format("ALTER TABLE temp_%s DROP COLUMN current_weight_in_pounds;", tableMacrosPerPoundLimitName);
-        String query04 = String.format("UPDATE temp_%s SET plan_id = %s;", tableMacrosPerPoundLimitName, toPlan);
+        String query02 = String.format("CREATE TABLE temp_%s AS SELECT * FROM %s WHERE plan_id = %s;",
+                tableMacrosPerPoundLimitName, tableMacrosPerPoundLimitName, fromPlan);
         
-        //####################################
-        // Gathering Table Columns
-        //####################################
+        String query03 = String.format("UPDATE temp_%s SET plan_id = %s;", tableMacrosPerPoundLimitName, toPlan);
+        String query04 = String.format("INSERT INTO %s SELECT * FROM temp_%s;", tableMacrosPerPoundLimitName, tableMacrosPerPoundLimitName);
         
-        ArrayList<String> columnsToAvoid = new ArrayList<>(List.of("current_weight_in_pounds"));
-        ArrayList<String> macrosColumns = db.get_Column_Names_AL(tableMacrosPerPoundLimitName);
-        
-        String query05 = String.format("INSERT INTO %s \n(", tableMacrosPerPoundLimitName);
-        int listSize = macrosColumns.size();
-        
-        for (int i = 0; i <= listSize - 1; i++)
-        {
-            String columnName = macrosColumns.get(i);
-            String colToAdd = columnsToAvoid.contains(columnName) ? "" : String.format("\n\t%s", columnName);
-            
-            query05 = ! colToAdd.equals("") ? String.format("%s %s,", query05, colToAdd) : query05;
-        }
-        
-        query05 = query05.substring(0, query05.length() - 1); // Remove last ',' from query
-        
-        query05 += String.format("\n) \n\nSELECT * FROM temp_%s;", tableMacrosPerPoundLimitName);
+        String query05 = String.format("DROP TABLE temp_%s;", tableMacrosPerPoundLimitName);
         
         //####################################
-        
-        String query06 = String.format("DROP TABLE temp_%s;", tableMacrosPerPoundLimitName);
-        
+        // Prepare Upload Statements
         //####################################
-        // Perform Upload
-        //####################################
-        String[] uploadQueries = new String[0];
+        String[] uploadQueries;
         
         if (deleteFromToPlan)
         {
-            uploadQueries = new String[]{ query00, query01, query02, query03, query04, query05, query06 };
+            uploadQueries = new String[]{ query00, query01, query02, query03, query04, query05 };
         }
         else
         {
-            uploadQueries = new String[]{ query01, query02, query03, query04, query05, query06 };
+            uploadQueries = new String[]{ query01, query02, query03, query04, query05 };
         }
         
-        if (! (db.upload_Data_Batch_Altogether(uploadQueries)))
-        {
-            JOptionPane.showMessageDialog(null, "\n\nCannot Transfer Targets");
-            return false;
-        }
-        else if (showConfirmMsg)
+        //####################################
+        // Execute Upload Statements
+        //####################################
+        if (! (db.upload_Data_Batch_Altogether(uploadQueries, "Unable to Transfer Targets Data!"))) { return false; }
+        
+        if (showConfirmMsg)
         {
             JOptionPane.showMessageDialog(null, "\n\nTargets Successfully Saved");
         }
         
+        //####################################
+        // Return Output
+        //####################################
         System.out.printf("\nTargets Successfully transferred! \n\n%s", lineSeparator);
         return true;
     }
@@ -795,7 +774,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         String query14 = String.format("""                  
                 CREATE table temp_%s AS
                 SELECT i.*
-                FROM %s i                                                       
+                FROM %s i
                 WHERE i.plan_id = %s;""", tableIngredientsInMealSections, tableIngredientsInMealSections, fromPlanID);
         
         String query15 = String.format("UPDATE temp_%s SET plan_id = %s;", tableIngredientsInMealSections, toPlanID);
@@ -808,15 +787,14 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################################
         // Update
         //####################################################
-        String[] query_Temp_Data = new String[]{ query0, query1, query2, query3, query4, query5, query6, query7, query8, query9, query10, query11, query12,
+        String[] query = new String[]{ query0, query1, query2, query3, query4, query5, query6, query7, query8, query9, query10, query11, query12,
                 query13, query14, query15, query16, query17, query18, query19 };
         
-        if (! (db.upload_Data_Batch_Altogether(query_Temp_Data)))
-        {
-            JOptionPane.showMessageDialog(null, "\n\nError, transferMealIngredients() cannot transfer meal Ingredients");
-            return false;
-        }
+        if (! (db.upload_Data_Batch_Altogether(query, "Error, Unable to Transfer Meal Ingredients"))) { return false; }
         
+        //####################################################
+        // Output
+        //####################################################
         System.out.printf("\nMealIngredients Successfully Transferred! \n\n%s", lineSeparator);
         return true;
     }
@@ -824,10 +802,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //#################################################
     // Get / Update Methods
     //#################################################
+    
     /**
-     *  Ingredient Types Mapped to Ingredient Names
-     *  IngredientTypes,
-     *  Stores
+     * Ingredient Types Mapped to Ingredient Names
+     * IngredientTypes,
+     * Stores
      */
     public boolean get_Ingredient_And_Store_Data()
     {
@@ -843,29 +822,37 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //#################################################################################
         // Get All The IngredientsType Inside The DB
         //#################################################################################
-        ingredientsTypesList = db.get_Single_Col_Alphabetically_Sorted(String.format("SELECT ingredient_type_name FROM %s ORDER BY ingredient_type_name ASC;", tableIngredientsTypeName));
+        String
+                query1 = String.format("SELECT ingredient_type_name FROM %s ORDER BY ingredient_type_name ASC;", tableIngredientsTypeName),
+                errorMSG1 = "Error, Unable to get Ingredient Types in Plan!";
+        
+        ingredientsTypesList = db.get_Single_Col_Alphabetically_Sorted(query1, errorMSG1);
         
         if (ingredientsTypesList == null)
         {
-            JOptionPane.showMessageDialog(this, "\n\nUnable to get ingredient_types");
+            JOptionPane.showMessageDialog(this, errorMSG1);
             return false;
         }
         
         //#################################################################################
         // Get All The Store Names Inside The DB
         //#################################################################################
-        storesNamesList = db.get_Single_Col_Alphabetically_Sorted(String.format("SELECT store_name FROM %s ORDER BY store_name ASC;", tableStoresName));
+        String
+                query2 = String.format("SELECT store_name FROM %s ORDER BY store_name ASC;", tableStoresName),
+                errorMSG2 = "Error, Unable to get Ingredient Stores in Plan!";
+        
+        storesNamesList = db.get_Single_Col_Alphabetically_Sorted(query2, errorMSG2);
         
         if (storesNamesList == null)
         {
-            JOptionPane.showMessageDialog(this, "\n\nUnable to get storesList!");
+            JOptionPane.showMessageDialog(this, errorMSG2);
             return false;
         }
         
         //#################################################################################
         // Success MSG
         //#################################################################################
-        System.out.printf("\nIngredient Types & Names Successfully transferred! \n\n%s", lineSeparator);
+        System.out.printf("\nIngredient Types & Store Names Successfully transferred! \n\n%s", lineSeparator);
         return true;
     }
     
@@ -874,25 +861,28 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###########################################################
         // Store ingredientTypes ID's & IngredientTypeName that occur
         //###########################################################
-        String queryIngredientsType = String.format(
+        String
+                queryTypes = String.format(
                 """
-                SELECT I.ingredient_type_id, N.ingredient_type_name
-                FROM
-                (
-                   SELECT DISTINCT(ingredient_type_id) FROM %s
-                ) AS I
-                INNER JOIN
-                (
-                   SELECT ingredient_type_id, ingredient_type_name FROM %s
-                ) AS N
-                ON I.ingredient_type_id = N.ingredient_type_id
-                ORDER BY N.ingredient_type_name;""", tableIngredientsInfoName, tableIngredientsTypeName);
+                        SELECT I.ingredient_type_id, N.ingredient_type_name
+                        FROM
+                        (
+                           SELECT DISTINCT(ingredient_type_id) FROM %s
+                        ) AS I
+                        INNER JOIN
+                        (
+                           SELECT ingredient_type_id, ingredient_type_name FROM %s
+                        ) AS N
+                        ON I.ingredient_type_id = N.ingredient_type_id
+                        ORDER BY N.ingredient_type_name;""", tableIngredientsInfoName, tableIngredientsTypeName),
+                
+                errorMSG = "\n\nUnable to update Ingredient Type Info";
         
-        ArrayList<ArrayList<String>> ingredientTypesNameAndIDResults = db.get_Multi_Column_Query(queryIngredientsType);
+        ArrayList<ArrayList<String>> ingredientTypesNameAndIDResults = db.get_Multi_Column_Query(queryTypes, errorMSG);
         
         if (ingredientTypesNameAndIDResults == null)
         {
-            JOptionPane.showMessageDialog(null, "\n\nUnable to update Ingredient Type Info");
+            JOptionPane.showMessageDialog(getFrame(), errorMSG);
             return false;
         }
         
@@ -904,7 +894,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //######################################
         // Store all ingredient types & names
         //######################################
-       for (ArrayList<String> rowData : ingredientTypesNameAndIDResults)
+        for (ArrayList<String> rowData : ingredientTypesNameAndIDResults)
         {
             String ID = rowData.get(0);
             String ingredientType = rowData.get(1);
@@ -912,14 +902,17 @@ public class Meal_Plan_Screen extends Screen_JFrame
             //########################################
             // Get IngredientNames for Type
             //########################################
-            String queryTypeIngredientNames =
-                    String.format("SELECT ingredient_name FROM %s WHERE ingredient_type_id = %s ORDER BY ingredient_name;", tableIngredientsInfoName, ID);
+            String
+                    query_Type_Names = String.format("SELECT ingredient_name FROM %s WHERE ingredient_type_id = %s ORDER BY ingredient_name;",
+                    tableIngredientsInfoName, ID),
+                    
+                    errorMSG2 = String.format("Error, Unable to get Ingredient Names for Ingredient Type '%s'!", ingredientType);
             
-            TreeSet<String> ingredientNames = db.get_Single_Col_Alphabetically_Sorted(queryTypeIngredientNames);
+            TreeSet<String> ingredientNames = db.get_Single_Col_Alphabetically_Sorted(query_Type_Names, errorMSG2);
             
             if (ingredientNames == null)
             {
-                System.err.printf("\nUnable to grab ingredient names for Type '%s'!", ingredientType);
+                System.err.printf("\n\n%s", errorMSG);
                 return false;
             }
             
@@ -929,6 +922,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
             map_ingredientTypesToNames.put(ingredientType, ingredientNames);
         }
         
+        //########################################
+        // Output
+        //########################################
         return true;
     }
     
@@ -1194,11 +1190,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###########################################################
         String queryDelete = String.format("DELETE FROM meals_in_plan WHERE plan_id = %s", tempPlanID);
         
-        if (! db.upload_Data(queryDelete, false))
-        {
-            JOptionPane.showMessageDialog(null, "\n\nUnable to DELETE All Meals in Plan!");
-            return;
-        }
+        if (! db.upload_Data(queryDelete, false, "Error, unable to DELETE meals in plan!")) { return; }
         
         JOptionPane.showMessageDialog(this, "\n\nSuccessfully, DELETED all meals in plan!");
         
@@ -1556,17 +1548,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
         {
             System.out.println("\n\n#################################### \n1.) saveMealData() Empty Meal Plan Save");
             
-            String query0 = "SET FOREIGN_KEY_CHECKS = 0;"; // Disable Foreign Key Checks
-            String query1 = String.format("DELETE FROM %s  WHERE plan_id = %s;", tableIngredientsInMealSections, planID);
-            String query2 = String.format("DELETE FROM %s WHERE plan_id = %s;", tableSub_MealsName, planID);
-            String query3 = String.format("DELETE FROM %s WHERE plan_id = %s;", tableMealsInPlanName, planID);
-            String query4 = "SET FOREIGN_KEY_CHECKS = 1;"; // Enable Foreign Key Checks
+            String query = String.format("DELETE FROM %s WHERE plan_id = %s;", tableMealsInPlanName, planID);
             
-            if (! (db.upload_Data_Batch_Altogether(new String[]{ query0, query1, query2, query3, query4 })))
-            {
-                JOptionPane.showMessageDialog(this, "\n\n1.)  Error \nUnable to save meals in plan!");
-                return;
-            }
+            if (! (db.upload_Data(query, false, "Error 2, Unable to Save Meal Data!"))) { return; }
         }
         else // because there are meals save them
         {
@@ -1755,6 +1739,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
             it.next().close_PieChartScreen();
             it.remove();
         }
+        
+        // ##########################################
+        // Close DB Pool
+        // ##########################################
+        db.close_Connection();
     }
     
     public void update_External_Charts(boolean mealPlanScreen_Action, String action, MealManager mealManager,
