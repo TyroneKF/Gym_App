@@ -346,7 +346,7 @@ public class Macros_Targets_Screen extends Screen_JFrame
                             carbohydrates_per_pound = %s, fibre =%s, fats_per_pound = %s,
                             saturated_fat_limit = %s, salt_limit = %s,water_target = %s,
                             liquid_target = %s, additional_calories = %s
-                            WHERE plan_id = %s AND date_time_of_creation = %s;""",
+                            WHERE plan_id = %s AND date_time_of_creation = '%s';""",
                     weightKG,
                     weightInPounds,
                     listOfTextFields.get(3).getText().trim(), listOfTextFields.get(4).getText().trim(),
@@ -369,7 +369,7 @@ public class Macros_Targets_Screen extends Screen_JFrame
                             )
                             VALUES
                             (%s, now(), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);""",
-                    planID,
+                    temp_PlanID,
                     weightKG, weightInPounds,
                     listOfTextFields.get(3).getText().trim(), listOfTextFields.get(4).getText().trim(),
                     listOfTextFields.get(5).getText().trim(), listOfTextFields.get(6).getText().trim(),
