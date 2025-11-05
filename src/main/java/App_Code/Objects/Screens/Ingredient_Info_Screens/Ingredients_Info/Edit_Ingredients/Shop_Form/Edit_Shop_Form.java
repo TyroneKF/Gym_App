@@ -28,7 +28,7 @@ public class Edit_Shop_Form extends Add_Shop_Form
     {
         super(parentContainer, ingredients_info_screen, edit_ingredients, btnText, btnWidth, btnHeight);
         this.edit_IngredientsForm = edit_ingredients.get_Ingredients_Form();
-    
+        
         collapsibleJPanel.expand_JPanel();
     }
     
@@ -48,7 +48,7 @@ public class Edit_Shop_Form extends Add_Shop_Form
         //###########################
         // Get New Ingredient Shop Info
         //###########################
-        ArrayList<ArrayList<String>> temp_ShopsFormDBData = db.get_Multi_Column_Query(String.format("""
+        String shopInfoQuery = String.format("""
                 SELECT i.pdid, s.store_name, i.product_name, i.cost_per_unit, i.volume_per_unit
                 FROM  ingredient_in_shops i
                 INNER JOIN
@@ -56,7 +56,11 @@ public class Edit_Shop_Form extends Add_Shop_Form
                   SELECT store_id, store_name FROM stores
                 ) s
                 ON s.store_id = i.store_id
-                AND  i.ingredient_id = %s ;""", selectedIngredientID));
+                AND  i.ingredient_id = %s ;""", selectedIngredientID);
+        
+        String errorMSG = "Error, Unable to get ShopForm Info For Selected Ingredient!";
+        
+        ArrayList<ArrayList<String>> temp_ShopsFormDBData = db.get_Multi_Column_Query(shopInfoQuery, errorMSG);
         
         if (temp_ShopsFormDBData == null)
         {
@@ -79,14 +83,14 @@ public class Edit_Shop_Form extends Add_Shop_Form
             ArrayList<String> rowData = shopsFormDBData.get(i);
             
             // PDID is set in constructor & Add Row
-           Edit_ShopForm_Object edit_shopForm_object = new Edit_ShopForm_Object(inputArea, this, rowData.get(0),
-                   rowData.get(1), rowData.get(2), rowData.get(3), rowData.get(4));
-    
+            Edit_ShopForm_Object edit_shopForm_object = new Edit_ShopForm_Object(inputArea, this, rowData.get(0),
+                    rowData.get(1), rowData.get(2), rowData.get(3), rowData.get(4));
+            
             shopFormObjects.add(edit_shopForm_object);
-    
+            
             // Adding Object To GUI
             add_To_Container(inputArea, edit_shopForm_object, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
-    
+            
             // Resize GUI
             resize_GUI();
         }
@@ -199,7 +203,7 @@ public class Edit_Shop_Form extends Add_Shop_Form
     
     public String get_Selected_IngredientID()
     {
-        return  edit_IngredientsForm.get_Selected_IngredientID();
+        return edit_IngredientsForm.get_Selected_IngredientID();
     }
     
     public MyJDBC get_DB()

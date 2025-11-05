@@ -29,8 +29,7 @@ public abstract class Add_Screen extends Screen_JPanel
             jTextField_JP;
     
     // Integer
-    protected int
-            charLimit = 55;
+    protected int charLimit = 55;
     
     // String
     protected String
@@ -218,8 +217,8 @@ public abstract class Add_Screen extends Screen_JPanel
             if (upload_Form())
             {
                 update_Other_Screens();
-                backup_Data_In_SQL_File();
                 success_Upload_Message();
+                backup_Data_In_SQL_File();
                 parent_Screen.reset_Actions();
             }
             else
@@ -238,7 +237,7 @@ public abstract class Add_Screen extends Screen_JPanel
             return false;
         }
         
-        if (jTextField_TXT.equals(""))
+        if (jTextField_TXT.isEmpty())
         {
             JOptionPane.showMessageDialog(null, String.format("\n\nAn %s Cannot Be Null!!", data_Gathering_Name));
             return false;
@@ -267,7 +266,7 @@ public abstract class Add_Screen extends Screen_JPanel
         //################################
         String query = String.format("SELECT %s  FROM %s WHERE %s = '%s';", db_ColumnName_Field, db_TableName, db_ColumnName_Field, jTextField_TXT);
         
-        if (db.get_Single_Column_Query_AL(query) != null)
+        if (db.get_Single_Column_Query_AL(query, "Error, checking if value already exists!") != null)
         {
             JOptionPane.showMessageDialog(null, String.format("\n\n%s '' %s '' Already Exists!", data_Gathering_Name, jTextField_TXT));
             return false;
@@ -276,27 +275,21 @@ public abstract class Add_Screen extends Screen_JPanel
         //################################
         // Upload Query
         //################################
-        String uploadString = String.format("""
-                INSERT INTO %s (%s) VALUES
-                ('%s');
-                """, db_TableName, db_ColumnName_Field, jTextField_TXT);
+        String uploadString = String.format("INSERT INTO %s (%s) VALUES ('%s');", db_TableName, db_ColumnName_Field, jTextField_TXT);
         
         //################################
         // Return Query Results
         //################################
-        return db.upload_Data_Batch_Altogether(new String[]{ uploadString });
+        return db.upload_Data( uploadString, false, "Error, Unable to Add Ingredient Info!");
     }
     
     protected boolean backup_Data_In_SQL_File()
     {
-        String txtToAdd = String.format("('%s')", jTextField_TXT);
+        String
+                txtToAdd = String.format("('%s')", jTextField_TXT),
+                errorMSG = String.format("Error, backing up new %s to SQL file!", process);
         
-        if (! (db.write_Txt_To_SQL_File(sql_File_Path, txtToAdd)))
-        {
-            JOptionPane.showMessageDialog(null, String.format("Error, backing up new %s to SQL file!", process));
-            return false;
-        }
-        return true;
+        return db.write_Txt_To_SQL_File(sql_File_Path, txtToAdd, errorMSG);
     }
     
     //########################

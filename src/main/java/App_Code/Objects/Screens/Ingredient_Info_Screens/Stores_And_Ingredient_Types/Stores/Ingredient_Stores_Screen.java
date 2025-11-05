@@ -23,7 +23,7 @@ public class Ingredient_Stores_Screen extends Parent_Screen
         super(db, ingredient_Info_screen,
                 "Edit Suppliers",
                 jComboBox_List,
-                "src/main/java/Documentation_And_Scripts/Database/Scripts/Editable_DB_Scripts/5.) IngredientTypes.sql");
+                "/data/database_scripts/5.) ingredient_types.sql");
         
         //####################################
         //

@@ -1,3 +1,9 @@
+DROP DATABASE IF EXISTS gymapp00001;
+
+-- ######################################
+CREATE DATABASE gymapp00001 CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+USE gymapp00001;
 
 -- ######################################
 CREATE TABLE IF NOT EXISTS users
@@ -39,7 +45,7 @@ CREATE TABLE IF NOT EXISTS macros_per_pound_and_limits
 	date_time_of_creation DATETIME NOT NULL,
 
 	current_weight_kg DECIMAL(7,2) NOT NULL,
-	current_weight_in_pounds DECIMAL(7,2) AS (ROUND(current_weight_kg * 2.2, 2)) STORED,
+	current_weight_in_pounds DECIMAL(7,2) NOT NULL,
 
 	body_fat_percentage DECIMAL(7,2) NOT NULL,
 

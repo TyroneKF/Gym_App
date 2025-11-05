@@ -43,6 +43,15 @@
             <version>2.3.232</version> <!-- ✅ Latest stable -->
         </dependency>
 
+        <!-- ⚡ HikariCP: High-performance JDBC connection pool -->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>5.1.0</version> <!-- ✅ Latest stable -->
+        </dependency>
+
+
+
         <!-- 🧩 MyBatis: ORM (Object Relational Mapper) for database interaction using SQL mapping -->
         <dependency>
             <groupId>org.mybatis</groupId>

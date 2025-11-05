@@ -611,7 +611,7 @@ public class Add_Ingredients_Form extends Parent_IngredientForm_And_ShopForm
         //####################################
         // Return Result
         //####################################
-        return db.get_Single_Column_Query_AL(query) != null;
+        return db.get_Single_Column_Query_AL(query, "Error, checking if Ingredient is in DB!") != null;
     }
     
     protected String remove_Space_And_Hidden_Chars(String stringToBeEdited)

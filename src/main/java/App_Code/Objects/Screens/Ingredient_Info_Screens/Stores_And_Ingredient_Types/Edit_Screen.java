@@ -128,13 +128,12 @@ public abstract class Edit_Screen extends Add_Screen
     protected boolean backup_Data_In_SQL_File()
     {
         System.out.printf("\n\nSql File Path: %s \nSelectedJComboBox: %s \nJTextfield: %s", sql_File_Path, selected_JComboBox_Item_Txt, jTextField_TXT);
+        String
+                txtToFind = String.format("('%s')", selected_JComboBox_Item_Txt),
+                txtToReplace = String.format("('%s')", jTextField_TXT),
+                errorMSG = String.format("Error, changing back-up of %s in SQL file!", process);
         
-        if (! (db.replace_Txt_In_SQL_File(sql_File_Path, false, String.format("('%s')", selected_JComboBox_Item_Txt), String.format("('%s')", jTextField_TXT))))
-        {
-            JOptionPane.showMessageDialog(null, String.format("Error, changing back-up of %s in SQL file!", process));
-            return false;
-        }
-        return true;
+        return db.replace_Txt_In_SQL_File(sql_File_Path, false, txtToFind, txtToReplace, errorMSG);
     }
     
     //#############################################################
@@ -159,7 +158,7 @@ public abstract class Edit_Screen extends Add_Screen
         //################################
         String query = String.format("SELECT %s  FROM %s WHERE %s = '%s';", db_ColumnName_Field, db_TableName, db_ColumnName_Field, jTextField_TXT);
         
-        if (db.get_Single_Column_Query_AL(query) != null)
+        if (db.get_Single_Column_Query_AL(query, "Error, unable to edit Ingredients Info / Shop Info") != null)
         {
             JOptionPane.showMessageDialog(null, String.format("\n\n%s '' %s '' Already Exists!", data_Gathering_Name, jTextField_TXT));
             return false;
@@ -181,7 +180,9 @@ public abstract class Edit_Screen extends Add_Screen
         //################################
         // Return Query Result
         //################################
-        return db.upload_Data_Batch_Independently(new String[]{ createMysqlVariable1, uploadString });
+        String errorMSG = String.format("Unable to Update Ingredient %s to '%s'!", data_Gathering_Name, jTextField_TXT);
+        
+        return db.upload_Data_Batch_Independently(new String[]{ createMysqlVariable1, uploadString }, errorMSG);
     }
     
     //#############################################################
@@ -211,36 +212,27 @@ public abstract class Edit_Screen extends Add_Screen
         //##########################################################################################################
         // Delete From SQL Database
         //##########################################################################################################
-        String mysqlVariableReference1 = "@CurrentID";
-        String createMysqlVariable1 = String.format("SET %s = (SELECT %s FROM %s WHERE %s = '%s');",
+        String
+                mysqlVariableReference1 = "@CurrentID",
+                createMysqlVariable1 = String.format("SET %s = (SELECT %s FROM %s WHERE %s = '%s');",
                 mysqlVariableReference1, id_ColumnName, db_TableName, db_ColumnName_Field, selected_JComboBox_Item_Txt);
-        
-        String[] queries = delete_Btn_Queries(mysqlVariableReference1, new ArrayList<>(Arrays.asList(createMysqlVariable1)));
         
         //##########################################################################################################
         //
         //##########################################################################################################
-        if (! db.upload_Data_Batch_Independently(queries))
-        {
-            JOptionPane.showMessageDialog(null, String.format("\n\nFailed To Delete ' %s ' FROM %s !!", selected_JComboBox_Item_Txt, data_Gathering_Name));
-            return false;
-        }
+        String errorMSG1 = String.format("\n\nFailed To Delete ' %s ' FROM %s !!", selected_JComboBox_Item_Txt, data_Gathering_Name);
+        
+        if (! db.upload_Data(createMysqlVariable1, false, errorMSG1)) { return false; }
         
         item_Deleted = true;
         
         //##########################################################################################################
         // Delete From BackUp SQL File
         //##########################################################################################################
+        String txtToDelete = String.format("('%s')", selected_JComboBox_Item_Txt);
+        String errorMSG2 = String.format("\n\nFailed To Delete ' %s ' FROM %s !!", selected_JComboBox_Item_Txt, data_Gathering_Name);
         
-        if (! (db.delete_Txt_In_File(sql_File_Path, String.format("('%s')", selected_JComboBox_Item_Txt))))
-        {
-            JOptionPane.showMessageDialog(null, String.format("\n\nError, deleteBTNAction() deleting ingredient type '%s' from backup files!", selected_JComboBox_Item_Txt));
-        }
-        
-        //##########################################################################################################
-        //
-        //##########################################################################################################
-        return true;
+        return db.delete_Txt_In_File(sql_File_Path, txtToDelete, errorMSG2);
     }
     
     protected void delete_Btn_Action_Listener()

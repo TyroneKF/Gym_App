@@ -11,6 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.text.Collator;
 import java.util.*;
+import java.util.stream.Stream;
 
 
 public class Add_Ingredients_Screen extends Screen_JPanel
@@ -128,7 +129,7 @@ public class Add_Ingredients_Screen extends Screen_JPanel
         // Add shop
         //###########################
         add_To_Container(mainCentre_JPanel, addShopForm, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
-      
+        
         
         //###########################
         //Space Divider
@@ -239,30 +240,27 @@ public class Add_Ingredients_Screen extends Screen_JPanel
         return true;
     }
     
-    protected boolean update_Both_Forms(String updateIngredients_String, String[] updateIngredientShops_String)
+    protected boolean update_Both_Forms(String ingredients_Update, String[] shops_Update)
     {
-        System.out.printf("\n\nupdateBothForms() \nIngredientValues: \n%s \n\nShopping Info: \n%s", updateIngredients_String, Arrays.toString(updateIngredientShops_String));
+        System.out.printf("\n\nupdateBothForms() \nIngredientValues: \n%s \n\nShopping Info: \n%s", ingredients_Update, Arrays.toString(shops_Update));
         
         //####################################
-        // Uploading Query
+        // Combine Inputs
         //####################################
-        if (! (db.upload_Data_Batch_Altogether(new String[]{ updateIngredients_String })))
-        {
-            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Failed 2/2 Updates - Unable To Add Ingredient Info In DB!");
-            return false;
-        }
+        String[] combined = Stream.concat(Arrays.stream(new String[]{ingredients_Update}), Arrays.stream(shops_Update))
+                .toArray(String[]::new);
         
-        if (updateIngredientShops_String != null)
-        {
-            if (! (db.upload_Data_Batch_Independently(updateIngredientShops_String)))
-            {
-                JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "Failed 1/2 Updates - Unable To Add Shop Supplier For Ingredient In DB!");
-                return false;
-            }
-        }
+        //####################################
+        // Execute Update
+        //####################################
+        String errorMSG = "Failed 2/2 Updates - Unable To Add Ingredient / Shop Info In DB!";
         
+        if (! (db.upload_Data_Batch_Independently(combined, errorMSG))) { return false; }
+        
+        //####################################
+        // User Feedback
+        //####################################
         JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "\n\nUpdated Ingredient Info! \n\nAlso updated 2/2 Shop Info In DB In DB!!!");
-        
         return true;
     }
     
@@ -302,12 +300,9 @@ public class Add_Ingredients_Screen extends Screen_JPanel
     protected boolean backup_Data_In_SQL_File()
     {
         String ingredientsValuesBeingAdded = add_Ingredients_Form.get_Ingredients_Values_Being_Added();
-        System.out.printf("\n\nbackupDataInSQLFile() \n%s", ingredientsValuesBeingAdded);
-        if (! (db.write_Txt_To_SQL_File(sqlBackUpPath, ingredientsValuesBeingAdded)))
-        {
-            return false;
-        }
-        return true;
+        String errorMSG = String.format("Unable to add ingredient %s", ingredientsValuesBeingAdded);
+       
+        return db.write_Txt_To_SQL_File(sqlBackUpPath, ingredientsValuesBeingAdded, errorMSG);
     }
     
     //####################################################

@@ -33,7 +33,7 @@ public class Edit_ShopForm_Object extends Add_ShopForm_Object
         this.productName_OG = productName;
         this.productPrice_OG = productPrice;
         this.quantityPerPack_OG = quantityPerPack;
-    
+        
         //#######################################################
         // Set GUI Objects
         //#######################################################
@@ -143,11 +143,8 @@ public class Edit_ShopForm_Object extends Add_ShopForm_Object
             //###################################################
             // Update
             //###################################################
-            if (! (db.upload_Data_Batch_Altogether(new String[]{ updateQuery, updateQuery2 })))
-            {
-                JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), String.format("Unable to remove product: \"%s\" from \"%s\" as a Supplier for this ingredient.", productName, chosenShop));
-                return;
-            }
+            String errorMSG = String.format("Unable to remove product: \"%s\" from \"%s\" as a Supplier for this ingredient.", productName, chosenShop);
+            if (! (db.upload_Data_Batch_Altogether(new String[]{ updateQuery, updateQuery2 }, errorMSG))) { return; }
         }
         
         //################################################

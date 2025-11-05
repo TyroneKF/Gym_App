@@ -15,12 +15,30 @@ MealManager
 .) Change all | or || bitwise or vs logical or
 .) Sql statements
 
-Use ID's in collections on MealPlanScreen
+
 
 MYJDBC:
 .) Refactor method calls that check if null and return msg use N/A
 .) Prepared statements
 .) Switch to
+
+Meal_Plan_Screen:
+.) Edit Transfer methods
+.) Remove un-necessary delete methods
+.) Use ID's in collections on MealPlanScreen for IngredientTypes / Name & Stores
+
+.) on ingredientsTable ingreidents info  pop up screen with food label & PieChart
+
+
+Macro_Targets
+.) MacroTargets Screen should add not update targets
+.) MacrosLeft should use the max time for a plan to calculate it
+
+DB:
+.) Make plansLeft use max date for calculation of a plan
+
+ADD / Edit Stores /Types
+.) BackUp Files
 
 ######################################################################################
 New Features:
@@ -42,9 +60,23 @@ New Features:
 .) Vegan mode for % of protein
 .) Vitamins
 
-.) Progress analytics:
+.) Progress analytics line chart:
    Body Weight & Tracked Meals eaten
    Size Measurements
+   % of meals eaten vs progress
+
+.) targets - cut mode / bulk graph analytics changes in terms of measuring progress
+
+.) chat messaging
+.) Friends challenge - create a group and compare results
+
+.) Personal goal tracker (linked with mobile phone) shows you how much % of your targets = meals eaten & others
+   you've achieved
+
+
+
+.) Search for food exterior window
+
 
 ######################################################################################
 OVERALL:

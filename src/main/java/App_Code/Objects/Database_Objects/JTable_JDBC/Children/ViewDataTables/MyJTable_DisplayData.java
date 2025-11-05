@@ -94,41 +94,20 @@ public class MyJTable_DisplayData extends JDBC_JTable
     {
         //###########################################################################
         //   Updating MacrosLeft_Table
-        ///##########################################################################
-        ArrayList<ArrayList<Object>> tableDataObject = db.get_TableData_Objects_AL(query, tableName);
+        //##########################################################################
+        String errorMSG = String.format("Error, Updating Table '%s'!", tableName);
+        
+        ArrayList<ArrayList<Object>> tableDataObject = db.get_TableData_Objects_AL(query, tableName, errorMSG);
         
         if (tableDataObject == null)
         {
-            JOptionPane.showMessageDialog(null, String.format("ERROR updateTable(): \nUn-able to update %s Table!", tableName));
-            
+            JOptionPane.showMessageDialog(null, String.format("Error, un-able to update %s Table!", tableName));
             return;
         }
-        
-        ArrayList<Object> tableData = tableDataObject.get(0);
-        super.updateTable(tableData, updateRow);
+      
+        super.updateTable(tableDataObject.getFirst(), updateRow);
     }
     
-    protected boolean updateTableModelData()
-    {
-        //##########################################
-        // Changing Table Model
-        //##########################################
-        
-        ArrayList<ArrayList<Object>> data = db.get_TableData_Objects_AL(query, tableName);
-        
-        if (data == null)
-        {
-            JOptionPane.showMessageDialog(null, String.format("ERROR updateTableModelData(): \nUn-able to updateTableModel %s !", tableName));
-            
-            System.err.printf("\n\nupdateTableModelData() Unable to update %s model data!", tableName);
-            return false;
-        }
-        
-        setTableModelData(data);
-        
-        jTable.repaint();
-        return true;
-    }
     
     protected void setTableModelData(ArrayList<ArrayList<Object>> tableModelData)
     {
