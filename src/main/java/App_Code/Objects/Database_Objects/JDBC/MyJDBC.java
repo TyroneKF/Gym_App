@@ -2,12 +2,9 @@ package App_Code.Objects.Database_Objects.JDBC;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-
 import java.sql.Connection;
 import java.sql.SQLException;
-
 import org.apache.ibatis.jdbc.ScriptRunner;
-
 import javax.swing.*;
 import java.io.*;
 import java.math.BigDecimal;
@@ -34,15 +31,11 @@ public class MyJDBC
             initial_db_connection = "jdbc:mysql://localhost:3306",
             db_Connection_Address = initial_db_connection;
     
-    private Connection connection;
-    
     private final String
-            users_DB_Script_Path = "/data/database_scripts/2.) Users.sql",
             line_Separator = "############################################################################################################################",
             middle_line_Separator = "###############################################################";
     
-    private boolean
-            db_Connection_Status = false;
+    private boolean db_Connection_Status = false;
     
     private HikariDataSource dataSource; // shared connection pool
     
@@ -173,7 +166,9 @@ public class MyJDBC
         // #############################################################
         //  Get Folder Path
         // #############################################################
-        try (InputStream listStream = getClass().getResourceAsStream(path))
+        try (Connection connection = dataSource.getConnection(); // if connection fails, error is thrown, script stops here)
+             InputStream listStream = getClass().getResourceAsStream(path)
+        )
         {
             if (listStream == null)
             {
@@ -188,8 +183,7 @@ public class MyJDBC
             // ############################################################
             //  Create DB Schema Through Scripts
             // #############################################################
-            try (Connection connection = dataSource.getConnection(); // if connection fails, error is thrown, script stops here
-                 BufferedReader file_Names_Reader = new BufferedReader(new InputStreamReader(listStream, StandardCharsets.UTF_8));
+            try (BufferedReader file_Names_Reader = new BufferedReader(new InputStreamReader(listStream, StandardCharsets.UTF_8));
                  PreparedStatement statement = connection.prepareStatement(update_User_Query, Statement.RETURN_GENERATED_KEYS)
             )
             {
@@ -294,7 +288,9 @@ public class MyJDBC
         // ####################################################
         //  Get Folder Path
         // ####################################################
-        try (InputStream listStream = getClass().getResourceAsStream(path))
+        try (Connection connection = dataSource.getConnection(); // if connection fails, error is thrown, script stops here
+             InputStream listStream = getClass().getResourceAsStream(path)
+        )
         {
             if (listStream == null)
             {
@@ -310,9 +306,7 @@ public class MyJDBC
             //  Reading Script List & Executing Each Script in List
             // ####################################################
             // Resources automatically released in try block / no need for reader.close()
-            try (Connection connection = dataSource.getConnection(); // if connection fails, error is thrown, script stops here
-                 BufferedReader file_Names_Reader = new BufferedReader(new InputStreamReader(listStream, StandardCharsets.UTF_8))
-            )
+            try (BufferedReader file_Names_Reader = new BufferedReader(new InputStreamReader(listStream, StandardCharsets.UTF_8)))
             {
                 connection.setAutoCommit(false); // Prevents each query from being singularly uploaded & is only made not temp when committed
                 
