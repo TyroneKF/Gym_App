@@ -270,7 +270,7 @@ public class Add_Ingredients_Screen extends Screen_JPanel
         else if (ingredients_Update != null) // Ingredient Update
         {
             String errorMSG = "Failed 1/1 Updates - Updating Ingredient Info !";
-            return db.upload_Data(ingredients_Update, false, errorMSG);
+            return db.upload_Data(ingredients_Update, errorMSG);
         }
         else // Shop Info
         {

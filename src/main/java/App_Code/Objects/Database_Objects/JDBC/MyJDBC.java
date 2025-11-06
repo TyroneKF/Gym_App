@@ -20,7 +20,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.sql.DriverManager;
 import java.util.stream.Collectors;
 
 public class MyJDBC
@@ -157,7 +156,7 @@ public class MyJDBC
         // ####################################################
         dataSource = new HikariDataSource(config); // Connection pool which provides a connection
         
-        System.out.printf("\n\n\n%s\nConnection pool initialized successfully!\n%s", line_Separator,line_Separator);
+        System.out.printf("\n\n\n%s\nConnection pool initialized successfully!\n%s", line_Separator, line_Separator);
     }
     
     public boolean create_DB(String db_Script_Folder_Address, String script_List_Name)
@@ -170,7 +169,7 @@ public class MyJDBC
                 methodName = "run_SQL_Script_Folder()",
                 errorMSG = String.format("Error, running scripts : '%s'!", script_List_Name),
                 update_User_Query = "UPDATE users SET user_name = ? WHERE user_id = 1;";
-               
+        
         // #############################################################
         //  Get Folder Path
         // #############################################################
@@ -264,8 +263,6 @@ public class MyJDBC
             handleException_File(e, methodName, errorMSG);
             return false;
         }
-        
-        
         
         // #############################################################
         //  Return DB to Correct Path
@@ -730,7 +727,7 @@ public class MyJDBC
      * This method can upload one statement or, multiple queries within a single String after each statement in the string is separated by a ;
      */
     
-    public boolean upload_Data(String query, boolean multipleQueries, String errorMSG)
+    public boolean upload_Data(String query, String errorMSG)
     {
         //##########################################################
         // Check DB Status
@@ -742,15 +739,8 @@ public class MyJDBC
         //##########################################################
         // Query Setup
         //##########################################################
-        String fullAddress = multipleQueries
-                ? db_Connection_Address + "?autoReconnect=true&allowMultiQueries=true"
-                : db_Connection_Address; // Allows Multiple queries in one command to be executed
-        
-        try (
-                Connection connection = multipleQueries ? DriverManager.getConnection(fullAddress, userName, password)
-                        : DriverManager.getConnection(db_Connection_Address, userName, password);
-                
-                Statement statement = connection.createStatement();
+        try (Connection connection = dataSource.getConnection(); // Get a Connection from pool
+             Statement statement = connection.createStatement();
         )
         {
             connection.setAutoCommit(false); // Update as OneBatch

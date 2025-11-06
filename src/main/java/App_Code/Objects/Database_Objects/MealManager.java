@@ -692,7 +692,7 @@ public class MealManager
         //##########################################
         // Upload Into Database Table
         //##########################################
-        if (! db.upload_Data(uploadQuery, false, "Error, unable to change Meal Time!")) { return; }
+        if (! db.upload_Data(uploadQuery, "Error, unable to change Meal Time!")) { return; }
         
         //#########################################################################################################
         // Update GUI & Variables
@@ -818,7 +818,7 @@ public class MealManager
                 SET meal_name = '%s'
                 WHERE plan_id = %s AND meal_in_plan_id = %s;""", inputMealName, tempPlanID, mealInPlanID);
         
-        if (! db.upload_Data(uploadQuery, false, "Error, unable to change Meal Name!")) { return; }
+        if (! db.upload_Data(uploadQuery, "Error, unable to change Meal Name!")) { return; }
         
         //#########################################################################################################
         // Change Variable DATA & Object
@@ -908,7 +908,7 @@ public class MealManager
         //##########################################
         // Execute Update
         //##########################################
-        if (! db.upload_Data(query, false, "Table Un-Successfully Deleted!")) { return; }
+        if (! db.upload_Data(query, "Table Un-Successfully Deleted!")) { return; }
         
         //##########################################
         // Delete MealManager Actions
@@ -1004,7 +1004,7 @@ public class MealManager
         //##########################################
         String query1 = String.format("DELETE FROM meals_in_plan WHERE meal_in_plan_id = %s AND plan_id = %s;", mealInPlanID, tempPlanID);
         
-        if (! (db.upload_Data(query1, false, "Error, Unable to DELETE IngredientsTable!!"))) { return; }
+        if (! (db.upload_Data(query1, "Error, Unable to DELETE IngredientsTable!!"))) { return; }
         
         delete_MealManager();
     }

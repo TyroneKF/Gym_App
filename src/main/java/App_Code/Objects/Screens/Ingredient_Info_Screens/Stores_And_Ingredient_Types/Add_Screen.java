@@ -280,7 +280,7 @@ public abstract class Add_Screen extends Screen_JPanel
         //################################
         // Return Query Results
         //################################
-        return db.upload_Data( uploadString, false, "Error, Unable to Add Ingredient Info!");
+        return db.upload_Data( uploadString, "Error, Unable to Add Ingredient Info!");
     }
     
     protected boolean backup_Data_In_SQL_File()

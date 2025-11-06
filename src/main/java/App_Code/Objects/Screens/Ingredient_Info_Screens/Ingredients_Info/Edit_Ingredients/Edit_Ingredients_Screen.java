@@ -581,7 +581,7 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
             if (! db.upload_Data_Batch_Independently(combined, errorMSG)) { return false; }
             
         }
-        else if (ingredients_Update != null && ! db.upload_Data(ingredients_Update, false, errorMSG))
+        else if (ingredients_Update != null && ! db.upload_Data(ingredients_Update, errorMSG))
         {
             return false;
         }
@@ -678,7 +678,7 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
         //###############################################
         String query = String.format("DELETE FROM `ingredients_info` WHERE ingredient_id  = %s;", selectedIngredientID);
         
-        if (! db.upload_Data(query, false, "Error, Unable to delete item From DB!")) { return; }
+        if (! db.upload_Data(query, "Error, Unable to delete item From DB!")) { return; }
         
         //###############################################
         // Update Screens / Methods

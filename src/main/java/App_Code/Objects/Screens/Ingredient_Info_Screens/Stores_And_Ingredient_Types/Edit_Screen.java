@@ -7,7 +7,6 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 
 public abstract class Edit_Screen extends Add_Screen
@@ -222,7 +221,7 @@ public abstract class Edit_Screen extends Add_Screen
         //##########################################################################################################
         String errorMSG1 = String.format("\n\nFailed To Delete ' %s ' FROM %s !!", selected_JComboBox_Item_Txt, data_Gathering_Name);
         
-        if (! db.upload_Data(createMysqlVariable1, false, errorMSG1)) { return false; }
+        if (! db.upload_Data(createMysqlVariable1, errorMSG1)) { return false; }
         
         item_Deleted = true;
         

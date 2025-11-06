@@ -385,7 +385,7 @@ public class Macros_Targets_Screen extends Screen_JFrame
         // ##############################################
         // Execute Query
         // ##############################################
-        if (! (db.upload_Data(update_Query, false, "Error, changing Macro Targets!"))) { return false; }
+        if (! (db.upload_Data(update_Query, "Error, changing Macro Targets!"))) { return false; }
         
         // ##############################################
         // Output MSG & Update Screens

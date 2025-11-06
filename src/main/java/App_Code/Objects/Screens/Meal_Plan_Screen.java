@@ -680,7 +680,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 WHERE
                     `P`.`plan_id` = %s; """, tablePlansName, fromPlan, toPlan);
         
-        if (! (db.upload_Data(query1, false, "Unable to Load / Transfer Plan Data!"))) { return false; }
+        if (! (db.upload_Data(query1, "Unable to Load / Transfer Plan Data!"))) { return false; }
         
         System.out.printf("\nPlanData Successfully transferred! \n\n%s", lineSeparator);
         return true;
@@ -1190,7 +1190,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###########################################################
         String queryDelete = String.format("DELETE FROM meals_in_plan WHERE plan_id = %s", tempPlanID);
         
-        if (! db.upload_Data(queryDelete, false, "Error, unable to DELETE meals in plan!")) { return; }
+        if (! db.upload_Data(queryDelete, "Error, unable to DELETE meals in plan!")) { return; }
         
         JOptionPane.showMessageDialog(this, "\n\nSuccessfully, DELETED all meals in plan!");
         
@@ -1550,7 +1550,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             
             String query = String.format("DELETE FROM %s WHERE plan_id = %s;", tableMealsInPlanName, planID);
             
-            if (! (db.upload_Data(query, false, "Error 2, Unable to Save Meal Data!"))) { return; }
+            if (! (db.upload_Data(query, "Error 2, Unable to Save Meal Data!"))) { return; }
         }
         else // because there are meals save them
         {
