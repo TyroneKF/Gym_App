@@ -5,6 +5,7 @@ import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ing
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.LinkedHashMap;
 
 
 public class Edit_ShopForm_Object extends Add_ShopForm_Object
@@ -93,12 +94,12 @@ public class Edit_ShopForm_Object extends Add_ShopForm_Object
         //################################################
         String
                 chosenShop = String.valueOf(get_ProductShops_TXT()),
-                productName = String.valueOf(get_ProductName_Txt()),
-                msg =
-                        String.format("""
-                                        Are you sure you want to permanently delete:
-                                        the product: '%s' from '%s' as a product for this ingredient.""",
-                                productName, chosenShop);
+                productName = String.valueOf(get_ProductName_Txt());
+        
+        String msg = String.format("""
+                        Are you sure you want to permanently delete:
+                        the product: '%s' from '%s' as a product for this ingredient.""",
+                productName, chosenShop);
         
         if (! (are_You_Sure("Delete Product", msg))) { return; }
         
@@ -144,7 +145,12 @@ public class Edit_ShopForm_Object extends Add_ShopForm_Object
             // Update
             //###################################################
             String errorMSG = String.format("Unable to remove product: \"%s\" from \"%s\" as a Supplier for this ingredient.", productName, chosenShop);
-            if (! (db.upload_Data_Batch_Altogether(new String[]{ updateQuery, updateQuery2 }, errorMSG))) { return; }
+            
+            LinkedHashMap<String, String[]> queries_And_Params = new LinkedHashMap<>(){{
+                put(updateQuery, null); put(updateQuery2, null);
+            }};
+            
+            if (! (db.upload_Data_Batch_Altogether2(queries_And_Params, errorMSG))) { return; }
         }
         
         //################################################
