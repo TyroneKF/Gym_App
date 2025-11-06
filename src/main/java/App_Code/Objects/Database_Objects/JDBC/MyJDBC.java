@@ -815,7 +815,7 @@ public class MyJDBC
         }
     }
     
-    public boolean upload_Data_Batch_Altogether2(LinkedHashMap<String, String[]> queries_And_Params, String errorMSG)
+    public <T> boolean upload_Data_Batch_Altogether2(LinkedHashMap<String, T[]> queries_And_Params, String errorMSG)
     {
         //#############################################################################
         // Check DB Status
@@ -834,13 +834,13 @@ public class MyJDBC
             //###############################################
             // For Loop For Queries & Params
             //###############################################
-            for (Map.Entry<String, String[]> entry : queries_And_Params.entrySet())
+            for (Map.Entry<String, T[]> entry : queries_And_Params.entrySet())
             {
                 //#########################
                 // Entry Values
                 //#########################
                 String query = entry.getKey();
-                String[] insertParameters = entry.getValue();
+                T[] insertParameters = entry.getValue();
                 
                 boolean skipParams = insertParameters == null;
                 
@@ -855,7 +855,7 @@ public class MyJDBC
                         // Prepare Statements
                         for (int pos = 1; pos <= insertParameters.length; pos++)
                         {
-                            statement.setString(pos, String.valueOf(insertParameters[pos - 1]));
+                            statement.setString(pos, insertParameters[pos - 1].toString());
                         }
                     }
                     

@@ -141,7 +141,7 @@ public class MealManager
                 uploadQuery = "INSERT INTO meals_in_plan (plan_id, meal_name, meal_time) VALUES (?,?,?)",
                 errorMSG = String.format("\n\nError Creating Meal \nMeal Name: '%s' \nMeal Time: %s!", newMealName, newMealTime);
         
-        mealInPlanID = db.insert_And_Get_ID(uploadQuery, new Object[]{ tempPlanID, newMealName, newMealTime}, errorMSG);
+        mealInPlanID = db.insert_And_Get_ID(uploadQuery, new Object[]{ tempPlanID, newMealName, newMealTime }, errorMSG);
         
         if (mealInPlanID == null) { return; } // Error MSG inside DB is returned if null, don't need to handle here
         
@@ -426,7 +426,7 @@ public class MealManager
             
             mealData = db.get_TableData_Objects_AL(query, tableName, errorMSG);
             
-            if(mealData == null)
+            if (mealData == null)
             {
                 JOptionPane.showMessageDialog(getFrame(), errorMSG);
                 return;
@@ -1049,75 +1049,83 @@ public class MealManager
         //########################################################
         // Clear Old Data from toPlan and & Temp Tables
         //########################################################
-        String query2 = "SET FOREIGN_KEY_CHECKS = 0;"; // Disable Foreign Key Checks
-        
-        // Delete ingredients from this meal in toPlan
-        String query3 = String.format("""
-                DELETE FROM ingredients_in_sections_of_meal
-                WHERE div_meal_sections_id IN (SELECT div_meal_sections_id FROM divided_meal_sections WHERE meal_in_plan_id = %s AND plan_id = %s) AND plan_id = %s;""", mealInPlanID, toPlanID, toPlanID);
-        
         // Delete sub-meals from this meal in toPlan
-        String query4 = String.format("DELETE FROM divided_meal_sections WHERE meal_in_plan_id = %s AND plan_id = %s;", mealInPlanID, toPlanID);
-        
-        String query5 = "SET FOREIGN_KEY_CHECKS = 1;"; // Enable Foreign Key Checks
+        String query2 = String.format("DELETE FROM divided_meal_sections WHERE meal_in_plan_id = %s AND plan_id = %s;", mealInPlanID, toPlanID);
         
         //####################################################
         // Transferring this plans Ingredients to Temp-Plan
         //####################################################
         
         // Create Table to transfer ingredients from original plan to temp
-        String query6 = String.format("""
+        String query3 = String.format("""
                 CREATE TABLE temp_divided_meal_sections  AS
                 SELECT i.*
                 FROM divided_meal_sections i
                 WHERE i.meal_in_plan_id = %s AND i.plan_id = %s;""", mealInPlanID, fromPlanID);
         
-        String query7 = String.format("UPDATE temp_divided_meal_sections SET plan_id = %s;", toPlanID);
+        String query4 = String.format("UPDATE temp_divided_meal_sections SET plan_id = %s;", toPlanID);
         
-        String query8 = "INSERT INTO divided_meal_sections SELECT * FROM temp_divided_meal_sections;";
+        String query5 = "INSERT INTO divided_meal_sections SELECT * FROM temp_divided_meal_sections;";
         //####################################################
         // Transferring ingredients from this meal in toPlan
         //####################################################
         
         // Create Table to transfer ingredients from original plan to temp
-        String query9 = String.format("""
+        String query6 = String.format("""
                 CREATE table temp_ingredients_in_meal  AS
                 SELECT i.*
                 FROM ingredients_in_sections_of_meal i
                 WHERE div_meal_sections_id IN (SELECT div_meal_sections_id FROM divided_meal_sections WHERE meal_in_plan_id = %s AND plan_id = %s) AND plan_id = %s;
                 """, mealInPlanID, fromPlanID, fromPlanID);
         
-        String query10 = String.format("UPDATE temp_ingredients_in_meal SET plan_id = %s;", toPlanID);
+        String query7 = String.format("UPDATE temp_ingredients_in_meal SET plan_id = %s;", toPlanID);
         
-        String query11 = "INSERT INTO ingredients_in_sections_of_meal SELECT * FROM temp_ingredients_in_meal;";
+        String query8 = "INSERT INTO ingredients_in_sections_of_meal SELECT * FROM temp_ingredients_in_meal;";
+        
+        String query9 = "DROP TABLE IF EXISTS temp_ingredients_in_meal;";
+        
+        String query10 = "DROP TABLE IF EXISTS temp_divided_meal_sections;";
         
         //#####################################################
         // Meal Name & Time Updates If Changed
         //#####################################################
-        String[] query_Temp_Data = new String[0];
-        int changes = 0;
         String
-                uploadQuery = "",
                 updateMealName = process.equals("refresh") ? savedMealName : currentMealName, // set mealName to refresh
                 updateMealTime = process.equals("refresh") ? get_SavedMealTime_GUI() : getCurrentMealTimeGUI(); // set mealTime to time
+          
+        //#####################################################
+        // Create Query Formatted Data for Method
+        //#####################################################
+        String errorMSG = "Error, Unable to Transfer Plan Data!";
         
-        if (hasMealNameBeenChanged || hasMealTimeBeenChanged) //  The meal time or name doesn't need to be updated
-        {
-            uploadQuery = String.format("UPDATE meals_in_plan SET meal_name = '%s', meal_time = '%s'  WHERE plan_id = %s AND  meal_in_plan_id = %s;", updateMealName, updateMealTime, toPlanID, mealInPlanID);
+        LinkedHashMap<String, Object[]> queries_And_Params = new LinkedHashMap<>()
+        {{
             
-            query_Temp_Data = new String[]{ uploadQuery, query0, query1, query2, query3, query4, query5, query6, query7, query8, query9, query10, query11 };
-        }
-        else // if either of the time and name has been changed update it
-        {
-            query_Temp_Data = new String[]{ query0, query1, query2, query3, query4, query5, query6, query7, query8, query9, query10, query11 };
-        }
-        
-        System.out.printf("\n\n Here  3 \n\n %s", uploadQuery);
+            if (hasMealNameBeenChanged || hasMealTimeBeenChanged) //  The meal time or name doesn't need to be updated
+            {
+                String uploadQuery = """
+                            UPDATE meals_in_plan
+                            SET meal_name = '?', meal_time = '?'
+                            WHERE plan_id = ? AND  meal_in_plan_id = ?;""";
+                
+                put(uploadQuery, new Object[]{updateMealName, updateMealTime, toPlanID, mealInPlanID});
+            }
+            
+            put(query2, null);
+            put(query3, null);
+            put(query4, null);
+            put(query5, null);
+            put(query6, null);
+            put(query7, null);
+            put(query8, null);
+            put(query9, null);
+            put(query10, null);
+        }};
         
         //####################################################
-        // Update
+        // Return Update /Output
         //####################################################
-        return db.upload_Data_Batch_Altogether(query_Temp_Data, "Error, Unable to Transfer Plan Data!");
+        return db.upload_Data_Batch_Altogether2(queries_And_Params, errorMSG);
     }
     
     //######################################
@@ -1159,7 +1167,7 @@ public class MealManager
         ArrayList<ArrayList<String>> results = db.get_Multi_Column_Query(query, errorMSG);
         if (results == null)
         {
-            JOptionPane.showMessageDialog(getFrame(),errorMSG);
+            JOptionPane.showMessageDialog(getFrame(), errorMSG);
             return;
         }
         
