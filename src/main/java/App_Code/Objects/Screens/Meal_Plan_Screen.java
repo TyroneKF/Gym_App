@@ -552,7 +552,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         ArrayList<ArrayList<Object>> planData = db.get_TableData_Objects_AL(planCalcQuery, tablePlanMacroTargetsNameCalc, errorMSG1);
         if (planData == null)
         {
-            JOptionPane.showMessageDialog(getFrame(),errorMSG1);
+            JOptionPane.showMessageDialog(getFrame(), errorMSG1);
             return;
         }
         
@@ -578,7 +578,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         ArrayList<ArrayList<Object>> macrosData = db.get_TableData_Objects_AL(macrosQuery, tablePlanMacrosLeftName, errorMSG_ML);
         if (macrosData == null)
         {
-            JOptionPane.showMessageDialog(getFrame(),errorMSG_ML);
+            JOptionPane.showMessageDialog(getFrame(), errorMSG_ML);
             return;
         }
         
@@ -689,7 +689,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     private boolean transfer_Targets(int fromPlan, int toPlan, boolean deleteFromToPlan, boolean showConfirmMsg)
     {
         //####################################
-        // Perform Upload
+        // Queries
         //####################################
         String query00 = String.format("DELETE FROM %s WHERE plan_id = %s;", tableMacrosPerPoundLimitName, toPlan);
         String query01 = String.format("DROP TABLE IF EXISTS temp_%s;", tableMacrosPerPoundLimitName);
@@ -703,27 +703,30 @@ public class Meal_Plan_Screen extends Screen_JFrame
         String query05 = String.format("DROP TABLE temp_%s;", tableMacrosPerPoundLimitName);
         
         //####################################
-        // Prepare Upload Statements
+        // Prepare Inputs For Execution
         //####################################
-        String[] uploadQueries;
+        String errorMSG = "Unable to Transfer Targets Data!";
         
-        if (deleteFromToPlan)
-        {
-            uploadQueries = new String[]{ query00, query01, query02, query03, query04, query05 };
-        }
-        else
-        {
-            uploadQueries = new String[]{ query01, query02, query03, query04, query05 };
-        }
+        LinkedHashMap<String, String[]> queries_And_Params = new LinkedHashMap<>()
+        {{
+            if (deleteFromToPlan) { put(query00, null); }
+            
+            put(query01, null);
+            put(query02, null);
+            put(query03, null);
+            put(query04, null);
+            put(query05, null);
+            
+        }};
         
         //####################################
         // Execute Upload Statements
         //####################################
-        if (! (db.upload_Data_Batch_Altogether(uploadQueries, "Unable to Transfer Targets Data!"))) { return false; }
+        if (! (db.upload_Data_Batch_Altogether2(queries_And_Params, errorMSG))) { return false; }
         
         if (showConfirmMsg)
         {
-            JOptionPane.showMessageDialog(null, "\n\nTargets Successfully Saved");
+            JOptionPane.showMessageDialog(getFrame(), "\n\nTargets Successfully Saved");
         }
         
         //####################################
@@ -742,55 +745,60 @@ public class Meal_Plan_Screen extends Screen_JFrame
         String query1 = String.format("DROP TABLE IF EXISTS temp_%s;", tableSub_MealsName);
         String query2 = String.format("DROP TABLE IF EXISTS temp_%s;", tableMealsInPlanName);
         
-        String query3 = "SET FOREIGN_KEY_CHECKS = 0;"; // Disable Foreign Key Checks
-        
         //################################################################
-        // Delete Meal & Ingredient Data from to plan_id
+        // Delete Meals
         //################################################################
-        String query4 = String.format("DELETE FROM %s WHERE plan_id = %s;", tableIngredientsInMealSections, toPlanID);
-        String query5 = String.format("DELETE FROM %s WHERE plan_id = %s;", tableSub_MealsName, toPlanID);
-        String query6 = String.format("DELETE FROM %s WHERE plan_id = %s;", tableMealsInPlanName, toPlanID);
-        
-        String query7 = "SET FOREIGN_KEY_CHECKS = 1;"; // Enable Foreign Key Checks
+        String query3 = String.format("DELETE FROM %s WHERE plan_id = %s;", tableMealsInPlanName, toPlanID);
         
         //################################################################
         // Transferring Meals From One Plan To Another
         //################################################################
-        String query8 = String.format("CREATE table temp_%s AS SELECT * FROM %s WHERE plan_id = %s ORDER BY meal_in_plan_id;", tableMealsInPlanName, tableMealsInPlanName, fromPlanID);
-        String query9 = String.format("UPDATE temp_%s SET plan_id = %s;", tableMealsInPlanName, toPlanID);
-        String query10 = String.format("INSERT INTO %s SELECT * FROM temp_%s;", tableMealsInPlanName, tableMealsInPlanName);
+        String query4 = String.format("CREATE table temp_%s AS SELECT * FROM %s WHERE plan_id = %s ORDER BY meal_in_plan_id;", tableMealsInPlanName, tableMealsInPlanName, fromPlanID);
+        String query5 = String.format("UPDATE temp_%s SET plan_id = %s;", tableMealsInPlanName, toPlanID);
+        String query6 = String.format("INSERT INTO %s SELECT * FROM temp_%s;", tableMealsInPlanName, tableMealsInPlanName);
         
         //################################################################
         // Transferring Sections Of Meals From One Plan To Another
         //################################################################
-        String query11 = String.format("CREATE table temp_%s AS SELECT * FROM %s WHERE plan_id = %s ORDER BY div_meal_sections_id;", tableSub_MealsName, tableSub_MealsName, fromPlanID);
-        String query12 = String.format("UPDATE temp_%s SET plan_id = %s;", tableSub_MealsName, toPlanID);
-        String query13 = String.format("INSERT INTO %s SELECT * FROM temp_%s;", tableSub_MealsName, tableSub_MealsName);
+        String query7 = String.format("CREATE table temp_%s AS SELECT * FROM %s WHERE plan_id = %s ORDER BY div_meal_sections_id;", tableSub_MealsName, tableSub_MealsName, fromPlanID);
+        String query8 = String.format("UPDATE temp_%s SET plan_id = %s;", tableSub_MealsName, toPlanID);
+        String query9 = String.format("INSERT INTO %s SELECT * FROM temp_%s;", tableSub_MealsName, tableSub_MealsName);
         
         //################################################################
         // Transferring this plans Ingredients to Temp-Plan
         //################################################################
         // Create Table to transfer ingredients from original plan to temp
-        String query14 = String.format("""                  
+        String query10 = String.format("""
                 CREATE table temp_%s AS
                 SELECT i.*
                 FROM %s i
                 WHERE i.plan_id = %s;""", tableIngredientsInMealSections, tableIngredientsInMealSections, fromPlanID);
         
-        String query15 = String.format("UPDATE temp_%s SET plan_id = %s;", tableIngredientsInMealSections, toPlanID);
-        String query16 = String.format("INSERT INTO %s SELECT * FROM temp_%s;", tableIngredientsInMealSections, tableIngredientsInMealSections);
+        String query11 = String.format("UPDATE temp_%s SET plan_id = %s;", tableIngredientsInMealSections, toPlanID);
+        String query12 = String.format("INSERT INTO %s SELECT * FROM temp_%s;", tableIngredientsInMealSections, tableIngredientsInMealSections);
         
-        String query17 = String.format("DROP TABLE temp_%s;", tableMealsInPlanName);
-        String query18 = String.format("DROP TABLE temp_%s;", tableIngredientsInMealSections);
-        String query19 = String.format("DROP TABLE temp_%s;", tableSub_MealsName);
+        String query13 = String.format("DROP TABLE temp_%s;", tableMealsInPlanName);
+        String query14 = String.format("DROP TABLE temp_%s;", tableIngredientsInMealSections);
+        String query15 = String.format("DROP TABLE temp_%s;", tableSub_MealsName);
         
         //####################################################
         // Update
         //####################################################
-        String[] query = new String[]{ query0, query1, query2, query3, query4, query5, query6, query7, query8, query9, query10, query11, query12,
-                query13, query14, query15, query16, query17, query18, query19 };
+        String errorMSG = "Error, Unable to Transfer Meal Ingredients";
         
-        if (! (db.upload_Data_Batch_Altogether(query, "Error, Unable to Transfer Meal Ingredients"))) { return false; }
+        LinkedHashMap<String, String[]> queries_And_Params = new LinkedHashMap<>()
+        {{
+            put(query0, null); put(query1, null);
+            put(query2, null); put(query3, null);
+            put(query4, null); put(query5, null);
+            put(query6, null); put(query7, null);
+            put(query8, null); put(query9, null);
+            put(query10, null); put(query11, null);
+            put(query12, null); put(query13, null);
+            put(query14, null); put(query15, null);
+        }};
+        
+        if (! (db.upload_Data_Batch_Altogether2(queries_And_Params, errorMSG))) { return false; }
         
         //####################################################
         // Output

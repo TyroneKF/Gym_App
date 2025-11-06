@@ -2,9 +2,12 @@ package App_Code.Objects.Database_Objects.JDBC;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+
 import java.sql.Connection;
 import java.sql.SQLException;
+
 import org.apache.ibatis.jdbc.ScriptRunner;
+
 import javax.swing.*;
 import java.io.*;
 import java.math.BigDecimal;
@@ -812,6 +815,77 @@ public class MyJDBC
         }
     }
     
+    public boolean upload_Data_Batch_Altogether2(LinkedHashMap<String, String[]> queries_And_Params, String errorMSG)
+    {
+        //#############################################################################
+        // Check DB Status
+        //#############################################################################
+        String methodName = "upload_Data_Batch_Altogether()";
+        
+        if (! is_DB_Connected(methodName)) { return false; }
+        
+        //##############################################################################
+        // Execute
+        //#############################################################################
+        try (Connection connection = dataSource.getConnection())
+        {
+            connection.setAutoCommit(false); // Prevents each query from being singularly uploaded & is only made not temp when committed
+            
+            //###############################################
+            // For Loop For Queries & Params
+            //###############################################
+            for (Map.Entry<String, String[]> entry : queries_And_Params.entrySet())
+            {
+                //#########################
+                // Entry Values
+                //#########################
+                String query = entry.getKey();
+                String[] insertParameters = entry.getValue();
+                
+                boolean skipParams = insertParameters == null;
+                
+                //#########################
+                // Execute Queries
+                //#########################
+                try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS))
+                {
+                    // Setup Params if statement has any
+                    if (! skipParams)
+                    {
+                        // Prepare Statements
+                        for (int pos = 1; pos <= insertParameters.length; pos++)
+                        {
+                            statement.setString(pos, String.valueOf(insertParameters[pos - 1]));
+                        }
+                    }
+                    
+                    //Executing the Statement
+                    statement.executeUpdate();
+                }
+                
+                catch (Exception e)
+                {
+                    rollBack_Connection(connection, methodName, queries_And_Params);
+                    throw e;
+                }
+            }
+            //###############################################
+            //Executing the Batch
+            //###############################################
+            connection.commit(); // Commit Changes beyond current driver
+            return true; // Return Output
+            
+        }
+        //##########################################################
+        // Error Handling
+        //##########################################################
+        catch (Exception e)
+        {
+            handleException_MYSQL(e, methodName, null, errorMSG);
+            return false;
+        }
+    }
+    
     /*
       Each query upload is executed separately and the query after, it can notice the changes
      */
@@ -1131,13 +1205,34 @@ public class MyJDBC
     
     private void rollBack_Connection(Connection connection, String methodName, Object queries)
     {
+        //#############################
+        // Exit
+        //#############################
+        if (connection == null) { return; }
+        
+        //#############################
+        // Rollback
+        //#############################
         try
         {
+            // IF Rollback wasn't executed return
+            if (connection.getAutoCommit()) { return; }
+            
+            // Execute Rollback
             connection.rollback();
+            System.err.println("\n\nRollback successful for method: " + methodName);
         }
         catch (SQLException x)
         {
+            System.err.println("\n\nRollback failed in " + methodName + ": " + x.getMessage());
+            
             handleException_MYSQL(x, methodName, queries, null);
+        }
+        finally
+        {
+            try {
+                connection.close(); // tells Hikari to evict this bad connection
+            } catch (SQLException ignore) {}
         }
     }
     
