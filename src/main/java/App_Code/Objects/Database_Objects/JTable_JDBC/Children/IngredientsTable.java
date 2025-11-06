@@ -409,7 +409,7 @@ public class IngredientsTable extends JDBC_JTable
         //###############################
         else if (columnModel == get_IngredientName_Col(true))
         {
-            System.out.printf("\n\n@tableDataChange_Action() Ingredient Name Changed");
+            System.out.println("\n\n@tableDataChange_Action() Ingredient Name Changed");
             
             // if the same item is selected avoid processing
             if (! (ingredientNameChanged))
@@ -436,7 +436,7 @@ public class IngredientsTable extends JDBC_JTable
                     query = String.format("Select ingredient_id From ingredients_info WHERE ingredient_name = '%s';", selected_IngredientName_JCombo_Item),
                     errorMSG = "Unable to retrieve chosen Ingredient ID from DB!";
             
-            ArrayList<ArrayList<Object>> results_Ingredient_ID = db.get_TableData_Objects_AL(query, tableName, errorMSG);
+          ArrayList<String> results_Ingredient_ID = db.get_Single_Column_Query_AL(query, errorMSG);
             
             if (results_Ingredient_ID == null)
             {
@@ -448,7 +448,7 @@ public class IngredientsTable extends JDBC_JTable
                 return;
             }
             
-            Object selected_Ingredient_ID = results_Ingredient_ID.getFirst().getFirst();
+            Object selected_Ingredient_ID = results_Ingredient_ID.getFirst();
             
             System.out.printf("\nPrevious JCombo Value: %s \nPrevious JCombo  ID: %s \n\nSelected JCombo Value: %s\nSelected JCombo ID: %s" +
                             "\n\nRow  Selected: %s \nColumn Selected: %s",
