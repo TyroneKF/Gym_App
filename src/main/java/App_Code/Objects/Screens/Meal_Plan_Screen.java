@@ -707,16 +707,14 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################
         String errorMSG = "Unable to Transfer Targets Data!";
         
-        LinkedHashMap<String, String[]> queries_And_Params = new LinkedHashMap<>()
-        {{
-            if (deleteFromToPlan) { put(query00, null); }
+        LinkedHashSet<Pair<String, String[]>> queries_And_Params = new LinkedHashSet<>() {{
+            if (deleteFromToPlan) { add(new Pair<>(query00, null)); }
             
-            put(query01, null);
-            put(query02, null);
-            put(query03, null);
-            put(query04, null);
-            put(query05, null);
-            
+            add(new Pair<>(query01, null));
+            add(new Pair<>(query02, null));
+            add(new Pair<>(query03, null));
+            add(new Pair<>(query04, null));
+            add(new Pair<>(query05, null));
         }};
         
         //####################################
@@ -786,16 +784,15 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################################
         String errorMSG = "Error, Unable to Transfer Meal Ingredients";
         
-        LinkedHashMap<String, String[]> queries_And_Params = new LinkedHashMap<>()
-        {{
-            put(query0, null); put(query1, null);
-            put(query2, null); put(query3, null);
-            put(query4, null); put(query5, null);
-            put(query6, null); put(query7, null);
-            put(query8, null); put(query9, null);
-            put(query10, null); put(query11, null);
-            put(query12, null); put(query13, null);
-            put(query14, null); put(query15, null);
+        LinkedHashSet<Pair<String, String[]>> queries_And_Params = new LinkedHashSet<>() {{
+            add(new Pair<>(query0,  null));   add(new Pair<>(query1,  null));
+            add(new Pair<>(query2,  null));   add(new Pair<>(query3,  null));
+            add(new Pair<>(query4,  null));   add(new Pair<>(query5,  null));
+            add(new Pair<>(query6,  null));   add(new Pair<>(query7,  null));
+            add(new Pair<>(query8,  null));   add(new Pair<>(query9,  null));
+            add(new Pair<>(query10, null));   add(new Pair<>(query11, null));
+            add(new Pair<>(query12, null));   add(new Pair<>(query13, null));
+            add(new Pair<>(query14, null));   add(new Pair<>(query15, null));
         }};
         
         if (! (db.upload_Data_Batch_Altogether2(queries_And_Params, errorMSG))) { return false; }

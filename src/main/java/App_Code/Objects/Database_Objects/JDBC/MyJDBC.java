@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.apache.ibatis.jdbc.ScriptRunner;
+import org.javatuples.Pair;
 
 import javax.swing.*;
 import java.io.*;
@@ -162,7 +163,7 @@ public class MyJDBC
         // #############################################################
         String
                 path = String.format("%s/%s", db_Script_Folder_Address, script_List_Name),
-                methodName = "run_SQL_Script_Folder()",
+                methodName = "create_DB(()",
                 errorMSG = String.format("Error, running scripts : '%s'!", script_List_Name),
                 update_User_Query = "UPDATE users SET user_name = ? WHERE user_id = 1;";
         
@@ -815,12 +816,14 @@ public class MyJDBC
         }
     }
     
-    public <T> boolean upload_Data_Batch_Altogether2(LinkedHashMap<String, T[]> queries_And_Params, String errorMSG)
+    public <T> boolean upload_Data_Batch_Altogether2(LinkedHashSet<Pair<String, T[]>> queries_And_Params, String errorMSG)
     {
         //#############################################################################
         // Check DB Status
         //#############################################################################
-        String methodName = "upload_Data_Batch_Altogether()";
+        String
+                query = "",
+                methodName = "upload_Data_Batch_Altogether()";
         
         if (! is_DB_Connected(methodName)) { return false; }
         
@@ -834,13 +837,13 @@ public class MyJDBC
             //###############################################
             // For Loop For Queries & Params
             //###############################################
-            for (Map.Entry<String, T[]> entry : queries_And_Params.entrySet())
+            for (Pair<String, T[]> entry : queries_And_Params)
             {
                 //#########################
                 // Entry Values
                 //#########################
-                String query = entry.getKey();
-                T[] insertParameters = entry.getValue();
+                query = entry.getValue0();
+                T[] insertParameters = entry.getValue1();
                 
                 boolean skipParams = insertParameters == null;
                 
@@ -881,7 +884,7 @@ public class MyJDBC
         //##########################################################
         catch (Exception e)
         {
-            handleException_MYSQL(e, methodName, null, errorMSG);
+            handleException_MYSQL(e, methodName, query, errorMSG);
             return false;
         }
     }

@@ -10,6 +10,7 @@ import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Screens.Graph_Screens.PieChart_MealManager_Screen.Pie_Chart_Meal_Manager_Screen;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 import org.apache.commons.lang3.StringUtils;
+import org.javatuples.Pair;
 import org.jfree.data.time.Second;
 
 import javax.swing.*;
@@ -1098,29 +1099,27 @@ public class MealManager
         //#####################################################
         String errorMSG = "Error, Unable to Transfer Plan Data!";
         
-        LinkedHashMap<String, Object[]> queries_And_Params = new LinkedHashMap<>()
-        {{
+        LinkedHashSet<Pair<String, Object[]>> queries_And_Params = new LinkedHashSet<>() {{
             
-            if (hasMealNameBeenChanged || hasMealTimeBeenChanged) //  The meal time or name doesn't need to be updated
-            {
+            add(new Pair<>(query0,  null));   add(new Pair<>(query1,  null));
+            
+            if (hasMealNameBeenChanged || hasMealTimeBeenChanged) {
                 String uploadQuery = """
-                            UPDATE meals_in_plan
-                            SET meal_name = '?', meal_time = '?'
-                            WHERE plan_id = ? AND  meal_in_plan_id = ?;""";
+                UPDATE meals_in_plan
+                SET meal_name = '?', meal_time = '?'
+                WHERE plan_id = ? AND meal_in_plan_id = ?;""";
                 
-                put(uploadQuery, new Object[]{updateMealName, updateMealTime, toPlanID, mealInPlanID});
+                add(new Pair<>(uploadQuery, new Object[]{updateMealName, updateMealTime, toPlanID, mealInPlanID}));
             }
             
-            put(query2, null);
-            put(query3, null);
-            put(query4, null);
-            put(query5, null);
-            put(query6, null);
-            put(query7, null);
-            put(query8, null);
-            put(query9, null);
-            put(query10, null);
+           
+            add(new Pair<>(query2,  null));   add(new Pair<>(query3,  null));
+            add(new Pair<>(query4,  null));   add(new Pair<>(query5,  null));
+            add(new Pair<>(query6,  null));   add(new Pair<>(query7,  null));
+            add(new Pair<>(query8,  null));   add(new Pair<>(query9,  null));
+            add(new Pair<>(query10, null));
         }};
+        
         
         //####################################################
         // Return Update /Output

@@ -2,10 +2,11 @@ package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_I
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.Add_ShopForm_Object;
+import org.javatuples.Pair;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 
 
 public class Edit_ShopForm_Object extends Add_ShopForm_Object
@@ -146,8 +147,8 @@ public class Edit_ShopForm_Object extends Add_ShopForm_Object
             //###################################################
             String errorMSG = String.format("Unable to remove product: \"%s\" from \"%s\" as a Supplier for this ingredient.", productName, chosenShop);
             
-            LinkedHashMap<String, String[]> queries_And_Params = new LinkedHashMap<>(){{
-                put(updateQuery, null); put(updateQuery2, null);
+            LinkedHashSet<Pair<String, String[]>> queries_And_Params = new LinkedHashSet<>(){{
+                add(new Pair<>(updateQuery, null)); add(new Pair<>(updateQuery2, null));
             }};
             
             if (! (db.upload_Data_Batch_Altogether2(queries_And_Params, errorMSG))) { return; }
