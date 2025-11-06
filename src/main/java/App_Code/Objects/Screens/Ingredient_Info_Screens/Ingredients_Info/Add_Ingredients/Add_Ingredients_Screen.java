@@ -197,37 +197,40 @@ public class Add_Ingredients_Screen extends Screen_JPanel
         }
         
         //###############################
-        // ShopForm
+        // Update Both Forms
         //###############################
-        if (update_Both_Forms(add_Ingredients_Form.get_Ingredients_Form_Update_String(null), add_Shop_Form.get_ShopForm_Update_String()))
+        if (! update_Both_Forms(add_Ingredients_Form.get_Ingredients_Form_Update_String(null), add_Shop_Form.get_ShopForm_Update_String()))
         {
-            ingredients_info_screen.set_Update_IngredientInfo(true);
-            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "The ingredient updates won't appear on the mealPlan screen until this window is closed!");
-            
-            //#####################################
-            // Reset Ingredient Names/Types
-            //####################################
-            String ingredientName = add_Ingredients_Form.get_Ingredient_Name_Form_Value();
-            String ingredientType = add_Ingredients_Form.get_Ingredient_Type_Form_Value();
-            
-            System.out.printf("\n\nsubmissionBtnAction() \n%s %s", ingredientName, ingredientType);
-            
-            add_Or_Delete_Ingredient_From_Map("add", ingredientType, ingredientName);
-            
-            //#####################################
-            // Write Ingredients Value To File
-            //####################################
-            if (! (backup_Data_In_SQL_File()))
-            {
-                JOptionPane.showMessageDialog(null, "Error, backing up new ingredients info to SQL file!");
-            }
-            
-            //#####################################
-            // Reset Form & Update GUI
-            //####################################
-            refresh_Interface();
-            resize_GUI();
+            return;
         }
+        
+        ingredients_info_screen.set_Update_IngredientInfo(true);
+        JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "\n\nUpdated Ingredient Info! \n\nAlso updated 2/2 Shop Info In DB In DB!!!");
+        JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "The ingredient updates won't appear on the mealPlan screen until this window is closed!");
+        
+        //#####################################
+        // Reset Ingredient Names/Types
+        //####################################
+        String ingredientName = add_Ingredients_Form.get_Ingredient_Name_Form_Value();
+        String ingredientType = add_Ingredients_Form.get_Ingredient_Type_Form_Value();
+        
+        System.out.printf("\n\nsubmissionBtnAction() \n%s %s", ingredientName, ingredientType);
+        
+        add_Or_Delete_Ingredient_From_Map("add", ingredientType, ingredientName);
+        
+        //#####################################
+        // Write Ingredients Value To File
+        //####################################
+        if (! (backup_Data_In_SQL_File()))
+        {
+            JOptionPane.showMessageDialog(null, "Error, backing up new ingredients info to SQL file!");
+        }
+        
+        //#####################################
+        // Reset Form & Update GUI
+        //####################################
+        refresh_Interface();
+        resize_GUI();
     }
     
     protected Boolean are_You_Sure(String process)
@@ -245,23 +248,35 @@ public class Add_Ingredients_Screen extends Screen_JPanel
         System.out.printf("\n\nupdateBothForms() \nIngredientValues: \n%s \n\nShopping Info: \n%s", ingredients_Update, Arrays.toString(shops_Update));
         
         //####################################
-        // Combine Inputs
+        // Empty
         //####################################
-        String[] combined = Stream.concat(Arrays.stream(new String[]{ingredients_Update}), Arrays.stream(shops_Update))
-                .toArray(String[]::new);
+        if (ingredients_Update == null && shops_Update == null) //HELLO Is this already accounted for by the time the code gets here
+        {
+            return false;
+        }
         
         //####################################
-        // Execute Update
+        // Execute Updates
         //####################################
-        String errorMSG = "Failed 2/2 Updates - Unable To Add Ingredient / Shop Info In DB!";
-        
-        if (! (db.upload_Data_Batch_Independently(combined, errorMSG))) { return false; }
-        
-        //####################################
-        // User Feedback
-        //####################################
-        JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "\n\nUpdated Ingredient Info! \n\nAlso updated 2/2 Shop Info In DB In DB!!!");
-        return true;
+        if (ingredients_Update != null && shops_Update != null) // Both
+        {
+            // Combine Updates into 1
+            String[] combined = Stream.concat(Arrays.stream(new String[]{ ingredients_Update }), Arrays.stream(shops_Update)).toArray(String[] :: new);
+            
+            // Execute Upload
+            String errorMSG = "Failed 2/2 Updates - Unable To Add Ingredient / Shop Info In DB!";
+            return  db.upload_Data_Batch_Independently(combined, errorMSG);
+        }
+        else if (ingredients_Update != null) // Ingredient Update
+        {
+            String errorMSG = "Failed 1/1 Updates - Updating Ingredient Info !";
+            return db.upload_Data(ingredients_Update, false, errorMSG);
+        }
+        else // Shop Info
+        {
+            String errorMSG = "Failed 1/1 Updates - Store Info !";
+            return db.upload_Data_Batch_Altogether(shops_Update,  errorMSG);
+        }
     }
     
     protected boolean add_Or_Delete_Ingredient_From_Map(String process, String ingredientType, String ingredientName)
@@ -301,7 +316,7 @@ public class Add_Ingredients_Screen extends Screen_JPanel
     {
         String ingredientsValuesBeingAdded = add_Ingredients_Form.get_Ingredients_Values_Being_Added();
         String errorMSG = String.format("Unable to add ingredient %s", ingredientsValuesBeingAdded);
-       
+        
         return db.write_Txt_To_SQL_File(sqlBackUpPath, ingredientsValuesBeingAdded, errorMSG);
     }
     

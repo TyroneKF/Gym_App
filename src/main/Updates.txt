@@ -42,6 +42,8 @@ ADD / Edit Stores /Types
 Loading Screen
 .) Include DB Creation in Loading screen progress
 
+Add / Edit Ingredients Screen
+
 ######################################################################################
 New Features:
 ######################################################################################

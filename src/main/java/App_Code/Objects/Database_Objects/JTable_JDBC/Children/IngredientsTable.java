@@ -509,7 +509,7 @@ public class IngredientsTable extends JDBC_JTable
                         SET pdid = NULL
                         WHERE ingredients_index = %s AND plan_id = %s; """, ingredientIndex, temp_PlanID);
             }
-            else if (! (cellValue.equals("N/A")))
+            else
             {
                 //######################################################
                 // Get PDID For Product Name For Ingredient Statement
@@ -550,17 +550,7 @@ public class IngredientsTable extends JDBC_JTable
                 uploadQuery = String.format("""
                         UPDATE  ingredients_in_sections_of_meal
                         SET pdid = %s
-                        WHERE ingredients_index = %s AND plan_id = %s;""", newPDIDResults.get(0), ingredientIndex, temp_PlanID);
-                
-                System.out.printf("\n\nQUERY PDID: \n'''%s''' \n\nPDID = %s \n\nUpload Query \n'''%s'''", getPDIDQuery, newPDIDResults.get(0), uploadQuery);
-            }
-            else
-            {
-                // Create  Statement for changing PDID (Ingredient_Index)
-                uploadQuery = String.format("""
-                        UPDATE  ingredients_in_sections_of_meal
-                        SET pdid = NULL
-                        WHERE ingredients_index = %s AND plan_id = %s;""", ingredientIndex, temp_PlanID);
+                        WHERE ingredients_index = %s AND plan_id = %s;""", newPDIDResults.getFirst(), ingredientIndex, temp_PlanID);
             }
             
             //##################################################################################################
@@ -590,7 +580,7 @@ public class IngredientsTable extends JDBC_JTable
         
         String query1 = String.format("""
                 UPDATE  ingredients_in_sections_of_meal
-                SET quantity = %s 
+                SET quantity = %s
                 WHERE plan_id = %s  AND ingredients_index = %s;""", quantity, temp_PlanID, ingredients_Index);
         
         if (! (db.upload_Data(query1, false, "Error, unable to change Ingredients Values!")))

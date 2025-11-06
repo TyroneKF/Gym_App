@@ -25,7 +25,7 @@ public class Add_Ingredients_Form extends Parent_IngredientForm_And_ShopForm
         put("Ingredient Measurement In", new Triplet<String, String, String>("serving_unit", "Measurement", "String"));
         put("Ingredient Name", new Triplet<String, String, String>("food_name", "Ingredient_Name", "String"));
         put("Ingredient Type", new Triplet<String, String, String>(null, "ingredient_type_id", "Integer"));
-        put("Based_On_Quantity", new Triplet<String, String, String>("serving_weight_grams", "Based_On_Quantity", "Double"));
+        put("Based On Quantity", new Triplet<String, String, String>("serving_weight_grams", "Based_On_Quantity", "Double"));
         put("Glycemic Index", new Triplet<String, String, String>(null, "Glycemic_Index", "Double"));
         put("Protein", new Triplet<String, String, String>("nf_protein", "Protein", "Double"));
         put("Carbohydrates", new Triplet<String, String, String>("nf_total_carbohydrate", "Carbohydrates", "Double"));
@@ -49,7 +49,7 @@ public class Add_Ingredients_Form extends Parent_IngredientForm_And_ShopForm
         put("Ingredient Measurement In", new Object[3]);
         put("Ingredient Name", new Object[3]);
         put("Ingredient Type", new Object[3]);
-        put("Based_On_Quantity", new Object[3]);
+        put("Based On Quantity", new Object[3]);
         put("Glycemic Index", new Object[3]);
         put("Protein", new Object[3]);
         put("Carbohydrates", new Object[3]);

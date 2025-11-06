@@ -78,7 +78,7 @@ public class Edit_Ingredients_Form extends Add_Ingredients_Form
         //##############################################################################################################
         // Load Data Into GUI & Store Info
         //##############################################################################################################
-        int pos = 0; // removes first value being IngrdientID from DB Results which isn't on the form Label
+        int pos = 0; // removes first value being IngredientID from DB Results which isn't on the form Label
         for (Map.Entry<String, Object[]> entry : ingredientsFormObjectAndValues.entrySet())
         {
             pos++;
@@ -168,7 +168,16 @@ public class Edit_Ingredients_Form extends Add_Ingredients_Form
         selectedIngredientName = "";
         
         // Remove FormField / DB Values in Memory to null
-        ingredientsFormObjectAndValues.replaceAll((k, v) -> new Object[]{ null, null });
+        for (Map.Entry<String, Object[]> info : ingredientsFormObjectAndValues.entrySet())
+        {
+            String rowLabel = info.getKey();
+            Object[] row = info.getValue();
+            
+            row[1]=null;
+            row[2]=null;
+            
+            ingredientsFormObjectAndValues.put(rowLabel, row);
+        }
     }
     
     @Override

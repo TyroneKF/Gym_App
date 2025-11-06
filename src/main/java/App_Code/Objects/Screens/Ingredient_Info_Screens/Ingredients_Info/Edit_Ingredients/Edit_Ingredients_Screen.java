@@ -510,21 +510,16 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
         }
         
         //###############################################
-        // Get Updates Strings
+        // Update From Both Forms
         //###############################################
-        if (! (update_Both_Forms(ingredientsFormUpdateString, shopFormUpdateString)))
-        {
-            JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "\n\nUnable To Update Ingredient Info !!");
-            return;
-        }
+        if (! (update_Both_Forms(ingredientsFormUpdateString, shopFormUpdateString))) { return; }
+        
+        JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "\n\nUpdating Ingredient Info / Shops was Successful !!");
         
         //###############################################
         // Write Ingredients Value To File
         //###############################################
-        if (! (backup_Data_In_SQL_File()))
-        {
-            JOptionPane.showMessageDialog(null, "Error, replacing ingredients info to SQL file!");
-        }
+        if (! (backup_Data_In_SQL_File())) { return; }
         
         //###############################################
         //
