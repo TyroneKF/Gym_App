@@ -382,8 +382,6 @@ public class Macros_Targets_Screen extends Screen_JFrame
             return false;
         }
         
-        System.out.printf("\n\nQuery: \n\n%s", update_Query);
-        
         // ##############################################
         // Execute Query
         // ##############################################

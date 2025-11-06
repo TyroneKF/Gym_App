@@ -16,7 +16,6 @@ MealManager
 .) Sql statements
 
 
-
 MYJDBC:
 .) Refactor method calls that check if null and return msg use N/A
 .) Prepared statements
@@ -39,6 +38,9 @@ DB:
 
 ADD / Edit Stores /Types
 .) BackUp Files
+
+Loading Screen
+.) Include DB Creation in Loading screen progress
 
 ######################################################################################
 New Features:
@@ -77,6 +79,8 @@ New Features:
 
 .) Search for food exterior window
 
+AI
+.) Food inspiration, show it a picture or give it prompts and generate a meal plan
 
 ######################################################################################
 OVERALL:
