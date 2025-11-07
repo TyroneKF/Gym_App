@@ -134,15 +134,11 @@ public class Edit_ShopForm_Object extends Add_ShopForm_Object
                     UPDATE ingredients_in_sections_of_meal
                     SET  pdid = ?
                     WHERE pdid = ?;""";
-            
-            System.out.printf("\n\n%s", updateQuery1);
-            
+                    
             //###################################################
             // Delete Supplier From ingredientInShops
             //###################################################
             String updateQuery2 = "DELETE FROM ingredient_in_shops WHERE pdid = ?;";
-            
-            System.out.printf("\n\n%s", updateQuery2);
             
             //###################################################
             // Update

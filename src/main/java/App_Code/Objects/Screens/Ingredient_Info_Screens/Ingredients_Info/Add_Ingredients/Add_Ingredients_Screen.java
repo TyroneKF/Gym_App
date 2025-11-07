@@ -243,7 +243,7 @@ public class Add_Ingredients_Screen extends Screen_JPanel
         return true;
     }
     
-    protected boolean update_Both_Forms(String ingredients_Update, String[] shops_Update)
+   protected boolean update_Both_Forms(String ingredients_Update, String[] shops_Update)
     {
         System.out.printf("\n\nupdateBothForms() \nIngredientValues: \n%s \n\nShopping Info: \n%s", ingredients_Update, Arrays.toString(shops_Update));
         
