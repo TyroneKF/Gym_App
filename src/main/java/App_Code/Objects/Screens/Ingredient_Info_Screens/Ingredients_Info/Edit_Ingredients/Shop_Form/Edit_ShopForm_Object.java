@@ -1,12 +1,14 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients.Shop_Form;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
+import App_Code.Objects.Database_Objects.JDBC.Null_MYSQL_Field;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.Add_ShopForm_Object;
 import org.javatuples.Pair;
-
 import javax.swing.*;
 import java.awt.*;
+import java.sql.Types;
 import java.util.LinkedHashSet;
+
 
 
 public class Edit_ShopForm_Object extends Add_ShopForm_Object
@@ -128,17 +130,17 @@ public class Edit_ShopForm_Object extends Add_ShopForm_Object
             //###################################################
             // Delete Supplier From ingredients_in_meal (PDID)
             //###################################################
-            String updateQuery = String.format("""
+            String updateQuery1 = """
                     UPDATE ingredients_in_sections_of_meal
-                    SET  pdid = NULL
-                    WHERE pdid = %s; """, PDID);
+                    SET  pdid = ?
+                    WHERE pdid = ?;""";
             
-            System.out.printf("\n\n%s", updateQuery);
+            System.out.printf("\n\n%s", updateQuery1);
             
             //###################################################
             // Delete Supplier From ingredientInShops
             //###################################################
-            String updateQuery2 = String.format("DELETE FROM ingredient_in_shops  WHERE pdid = %s;", PDID);
+            String updateQuery2 = "DELETE FROM ingredient_in_shops WHERE pdid = ?;";
             
             System.out.printf("\n\n%s", updateQuery2);
             
@@ -147,8 +149,11 @@ public class Edit_ShopForm_Object extends Add_ShopForm_Object
             //###################################################
             String errorMSG = String.format("Unable to remove product: \"%s\" from \"%s\" as a Supplier for this ingredient.", productName, chosenShop);
             
-            LinkedHashSet<Pair<String, String[]>> queries_And_Params = new LinkedHashSet<>(){{
-                add(new Pair<>(updateQuery, null)); add(new Pair<>(updateQuery2, null));
+            LinkedHashSet<Pair<String, Object[]>> queries_And_Params = new LinkedHashSet<>()
+            {{
+                
+                add(new Pair<>(updateQuery1, new Object[]{ new Null_MYSQL_Field(Types.INTEGER), PDID }));
+                add(new Pair<>(updateQuery2, new Object[]{PDID}));
             }};
             
             if (! (db.upload_Data_Batch_Altogether2(queries_And_Params, errorMSG))) { return; }

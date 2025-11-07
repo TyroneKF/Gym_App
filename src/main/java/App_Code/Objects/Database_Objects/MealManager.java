@@ -180,7 +180,7 @@ public class MealManager
         String
                 tableName = "total_meal_view",
                 query = String.format("SELECT * FROM total_meal_view WHERE meal_in_plan_id = %s AND plan_id = %s;", mealInPlanID, tempPlanID),
-                errorMSG = String.format("Error, unable to get TotalMeal Data for %s at %s", currentMealName, getCurrentMealTimeGUI());
+                errorMSG = String.format("Error, unable to get TotalMeal Data for %s at %s", currentMealName, get_Current_Meal_Time_GUI());
         
         ArrayList<ArrayList<Object>> meal_Total_Data = db.get_TableData_Objects_AL(query, tableName, errorMSG);
         if (meal_Total_Data == null)
@@ -590,7 +590,7 @@ public class MealManager
                 
                 if (getCurrentMealTime().equals(inputConvertedToSeconds)) // Time : User enters same meal time
                 {
-                    JOptionPane.showMessageDialog(getFrame(), String.format("This meal '%s' already has the value '%s' !!", variableName, getCurrentMealTimeGUI()));
+                    JOptionPane.showMessageDialog(getFrame(), String.format("This meal '%s' already has the value '%s' !!", variableName, get_Current_Meal_Time_GUI()));
                     return null;
                 }
             }
@@ -642,7 +642,7 @@ public class MealManager
         //##############################################################################################################
         if (! skipConfirmation) // If requested not to skip a confirmation msg prompt confirmation
         {
-            String currentVariableValue = variableName.equals("name") ? getCurrentMealName() : getCurrentMealTimeGUI();
+            String currentVariableValue = variableName.equals("name") ? getCurrentMealName() : get_Current_Meal_Time_GUI().toString();
             if (! areYouSure(String.format("change meal %s from '%s' to '%s'", variableName, currentVariableValue, input)))
             {
                 return null;
@@ -700,7 +700,7 @@ public class MealManager
         //#########################################################################################################
         
         JOptionPane.showMessageDialog(getFrame(), String.format("Successfully, changed meal time from '%s' to '%s'",
-                getCurrentMealTimeGUI(), newMealTime)); // Success MSG
+                get_Current_Meal_Time_GUI(), newMealTime)); // Success MSG
         
         //#######################################
         // Update total Meal View Time Col
@@ -782,20 +782,20 @@ public class MealManager
         return currentMealTime;
     }
     
-    public String getCurrentMealTimeGUI()
+    public LocalTime get_Current_Meal_Time_GUI()
     {
         return currentMealTime.getStart()
                 .toInstant()
                 .atZone(ZoneId.systemDefault())
-                .toLocalTime().toString();
+                .toLocalTime();
     }
     
-    public String get_SavedMealTime_GUI()
+    public LocalTime get_Saved_MealTime_GUI()
     {
         return savedMealTime.getStart()
                 .toInstant()
                 .atZone(ZoneId.systemDefault())
-                .toLocalTime().toString();
+                .toLocalTime();
     }
     
     //####################################
@@ -1051,20 +1051,20 @@ public class MealManager
         // Clear Old Data from toPlan and & Temp Tables
         //########################################################
         // Delete sub-meals from this meal in toPlan
-        String query2 = String.format("DELETE FROM divided_meal_sections WHERE meal_in_plan_id = %s AND plan_id = %s;", mealInPlanID, toPlanID);
+        String query2 = "DELETE FROM divided_meal_sections WHERE meal_in_plan_id = ? AND plan_id = ? ;";
         
         //####################################################
         // Transferring this plans Ingredients to Temp-Plan
         //####################################################
         
         // Create Table to transfer ingredients from original plan to temp
-        String query3 = String.format("""
+        String query3 = """
                 CREATE TABLE temp_divided_meal_sections  AS
                 SELECT i.*
                 FROM divided_meal_sections i
-                WHERE i.meal_in_plan_id = %s AND i.plan_id = %s;""", mealInPlanID, fromPlanID);
+                WHERE i.meal_in_plan_id = ? AND i.plan_id = ?;""";
         
-        String query4 = String.format("UPDATE temp_divided_meal_sections SET plan_id = %s;", toPlanID);
+        String query4 = "UPDATE temp_divided_meal_sections SET plan_id = ?;";
         
         String query5 = "INSERT INTO divided_meal_sections SELECT * FROM temp_divided_meal_sections;";
         //####################################################
@@ -1072,14 +1072,14 @@ public class MealManager
         //####################################################
         
         // Create Table to transfer ingredients from original plan to temp
-        String query6 = String.format("""
+        String query6 = """
                 CREATE table temp_ingredients_in_meal  AS
                 SELECT i.*
                 FROM ingredients_in_sections_of_meal i
-                WHERE div_meal_sections_id IN (SELECT div_meal_sections_id FROM divided_meal_sections WHERE meal_in_plan_id = %s AND plan_id = %s) AND plan_id = %s;
-                """, mealInPlanID, fromPlanID, fromPlanID);
+                WHERE div_meal_sections_id IN (SELECT div_meal_sections_id FROM divided_meal_sections WHERE meal_in_plan_id = ? AND plan_id = ?)
+                AND plan_id = ?;""";
         
-        String query7 = String.format("UPDATE temp_ingredients_in_meal SET plan_id = %s;", toPlanID);
+        String query7 = "UPDATE temp_ingredients_in_meal SET plan_id = ?;";
         
         String query8 = "INSERT INTO ingredients_in_sections_of_meal SELECT * FROM temp_ingredients_in_meal;";
         
@@ -1090,36 +1090,40 @@ public class MealManager
         //#####################################################
         // Meal Name & Time Updates If Changed
         //#####################################################
-        String
-                updateMealName = process.equals("refresh") ? savedMealName : currentMealName, // set mealName to refresh
-                updateMealTime = process.equals("refresh") ? get_SavedMealTime_GUI() : getCurrentMealTimeGUI(); // set mealTime to time
-          
+        String updateMealName = process.equals("refresh") ? savedMealName : currentMealName; // set mealName to refresh
+        LocalTime updateMealTime = process.equals("refresh") ? get_Saved_MealTime_GUI() : get_Current_Meal_Time_GUI(); // set mealTime to time
+        
         //#####################################################
         // Create Query Formatted Data for Method
         //#####################################################
         String errorMSG = "Error, Unable to Transfer Plan Data!";
         
-        LinkedHashSet<Pair<String, Object[]>> queries_And_Params = new LinkedHashSet<>() {{
+        LinkedHashSet<Pair<String, Object[]>> queries_And_Params = new LinkedHashSet<>()
+        {{
             
-            add(new Pair<>(query0,  null));   add(new Pair<>(query1,  null));
+            add(new Pair<>(query0, null));
+            add(new Pair<>(query1, null));
             
-            if (hasMealNameBeenChanged || hasMealTimeBeenChanged) {
+            if (hasMealNameBeenChanged || hasMealTimeBeenChanged)
+            {
                 String uploadQuery = """
-                UPDATE meals_in_plan
-                SET meal_name = '?', meal_time = '?'
-                WHERE plan_id = ? AND meal_in_plan_id = ?;""";
+                        UPDATE meals_in_plan
+                        SET meal_name = ?, meal_time = ?
+                        WHERE plan_id = ? AND meal_in_plan_id = ?;""";
                 
-                add(new Pair<>(uploadQuery, new Object[]{updateMealName, updateMealTime, toPlanID, mealInPlanID}));
+                add(new Pair<>(uploadQuery, new Object[]{ updateMealName, updateMealTime, toPlanID, mealInPlanID }));
             }
             
-           
-            add(new Pair<>(query2,  null));   add(new Pair<>(query3,  null));
-            add(new Pair<>(query4,  null));   add(new Pair<>(query5,  null));
-            add(new Pair<>(query6,  null));   add(new Pair<>(query7,  null));
-            add(new Pair<>(query8,  null));   add(new Pair<>(query9,  null));
+            add(new Pair<>(query2, new Object[]{ mealInPlanID, toPlanID })); // Already in correct dataType
+            add(new Pair<>(query3, new Object[]{ mealInPlanID, fromPlanID })); // 
+            add(new Pair<>(query4, new Object[]{ toPlanID }));
+            add(new Pair<>(query5, null));
+            add(new Pair<>(query6, new Object[]{ mealInPlanID, fromPlanID, fromPlanID }));
+            add(new Pair<>(query7, new Object[]{toPlanID}));
+            add(new Pair<>(query8, null));
+            add(new Pair<>(query9, null));
             add(new Pair<>(query10, null));
         }};
-        
         
         //####################################################
         // Return Update /Output
@@ -1160,7 +1164,7 @@ public class MealManager
                 
                 ON P.plan_id = M.plan_id
                 AND (M.meal_name = '%s' OR M.meal_time = '%s')
-                AND M.meal_in_plan_id != %s; """, tempPlanID, tempPlanID, savedMealName, get_SavedMealTime_GUI(), mealInPlanID);
+                AND M.meal_in_plan_id != %s;""", tempPlanID, tempPlanID, savedMealName, get_Saved_MealTime_GUI(), mealInPlanID);
         
         
         ArrayList<ArrayList<String>> results = db.get_Multi_Column_Query(query, errorMSG);

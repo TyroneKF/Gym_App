@@ -963,8 +963,9 @@ public class IngredientsTable extends JDBC_JTable
         String query0 = "DROP TABLE IF EXISTS temp_ingredients_in_meal;";
         
         // Delete ingredients in meal Data from original plan with this mealID
-        String query1 = String.format("DELETE FROM ingredients_in_sections_of_meal WHERE div_meal_sections_id = %s AND plan_id = %s;",
-                divMealSectionsID, toPlanID);
+        String query1 = """
+                DELETE FROM ingredients_in_sections_of_meal
+                WHERE div_meal_sections_id = ? AND plan_id = ?;""";
         
         //########################################################
         // Insert Meal & dividedMealSections If Not in DB In toPlan
@@ -977,24 +978,24 @@ public class IngredientsTable extends JDBC_JTable
                 VALUES
                 (?, ?, ?);""";
         
-        String query3 = String.format("""
+        String query3 = """
                 INSERT IGNORE INTO divided_meal_sections
                 (div_meal_sections_id, meal_in_plan_id, plan_id)
                 VALUES
-                (%s, %s, %s);""", divMealSectionsID, mealInPlanID, toPlanID);
+                (?,?,?);""";
         
         //####################################################
         // Transferring this plans Ingredients to Temp-Plan
         //####################################################
         
         // Create Table to transfer ingredients from original plan to temp
-        String query4 = String.format("""
+        String query4 = """
                 CREATE table temp_ingredients_in_meal  AS
                 SELECT i.*
                 FROM ingredients_in_sections_of_meal i
-                WHERE i.div_meal_sections_id = %s AND i.plan_id = %s;""", divMealSectionsID, fromPlanID);
+                WHERE i.div_meal_sections_id = ? AND i.plan_id = ?;""";
         
-        String query5 = String.format("UPDATE temp_ingredients_in_meal  SET plan_id = %s;", toPlanID);
+        String query5 = "UPDATE temp_ingredients_in_meal  SET plan_id = ?;";
         
         String query6 = "INSERT INTO ingredients_in_sections_of_meal SELECT * FROM temp_ingredients_in_meal;";
         
@@ -1007,12 +1008,13 @@ public class IngredientsTable extends JDBC_JTable
         
         LinkedHashSet<Pair<String, Object[]>> queries_And_Params = new LinkedHashSet<>()
         {{
-            add(new Pair<>(query0, null)); add(new Pair<>(query1, null));
-            
+            add(new Pair<>(query0, null));
+            add(new Pair<>(query1, new Object[]{ divMealSectionsID, toPlanID }));
             add(new Pair<>(query2, new Object[]{ mealInPlanID, toPlanID, mealName }));
-           
-            add(new Pair<>(query3, null)); add(new Pair<>(query4, null));
-            add(new Pair<>(query5, null)); add(new Pair<>(query6, null));
+            add(new Pair<>(query3, new Object[]{ divMealSectionsID, mealInPlanID, toPlanID }));
+            add(new Pair<>(query4, new Object[]{ divMealSectionsID, fromPlanID }));
+            add(new Pair<>(query5, new Object[]{ toPlanID }));
+            add(new Pair<>(query6, null));
             add(new Pair<>(query7, null));
         }};
         

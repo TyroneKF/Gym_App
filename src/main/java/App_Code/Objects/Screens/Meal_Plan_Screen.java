@@ -691,13 +691,13 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################
         // Queries
         //####################################
-        String query00 = String.format("DELETE FROM %s WHERE plan_id = %s;", tableMacrosPerPoundLimitName, toPlan);
+        String query00 = String.format("DELETE FROM %s WHERE plan_id = ?;", tableMacrosPerPoundLimitName);
         String query01 = String.format("DROP TABLE IF EXISTS temp_%s;", tableMacrosPerPoundLimitName);
         
-        String query02 = String.format("CREATE TABLE temp_%s AS SELECT * FROM %s WHERE plan_id = %s;",
-                tableMacrosPerPoundLimitName, tableMacrosPerPoundLimitName, fromPlan);
+        String query02 = String.format("CREATE TABLE temp_%s AS SELECT * FROM %s WHERE plan_id = ?;",
+                tableMacrosPerPoundLimitName, tableMacrosPerPoundLimitName);
         
-        String query03 = String.format("UPDATE temp_%s SET plan_id = %s;", tableMacrosPerPoundLimitName, toPlan);
+        String query03 = String.format("UPDATE temp_%s SET plan_id = ?;", tableMacrosPerPoundLimitName);
         String query04 = String.format("INSERT INTO %s SELECT * FROM temp_%s;", tableMacrosPerPoundLimitName, tableMacrosPerPoundLimitName);
         
         String query05 = String.format("DROP TABLE temp_%s;", tableMacrosPerPoundLimitName);
@@ -707,12 +707,13 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################
         String errorMSG = "Unable to Transfer Targets Data!";
         
-        LinkedHashSet<Pair<String, String[]>> queries_And_Params = new LinkedHashSet<>() {{
-            if (deleteFromToPlan) { add(new Pair<>(query00, null)); }
+        LinkedHashSet<Pair<String, Object[]>> queries_And_Params = new LinkedHashSet<>()
+        {{
+            if (deleteFromToPlan) { add(new Pair<>(query00, new Object[]{ toPlan })); }
             
             add(new Pair<>(query01, null));
-            add(new Pair<>(query02, null));
-            add(new Pair<>(query03, null));
+            add(new Pair<>(query02, new Object[]{ fromPlan }));
+            add(new Pair<>(query03, new Object[]{ toPlan }));
             add(new Pair<>(query04, null));
             add(new Pair<>(query05, null));
         }};
@@ -746,20 +747,21 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //################################################################
         // Delete Meals
         //################################################################
-        String query3 = String.format("DELETE FROM %s WHERE plan_id = %s;", tableMealsInPlanName, toPlanID);
+        String query3 = String.format("DELETE FROM %s WHERE plan_id = ?;", tableMealsInPlanName);
         
         //################################################################
         // Transferring Meals From One Plan To Another
         //################################################################
-        String query4 = String.format("CREATE table temp_%s AS SELECT * FROM %s WHERE plan_id = %s ORDER BY meal_in_plan_id;", tableMealsInPlanName, tableMealsInPlanName, fromPlanID);
-        String query5 = String.format("UPDATE temp_%s SET plan_id = %s;", tableMealsInPlanName, toPlanID);
+        String query4 = String.format("CREATE table temp_%s AS SELECT * FROM %s WHERE plan_id = ? ORDER BY meal_in_plan_id;", tableMealsInPlanName, tableMealsInPlanName);
+        
+        String query5 = String.format("UPDATE temp_%s SET plan_id = ?;", tableMealsInPlanName);
         String query6 = String.format("INSERT INTO %s SELECT * FROM temp_%s;", tableMealsInPlanName, tableMealsInPlanName);
         
         //################################################################
         // Transferring Sections Of Meals From One Plan To Another
         //################################################################
-        String query7 = String.format("CREATE table temp_%s AS SELECT * FROM %s WHERE plan_id = %s ORDER BY div_meal_sections_id;", tableSub_MealsName, tableSub_MealsName, fromPlanID);
-        String query8 = String.format("UPDATE temp_%s SET plan_id = %s;", tableSub_MealsName, toPlanID);
+        String query7 = String.format("CREATE table temp_%s AS SELECT * FROM %s WHERE plan_id = ? ORDER BY div_meal_sections_id;", tableSub_MealsName, tableSub_MealsName);
+        String query8 = String.format("UPDATE temp_%s SET plan_id = ?;", tableSub_MealsName);
         String query9 = String.format("INSERT INTO %s SELECT * FROM temp_%s;", tableSub_MealsName, tableSub_MealsName);
         
         //################################################################
@@ -770,9 +772,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 CREATE table temp_%s AS
                 SELECT i.*
                 FROM %s i
-                WHERE i.plan_id = %s;""", tableIngredientsInMealSections, tableIngredientsInMealSections, fromPlanID);
+                WHERE i.plan_id = ?;""", tableIngredientsInMealSections, tableIngredientsInMealSections);
         
-        String query11 = String.format("UPDATE temp_%s SET plan_id = %s;", tableIngredientsInMealSections, toPlanID);
+        String query11 = String.format("UPDATE temp_%s SET plan_id = ?;", tableIngredientsInMealSections);
         String query12 = String.format("INSERT INTO %s SELECT * FROM temp_%s;", tableIngredientsInMealSections, tableIngredientsInMealSections);
         
         String query13 = String.format("DROP TABLE temp_%s;", tableMealsInPlanName);
@@ -784,15 +786,24 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################################
         String errorMSG = "Error, Unable to Transfer Meal Ingredients";
         
-        LinkedHashSet<Pair<String, String[]>> queries_And_Params = new LinkedHashSet<>() {{
-            add(new Pair<>(query0,  null));   add(new Pair<>(query1,  null));
-            add(new Pair<>(query2,  null));   add(new Pair<>(query3,  null));
-            add(new Pair<>(query4,  null));   add(new Pair<>(query5,  null));
-            add(new Pair<>(query6,  null));   add(new Pair<>(query7,  null));
-            add(new Pair<>(query8,  null));   add(new Pair<>(query9,  null));
-            add(new Pair<>(query10, null));   add(new Pair<>(query11, null));
-            add(new Pair<>(query12, null));   add(new Pair<>(query13, null));
-            add(new Pair<>(query14, null));   add(new Pair<>(query15, null));
+        LinkedHashSet<Pair<String, Object[]>> queries_And_Params = new LinkedHashSet<>()
+        {{
+            add(new Pair<>(query0, null));
+            add(new Pair<>(query1, null));
+            add(new Pair<>(query2, null));
+            add(new Pair<>(query3, new Object[]{ toPlanID }));
+            add(new Pair<>(query4, new Object[]{ fromPlanID }));
+            add(new Pair<>(query5, new Object[]{ toPlanID }));
+            add(new Pair<>(query6, null));
+            add(new Pair<>(query7, new Object[]{ fromPlanID }));
+            add(new Pair<>(query8, new Object[]{ toPlanID }));
+            add(new Pair<>(query9, null));
+            add(new Pair<>(query10, new Object[]{ fromPlanID }));
+            add(new Pair<>(query11, new Object[]{ toPlanID }));
+            add(new Pair<>(query12, null));
+            add(new Pair<>(query13, null));
+            add(new Pair<>(query14, null));
+            add(new Pair<>(query15, null));
         }};
         
         if (! (db.upload_Data_Batch_Altogether2(queries_And_Params, errorMSG))) { return false; }
@@ -1502,7 +1513,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         for (MealManager mm : mealManager_ArrayList)
         {
             System.out.printf("\n\nMealManagerID: %s \nMealName : %s \nMealTime : %s",
-                    mm.getMealInPlanID(), mm.getCurrentMealName(), mm.getCurrentMealTimeGUI());
+                    mm.getMealInPlanID(), mm.getCurrentMealName(), mm.get_Current_Meal_Time_GUI());
             
             mm.collapse_MealManager(); // Collapse all meals
             

@@ -84,7 +84,7 @@ New Features:
 .) Personal goal tracker (linked with mobile phone) shows you how much % of your targets = meals eaten & others
    you've achieved
 
-
+.) Sync with strong data app
 
 .) Search for food exterior window
 
