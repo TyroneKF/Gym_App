@@ -9,6 +9,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -17,7 +20,7 @@ public class Macros_Targets_Screen extends Screen_JFrame
     // ################################################################################################################
     // Variables
     // ################################################################################################################
-    private Integer temp_PlanID, planID;
+    private Integer temp_PlanID;
     private String planName;
     private Meal_Plan_Screen meal_plan_screen;
     
@@ -34,13 +37,14 @@ public class Macros_Targets_Screen extends Screen_JFrame
             not_Editable_Columns = new ArrayList<>(Arrays.asList("Selected Plan Name", "Creation Date"));
     
     
-    private String tableName = "macros_per_pound_and_limits";
     private String creation_Date;
+    
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     
     // ################################################################################################################
     // Constructor
     // ################################################################################################################
-    public Macros_Targets_Screen(MyJDBC db, Meal_Plan_Screen meal_plan_screen, int planID, int temp_PlanID, String planName)
+    public Macros_Targets_Screen(MyJDBC db, Meal_Plan_Screen meal_plan_screen, int temp_PlanID, String planName)
     {
         // #############################################################################################################
         // Super Constructors & Variables
@@ -48,7 +52,6 @@ public class Macros_Targets_Screen extends Screen_JFrame
         super(db, false, "Macro-Nutrients Screen", 650, 550, 0, 0);
         getScrollPaneJPanel().setBackground(Color.WHITE);
         set_Resizable(true);
-        
         
         // ##########################################
         // Variables
@@ -59,7 +62,6 @@ public class Macros_Targets_Screen extends Screen_JFrame
         // Variables
         // ##########################################
         this.meal_plan_screen = meal_plan_screen;
-        this.planID = planID;
         this.temp_PlanID = temp_PlanID;
         this.planName = planName;
         
@@ -68,10 +70,14 @@ public class Macros_Targets_Screen extends Screen_JFrame
         //##############################################################################################################
         // Get DB Target Info for this Plan
         //##############################################################################################################
-        String query = String.format("SELECT * FROM %s WHERE plan_id = %s;", tableName, temp_PlanID);
+        String query = String.format("""
+                        SELECT * FROM macros_per_pound_and_limits
+                        WHERE plan_id = %s
+                        AND date_time_of_creation = (Select Max(date_time_of_creation) FROM macros_per_pound_and_limits WHERE plan_id = %s);""",
+                temp_PlanID, temp_PlanID);
         
         ArrayList<ArrayList<String>> data = db.get_Multi_Column_Query(query, "Unable to retrieve this plans Macro Targets");
-       
+        
         if (data == null)
         {
             JOptionPane.showMessageDialog(meal_plan_screen.getFrame(), "\n\nUnable to retrieve current plan Macros Data!");
@@ -323,6 +329,7 @@ public class Macros_Targets_Screen extends Screen_JFrame
         Object[] options = { "Update Existing Macro", "Create New Macro Target", "Cancel" };
         
         String update_Query = "";
+        Object[] params;
         
         int choice = JOptionPane.showOptionDialog(
                 null, // parent component (null = center of screen)
@@ -337,45 +344,48 @@ public class Macros_Targets_Screen extends Screen_JFrame
         
         if (choice == 0)// "Update Existing Macro"
         {
-            update_Query = String.format("""
-                            UPDATE macros_per_pound_and_limits
-                            SET
-                            date_time_of_creation = now(),
-                            current_weight_kg = %s, current_weight_in_pounds = %s,
-                            body_fat_percentage = %s, protein_per_pound = %s,
-                            carbohydrates_per_pound = %s, fibre =%s, fats_per_pound = %s,
-                            saturated_fat_limit = %s, salt_limit = %s,water_target = %s,
-                            liquid_target = %s, additional_calories = %s
-                            WHERE plan_id = %s AND date_time_of_creation = '%s';""",
-                    weightKG,
-                    weightInPounds,
-                    listOfTextFields.get(3).getText().trim(), listOfTextFields.get(4).getText().trim(),
-                    listOfTextFields.get(5).getText().trim(), listOfTextFields.get(6).getText().trim(),
-                    listOfTextFields.get(7).getText().trim(), listOfTextFields.get(8).getText().trim(),
-                    listOfTextFields.get(9).getText().trim(), listOfTextFields.get(10).getText().trim(),
-                    listOfTextFields.get(11).getText().trim(), listOfTextFields.get(12).getText().trim(),
-                    temp_PlanID, creation_Date);
+            update_Query = """
+                    UPDATE macros_per_pound_and_limits
+                    SET
+                    date_time_of_creation = now(),
+                    current_weight_kg = ?, current_weight_in_pounds = ?, body_fat_percentage = ?,
+                    protein_per_pound = ?, carbohydrates_per_pound = ?, fibre =?, fats_per_pound = ?,
+                    saturated_fat_limit = ?, salt_limit = ?, water_target = ?, liquid_target = ?,
+                    additional_calories = ?
+                    WHERE plan_id = ? AND date_time_of_creation = ?;""";
+            
+            params = new Object[]{
+                    weightKG, weightInPounds, new BigDecimal(listOfTextFields.get(3).getText().trim()),
+                    new BigDecimal(listOfTextFields.get(4).getText().trim()), new BigDecimal(listOfTextFields.get(5).getText().trim()),
+                    new BigDecimal(listOfTextFields.get(6).getText().trim()), new BigDecimal(listOfTextFields.get(7).getText().trim()),
+                    new BigDecimal(listOfTextFields.get(8).getText().trim()), new BigDecimal(listOfTextFields.get(9).getText().trim()),
+                    new BigDecimal(listOfTextFields.get(10).getText().trim()), new BigDecimal(listOfTextFields.get(11).getText().trim()),
+                    new BigDecimal(listOfTextFields.get(12).getText().trim()), temp_PlanID,
+                    Timestamp.valueOf(LocalDateTime.parse(creation_Date, formatter)) // Convert to LocalDate & SQLTimeStamp
+            };
         }
         else if (choice == 1)// "Replace Existing Macro"
         {
-            update_Query = String.format("""
-                            INSERT INTO macros_per_pound_and_limits
-                            (
-                            	plan_id , date_time_of_creation,
-                            	current_weight_kg, current_weight_in_pounds,
-                            	body_fat_percentage, protein_per_pound, carbohydrates_per_pound, fibre,
-                            	fats_per_pound, saturated_fat_limit, salt_limit, water_target, liquid_target,
-                            	additional_calories
-                            )
-                            VALUES
-                            (%s, now(), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);""",
-                    temp_PlanID,
-                    weightKG, weightInPounds,
-                    listOfTextFields.get(3).getText().trim(), listOfTextFields.get(4).getText().trim(),
-                    listOfTextFields.get(5).getText().trim(), listOfTextFields.get(6).getText().trim(),
-                    listOfTextFields.get(7).getText().trim(), listOfTextFields.get(8).getText().trim(),
-                    listOfTextFields.get(9).getText().trim(), listOfTextFields.get(10).getText().trim(),
-                    listOfTextFields.get(11).getText().trim(), listOfTextFields.get(12).getText().trim());
+            update_Query = """
+                    INSERT INTO macros_per_pound_and_limits
+                    (
+                    	plan_id , date_time_of_creation,
+                    	current_weight_kg, current_weight_in_pounds,
+                    	body_fat_percentage, protein_per_pound, carbohydrates_per_pound, fibre,
+                    	fats_per_pound, saturated_fat_limit, salt_limit, water_target, liquid_target,
+                    	additional_calories
+                    )
+                    VALUES
+                    (?, now(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);""";
+            
+            params = new Object[]{
+                    temp_PlanID, weightKG, weightInPounds, new BigDecimal(listOfTextFields.get(3).getText().trim()),
+                    new BigDecimal(listOfTextFields.get(4).getText().trim()), new BigDecimal(listOfTextFields.get(5).getText().trim()),
+                    new BigDecimal(listOfTextFields.get(6).getText().trim()), new BigDecimal(listOfTextFields.get(7).getText().trim()),
+                    new BigDecimal(listOfTextFields.get(8).getText().trim()), new BigDecimal(listOfTextFields.get(9).getText().trim()),
+                    new BigDecimal(listOfTextFields.get(10).getText().trim()), new BigDecimal(listOfTextFields.get(11).getText().trim()),
+                    new BigDecimal(listOfTextFields.get(12).getText().trim())
+            };
         }
         else
         {
@@ -385,7 +395,7 @@ public class Macros_Targets_Screen extends Screen_JFrame
         // ##############################################
         // Execute Query
         // ##############################################
-        if (! (db.upload_Data(update_Query, "Error, changing Macro Targets!"))) { return false; }
+        if (! (db.upload_Data2(update_Query, params, "Error, changing Macro Targets!"))) { return false; }
         
         // ##############################################
         // Output MSG & Update Screens

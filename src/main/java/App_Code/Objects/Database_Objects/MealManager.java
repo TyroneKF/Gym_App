@@ -683,17 +683,17 @@ public class MealManager
         //#########################################################################################################
         // Update
         //#########################################################################################################
-        String uploadQuery = String.format("""
+        String uploadQuery = """
                 UPDATE meals_in_plan
-                SET meal_time = '%s'
-                WHERE plan_id = %s AND meal_in_plan_id = %s; """, newMealTime, tempPlanID, mealInPlanID);
-        
-        System.out.printf("\n\neditTime_Btn_Action() uploadQuery = \n%s", uploadQuery);
+                SET meal_time = ?
+                WHERE plan_id = ? AND meal_in_plan_id = ?;""";
+       
+        Object[] params = new Object[]{newMealTime, tempPlanID, mealInPlanID};
         
         //##########################################
         // Upload Into Database Table
         //##########################################
-        if (! db.upload_Data(uploadQuery, "Error, unable to change Meal Time!")) { return; }
+        if (! db.upload_Data2(uploadQuery,params, "Error, unable to change Meal Time!")) { return; }
         
         //#########################################################################################################
         // Update GUI & Variables
@@ -814,12 +814,14 @@ public class MealManager
         //#########################################################################################################
         // Update DB
         //#########################################################################################################
-        String uploadQuery = String.format("""
+        String uploadQuery = """
                 UPDATE meals_in_plan
-                SET meal_name = '%s'
-                WHERE plan_id = %s AND meal_in_plan_id = %s;""", inputMealName, tempPlanID, mealInPlanID);
+                SET meal_name = ?
+                WHERE plan_id = ? AND meal_in_plan_id = ?;""";
         
-        if (! db.upload_Data(uploadQuery, "Error, unable to change Meal Name!")) { return; }
+        Object[] params = new Object[]{inputMealName, tempPlanID, mealInPlanID};
+        
+        if (! db.upload_Data2(uploadQuery, params, "Error, unable to change Meal Name!")) { return; }
         
         //#########################################################################################################
         // Change Variable DATA & Object
@@ -904,12 +906,13 @@ public class MealManager
         //##########################################
         // Delete MealManager Queries
         //##########################################
-        String query = String.format("DELETE FROM meals_in_plan WHERE meal_in_plan_id = %s AND plan_id = %s", mealInPlanID, tempPlanID);
+        String query = "DELETE FROM meals_in_plan WHERE meal_in_plan_id = ? AND plan_id = ?";
+        Object[] params = new Object[]{ mealInPlanID, tempPlanID};
         
         //##########################################
         // Execute Update
         //##########################################
-        if (! db.upload_Data(query, "Table Un-Successfully Deleted!")) { return; }
+        if (! db.upload_Data2(query, params, "Table Un-Successfully Deleted!")) { return; }
         
         //##########################################
         // Delete MealManager Actions
@@ -1003,9 +1006,11 @@ public class MealManager
         //##########################################
         // Delete Meal From DB
         //##########################################
-        String query1 = String.format("DELETE FROM meals_in_plan WHERE meal_in_plan_id = %s AND plan_id = %s;", mealInPlanID, tempPlanID);
+        String query1 = "DELETE FROM meals_in_plan WHERE meal_in_plan_id = ? AND plan_id = ?;";
         
-        if (! (db.upload_Data(query1, "Error, Unable to DELETE IngredientsTable!!"))) { return; }
+        Object[] params = new Object[]{ mealInPlanID, tempPlanID };
+        
+        if (! (db.upload_Data2(query1, params, "Error, Unable to DELETE IngredientsTable!!"))) { return; }
         
         delete_MealManager();
     }
@@ -1119,7 +1124,7 @@ public class MealManager
             add(new Pair<>(query4, new Object[]{ toPlanID }));
             add(new Pair<>(query5, null));
             add(new Pair<>(query6, new Object[]{ mealInPlanID, fromPlanID, fromPlanID }));
-            add(new Pair<>(query7, new Object[]{toPlanID}));
+            add(new Pair<>(query7, new Object[]{ toPlanID }));
             add(new Pair<>(query8, null));
             add(new Pair<>(query9, null));
             add(new Pair<>(query10, null));

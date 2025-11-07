@@ -2,6 +2,7 @@ package App_Code.Objects.Database_Objects.JTable_JDBC.Children;
 
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
+import App_Code.Objects.Database_Objects.JDBC.Null_MYSQL_Field;
 import App_Code.Objects.Database_Objects.JTable_JDBC.JDBC_JTable;
 import App_Code.Objects.Database_Objects.MealManager;
 import App_Code.Objects.Gui_Objects.IconButton;
@@ -16,6 +17,7 @@ import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.math.BigDecimal;
+import java.sql.Types;
 import java.util.*;
 
 public class IngredientsTable extends JDBC_JTable
@@ -460,15 +462,17 @@ public class IngredientsTable extends JDBC_JTable
             // Get Rid off of old chosen product_name
             //##################################################################################################
             
-            String uploadQuery = String.format("""
+            String uploadQuery = """
                     UPDATE  ingredients_in_sections_of_meal
-                    SET ingredient_id = %s, 
-                    pdid = NULL
-                    WHERE ingredients_index = %s AND plan_id = %s; """, selected_Ingredient_ID, ingredientIndex, temp_PlanID);
+                    SET ingredient_id = ?,
+                    pdid = ?
+                    WHERE ingredients_index = ? AND plan_id = ?;""";
+            
+            Object[] params = new Object[]{
+                    (Integer) selected_Ingredient_ID, new Null_MYSQL_Field(Types.INTEGER), (Integer) ingredientIndex, temp_PlanID };
             
             // Upload IngredientName & NEW PDID
-            
-            if (! (db.upload_Data(uploadQuery, "Error, Unable to update Ingredient Info In DB!")))
+            if (! (db.upload_Data2(uploadQuery, params, "Error, Unable to update Ingredient Info In DB!")))
             {
                 // Change JTable JComboBox Back To Original Value
                 tableModel.setValueAt(previous_IngredientName_JComboItem, rowModel, columnModel);
@@ -502,13 +506,18 @@ public class IngredientsTable extends JDBC_JTable
         else if (columnModel == get_ProductName_Col(true))
         {
             String uploadQuery = "";
+            Object[] params;
             
             if (cellValue.equals("N/A"))
             {
-                uploadQuery = String.format("""
+                uploadQuery = """
                         UPDATE  ingredients_in_sections_of_meal
-                        SET pdid = NULL
-                        WHERE ingredients_index = %s AND plan_id = %s; """, ingredientIndex, temp_PlanID);
+                        SET pdid = ?
+                        WHERE ingredients_index = ? AND plan_id = ?;""";
+                
+                params = new Object[]{
+                        new Null_MYSQL_Field(Types.INTEGER), (Integer) ingredientIndex, temp_PlanID
+                };
             }
             else
             {
@@ -548,16 +557,22 @@ public class IngredientsTable extends JDBC_JTable
                 //######################################################
                 
                 // Create  Statement for changing PDID (Ingredient_Index)
-                uploadQuery = String.format("""
+                uploadQuery = """
                         UPDATE  ingredients_in_sections_of_meal
-                        SET pdid = %s
-                        WHERE ingredients_index = %s AND plan_id = %s;""", newPDIDResults.getFirst(), ingredientIndex, temp_PlanID);
+                        SET pdid = ?
+                        WHERE ingredients_index = ? AND plan_id = ?;""";
+                
+                params = new Object[]{
+                        Integer.valueOf(newPDIDResults.getFirst()), (Integer) ingredientIndex, temp_PlanID
+                };
+                
+                
             }
             
             //##################################################################################################
             // Upload Selected Product Name for Ingredient
             //##################################################################################################
-            if (! db.upload_Data(uploadQuery, "Error, Unable to update Ingredient Store Info"))
+            if (! db.upload_Data2(uploadQuery, params, "Error, Unable to update Ingredient Store Info"))
             {
                 // HELLO Create Previous value for supplier column
                 tableModel.setValueAt(previous_ProductName_JComboItem, rowModel, columnModel);
@@ -579,12 +594,14 @@ public class IngredientsTable extends JDBC_JTable
         // Updating Quantity Value in temp plan In DB
         //####################################################################
         
-        String query1 = String.format("""
+        String query1 = """
                 UPDATE  ingredients_in_sections_of_meal
-                SET quantity = %s
-                WHERE plan_id = %s  AND ingredients_index = %s;""", quantity, temp_PlanID, ingredients_Index);
+                SET quantity = ?
+                WHERE plan_id = ?  AND ingredients_index = ?;""";
         
-        if (! (db.upload_Data(query1, "Error, unable to change Ingredients Values!")))
+        Object[] params = new Object[]{ (Integer) quantity, temp_PlanID, (Integer) ingredients_Index };
+        
+        if (! (db.upload_Data2(query1, params, "Error, unable to change Ingredients Values!")))
         {
             setRowBeingEdited();
             return;
@@ -690,9 +707,11 @@ public class IngredientsTable extends JDBC_JTable
             //#################################################
             // Delete Ingredient From Temp Meal
             //#################################################
-            String query = String.format("DELETE FROM ingredients_in_sections_of_meal WHERE ingredients_index = %s AND plan_id = %s;", ingredientIndex, temp_PlanID);
+            String query = "DELETE FROM ingredients_in_sections_of_meal WHERE ingredients_index = ? AND plan_id = ?;";
             
-            if (! db.upload_Data(query, "Error, Unable to delete Ingredient in Table!")) { return; }
+            Object[] params = new Object[]{ (Integer) ingredientIndex, temp_PlanID };
+            
+            if (! db.upload_Data2(query, params, "Error, Unable to delete Ingredient in Table!")) { return; }
         }
         
         //#################################################
@@ -717,9 +736,11 @@ public class IngredientsTable extends JDBC_JTable
             Delete meal from meals database
          */
         
-        String query = String.format("DELETE FROM divided_meal_sections WHERE div_meal_sections_id = %s AND plan_id = %s;", divMealSectionsID, temp_PlanID);
+        String query = "DELETE FROM divided_meal_sections WHERE div_meal_sections_id = ? AND plan_id = ?;";
         
-        if (! db.upload_Data(query, "Error, Table Un-Successfully Deleted! ")) { return; }
+        Object[] params = new Object[]{ divMealSectionsID, temp_PlanID };
+        
+        if (! db.upload_Data2(query, params, "Error, Table Un-Successfully Deleted! ")) { return; }
         
         //################################################
         // Hide JTable object & Collapsible OBJ
