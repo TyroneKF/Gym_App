@@ -163,7 +163,7 @@ public class MyJDBC
         // #############################################################
         String
                 path = String.format("%s/%s", db_Script_Folder_Address, script_List_Name),
-                methodName = "create_DB(()",
+                methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName()),
                 errorMSG = String.format("Error, running scripts : '%s'!", script_List_Name),
                 update_User_Query = "UPDATE users SET user_name = ? WHERE user_id = 1;";
         
@@ -285,9 +285,10 @@ public class MyJDBC
         // ####################################################
         //  Variables
         // ####################################################
-        String path = String.format("%s/%s", db_Script_Folder_Address, script_List_Name);
-        String methodName = "run_SQL_Script_Folder()";
-        String errorMSG = String.format("Error, running script a scripts in path: \n\n%s", path);
+        String
+                path = String.format("%s/%s", db_Script_Folder_Address, script_List_Name),
+                methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName()),
+                errorMSG = String.format("Error, running script a scripts in path: \n\n%s", path);
         
         // ####################################################
         //  Get Folder Path
@@ -384,7 +385,7 @@ public class MyJDBC
     //##################################################################################################################
     public boolean write_Txt_To_SQL_File(String sqlFilePath, String txt_To_Write_To_SQL_File, String errorMSG)
     {
-        String methodName = "write_Txt_To_SQL_File()";
+        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
         
         //##########################################################
         // Creating Temp File
@@ -436,7 +437,7 @@ public class MyJDBC
     public boolean replace_Txt_In_SQL_File(String sqlFilePath, boolean multiValues, String txt_To_Find, String
             txt_Replacement, String errorMSG)
     {
-        String methodName = "replace_Txt_In_SQL_File()";
+        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
         
         //##########################################################
         // Creating Temp File
@@ -517,7 +518,7 @@ public class MyJDBC
      */
     public boolean delete_Txt_In_File(String filePath, String txtToDelete, String errorMSG)
     {
-        String methodName = "delete_Txt_In_File()";
+        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
         
         //#################################################################################
         // Creating Temp File
@@ -650,7 +651,7 @@ public class MyJDBC
         // Check DB Status
         //##########################################################
         String
-                methodName = "insert_And_Get()",
+                methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName()),
                 query_Combined = String.format("%s \n%s", query, Arrays.toString(insertParameters));
         
         if (! is_DB_Connected(methodName)) { return null; }
@@ -730,7 +731,7 @@ public class MyJDBC
         //##########################################################
         // Check DB Status
         //##########################################################
-        String methodName = "upload_Data()";
+        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
         
         if (! is_DB_Connected(methodName)) { return false; }
         
@@ -769,7 +770,7 @@ public class MyJDBC
         //##########################################################
         // Check DB Status
         //##########################################################
-        String methodName = "upload_Data_Batch_Altogether()";
+        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
         
         if (! is_DB_Connected(methodName)) { return false; }
         
@@ -816,14 +817,31 @@ public class MyJDBC
         }
     }
     
-    public <T> boolean upload_Data_Batch_Altogether2(LinkedHashSet<Pair<String, T[]>> queries_And_Params, String errorMSG)
+    /***
+     * @param queries_And_Params
+     * @param errorMSG
+     * @return
+     *
+     * DataTypes of params need to be converted to their expected Type  before being passed in as a param in java equivalent
+     *      * to MYSQL's type
+     *      * Although all params can be passed as strings the statement type conversion should match the type the schema expects
+     *      * as MYSQL does this internally and if it fails will cause the following errors:
+     *      * .) silent truncation,
+     *      * .) rounding errors,
+     *      * .)  or outright SQL exceptions.
+     *      *
+     *      * So it's better to convert before MYSQL handles it.
+     *
+     *
+     */
+    public boolean upload_Data_Batch_Altogether2(LinkedHashSet<Pair<String, Object[]>> queries_And_Params, String errorMSG)
     {
         //#############################################################################
         // Check DB Status
         //#############################################################################
         String
                 query = "",
-                methodName = "upload_Data_Batch_Altogether()";
+                methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
         
         if (! is_DB_Connected(methodName)) { return false; }
         
@@ -837,13 +855,13 @@ public class MyJDBC
             //###############################################
             // For Loop For Queries & Params
             //###############################################
-            for (Pair<String, T[]> entry : queries_And_Params)
+            for (Pair<String, Object[]> entry : queries_And_Params)
             {
                 //#########################
                 // Entry Values
                 //#########################
                 query = entry.getValue0();
-                T[] insertParameters = entry.getValue1();
+                Object[] insertParameters = entry.getValue1();
                 
                 boolean skipParams = insertParameters == null;
                 
@@ -858,7 +876,38 @@ public class MyJDBC
                         // Prepare Statements
                         for (int pos = 1; pos <= insertParameters.length; pos++)
                         {
-                            statement.setString(pos, insertParameters[pos - 1].toString());
+                            Object object = insertParameters[pos - 1];
+                            
+                            // Switches based on Object type
+                            switch (object)
+                            {
+                                // NULL
+                                case null -> throw new Exception(String.format(
+                                        "Received untyped NULL at position %d.%n" +
+                                                "Convert nulls explicitly using Null_MYSQL_Field, e.g.%n" +
+                                                "add(new Pair<>(query, new Object[]{ new Null_MYSQL_Field(Types.INTEGER), PDID }));",
+                                        pos
+                                ));
+                                
+                                // Expect Self Created  NULL Type
+                                case Null_MYSQL_Field nullMysqlField -> statement.setNull(pos, nullMysqlField.getSqlType());
+                                
+                                case String s -> statement.setString(pos, s); // String
+                                case Integer i -> statement.setInt(pos, i); // Integer
+                                case Boolean b -> statement.setBoolean(pos, b); // Boolean
+                                case BigDecimal bigDecimal -> statement.setBigDecimal(pos, bigDecimal); // BigDecimal
+                                case Timestamp timestamp -> statement.setTimestamp(pos, timestamp);  // TimeStamp / LocalDateTime
+                                case LocalDateTime localDateTime -> // Local Date Time
+                                        statement.setTimestamp(pos, Timestamp.valueOf(localDateTime));
+                                case LocalTime localTime -> statement.setTime(pos, Time.valueOf(localTime)); // LocalTime
+                                case Float f -> statement.setFloat(pos, f);
+                                case Double d -> statement.setDouble(pos, d);
+                                
+                                // Exception clause
+                                default ->
+                                        throw new Exception(String.format("Unable to configure param dataType of object being '%s' - %s"
+                                                , object.toString(), object.getClass().getSimpleName()));
+                            }
                         }
                     }
                     
@@ -897,7 +946,7 @@ public class MyJDBC
         //##########################################################
         // Check DB Status
         //##########################################################
-        String methodName = "upload_Data_Batch_Independently()";
+        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
         
         if (! is_DB_Connected(methodName)) { return false; }
         
@@ -952,7 +1001,7 @@ public class MyJDBC
         //##########################################################
         // Check DB Status
         //##########################################################
-        String methodName = "get_Multi_Column_Query()";
+        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
         
         if (! is_DB_Connected(methodName)) { return null; }
         
@@ -998,7 +1047,7 @@ public class MyJDBC
         //#########################################################################
         // Check DB Status
         //#########################################################################
-        String methodName = "get_TableData_Objects_AL()";
+        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
         
         if (! is_DB_Connected(methodName)) { System.out.printf("\n\nConnection No"); return null; }
         
@@ -1096,7 +1145,7 @@ public class MyJDBC
         //##########################################################
         // Check DB Status
         //##########################################################
-        String methodName = "get_Single_Col_Alphabetically_Sorted()";
+        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
         
         if (! is_DB_Connected(methodName)) { return null; }
         
@@ -1233,9 +1282,11 @@ public class MyJDBC
         }
         finally
         {
-            try {
+            try
+            {
                 connection.close(); // tells Hikari to evict this bad connection
-            } catch (SQLException ignore) {}
+            }
+            catch (SQLException ignore) { }
         }
     }
     

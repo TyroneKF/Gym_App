@@ -49,7 +49,7 @@ public class PieChart_MacroKey implements Comparable<PieChart_MacroKey>
     
     public String get_MealTime_GUI()
     {
-        return mealManager.getCurrentMealTimeGUI();
+        return mealManager.get_Current_Meal_Time_GUI().toString();
     }
     
     public String get_MealName() { return mealManager.getCurrentMealName(); }

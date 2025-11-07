@@ -5,12 +5,18 @@ mvn javafx:run "-DmainClass=Tests.ToggleSwitchDemo"
 Work On:
 ######################################################################################
 
+IngredientsTable
+.) Redraw if ingredient / Info in edit Screen is being edited needs to be reflcected on Tables (Redrawn)
+   etc shop selected thats been deleted all products need to be reloaded.
+
+
 TotalMeal:
 .) Ingredient Count
 .) Refresh Meal - Redraws screen and what's happens to pie charts open from unsaved meals it should be removed
 
 MealManager
 .) MealManager Update mealTime could just change time field on TotalMeal Vs reloading whole table
+.) Switch object make it LocalTime vs Second
 
 .) Change all | or || bitwise or vs logical or
 .) Sql statements
@@ -22,6 +28,7 @@ MYJDBC:
 .) Switch to
 
 Meal_Plan_Screen:
+.) Get rid of table name variables its hard to read
 .) Edit Transfer methods
 .) Remove un-necessary delete methods
 .) Use ID's in collections on MealPlanScreen for IngredientTypes / Name & Stores

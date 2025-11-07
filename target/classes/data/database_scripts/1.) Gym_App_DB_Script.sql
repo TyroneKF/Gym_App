@@ -261,7 +261,7 @@ CREATE TABLE IF NOT EXISTS ingredients_in_sections_of_meal
 	quantity DECIMAL(15,2) NOT NULL,
 
 	pdid INT NULL,
- 	FOREIGN KEY (pdid) REFERENCES ingredient_in_shops(pdid) ON DELETE CASCADE,
+ 	FOREIGN KEY (pdid) REFERENCES ingredient_in_shops(pdid),
 
 	PRIMARY KEY (ingredients_index, plan_id),
 	UNIQUE KEY no_repeat_records(ingredients_index, div_meal_sections_id, plan_id)

@@ -160,7 +160,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen_JFrame
         //#####################################
         // Graph Preferences
         //#####################################
-        String title = String.format("[%s]      %s Macros", mealManager.getCurrentMealTimeGUI(), mealManager.getCurrentMealName());
+        String title = String.format("[%s]      %s Macros", mealManager.get_Current_Meal_Time_GUI(), mealManager.getCurrentMealName());
         int
                 pieWidth = frameWidth - 50,
                 pieHeight = frameHeight - 20;
@@ -216,7 +216,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen_JFrame
     //####################################
     public void update_PieChart_Title()
     {
-        String title = String.format("[%s]      %s Macros", mealManager.getCurrentMealTimeGUI(), mealManager.getCurrentMealName());
+        String title = String.format("[%s]      %s Macros", mealManager.get_Current_Meal_Time_GUI(), mealManager.getCurrentMealName());
         pieChart.setTitle(title);
     }
 }

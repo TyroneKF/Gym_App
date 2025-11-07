@@ -217,7 +217,7 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
             //##############################
             // Create PieChart & Add to List
             //##############################
-            String title = String.format("[%s]      %s Macros", mealManager.getCurrentMealTimeGUI(), mealManager.getCurrentMealName());
+            String title = String.format("[%s]      %s Macros", mealManager.get_Current_Meal_Time_GUI(), mealManager.getCurrentMealName());
             
             PieChart_Totals pieChart = new PieChart_Totals(title, colorPalette, pieWidth, pieHeight, rotateDelay, titleFont, labelFont, legendFont, pieDataset);
             
@@ -378,7 +378,7 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
         //##############################
         // Create PieChart & Add to List
         //##############################
-        String title = String.format("[%s]      %s Macros", mealManager.getCurrentMealTimeGUI(), mealManager.getCurrentMealName());
+        String title = String.format("[%s]      %s Macros", mealManager.get_Current_Meal_Time_GUI(), mealManager.getCurrentMealName());
         
         PieChart_Totals pieChart = new PieChart_Totals(title, colorPalette, pieWidth, pieHeight, rotateDelay, titleFont, labelFont, legendFont, pieDataset);
         pieChart_MPS_Entries.add(new PieChart_Totals_Entry_MPS(mealPlanID, mealManager, pieChart));
