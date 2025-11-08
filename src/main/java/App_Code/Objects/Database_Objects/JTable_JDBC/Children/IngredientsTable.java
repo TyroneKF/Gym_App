@@ -451,7 +451,7 @@ public class IngredientsTable extends JDBC_JTable
                 return;
             }
             
-            Object selected_Ingredient_ID = results_Ingredient_ID.getFirst();
+            String selected_Ingredient_ID = results_Ingredient_ID.get(0);
             
             System.out.printf("\nPrevious JCombo Value: %s \nPrevious JCombo  ID: %s \n\nSelected JCombo Value: %s\nSelected JCombo ID: %s" +
                             "\n\nRow  Selected: %s \nColumn Selected: %s",
@@ -469,7 +469,11 @@ public class IngredientsTable extends JDBC_JTable
                     WHERE ingredients_index = ? AND plan_id = ?;""";
             
             Object[] params = new Object[]{
-                    (Integer) selected_Ingredient_ID, new Null_MYSQL_Field(Types.INTEGER), (Integer) ingredientIndex, temp_PlanID };
+                    Integer.valueOf(selected_Ingredient_ID),
+                    new Null_MYSQL_Field(Types.INTEGER),
+                    (Integer)  ingredientIndex,
+                    temp_PlanID
+            };
             
             // Upload IngredientName & NEW PDID
             if (! (db.upload_Data2(uploadQuery, params, "Error, Unable to update Ingredient Info In DB!")))
@@ -599,7 +603,7 @@ public class IngredientsTable extends JDBC_JTable
                 SET quantity = ?
                 WHERE plan_id = ?  AND ingredients_index = ?;""";
         
-        Object[] params = new Object[]{ (Integer) quantity, temp_PlanID, (Integer) ingredients_Index };
+        Object[] params = new Object[]{ (BigDecimal) quantity, temp_PlanID, (Integer) ingredients_Index };
         
         if (! (db.upload_Data2(query1, params, "Error, unable to change Ingredients Values!")))
         {

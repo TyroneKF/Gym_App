@@ -45,6 +45,7 @@ DB:
 
 ADD / Edit Stores /Types
 .) BackUp Files
+.) Items not needing to be in JComboList
 
 Loading Screen
 .) Include DB Creation in Loading screen progress

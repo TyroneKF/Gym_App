@@ -4,10 +4,12 @@ import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients.Edit_Ingredients_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Edit_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Parent_Screen;
+import org.javatuples.Pair;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 
 public class Edit_Ingredient_Type extends Edit_Screen
 {
@@ -93,23 +95,31 @@ public class Edit_Ingredient_Type extends Edit_Screen
     }
     
     @Override
-    protected String[] delete_Btn_Queries(String mysqlVariableReference1, ArrayList<String> queries)
+    protected LinkedHashSet<Pair<String, Object[]>> delete_Btn_Queries(String mysqlVariableReference1, LinkedHashSet<Pair<String, Object[]>> queries_And_Params)
     {
         //#############################################
         //
         //#############################################
-        String changeToValue = String.format("(SELECT %s FROM %s WHERE %s = 'UnAssigned')", id_ColumnName, db_TableName, db_ColumnName_Field);
-        
         String query1 = String.format("""
-                UPDATE %s
-                SET %s =  %s
-                WHERE %s = %s;""", fk_Table, id_ColumnName, changeToValue, id_ColumnName, mysqlVariableReference1);
+                        UPDATE %s
+                        SET %s = (SELECT %s FROM %s WHERE %s =  ?)
+                        WHERE %s = %s;""",
+                fk_Table,
+                id_ColumnName,
+                id_ColumnName, db_TableName, db_ColumnName_Field,
+                id_ColumnName, mysqlVariableReference1);
         
-        String query2 = String.format("DELETE FROM %s WHERE %s = %s;", db_TableName, id_ColumnName, mysqlVariableReference1);
+        queries_And_Params.add(new Pair<>(query1, new Object[]{ "UnAssigned" }));
         
         //######################################
         //Return Results
         //######################################
-        return new String[]{ query1, query2 };
+        String query2 = String.format("DELETE FROM %s WHERE %s = %s;", db_TableName, id_ColumnName, mysqlVariableReference1);
+        queries_And_Params.add(new Pair<>(query2, null));
+        
+        //######################################
+        //Return Results
+        //######################################
+        return queries_And_Params;
     }
 }

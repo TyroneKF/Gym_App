@@ -1,6 +1,7 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
+import org.javatuples.Pair;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,6 +9,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 
 public abstract class Edit_Screen extends Add_Screen
 {
@@ -167,21 +169,29 @@ public abstract class Edit_Screen extends Add_Screen
         // Upload Query
         //################################
         String mysqlVariableReference1 = "@CurrentID";
-        String createMysqlVariable1 = String.format("SET %s = (SELECT %s FROM %s WHERE %s = '%s');",
-                mysqlVariableReference1, id_ColumnName, db_TableName, db_ColumnName_Field, selected_JComboBox_Item_Txt);
+        String createMysqlVariable1 = String.format("SET %s = (SELECT %s FROM %s WHERE %s = ?);",
+                mysqlVariableReference1, id_ColumnName, db_TableName, db_ColumnName_Field);
         
         String uploadString = String.format("""
                         UPDATE %s
-                        SET %s = '%s'
+                        SET %s = ?
                         WHERE %s = %s;""",
-                db_TableName, db_ColumnName_Field, jTextField_TXT, id_ColumnName, mysqlVariableReference1);
+                db_TableName,
+                db_ColumnName_Field,
+                id_ColumnName, mysqlVariableReference1);
         
         //################################
         // Return Query Result
         //################################
         String errorMSG = String.format("Unable to Update Ingredient %s to '%s'!", data_Gathering_Name, jTextField_TXT);
         
-        return db.upload_Data_Batch_Independently(new String[]{ createMysqlVariable1, uploadString }, errorMSG);
+        LinkedHashSet<Pair<String, Object[]>> queries_And_Params = new LinkedHashSet<>()
+        {{
+            add(new Pair<>(createMysqlVariable1, new Object[]{ selected_JComboBox_Item_Txt }));
+            add(new Pair<>(uploadString, new Object[]{ jTextField_TXT, }));
+        }};
+        
+        return db.upload_Data_Batch_Altogether2(queries_And_Params, errorMSG);
     }
     
     //#############################################################
@@ -203,35 +213,51 @@ public abstract class Edit_Screen extends Add_Screen
         selected_JComboBox_Item_Txt = "";
     }
     
-    //#############################################################
+    //###################################################################
     // Delete Methods
-    //#############################################################
+    //###################################################################
     private boolean delete_Btn_Action()
     {
-        //##########################################################################################################
-        // Delete From SQL Database
-        //##########################################################################################################
+        //##################################
+        // SQL Variables
+        //##################################
         String
                 mysqlVariableReference1 = "@CurrentID",
-                createMysqlVariable1 = String.format("SET %s = (SELECT %s FROM %s WHERE %s = '%s');",
-                mysqlVariableReference1, id_ColumnName, db_TableName, db_ColumnName_Field, selected_JComboBox_Item_Txt);
+                createMysqlVariable1 = String.format("SET %s = (SELECT %s FROM %s WHERE %s = ?);",
+                        mysqlVariableReference1, id_ColumnName, db_TableName, db_ColumnName_Field);
         
-        //##########################################################################################################
-        //
-        //##########################################################################################################
+      
         String errorMSG1 = String.format("\n\nFailed To Delete ' %s ' FROM %s !!", selected_JComboBox_Item_Txt, data_Gathering_Name);
         
-        if (! db.upload_Data(createMysqlVariable1, errorMSG1)) { return false; }
+        // Generate Queries
+        LinkedHashSet<Pair<String, Object[]>> queries_And_Params = new LinkedHashSet<>()
+        {{
+            add(new Pair<>(createMysqlVariable1,  new Object[]{ selected_JComboBox_Item_Txt }));
+        }};
+        
+       queries_And_Params = delete_Btn_Queries(mysqlVariableReference1, queries_And_Params);
+        
+        //##################################
+        // Execute Query
+        //##################################
+        if (! db.upload_Data_Batch_Altogether2(queries_And_Params, errorMSG1)) { return false; }
         
         item_Deleted = true;
         
-        //##########################################################################################################
+        //##################################
+        // Return Value
+        //##################################
+        return true;
+        
+        //##################################
         // Delete From BackUp SQL File
-        //##########################################################################################################
+        //##################################
+        /*
         String txtToDelete = String.format("('%s')", selected_JComboBox_Item_Txt);
-        String errorMSG2 = String.format("\n\nFailed To Delete ' %s ' FROM %s !!", selected_JComboBox_Item_Txt, data_Gathering_Name);
+        String errorMSG2 = String.format("\n\nFailed To Delete ' %s ' FROM %s  in BackUp File!!", selected_JComboBox_Item_Txt, data_Gathering_Name);
         
         return db.delete_Txt_In_File(sql_File_Path, txtToDelete, errorMSG2);
+        */
     }
     
     protected void delete_Btn_Action_Listener()
@@ -263,5 +289,5 @@ public abstract class Edit_Screen extends Add_Screen
         reset_Actions();
     }
     
-    protected abstract String[] delete_Btn_Queries(String mysqlVariableReference1, ArrayList<String> queries);
+    protected abstract LinkedHashSet<Pair<String, Object[]>> delete_Btn_Queries(String mysqlVariableReference1, LinkedHashSet<Pair<String, Object[]>> queries_And_Params);
 }

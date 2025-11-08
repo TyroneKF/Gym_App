@@ -275,12 +275,13 @@ public abstract class Add_Screen extends Screen_JPanel
         //################################
         // Upload Query
         //################################
-        String uploadString = String.format("INSERT INTO %s (%s) VALUES ('%s');", db_TableName, db_ColumnName_Field, jTextField_TXT);
+        String uploadString = String.format("INSERT INTO %s (%s) VALUES (?);", db_TableName, db_ColumnName_Field);
+        Object[] params = new Object[]{ jTextField_TXT };
         
         //################################
         // Return Query Results
         //################################
-        return db.upload_Data( uploadString, "Error, Unable to Add Ingredient Info!");
+        return db.upload_Data2(uploadString, params, "Error, Unable to Add Ingredient Info!");
     }
     
     protected boolean backup_Data_In_SQL_File()
@@ -295,6 +296,7 @@ public abstract class Add_Screen extends Screen_JPanel
     //########################
     // Messages
     //########################
+    
     /**
      * All the methods are Override by child class
      */
