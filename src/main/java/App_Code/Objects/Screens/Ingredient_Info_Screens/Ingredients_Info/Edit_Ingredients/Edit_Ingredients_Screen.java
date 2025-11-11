@@ -9,7 +9,6 @@ import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_In
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Search_For_Food_Info;
 import org.apache.commons.lang3.ArrayUtils;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
@@ -361,7 +360,7 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
         
         String errorMSG1 = "Error, Edit_Ingredients_Screen Unable to get Ingredient Type Info";
         
-        ArrayList<ArrayList<String>> ingredientTypesNameAndIDResults = db.get_Multi_Column_Query(query_Types, errorMSG1);
+        ArrayList<ArrayList<Object>> ingredientTypesNameAndIDResults = db.get_2D_Query_AL_Object(query_Types, null, errorMSG1);
         
         if (ingredientTypesNameAndIDResults == null)
         {
@@ -372,12 +371,10 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
         //######################################
         // Store all ingredient types & names
         //######################################
-        StringBuilder errorTxt = new StringBuilder();
-        
-        for (ArrayList<String> row : ingredientTypesNameAndIDResults)
+        for (ArrayList<Object> row : ingredientTypesNameAndIDResults)
         {
-            String ID = row.get(0);
-            String ingredientType = row.get(1);
+            Integer ID = (Integer) row.get(0);
+            String ingredientType = (String) row.get(1);
             
             //########################################
             // Get IngredientNames for Type
@@ -386,7 +383,7 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
                     queryTypeIngredientNames = String.format("SELECT ingredient_name FROM ingredients_info WHERE ingredient_type_id = %s ORDER BY ingredient_name;", ID),
                     errorMSG = String.format("\nUnable to grab Ingredient Names for Type '%s'!", ingredientType);
             
-            TreeSet<String> ingredientNames = db.get_Single_Col_Alphabetically_Sorted(queryTypeIngredientNames, errorMSG);
+            TreeSet<String> ingredientNames = db.get_Single_Col_Query_Ordered_TS(queryTypeIngredientNames, null, errorMSG);
             
             if (ingredientNames == null)
             {
@@ -515,10 +512,6 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
         
         JOptionPane.showMessageDialog(mealPlanScreen.getFrame(), "\n\nUpdating Ingredient Info / Shops was Successful !!");
         
-        //###############################################
-        // Write Ingredients Value To File
-        //###############################################
-       // if (! (backup_Data_In_SQL_File())) { return; }
         
         //###############################################
         //
@@ -577,14 +570,14 @@ public class Edit_Ingredients_Screen extends Add_Ingredients_Screen
         {
             String[] combined = ArrayUtils.addAll(new String[]{ ingredients_Update }, shops_Update);
             
-            if (! db.upload_Data_Batch_Independently(combined, errorMSG)) { return false; }
+            if (! db.upload_Data_Batch(combined, errorMSG)) { return false; }
             
         }
         else if (ingredients_Update != null && ! db.upload_Data(ingredients_Update, errorMSG))
         {
             return false;
         }
-        else if (shops_Update != null && db.upload_Data_Batch_Altogether(shops_Update, errorMSG))
+        else if (shops_Update != null && db.upload_Data_Batch(shops_Update, errorMSG))
         {
             return false;
         }

@@ -265,7 +265,7 @@ public class Add_Ingredients_Screen extends Screen_JPanel
             
             // Execute Upload
             String errorMSG = "Failed 2/2 Updates - Unable To Add Ingredient / Shop Info In DB!";
-            return  db.upload_Data_Batch_Independently(combined, errorMSG);
+            return  db.upload_Data_Batch(combined, errorMSG);
         }
         else if (ingredients_Update != null) // Ingredient Update
         {
@@ -275,7 +275,7 @@ public class Add_Ingredients_Screen extends Screen_JPanel
         else // Shop Info
         {
             String errorMSG = "Failed 1/1 Updates - Store Info !";
-            return db.upload_Data_Batch_Altogether(shops_Update,  errorMSG);
+            return db.upload_Data_Batch(shops_Update,  errorMSG);
         }
     }
     

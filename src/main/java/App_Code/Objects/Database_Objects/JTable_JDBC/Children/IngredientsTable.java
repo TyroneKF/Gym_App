@@ -436,10 +436,12 @@ public class IngredientsTable extends JDBC_JTable
             // Get Chosen Ingredient ID For Chosen Item (Ingredient Name)
             //##################################################################################################
             String
-                    query = String.format("Select ingredient_id From ingredients_info WHERE ingredient_name = '%s';", selected_IngredientName_JCombo_Item),
+                    query = "Select ingredient_id From ingredients_info WHERE ingredient_name = ?;",
                     errorMSG = "Unable to retrieve chosen Ingredient ID from DB!";
             
-            ArrayList<String> results_Ingredient_ID = db.get_Single_Column_Query_AL(query, errorMSG);
+            Object[] params = new Object[]{ selected_IngredientName_JCombo_Item };
+            
+            ArrayList<Integer> results_Ingredient_ID = db.get_Single_Col_Query_Int(query, params, errorMSG);
             
             if (results_Ingredient_ID == null)
             {
@@ -451,7 +453,7 @@ public class IngredientsTable extends JDBC_JTable
                 return;
             }
             
-            String selected_Ingredient_ID = results_Ingredient_ID.get(0);
+            Integer selected_Ingredient_ID = results_Ingredient_ID.getFirst();
             
             System.out.printf("\nPrevious JCombo Value: %s \nPrevious JCombo  ID: %s \n\nSelected JCombo Value: %s\nSelected JCombo ID: %s" +
                             "\n\nRow  Selected: %s \nColumn Selected: %s",
@@ -468,15 +470,15 @@ public class IngredientsTable extends JDBC_JTable
                     pdid = ?
                     WHERE ingredients_index = ? AND plan_id = ?;""";
             
-            Object[] params = new Object[]{
-                    Integer.valueOf(selected_Ingredient_ID),
+            Object[] params_Upload = new Object[]{
+                    selected_Ingredient_ID,
                     new Null_MYSQL_Field(Types.INTEGER),
-                    (Integer)  ingredientIndex,
+                    (Integer) ingredientIndex,
                     temp_PlanID
             };
             
             // Upload IngredientName & NEW PDID
-            if (! (db.upload_Data2(uploadQuery, params, "Error, Unable to update Ingredient Info In DB!")))
+            if (! (db.upload_Data2(uploadQuery, params_Upload, "Error, Unable to update Ingredient Info In DB!")))
             {
                 // Change JTable JComboBox Back To Original Value
                 tableModel.setValueAt(previous_IngredientName_JComboItem, rowModel, columnModel);
@@ -528,24 +530,27 @@ public class IngredientsTable extends JDBC_JTable
                 //######################################################
                 // Get PDID For Product Name For Ingredient Statement
                 //######################################################
-                Object storeName = tableModel.getValueAt(rowModel, get_Supplier_Col(true));
-                String getPDIDQuery = String.format("""
+                String storeName = (String) tableModel.getValueAt(rowModel, get_Supplier_Col(true));
+                
+                String get_PDID_Query = """
                         SELECT pdid
                         FROM
                         (
-                             SELECT pdid, product_name, ingredient_id, store_id FROM ingredient_in_shops 
-                             WHERE ingredient_id = %s
+                             SELECT pdid, product_name, ingredient_id, store_id FROM ingredient_in_shops
+                             WHERE ingredient_id = ?
                         ) AS i
                         LEFT JOIN
                         (
                               SELECT store_id, store_name FROM stores
                          ) AS s
                         ON i.store_id = s.store_id
-                        WHERE i.product_name = '%s' AND s.store_name = '%s';""", ingredientID, cellValue, storeName);
+                        WHERE i.product_name = ? AND s.store_name = ?;""";
                 
-                String errorMSG = "Error, Unable to get Selectd Ingredient Shop ID Info!";
+                Object[] store_ID_Params = new Object[]{ ingredientID, cellValue, storeName };
                 
-                ArrayList<String> newPDIDResults = db.get_Single_Column_Query_AL(getPDIDQuery, errorMSG);
+                String errorMSG = "Error, Unable to get Selected Ingredient Shop ID Info!";
+                
+                ArrayList<Integer> newPDIDResults = db.get_Single_Col_Query_Int(get_PDID_Query, store_ID_Params, errorMSG);
                 
                 if (newPDIDResults == null)
                 {
@@ -620,10 +625,12 @@ public class IngredientsTable extends JDBC_JTable
         //  Getting DB data to update Ingredients Table In GUI
         //####################################################################
         String
-                query = String.format("SELECT * FROM ingredients_in_sections_of_meal_calculation WHERE ingredients_index = %s AND plan_id = %s;", ingredients_Index, temp_PlanID),
+                query = "SELECT * FROM ingredients_in_sections_of_meal_calculation WHERE ingredients_index = ? AND plan_id = ?;",
                 errorMSG = "Error, Updating IngredientTable by Quantity!";
         
-        ArrayList<ArrayList<Object>> ingredientsUpdateData = db.get_TableData_Objects_AL(query, tableName, errorMSG);
+        Object[] params2 = new Object[]{ ingredients_Index, temp_PlanID };
+        
+        ArrayList<ArrayList<Object>> ingredientsUpdateData = db.get_2D_Query_AL_Object(query, params2, errorMSG);
         
         if (ingredientsUpdateData == null)
         {
@@ -840,11 +847,12 @@ public class IngredientsTable extends JDBC_JTable
         String
                 errorMSG = "Error, Unable to get new rows Information!",
                 
-                query = String.format("""
+                query = """
                         SELECT * FROM ingredients_in_sections_of_meal_calculation
-                        WHERE ingredients_index = %s AND plan_id = %s;""", newIngredientsIndex, temp_PlanID);
+                        WHERE ingredients_index = ? AND plan_id = ?;""";
         
-        ArrayList<ArrayList<Object>> results = db.get_TableData_Objects_AL(query, tableName, errorMSG);
+        Object[] params2 = new Object[]{ newIngredientsIndex, temp_PlanID };
+        ArrayList<ArrayList<Object>> results = db.get_2D_Query_AL_Object(query, params2, errorMSG);
         
         if (results == null)
         {
@@ -1043,7 +1051,7 @@ public class IngredientsTable extends JDBC_JTable
             add(new Pair<>(query7, null));
         }};
         
-        if (! (db.upload_Data_Batch_Altogether2(queries_And_Params, errorMSG))) { return false; }
+        if (! (db.upload_Data_Batch2(queries_And_Params, errorMSG))) { return false; }
         
         //####################################################
         // Output
@@ -1136,29 +1144,33 @@ public class IngredientsTable extends JDBC_JTable
                 ////######################################
                 model1.removeAllElements();
                 
-                Object ingredientID = tableModel.getValueAt(row, get_IngredientID_Col(true));
-                Object ingredientSupplier = tableModel.getValueAt(row, get_Supplier_Col(true));
+                Integer ingredientID = (Integer) tableModel.getValueAt(row, get_IngredientID_Col(true));
+                String ingredientSupplier = (String) tableModel.getValueAt(row, get_Supplier_Col(true));
                 
                 //########################################
                 // Get product names Based on store selected
-                ////######################################
+                //######################################
                 
-                String queryStore = String.format("""
-                        SELECT IFNULL(S.product_name, 'N/A') AS product_name
-                        FROM
-                        (
-                            SELECT ingredient_id FROM ingredients_info
-                        ) AS I
-                        LEFT JOIN
-                        (
-                            SELECT ingredient_id, product_name, store_id  FROM ingredient_in_shops 	
-                        ) AS S
-                        ON I.ingredient_id = S.ingredient_id
-                        AND S.store_id = (SELECT store_id FROM stores WHERE store_name = '%s')
-                        WHERE I.ingredient_id = %s
-                        ORDER BY S.product_name ASC;""", ingredientSupplier, ingredientID);
+                String
+                        errorMSG = "Error, Unable to Query Ingredient Product Names!",
+                        query_store_name = """
+                                SELECT IFNULL(S.product_name, 'N/A') AS product_name
+                                FROM
+                                (
+                                    SELECT ingredient_id FROM ingredients_info
+                                ) AS I
+                                LEFT JOIN
+                                (
+                                    SELECT ingredient_id, product_name, store_id  FROM ingredient_in_shops
+                                ) AS S
+                                ON I.ingredient_id = S.ingredient_id
+                                AND S.store_id = (SELECT store_id FROM stores WHERE store_name = ? )
+                                WHERE I.ingredient_id = ?
+                                ORDER BY S.product_name ASC;""";
                 
-                ArrayList<String> productNameResults = db.get_Single_Column_Query_AL(queryStore, "Error, Unable to Query Ingredient Product Names!");
+                Object[] store_namee_Params = new Object[]{ ingredientSupplier, ingredientID };
+                
+                ArrayList<String> productNameResults = db.get_Single_Col_Query_String(query_store_name, store_namee_Params, errorMSG);
                 
                 if (productNameResults != null)
                 {
@@ -1260,38 +1272,39 @@ public class IngredientsTable extends JDBC_JTable
              */
                 //########################################
                 // Get Previous Stored Item
-                ////######################################
-                
+                //########################################
                 model1.removeAllElements();
                 
-                Object ingredientID = tableModel.getValueAt(row, get_IngredientID_Col(true));
-                Object ingredientName = tableModel.getValueAt(row, get_IngredientName_Col(true));
+                Integer ingredientID = (Integer) tableModel.getValueAt(row, get_IngredientID_Col(true));
+                String ingredientName = (String) tableModel.getValueAt(row, get_IngredientName_Col(true));
                 
                 //########################################
                 // Get Supplier Based on ingredientIndex
                 //########################################
-                String errorMSG = "Error, Setting Available Stores for Ingredient!";
+                String errorMSG_Store = "Error, Setting Available Stores for Ingredient!";
                 
-                String queryStore = String.format("""
+                String query_Store = """
                         SELECT DISTINCT IFNULL(D.store_name, 'N/A') AS store_name
-                        FROM 
+                        FROM
                         (
-                        	SELECT ingredient_id FROM ingredients_info 
-                        ) AS T                                             
+                        	SELECT ingredient_id FROM ingredients_info
+                        ) AS T
                         LEFT JOIN
                         (
-                           SELECT ingredient_id, store_id FROM ingredient_in_shops                         	
+                           SELECT ingredient_id, store_id FROM ingredient_in_shops
                         ) AS C
-                        ON T.ingredient_id = C.ingredient_id 
+                        ON T.ingredient_id = C.ingredient_id
                         LEFT JOIN
                         (
                           SELECT store_id, store_name FROM stores
                         ) AS D
                         ON C.store_id = D.store_id
-                        WHERE T.ingredient_id = %s
-                        ORDER BY D.store_name ASC;""", ingredientID);
+                        WHERE T.ingredient_id = ?
+                        ORDER BY D.store_name ASC;""";
                 
-                ArrayList<String> storesResults = db.get_Single_Column_Query_AL(queryStore, errorMSG);
+                Object[] store_Params = new Object[]{ ingredientID };
+                
+                ArrayList<String> storesResults = db.get_Single_Col_Query_String(query_Store, store_Params, errorMSG_Store);
                 
                 if (storesResults != null)
                 {
@@ -1314,7 +1327,7 @@ public class IngredientsTable extends JDBC_JTable
                 else
                 {
                     //HELLO FIX WILL SOMEHOW CAUSE ERROR
-                    JOptionPane.showMessageDialog(frame, errorMSG);
+                    JOptionPane.showMessageDialog(frame, errorMSG_Store);
                 }
                 
                 return super.getTableCellEditorComponent(table, value, isSelected, row, column);

@@ -152,7 +152,7 @@ public class Edit_ShopForm_Object extends Add_ShopForm_Object
                 add(new Pair<>(updateQuery2, new Object[]{PDID}));
             }};
             
-            if (! (db.upload_Data_Batch_Altogether2(queries_And_Params, errorMSG))) { return; }
+            if (! (db.upload_Data_Batch2(queries_And_Params, errorMSG))) { return; }
         }
         
         //################################################

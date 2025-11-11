@@ -12,6 +12,7 @@ public class MyJTable_DisplayData extends JDBC_JTable
 {
     protected Integer planID, temp_PlanID;
     protected String query = "";
+    protected Object[] params;
     protected int updateRow = 0;
     
     public MyJTable_DisplayData(MyJDBC db, Container parentContainer, ArrayList<ArrayList<Object>> data, ArrayList<String> columnNames, int planID, int temp_PlanID,
@@ -97,7 +98,7 @@ public class MyJTable_DisplayData extends JDBC_JTable
         //##########################################################################
         String errorMSG = String.format("Error, Updating Table '%s'!", tableName);
         
-        ArrayList<ArrayList<Object>> tableDataObject = db.get_TableData_Objects_AL(query, tableName, errorMSG);
+        ArrayList<ArrayList<Object>> tableDataObject = db.get_2D_Query_AL_Object(query, params, errorMSG);
         
         if (tableDataObject == null)
         {

@@ -157,9 +157,13 @@ public abstract class Edit_Screen extends Add_Screen
         //################################
         // Check if Value Already Exists
         //################################
-        String query = String.format("SELECT %s  FROM %s WHERE %s = '%s';", db_ColumnName_Field, db_TableName, db_ColumnName_Field, jTextField_TXT);
+        String
+                errorMSG = "Error, unable to edit Ingredients Info / Shop Info",
+                query = String.format("SELECT %s FROM %s WHERE %s = ?;", db_ColumnName_Field, db_TableName, db_ColumnName_Field);
         
-        if (db.get_Single_Column_Query_AL(query, "Error, unable to edit Ingredients Info / Shop Info") != null)
+        Object[] params = new Object[]{ jTextField_TXT };
+        
+        if (db.get_Single_Col_Query_Obj(query, params, errorMSG) != null)
         {
             JOptionPane.showMessageDialog(null, String.format("\n\n%s '' %s '' Already Exists!", data_Gathering_Name, jTextField_TXT));
             return false;
@@ -183,7 +187,7 @@ public abstract class Edit_Screen extends Add_Screen
         //################################
         // Return Query Result
         //################################
-        String errorMSG = String.format("Unable to Update Ingredient %s to '%s'!", data_Gathering_Name, jTextField_TXT);
+        String errorMSG_Upload = String.format("Unable to Update Ingredient %s to '%s'!", data_Gathering_Name, jTextField_TXT);
         
         LinkedHashSet<Pair<String, Object[]>> queries_And_Params = new LinkedHashSet<>()
         {{
@@ -191,7 +195,7 @@ public abstract class Edit_Screen extends Add_Screen
             add(new Pair<>(uploadString, new Object[]{ jTextField_TXT, }));
         }};
         
-        return db.upload_Data_Batch_Altogether2(queries_And_Params, errorMSG);
+        return db.upload_Data_Batch2(queries_And_Params, errorMSG_Upload);
     }
     
     //#############################################################
@@ -226,21 +230,20 @@ public abstract class Edit_Screen extends Add_Screen
                 createMysqlVariable1 = String.format("SET %s = (SELECT %s FROM %s WHERE %s = ?);",
                         mysqlVariableReference1, id_ColumnName, db_TableName, db_ColumnName_Field);
         
-      
         String errorMSG1 = String.format("\n\nFailed To Delete ' %s ' FROM %s !!", selected_JComboBox_Item_Txt, data_Gathering_Name);
         
         // Generate Queries
         LinkedHashSet<Pair<String, Object[]>> queries_And_Params = new LinkedHashSet<>()
         {{
-            add(new Pair<>(createMysqlVariable1,  new Object[]{ selected_JComboBox_Item_Txt }));
+            add(new Pair<>(createMysqlVariable1, new Object[]{ selected_JComboBox_Item_Txt }));
         }};
         
-       queries_And_Params = delete_Btn_Queries(mysqlVariableReference1, queries_And_Params);
+        queries_And_Params = delete_Btn_Queries(mysqlVariableReference1, queries_And_Params);
         
         //##################################
         // Execute Query
         //##################################
-        if (! db.upload_Data_Batch_Altogether2(queries_And_Params, errorMSG1)) { return false; }
+        if (! db.upload_Data_Batch2(queries_And_Params, errorMSG1)) { return false; }
         
         item_Deleted = true;
         
@@ -248,16 +251,6 @@ public abstract class Edit_Screen extends Add_Screen
         // Return Value
         //##################################
         return true;
-        
-        //##################################
-        // Delete From BackUp SQL File
-        //##################################
-        /*
-        String txtToDelete = String.format("('%s')", selected_JComboBox_Item_Txt);
-        String errorMSG2 = String.format("\n\nFailed To Delete ' %s ' FROM %s  in BackUp File!!", selected_JComboBox_Item_Txt, data_Gathering_Name);
-        
-        return db.delete_Txt_In_File(sql_File_Path, txtToDelete, errorMSG2);
-        */
     }
     
     protected void delete_Btn_Action_Listener()

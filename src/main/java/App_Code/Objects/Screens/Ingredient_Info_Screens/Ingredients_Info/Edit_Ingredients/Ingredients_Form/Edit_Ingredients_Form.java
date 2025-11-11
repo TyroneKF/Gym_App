@@ -20,7 +20,8 @@ public class Edit_Ingredients_Form extends Add_Ingredients_Form
     // Variables
     //##################################################
     // DELETE Use Smarter Method
-    private String selectedIngredientID, selectedIngredientName;
+    private String selectedIngredientName;
+    private Integer selectedIngredientID;
     
     private Edit_Ingredients_Screen edit_ingredientsScreen;
     
@@ -61,7 +62,7 @@ public class Edit_Ingredients_Form extends Add_Ingredients_Form
                 getIngredientInfoString = get_Ingredient_Info_Select_Statement(selectedIngredientName),
                 errorMSG = "Error, Unable to grab selected ingredient info!";
         
-        ArrayList<ArrayList<String>> ingredientInfo_Results = db.get_Multi_Column_Query(getIngredientInfoString, errorMSG);
+        ArrayList<ArrayList<Object>> ingredientInfo_Results = db.get_2D_Query_AL_Object(getIngredientInfoString, null, errorMSG);
         
         if (ingredientInfo_Results == null)
         {
@@ -72,8 +73,8 @@ public class Edit_Ingredients_Form extends Add_Ingredients_Form
         //##############################
         // Get Info & Ingredient ID
         //##############################
-        ArrayList<String> ingredientInfoInDB = ingredientInfo_Results.getFirst();
-        selectedIngredientID = ingredientInfoInDB.getFirst();
+        ArrayList<Object> ingredientInfoInDB = ingredientInfo_Results.getFirst();
+        selectedIngredientID = (Integer) ingredientInfoInDB.getFirst();
         
         //##############################################################################################################
         // Load Data Into GUI & Store Info
@@ -85,7 +86,7 @@ public class Edit_Ingredients_Form extends Add_Ingredients_Form
             
             String rowLabel = entry.getKey();
             Component comp = (Component) entry.getValue()[0];
-            String fieldValue = ingredientInfoInDB.get(pos);
+            String fieldValue = ingredientInfoInDB.get(pos).toString();
             
             // Set DB Value for Row in memory
             set_Ingredients_Form_Object_And_Values(rowLabel, 2, fieldValue);
@@ -164,7 +165,7 @@ public class Edit_Ingredients_Form extends Add_Ingredients_Form
     protected void extra_Clear_Ingredients_Form()
     {
         // Reset Variables
-        selectedIngredientID = "";
+        selectedIngredientID = null;
         selectedIngredientName = "";
         
         // Remove FormField / DB Values in Memory to null
@@ -173,8 +174,8 @@ public class Edit_Ingredients_Form extends Add_Ingredients_Form
             String rowLabel = info.getKey();
             Object[] row = info.getValue();
             
-            row[1]=null;
-            row[2]=null;
+            row[1] = null;
+            row[2] = null;
             
             ingredientsFormObjectAndValues.put(rowLabel, row);
         }
@@ -334,7 +335,7 @@ public class Edit_Ingredients_Form extends Add_Ingredients_Form
     
     public String get_Selected_IngredientID()
     {
-        return selectedIngredientID;
+        return selectedIngredientID.toString();
     }
     
     public String get_Selected_IngredientName()

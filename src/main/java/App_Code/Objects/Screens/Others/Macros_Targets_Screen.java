@@ -21,7 +21,6 @@ public class Macros_Targets_Screen extends Screen_JFrame
     // Variables
     // ################################################################################################################
     private Integer temp_PlanID;
-    private String planName;
     private Meal_Plan_Screen meal_plan_screen;
     
     private boolean formEditable = false;
@@ -32,10 +31,9 @@ public class Macros_Targets_Screen extends Screen_JFrame
             "Protein Per Pound Target", "Carbohydrates Per Pound Target", "Fibre Target (G)", "Fats Per Pound Target",
             "Saturated Fat Limit", "Salt Limit (G)", "Water Target (Ml)", "Liquid Target (Ml)", "Additional Calories" };
     
-    private ArrayList<String>
-            macrosData,
-            not_Editable_Columns = new ArrayList<>(Arrays.asList("Selected Plan Name", "Creation Date"));
+    private ArrayList<String> not_Editable_Columns = new ArrayList<>(Arrays.asList("Selected Plan Name", "Creation Date"));
     
+    private ArrayList<Object> macrosData;
     
     private String creation_Date;
     
@@ -63,24 +61,27 @@ public class Macros_Targets_Screen extends Screen_JFrame
         // ##########################################
         this.meal_plan_screen = meal_plan_screen;
         this.temp_PlanID = temp_PlanID;
-        this.planName = planName;
         
         JPanel mainJPanel = getScrollPaneJPanel();
         
         //##############################################################################################################
         // Get DB Target Info for this Plan
         //##############################################################################################################
-        String query = String.format("""
-                        SELECT * FROM macros_per_pound_and_limits
-                        WHERE plan_id = %s
-                        AND date_time_of_creation = (Select Max(date_time_of_creation) FROM macros_per_pound_and_limits WHERE plan_id = %s);""",
-                temp_PlanID, temp_PlanID);
+        String
+                query_Target = """
+                SELECT * FROM macros_per_pound_and_limits
+                WHERE plan_id = ?
+                AND date_time_of_creation = (Select Max(date_time_of_creation) FROM macros_per_pound_and_limits WHERE plan_id = ?);""",
+                
+                errorMSG_Target = "Unable to retrieve this plans Macro Targets";
         
-        ArrayList<ArrayList<String>> data = db.get_Multi_Column_Query(query, "Unable to retrieve this plans Macro Targets");
+        Object[] params_Target = new Object[]{ temp_PlanID, temp_PlanID };
+        
+        ArrayList<ArrayList<Object>> data = db.get_2D_Query_AL_Object(query_Target,params_Target, errorMSG_Target);
         
         if (data == null)
         {
-            JOptionPane.showMessageDialog(meal_plan_screen.getFrame(), "\n\nUnable to retrieve current plan Macros Data!");
+            JOptionPane.showMessageDialog(meal_plan_screen.getFrame(), errorMSG_Target);
             return;
         }
         
@@ -126,7 +127,7 @@ public class Macros_Targets_Screen extends Screen_JFrame
             // JTextField
             //################################
             JTextField textField = new JTextField("");
-            String cellData = macrosData.get(i);
+            Object cellData = macrosData.get(i);
             
             //Setting TextField limits
             if (labelTXT.equals("Selected Plan Name"))
@@ -139,13 +140,15 @@ public class Macros_Targets_Screen extends Screen_JFrame
                 if (labelTXT.equals("Creation Date"))
                 {
                     textField.setDocument(new JTextFieldLimit(30));
-                    creation_Date = cellData;
+                    creation_Date = cellData.toString();
+                    
+                    textField.setText(creation_Date.replaceAll("-", "/").replaceAll("T", "   "));
                 }
                 else
                 {
                     textField.setDocument(new JTextFieldLimit(9));
+                    textField.setText(String.format(" %s", cellData));
                 }
-                textField.setText(String.format(" %s", cellData));
             }
             
             textField.setEditable(false);
@@ -269,7 +272,7 @@ public class Macros_Targets_Screen extends Screen_JFrame
             try
             {
                 BigDecimal bd_User_Input = new BigDecimal(value);
-                BigDecimal dbRowData_BD_Form = new BigDecimal(macrosData.get(row));
+                BigDecimal dbRowData_BD_Form = (BigDecimal) macrosData.get(row);
                 
                 if (bd_User_Input.compareTo(zero) < 0 || bd_User_Input.compareTo(zero) == 0) // decimal less than 0
                 {

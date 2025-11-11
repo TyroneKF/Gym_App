@@ -18,7 +18,7 @@ public class Edit_Shop_Form extends Add_Shop_Form
     // Variables
     //##################################################
     private Edit_Ingredients_Form edit_IngredientsForm;
-    private ArrayList<ArrayList<String>> shopsFormDBData = new ArrayList<>();
+    private ArrayList<ArrayList<Object>> shopsFormDBData = new ArrayList<>();
     
     //##################################################################################################################
     // Constructor
@@ -43,12 +43,12 @@ public class Edit_Shop_Form extends Add_Shop_Form
         //###########################
         //
         //###########################
-        String selectedIngredientID = edit_IngredientsForm.get_Selected_IngredientID();
+        int selectedIngredientID = Integer.parseInt(edit_IngredientsForm.get_Selected_IngredientID());
         
         //###########################
         // Get New Ingredient Shop Info
         //###########################
-        String shopInfoQuery = String.format("""
+        String shopInfo_Query = """
                 SELECT i.pdid, s.store_name, i.product_name, i.cost_per_unit, i.volume_per_unit
                 FROM  ingredient_in_shops i
                 INNER JOIN
@@ -56,11 +56,13 @@ public class Edit_Shop_Form extends Add_Shop_Form
                   SELECT store_id, store_name FROM stores
                 ) s
                 ON s.store_id = i.store_id
-                AND  i.ingredient_id = %s ;""", selectedIngredientID);
+                AND  i.ingredient_id = ? ;""";
+        
+        Object[] params_Shop_Info = new Object[]{ selectedIngredientID };
         
         String errorMSG = "Error, Unable to get ShopForm Info For Selected Ingredient!";
         
-        ArrayList<ArrayList<String>> temp_ShopsFormDBData = db.get_Multi_Column_Query(shopInfoQuery, errorMSG);
+        ArrayList<ArrayList<Object>> temp_ShopsFormDBData = db.get_2D_Query_AL_Object(shopInfo_Query, params_Shop_Info, errorMSG);
         
         if (temp_ShopsFormDBData == null)
         {
@@ -80,11 +82,19 @@ public class Edit_Shop_Form extends Add_Shop_Form
     {
         for (int i = 0; i < shopsFormDBData.size(); i++)
         {
-            ArrayList<String> rowData = shopsFormDBData.get(i);
+            ArrayList<Object> rowData = shopsFormDBData.get(i);
             
             // PDID is set in constructor & Add Row
-            Edit_ShopForm_Object edit_shopForm_object = new Edit_ShopForm_Object(inputArea, this, rowData.get(0),
-                    rowData.get(1), rowData.get(2), rowData.get(3), rowData.get(4));
+            
+            String
+                    pdid = rowData.get(0).toString(),
+                    shop_Name = (String) rowData.get(1),
+                    product_Name = (String) rowData.get(2),
+                    price = rowData.get(3).toString(),
+                    quantity_Per_Pack = rowData.get(4).toString();
+            
+            Edit_ShopForm_Object edit_shopForm_object =
+                    new Edit_ShopForm_Object(inputArea, this, pdid, shop_Name, product_Name, price, quantity_Per_Pack);
             
             shopFormObjects.add(edit_shopForm_object);
             

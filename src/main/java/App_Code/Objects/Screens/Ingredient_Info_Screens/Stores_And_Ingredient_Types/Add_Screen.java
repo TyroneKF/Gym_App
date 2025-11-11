@@ -4,7 +4,6 @@ import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Gui_Objects.JTextFieldLimit;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.regex.Matcher;
@@ -264,9 +263,13 @@ public abstract class Add_Screen extends Screen_JPanel
         //################################
         // Check if Value Already Exists
         //################################
-        String query = String.format("SELECT %s  FROM %s WHERE %s = '%s';", db_ColumnName_Field, db_TableName, db_ColumnName_Field, jTextField_TXT);
+        String
+                errorMSG = String.format("Error, checking if %s already exists!", db_ColumnName_Field),
+                query = String.format("SELECT %s  FROM %s WHERE %s = ?;", db_ColumnName_Field, db_TableName, db_ColumnName_Field);
         
-        if (db.get_Single_Column_Query_AL(query, "Error, checking if value already exists!") != null)
+        Object[] params = new Object[]{ jTextField_TXT };
+        
+        if (db.get_Single_Col_Query_String(query, params, errorMSG) != null)
         {
             JOptionPane.showMessageDialog(null, String.format("\n\n%s '' %s '' Already Exists!", data_Gathering_Name, jTextField_TXT));
             return false;
@@ -275,13 +278,10 @@ public abstract class Add_Screen extends Screen_JPanel
         //################################
         // Upload Query
         //################################
-        String uploadString = String.format("INSERT INTO %s (%s) VALUES (?);", db_TableName, db_ColumnName_Field);
-        Object[] params = new Object[]{ jTextField_TXT };
+        String upload_String = String.format("INSERT INTO %s (%s) VALUES (?);", db_TableName, db_ColumnName_Field);
+        Object[] upload_params = new Object[]{ jTextField_TXT };
         
-        //################################
-        // Return Query Results
-        //################################
-        return db.upload_Data2(uploadString, params, "Error, Unable to Add Ingredient Info!");
+        return db.upload_Data2(upload_String, upload_params, "Error, Unable to Add Ingredient Info!");
     }
     
     protected boolean backup_Data_In_SQL_File()
