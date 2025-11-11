@@ -17,10 +17,9 @@ import java.nio.file.*;
 import java.sql.*;
 import java.text.Collator;
 import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class MyJDBC
@@ -259,6 +258,7 @@ public class MyJDBC
         catch (Exception e)
         {
             handleException_File(e, methodName, errorMSG);
+            close_Connection();
             return false;
         }
         
@@ -670,81 +670,9 @@ public class MyJDBC
         }
     }
     
-    /**
-     * Only works on auto-increment ID's
-     *
-     * @param query            = "INSERT INTO employees (name, position) VALUES (?, ?)";
-     * @param insertParameters = The ? Parameters
-     * @return
-     *
-     */
-    public Integer insert_And_Get_ID(String query, Object[] insertParameters, String errorMSG)
-    {
-        //##########################################################
-        // Check DB Status
-        //##########################################################
-        String
-                methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName()),
-                query_Combined = String.format("%s \n%n%s", query, Arrays.toString(insertParameters));
-        
-        if (! is_DB_Connected(methodName)) { return null; }
-        
-        //##########################################################
-        // Query Setup
-        //##########################################################
-        try (Connection connection = dataSource.getConnection(); // Get a Connection from pool
-             PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
-        )
-        {
-            connection.setAutoCommit(false); // Prevents each query from being singularly uploaded & is only made not temp when committed
-            
-            int param_Count = insertParameters.length;
-            
-            //##################################
-            // Prepare Statements
-            //##################################
-            for (int pos = 1; pos <= param_Count; pos++)
-            {
-                Object object = insertParameters[pos - 1];
-                set_Statement_Params(statement, pos, object);
-            }
-            
-            //##################################
-            // Execute Insert Query
-            //##################################
-            int rowsAffected = statement.executeUpdate();
-            if (rowsAffected == 0) { throw new Exception("\nNo Rows Inserted!"); }
-            
-            try (ResultSet rs = statement.getGeneratedKeys())
-            {
-                if (! rs.next()) // Cannot Get ID, Throw ERROR
-                {
-                    throw new SQLException("Insert succeeded, but no generated ID was returned.");
-                }
-                
-                connection.commit();// Commit Changes beyond current driver
-                return Math.toIntExact(rs.getLong(1));
-            }
-            catch (Exception e)
-            {
-                rollBack_Connection(connection, methodName, query_Combined);
-                throw e;
-            }
-            finally
-            {
-                connection.setAutoCommit(true);
-            }
-        }
-        //##########################################################
-        // Error Handling
-        //##########################################################
-        catch (Exception e)
-        {
-            handleException_MYSQL(e, methodName, query_Combined, errorMSG);
-            return null;
-        }
-    }
-    
+    //####################################
+    //
+    //####################################
     public boolean upload_Data2(String query, Object[] insertParameters, String errorMSG)
     {
         //#############################################################################
@@ -825,7 +753,7 @@ public class MyJDBC
      *
      *
      */
-    public boolean upload_Data_Batch_Altogether2(LinkedHashSet<Pair<String, Object[]>> queries_And_Params, String errorMSG)
+    public boolean upload_Data_Batch2(LinkedHashSet<Pair<String, Object[]>> queries_And_Params, String errorMSG)
     {
         //#############################################################################
         // Check DB Status
@@ -897,8 +825,84 @@ public class MyJDBC
         }
     }
     
-    // #####################################################################################
-    // #####################################################################################
+    /**
+     * Only works on auto-increment ID's
+     *
+     * @param query            = "INSERT INTO employees (name, position) VALUES (?, ?)";
+     * @param insertParameters = The ? Parameters
+     * @return
+     *
+     */
+    public Integer insert_And_Get_ID(String query, Object[] insertParameters, String errorMSG)
+    {
+        //##########################################################
+        // Check DB Status
+        //##########################################################
+        String
+                methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName()),
+                query_Combined = String.format("%s \n%n%s", query, Arrays.toString(insertParameters));
+        
+        if (! is_DB_Connected(methodName)) { return null; }
+        
+        //##########################################################
+        // Query Setup
+        //##########################################################
+        try (Connection connection = dataSource.getConnection(); // Get a Connection from pool
+             PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+        )
+        {
+            connection.setAutoCommit(false); // Prevents each query from being singularly uploaded & is only made not temp when committed
+            
+            int param_Count = insertParameters.length;
+            
+            //##################################
+            // Prepare Statements
+            //##################################
+            for (int pos = 1; pos <= param_Count; pos++)
+            {
+                Object object = insertParameters[pos - 1];
+                set_Statement_Params(statement, pos, object);
+            }
+            
+            //##################################
+            // Execute Insert Query
+            //##################################
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected == 0) { throw new Exception("\nNo Rows Inserted!"); }
+            
+            try (ResultSet rs = statement.getGeneratedKeys())
+            {
+                if (! rs.next()) // Cannot Get ID, Throw ERROR
+                {
+                    throw new SQLException("Insert succeeded, but no generated ID was returned.");
+                }
+                
+                connection.commit();// Commit Changes beyond current driver
+                return Math.toIntExact(rs.getLong(1));
+            }
+            catch (Exception e)
+            {
+                rollBack_Connection(connection, methodName, query_Combined);
+                throw e;
+            }
+            finally
+            {
+                connection.setAutoCommit(true);
+            }
+        }
+        //##########################################################
+        // Error Handling
+        //##########################################################
+        catch (Exception e)
+        {
+            handleException_MYSQL(e, methodName, query_Combined, errorMSG);
+            return null;
+        }
+    }
+    
+    // #######################################################
+    // #######################################################
+    
     /**
      * This method can upload one statement or, multiple queries within a single String after each statement in the string is separated by a ;
      */
@@ -937,66 +941,10 @@ public class MyJDBC
         }
     }
     
-    /**
-     * If one query fails the whole queries fails
-     * The changes made by a previous query in the list isn't visible to the query after it, the updates are made altogether
-     */
-    public boolean upload_Data_Batch_Altogether(String[] queries, String errorMSG)
-    {
-        //##########################################################
-        // Check DB Status
-        //##########################################################
-        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        
-        if (! is_DB_Connected(methodName)) { return false; }
-        
-        //##########################################################
-        // Query Setup
-        try (Connection connection = dataSource.getConnection(); // Get a Connection from pool
-             Statement statement = connection.createStatement()
-        )
-        {
-            try
-            {
-                connection.setAutoCommit(false); // Prevents each query from being singularly uploaded & is only made not temp when committed
-                
-                //################################
-                // Creating Batch
-                //################################
-                for (String query : queries)
-                {
-                    statement.addBatch(query);
-                }
-                
-                //################################
-                //Executing the Batch
-                //################################
-                statement.executeBatch(); // Execute Batch Commits
-                connection.commit(); // Commit Changes beyond current driver
-                
-                return true; // Return Output
-                
-            }
-            catch (Exception e)
-            {
-                rollBack_Connection(connection, methodName, queries);
-                throw e;
-            }
-        }
-        //##########################################################
-        // Error Handling
-        //##########################################################
-        catch (Exception e)
-        {
-            handleException_MYSQL(e, methodName, queries, errorMSG);
-            return false;
-        }
-    }
-    
     /*
       Each query upload is executed separately and the query after, it can notice the changes
      */
-    public boolean upload_Data_Batch_Independently(String[] queries, String errorMSG)
+    public boolean upload_Data_Batch(String[] queries, String errorMSG)
     {
         //##########################################################
         // Check DB Status
@@ -1044,14 +992,21 @@ public class MyJDBC
     //##################################################################################################################
     // DB Get Methods
     //##################################################################################################################
-    
     /**
-     * Give this method an SQL command and this method will return an arraylist storing other arraylists which are rows
-     * of the SQL query
+     * Allows Multiple Types Of Collections
+     * <p>
+     * <T, C extends Collection<T>> C getData(Supplier<C> factory) {
+     * C collection = factory.get();  // new collection created inside
+     * collection.add(...);
+     * return collection;
+     * }
+     * <p>
+     * ArrayList<String> list = getData(ArrayList::new);
+     * TreeSet<String> set = getData(TreeSet::new);
      *
-     * @return ArrayList of ArrayLists storing the output of the SQL request
      */
-    public ArrayList<ArrayList<String>> get_Multi_Column_Query(String query, String errorMSG)
+    private <T, C extends Collection<T>> C get_Single_Column
+    (String query, Object[] params, String errorMSG, Class<T> type, Supplier<C> collectionType)
     {
         //##########################################################
         // Check DB Status
@@ -1060,182 +1015,184 @@ public class MyJDBC
         
         if (! is_DB_Connected(methodName)) { return null; }
         
+        // Create List Object from Scratch inside method
+        C collection = collectionType.get();
+        
         //##########################################################
-        // Execute Query
+        // Query Setup
         //##########################################################
         try (
                 Connection connection = dataSource.getConnection(); // Get a Connection from pool
-                Statement statement = connection.createStatement();
-                ResultSet resultSet = statement.executeQuery(query))
+                PreparedStatement statement = connection.prepareStatement(query);
+        )
         {
+            //############################################
+            // Prepare Params
+            //############################################
+            if (params != null)
+            {
+                for (int pos = 1; pos <= params.length; pos++)
+                {
+                    Object object = params[pos - 1];
+                    set_Statement_Params(statement, pos, object); // Set Statement Params etc; statement.setString(x , y)
+                }
+            }
+            
+            //############################################
+            // Execute Query
+            //############################################
+            ResultSet resultSet = statement.executeQuery();
+            
             if (! resultSet.isBeforeFirst()) { return null; } // checks if any data was returned
             
-            ResultSetMetaData rs_MetaData = resultSet.getMetaData();
-            int columnSize = rs_MetaData.getColumnCount(); // Get size of query
+            //############################################
+            // Catch Exception (Multiple Columns)
+            //############################################
+            ResultSetMetaData rsmd = resultSet.getMetaData();
+            int columnSize = rsmd.getColumnCount();
             
-            ArrayList<ArrayList<String>> arrayList = new ArrayList<>();
-            while (resultSet.next())  // For each row of the query, compile results
+            if (columnSize > 1) // if query_And_Params has multiple columns this method cannot produce a 2d list results,
             {
-                ArrayList<String> tempList = new ArrayList<>(); // storing  all the columns results of a record
-                
-                // Add each column of the query to an overall string which represents the query row
-                for (int i = 1; i <= columnSize; i++)
-                {
-                    tempList.add(resultSet.getString(i));
-                }
-                arrayList.add(tempList);
+                throw new Exception("\n\nQuery size bigger than one column, use multi-line query_And_Params !!!");
             }
-            return arrayList;
+            
+            //############################################
+            // Storing query_And_Params data in String[]
+            //############################################
+            while (resultSet.next())
+            {
+                collection.add(type.cast(resultSet.getObject(1)));
+            }
+            return collection;
         }
         //##########################################################
         // Error Handling
         //##########################################################
         catch (Exception e)
         {
-            handleException_MYSQL(e, methodName, query, errorMSG);
+            handleException_MYSQL(e, methodName, String.format("%s \n\n%n%s", query, Arrays.toString(params)), errorMSG);
             return null;
         }
     }
     
-    public ArrayList<ArrayList<Object>> get_TableData_Objects_AL(String query, String tableName, String errorMSG)
+    //######################################################
+    // Different Types Of Single Column Collections
+    //######################################################
+    public  ArrayList<String> get_Single_Col_Query_String(String query, Object[] params, String errorMSG)
+    {
+        return get_Single_Column(query, params, errorMSG, String.class, ArrayList::new);
+    }
+    
+    public  ArrayList<Object> get_Single_Col_Query_Obj(String query, Object[] params, String errorMSG)
+    {
+        return (ArrayList<Object>) get_Single_Column(query, params, errorMSG, Object.class, ArrayList::new);
+    }
+    
+    public  ArrayList<Integer> get_Single_Col_Query_Int(String query, Object[] params, String errorMSG) {
+        return (ArrayList<Integer>) get_Single_Column(query, params, errorMSG, Integer.class, ArrayList::new);
+    }
+    
+    public TreeSet<String> get_Single_Col_Query_Ordered_TS(String query, Object[] params, String errorMSG)
+    {
+        return (TreeSet<String>) get_Single_Column(
+                query,
+                params,
+                errorMSG,
+                String.class,
+                () -> new TreeSet<>(Collator.getInstance())
+        );
+    }
+    
+    //######################################################
+    //  MetaData Methods (Done)
+    //######################################################
+    public ArrayList<String> get_Column_Names_AL(String tableName)
+    {
+        //##########################################################
+        // Check DB Status
+        //##########################################################
+        if (! is_DB_Connected("get_Column_Names_AL()")) { return null; }
+        
+        //##########################################################
+        // Query Setup
+        //##########################################################
+        String columnNamesQuery = """
+                SELECT column_name
+                FROM information_schema.columns
+                WHERE table_schema = ?
+                AND table_name = ?
+                ORDER BY ordinal_position;""";
+        
+        //##########################################################
+        // Setup Params
+        //##########################################################
+        Object[] params = new Object[]{ databaseName, tableName };
+        String errorMSG = String.format("Error, getting DataTypes get_Column_Names_AL() for Table: %s", tableName);
+       
+        return get_Single_Col_Query_String(columnNamesQuery,params, errorMSG);
+    }
+    
+    //##################################################################################################################
+    // Multi Methods
+    //##################################################################################################################
+    private <T> ArrayList<ArrayList<T>> get_2D_ArrayList(String query, Object[] params, Class<T> typeCast, String errorMSG)
     {
         //#########################################################################
         // Check DB Status
         //#########################################################################
         String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
         
-        if (! is_DB_Connected(methodName)) { System.out.printf("\n\nConnection No"); return null; }
+        if (! is_DB_Connected(methodName)) { return null; }
         
+        ArrayList<ArrayList<T>> collection = new ArrayList<>();
         //#########################################################################
         // Query Setup
         //#########################################################################
         try (
                 Connection connection = dataSource.getConnection(); // Get a Connection from pool
-                Statement statement = connection.createStatement();
-                ResultSet resultSet = statement.executeQuery(query))
+                PreparedStatement statement = connection.prepareStatement(query);
+        )
         {
+            //############################################
+            // Prepare Params
+            //############################################
+            if (params != null)
+            {
+                for (int pos = 1; pos <= params.length; pos++)
+                {
+                    Object object = params[pos - 1];
+                    set_Statement_Params(statement, pos, object); // Set Statement Params etc; statement.setString(x , y)
+                }
+            }
+            
+            //############################################
+            // Execute Query
+            //############################################
+            ResultSet resultSet = statement.executeQuery();
+            
             if (! resultSet.isBeforeFirst()) { return null; } // checks if any data was returned
             
             //#####################################################################
             // Getting Query Data Info
             //#####################################################################
-            ArrayList<ArrayList<Object>> data = new ArrayList<>();
-            ArrayList<String> table_Col_DataTypes = get_Column_DataTypes_AL(tableName);
-            
-            if (table_Col_DataTypes == null)
-            {
-                throw new Exception(String.format("get_Column_DataTypes_AL() for '%s' table returned null", tableName));
-            }
-            
-            int noOfColumnsInTable = table_Col_DataTypes.size();
+            ResultSetMetaData rsmd = resultSet.getMetaData();
+            int columnSize = rsmd.getColumnCount();
             
             //#####################################################################
             // Compile Results
             //#####################################################################
+            
             while (resultSet.next())
             {
-                ArrayList<Object> rowData = new ArrayList<>();
+                ArrayList<T> rowData = new ArrayList<>();
                 
-                for (int col = 1; col <= noOfColumnsInTable; col++) // Filter Through Query Result Data
+                for (int col = 1; col <= columnSize; col++) // Filter Through Query Result Data
                 {
-                    String colData = resultSet.getString(col);
-                    String colDataType = table_Col_DataTypes.get(col - 1); // Index in regular list start at 0
+                    Object obj = resultSet.getObject(col);
                     
-                    //######################################
-                    // Convert Data To Appropriate Datatype
-                    //######################################
-                    switch (colDataType)
-                    {
-                        case "varchar":
-                            rowData.add(colData); break;
-                        case "tinyint":
-                            rowData.add(colData.equals("1")); break;
-                        case "int":
-                            rowData.add(Integer.valueOf(colData)); break;
-                        case "decimal":
-                            rowData.add(new BigDecimal(colData)); break;
-                        case "bigint":
-                            rowData.add(resultSet.getLong(col)); break;
-                        case "datetime":
-                            DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                            LocalDateTime result = LocalDateTime.parse(colData, format);
-                            rowData.add(result.toString().replaceAll("T", " "));
-                            break;
-                        case "time":
-                            // parses "HH:mm:ss" & Removes :00 the seconds from the time
-                            rowData.add(LocalTime.parse(colData).truncatedTo(ChronoUnit.MINUTES)); break;
-                        default:
-                            throw new Exception(String.format("\n\nError With DataType '%s' = ' %s ' !", colDataType, colData));
-                    }
+                    rowData.add(typeCast.cast(obj)); // Converts Object to type and casts it
                 }
-                data.add(rowData);
-            }
-            return data;
-        }
-        //##########################################################
-        // Error Handling
-        //##########################################################
-        catch (Exception e)
-        {
-            handleException_MYSQL(e, methodName, query, errorMSG);
-            return null;
-        }
-    }
-    
-    //######################################################
-    // Get Single Row Query
-    //######################################################
-    public ArrayList<String> get_Single_Column_Query_AL(String query, String errorMSG)
-    {
-        return (ArrayList<String>) get_Single_Column_Query(query, new ArrayList<>(), errorMSG);
-    }
-    
-    public TreeSet<String> get_Single_Col_Alphabetically_Sorted(String query, String errorMSG)
-    {
-        return (TreeSet<String>) get_Single_Column_Query(query, new TreeSet<>(Collator.getInstance()), errorMSG);
-    }
-    
-    private Collection<String> get_Single_Column_Query(String query, Collection<String> collection, String errorMSG)
-    {
-        //##########################################################
-        // Check DB Status
-        //##########################################################
-        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        
-        if (! is_DB_Connected(methodName)) { return null; }
-        
-        //##########################################################
-        // Query Setup
-        //##########################################################
-        try (
-                Connection connection = dataSource.getConnection(); // Get a Connection from pool
-                Statement statement = connection.createStatement();
-                ResultSet resultSet = statement.executeQuery(query)
-        )
-        {
-            if (! resultSet.isBeforeFirst()) { return null; } // checks if any data was returned
-            
-            //############################################
-            // Get number of  Columns in each query row
-            //############################################
-            ResultSetMetaData rsmd = resultSet.getMetaData();
-            int columnSize = rsmd.getColumnCount();
-            
-            if (columnSize > 1) // if query has multiple columns this method cannot produce a 2d list results,
-            {
-                System.err.printf("\n\n!!! MyJDBC.java %s \nQuery size bigger than one column, use multi-line query !!!", methodName);
-                
-                JOptionPane.showMessageDialog(null, "\n\nDatabase Error: \nCheck Output ", "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
-                
-                return null;
-            }
-            
-            //############################################
-            // Storing query data in String[]
-            //############################################
-            while (resultSet.next()) // for each row of the query
-            {
-                collection.add(resultSet.getString(1));
+                collection.add(rowData);
             }
             return collection;
         }
@@ -1249,54 +1206,17 @@ public class MyJDBC
         }
     }
     
-    //##################################################################################################################
-    //  MetaData Methods (Done)
-    //##################################################################################################################
-    public ArrayList<String> get_Column_DataTypes_AL(String tableName)
+    //#####################################
+    // Different Types
+    //#####################################
+    public ArrayList<ArrayList<Object>> get_2D_Query_AL_Object(String query, Object[] params, String errorMSG)
     {
-        
-        //##########################################################
-        // Check DB Status
-        //##########################################################
-        if (! is_DB_Connected("get_Column_DataTypes_AL()")) { return null; }
-        
-        //##########################################################
-        // Query Setup
-        //##########################################################
-        String columnDataTypesQuery = String.format("""
-                SELECT data_type
-                FROM information_schema.columns
-                WHERE table_schema = '%s'
-                AND table_name = '%s'
-                ORDER BY ordinal_position;""", databaseName, tableName);
-        
-        //##########################################################
-        // Return Query
-        //##########################################################
-        return get_Single_Column_Query_AL(columnDataTypesQuery, String.format("Error, getting DataTypes get_Column_DataTypes_AL() for Table: %s", tableName));
+        return get_2D_ArrayList(query, params, Object.class, errorMSG);
     }
     
-    public ArrayList<String> get_Column_Names_AL(String tableName)
+    public ArrayList<ArrayList<Integer>> get_2D_Query_AL_Integer(String query, Object[] params, String errorMSG)
     {
-        //##########################################################
-        // Check DB Status
-        //##########################################################
-        if (! is_DB_Connected("get_Column_Names_AL()")) { return null; }
-        
-        //##########################################################
-        // Query Setup
-        //##########################################################
-        String columnNamesQuery = String.format("""
-                SELECT column_name
-                FROM information_schema.columns
-                WHERE table_schema = '%s'
-                AND table_name = '%s'
-                ORDER BY ordinal_position;""", databaseName, tableName);
-        
-        //##########################################################
-        // Return Query
-        //##########################################################
-        return get_Single_Column_Query_AL(columnNamesQuery, String.format("Error, getting DataTypes get_Column_Names_AL() for Table: %s", tableName));
+        return get_2D_ArrayList(query, params, Integer.class, errorMSG);
     }
     
     //##################################################################################################################
