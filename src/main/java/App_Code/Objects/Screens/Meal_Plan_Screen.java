@@ -19,6 +19,7 @@ import org.jfree.data.time.Second;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.time.LocalTime;
 import java.util.*;
 
 public class Meal_Plan_Screen extends Screen_JFrame
@@ -50,7 +51,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //###############################################
     // Booleans
     //###############################################
-    private boolean macroTargetsChanged = false;
+    private boolean
+            screen_Created = false,
+            macroTargetsChanged = false;
     private static boolean production = false;
     
     //###############################################
@@ -254,10 +257,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
         }
         else
         {
-            //############################################################################################################
+            //###################################################
             // Create DB Object & run SQL Script
-            //#############################################################################################################
-            
+            //####################################################
             MyJDBC db = new MyJDBC(
                     "localhost",
                     "3306",
@@ -285,18 +287,19 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //##############################################################################################################
         // Getting Selected User & Plan Info
         //##############################################################################################################
-        String queryX = String.format("""
+        String errorMSG = "Error, Gathering Plan & Personal User Information!";
+        
+        String queryX = """
                 SELECT U.user_id, P.plan_id, P.plan_name
                 FROM
                 (
-                  SELECT plan_id, plan_name, user_id, selected_plan_flag from %s
+                  SELECT plan_id, plan_name, user_id, selected_plan_flag from plans
                 ) P
                 LEFT JOIN users U
                 ON U.user_id = P.user_id
-                WHERE P.selected_plan_flag = TRUE AND U.user_name = ?;""", tablePlansName);
+                WHERE P.selected_plan_flag = ? AND U.user_name = ?;""";
         
-        String errorMSG = "Error, Gathering Plan & Personal User Information!";
-        Object[] params = new Object[]{ user_name };
+        Object[] params = new Object[]{ true, user_name };
         
         ArrayList<ArrayList<Object>> results = db.get_2D_Query_AL_Object(queryX, params, errorMSG);
         
@@ -375,37 +378,54 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //##############################################################################################################
         // Getting Number Of Meals & Sub meals Count
         //##############################################################################################################
-        String
-                query_Meal_Count = String.format("SELECT COUNT(meal_in_plan_id) AS total_meals FROM %s WHERE plan_id = ?;", tableMealsInPlanName),
-                error_msg_MC = "Error, getting Meal Counts!";
+        String plan_Counts_ErrorMSG = "Unable to get Meals & Sub-Meals Count!";
+        String plan_Counts_Query = """
+                WITH
+                    plans AS (SELECT plan_id FROM plans),
+                	meals AS (SELECT plan_id, meal_in_plan_id FROM meals_in_plan),
+                	subs AS (SELECT plan_id, div_meal_sections_id FROM divided_meal_sections),
+                
+                	count_cte AS (
+                
+                		SELECT p.plan_id,
+                
+                		COUNT(DISTINCT(M.meal_in_plan_id)) AS total_meals,
+                   		COUNT(DISTINCT(S.div_meal_sections_id)) AS total_sub_meals
+                
+                		FROM plans p
+                		LEFT JOIN meals M ON P.plan_id = M.plan_id
+                		LEFT JOIN subs S ON P.plan_id = S.plan_id
+                
+                		GROUP BY P.plan_id
+                	)
+                
+                SELECT
+                	P.plan_id,
+                	COALESCE(C.total_meals, 0) AS meal_count,
+                	COALESCE(C.total_sub_meals, 0) AS sub_count
+                
+                FROM plans P
+                LEFT JOIN count_cte C
+                ON P.plan_id = C.plan_id
+                WHERE P.plan_id = ?;""";
         
-        Object[] meal_Count_Params = new Object[]{ planID };
-        ArrayList<Object> mealsInPlanCount = db.get_Single_Col_Query_Obj(query_Meal_Count, meal_Count_Params, error_msg_MC);
+        Object[] counts_Params = new Object[]{ planID };
+        
+        ArrayList<ArrayList<Object>> meal_Count_Results = db.get_2D_Query_AL_Object(plan_Counts_Query, counts_Params, plan_Counts_ErrorMSG);
         
         //#################################
-        //
+        // Execute Query
         //#################################
-        String
-                query_Sub_Meal_Count = String.format("SELECT COUNT(div_meal_sections_id) AS total_sub_meals FROM %s WHERE plan_id = ?;", tableSub_MealsName),
-                errorMSG_Sub = "Error, getting Sub-Meal Counts!";
-        
-        Object[] params_sub_Meal_Count = new Object[]{ planID };
-        ArrayList<Object> dividedMealSectionsCount = db.get_Single_Col_Query_Obj(query_Sub_Meal_Count, params_sub_Meal_Count, errorMSG_Sub);
-        
-        //#################################
-        //
-        //#################################
-        if (mealsInPlanCount == null || dividedMealSectionsCount == null)
+        if (meal_Count_Results == null)
         {
-            String msg = "\n\nError, Getting Meal Count Or, Sub Meals Count";
-            
-            JOptionPane.showMessageDialog(this, msg);
+            JOptionPane.showMessageDialog(this, plan_Counts_ErrorMSG);
             return;
         }
         
+        System.out.printf("\n\n%s", meal_Count_Results.getFirst().getFirst().getClass());
         int
-                no_of_meals = Math.toIntExact((Long) mealsInPlanCount.getFirst()),
-                no_of_sub_meals = Math.toIntExact((Long) dividedMealSectionsCount.getFirst());
+                no_of_meals = Math.toIntExact((Long) meal_Count_Results.getFirst().get(1)),
+                no_of_sub_meals = Math.toIntExact((Long) meal_Count_Results.getFirst().get(2));
         
         System.out.printf("\n\n%s \nMeals In Plan: %s\nSub-Meals In Plan: %s \n", lineSeparator, no_of_meals, no_of_sub_meals);
         
@@ -630,7 +650,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
             //#####################################################
             int mealInPlanID = (Integer) meals_Info_In_Plan.get(i).get(0); // MealID's From Original Plan Not Temp
             String mealName = (String) meals_Info_In_Plan.get(i).get(1);
-            String mealTime = meals_Info_In_Plan.get(i).get(2).toString();
+            LocalTime mealTime = ((java.sql.Time) meals_Info_In_Plan.get(i).get(2)).toLocalTime();
+            
             //#####################################################
             // Get MealID's Of SubMeals
             //#####################################################
@@ -679,7 +700,18 @@ public class Meal_Plan_Screen extends Screen_JFrame
         
         //##############################################################################################################
         // GUI Alignments & Configurations
-        //##############################################################################################################
+        //#############################################################################################################
+        if (! loadingScreen.isFinished())
+        {
+            JOptionPane.showMessageDialog(getFrame(), "Error, in configuration! All Tasks Are Not Completed!");
+            window_Closed_Event();
+            return;
+        }
+        
+        //##################################
+        // Make GUI Visible
+        //##################################
+        screen_Created = true;
         resizeGUI();
         setFrameVisibility(true);
         scroll_To_Top_of_ScrollPane();
@@ -1747,14 +1779,19 @@ public class Meal_Plan_Screen extends Screen_JFrame
     public void window_Closed_Event()
     {
         // ##########################################
-        // Ask to Save DATA
+        // Close Other Windows If Open
         // ##########################################
-        if (hasMacroTargetsChanged()) // If targets have changed, save them?
+        if (screen_Created)
         {
-            saveMacroTargets(true, false);
+            
+            // Ask to Save Target DATA
+            if (hasMacroTargetsChanged()) // If targets have changed, save them?
+            {
+                saveMacroTargets(true, false);
+            }
+            
+            saveMealData(true, false);  //Meal Data
         }
-        
-        saveMealData(true, false);  //Meal Data
         
         // ##########################################
         // Close Other Windows If Open

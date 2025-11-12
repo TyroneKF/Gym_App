@@ -167,6 +167,19 @@ public class MyJDBC
                 update_User_Query = "UPDATE users SET user_name = ? WHERE user_id = 1;";
         
         // #############################################################
+        //  Connect to LocalHost To Create DB
+        // #############################################################
+        try
+        {
+            reconnect_DB_Connection(initial_db_connection);
+        }
+        catch (Exception e)
+        {
+            handleException_MYSQL(e, methodName, null, "Error, Connecting TO Initial DB!!");
+            return false;
+        }
+        
+        // #############################################################
         //  Get Folder Path
         // #############################################################
         try (Connection connection = dataSource.getConnection(); // if connection fails, error is thrown, script stops here)
@@ -177,11 +190,6 @@ public class MyJDBC
             {
                 throw new Exception(String.format("\n\nrun_SQL_Script_Folder() Error Loading = NULL \n%s", path));
             }
-            
-            // #############################################################
-            //  Connect to LocalHost To Create DB
-            // #############################################################
-            reconnect_DB_Connection(initial_db_connection);
             
             // ############################################################
             //  Create DB Schema Through Scripts
@@ -1053,7 +1061,7 @@ public class MyJDBC
             
             if (columnSize > 1) // if query_And_Params has multiple columns this method cannot produce a 2d list results,
             {
-                throw new Exception("\n\nQuery size bigger than one column, use multi-line query_And_Params !!!");
+                throw new Exception("\n\nQuery size has multiple Columns, use multi-line query_And_Params !!!");
             }
             
             //############################################
@@ -1070,7 +1078,9 @@ public class MyJDBC
         //##########################################################
         catch (Exception e)
         {
-            handleException_MYSQL(e, methodName, String.format("%s \n\n%n%s", query, Arrays.toString(params)), errorMSG);
+            query = String.format("\n\n%s \n%n%s", query, Arrays.toString(params));
+            
+            handleException_MYSQL(e, methodName, query , errorMSG);
             return null;
         }
     }

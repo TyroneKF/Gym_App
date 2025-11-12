@@ -79,7 +79,7 @@ public class MealManager
     //##################################################################################################################
     // Constructors
     //##################################################################################################################
-    public MealManager(Meal_Plan_Screen meal_plan_screen, int mealInPlanID, String mealName, String mealTime, ArrayList<ArrayList<Integer>> subMealsInMealArrayList)
+    public MealManager(Meal_Plan_Screen meal_plan_screen, int mealInPlanID, String mealName, LocalTime mealTime, ArrayList<ArrayList<Integer>> subMealsInMealArrayList)
     {
         //################################################
         // Global Variables
@@ -93,7 +93,7 @@ public class MealManager
         this.tempPlanID = meal_plan_screen.getTempPlanID();
         this.planID = meal_plan_screen.getPlanID();
         
-        Second timeStringFormatted = convertMysqlTimeToSecond(mealTime); // turns etc 09:30:00 into 09:30 for GUI purposes & in second format
+        Second timeStringFormatted = localTimeToSecond(mealTime); // turns etc 09:30:00 into 09:30 for GUI purposes & in second format
         setTimeVariables(false, timeStringFormatted, timeStringFormatted); // Set MealTime Variables
         
         setMealNameVariables(false, mealName, mealName); // Set MealName Variables

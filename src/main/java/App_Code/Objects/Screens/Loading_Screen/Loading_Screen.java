@@ -14,6 +14,8 @@ public class Loading_Screen extends Screen_JFrame
             endCount,
             currentCount = 0;
 
+    private boolean finished = false;
+    
     // Objects
     private JProgressBar progressBar = new JProgressBar();
 
@@ -57,6 +59,7 @@ public class Loading_Screen extends Screen_JFrame
         // Super Constructor & Variables
         //##############################################
         makeJFrameVisible();
+        set_Resizable(false);
     }
 
     //##################################################################################################################
@@ -74,7 +77,7 @@ public class Loading_Screen extends Screen_JFrame
 
             progressBar.setValue(percentage); //Setting value of Progress Bar
 
-            if (currentCount == endCount) { window_Closed_Event(); }
+            if (currentCount == endCount) { finished = true; window_Closed_Event(); }
         }
         catch (Exception e)
         {
@@ -87,7 +90,12 @@ public class Loading_Screen extends Screen_JFrame
     {
       dispose();
     }
-
+    
+    public boolean isFinished()
+    {
+        return finished;
+    }
+    
     //##################################################################################################################
     // ImagePanel Class
     //##################################################################################################################
