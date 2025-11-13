@@ -1,7 +1,7 @@
 package App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Meals;
 
-import App_Code.Objects.Database_Objects.MealManager;
-import App_Code.Objects.Database_Objects.MealManagerRegistry;
+import App_Code.Objects.Tables.MealManager;
+import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Graph_Objects.Pie_Chart;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
@@ -41,7 +41,7 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
     // Objects
     //##############################################
     private Meal_Plan_Screen meal_plan_screen;
-    private MealManagerRegistry mealManagerRegistry;
+    private Shared_Data_Registry shared_Data_Registry;
     
     //##############################################
     // Collections
@@ -157,12 +157,12 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
         // Variables
         // ################################################################
         this.meal_plan_screen = meal_plan_screen;
-        this.mealManagerRegistry = meal_plan_screen.get_MealManagerRegistry();
+        this.shared_Data_Registry = meal_plan_screen.get_MealManagerRegistry();
         
         // #####################################
         /// Collections
         // ######################################
-        mealManager_ArrayList = mealManagerRegistry.get_MealManager_ArrayList();
+        mealManager_ArrayList = shared_Data_Registry.get_MealManager_ArrayList();
         
         // #####################################
         /// Create GUI
@@ -212,7 +212,7 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
             //##############################
             // Get / Create PieChart Data
             //##############################
-            DefaultPieDataset<String> pieDataset = mealManagerRegistry.get_OR_Create_PieChart_Dataset(mealManager);
+            DefaultPieDataset<String> pieDataset = shared_Data_Registry.get_OR_Create_PieChart_Dataset(mealManager);
             
             //##############################
             // Create PieChart & Add to List
@@ -300,7 +300,7 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
         // ####################################################
         // Set GridLayout
         // ####################################################
-        mealCount = mealManagerRegistry.get_Active_MealCount();
+        mealCount = shared_Data_Registry.get_Active_MealCount();
         
         int calc = (int) Math.ceil((double) mealCount / col);
         int rows = Math.max(calc, 2); // returns the larger out of the 2
@@ -373,7 +373,7 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
         // Get / Create PieChart Data
         //##############################
         Integer mealPlanID = mealManager.getMealInPlanID();
-        DefaultPieDataset<String> pieDataset = mealManagerRegistry.get_OR_Create_PieChart_Dataset(mealManager);
+        DefaultPieDataset<String> pieDataset = shared_Data_Registry.get_OR_Create_PieChart_Dataset(mealManager);
         
         //##############################
         // Create PieChart & Add to List

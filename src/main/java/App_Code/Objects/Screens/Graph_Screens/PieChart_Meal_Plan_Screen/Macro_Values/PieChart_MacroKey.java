@@ -1,19 +1,18 @@
 package App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Macro_Values;
 
-import App_Code.Objects.Database_Objects.MealManager;
-import App_Code.Objects.Database_Objects.MealManagerRegistry;
+import App_Code.Objects.Tables.MealManager;
+import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 
 import java.util.Objects;
 
 public class PieChart_MacroKey implements Comparable<PieChart_MacroKey>
 {
-    // ############################################################################################
+    // #################################################################################################################
     // Variables
-    // ############################################################################################
+    // #################################################################################################################
     
     // Objects
     private MealManager mealManager;
-    private MealManagerRegistry mealManagerRegistry;
     
     // Integers
     private int mealInPlanID;

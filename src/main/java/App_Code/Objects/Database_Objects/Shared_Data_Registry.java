@@ -1,18 +1,19 @@
 package App_Code.Objects.Database_Objects;
 
-import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.TotalMealTable;
+import App_Code.Objects.Data_Objects.Ingredient_Name_ID;
+import App_Code.Objects.Data_Objects.Ingredient_Type_ID;
+import App_Code.Objects.Data_Objects.Store_ID;
+import App_Code.Objects.Tables.JTable_JDBC.Children.ViewDataTables.TotalMealTable;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 
+import App_Code.Objects.Tables.MealManager;
 import org.javatuples.Pair;
 import org.jfree.data.general.DefaultPieDataset;
-import org.jfree.data.time.TimeSeries;
-import org.jfree.data.time.TimeSeriesCollection;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
-public class MealManagerRegistry
+public class Shared_Data_Registry
 {
     private Meal_Plan_Screen meal_plan_screen;
     
@@ -41,10 +42,18 @@ public class MealManagerRegistry
     //#############################
     private HashMap<Integer, DefaultPieDataset<String>> pieChart_Dataset_HashMap = new HashMap<>();
     
+    //##############################
+    // Table / Form Data Collections
+    //##############################
+    ArrayList<Store_ID> stores;
+    ArrayList<Ingredient_Type_ID> ingredient_Types;
+    HashMap<Ingredient_Type_ID, ArrayList<Ingredient_Name_ID>> ingredient_Types_To_Names;
+    
+    
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public MealManagerRegistry(Meal_Plan_Screen meal_plan_screen, LinkedHashMap<String, Pair<Integer, String>> totalMeal_Macro_Pos_And_Symbol)
+    public Shared_Data_Registry(Meal_Plan_Screen meal_plan_screen, LinkedHashMap<String, Pair<Integer, String>> totalMeal_Macro_Pos_And_Symbol)
     {
         //##################################
         // Variables
@@ -84,7 +93,7 @@ public class MealManagerRegistry
     
     //###############################################################################
     // ADD Methods
-    ///###############################################################################
+    //###############################################################################
     public void addMealManager(MealManager mealManager) // ADD Pie DATA
     {
         //##########################################
@@ -241,9 +250,9 @@ public class MealManagerRegistry
         sort_MealManager_AL();
     }
     
-    ///#################################################################################################################
+    //#################################################################################################################
     // Pie Chart [TotalMeal] :
-    ///#################################################################################################################
+    //#################################################################################################################
     
     /**
      * @return PieChart Dataset
@@ -321,9 +330,9 @@ public class MealManagerRegistry
         return dataset;
     }
     
-    ///############################
+    //############################
     //  Update Methods
-    ///############################
+    //############################
     public Boolean update_PieChart_Values(MealManager mealManager)
     {
         //#########################################
@@ -371,7 +380,17 @@ public class MealManagerRegistry
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
+    public int get_Active_MealCount()
+    {
+        return (int) mealManager_ArrayList.stream().filter(mealManager -> ! mealManager.is_Meal_Deleted()).count();
+    }
+    
+    //###############################################
     // Collections
+    //###############################################
+    
+    
+    // MealManagers /
     public ArrayList<MealManager> get_MealManager_ArrayList()
     {
         return mealManager_ArrayList;
@@ -385,10 +404,5 @@ public class MealManagerRegistry
     public LinkedHashMap<String, Pair<Integer, String>> get_TotalMeal_Macro_Pos_And_Symbol()
     {
         return totalMeal_Macro_Pos_And_Symbol;
-    }
-    
-    public int get_Active_MealCount()
-    {
-        return (int) mealManager_ArrayList.stream().filter(mealManager -> ! mealManager.is_Meal_Deleted()).count();
     }
 }

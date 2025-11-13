@@ -1,8 +1,8 @@
 package App_Code.Objects.Screens.Graph_Screens.LineChart_Meal_Plan_Screen;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
-import App_Code.Objects.Database_Objects.MealManager;
-import App_Code.Objects.Database_Objects.MealManagerRegistry;
+import App_Code.Objects.Database_Objects.Shared_Data_Registry;
+import App_Code.Objects.Tables.MealManager;
 import App_Code.Objects.Graph_Objects.Line_Chart;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
@@ -26,7 +26,7 @@ class LineChart_Macros_MPS extends Screen_JPanel
     // Objects
     //##############################################
     private Meal_Plan_Screen meal_plan_screen;
-    private MealManagerRegistry mealManagerRegistry;
+    private Shared_Data_Registry shared_Data_Registry;
     
     private MyJDBC db;
     
@@ -68,14 +68,14 @@ class LineChart_Macros_MPS extends Screen_JPanel
         // Objects
         this.db = db;
         this.meal_plan_screen = meal_plan_screen;
-        this.mealManagerRegistry = meal_plan_screen.get_MealManagerRegistry();
+        this.shared_Data_Registry = meal_plan_screen.get_MealManagerRegistry();
         
         // String
         this.planName = meal_plan_screen.getPlanName();
         
         // Collections
         this.macros_To_Check = macros_To_Check;
-        this.mealManagers_TotalMeal_MacroValues = mealManagerRegistry.get_MealManagers_MacroValues();
+        this.mealManagers_TotalMeal_MacroValues = shared_Data_Registry.get_MealManagers_MacroValues();
         
         //############################################
         // Creating Macros / Dataset

@@ -1,8 +1,8 @@
 package App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
-import App_Code.Objects.Database_Objects.MealManager;
-import App_Code.Objects.Database_Objects.MealManagerRegistry;
+import App_Code.Objects.Tables.MealManager;
+import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
 import App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Macro_Values.PieChart_Macros_MPS;
 import App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Meals.PieChart_Totals_Entry_MPS;
@@ -22,7 +22,7 @@ public class PieChart_Screen_MPS extends Screen_JFrame
     
     // Objects
     private Meal_Plan_Screen meal_plan_screen;
-    private MealManagerRegistry mealManagerRegistry;
+    private Shared_Data_Registry shared_Data_Registry;
     
     // Screens
     private PieChart_TotalMeals_MPS pieChart_TotalMeals_MPS;
@@ -43,7 +43,7 @@ public class PieChart_Screen_MPS extends Screen_JFrame
         // Variables
         // ################################################################
         this.meal_plan_screen = meal_plan_screen;
-        this.mealManagerRegistry = meal_plan_screen.get_MealManagerRegistry();
+        this.shared_Data_Registry = meal_plan_screen.get_MealManagerRegistry();
         
         //###################################################################################
         // Create ContentPane
@@ -100,7 +100,7 @@ public class PieChart_Screen_MPS extends Screen_JFrame
             // IF MealManager Associated with Entry isn't open, remove its dataset
             if (! mealManager.is_PieChartOpen())
             {
-                mealManagerRegistry.remove_PieChart_DatasetValues(mealManagerID);
+                shared_Data_Registry.remove_PieChart_DatasetValues(mealManagerID);
             }
             
             // Remove this item from the MPS PieChart Screen

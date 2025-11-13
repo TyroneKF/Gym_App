@@ -1,8 +1,8 @@
 package App_Code.Objects.Screens.Graph_Screens.PieChart_MealManager_Screen;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
-import App_Code.Objects.Database_Objects.MealManager;
-import App_Code.Objects.Database_Objects.MealManagerRegistry;
+import App_Code.Objects.Tables.MealManager;
+import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
 import App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Meals.PieChart_Totals;
 import org.jfree.chart.title.LegendTitle;
@@ -24,7 +24,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen_JFrame
     //#####################################
     private MealManager mealManager;
     private PieChart_Totals pieChart;
-    private MealManagerRegistry mealManagerRegistry;
+    private Shared_Data_Registry shared_Data_Registry;
     
     //#####################################
     // Strings
@@ -147,7 +147,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen_JFrame
         // Variables
         // ##########################################
         this.mealManager = mealManager;
-        this.mealManagerRegistry = mealManager.getMealManagerRegistry();
+        this.shared_Data_Registry = mealManager.getMealManagerRegistry();
         
         this.mealInPlanID = mealManager.getMealInPlanID();
         this.meal_name = mealManager.getCurrentMealName();
@@ -155,7 +155,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen_JFrame
         //############################################
         // Creating Macros / Dataset
         //############################################
-        DefaultPieDataset<String> dataset = mealManagerRegistry.get_OR_Create_PieChart_Dataset(mealManager);
+        DefaultPieDataset<String> dataset = shared_Data_Registry.get_OR_Create_PieChart_Dataset(mealManager);
         
         //#####################################
         // Graph Preferences

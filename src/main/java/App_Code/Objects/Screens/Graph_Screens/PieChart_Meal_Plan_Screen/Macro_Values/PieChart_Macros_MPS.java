@@ -1,7 +1,7 @@
 package App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Macro_Values;
 
-import App_Code.Objects.Database_Objects.MealManager;
-import App_Code.Objects.Database_Objects.MealManagerRegistry;
+import App_Code.Objects.Tables.MealManager;
+import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 import org.javatuples.Pair;
@@ -17,7 +17,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
     // Variables
     //##################################################################################################################
     private Meal_Plan_Screen meal_plan_screen;
-    private MealManagerRegistry mealManagerRegistry;
+    private Shared_Data_Registry shared_Data_Registry;
     
     // Graph Preferences
     
@@ -121,15 +121,15 @@ public class PieChart_Macros_MPS extends Screen_JPanel
         // ################################################################
         // Objects
         this.meal_plan_screen = meal_plan_screen;
-        this.mealManagerRegistry = meal_plan_screen.get_MealManagerRegistry();
+        this.shared_Data_Registry = meal_plan_screen.get_MealManagerRegistry();
         
         this.planName = meal_plan_screen.getPlanName();
         
         // #####################################
         /// Collections
         // ######################################
-        mealManagers_TotalMeal_MacroValues = mealManagerRegistry.get_MealManagers_MacroValues();
-        totalMeal_Macro_Pos_And_Symbol = mealManagerRegistry.get_TotalMeal_Macro_Pos_And_Symbol();
+        mealManagers_TotalMeal_MacroValues = shared_Data_Registry.get_MealManagers_MacroValues();
+        totalMeal_Macro_Pos_And_Symbol = shared_Data_Registry.get_TotalMeal_Macro_Pos_And_Symbol();
         
         // #####################################
         /// Create GUI
