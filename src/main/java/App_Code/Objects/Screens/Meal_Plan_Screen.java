@@ -400,7 +400,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 	)
                 
                 SELECT
-                	P.plan_id,
                 	COALESCE(C.total_meals, 0) AS meal_count,
                 	COALESCE(C.total_sub_meals, 0) AS sub_count
                 
@@ -422,10 +421,12 @@ public class Meal_Plan_Screen extends Screen_JFrame
             return;
         }
         
-        System.out.printf("\n\n%s", meal_Count_Results.getFirst().getFirst().getClass());
+        //#################################
+        // Format Results
+        //#################################
         int
-                no_of_meals = Math.toIntExact((Long) meal_Count_Results.getFirst().get(1)),
-                no_of_sub_meals = Math.toIntExact((Long) meal_Count_Results.getFirst().get(2));
+                no_of_meals = Math.toIntExact((Long) meal_Count_Results.getFirst().get(0)),
+                no_of_sub_meals = Math.toIntExact((Long) meal_Count_Results.getFirst().get(1));
         
         System.out.printf("\n\n%s \nMeals In Plan: %s\nSub-Meals In Plan: %s \n", lineSeparator, no_of_meals, no_of_sub_meals);
         

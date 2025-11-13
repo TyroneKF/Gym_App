@@ -52,6 +52,9 @@ Loading Screen
 
 Add / Edit Ingredients Screen
 
+Loading Screen
+.) Move the loading screen to before the DB scripts
+
 ######################################################################################
 New Features:
 ######################################################################################
