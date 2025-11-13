@@ -38,6 +38,8 @@ Meal_Plan_Screen:
 
 Macro_Targets
 .) MacroTargets Screen should add not update targets
+
+MacrosLeft
 .) MacrosLeft should use the max time for a plan to calculate it
 
 DB:
@@ -51,6 +53,9 @@ Loading Screen
 .) Include DB Creation in Loading screen progress
 
 Add / Edit Ingredients Screen
+.) Deleting stores / type ask if we want to delete children or assign them to a new parent
+.) Deleting ingredient / type should refresh meal plan
+
 
 Loading Screen
 .) Move the loading screen to before the DB scripts

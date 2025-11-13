@@ -50,7 +50,12 @@
             <version>5.1.0</version> <!-- ✅ Latest stable -->
         </dependency>
 
-
+        <!-- 📦 Jackson Databind: JSON serialization/deserialization library -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.17.0</version> <!-- ✅ Latest stable -->
+        </dependency>
 
         <!-- 🧩 MyBatis: ORM (Object Relational Mapper) for database interaction using SQL mapping -->
         <dependency>
@@ -72,7 +77,6 @@
             <artifactId>dotenv-java</artifactId>
             <version>3.2.0</version> <!-- ✅ use this version (latest published to Maven Central) -->
         </dependency>
-
 
         <!-- 🧩 JFreeChart: Library for creating charts and graphs (pie, bar, line, etc.) -->
         <dependency>
