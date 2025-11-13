@@ -1,8 +1,6 @@
 package App_Code.Objects.Database_Objects;
 
-import App_Code.Objects.Data_Objects.Ingredient_Name_ID;
-import App_Code.Objects.Data_Objects.Ingredient_Type_ID;
-import App_Code.Objects.Data_Objects.Store_ID;
+import App_Code.Objects.Data_Objects.*;
 import App_Code.Objects.Tables.JTable_JDBC.Children.ViewDataTables.TotalMealTable;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 
@@ -45,21 +43,23 @@ public class Shared_Data_Registry
     //##############################
     // Table / Form Data Collections
     //##############################
-    ArrayList<Store_ID> stores;
-    ArrayList<Ingredient_Type_ID> ingredient_Types;
-    HashMap<Ingredient_Type_ID, ArrayList<Ingredient_Name_ID>> ingredient_Types_To_Names;
+    // Stores
+    private ArrayList<Store_OBJ> stores = new ArrayList<>();
     
+    // Ingredient Types
+    private ArrayList<Ingredient_Type_OBJ> ingredient_Types = new ArrayList<>();
+    private HashMap<Ingredient_Type_OBJ, ArrayList<Ingredient_Name_OBJ>> ingredient_Types_To_Names = new HashMap<>();
     
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Shared_Data_Registry(Meal_Plan_Screen meal_plan_screen, LinkedHashMap<String, Pair<Integer, String>> totalMeal_Macro_Pos_And_Symbol)
+    public Shared_Data_Registry(Meal_Plan_Screen meal_plan_screen)
     {
         //##################################
         // Variables
         //##################################
-        this.totalMeal_Macro_Pos_And_Symbol = totalMeal_Macro_Pos_And_Symbol;
         this.meal_plan_screen = meal_plan_screen;
+        this.totalMeal_Macro_Pos_And_Symbol = meal_plan_screen.get_TotalMeal_macro_Col_Name_And_Pos();
         
         //##################################
         // Create Macros Collection
@@ -377,6 +377,103 @@ public class Shared_Data_Registry
         if (pieChart_Dataset_HashMap.containsKey(mealInPlanID)) { pieChart_Dataset_HashMap.remove(mealInPlanID); }
     }
     
+    //#################################################################################################################
+    // Objects
+    //#################################################################################################################
+    public void add_To_Ingredients_Tye_To_Names_Map(Ingredient_Type_OBJ ingredient_Type, Ingredient_Name_OBJ ingredient_Name)
+    {
+        //#########################################
+        // If ingredient Type Already Exists
+        //#########################################
+        if(ingredient_Types_To_Names.containsKey(ingredient_Type))
+        {
+            // Get List Associated to Ingredient Type
+            ArrayList<Ingredient_Name_OBJ> ingredient_Names_AL = ingredient_Types_To_Names.get(ingredient_Type);
+            
+            // Add new Ingredient Name to Type
+            ingredient_Names_AL.add(ingredient_Name);
+            
+            // Sort Types
+            ingredient_Names_AL.sort((a, b) -> a.get_Name().compareTo(b.get_Name()));
+            
+            // Add Back into Map
+            ingredient_Types_To_Names.put(ingredient_Type, ingredient_Names_AL);
+            
+            // Exit Method
+            return;
+        }
+        
+        //#########################################
+        // Ingredient Type Doesn't Exists
+        //#########################################
+        ingredient_Types_To_Names.put(ingredient_Type, new ArrayList<>(Arrays.asList(ingredient_Name)));
+    }
+    
+    public void remove_Ingredient_Types(Ingredient_Type_OBJ ingredient_Type)
+    {
+        ingredient_Types.remove(ingredient_Type);
+    }
+    
+    public void add_Ingredient_To_Type(Ingredient_Name_OBJ ingredient_Name)
+    {
+    
+    }
+    
+    public void change_Ingredients_In_Ingredient_Types(Ingredient_Type_OBJ to_Type, Ingredient_Type_OBJ from_Type)
+    {
+    
+    }
+    
+    
+    //#############################################
+    // Ingredient Types
+    //#############################################
+    public void add_Ingredient_Type(Ingredient_Type_OBJ ingredient_Type)
+    {
+        ingredient_Types.add(ingredient_Type);
+        ingredient_Types.sort((a, b) -> a.get_Name().compareTo(b.get_Name()));
+    }
+    
+    private void remove_Ingredient_Type(Ingredient_Type_OBJ ingredient_Type)
+    {
+        ingredient_Types.remove(ingredient_Type);
+    }
+    
+    //#############################################
+    // Stores
+    //#############################################
+    public void add_Store(Store_OBJ store)
+    {
+        stores.add(store);
+        stores.sort((a, b) -> a.get_Name().compareTo(b.get_Name()));
+    }
+    
+    public void remove_Store(Store_OBJ store)
+    {
+        stores.remove(store);
+    }
+    
+    //#################################################################
+    // Accessor Methods
+    //#################################################################
+    public ArrayList<Store_OBJ> get_Stores()
+    {
+        return stores;
+    }
+    
+    //###########################
+    // Types
+    //###########################
+    public ArrayList<Ingredient_Type_OBJ> get_Ingredient_Types()
+    {
+        return ingredient_Types;
+    }
+    
+    public HashMap<Ingredient_Type_OBJ, ArrayList<Ingredient_Name_OBJ>> get_Ingredient_Types_To_Names()
+    {
+        return ingredient_Types_To_Names;
+    }
+    
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
@@ -385,12 +482,9 @@ public class Shared_Data_Registry
         return (int) mealManager_ArrayList.stream().filter(mealManager -> ! mealManager.is_Meal_Deleted()).count();
     }
     
-    //###############################################
-    // Collections
-    //###############################################
-    
-    
-    // MealManagers /
+    //############################
+    // MealManagers / TotalMeal
+    //#############################
     public ArrayList<MealManager> get_MealManager_ArrayList()
     {
         return mealManager_ArrayList;

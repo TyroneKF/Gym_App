@@ -7,20 +7,20 @@ public class ID_Object implements Comparable<ID_Object>
     // #################################################################################################################
     // Variables
     // #################################################################################################################
-    private String type, name;
+    private String class_Type, name;
     private int id;
     
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
-    protected ID_Object(int id, String name, String type)
+    protected ID_Object(int id, String name, String class_Type)
     {
         //############################################
         // Variables
         //############################################
         this.id = id;
         this.name = name;
-        this.type = type;
+        this.class_Type = class_Type;
     }
     
     // #################################################################################################################
@@ -39,9 +39,9 @@ public class ID_Object implements Comparable<ID_Object>
         return name;
     }
     
-    public String get_Type()
+    public String get_Class_Type()
     {
-        return type;
+        return class_Type;
     }
     
     public int get_ID()
@@ -65,7 +65,7 @@ public class ID_Object implements Comparable<ID_Object>
         if (obj == null || getClass() != obj.getClass()) { return false; }
         
         ID_Object other = (ID_Object) obj;
-        return get_ID() == other.get_ID() && get_Type().equals(other.get_Type());
+        return get_ID() == other.get_ID() && get_Class_Type().equals(other.get_Class_Type());
     }
     
     @Override
