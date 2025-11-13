@@ -1,10 +1,12 @@
 package App_Code.Objects.Screens;
 
+import App_Code.Objects.Data_Objects.Ingredient_Name_OBJ;
+import App_Code.Objects.Data_Objects.Ingredient_Type_OBJ;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
-import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.MacrosLeftTable;
-import App_Code.Objects.Database_Objects.JTable_JDBC.Children.ViewDataTables.MacrosTargetsTable;
-import App_Code.Objects.Database_Objects.MealManager;
-import App_Code.Objects.Database_Objects.MealManagerRegistry;
+import App_Code.Objects.Database_Objects.Shared_Data_Registry;
+import App_Code.Objects.Tables.JTable_JDBC.Children.ViewDataTables.MacrosLeftTable;
+import App_Code.Objects.Tables.JTable_JDBC.Children.ViewDataTables.MacrosTargetsTable;
+import App_Code.Objects.Tables.MealManager;
 import App_Code.Objects.Gui_Objects.*;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
 import App_Code.Objects.Screens.Graph_Screens.LineChart_Meal_Plan_Screen.LineChart_MPS;
@@ -12,6 +14,8 @@ import App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.PieChart
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
 import App_Code.Objects.Screens.Loading_Screen.Loading_Screen;
 import App_Code.Objects.Screens.Others.Macros_Targets_Screen;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.javatuples.Pair;
 import org.jfree.data.time.Second;
@@ -75,11 +79,12 @@ public class Meal_Plan_Screen extends Screen_JFrame
         }
     });
     
-    MealManagerRegistry mealManagerRegistry;
-    
     //#################################################
     // Objects
     //#################################################
+    
+    // DATA Object
+    private Shared_Data_Registry shared_Data_Registry;
     
     // JPanels
     private JPanel scrollJPanelCenter, scrollJPanelBottom;
@@ -92,7 +97,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
     private Macros_Targets_Screen macrosTargets_Screen = null;
     private Ingredients_Info_Screen ingredientsInfoScreen = null;
     
-    
     private PieChart_Screen_MPS pieChart_Screen_MPS = null;
     private LineChart_MPS lineChart_MPS = null;
     
@@ -102,7 +106,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
     private final static String
             db_Scripts_Folder_Path = "/data/database_scripts",
             db_File_Script_List_Name = "0.) Script_List.txt",
-            db_File_Tables_Name = "0.) Database_Names.txt",
     
     // Table Names Frequently Used
     tablePlansName = "plans",
@@ -284,6 +287,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
     {
         super(db, true, "Gym App", 1925, 1082, 1300, 0);
         
+        // Create MealRegistry's for MealManagers
+        shared_Data_Registry = new Shared_Data_Registry(this);
+        
         //##############################################################################################################
         // Getting Selected User & Plan Info
         //##############################################################################################################
@@ -314,6 +320,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
             System.err.printf("\n\nUsername : %s \nUser ID : %s \n\nSelected Plan ID : %s  \nSelected Plan Name : %s\n", user_name, user_id, planID, planName);
             return;
         }
+        
+       //if (! get_Ingredient_Types_To_Ingredient_Names()) { return; }
         
         //#############################################################################################################
         // 2.) Getting Table Column Names
@@ -408,12 +416,15 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 ON P.plan_id = C.plan_id
                 WHERE P.plan_id = ?;""";
         
+        //#################################
+        // Execute Query
+        //#################################
         Object[] counts_Params = new Object[]{ planID };
         
         ArrayList<ArrayList<Object>> meal_Count_Results = db.get_2D_Query_AL_Object(plan_Counts_Query, counts_Params, plan_Counts_ErrorMSG);
         
         //#################################
-        // Execute Query
+        // Check Results
         //#################################
         if (meal_Count_Results == null)
         {
@@ -637,13 +648,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //##############################################################################################################
         // Centre: Adding Meal Managers to Centre of Screen On ScrollPanel
         //##############################################################################################################
-        
-        // Create MealRegistry's for MealManagers
-        mealManagerRegistry = new MealManagerRegistry(this, totalMeal_macroColName_And_Pos);
-        
-        // #####################################
-        // Add MealManagers to GUI
-        // #####################################
+       
         for (int i = 0; i < no_of_meals; i++)
         {
             //#####################################################
@@ -686,7 +691,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             //###############################################
             // ADD MealManager Info to DATA
             //###############################################
-            mealManagerRegistry.addMealManager(mealManager);
+            shared_Data_Registry.addMealManager(mealManager);
             
             //###############################################
             // ADD to GUI & Charts
@@ -724,6 +729,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // Transfer Data Methods
     private boolean transfer_Plan_Data(int fromPlan, int toPlan)
     {
+        //###############################################
+        // Queries
+        //###############################################
         String query1 = String.format("""
                 UPDATE `plans` AS `P`,
                 (
@@ -735,10 +743,16 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 WHERE
                     `P`.`plan_id` = ?;""", tablePlansName);
         
+        //###############################################
+        // Upload / Params
+        //###############################################
         Object[] params = new Object[]{ fromPlan, toPlan };
         
         if (! (db.upload_Data2(query1, params, "Unable to Load / Transfer Plan Data!"))) { return false; }
         
+        //###############################################
+        // Output
+        //###############################################
         System.out.printf("\nPlanData Successfully transferred! \n\n%s", lineSeparator);
         return true;
     }
@@ -1001,6 +1015,114 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // Output
         //########################################
         return true;
+    }
+    
+    public boolean get_Ingredient_Types_To_Ingredient_Names()
+    {
+        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+        
+        //#######################################
+        // Create Get Query Results
+        //#######################################
+        String query = """
+                WITH
+                    I AS (SELECT ingredient_id, ingredient_name, ingredient_type_id FROM ingredients_info),
+                	T AS (SELECT * FROM ingredient_types)
+                
+                SELECT
+                    T.ingredient_type_id AS type_id,
+                	T.ingredient_type_name AS type_name,
+                
+                	JSON_ARRAYAGG(
+                        JSON_OBJECT('id', I.ingredient_id,
+                            'name', I.ingredient_name
+                        )
+                    ) AS matched_ingredients
+                
+                FROM  T
+                LEFT JOIN I ON T.ingredient_type_id = I.ingredient_type_id
+                GROUP BY T.ingredient_type_id, T.ingredient_type_name
+                ORDER BY T.ingredient_type_name ASC;""";
+        
+        String errorMSG = "Unable to get Ingredient Types & Ingredient Names";
+        
+        //#######################################
+        // Execute Query
+        //#######################################
+        ArrayList<ArrayList<Object>> results = db.get_2D_Query_AL_Object(query, null, errorMSG);
+        
+        if (results == null) { JOptionPane.showMessageDialog(null, errorMSG); return false; }
+        
+        //#######################################
+        // Go through Results
+        //#######################################
+        ObjectMapper mapper = new ObjectMapper();
+        HashMap<Ingredient_Type_OBJ, ArrayList<Ingredient_Name_OBJ>> mapped_Data = new HashMap<>();
+        
+        try
+        {
+            for (ArrayList<Object> row : results)
+            {
+                //#########################
+                // Get Info
+                //#########################
+                int type_ID = (int) row.get(0);
+                String type_name = (String) row.get(1);
+                
+                // Ingredient Type Objects
+                Ingredient_Type_OBJ type_OBJ = new Ingredient_Type_OBJ(type_ID, type_name);
+                
+                // Add to DATA
+                shared_Data_Registry.add_Ingredient_Type(type_OBJ); // Add ingredient Type
+                
+                //#########################
+                // Parsing JSON DATA
+                //#########################
+                JsonNode json_array = mapper.readTree((String) row.get(2));
+                
+                for (JsonNode node : json_array) // For loop through each node of Ingredients
+                {
+                    // Per Object Ingredient Object
+                    JsonNode id = node.get("id");
+                    JsonNode name = node.get("name");
+                    
+                    // If values are empty skip
+                    if (id.isNull() || name.isNull()) { continue; }
+                    
+                    // Add Ingredient_Name to DATA IF not NULL
+                    Ingredient_Name_OBJ ingredient_Name_OBJ = new Ingredient_Name_OBJ(id.asInt(), name.asText(), type_OBJ);
+                    shared_Data_Registry.add_To_Ingredients_Tye_To_Names_Map(type_OBJ, ingredient_Name_OBJ);
+                }
+            }
+            
+            return true;
+            
+             /*System.out.println("\n\nAll Ingredient Types");
+        
+        for (Ingredient_Type_OBJ typeObj : shared_Data_Registry.get_Ingredient_Types())
+        {
+            System.out.printf("\n%s : %s", typeObj.get_ID(), typeObj.get_Name());
+        }
+        
+        System.out.println("\n\nAll Ingredient Types");
+        
+        for (Map.Entry<Ingredient_Type_OBJ, ArrayList<Ingredient_Name_OBJ>> d : shared_Data_Registry.get_Ingredient_Types_To_Names().entrySet())
+        {
+            Ingredient_Type_OBJ type = d.getKey();
+            System.out.printf("\n\n%s \n%s : %s \n%s", lineSeparator, type.get_ID(), type.get_Name(), lineSeparator);
+            
+            ArrayList<Ingredient_Name_OBJ> ingredient_Names = d.getValue();
+            for (Ingredient_Name_OBJ ingredient_name_obj : ingredient_Names)
+            {
+                System.out.printf("\n%s : %s", ingredient_name_obj.get_ID(), ingredient_name_obj.get_Name());
+            }
+        }*/
+        }
+        catch (Exception e)
+        {
+            System.err.printf("\n\n%s error \n\n%s", methodName, e);
+            return false;
+        }
     }
     
     //##################################################################################################################
@@ -1274,7 +1396,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###########################################################
         // DELETE all the meals in Memory
         //###########################################################
-        mealManagerRegistry.delete_MealManagers_MPS();
+        shared_Data_Registry.delete_MealManagers_MPS();
         
         //###########################################################
         // Update MacrosLeft
@@ -1448,7 +1570,10 @@ public class Meal_Plan_Screen extends Screen_JFrame
     private void refreshPlan(boolean askPermission)
     {
         String txt = "Are you sure you want to refresh all the meals in this plan?";
-        if ((! (get_IsPlanSelected())) || askPermission && ! (areYouSure("Refresh Meal Plan Data", txt))) { return; }
+        if ((! (get_IsPlanSelected())) || askPermission && ! (areYouSure("Refresh Meal Plan Data", txt)))
+        {
+            return;
+        }
         
         //####################################################################
         // Refresh DB Data
@@ -1462,7 +1587,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################################################
         // Refresh MealManagers Collections
         //####################################################################
-        mealManagerRegistry.refresh_MealManagers_MPS();
+        shared_Data_Registry.refresh_MealManagers_MPS();
         
         //####################################################################
         // Re-draw GUI Screen
@@ -1510,7 +1635,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###############################################
         // ADD MealManager Info to DATA
         //###############################################
-        mealManagerRegistry.addMealManager(mealManager);
+        shared_Data_Registry.addMealManager(mealManager);
         
         //###############################################
         // ADD to GUI & Charts
@@ -1565,12 +1690,12 @@ public class Meal_Plan_Screen extends Screen_JFrame
     
     public void reDraw_GUI()
     {
-        mealManagerRegistry.sort_MealManager_AL(); // Sort
+        shared_Data_Registry.sort_MealManager_AL(); // Sort
         
         scrollJPanelCenter.removeAll(); // Clear Screen
         
         // Re-Draw all MealManager to GUI
-        ArrayList<MealManager> mealManager_ArrayList = mealManagerRegistry.get_MealManager_ArrayList();
+        ArrayList<MealManager> mealManager_ArrayList = shared_Data_Registry.get_MealManager_ArrayList();
         for (MealManager mm : mealManager_ArrayList)
         {
             System.out.printf("\n\nMealManagerID: %s \nMealName : %s \nMealTime : %s",
@@ -1603,7 +1728,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // ##############################################################################
         boolean noMealsLeft = true;
         
-        ArrayList<MealManager> mealManager_ArrayList = mealManagerRegistry.get_MealManager_ArrayList();
+        ArrayList<MealManager> mealManager_ArrayList = shared_Data_Registry.get_MealManager_ArrayList();
         
         Iterator<MealManager> it = mealManager_ArrayList.iterator();
         while (it.hasNext())
@@ -1817,7 +1942,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // ##########################################
         // Close PieCharts Open by MealManagers
         // ##########################################
-        Iterator<MealManager> it = mealManagerRegistry.get_MealManager_ArrayList().iterator();
+        Iterator<MealManager> it = shared_Data_Registry.get_MealManager_ArrayList().iterator();
         while (it.hasNext())
         {
             it.next().close_PieChartScreen();
@@ -2008,9 +2133,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //###########################################
     // Objects
     //###########################################
-    public MealManagerRegistry get_MealManagerRegistry()
+    public Shared_Data_Registry get_MealManagerRegistry()
     {
-        return mealManagerRegistry;
+        return shared_Data_Registry;
     }
     
     public JPanel getScrollJPanelCenter()
@@ -2056,6 +2181,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
         return totalMeal_Other_Cols_Pos;
     }
     
+    public LinkedHashMap<String, Pair<Integer, String>> get_TotalMeal_macro_Col_Name_And_Pos()
+    {
+        return totalMeal_macroColName_And_Pos;
+    }
+    
     //###########################################
     // Ingredients Table Collections
     //###########################################
@@ -2069,7 +2199,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
         return ingredientsTableUnEditableCells;
     }
     
-    public ArrayList<String> getIngredients_Table_Col_Avoid_Centering() { return ingredients_Table_Col_Avoid_Centering; }
+    public ArrayList<String> getIngredients_Table_Col_Avoid_Centering()
+    { return ingredients_Table_Col_Avoid_Centering; }
     
     public ArrayList<String> getIngredientsInMeal_Table_ColToHide()
     {
