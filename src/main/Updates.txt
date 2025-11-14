@@ -55,6 +55,7 @@ Loading Screen
 Add / Edit Ingredients Screen
 .) Deleting stores / type ask if we want to delete children or assign them to a new parent
 .) Deleting ingredient / type should refresh meal plan
+.) Transfer in Bulk
 
 
 Loading Screen

@@ -1,6 +1,6 @@
-INSERT IGNORE INTO plans (is_selected_plan, plan_id, plan_name, vegan, user_id) VALUES
-(false, 1, 'Temp_Plan', FALSE, 1),
-(true, 2,  'Dummy Plan 1', FALSE, 1);
+INSERT IGNORE INTO plans (plan_id, is_selected_plan, plan_name, user_id, vegan) VALUES
+(1, false, 'Temp_Plan', 1, FALSE),
+(2, true,  'Dummy Plan 1', 1,  FALSE);
 
 
 
