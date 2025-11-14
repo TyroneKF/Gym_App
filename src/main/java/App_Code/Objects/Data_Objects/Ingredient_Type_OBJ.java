@@ -4,6 +4,6 @@ public class Ingredient_Type_OBJ extends ID_Object
 {
     public Ingredient_Type_OBJ(int id, String name)
     {
-        super(id, name, "ingredient_Type");
+        super(id, name);
     }
 }

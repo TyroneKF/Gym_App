@@ -13,14 +13,13 @@ public class ID_Object implements Comparable<ID_Object>
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
-    protected ID_Object(int id, String name, String class_Type)
+    protected ID_Object(int id, String name)
     {
         //############################################
         // Variables
         //############################################
         this.id = id;
         this.name = name;
-        this.class_Type = class_Type;
     }
     
     // #################################################################################################################
@@ -65,13 +64,13 @@ public class ID_Object implements Comparable<ID_Object>
         if (obj == null || getClass() != obj.getClass()) { return false; }
         
         ID_Object other = (ID_Object) obj;
-        return get_ID() == other.get_ID() && get_Class_Type().equals(other.get_Class_Type());
+        return get_ID() == other.get_ID();
     }
     
     @Override
     public int hashCode()
     {
-        return Objects.hash(get_ID());
+        return Objects.hash(id);
     }
     
     @Override

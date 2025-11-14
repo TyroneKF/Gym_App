@@ -12,7 +12,7 @@ public class Ingredient_Name_OBJ extends ID_Object
     // #################################################################################################################
     public Ingredient_Name_OBJ(int id, String name, Ingredient_Type_OBJ type_ID_OBJ)
     {
-        super(id, name, "ingredient_Name");
+        super(id, name);
         
         this.type_ID_Obj = type_ID_OBJ;
     }
