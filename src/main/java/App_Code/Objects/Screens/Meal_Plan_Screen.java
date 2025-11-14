@@ -2,6 +2,7 @@ package App_Code.Objects.Screens;
 
 import App_Code.Objects.Data_Objects.Ingredient_Name_OBJ;
 import App_Code.Objects.Data_Objects.Ingredient_Type_OBJ;
+import App_Code.Objects.Data_Objects.Store_OBJ;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Tables.JTable_JDBC.Children.ViewDataTables.MacrosLeftTable;
@@ -321,7 +322,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             return;
         }
         
-       //if (! get_Ingredient_Types_To_Ingredient_Names()) { return; }
+       //if (! get_Stores_Data()) { return; }
         
         //#############################################################################################################
         // 2.) Getting Table Column Names
@@ -1017,6 +1018,47 @@ public class Meal_Plan_Screen extends Screen_JFrame
         return true;
     }
     
+    public boolean get_Stores_Data()
+    {
+        //#######################################
+        // Create Get Query Results
+        //#######################################
+        String
+                errorMSG= "Error, Unable to get Ingredient Stores in Plan!",
+                query = String.format("SELECT store_id, store_name FROM %s ORDER BY store_name ASC;", tableStoresName);
+        
+        //#######################################
+        // Execute Query
+        //#######################################
+        ArrayList<ArrayList<Object>> results = db.get_2D_Query_AL_Object(query, null, errorMSG);
+        
+        if (results == null) { JOptionPane.showMessageDialog(null, errorMSG); return false; }
+        
+        //#######################################
+        // Process Data
+        //#######################################
+        for(ArrayList<Object> row : results)
+        {
+            // Store Info
+            int id = (int) row.get(0);
+            String name = (String) row.get(1);
+            
+            // Add to DATA
+            shared_Data_Registry.add_Store(new Store_OBJ(id, name), false);
+        }
+        
+        System.out.println("\n\nStores DATA");
+        for(Store_OBJ store : shared_Data_Registry.get_Stores())
+        {
+            System.out.printf("\n%s : %s", store.get_ID(), store.get_Name());
+        }
+        
+        //#######################################
+        // Output
+        //#######################################
+        return false;
+    }
+    
     public boolean get_Ingredient_Types_To_Ingredient_Names()
     {
         String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
@@ -1073,7 +1115,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 Ingredient_Type_OBJ type_OBJ = new Ingredient_Type_OBJ(type_ID, type_name);
                 
                 // Add to DATA
-                shared_Data_Registry.add_Ingredient_Type(type_OBJ); // Add ingredient Type
+                shared_Data_Registry.add_Ingredient_Type(type_OBJ, false); // Add ingredient Type
                 
                 //#########################
                 // Parsing JSON DATA
@@ -1091,32 +1133,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     
                     // Add Ingredient_Name to DATA IF not NULL
                     Ingredient_Name_OBJ ingredient_Name_OBJ = new Ingredient_Name_OBJ(id.asInt(), name.asText(), type_OBJ);
-                    shared_Data_Registry.add_To_Ingredients_Tye_To_Names_Map(type_OBJ, ingredient_Name_OBJ);
+                    shared_Data_Registry.add_Ingredient_Name_To_Type_Map(type_OBJ, ingredient_Name_OBJ);
                 }
             }
             
             return true;
-            
-             /*System.out.println("\n\nAll Ingredient Types");
-        
-        for (Ingredient_Type_OBJ typeObj : shared_Data_Registry.get_Ingredient_Types())
-        {
-            System.out.printf("\n%s : %s", typeObj.get_ID(), typeObj.get_Name());
-        }
-        
-        System.out.println("\n\nAll Ingredient Types");
-        
-        for (Map.Entry<Ingredient_Type_OBJ, ArrayList<Ingredient_Name_OBJ>> d : shared_Data_Registry.get_Ingredient_Types_To_Names().entrySet())
-        {
-            Ingredient_Type_OBJ type = d.getKey();
-            System.out.printf("\n\n%s \n%s : %s \n%s", lineSeparator, type.get_ID(), type.get_Name(), lineSeparator);
-            
-            ArrayList<Ingredient_Name_OBJ> ingredient_Names = d.getValue();
-            for (Ingredient_Name_OBJ ingredient_name_obj : ingredient_Names)
-            {
-                System.out.printf("\n%s : %s", ingredient_name_obj.get_ID(), ingredient_name_obj.get_Name());
-            }
-        }*/
         }
         catch (Exception e)
         {
