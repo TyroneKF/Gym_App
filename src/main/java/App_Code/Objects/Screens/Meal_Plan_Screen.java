@@ -2,6 +2,7 @@ package App_Code.Objects.Screens;
 
 import App_Code.Objects.Data_Objects.Ingredient_Name_OBJ;
 import App_Code.Objects.Data_Objects.Ingredient_Type_OBJ;
+import App_Code.Objects.Data_Objects.Meal_OBJ_ID;
 import App_Code.Objects.Data_Objects.Store_OBJ;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
@@ -137,8 +138,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
             "ingredients_index", "ingredient_id", "ingredient_cost", "protein", "gi", "carbohydrates", "sugars_of_carbs",
             "fibre", "fat", "saturated_fat", "salt", "water_content", "liquid_content", "calories")),
     
-    ingredientsInMeal_Table_ColToHide = new ArrayList<>(Arrays.asList("plan_id", "div_meal_sections_id", "ingredient_id",
-            "ingredients_index", "liquid_content", "water_content"));
+    ingredientsInMeal_Table_ColToHide = new ArrayList<>(Arrays.asList("plan_id", "div_meal_sections_id", "ingredients_index",
+            "ingredient_id", "liquid_content", "water_content"));
     
     //##################################################################################################################
     // TotalMealView Table
@@ -321,8 +322,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
             System.err.printf("\n\nUsername : %s \nUser ID : %s \n\nSelected Plan ID : %s  \nSelected Plan Name : %s\n", user_name, user_id, planID, planName);
             return;
         }
-        
-       //if (! get_Stores_Data()) { return; }
         
         //#############################################################################################################
         // 2.) Getting Table Column Names
@@ -649,7 +648,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //##############################################################################################################
         // Centre: Adding Meal Managers to Centre of Screen On ScrollPanel
         //##############################################################################################################
-       
         for (int i = 0; i < no_of_meals; i++)
         {
             //#####################################################
@@ -1018,13 +1016,16 @@ public class Meal_Plan_Screen extends Screen_JFrame
         return true;
     }
     
+    //#############################
+    //
+    //#############################
     public boolean get_Stores_Data()
     {
         //#######################################
         // Create Get Query Results
         //#######################################
         String
-                errorMSG= "Error, Unable to get Ingredient Stores in Plan!",
+                errorMSG = "Error, Unable to get Ingredient Stores in Plan!",
                 query = String.format("SELECT store_id, store_name FROM %s ORDER BY store_name ASC;", tableStoresName);
         
         //#######################################
@@ -1037,7 +1038,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //#######################################
         // Process Data
         //#######################################
-        for(ArrayList<Object> row : results)
+        for (ArrayList<Object> row : results)
         {
             // Store Info
             int id = (int) row.get(0);
@@ -1048,7 +1049,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         }
         
         System.out.println("\n\nStores DATA");
-        for(Store_OBJ store : shared_Data_Registry.get_Stores())
+        for (Store_OBJ store : shared_Data_Registry.get_Stores())
         {
             System.out.printf("\n%s : %s", store.get_ID(), store.get_Name());
         }
@@ -1128,8 +1129,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     JsonNode id = node.get("id");
                     JsonNode name = node.get("name");
                     
-                    // If values are empty skip
-                    if (id.isNull() || name.isNull()) { continue; }
+                    if (id.isNull()) { continue; }  // If values are empty skip
                     
                     // Add Ingredient_Name to DATA IF not NULL
                     Ingredient_Name_OBJ ingredient_Name_OBJ = new Ingredient_Name_OBJ(id.asInt(), name.asText(), type_OBJ);
@@ -1144,6 +1144,209 @@ public class Meal_Plan_Screen extends Screen_JFrame
             System.err.printf("\n\n%s error \n\n%s", methodName, e);
             return false;
         }
+    }
+    
+    public LinkedHashMap<Meal_OBJ_ID, LinkedHashMap<Integer, ArrayList<ArrayList<Object>>>> get_Meal_Data()
+    {
+        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+        
+        //########################################################################
+        // Create Get Query Results
+        //########################################################################
+        String query = """
+                -- Divs with Ingredients
+                
+                WITH
+                   M AS (SELECT * FROM meals_in_plan ORDER BY meal_time ASC),
+                   D AS (SELECT * FROM divided_meal_sections ORDER BY div_meal_sections_id ASC ),
+                   I AS (SELECT * FROM ingredients_in_sections_of_meal_calculation ORDER BY ingredients_index ASC)
+                
+                SELECT DISTINCT
+                    Q.plan_id,
+                	Q.meal_in_plan_id,
+                	Q.Meal_Name,
+                	Q.meal_time,
+                
+                	JSON_ARRAYAGG(
+                        JSON_OBJECT(
+                		    'plan_id',     Q.plan_id,
+                            'div_id',      Q.div_meal_sections_id,
+                			'index',       Q.ingredients_index,
+                			'id',          Q.ingredient_id,
+                			'type',        Q.ingredient_type,
+                			'ingred_name', Q.ingredient_name,
+                			'quantity',    Q.quantity,
+                			'supplier',    Q.supplier,
+                			'prod_name',   Q.product_name,
+                			'ingred_cost', Q.ingredient_cost,
+                			'gi',          Q.gi,
+                			'protein',     Q.protein,
+                			'carbs',       Q.carbohydrates,
+                			'sugar_carbs', Q.sugars_of_carbs,
+                			'fibre',       Q.fibre,
+                			'fat',         Q.fat,
+                			'sat_fat',     Q.saturated_fat,
+                			'salt',        Q.salt,
+                			'water',       Q.water_content,
+                			'liquid',      Q.liquid_content,
+                			'calories',    Q.calories,
+                			'delete_btn',  Q.`delete button`
+                        )
+                    ) AS matched_ingredients
+                
+                FROM
+                (
+                	SELECT M.plan_id AS p_id, M.meal_in_plan_id , M.Meal_Name, M.meal_time, I.*
+                	FROM M
+                	LEFT JOIN D ON M.plan_id = D.plan_id AND M.meal_in_plan_id = D.meal_in_plan_id
+                 	INNER JOIN I ON I.plan_id = D.plan_id AND I.div_meal_sections_id = D.div_meal_sections_id
+                ) AS Q
+                WHERE Q.plan_id = ?
+                GROUP BY Q.plan_id, Q.meal_in_plan_id, Q.meal_time  /*, Q.div_meal_sections_id */;""";
+        
+        String errorMSG = "Unable to get Ingredient Types & Ingredient Names";
+        
+        Object[] params = new Object[]{ tempPlanID };
+        
+        //########################################################################
+        // Execute Query
+        //########################################################################
+        ArrayList<ArrayList<Object>> results = db.get_2D_Query_AL_Object(query, params, errorMSG);
+        
+        if (results == null) { JOptionPane.showMessageDialog(null, errorMSG); return null; }
+        
+        //########################################################################
+        // Go Through JSON DATA
+        //#########################################################################
+        /**
+         *  HashMap<Meal_OBJ_ID, HashMap<Integer, ArrayList<ArrayList<Object>>>> meals_Data = new HashMap<>();
+         *  HashMap<Meal_OBJ_ID [Meal_ID, Meal_Time, Meal_Name], HashMap<Div_ID, List Of Ingredients>
+         */
+        LinkedHashMap<Meal_OBJ_ID, LinkedHashMap<Integer, ArrayList<ArrayList<Object>>>> meals_Data = new LinkedHashMap<>();
+        
+        try
+        {
+            for (ArrayList<Object> row : results) // For LOOP through each Meal
+            {
+                //######################################################
+                // Get Meal Info
+                //#####################################################
+                int meal_ID = (int) row.get(1);
+                String meal_name = (String) row.get(2);
+                LocalTime meal_Time = ((java.sql.Time) row.get(3)).toLocalTime();
+                
+                //############################
+                // Add Meal DATA / Collections
+                //############################
+                Meal_OBJ_ID meal_Obj_ID = new Meal_OBJ_ID(meal_ID, meal_name, meal_Time);
+                LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> div_Meal_Sections = new LinkedHashMap<>();
+                
+                meals_Data.put(meal_Obj_ID, div_Meal_Sections); // ADD to memory
+                
+                //######################################################
+                // Parsing JSON DATA - Ingredients in Meals
+                //######################################################
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode ingredients_json_array = mapper.readTree((String) row.get(4));
+                
+                //######################################
+                // For Each Ingredient
+                //######################################
+                for (JsonNode ingredient_node : ingredients_json_array) // For loop through each Ingredient belonging to a  Sub-DIV
+                {
+                    //###########################
+                    // Store Ingredients Data
+                    //###########################
+                    ArrayList<Object> ingredient_macros = new ArrayList<>();
+                    
+                    //###########################
+                    // Get Ingredients DATA
+                    //###########################
+                    ingredient_macros.add(ingredient_node.get("plan_id").asInt());
+                    
+                    int div_id = ingredient_node.get("div_id").asInt();
+                    ingredient_macros.add(div_id);
+                    
+                    ingredient_macros.add(ingredient_node.get("index").asInt());
+                    ingredient_macros.add(ingredient_node.get("id").asInt());
+                    
+                    ingredient_macros.add(ingredient_node.get("type").asText());
+                    
+                    ingredient_macros.add(ingredient_node.get("ingred_name").asText());
+                    ingredient_macros.add(ingredient_node.get("quantity").decimalValue());
+                    ingredient_macros.add(ingredient_node.get("supplier").decimalValue());
+                    
+                    ingredient_macros.add(ingredient_node.get("prod_name").asText());
+                    
+                    ingredient_macros.add(ingredient_node.get("ingred_cost").decimalValue());
+                    ingredient_macros.add(ingredient_node.get("gi").decimalValue());
+                    ingredient_macros.add(ingredient_node.get("protein").decimalValue());
+                    ingredient_macros.add(ingredient_node.get("carbs").decimalValue());
+                    ingredient_macros.add(ingredient_node.get("sugar_carbs").decimalValue());
+                    ingredient_macros.add(ingredient_node.get("fibre").decimalValue());
+                    ingredient_macros.add(ingredient_node.get("fat").decimalValue());
+                    ingredient_macros.add(ingredient_node.get("sat_fat").decimalValue());
+                    ingredient_macros.add(ingredient_node.get("salt").decimalValue());
+                    ingredient_macros.add(ingredient_node.get("water").decimalValue());
+                    ingredient_macros.add(ingredient_node.get("liquid").decimalValue());
+                    ingredient_macros.add(ingredient_node.get("calories").decimalValue());
+                    
+                    ingredient_macros.add(ingredient_node.get("delete_btn").asText());
+                    
+                    //###########################
+                    // Store DATA in DIV
+                    //###########################
+                    if (div_Meal_Sections.containsKey(div_id)) // IF Div already exists add ingredient
+                    {
+                        div_Meal_Sections.get(div_id).add(ingredient_macros);
+                    }
+                    else // Create & ADD
+                    {
+                        ArrayList<ArrayList<Object>> div_Meal = new ArrayList<>();   // Create Meal Div Section
+                        div_Meal_Sections.put(div_id, div_Meal); // Add Div to meals Collection
+                        
+                        div_Meal.add(ingredient_macros); // Add ingredients data
+                    }
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            System.err.printf("\n\n%s ERROR \n%s", methodName, e);
+            return null;
+        }
+        
+        //#######################################
+        // Read DATA
+        //#######################################
+        for (Map.Entry<Meal_OBJ_ID, LinkedHashMap<Integer, ArrayList<ArrayList<Object>>>> meal_Entry : meals_Data.entrySet())
+        {
+            // Meal DATA
+            Meal_OBJ_ID meal_ID_Obj = meal_Entry.getKey();
+            
+            System.out.printf("\n\n%s \n[%s] - %s (%s) \n%s", lineSeparator, meal_ID_Obj.get_Meal_Time(), meal_ID_Obj.get_Name(), meal_ID_Obj.get_ID(), lineSeparator);
+            
+            LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> meals_data = meal_Entry.getValue();
+            
+            // DIVS Per MEALS
+            for (Map.Entry<Integer, ArrayList<ArrayList<Object>>> div_data : meals_data.entrySet())
+            {
+                int div_id = div_data.getKey();
+                ArrayList<ArrayList<Object>> ingredients = div_data.getValue();
+                
+                System.out.printf("\n\n%s \n###########################\n", div_id);
+                
+                for (ArrayList<Object> ingredient : ingredients)
+                {
+                    System.out.printf("\n%s%n", ingredient);
+                }
+            }
+        }
+        
+        //#######################################
+        // Return DATA
+        //#######################################
+        return meals_Data;
     }
     
     //##################################################################################################################

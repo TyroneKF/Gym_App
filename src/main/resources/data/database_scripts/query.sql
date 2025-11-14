@@ -35,8 +35,9 @@ WITH
 
 SELECT DISTINCT
     Q.plan_id,
-	Q.meal_in_plan_id,
-	Q.meal_time,
+	Q.meal_in_plan_id AS meal_id,
+	Q.meal_time,	
+	Q.meal_name,
 
 	JSON_ARRAYAGG(
         JSON_OBJECT(
@@ -47,43 +48,48 @@ SELECT DISTINCT
 
 FROM
 (
-	SELECT M.plan_id AS p_id, M.meal_in_plan_id , M.meal_time, I.*
+	SELECT M.plan_id AS p_id, M.meal_in_plan_id , M.meal_time, M.meal_name, I.*
 	FROM M
 	LEFT JOIN D ON M.plan_id = D.plan_id AND M.meal_in_plan_id = D.meal_in_plan_id
  	LEFT JOIN I ON I.plan_id = D.plan_id AND I.div_meal_sections_id = D.div_meal_sections_id
 ) AS Q
 WHERE Q.plan_id = 1
-GROUP BY Q.plan_id, Q.meal_in_plan_id, Q.meal_time  /*, Q.div_meal_sections_id*/
-ORDER BY Q.div_meal_sections_id;
+GROUP BY Q.plan_id, Q.meal_in_plan_id, Q.meal_time /*, Q.div_meal_sections_id*/;
 
 
 -- ##################################################################
 -- ##################################################################
 
-JSON_OBJECT(
-            'div_id', D.div_meal_sections_id,
-            'ingredients', JSON_ARRAYAGG(
-					JSON_OBJECT(
-						'index',       I.ingredients_index,
-						'id',          I.ingredient_id,
-						'type',        I.ingredient_type,
-						'ingred_name', I.ingredient_name,
-						'quantity',    I.quantity,
-						'supplier',    I.supplier,
-						'prod_name',   I.product_name,
-						'ingred_cost', I.ingredient_cost,
-						'gi',          I.gi,
-						'protein',     I.protein,
-						'carbs',       I.carbohydrates,
-						'sugar_carbs', I.sugars_of_carbs,
-						'fibre',       I.fibre,
-						'fat',         I.fat,
-						'sat_fat',     I.saturated_fat,
-						'salt',        I.salt,
-						'water',       I.water_content,
-						'liquid',      I.liquid_content,
-						'calories',    I.calories,
-						'delete_btn',  I.`delete button`
-					)
-				) AS ingredients
-        )
+-- Divs with Ingredients
+                
+WITH
+   M AS (SELECT * FROM meals_in_plan ORDER BY meal_time ASC),
+   D AS (SELECT * FROM divided_meal_sections ORDER BY div_meal_sections_id ASC ),
+   I AS (SELECT * FROM ingredients_in_sections_of_meal_calculation ORDER BY ingredients_index ASC)
+
+SELECT DISTINCT
+    Q.plan_id,
+	Q.meal_in_plan_id AS meal_id,
+	Q.meal_time,	
+	Q.meal_name,
+
+	JSON_ARRAYAGG(
+		JSON_OBJECT(
+			'plan_id',     Q.plan_id,
+			'div_id',      Q.div_meal_sections_id,
+			'index',       Q.ingredients_index
+
+
+		)
+	) AS matched_ingredients
+
+FROM
+(
+	SELECT M.plan_id AS p_id, M.meal_in_plan_id , M.meal_time, M.meal_name, I.*
+	FROM M
+	LEFT JOIN D ON M.plan_id = D.plan_id AND M.meal_in_plan_id = D.meal_in_plan_id
+	LEFT JOIN I ON I.plan_id = D.plan_id AND I.div_meal_sections_id = D.div_meal_sections_id
+) AS Q
+WHERE Q.plan_id = 1
+GROUP BY Q.plan_id, Q.meal_in_plan_id, Q.meal_time  /*, Q.div_meal_sections_id */
+ORDER BY Q.meal_time;

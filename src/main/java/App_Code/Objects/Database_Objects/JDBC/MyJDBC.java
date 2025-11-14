@@ -1305,8 +1305,8 @@ public class MyJDBC
     
     private void print_SQL_ERR_MSG(SQLException e, String methodName, Object query)
     {
-        System.err.printf("\n\nMyJDBC.java @%s SQL ERROR \n\nQuery: %s \n\nMessage: %s \n\nSQLState: %s \n\nErrorCode: %d\n\n",
-                methodName, query != null ? query.toString() : "", e.getMessage(), e.getSQLState(), e.getErrorCode());
+        System.err.printf("\n\n%s\nMyJDBC.java @%s SQL ERROR \n%s \n\nQuery: \"\"\"\n%s\n\"\"\" \n\nMessage: %s \n\nSQLState: %s \n\nErrorCode: %d\n\n",
+                line_Separator, methodName, line_Separator, query != null ? query.toString() : "", e.getMessage(), e.getSQLState(), e.getErrorCode());
     }
     
     private void print_Exception_ERR_MSG(Exception e, String methodName, Object query)
