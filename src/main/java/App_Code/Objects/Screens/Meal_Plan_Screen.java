@@ -6,8 +6,8 @@ import App_Code.Objects.Data_Objects.Meal_OBJ_ID;
 import App_Code.Objects.Data_Objects.Store_OBJ;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
-import App_Code.Objects.Tables.JTable_JDBC.Children.ViewDataTables.MacrosLeftTable;
-import App_Code.Objects.Tables.JTable_JDBC.Children.ViewDataTables.MacrosTargetsTable;
+import App_Code.Objects.Tables.JTable_JDBC.Children.ViewDataTables.MacrosLeft_Table;
+import App_Code.Objects.Tables.JTable_JDBC.Children.ViewDataTables.MacrosTargets_Table;
 import App_Code.Objects.Tables.MealManager;
 import App_Code.Objects.Gui_Objects.*;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
@@ -92,8 +92,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
     private JPanel scrollJPanelCenter, scrollJPanelBottom;
     
     // Table Objects
-    private MacrosLeftTable macrosLeft_JTable;
-    private MacrosTargetsTable macros_Targets_Table;
+    private MacrosLeft_Table macrosLeft_JTable;
+    private MacrosTargets_Table macros_Targets_Table;
     
     // Screen Objects
     private Macros_Targets_Screen macrosTargets_Screen = null;
@@ -638,7 +638,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //######################################
         // Setting up MacroTargets Table
         //######################################
-        macros_Targets_Table = new MacrosTargetsTable(db, macrosInfoJPanel, planData, macroTargets_ColumnNames, planID, tempPlanID,
+        macros_Targets_Table = new MacrosTargets_Table(db, macrosInfoJPanel, planData, macroTargets_ColumnNames, planID, tempPlanID,
                 tablePlanMacroTargetsNameCalc, macroTargets_ColumnNames, null, macrosTargets_Table_ColToHide);
         
         addToContainer(macrosInfoJPanel, macros_Targets_Table, 0, macrosInfoJP_YPos += 1, + 1, 1, 0.25, 0.25, "both", 40, 0, null);
@@ -648,7 +648,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //######################################
         // Setting UP planMacrosLeft Table
         //######################################
-        macrosLeft_JTable = new MacrosLeftTable(db, macrosInfoJPanel, macrosData, macrosLeft_columnNames, planID, tempPlanID,
+        macrosLeft_JTable = new MacrosLeft_Table(db, macrosInfoJPanel, macrosData, macrosLeft_columnNames, planID, tempPlanID,
                 tablePlanMacrosLeftName, macrosLeft_columnNames, null, macrosLeft_Table_ColToHide);
         
         addToContainer(macrosInfoJPanel, macrosLeft_JTable, 0, macrosInfoJP_YPos += 1, 1, 1, 0.25, 0.25, "both", 30, 0, null);
@@ -2234,7 +2234,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //#########################################
     public void update_MacrosTargetTable()
     {
-        macros_Targets_Table.updateMacrosTargetsTable();
+        macros_Targets_Table.update_MacrosTargets_Table();
     }
     
     private void refresh_MacroTargets()
@@ -2265,10 +2265,10 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //#########################################
     public void update_MacrosLeftTable()
     {
-        macrosLeft_JTable.updateMacrosLeftTable();
+        macrosLeft_JTable.update_Macros_Left_Table();
     }
     
-    public MacrosLeftTable getMacrosLeft_JTable()
+    public MacrosLeft_Table getMacrosLeft_JTable()
     {
         return macrosLeft_JTable;
     }

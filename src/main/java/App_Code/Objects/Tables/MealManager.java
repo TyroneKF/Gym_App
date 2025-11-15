@@ -4,7 +4,7 @@ import App_Code.Objects.Data_Objects.Meal_OBJ_ID;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Tables.JTable_JDBC.Children.IngredientsTable;
-import App_Code.Objects.Tables.JTable_JDBC.Children.ViewDataTables.MacrosLeftTable;
+import App_Code.Objects.Tables.JTable_JDBC.Children.ViewDataTables.MacrosLeft_Table;
 import App_Code.Objects.Tables.JTable_JDBC.Children.ViewDataTables.TotalMeal_Table;
 import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 import App_Code.Objects.Gui_Objects.IconButton;
@@ -74,7 +74,7 @@ public class MealManager
     private Pie_Chart_Meal_Manager_Screen pie_chart_meal_manager_screen;
     
     // Table Objects
-    private MacrosLeftTable macrosLeft_JTable;
+    private MacrosLeft_Table macrosLeft_JTable;
     private Meal_Plan_Screen meal_plan_screen;
     private TotalMeal_Table totalMealTable;
     
@@ -966,7 +966,7 @@ public class MealManager
         delete_MealManager();
         
         //##########################################
-        // Update MacrosLeftTable
+        // Update MacrosLeft_Table
         //##########################################
         update_MacrosLeft_Table();// update macrosLeft table, due to number deductions from this meal
         
@@ -1437,7 +1437,7 @@ public class MealManager
     
     public void update_MacrosLeft_Table()
     {
-        macrosLeft_JTable.updateMacrosLeftTable();
+        macrosLeft_JTable.update_Macros_Left_Table();
     }
     
     private void updateCharts(Boolean updateInternalCharts, Boolean updateExternalCharts)

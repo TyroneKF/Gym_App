@@ -19,6 +19,9 @@ public abstract class MyJTable_DisplayData extends JDBC_JTable
                                 String tableName, ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering,
                                 ArrayList<String> columnsToHide)
     {
+        // #################################################
+        // Super /  Variables
+        // #################################################
         super(db, parentContainer, false, false, tableName, data, columnNames, unEditableColumns, colAvoidCentering, columnsToHide);
         
         this.planID = planID;
@@ -90,8 +93,6 @@ public abstract class MyJTable_DisplayData extends JDBC_JTable
             jTable.getColumnModel().getColumn(i).setCellRenderer(cellRenderer);
         }
     }
-   
-    //protected abstract void set_Variables();
     
     protected void update_Table()
     {
