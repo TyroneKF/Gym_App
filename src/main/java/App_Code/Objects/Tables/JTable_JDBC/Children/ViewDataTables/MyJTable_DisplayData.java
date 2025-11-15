@@ -4,28 +4,29 @@ import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Tables.JTable_JDBC.JDBC_JTable;
 
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.util.ArrayList;
 
 public abstract class MyJTable_DisplayData extends JDBC_JTable
 {
-    protected Integer planID, temp_PlanID;
+    protected Integer plan_ID, temp_Plan_ID;
     protected String query = "";
     protected Object[] params;
-    protected int updateRow = 0;
+    protected int update_Row = 0;
     
-    public MyJTable_DisplayData(MyJDBC db, Container parentContainer, ArrayList<ArrayList<Object>> data, ArrayList<String> columnNames,
-                                int planID, int temp_PlanID, String tableName, ArrayList<String> unEditableColumns,
-                                ArrayList<String> colAvoidCentering, ArrayList<String> columnsToHide)
+    public MyJTable_DisplayData(MyJDBC db, Container parent_Container, ArrayList<ArrayList<Object>> data, ArrayList<String> column_Names,
+                                int plan_ID, int temp_Plan_ID, String table_Name, ArrayList<String> un_Editable_Columns,
+                                ArrayList<String> col_Avoid_Centering, ArrayList<String> columns_To_Hide)
     {
         // #################################################
         // Super /  Variables
         // #################################################
-        super(db, parentContainer, false, false, tableName, data, columnNames, unEditableColumns, colAvoidCentering, columnsToHide);
+        super(db, parent_Container, false, false, table_Name, data, column_Names, un_Editable_Columns, col_Avoid_Centering, columns_To_Hide);
         
-        this.planID = planID;
-        this.temp_PlanID = temp_PlanID;
+        this.plan_ID = plan_ID;
+        this.temp_Plan_ID = temp_Plan_ID;
         
         // #################################################
         // Stop Rows From Being Highlighted From Selection
@@ -47,10 +48,10 @@ public abstract class MyJTable_DisplayData extends JDBC_JTable
         setOpaque(true);
         
         // Set Header Font
-        setTableHeaderFont(new Font("Dialog", Font.BOLD, 14));
+        set_Table_Header_Font(new Font("Dialog", Font.BOLD, 14));
         
         // Set Txt Font
-        setTableTextFont(new Font("Dialog", Font.PLAIN, 14));
+        set_Table_Text_Font(new Font("Dialog", Font.PLAIN, 14));
     }
     
     @Override
@@ -94,6 +95,15 @@ public abstract class MyJTable_DisplayData extends JDBC_JTable
         }
     }
     
+    @Override
+    protected void extra_Table_Setup() { }
+    
+    @Override
+    protected void extra_TableModel_Setup() { }
+    
+    @Override
+    protected void table_Data_Changed_Action(TableModelEvent evt) { }
+    
     protected abstract String get_Query();
     
     protected abstract Object[] get_Params();
@@ -103,22 +113,22 @@ public abstract class MyJTable_DisplayData extends JDBC_JTable
         //###########################################################################
         //   Updating MacrosLeft_Table
         //##########################################################################
-        String errorMSG = String.format("Error, Updating Table '%s'!", tableName);
+        String errorMSG = String.format("Error, Updating Table '%s'!", table_Name);
         
         ArrayList<ArrayList<Object>> tableDataObject = db.get_2D_Query_AL_Object(get_Query(), get_Params(), errorMSG);
         
         if (tableDataObject == null)
         {
-            JOptionPane.showMessageDialog(null, String.format("Error, un-able to update %s Table!", tableName));
+            JOptionPane.showMessageDialog(null, String.format("Error, un-able to update %s Table!", table_Name));
             return;
         }
         
-        super.updateTable(tableDataObject.getFirst(), updateRow);
+        super.update_Table(tableDataObject.getFirst(), update_Row);
     }
     
-    protected void set_Table_Model_Data(ArrayList<ArrayList<Object>> tableModelData)
+    protected void set_Table_Model_Data(ArrayList<ArrayList<Object>> table_Model_Data)
     {
-        super.set_Table_Model_Data(tableModelData);
+        super.set_Table_Model_Data(table_Model_Data);
     }
     
     protected void update_Table_Cell_Value(Object data, int row, int col)

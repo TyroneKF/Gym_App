@@ -20,7 +20,7 @@ public abstract class JDBC_JTable extends JPanel
     // Objects
     //##############################################
     protected MyJDBC db;
-    protected Container parentContainer;
+    protected Container parent_Container;
     protected JScrollPane scrollPane = new JScrollPane();
     protected static GridBagConstraints gbc = new GridBagConstraints(); //HELLO DELETE
     
@@ -29,17 +29,17 @@ public abstract class JDBC_JTable extends JPanel
     //##############################################
     protected JTable jTable = new JTable();
     protected CustomTableModel tableModel;
-    protected ArrayList<ArrayList<Object>> savedData;
+    protected ArrayList<ArrayList<Object>> saved_Data;
     
-    protected String tableName;
-    protected ArrayList<String> columnNames, guiColumnNames;
+    protected String table_Name;
+    protected ArrayList<String> column_Names, gui_Column_Names;
     
     // Collection : Customisation Options
-    protected ArrayList<String> colAvoidCentering = new ArrayList<>();
-    protected ArrayList<Integer> unEditableColumnPositions = new ArrayList<>();
-    protected ArrayList<String> columnsToHide = new ArrayList<>();
+    protected ArrayList<String> col_To_Avoid_Centering;
+    protected ArrayList<Integer> un_Editable_Column_Positions = new ArrayList<>();
+    protected ArrayList<String> columns_To_Hide;
     
-    protected LinkedHashMap<String, Integer[]> columnNamesAndPositions = new LinkedHashMap<>(); // Hello Can be removed
+    protected LinkedHashMap<String, Integer[]> column_Names_And_Positions = new LinkedHashMap<>(); // Hello Can be removed
     /*
         Array Pos 1 = Original Position in JTable Data
         Array Pos 2 = Position after columns hidden
@@ -48,16 +48,16 @@ public abstract class JDBC_JTable extends JPanel
     //##############################################
     //
     //##############################################
-    protected boolean tableInitialised = false, addJTableAction;
+    protected boolean table_Initialised = false, add_JTable_Action;
     
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
     public JDBC_JTable
     (
-            MyJDBC db, Container parentContainer, boolean setIconsUp, boolean addJTableAction,
-            String tableName, ArrayList<ArrayList<Object>> savedData, ArrayList<String> columnNames,
-            ArrayList<String> unEditableColumnNames, ArrayList<String> colAvoidCentering, ArrayList<String> columnsToHide
+            MyJDBC db, Container parent_Container, boolean set_Icons_Up, boolean add_JTable_Action,
+            String table_Name, ArrayList<ArrayList<Object>> saved_Data, ArrayList<String> column_Names,
+            ArrayList<String> un_Editable_Column_Names, ArrayList<String> col_To_Avoid_Centering, ArrayList<String> columns_To_Hide
     )
     {
         setLayout(new GridBagLayout());
@@ -66,51 +66,51 @@ public abstract class JDBC_JTable extends JPanel
         // Variables
         //##############################################################
         this.db = db;
-        this.savedData = savedData;
+        this.saved_Data = saved_Data;
         
-        this.parentContainer = parentContainer;
-        this.addJTableAction = addJTableAction;
-        this.tableName = tableName;
+        this.parent_Container = parent_Container;
+        this.add_JTable_Action = add_JTable_Action;
+        this.table_Name = table_Name;
         
         //##############################################################
         // Column Names & Their Original Positions
         //##############################################################
-        this.columnNames = columnNames;
+        this.column_Names = column_Names;
         
         // Adding column names and their original positions to the hashmap
-        for (int pos = 0; pos < columnNames.size(); pos++)
+        for (int pos = 0; pos < column_Names.size(); pos++)
         {
-            columnNamesAndPositions.put(columnNames.get(pos), new Integer[]{ pos, pos });
+            column_Names_And_Positions.put(column_Names.get(pos), new Integer[]{ pos, pos });
         }
         
         //##############################################################
         
-        this.colAvoidCentering = colAvoidCentering;
-        this.columnsToHide = columnsToHide;
+        this.col_To_Avoid_Centering = col_To_Avoid_Centering;
+        this.columns_To_Hide = columns_To_Hide;
         
         //##############################################################
         // Get UnEditable Column Positions By Name
         //##############################################################
-        if (unEditableColumnNames != null)
+        if (un_Editable_Column_Names != null)
         {
-            for (String columnName : unEditableColumnNames)
+            for (String column_Name : un_Editable_Column_Names)
             {
-                unEditableColumnPositions.add(columnNamesAndPositions.get(columnName)[0]);
+                un_Editable_Column_Positions.add(column_Names_And_Positions.get(column_Name)[0]);
             }
         }
         
         //################################################################
         // Reformat Column Names To be Capitalised on the Application lvl
         //################################################################
-        guiColumnNames = new ArrayList<String>();
+        gui_Column_Names = new ArrayList<String>();
         
-        for (int x = 0; x < columnNames.size(); x++)
+        for (int x = 0; x < column_Names.size(); x++)
         {
             // Get Column Name
-            String columnName = columnNames.get(x);
+            String column_Name = column_Names.get(x);
             
             // Re-assign Re-Capitalised Value into list
-            guiColumnNames.add(Arrays.stream(columnName.split("[ _]+"))
+            gui_Column_Names.add(Arrays.stream(column_Name.split("[ _]+"))
                     .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
                     .collect(Collectors.joining("_")));
         }
@@ -118,22 +118,20 @@ public abstract class JDBC_JTable extends JPanel
         //################################################################
         // Table Setup With Table Data
         //################################################################
-        if (savedData != null)
+        if (saved_Data != null)
         {
-            tableSetup(savedData, guiColumnNames, setIconsUp);
+            tableSetup(saved_Data, gui_Column_Names, set_Icons_Up);
         }
         else
         {
-            tableSetup(new ArrayList<ArrayList<Object>>(), guiColumnNames, setIconsUp);
+            tableSetup(new ArrayList<ArrayList<Object>>(), gui_Column_Names, set_Icons_Up);
         }
         
         //##############################################################
         // Hide Columns
         //##############################################################
-        SetUp_HiddenTableColumns(columnsToHide);
+        SetUp_Hidden_Table_Columns(columns_To_Hide);
     }
-    
-   // protected abstract void set_Variables();
     
     //##################################################################################################################
     // Table Model Set Up Methods
@@ -141,46 +139,46 @@ public abstract class JDBC_JTable extends JPanel
     public class CustomTableModel extends AbstractTableModel
     {
         
-        private ArrayList<ArrayList<Object>> currentTableData;
-        private ArrayList<String> columnNames;
+        private ArrayList<ArrayList<Object>> current_Table_Data;
+        private ArrayList<String> column_Names;
         
-        public CustomTableModel(ArrayList<ArrayList<Object>> inputData, ArrayList<String> columnNames)
+        public CustomTableModel(ArrayList<ArrayList<Object>> input_Data, ArrayList<String> column_Names)
         {
             // ######################################################
             //
             // ######################################################
-            this.columnNames = columnNames;
-            this.currentTableData = cloneData(inputData);
+            this.column_Names = column_Names;
+            this.current_Table_Data = clone_Data(input_Data);
         }
         
         @Override
         public int getRowCount()
         {
-            return currentTableData.size();
+            return current_Table_Data.size();
         }
         
         @Override
         public int getColumnCount()
         {
-            return columnNames.size();
+            return column_Names.size();
         }
         
         @Override
         public Object getValueAt(int row, int col)
         {
-            return currentTableData.get(row).get(col);
+            return current_Table_Data.get(row).get(col);
         }
         
         @Override
         public String getColumnName(int col)
         {
-            return columnNames.get(col);
+            return column_Names.get(col);
         }
         
         @Override
         public void setValueAt(Object value, int row, int col)
         {
-            currentTableData.get(row).set(col, value);
+            current_Table_Data.get(row).set(col, value);
             fireTableCellUpdated(row, col);
         }
         
@@ -196,54 +194,54 @@ public abstract class JDBC_JTable extends JPanel
             return getValueAt(0, c).getClass();
         }
         
-        public void removeRow(int modelRow)
+        public void remove_Row(int model_Row)
         {
-            currentTableData.remove(modelRow);
-            fireTableRowsDeleted(modelRow, modelRow); // notify JTable
+            current_Table_Data.remove(model_Row);
+            fireTableRowsDeleted(model_Row, model_Row); // notify JTable
         }
         
-        public void addRow()
+        public void add_Row()
         {
             //#############################################
             // Adding NULL DATA to Row to FIll ALl Columns
             //#############################################
-            ArrayList<Object> newRowData = new ArrayList<>();
+            ArrayList<Object> new_Row_Data = new ArrayList<>();
             for (int i = 0; i < getColumnCount(); i++)
             {
-                newRowData.add(null);
+                new_Row_Data.add(null);
             }
             
-            currentTableData.add(newRowData);
+            current_Table_Data.add(new_Row_Data);
             
             //#############################################
             // Trigger JTable Update Methods
             //#############################################
-            int size = currentTableData.size() - 1;
+            int size = current_Table_Data.size() - 1;
             fireTableRowsInserted(size, size); // Alerts JTable has been updated and refreshes JTable
         }
         
-        public void refreshData()
+        public void refresh_Data()
         {
             // ######################################################
             // Clear DATA
             // ######################################################
-            currentTableData.clear();
-            currentTableData = cloneData(getSavedData());
+            current_Table_Data.clear();
+            current_Table_Data = clone_Data(get_Saved_Data());
             
             // ######################################################
             //
             // ######################################################
             fireTableDataChanged(); // notifies JTable to redraw everything
-            resizeObject();
+            resize_Object();
         }
         
-        public void saveData()
+        public void save_Data()
         {
-            savedData.clear();
-            savedData = cloneData(currentTableData);
+            saved_Data.clear();
+            saved_Data = clone_Data(current_Table_Data);
         }
         
-        private ArrayList<ArrayList<Object>> cloneData(ArrayList<ArrayList<Object>> sourceData)
+        private ArrayList<ArrayList<Object>> clone_Data(ArrayList<ArrayList<Object>> source_Data)
         {
             /**
              * Although this does look long alternative methods dont work
@@ -255,40 +253,37 @@ public abstract class JDBC_JTable extends JPanel
             // ######################################################
             // Create DataSet by manually adding each Cell
             // ######################################################
-            ArrayList<ArrayList<Object>> tempData = new ArrayList<>();
+            ArrayList<ArrayList<Object>> temp_Data = new ArrayList<>();
             
-            int rowSize = sourceData.size(), columnSize = columnNames.size();
+            int row_Size = source_Data.size(), column_Size = column_Names.size();
             
-            for (int row = 0; row < rowSize; row++)
+            for (int row = 0; row < row_Size; row++)
             {
-                ArrayList<Object> readingRow = sourceData.get(row);
-                ArrayList<Object> newRow = new ArrayList<>();
+                ArrayList<Object> reading_Row = source_Data.get(row);
+                ArrayList<Object> new_Row = new ArrayList<>();
                 
-                for (int col = 0; col < columnSize; col++)
+                for (int col = 0; col < column_Size; col++)
                 {
-                    newRow.add(readingRow.get(col));
+                    new_Row.add(reading_Row.get(col));
                 }
                 
-                tempData.add(newRow);
+                temp_Data.add(new_Row);
             }
-            return tempData;
+            return temp_Data;
         }
         
-        protected ArrayList<ArrayList<Object>> getTableModelData()
+        protected ArrayList<ArrayList<Object>> get_TableModel_Data()
         {
-            return currentTableData;
+            return current_Table_Data;
         }
     }
     
     //###################################################
     // Table Setup Methods
     //###################################################
-    protected void extra_Table_Setup()
-    {
+    protected abstract void extra_Table_Setup();
     
-    }
-    
-    protected void tableSetup(ArrayList<ArrayList<Object>> data, ArrayList<String> columnNames, boolean setIconsUp)
+    protected void tableSetup(ArrayList<ArrayList<Object>> data, ArrayList<String> column_Names, boolean set_Icons_Up)
     {
         extra_Table_Setup();
         
@@ -300,9 +295,9 @@ public abstract class JDBC_JTable extends JPanel
         jTable.setRowHeight(jTable.getRowHeight() + 15);
         jTable.setFillsViewportHeight(true);
         jTable.getTableHeader().setPreferredSize(new Dimension(100, 50));  // setting header size
-        setTableHeaderFont(new Font("Dialog", Font.BOLD, 16));    // setting text size
+        set_Table_Header_Font(new Font("Dialog", Font.BOLD, 16));    // setting text size
         
-        tableModel_Setup(data, columnNames); // sets JTable Model
+        tableModel_Setup(data, column_Names); // sets JTable Model
         
         //################################################################################
         // Adding JTable to JScrollPane
@@ -314,19 +309,19 @@ public abstract class JDBC_JTable extends JPanel
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
         
-        addToContainer(this, scrollPane, 0, 1, 1, 1, 0.25, 0.25, "both", "");
+        add_To_Container(this, scrollPane, 0, 1, 1, 1, 0.25, 0.25, "both", "");
         
         //#################################################################################
         // Sizing
         //#################################################################################
-        resizeObject();
+        resize_Object();
     }
     
-    protected void tableModel_Setup(ArrayList<ArrayList<Object>> data, ArrayList<String> columnNames)
+    protected void tableModel_Setup(ArrayList<ArrayList<Object>> data, ArrayList<String> column_Names)
     {
-        tableModel = new CustomTableModel(data, columnNames);
+        tableModel = new CustomTableModel(data, column_Names);
         
-        if (addJTableAction) { tableModel.addTableModelListener(evt -> table_Data_Changed_Action(evt)); }
+        if (add_JTable_Action) { tableModel.addTableModelListener(evt -> table_Data_Changed_Action(evt)); }
         
         jTable.setModel(tableModel);
         
@@ -337,20 +332,20 @@ public abstract class JDBC_JTable extends JPanel
         //initColumnSizes();
         set_Cell_Renderer();
         
-        if (getTableInitialised())  //first time this method is called, special columns aren't defined
+        if (table_Initialised)  //first time this method is called, special columns aren't defined
         {
-            if (getColumnsToHide() != null)
+            if (get_Columns_To_Hide() != null)
             {
-                SetUp_HiddenTableColumns(columnsToHide);
+                SetUp_Hidden_Table_Columns(columns_To_Hide);
             }
             
             extra_TableModel_Setup();
         }
         else
         {
-            setTableInitialized();
+            table_Initialised = true;
         }
-        resizeObject();
+        resize_Object();
     }
     
     /**
@@ -363,32 +358,29 @@ public abstract class JDBC_JTable extends JPanel
         // Centering Column Txt
         // ###############################################################
         
-        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
-        rightRenderer.setHorizontalAlignment(0);
+        DefaultTableCellRenderer right_Renderer = new DefaultTableCellRenderer();
+        right_Renderer.setHorizontalAlignment(0);
         
         int pos = - 1;
-        for (String columnName : columnNames)
+        for (String column_Name : column_Names)
         {
             pos++;
             
-            if (colAvoidCentering != null && colAvoidCentering.contains(columnName))
+            if (col_To_Avoid_Centering != null && col_To_Avoid_Centering.contains(column_Name))
             {
                 continue;
             }
             
-            jTable.getColumnModel().getColumn(pos).setCellRenderer(rightRenderer); // Center Column Data
+            jTable.getColumnModel().getColumn(pos).setCellRenderer(right_Renderer); // Center Column Data
         }
     }
     
-    protected void extra_TableModel_Setup()
-    {
+    protected abstract void extra_TableModel_Setup();
     
-    }
-    
-    protected void set_Table_Model_Data(ArrayList<ArrayList<Object>> tableModelData)
+    protected void set_Table_Model_Data(ArrayList<ArrayList<Object>> table_Model_Data)
     {
-        this.savedData = tableModelData;
-        resizeObject();
+        this.saved_Data = table_Model_Data;
+        resize_Object();
     }
     
     //###################################################
@@ -397,42 +389,42 @@ public abstract class JDBC_JTable extends JPanel
     /*
        As columns are hidden the position changes by -1 for the next time its called
      */
-    protected void SetUp_HiddenTableColumns(ArrayList<String> columnsToHide)
+    protected void SetUp_Hidden_Table_Columns(ArrayList<String> columns_To_Hide)
     {
-        int pos = 0, numberOfColumnsHidden = 0, jTablePosAfterHiding = 0;
+        int pos = 0, no_Of_Columns_Hidden = 0, jTable_Pos_After_Hiding = 0;
         
-        for (Map.Entry<String, Integer[]> jTableColumn : columnNamesAndPositions.entrySet())
+        for (Map.Entry<String, Integer[]> jTable_Column : column_Names_And_Positions.entrySet())
         {
-            jTablePosAfterHiding = pos - numberOfColumnsHidden;
+            jTable_Pos_After_Hiding = pos - no_Of_Columns_Hidden;
             
             //########################################################################
             // Extracting Info
             //#######################################################################
-            String columnName = jTableColumn.getKey();
+            String column_Name = jTable_Column.getKey();
 
             /*
              Pos 1 column original position in JTable Data
              Pos 2 column position in JTable after columns are hidden
             */
-            Integer[] columnPositionsList = jTableColumn.getValue();
+            Integer[] column_Positions_List = jTable_Column.getValue();
             
             //#######################################################################
             // Hide Or Update Column Pos After Hiding
             //#######################################################################
             
-            if (columnsToHide.contains(columnName)) // Hide Column In JTable
+            if (columns_To_Hide.contains(column_Name)) // Hide Column In JTable
             {
-                columnPositionsList[1] = null; // No Longer In The JTable so position is null
-                columnNamesAndPositions.replace(columnName, columnPositionsList); // Update position
+                column_Positions_List[1] = null; // No Longer In The JTable so position is null
+                column_Names_And_Positions.replace(column_Name, column_Positions_List); // Update position
                 
-                jTable.removeColumn(jTable.getColumnModel().getColumn(jTablePosAfterHiding)); // Hide Column in JTable
+                jTable.removeColumn(jTable.getColumnModel().getColumn(jTable_Pos_After_Hiding)); // Hide Column in JTable
                 
-                numberOfColumnsHidden++;
+                no_Of_Columns_Hidden++;
             }
             else // Adjust current column position
             {
-                columnPositionsList[1] = jTablePosAfterHiding;
-                columnNamesAndPositions.replace(columnName, columnPositionsList);
+                column_Positions_List[1] = jTable_Pos_After_Hiding;
+                column_Names_And_Positions.replace(column_Name, column_Positions_List);
             }
             //#######################################################################
             
@@ -440,10 +432,7 @@ public abstract class JDBC_JTable extends JPanel
         }
     }
     
-    protected void table_Data_Changed_Action(TableModelEvent evt)
-    {
-    
-    }
+    protected abstract void table_Data_Changed_Action(TableModelEvent evt);
     
     protected void update_Table_Cell_Value(Object data, int row, int col)
     {
@@ -453,14 +442,14 @@ public abstract class JDBC_JTable extends JPanel
         tableModel.setValueAt(data, row, col);
     }
     
-    protected void updateTable(ArrayList<Object> updateData, int updateRow)
+    protected void update_Table(ArrayList<Object> update_Data, int update_Row)
     {
         //########################################################################
         // Updating Table Info
         //########################################################################
-        for (int columnPos = 0; columnPos < tableModel.getColumnCount(); columnPos++)
+        for (int column_Pos = 0; column_Pos < tableModel.getColumnCount(); column_Pos++)
         {
-            tableModel.setValueAt(updateData.get(columnPos), updateRow, columnPos);
+            tableModel.setValueAt(update_Data.get(column_Pos), update_Row, column_Pos);
         }
         
         //########################################################################
@@ -469,17 +458,17 @@ public abstract class JDBC_JTable extends JPanel
         jTable.repaint();
     }
     
-    public void refreshData()
+    public void refresh_Data()
     {
-        tableModel.refreshData();
+        tableModel.refresh_Data();
     }
     
-    public void savedData() { tableModel.saveData(); }
+    public void save_Data() { tableModel.save_Data(); }
     
     //##################################################################################################################
     // Action Methods
     //##################################################################################################################
-    protected Boolean areYouSure(String process)
+    protected Boolean are_You_Sure(String process)
     {
         int reply = JOptionPane.showConfirmDialog(null, String.format("Are you sure you want to %s, \nany unsaved changes will be lost in this Table! \nDo you want to %s?", process, process),
                 "Notification", JOptionPane.YES_NO_OPTION); //HELLO Edit
@@ -492,17 +481,12 @@ public abstract class JDBC_JTable extends JPanel
     //######################################################
     // Mutator Methods
     //######################################################
-    protected void setTableInitialized()
-    {
-        tableInitialised = true;
-    }
-    
-    public void setTableHeaderFont(Font font)
+    public void set_Table_Header_Font(Font font)
     {
         jTable.getTableHeader().setFont(font);
     }
     
-    public void setTableTextFont(Font font)
+    public void set_Table_Text_Font(Font font)
     {
         jTable.setFont(font);
     }
@@ -510,60 +494,38 @@ public abstract class JDBC_JTable extends JPanel
     //######################################################
     // Accessor Methods
     //######################################################
-    protected ArrayList<String> getColumnsToHide()
+    protected ArrayList<String> get_Columns_To_Hide()
     {
-        return columnsToHide;
+        return columns_To_Hide;
     }
     
-    protected ArrayList<String> getColumnNames()
+    protected int get_Rows_In_Table()
     {
-        return columnNames;
-    }
-    
-    protected ArrayList<String> getGuiColumnNames() { return guiColumnNames; }
-    
-    protected int getRowsInTable()
-    {
-        return getTableModel().getRowCount();
-    }
-    
-    protected CustomTableModel getTableModel()
-    {
-        return tableModel;
-    }
-    
-    protected JTable getTable()
-    {
-        return jTable;
-    }
-    
-    protected boolean getTableInitialised()
-    {
-        return tableInitialised;
+        return tableModel.getRowCount();
     }
     
     //######################################################
     // Get Data Methods
     //######################################################
-    protected Object getValueOnTable(int row, int col)
+    protected Object get_Value_On_Table(int row, int col)
     {
-        return getCurrentData().get(row).get(col);
+        return get_Current_Data().get(row).get(col);
     }
     
-    protected ArrayList<ArrayList<Object>> getSavedData()
+    protected ArrayList<ArrayList<Object>> get_Saved_Data()
     {
-        return savedData;
+        return saved_Data;
     }
     
-    protected ArrayList<ArrayList<Object>> getCurrentData()
+    protected ArrayList<ArrayList<Object>> get_Current_Data()
     {
-        return tableModel.getTableModelData();
+        return tableModel.get_TableModel_Data();
     }
     
     //##################################################################################################################
     // Resizing GUi & Add Component Methods
     //##################################################################################################################
-    protected void resizeObject()
+    protected void resize_Object()
     {
         jTable.repaint();
         jTable.revalidate();
@@ -571,26 +533,26 @@ public abstract class JDBC_JTable extends JPanel
                 new Dimension(
                         jTable.getPreferredSize().width,
                         //jTable.getRowHeight() * rowsInTable +20))
-                        jTable.getRowHeight() * getRowsInTable())); // get rid of 20, to have the border be exact
+                        jTable.getRowHeight() * get_Rows_In_Table())); // get rid of 20, to have the border be exact
         
         scrollPane.revalidate(); // reshapes scrollpane
         revalidate();
         
-        if (parentContainer != null)
+        if (parent_Container != null)
         {
-            parentContainer.revalidate();
+            parent_Container.revalidate();
         }
     }
     
-    protected static void addToContainer(Container container, Component addToContainer, int gridx, int gridy, int gridwidth,
-                                         int gridheight, double weightx, double weighty, String fill, String anchor)
+    protected static void add_To_Container(Container container, Component add_To_Container, int grid_X, int grid_Y, int grid_Width,
+                                           int grid_Height, double weight_X, double weight_Y, String fill, String anchor)
     {
-        gbc.gridx = gridx;
-        gbc.gridy = gridy;
-        gbc.gridwidth = gridwidth;
-        gbc.gridheight = gridheight;
-        gbc.weightx = weightx;
-        gbc.weighty = weighty;
+        gbc.gridx = grid_X;
+        gbc.gridy = grid_Y;
+        gbc.gridwidth = grid_Width;
+        gbc.gridheight = grid_Height;
+        gbc.weightx = weight_X;
+        gbc.weighty = weight_Y;
         
         switch (fill.toLowerCase())
         {
@@ -621,6 +583,6 @@ public abstract class JDBC_JTable extends JPanel
                 gbc.anchor = GridBagConstraints.SOUTH;
                 break;
         }
-        container.add(addToContainer, gbc);
+        container.add(add_To_Container, gbc);
     }
 }

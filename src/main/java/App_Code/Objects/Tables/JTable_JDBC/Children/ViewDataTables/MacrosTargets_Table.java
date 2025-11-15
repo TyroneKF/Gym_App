@@ -17,12 +17,12 @@ public class MacrosTargets_Table extends MyJTable_DisplayData
     @Override
     protected String get_Query()
     {
-        return String.format("SELECT * FROM %s WHERE plan_id = ?;", tableName);
+        return String.format("SELECT * FROM %s WHERE plan_id = ?;", table_Name);
     }
     
     @Override
     protected Object[] get_Params()
     {
-        return new Object[]{temp_PlanID};
+        return new Object[]{ temp_Plan_ID };
     }
 }

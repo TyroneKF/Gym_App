@@ -2254,7 +2254,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     JOptionPane.showMessageDialog(this, "\n\nMacro-Targets Successfully Refreshed!!");
                     macrosTargetsChanged(false);
                     
-                    macros_Targets_Table.refreshData();
+                    macros_Targets_Table.refresh_Data();
                 }
             }
         }

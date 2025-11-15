@@ -45,7 +45,7 @@ public class TotalMeal_Table extends MyJTable_DisplayData
     //##################################################################################################################
     public Object get_Value_On_Table(int row, int col)
     {
-        return super.getValueOnTable(row, col);
+        return super.get_Value_On_Table(row, col);
     }
     
     public void set_Value_On_Table(Object data, int row, int col)
@@ -56,13 +56,13 @@ public class TotalMeal_Table extends MyJTable_DisplayData
     @Override
     protected String get_Query()
     {
-        return String.format("SELECT * FROM %s WHERE meal_in_plan_id = ? AND plan_id = ?;", tableName);
+        return String.format("SELECT * FROM %s WHERE meal_in_plan_id = ? AND plan_id = ?;", table_Name);
     }
     
     @Override
     protected Object[] get_Params()
     {
-        return new Object[]{ meal_In_Plan_ID, temp_PlanID };
+        return new Object[]{ meal_In_Plan_ID, temp_Plan_ID };
     }
 }
 
