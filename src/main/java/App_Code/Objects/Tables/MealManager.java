@@ -124,7 +124,7 @@ public class MealManager
         //################################################
         this.meal_plan_screen = meal_plan_screen;
         this.macrosLeft_JTable = macrosLeft_JTable;
-        this.db = meal_plan_screen.getDb();
+        this.db = db;
         
         tempPlanID = meal_plan_screen.getTempPlanID();
         planID = meal_plan_screen.getPlanID();
@@ -1433,12 +1433,12 @@ public class MealManager
     
     private void update_TotalMeal_Table()
     {
-        totalMealTable.update_TotalMeal_Table();
+        totalMealTable.update_Table();
     }
     
     public void update_MacrosLeft_Table()
     {
-        macrosLeft_JTable.update_Macros_Left_Table();
+        macrosLeft_JTable.update_Table();
     }
     
     private void updateCharts(Boolean updateInternalCharts, Boolean updateExternalCharts)

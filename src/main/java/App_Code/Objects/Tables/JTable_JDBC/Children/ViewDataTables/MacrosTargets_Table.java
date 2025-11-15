@@ -12,12 +12,17 @@ public class MacrosTargets_Table extends MyJTable_DisplayData
                                ArrayList<String> columnsToHide)
     {
         super(db, parentContainer, data, columnNames, planID, temp_PlanID, tableName, unEditableColumns, colAvoidCentering, columnsToHide);
-        super.query = String.format("SELECT * FROM %s WHERE plan_id = ?;", tableName);
-        super.params = new Object[]{temp_PlanID};
     }
     
-    public void update_MacrosTargets_Table()
+    @Override
+    protected String get_Query()
     {
-        super.update_Table();
+        return String.format("SELECT * FROM %s WHERE plan_id = ?;", tableName);
+    }
+    
+    @Override
+    protected Object[] get_Params()
+    {
+        return new Object[]{temp_PlanID};
     }
 }

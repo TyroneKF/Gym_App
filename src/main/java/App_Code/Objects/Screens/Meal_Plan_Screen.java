@@ -2234,7 +2234,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //#########################################
     public void update_MacrosTargetTable()
     {
-        macros_Targets_Table.update_MacrosTargets_Table();
+        macros_Targets_Table.update_Table();
     }
     
     private void refresh_MacroTargets()
@@ -2265,7 +2265,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //#########################################
     public void update_MacrosLeftTable()
     {
-        macrosLeft_JTable.update_Macros_Left_Table();
+        macrosLeft_JTable.update_Table();
     }
     
     public MacrosLeft_Table get_MacrosLeft_JTable()

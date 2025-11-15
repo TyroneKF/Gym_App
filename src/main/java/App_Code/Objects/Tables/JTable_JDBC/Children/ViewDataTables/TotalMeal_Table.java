@@ -11,7 +11,6 @@ public class TotalMeal_Table extends MyJTable_DisplayData
     // Variables
     //##################################################################################################################
     private Integer meal_In_Plan_ID;
-    private MealManager mealManager;
     
     //##################################################################################################################
     // Constructor
@@ -22,7 +21,8 @@ public class TotalMeal_Table extends MyJTable_DisplayData
         //##########################################
         // Super
         //##########################################
-        super(db,
+        super(
+                db,
                 mealManager.get_Collapsible_JP_Obj().get_South_JPanel(),
                 data,
                 mealManager.get_Total_Meal_Table_Column_Names(),
@@ -38,28 +38,11 @@ public class TotalMeal_Table extends MyJTable_DisplayData
         // Variables
         //###########################################
         this.meal_In_Plan_ID = meal_In_Plan_ID;
-        this.mealManager = mealManager;
-        
-        super.query = String.format("SELECT * FROM %s WHERE meal_in_plan_id = ? AND plan_id = ?;", tableName);
-        super.params = new Object[]{ meal_In_Plan_ID, temp_PlanID };
     }
     
-   /* @Override
-    protected  void set_Variables()
-    {
-        *//*  String tableName, ArrayList<ArrayList<Object>> savedData, ArrayList<String> columnNames,
-            ArrayList<String> unEditableColumnNames, ArrayList<String> colAvoidCentering, ArrayList<String> columnsToHide*//*
-          
-    }
-    */
     //##################################################################################################################
     // Methods
     //##################################################################################################################
-    public void update_TotalMeal_Table()
-    {
-        super.update_Table();
-    }
-    
     public Object get_Value_On_Table(int row, int col)
     {
         return super.getValueOnTable(row, col);
@@ -68,6 +51,18 @@ public class TotalMeal_Table extends MyJTable_DisplayData
     public void set_Value_On_Table(Object data, int row, int col)
     {
         super.update_Table_Cell_Value(data, row, col);
+    }
+    
+    @Override
+    protected String get_Query()
+    {
+        return String.format("SELECT * FROM %s WHERE meal_in_plan_id = ? AND plan_id = ?;", tableName);
+    }
+    
+    @Override
+    protected Object[] get_Params()
+    {
+        return new Object[]{ meal_In_Plan_ID, temp_PlanID };
     }
 }
 

@@ -15,9 +15,9 @@ public abstract class MyJTable_DisplayData extends JDBC_JTable
     protected Object[] params;
     protected int updateRow = 0;
     
-    public MyJTable_DisplayData(MyJDBC db, Container parentContainer, ArrayList<ArrayList<Object>> data, ArrayList<String> columnNames, int planID, int temp_PlanID,
-                                String tableName, ArrayList<String> unEditableColumns, ArrayList<String> colAvoidCentering,
-                                ArrayList<String> columnsToHide)
+    public MyJTable_DisplayData(MyJDBC db, Container parentContainer, ArrayList<ArrayList<Object>> data, ArrayList<String> columnNames,
+                                int planID, int temp_PlanID, String tableName, ArrayList<String> unEditableColumns,
+                                ArrayList<String> colAvoidCentering, ArrayList<String> columnsToHide)
     {
         // #################################################
         // Super /  Variables
@@ -94,21 +94,25 @@ public abstract class MyJTable_DisplayData extends JDBC_JTable
         }
     }
     
-    protected void update_Table()
+    protected abstract String get_Query();
+    
+    protected abstract Object[] get_Params();
+    
+    public void update_Table()
     {
         //###########################################################################
         //   Updating MacrosLeft_Table
         //##########################################################################
         String errorMSG = String.format("Error, Updating Table '%s'!", tableName);
         
-        ArrayList<ArrayList<Object>> tableDataObject = db.get_2D_Query_AL_Object(query, params, errorMSG);
+        ArrayList<ArrayList<Object>> tableDataObject = db.get_2D_Query_AL_Object(get_Query(), get_Params(), errorMSG);
         
         if (tableDataObject == null)
         {
             JOptionPane.showMessageDialog(null, String.format("Error, un-able to update %s Table!", tableName));
             return;
         }
-      
+        
         super.updateTable(tableDataObject.getFirst(), updateRow);
     }
     
