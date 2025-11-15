@@ -12,8 +12,6 @@ import java.util.ArrayList;
 public abstract class MyJTable_DisplayData extends JDBC_JTable
 {
     protected Integer plan_ID, temp_Plan_ID;
-    protected String query = "";
-    protected Object[] params;
     protected int update_Row = 0;
     
     public MyJTable_DisplayData(MyJDBC db, Container parent_Container, ArrayList<ArrayList<Object>> data, ArrayList<String> column_Names,
