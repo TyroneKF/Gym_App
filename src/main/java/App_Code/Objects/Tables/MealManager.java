@@ -81,8 +81,8 @@ public class MealManager
     //##################################################################################################################
     // Constructors
     //##################################################################################################################
-    public MealManager(Meal_Plan_Screen meal_plan_screen, Meal_OBJ_ID meal_Obj_ID,
-                       LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> sub_Meal_DATA
+    public MealManager(Meal_Plan_Screen meal_plan_screen, MyJDBC db, MacrosLeft_Table macrosLeft_JTable,
+                       Meal_OBJ_ID meal_Obj_ID, LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> sub_Meal_DATA
                        //,ArrayList<ArrayList<Object>> total_Meal_Data
     )
     {
@@ -90,8 +90,9 @@ public class MealManager
         // Global Variables
         //################################################
         this.meal_plan_screen = meal_plan_screen;
+        this.db = db;
+        this.macrosLeft_JTable = macrosLeft_JTable;
         
-        db = meal_plan_screen.getDb();
         meal_In_Plan_ID = meal_Obj_ID.get_ID();
         
         tempPlanID = meal_plan_screen.getTempPlanID();
@@ -116,17 +117,17 @@ public class MealManager
     }
     
     //
-    public MealManager(Meal_Plan_Screen meal_plan_screen)
+    public MealManager(Meal_Plan_Screen meal_plan_screen, MyJDBC db, MacrosLeft_Table macrosLeft_JTable)
     {
         //################################################
         // Setting Variables
         //################################################
         this.meal_plan_screen = meal_plan_screen;
-        
+        this.macrosLeft_JTable = macrosLeft_JTable;
         this.db = meal_plan_screen.getDb();
         
-        this.tempPlanID = meal_plan_screen.getTempPlanID();
-        this.planID = meal_plan_screen.getPlanID();
+        tempPlanID = meal_plan_screen.getTempPlanID();
+        planID = meal_plan_screen.getPlanID();
         
         //################################################
         // Getting user input for Meal Name & Time
@@ -205,7 +206,7 @@ public class MealManager
         gbc = new GridBagConstraints();
         container = meal_plan_screen.getScrollJPanelCenter();
         sharedDataRegistry = meal_plan_screen.get_MealManagerRegistry();
-        macrosLeft_JTable = meal_plan_screen.getMacrosLeft_JTable();
+        macrosLeft_JTable = meal_plan_screen.get_MacrosLeft_JTable();
         
         //############################
         // Lists & Arraylists & Maps
@@ -431,7 +432,7 @@ public class MealManager
         JPanel spaceDivider = new JPanel();
         
         IngredientsTable ingredients_Table =
-                new IngredientsTable(db,this,div_id,sub_Meal_Data,is_Sub_Meal_In_DB, spaceDivider);
+                new IngredientsTable(db, this, div_id, sub_Meal_Data, is_Sub_Meal_In_DB, spaceDivider);
         
         //################################################
         // Add Ingredients Table To GUI
@@ -1558,6 +1559,7 @@ public class MealManager
     {
         return planID;
     }
+    
     // #############################################
     // Table Objects
     // ############################################

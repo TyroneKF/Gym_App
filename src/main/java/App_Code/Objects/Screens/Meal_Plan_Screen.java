@@ -566,34 +566,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################################
         // North :  JPanel
         //####################################################
-        iconSetup(getMainNorthPanel()); // Icon Setup in mainNorthPanel
-        
-        //####################################################
-        // Centre : JPanel
-        //####################################################
-        // Centre: Adding Meal Managers to Centre of Screen On ScrollPanel
-        /**
-         *  HashMap<Meal_OBJ_ID, HashMap<Integer, ArrayList<ArrayList<Object>>>> meals_Data = new HashMap<>();
-         *  HashMap<Meal_OBJ_ID [Meal_ID, Meal_Time, Meal_Name], HashMap<Div_ID, List Of Ingredients>
-         */
-        for (Map.Entry<Meal_OBJ_ID, LinkedHashMap<Integer, ArrayList<ArrayList<Object>>>> meal_Entry : meals_Data.entrySet())
-        {
-            // Get Meal OBJ Data From Map
-            Meal_OBJ_ID meal_ID_Obj = meal_Entry.getKey();
-            LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> sub_Meal_DATA = meal_Entry.getValue();
-            
-            // Create MealManager
-            MealManager mealManager = new MealManager(this, meal_ID_Obj, sub_Meal_DATA);
-            
-            // ADD MealManager To Memory
-            shared_Data_Registry.addMealManager(mealManager);
-            
-            // ADD to GUI
-            add_And_Replace_MealManger_POS_GUI(mealManager, false, false); // Add to GUI
-            
-            // Update Progress
-            loadingScreen.increaseBar(1 + sub_Meal_DATA.size()); // + original meal + the sub-meal
-        }
+        iconSetup(getMainNorthPanel()); // Icon Setup
         
         //#####################################################
         //Bottom : JPanel
@@ -603,9 +576,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
         
         int macrosInfoJP_YPos = 0;
 
-        /*//#########################################################################
+        /*//###################################
         // Setting up Horizontal Image Divider
-        //#########################################################################
+        //#####################################
         int height = 75, width = 0;
         JPanel macrosDividerJPanel = new JPanel(new GridLayout(1, 1));
         macrosDividerJPanel.setPreferredSize(new Dimension(width, height));
@@ -628,16 +601,16 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
         addToContainer(macrosInfoJPanel, macrosDividerJPanel, 0, macrosInfoJP_YPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0, null);
 
-        //#########################################################################
+        //##########################################
         // Add Space Divider
-        //#########################################################################
+        //##########################################
 
         addToContainer(macrosInfoJPanel, createSpaceDivider(0, 20), 0, macrosInfoJP_YPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0, null);
 */
         
-        //######################################
-        // Setting up MacroTargets Table
-        //######################################
+        //############################
+        // MacroTargets Table
+        //############################
         macros_Targets_Table = new MacrosTargets_Table(db, macrosInfoJPanel, planData, macroTargets_ColumnNames, planID, tempPlanID,
                 tablePlanMacroTargetsNameCalc, macroTargets_ColumnNames, null, macrosTargets_Table_ColToHide);
         
@@ -645,15 +618,42 @@ public class Meal_Plan_Screen extends Screen_JFrame
         
         loadingScreen.increaseBar(10);
         
-        //######################################
-        // Setting UP planMacrosLeft Table
-        //######################################
+        //############################
+        // plan_Macros_Left Table
+        //############################
         macrosLeft_JTable = new MacrosLeft_Table(db, macrosInfoJPanel, macrosData, macrosLeft_columnNames, planID, tempPlanID,
                 tablePlanMacrosLeftName, macrosLeft_columnNames, null, macrosLeft_Table_ColToHide);
         
         addToContainer(macrosInfoJPanel, macrosLeft_JTable, 0, macrosInfoJP_YPos += 1, 1, 1, 0.25, 0.25, "both", 30, 0, null);
         
         loadingScreen.increaseBar(10);
+        
+        //####################################################
+        // Centre : JPanel
+        //####################################################
+        // Centre: Adding Meal Managers to Centre of Screen On ScrollPanel
+        /**
+         *  HashMap<Meal_OBJ_ID, HashMap<Integer, ArrayList<ArrayList<Object>>>> meals_Data = new HashMap<>();
+         *  HashMap<Meal_OBJ_ID [Meal_ID, Meal_Time, Meal_Name], HashMap<Div_ID, List Of Ingredients>
+         */
+        for (Map.Entry<Meal_OBJ_ID, LinkedHashMap<Integer, ArrayList<ArrayList<Object>>>> meal_Entry : meals_Data.entrySet())
+        {
+            // Get Meal OBJ Data From Map
+            Meal_OBJ_ID meal_ID_Obj = meal_Entry.getKey();
+            LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> sub_Meal_DATA = meal_Entry.getValue();
+            
+            // Create MealManager
+            MealManager mealManager = new MealManager(this, db, macrosLeft_JTable, meal_ID_Obj, sub_Meal_DATA);
+            
+            // ADD MealManager To Memory
+            shared_Data_Registry.addMealManager(mealManager);
+            
+            // ADD to GUI
+            add_And_Replace_MealManger_POS_GUI(mealManager, false, false); // Add to GUI
+            
+            // Update Progress
+            loadingScreen.increaseBar(1 + sub_Meal_DATA.size()); // + original meal + the sub-meal
+        }
         
         //###############################################################################
         // GUI Alignments & Configurations
@@ -1802,7 +1802,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //##############################################################################################################
         // Add MealManager To GUI & Charts
         //##############################################################################################################
-        MealManager mealManager = new MealManager(this);
+        MealManager mealManager = new MealManager(this, db, macrosLeft_JTable);
         
         //###############################################
         // If Object Creation Failed Exit
@@ -2268,7 +2268,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         macrosLeft_JTable.update_Macros_Left_Table();
     }
     
-    public MacrosLeft_Table getMacrosLeft_JTable()
+    public MacrosLeft_Table get_MacrosLeft_JTable()
     {
         return macrosLeft_JTable;
     }
