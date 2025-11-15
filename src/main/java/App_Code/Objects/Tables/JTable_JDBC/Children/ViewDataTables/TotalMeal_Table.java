@@ -57,7 +57,7 @@ public class TotalMeal_Table extends MyJTable_DisplayData
     //##################################################################################################################
     public void update_TotalMeal_Table()
     {
-        super.updateTable();
+        super.update_Table();
     }
     
     public Object get_Value_On_Table(int row, int col)

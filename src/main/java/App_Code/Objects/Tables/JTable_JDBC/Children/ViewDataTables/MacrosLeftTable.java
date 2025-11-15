@@ -19,6 +19,6 @@ public class MacrosLeftTable extends MyJTable_DisplayData
     
     public void updateMacrosLeftTable()
     {
-        super.updateTable();
+        super.update_Table();
     }
 }

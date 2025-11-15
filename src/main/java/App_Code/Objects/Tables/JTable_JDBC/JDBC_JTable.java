@@ -335,7 +335,7 @@ public abstract class JDBC_JTable extends JPanel
         //#################################################################################
         
         //initColumnSizes();
-        setCellRenderer();
+        set_Cell_Renderer();
         
         if (getTableInitialised())  //first time this method is called, special columns aren't defined
         {
@@ -357,7 +357,7 @@ public abstract class JDBC_JTable extends JPanel
      * This needs to be done before hiding columns
      * Set Column alignment
      */
-    protected void setCellRenderer()
+    protected void set_Cell_Renderer()
     {
         // ###############################################################
         // Centering Column Txt
@@ -385,7 +385,7 @@ public abstract class JDBC_JTable extends JPanel
     
     }
     
-    protected void setTableModelData(ArrayList<ArrayList<Object>> tableModelData)
+    protected void set_Table_Model_Data(ArrayList<ArrayList<Object>> tableModelData)
     {
         this.savedData = tableModelData;
         resizeObject();

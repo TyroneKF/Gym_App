@@ -18,6 +18,6 @@ public class MacrosTargetsTable extends MyJTable_DisplayData
 
     public void updateMacrosTargetsTable()
     {
-        super.updateTable();
+        super.update_Table();
     }
 }

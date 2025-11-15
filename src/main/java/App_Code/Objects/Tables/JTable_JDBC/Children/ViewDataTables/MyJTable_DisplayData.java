@@ -51,7 +51,7 @@ public abstract class MyJTable_DisplayData extends JDBC_JTable
     }
     
     @Override
-    protected void setCellRenderer()
+    protected void set_Cell_Renderer()
     {
         // ###############################################################
         // Centering Column Txt
@@ -90,11 +90,10 @@ public abstract class MyJTable_DisplayData extends JDBC_JTable
             jTable.getColumnModel().getColumn(i).setCellRenderer(cellRenderer);
         }
     }
-    
    
     //protected abstract void set_Variables();
     
-    protected void updateTable()
+    protected void update_Table()
     {
         //###########################################################################
         //   Updating MacrosLeft_Table
@@ -112,9 +111,9 @@ public abstract class MyJTable_DisplayData extends JDBC_JTable
         super.updateTable(tableDataObject.getFirst(), updateRow);
     }
     
-    protected void setTableModelData(ArrayList<ArrayList<Object>> tableModelData)
+    protected void set_Table_Model_Data(ArrayList<ArrayList<Object>> tableModelData)
     {
-        super.setTableModelData(tableModelData);
+        super.set_Table_Model_Data(tableModelData);
     }
     
     protected void update_Table_Cell_Value(Object data, int row, int col)
