@@ -8,7 +8,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class MyJTable_DisplayData extends JDBC_JTable
+public abstract class MyJTable_DisplayData extends JDBC_JTable
 {
     protected Integer planID, temp_PlanID;
     protected String query = "";
@@ -91,6 +91,9 @@ public class MyJTable_DisplayData extends JDBC_JTable
         }
     }
     
+   
+    //protected abstract void set_Variables();
+    
     protected void updateTable()
     {
         //###########################################################################
@@ -108,7 +111,6 @@ public class MyJTable_DisplayData extends JDBC_JTable
       
         super.updateTable(tableDataObject.getFirst(), updateRow);
     }
-    
     
     protected void setTableModelData(ArrayList<ArrayList<Object>> tableModelData)
     {

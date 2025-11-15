@@ -1,7 +1,7 @@
 package App_Code.Objects.Database_Objects;
 
 import App_Code.Objects.Data_Objects.*;
-import App_Code.Objects.Tables.JTable_JDBC.Children.ViewDataTables.TotalMealTable;
+import App_Code.Objects.Tables.JTable_JDBC.Children.ViewDataTables.TotalMeal_Table;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 
 import App_Code.Objects.Tables.MealManager;
@@ -117,7 +117,7 @@ public class Shared_Data_Registry
         //##########################################
         // mealManager Info
         //##########################################
-        TotalMealTable totalMealTable = mealManager.getTotalMealTable();
+        TotalMeal_Table totalMealTable = mealManager.get_Total_Meal_Table();
         
         //##########################################
         // Remove MealManager Results to Collection
@@ -138,7 +138,7 @@ public class Shared_Data_Registry
             String macroName = mapEntry.getKey();
             Integer macroPos = mapEntry.getValue().getValue0();
             
-            BigDecimal macroValue = (BigDecimal) totalMealTable.get_ValueOnTable(0, macroPos);
+            BigDecimal macroValue = (BigDecimal) totalMealTable.get_Value_On_Table(0, macroPos);
             
             /**
              *  <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
@@ -162,7 +162,7 @@ public class Shared_Data_Registry
         //###########################################
         // Remove MealManager PieChart Data
         //###########################################
-        int mealManagerID = mealManager.getMealInPlanID();
+        int mealManagerID = mealManager.get_Meal_In_Plan_ID();
         remove_PieChart_DatasetValues(mealManagerID);
     }
     
@@ -265,7 +265,7 @@ public class Shared_Data_Registry
         //#########################################
         // MealManager Info
         //#########################################
-        int mealInPlanID = mealManager.getMealInPlanID();
+        int mealInPlanID = mealManager.get_Meal_In_Plan_ID();
         
         //##############################################
         // Add to HashMapDataset
@@ -338,7 +338,7 @@ public class Shared_Data_Registry
         //#########################################
         //
         //#########################################
-        int mealInPlanID = mealManager.getMealInPlanID();
+        int mealInPlanID = mealManager.get_Meal_In_Plan_ID();
         
         //#########################################
         // IF PieChart Not Open Exit

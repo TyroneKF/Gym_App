@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-public class JDBC_JTable extends JPanel
+public abstract class JDBC_JTable extends JPanel
 {
     //##############################################
     // Objects
@@ -132,6 +132,8 @@ public class JDBC_JTable extends JPanel
         //##############################################################
         SetUp_HiddenTableColumns(columnsToHide);
     }
+    
+   // protected abstract void set_Variables();
     
     //##################################################################################################################
     // Table Model Set Up Methods
@@ -281,14 +283,14 @@ public class JDBC_JTable extends JPanel
     //###################################################
     // Table Setup Methods
     //###################################################
-    protected void extra_TableSetup()
+    protected void extra_Table_Setup()
     {
     
     }
     
     protected void tableSetup(ArrayList<ArrayList<Object>> data, ArrayList<String> columnNames, boolean setIconsUp)
     {
-        extra_TableSetup();
+        extra_Table_Setup();
         
         //###################################################################################
         // Table Setup
@@ -324,7 +326,7 @@ public class JDBC_JTable extends JPanel
     {
         tableModel = new CustomTableModel(data, columnNames);
         
-        if (addJTableAction) { tableModel.addTableModelListener(evt -> tableDataChange_Action(evt)); }
+        if (addJTableAction) { tableModel.addTableModelListener(evt -> table_Data_Changed_Action(evt)); }
         
         jTable.setModel(tableModel);
         
@@ -342,7 +344,7 @@ public class JDBC_JTable extends JPanel
                 SetUp_HiddenTableColumns(columnsToHide);
             }
             
-            extraTableModel_Setup();
+            extra_TableModel_Setup();
         }
         else
         {
@@ -378,7 +380,7 @@ public class JDBC_JTable extends JPanel
         }
     }
     
-    protected void extraTableModel_Setup()
+    protected void extra_TableModel_Setup()
     {
     
     }
@@ -438,7 +440,7 @@ public class JDBC_JTable extends JPanel
         }
     }
     
-    protected void tableDataChange_Action(TableModelEvent evt)
+    protected void table_Data_Changed_Action(TableModelEvent evt)
     {
     
     }

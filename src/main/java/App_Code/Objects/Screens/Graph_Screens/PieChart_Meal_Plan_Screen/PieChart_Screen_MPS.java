@@ -95,7 +95,7 @@ public class PieChart_Screen_MPS extends Screen_JFrame
             PieChart_Totals_Entry_MPS pieChart_entry_mps = it.next();
             MealManager mealManager = pieChart_entry_mps.get_MealManager();
             
-            int mealManagerID = mealManager.getMealInPlanID();
+            int mealManagerID = mealManager.get_Meal_In_Plan_ID();
             
             // IF MealManager Associated with Entry isn't open, remove its dataset
             if (! mealManager.is_PieChartOpen())

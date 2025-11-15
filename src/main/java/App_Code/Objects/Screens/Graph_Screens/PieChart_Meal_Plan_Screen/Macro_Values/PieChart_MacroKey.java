@@ -1,7 +1,6 @@
 package App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Macro_Values;
 
 import App_Code.Objects.Tables.MealManager;
-import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 
 import java.util.Objects;
 
@@ -28,7 +27,7 @@ public class PieChart_MacroKey implements Comparable<PieChart_MacroKey>
         //############################################
         this.mealManager = mealManager;
         
-        this.mealInPlanID = mealManager.getMealInPlanID();
+        this.mealInPlanID = mealManager.get_Meal_In_Plan_ID();
         this.macroName = macroName;
         this.macroSymbol = macroSymbol;
     }
@@ -51,7 +50,7 @@ public class PieChart_MacroKey implements Comparable<PieChart_MacroKey>
         return mealManager.get_Current_Meal_Time_GUI().toString();
     }
     
-    public String get_MealName() { return mealManager.getCurrentMealName(); }
+    public String get_MealName() { return mealManager.get_Current_Meal_Name(); }
     
     public String get_MacroSymbol()
     {

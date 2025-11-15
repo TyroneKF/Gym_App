@@ -33,7 +33,7 @@ public class PieChart_Totals_Entry_MPS
     //##################################################################################################################
     public void update_PieChart_Title()
     {
-        String title = String.format("[%s]      %s Macros", mealManager.get_Current_Meal_Time_GUI(), mealManager.getCurrentMealName());
+        String title = String.format("[%s]      %s Macros", mealManager.get_Current_Meal_Time_GUI(), mealManager.get_Current_Meal_Name());
         pieChart.setTitle(title);
     }
     

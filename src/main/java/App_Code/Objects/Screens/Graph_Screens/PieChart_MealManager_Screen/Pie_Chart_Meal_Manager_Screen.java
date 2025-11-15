@@ -149,8 +149,8 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen_JFrame
         this.mealManager = mealManager;
         this.shared_Data_Registry = mealManager.getMealManagerRegistry();
         
-        this.mealInPlanID = mealManager.getMealInPlanID();
-        this.meal_name = mealManager.getCurrentMealName();
+        this.mealInPlanID = mealManager.get_Meal_In_Plan_ID();
+        this.meal_name = mealManager.get_Current_Meal_Name();
         
         //############################################
         // Creating Macros / Dataset
@@ -160,7 +160,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen_JFrame
         //#####################################
         // Graph Preferences
         //#####################################
-        String title = String.format("[%s]      %s Macros", mealManager.get_Current_Meal_Time_GUI(), mealManager.getCurrentMealName());
+        String title = String.format("[%s]      %s Macros", mealManager.get_Current_Meal_Time_GUI(), mealManager.get_Current_Meal_Name());
         int
                 pieWidth = frameWidth - 50,
                 pieHeight = frameHeight - 20;
@@ -216,7 +216,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen_JFrame
     //####################################
     public void update_PieChart_Title()
     {
-        String title = String.format("[%s]      %s Macros", mealManager.get_Current_Meal_Time_GUI(), mealManager.getCurrentMealName());
+        String title = String.format("[%s]      %s Macros", mealManager.get_Current_Meal_Time_GUI(), mealManager.get_Current_Meal_Name());
         pieChart.setTitle(title);
     }
 }
