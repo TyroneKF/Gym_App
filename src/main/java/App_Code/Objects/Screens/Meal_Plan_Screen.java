@@ -100,7 +100,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
      */
     private LinkedHashMap<Integer, LinkedHashMap<Integer, ArrayList<ArrayList<Object>>>> sub_Meals_Data_Map = new LinkedHashMap<>();
     
-    private LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> total_Meals_Data_Map = new LinkedHashMap<>();
+    private LinkedHashMap<Integer, ArrayList<Object>> total_Meals_Data_Map = new LinkedHashMap<>();
     
     //#################################################
     // Objects
@@ -679,7 +679,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> sub_Meal_DATA = sub_Meals_Data_Map.get(meal_ID);
             
             // Total Meals DATA
-            ArrayList<ArrayList<Object>> total_Meal_DATA = total_Meals_Data_Map.get(meal_ID);
+            ArrayList<Object> total_Meal_DATA = total_Meals_Data_Map.get(meal_ID);
             
             // Create MealManager
             MealManager mealManager = new MealManager(this, db, macrosLeft_JTable, meal_ID_Obj, sub_Meal_DATA, total_Meal_DATA);
@@ -697,8 +697,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //##########################
         // Clear DATA
         //##########################
-        meals_Data_Map.clear();
-        sub_Meals_Data_Map.clear();
+        meals_Data_Map = null;
+        sub_Meals_Data_Map = null;
         total_Meals_Data_Map.clear();
         
         //###############################################################################
@@ -1390,7 +1390,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         {
             int meal_ID = (int) meal_Data.get(1); // Get Meal Info
             
-            total_Meals_Data_Map.put(meal_ID, new ArrayList<>(List.of(meal_Data))); // Add total Meals Data to storage
+            total_Meals_Data_Map.put(meal_ID, meal_Data); // Add total Meals Data to storage
         }
         
         //#################################
@@ -1398,9 +1398,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //#################################
         System.out.printf("\n\n%s \nTotal Meal Data \n%s", lineSeparator, lineSeparator);
         
-        for (Map.Entry<Integer, ArrayList<ArrayList<Object>>> total_Meal : total_Meals_Data_Map.entrySet())
+        for (Map.Entry<Integer, ArrayList<Object>> total_Meal : total_Meals_Data_Map.entrySet())
         {
-            System.out.printf("\n\n%s \n############################ \n%s", total_Meal.getKey(), total_Meal.getValue().getFirst());
+            System.out.printf("\n\n%s \n############################ \n%s", total_Meal.getKey(), total_Meal.getValue());
         }
         
         //#################################

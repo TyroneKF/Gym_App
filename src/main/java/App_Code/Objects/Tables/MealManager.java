@@ -83,7 +83,7 @@ public class MealManager
     //##################################################################################################################
     public MealManager(Meal_Plan_Screen meal_plan_screen, MyJDBC db, MacrosLeft_Table macrosLeft_JTable,
                        Meal_OBJ_ID meal_Obj_ID, LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> sub_Meal_DATA,
-                       ArrayList<ArrayList<Object>> total_Meal_Data
+                       ArrayList<Object> total_Meal_Data
     )
     {
         //################################################
@@ -111,7 +111,7 @@ public class MealManager
         //################################################
         // Setup Methods
         //################################################
-        if (! setup(total_Meal_Data)) { return; } ;
+        setup_GUI(total_Meal_Data);
         
         add_Multiple_Sub_Meals(sub_Meal_DATA); // Add Sub-Meal to GUI
     }
@@ -174,7 +174,6 @@ public class MealManager
         //################################################
         // Set Name & Time Variables
         //################################################
-        
         setMealNameVariables(false, newMealName, newMealName); // Set MealName Variables
         
         Second convertedNewMealTime = localTimeToSecond(newMealTime);
@@ -186,7 +185,7 @@ public class MealManager
         //################################################
         // Setup
         //################################################
-        if (! setup(null)) { return; } ;
+       // setup_GUI(null);
         
         //################################################
         // Add A SubMeal To Meal
@@ -197,76 +196,6 @@ public class MealManager
     //##################################################################################################################
     //  Setup
     //##################################################################################################################
-    
-    // GUI Setup
-    private boolean setup(ArrayList<ArrayList<Object>> total_Meal_Data)
-    {
-        //################################################################
-        // Variables
-        //################################################################
-        gbc = new GridBagConstraints();
-        container = meal_plan_screen.getScrollJPanelCenter();
-        sharedDataRegistry = meal_plan_screen.get_MealManagerRegistry();
-        macrosLeft_JTable = meal_plan_screen.get_MacrosLeft_JTable();
-        
-        //############################
-        // Lists & Arraylists & Maps
-        //############################
-        
-        // Total Meal
-        mealTotalTable_ColumnNames = meal_plan_screen.getMeal_total_columnNames();
-        totalMeal_Table_ColToHide = meal_plan_screen.getTotalMeal_Table_ColToHide();
-        totalMeal_Other_Cols_Pos = meal_plan_screen.get_TotalMeal_Other_Cols_Pos();
-        
-        // Ingredients Table
-        map_ingredientTypesToNames = meal_plan_screen.getMap_ingredientTypesToNames();
-        ingredientsTableUnEditableCells = meal_plan_screen.getIngredientsTableUnEditableCells();
-        ingredients_Table_Col_Avoid_Centering = meal_plan_screen.getIngredients_Table_Col_Avoid_Centering();
-        ingredientsInMeal_Table_ColToHide = meal_plan_screen.getIngredientsInMeal_Table_ColToHide();
-        ingredientsTable_ColumnNames = meal_plan_screen.getIngredients_ColumnNames();
-        
-        //################################################################
-        // Create Collapsible Object
-        //################################################################
-        //collapsibleJpObj = new CollapsibleJPanel(container, removeSecondsOnTimeString(savedMealTime), 150, 50); // time as btn txt
-        collapsibleJpObj = new CollapsibleJPanel(container, savedMealName, 180, 50); // time as btn txt
-        collapsibleCenterJPanel = collapsibleJpObj.get_Centre_JPanel();
-        collapsibleCenterJPanel.setBackground(Color.YELLOW);
-        
-        //################################################################
-        // Icon Setup in Collapsible Object
-        //################################################################
-        iconSetup();
-        
-        //################################################################
-        // Create TotalMeal Objects
-        //################################################################
-        totalMealTable = new TotalMeal_Table(db, this, meal_In_Plan_ID, total_Meal_Data);
-        
-        //######################################
-        // TotalMeal_Table to Collapsible Object
-        //######################################
-        JPanel southPanel = collapsibleJpObj.get_South_JPanel();
-        
-        // adds space between Ingredients_In_Meal_Calculation table and total_in_meal table
-        add_To_Container(southPanel, new JPanel(), 0, 1, 1, 1, 0.25, 0.25, "both", 50, 0, null);
-        
-        // Adding total table to CollapsibleOBJ
-        add_To_Container(southPanel, totalMealTable, 0, 2, 1, 1, 0.25, 0.25, "both", 0, 0, null);
-        
-        //################################################################
-        // Add Initial Space Between For the First Divided Meal
-        //################################################################
-        add_To_Container(collapsibleCenterJPanel, new JPanel(), 0, yPoInternally++, 1, 1, 0.25, 0.25, "both", 10, 0, null);
-        
-        //################################################################
-        // Set Object Created
-        //################################################################
-        isObjectCreated = true;
-        
-        return true;
-    }
-    
     private void iconSetup()
     {
         int iconSize = 40;
@@ -412,6 +341,73 @@ public class MealManager
         });
         
         iconPanelInsert.add(delete_btn);
+    }
+    
+    // GUI Setup
+    private void setup_GUI(ArrayList<Object> total_Meal_Data)
+    {
+        //################################################################
+        // Variables
+        //################################################################
+        gbc = new GridBagConstraints();
+        container = meal_plan_screen.getScrollJPanelCenter();
+        sharedDataRegistry = meal_plan_screen.get_MealManagerRegistry();
+        macrosLeft_JTable = meal_plan_screen.get_MacrosLeft_JTable();
+        
+        //############################
+        // Lists & Arraylists & Maps
+        //############################
+        
+        // Total Meal
+        mealTotalTable_ColumnNames = meal_plan_screen.getMeal_total_columnNames();
+        totalMeal_Table_ColToHide = meal_plan_screen.getTotalMeal_Table_ColToHide();
+        totalMeal_Other_Cols_Pos = meal_plan_screen.get_TotalMeal_Other_Cols_Pos();
+        
+        // Ingredients Table
+        map_ingredientTypesToNames = meal_plan_screen.getMap_ingredientTypesToNames();
+        ingredientsTableUnEditableCells = meal_plan_screen.getIngredientsTableUnEditableCells();
+        ingredients_Table_Col_Avoid_Centering = meal_plan_screen.getIngredients_Table_Col_Avoid_Centering();
+        ingredientsInMeal_Table_ColToHide = meal_plan_screen.getIngredientsInMeal_Table_ColToHide();
+        ingredientsTable_ColumnNames = meal_plan_screen.getIngredients_ColumnNames();
+        
+        //################################################################
+        // Create Collapsible Object
+        //################################################################
+        //collapsibleJpObj = new CollapsibleJPanel(container, removeSecondsOnTimeString(savedMealTime), 150, 50); // time as btn txt
+        collapsibleJpObj = new CollapsibleJPanel(container, savedMealName, 180, 50); // time as btn txt
+        collapsibleCenterJPanel = collapsibleJpObj.get_Centre_JPanel();
+        collapsibleCenterJPanel.setBackground(Color.YELLOW);
+        
+        //################################################################
+        // Icon Setup in Collapsible Object
+        //################################################################
+        iconSetup();
+        
+        //################################################################
+        // Create TotalMeal Objects
+        //################################################################
+        totalMealTable = new TotalMeal_Table(db, this, meal_In_Plan_ID, total_Meal_Data);
+        
+        //######################################
+        // TotalMeal_Table to Collapsible Object
+        //######################################
+        JPanel southPanel = collapsibleJpObj.get_South_JPanel();
+        
+        // adds space between Ingredients_In_Meal_Calculation table and total_in_meal table
+        add_To_Container(southPanel, new JPanel(), 0, 1, 1, 1, 0.25, 0.25, "both", 50, 0, null);
+        
+        // Adding total table to CollapsibleOBJ
+        add_To_Container(southPanel, totalMealTable, 0, 2, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        
+        //################################################################
+        // Add Initial Space Between For the First Divided Meal
+        //################################################################
+        add_To_Container(collapsibleCenterJPanel, new JPanel(), 0, yPoInternally++, 1, 1, 0.25, 0.25, "both", 10, 0, null);
+        
+        //################################################################
+        // Set Object Created
+        //################################################################
+        isObjectCreated = true;
     }
     
     //#################################
