@@ -1,6 +1,6 @@
 package App_Code.Objects.Tables;
 
-import App_Code.Objects.Data_Objects.Meal_OBJ_ID;
+import App_Code.Objects.Data_Objects.Meal_ID;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Tables.JTable_JDBC.Children.IngredientsTable;
@@ -82,7 +82,7 @@ public class MealManager
     // Constructors
     //##################################################################################################################
     public MealManager(Meal_Plan_Screen meal_plan_screen, MyJDBC db, MacrosLeft_Table macrosLeft_JTable,
-                       Meal_OBJ_ID meal_Obj_ID, LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> sub_Meal_DATA,
+                       Meal_ID meal_ID_Obj, LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> sub_Meal_DATA,
                        ArrayList<Object> total_Meal_Data
     )
     {
@@ -93,17 +93,16 @@ public class MealManager
         this.db = db;
         this.macrosLeft_JTable = macrosLeft_JTable;
         
-        meal_In_Plan_ID = meal_Obj_ID.get_ID();
-        
+        meal_In_Plan_ID = meal_ID_Obj.get_ID();
         tempPlanID = meal_plan_screen.getTempPlanID();
         planID = meal_plan_screen.getPlanID();
         
         // Set Meal Time Variables
-        Second timeStringFormatted = localTimeToSecond(meal_Obj_ID.get_Meal_Time()); // turns etc 09:30:00 into 09:30 for GUI purposes & in second format
+        Second timeStringFormatted = localTimeToSecond(meal_ID_Obj.get_Meal_Time()); // turns etc 09:30:00 into 09:30 for GUI purposes & in second format
         setTimeVariables(false, timeStringFormatted, timeStringFormatted); // Set MealTime Variables
         
         // Set Meal Name Variables
-        String mealName = meal_Obj_ID.get_Name();
+        String mealName = meal_ID_Obj.get_Name();
         setMealNameVariables(false, mealName, mealName); // Set MealName Variables
         
         setMealManagerInDB(true);  // Set Variable which identifies in this meal associated with this object is in the database
@@ -111,7 +110,7 @@ public class MealManager
         //################################################
         // Setup Methods
         //################################################
-        setup_GUI(total_Meal_Data);
+        setup_GUI(total_Meal_Data); // GUI
         
         add_Multiple_Sub_Meals(sub_Meal_DATA); // Add Sub-Meal to GUI
     }

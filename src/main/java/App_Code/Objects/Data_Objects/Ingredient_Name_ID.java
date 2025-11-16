@@ -1,29 +1,32 @@
 package App_Code.Objects.Data_Objects;
 
-import java.time.LocalTime;
-
-public class Meal_OBJ_ID extends ID_Object
+public class Ingredient_Name_ID extends ID_Object
 {
     // #################################################################################################################
     // Variables
     // #################################################################################################################
-    private LocalTime meal_Time;
-    
+    private Ingredient_Type_ID type_ID_Obj;
     
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
-    public Meal_OBJ_ID(int id, String meal_name, LocalTime meal_Time)
+    public Ingredient_Name_ID(int id, String name, Ingredient_Type_ID type_ID_OBJ)
     {
-        super(id, meal_name);
-        this.meal_Time = meal_Time;
+        super(id, name);
+        
+        this.type_ID_Obj = type_ID_OBJ;
     }
     
     // #################################################################################################################
     // Accessor Methods
     // #################################################################################################################
-    public LocalTime get_Meal_Time()
+    public int get_Ingredient_Type_ID()
     {
-        return meal_Time;
+        return type_ID_Obj.get_ID();
+    }
+    
+    public String get_Ingredient_Name()
+    {
+        return type_ID_Obj.get_Name();
     }
 }

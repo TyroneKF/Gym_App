@@ -1,9 +1,9 @@
 package App_Code.Objects.Screens;
 
-import App_Code.Objects.Data_Objects.Ingredient_Name_OBJ;
-import App_Code.Objects.Data_Objects.Ingredient_Type_OBJ;
-import App_Code.Objects.Data_Objects.Meal_OBJ_ID;
-import App_Code.Objects.Data_Objects.Store_OBJ;
+import App_Code.Objects.Data_Objects.Ingredient_Name_ID;
+import App_Code.Objects.Data_Objects.Ingredient_Type_ID;
+import App_Code.Objects.Data_Objects.Meal_ID;
+import App_Code.Objects.Data_Objects.Store_ID;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Tables.JTable_JDBC.Children.ViewDataTables.MacrosLeft_Table;
@@ -28,7 +28,6 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.*;
-import java.util.List;
 
 public class Meal_Plan_Screen extends Screen_JFrame
 {
@@ -87,12 +86,12 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // Meals Data Collections
     //########################
     /**
-     * LinkedHashMap<Integer, Meal_OBJ_ID> meals_Data = new LinkedHashMap<>();
-     * LinkedHashMap<Meal_ID, Meal_OBJ_ID> meals_Data
+     * LinkedHashMap<Integer, Meal_ID> meals_Data = new LinkedHashMap<>();
+     * LinkedHashMap<Meal_ID, Meal_ID> meals_Data
      * <p>
-     * Meal_OBJ_ID = Meal ID / Name/ Time inside Object
+     * Meal_ID = Meal ID / Name/ Time inside Object
      */
-    private LinkedHashMap<Integer, Meal_OBJ_ID> meals_Data_Map = new LinkedHashMap<>();
+    private LinkedHashMap<Integer, Meal_ID> meals_Data_Map = new LinkedHashMap<>();
     
     /**
      * HashMap<Integer, HashMap<Integer, ArrayList<ArrayList<Object>>>> sub_Meals_Data = new HashMap<>();
@@ -659,21 +658,21 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // Centre : JPanel (Meals)
         //####################################################
         /**
-         * LinkedHashMap<Integer, Meal_OBJ_ID> meals_Data = new LinkedHashMap<>();
-         * LinkedHashMap<Meal_ID, Meal_OBJ_ID> meals_Data
+         * LinkedHashMap<Integer, Meal_ID> meals_Data = new LinkedHashMap<>();
+         * LinkedHashMap<Meal_ID, Meal_ID> meals_Data
          *
-         * Meal_OBJ_ID = Meal ID / Name/ Time inside Object
+         * Meal_ID = Meal ID / Name/ Time inside Object
          *
          *  HashMap<Integer, HashMap<Integer, ArrayList<ArrayList<Object>>>> sub_Meals_Data = new HashMap<>();
          *  HashMap<Meal_ID [Meal_ID, Meal_Time, Meal_Name], HashMap<Div_ID, List Of Ingredients>
          */
-        for (Map.Entry<Integer, Meal_OBJ_ID> meal_Entry : meals_Data_Map.entrySet())
+        for (Map.Entry<Integer, Meal_ID> meal_Entry : meals_Data_Map.entrySet())
         {
             // Get Meal ID
             int meal_ID = meal_Entry.getKey();
             
             // Get Meal OBJ Data From Map
-            Meal_OBJ_ID meal_ID_Obj = meals_Data_Map.get(meal_ID);
+            Meal_ID meal_ID_Obj = meals_Data_Map.get(meal_ID);
             
             // Get Associated Sub-Meals
             LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> sub_Meal_DATA = sub_Meals_Data_Map.get(meal_ID);
@@ -1044,11 +1043,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
             String name = (String) row.get(1);
             
             // Add to DATA
-            shared_Data_Registry.add_Store(new Store_OBJ(id, name), false);
+            shared_Data_Registry.add_Store(new Store_ID(id, name), false);
         }
         
         System.out.println("\n\nStores DATA");
-        for (Store_OBJ store : shared_Data_Registry.get_Stores())
+        for (Store_ID store : shared_Data_Registry.get_Stores())
         {
             System.out.printf("\n%s : %s", store.get_ID(), store.get_Name());
         }
@@ -1099,7 +1098,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // Go through Results
         //#######################################
         ObjectMapper mapper = new ObjectMapper();
-        HashMap<Ingredient_Type_OBJ, ArrayList<Ingredient_Name_OBJ>> mapped_Data = new HashMap<>();
+        HashMap<Ingredient_Type_ID, ArrayList<Ingredient_Name_ID>> mapped_Data = new HashMap<>();
         
         try
         {
@@ -1112,7 +1111,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 String type_name = (String) row.get(1);
                 
                 // Ingredient Type Objects
-                Ingredient_Type_OBJ type_OBJ = new Ingredient_Type_OBJ(type_ID, type_name);
+                Ingredient_Type_ID type_OBJ = new Ingredient_Type_ID(type_ID, type_name);
                 
                 // Add to DATA
                 shared_Data_Registry.add_Ingredient_Type(type_OBJ, false); // Add ingredient Type
@@ -1131,8 +1130,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     if (id.isNull()) { continue; }  // If values are empty skip
                     
                     // Add Ingredient_Name to DATA IF not NULL
-                    Ingredient_Name_OBJ ingredient_Name_OBJ = new Ingredient_Name_OBJ(id.asInt(), name.asText(), type_OBJ);
-                    shared_Data_Registry.add_Ingredient_Name_To_Type_Map(type_OBJ, ingredient_Name_OBJ);
+                    Ingredient_Name_ID ingredient_Name_ID_OBJ = new Ingredient_Name_ID(id.asInt(), name.asText(), type_OBJ);
+                    shared_Data_Registry.add_Ingredient_Name_To_Type_Map(type_OBJ, ingredient_Name_ID_OBJ);
                 }
             }
             
@@ -1220,10 +1219,10 @@ public class Meal_Plan_Screen extends Screen_JFrame
         /**
          * Meals Collection:
          *
-         * LinkedHashMap<Integer, Meal_OBJ_ID> meals_Data = new LinkedHashMap<>();
-         * LinkedHashMap<Meal_ID, Meal_OBJ_ID> meals_Data
+         * LinkedHashMap<Integer, Meal_ID> meals_Data = new LinkedHashMap<>();
+         * LinkedHashMap<Meal_ID, Meal_ID> meals_Data
          *
-         * Meal_OBJ_ID = Meal ID / Name/ Time inside Object
+         * Meal_ID = Meal ID / Name/ Time inside Object
          */
         
         /**
@@ -1249,8 +1248,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 //############################
                 
                 // Add to Meals Data
-                Meal_OBJ_ID meal_Obj_ID = new Meal_OBJ_ID(meal_ID, meal_name, meal_Time);
-                meals_Data_Map.put(meal_ID, meal_Obj_ID);
+                Meal_ID meal_ID_Obj = new Meal_ID(meal_ID, meal_name, meal_Time);
+                meals_Data_Map.put(meal_ID, meal_ID_Obj);
                 
                 // Add to Sub-Meals Data
                 LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> div_Meal_Sections = new LinkedHashMap<>();
@@ -1336,7 +1335,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         {
             // Meal DATA
             int meal_ID = meal_Entry.getKey();
-            Meal_OBJ_ID meal_ID_Obj = meals_Data_Map.get(meal_ID);
+            Meal_ID meal_ID_Obj = meals_Data_Map.get(meal_ID);
             
             System.out.printf("\n\n%s \n[%s] - %s (%s) \n%s", lineSeparator, meal_ID_Obj.get_Meal_Time(), meal_ID_Obj.get_Name(), meal_ID_Obj.get_ID(), lineSeparator);
             
