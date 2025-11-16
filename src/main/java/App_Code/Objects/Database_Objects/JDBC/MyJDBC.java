@@ -679,7 +679,7 @@ public class MyJDBC
     }
     
     //####################################
-    //
+    // Singular Query Upload Methods
     //####################################
     public boolean upload_Data2(String query, Object[] insertParameters, String errorMSG)
     {
@@ -733,95 +733,6 @@ public class MyJDBC
             {
                 connection.setAutoCommit(false); // Reset Commit, in case it's not automatically done
             }
-        }
-        //##########################################################
-        // Error Handling
-        //##########################################################
-        catch (Exception e)
-        {
-            handleException_MYSQL(e, methodName, query, errorMSG);
-            return false;
-        }
-    }
-    
-    /***
-     * @param queries_And_Params
-     * @param errorMSG
-     * @return
-     *
-     * DataTypes of params need to be converted to their expected Type  before being passed in as a param in java equivalent
-     *      * to MYSQL's type
-     *      * Although all params can be passed as strings the statement type conversion should match the type the schema expects
-     *      * as MYSQL does this internally and if it fails will cause the following errors:
-     *      * .) silent truncation,
-     *      * .) rounding errors,
-     *      * .)  or outright SQL exceptions.
-     *      *
-     *      * So it's better to convert before MYSQL handles it.
-     *
-     *
-     */
-    public boolean upload_Data_Batch2(LinkedHashSet<Pair<String, Object[]>> queries_And_Params, String errorMSG)
-    {
-        //#############################################################################
-        // Check DB Status
-        //#############################################################################
-        String
-                query = "",
-                methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        
-        if (! is_DB_Connected(methodName)) { return false; }
-        
-        //##############################################################################
-        // Execute
-        //#############################################################################
-        try (Connection connection = dataSource.getConnection())
-        {
-            connection.setAutoCommit(false); // Prevents each query from being singularly uploaded & is only made not temp when committed
-            
-            //###############################################
-            // For Loop For Queries & Params
-            //###############################################
-            for (Pair<String, Object[]> entry : queries_And_Params)
-            {
-                //#########################
-                // Entry Values
-                //#########################
-                query = entry.getValue0();
-                Object[] insertParameters = entry.getValue1();
-                
-                boolean skipParams = insertParameters == null;
-                
-                //#########################
-                // Execute Queries
-                //#########################
-                try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS))
-                {
-                    // Setup Params if statement has any
-                    if (! skipParams)
-                    {
-                        // Prepare Statements
-                        for (int pos = 1; pos <= insertParameters.length; pos++)
-                        {
-                            Object object = insertParameters[pos - 1];
-                            set_Statement_Params(statement, pos, object); // Set Statement Params etc; statement.setString(x , y)
-                        }
-                    }
-                    
-                    //Executing the Statement
-                    statement.executeUpdate();
-                }
-                catch (Exception e)
-                {
-                    rollBack_Connection(connection, methodName, queries_And_Params);
-                    throw e;
-                }
-            }
-            //###############################################
-            //Executing the Batch
-            //###############################################
-            connection.commit(); // Commit Changes beyond current driver
-            return true; // Return Output
         }
         //##########################################################
         // Error Handling
@@ -908,8 +819,175 @@ public class MyJDBC
         }
     }
     
+    //########################################
+    // Upload Batch Methods
+    //########################################
+    
+    /***
+     * @param queries_And_Params
+     * @param errorMSG
+     * @return
+     *
+     * DataTypes of params need to be converted to their expected Type  before being passed in as a param in java equivalent
+     *      * to MYSQL's type
+     *      * Although all params can be passed as strings the statement type conversion should match the type the schema expects
+     *      * as MYSQL does this internally and if it fails will cause the following errors:
+     *      * .) silent truncation,
+     *      * .) rounding errors,
+     *      * .)  or outright SQL exceptions.
+     *      *
+     *      * So it's better to convert before MYSQL handles it.
+     *
+     *
+     */
+    public boolean upload_Data_Batch2(LinkedHashSet<Pair<String, Object[]>> queries_And_Params, String errorMSG)
+    {
+        //###############################################################
+        // Check DB Status
+        //###############################################################
+        String
+                query = "",
+                methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+        
+        if (! is_DB_Connected(methodName)) { return false; }
+        
+        //############################################################
+        // Execute
+        //############################################################
+        try (Connection connection = dataSource.getConnection())
+        {
+            upload_Data_Batch_Internally(connection, methodName, queries_And_Params);  // Upload Batch
+            
+            connection.commit(); // Commit Changes beyond current driver
+            return true; // Return Output
+        }
+        //##########################################################
+        // Error Handling
+        //##########################################################
+        catch (Exception e)
+        {
+            handleException_MYSQL(e, methodName, query, errorMSG);
+            return false;
+        }
+    }
+    
+    private void upload_Data_Batch_Internally
+            (Connection connection, String origin_Method_Name, LinkedHashSet<Pair<String, Object[]>> queries_And_Params) throws Exception
+    {
+        //###############################################
+        // Set Settings For Connection
+        //###############################################
+        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+        
+        connection.setAutoCommit(false); // Prevents each query from being singularly uploaded & is only made not temp when committed
+        
+        //###############################################
+        // For Loop For Queries & Params
+        //###############################################
+        for (Pair<String, Object[]> entry : queries_And_Params)
+        {
+            //#########################
+            // Entry Values
+            //#########################
+            String query = entry.getValue0();
+            Object[] insertParameters = entry.getValue1();
+            
+            boolean skipParams = insertParameters == null;
+            
+            //#########################
+            // Execute Queries
+            //#########################
+            try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS))
+            {
+                // Setup Params if statement has any
+                if (! skipParams)
+                {
+                    // Prepare Statements
+                    for (int pos = 1; pos <= insertParameters.length; pos++)
+                    {
+                        Object object = insertParameters[pos - 1];
+                        set_Statement_Params(statement, pos, object); // Set Statement Params etc; statement.setString(x , y)
+                    }
+                }
+                
+                //Executing the Statement
+                statement.executeUpdate();
+            }
+            catch (Exception e)
+            {
+                rollBack_Connection(connection, origin_Method_Name + " " + methodName, queries_And_Params);
+                throw e;
+            }
+        }
+    }
+    
     // #######################################################
+    // Upload & GET Together
     // #######################################################
+    
+    /***
+     * @param upload_Queries_And_Params
+     * @param errorMSG
+     * @return
+     *
+     * DataTypes of params need to be converted to their expected Type  before being passed in as a param in java equivalent
+     *      * to MYSQL's type
+     *      * Although all params can be passed as strings the statement type conversion should match the type the schema expects
+     *      * as MYSQL does this internally and if it fails will cause the following errors:
+     *      * .) silent truncation,
+     *      * .) rounding errors,
+     *      * .)  or outright SQL exceptions.
+     *      *
+     *      * So it's better to convert before MYSQL handles it.
+     *
+     *
+     */
+    public Query_Results upload_And_Get_Batch(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params,
+                                        LinkedHashSet<Pair<String, Object[]>> get_Queries_And_Params, String errorMSG)
+    {
+        //###############################################################
+        // Check DB Status & Variables
+        //###############################################################
+        String
+                query = "",
+                methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+        
+        Query_Results query_Results = new Query_Results();
+        
+        if (! is_DB_Connected(methodName)) { return query_Results; }
+        
+        //############################################################
+        // Execute Upload Params
+        //############################################################
+        try (Connection connection = dataSource.getConnection())
+        {
+            // Upload Results In Batch
+            upload_Data_Batch_Internally(connection, methodName, upload_Queries_And_Params);  // Upload Batch
+            
+            // Execute Get Statements
+            
+            
+            
+            
+            connection.commit(); // Commit Changes beyond current driver
+            return query_Results; // Return Output
+        }
+        //##########################################################
+        // Error Handling
+        //##########################################################
+        catch (Exception e)
+        {
+            handleException_MYSQL(e, methodName, query, errorMSG);
+            return null; // Return Output
+        }
+    }
+    
+    // ############################################################
+    // ############################################################
+    // ############################################################
+    // ############################################################
+    // REMOVE
+    // #########################################################
     
     /**
      * This method can upload one statement or, multiple queries within a single String after each statement in the string is separated by a ;
@@ -1000,6 +1078,7 @@ public class MyJDBC
     //##################################################################################################################
     // DB Get Methods
     //##################################################################################################################
+    
     /**
      * Allows Multiple Types Of Collections
      * <p>
@@ -1080,7 +1159,7 @@ public class MyJDBC
         {
             query = String.format("\n\n%s \n%n%s", query, Arrays.toString(params));
             
-            handleException_MYSQL(e, methodName, query , errorMSG);
+            handleException_MYSQL(e, methodName, query, errorMSG);
             return null;
         }
     }
@@ -1088,18 +1167,19 @@ public class MyJDBC
     //######################################################
     // Different Types Of Single Column Collections
     //######################################################
-    public  ArrayList<String> get_Single_Col_Query_String(String query, Object[] params, String errorMSG)
+    public ArrayList<String> get_Single_Col_Query_String(String query, Object[] params, String errorMSG)
     {
-        return get_Single_Column(query, params, errorMSG, String.class, ArrayList::new);
+        return get_Single_Column(query, params, errorMSG, String.class, ArrayList :: new);
     }
     
-    public  ArrayList<Object> get_Single_Col_Query_Obj(String query, Object[] params, String errorMSG)
+    public ArrayList<Object> get_Single_Col_Query_Obj(String query, Object[] params, String errorMSG)
     {
-        return (ArrayList<Object>) get_Single_Column(query, params, errorMSG, Object.class, ArrayList::new);
+        return (ArrayList<Object>) get_Single_Column(query, params, errorMSG, Object.class, ArrayList :: new);
     }
     
-    public  ArrayList<Integer> get_Single_Col_Query_Int(String query, Object[] params, String errorMSG) {
-        return (ArrayList<Integer>) get_Single_Column(query, params, errorMSG, Integer.class, ArrayList::new);
+    public ArrayList<Integer> get_Single_Col_Query_Int(String query, Object[] params, String errorMSG)
+    {
+        return (ArrayList<Integer>) get_Single_Column(query, params, errorMSG, Integer.class, ArrayList :: new);
     }
     
     public TreeSet<String> get_Single_Col_Query_Ordered_TS(String query, Object[] params, String errorMSG)
@@ -1138,8 +1218,8 @@ public class MyJDBC
         //##########################################################
         Object[] params = new Object[]{ databaseName, tableName };
         String errorMSG = String.format("Error, getting DataTypes get_Column_Names_AL() for Table: %s", tableName);
-       
-        return get_Single_Col_Query_String(columnNamesQuery,params, errorMSG);
+        
+        return get_Single_Col_Query_String(columnNamesQuery, params, errorMSG);
     }
     
     //##################################################################################################################
