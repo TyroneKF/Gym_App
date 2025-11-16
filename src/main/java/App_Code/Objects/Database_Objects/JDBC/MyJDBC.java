@@ -943,41 +943,56 @@ public class MyJDBC
      *
      */
     public Query_Results upload_And_Get_Batch(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params,
-                                        LinkedHashSet<Pair<String, Object[]>> get_Queries_And_Params, String errorMSG)
+                                              LinkedHashSet<Pair<String, Object[]>> get_Queries_And_Params, String errorMSG)
     {
         //###############################################################
         // Check DB Status & Variables
         //###############################################################
-        String
-                query = "",
-                methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
         
+        if (! is_DB_Connected(methodName)) { return null; }
+        
+        //###############################################################
+        // Variables
+        //###############################################################
         Query_Results query_Results = new Query_Results();
         
-        if (! is_DB_Connected(methodName)) { return query_Results; }
-        
-        //############################################################
+        //##############################################################
         // Execute Upload Params
-        //############################################################
+        //##############################################################
         try (Connection connection = dataSource.getConnection())
         {
-            // Upload Results In Batch
-            upload_Data_Batch_Internally(connection, methodName, upload_Queries_And_Params);  // Upload Batch
-            
-            // Execute Get Statements
-            
-            
-            
-            
-            connection.commit(); // Commit Changes beyond current driver
-            return query_Results; // Return Output
+            try
+            {
+                upload_Data_Batch_Internally(connection, methodName, upload_Queries_And_Params);  // Upload Batch
+                
+                for (Pair<String, Object[]> fetch_Obj : get_Queries_And_Params)  // Execute Get Statements
+                {
+                    String query = fetch_Obj.getValue0();
+                    Object[] params = fetch_Obj.getValue1();
+                    
+                    // Add Fetch Results To Object made for storing multiple queries
+                    query_Results.add_Result(get_2D_ArrayList_Internal(connection, methodName, query, params, Object.class));
+                }
+                
+                // Commit Changes beyond current driver
+                connection.commit();
+                
+                // Return Output
+                return query_Results;
+            }
+            catch (Exception e)
+            {
+                rollBack_Connection(connection, methodName, null); // Rollback, in case it's not automatically done
+                throw e;
+            }
         }
         //##########################################################
         // Error Handling
         //##########################################################
         catch (Exception e)
         {
-            handleException_MYSQL(e, methodName, query, errorMSG);
+            handleException_MYSQL(e, methodName, null, errorMSG);
             return null; // Return Output
         }
     }
@@ -1225,7 +1240,7 @@ public class MyJDBC
     //##################################################################################################################
     // Multi Methods
     //##################################################################################################################
-    private <T> ArrayList<ArrayList<T>> get_2D_ArrayList(String query, Object[] params, Class<T> typeCast, String errorMSG)
+    private <T> ArrayList<ArrayList<T>> get_2D_ArrayList(String query, Object[] params, Class<T> type_Cast, String errorMSG)
     {
         //#########################################################################
         // Check DB Status
@@ -1234,14 +1249,37 @@ public class MyJDBC
         
         if (! is_DB_Connected(methodName)) { return null; }
         
-        ArrayList<ArrayList<T>> collection = new ArrayList<>();
         //#########################################################################
         // Query Setup
         //#########################################################################
-        try (
-                Connection connection = dataSource.getConnection(); // Get a Connection from pool
-                PreparedStatement statement = connection.prepareStatement(query);
-        )
+        try (Connection connection = dataSource.getConnection()) // Get a Connection from pool
+        {
+            return get_2D_ArrayList_Internal(connection, methodName, query, params, type_Cast);
+        }
+        //##########################################################
+        // Error Handling
+        //##########################################################
+        catch (Exception e)
+        {
+            handleException_MYSQL(e, methodName, query, errorMSG);
+            return null;
+        }
+    }
+    
+    private <T> ArrayList<ArrayList<T>> get_2D_ArrayList_Internal(Connection connection, String origin_Method_Name, String query, Object[] params,
+                                                                  Class<T> typeCast) throws Exception
+    {
+        //#########################################################################
+        // Variables
+        //#########################################################################
+        ArrayList<ArrayList<T>> collection = new ArrayList<>();
+        
+        String method_Name = String.format("%s() / %s()", new Object() { }.getClass().getEnclosingMethod().getName(), origin_Method_Name);
+        
+        //#########################################################################
+        // Query Setup
+        //#########################################################################
+        try (PreparedStatement statement = connection.prepareStatement(query))
         {
             //############################################
             // Prepare Params
@@ -1260,7 +1298,12 @@ public class MyJDBC
             //############################################
             ResultSet resultSet = statement.executeQuery();
             
-            if (! resultSet.isBeforeFirst()) { return null; } // checks if any data was returned
+            if (! resultSet.isBeforeFirst()) // checks if any data was returned
+            {
+                String errorMSG = String.format("\n\n%s Error \nQuery Returned NULL Results!! \n\n%s", method_Name, query);
+                
+                throw new Exception(errorMSG);
+            }
             
             //#####################################################################
             // Getting Query Data Info
@@ -1271,7 +1314,6 @@ public class MyJDBC
             //#####################################################################
             // Compile Results
             //#####################################################################
-            
             while (resultSet.next())
             {
                 ArrayList<T> rowData = new ArrayList<>();
@@ -1291,8 +1333,7 @@ public class MyJDBC
         //##########################################################
         catch (Exception e)
         {
-            handleException_MYSQL(e, methodName, query, errorMSG);
-            return null;
+            throw e;
         }
     }
     

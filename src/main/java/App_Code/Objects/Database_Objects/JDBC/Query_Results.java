@@ -21,7 +21,7 @@ public class Query_Results
     //##################################################################################################################
     // Methods
     //##################################################################################################################
-    public void add_Fetched_Result(ArrayList<ArrayList<Object>> query_Results) throws Exception
+    public void add_Result(ArrayList<ArrayList<Object>> query_Results) throws Exception
     {
         String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
         
@@ -42,6 +42,7 @@ public class Query_Results
         check_Index_In_Bounds(index, method_Name);
         
         outputs.remove(index);
+        size--;
     }
     
     public ArrayList<ArrayList<Object>> get_Fetched_Result(int index) throws Exception
