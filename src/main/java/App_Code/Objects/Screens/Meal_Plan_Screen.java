@@ -25,6 +25,7 @@ import org.jfree.data.time.Second;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.*;
 
@@ -33,7 +34,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    
     // Integers
     private final Integer tempPlanID = 1;
     private Integer planID;
@@ -60,6 +60,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     private boolean
             screen_Created = false,
             macroTargetsChanged = false;
+    
     private static boolean production = false;
     
     //###############################################
@@ -81,10 +82,26 @@ public class Meal_Plan_Screen extends Screen_JFrame
         }
     });
     
+    //########################
+    // Meals Data Collections
+    //########################
+    /**
+     * LinkedHashMap<Integer, Meal_OBJ_ID> meals_Data = new LinkedHashMap<>();
+     * LinkedHashMap<Meal_ID, Meal_OBJ_ID> meals_Data
+     *
+     * Meal_OBJ_ID = Meal ID / Name/ Time inside Object
+     */
+    private LinkedHashMap<Integer, Meal_OBJ_ID> meals_Data = new LinkedHashMap<>();
+    
+    /**
+     * HashMap<Integer, HashMap<Integer, ArrayList<ArrayList<Object>>>> sub_Meals_Data = new HashMap<>();
+     * HashMap<Meal_ID [Meal_ID, Meal_Time, Meal_Name], HashMap<Div_ID, List Of Ingredients>
+     */
+    private LinkedHashMap<Integer, LinkedHashMap<Integer, ArrayList<ArrayList<Object>>>> sub_Meals_Data = new LinkedHashMap<>();
+    
     //#################################################
     // Objects
     //#################################################
-    
     // DATA Object
     private Shared_Data_Registry shared_Data_Registry;
     
@@ -541,8 +558,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################################
         // Get Meals Data
         //####################################################
-        LinkedHashMap<Meal_OBJ_ID, LinkedHashMap<Integer, ArrayList<ArrayList<Object>>>> meals_Data = get_Meal_Data();
-        if (meals_Data == null) { JOptionPane.showMessageDialog(null, "Unable to get Meals Data! "); return; }
+        if (! get_Meal_Data()) { JOptionPane.showMessageDialog(null, "Unable to get Meals Data! "); return; }
         
         //###############################################################################
         // Build GUI
@@ -629,18 +645,27 @@ public class Meal_Plan_Screen extends Screen_JFrame
         loadingScreen.increaseBar(10);
         
         //####################################################
-        // Centre : JPanel
+        // Centre : JPanel (Meals)
         //####################################################
-        // Centre: Adding Meal Managers to Centre of Screen On ScrollPanel
         /**
-         *  HashMap<Meal_OBJ_ID, HashMap<Integer, ArrayList<ArrayList<Object>>>> meals_Data = new HashMap<>();
-         *  HashMap<Meal_OBJ_ID [Meal_ID, Meal_Time, Meal_Name], HashMap<Div_ID, List Of Ingredients>
+         * LinkedHashMap<Integer, Meal_OBJ_ID> meals_Data = new LinkedHashMap<>();
+         * LinkedHashMap<Meal_ID, Meal_OBJ_ID> meals_Data
+         *
+         * Meal_OBJ_ID = Meal ID / Name/ Time inside Object
+         *
+         *  HashMap<Integer, HashMap<Integer, ArrayList<ArrayList<Object>>>> sub_Meals_Data = new HashMap<>();
+         *  HashMap<Meal_ID [Meal_ID, Meal_Time, Meal_Name], HashMap<Div_ID, List Of Ingredients>
          */
-        for (Map.Entry<Meal_OBJ_ID, LinkedHashMap<Integer, ArrayList<ArrayList<Object>>>> meal_Entry : meals_Data.entrySet())
+        for (Map.Entry<Integer, Meal_OBJ_ID> meal_Entry : meals_Data.entrySet())
         {
+            // Get Meal ID
+            int meal_ID = meal_Entry.getKey();
+            
             // Get Meal OBJ Data From Map
-            Meal_OBJ_ID meal_ID_Obj = meal_Entry.getKey();
-            LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> sub_Meal_DATA = meal_Entry.getValue();
+            Meal_OBJ_ID meal_ID_Obj = meals_Data.get(meal_ID);
+            
+            // Get Associated Sub-Meals
+            LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> sub_Meal_DATA = sub_Meals_Data.get(meal_ID);
             
             // Create MealManager
             MealManager mealManager = new MealManager(this, db, macrosLeft_JTable, meal_ID_Obj, sub_Meal_DATA);
@@ -654,6 +679,12 @@ public class Meal_Plan_Screen extends Screen_JFrame
             // Update Progress
             loadingScreen.increaseBar(1 + sub_Meal_DATA.size()); // + original meal + the sub-meal
         }
+        
+        //##########################
+        // Clear DATA
+        //##########################
+        meals_Data.clear();
+        sub_Meals_Data.clear();
         
         //###############################################################################
         // GUI Alignments & Configurations
@@ -1099,7 +1130,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         }
     }
     
-    public LinkedHashMap<Meal_OBJ_ID, LinkedHashMap<Integer, ArrayList<ArrayList<Object>>>> get_Meal_Data()
+    public boolean get_Meal_Data()
     {
         String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
         
@@ -1166,16 +1197,26 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //########################################################################
         ArrayList<ArrayList<Object>> results = db.get_2D_Query_AL_Object(query, params, errorMSG);
         
-        if (results == null) { JOptionPane.showMessageDialog(null, errorMSG); return null; }
+        if (results == null) { JOptionPane.showMessageDialog(null, errorMSG); return false; }
         
         //########################################################################
         // Go Through JSON DATA
         //#########################################################################
         /**
-         *  HashMap<Meal_OBJ_ID, HashMap<Integer, ArrayList<ArrayList<Object>>>> meals_Data = new HashMap<>();
-         *  HashMap<Meal_OBJ_ID [Meal_ID, Meal_Time, Meal_Name], HashMap<Div_ID, List Of Ingredients>
+         * Meals Collection:
+         *
+         * LinkedHashMap<Integer, Meal_OBJ_ID> meals_Data = new LinkedHashMap<>();
+         * LinkedHashMap<Meal_ID, Meal_OBJ_ID> meals_Data
+         *
+         * Meal_OBJ_ID = Meal ID / Name/ Time inside Object
          */
-        LinkedHashMap<Meal_OBJ_ID, LinkedHashMap<Integer, ArrayList<ArrayList<Object>>>> meals_Data = new LinkedHashMap<>();
+        
+        /**
+         *  Sub-Meals Collection:
+         *
+         *  HashMap<Integer, HashMap<Integer, ArrayList<ArrayList<Object>>>> sub_Meals_Data = new HashMap<>();
+         *  HashMap<Meal_ID [Meal_ID, Meal_Time, Meal_Name], HashMap<Div_ID, List Of Ingredients>
+         */
         
         try
         {
@@ -1191,10 +1232,14 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 //############################
                 // Add Meal DATA / Collections
                 //############################
-                Meal_OBJ_ID meal_Obj_ID = new Meal_OBJ_ID(meal_ID, meal_name, meal_Time);
-                LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> div_Meal_Sections = new LinkedHashMap<>();
                 
-                meals_Data.put(meal_Obj_ID, div_Meal_Sections); // ADD to memory
+                // Add to Meals Data
+                Meal_OBJ_ID meal_Obj_ID = new Meal_OBJ_ID(meal_ID, meal_name, meal_Time);
+                meals_Data.put(meal_ID, meal_Obj_ID);
+                
+                // Add to Sub-Meals Data
+                LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> div_Meal_Sections = new LinkedHashMap<>();
+                sub_Meals_Data.put(meal_ID, div_Meal_Sections); // ADD to memory
                 
                 //######################################################
                 // Parsing JSON DATA - Ingredients in Meals
@@ -1226,23 +1271,23 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     ingredient_macros.add(ingredient_node.get("type").asText());
                     
                     ingredient_macros.add(ingredient_node.get("ingred_name").asText());
-                    ingredient_macros.add(ingredient_node.get("quantity").decimalValue());
+                    ingredient_macros.add(new BigDecimal(ingredient_node.get("quantity").asText()));
                     ingredient_macros.add(ingredient_node.get("supplier").asText());
                     
                     ingredient_macros.add(ingredient_node.get("prod_name").asText());
                     
-                    ingredient_macros.add(ingredient_node.get("ingred_cost").decimalValue());
-                    ingredient_macros.add(ingredient_node.get("gi").decimalValue());
-                    ingredient_macros.add(ingredient_node.get("protein").decimalValue());
-                    ingredient_macros.add(ingredient_node.get("carbs").decimalValue());
-                    ingredient_macros.add(ingredient_node.get("sugar_carbs").decimalValue());
-                    ingredient_macros.add(ingredient_node.get("fibre").decimalValue());
-                    ingredient_macros.add(ingredient_node.get("fat").decimalValue());
-                    ingredient_macros.add(ingredient_node.get("sat_fat").decimalValue());
-                    ingredient_macros.add(ingredient_node.get("salt").decimalValue());
-                    ingredient_macros.add(ingredient_node.get("water").decimalValue());
-                    ingredient_macros.add(ingredient_node.get("liquid").decimalValue());
-                    ingredient_macros.add(ingredient_node.get("calories").decimalValue());
+                    ingredient_macros.add(new BigDecimal(ingredient_node.get("ingred_cost").asText()));
+                    ingredient_macros.add(ingredient_node.get("gi").asInt());
+                    ingredient_macros.add(new BigDecimal(ingredient_node.get("protein").asText()));
+                    ingredient_macros.add(new BigDecimal(ingredient_node.get("carbs").asText()));
+                    ingredient_macros.add(new BigDecimal(ingredient_node.get("sugar_carbs").asText()));
+                    ingredient_macros.add(new BigDecimal(ingredient_node.get("fibre").asText()));
+                    ingredient_macros.add(new BigDecimal(ingredient_node.get("fat").asText()));
+                    ingredient_macros.add(new BigDecimal(ingredient_node.get("sat_fat").asText()));
+                    ingredient_macros.add(new BigDecimal(ingredient_node.get("salt").asText()));
+                    ingredient_macros.add(new BigDecimal(ingredient_node.get("water").asText()));
+                    ingredient_macros.add(new BigDecimal(ingredient_node.get("liquid").asText()));
+                    ingredient_macros.add(new BigDecimal(ingredient_node.get("calories").asText()));
                     
                     ingredient_macros.add(ingredient_node.get("delete_btn").asText());
                     
@@ -1266,16 +1311,17 @@ public class Meal_Plan_Screen extends Screen_JFrame
         catch (Exception e)
         {
             System.err.printf("\n\n%s ERROR \n%s", methodName, e);
-            return null;
+            return false;
         }
         
         //#######################################
         // Read DATA
         //#######################################
-        for (Map.Entry<Meal_OBJ_ID, LinkedHashMap<Integer, ArrayList<ArrayList<Object>>>> meal_Entry : meals_Data.entrySet())
+        for (Map.Entry<Integer, LinkedHashMap<Integer, ArrayList<ArrayList<Object>>>> meal_Entry : sub_Meals_Data.entrySet())
         {
             // Meal DATA
-            Meal_OBJ_ID meal_ID_Obj = meal_Entry.getKey();
+            int meal_ID = meal_Entry.getKey();
+            Meal_OBJ_ID meal_ID_Obj = meals_Data.get(meal_ID);
             
             System.out.printf("\n\n%s \n[%s] - %s (%s) \n%s", lineSeparator, meal_ID_Obj.get_Meal_Time(), meal_ID_Obj.get_Name(), meal_ID_Obj.get_ID(), lineSeparator);
             
@@ -1299,7 +1345,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //#######################################
         // Return DATA
         //#######################################
-        return meals_Data;
+        return true;
     }
     
     //##################################################################################################################
