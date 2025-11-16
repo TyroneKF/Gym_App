@@ -91,13 +91,15 @@ public class Meal_Plan_Screen extends Screen_JFrame
      *
      * Meal_OBJ_ID = Meal ID / Name/ Time inside Object
      */
-    private LinkedHashMap<Integer, Meal_OBJ_ID> meals_Data = new LinkedHashMap<>();
+    private LinkedHashMap<Integer, Meal_OBJ_ID> meals_Data_Map = new LinkedHashMap<>();
     
     /**
      * HashMap<Integer, HashMap<Integer, ArrayList<ArrayList<Object>>>> sub_Meals_Data = new HashMap<>();
      * HashMap<Meal_ID [Meal_ID, Meal_Time, Meal_Name], HashMap<Div_ID, List Of Ingredients>
      */
-    private LinkedHashMap<Integer, LinkedHashMap<Integer, ArrayList<ArrayList<Object>>>> sub_Meals_Data = new LinkedHashMap<>();
+    private LinkedHashMap<Integer, LinkedHashMap<Integer, ArrayList<ArrayList<Object>>>> sub_Meals_Data_Map = new LinkedHashMap<>();
+    
+    private LinkedHashMap<Integer, ArrayList<Object>> total_Meals_Data_Map = new LinkedHashMap<>();
     
     //#################################################
     // Objects
@@ -556,9 +558,17 @@ public class Meal_Plan_Screen extends Screen_JFrame
         }
         
         //####################################################
-        // Get Meals Data
+        // Get Meals Data (Sub-Meals & Ingredients)
         //####################################################
         if (! get_Meal_Data()) { JOptionPane.showMessageDialog(null, "Unable to get Meals Data! "); return; }
+        
+        //####################################################
+        // Get Total Meals Data (Totals Per Macro)
+        //####################################################
+        if (! get_Total_Meals_Data())
+        {
+            JOptionPane.showMessageDialog(null, "Unable to get Totals Data For Meals! "); return;
+        }
         
         //###############################################################################
         // Build GUI
@@ -656,16 +666,16 @@ public class Meal_Plan_Screen extends Screen_JFrame
          *  HashMap<Integer, HashMap<Integer, ArrayList<ArrayList<Object>>>> sub_Meals_Data = new HashMap<>();
          *  HashMap<Meal_ID [Meal_ID, Meal_Time, Meal_Name], HashMap<Div_ID, List Of Ingredients>
          */
-        for (Map.Entry<Integer, Meal_OBJ_ID> meal_Entry : meals_Data.entrySet())
+        for (Map.Entry<Integer, Meal_OBJ_ID> meal_Entry : meals_Data_Map.entrySet())
         {
             // Get Meal ID
             int meal_ID = meal_Entry.getKey();
             
             // Get Meal OBJ Data From Map
-            Meal_OBJ_ID meal_ID_Obj = meals_Data.get(meal_ID);
+            Meal_OBJ_ID meal_ID_Obj = meals_Data_Map.get(meal_ID);
             
             // Get Associated Sub-Meals
-            LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> sub_Meal_DATA = sub_Meals_Data.get(meal_ID);
+            LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> sub_Meal_DATA = sub_Meals_Data_Map.get(meal_ID);
             
             // Create MealManager
             MealManager mealManager = new MealManager(this, db, macrosLeft_JTable, meal_ID_Obj, sub_Meal_DATA);
@@ -683,8 +693,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //##########################
         // Clear DATA
         //##########################
-        meals_Data.clear();
-        sub_Meals_Data.clear();
+        meals_Data_Map.clear();
+        sub_Meals_Data_Map.clear();
+        total_Meals_Data_Map.clear();
         
         //###############################################################################
         // GUI Alignments & Configurations
@@ -1235,11 +1246,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 
                 // Add to Meals Data
                 Meal_OBJ_ID meal_Obj_ID = new Meal_OBJ_ID(meal_ID, meal_name, meal_Time);
-                meals_Data.put(meal_ID, meal_Obj_ID);
+                meals_Data_Map.put(meal_ID, meal_Obj_ID);
                 
                 // Add to Sub-Meals Data
                 LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> div_Meal_Sections = new LinkedHashMap<>();
-                sub_Meals_Data.put(meal_ID, div_Meal_Sections); // ADD to memory
+                sub_Meals_Data_Map.put(meal_ID, div_Meal_Sections); // ADD to memory
                 
                 //######################################################
                 // Parsing JSON DATA - Ingredients in Meals
@@ -1317,11 +1328,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //#######################################
         // Read DATA
         //#######################################
-        for (Map.Entry<Integer, LinkedHashMap<Integer, ArrayList<ArrayList<Object>>>> meal_Entry : sub_Meals_Data.entrySet())
+        for (Map.Entry<Integer, LinkedHashMap<Integer, ArrayList<ArrayList<Object>>>> meal_Entry : sub_Meals_Data_Map.entrySet())
         {
             // Meal DATA
             int meal_ID = meal_Entry.getKey();
-            Meal_OBJ_ID meal_ID_Obj = meals_Data.get(meal_ID);
+            Meal_OBJ_ID meal_ID_Obj = meals_Data_Map.get(meal_ID);
             
             System.out.printf("\n\n%s \n[%s] - %s (%s) \n%s", lineSeparator, meal_ID_Obj.get_Meal_Time(), meal_ID_Obj.get_Name(), meal_ID_Obj.get_ID(), lineSeparator);
             
@@ -1345,6 +1356,52 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //#######################################
         // Return DATA
         //#######################################
+        return true;
+    }
+    
+    public boolean get_Total_Meals_Data()
+    {
+        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+        
+        //#################################
+        // Create Get Query Results
+        //#################################
+        String query = String.format("Select * FROM %s WHERE plan_id = ? ORDER BY meal_in_plan_id;", tableTotalMealsTableName);
+        
+        String errorMSG = "Unable to get Total Meals Data for Plan!!";
+        
+        Object[] params = new Object[]{ tempPlanID };
+        
+        //#################################
+        // Execute Query
+        //#################################
+        ArrayList<ArrayList<Object>> meals_Data = db.get_2D_Query_AL_Object(query, params, errorMSG);
+        
+        if (meals_Data == null) { JOptionPane.showMessageDialog(null, errorMSG); return false; }
+        
+        //#################################
+        // Go Through DATA
+        //#################################
+        for (ArrayList<Object> meal_Data : meals_Data) // For LOOP through each Meal
+        {
+            int meal_ID = (int) meal_Data.get(1); // Get Meal Info
+            
+            total_Meals_Data_Map.put(meal_ID, meal_Data); // Add total Meals Data to storage
+        }
+        
+        //#################################
+        // Return Output
+        //#################################
+        System.out.printf("\n\n%s \nTotal Meal Data \n%s", lineSeparator, lineSeparator);
+        
+        for (Map.Entry<Integer, ArrayList<Object>> total_Meal : total_Meals_Data_Map.entrySet())
+        {
+            System.out.printf("\n\n%s \n############################ \n%s", total_Meal.getKey(), total_Meal.getValue());
+        }
+        
+        //#################################
+        // Return Output
+        //#################################
         return true;
     }
     
