@@ -82,8 +82,8 @@ public class MealManager
     // Constructors
     //##################################################################################################################
     public MealManager(Meal_Plan_Screen meal_plan_screen, MyJDBC db, MacrosLeft_Table macrosLeft_JTable,
-                       Meal_OBJ_ID meal_Obj_ID, LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> sub_Meal_DATA
-                       //,ArrayList<ArrayList<Object>> total_Meal_Data
+                       Meal_OBJ_ID meal_Obj_ID, LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> sub_Meal_DATA,
+                       ArrayList<ArrayList<Object>> total_Meal_Data
     )
     {
         //################################################
@@ -111,7 +111,7 @@ public class MealManager
         //################################################
         // Setup Methods
         //################################################
-        if (! setup()) { return; } ;
+        if (! setup(total_Meal_Data)) { return; } ;
         
         add_Multiple_Sub_Meals(sub_Meal_DATA); // Add Sub-Meal to GUI
     }
@@ -144,7 +144,7 @@ public class MealManager
         if (newMealTime == null) { return; } // Error occurred in validation checks above
         
         //################################################
-        // Upload Meal To Temp Plan
+        // Upload Meal To Temp Plan & Get ID
         //################################################
         String
                 uploadQuery = "INSERT INTO meals_in_plan (plan_id, meal_name, meal_time) VALUES (?,?,?)",
@@ -153,6 +153,23 @@ public class MealManager
         meal_In_Plan_ID = db.insert_And_Get_ID(uploadQuery, new Object[]{ tempPlanID, newMealName, newMealTime }, errorMSG);
         
         if (meal_In_Plan_ID == null) { return; } // Error MSG inside DB is returned if null, don't need to handle here
+        
+        //################################################################
+        // Total_Meal DATA
+        //################################################################
+        /*String
+                query = "SELECT * FROM total_meal_view WHERE meal_in_plan_id = ? AND plan_id = ?;",
+                errorMSG = String.format("Error, unable to get TotalMeal Data for %s at %s", currentMealName, get_Current_Meal_Time_GUI());
+        
+        Object[] params = new Object[]{ meal_In_Plan_ID, tempPlanID };
+        
+        ArrayList<ArrayList<Object>> meal_Total_Data = db.get_2D_Query_AL_Object(query, params, errorMSG);
+        if (meal_Total_Data == null)
+        {
+            JOptionPane.showMessageDialog(getFrame(), errorMSG);
+            return false;
+        }*/
+        
         
         //################################################
         // Set Name & Time Variables
@@ -169,7 +186,7 @@ public class MealManager
         //################################################
         // Setup
         //################################################
-        if (! setup()) { return; } ;
+        if (! setup(null)) { return; } ;
         
         //################################################
         // Add A SubMeal To Meal
@@ -182,24 +199,8 @@ public class MealManager
     //##################################################################################################################
     
     // GUI Setup
-    private boolean setup()
+    private boolean setup(ArrayList<ArrayList<Object>> total_Meal_Data)
     {
-        //################################################################
-        // Total_Meal DATA
-        //################################################################
-        String
-                query = "SELECT * FROM total_meal_view WHERE meal_in_plan_id = ? AND plan_id = ?;",
-                errorMSG = String.format("Error, unable to get TotalMeal Data for %s at %s", currentMealName, get_Current_Meal_Time_GUI());
-        
-        Object[] params = new Object[]{ meal_In_Plan_ID, tempPlanID };
-        
-        ArrayList<ArrayList<Object>> meal_Total_Data = db.get_2D_Query_AL_Object(query, params, errorMSG);
-        if (meal_Total_Data == null)
-        {
-            JOptionPane.showMessageDialog(getFrame(), errorMSG);
-            return false;
-        }
-        
         //################################################################
         // Variables
         //################################################################
@@ -240,7 +241,7 @@ public class MealManager
         //################################################################
         // Create TotalMeal Objects
         //################################################################
-        totalMealTable = new TotalMeal_Table(db, this, meal_In_Plan_ID, meal_Total_Data);
+        totalMealTable = new TotalMeal_Table(db, this, meal_In_Plan_ID, total_Meal_Data);
         
         //######################################
         // TotalMeal_Table to Collapsible Object

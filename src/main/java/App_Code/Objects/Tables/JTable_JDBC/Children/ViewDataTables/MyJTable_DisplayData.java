@@ -21,7 +21,18 @@ public abstract class MyJTable_DisplayData extends JDBC_JTable
         // #################################################
         // Super /  Variables
         // #################################################
-        super(db, parent_Container, false, false, table_Name, data, column_Names, un_Editable_Columns, col_Avoid_Centering, columns_To_Hide);
+        super(
+                db,
+                parent_Container,
+                false,
+                false,
+                table_Name,
+                data,
+                column_Names,
+                un_Editable_Columns,
+                col_Avoid_Centering,
+                columns_To_Hide
+        );
         
         this.plan_ID = plan_ID;
         this.temp_Plan_ID = temp_Plan_ID;
