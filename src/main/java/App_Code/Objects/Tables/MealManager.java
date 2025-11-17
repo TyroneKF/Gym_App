@@ -177,7 +177,7 @@ public class MealManager
         // 3.) Create Sub-Meal
         //######################################
         String upload_Q3 = String.format( """
-                INSERT IGNORE INTO divided_meal_sections (meal_in_plan_id, plan_id) VALUES
+                INSERT INTO divided_meal_sections (meal_in_plan_id, plan_id) VALUES
                 (%s, ?);""", var_Meal_ID);
         upload_Queries_And_Params.add(new Pair<>(upload_Q3, new Object[]{ tempPlanID }));
         
@@ -194,7 +194,7 @@ public class MealManager
         //########################################
         
         String upload_Q5 = String.format("""
-                INSERT IGNORE INTO ingredients_in_sections_of_meal
+                INSERT INTO ingredients_in_sections_of_meal
                 (plan_id, pdid, div_meal_sections_id, ingredient_id, quantity) VALUES
                 (?, ?, %s, ?, ?);""", var_Sub_Meal_ID);
         
@@ -1028,7 +1028,7 @@ public class MealManager
         
         // 1.) Create Sub-Meal
         String upload_Q1 = """
-                INSERT IGNORE INTO divided_meal_sections (meal_in_plan_id, plan_id) VALUES
+                INSERT INTO divided_meal_sections (meal_in_plan_id, plan_id) VALUES
                 (?, ?);""";
         upload_Queries_And_Params.add(new Pair<>(upload_Q1, new Object[]{ meal_In_Plan_ID, tempPlanID }));
         
@@ -1045,7 +1045,7 @@ public class MealManager
         //########################################
         
         String upload_Q3 = String.format("""
-                INSERT IGNORE INTO ingredients_in_sections_of_meal
+                INSERT INTO ingredients_in_sections_of_meal
                 (plan_id, pdid, div_meal_sections_id, ingredient_id, quantity) VALUES
                 (?, ?, %s, ?, ?);""", var_Sub_Meal_ID);
         

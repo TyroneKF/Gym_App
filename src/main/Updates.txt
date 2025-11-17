@@ -27,7 +27,7 @@ MealManager
 MYJDBC:
 .) Refactor method calls that check if null and return msg use N/A
 .) Prepared statements
-.) Switch to
+.) Switch to Arraylist from LinkedHashSet
 
 Meal_Plan_Screen:
 .) Get rid of table name variables its hard to read
