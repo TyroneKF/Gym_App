@@ -178,7 +178,7 @@ public class Screen_JFrame extends JFrame
     //##############################################
     // Screen_JFrame Positioning
     //##############################################
-    protected void scrollToJPanelOnScreen(JPanel panel) // Only Works With JPanels
+    public void scrollToJPanelOnScreen(JPanel panel) // Only Works With JPanels
     {
         // Scroll to that panel AFTER layout has finished
         SwingUtilities.invokeLater(() -> {

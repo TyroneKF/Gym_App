@@ -279,7 +279,6 @@ public class MealManager
         // Return Variables
         //#######################################################
         isObjectCreated = true;
-        
     }
     
     //##################################################################################################################
@@ -1012,23 +1011,99 @@ public class MealManager
     // HELLO, Needs to scroll down to the bottom of the MealManager
     private void addButtonAction()
     {
-        //##########################################
-        // Insert Into Database Table
-        //##########################################
-        String
-                uploadQuery = "INSERT INTO divided_meal_sections (meal_in_plan_id, plan_id) VALUES (?, ?)",
-                errorMSG = "Error, unable to add SubMeal to Meal!";
+        //###########################################################
+        // Upload & Fetch Variables
+        //############################################################
+        String errorMSG = "Error, unable to add SubMeal to Meal!";
         
-        String[] params = new String[]{ String.valueOf(meal_In_Plan_ID), String.valueOf(tempPlanID) };
+        LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params = new LinkedHashSet<>();
+        LinkedHashSet<Pair<String, Object[]>> fetch_Queries_And_Params = new LinkedHashSet<>();
         
-        Integer divID = db.insert_And_Get_ID(uploadQuery, params, errorMSG);
+        int sub_Meal_ID;
+        ArrayList<ArrayList<Object>> sub_Meal_DATA;
         
-        if (divID == null) { return; }
+        //################################################
+        // Uploads
+        //###############################################
         
-        //##########################################
-        // Add Sub-Meal To Meal GUI
-        //##########################################
-        add_Sub_Meal_Original(false, divID);
+        // 1.) Create Sub-Meal
+        String upload_Q1 = """
+                INSERT IGNORE INTO divided_meal_sections (meal_in_plan_id, plan_id) VALUES
+                (?, ?);""";
+        upload_Queries_And_Params.add(new Pair<>(upload_Q1, new Object[]{ meal_In_Plan_ID, tempPlanID }));
+        
+        //######################################
+        // 2.) Set Sub-Meal ID
+        //######################################
+        String var_Sub_Meal_ID = "@subMealID";
+        String upload_Q2 = String.format("Set %s = LAST_INSERT_ID();", var_Sub_Meal_ID);
+        
+        upload_Queries_And_Params.add(new Pair<>(upload_Q2, null));
+        
+        //########################################
+        // 3.) Insert None of the Above into Sub-Meal
+        //########################################
+        
+        String upload_Q3 = String.format("""
+                INSERT IGNORE INTO ingredients_in_sections_of_meal
+                (plan_id, pdid, div_meal_sections_id, ingredient_id, quantity) VALUES
+                (?, ?, %s, ?, ?);""", var_Sub_Meal_ID);
+        
+        upload_Queries_And_Params.add(new Pair<>(upload_Q3,
+                new Object[]{ tempPlanID, new Null_MYSQL_Field(Types.INTEGER), 1, 0 }));
+        
+        //#######################################################
+        // Fetch Queries
+        //#######################################################
+ 
+        // 1.) Get Sub-Meal ID
+        String get_Q1 = String.format("SELECT %s;", var_Sub_Meal_ID);
+        fetch_Queries_And_Params.add(new Pair<>(get_Q1, null));
+        
+        //#############################
+        // 2.) Get Ingredients Table DATA
+        //#############################
+        String get_Q2 = String.format("""
+                SELECT *
+                FROM ingredients_in_sections_of_meal_calculation
+                WHERE plan_id = ? AND div_meal_sections_id = %s;""", var_Sub_Meal_ID);
+        fetch_Queries_And_Params.add(new Pair<>(get_Q2, new Object[]{ tempPlanID }));
+        
+        //#######################################################
+        // Execute Query
+        //#######################################################
+        Query_Results results_OBJ = db.upload_And_Get_Batch(upload_Queries_And_Params, fetch_Queries_And_Params, errorMSG);
+        
+        if (results_OBJ == null || results_OBJ.is_Empty()) { System.err.println("\n\n\nFailed Creating Meal"); return; }
+        
+        //#######################################################
+        // Set Variables from Results
+        //#######################################################
+        try
+        {
+            sub_Meal_ID = ((Number) results_OBJ.get_Result_Object(0)).intValue();
+            sub_Meal_DATA = results_OBJ.get_Fetched_Result_2D_AL(1);
+        }
+        catch (Exception e)
+        {
+            System.err.printf("\n\n%s", e);
+            return;
+        }
+        
+        //#######################################################
+        // Add Meal To GUI
+        //#######################################################
+        add_Sub_Meal(false, sub_Meal_ID, sub_Meal_DATA); // Add Sub-Meal to GUI
+        
+        //#######################################################
+        // Success MSG & Expand Meal View
+        //#######################################################
+        JOptionPane.showMessageDialog(null, String.format("Successfully Created Sub-Meal in %s at [%s]",
+                currentMealName, get_Current_Meal_Time_GUI() )); // Show Success MSG
+       
+        expand_JPanel(); // Expand Meal View
+       
+        meal_plan_screen.scrollToJPanelOnScreen(get_Collapsible_JP_Obj()); // Scroll GUI to MealManager
     }
     
     //#################################################################################

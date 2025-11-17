@@ -1877,6 +1877,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###############################################
         if (! mealManager.isObjectCreated()) { return; }
         
+        JOptionPane.showMessageDialog(null, String.format("Successfully Created Meal in %s at [%s]",
+                mealManager.get_Current_Meal_Name(), mealManager.get_Current_Meal_Time_GUI() ));
+        
         //###############################################
         // ADD MealManager Info to DATA
         //###############################################
