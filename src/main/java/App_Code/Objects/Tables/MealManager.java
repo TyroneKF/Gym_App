@@ -531,45 +531,6 @@ public class MealManager
         ingredientTables_In_MealManager.add(ingredients_Table);
     }
     
-    private void add_Sub_Meal_Original(boolean subMealInDB, Integer divMealSectionsID)
-    {
-        String tableName = "ingredients_in_sections_of_meal_calculation";
-        ArrayList<ArrayList<Object>> mealData = new ArrayList<>();
-        
-        if (subMealInDB)
-        {
-            // Getting Ingredients In Meal
-            String
-                    query = String.format("SELECT * FROM %s WHERE div_meal_sections_id = ? AND plan_id = ? ORDER BY ingredients_index;", tableName),
-                    errorMSG = String.format("Error, unable to get Ingredient Data for SubMeal %s in %s", divMealSectionsID, currentMealName);
-            
-            Object[] params = new Object[]{ divMealSectionsID, tempPlanID };
-            mealData = db.get_2D_Query_AL_Object(query, params, errorMSG);
-            
-            if (mealData == null)
-            {
-                JOptionPane.showMessageDialog(getFrame(), errorMSG);
-                return;
-            }
-        }
-        
-        //##############################################
-        // Ingredients_In_Meal_Calculation Creation
-        //##############################################
-        JPanel spaceDivider = new JPanel();
-        IngredientsTable ingredients_Table = new IngredientsTable(db, this, mealData, ingredientsTable_ColumnNames, planID,
-                meal_In_Plan_ID, divMealSectionsID, subMealInDB,
-                tableName, ingredientsTableUnEditableCells, ingredients_Table_Col_Avoid_Centering, ingredientsInMeal_Table_ColToHide, spaceDivider);
-        
-        ingredientTables_In_MealManager.add(ingredients_Table);
-        
-        //################################################
-        // Ingredients_In_Meal_Calculation Customisation
-        //################################################
-        add_To_Container(collapsibleCenterJPanel, ingredients_Table, 0, yPoInternally++, 1, 1, 0.25, 0.25, "both", 0, 0, null);
-        add_To_Container(collapsibleCenterJPanel, spaceDivider, 0, yPoInternally++, 1, 1, 0.25, 0.25, "both", 50, 0, null);
-    }
-    
     //##################################################################################################################
     // Actions
     //##################################################################################################################
