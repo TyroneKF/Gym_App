@@ -875,12 +875,17 @@ public class MyJDBC
             (Connection connection, String origin_Method_Name, LinkedHashSet<Pair<String, Object[]>> queries_And_Params) throws Exception
     {
         //###############################################
-        // Set Settings For Connection
+        // Set Settings For Connection & Variables
         //###############################################
-        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+        String
+                query = "",
+                method_Name = String.format("%s ---> %s()", origin_Method_Name, new Object() { }.getClass().getEnclosingMethod().getName());
+        
+        Object[] insertParameters;
         
         connection.setAutoCommit(false); // Prevents each query from being singularly uploaded & is only made not temp when committed
         
+        int query_Pos = 1;
         //###############################################
         // For Loop For Queries & Params
         //###############################################
@@ -889,8 +894,8 @@ public class MyJDBC
             //#########################
             // Entry Values
             //#########################
-            String query = entry.getValue0();
-            Object[] insertParameters = entry.getValue1();
+            query = entry.getValue0();
+            insertParameters = entry.getValue1();
             
             boolean skipParams = insertParameters == null;
             
@@ -915,9 +920,15 @@ public class MyJDBC
             }
             catch (Exception e)
             {
-                rollBack_Connection(connection, origin_Method_Name + " " + methodName, queries_And_Params);
+                print_Internal_Method_Err_MSG(method_Name, query, insertParameters, e);
+                
                 throw e;
             }
+            
+            //#########################
+            // Increase
+            //#########################
+            query_Pos++;
         }
     }
     
@@ -964,15 +975,17 @@ public class MyJDBC
         {
             try
             {
+                // Upload Statements
                 upload_Data_Batch_Internally(connection, methodName, upload_Queries_And_Params);  // Upload Batch
                 
+                // Execute Fetch Statements
                 for (Pair<String, Object[]> fetch_Obj : get_Queries_And_Params)  // Execute Get Statements
                 {
                     String query = fetch_Obj.getValue0();
                     Object[] params = fetch_Obj.getValue1();
                     
                     // Add Fetch Results To Object made for storing multiple queries
-                    query_Results.add_Result(get_2D_ArrayList_Internal(connection, methodName, query, params, Object.class));
+                    query_Results.add_Result(get_2D_ArrayList_Internally(connection, methodName, query, params, Object.class));
                 }
                 
                 // Commit Changes beyond current driver
@@ -1240,41 +1253,15 @@ public class MyJDBC
     //##################################################################################################################
     // Multi Methods
     //##################################################################################################################
-    private <T> ArrayList<ArrayList<T>> get_2D_ArrayList(String query, Object[] params, Class<T> type_Cast, String errorMSG)
-    {
-        //#########################################################################
-        // Check DB Status
-        //#########################################################################
-        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        
-        if (! is_DB_Connected(methodName)) { return null; }
-        
-        //#########################################################################
-        // Query Setup
-        //#########################################################################
-        try (Connection connection = dataSource.getConnection()) // Get a Connection from pool
-        {
-            return get_2D_ArrayList_Internal(connection, methodName, query, params, type_Cast);
-        }
-        //##########################################################
-        // Error Handling
-        //##########################################################
-        catch (Exception e)
-        {
-            handleException_MYSQL(e, methodName, query, errorMSG);
-            return null;
-        }
-    }
-    
-    private <T> ArrayList<ArrayList<T>> get_2D_ArrayList_Internal(Connection connection, String origin_Method_Name, String query, Object[] params,
-                                                                  Class<T> typeCast) throws Exception
+    private <T> ArrayList<ArrayList<T>> get_2D_ArrayList_Internally(Connection connection, String method_Name, String query, Object[] params,
+                                                                    Class<T> typeCast) throws Exception
     {
         //#########################################################################
         // Variables
         //#########################################################################
         ArrayList<ArrayList<T>> collection = new ArrayList<>();
         
-        String method_Name = String.format("%s() / %s()", new Object() { }.getClass().getEnclosingMethod().getName(), origin_Method_Name);
+        method_Name = String.format("%s ---> %s()", method_Name, new Object() { }.getClass().getEnclosingMethod().getName());
         
         //#########################################################################
         // Query Setup
@@ -1333,7 +1320,35 @@ public class MyJDBC
         //##########################################################
         catch (Exception e)
         {
+            print_Internal_Method_Err_MSG(method_Name, query, params, e);
             throw e;
+        }
+    }
+    
+    
+    private <T> ArrayList<ArrayList<T>> get_2D_ArrayList(String query, Object[] params, Class<T> type_Cast, String errorMSG)
+    {
+        //#########################################################################
+        // Check DB Status
+        //#########################################################################
+        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+        
+        if (! is_DB_Connected(methodName)) { return null; }
+        
+        //#########################################################################
+        // Query Setup
+        //#########################################################################
+        try (Connection connection = dataSource.getConnection()) // Get a Connection from pool
+        {
+            return get_2D_ArrayList_Internally(connection, methodName, query, params, type_Cast);
+        }
+        //##########################################################
+        // Error Handling
+        //##########################################################
+        catch (Exception e)
+        {
+            handleException_MYSQL(e, methodName, query, errorMSG);
+            return null;
         }
     }
     
@@ -1373,17 +1388,17 @@ public class MyJDBC
         //#############################
         try
         {
-            // IF Rollback wasn't executed return
-            if (connection.getAutoCommit()) { return; }
+            if (connection.getAutoCommit()) { return; } // IF Rollback wasn't executed return
             
-            // Execute Rollback
-            connection.rollback();
-            System.err.println("\n\nRollback successful for method: " + methodName);
+            connection.rollback(); // Execute Rollback
+            System.err.printf("\n\n%s \nRollback successful for method: %s \n%s\n\n\n", middle_line_Separator, methodName, middle_line_Separator);
         }
         catch (SQLException x)
         {
-            System.err.println("\n\nRollback failed in " + methodName + ": " + x.getMessage());
+            System.err.printf("\n\n%s \nRollback failed for method: %s \n\n\n", middle_line_Separator, methodName, middle_line_Separator);
             
+            // Change Method Name to this method & Display Error
+            methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
             handleException_MYSQL(x, methodName, queries, null);
         }
         finally
@@ -1426,7 +1441,7 @@ public class MyJDBC
     
     private void print_SQL_ERR_MSG(SQLException e, String methodName, Object query)
     {
-        System.err.printf("\n\n%s\nMyJDBC.java @%s SQL ERROR \n%s \n\nQuery: \"\"\"\n%s\n\"\"\" \n\nMessage: %s \n\nSQLState: %s \n\nErrorCode: %d\n\n",
+        System.err.printf("\n\n%s\nMyJDBC.java @%s SQL ERROR \n%s \n\nQuery: \n\"\"\"\n %s\n\"\"\" \n\nError Message: \n\n\"\"\" \n\n%s \n\n\"\"\" \n\nSQLState: %s \n\nErrorCode: %d\n\n",
                 line_Separator, methodName, line_Separator, query != null ? query.toString() : "", e.getMessage(), e.getSQLState(), e.getErrorCode());
     }
     
@@ -1479,6 +1494,21 @@ public class MyJDBC
     {
         System.err.printf("\n\nMyJDBC.java @%s Exception ERROR \n\nI/O error while processing files: %s%n", methodName, e.getMessage());
     }
+    
+    //###########################################
+    // Method Catch Print Query + Params
+    //###########################################
+    private void print_Internal_Method_Err_MSG(String method_Name, String query, Object[] params, Exception e)
+    {
+        System.err.printf("""
+                \n\n%s
+                MyJDBC.java %s Error
+                %s
+                \nQuery : \n\n\"\"\" \n\n%s \n\n\"\"\"
+                \nParams: \n%s%n
+                \nError MSG:  \n\n\"\"\" \n%s \n\"\"\"""", line_Separator, method_Name, line_Separator, query, Arrays.toString(params), e);
+    }
+    
     
     //##################################################################################################################
     // Validation Methods

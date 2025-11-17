@@ -1327,35 +1327,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             System.err.printf("\n\n%s ERROR \n%s", methodName, e);
             return false;
         }
-        
-        //#######################################
-        // Read DATA
-        //#######################################
-        for (Map.Entry<Integer, LinkedHashMap<Integer, ArrayList<ArrayList<Object>>>> meal_Entry : sub_Meals_Data_Map.entrySet())
-        {
-            // Meal DATA
-            int meal_ID = meal_Entry.getKey();
-            Meal_ID meal_ID_Obj = meals_Data_Map.get(meal_ID);
-            
-            System.out.printf("\n\n%s \n[%s] - %s (%s) \n%s", lineSeparator, meal_ID_Obj.get_Meal_Time(), meal_ID_Obj.get_Name(), meal_ID_Obj.get_ID(), lineSeparator);
-            
-            LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> meals_data = meal_Entry.getValue();
-            
-            // DIVS Per MEALS
-            for (Map.Entry<Integer, ArrayList<ArrayList<Object>>> div_data : meals_data.entrySet())
-            {
-                int div_id = div_data.getKey();
-                ArrayList<ArrayList<Object>> ingredients = div_data.getValue();
-                
-                System.out.printf("\n\n%s \n###########################\n", div_id);
-                
-                for (ArrayList<Object> ingredient : ingredients)
-                {
-                    System.out.printf("\n%s%n", ingredient);
-                }
-            }
-        }
-        
+      
         //#######################################
         // Return DATA
         //#######################################
@@ -1390,16 +1362,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
             int meal_ID = (int) meal_Data.get(1); // Get Meal Info
             
             total_Meals_Data_Map.put(meal_ID, meal_Data); // Add total Meals Data to storage
-        }
-        
-        //#################################
-        // Return Output
-        //#################################
-        System.out.printf("\n\n%s \nTotal Meal Data \n%s", lineSeparator, lineSeparator);
-        
-        for (Map.Entry<Integer, ArrayList<Object>> total_Meal : total_Meals_Data_Map.entrySet())
-        {
-            System.out.printf("\n\n%s \n############################ \n%s", total_Meal.getKey(), total_Meal.getValue());
         }
         
         //#################################

@@ -2,6 +2,8 @@ package App_Code.Objects.Tables;
 
 import App_Code.Objects.Data_Objects.Meal_ID;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
+import App_Code.Objects.Database_Objects.JDBC.Null_MYSQL_Field;
+import App_Code.Objects.Database_Objects.JDBC.Query_Results;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Tables.JTable_JDBC.Children.IngredientsTable;
 import App_Code.Objects.Tables.JTable_JDBC.Children.ViewDataTables.MacrosLeft_Table;
@@ -17,6 +19,8 @@ import org.jfree.data.time.Second;
 
 import javax.swing.*;
 import java.awt.*;
+import java.sql.Types;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -118,9 +122,9 @@ public class MealManager
     //
     public MealManager(Meal_Plan_Screen meal_plan_screen, MyJDBC db, MacrosLeft_Table macrosLeft_JTable)
     {
-        //################################################
+        //############################################################################
         // Setting Variables
-        //################################################
+        //############################################################################
         this.meal_plan_screen = meal_plan_screen;
         this.macrosLeft_JTable = macrosLeft_JTable;
         this.db = db;
@@ -128,68 +132,154 @@ public class MealManager
         tempPlanID = meal_plan_screen.getTempPlanID();
         planID = meal_plan_screen.getPlanID();
         
-        //################################################
+        //############################################################################
         // Getting user input for Meal Name & Time
-        //################################################
-        String newMealName = promptUserForMealName(true, false);
+        //############################################################################
+        String new_Meal_Name = promptUserForMealName(true, false);
         
-        if (newMealName == null) { return; } // Error occurred in validation checks above
+        if (new_Meal_Name == null) { return; } // Error occurred in validation checks above
         
-        //################################################
+        //############################################################################
         // Validating User Input
+        //############################################################################
+        LocalTime new_Meal_Time = promptUserForMealTime(true, false);
+        
+        if (new_Meal_Time == null) { return; } // Error occurred in validation checks above
+        
+        //############################################################################
+        // Upload & Fetch Variables
+        //############################################################################
+        String errorMSG = String.format("\n\nError Creating Meal with credentials: \n\nMeal Name: '%s' \nMeal Time: %s!", new_Meal_Name, new_Meal_Time);
+        
+        LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params = new LinkedHashSet<>();
+        LinkedHashSet<Pair<String, Object[]>> fetch_Queries_And_Params = new LinkedHashSet<>();
+        
+        int sub_Meal_ID;
+        ArrayList<ArrayList<Object>> sub_Meal_DATA;
+        ArrayList<Object> total_Meal_Data = null;
+        
         //################################################
-        LocalTime newMealTime = promptUserForMealTime(true, false);
+        // Uploads
+        //###############################################
         
-        if (newMealTime == null) { return; } // Error occurred in validation checks above
+        // 1.) Create Meal Upload
+        String upload_Q1 = "INSERT INTO meals_in_plan (plan_id, meal_name, meal_time) VALUES (?,?,?);";
+        upload_Queries_And_Params.add(new Pair<>(upload_Q1, new Object[]{ tempPlanID, new_Meal_Name, new_Meal_Time }));
         
-        //################################################
-        // Upload Meal To Temp Plan & Get ID
-        //################################################
-        String
-                uploadQuery = "INSERT INTO meals_in_plan (plan_id, meal_name, meal_time) VALUES (?,?,?)",
-                errorMSG = String.format("\n\nError Creating Meal \nMeal Name: '%s' \nMeal Time: %s!", newMealName, newMealTime);
+        //######################################
+        // 2.) Set Meal ID
+        //######################################
+        String var_Meal_ID = "@mealID";
+        String upload_Q2 = String.format("Set %s = LAST_INSERT_ID();", var_Meal_ID);
+        upload_Queries_And_Params.add(new Pair<>(upload_Q2, null));
         
-        meal_In_Plan_ID = db.insert_And_Get_ID(uploadQuery, new Object[]{ tempPlanID, newMealName, newMealTime }, errorMSG);
+        //######################################
+        // 3.) Create Sub-Meal
+        //######################################
+        String upload_Q3 = String.format( """
+                INSERT IGNORE INTO divided_meal_sections (meal_in_plan_id, plan_id) VALUES
+                (%s, ?);""", var_Meal_ID);
+        upload_Queries_And_Params.add(new Pair<>(upload_Q3, new Object[]{ tempPlanID }));
         
-        if (meal_In_Plan_ID == null) { return; } // Error MSG inside DB is returned if null, don't need to handle here
+        //######################################
+        // 4.) Set Sub-Meal ID
+        //######################################
+        String var_Sub_Meal_ID = "@subMealID";
+        String upload_Q4 = String.format("Set %s = LAST_INSERT_ID();", var_Sub_Meal_ID);
         
-        //################################################################
-        // Total_Meal DATA
-        //################################################################
-        /*String
-                query = "SELECT * FROM total_meal_view WHERE meal_in_plan_id = ? AND plan_id = ?;",
-                errorMSG = String.format("Error, unable to get TotalMeal Data for %s at %s", currentMealName, get_Current_Meal_Time_GUI());
+        upload_Queries_And_Params.add(new Pair<>(upload_Q4, null));
         
-        Object[] params = new Object[]{ meal_In_Plan_ID, tempPlanID };
+        //########################################
+        // 5.) Insert None of the Above into Sub-Meal
+        //########################################
         
-        ArrayList<ArrayList<Object>> meal_Total_Data = db.get_2D_Query_AL_Object(query, params, errorMSG);
-        if (meal_Total_Data == null)
+        String upload_Q5 = String.format("""
+                INSERT IGNORE INTO ingredients_in_sections_of_meal
+                (plan_id, pdid, div_meal_sections_id, ingredient_id, quantity) VALUES
+                (?, ?, %s, ?, ?);""", var_Sub_Meal_ID);
+        
+        upload_Queries_And_Params.add(new Pair<>(upload_Q5,
+                new Object[]{ tempPlanID, new Null_MYSQL_Field(Types.INTEGER), 1, 0 }));
+        
+        //#######################################################
+        // Fetch Queries
+        //#######################################################
+        
+        // 1.) Get Meal_ID
+        String get_Q1 = String.format("SELECT %s;", var_Meal_ID);
+        fetch_Queries_And_Params.add(new Pair<>(get_Q1, null));
+        
+        //#############################
+        // 2.) Get Sub-Meal ID
+        //#############################
+        String get_Q2 = String.format("SELECT %s;", var_Sub_Meal_ID);
+        fetch_Queries_And_Params.add(new Pair<>(get_Q2, null));
+        
+        //#############################
+        // 3.) Get Ingredients Table DATA
+        //#############################
+        String get_Q3 = String.format("""
+                SELECT *
+                FROM ingredients_in_sections_of_meal_calculation
+                WHERE plan_id = ? AND div_meal_sections_id = %s;""", var_Sub_Meal_ID);
+        fetch_Queries_And_Params.add(new Pair<>(get_Q3, new Object[]{ tempPlanID }));
+        
+        //#############################
+        // 4.) Get Total Meal DATA
+        //#############################
+        String get_Q4 = String.format("""
+                SELECT *
+                FROM total_meal_view
+                WHERE plan_id = ? AND meal_in_plan_id = %s;""", var_Meal_ID);
+        fetch_Queries_And_Params.add(new Pair<>(get_Q4, new Object[]{ tempPlanID }));
+        
+        //#######################################################
+        // Execute Query
+        //#######################################################
+        Query_Results results_OBJ = db.upload_And_Get_Batch(upload_Queries_And_Params, fetch_Queries_And_Params, errorMSG);
+        
+        if (results_OBJ == null || results_OBJ.is_Empty()) { System.err.println("\n\n\nFailed Creating Meal"); return; }
+        
+        //#######################################################
+        // Set Variables from Results
+        //#######################################################
+        try
         {
-            JOptionPane.showMessageDialog(getFrame(), errorMSG);
-            return false;
-        }*/
-        
-        
-        //################################################
+            meal_In_Plan_ID = ((Number)  results_OBJ.get_Result_Object(0)).intValue();
+            sub_Meal_ID = ((Number) results_OBJ.get_Result_Object(1)).intValue();
+            
+            sub_Meal_DATA = results_OBJ.get_Fetched_Result_2D_AL(2);
+            total_Meal_Data = results_OBJ.get_Result_1D_AL(3);
+        }
+        catch (Exception e)
+        {
+            System.err.printf("\n\n%s", e);
+            return;
+        }
+     
+        //#############################
         // Set Name & Time Variables
-        //################################################
-        setMealNameVariables(false, newMealName, newMealName); // Set MealName Variables
+        //#############################
+        setMealNameVariables(false, new_Meal_Name, new_Meal_Name); // Set MealName Variables
         
-        Second convertedNewMealTime = localTimeToSecond(newMealTime);
+        Second convertedNewMealTime = localTimeToSecond(new_Meal_Time);
         
         setTimeVariables(false, convertedNewMealTime, convertedNewMealTime);     // Set MealTime Variables
         
         setMealManagerInDB(false);
         
-        //################################################
-        // Setup
-        //################################################
-       // setup_GUI(null);
+        //#######################################################
+        // Add Meals To GUI
+        //#######################################################
+        setup_GUI(total_Meal_Data); // GUI
         
-        //################################################
-        // Add A SubMeal To Meal
-        //################################################
-        addButtonAction();
+        add_Sub_Meal(false, sub_Meal_ID, sub_Meal_DATA); // Add Sub-Meal to GUI
+        
+        //#######################################################
+        // Return Variables
+        //#######################################################
+        isObjectCreated = true;
+        
     }
     
     //##################################################################################################################
@@ -789,7 +879,7 @@ public class MealManager
     private Second localTimeToSecond(LocalTime localTime)
     {
         // Convert LocalTime -> Date (fixed base date)
-        Date date = Date.from(localTime.atDate(java.time.LocalDate.of(1970, 1, 1))
+        Date date = Date.from(localTime.atDate(LocalDate.of(1970, 1, 1))
                 .atZone(ZoneId.systemDefault())
                 .toInstant());
         

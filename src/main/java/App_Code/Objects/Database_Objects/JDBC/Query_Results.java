@@ -45,15 +45,6 @@ public class Query_Results
         size--;
     }
     
-    public ArrayList<ArrayList<Object>> get_Fetched_Result(int index) throws Exception
-    {
-        String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        
-        check_Index_In_Bounds(index, method_Name);
-        
-        return outputs.get(index);
-    }
-    
     private void check_Index_In_Bounds(int index, String method_Name) throws Exception
     {
         if (index > size - 1 || index < 0)
@@ -76,6 +67,25 @@ public class Query_Results
     
     public boolean is_Empty()
     {
-       return no_Of_Fetched_Results() > 0;
+       return no_Of_Fetched_Results() == 0;
+    }
+    
+    public ArrayList<ArrayList<Object>> get_Fetched_Result_2D_AL(int index) throws Exception
+    {
+        String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+        
+        check_Index_In_Bounds(index, method_Name);
+        
+        return outputs.get(index);
+    }
+    
+    public ArrayList<Object> get_Result_1D_AL(int index) throws Exception
+    {
+        return get_Fetched_Result_2D_AL(index).getFirst();
+    }
+    
+    public Object get_Result_Object(int index) throws Exception
+    {
+        return get_Result_1D_AL(index).getFirst();
     }
 }
