@@ -4,7 +4,6 @@ import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
 
 import javax.swing.*;
 import java.awt.*;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -255,12 +254,12 @@ public class Screen_JPanel extends JPanel
     // ##################################
     // Get Int Methods
     // ##################################
-    protected int get_FrameWidth()
+    protected int get_Frame_Width()
     {
         return frameWidth;
     }
     
-    protected int get_FrameHeight()
+    protected int get_Frame_Height()
     {
         return frameHeight;
     }

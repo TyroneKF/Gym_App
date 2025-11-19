@@ -1055,54 +1055,7 @@ public class MyJDBC
         }
     }
     
-    /*
-      Each query upload is executed separately and the query after, it can notice the changes
-     */
-    public boolean upload_Data_Batch(String[] queries, String errorMSG)
-    {
-        //##########################################################
-        // Check DB Status
-        //##########################################################
-        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        
-        if (! is_DB_Connected(methodName)) { return false; }
-        
-        //##########################################################
-        // Query Setup
-        //##########################################################
-        try (Connection connection = dataSource.getConnection(); // Creates a connection pool
-             Statement statement = connection.createStatement()
-        )
-        {
-            try
-            {
-                connection.setAutoCommit(false); // Prevents each query from being singularly uploaded & is only made not temp when committed
-                
-                for (String query : queries)  // Executing Each Statement
-                {
-                    statement.executeUpdate(query);
-                }
-                
-                connection.commit(); // Commit Completely
-                
-                return true; // Return Values
-            }
-            catch (Exception e)
-            {
-                rollBack_Connection(connection, methodName, queries);
-                throw e;
-            }
-        }
-        //##########################################################
-        // Error Handling
-        //##########################################################
-        catch (Exception e)
-        {
-            handleException_MYSQL(e, methodName, queries, errorMSG);
-            return false;
-        }
-    }
-    
+   
     //##################################################################################################################
     // DB Get Methods
     //##################################################################################################################

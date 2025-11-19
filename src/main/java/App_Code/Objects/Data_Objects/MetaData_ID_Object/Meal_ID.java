@@ -1,32 +1,31 @@
-package App_Code.Objects.Data_Objects;
+package App_Code.Objects.Data_Objects.MetaData_ID_Object;
 
-public class Ingredient_Name_ID extends ID_Object
+import App_Code.Objects.Data_Objects.ID_Object;
+
+import java.time.LocalTime;
+
+public final class Meal_ID extends Meta_Data_ID_Parent
 {
     // #################################################################################################################
     // Variables
     // #################################################################################################################
-    private Ingredient_Type_ID type_ID_Obj;
+    private LocalTime meal_Time;
+    
     
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
-    public Ingredient_Name_ID(int id, String name, Ingredient_Type_ID type_ID_OBJ)
+    public Meal_ID(int id, String meal_name, LocalTime meal_Time)
     {
-        super(id, name);
-        
-        this.type_ID_Obj = type_ID_OBJ;
+        super(id, meal_name);
+        this.meal_Time = meal_Time;
     }
     
     // #################################################################################################################
     // Accessor Methods
     // #################################################################################################################
-    public int get_Ingredient_Type_ID()
+    public LocalTime get_Meal_Time()
     {
-        return type_ID_Obj.get_ID();
-    }
-    
-    public String get_Ingredient_Name()
-    {
-        return type_ID_Obj.get_Name();
+        return meal_Time;
     }
 }

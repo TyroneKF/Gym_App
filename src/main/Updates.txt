@@ -7,6 +7,13 @@ Work On:
 .) If an ingredient table is saved and its not in the DB because the mealManager isn't
  .) MealManagaer should be saved
 
+
+IconButton
+.) Condense methods etc make button transparent
+    iconPanelInsert.add(delete_Icon_Btn);
+    delete_Icon_Btn.makeBTntransparent();
+
+
 IngredientsTable
 .) Redraw if ingredient / Info in edit Screen is being edited needs to be reflcected on Tables (Redrawn)
    etc shop selected thats been deleted all products need to be reloaded.

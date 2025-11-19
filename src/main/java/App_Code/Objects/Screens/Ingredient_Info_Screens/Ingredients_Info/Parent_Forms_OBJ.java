@@ -3,7 +3,6 @@ package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
-import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 
 import javax.swing.*;
@@ -15,7 +14,7 @@ import java.util.regex.Pattern;
 
 
 // Shop Form and Ingredients Form
-public class Parent_IngredientForm_And_ShopForm extends Screen_JPanel
+public class Parent_Forms_OBJ extends Screen_JPanel
 {
     //##################################################################################################################
     // Variables
@@ -25,8 +24,6 @@ public class Parent_IngredientForm_And_ShopForm extends Screen_JPanel
     
     protected Meal_Plan_Screen mealPlanScreen;
     protected MyJDBC db;
-    protected Integer planID, tempPlanID;
-    protected String planName;
     
     protected final int totalNumbersAllowed = 7, decimalScale = 2, decimalPrecision = totalNumbersAllowed - decimalScale,
             charLimit = 8;
@@ -36,7 +33,7 @@ public class Parent_IngredientForm_And_ShopForm extends Screen_JPanel
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Parent_IngredientForm_And_ShopForm(
+    public Parent_Forms_OBJ(
             Container parentContainer, Ingredients_Info_Screen ingredients_info_screen, String btnText, int btnWidth, int btnHeight)
     {
         //##################################################
@@ -50,14 +47,7 @@ public class Parent_IngredientForm_And_ShopForm extends Screen_JPanel
     
         // Screens
         this.ingredients_info_screen = ingredients_info_screen;
-        
-        // Integer
-        this.planID = ingredients_info_screen.get_PlanID();
-        this.tempPlanID = ingredients_info_screen.get_TempPlanID();
-        
-        // String
-        this.planName = ingredients_info_screen.get_PlanName();
-        
+ 
         //##################################################
         // Collapsible JPanel Creation
         //##################################################

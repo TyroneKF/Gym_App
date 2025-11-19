@@ -1,9 +1,8 @@
 package App_Code.Objects.Screens;
 
-import App_Code.Objects.Data_Objects.Ingredient_Name_ID;
-import App_Code.Objects.Data_Objects.Ingredient_Type_ID;
-import App_Code.Objects.Data_Objects.Meal_ID;
-import App_Code.Objects.Data_Objects.Store_ID;
+import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Ingredient_Name_ID;
+import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID;
+import App_Code.Objects.Data_Objects.MetaData_ID_Object.Meal_ID;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Tables.JTable_JDBC.Children.ViewDataTables.MacrosLeft_Table;
@@ -514,10 +513,26 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // Get DATA Methods
         //###############################################################################
         // Get IngredientTypes & Store Data
-        if (! (get_Ingredient_And_Store_Data()))
+        if (! get_Ingredient_And_Store_Data()) //HELLO Remove eventually
         {
             loadingScreen.window_Closed_Event();
-            JOptionPane.showMessageDialog(null, "\n\nCannot Get Ingredients_Types & Stores Info \n\ngetIngredientsTypesAndStoresData()");
+            JOptionPane.showMessageDialog(null, "\n\nError, Cannot Get Ingredients_Types & Stores Info!");
+            return;
+        }
+        
+        // Get Ingredient Types Mapped to Ingredient Names
+        if (! get_Ingredient_Types_And_Ingredient_Names())
+        {
+            loadingScreen.window_Closed_Event();
+            JOptionPane.showMessageDialog(null, "\n\nError, Cannot Get Ingredients Types DATA!");
+            return;
+        }
+        
+        // Get Stores DATA
+        if (! get_Stores_Data())
+        {
+            loadingScreen.window_Closed_Event();
+            JOptionPane.showMessageDialog(null, "\n\nError, Cannot Get Ingredients Store DATA!");
             return;
         }
         
@@ -1038,27 +1053,17 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //#######################################
         for (ArrayList<Object> row : results)
         {
-            // Store Info
-            int id = (int) row.get(0);
-            String name = (String) row.get(1);
-            
             // Add to DATA
-            shared_Data_Registry.add_Store(new Store_ID(id, name), false);
-        }
-        
-        System.out.println("\n\nStores DATA");
-        for (Store_ID store : shared_Data_Registry.get_Stores())
-        {
-            System.out.printf("\n%s : %s", store.get_ID(), store.get_Name());
+            shared_Data_Registry.add_Store((int) row.get(0), (String) row.get(1), false);
         }
         
         //#######################################
         // Output
         //#######################################
-        return false;
+        return true;
     }
     
-    public boolean get_Ingredient_Types_To_Ingredient_Names()
+    public boolean get_Ingredient_Types_And_Ingredient_Names()
     {
         String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
         
@@ -1110,7 +1115,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 int type_ID = (int) row.get(0);
                 String type_name = (String) row.get(1);
                 
-                // Ingredient Type Objects
                 Ingredient_Type_ID type_OBJ = new Ingredient_Type_ID(type_ID, type_name);
                 
                 // Add to DATA
@@ -1130,8 +1134,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     if (id.isNull()) { continue; }  // If values are empty skip
                     
                     // Add Ingredient_Name to DATA IF not NULL
-                    Ingredient_Name_ID ingredient_Name_ID_OBJ = new Ingredient_Name_ID(id.asInt(), name.asText(), type_OBJ);
-                    shared_Data_Registry.add_Ingredient_Name_To_Type_Map(type_OBJ, ingredient_Name_ID_OBJ);
+                    Ingredient_Name_ID ingredient_Name_ID = new Ingredient_Name_ID(id.asInt(), name.asText(), type_OBJ);
+                    shared_Data_Registry.add_Ingredient_Name(ingredient_Name_ID);
                 }
             }
             
@@ -1327,7 +1331,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             System.err.printf("\n\n%s ERROR \n%s", methodName, e);
             return false;
         }
-      
+        
         //#######################################
         // Return DATA
         //#######################################
@@ -1878,7 +1882,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         if (! mealManager.isObjectCreated()) { return; }
         
         JOptionPane.showMessageDialog(null, String.format("Successfully Created Meal in %s at [%s]",
-                mealManager.get_Current_Meal_Name(), mealManager.get_Current_Meal_Time_GUI() ));
+                mealManager.get_Current_Meal_Name(), mealManager.get_Current_Meal_Time_GUI()));
         
         //###############################################
         // ADD MealManager Info to DATA
@@ -2043,7 +2047,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             return;
         }
         
-        ingredientsInfoScreen = new Ingredients_Info_Screen(db, this);
+        ingredientsInfoScreen = new Ingredients_Info_Screen(db, this, shared_Data_Registry);
     }
     
     private Boolean is_IngredientScreen_Open()
