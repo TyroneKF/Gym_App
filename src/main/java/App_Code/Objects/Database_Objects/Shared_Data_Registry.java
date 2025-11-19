@@ -398,7 +398,7 @@ public class Shared_Data_Registry
     private <T extends Storable_IDS_Parent> void add_ID_Obj(T id_Object, boolean sort, ArrayList<T> list)
     {
         // Add lists if they're of these Types
-        if (id_Object instanceof Ingredient_Type_ID || id_Object instanceof Store_ID)
+        if ( list!= null && (id_Object instanceof Ingredient_Type_ID || id_Object instanceof Store_ID))
         {
             // Add Store Obj to list
             list.add(id_Object);
@@ -457,25 +457,39 @@ public class Shared_Data_Registry
     //###############################################################
     
     // Change Methods
-    public boolean move_Ingredient_To_Type(Ingredient_Type_ID to_Type, Ingredient_Type_ID from_Type, Ingredient_Name_ID ingredient_name)
+    public boolean change_Ingredient_Type(Ingredient_Type_ID to_Type, Ingredient_Name_ID ingredient_Name_OBJ)
     {
+        //####################################
+        // From Type
+        //####################################
+        // Get Ingredient Type Associated with current Ingredient Name
+        Ingredient_Type_ID from_Type = ingredient_Name_OBJ.get_Ingredient_Type_ID_Obj();
+        
         // Check if From_Type Key has any records to move
         if (! ingredient_Types_To_Names_Map.containsKey(from_Type)) { return false; }
         
-        // Assign from_Type to variable
+        // Assign from_Type  Ingredient Names to variable
         ArrayList<Ingredient_Name_ID> from_Type_AL = ingredient_Types_To_Names_Map.get(from_Type);
         
         // Check if Ingredient Name Exists in from_Type
-        if (! from_Type_AL.contains(ingredient_name)) { return false; }
+        if (! from_Type_AL.contains(ingredient_Name_OBJ)) { return false; }
         
         // Remove Ingredient_Name from from_Type
-        from_Type_AL.remove(ingredient_name);
+        from_Type_AL.remove(ingredient_Name_OBJ);
         
         //Check if from_type is empty now remove it
         if (from_Type_AL.isEmpty()) { ingredient_Types_To_Names_Map.remove(from_Type); }
         
-        // Add to ingredient_name to to_Type
-        //add_Ingredient_Name_To_Type_Map(to_Type, ingredient_name);
+        //####################################
+        // To Type
+        //####################################
+        // Set Ingredient Type to new Ingredient Type
+        ingredient_Name_OBJ.set_Ingredient_Type_ID_Obj(to_Type);
+        
+        //####################################
+        // Add to Ingredient Type
+        //####################################
+        add_ID_Obj(ingredient_Name_OBJ, false, null);
         
         return true;
     }
@@ -501,8 +515,6 @@ public class Shared_Data_Registry
             ingredient_Names_To.addAll(ingredient_Names_From); // combine results
             
             sort_ID_Objects_AL(ingredient_Names_To); // Sort List
-            
-            // ingredient_Types_To_Names.put(to_Type, ingredient_Names_To);
         }
         else // Move Ingredients Name from From_Type to To_Type
         {
@@ -555,7 +567,7 @@ public class Shared_Data_Registry
         //###################################
         // Output
         //###################################
-        return false;
+        return true;
     }
     
     //##############################################################
@@ -566,16 +578,16 @@ public class Shared_Data_Registry
         add_ID_Obj(ingredient_type_id, sort, ingredient_Types_AL);
     }
     
-    public boolean remove_Ingredient_Type(Ingredient_Type_ID ingredient_Type_ID) throws Exception
+    public boolean remove_Ingredient_Type(Ingredient_Type_ID from_Type_ID)
     {
         // Get 'Un-Assigned' Type
         Ingredient_Type_ID  to_Type_ID = ingredient_Types_ID_Obj_Map.get(2);
         
         // Move & Delete From Ingredient Type to Un-Assigned
-        move_Ingredients_In_Bulk_To_Type(ingredient_Type_ID, to_Type_ID);
+        move_Ingredients_In_Bulk_To_Type(from_Type_ID, to_Type_ID);
         
         // Return Output
-        return false;
+        return true;
     }
     
     //#################################################################
