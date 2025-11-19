@@ -1,9 +1,9 @@
 package App_Code.Objects.Database_Objects;
 
-import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Ingredient_Name_ID;
-import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID;
+import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
+import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_Obj;
 import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Storable_IDS_Parent;
-import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Store_ID;
+import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
 import App_Code.Objects.Tables.JTable_JDBC.Children.ViewDataTables.TotalMeal_Table;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 
@@ -47,18 +47,23 @@ public class Shared_Data_Registry
     // Table / Form Data Collections
     //##############################
     // Stores
-    private HashMap<Integer, Store_ID> stores_ID_Obj_Map = new HashMap<>();
-    private ArrayList<Store_ID> stores_AL = new ArrayList<>();
+    private HashMap<Integer, Store_ID_OBJ> stores_Obj_Map = new HashMap<>();
+    private ArrayList<Store_ID_OBJ> stores_Obj_AL = new ArrayList<>();
     
+    //##################
     // Ingredient Types
-    private HashMap<Integer, Ingredient_Type_ID> ingredient_Types_ID_Obj_Map = new HashMap<>();
-    private ArrayList<Ingredient_Type_ID> ingredient_Types_AL = new ArrayList<>();
+    //##################
+    private HashMap<Integer, Ingredient_Type_ID_Obj> ingredient_Types_Obj_Map = new HashMap<>();
+    private ArrayList<Ingredient_Type_ID_Obj> ingredient_Types_Obj_AL = new ArrayList<>();
     
     // Ingredient Types To Names
-    private HashMap<Ingredient_Type_ID, ArrayList<Ingredient_Name_ID>> ingredient_Types_To_Names_Map = new HashMap<>();
+    private HashMap<Integer, ArrayList<Ingredient_Name_ID_OBJ>> ingredient_Types_To_Names_Map = new HashMap<>();
     
+    //##################
     // Ingredient Names
-    private HashMap<Integer, Ingredient_Name_ID> ingredient_Names_ID_Obj_Map = new HashMap<>();
+    //##################
+    private HashMap<Integer, Ingredient_Name_ID_OBJ> ingredient_Names_Obj_Map = new HashMap<>();
+    private ArrayList<Ingredient_Name_ID_OBJ> ingredient_Names_Obj_AL = new ArrayList<>();
     
     //##################################################################################################################
     // Constructor
@@ -395,122 +400,86 @@ public class Shared_Data_Registry
         list.sort((a, b) -> a.get_Name().compareTo(b.get_Name()));
     }
     
-    private <T extends Storable_IDS_Parent> void add_ID_Obj(T id_Object, boolean sort, ArrayList<T> list)
-    {
-        // Add lists if they're of these Types
-        if ( list!= null && (id_Object instanceof Ingredient_Type_ID || id_Object instanceof Store_ID))
-        {
-            // Add Store Obj to list
-            list.add(id_Object);
-            
-            // Sort list if needed
-            if (sort) { sort_ID_Objects_AL(list); }
-        }
-        
-        // Get Object ID
-        int id = id_Object.get_ID();
-        
-        // Add to ordered Map for specific class
-        switch (id_Object)
-        {
-            case Store_ID x -> stores_ID_Obj_Map.put(id, x);
-            case Ingredient_Type_ID x -> ingredient_Types_ID_Obj_Map.put(id, x);
-            case Ingredient_Name_ID x ->
-            {
-                // Add to ID Objects to Ingredients Name Map
-                ingredient_Names_ID_Obj_Map.put(id, x);
-                
-                // Get Ingredient Type ID
-                Ingredient_Type_ID ingredient_type_id = x.get_Ingredient_Type_ID_Obj();
-                
-                // Check if this Type already has a list of ingredients
-                if (ingredient_Types_To_Names_Map.containsKey(ingredient_type_id))
-                {
-                    // Get Ingredient Names List
-                    ArrayList<Ingredient_Name_ID> ingredient_Names_IDs = ingredient_Types_To_Names_Map.get(ingredient_type_id);
-                    
-                    // Add Ingredient Name to List
-                    ingredient_Names_IDs.add(x);
-                    
-                    // Sort List
-                    sort_ID_Objects_AL(ingredient_Names_IDs);
-                }
-                else // No Ingredients Assigned to Ingredients Type
-                {
-                    // Create ArrayList
-                    ArrayList<Ingredient_Name_ID> ingredient_Names_IDs = new ArrayList<>();
-                    
-                    // Add Ingredient Name to List
-                    ingredient_Names_IDs.add(x);
-                    
-                    // Add Ingredient Types to Map
-                    ingredient_Types_To_Names_Map.put(ingredient_type_id, ingredient_Names_IDs);
-                }
-            }
-            default -> System.err.print("\n...");// This shouldn't throw an error
-        }
-    }
-    
-    
     //###############################################################
     // HashMap Ingredient Types To Ingredient Names
     //###############################################################
     
     // Change Methods
-    public boolean change_Ingredient_Type(Ingredient_Type_ID to_Type, Ingredient_Name_ID ingredient_Name_OBJ)
+    public boolean change_Ingredient_Type(Ingredient_Type_ID_Obj to_Type_Obj, Ingredient_Name_ID_OBJ ingredient_Name_Obj)
     {
         //####################################
         // From Type
         //####################################
         // Get Ingredient Type Associated with current Ingredient Name
-        Ingredient_Type_ID from_Type = ingredient_Name_OBJ.get_Ingredient_Type_ID_Obj();
+        int from_Type_id = ingredient_Name_Obj.get_Ingredient_Type_ID();
         
         // Check if From_Type Key has any records to move
-        if (! ingredient_Types_To_Names_Map.containsKey(from_Type)) { return false; }
+        if (! ingredient_Types_To_Names_Map.containsKey(from_Type_id)) { return false; }
         
-        // Assign from_Type  Ingredient Names to variable
-        ArrayList<Ingredient_Name_ID> from_Type_AL = ingredient_Types_To_Names_Map.get(from_Type);
+        // Assign from_Type_id  Ingredient Names to variable
+        ArrayList<Ingredient_Name_ID_OBJ> from_Type_AL = ingredient_Types_To_Names_Map.get(from_Type_id);
         
-        // Check if Ingredient Name Exists in from_Type
-        if (! from_Type_AL.contains(ingredient_Name_OBJ)) { return false; }
+        // Check if Ingredient Name Exists in from_Type_id
+        if (! from_Type_AL.contains(ingredient_Name_Obj)) { return false; }
         
-        // Remove Ingredient_Name from from_Type
-        from_Type_AL.remove(ingredient_Name_OBJ);
+        // Remove Ingredient_Name from from_Type_id
+        from_Type_AL.remove(ingredient_Name_Obj);
         
         //Check if from_type is empty now remove it
-        if (from_Type_AL.isEmpty()) { ingredient_Types_To_Names_Map.remove(from_Type); }
+        if (from_Type_AL.isEmpty()) { ingredient_Types_To_Names_Map.remove(from_Type_id); }
         
         //####################################
-        // To Type
+        // Set Ingredient Type to To_Type
         //####################################
         // Set Ingredient Type to new Ingredient Type
-        ingredient_Name_OBJ.set_Ingredient_Type_ID_Obj(to_Type);
+        ingredient_Name_Obj.set_Ingredient_Type_ID_Obj(to_Type_Obj);
         
         //####################################
-        // Add to Ingredient Type
+        // Add to Ingredient Name to Type & Sort
         //####################################
-        add_ID_Obj(ingredient_Name_OBJ, false, null);
+        ArrayList<Ingredient_Name_ID_OBJ> to_Type_Ingredients_Name = new ArrayList<>();
+        int to_Type_ID = to_Type_Obj.get_ID();
         
+        if(ingredient_Types_To_Names_Map.containsKey(to_Type_ID)) // IF to_Type is in map, get it
+        {
+            to_Type_Ingredients_Name = ingredient_Types_To_Names_Map.get(to_Type_ID);
+        }
+        
+        to_Type_Ingredients_Name.add(ingredient_Name_Obj);
+        
+        // Update / Add to_Type to list
+        ingredient_Types_To_Names_Map.put(to_Type_ID, to_Type_Ingredients_Name);
+        
+        // Sort Ingredient Names
+        sort_ID_Objects_AL(to_Type_Ingredients_Name);
+        
+        //####################################
+        // Return
+        //####################################
         return true;
     }
     
     // Bulk
-    private void move_Ingredients_In_Bulk_To_Type(Ingredient_Type_ID from_Type, Ingredient_Type_ID to_Type)
+    private void move_Ingredients_In_Bulk_To_Type(Ingredient_Type_ID_Obj from_Type_Obj, Ingredient_Type_ID_Obj to_Type_Obj)
     {
         //#####################################
         // Check if From Key is Valid
         //#####################################
-        if (! ingredient_Types_To_Names_Map.containsKey(from_Type)) { return; }
+        int from_Type_id = from_Type_Obj.get_ID();
         
-        ArrayList<Ingredient_Name_ID> ingredient_Names_From = ingredient_Types_To_Names_Map.get(from_Type);  // Get Ingredient Names Associated with from Key
+        if (! ingredient_Types_To_Names_Map.containsKey(from_Type_id)) { return; }
+        
+        ArrayList<Ingredient_Name_ID_OBJ> ingredient_Names_From = ingredient_Types_To_Names_Map.get(from_Type_id);  // Get Ingredient Names Associated with from Key
         
         //#####################################
         // Combine Results If Exists
         //#####################################
+        int to_Type_id = to_Type_Obj.get_ID();
+        
         // IF To_type Key does exist then combine with From_Type  ingredients then add to To_Type results
-        if (ingredient_Types_To_Names_Map.containsKey(to_Type))
+        if (ingredient_Types_To_Names_Map.containsKey(to_Type_id))
         {
-            ArrayList<Ingredient_Name_ID> ingredient_Names_To = ingredient_Types_To_Names_Map.get(to_Type); // get from_Type values
+            ArrayList<Ingredient_Name_ID_OBJ> ingredient_Names_To = ingredient_Types_To_Names_Map.get(to_Type_id); // get from_Type_Obj values
             
             ingredient_Names_To.addAll(ingredient_Names_From); // combine results
             
@@ -518,51 +487,84 @@ public class Shared_Data_Registry
         }
         else // Move Ingredients Name from From_Type to To_Type
         {
-            ingredient_Types_To_Names_Map.put(to_Type, ingredient_Names_From);
+            ingredient_Types_To_Names_Map.put(to_Type_Obj.get_ID(), ingredient_Names_From);
         }
         
         //#####################################
         // Delete From Key
         //#####################################
-        ingredient_Types_To_Names_Map.remove(from_Type);
+        ingredient_Types_To_Names_Map.remove(from_Type_id);
     }
     
     //##############################################################
     // Ingredient Names
     //##############################################################
-    public void add_Ingredient_Name(Ingredient_Name_ID ingredient_Name_ID)
+    public void add_Ingredient_Name(Ingredient_Name_ID_OBJ ingredient_Name_Id_Obj)
     {
-        add_ID_Obj(ingredient_Name_ID, false, null);
+        // Add to ID Objects to Ingredients Name Map
+        ingredient_Names_Obj_Map.put(ingredient_Name_Id_Obj.get_ID(), ingredient_Name_Id_Obj);
+        
+        // Get Ingredient Type ID
+        int ingredient_Type_Id = ingredient_Name_Id_Obj.get_Ingredient_Type_ID();
+        
+        // Check if this Type already has a list of ingredients
+        if (ingredient_Types_To_Names_Map.containsKey(ingredient_Type_Id))
+        {
+            // Get Ingredient Names List
+            ArrayList<Ingredient_Name_ID_OBJ> ingredient_Names_IDs = ingredient_Types_To_Names_Map.get(ingredient_Type_Id);
+            
+            // Add Ingredient Name to List
+            ingredient_Names_IDs.add(ingredient_Name_Id_Obj);
+            
+            // Sort List
+            sort_ID_Objects_AL(ingredient_Names_IDs);
+        }
+        else // No Ingredients Assigned to Ingredients Type
+        {
+            // Create ArrayList
+            ArrayList<Ingredient_Name_ID_OBJ> ingredient_Names_IDs = new ArrayList<>();
+            
+            // Add Ingredient Name to List
+            ingredient_Names_IDs.add(ingredient_Name_Id_Obj);
+            
+            // Add Ingredient Types to Map
+            ingredient_Types_To_Names_Map.put(ingredient_Type_Id, ingredient_Names_IDs);
+        }
+        
+        // Add to Ingredients Name List & Sort
+        ingredient_Names_Obj_AL.add(ingredient_Name_Id_Obj);
+        sort_ID_Objects_AL(ingredient_Names_Obj_AL); // Sort by Name
     }
     
-    public boolean remove_Ingredient_Name(Ingredient_Name_ID ingredient_Name_ID)
+    public boolean remove_Ingredient_Name(Ingredient_Name_ID_OBJ ingredient_Name_ID_Obj)
     {
         //###################################
         // Remove from Ingredients Type Map
         //###################################
         
         // Get Ingredients Type OBJ
-        Ingredient_Type_ID type_id_OBJ = ingredient_Name_ID.get_Ingredient_Type_ID_Obj();
+        int type_id = ingredient_Name_ID_Obj.get_Ingredient_Type_ID();
         
         // Check IF Map Contains this Ingredient Type
-        if (! ingredient_Types_To_Names_Map.containsKey(type_id_OBJ)) { return false; }
+        if (! ingredient_Types_To_Names_Map.containsKey(type_id)) { return false; }
         
         // Get Ingredients Names
-        ArrayList<Ingredient_Name_ID> ingredient_Names = ingredient_Types_To_Names_Map.get(type_id_OBJ);
+        ArrayList<Ingredient_Name_ID_OBJ> ingredient_Names = ingredient_Types_To_Names_Map.get(type_id);
         
         // Remove Ingredients Name From Type List
-        ingredient_Names.remove(ingredient_Name_ID);
+        ingredient_Names.remove(ingredient_Name_ID_Obj);
         
         // If Ingredients Names is empty remove the whole list
-        if(ingredient_Names.isEmpty()){ ingredient_Types_To_Names_Map.remove(type_id_OBJ);}
+        if (ingredient_Names.isEmpty()) { ingredient_Types_To_Names_Map.remove(type_id); }
         
         //###################################
         // Remove From Ingredients Map
         //###################################
-        int id = ingredient_Name_ID.get_ID(); // Get ID
-        if (! ingredient_Names_ID_Obj_Map.containsKey(id)) { return false; }
+        int ingredient_Name_Id = ingredient_Name_ID_Obj.get_ID(); // Get ID
+        if (! ingredient_Names_Obj_Map.containsKey(ingredient_Name_Id)) { return false; }
         
-        ingredient_Names_ID_Obj_Map.remove(id);// Remove From Map
+        ingredient_Names_Obj_Map.remove(ingredient_Name_Id);// Remove From Map
+        ingredient_Names_Obj_AL.remove(ingredient_Name_ID_Obj);
         
         //###################################
         // Output
@@ -573,18 +575,26 @@ public class Shared_Data_Registry
     //##############################################################
     // Ingredient Types - Singular List
     //##############################################################
-    public void add_Ingredient_Type(Ingredient_Type_ID ingredient_type_id, boolean sort)
+    public void add_Ingredient_Type(Ingredient_Type_ID_Obj ingredient_type_Id_Obj, boolean sort)
     {
-        add_ID_Obj(ingredient_type_id, sort, ingredient_Types_AL);
+        ingredient_Types_Obj_AL.add(ingredient_type_Id_Obj); // Create Ingredients ID Object
+        
+        if (sort) { sort_ID_Objects_AL(ingredient_Types_Obj_AL); } // Sort list if needed
+        
+        ingredient_Types_Obj_Map.put(ingredient_type_Id_Obj.get_ID(), ingredient_type_Id_Obj); // Add Object in Map
     }
     
-    public boolean remove_Ingredient_Type(Ingredient_Type_ID from_Type_ID)
+    public boolean remove_Ingredient_Type(Ingredient_Type_ID_Obj from_Type_Id_Obj)
     {
         // Get 'Un-Assigned' Type
-        Ingredient_Type_ID  to_Type_ID = ingredient_Types_ID_Obj_Map.get(2);
+        Ingredient_Type_ID_Obj to_Type_ID = ingredient_Types_Obj_Map.get(2);
         
         // Move & Delete From Ingredient Type to Un-Assigned
-        move_Ingredients_In_Bulk_To_Type(from_Type_ID, to_Type_ID);
+        move_Ingredients_In_Bulk_To_Type(from_Type_Id_Obj, to_Type_ID);
+        
+        // Remove From Collections
+        ingredient_Types_Obj_AL.remove(from_Type_Id_Obj);
+        ingredient_Types_Obj_Map.remove(from_Type_Id_Obj.get_ID());
         
         // Return Output
         return true;
@@ -593,20 +603,26 @@ public class Shared_Data_Registry
     //#################################################################
     // Stores
     //#################################################################
-    public void add_Store(Integer id, String name, boolean sort)
+    public void add_Store(Store_ID_OBJ store_ID_Obj, boolean sort)
     {
-        add_ID_Obj(new Store_ID(id, name), sort, stores_AL);
+        int id = store_ID_Obj.get_ID();
+        
+        stores_Obj_AL.add(store_ID_Obj); // Add Store Obj to list
+        
+        if (sort) { sort_ID_Objects_AL(stores_Obj_AL); } // Sort list if needed
+        
+        stores_Obj_Map.put(id, store_ID_Obj); // Add Object in Map
     }
     
-    public boolean remove_Store(Store_ID store_id)
+    public boolean remove_Store(Store_ID_OBJ store_ID_Obj)
     {
-        int id = store_id.get_ID(); // Get ID
+        int id = store_ID_Obj.get_ID(); // Get ID
         
-        if (! stores_ID_Obj_Map.containsKey(id)) { return false; }  // Check If Object is in Map (should be)
+        if (! stores_Obj_Map.containsKey(id)) { return false; }  // Check If Object is in Map (should be)
         
-        stores_ID_Obj_Map.remove(id);// Remove From Map
+        stores_Obj_Map.remove(id);// Remove From Map
         
-        stores_AL.remove(store_id); // Remove From Stores AL
+        stores_Obj_AL.remove(store_ID_Obj); // Remove From Stores AL
         
         return true; // Output
     }
@@ -614,23 +630,23 @@ public class Shared_Data_Registry
     //##############################################################################################
     // Accessor Methods
     //###############################################################################################
-    public ArrayList<Store_ID> get_Stores()
+    public ArrayList<Store_ID_OBJ> get_Stores()
     {
-        return stores_AL;
+        return stores_Obj_AL;
     }
     
     // Types
-    public ArrayList<Ingredient_Type_ID> get_Ingredient_Types()
+    public ArrayList<Ingredient_Type_ID_Obj> get_Ingredient_Types()
     {
-        return ingredient_Types_AL;
+        return ingredient_Types_Obj_AL;
     }
     
-    public ArrayList<Ingredient_Name_ID> get_Ingredient_Names(Ingredient_Type_ID ingredient_type_id)
+    public ArrayList<Ingredient_Name_ID_OBJ> get_Ingredient_Names(Ingredient_Type_ID_Obj ingredient_Type_ID_Obj)
     {
-        return ingredient_Types_To_Names_Map.get(ingredient_type_id);
+        return ingredient_Types_To_Names_Map.get(ingredient_Type_ID_Obj.get_ID());
     }
     
-    public HashMap<Ingredient_Type_ID, ArrayList<Ingredient_Name_ID>> get_Ingredient_Types_To_Names()
+    public HashMap<Integer, ArrayList<Ingredient_Name_ID_OBJ>> get_Ingredient_Types_To_Names()
     {
         return ingredient_Types_To_Names_Map;
     }

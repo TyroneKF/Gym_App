@@ -7,7 +7,7 @@ import App_Code.Objects.Data_Objects.ID_Object;
  */
 
 
-public sealed class Storable_IDS_Parent extends ID_Object permits Store_ID, Ingredient_Type_ID, Ingredient_Name_ID
+public sealed class Storable_IDS_Parent extends ID_Object permits Store_ID_OBJ, Ingredient_Type_ID_Obj, Ingredient_Name_ID_OBJ
 {
     protected Storable_IDS_Parent(int id, String name)
     {

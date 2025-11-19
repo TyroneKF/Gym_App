@@ -1,8 +1,9 @@
 package App_Code.Objects.Screens;
 
-import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Ingredient_Name_ID;
-import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID;
+import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
+import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_Obj;
 import App_Code.Objects.Data_Objects.MetaData_ID_Object.Meal_ID;
+import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Tables.JTable_JDBC.Children.ViewDataTables.MacrosLeft_Table;
@@ -1054,7 +1055,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         for (ArrayList<Object> row : results)
         {
             // Add to DATA
-            shared_Data_Registry.add_Store((int) row.get(0), (String) row.get(1), false);
+            shared_Data_Registry.add_Store(new Store_ID_OBJ((int) row.get(0), (String) row.get(1)), false);
         }
         
         //#######################################
@@ -1103,7 +1104,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // Go through Results
         //#######################################
         ObjectMapper mapper = new ObjectMapper();
-        HashMap<Ingredient_Type_ID, ArrayList<Ingredient_Name_ID>> mapped_Data = new HashMap<>();
+        HashMap<Ingredient_Type_ID_Obj, ArrayList<Ingredient_Name_ID_OBJ>> mapped_Data = new HashMap<>();
         
         try
         {
@@ -1115,7 +1116,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 int type_ID = (int) row.get(0);
                 String type_name = (String) row.get(1);
                 
-                Ingredient_Type_ID type_OBJ = new Ingredient_Type_ID(type_ID, type_name);
+                Ingredient_Type_ID_Obj type_OBJ = new Ingredient_Type_ID_Obj(type_ID, type_name);
                 
                 // Add to DATA
                 shared_Data_Registry.add_Ingredient_Type(type_OBJ, false); // Add ingredient Type
@@ -1134,7 +1135,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     if (id.isNull()) { continue; }  // If values are empty skip
                     
                     // Add Ingredient_Name to DATA IF not NULL
-                    Ingredient_Name_ID ingredient_Name_ID = new Ingredient_Name_ID(id.asInt(), name.asText(), type_OBJ);
+                    Ingredient_Name_ID_OBJ ingredient_Name_ID = new Ingredient_Name_ID_OBJ(id.asInt(), name.asText(), type_OBJ);
                     shared_Data_Registry.add_Ingredient_Name(ingredient_Name_ID);
                 }
             }
