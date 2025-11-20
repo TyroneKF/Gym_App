@@ -1,6 +1,9 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types;
 
+import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Storable_IDS_Parent;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
+import App_Code.Objects.Database_Objects.Shared_Data_Registry;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
 import org.javatuples.Pair;
 
 import javax.swing.*;
@@ -8,14 +11,18 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 
 public abstract class Edit_Screen extends Add_Screen
 {
     //##################################################################################################################
     // Variables
     //##################################################################################################################
+    
+    // GUI Objects
+    protected JComboBox<Storable_IDS_Parent> jCombo_Box;
+    protected JPanel jComboBox_JPanel;
     
     // String
     protected String
@@ -28,22 +35,17 @@ public abstract class Edit_Screen extends Add_Screen
     protected boolean item_Deleted = false;
     
     // Collections
-    protected ArrayList<String> remove_JComboBox_Items = new ArrayList<>();
-    protected Collection<String> jComboBox_List;
-    
-    // GUI Objects
-    protected JComboBox<String> jCombo_Box;
-    protected JPanel jComboBox_JPanel;
+    protected ArrayList<? extends Storable_IDS_Parent> remove_JComboBox_Items = new ArrayList<>();
+    protected ArrayList<? extends Storable_IDS_Parent> jComboBox_List;
     
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Edit_Screen(MyJDBC db, Parent_Screen parent_Screen)
+    public Edit_Screen(MyJDBC db, Shared_Data_Registry shared_Data_Registry, Ingredients_Info_Screen ingredient_Info_Screen, Parent_Screen parent_Screen)
     {
-        super(db, parent_Screen);
-        
-        // Adjust Screen Size
-        setPreferredSize(new Dimension(200, 160));
+        super(db, shared_Data_Registry, ingredient_Info_Screen, parent_Screen);
+       
+        setPreferredSize(new Dimension(200, 160));  // Adjust Screen Size
     }
     
     //##################################################################################################################
@@ -60,7 +62,7 @@ public abstract class Edit_Screen extends Add_Screen
         jComboBox_JPanel = new JPanel(new GridLayout(1, 1));
         jComboBox_JPanel.setPreferredSize(new Dimension(650, 45));
         
-        jCombo_Box = new JComboBox<String>();
+        jCombo_Box = new JComboBox<>();
         
         load_JComboBox();
         
@@ -73,7 +75,7 @@ public abstract class Edit_Screen extends Add_Screen
             {
                 if (ie.getStateChange() == ItemEvent.SELECTED)
                 {
-                    selected_JComboBox_Item_Txt = (String) jCombo_Box.getSelectedItem();
+                    selected_JComboBox_Item_Txt = ((Storable_IDS_Parent) Objects.requireNonNull(jCombo_Box.getSelectedItem())).get_Name();
                 }
             }
         });
@@ -106,13 +108,13 @@ public abstract class Edit_Screen extends Add_Screen
         //###############################
         // Populate List
         //###############################
-        for (String list_Item : jComboBox_List)
+        for (Storable_IDS_Parent id_Obj: jComboBox_List)
         {
             // If Item is in List to avoid then skip
-            if (remove_JComboBox_Items.contains(list_Item)) { continue; }
+            if (remove_JComboBox_Items.contains(id_Obj)) { continue; }
             
             // Add Item
-            jCombo_Box.addItem(list_Item);
+            jCombo_Box.addItem(id_Obj);
         }
         
         //###############################
@@ -124,22 +126,8 @@ public abstract class Edit_Screen extends Add_Screen
     //##################################################################################################################
     // Methods
     //##################################################################################################################
-    // BackUp Methods
-    @Override
-    protected boolean backup_Data_In_SQL_File()
-    {
-        System.out.printf("\n\nSql File Path: %s \nSelectedJComboBox: %s \nJTextfield: %s", sql_File_Path, selected_JComboBox_Item_Txt, jTextField_TXT);
-        String
-                txtToFind = String.format("('%s')", selected_JComboBox_Item_Txt),
-                txtToReplace = String.format("('%s')", jTextField_TXT),
-                errorMSG = String.format("Error, changing back-up of %s in SQL file!", process);
-        
-        return db.replace_Txt_In_SQL_File(sql_File_Path, false, txtToFind, txtToReplace, errorMSG);
-    }
-    
-    //#############################################################
+ 
     // Form Methods
-    //#############################################################
     @Override
     protected boolean additional_Validate_Form()
     {
@@ -152,7 +140,7 @@ public abstract class Edit_Screen extends Add_Screen
     }
     
     @Override
-    protected boolean upload_Form()
+    protected boolean upload_DATA()
     {
         //################################
         // Check if Value Already Exists
@@ -198,6 +186,27 @@ public abstract class Edit_Screen extends Add_Screen
         return db.upload_Data_Batch2(queries_And_Params, errorMSG_Upload);
     }
     
+    //###############################################
+    // Upload Messages Output
+    //###############################################
+    
+    /**
+     * All the methods are Override by child class
+     */
+    @Override
+    protected void success_Upload_Message()
+    {
+        String text = String.format("\n\nSuccessfully Changed Ingredient %s From : '%s' To '%s' in DB!", process, selected_JComboBox_Item_Txt, jTextField_TXT);
+        JOptionPane.showMessageDialog(null, text);
+    }
+    
+    @Override
+    protected void failure_Upload_Message()
+    {
+        String text = String.format("\n\nFailed Changing Ingredient %s From : '%s' To '%s' in DB!", process, selected_JComboBox_Item_Txt, jTextField_TXT);
+        JOptionPane.showMessageDialog(null, text);
+    }
+    
     //#############################################################
     // Reset Methods
     //#############################################################
@@ -220,39 +229,6 @@ public abstract class Edit_Screen extends Add_Screen
     //###################################################################
     // Delete Methods
     //###################################################################
-    private boolean delete_Btn_Action()
-    {
-        //##################################
-        // SQL Variables
-        //##################################
-        String
-                mysqlVariableReference1 = "@CurrentID",
-                createMysqlVariable1 = String.format("SET %s = (SELECT %s FROM %s WHERE %s = ?);",
-                        mysqlVariableReference1, id_ColumnName, db_TableName, db_ColumnName_Field);
-        
-        String errorMSG1 = String.format("\n\nFailed To Delete ' %s ' FROM %s !!", selected_JComboBox_Item_Txt, data_Gathering_Name);
-        
-        // Generate Queries
-        LinkedHashSet<Pair<String, Object[]>> queries_And_Params = new LinkedHashSet<>()
-        {{
-            add(new Pair<>(createMysqlVariable1, new Object[]{ selected_JComboBox_Item_Txt }));
-        }};
-        
-        queries_And_Params = delete_Btn_Queries(mysqlVariableReference1, queries_And_Params);
-        
-        //##################################
-        // Execute Query
-        //##################################
-        if (! db.upload_Data_Batch2(queries_And_Params, errorMSG1)) { return false; }
-        
-        item_Deleted = true;
-        
-        //##################################
-        // Return Value
-        //##################################
-        return true;
-    }
-    
     protected void delete_Btn_Action_Listener()
     {
         //##################################
@@ -282,5 +258,36 @@ public abstract class Edit_Screen extends Add_Screen
         reset_Actions();
     }
     
-    protected abstract LinkedHashSet<Pair<String, Object[]>> delete_Btn_Queries(String mysqlVariableReference1, LinkedHashSet<Pair<String, Object[]>> queries_And_Params);
+    private boolean delete_Btn_Action()
+    {
+        //##################################
+        // SQL Variables
+        //##################################
+        String
+                mysqlVariableReference1 = "@CurrentID",
+                createMysqlVariable1 = String.format("SET %s = (SELECT %s FROM %s WHERE %s = ?);",
+                        mysqlVariableReference1, id_ColumnName, db_TableName, db_ColumnName_Field);
+        
+        String errorMSG1 = String.format("\n\nFailed To Delete ' %s ' FROM %s !!", selected_JComboBox_Item_Txt, data_Gathering_Name);
+        
+        // Generate Queries
+        LinkedHashSet<Pair<String, Object[]>> queries_And_Params = new LinkedHashSet<>()
+        {{
+            add(new Pair<>(createMysqlVariable1, new Object[]{ selected_JComboBox_Item_Txt }));
+        }};
+        
+      
+        
+        //##################################
+        // Execute Query
+        //##################################
+        if (! db.upload_Data_Batch2(queries_And_Params, errorMSG1)) { return false; }
+        
+        item_Deleted = true;
+        
+        //##################################
+        // Return Value
+        //##################################
+        return true;
+    }
 }

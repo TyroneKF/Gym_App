@@ -1,6 +1,8 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types;
 
+import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Storable_IDS_Parent;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
+import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Gui_Objects.Image_JPanel;
@@ -9,7 +11,7 @@ import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredi
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Collection;
+import java.util.ArrayList;
 
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
@@ -29,77 +31,74 @@ public abstract class Parent_Screen extends Screen_JPanel
     // Variables
     //##################################################################################################################
     // String
-    protected String
-            sql_File_Path,
-            process;
+    protected String process;
     
     //############################
     // Integer
-    //############################
-    protected int
-            frameHeight,
-            frameWidth;
+    protected int frameHeight, frameWidth;
     
-    //############################
     // Boolean
-    //############################
     protected final boolean[] isEditMode = { false };
-    
-    //############################
-    // Collections
-    //############################
-    protected Collection<String> jComboBox_List;
     
     //############################
     // Objects
     //############################
     protected MyJDBC db;
+    protected Shared_Data_Registry shared_Data_Registry;
     protected GridBagConstraints gbc = new GridBagConstraints();
     
-    //############################
     // Screen Objects
-    //############################
     protected Ingredients_Info_Screen ingredient_Info_Screen;
     protected Edit_Screen edit_Screen;
     protected Add_Screen add_Screen;
+    protected Frame frame;
+    
+    // JComboBox
+    protected ArrayList<? extends Storable_IDS_Parent> jComboBox_List;
     
     // JButton
     protected IconButton delete_Icon_Btn;
     
     // JPanels
     protected Image_JPanel screenImage;
-    protected JPanel addScreen_Divider;
+    protected JPanel addScreen_Divider, iconPanelInsert;
     
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Parent_Screen(MyJDBC db, Ingredients_Info_Screen ingredients_Info_Screen,
-                         String process, Collection<String> jComboBox_List, String sql_File_Path)
+    public Parent_Screen(MyJDBC db, Shared_Data_Registry shared_Data_Registry, Ingredients_Info_Screen ingredients_Info_Screen,
+                         String process, ArrayList<? extends Storable_IDS_Parent> jComboBox_List)
     {
+        //####################################
+        // Super
+        //####################################
         super(null, false);
         
         //####################################
         // Variables
         //####################################
-        // Object
-        this.db = db;
+        this.db = db;  // Object
+        this.shared_Data_Registry = shared_Data_Registry;
+        this.ingredient_Info_Screen = ingredients_Info_Screen;  // Screen Objects
+       
+        frame = ingredient_Info_Screen.getFrame();
         
-        // Screen Objects
-        this.ingredient_Info_Screen = ingredients_Info_Screen;
+        this.jComboBox_List = jComboBox_List;   // Collections
         
-        // Collections
-        this.jComboBox_List = jComboBox_List;
-        
-        // String
-        this.process = process;
-        this.sql_File_Path = sql_File_Path;
+        this.process = process;  // String
         
         // Integer
         frameWidth = ingredients_Info_Screen.getWidth();
         frameHeight = ingredients_Info_Screen.getHeight();
+        
+        //####################################
+        // Create Interface
+        //####################################
+        initialize_Screens();
+        create_Interface();
     }
     
-    protected abstract void initialize_Screens(MyJDBC db);
+    protected abstract void initialize_Screens();
     
     //##################################################################################################################
     // Create GUI Methods
@@ -110,7 +109,7 @@ public abstract class Parent_Screen extends Screen_JPanel
         //   Create Screen for Interface
         //###################################################################################
         get_ScrollPane_JPanel().setLayout(new BorderLayout());
-
+        
         // Create Main Centre Screen for Interface
         JPanel mainCentreScreen = new JPanel(new GridBagLayout());
         get_ScrollPane_JPanel().add(mainCentreScreen, BorderLayout.CENTER);
@@ -136,7 +135,7 @@ public abstract class Parent_Screen extends Screen_JPanel
         //###########################
         JPanel east_JP = create_Space_Divider(325, height, java.awt.Color.WHITE);  // East
         icon_And_ToggleSwitch_JP.add(east_JP, BorderLayout.EAST);
-        create_IconPanel(east_JP);
+        create_Icon_Panel(east_JP);
         
         //################################################
         // JavaFX Toggle Switch Creation
@@ -187,7 +186,7 @@ public abstract class Parent_Screen extends Screen_JPanel
              *   (since it has setPrefSize(110, 40)).
              */
             
-            StackPane toggle = getStackPane(background, add_Label, circle);
+            StackPane toggle = get_Stacked_Pane(background, add_Label, circle);
             
             //###########################
             //
@@ -226,7 +225,51 @@ public abstract class Parent_Screen extends Screen_JPanel
         resize_GUI();
     }
     
-    private void create_IconPanel(JPanel add_To_Panel)
+    private StackPane get_Stacked_Pane(StackPane background, Label add_Label, Circle circle)
+    {
+        StackPane toggle = new StackPane(background, add_Label, circle);
+        
+        //#####################################################
+        // Define Toggle Movements
+        //#####################################################
+        TranslateTransition moveRight = new TranslateTransition(Duration.seconds(0.25), circle);
+        moveRight.setToX(35);
+        
+        TranslateTransition moveLeft = new TranslateTransition(Duration.seconds(0.25), circle);
+        moveLeft.setToX(- 35);
+        
+        //#####################################################
+        // Toggle ActionListener EVT
+        //#####################################################
+        
+        toggle.setOnMouseClicked(e -> {
+            if (isEditMode[0])
+            {
+                background.setStyle("-fx-background-color: #ccc; -fx-background-radius: 30px;");
+                add_Label.setText("ADD");
+                moveLeft.play();
+            }
+            else
+            {
+                background.setStyle("-fx-background-color: #4cd964; -fx-background-radius: 30px;");
+                add_Label.setText("EDIT");
+                moveRight.play();
+            }
+            
+            //#####################################################
+            //
+            //#####################################################
+            isEditMode[0] = ! isEditMode[0];
+            switch_Panel();
+        });
+        
+        return toggle;
+    }
+    
+    //###############################
+    // Icon Setup Methods
+    //###############################
+    private void create_Icon_Panel(JPanel add_To_Panel)
     {
         int width = 38;
         int height = 40;
@@ -238,7 +281,7 @@ public abstract class Parent_Screen extends Screen_JPanel
         add_To_Container(add_To_Panel, iconArea, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
         
         IconPanel iconPanel = new IconPanel(1, 10, "East");
-        JPanel iconPanelInsert = iconPanel.getIconJpanel();
+        iconPanelInsert = iconPanel.getIconJpanel();
         
         add_To_Container(iconArea, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0, null);
         
@@ -274,60 +317,19 @@ public abstract class Parent_Screen extends Screen_JPanel
         });
         
         //#####################################################
-        //
+        // Additional Icon Setup
         //#####################################################
-        additional_Icon_Setup(iconPanelInsert);
+        additional_Icon_Setup();
     }
     
-    protected abstract void additional_Icon_Setup(JPanel iconPanelInsert);
-    
-    private StackPane getStackPane(StackPane background, Label add_Label, Circle circle)
-    {
-        StackPane toggle = new StackPane(background, add_Label, circle);
-        
-        //#####################################################
-        // Define Toggle Movements
-        //#####################################################
-        TranslateTransition moveRight = new TranslateTransition(Duration.seconds(0.25), circle);
-        moveRight.setToX(35);
-        
-        TranslateTransition moveLeft = new TranslateTransition(Duration.seconds(0.25), circle);
-        moveLeft.setToX(- 35);
-        
-        //#####################################################
-        // Toggle ActionListener EVT
-        //#####################################################
-        
-        toggle.setOnMouseClicked(e -> {
-            if (isEditMode[0])
-            {
-                background.setStyle("-fx-background-color: #ccc; -fx-background-radius: 30px;");
-                add_Label.setText("ADD");
-                moveLeft.play();
-            }
-            else
-            {
-                background.setStyle("-fx-background-color: #4cd964; -fx-background-radius: 30px;");
-                add_Label.setText("EDIT");
-                moveRight.play();
-            }
-            
-            //#####################################################
-            //
-            //#####################################################
-            isEditMode[0] = ! isEditMode[0];
-            switchPanel();
-        });
-        
-        return toggle;
-    }
+    protected abstract void additional_Icon_Setup();
     
     //#######################################################################
     // Icon BTN Actions
     //#######################################################################
     private void clear_BTN_Action()
     {
-        if(is_Editable())
+        if (is_Editable())
         {
             edit_Screen.clear_Btn_Action();
             return;
@@ -358,9 +360,9 @@ public abstract class Parent_Screen extends Screen_JPanel
         return isEditMode[0];
     }
     
-    private void switchPanel()
+    private void switch_Panel()
     {
-        if ( is_Editable()) // Edit Mode
+        if (is_Editable()) // Edit Mode
         {
             add_Screen.clear_Btn_Action(); // clear form
             
@@ -387,42 +389,33 @@ public abstract class Parent_Screen extends Screen_JPanel
     //####################################################
     // Get Methods
     //####################################################
-    // Objects
-    public JPanel get_Container()
-    {
-        return this;
-    }
-    
-    // Screen Objects
-    public Ingredients_Info_Screen get_Ingredient_Info_Screen()
-    {
-        return ingredient_Info_Screen;
-    }
-    
     // String
-    public String get_SQL_File_Path()
-    {
-        return sql_File_Path;
-    }
-    
     public String get_Process()
     {
         return process;
     }
     
-    // Integer
-    public int get_FrameWidth()
+    // Integers
+    public int get_Frame_Width()
     {
         return frameWidth;
     }
     
-    public int get_FrameHeight()
+    public int get_Frame_Height()
     {
         return frameHeight;
     }
     
+    //##########################
+    // Objects
+    //##########################
+    public JPanel get_Container()
+    {
+        return this;
+    }
+    
     // Collections
-    public Collection<String> get_JComboBox_List()
+    public ArrayList<? extends Storable_IDS_Parent> get_JComboBox_List()
     {
         return jComboBox_List;
     }

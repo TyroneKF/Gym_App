@@ -7,7 +7,7 @@ public class Query_Results
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    private ArrayList<ArrayList<ArrayList<Object>>> outputs = new ArrayList<>(); // Each row in the output is a query result
+    private final ArrayList<ArrayList<ArrayList<Object>>> outputs = new ArrayList<>(); // Each row in the output is a query result
     
     private int size = 0;
     private String class_Name = "Query_Results ";
@@ -54,6 +54,13 @@ public class Query_Results
             
             throw new Exception (errorMSG);
         }
+    }
+    //##################################################################################################################
+    // Mutator Methods
+    //##################################################################################################################
+    public void clear_Results()
+    {
+        outputs.clear();
     }
     
     //##################################################################################################################

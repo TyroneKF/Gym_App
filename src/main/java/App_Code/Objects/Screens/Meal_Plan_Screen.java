@@ -1136,7 +1136,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     
                     // Add Ingredient_Name to DATA IF not NULL
                     Ingredient_Name_ID_OBJ ingredient_Name_ID = new Ingredient_Name_ID_OBJ(id.asInt(), name.asText(), type_OBJ);
-                    shared_Data_Registry.add_Ingredient_Name(ingredient_Name_ID);
+                    shared_Data_Registry.add_Ingredient_Name(ingredient_Name_ID, true);
                 }
             }
             

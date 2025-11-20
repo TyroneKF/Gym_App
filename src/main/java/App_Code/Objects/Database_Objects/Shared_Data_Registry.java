@@ -397,7 +397,7 @@ public class Shared_Data_Registry
     //#################################################################################################################
     public <T extends Storable_IDS_Parent> void sort_ID_Objects_AL(ArrayList<T> list)
     {
-        list.sort((a, b) -> a.get_Name().compareTo(b.get_Name()));
+        list.sort((a, b) -> a.get_Name().compareToIgnoreCase(b.get_Name()));
     }
     
     private <T extends Storable_IDS_Parent> void add_ID_Object(T id_Obj, ArrayList<T> list, boolean sort, Map<Integer, T> map)
