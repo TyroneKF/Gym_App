@@ -33,7 +33,7 @@ public class Ingredients_Types_Screen extends Parent_Screen
     protected void initialize_Screens()
     {
         this.add_Screen = new Add_Ingredient_Type(db, shared_Data_Registry, ingredient_Info_Screen, this);
-        this.edit_Screen = new Edit_Ingredient_Type(db, shared_Data_Registry, ingredient_Info_Screen, this);
+        this.edit_Screen = new Edit_Ingredient_Type(db, shared_Data_Registry, ingredient_Info_Screen, this, jComboBox_List);
         this.screenImage = new Image_JPanel("/images/ingredient_Type/ingredientType0.png", 500, 500);
     }
     

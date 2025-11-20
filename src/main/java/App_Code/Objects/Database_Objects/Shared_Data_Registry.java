@@ -588,6 +588,11 @@ public class Shared_Data_Registry
         return remove_ID_Object(from_Type_Id_Obj, ingredient_Types_Obj_AL, ingredient_Types_Obj_Map);
     }
     
+    public Ingredient_Type_ID_Obj get_Type_ID_Obj(int id)
+    {
+        return ingredient_Types_Obj_Map.get(id);
+    }
+    
     //#################################################################
     // Stores
     //#################################################################
@@ -599,6 +604,11 @@ public class Shared_Data_Registry
     public boolean remove_Store(Store_ID_OBJ store_ID_Obj)
     {
         return remove_ID_Object(store_ID_Obj, stores_Obj_AL, stores_Obj_Map);
+    }
+    
+    public Store_ID_OBJ get_Store_ID_Obj(int id)
+    {
+        return stores_Obj_Map.get(id);
     }
     
     //##############################################################################################

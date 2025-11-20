@@ -1,11 +1,19 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types;
 
+import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_Obj;
+import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
+import App_Code.Objects.Database_Objects.JDBC.Query_Results;
+import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.JTextFieldLimit;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Ingredient_Types.Add_Ingredient_Type;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Stores.Add_Stores;
+import org.javatuples.Pair;
 import javax.swing.*;
 import java.awt.*;
+import java.util.LinkedHashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,14 +26,16 @@ public abstract class Add_Screen extends Screen_JPanel
     // Objects
     protected MyJDBC db;
     protected Parent_Screen parent_Screen;
+    protected Ingredients_Info_Screen ingredient_Info_Screen;
+    protected Shared_Data_Registry sharedDataRegistry;
+    protected Query_Results results_OBJ;
     
     // GUI Objects
     protected GridBagConstraints gbc = new GridBagConstraints();
     protected JTextField jTextField;
     protected JButton submitButton;
-    protected JPanel
-            centre_JPanel,
-            jTextField_JP;
+    protected JPanel centre_JPanel, jTextField_JP;
+    protected Frame frame;
     
     // Integer
     protected int charLimit = 55;
@@ -37,15 +47,12 @@ public abstract class Add_Screen extends Screen_JPanel
             data_Gathering_Name,
             db_ColumnName_Field,
             db_TableName,
-            sql_File_Path,
             process;
-    
-    protected Ingredients_Info_Screen ingredient_Info_Screen;
     
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Add_Screen(MyJDBC db, Parent_Screen parent_Screen)
+    public Add_Screen(MyJDBC db, Shared_Data_Registry shared_Data_Registry, Ingredients_Info_Screen ingredient_Info_Screen, Parent_Screen parent_Screen)
     {
         //########################################
         //
@@ -56,11 +63,10 @@ public abstract class Add_Screen extends Screen_JPanel
         //
         //########################################
         this.db = db;
+        this.sharedDataRegistry = shared_Data_Registry;
         this.parent_Screen = parent_Screen;
-        sql_File_Path = parent_Screen.get_SQL_File_Path();
+        this.ingredient_Info_Screen = ingredient_Info_Screen;
         process = parent_Screen.get_Process();
-        
-        ingredient_Info_Screen = parent_Screen.get_Ingredient_Info_Screen();
         
         setPreferredSize(new Dimension(200, 125));
         
@@ -127,7 +133,7 @@ public abstract class Add_Screen extends Screen_JPanel
         submitButton.setPreferredSize(new Dimension(50, 35)); // width, height
         
         // creating commands for submit button to execute on
-        submitButton.addActionListener(ae -> {
+        submitButton.addActionListener(_ -> {
             submission_Btn_Action();
         });
     }
@@ -184,21 +190,15 @@ public abstract class Add_Screen extends Screen_JPanel
         clear_Btn_Action();
     }
     
-    //##########################################################
+    //#############################################################################
     // Text Formatting Methods
-    //##########################################################
+    //#############################################################################
     private boolean does_String_Contain_Characters(String input)
     {
         Pattern p1 = Pattern.compile("[^a-zA-Z]", Pattern.CASE_INSENSITIVE);
         Matcher m1 = p1.matcher(input.replaceAll("\\s+", ""));
-        boolean b1 = m1.find();
         
-        if (b1)
-        {
-            return true;
-        }
-        
-        return false;
+        return m1.find();
     }
     
     private String remove_Space_And_Hidden_Chars(String stringToBeEdited)
@@ -206,27 +206,34 @@ public abstract class Add_Screen extends Screen_JPanel
         return stringToBeEdited.trim().replaceAll("\\p{C}", ""); // remove all whitespace & hidden characters like \n
     }
     
-    //##########################################################
+    //#############################################################################
     // Submission Actions
-    //##########################################################
+    //#############################################################################
     private void submission_Btn_Action()
     {
         if (validate_Form())
         {
-            if (upload_Form())
+            if (upload_DATA())
             {
-                update_Other_Screens();
                 success_Upload_Message();
-                backup_Data_In_SQL_File();
+                
+                if (! update_Shared_DATA()) { failed_Upload_Shared_Data_Message(); }
+                
+                update_Other_Screens();
                 parent_Screen.reset_Actions();
             }
             else
             {
-                failure_Message();
+                failure_Upload_Message();
             }
+            
+            results_OBJ.clear_Results(); // Clear Results
         }
     }
     
+    //###############################################
+    // Validation Methods
+    //###############################################
     private boolean validate_Form()
     {
         jTextField_TXT = jTextField.getText();
@@ -258,15 +265,24 @@ public abstract class Add_Screen extends Screen_JPanel
      */
     protected abstract boolean additional_Validate_Form();
     
-    protected boolean upload_Form()
+    //###############################################
+    // Update Methods
+    //###############################################
+    protected boolean upload_DATA()
     {
-        //################################
-        // Check if Value Already Exists
-        //################################
-        String
-                errorMSG = String.format("Error, checking if %s already exists!", db_ColumnName_Field),
-                query = String.format("SELECT %s  FROM %s WHERE %s = ?;", db_ColumnName_Field, db_TableName, db_ColumnName_Field);
+        //########################
+        // Variables
+        //########################
+        LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params = new LinkedHashSet<>();
+        LinkedHashSet<Pair<String, Object[]>> fetch_Queries_And_Params = new LinkedHashSet<>();
         
+        String errorMSG = String.format("Error, checking if %s already exists!", db_ColumnName_Field);
+        
+        //########################
+        // Validation Check
+        //########################
+        // Check if Value Already Exists
+        String query = String.format("SELECT %s  FROM %s WHERE %s = ?;", db_ColumnName_Field, db_TableName, db_ColumnName_Field);
         Object[] params = new Object[]{ jTextField_TXT };
         
         if (db.get_Single_Col_Query_String(query, params, errorMSG) != null)
@@ -275,35 +291,106 @@ public abstract class Add_Screen extends Screen_JPanel
             return false;
         }
         
-        //################################
-        // Upload Query
-        //################################
-        String upload_String = String.format("INSERT INTO %s (%s) VALUES (?);", db_TableName, db_ColumnName_Field);
-        Object[] upload_params = new Object[]{ jTextField_TXT };
+        //########################
+        // Create Queries
+        //########################
+        // Create Upload Queries
+        String upload_Q1 = String.format("INSERT INTO %s (%s) VALUES (?);", db_TableName, db_ColumnName_Field);
         
-        return db.upload_Data2(upload_String, upload_params, "Error, Unable to Add Ingredient Info!");
+        upload_Queries_And_Params.add(new Pair<>(upload_Q1, new Object[]{ jTextField_TXT }));
+        
+        // Create Fetch Queries
+        String fetch_Q1 = " SELECT LAST_INSERT_ID();";
+        fetch_Queries_And_Params.add(new Pair<>(fetch_Q1, null));
+        
+        //########################
+        // Execute Query
+        //########################
+        results_OBJ = db.upload_And_Get_Batch(upload_Queries_And_Params, fetch_Queries_And_Params, errorMSG);
+        
+        //########################
+        // Return
+        //########################
+        try
+        {
+            System.out.printf("\n\n%s", results_OBJ.get_Result_Object(0));
+        }
+        catch (Exception e)
+        {
+            System.err.printf("\n\nUpload_DATA Error, \n\n%s", e);
+        }
+        
+        
+        return (results_OBJ != null && ! results_OBJ.is_Empty());
     }
     
-    protected boolean backup_Data_In_SQL_File()
+    protected boolean update_Shared_DATA()
     {
-        String
-                txtToAdd = String.format("('%s')", jTextField_TXT),
-                errorMSG = String.format("Error, backing up new %s to SQL file!", process);
+        //########################
+        // Get ID Variable
+        //########################
+        String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+        int id;
         
-        return db.write_Txt_To_SQL_File(sql_File_Path, txtToAdd, errorMSG);
+        try
+        {
+            id = ((Number) results_OBJ.get_Result_Object(0)).intValue();
+        }
+        catch (Exception e)
+        {
+            System.err.printf("\n\n%s Error, \n\n%s", method_Name, e);
+            return false;
+        }
+        
+        //########################
+        // Update Process
+        //########################
+        if (this instanceof Add_Stores)
+        {
+            sharedDataRegistry.add_Store(new Store_ID_OBJ(id, jTextField_TXT), true);
+        }
+        else if (this instanceof Add_Ingredient_Type)
+        {
+            sharedDataRegistry.add_Ingredient_Type(new Ingredient_Type_ID_Obj(id, jTextField_TXT), true);
+        }
+        else
+        {
+            return false;
+        }
+        
+        //########################
+        // Return
+        //########################
+        return true;
     }
     
-    //########################
-    // Messages
-    //########################
-    
+    //###############################################
+    // Upload Messages Output
+    //###############################################
     /**
      * All the methods are Override by child class
      */
-    protected abstract void success_Upload_Message();
+    protected void success_Upload_Message()
+    {
+        String text = String.format("\n\nSuccessfully Added New Ingredient %s: '%s' To DB!", process, jTextField_TXT);
+        JOptionPane.showMessageDialog(null, text);
+    }
     
-    protected abstract void failure_Message();
+    protected void failure_Upload_Message()
+    {
+        String text = String.format("\n\nFailed Upload - Couldn't Add New Ingredient %s: '%s' To DB!", process, jTextField_TXT);
+        JOptionPane.showMessageDialog(null, text);
+    }
     
+    protected void failed_Upload_Shared_Data_Message()
+    {
+        String text = String.format("\n\nFailed Updating GUI Data - Couldn't Add New Ingredient %s", process);
+        JOptionPane.showMessageDialog(null, text);
+    }
+    
+    //###############################################
+    // Update Other Screens
+    //###############################################
     protected abstract void update_Other_Screens();
 }
 

@@ -35,7 +35,7 @@ public class Ingredient_Stores_Screen extends Parent_Screen
     protected void initialize_Screens()
     {
         this.add_Screen = new Add_Stores(db, shared_Data_Registry, ingredient_Info_Screen, this);
-        this.edit_Screen = new Edit_Stores(db, shared_Data_Registry, ingredient_Info_Screen, this);
+        this.edit_Screen = new Edit_Stores(db, shared_Data_Registry, ingredient_Info_Screen, this, jComboBox_List);
         this.screenImage = new Image_JPanel("/images/stores/store0.png", 500, 470);
     }
     

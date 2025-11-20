@@ -1,6 +1,8 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Ingredient_Types;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
+import App_Code.Objects.Database_Objects.Shared_Data_Registry;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Add_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Parent_Screen;
 
@@ -8,13 +10,14 @@ import javax.swing.*;
 
 public class Add_Ingredient_Type extends Add_Screen
 {
-    public Add_Ingredient_Type(MyJDBC db, Parent_Screen parent_Screen)
+    public Add_Ingredient_Type(MyJDBC db, Shared_Data_Registry shared_Data_Registry, Ingredients_Info_Screen ingredient_Info_Screen,
+                               Parent_Screen parent_Screen)
     {
-        super(db, parent_Screen);
+        super(db, shared_Data_Registry, ingredient_Info_Screen, parent_Screen);
     }
     
     @Override
-    protected void  set_Screen_Variables()
+    protected void set_Screen_Variables()
     {
         super.main_Label = "Add Ingredient Type Name";
         
@@ -34,25 +37,10 @@ public class Add_Ingredient_Type extends Add_Screen
     {
         return true;
     }
-    
-    @Override
-    protected void success_Upload_Message()
-    {
-        String text = String.format("\n\nSuccessfully Added New Ingredient Type: '%s'", jTextField_TXT);
-        JOptionPane.showMessageDialog(null, text);
-    }
-    
-    @Override
-    protected void failure_Message()
-    {
-        String text = "\n\nFailed Upload - Couldn't Add New Ingredient Type";
-        JOptionPane.showMessageDialog(null, text);
-    }
-    
+   
     @Override
     protected void update_Other_Screens()
     {
-        ingredient_Info_Screen.add_Change_Or_Remove_IngredientsTypeName("addKey", jTextField_TXT, null);
-        ingredient_Info_Screen.update_IngredientsForm_Type_JComboBoxes();
+        //ingredient_Info_Screen.update_IngredientsForm_Type_JComboBoxes();
     }
 }

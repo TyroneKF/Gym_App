@@ -935,7 +935,6 @@ public class MyJDBC
     // #######################################################
     // Upload & GET Together
     // #######################################################
-    
     /***
      * @param upload_Queries_And_Params
      * @param errorMSG
@@ -1009,52 +1008,6 @@ public class MyJDBC
             return null; // Return Output
         }
     }
-    
-    // ############################################################
-    // ############################################################
-    // ############################################################
-    // ############################################################
-    // REMOVE
-    // #########################################################
-    
-    /**
-     * This method can upload one statement or, multiple queries within a single String after each statement in the string is separated by a ;
-     */
-    public boolean upload_Data(String query, String errorMSG)
-    {
-        //##########################################################
-        // Check DB Status
-        //##########################################################
-        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        
-        if (! is_DB_Connected(methodName)) { return false; }
-        
-        //##########################################################
-        // Query Setup
-        //##########################################################
-        try (Connection connection = dataSource.getConnection(); // Get a Connection from pool
-             Statement statement = connection.createStatement();
-        )
-        {
-            connection.setAutoCommit(false); // Update as OneBatch
-            
-            statement.executeUpdate(query);
-            connection.commit();
-            
-            connection.setAutoCommit(true);
-            
-            return true;
-        }
-        //##########################################################
-        // Error Handling
-        //##########################################################
-        catch (Exception e)
-        {
-            handleException_MYSQL(e, methodName, query, errorMSG);
-            return false;
-        }
-    }
-    
    
     //##################################################################################################################
     // DB Get Methods

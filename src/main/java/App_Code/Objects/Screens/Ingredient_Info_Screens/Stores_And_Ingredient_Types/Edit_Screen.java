@@ -1,9 +1,13 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types;
 
+import App_Code.Objects.Data_Objects.ID_Object;
+import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_Obj;
 import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Storable_IDS_Parent;
+import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Stores.Edit_Stores;
 import org.javatuples.Pair;
 
 import javax.swing.*;
@@ -35,17 +39,20 @@ public abstract class Edit_Screen extends Add_Screen
     protected boolean item_Deleted = false;
     
     // Collections
-    protected ArrayList<? extends Storable_IDS_Parent> remove_JComboBox_Items = new ArrayList<>();
+    protected ArrayList<Integer> remove_JComboBox_Items;
     protected ArrayList<? extends Storable_IDS_Parent> jComboBox_List;
     
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Edit_Screen(MyJDBC db, Shared_Data_Registry shared_Data_Registry, Ingredients_Info_Screen ingredient_Info_Screen, Parent_Screen parent_Screen)
+    public Edit_Screen(MyJDBC db, Shared_Data_Registry shared_Data_Registry, Ingredients_Info_Screen ingredient_Info_Screen, Parent_Screen parent_Screen,
+                       ArrayList<? extends Storable_IDS_Parent> jComboBox_List)
     {
         super(db, shared_Data_Registry, ingredient_Info_Screen, parent_Screen);
-       
         setPreferredSize(new Dimension(200, 160));  // Adjust Screen Size
+        
+        this.jComboBox_List = jComboBox_List;
+        load_JComboBox();
     }
     
     //##################################################################################################################
@@ -54,17 +61,13 @@ public abstract class Edit_Screen extends Add_Screen
     @Override
     protected void additional_Add_Screen_Objects()
     {
-        //########################################################################################################
+        //#########################################################
         //  JComboBox
-        //########################################################################################################
-        jComboBox_List = parent_Screen.get_JComboBox_List();
-        
+        //#########################################################
         jComboBox_JPanel = new JPanel(new GridLayout(1, 1));
         jComboBox_JPanel.setPreferredSize(new Dimension(650, 45));
         
         jCombo_Box = new JComboBox<>();
-        
-        load_JComboBox();
         
         jCombo_Box.setFont(new Font("Arial", Font.PLAIN, 17)); // setting font
         ((JLabel) jCombo_Box.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER); // centre text
@@ -111,7 +114,7 @@ public abstract class Edit_Screen extends Add_Screen
         for (Storable_IDS_Parent id_Obj: jComboBox_List)
         {
             // If Item is in List to avoid then skip
-            if (remove_JComboBox_Items.contains(id_Obj)) { continue; }
+            if (remove_JComboBox_Items.contains(id_Obj.get_ID())) { continue; }
             
             // Add Item
             jCombo_Box.addItem(id_Obj);
@@ -126,7 +129,7 @@ public abstract class Edit_Screen extends Add_Screen
     //##################################################################################################################
     // Methods
     //##################################################################################################################
- 
+    
     // Form Methods
     @Override
     protected boolean additional_Validate_Form()
@@ -232,25 +235,34 @@ public abstract class Edit_Screen extends Add_Screen
     protected void delete_Btn_Action_Listener()
     {
         //##################################
-        //
+        // IS Item Selected
         //##################################
-        if (selected_JComboBox_Item_Txt.isEmpty())
+        if (jCombo_Box.getSelectedIndex() == - 1)
         {
             JOptionPane.showMessageDialog(null, String.format("Select An ' %s 'To Delete It !!!", data_Gathering_Name));
             return;
         }
         
         //##################################
-        //
+        // MYSQL
         //##################################
-        if (! delete_Btn_Action())
+        if (! delete_Btn_DB_Action())
         {
             JOptionPane.showMessageDialog(null, String.format("\n\nFailed To Delete Selected Item ''%s'' !!", selected_JComboBox_Item_Txt));
             return;
         }
         
         //##################################
-        //
+        // Shared_DATA
+        //##################################
+        if (! delete_Shared_Data_Action())
+        {
+            JOptionPane.showMessageDialog(null, String.format("\n\nFailed To Delete Selected Item ''%s'' From GUI (Restart App) !!", selected_JComboBox_Item_Txt));
+            return;
+        }
+        
+        //##################################
+        // Success MSG
         //##################################
         JOptionPane.showMessageDialog(null, String.format("\n\nSelected Item ''%s'' Has Successfully Been Deleted!!!", selected_JComboBox_Item_Txt));
         
@@ -258,36 +270,34 @@ public abstract class Edit_Screen extends Add_Screen
         reset_Actions();
     }
     
-    private boolean delete_Btn_Action()
+    private boolean delete_Btn_DB_Action()
     {
         //##################################
-        // SQL Variables
+        // Variables
         //##################################
-        String
-                mysqlVariableReference1 = "@CurrentID",
-                createMysqlVariable1 = String.format("SET %s = (SELECT %s FROM %s WHERE %s = ?);",
-                        mysqlVariableReference1, id_ColumnName, db_TableName, db_ColumnName_Field);
-        
-        String errorMSG1 = String.format("\n\nFailed To Delete ' %s ' FROM %s !!", selected_JComboBox_Item_Txt, data_Gathering_Name);
-        
-        // Generate Queries
-        LinkedHashSet<Pair<String, Object[]>> queries_And_Params = new LinkedHashSet<>()
-        {{
-            add(new Pair<>(createMysqlVariable1, new Object[]{ selected_JComboBox_Item_Txt }));
-        }};
-        
-      
+        Storable_IDS_Parent item_ID_Obj = (Storable_IDS_Parent) jCombo_Box.getSelectedItem();
+        LinkedHashSet<Pair<String, Object[]>> upload_Query_And_Params = new LinkedHashSet<>();
         
         //##################################
+        // SQL
+        //##################################
+        
+        // Get Child Class Queries
+        upload_Query_And_Params = delete_Prior_Queries(item_ID_Obj, upload_Query_And_Params);
+        
+        // Define Query Variables
+        String errorMSG = String.format("Failed To Delete ' %s ' FROM %s !!", selected_JComboBox_Item_Txt, data_Gathering_Name);
+        String upload_Q1 = String.format("DELETE FROM %s WHERE %s = ?", db_TableName, id_ColumnName);
+        
+        upload_Query_And_Params.add(new Pair<>(upload_Q1, new Object[]{ item_ID_Obj.get_ID() }));
+        
+        //##################
         // Execute Query
-        //##################################
-        if (! db.upload_Data_Batch2(queries_And_Params, errorMSG1)) { return false; }
-        
-        item_Deleted = true;
-        
-        //##################################
-        // Return Value
-        //##################################
-        return true;
+        //##################
+        return (! db.upload_Data_Batch2(upload_Query_And_Params, errorMSG));
     }
+    
+    protected abstract LinkedHashSet<Pair<String, Object[]>> delete_Prior_Queries(ID_Object id_object, LinkedHashSet<Pair<String, Object[]>> query_And_Params);
+    
+    protected abstract boolean delete_Shared_Data_Action();
 }
