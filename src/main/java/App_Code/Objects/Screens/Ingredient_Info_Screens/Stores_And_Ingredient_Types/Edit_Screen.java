@@ -1,13 +1,10 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types;
 
 import App_Code.Objects.Data_Objects.ID_Object;
-import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_Obj;
 import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Storable_IDS_Parent;
-import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
-import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Stores.Edit_Stores;
 import org.javatuples.Pair;
 
 import javax.swing.*;
@@ -30,7 +27,7 @@ public abstract class Edit_Screen extends Add_Screen
     
     // String
     protected String
-            lable1, label2,
+            label1, label2,
             id_ColumnName,
             selected_JComboBox_Item_Txt = "",
             fk_Table;
@@ -89,7 +86,7 @@ public abstract class Edit_Screen extends Add_Screen
     @Override
     protected void add_Screen_Objects()
     {
-        add_To_Container(centre_JPanel, create_Label_Panel(lable1), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
+        add_To_Container(centre_JPanel, create_Label_Panel(label1), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
         add_To_Container(centre_JPanel, jComboBox_JPanel, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
         
         add_To_Container(centre_JPanel, new JPanel(), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "horizontal", 10, 0, null);
@@ -111,7 +108,7 @@ public abstract class Edit_Screen extends Add_Screen
         //###############################
         // Populate List
         //###############################
-        for (Storable_IDS_Parent id_Obj: jComboBox_List)
+        for (Storable_IDS_Parent id_Obj : jComboBox_List)
         {
             // If Item is in List to avoid then skip
             if (remove_JComboBox_Items.contains(id_Obj.get_ID())) { continue; }
@@ -129,6 +126,19 @@ public abstract class Edit_Screen extends Add_Screen
     //##################################################################################################################
     // Methods
     //##################################################################################################################
+    protected Integer get_Selected_Item_ID()
+    {
+        Object item_ID_Obj = jCombo_Box.getSelectedItem();
+        
+        return item_ID_Obj != null ? ((Storable_IDS_Parent) item_ID_Obj).get_ID() : null;
+    }
+    
+    protected Storable_IDS_Parent get_Selected_Item()
+    {
+        Object item_ID_Obj = jCombo_Box.getSelectedItem();
+        
+        return item_ID_Obj != null ? (Storable_IDS_Parent) item_ID_Obj : null;
+    }
     
     // Form Methods
     @Override
@@ -149,8 +159,9 @@ public abstract class Edit_Screen extends Add_Screen
         // Check if Value Already Exists
         //################################
         String
-                errorMSG = "Error, unable to edit Ingredients Info / Shop Info",
-                query = String.format("SELECT %s FROM %s WHERE %s = ?;", db_ColumnName_Field, db_TableName, db_ColumnName_Field);
+                errorMSG = "Error, unable to access DB to process request!",
+                query = String.format("SELECT %s FROM %s WHERE %s = ?;",
+                        db_ColumnName_Field, db_TableName, db_ColumnName_Field);
         
         Object[] params = new Object[]{ jTextField_TXT };
         
@@ -163,32 +174,32 @@ public abstract class Edit_Screen extends Add_Screen
         //################################
         // Upload Query
         //################################
-        String mysqlVariableReference1 = "@CurrentID";
-        String createMysqlVariable1 = String.format("SET %s = (SELECT %s FROM %s WHERE %s = ?);",
-                mysqlVariableReference1, id_ColumnName, db_TableName, db_ColumnName_Field);
+        Integer object_ID = get_Selected_Item_ID();
         
-        String uploadString = String.format("""
+        String upload_Q1 = String.format("""
                         UPDATE %s
                         SET %s = ?
-                        WHERE %s = %s;""",
-                db_TableName,
-                db_ColumnName_Field,
-                id_ColumnName, mysqlVariableReference1);
+                        WHERE %s = ?;""",
+                db_TableName, db_ColumnName_Field, id_ColumnName);
         
         //################################
         // Return Query Result
         //################################
         String errorMSG_Upload = String.format("Unable to Update Ingredient %s to '%s'!", data_Gathering_Name, jTextField_TXT);
         
-        LinkedHashSet<Pair<String, Object[]>> queries_And_Params = new LinkedHashSet<>()
-        {{
-            add(new Pair<>(createMysqlVariable1, new Object[]{ selected_JComboBox_Item_Txt }));
-            add(new Pair<>(uploadString, new Object[]{ jTextField_TXT, }));
-        }};
-        
-        return db.upload_Data_Batch2(queries_And_Params, errorMSG_Upload);
+        return db.upload_Data2(upload_Q1, new Object[]{jTextField_TXT, object_ID}, errorMSG_Upload);
     }
     
+    @Override
+    protected final boolean update_Shared_DATA()
+    {
+        get_Selected_Item().set_Name(get_JTextField_TXT()); // Update Item Text
+        
+        sharedDataRegistry.sort_ID_Objects_AL(jComboBox_List); // Sort List, due to name change
+        
+        return true;
+    }
+
     //###############################################
     // Upload Messages Output
     //###############################################
@@ -275,7 +286,7 @@ public abstract class Edit_Screen extends Add_Screen
         //##################################
         // Variables
         //##################################
-        Storable_IDS_Parent item_ID_Obj = (Storable_IDS_Parent) jCombo_Box.getSelectedItem();
+        Storable_IDS_Parent item_ID_Obj = get_Selected_Item();
         LinkedHashSet<Pair<String, Object[]>> upload_Query_And_Params = new LinkedHashSet<>();
         
         //##################################
@@ -294,7 +305,7 @@ public abstract class Edit_Screen extends Add_Screen
         //##################
         // Execute Query
         //##################
-        return  db.upload_Data_Batch2(upload_Query_And_Params, errorMSG);
+        return db.upload_Data_Batch2(upload_Query_And_Params, errorMSG);
     }
     
     protected abstract LinkedHashSet<Pair<String, Object[]>> delete_Prior_Queries(ID_Object id_object, LinkedHashSet<Pair<String, Object[]>> query_And_Params);

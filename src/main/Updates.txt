@@ -7,6 +7,12 @@ Work On:
 .) If an ingredient table is saved and its not in the DB because the mealManager isn't
  .) MealManagaer should be saved
 
+Add / Edit Ingredients Screen
+.) Update Other Screens
+.) Deleting stores / type ask if we want to delete children or assign them to a new parent
+.) Deleting ingredient / type should refresh meal plan
+.) Transfer in Bulk
+
 
 IconButton
 .) Condense methods etc make button transparent
@@ -60,11 +66,6 @@ ADD / Edit Stores /Types
 
 Loading Screen
 .) Include DB Creation in Loading screen progress
-
-Add / Edit Ingredients Screen
-.) Deleting stores / type ask if we want to delete children or assign them to a new parent
-.) Deleting ingredient / type should refresh meal plan
-.) Transfer in Bulk
 
 
 Loading Screen

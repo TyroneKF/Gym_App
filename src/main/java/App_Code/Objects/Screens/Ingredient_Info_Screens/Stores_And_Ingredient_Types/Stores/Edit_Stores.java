@@ -2,7 +2,6 @@ package App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_T
 
 
 import App_Code.Objects.Data_Objects.ID_Object;
-import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_Obj;
 import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Storable_IDS_Parent;
 import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
@@ -12,7 +11,6 @@ import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Ty
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Parent_Screen;
 import org.javatuples.Pair;
 
-import javax.swing.*;
 import java.util.*;
 
 public class Edit_Stores extends Edit_Screen
@@ -26,7 +24,7 @@ public class Edit_Stores extends Edit_Screen
     @Override
     protected void set_Screen_Variables()
     {
-        super.lable1 = "Select Supplier Name To Edit";
+        super.label1 = "Select Supplier Name To Edit";
         super.label2 = "Change Supplier Name To";
         
         super.data_Gathering_Name = "Supplier Name";

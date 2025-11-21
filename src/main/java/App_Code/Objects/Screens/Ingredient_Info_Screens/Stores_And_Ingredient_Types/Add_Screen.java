@@ -392,5 +392,13 @@ public abstract class Add_Screen extends Screen_JPanel
     // Update Other Screens
     //###############################################
     protected abstract void update_Other_Screens();
+    
+    //##################################################################################################################
+    // Accessor Methods
+    //##################################################################################################################
+    protected String get_JTextField_TXT()
+    {
+        return jTextField_TXT;
+    }
 }
 
