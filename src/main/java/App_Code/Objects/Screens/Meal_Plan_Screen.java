@@ -3,6 +3,7 @@ package App_Code.Objects.Screens;
 import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
 import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_Obj;
 import App_Code.Objects.Data_Objects.MetaData_ID_Object.Meal_ID;
+import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Measurement_ID_OBJ;
 import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
@@ -537,6 +538,13 @@ public class Meal_Plan_Screen extends Screen_JFrame
             return;
         }
         
+        if(! get_Measurement_Data())
+        {
+            loadingScreen.window_Closed_Event();
+            JOptionPane.showMessageDialog(null, "\n\nError, Cannot Get Measurement DATA!");
+            return;
+        }
+        
         loadingScreen.increaseBar(10);
         
         //####################################################
@@ -734,6 +742,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
         resizeGUI();
         setFrameVisibility(true);
         scroll_To_Top_of_ScrollPane();
+        
+        //open_Ingredients_Screen();
     }
     
     //##################################################################################################################
@@ -1147,6 +1157,36 @@ public class Meal_Plan_Screen extends Screen_JFrame
             System.err.printf("\n\n%s error \n\n%s", methodName, e);
             return false;
         }
+    }
+    
+    public boolean get_Measurement_Data()
+    {
+        // Set Variables
+        String
+                query = "SELECT * FROM measurements ORDER BY unit_name;",
+                errorMSG = "Unable, to get Measurments Data";
+        
+        // Execute Query
+        ArrayList<ArrayList<Object>> data = db.get_2D_Query_AL_Object(query, null, errorMSG);
+        
+        // Exit Clause
+        if (data == null) { return false; }
+        
+        // Add Measurement OBJ
+        for(ArrayList<Object> row : data)
+        {
+            int id = (int) row.get(0);
+            String unit_Name = (String) row.get(1);
+            String unit_Symbol = (String) row.get(2);
+            String measured_Material_Type = (String) row.get(3);
+            
+            shared_Data_Registry.add_Measurement(
+                    new Measurement_ID_OBJ(id, unit_Name, unit_Symbol, measured_Material_Type), false
+            );
+        }
+        
+        // Return Output
+        return true;
     }
     
     public boolean get_Meal_Data()

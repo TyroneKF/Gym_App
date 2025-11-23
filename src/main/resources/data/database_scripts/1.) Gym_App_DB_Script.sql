@@ -123,7 +123,7 @@ LEFT JOIN
 )  C
 ON P.plan_id = C.plan_id;
 
---######################################
+-- ######################################
 
 CREATE TABLE IF NOT EXISTS ingredient_types
 (
@@ -133,53 +133,52 @@ CREATE TABLE IF NOT EXISTS ingredient_types
 	UNIQUE KEY no_repeat_ingredient_type_name (ingredient_type_name)
 );
 
---######################################
+-- ######################################
 
 CREATE TABLE IF NOT EXISTS measurements
  (
     -- PRIMARY KEYS
-    meassurement_id INT PRIMARY KEY AUTO_INCREMENT,
+    measurement_id INT PRIMARY KEY AUTO_INCREMENT,
 
 	unit_name VARCHAR(100) NOT NULL,
 	unit_symbol VARCHAR(10) NOT NULL,
-	measured_material_type ENUM('solids', 'liquids') NOT NULL
+	measured_material_type ENUM('solids', 'liquids') NOT NULL,
+	
+	UNIQUE KEY no_repeat_unit_names(unit_name)
  );
  
---######################################
+-- ######################################
 
 CREATE TABLE IF NOT EXISTS ingredients_info
  (
     -- PRIMARY KEYS
     ingredient_id INT  PRIMARY KEY AUTO_INCREMENT,
-
-	measurement ENUM('Litres', 'Grams') NOT NULL,
-
+	
+	measurement_id INT NOT NULL,
+	FOREIGN KEY (measurement_id) REFERENCES measurements(measurement_id),
+		
 	ingredient_name VARCHAR(100) NOT NULL,
-
+	
 	ingredient_type_id  INT NOT NULL,
 	FOREIGN KEY (ingredient_type_id) REFERENCES ingredient_types(ingredient_type_id) ON DELETE CASCADE,
 
 	based_on_quantity DECIMAL(7,2) NOT NULL,
-
     glycemic_index INT NOT NULL,
 	protein DECIMAL(7,2) NOT NULL,
-
 	carbohydrates DECIMAL(7,2) NOT NULL,
 	sugars_of_carbs DECIMAL(7,2) NOT NULL,
 	fibre DECIMAL(7,2) NOT NULL,
-
 	fat DECIMAL(7,2) NOT NULL,
 	saturated_fat DECIMAL(7,2) NOT NULL,
 	salt DECIMAL(7,2) NOT NULL,
 	water_content DECIMAL(7,2) NOT NULL,
 	liquid_content DECIMAL(7,2) NOT NULL,
-
 	calories DECIMAL(7,2) NOT NULL,
 
 	UNIQUE KEY no_repeat_ingredient_names(ingredient_name)
 );
 
---######################################
+-- ######################################
 CREATE TABLE IF NOT EXISTS stores
 (
     -- PRIMARY KEYS
@@ -188,7 +187,7 @@ CREATE TABLE IF NOT EXISTS stores
 	UNIQUE KEY no_repeat_store_names (store_name)
 
 );
---######################################
+-- ######################################
 
 CREATE TABLE IF NOT EXISTS ingredient_in_shops
 (
@@ -208,7 +207,7 @@ CREATE TABLE IF NOT EXISTS ingredient_in_shops
 
     UNIQUE KEY no_repeat_products_in_store(store_id, product_name)
 );
---######################################
+-- ######################################
 
 CREATE TABLE IF NOT EXISTS meals_in_plan
 (
@@ -225,7 +224,7 @@ CREATE TABLE IF NOT EXISTS meals_in_plan
    UNIQUE KEY no_repeat_meal_names_in_plan(plan_id, meal_name) -- can't have 2 of the same meal_names in a plan
 );
 
---######################################
+-- ######################################
 
 CREATE TABLE IF NOT EXISTS divided_meal_sections
 (
@@ -243,7 +242,7 @@ CREATE TABLE IF NOT EXISTS divided_meal_sections
 
 );
 
---######################################
+-- ######################################
 CREATE TABLE IF NOT EXISTS ingredients_in_sections_of_meal
 (
     ingredients_index INT  AUTO_INCREMENT,
@@ -267,7 +266,7 @@ CREATE TABLE IF NOT EXISTS ingredients_in_sections_of_meal
 	UNIQUE KEY no_repeat_records(ingredients_index, div_meal_sections_id, plan_id)
 );
 
---######################################
+-- ######################################
 
 DROP VIEW IF EXISTS ingredients_in_sections_of_meal_calculation;
 CREATE VIEW ingredients_in_sections_of_meal_calculation AS
@@ -308,7 +307,7 @@ LEFT JOIN ingredients_info info ON  info.ingredient_id = i.ingredient_id
 LEFT JOIN ingredient_in_shops p ON p.pdid = i.pdid
 LEFT JOIN stores s ON p.store_id = s.store_id;
 
---######################################
+-- ######################################
 
 DROP VIEW IF EXISTS divided_meal_sections_calculations;
 CREATE VIEW divided_meal_sections_calculations AS
@@ -334,7 +333,7 @@ IFNULL(ROUND(SUM(calories),2),0) as total_calories
 FROM  ingredients_in_sections_of_meal_calculation
 GROUP BY div_meal_sections_id, plan_id;
 
---######################################
+-- ######################################
 
 DROP VIEW IF EXISTS total_meal_view;
 CREATE VIEW total_meal_view AS
@@ -368,7 +367,7 @@ ON di.div_meal_sections_id = d.div_meal_sections_id AND di.plan_id = d.plan_id
 
 GROUP BY  m.plan_id, m.meal_in_plan_id, Meal_Time, Meal_Name; -- Last 2 were just added because
 
---######################################
+-- ######################################
 
 DROP VIEW IF EXISTS total_plan_view;
 CREATE VIEW total_plan_view AS
@@ -399,7 +398,7 @@ ON P.plan_id = T.plan_id
 
 GROUP BY  P.plan_id, P.plan_name;
 
---######################################
+-- ######################################
 
 DROP VIEW IF EXISTS plan_macros_left;
 CREATE VIEW  plan_macros_left AS

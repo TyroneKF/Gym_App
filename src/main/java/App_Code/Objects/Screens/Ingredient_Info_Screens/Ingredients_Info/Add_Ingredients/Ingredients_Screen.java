@@ -1,0 +1,243 @@
+package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients;
+
+import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
+import App_Code.Objects.Database_Objects.Shared_Data_Registry;
+import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredient_Form.Ingredients_Form;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.Add_Shop_Form;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
+import org.javatuples.Pair;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.*;
+
+
+public class Ingredients_Screen extends Screen_JPanel
+{
+    //##################################################################################################################
+    // Variables
+    //##################################################################################################################
+    
+    // JPanel
+    protected JPanel scroll_JPanel, mainCentre_JPanel;
+    
+    // Objects
+    protected MyJDBC db;
+    protected Frame frame;
+    
+    // Screen Objects
+    protected Ingredients_Form ingredients_Form;
+    private Add_Shop_Form shop_Form;
+    protected Search_For_Food_Info search_For_Ingredient_Info;
+    protected Ingredients_Info_Screen ingredients_info_screen;
+    protected Shared_Data_Registry shared_Data_Registry;
+    
+    //##################################################################################################################
+    // Constructor
+    //##################################################################################################################
+    public Ingredients_Screen(Ingredients_Info_Screen ingredients_info_screen, MyJDBC db, Shared_Data_Registry shared_Data_Registry)
+    {
+        //##########################################################
+        // Super Constructor
+        //##########################################################
+        super(null, true, 800, 850);
+        
+        //##########################################################
+        // Variables
+        //##########################################################
+        // Objects
+        this.ingredients_info_screen = ingredients_info_screen;
+        this.db = db;
+        this.shared_Data_Registry = shared_Data_Registry;
+        
+        frame = ingredients_info_screen.getFrame();
+        
+        //#########################################################
+        //   Create Screen for Interface
+        //#########################################################
+        scroll_JPanel = get_ScrollPane_JPanel();
+        scroll_JPanel.setLayout(new BorderLayout());
+        
+        // Main Centre JPanel
+        mainCentre_JPanel = new JPanel(new GridBagLayout());
+        scroll_JPanel.add(mainCentre_JPanel, BorderLayout.CENTER);
+        
+        //##########################################################
+        //   Create GUI Objects
+        //#########################################################
+        create_GUI_Objects();
+        create_GUI();
+    }
+    
+    //##################################################################################################################
+    // Methods
+    //##################################################################################################################
+    
+    // Create GUI Methods
+    protected void create_GUI_Objects()
+    {
+        ingredients_Form = new Ingredients_Form(scroll_JPanel, db, shared_Data_Registry,"Add Ingredients Info");
+        
+        shop_Form = new Add_Shop_Form(scroll_JPanel, this);
+        
+        search_For_Ingredient_Info = new Search_For_Food_Info(scroll_JPanel, ingredients_Form, "Search For Food Info");
+    }
+    
+    protected void create_GUI()
+    {
+        //Search For Ingredients Form
+        add_To_Container(mainCentre_JPanel, search_For_Ingredient_Info, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        
+        add_To_Container(mainCentre_JPanel, new JPanel(), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 10, 0, null);
+        
+        add_To_Container(mainCentre_JPanel, ingredients_Form, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        
+        add_To_Container(mainCentre_JPanel, new JPanel(), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 10, 0, null);
+        
+        //#############################
+        // Add shop
+        //#############################
+        add_To_Container(mainCentre_JPanel, shop_Form, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        
+        
+        //##############################
+        //Space Divider
+        //##############################
+        add_To_Container(mainCentre_JPanel, new JPanel(), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 10, 0, null);
+        
+        
+        //###############################
+        // South Screen for Interface
+        //###############################
+        // Creating Submit Button
+        JButton submitButton = new JButton("Submit Form");
+        submitButton.setFont(new Font("Arial", Font.BOLD, 14)); // setting font
+        submitButton.setPreferredSize(new Dimension(50, 50)); // width, height
+        
+        // creating commands for submit button to execute on
+        submitButton.addActionListener(ae -> {
+            submission_Btn_Action();
+        });
+        
+        get_Main_South_JPanel().setLayout(new GridLayout(1, 1));
+        get_Main_South_JPanel().add(submitButton, BorderLayout.SOUTH);
+        
+        //#############################
+        // Resizing GUI
+        //#############################
+        resize_GUI();
+    }
+    
+    //##################################################################
+    // Submission Button Actions
+    //#################################################################
+    protected void submission_Btn_Action()
+    {
+        //###############################
+        //
+        //###############################
+        String
+                title_Create = "Create New Ingredient",
+                message_Create = "Are you sure you want to add this Ingredient?";
+        
+        if (! are_You_Sure(title_Create, message_Create)) { return; }
+        
+        //###############################
+        // Ingredient Form
+        //###############################
+        if (! (ingredients_Form.validate_Ingredients_Form())) { return; }
+        
+        //###############################
+        // Shop Form
+        //###############################
+        if (! (shop_Form.validate_Form())) { return; }
+        
+        //###############################
+        // Data Formatting
+        //###############################
+        String
+                title_Upload = "",
+                message_Upload = "upload these values as they may have been changed / adapted to fit our data type format";
+        
+        if (! are_You_Sure(title_Upload, message_Upload)) { return; }
+        
+        //###############################
+        // Update Both Forms
+        //###############################
+        if (! update_Both_Forms()) { return; }
+        
+        ingredients_info_screen.set_Update_IngredientInfo(true);
+        JOptionPane.showMessageDialog(get_Frame(), "\n\nUpdated Ingredient Info! \n\nAlso updated 2/2 Shop Info In DB In DB!!!");
+        JOptionPane.showMessageDialog(get_Frame(), "The ingredient updates won't appear on the mealPlan screen until this window is closed!");
+        
+        //################################
+        // Reset Form & Update GUI
+        //################################
+        clear_Interface();
+    }
+    
+    protected boolean update_Both_Forms()
+    {
+        String errorMSG = "Error, Unable to add new Ingredient !";
+        
+        LinkedHashSet<Pair<String, Object[]>> queries_And_Params = new LinkedHashSet<>();
+        
+        db.upload_Data_Batch2(queries_And_Params, errorMSG);
+        return false;
+    }
+    
+    //####################################################
+    // Clearing GUI Methods
+    //####################################################
+    private void clear_Interface() // only available to reset screen
+    {
+        clear_Search_For_Ingredient_Info_Form();
+        clear_Ingredients_Form();
+        clear_Shop_Form();
+        
+        resize_GUI();
+    }
+    
+    protected void clear_Search_For_Ingredient_Info_Form()
+    {
+        search_For_Ingredient_Info.resetFullDisplay();
+    }
+    
+    protected void clear_Ingredients_Form()
+    {
+        ingredients_Form.clear_Ingredients_Form();
+    }
+    
+    public void clear_Shop_Form()
+    {
+        shop_Form.clear_Shop_Form();
+    }
+    
+    //####################################################
+    // Update Methods
+    //####################################################
+    public void load_Ingredient_Type_JC()
+    {
+        ingredients_Form.load_Ingredients_Type_JComboBox();
+    }
+    
+    
+    public void load_Stores_JC()
+    {
+    
+    }
+    
+    //##########################################################
+    // Accessor Methods
+    //##########################################################
+    public Frame get_Frame()
+    {
+        return frame;
+    }
+}
+
+
+
+    
+

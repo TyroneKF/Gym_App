@@ -1,9 +1,6 @@
 package App_Code.Objects.Database_Objects;
 
-import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
-import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_Obj;
-import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Storable_IDS_Parent;
-import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
+import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.*;
 import App_Code.Objects.Tables.JTable_JDBC.Children.ViewDataTables.TotalMeal_Table;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 
@@ -64,6 +61,12 @@ public class Shared_Data_Registry
     //##################
     private HashMap<Integer, Ingredient_Name_ID_OBJ> ingredient_Names_Obj_Map = new HashMap<>();
     private ArrayList<Ingredient_Name_ID_OBJ> ingredient_Names_Obj_AL = new ArrayList<>();
+    
+    //##################
+    // Measurements
+    //##################
+    private HashMap<Integer, Measurement_ID_OBJ> ingredient_Measurement_Obj_Map = new HashMap<>();
+    private ArrayList<Measurement_ID_OBJ> ingredient_Measurement_Obj_AL = new ArrayList<>();
     
     //##################################################################################################################
     // Constructor
@@ -611,12 +614,30 @@ public class Shared_Data_Registry
         return stores_Obj_Map.get(id);
     }
     
+    //#################################################################
+    // Stores
+    //#################################################################
+    public void add_Measurement(Measurement_ID_OBJ measurement_id_obj, boolean sort)
+    {
+        add_ID_Object(measurement_id_obj, ingredient_Measurement_Obj_AL, sort, ingredient_Measurement_Obj_Map);
+    }
+    
+    public Measurement_ID_OBJ get_Measurement_ID_Obj(int id)
+    {
+        return ingredient_Measurement_Obj_Map.get(id);
+    }
+    
     //##############################################################################################
     // Accessor Methods
     //###############################################################################################
     public ArrayList<Store_ID_OBJ> get_Stores()
     {
         return stores_Obj_AL;
+    }
+    
+    public ArrayList<Measurement_ID_OBJ> get_Ingredient_Measurement_Obj_AL()
+    {
+        return ingredient_Measurement_Obj_AL;
     }
     
     // Types
