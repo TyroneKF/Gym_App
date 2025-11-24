@@ -55,4 +55,9 @@ public class Field_Binding<T>
     {
         return nutrition_IX_Label;
     }
+    
+    public Class<T> get_Field_Type()
+    {
+        return field_Type;
+    }
 }
