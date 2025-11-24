@@ -74,7 +74,7 @@ public class Field_JTxtField extends JTextField
         }
         else // Decimal Validation
         {
-            return  decimal_Validation(txt, error_MSGs);
+            return decimal_Validation(txt, error_MSGs);
         }
     }
     
@@ -98,9 +98,8 @@ public class Field_JTxtField extends JTextField
                     .mapToObj(c -> (char) c)
                     .filter(ch -> ch == '.')
                     .count();
-                    
             
-            if( sections > 0 && (parts[0].isEmpty()) && sections == 2 )
+            if (sections > 0 && (parts[0].isEmpty()) && sections == 2)
             {
                 value = String.format("0%s", value);
             }
@@ -181,7 +180,10 @@ public class Field_JTxtField extends JTextField
     //#######################
     // Validation Strings
     //#######################
-    // Does string contain given symbols or, numbers or a defined pattern by the user
+     /*
+         *  Does string contain given symbols or, numbers or a defined pattern by the user
+         *  Allows : \p{L} = any Unicode letter, space, period . , apostrophe ' , hyphen -
+      */
     protected boolean does_String_Contain_Given_Characters(String condition)
     {
         // Variables
@@ -191,9 +193,10 @@ public class Field_JTxtField extends JTextField
         if (stringToCheck == null) { return false; }
         
         // Does string contain given symbols or, numbers or a defined pattern by the user
+        // Allows : \p{L} = any Unicode letter, space, period . , apostrophe ' , hyphen -
         Pattern p1 =
                 (condition == null || condition.isEmpty()) ?
-                        Pattern.compile("[^a-zA-Z]", Pattern.CASE_INSENSITIVE) :
+                        Pattern.compile("^[\\p{L} .'\\-]+$", Pattern.CASE_INSENSITIVE) :
                         Pattern.compile(condition, Pattern.CASE_INSENSITIVE);
         
         Matcher m1 = p1.matcher(stringToCheck.replaceAll("\\s+", ""));

@@ -4,11 +4,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class Field_JTxtFieldTest
+class Field_JTxtField_Decimal_Test
 {
     //##################################################################
     // Set-Up Methods & Variables
@@ -25,6 +24,7 @@ class Field_JTxtFieldTest
         field = new Field_JTxtField("Based On Quantity", 8, true);
         errors = new ArrayList<>();
     }
+    
     
     void print_Results()
     {
