@@ -91,7 +91,7 @@ public class Field_JTxtField extends JTextField
     //#######################
     // Validation Decimals
     //#######################
-    protected boolean decimal_Validation(String value, ArrayList<String> error_MSGs)
+    private boolean decimal_Validation(String value, ArrayList<String> error_MSGs)
     {
         boolean no_Error = true;
         //String value = get_Text();

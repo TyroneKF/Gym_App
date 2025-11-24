@@ -44,7 +44,7 @@ class Field_JTxtField_Decimal_Test
         input_TXT = "9.";
         field.setText(input_TXT);
         
-        boolean result = field.decimal_Validation(input_TXT, errors);
+        boolean result = field.validation_Check(errors);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
                 new Object(){}.getClass().getEnclosingMethod().getName());
@@ -356,7 +356,7 @@ class Field_JTxtField_Decimal_Test
         input_TXT = "12345678"; // too many digits before decimal
         field.setText(input_TXT);
         
-        boolean result = field.decimal_Validation(input_TXT, errors);
+        boolean result = field.validation_Check(errors);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
                 new Object(){}.getClass().getEnclosingMethod().getName());
@@ -389,10 +389,10 @@ class Field_JTxtField_Decimal_Test
     @Test
     void decimal_whitespace_invalid()
     {
-        input_TXT = "   5.00   ";
+        input_TXT = "   5.00";
         field.setText(input_TXT);
         
-        boolean result = field.decimal_Validation(input_TXT.trim(), errors);
+        boolean result = field.validation_Check(errors);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
                 new Object(){}.getClass().getEnclosingMethod().getName());
@@ -451,7 +451,7 @@ class Field_JTxtField_Decimal_Test
         field = new Field_JTxtField("Based On Quantity", 8, true, false);
         field.setText(input_TXT);
         
-        boolean result = field.decimal_Validation(input_TXT, errors);
+        boolean result = field.validation_Check(errors);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
                 new Object(){}.getClass().getEnclosingMethod().getName());
@@ -470,7 +470,7 @@ class Field_JTxtField_Decimal_Test
         field = new Field_JTxtField("Based On Quantity", 8, true, false);
         field.setText(input_TXT);
         
-        boolean result = field.decimal_Validation(input_TXT, errors);
+        boolean result = field.validation_Check(errors);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
                 new Object(){}.getClass().getEnclosingMethod().getName());
@@ -489,7 +489,7 @@ class Field_JTxtField_Decimal_Test
         field = new Field_JTxtField("Based On Quantity", 8, true, false);
         field.setText(input_TXT);
         
-        boolean result = field.decimal_Validation(input_TXT, errors);
+        boolean result = field.validation_Check(errors);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
                 new Object(){}.getClass().getEnclosingMethod().getName());
@@ -508,7 +508,7 @@ class Field_JTxtField_Decimal_Test
         field = new Field_JTxtField("Based On Quantity", 8, true, false);
         field.setText(input_TXT);
         
-        boolean result = field.decimal_Validation(input_TXT, errors);
+        boolean result = field.validation_Check(errors);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
                 new Object(){}.getClass().getEnclosingMethod().getName());
@@ -527,7 +527,7 @@ class Field_JTxtField_Decimal_Test
         field = new Field_JTxtField("Based On Quantity", 8, true, false);
         field.setText(input_TXT);
         
-        boolean result = field.decimal_Validation(input_TXT, errors);
+        boolean result = field.validation_Check(errors);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
                 new Object(){}.getClass().getEnclosingMethod().getName());
@@ -546,7 +546,7 @@ class Field_JTxtField_Decimal_Test
         field = new Field_JTxtField("Based On Quantity", 8, true, false);
         field.setText(input_TXT);
         
-        boolean result = field.decimal_Validation(input_TXT, errors);
+        boolean result = field.validation_Check(errors);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
                 new Object(){}.getClass().getEnclosingMethod().getName());
@@ -565,7 +565,7 @@ class Field_JTxtField_Decimal_Test
         field = new Field_JTxtField("Based On Quantity", 8, true, false);
         field.setText(input_TXT);
         
-        boolean result = field.decimal_Validation(input_TXT, errors);
+        boolean result = field.validation_Check(errors);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
                 new Object(){}.getClass().getEnclosingMethod().getName());
@@ -584,7 +584,7 @@ class Field_JTxtField_Decimal_Test
         field = new Field_JTxtField("Based On Quantity", 8, true, false);
         field.setText(input_TXT);
         
-        boolean result = field.decimal_Validation(input_TXT, errors);
+        boolean result = field.validation_Check(errors);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
                 new Object(){}.getClass().getEnclosingMethod().getName());
