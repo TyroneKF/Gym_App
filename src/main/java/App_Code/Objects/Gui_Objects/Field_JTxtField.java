@@ -12,7 +12,7 @@ public class Field_JTxtField extends JTextField
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    protected boolean is_Decimal_Field;
+    protected boolean is_Decimal_Field, can_Be_0 = true;
     protected int
             precision = 7,
             expceted_decimal_Scale = 2,
@@ -24,6 +24,16 @@ public class Field_JTxtField extends JTextField
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
+    public Field_JTxtField(String label, int char_Limit, boolean is_Decimal_Field, boolean can_Be_0)
+    {
+        this.is_Decimal_Field = is_Decimal_Field;
+        this.char_Limit = char_Limit; // IF SeText is used on a text bigger than char_Limit the text is scrapped = ""
+        this.label = label;
+        this.can_Be_0 = can_Be_0;
+        
+        setDocument(new JTextFieldLimit(char_Limit));
+    }
+    
     public Field_JTxtField(String label, int char_Limit, boolean is_Decimal_Field)
     {
         this.is_Decimal_Field = is_Decimal_Field;
@@ -127,6 +137,12 @@ public class Field_JTxtField extends JTextField
             if (bd.compareTo(BigDecimal.ZERO) < 0)
             {
                 error_MSGs.add(String.format("Label '%s' : value must be bigger than 0!", label));
+                no_Error = false;
+            }
+            
+            if (! can_Be_0 && bd.compareTo(BigDecimal.ZERO) == 0)
+            {
+                error_MSGs.add(String.format("Label '%s' : cannot be equal to 0!", label));
                 no_Error = false;
             }
             

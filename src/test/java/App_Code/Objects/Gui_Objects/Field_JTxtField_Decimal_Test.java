@@ -21,10 +21,9 @@ class Field_JTxtField_Decimal_Test
     @BeforeEach
     void setup()
     {
-        field = new Field_JTxtField("Based On Quantity", 8, true);
+        field = new Field_JTxtField("Based On Quantity", 8, true, true);
         errors = new ArrayList<>();
     }
-    
     
     void print_Results()
     {
@@ -440,5 +439,162 @@ class Field_JTxtField_Decimal_Test
         assertFalse(result);
         assertFalse(errors.isEmpty());
     }
+    
+    //##################################################################
+    // H. ZERO-VALUE VALIDATION (ZERO NOT ALLOWED)
+    //##################################################################
+    
+    @Test
+    void decimal_Value_zero_invalid_plainZero()
+    {
+        input_TXT = "0";
+        field = new Field_JTxtField("Based On Quantity", 8, true, false);
+        field.setText(input_TXT);
+        
+        boolean result = field.decimal_Validation(input_TXT, errors);
+        
+        String methodName = String.format("\n\n%s \n%s()", seperator,
+                new Object(){}.getClass().getEnclosingMethod().getName());
+        
+        System.err.printf("\n\n%s", methodName);
+        print_Results();
+        
+        assertFalse(result);
+        assertFalse(errors.isEmpty());
+    }
+    
+    @Test
+    void decimal_Value_zero_invalid_trailingDot()
+    {
+        input_TXT = "0.";
+        field = new Field_JTxtField("Based On Quantity", 8, true, false);
+        field.setText(input_TXT);
+        
+        boolean result = field.decimal_Validation(input_TXT, errors);
+        
+        String methodName = String.format("\n\n%s \n%s()", seperator,
+                new Object(){}.getClass().getEnclosingMethod().getName());
+        
+        System.err.printf("\n\n%s", methodName);
+        print_Results();
+        
+        assertFalse(result);
+        assertFalse(errors.isEmpty());
+    }
+    
+    @Test
+    void decimal_Value_zero_invalid_singleDecimal()
+    {
+        input_TXT = "0.0";
+        field = new Field_JTxtField("Based On Quantity", 8, true, false);
+        field.setText(input_TXT);
+        
+        boolean result = field.decimal_Validation(input_TXT, errors);
+        
+        String methodName = String.format("\n\n%s \n%s()", seperator,
+                new Object(){}.getClass().getEnclosingMethod().getName());
+        
+        System.err.printf("\n\n%s", methodName);
+        print_Results();
+        
+        assertFalse(result);
+        assertFalse(errors.isEmpty());
+    }
+    
+    @Test
+    void decimal_Value_zero_invalid_exactScale()
+    {
+        input_TXT = "0.00";
+        field = new Field_JTxtField("Based On Quantity", 8, true, false);
+        field.setText(input_TXT);
+        
+        boolean result = field.decimal_Validation(input_TXT, errors);
+        
+        String methodName = String.format("\n\n%s \n%s()", seperator,
+                new Object(){}.getClass().getEnclosingMethod().getName());
+        
+        System.err.printf("\n\n%s", methodName);
+        print_Results();
+        
+        assertFalse(result);
+        assertFalse(errors.isEmpty());
+    }
+    
+    @Test
+    void decimal_Value_zero_invalid_multipleLeadingZeros()
+    {
+        input_TXT = "0000";
+        field = new Field_JTxtField("Based On Quantity", 8, true, false);
+        field.setText(input_TXT);
+        
+        boolean result = field.decimal_Validation(input_TXT, errors);
+        
+        String methodName = String.format("\n\n%s \n%s()", seperator,
+                new Object(){}.getClass().getEnclosingMethod().getName());
+        
+        System.err.printf("\n\n%s", methodName);
+        print_Results();
+        
+        assertFalse(result);
+        assertFalse(errors.isEmpty());
+    }
+    
+    @Test
+    void decimal_Value_zero_invalid_leadingZerosDecimal()
+    {
+        input_TXT = "0000.000";
+        field = new Field_JTxtField("Based On Quantity", 8, true, false);
+        field.setText(input_TXT);
+        
+        boolean result = field.decimal_Validation(input_TXT, errors);
+        
+        String methodName = String.format("\n\n%s \n%s()", seperator,
+                new Object(){}.getClass().getEnclosingMethod().getName());
+        
+        System.err.printf("\n\n%s", methodName);
+        print_Results();
+        
+        assertFalse(result);
+        assertFalse(errors.isEmpty());
+    }
+    
+    @Test
+    void decimal_Value_zero_invalid_fractionOnlyZero()
+    {
+        input_TXT = ".0";
+        field = new Field_JTxtField("Based On Quantity", 8, true, false);
+        field.setText(input_TXT);
+        
+        boolean result = field.decimal_Validation(input_TXT, errors);
+        
+        String methodName = String.format("\n\n%s \n%s()", seperator,
+                new Object(){}.getClass().getEnclosingMethod().getName());
+        
+        System.err.printf("\n\n%s", methodName);
+        print_Results();
+        
+        assertFalse(result);
+        assertFalse(errors.isEmpty());
+    }
+    
+    @Test
+    void decimal_Value_zero_invalid_fractionOnlyZeros()
+    {
+        input_TXT = ".000";
+        field = new Field_JTxtField("Based On Quantity", 8, true, false);
+        field.setText(input_TXT);
+        
+        boolean result = field.decimal_Validation(input_TXT, errors);
+        
+        String methodName = String.format("\n\n%s \n%s()", seperator,
+                new Object(){}.getClass().getEnclosingMethod().getName());
+        
+        System.err.printf("\n\n%s", methodName);
+        print_Results();
+        
+        assertFalse(result);
+        assertFalse(errors.isEmpty());
+    }
+    
     
 }
