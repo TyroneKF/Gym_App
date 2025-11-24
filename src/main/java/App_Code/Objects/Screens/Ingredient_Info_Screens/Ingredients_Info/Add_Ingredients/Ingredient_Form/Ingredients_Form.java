@@ -15,6 +15,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.List;
 
 public class Ingredients_Form extends Parent_Forms_OBJ
 {
@@ -27,7 +28,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
     protected MyJDBC db;
     
     protected ArrayList<String> salt_Values_AL = new ArrayList<>(Arrays.asList("mg", "g"));
-    protected Field_JComboBox<String> salt_JC = new Field_JComboBox<>(salt_Values_AL);
+    protected Field_JComboBox<String> salt_JC = new Field_JComboBox<>("Salt", salt_Values_AL);
     
     // Integers
     protected int charLimit = 8;
@@ -71,8 +72,8 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         field_Items_Map = new LinkedHashMap<>()
         {{
             put("measurement", new Field_Binding<>(
-                    "Ingredient Measurement In",                   // GUI Label
-                    new Field_JComboBox<>(ingredient_Measurement_Obj_AL),   // Component
+                    "Ingredient Measurement In",                                                   // GUI Label
+                    new Field_JComboBox<>("Ingredient Measurement In", ingredient_Measurement_Obj_AL), // Component
                     "measurement_id",                                       // MySQL Field
                     Integer.class,                                          // Field Type
                     "serving_unit"                                          // NutritionIX Field
@@ -87,17 +88,18 @@ public class Ingredients_Form extends Parent_Forms_OBJ
             ));
             
             put("type", new Field_Binding<>(
-                    "Ingredient Type",                        // GUI Label
-                    new Field_JComboBox<>(ingredient_Types_Obj_AL),    // Component
-                    "ingredient_type_id",                              // MySQL Field
-                    Integer.class,                                     // Field Type
-                    null                                              // NutritionIX Field
+                    "Ingredient Type",                                             // GUI Label
+                    new Field_JComboBox<>("Ingredient Type", ingredient_Types_Obj_AL), // Component
+                    "ingredient_type_id",                                                    // MySQL Field
+                    Integer.class,                                                           // Field Type
+                    null                                                                     // NutritionIX Field
             ));
             
             put("quantity", new Field_Binding<>(
                     "Based On Quantity",                                                   // GUI Label
-                    new Field_JTxtField("Based On Quantity", charLimit, true, false),              // Component
-                    "based_on_quantity",                                                            // MySQL Field
+                                                                                                   // Component
+                    new Field_JTxtField("Based On Quantity", charLimit, true, false),
+                    "based_on_quantity",                                                // MySQL Field
                     BigDecimal.class,                                                              // Field Type
                     "serving_weight_grams"                                                        // NutritionIX Field
             ));
@@ -458,6 +460,40 @@ public class Ingredients_Form extends Parent_Forms_OBJ
     //#######################################################
     public boolean validate_Ingredients_Form()
     {
+        LinkedHashMap<String, ArrayList<String>> error_Map = new LinkedHashMap<>();
+        
+        // Get Error MSGs from Components
+        for (Field_Binding<?> field_Binding : field_Items_Map.values())
+        {
+            switch (field_Binding.get_Gui_Component())
+            {
+                case Field_JComboBox<?> jc -> jc.validation_Check(error_Map);
+                case Field_JTxtField jt -> jt.validation_Check(error_Map);
+                default -> throw new IllegalStateException("Unexpected value: " + field_Binding.get_Gui_Component());
+            }
+        }
+        
+        // IF no errors returns True
+        if (error_Map.isEmpty()) { return true; }
+        
+        // Build Error MSGS
+        StringBuilder error_MSG = new StringBuilder();
+        
+        for (Map.Entry<String, ArrayList<String>> error_MSGs : error_Map.entrySet())
+        {
+            error_MSG.append("\n");
+            
+            for (String error : error_MSGs.getValue())
+            {
+                error_MSG.append(String.format("\n%s", error));
+            }
+        }
+        
+        // Display Errors
+        UIManager.put("OptionPane.messageFont", new Font("Arial", Font.BOLD, 16));
+        JOptionPane.showMessageDialog(null, error_MSG);
+        
+        // Outputs
         return false;
     }
     
