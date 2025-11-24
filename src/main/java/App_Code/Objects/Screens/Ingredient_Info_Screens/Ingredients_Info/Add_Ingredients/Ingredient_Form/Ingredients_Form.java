@@ -15,7 +15,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.List;
 
 public class Ingredients_Form extends Parent_Forms_OBJ
 {
@@ -97,7 +96,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
             
             put("quantity", new Field_Binding<>(
                     "Based On Quantity",                                                   // GUI Label
-                                                                                                   // Component
+                    // Component
                     new Field_JTxtField("Based On Quantity", charLimit, true, false),
                     "based_on_quantity",                                                // MySQL Field
                     BigDecimal.class,                                                              // Field Type
@@ -462,7 +461,9 @@ public class Ingredients_Form extends Parent_Forms_OBJ
     {
         LinkedHashMap<String, ArrayList<String>> error_Map = new LinkedHashMap<>();
         
+        //###############################
         // Get Error MSGs from Components
+        //###############################
         for (Field_Binding<?> field_Binding : field_Items_Map.values())
         {
             switch (field_Binding.get_Gui_Component())
@@ -473,10 +474,26 @@ public class Ingredients_Form extends Parent_Forms_OBJ
             }
         }
         
+        //###############################
+        // Check Ingredient Name In DB
+        //###############################
+        String label = "Ingredient Name";
+        ArrayList<String> ingredient_Name_Errors = error_Map.getOrDefault(label, new ArrayList<>());  // Get Or Create an Empty list if not available
+        
+        if (is_Ingredient_Name_In_DB())
+        {
+            ingredient_Name_Errors.add(String.format("'%s' : Already Exists in DB!", label));
+            error_Map.put(label, ingredient_Name_Errors);
+        }
+        
+        //###############################
         // IF no errors returns True
+        //###############################
         if (error_Map.isEmpty()) { return true; }
         
-        // Build Error MSGS
+        //###############################
+        // Build Error MSGs
+        //###############################
         StringBuilder error_MSG = new StringBuilder();
         
         for (Map.Entry<String, ArrayList<String>> error_MSGs : error_Map.entrySet())
@@ -489,27 +506,41 @@ public class Ingredients_Form extends Parent_Forms_OBJ
             }
         }
         
+        //###############################
         // Display Errors
+        //###############################
         UIManager.put("OptionPane.messageFont", new Font("Arial", Font.BOLD, 16));
         JOptionPane.showMessageDialog(null, error_MSG);
         
+        //###############################
         // Outputs
+        //###############################
         return false;
     }
     
-    protected boolean check_IF_IngredientName_In_DB(String ingredientName)
+    protected boolean is_Ingredient_Name_In_DB()
     {
+        //##################################
+        // IS Ingredient Name Null or Empty
+        //####################################
+        String ingredient_Name = ((Field_JTxtField) field_Items_Map.get("name").get_Gui_Component()).get_Text();
+        
+        if (ingredient_Name == null || ingredient_Name.isEmpty()) { return false; }
+        
         //##################################
         // Create Query
         //####################################
-        ingredientName = remove_Space_And_Hidden_Chars(ingredientName);
+        ingredient_Name = remove_Space_And_Hidden_Chars(ingredient_Name);
         String
                 errorMSG = "Error, checking if Ingredient is in DB!",
                 query = "SELECT ingredient_id FROM ingredients_info WHERE Ingredient_Name = ?;";
         
-        Object[] params = new Object[]{ ingredientName };
+        Object[] params = new Object[]{ ingredient_Name };
         
-        return db.get_Single_Col_Query_String(query, params, errorMSG) == null;
+        //##################################
+        // Execute
+        //####################################
+        return db.get_Single_Col_Query_Int(query, params, errorMSG) != null;
     }
     
     protected String remove_Space_And_Hidden_Chars(String stringToBeEdited)
