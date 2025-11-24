@@ -4,16 +4,20 @@ import App_Code.Objects.Data_Objects.ID_Object;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 public class Field_JComboBox<T> extends JComboBox<T>
 {
     protected ArrayList<T> data_AL;
+    protected String label;
     
-    public Field_JComboBox(ArrayList<T> data_AL)
+    public Field_JComboBox(String label, ArrayList<T> data_AL)
     {
         //############################
         // Variables
         //############################
+        this.label = label;
         this.data_AL = data_AL;
         
         //############################
@@ -57,7 +61,18 @@ public class Field_JComboBox<T> extends JComboBox<T>
         setSelectedItem(null);
     }
     
-    public boolean validation_Check() { return getSelectedIndex() != - 1; }
+    public boolean validation_Check(LinkedHashMap<String, ArrayList<String>> error_Map)
+    {
+        if (getSelectedIndex() == - 1)
+        {
+            error_Map.put(label, new ArrayList<>(List.of(String.format("%s : Select an item !", label))));
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
     
     public Integer get_Selected_Item_ID() throws Exception
     {
