@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -61,13 +62,17 @@ public class Field_JTxtField extends JTextField
     //##############################################
     // Validation Methods
     //##############################################
-    public boolean validation_Check(ArrayList<String> error_MSGs)
+    public boolean validation_Check(LinkedHashMap<String, ArrayList<String>> error_Map)
     {
         String txt = get_Text();   // Get Text
+        
+        ArrayList<String> error_MSGs = new ArrayList<>();
         
         if (txt.isEmpty())  // Check text is not Empty
         {
             error_MSGs.add(String.format("Label '%s' : cannot be empty !", label));
+            error_Map.put(label, error_MSGs);
+            
             return false;
         }
         
@@ -77,6 +82,8 @@ public class Field_JTxtField extends JTextField
             if (does_String_Contain_Given_Characters(null))
             {
                 error_MSGs.add(String.format("Label '%s' : contains Characters or Numbers!", label));
+                error_Map.put(label, error_MSGs);
+                
                 return false;
             }
             
@@ -84,7 +91,11 @@ public class Field_JTxtField extends JTextField
         }
         else // Decimal Validation
         {
-            return decimal_Validation(txt, error_MSGs);
+            boolean output = decimal_Validation(txt, error_MSGs); // Capture output
+            
+            if (! error_MSGs.isEmpty()) { error_Map.put(label, error_MSGs); } // if any errors were found, report
+            
+            return output;
         }
     }
     
@@ -196,10 +207,10 @@ public class Field_JTxtField extends JTextField
     //#######################
     // Validation Strings
     //#######################
-     /*
-         *  Does string contain given symbols or, numbers or a defined pattern by the user
-         *  Allows : \p{L} = any Unicode letter, space, period . , apostrophe ' , hyphen -
-      */
+    /*
+     *  Does string contain given symbols or, numbers or a defined pattern by the user
+     *  Allows : \p{L} = any Unicode letter, space, period . , apostrophe ' , hyphen -
+     */
     protected boolean does_String_Contain_Given_Characters(String condition)
     {
         // Variables

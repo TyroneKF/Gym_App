@@ -96,7 +96,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
             
             put("quantity", new Field_Binding<>(
                     "Based On Quantity",                                                   // GUI Label
-                    new Field_JTxtField("Based On Quantity", charLimit, true),  // Component
+                    new Field_JTxtField("Based On Quantity", charLimit, true, false),              // Component
                     "based_on_quantity",                                                            // MySQL Field
                     BigDecimal.class,                                                              // Field Type
                     "serving_weight_grams"                                                        // NutritionIX Field

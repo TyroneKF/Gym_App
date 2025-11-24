@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,20 +15,25 @@ class Field_JTxtField_Decimal_Test
     //##################################################################
     // Arrange
     private Field_JTxtField field;
-    private ArrayList<String> errors;
-    private String input_TXT;
+    private LinkedHashMap<String, ArrayList<String>> error_Map;
+    private String input_TXT , label = "Based On Quantity";
     private final String seperator = "##################################################################";
     
     @BeforeEach
     void setup()
     {
+        error_Map = new LinkedHashMap<>();
         field = new Field_JTxtField("Based On Quantity", 8, true, true);
-        errors = new ArrayList<>();
     }
     
     void print_Results()
     {
         System.err.printf("\nInput Text = %s \nOutput Txt = %s", input_TXT, field.getText());
+        
+        if (error_Map.isEmpty()) { return; }
+        
+        ArrayList<String> errors = error_Map.get(label);
+        
         for (String i : errors)
         {
             System.err.printf("\n%s", i);
@@ -44,16 +50,16 @@ class Field_JTxtField_Decimal_Test
         input_TXT = "9.";
         field.setText(input_TXT);
         
-        boolean result = field.validation_Check(errors);
+        boolean result = field.validation_Check(error_Map);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
-                new Object(){}.getClass().getEnclosingMethod().getName());
+                new Object() { }.getClass().getEnclosingMethod().getName());
         
         System.err.printf("\n\n%s", methodName);
         print_Results();
         
         assertTrue(result);
-        assertTrue(errors.isEmpty());
+        assertTrue(error_Map.isEmpty());;
     }
     
     @Test
@@ -62,16 +68,16 @@ class Field_JTxtField_Decimal_Test
         input_TXT = "0.";
         field.setText(input_TXT);
         
-        boolean result = field.validation_Check(errors);
+        boolean result = field.validation_Check(error_Map);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
-                new Object(){}.getClass().getEnclosingMethod().getName());
+                new Object() { }.getClass().getEnclosingMethod().getName());
         
         System.err.printf("\n\n%s", methodName);
         print_Results();
         
         assertTrue(result);
-        assertTrue(errors.isEmpty());
+        assertTrue(error_Map.isEmpty());
     }
     
     @Test
@@ -80,16 +86,16 @@ class Field_JTxtField_Decimal_Test
         input_TXT = "12.";
         field.setText(input_TXT);
         
-        boolean result = field.validation_Check(errors);
+        boolean result = field.validation_Check(error_Map);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
-                new Object(){}.getClass().getEnclosingMethod().getName());
+                new Object() { }.getClass().getEnclosingMethod().getName());
         
         System.err.printf("\n\n%s", methodName);
         print_Results();
         
         assertTrue(result);
-        assertTrue(errors.isEmpty());
+        assertTrue(error_Map.isEmpty());;
     }
     
     //##################################################################
@@ -102,16 +108,16 @@ class Field_JTxtField_Decimal_Test
         input_TXT = "12..";
         field.setText(input_TXT);
         
-        boolean result = field.validation_Check(errors);
+        boolean result = field.validation_Check(error_Map);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
-                new Object(){}.getClass().getEnclosingMethod().getName());
+                new Object() { }.getClass().getEnclosingMethod().getName());
         
         System.err.printf("\n\n%s", methodName);
         print_Results();
         
         assertFalse(result);
-        assertFalse(errors.isEmpty());
+        assertFalse(error_Map.isEmpty());;
     }
     
     @Test
@@ -120,16 +126,16 @@ class Field_JTxtField_Decimal_Test
         input_TXT = "9.5.2";
         field.setText(input_TXT);
         
-        boolean result = field.validation_Check(errors);
+        boolean result = field.validation_Check(error_Map);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
-                new Object(){}.getClass().getEnclosingMethod().getName());
+                new Object() { }.getClass().getEnclosingMethod().getName());
         
         System.err.printf("\n\n%s", methodName);
         print_Results();
         
         assertFalse(result);
-        assertFalse(errors.isEmpty());
+        assertFalse(error_Map.isEmpty());;
     }
     
     @Test
@@ -138,16 +144,16 @@ class Field_JTxtField_Decimal_Test
         input_TXT = "..5";
         field.setText(input_TXT);
         
-        boolean result = field.validation_Check(errors);
+        boolean result = field.validation_Check(error_Map);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
-                new Object(){}.getClass().getEnclosingMethod().getName());
+                new Object() { }.getClass().getEnclosingMethod().getName());
         
         System.err.printf("\n\n%s", methodName);
         print_Results();
         
         assertFalse(result);
-        assertFalse(errors.isEmpty());
+        assertFalse(error_Map.isEmpty());;
     }
     
     @Test
@@ -156,16 +162,16 @@ class Field_JTxtField_Decimal_Test
         input_TXT = "5.3.";
         field.setText(input_TXT);
         
-        boolean result = field.validation_Check(errors);
+        boolean result = field.validation_Check(error_Map);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
-                new Object(){}.getClass().getEnclosingMethod().getName());
+                new Object() { }.getClass().getEnclosingMethod().getName());
         
         System.err.printf("\n\n%s", methodName);
         print_Results();
         
         assertFalse(result);
-        assertFalse(errors.isEmpty());
+        assertFalse(error_Map.isEmpty());;
     }
     
     //##################################################################
@@ -178,16 +184,16 @@ class Field_JTxtField_Decimal_Test
         input_TXT = ".";
         field.setText(input_TXT);
         
-        boolean result = field.validation_Check(errors);
+        boolean result = field.validation_Check(error_Map);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
-                new Object(){}.getClass().getEnclosingMethod().getName());
+                new Object() { }.getClass().getEnclosingMethod().getName());
         
         System.err.printf("\n\n%s", methodName);
         print_Results();
         
         assertFalse(result);
-        assertFalse(errors.isEmpty());
+        assertFalse(error_Map.isEmpty());;
     }
     
     @Test
@@ -196,16 +202,16 @@ class Field_JTxtField_Decimal_Test
         input_TXT = "..";
         field.setText(input_TXT);
         
-        boolean result = field.validation_Check(errors);
+        boolean result = field.validation_Check(error_Map);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
-                new Object(){}.getClass().getEnclosingMethod().getName());
+                new Object() { }.getClass().getEnclosingMethod().getName());
         
         System.err.printf("\n\n%s", methodName);
         print_Results();
         
         assertFalse(result);
-        assertFalse(errors.isEmpty());
+        assertFalse(error_Map.isEmpty());;
     }
     
     //##################################################################
@@ -218,16 +224,16 @@ class Field_JTxtField_Decimal_Test
         input_TXT = "9.5";
         field.setText(input_TXT);
         
-        boolean result = field.validation_Check(errors);
+        boolean result = field.validation_Check(error_Map);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
-                new Object(){}.getClass().getEnclosingMethod().getName());
+                new Object() { }.getClass().getEnclosingMethod().getName());
         
         System.err.printf("\n\n%s", methodName);
         print_Results();
         
         assertTrue(result);
-        assertTrue(errors.isEmpty());
+        assertTrue(error_Map.isEmpty());;
     }
     
     @Test
@@ -236,16 +242,16 @@ class Field_JTxtField_Decimal_Test
         input_TXT = "9.00";
         field.setText(input_TXT);
         
-        boolean result = field.validation_Check(errors);
+        boolean result = field.validation_Check(error_Map);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
-                new Object(){}.getClass().getEnclosingMethod().getName());
+                new Object() { }.getClass().getEnclosingMethod().getName());
         
         System.err.printf("\n\n%s", methodName);
         print_Results();
         
         assertTrue(result);
-        assertTrue(errors.isEmpty());
+        assertTrue(error_Map.isEmpty());;
     }
     
     //##################################################################
@@ -258,16 +264,16 @@ class Field_JTxtField_Decimal_Test
         input_TXT = "9.123";
         field.setText(input_TXT);
         
-        boolean result = field.validation_Check(errors);
+        boolean result = field.validation_Check(error_Map);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
-                new Object(){}.getClass().getEnclosingMethod().getName());
+                new Object() { }.getClass().getEnclosingMethod().getName());
         
         System.err.printf("\n\n%s", methodName);
         print_Results();
         
         assertTrue(result);
-        assertFalse(errors.isEmpty());
+        assertFalse(error_Map.isEmpty());;
     }
     
     @Test
@@ -276,16 +282,16 @@ class Field_JTxtField_Decimal_Test
         input_TXT = "0.123456";
         field.setText(input_TXT);
         
-        boolean result = field.validation_Check(errors);
+        boolean result = field.validation_Check(error_Map);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
-                new Object(){}.getClass().getEnclosingMethod().getName());
+                new Object() { }.getClass().getEnclosingMethod().getName());
         
         System.err.printf("\n\n%s", methodName);
         print_Results();
         
         assertTrue(result);
-        assertFalse(errors.isEmpty());
+        assertFalse(error_Map.isEmpty());;
     }
     
     //##################################################################
@@ -298,16 +304,16 @@ class Field_JTxtField_Decimal_Test
         input_TXT = ".5";
         field.setText(input_TXT);
         
-        boolean result = field.validation_Check(errors);
+        boolean result = field.validation_Check(error_Map);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
-                new Object(){}.getClass().getEnclosingMethod().getName());
+                new Object() { }.getClass().getEnclosingMethod().getName());
         
         System.err.printf("\n\n%s", methodName);
         print_Results();
         
         assertTrue(result);
-        assertTrue(errors.isEmpty());
+        assertTrue(error_Map.isEmpty());;
     }
     
     @Test
@@ -316,16 +322,16 @@ class Field_JTxtField_Decimal_Test
         input_TXT = ".123";
         field.setText(input_TXT);
         
-        boolean result = field.validation_Check(errors);
+        boolean result = field.validation_Check(error_Map);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
-                new Object(){}.getClass().getEnclosingMethod().getName());
+                new Object() { }.getClass().getEnclosingMethod().getName());
         
         System.err.printf("\n\n%s", methodName);
         print_Results();
         
         assertTrue(result);
-        assertFalse(errors.isEmpty());
+        assertFalse(error_Map.isEmpty());;
     }
     
     //##################################################################
@@ -338,16 +344,16 @@ class Field_JTxtField_Decimal_Test
         input_TXT = "0009.5";
         field.setText(input_TXT);
         
-        boolean result = field.validation_Check(errors);
+        boolean result = field.validation_Check(error_Map);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
-                new Object(){}.getClass().getEnclosingMethod().getName());
+                new Object() { }.getClass().getEnclosingMethod().getName());
         
         System.err.printf("\n\n%s", methodName);
         print_Results();
         
         assertTrue(result);
-        assertTrue(errors.isEmpty());
+        assertTrue(error_Map.isEmpty());;
     }
     
     @Test
@@ -356,16 +362,16 @@ class Field_JTxtField_Decimal_Test
         input_TXT = "12345678"; // too many digits before decimal
         field.setText(input_TXT);
         
-        boolean result = field.validation_Check(errors);
+        boolean result = field.validation_Check(error_Map);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
-                new Object(){}.getClass().getEnclosingMethod().getName());
+                new Object() { }.getClass().getEnclosingMethod().getName());
         
         System.err.printf("\n\n%s", methodName);
         print_Results();
         
         assertFalse(result);
-        assertFalse(errors.isEmpty());
+        assertFalse(error_Map.isEmpty());;
     }
     
     @Test
@@ -374,16 +380,16 @@ class Field_JTxtField_Decimal_Test
         input_TXT = "-5.00";
         field.setText(input_TXT);
         
-        boolean result = field.validation_Check(errors);
+        boolean result = field.validation_Check(error_Map);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
-                new Object(){}.getClass().getEnclosingMethod().getName());
+                new Object() { }.getClass().getEnclosingMethod().getName());
         
         System.err.printf("\n\n%s", methodName);
         print_Results();
         
         assertFalse(result); // method returns true but logs error
-        assertFalse(errors.isEmpty());
+        assertFalse(error_Map.isEmpty());;
     }
     
     @Test
@@ -392,16 +398,16 @@ class Field_JTxtField_Decimal_Test
         input_TXT = "   5.00";
         field.setText(input_TXT);
         
-        boolean result = field.validation_Check(errors);
+        boolean result = field.validation_Check(error_Map);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
-                new Object(){}.getClass().getEnclosingMethod().getName());
+                new Object() { }.getClass().getEnclosingMethod().getName());
         
         System.err.printf("\n\n%s", methodName);
         print_Results();
         
         assertTrue(result);
-        assertTrue(errors.isEmpty());
+        assertTrue(error_Map.isEmpty());;
     }
     
     @Test
@@ -410,16 +416,16 @@ class Field_JTxtField_Decimal_Test
         input_TXT = "";
         field.setText(input_TXT);
         
-        boolean result = field.validation_Check(errors);
+        boolean result = field.validation_Check(error_Map);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
-                new Object(){}.getClass().getEnclosingMethod().getName());
+                new Object() { }.getClass().getEnclosingMethod().getName());
         
         System.err.printf("\n\n%s", methodName);
         print_Results();
         
         assertFalse(result);
-        assertFalse(errors.isEmpty());
+        assertFalse(error_Map.isEmpty());;
     }
     
     @Test
@@ -428,16 +434,16 @@ class Field_JTxtField_Decimal_Test
         input_TXT = "5A.2";
         field.setText(input_TXT);
         
-        boolean result = field.validation_Check(errors);
+        boolean result = field.validation_Check(error_Map);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
-                new Object(){}.getClass().getEnclosingMethod().getName());
+                new Object() { }.getClass().getEnclosingMethod().getName());
         
         System.err.printf("\n\n%s", methodName);
         print_Results();
         
         assertFalse(result);
-        assertFalse(errors.isEmpty());
+        assertFalse(error_Map.isEmpty());;
     }
     
     //##################################################################
@@ -451,16 +457,16 @@ class Field_JTxtField_Decimal_Test
         field = new Field_JTxtField("Based On Quantity", 8, true, false);
         field.setText(input_TXT);
         
-        boolean result = field.validation_Check(errors);
+        boolean result = field.validation_Check(error_Map);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
-                new Object(){}.getClass().getEnclosingMethod().getName());
+                new Object() { }.getClass().getEnclosingMethod().getName());
         
         System.err.printf("\n\n%s", methodName);
         print_Results();
         
         assertFalse(result);
-        assertFalse(errors.isEmpty());
+        assertFalse(error_Map.isEmpty());;
     }
     
     @Test
@@ -470,16 +476,16 @@ class Field_JTxtField_Decimal_Test
         field = new Field_JTxtField("Based On Quantity", 8, true, false);
         field.setText(input_TXT);
         
-        boolean result = field.validation_Check(errors);
+        boolean result = field.validation_Check(error_Map);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
-                new Object(){}.getClass().getEnclosingMethod().getName());
+                new Object() { }.getClass().getEnclosingMethod().getName());
         
         System.err.printf("\n\n%s", methodName);
         print_Results();
         
         assertFalse(result);
-        assertFalse(errors.isEmpty());
+        assertFalse(error_Map.isEmpty());;
     }
     
     @Test
@@ -489,16 +495,16 @@ class Field_JTxtField_Decimal_Test
         field = new Field_JTxtField("Based On Quantity", 8, true, false);
         field.setText(input_TXT);
         
-        boolean result = field.validation_Check(errors);
+        boolean result = field.validation_Check(error_Map);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
-                new Object(){}.getClass().getEnclosingMethod().getName());
+                new Object() { }.getClass().getEnclosingMethod().getName());
         
         System.err.printf("\n\n%s", methodName);
         print_Results();
         
         assertFalse(result);
-        assertFalse(errors.isEmpty());
+        assertFalse(error_Map.isEmpty());;
     }
     
     @Test
@@ -508,16 +514,16 @@ class Field_JTxtField_Decimal_Test
         field = new Field_JTxtField("Based On Quantity", 8, true, false);
         field.setText(input_TXT);
         
-        boolean result = field.validation_Check(errors);
+        boolean result = field.validation_Check(error_Map);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
-                new Object(){}.getClass().getEnclosingMethod().getName());
+                new Object() { }.getClass().getEnclosingMethod().getName());
         
         System.err.printf("\n\n%s", methodName);
         print_Results();
         
         assertFalse(result);
-        assertFalse(errors.isEmpty());
+        assertFalse(error_Map.isEmpty());;
     }
     
     @Test
@@ -527,16 +533,16 @@ class Field_JTxtField_Decimal_Test
         field = new Field_JTxtField("Based On Quantity", 8, true, false);
         field.setText(input_TXT);
         
-        boolean result = field.validation_Check(errors);
+        boolean result = field.validation_Check(error_Map);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
-                new Object(){}.getClass().getEnclosingMethod().getName());
+                new Object() { }.getClass().getEnclosingMethod().getName());
         
         System.err.printf("\n\n%s", methodName);
         print_Results();
         
         assertFalse(result);
-        assertFalse(errors.isEmpty());
+        assertFalse(error_Map.isEmpty());;
     }
     
     @Test
@@ -546,16 +552,16 @@ class Field_JTxtField_Decimal_Test
         field = new Field_JTxtField("Based On Quantity", 8, true, false);
         field.setText(input_TXT);
         
-        boolean result = field.validation_Check(errors);
+        boolean result = field.validation_Check(error_Map);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
-                new Object(){}.getClass().getEnclosingMethod().getName());
+                new Object() { }.getClass().getEnclosingMethod().getName());
         
         System.err.printf("\n\n%s", methodName);
         print_Results();
         
         assertFalse(result);
-        assertFalse(errors.isEmpty());
+        assertFalse(error_Map.isEmpty());;
     }
     
     @Test
@@ -565,16 +571,16 @@ class Field_JTxtField_Decimal_Test
         field = new Field_JTxtField("Based On Quantity", 8, true, false);
         field.setText(input_TXT);
         
-        boolean result = field.validation_Check(errors);
+        boolean result = field.validation_Check(error_Map);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
-                new Object(){}.getClass().getEnclosingMethod().getName());
+                new Object() { }.getClass().getEnclosingMethod().getName());
         
         System.err.printf("\n\n%s", methodName);
         print_Results();
         
         assertFalse(result);
-        assertFalse(errors.isEmpty());
+        assertFalse(error_Map.isEmpty());;
     }
     
     @Test
@@ -584,16 +590,16 @@ class Field_JTxtField_Decimal_Test
         field = new Field_JTxtField("Based On Quantity", 8, true, false);
         field.setText(input_TXT);
         
-        boolean result = field.validation_Check(errors);
+        boolean result = field.validation_Check(error_Map);
         
         String methodName = String.format("\n\n%s \n%s()", seperator,
-                new Object(){}.getClass().getEnclosingMethod().getName());
+                new Object() { }.getClass().getEnclosingMethod().getName());
         
         System.err.printf("\n\n%s", methodName);
         print_Results();
         
         assertFalse(result);
-        assertFalse(errors.isEmpty());
+        assertFalse(error_Map.isEmpty());;
     }
     
     
