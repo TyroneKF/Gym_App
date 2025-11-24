@@ -27,7 +27,7 @@ public class Field_JTxtField extends JTextField
     public Field_JTxtField(String label, int char_Limit, boolean is_Decimal_Field)
     {
         this.is_Decimal_Field = is_Decimal_Field;
-        this.char_Limit = char_Limit;
+        this.char_Limit = char_Limit; // IF SeText is used on a text bigger than char_Limit the text is scrapped = ""
         this.label = label;
         
         setDocument(new JTextFieldLimit(char_Limit));
@@ -55,7 +55,11 @@ public class Field_JTxtField extends JTextField
     {
         String txt = get_Text();   // Get Text
         
-        if (! txt.isEmpty()) { return false; } // Check text is not Empty
+        if (txt.isEmpty())  // Check text is not Empty
+        {
+            error_MSGs.add(String.format("Label '%s' : cannot be empty !", label));
+            return false;
+        }
         
         if (! is_Decimal_Field)   // String Validation
         {
@@ -70,44 +74,8 @@ public class Field_JTxtField extends JTextField
         }
         else // Decimal Validation
         {
-            boolean result = decimal_Validation(txt, error_MSGs);
-            
-            for (String i : error_MSGs)
-            {
-                System.err.printf("\n%s", i);
-            }
-            
-            return result;
+            return  decimal_Validation(txt, error_MSGs);
         }
-    }
-    
-    //#######################
-    // Validation Strings
-    //#######################
-    // Does string contain given symbols or, numbers or a defined pattern by the user
-    protected boolean does_String_Contain_Given_Characters(String condition)
-    {
-        // Variables
-        String stringToCheck = get_Text();
-        
-        // Exit Clause
-        if (stringToCheck == null) { return false; }
-        
-        // Does string contain given symbols or, numbers or a defined pattern by the user
-        Pattern p1 =
-                (condition == null || condition.isEmpty()) ?
-                        Pattern.compile("[^a-zA-Z]", Pattern.CASE_INSENSITIVE) :
-                        Pattern.compile(condition, Pattern.CASE_INSENSITIVE);
-        
-        Matcher m1 = p1.matcher(stringToCheck.replaceAll("\\s+", ""));
-        
-        return m1.find();
-    }
-    
-    private String remove_Space_And_Hidden_Chars(String txt_To_Edit)
-    {
-        // remove all whitespace & hidden characters like \n
-        return txt_To_Edit != null && ! txt_To_Edit.isEmpty() ? txt_To_Edit.trim().replaceAll("\\p{C}", "") : "";
     }
     
     //#######################
@@ -208,5 +176,34 @@ public class Field_JTxtField extends JTextField
             error_MSGs.add(String.format("Label '%s' : Cannot be converted to a Big Decimal!", label));
             return false;
         }
+    }
+    
+    //#######################
+    // Validation Strings
+    //#######################
+    // Does string contain given symbols or, numbers or a defined pattern by the user
+    protected boolean does_String_Contain_Given_Characters(String condition)
+    {
+        // Variables
+        String stringToCheck = get_Text();
+        
+        // Exit Clause
+        if (stringToCheck == null) { return false; }
+        
+        // Does string contain given symbols or, numbers or a defined pattern by the user
+        Pattern p1 =
+                (condition == null || condition.isEmpty()) ?
+                        Pattern.compile("[^a-zA-Z]", Pattern.CASE_INSENSITIVE) :
+                        Pattern.compile(condition, Pattern.CASE_INSENSITIVE);
+        
+        Matcher m1 = p1.matcher(stringToCheck.replaceAll("\\s+", ""));
+        
+        return m1.find();
+    }
+    
+    private String remove_Space_And_Hidden_Chars(String txt_To_Edit)
+    {
+        // remove all whitespace & hidden characters like \n
+        return txt_To_Edit != null && ! txt_To_Edit.isEmpty() ? txt_To_Edit.trim().replaceAll("\\p{C}", "") : "";
     }
 }
