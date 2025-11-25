@@ -10,15 +10,17 @@ import java.util.List;
 public class Field_JComboBox<T> extends JComboBox<T>
 {
     protected ArrayList<T> data_AL;
+    protected Class<T> typeCast;
     protected String label;
     
-    public Field_JComboBox(String label, ArrayList<T> data_AL)
+    public Field_JComboBox(String label, Class<T> typeCast, ArrayList<T> data_AL)
     {
         //############################
         // Variables
         //############################
         this.label = label;
         this.data_AL = data_AL;
+        this.typeCast = typeCast;
         
         //############################
         // Centre JComboBox Item
@@ -42,6 +44,11 @@ public class Field_JComboBox<T> extends JComboBox<T>
     public void reload_Items()
     {
         //############################
+        // Get Previous Item
+        //############################
+        T selected_Item = typeCast.cast(getSelectedItem());
+        
+        //############################
         // Load List
         //############################
         DefaultComboBoxModel<T> model = (DefaultComboBoxModel<T>) getModel();
@@ -53,7 +60,17 @@ public class Field_JComboBox<T> extends JComboBox<T>
             model.addElement(item);
         }
         
-        reset_JC();// Set Selected Item to Nothing
+        //############################
+        // Set Selected Item
+        //############################
+        if (selected_Item != null)  // Set Item back to original Item
+        {
+            setSelectedItem(selected_Item);
+        }
+        else
+        {
+            reset_JC(); // Set Selected Item to Nothing
+        }
     }
     
     public void reset_JC()

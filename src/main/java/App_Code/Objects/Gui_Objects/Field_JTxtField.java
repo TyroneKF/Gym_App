@@ -13,11 +13,11 @@ public class Field_JTxtField extends JTextField
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    protected boolean is_Decimal_Field, can_Be_0 = true;
+    protected boolean is_Decimal_Field = false, can_Be_0 = true;
     protected int
             precision = 7,
-            expceted_decimal_Scale = 2,
-            expected_Unscaled_Integer = precision - expceted_decimal_Scale,
+            expected_decimal_Scale = 2,
+            expected_Unscaled_Integer = precision - expected_decimal_Scale,
             char_Limit;
     
     protected String label;
@@ -25,22 +25,33 @@ public class Field_JTxtField extends JTextField
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Field_JTxtField(String label, int char_Limit, boolean is_Decimal_Field, boolean can_Be_0)
+    public Field_JTxtField(String label, int char_Limit, boolean is_Decimal_Field, boolean can_Be_0) // Specific Decimal
     {
-        this.is_Decimal_Field = is_Decimal_Field;
-        this.char_Limit = char_Limit; // IF SeText is used on a text bigger than char_Limit the text is scrapped = ""
-        this.label = label;
-        this.can_Be_0 = can_Be_0;
-        
-        setDocument(new JTextFieldLimit(char_Limit));
+        constructor_Setup(label, char_Limit, is_Decimal_Field, can_Be_0);
     }
     
-    public Field_JTxtField(String label, int char_Limit, boolean is_Decimal_Field)
+    public Field_JTxtField(String label, int char_Limit, boolean is_Decimal_Field) // Generic Decimal
     {
-        this.is_Decimal_Field = is_Decimal_Field;
-        this.char_Limit = char_Limit; // IF SeText is used on a text bigger than char_Limit the text is scrapped = ""
+        constructor_Setup(label, char_Limit, is_Decimal_Field, null);
+    }
+    
+    public Field_JTxtField(String label, int char_Limit) // Text Field
+    {
+        constructor_Setup(label, char_Limit, null, null);
+    }
+    
+    
+    private void constructor_Setup(String label, int char_Limit, Boolean is_Decimal_Field, Boolean can_Be_0)
+    {
+        // Field All Constructors use
         this.label = label;
+        this.char_Limit = char_Limit; // IF SeText is used on a text bigger than char_Limit the text is scrapped = ""
         
+        if (is_Decimal_Field != null) { this.is_Decimal_Field = is_Decimal_Field; }
+        
+        if (can_Be_0 != null) { this.can_Be_0 = can_Be_0; }
+        
+        // Optional
         setDocument(new JTextFieldLimit(char_Limit));
     }
     
@@ -170,7 +181,7 @@ public class Field_JTxtField extends JTextField
             //#####################################################
             // Check: Precision (Max 7 digits) 5 before '.' 2 after
             //#####################################################
-            if (bd_Scale > expceted_decimal_Scale)
+            if (bd_Scale > expected_decimal_Scale)
             {
                 error_MSGs.add(String.format("'%s' : can only contain 2 decimal places ('.' 2 digits after)!", label));
             }
@@ -178,19 +189,19 @@ public class Field_JTxtField extends JTextField
             //#####################################################
             // Format : Decimal Scale
             //#####################################################
-            if (bd_Scale < expceted_decimal_Scale) // Less than required Decimal Places
+            if (bd_Scale < expected_decimal_Scale) // Less than required Decimal Places
             {
                 StringBuilder new_BD = new StringBuilder(bd.toPlainString()); // convert bd back to string
                 
                 if (bd_Scale == 0) { new_BD.append("."); } // Add Decimal Point
                 
-                new_BD.append("0".repeat(Math.max(0, expceted_decimal_Scale - bd_Scale))); // Add as many 0's as needed
+                new_BD.append("0".repeat(Math.max(0, expected_decimal_Scale - bd_Scale))); // Add as many 0's as needed
                 
                 setText(new_BD.toString());
             }
-            else if (bd_Scale > expceted_decimal_Scale) // IF decimal scale has more digits than allowed Round DOWN
+            else if (bd_Scale > expected_decimal_Scale) // IF decimal scale has more digits than allowed Round DOWN
             {
-                setText(String.valueOf(bd.setScale(expceted_decimal_Scale, RoundingMode.DOWN))); // round the number
+                setText(String.valueOf(bd.setScale(expected_decimal_Scale, RoundingMode.DOWN))); // round the number
             }
             
             //#####################################################

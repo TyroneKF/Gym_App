@@ -21,7 +21,7 @@ class Field_JTxtField_Test_String_Test
     void setup()
     {
         error_Map = new LinkedHashMap<>();
-        field = new Field_JTxtField("Based On Quantity", 255, false);
+        field = new Field_JTxtField("Based On Quantity", 255);
     }
     
     void print_Results()
