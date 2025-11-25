@@ -82,7 +82,7 @@ public class Field_JComboBox<T> extends JComboBox<T>
     {
         if (getSelectedIndex() == - 1)
         {
-            error_Map.put(label, new ArrayList<>(List.of(String.format("%s : Select an item !", label))));
+            error_Map.put(label, new ArrayList<>(List.of("Select an item !")));
             return false;
         }
         else

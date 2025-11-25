@@ -81,7 +81,7 @@ public class Field_JTxtField extends JTextField
         
         if (txt.isEmpty())  // Check text is not Empty
         {
-            error_MSGs.add(String.format("'%s' : cannot be empty !", label));
+            error_MSGs.add("Cannot be empty !");
             error_Map.put(label, error_MSGs);
             
             return false;
@@ -93,7 +93,7 @@ public class Field_JTxtField extends JTextField
             // Matches any character that is NOT a letter, space, period, apostrophe, or hyphen
             if (does_String_Contain_Given_Characters("[^\\p{L} .'\\-]"))
             {
-                error_MSGs.add(String.format("'%s' : can only contain; letters, spaces, period, apostrophe, or hyphens!", label));
+                error_MSGs.add("Can only contain; letters, spaces, period, apostrophe, or hyphens!");
                 error_Map.put(label, error_MSGs);
                 
                 return false;
@@ -138,7 +138,7 @@ public class Field_JTxtField extends JTextField
             }
             if (sections > 2 || decimal_Count > 1) // Multiple Decimal Points
             {
-                error_MSGs.add(String.format("'%s' : Decimal  cannot contain more than 1 '.' decimal point!", label));
+                error_MSGs.add("Decimal  cannot contain more than 1 '.' decimal point!");
                 return false;
             }
             if (sections == 1 && value.contains(".")) // Just a decimal point by itself = Remove converting to bd = error
@@ -159,13 +159,13 @@ public class Field_JTxtField extends JTextField
             //#####################################################
             if (bd.compareTo(BigDecimal.ZERO) < 0)
             {
-                error_MSGs.add(String.format("'%s' : value must be bigger than 0!", label));
+                error_MSGs.add("Value must be bigger than 0!");
                 no_Error = false;
             }
             
             if (! can_Be_0 && bd.compareTo(BigDecimal.ZERO) == 0)
             {
-                error_MSGs.add(String.format("'%s' : cannot be equal to 0!", label));
+                error_MSGs.add("Cannot be equal to 0!");
                 no_Error = false;
             }
             
@@ -174,7 +174,7 @@ public class Field_JTxtField extends JTextField
             //#####################################################
             if ((bd_Precision - bd_Scale) > expected_Unscaled_Integer)
             {
-                error_MSGs.add(String.format("'%s' : can only contain max 5 digits before the decimal point!", label));
+                error_MSGs.add("Can only contain max 5 digits before the decimal point!");
                 no_Error = false;
             }
             
@@ -183,7 +183,7 @@ public class Field_JTxtField extends JTextField
             //#####################################################
             if (bd_Scale > expected_decimal_Scale)
             {
-                error_MSGs.add(String.format("'%s' : can only contain 2 decimal places ('.' 2 digits after)!", label));
+                error_MSGs.add("Can only contain 2 decimal places ('.' 2 digits after)!");
             }
             
             //#####################################################
@@ -211,7 +211,7 @@ public class Field_JTxtField extends JTextField
         }
         catch (Exception e)
         {
-            error_MSGs.add(String.format("'%s' : Cannot be converted to a Big Decimal!", label));
+            error_MSGs.add("Cannot be converted to a Big Decimal!");
             return false;
         }
     }

@@ -282,26 +282,48 @@ public class Shop_Form extends Parent_Forms_OBJ
         //##################################
         // Build Error MSG
         //##################################
-        StringBuilder error_MSG = new StringBuilder();
+        /**
+         * HTML:
+         * &nbsp; = space
+         * <br> = line break
+         * <b></b> = bold
+         */
+        
+        StringBuilder error_MSG = new StringBuilder("<html>");
         
         for (int pos = 0; pos < all_Errors.size(); pos++)
         {
-            error_MSG.append(String.format("\n\nRow %s               ", pos + 1));
+            error_MSG.append(String.format("<br><br><div align='center'><b> Shop Form Row %s </b></div>", pos + 1));
             LinkedHashMap<String, ArrayList<String>> errors = all_Errors.get(pos); // = One Rows Errors
             
-            for (Map.Entry<String, ArrayList<String>> entry : errors.entrySet())
+            for (Map.Entry<String, ArrayList<String>> error_Entry : errors.entrySet())
             {
-                error_MSG.append(String.format("\n "));
+                ArrayList<String> error_MSGs = error_Entry.getValue();
                 
-                for (String error : entry.getValue())
+                // Singular Error MSG
+                if(error_MSGs.size() == 1)
                 {
-                    error_MSG.append(String.format("\n%s", error));
+                    error_MSG.append(String.format("<br><br><b>%s&nbsp;:&nbsp;</b> %s", error_Entry.getKey(), error_MSGs.getFirst()));
+                    continue;
+                }
+                
+                // Multiple Error Messages
+                error_MSG.append(String.format("<br><br><b>%s:</b>", error_Entry.getKey()));
+                
+                for (String error : error_MSGs)
+                {
+                    error_MSG.append(String.format("<br>&nbsp;&nbsp;&nbsp;&nbsp;<b>.</b>&nbsp; %s", error));
                 }
             }
         }
         
-        UIManager.put("OptionPane.messageFont", new Font("Arial", Font.PLAIN, 14));
-        JOptionPane.showMessageDialog(null, error_MSG);
+        error_MSG.append("</html>");
+        
+        //###############################
+        // Display Errors
+        //###############################
+        UIManager.put("OptionPane.messageFont", new Font("Arial", Font.PLAIN, 16));
+        JOptionPane.showMessageDialog(null, error_MSG, "Shops Form Error Messages", JOptionPane.INFORMATION_MESSAGE);
         
         //##################################
         // Output

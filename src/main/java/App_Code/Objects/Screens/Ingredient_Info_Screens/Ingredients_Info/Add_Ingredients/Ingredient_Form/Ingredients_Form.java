@@ -500,23 +500,42 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         //###############################
         // Build Error MSGs
         //###############################
-        StringBuilder error_MSG = new StringBuilder();
+        /**
+         * HTML:
+         * &nbsp; = space
+         * <br> = line break
+         * <b></b> = bold
+         */
         
-        for (Map.Entry<String, ArrayList<String>> error_MSGs : error_Map.entrySet())
+        StringBuilder error_MSG_String = new StringBuilder("<html>");
+        
+        for (Map.Entry<String, ArrayList<String>> error_Entry : error_Map.entrySet())
         {
-            error_MSG.append("\n");
+            ArrayList<String> error_MSGs = error_Entry.getValue();
             
-            for (String error : error_MSGs.getValue())
+            // Singular Error MSG
+            if(error_MSGs.size() == 1)
             {
-                error_MSG.append(String.format("\n%s", error));
+                error_MSG_String.append(String.format("<br><br><b>%s&nbsp;:&nbsp;</b> %s", error_Entry.getKey(), error_MSGs.getFirst()));
+                continue;
+            }
+            
+            // Multiple Error Messages
+            error_MSG_String.append(String.format("<br><br><b>%s:</b>", error_Entry.getKey()));
+            
+            for (String error : error_MSGs)
+            {
+                error_MSG_String.append(String.format("<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>.</b>&nbsp; %s", error));
             }
         }
+        
+        error_MSG_String.append("</html>");
         
         //###############################
         // Display Errors
         //###############################
-        UIManager.put("OptionPane.messageFont", new Font("Arial", Font.BOLD, 16));
-        JOptionPane.showMessageDialog(null, error_MSG);
+        UIManager.put("OptionPane.messageFont", new Font("Arial", Font.PLAIN, 16));
+        JOptionPane.showMessageDialog(null, error_MSG_String, "Ingredients Form Error Messages", JOptionPane.INFORMATION_MESSAGE);
         
         //###############################
         // Outputs
