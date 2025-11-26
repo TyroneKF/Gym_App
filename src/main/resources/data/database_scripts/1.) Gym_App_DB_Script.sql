@@ -44,24 +44,24 @@ CREATE TABLE IF NOT EXISTS macros_per_pound_and_limits
 
 	date_time_of_creation DATETIME NOT NULL,
 
-	current_weight_kg DECIMAL(5,2) NOT NULL,
-	current_weight_in_pounds DECIMAL(5,2) NOT NULL,
+	current_weight_kg DECIMAL(7,2) NOT NULL,
+	current_weight_in_pounds DECIMAL(7,2) NOT NULL,
 
-	body_fat_percentage DECIMAL(5,2) NOT NULL,
+	body_fat_percentage DECIMAL(7,2) NOT NULL,
 
-	protein_per_pound DECIMAL(5,2) NOT NULL,
-	carbohydrates_per_pound DECIMAL(5,2) NOT NULL,
-	fibre DECIMAL(5,2) NOT NULL,
+	protein_per_pound DECIMAL(7,2) NOT NULL,
+	carbohydrates_per_pound DECIMAL(7,2) NOT NULL,
+	fibre DECIMAL(7,2) NOT NULL,
 	
-	fats_per_pound DECIMAL(5,2) NOT NULL,
-	saturated_fat_limit DECIMAL(5,2) NOT NULL,
+	fats_per_pound DECIMAL(7,2) NOT NULL,
+	saturated_fat_limit DECIMAL(7,2) NOT NULL,
 	
-	salt_limit DECIMAL(5,2) NOT NULL,
+	salt_limit DECIMAL(7,2) NOT NULL,
 
-    water_target DECIMAL(5,2) NOT NULL,
-	liquid_target DECIMAL(5,2) NOT NULL,
+    water_target DECIMAL(7,2) NOT NULL,
+	liquid_target DECIMAL(7,2) NOT NULL,
 
-	additional_calories DECIMAL(5,2) NOT NULL,
+	additional_calories DECIMAL(7,2) NOT NULL,
 
 	PRIMARY KEY (plan_id, date_time_of_creation)
 );
@@ -142,7 +142,7 @@ CREATE TABLE IF NOT EXISTS measurements
 
 	unit_name VARCHAR(100) NOT NULL,
 	unit_symbol VARCHAR(10) NOT NULL,
-	measured_material_type ENUM('solids', 'liquids') NOT NULL,
+	measured_material_type ENUM('solids', 'liquids', 'N/A') NOT NULL,
 	
 	UNIQUE KEY no_repeat_unit_names(unit_name)
  );
@@ -162,18 +162,18 @@ CREATE TABLE IF NOT EXISTS ingredients_info
 	ingredient_type_id  INT NOT NULL,
 	FOREIGN KEY (ingredient_type_id) REFERENCES ingredient_types(ingredient_type_id) ON DELETE CASCADE,
 
-	based_on_quantity DECIMAL(5,2) NOT NULL,
+	based_on_quantity DECIMAL(7,2) NOT NULL,
     glycemic_index INT NOT NULL,
-	protein DECIMAL(5,2) NOT NULL,
-	carbohydrates DECIMAL(5,2) NOT NULL,
-	sugars_of_carbs DECIMAL(5,2) NOT NULL,
-	fibre DECIMAL(5,2) NOT NULL,
-	fat DECIMAL(5,2) NOT NULL,
-	saturated_fat DECIMAL(5,2) NOT NULL,
-	salt DECIMAL(5,2) NOT NULL,
-	water_content DECIMAL(5,2) NOT NULL,
-	liquid_content DECIMAL(5,2) NOT NULL,
-	calories DECIMAL(5,2) NOT NULL,
+	protein DECIMAL(7,2) NOT NULL,
+	carbohydrates DECIMAL(7,2) NOT NULL,
+	sugars_of_carbs DECIMAL(7,2) NOT NULL,
+	fibre DECIMAL(7,2) NOT NULL,
+	fat DECIMAL(7,2) NOT NULL,
+	saturated_fat DECIMAL(7,2) NOT NULL,
+	salt DECIMAL(7,2) NOT NULL,
+	water_content DECIMAL(7,2) NOT NULL,
+	liquid_content DECIMAL(7,2) NOT NULL,
+	calories DECIMAL(7,2) NOT NULL,
 
 	UNIQUE KEY no_repeat_ingredient_names(ingredient_name)
 );
@@ -199,8 +199,8 @@ CREATE TABLE IF NOT EXISTS ingredient_in_shops
 
     product_name VARCHAR(100) NOT NULL,
 
-	volume_per_unit DECIMAL(5,2) NOT NULL,
-	cost_per_unit DECIMAL(5,2) NOT NULL,
+	volume_per_unit DECIMAL(7,2) NOT NULL,
+	cost_per_unit DECIMAL(7,2) NOT NULL,
 
 	store_id INT NOT NULL,
 	FOREIGN KEY (store_id) REFERENCES stores(store_id) ON DELETE CASCADE,

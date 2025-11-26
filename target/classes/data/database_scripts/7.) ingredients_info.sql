@@ -1,4 +1,4 @@
-INSERT IGNORE INTO ingredients_info (ingredient_id, measurement_id, ingredient_name, ingredient_type_id, based_on_quantity, glycemic_index, protein, carbohydrates, sugars_of_carbs, fibre, fat, saturated_fat, salt, water_content, liquid_content, calories) VALUES
+INSERT INTO ingredients_info (ingredient_id, measurement_id, ingredient_name, ingredient_type_id, based_on_quantity, glycemic_index, protein, carbohydrates, sugars_of_carbs, fibre, fat, saturated_fat, salt, water_content, liquid_content, calories) VALUES
 (1, 3,"None Of The Above",1, 0,0,0,0,0,0,0,0,0,0,0,0),
 (null,1,("Water"),(SELECT ingredient_type_id FROM ingredient_types WHERE ingredient_type_name = "Liquids"),(100.00),(0),(0.00),(0.00),(0.00),(0.00),(0.00),(0.00),(0.00),(100.00),(100.00),(0.00)),
 (null,2,("Banana"),(SELECT ingredient_type_id FROM ingredient_types WHERE ingredient_type_name = "Fruit"),(100.00),(51),(1.1),(23.00),(12.00),(2.6),(0.3),(0.1),(0.00),(0.00),(0.00),(89.00)),
