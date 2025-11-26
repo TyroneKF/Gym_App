@@ -1,14 +1,18 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form;
 
-import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
+import App_Code.Objects.Data_Objects.Field_Bindings.Shop_Form_Binding;
+import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
 import App_Code.Objects.Gui_Objects.Field_JComboBox;
-import App_Code.Objects.Gui_Objects.Field_JTxtField;
+import App_Code.Objects.Gui_Objects.Text_Fields.Field_JTxtField;
+
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 
 
 public class ShopForm_Object extends JPanel
@@ -17,16 +21,29 @@ public class ShopForm_Object extends JPanel
     // Variables
     //##################################################################################################################
     
+    // Int
+    protected int
+            string_Char_Limit = 255,
+            decimal_Char_Limit = 8;
+    
     // GUI Objects
-    protected Field_JComboBox<Store_ID_OBJ> stores_JC;
-    protected Field_JTxtField product_Name_JT, product_Price_JT, quantity_JT;
     protected Container parent_Container;
+    protected Field_JComboBox<Store_ID_OBJ> stores_JC;
+    protected Field_JTxtField
+            product_Name_JT = new Field_JTxtField("name", string_Char_Limit),
+            product_Price_JT = new Field_JTxtField("price", decimal_Char_Limit, true, false),
+            quantity_JT = new Field_JTxtField("quantity", decimal_Char_Limit, true, false);
     
     // Objects
     protected Shop_Form shop_form;
     
     // Collections
-    ArrayList<Store_ID_OBJ> stores;
+    protected ArrayList<Store_ID_OBJ> stores;
+    
+    //############
+    // Maps
+    //############
+    protected LinkedHashMap<String, Shop_Form_Binding<?>> field_Items_Map;
     
     //##################################################################################################################
     // Constructor
@@ -40,10 +57,48 @@ public class ShopForm_Object extends JPanel
         this.shop_form = shop_form;
         this.stores = stores;  // Collections
         
+        stores_JC = new Field_JComboBox<>("store", Store_ID_OBJ.class, stores);  // Component
+        
         //###############################
         // Create GUI
         //###############################
+        create_Field_Items_Map();
         create_GUI();
+    }
+    
+    private void create_Field_Items_Map()
+    {
+        field_Items_Map = new LinkedHashMap<>()
+        {
+            {
+                put("store", new Shop_Form_Binding<>(
+                        "Select A Store",    // GUI Label
+                        stores_JC,                    // Component
+                        "store_id"                    // MySQL Field
+                ));
+                
+                put("name", new Shop_Form_Binding<>(
+                        "Product Name",       // GUI Label
+                        product_Name_JT,               // Component
+                        "product_name",                // MySQL Field
+                        String.class                   // Field Type
+                ));
+                
+                put("price", new Shop_Form_Binding<>(
+                        "Product Price",         // GUI Label
+                        product_Price_JT,                // Component
+                        "cost_per_unit",                 // MySQL Field
+                        BigDecimal.class                // Field Type
+                ));
+                
+                put("quantity", new Shop_Form_Binding<>(
+                        "Quantity Per Pack",         // GUI Label
+                        quantity_JT,                          // Component
+                        "volume_per_unit",                   // MySQL Field
+                        BigDecimal.class                    // Field Type
+                ));
+            }
+        };
     }
     
     protected void create_GUI()
@@ -79,8 +134,7 @@ public class ShopForm_Object extends JPanel
         //######################################################
         
         // create JComboBox
-        stores_JC = new Field_JComboBox<>("Store Name", Store_ID_OBJ.class, stores);
-        westPanel.add(stores_JC);
+        westPanel.add(field_Items_Map.get("store").get_Gui_Component());
         
         //#####################################################
         // Centre Side
@@ -143,6 +197,7 @@ public class ShopForm_Object extends JPanel
     protected void delete_Row_Action()
     {
         shop_form.remove_Shop_Form_Obj(this);
+        
         remove_From_Parent_Container(); // remove all the  input GUI objects from memory
         resize_GUI();
     }
@@ -152,32 +207,35 @@ public class ShopForm_Object extends JPanel
     //#########################################################
     protected void remove_From_Parent_Container()
     {
-        //Remove from parent Container
-        parent_Container.remove(this);
+        parent_Container.remove(this); //Remove from parent Container
     }
     
     protected void resize_GUI()
     {
-        //Resizing
-        parent_Container.revalidate();
+        parent_Container.revalidate(); //Resizing
         
-        //Resizing Form
-        shop_form.resize_GUI();
+        shop_form.resize_GUI(); //Resizing Form
     }
     
     //#########################################################
-    // Resizing Methods
+    // Validation & Update Methods
     //#########################################################
     public boolean validation_Check(LinkedHashMap<String, ArrayList<String>> error_Map)
     {
-        stores_JC.validation_Check(error_Map);
         product_Name_JT.validation_Check(error_Map);
-        product_Price_JT.validation_Check(error_Map);
         quantity_JT.validation_Check(error_Map);
+        product_Price_JT.validation_Check(error_Map);
+        stores_JC.validation_Check(error_Map);
         
         return error_Map.isEmpty();
     }
     
-    
+    public void add_Params(Object[] params, int base) throws Exception
+    {
+        params[base] = product_Name_JT.getText();
+        params[base + 1] = quantity_JT.getText();
+        params[base + 2] = product_Price_JT.getText();
+        params[base + 3] = stores_JC.get_Selected_Item_ID();
+    }
 }
 

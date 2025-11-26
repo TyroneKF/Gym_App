@@ -1,16 +1,16 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredient_Form;
 
-import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_Obj;
-import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Measurement_ID_OBJ;
+import App_Code.Objects.Data_Objects.Field_Bindings.Ingredients_Form_Binding;
+import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_Obj;
+import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Measurement_ID_OBJ;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
+import App_Code.Objects.Gui_Objects.Field_JComboBox;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
-import App_Code.Objects.Gui_Objects.Field_JComboBox;
-import App_Code.Objects.Gui_Objects.Field_JTxtField;
+import App_Code.Objects.Gui_Objects.Text_Fields.Field_JTxtField;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Parent_Forms_OBJ;
 import org.javatuples.Pair;
-
 import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
@@ -18,9 +18,9 @@ import java.util.*;
 
 public class Ingredients_Form extends Parent_Forms_OBJ
 {
-    //##################################################
+    //##################################################################################################################
     // Variables
-    //##################################################
+    //##################################################################################################################
     // Integers
     protected int digit_Char_Limit = 8, text_Char_Limit = 255;
     
@@ -43,7 +43,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
     //############
     // Maps
     //############
-    protected LinkedHashMap<String, Field_Binding<?>> field_Items_Map;
+    protected LinkedHashMap<String, Ingredients_Form_Binding<?>> field_Items_Map;
     
     //##################################################################################################################
     // Constructor
@@ -72,16 +72,15 @@ public class Ingredients_Form extends Parent_Forms_OBJ
     {
         field_Items_Map = new LinkedHashMap<>()
         {{
-            put("measurement", new Field_Binding<>(
+            put("measurement", new Ingredients_Form_Binding<>(
                     "Ingredient Measurement In",                                                   // GUI Label
                     new Field_JComboBox<>("Ingredient Measurement In", Measurement_ID_OBJ.class, ingredient_Measurement_Obj_AL),
                     // Component
                     "measurement_id",                                       // MySQL Field
-                    Integer.class,                                          // Field Type
                     "serving_unit"                                          // NutritionIX Field
             ));
             
-            put("name", new Field_Binding<>(
+            put("name", new Ingredients_Form_Binding<>(
                     "Ingredient Name",                                                       // GUI Label
                     new Field_JTxtField("Ingredient Name", text_Char_Limit),  // Component
                     "ingredient_name",                                                                // MySQL Field
@@ -89,16 +88,14 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     "food_name"                                                                   // NutritionIX Field
             ));
             
-            put("type", new Field_Binding<>(
+            put("type", new Ingredients_Form_Binding<>(
                     "Ingredient Type",                                             // GUI Label
+                    // Component
                     new Field_JComboBox<>("Ingredient Type", Ingredient_Type_ID_Obj.class, ingredient_Types_Obj_AL),
-                                                                                             // Component
-                    "ingredient_type_id",                                                    // MySQL Field
-                    Integer.class,                                                           // Field Type
-                    null                                                                     // NutritionIX Field
+                    "ingredient_type_id"                                                   // MySQL Field
             ));
             
-            put("quantity", new Field_Binding<>(
+            put("quantity", new Ingredients_Form_Binding<>(
                     "Based On Quantity",                                                   // GUI Label
                     // Component
                     new Field_JTxtField("Based On Quantity", digit_Char_Limit, true, false),
@@ -107,15 +104,14 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     "serving_weight_grams"                                                        // NutritionIX Field
             ));
             
-            put("gi", new Field_Binding<>(
+            put("gi", new Ingredients_Form_Binding<>(
                     "Glycemic Index",                                                  // GUI Label
                     new Field_JTxtField("Glycemic Index", digit_Char_Limit, true),  // Component
                     "glycemic_index",                                                           // MySQL Field
-                    BigDecimal.class,                                                           // Field Type
-                    null                                                                      // NutritionIX Field
+                    BigDecimal.class                                                          // Field Type
             ));
             
-            put("protein", new Field_Binding<>(
+            put("protein", new Ingredients_Form_Binding<>(
                     "Protein",                                                  // GUI Label
                     new Field_JTxtField("Protein", digit_Char_Limit, true),  // Component
                     "protein",                                                            // MySQL Field
@@ -123,7 +119,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     "nf_protein"                                                         // NutritionIX Field
             ));
             
-            put("carbohydrates", new Field_Binding<>(
+            put("carbohydrates", new Ingredients_Form_Binding<>(
                     "Carbohydrates",                                                   // GUI Label
                     new Field_JTxtField("Carbohydrates", digit_Char_Limit, true),  // Component
                     "carbohydrates",                                                           // MySQL Field
@@ -131,7 +127,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     "nf_total_carbohydrate"                                                    // NutritionIX Field
             ));
             
-            put("sugars_of_carbs", new Field_Binding<>(
+            put("sugars_of_carbs", new Ingredients_Form_Binding<>(
                     "Sugars Of Carbs",                                                  // GUI Label
                     new Field_JTxtField("Sugars Of Carbs", digit_Char_Limit, true),  // Component
                     "sugars_of_carbs",                                                           // MySQL Field
@@ -139,7 +135,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     "nf_sugars"                                                                 // NutritionIX Field
             ));
             
-            put("fibre", new Field_Binding<>(
+            put("fibre", new Ingredients_Form_Binding<>(
                     "Fibre",                                                   // GUI Label
                     new Field_JTxtField("Fibre", digit_Char_Limit, true),  // Component
                     "fibre",                                                            // MySQL Field
@@ -147,7 +143,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     "nf_dietary_fiber"                                                  // NutritionIX Field
             ));
             
-            put("fat", new Field_Binding<>(
+            put("fat", new Ingredients_Form_Binding<>(
                     "Fat",                                                        // GUI Label
                     new Field_JTxtField("Fat", digit_Char_Limit, true),       // Component
                     "fat",                                                                // MySQL Field
@@ -155,7 +151,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     "nf_total_fat"                                                        // NutritionIX Field
             ));
             
-            put("sat_fat", new Field_Binding<>(
+            put("sat_fat", new Ingredients_Form_Binding<>(
                     "Saturated Fat",                                                  // GUI Label
                     new Field_JTxtField("Saturated Fat", digit_Char_Limit, true),  // Component
                     "saturated_fat",                                                           // MySQL Field
@@ -163,7 +159,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     "nf_saturated_fat"                                                        // NutritionIX Field
             ));
             
-            put("salt", new Field_Binding<>(
+            put("salt", new Ingredients_Form_Binding<>(
                     "Salt",                                                   // GUI Label
                     new Field_JTxtField("Salt", digit_Char_Limit, true),  // Component
                     "salt",                                                             // MySQL Field
@@ -171,23 +167,21 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     "nf_sodium"                                                        // NutritionIX Field
             ));
             
-            put("water", new Field_Binding<>(
+            put("water", new Ingredients_Form_Binding<>(
                     "Water Content",                                                  // GUI Label
                     new Field_JTxtField("Water Content", digit_Char_Limit, true),  // Component
                     "water_content",                                                           // MySQL Field
-                    BigDecimal.class,                                                          // Field Type
-                    null                                                                       // NutritionIX Field
+                    BigDecimal.class                                                          // Field Type
             ));
             
-            put("liquid", new Field_Binding<>(
+            put("liquid", new Ingredients_Form_Binding<>(
                     "Liquid Content",                                                 // GUI Label
                     new Field_JTxtField("Liquid Content", digit_Char_Limit, true), // Component
                     "liquid_content",                                                          // MySQL Field
-                    BigDecimal.class,                                                         // Field Type
-                    null                                                                      // NutritionIX Field
+                    BigDecimal.class                                                        // Field Type
             ));
             
-            put("calories", new Field_Binding<>(
+            put("calories", new Ingredients_Form_Binding<>(
                     "Calories",                                                  // GUI Label
                     new Field_JTxtField("Calories", digit_Char_Limit, true),  // Component
                     "calories",                                                          // MySQL Field
@@ -241,22 +235,22 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         //#################################################################
         JPanel inputArea = new JPanel(new GridBagLayout());
         
-        for (Map.Entry<String, Field_Binding<?>> field_Item : field_Items_Map.entrySet())
+        for (Map.Entry<String, Ingredients_Form_Binding<?>> field_Item : field_Items_Map.entrySet())
         {
             //#######################################
             // Variables
             //#######################################
             String key = field_Item.getKey();
-            Field_Binding<?> field_Binding = field_Item.getValue();
+            Ingredients_Form_Binding<?> Ingredients_Form_Binding = field_Item.getValue();
             
-            Component component = field_Binding.get_Gui_Component();
+            Component component = Ingredients_Form_Binding.get_Gui_Component();
             
             int xPos = 0, yPos = get_And_Increase_YPos();
             
             //#######################################
             // Set Label
             //#######################################
-            JLabel label = new JLabel(String.format("    %s : ", field_Binding.get_Gui_Label()));
+            JLabel label = new JLabel(String.format("    %s : ", Ingredients_Form_Binding.get_Gui_Label()));
             label.setHorizontalAlignment(JLabel.LEFT);
             label.setFont(new Font("Verdana", Font.BOLD, 14));
             
@@ -342,7 +336,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
     public void clear_Ingredients_Form()
     {
         // Reset All Component Items (JTextField / JComboBox)
-        for (Map.Entry<String, Field_Binding<?>> field_Item : field_Items_Map.entrySet())
+        for (Map.Entry<String, Ingredients_Form_Binding<?>> field_Item : field_Items_Map.entrySet())
         {
             Component component = field_Item.getValue().get_Gui_Component();
             
@@ -470,7 +464,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         //###############################
         // Get Error MSGs from Components
         //###############################
-        for (Field_Binding<?> field_Binding : field_Items_Map.values())
+        for (Ingredients_Form_Binding<?> field_Binding : field_Items_Map.values())
         {
             switch (field_Binding.get_Gui_Component())
             {
@@ -486,7 +480,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         String label = "Ingredient Name";
         ArrayList<String> ingredient_Name_Errors = error_Map.getOrDefault(label, new ArrayList<>());  // Get Or Create an Empty list if not available
         
-        if (is_Ingredient_Name_In_DB())
+        if (is_Ingredient_Name_In_DB()) // IF ingredient Name already exists add error msg
         {
             ingredient_Name_Errors.add(String.format("'%s' : Already Exists in DB!", label));
             error_Map.put(label, ingredient_Name_Errors);
@@ -514,7 +508,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
             ArrayList<String> error_MSGs = error_Entry.getValue();
             
             // Singular Error MSG
-            if(error_MSGs.size() == 1)
+            if (error_MSGs.size() == 1)
             {
                 error_MSG_String.append(String.format("<br><br><b>%s&nbsp;:&nbsp;</b> %s", error_Entry.getKey(), error_MSGs.getFirst()));
                 continue;
@@ -570,7 +564,74 @@ public class Ingredients_Form extends Parent_Forms_OBJ
     //#######################################################
     // Update Methods
     //#######################################################
-    public void add_Updates(LinkedHashSet<Pair<String, Object[]>> queries_And_Params)
+    public void add_Update_Queries(LinkedHashSet<Pair<String, Object[]>> queries_And_Params) throws Exception
     {
+        //##########################
+        // Variables
+        //##########################
+        int size = field_Items_Map.size();
+        
+        StringBuilder
+                insert_Header = new StringBuilder("INSERT INTO ingredients_info ("),
+                values = new StringBuilder("(");
+        
+        Object[] params = new Object[size];
+        
+        //##########################
+        // Create Update Query
+        //##########################
+        try
+        {
+            int pos = 0;
+            for (Ingredients_Form_Binding<?> fb : field_Items_Map.values())
+            {
+                // Add to Header
+                insert_Header.append(pos == size - 1
+                        ? String.format("%s) VALUES ", fb.get_Mysql_Field_Name())
+                        : String.format("%s,", fb.get_Mysql_Field_Name())
+                );
+                
+                // Add to Values
+                values.append(pos == size - 1 ? "?);" : "?,");
+                
+                // Add to params
+                switch (fb.get_Gui_Component())
+                {
+                    case Field_JComboBox<?> jc -> params[pos] = jc.get_Selected_Item_ID();
+                    case Field_JTxtField jt ->  // Get Text & Type cast to expected type
+                    {
+                        Class<?> type = fb.get_Field_Type();
+                        
+                        if (type == BigDecimal.class)  // IF type is BigDecimal Convert TXT to
+                        {
+                            params[pos] = new BigDecimal(jt.get_Text());
+                        }
+                        else if (type == Integer.class)
+                        {
+                            params[pos] = Integer.valueOf(jt.get_Text());
+                        }
+                        else // Default is Text
+                        {
+                            params[pos] = jt.get_Text();
+                        }
+                    }
+                    default -> throw new IllegalStateException("Unexpected value: " + fb.get_Gui_Component());
+                }
+                
+                pos++; // Increase pos
+            }
+        }
+        catch (Exception e)
+        {
+            throw e;
+        }
+        
+        System.out.printf("\n\nInsert Headers: \n%s \n\nValues: \n%s  \n\nParams: \n%s%n", insert_Header, values, Arrays.toString(params));
+        
+        //##########################
+        // Add To Results
+        //##########################
+        StringBuilder update_Query = insert_Header.append(values);
+        queries_And_Params.add(new Pair<>(update_Query.toString(), params));
     }
 }

@@ -4,7 +4,7 @@ import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredient_Form.Ingredients_Form;
-import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.Add_Shop_Form;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.Shop_Form;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
 import org.javatuples.Pair;
 
@@ -28,7 +28,7 @@ public class Ingredients_Screen extends Screen_JPanel
     
     // Screen Objects
     protected Ingredients_Form ingredients_Form;
-    private Add_Shop_Form shop_Form;
+    private Shop_Form shop_Form;
     protected Search_For_Food_Info search_For_Ingredient_Info;
     protected Ingredients_Info_Screen ingredients_info_screen;
     protected Shared_Data_Registry shared_Data_Registry;
@@ -77,9 +77,9 @@ public class Ingredients_Screen extends Screen_JPanel
     // Create GUI Methods
     protected void create_GUI_Objects()
     {
-        ingredients_Form = new Ingredients_Form(scroll_JPanel, db, shared_Data_Registry,"Add Ingredients Info");
+        ingredients_Form = new Ingredients_Form(scroll_JPanel, db, shared_Data_Registry, "Add Ingredients Info");
         
-        shop_Form = new Add_Shop_Form(scroll_JPanel, this);
+        shop_Form = new Shop_Form(scroll_JPanel, this, shared_Data_Registry.get_Stores());
         
         search_For_Ingredient_Info = new Search_For_Food_Info(scroll_JPanel, ingredients_Form, "Search For Food Info");
     }
@@ -135,7 +135,7 @@ public class Ingredients_Screen extends Screen_JPanel
     protected void submission_Btn_Action()
     {
         //###############################
-        //
+        // Ask to Add Ingredient / Products
         //###############################
         String
                 title_Create = "Create New Ingredient",
@@ -144,20 +144,19 @@ public class Ingredients_Screen extends Screen_JPanel
         if (! are_You_Sure(title_Create, message_Create)) { return; }
         
         //###############################
-        // Ingredient Form
+        // Ingredient / Shop Update
         //###############################
-        if (! (ingredients_Form.validate_Ingredients_Form())) { return; }
+        boolean
+                ingredients_Form_Update = ingredients_Form.validate_Ingredients_Form(),
+                shop_Form_Update = shop_Form.validate_Form();
+        
+        if (! ingredients_Form_Update || ! shop_Form_Update) { return; }
         
         //###############################
-        // Shop Form
-        //###############################
-        if (! (shop_Form.validate_Form())) { return; }
-        
-        //###############################
-        // Data Formatting
+        // Accept : Data Formatting
         //###############################
         String
-                title_Upload = "",
+                title_Upload = "Accept Data Formatting",
                 message_Upload = "upload these values as they may have been changed / adapted to fit our data type format";
         
         if (! are_You_Sure(title_Upload, message_Upload)) { return; }
@@ -165,10 +164,18 @@ public class Ingredients_Screen extends Screen_JPanel
         //###############################
         // Update Both Forms
         //###############################
-        if (! update_Both_Forms()) { return; }
+        if (! update_Both_Forms())
+        {
+            JOptionPane.showMessageDialog(null, "\n\nError, Uploading Ingredients / Product Values!");
+            return;
+        }
         
         ingredients_info_screen.set_Update_IngredientInfo(true);
-        JOptionPane.showMessageDialog(get_Frame(), "\n\nUpdated Ingredient Info! \n\nAlso updated 2/2 Shop Info In DB In DB!!!");
+        
+        // Generate Update MSG depending on what was updated
+        StringBuilder update_MSG = new StringBuilder("\n\nUpdated Ingredient Info & Product Info ! ");
+        JOptionPane.showMessageDialog(get_Frame(), update_MSG);
+        
         JOptionPane.showMessageDialog(get_Frame(), "The ingredient updates won't appear on the mealPlan screen until this window is closed!");
         
         //################################
@@ -179,12 +186,31 @@ public class Ingredients_Screen extends Screen_JPanel
     
     protected boolean update_Both_Forms()
     {
+        //###########################
+        // Create Variables
+        //###########################
         String errorMSG = "Error, Unable to add new Ingredient !";
         
         LinkedHashSet<Pair<String, Object[]>> queries_And_Params = new LinkedHashSet<>();
         
-        db.upload_Data_Batch2(queries_And_Params, errorMSG);
-        return false;
+        //###########################
+        // Get Each Forms Update
+        //###########################
+        try
+        {
+            ingredients_Form.add_Update_Queries(queries_And_Params);
+            shop_Form.add_Update_Queries(queries_And_Params);
+        }
+        catch (Exception e)
+        {
+            System.out.printf("\n\n%s", e);
+            return false;
+        }
+        
+        //###########################
+        // Upload
+        //###########################
+        return db.upload_Data_Batch2(queries_And_Params, errorMSG);
     }
     
     //####################################################
@@ -219,13 +245,12 @@ public class Ingredients_Screen extends Screen_JPanel
     //####################################################
     public void load_Ingredient_Type_JC()
     {
-        ingredients_Form.load_Ingredients_Type_JComboBox();
+        ingredients_Form.reload_Ingredients_Type_JComboBox();
     }
-    
     
     public void load_Stores_JC()
     {
-    
+        shop_Form.reload_Stores_JC();
     }
     
     //##########################################################

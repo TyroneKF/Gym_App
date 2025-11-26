@@ -1,27 +1,32 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Ingredient_Types;
 
+import App_Code.Objects.Data_Objects.ID_Objects.ID_Object;
+import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_Obj;
+import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Storable_IDS_Parent;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
-import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients.Edit_Ingredients_Screen;
+import App_Code.Objects.Database_Objects.Shared_Data_Registry;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Edit_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Parent_Screen;
 import org.javatuples.Pair;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 
 public class Edit_Ingredient_Type extends Edit_Screen
 {
-    public Edit_Ingredient_Type(MyJDBC db, Parent_Screen parent_Screen)
+    
+    public Edit_Ingredient_Type(MyJDBC db, Shared_Data_Registry shared_Data_Registry, Ingredients_Info_Screen ingredient_Info_Screen,
+                                Parent_Screen parent_Screen, ArrayList<? extends Storable_IDS_Parent> jComboBox_List)
     {
-        super(db, parent_Screen);
+        super(db, shared_Data_Registry, ingredient_Info_Screen, parent_Screen, jComboBox_List);
     }
     
     @Override
     protected void set_Screen_Variables()
     {
-        super.lable1 = "Select Ingredient Type Name To Edit";
+        super.label1 = "Select Ingredient Type Name To Edit";
         super.label2 = "Change Ingredient Type Name To";
         
         super.data_Gathering_Name = "Ingredient Type Name";
@@ -30,96 +35,32 @@ public class Edit_Ingredient_Type extends Edit_Screen
         
         super.id_ColumnName = "ingredient_type_id";
         super.fk_Table = "ingredients_info";
-        super.remove_JComboBox_Items = new ArrayList<>(Arrays.asList("None Of The Above", "UnAssigned"));
+        super.remove_JComboBox_Items = new ArrayList<>(Arrays.asList(1,2));
+    }
+    
+    
+    
+    @Override
+    protected LinkedHashSet<Pair<String, Object[]>> delete_Prior_Queries(ID_Object item_ID_Obj, LinkedHashSet<Pair<String, Object[]>> query_And_Params)
+    {
+        String upload_Q1 = """
+                UPDATE ingredients_info
+                SET ingredient_type_id = ?
+                WHERE ingredient_type_id = ?""";
+        
+       query_And_Params.add(new Pair<>(upload_Q1, new Object[]{ 2, item_ID_Obj.get_ID() }));
+       
+      return query_And_Params;
     }
     
     @Override
-    protected void success_Upload_Message()
+    protected boolean delete_Shared_Data_Action()
     {
-        String text = String.format("\n\nSuccessfully Changed Ingredient Type From ' %s ' to ' %s ' !", selected_JComboBox_Item_Txt, jTextField_TXT);
-        JOptionPane.showMessageDialog(null, text);
+        Storable_IDS_Parent item_ID_Obj = (Storable_IDS_Parent) jCombo_Box.getSelectedItem();
+        
+        return sharedDataRegistry.remove_Ingredient_Type((Ingredient_Type_ID_Obj) item_ID_Obj);
     }
     
     @Override
-    protected void failure_Message()
-    {
-        String text = "\n\nFailed Upload - Couldn't Add New Ingredient Type";
-        JOptionPane.showMessageDialog(null, text);
-    }
-    
-    @Override
-    protected void update_Other_Screens()
-    {
-        System.out.printf("\n\n##############################################");
-        System.out.printf("\nupdateOtherScreens()  \nnewKey: %s \noldKey: %s", jTextField_TXT, selected_JComboBox_Item_Txt); // HELLO REMOVE
-        
-        //#################################################################
-        // Reset EditCreateForm
-        //#################################################################
-        Edit_Ingredients_Screen editingIngredientsInfo = ingredient_Info_Screen.get_Edit_Ingredients_Form();
-        editingIngredientsInfo.refresh_Interface(true, true);  // reset form`
-        
-        //###################################################################
-        // Change IngredientsTypeToNames JComboBox & List in  EditCreateForm
-        //###################################################################
-        if (item_Deleted)
-        {
-            if (ingredient_Info_Screen.add_Change_Or_Remove_IngredientsTypeName("removeKey", null, selected_JComboBox_Item_Txt)) // change key
-            {
-                editingIngredientsInfo.update_IngredientNames_To_Types_JComboBox(); // update IngredientsTypeToNames JComboBox
-            }
-            else
-            {
-                System.out.print("\n\nupdateOtherScreens() error deletingKey "); // HELLO REMOVE
-                return;
-            }
-        }
-        else
-        {
-            if (ingredient_Info_Screen.add_Change_Or_Remove_IngredientsTypeName("changeKeyName", jTextField_TXT, selected_JComboBox_Item_Txt)) // change key
-            {
-                editingIngredientsInfo.update_IngredientNames_To_Types_JComboBox(); // update IngredientsTypeToNames JComboBox
-            }
-            else
-            {
-                System.out.println("\n\n################################# \nupdateOtherScreens() error changingKey \n#################################"); // HELLO REMOVE
-                return;
-            }
-        }
-        
-        //#################################################################
-        // Update CreateForm ingredientsForm  Type JComboBoxes
-        //##################################################################
-        ingredient_Info_Screen.update_IngredientsForm_Type_JComboBoxes();
-        ingredient_Info_Screen.set_Update_IngredientInfo(true);
-    }
-    
-    @Override
-    protected LinkedHashSet<Pair<String, Object[]>> delete_Btn_Queries(String mysqlVariableReference1, LinkedHashSet<Pair<String, Object[]>> queries_And_Params)
-    {
-        //#############################################
-        //
-        //#############################################
-        String query1 = String.format("""
-                        UPDATE %s
-                        SET %s = (SELECT %s FROM %s WHERE %s =  ?)
-                        WHERE %s = %s;""",
-                fk_Table,
-                id_ColumnName,
-                id_ColumnName, db_TableName, db_ColumnName_Field,
-                id_ColumnName, mysqlVariableReference1);
-        
-        queries_And_Params.add(new Pair<>(query1, new Object[]{ "UnAssigned" }));
-        
-        //######################################
-        //Return Results
-        //######################################
-        String query2 = String.format("DELETE FROM %s WHERE %s = %s;", db_TableName, id_ColumnName, mysqlVariableReference1);
-        queries_And_Params.add(new Pair<>(query2, null));
-        
-        //######################################
-        //Return Results
-        //######################################
-        return queries_And_Params;
-    }
+    protected void update_Other_Screens() { }
 }

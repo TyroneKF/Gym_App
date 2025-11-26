@@ -1,6 +1,6 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form;
 
-import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
+import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredients_Screen;
@@ -301,7 +301,7 @@ public class Shop_Form extends Parent_Forms_OBJ
                 ArrayList<String> error_MSGs = error_Entry.getValue();
                 
                 // Singular Error MSG
-                if(error_MSGs.size() == 1)
+                if (error_MSGs.size() == 1)
                 {
                     error_MSG.append(String.format("<br><br><b>%s&nbsp;:&nbsp;</b> %s", error_Entry.getKey(), error_MSGs.getFirst()));
                     continue;
@@ -331,8 +331,66 @@ public class Shop_Form extends Parent_Forms_OBJ
         return false;
     }
     
-    public void add_Updates(LinkedHashSet<Pair<String, Object[]>> queries_And_Params)
+    public void add_Update_Queries(LinkedHashSet<Pair<String, Object[]>> queries_And_Params) throws Exception
     {
+        //###########################################
+        // Get Inserted Ingredient ID Query
+        //###########################################
+        // Get Insert Statement
+        String var_Ingredient_ID = "@IngredientID";
+        String upload_Q1 = String.format("Set %s = LAST_INSERT_ID();", var_Ingredient_ID);
+        
+        queries_And_Params.add(new Pair<>(upload_Q1, null));
+        
+        //###########################################
+        // Create Query for Upload Products
+        //###########################################
+        int
+                size = shopFormObjects.size(),
+                input_Params_Per_Item = 4;
+        
+        StringBuilder insert_Header =
+                new StringBuilder("INSERT INTO ingredient_in_shops (ingredient_id, product_name, volume_per_unit, cost_per_unit, store_id) VALUES"),
+                values = new StringBuilder();
+        
+        Object[] params = new Object[size * input_Params_Per_Item];
+        
+        //######################
+        // Create Update Query
+        //######################
+        try
+        {
+            for (int pos = 0; pos < size; pos++)
+            {
+                ShopForm_Object shopForm_object = shopFormObjects.get(pos);
+                
+                int base = pos * input_Params_Per_Item;
+                
+                // Add to Values
+                values.append(
+                        pos == size - 1
+                                ? String.format("(%s, ?, ?, ?, ?);", var_Ingredient_ID)
+                                : String.format("(%s, ?, ?, ?, ?),", var_Ingredient_ID)
+                );
+                
+                shopForm_object.add_Params(params, base); // Each Item add its update statements
+            }
+        }
+        catch (Exception e)
+        {
+            throw e;
+        }
+        
+        //###########################
+        // Edit Values Statement
+        //###########################
+        System.out.printf("\n\nInsert Headers: \n%s \n\nValues: \n%s  \n\nParams: \n%s%n", insert_Header, values, Arrays.toString(params));
+        
+        //##########################
+        // Add To Results
+        //##########################
+        StringBuilder update_Query = insert_Header.append(values);
+        queries_And_Params.add(new Pair<>(update_Query.toString(), params));
     }
     
     //################################################################
