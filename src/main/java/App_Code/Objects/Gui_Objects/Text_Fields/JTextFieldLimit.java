@@ -1,4 +1,4 @@
-package App_Code.Objects.Gui_Objects;
+package App_Code.Objects.Gui_Objects.Text_Fields;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;

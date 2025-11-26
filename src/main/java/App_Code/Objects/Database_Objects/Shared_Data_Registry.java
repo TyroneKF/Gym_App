@@ -1,6 +1,6 @@
 package App_Code.Objects.Database_Objects;
 
-import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.*;
+import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.*;
 import App_Code.Objects.Tables.JTable_JDBC.Children.ViewDataTables.TotalMeal_Table;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 

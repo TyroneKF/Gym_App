@@ -1,6 +1,6 @@
 package App_Code.Objects.Tables;
 
-import App_Code.Objects.Data_Objects.MetaData_ID_Object.Meal_ID;
+import App_Code.Objects.Data_Objects.ID_Objects.MetaData_ID_Object.Meal_ID;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.JDBC.Null_MYSQL_Field;
 import App_Code.Objects.Database_Objects.JDBC.Query_Results;

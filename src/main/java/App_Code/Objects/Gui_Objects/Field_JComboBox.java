@@ -1,6 +1,6 @@
 package App_Code.Objects.Gui_Objects;
 
-import App_Code.Objects.Data_Objects.ID_Object;
+import App_Code.Objects.Data_Objects.ID_Objects.ID_Object;
 
 import javax.swing.*;
 import java.util.ArrayList;

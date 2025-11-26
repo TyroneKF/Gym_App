@@ -1,4 +1,4 @@
-package App_Code.Objects.Gui_Objects;
+package App_Code.Objects.Gui_Objects.Text_Fields;
 
 import javax.swing.*;
 import java.math.BigDecimal;
@@ -25,6 +25,15 @@ public class Field_JTxtField extends JTextField
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
+    // Text Field
+    public Field_JTxtField(String label, int char_Limit)
+    {
+        constructor_Setup(label, char_Limit, null, null);
+    }
+    
+    //############################################
+    // Decimal
+    //############################################
     public Field_JTxtField(String label, int char_Limit, boolean is_Decimal_Field, boolean can_Be_0) // Specific Decimal
     {
         constructor_Setup(label, char_Limit, is_Decimal_Field, can_Be_0);
@@ -35,12 +44,9 @@ public class Field_JTxtField extends JTextField
         constructor_Setup(label, char_Limit, is_Decimal_Field, null);
     }
     
-    public Field_JTxtField(String label, int char_Limit) // Text Field
-    {
-        constructor_Setup(label, char_Limit, null, null);
-    }
-    
-    
+    //##########################################################################
+    // Constructor Helper method
+    //##########################################################################
     private void constructor_Setup(String label, int char_Limit, Boolean is_Decimal_Field, Boolean can_Be_0)
     {
         // Field All Constructors use

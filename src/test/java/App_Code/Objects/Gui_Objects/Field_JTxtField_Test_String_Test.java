@@ -1,12 +1,11 @@
 package App_Code.Objects.Gui_Objects;
 
+import App_Code.Objects.Gui_Objects.Text_Fields.Field_JTxtField;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 

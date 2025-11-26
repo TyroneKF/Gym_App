@@ -1,10 +1,10 @@
 package App_Code.Objects.Screens;
 
-import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
-import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_Obj;
-import App_Code.Objects.Data_Objects.MetaData_ID_Object.Meal_ID;
-import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Measurement_ID_OBJ;
-import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
+import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
+import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_Obj;
+import App_Code.Objects.Data_Objects.ID_Objects.MetaData_ID_Object.Meal_ID;
+import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Measurement_ID_OBJ;
+import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Tables.JTable_JDBC.Children.ViewDataTables.MacrosLeft_Table;

@@ -1,4 +1,6 @@
-package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredient_Form;
+package App_Code.Objects.Data_Objects.Field_Bindings;
+
+import App_Code.Objects.Gui_Objects.Field_JComboBox;
 
 import java.awt.*;
 
@@ -9,7 +11,6 @@ public class Field_Binding<T>
     //##################################################################################################################
     private String
             gui_Label,
-            nutrition_IX_Label,
             mysql_Field_Name;
     
     private Component gui_Component;
@@ -19,18 +20,23 @@ public class Field_Binding<T>
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Field_Binding(
-            String gui_Label,
-            Component component,
-            String mysql_Field,
-            Class<T> type,
-            String api_Field)
+    public Field_Binding(String gui_Label, Field_JComboBox<T> component, String mysql_Field)
+    {
+        constructor_Setup(gui_Label, component, mysql_Field, null);
+    }
+    
+    public Field_Binding(String gui_Label, Component component, String mysql_Field, Class<T> type)
+    {
+        constructor_Setup(gui_Label, component, mysql_Field, type);
+    }
+    
+    private void constructor_Setup(String gui_Label, Component component, String mysql_Field, Class<T> type)
     {
         this.gui_Label = gui_Label;
-        this.mysql_Field_Name = mysql_Field;
-        this.field_Type = type;
-        this.nutrition_IX_Label = api_Field;
         this.component = component;
+        this.mysql_Field_Name = mysql_Field;
+        
+        if (type != null) { this.field_Type = type; }
     }
     
     //##################################################################################################################
@@ -51,10 +57,7 @@ public class Field_Binding<T>
         return mysql_Field_Name;
     }
     
-    public String get_Nutrition_IX_Label()
-    {
-        return nutrition_IX_Label;
-    }
+    
     
     public Class<T> get_Field_Type()
     {

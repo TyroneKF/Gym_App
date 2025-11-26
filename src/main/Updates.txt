@@ -4,6 +4,12 @@ mvn javafx:run "-DmainClass=Tests.ToggleSwitchDemo"
 ######################################################################################
 Work On:
 ######################################################################################
+.) Can error msgs be refactored in shop and ingredients screen into parent screen
+.) Refactor shopForm GUI Methods
+
+.) IF DB Creation passes & the inserts don't fail the connection isn't rolledback the tables are still created
+
+
 .) If an ingredient table is saved and its not in the DB because the mealManager isn't
  .) MealManagaer should be saved
 

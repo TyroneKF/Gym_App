@@ -1,11 +1,11 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types;
 
-import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_Obj;
-import App_Code.Objects.Data_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
+import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_Obj;
+import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.JDBC.Query_Results;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
-import App_Code.Objects.Gui_Objects.JTextFieldLimit;
+import App_Code.Objects.Gui_Objects.Text_Fields.JTextFieldLimit;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Ingredient_Types.Add_Ingredient_Type;

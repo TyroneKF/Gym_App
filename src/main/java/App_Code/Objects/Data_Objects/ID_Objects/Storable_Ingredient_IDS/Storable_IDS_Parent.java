@@ -1,6 +1,6 @@
-package App_Code.Objects.Data_Objects.Storable_Ingredient_IDS;
+package App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS;
 
-import App_Code.Objects.Data_Objects.ID_Object;
+import App_Code.Objects.Data_Objects.ID_Objects.ID_Object;
 
 /**
  *  Permits restricts the classes that can extend this object enforces type restriction in case its accidentally extended
