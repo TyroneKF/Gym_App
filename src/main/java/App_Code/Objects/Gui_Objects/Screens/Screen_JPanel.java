@@ -170,6 +170,24 @@ public class Screen_JPanel extends JPanel
         //#############################
         jp.add(scaledIcon);
     }*/
+    
+    protected JPanel create_Label_JP(String title, Font font)
+    {
+        // Title JP
+        JPanel title_JP = new JPanel();
+        title_JP.setBackground(Color.green);
+        
+        // Creating Label
+        JLabel label = new JLabel(title);
+        label.setFont(font);
+        label.setHorizontalAlignment(JLabel.CENTER);
+        
+        // Add Label to JP
+        title_JP.add(label);
+        
+        // Return JP
+        return title_JP;
+    }
 
     
     //##############################################

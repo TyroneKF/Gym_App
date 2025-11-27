@@ -7,7 +7,7 @@ public class ID_Object implements Comparable<ID_Object>
     // #################################################################################################################
     // Variables
     // #################################################################################################################
-    private String class_Type, name;
+    private String  name;
     private int id;
     
     // #################################################################################################################
@@ -19,7 +19,7 @@ public class ID_Object implements Comparable<ID_Object>
         // Variables
         //############################################
         this.id = id;
-        this.name = name;
+        set_Name(name);
     }
     
     // #################################################################################################################
@@ -27,7 +27,7 @@ public class ID_Object implements Comparable<ID_Object>
     // #################################################################################################################
     public void set_Name(String name)
     {
-        this.name = name;
+        this.name = Objects.requireNonNull(name, "Name cannot be null");
     }
     
     // #################################
@@ -36,11 +36,6 @@ public class ID_Object implements Comparable<ID_Object>
     public String get_Name()
     {
         return name;
-    }
-    
-    public String get_Class_Type()
-    {
-        return class_Type;
     }
     
     public int get_ID()
@@ -59,7 +54,8 @@ public class ID_Object implements Comparable<ID_Object>
     @Override
     public int compareTo(ID_Object other)
     {
-        return CharSequence.compare(this.get_Name(), other.get_Name());
+        if (other == null) return 1;
+        return this.get_Name().compareToIgnoreCase(other.get_Name());
     }
     
     @Override

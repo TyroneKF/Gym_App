@@ -29,6 +29,8 @@ public class Ingredients_Form extends Parent_Forms_OBJ
     //#############################
     protected Shared_Data_Registry sharedDataRegistry;
     protected MyJDBC db;
+   
+    protected JPanel northPanel = new JPanel(new GridBagLayout());
     
     // Salt JC Object
     protected ArrayList<String> salt_Values_AL = new ArrayList<>(Arrays.asList("mg", "g"));
@@ -50,24 +52,33 @@ public class Ingredients_Form extends Parent_Forms_OBJ
     //##################################################################################################################
     public Ingredients_Form(Container parentContainer, MyJDBC db, Shared_Data_Registry sharedDataRegistry, String btn_Txt)
     {
+        //############################################
         // Super Constructor
+        //############################################
         super(parentContainer, btn_Txt);
         
-        // Objects
+        //############################################
+        // Variables
+        //############################################
         this.db = db;
         this.sharedDataRegistry = sharedDataRegistry;
         
         // Collections
-        ingredient_Types_Obj_AL = sharedDataRegistry.get_Ingredient_Types();
+        ingredient_Types_Obj_AL = sharedDataRegistry.get_All_Ingredient_Types_AL();
         ingredient_Measurement_Obj_AL = sharedDataRegistry.get_Ingredient_Measurement_Obj_AL();
         
         create_Field_Items_Map(); // Create Map, as values were needed from above ^^
         
-        // GUI Setup
+        //############################################
+        // Create GUI
+        //############################################
         create_Ingredients_Form();
         collapsibleJPanel.expand_JPanel();
     }
-    
+
+    //##################################################################################################################
+    // Methods
+    //##################################################################################################################
     private void create_Field_Items_Map()
     {
         field_Items_Map = new LinkedHashMap<>()
@@ -190,11 +201,6 @@ public class Ingredients_Form extends Parent_Forms_OBJ
             ));
         }};
     }
-    
-    //##################################################################################################################
-    // Methods
-    //##################################################################################################################
-    
     
     //###########################################################
     // Create GUI Methods

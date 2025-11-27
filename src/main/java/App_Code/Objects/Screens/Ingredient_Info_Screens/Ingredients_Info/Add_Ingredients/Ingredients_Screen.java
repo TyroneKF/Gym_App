@@ -79,13 +79,26 @@ public class Ingredients_Screen extends Screen_JPanel
     {
         ingredients_Form = new Ingredients_Form(scroll_JPanel, db, shared_Data_Registry, "Add Ingredients Info");
         
-        shop_Form = new Shop_Form(scroll_JPanel, this, shared_Data_Registry.get_Stores());
+        shop_Form = new Shop_Form(scroll_JPanel, "Add Suppliers", this, shared_Data_Registry.get_Stores_AL());
         
         search_For_Ingredient_Info = new Search_For_Food_Info(scroll_JPanel, ingredients_Form, "Search For Food Info");
     }
     
+    protected void prior_GUI_Setup()
+    {
+    
+    }
+    
     protected void create_GUI()
     {
+        //#############################
+        // Prior Setup
+        //#############################
+        prior_GUI_Setup();
+        
+        //#############################
+        // Add Objects to GUI
+        //#############################
         //Search For Ingredients Form
         add_To_Container(mainCentre_JPanel, search_For_Ingredient_Info, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
         
@@ -243,12 +256,12 @@ public class Ingredients_Screen extends Screen_JPanel
     //####################################################
     // Update Methods
     //####################################################
-    public void load_Ingredient_Type_JC()
+    public void reload_Ingredient_Type_JC()
     {
         ingredients_Form.reload_Ingredients_Type_JComboBox();
     }
     
-    public void load_Stores_JC()
+    public void reload_Stores_JC()
     {
         shop_Form.reload_Stores_JC();
     }

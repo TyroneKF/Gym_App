@@ -3,28 +3,38 @@ package App_Code.Objects.Gui_Objects;
 import App_Code.Objects.Data_Objects.ID_Objects.ID_Object;
 
 import javax.swing.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class Field_JComboBox<T> extends JComboBox<T>
 {
+    //##################################################################################################################
+    // Variables
+    //##################################################################################################################
     protected ArrayList<T> data_AL;
     protected Class<T> typeCast;
     protected String label;
     
+    //##################################################################################################################
+    // Constructor
+    //##################################################################################################################
     public Field_JComboBox(String label, Class<T> typeCast, ArrayList<T> data_AL)
     {
         //############################
         // Variables
         //############################
-        this.label = label;
-        this.data_AL = data_AL;
-        this.typeCast = typeCast;
+        this.label = Objects.requireNonNull(label, "Label cannot be null");
+        this.data_AL = Objects.requireNonNull(data_AL, "Data cannot be null");
+        this.typeCast = Objects.requireNonNull(typeCast, "Type Cast cannot be null");
         
         //############################
-        // Centre JComboBox Item
+        // JComboBox Setup
         //############################
+        // Centre JComboBox Item
         DefaultListCellRenderer listRenderer = new DefaultListCellRenderer();
         listRenderer.setHorizontalAlignment(DefaultListCellRenderer.CENTER); // center-aligned items
         setRenderer(listRenderer);
@@ -39,6 +49,31 @@ public class Field_JComboBox<T> extends JComboBox<T>
         // Load List
         //############################
         reload_Items();
+        
+        //############################
+        // ActionListener
+        //############################
+        addItemListener(new ItemListener()
+        {
+            public void itemStateChanged(ItemEvent ie)
+            {
+                if (ie.getStateChange() == ItemEvent.SELECTED)
+                {
+                    actionListener();
+                }
+            }
+        });
+        
+    }
+    
+    //##################################################################################################################
+    // Methods
+    //##################################################################################################################
+    protected void actionListener(){ }
+    
+    public void set_Data_AL(ArrayList<T> data_AL)
+    {
+        this.data_AL = Objects.requireNonNull(data_AL, "Data cannot be null");
     }
     
     public void reload_Items()
@@ -47,6 +82,10 @@ public class Field_JComboBox<T> extends JComboBox<T>
         // Get Previous Item
         //############################
         T selected_Item = typeCast.cast(getSelectedItem());
+        
+        boolean
+                item_Not_Null = selected_Item != null,
+                item_in_List = false;
         
         //############################
         // Load List
@@ -57,13 +96,15 @@ public class Field_JComboBox<T> extends JComboBox<T>
         
         for (T item : data_AL) // Populate Model From AL that's updated
         {
+            if (item_Not_Null && ! item_in_List && item.equals(selected_Item)) { item_in_List = true; } // Check if selected item is in list
+            
             model.addElement(item);
         }
         
         //############################
         // Set Selected Item
         //############################
-        if (selected_Item != null)  // Set Item back to original Item
+        if (item_Not_Null && item_in_List)  // Set Item back to original Item
         {
             setSelectedItem(selected_Item);
         }
@@ -91,6 +132,9 @@ public class Field_JComboBox<T> extends JComboBox<T>
         }
     }
     
+    //##################################################################################################################
+    // Acessor Methods
+    //##################################################################################################################
     public Integer get_Selected_Item_ID() throws Exception
     {
         String method_Name = String.format(" Field_JComboBox.java -> %s()", new Object() { }.getClass().getEnclosingMethod().getName());

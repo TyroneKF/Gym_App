@@ -71,17 +71,18 @@ public class ShopForm_Object extends JPanel
         field_Items_Map = new LinkedHashMap<>()
         {
             {
-                put("store", new Shop_Form_Binding<>(
-                        "Select A Store",    // GUI Label
-                        stores_JC,                    // Component
-                        "store_id"                    // MySQL Field
-                ));
-                
-                put("name", new Shop_Form_Binding<>(
+               put("name", new Shop_Form_Binding<>(
                         "Product Name",       // GUI Label
                         product_Name_JT,               // Component
                         "product_name",                // MySQL Field
                         String.class                   // Field Type
+                ));
+                
+                put("quantity", new Shop_Form_Binding<>(
+                        "Quantity Per Pack",         // GUI Label
+                        quantity_JT,                          // Component
+                        "volume_per_unit",                   // MySQL Field
+                        BigDecimal.class                    // Field Type
                 ));
                 
                 put("price", new Shop_Form_Binding<>(
@@ -91,11 +92,10 @@ public class ShopForm_Object extends JPanel
                         BigDecimal.class                // Field Type
                 ));
                 
-                put("quantity", new Shop_Form_Binding<>(
-                        "Quantity Per Pack",         // GUI Label
-                        quantity_JT,                          // Component
-                        "volume_per_unit",                   // MySQL Field
-                        BigDecimal.class                    // Field Type
+                put("store", new Shop_Form_Binding<>(
+                        "Select A Store",    // GUI Label
+                        stores_JC,                    // Component
+                        "store_id"                    // MySQL Field
                 ));
             }
         };
@@ -237,5 +237,6 @@ public class ShopForm_Object extends JPanel
         params[base + 2] = product_Price_JT.getText();
         params[base + 3] = stores_JC.get_Selected_Item_ID();
     }
+    
 }
 

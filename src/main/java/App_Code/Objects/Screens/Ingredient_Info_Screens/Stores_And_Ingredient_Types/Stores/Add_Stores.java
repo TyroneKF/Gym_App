@@ -6,8 +6,6 @@ import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredi
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Add_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Parent_Screen;
 
-import javax.swing.*;
-
 public  class Add_Stores extends Add_Screen
 {
     public Add_Stores(MyJDBC db, Shared_Data_Registry shared_Data_Registry, Ingredients_Info_Screen ingredient_Info_Screen, Parent_Screen parent_Screen)
@@ -40,6 +38,6 @@ public  class Add_Stores extends Add_Screen
     @Override
     protected void update_Other_Screens()
     {
-        ingredient_Info_Screen.update_Ingredient_Suppliers_JComboBoxes();
+        ingredient_Info_Screen.update_Stores_JC();
     }
 }

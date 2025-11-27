@@ -1,5 +1,7 @@
 package App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS;
 
+import java.util.Objects;
+
 public final class Ingredient_Name_ID_OBJ extends Storable_IDS_Parent
 {
     // #################################################################################################################
@@ -14,7 +16,7 @@ public final class Ingredient_Name_ID_OBJ extends Storable_IDS_Parent
     {
         super(id, name);
         
-        this.ingredient_Type_ID_Obj = type_ID_OBJ;
+        set_Ingredient_Type_ID_Obj(type_ID_OBJ);
     }
     
     // #################################################################################################################
@@ -22,7 +24,8 @@ public final class Ingredient_Name_ID_OBJ extends Storable_IDS_Parent
     // #################################################################################################################
     public void set_Ingredient_Type_ID_Obj(Ingredient_Type_ID_Obj ingredient_type_ID_Obj)
     {
-       this.ingredient_Type_ID_Obj = ingredient_type_ID_Obj;
+        Objects.requireNonNull(ingredient_type_ID_Obj, "Ingredient type cannot be null");
+        this.ingredient_Type_ID_Obj = ingredient_type_ID_Obj;
     }
     
     // #################################################################################################################

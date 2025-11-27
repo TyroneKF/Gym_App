@@ -34,13 +34,17 @@ public class Shop_Form extends Parent_Forms_OBJ
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Shop_Form(Container parentContainer, Ingredients_Screen ingredient_Screen, ArrayList<Store_ID_OBJ> stores)
+    public Shop_Form(Container parentContainer, String btn_Text,  Ingredients_Screen ingredient_Screen, ArrayList<Store_ID_OBJ> stores)
     {
         //############################################
-        // Super & Variables
+        // Super
         //############################################
-        super(parentContainer, "Add Suppliers");
+        super(parentContainer, btn_Text);
         
+        
+        //############################################
+        // Variables
+        //############################################
         this.parentContainer = parentContainer;
         this.ingredient_Screen = ingredient_Screen;
         this.stores = stores;
@@ -334,6 +338,12 @@ public class Shop_Form extends Parent_Forms_OBJ
     public void add_Update_Queries(LinkedHashSet<Pair<String, Object[]>> queries_And_Params) throws Exception
     {
         //###########################################
+        // Exit Clause
+        //###########################################
+        if (shopFormObjects.isEmpty()) { return; }
+        
+        
+        //###########################################
         // Get Inserted Ingredient ID Query
         //###########################################
         // Get Insert Statement
@@ -349,15 +359,19 @@ public class Shop_Form extends Parent_Forms_OBJ
                 size = shopFormObjects.size(),
                 input_Params_Per_Item = 4;
         
+        //######################
+        // Create Params Query
+        //######################
         StringBuilder insert_Header =
                 new StringBuilder("INSERT INTO ingredient_in_shops (ingredient_id, product_name, volume_per_unit, cost_per_unit, store_id) VALUES"),
                 values = new StringBuilder();
         
-        Object[] params = new Object[size * input_Params_Per_Item];
         
         //######################
-        // Create Update Query
+        // Create Params Query
         //######################
+        Object[] params = new Object[size * input_Params_Per_Item];
+        
         try
         {
             for (int pos = 0; pos < size; pos++)
