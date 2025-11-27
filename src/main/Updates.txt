@@ -80,7 +80,10 @@ Loading Screen
 ######################################################################################
 New Features:
 ######################################################################################
-.) SQL Injection
+.) Recime - screenshot image and gets ingredients
+.) Search on app for recommended meals with a GUI like studentPeak events page
+
+
 .) Barcode scanner using phone portal / tunnel as a connection
 .) Graphs / Charts of Meals
 .) Shopping Evaluator / Stock
