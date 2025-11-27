@@ -1,6 +1,4 @@
-package App_Code.Objects.Gui_Objects;
-
-import App_Code.Objects.Data_Objects.ID_Objects.ID_Object;
+package App_Code.Objects.Gui_Objects.Combo_Boxes;
 
 import javax.swing.*;
 import java.awt.event.ItemEvent;
@@ -69,12 +67,7 @@ public class Field_JComboBox<T> extends JComboBox<T>
     //##################################################################################################################
     // Methods
     //##################################################################################################################
-    protected void actionListener(){ }
-    
-    public void set_Data_AL(ArrayList<T> data_AL)
-    {
-        this.data_AL = Objects.requireNonNull(data_AL, "Data cannot be null");
-    }
+    protected void actionListener() { }
     
     public void reload_Items()
     {
@@ -96,7 +89,10 @@ public class Field_JComboBox<T> extends JComboBox<T>
         
         for (T item : data_AL) // Populate Model From AL that's updated
         {
-            if (item_Not_Null && ! item_in_List && item.equals(selected_Item)) { item_in_List = true; } // Check if selected item is in list
+            if (item_Not_Null && ! item_in_List && item.equals(selected_Item))
+            {
+                item_in_List = true;
+            } // Check if selected item is in list
             
             model.addElement(item);
         }
@@ -119,37 +115,19 @@ public class Field_JComboBox<T> extends JComboBox<T>
         setSelectedItem(null);
     }
     
-    public boolean validation_Check(LinkedHashMap<String, ArrayList<String>> error_Map)
+    public void validation_Check(LinkedHashMap<String, ArrayList<String>> error_Map)
     {
         if (getSelectedIndex() == - 1)
         {
             error_Map.put(label, new ArrayList<>(List.of("Select an item !")));
-            return false;
-        }
-        else
-        {
-            return true;
         }
     }
     
     //##################################################################################################################
-    // Acessor Methods
+    // Mutator Methods
     //##################################################################################################################
-    public Integer get_Selected_Item_ID() throws Exception
+    public void set_Data_AL(ArrayList<T> data_AL)
     {
-        String method_Name = String.format(" Field_JComboBox.java -> %s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        
-        // Get Object
-        Object item = getSelectedItem();
-        
-        if (item == null) { return null; }
-        
-        // If this is an ID object return the ID
-        if (item instanceof ID_Object id_object) { return id_object.get_ID(); }
-        
-        String errorMSG = String.format("%s \nItem is not an D_Object id_object to get ID but, is -> %s",
-                method_Name, item.getClass().getSimpleName());
-        
-        throw new Exception(errorMSG);
+        this.data_AL = Objects.requireNonNull(data_AL, "Data cannot be null");
     }
 }

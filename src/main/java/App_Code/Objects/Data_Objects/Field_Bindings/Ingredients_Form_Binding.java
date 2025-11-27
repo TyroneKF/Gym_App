@@ -1,6 +1,6 @@
 package App_Code.Objects.Data_Objects.Field_Bindings;
 
-import App_Code.Objects.Gui_Objects.Field_JComboBox;
+import App_Code.Objects.Gui_Objects.Combo_Boxes.Field_JComboBox;
 
 import java.awt.*;
 

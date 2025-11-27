@@ -1,6 +1,6 @@
 package App_Code.Objects.Data_Objects.Field_Bindings;
 
-import App_Code.Objects.Gui_Objects.Field_JComboBox;
+import App_Code.Objects.Gui_Objects.Combo_Boxes.Field_JComboBox;
 
 import java.awt.*;
 
@@ -56,8 +56,6 @@ public class Field_Binding<T>
     {
         return mysql_Field_Name;
     }
-    
-    
     
     public Class<T> get_Field_Type()
     {

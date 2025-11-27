@@ -5,7 +5,8 @@ import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredie
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Measurement_ID_OBJ;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
-import App_Code.Objects.Gui_Objects.Field_JComboBox;
+import App_Code.Objects.Gui_Objects.Combo_Boxes.Field_JC_Storable_ID;
+import App_Code.Objects.Gui_Objects.Combo_Boxes.Field_JComboBox;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Gui_Objects.Text_Fields.Field_JTxtField;
@@ -65,7 +66,9 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         
         // Collections
         ingredient_Types_Obj_AL = sharedDataRegistry.get_All_Ingredient_Types_AL();
+        
         ingredient_Measurement_Obj_AL = sharedDataRegistry.get_Ingredient_Measurement_Obj_AL();
+        ingredient_Measurement_Obj_AL.removeIf(e -> e.get_ID()== 3); // Remove N/A Measurement
         
         create_Field_Items_Map(); // Create Map, as values were needed from above ^^
         
@@ -85,7 +88,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         {{
             put("measurement", new Ingredients_Form_Binding<>(
                     "Ingredient Measurement In",                                                   // GUI Label
-                    new Field_JComboBox<>("Ingredient Measurement In", Measurement_ID_OBJ.class, ingredient_Measurement_Obj_AL),
+                    new Field_JC_Storable_ID<>("Ingredient Measurement In", Measurement_ID_OBJ.class, ingredient_Measurement_Obj_AL),
                     // Component
                     "measurement_id",                                       // MySQL Field
                     "serving_unit"                                          // NutritionIX Field
@@ -102,7 +105,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
             put("type", new Ingredients_Form_Binding<>(
                     "Ingredient Type",                                             // GUI Label
                     // Component
-                    new Field_JComboBox<>("Ingredient Type", Ingredient_Type_ID_Obj.class, ingredient_Types_Obj_AL),
+                    new Field_JC_Storable_ID<>("Ingredient Type", Ingredient_Type_ID_Obj.class, ingredient_Types_Obj_AL),
                     "ingredient_type_id"                                                   // MySQL Field
             ));
             
@@ -200,6 +203,11 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     "nf_calories"                                                       // NutritionIX Field
             ));
         }};
+    }
+    
+    public void set_Salt_JC()
+    {
+        salt_JC.setSelectedItem("g");
     }
     
     //###########################################################
@@ -603,7 +611,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                 // Add to params
                 switch (fb.get_Gui_Component())
                 {
-                    case Field_JComboBox<?> jc -> params[pos] = jc.get_Selected_Item_ID();
+                    case Field_JC_Storable_ID<?> jc -> params[pos] = jc.get_Selected_Item_ID();
                     case Field_JTxtField jt ->  // Get Text & Type cast to expected type
                     {
                         Class<?> type = fb.get_Field_Type();
