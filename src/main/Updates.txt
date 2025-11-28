@@ -8,7 +8,8 @@ Work On:
 .) Refactor shopForm GUI Methods
 
 .) IF DB Creation passes & the inserts don't fail the connection isn't rolledback the tables are still created - check create db method
-
+.) What happens when a db query fails and is empty! Differentiate between empty and null results.
+           Null for failed and empty Collection
 
 .) If an ingredient table is saved and its not in the DB because the mealManager isn't
  .) MealManagaer should be saved
