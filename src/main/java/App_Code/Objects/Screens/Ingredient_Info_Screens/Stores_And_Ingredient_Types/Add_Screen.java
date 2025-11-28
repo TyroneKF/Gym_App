@@ -313,7 +313,7 @@ public abstract class Add_Screen extends Screen_JPanel
         //########################
         try
         {
-            System.out.printf("\n\n%s", results_OBJ.get_Result_Object(0));
+            System.out.printf("\n\n%s", results_OBJ.get_1D_Result_Into_Object(0));
         }
         catch (Exception e)
         {
@@ -334,7 +334,7 @@ public abstract class Add_Screen extends Screen_JPanel
         
         try
         {
-            id = ((Number) results_OBJ.get_Result_Object(0)).intValue();
+            id = ((Number) results_OBJ.get_1D_Result_Into_Object(0)).intValue();
         }
         catch (Exception e)
         {
