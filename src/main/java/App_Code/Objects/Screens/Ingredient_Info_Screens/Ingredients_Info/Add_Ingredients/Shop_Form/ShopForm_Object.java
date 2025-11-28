@@ -2,7 +2,7 @@ package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_In
 
 import App_Code.Objects.Data_Objects.Field_Bindings.Shop_Form_Binding;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
-import App_Code.Objects.Gui_Objects.Combo_Boxes.Field_JC_Storable_ID;
+import App_Code.Objects.Gui_Objects.Combo_Boxes.Field_JCombo_Storable_ID;
 import App_Code.Objects.Gui_Objects.Text_Fields.Field_JTxtField;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -24,7 +24,7 @@ public class ShopForm_Object extends JPanel
     
     // GUI Objects
     protected Container parent_Container;
-    protected Field_JC_Storable_ID<Store_ID_OBJ> stores_JC;
+    protected Field_JCombo_Storable_ID<Store_ID_OBJ> stores_JC;
     protected Field_JTxtField
             product_Name_JT = new Field_JTxtField("name", string_Char_Limit),
             product_Price_JT = new Field_JTxtField("price", decimal_Char_Limit, true, false),
@@ -53,7 +53,7 @@ public class ShopForm_Object extends JPanel
         this.shop_form = shop_form;
         this.stores = stores;  // Collections
         
-        stores_JC = new Field_JC_Storable_ID<>("store", Store_ID_OBJ.class, stores);  // Component
+        stores_JC = new Field_JCombo_Storable_ID<>("store", Store_ID_OBJ.class, stores);  // Component
         
         //###############################
         // Create GUI

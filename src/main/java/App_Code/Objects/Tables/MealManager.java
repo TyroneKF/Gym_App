@@ -245,8 +245,8 @@ public class MealManager
         //#######################################################
         try
         {
-            meal_In_Plan_ID = ((Number)  results_OBJ.get_Result_Object(0)).intValue();
-            sub_Meal_ID = ((Number) results_OBJ.get_Result_Object(1)).intValue();
+            meal_In_Plan_ID = ((Number)  results_OBJ.get_1D_Result_Into_Object(0)).intValue();
+            sub_Meal_ID = ((Number) results_OBJ.get_1D_Result_Into_Object(1)).intValue();
             
             sub_Meal_DATA = results_OBJ.get_Fetched_Result_2D_AL(2);
             total_Meal_Data = results_OBJ.get_Result_1D_AL(3);
@@ -1042,7 +1042,7 @@ public class MealManager
         //#######################################################
         try
         {
-            sub_Meal_ID = ((Number) results_OBJ.get_Result_Object(0)).intValue();
+            sub_Meal_ID = ((Number) results_OBJ.get_1D_Result_Into_Object(0)).intValue();
             sub_Meal_DATA = results_OBJ.get_Fetched_Result_2D_AL(1);
         }
         catch (Exception e)

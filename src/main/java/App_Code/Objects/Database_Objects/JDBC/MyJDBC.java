@@ -935,6 +935,7 @@ public class MyJDBC
     // #######################################################
     // Upload & GET Together
     // #######################################################
+    
     /***
      * @param upload_Queries_And_Params
      * @param errorMSG
@@ -984,7 +985,7 @@ public class MyJDBC
                     Object[] params = fetch_Obj.getValue1();
                     
                     // Add Fetch Results To Object made for storing multiple queries
-                    query_Results.add_Result(get_2D_ArrayList_Internally(connection, methodName, query, params, Object.class));
+                    query_Results.add_2D_Result(get_2D_Object_AL_Internally(connection, methodName, query, params));
                 }
                 
                 // Commit Changes beyond current driver
@@ -1008,7 +1009,7 @@ public class MyJDBC
             return null; // Return Output
         }
     }
-   
+    
     //##################################################################################################################
     // DB Get Methods
     //##################################################################################################################
@@ -1108,17 +1109,17 @@ public class MyJDBC
     
     public ArrayList<Object> get_Single_Col_Query_Obj(String query, Object[] params, String errorMSG)
     {
-        return (ArrayList<Object>) get_Single_Column(query, params, errorMSG, Object.class, ArrayList :: new);
+        return get_Single_Column(query, params, errorMSG, Object.class, ArrayList :: new);
     }
     
     public ArrayList<Integer> get_Single_Col_Query_Int(String query, Object[] params, String errorMSG)
     {
-        return (ArrayList<Integer>) get_Single_Column(query, params, errorMSG, Integer.class, ArrayList :: new);
+        return get_Single_Column(query, params, errorMSG, Integer.class, ArrayList :: new);
     }
     
     public TreeSet<String> get_Single_Col_Query_Ordered_TS(String query, Object[] params, String errorMSG)
     {
-        return (TreeSet<String>) get_Single_Column(
+        return get_Single_Column(
                 query,
                 params,
                 errorMSG,
@@ -1191,12 +1192,8 @@ public class MyJDBC
             //############################################
             ResultSet resultSet = statement.executeQuery();
             
-            if (! resultSet.isBeforeFirst()) // checks if any data was returned
-            {
-                String errorMSG = String.format("\n\n%s Error \nQuery Returned NULL Results!! \n\n%s", method_Name, query);
-                
-                throw new Exception(errorMSG);
-            }
+            // checks if any data was returned
+            if (! resultSet.isBeforeFirst()) { return null; }
             
             //#####################################################################
             // Getting Query Data Info
@@ -1231,26 +1228,27 @@ public class MyJDBC
         }
     }
     
-    
-    private <T> ArrayList<ArrayList<T>> get_2D_ArrayList(String query, Object[] params, Class<T> type_Cast, String errorMSG)
+    private ArrayList<ArrayList<Object>> get_2D_Object_AL_Internally(Connection connection, String method_Name, String query, Object[] params) throws Exception
     {
-        //#########################################################################
-        // Check DB Status
-        //#########################################################################
-        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        
-        if (! is_DB_Connected(methodName)) { return null; }
-        
-        //#########################################################################
+        return get_2D_ArrayList_Internally(connection, method_Name, query, params, Object.class);
+    }
+    
+    //###########################################################
+    // Different Types
+    //###########################################################
+    public ArrayList<ArrayList<Object>> get_2D_Query_AL_Object(String query, Object[] params, String errorMSG)
+    {
+        //#############################
         // Query Setup
-        //#########################################################################
+        //#############################
+        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
         try (Connection connection = dataSource.getConnection()) // Get a Connection from pool
         {
-            return get_2D_ArrayList_Internally(connection, methodName, query, params, type_Cast);
+            return get_2D_Object_AL_Internally(connection, methodName, query, params);
         }
-        //##########################################################
+        //#############################
         // Error Handling
-        //##########################################################
+        //#############################
         catch (Exception e)
         {
             handleException_MYSQL(e, methodName, query, errorMSG);
@@ -1261,15 +1259,12 @@ public class MyJDBC
     //#####################################
     // Different Types
     //#####################################
-    public ArrayList<ArrayList<Object>> get_2D_Query_AL_Object(String query, Object[] params, String errorMSG)
+    /*public ArrayList<ArrayList<Object>> get_2D_Query_AL_Object(String query, Object[] params, String errorMSG)
     {
-        return get_2D_ArrayList(query, params, Object.class, errorMSG);
+        return ge(query, params, Object.class, errorMSG);
     }
+    */
     
-    public ArrayList<ArrayList<Integer>> get_2D_Query_AL_Integer(String query, Object[] params, String errorMSG)
-    {
-        return get_2D_ArrayList(query, params, Integer.class, errorMSG);
-    }
     
     //##################################################################################################################
     // Methods
@@ -1339,8 +1334,8 @@ public class MyJDBC
         //#########################
         if (errorMSG == null) { return; }
         
-        JOptionPane.showMessageDialog(null, "\n\nDatabase Error: \nCheck Output !!",
-                "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
+        /*JOptionPane.showMessageDialog(null, "\n\nDatabase Error: \nCheck Output !!",
+                "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);*/
         
         JOptionPane.showMessageDialog(null, errorMSG, "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
     }
@@ -1380,8 +1375,8 @@ public class MyJDBC
         //#########################
         // Display MSGS
         //#########################
-        JOptionPane.showMessageDialog(null, "\n\nDatabase Error: \nCheck Output !!", "Alert Message: ",
-                JOptionPane.INFORMATION_MESSAGE);
+        /*JOptionPane.showMessageDialog(null, "\n\nDatabase Error: \nCheck Output !!", "Alert Message: ",
+                JOptionPane.INFORMATION_MESSAGE);*/
         
         JOptionPane.showMessageDialog(null, errorMSG, "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
     }

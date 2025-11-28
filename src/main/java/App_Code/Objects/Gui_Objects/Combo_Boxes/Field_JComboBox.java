@@ -47,28 +47,11 @@ public class Field_JComboBox<T> extends JComboBox<T>
         // Load List
         //############################
         reload_Items();
-        
-        //############################
-        // ActionListener
-        //############################
-        addItemListener(new ItemListener()
-        {
-            public void itemStateChanged(ItemEvent ie)
-            {
-                if (ie.getStateChange() == ItemEvent.SELECTED)
-                {
-                    actionListener();
-                }
-            }
-        });
-        
     }
     
     //##################################################################################################################
     // Methods
     //##################################################################################################################
-    protected void actionListener() { }
-    
     public void reload_Items()
     {
         //############################
@@ -128,6 +111,19 @@ public class Field_JComboBox<T> extends JComboBox<T>
     //##################################################################################################################
     public void set_Data_AL(ArrayList<T> data_AL)
     {
-        this.data_AL = Objects.requireNonNull(data_AL, "Data cannot be null");
+        this.data_AL = Objects.requireNonNull(data_AL, "set_Data_AL() Data cannot be null");
+    }
+    
+    public void set_And_Load_Data(ArrayList<T> data_AL)
+    {
+        set_Data_AL(data_AL);
+        reload_Items();
+    }
+    
+    public void set_Item(T obj)
+    {
+        if (! (data_AL.contains(obj))) { return; }
+        
+        setSelectedItem(obj);
     }
 }

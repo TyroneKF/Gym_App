@@ -28,7 +28,7 @@ public class Ingredients_Screen extends Screen_JPanel
     
     // Screen Objects
     protected Ingredients_Form ingredients_Form;
-    private Shop_Form shop_Form;
+    protected Shop_Form shop_Form;
     protected Search_For_Food_Info search_For_Ingredient_Info;
     protected Ingredients_Info_Screen ingredients_info_screen;
     protected Shared_Data_Registry shared_Data_Registry;
