@@ -187,7 +187,7 @@ public abstract class Edit_Screen extends Add_Screen
         //################################
         String errorMSG_Upload = String.format("Unable to Update Ingredient %s to '%s'!", data_Gathering_Name, jTextField_TXT);
         
-        return db.upload_Data2(upload_Q1, new Object[]{jTextField_TXT, object_ID}, errorMSG_Upload);
+        return db.upload_Data(upload_Q1, new Object[]{jTextField_TXT, object_ID}, errorMSG_Upload);
     }
     
     @Override
@@ -305,7 +305,7 @@ public abstract class Edit_Screen extends Add_Screen
         //##################
         // Execute Query
         //##################
-        return db.upload_Data_Batch2(upload_Query_And_Params, errorMSG);
+        return db.upload_Data_Batch(upload_Query_And_Params, errorMSG);
     }
     
     protected abstract LinkedHashSet<Pair<String, Object[]>> delete_Prior_Queries(ID_Object id_object, LinkedHashSet<Pair<String, Object[]>> query_And_Params);

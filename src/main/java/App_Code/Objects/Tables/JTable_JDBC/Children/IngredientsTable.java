@@ -466,7 +466,7 @@ public class IngredientsTable extends JDBC_JTable
             };
             
             // Upload IngredientName & NEW PDID
-            if (! (db.upload_Data2(upload_Query, params_Upload, "Error, Unable to update Ingredient Info In DB!")))
+            if (! (db.upload_Data(upload_Query, params_Upload, "Error, Unable to update Ingredient Info In DB!")))
             {
                 // Change JTable JComboBox Back To Original Value
                 tableModel.setValueAt(previous_IngredientName_JC_Item, row_Model, column_Model);
@@ -569,7 +569,7 @@ public class IngredientsTable extends JDBC_JTable
             //##################################################################################################
             // Upload Selected Product Name for Ingredient
             //##################################################################################################
-            if (! db.upload_Data2(upload_Query, params, "Error, Unable to update Ingredient Store Info"))
+            if (! db.upload_Data(upload_Query, params, "Error, Unable to update Ingredient Store Info"))
             {
                 // HELLO Create Previous value for supplier column
                 tableModel.setValueAt(previous_ProductName_JC_Item, row_Model, column_Model);
@@ -598,7 +598,7 @@ public class IngredientsTable extends JDBC_JTable
         
         Object[] params = new Object[]{ (BigDecimal) quantity, temp_Plan_ID, (Integer) ingredients_Index };
         
-        if (! (db.upload_Data2(query1, params, "Error, unable to change Ingredients Values!")))
+        if (! (db.upload_Data(query1, params, "Error, unable to change Ingredients Values!")))
         {
             set_Row_Being_Edited();
             return;
@@ -710,7 +710,7 @@ public class IngredientsTable extends JDBC_JTable
             
             Object[] params = new Object[]{ (Integer) ingredient_Index, temp_Plan_ID };
             
-            if (! db.upload_Data2(query, params, "Error, Unable to delete Ingredient in Table!")) { return; }
+            if (! db.upload_Data(query, params, "Error, Unable to delete Ingredient in Table!")) { return; }
         }
         
         //#################################################
@@ -739,7 +739,7 @@ public class IngredientsTable extends JDBC_JTable
         
         Object[] params = new Object[]{ sub_Meal_ID, temp_Plan_ID };
         
-        if (! db.upload_Data2(query, params, "Error, Table Un-Successfully Deleted! ")) { return; }
+        if (! db.upload_Data(query, params, "Error, Table Un-Successfully Deleted! ")) { return; }
         
         //################################################
         // Hide JTable object & Collapsible OBJ
@@ -1060,7 +1060,7 @@ public class IngredientsTable extends JDBC_JTable
             add(new Pair<>(query7, null));
         }};
         
-        if (! (db.upload_Data_Batch2(queries_And_Params, error_MSG))) { return false; }
+        if (! (db.upload_Data_Batch(queries_And_Params, error_MSG))) { return false; }
         
         //####################################################
         // Output

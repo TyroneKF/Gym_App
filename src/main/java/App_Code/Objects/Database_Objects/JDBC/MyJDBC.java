@@ -124,6 +124,9 @@ public class MyJDBC
         }
     }
     
+    // #######################################################
+    // DB Setup Methods
+    // #######################################################
     private void reconnect_DB_Connection(String connection_Address) throws Exception
     {
         // ####################################################
@@ -285,9 +288,9 @@ public class MyJDBC
         }
     }
     
-    //################################################
-    // Script Reading Methods
-    //################################################
+    //##################################################################################################################
+    // Script Reading :  Methods
+    //##################################################################################################################
     public boolean run_SQL_Script_Folder(String db_Script_Folder_Address, String script_List_Name)
     {
         // ####################################################
@@ -388,8 +391,8 @@ public class MyJDBC
         return false;
     }
     
-    //############################################################################ ######################################
-    // Write Methods With BackUp Files
+    //##################################################################################################################
+    // File Writing : Methods
     //##################################################################################################################
     public boolean write_Txt_To_SQL_File(String sqlFilePath, String txt_To_Write_To_SQL_File, String errorMSG)
     {
@@ -517,7 +520,7 @@ public class MyJDBC
         return rename_File(tempFilePath, sqlFilePath, methodName, errorMSG);
     }
     
-    /**
+    /*
      * In most files there's at least one insert value which avoids completely deleting all elements and the file no ending in an ';'
      *
      * @param filePath
@@ -641,47 +644,9 @@ public class MyJDBC
     }
     
     //##################################################################################################################
-    // Uploading Data to DB Methods
+    // Uploading Data : Methods
     //##################################################################################################################
-    
-    // Param Methods
-    private void set_Statement_Params(PreparedStatement statement, int pos, Object object) throws Exception
-    {
-        // Switches based on Object type
-        switch (object)
-        {
-            // NULL
-            case null -> throw new Exception(String.format(
-                    "Received untyped NULL at position %d.%n" +
-                            "Convert nulls explicitly using Null_MYSQL_Field, e.g.%n" +
-                            "add(new Pair<>(query, new Object[]{ new Null_MYSQL_Field(Types.INTEGER), PDID }));",
-                    pos
-            ));
-            
-            // Expect Self Created  NULL Type
-            case Null_MYSQL_Field nullMysqlField -> statement.setNull(pos, nullMysqlField.getSqlType());
-            
-            case String s -> statement.setString(pos, s); // String
-            case Integer i -> statement.setInt(pos, i); // Integer
-            case Boolean b -> statement.setBoolean(pos, b); // Boolean
-            case BigDecimal bigDecimal -> statement.setBigDecimal(pos, bigDecimal); // BigDecimal
-            case Timestamp timestamp -> statement.setTimestamp(pos, timestamp);  // TimeStamp / LocalDateTime
-            case LocalDateTime localDateTime -> // Local Date Time
-                    statement.setTimestamp(pos, Timestamp.valueOf(localDateTime));
-            case LocalTime localTime -> statement.setTime(pos, Time.valueOf(localTime)); // LocalTime
-            case Float f -> statement.setFloat(pos, f);
-            case Double d -> statement.setDouble(pos, d);
-            
-            // Exception clause
-            default -> throw new Exception(String.format("Unable to configure param dataType of object being '%s' - %s"
-                    , object.toString(), object.getClass().getSimpleName()));
-        }
-    }
-    
-    //####################################
-    // Singular Query Upload Methods
-    //####################################
-    public boolean upload_Data2(String query, Object[] insertParameters, String errorMSG)
+    public boolean upload_Data(String query, Object[] insertParameters, String errorMSG) // Singular Query Upload Methods
     {
         //#############################################################################
         // Check DB Status
@@ -744,135 +709,12 @@ public class MyJDBC
         }
     }
     
-    /**
-     * Only works on auto-increment ID's
-     *
-     * @param query            = "INSERT INTO employees (name, position) VALUES (?, ?)";
-     * @param insertParameters = The ? Parameters
-     * @return
-     *
-     */
-    public Integer insert_And_Get_ID(String query, Object[] insertParameters, String errorMSG)
-    {
-        //##########################################################
-        // Check DB Status
-        //##########################################################
-        String
-                methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName()),
-                query_Combined = String.format("%s \n%n%s", query, Arrays.toString(insertParameters));
-        
-        if (! is_DB_Connected(methodName)) { return null; }
-        
-        //##########################################################
-        // Query Setup
-        //##########################################################
-        try (Connection connection = dataSource.getConnection(); // Get a Connection from pool
-             PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
-        )
-        {
-            connection.setAutoCommit(false); // Prevents each query from being singularly uploaded & is only made not temp when committed
-            
-            int param_Count = insertParameters.length;
-            
-            //##################################
-            // Prepare Statements
-            //##################################
-            for (int pos = 1; pos <= param_Count; pos++)
-            {
-                Object object = insertParameters[pos - 1];
-                set_Statement_Params(statement, pos, object);
-            }
-            
-            //##################################
-            // Execute Insert Query
-            //##################################
-            int rowsAffected = statement.executeUpdate();
-            if (rowsAffected == 0) { throw new Exception("\nNo Rows Inserted!"); }
-            
-            try (ResultSet rs = statement.getGeneratedKeys())
-            {
-                if (! rs.next()) // Cannot Get ID, Throw ERROR
-                {
-                    throw new SQLException("Insert succeeded, but no generated ID was returned.");
-                }
-                
-                connection.commit();// Commit Changes beyond current driver
-                return Math.toIntExact(rs.getLong(1));
-            }
-            catch (Exception e)
-            {
-                rollBack_Connection(connection, methodName, query_Combined);
-                throw e;
-            }
-            finally
-            {
-                connection.setAutoCommit(true);
-            }
-        }
-        //##########################################################
-        // Error Handling
-        //##########################################################
-        catch (Exception e)
-        {
-            handleException_MYSQL(e, methodName, query_Combined, errorMSG);
-            return null;
-        }
-    }
-    
-    //########################################
-    // Upload Batch Methods
-    //########################################
-    
-    /***
-     * @param queries_And_Params
-     * @param errorMSG
-     * @return
-     *
-     * DataTypes of params need to be converted to their expected Type  before being passed in as a param in java equivalent
-     *      * to MYSQL's type
-     *      * Although all params can be passed as strings the statement type conversion should match the type the schema expects
-     *      * as MYSQL does this internally and if it fails will cause the following errors:
-     *      * .) silent truncation,
-     *      * .) rounding errors,
-     *      * .)  or outright SQL exceptions.
-     *      *
-     *      * So it's better to convert before MYSQL handles it.
-     *
-     *
-     */
-    public boolean upload_Data_Batch2(LinkedHashSet<Pair<String, Object[]>> queries_And_Params, String errorMSG)
-    {
-        //###############################################################
-        // Check DB Status
-        //###############################################################
-        String
-                query = "",
-                methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        
-        if (! is_DB_Connected(methodName)) { return false; }
-        
-        //############################################################
-        // Execute
-        //############################################################
-        try (Connection connection = dataSource.getConnection())
-        {
-            upload_Data_Batch_Internally(connection, methodName, queries_And_Params);  // Upload Batch
-            
-            connection.commit(); // Commit Changes beyond current driver
-            return true; // Return Output
-        }
-        //##########################################################
-        // Error Handling
-        //##########################################################
-        catch (Exception e)
-        {
-            handleException_MYSQL(e, methodName, query, errorMSG);
-            return false;
-        }
-    }
-    
+    // #######################################################
+    // Upload Batch : Methods
+    // #######################################################
+    // Internal Method
     private void upload_Data_Batch_Internally
-            (Connection connection, String origin_Method_Name, LinkedHashSet<Pair<String, Object[]>> queries_And_Params) throws Exception
+    (Connection connection, String origin_Method_Name, LinkedHashSet<Pair<String, Object[]>> queries_And_Params) throws Exception
     {
         //###############################################
         // Set Settings For Connection & Variables
@@ -932,9 +774,40 @@ public class MyJDBC
         }
     }
     
-    // #######################################################
-    // Upload & GET Together
-    // #######################################################
+    // #########################
+    // Upload Batch : Methods
+    // #########################
+    public boolean upload_Data_Batch(LinkedHashSet<Pair<String, Object[]>> queries_And_Params, String errorMSG)
+    {
+        //###############################################################
+        // Check DB Status
+        //###############################################################
+        String
+                query = "",
+                methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+        
+        if (! is_DB_Connected(methodName)) { return false; }
+        
+        //############################################################
+        // Execute
+        //############################################################
+        try (Connection connection = dataSource.getConnection())
+        {
+            upload_Data_Batch_Internally(connection, methodName, queries_And_Params);  // Upload Batch
+            
+            connection.commit(); // Commit Changes beyond current driver
+            return true; // Return Output
+        }
+        //##########################################################
+        // Error Handling
+        //##########################################################
+        catch (Exception e)
+        {
+            handleException_MYSQL(e, methodName, query, errorMSG);
+            return false;
+        }
+    }
+    
     
     /***
      * @param upload_Queries_And_Params
@@ -1027,7 +900,8 @@ public class MyJDBC
      * TreeSet<String> set = getData(TreeSet::new);
      *
      */
-    private <T, C extends Collection<T>> C get_Single_Column
+    
+    private <T, C extends Collection<T>> C get_Single_Column_Internally
     (String query, Object[] params, String errorMSG, Class<T> type, Supplier<C> collectionType)
     {
         //##########################################################
@@ -1104,22 +978,22 @@ public class MyJDBC
     //######################################################
     public ArrayList<String> get_Single_Col_Query_String(String query, Object[] params, String errorMSG)
     {
-        return get_Single_Column(query, params, errorMSG, String.class, ArrayList :: new);
+        return get_Single_Column_Internally(query, params, errorMSG, String.class, ArrayList :: new);
     }
     
     public ArrayList<Object> get_Single_Col_Query_Obj(String query, Object[] params, String errorMSG)
     {
-        return get_Single_Column(query, params, errorMSG, Object.class, ArrayList :: new);
+        return get_Single_Column_Internally(query, params, errorMSG, Object.class, ArrayList :: new);
     }
     
     public ArrayList<Integer> get_Single_Col_Query_Int(String query, Object[] params, String errorMSG)
     {
-        return get_Single_Column(query, params, errorMSG, Integer.class, ArrayList :: new);
+        return get_Single_Column_Internally(query, params, errorMSG, Integer.class, ArrayList :: new);
     }
     
     public TreeSet<String> get_Single_Col_Query_Ordered_TS(String query, Object[] params, String errorMSG)
     {
-        return get_Single_Column(
+        return get_Single_Column_Internally(
                 query,
                 params,
                 errorMSG,
@@ -1277,6 +1151,62 @@ public class MyJDBC
         }
     }
     
+    // Param Methods
+    private void set_Statement_Params(PreparedStatement statement, int pos, Object object) throws Exception
+    {
+        // Switches based on Object type
+        switch (object)
+        {
+            // NULL
+            case null -> throw new Exception(String.format(
+                    "Received untyped NULL at position %d.%n" +
+                            "Convert nulls explicitly using Null_MYSQL_Field, e.g.%n" +
+                            "add(new Pair<>(query, new Object[]{ new Null_MYSQL_Field(Types.INTEGER), PDID }));",
+                    pos
+            ));
+            
+            // Expect Self Created  NULL Type
+            case Null_MYSQL_Field nullMysqlField -> statement.setNull(pos, nullMysqlField.getSqlType());
+            
+            case String s -> statement.setString(pos, s); // String
+            case Integer i -> statement.setInt(pos, i); // Integer
+            case Boolean b -> statement.setBoolean(pos, b); // Boolean
+            case BigDecimal bigDecimal -> statement.setBigDecimal(pos, bigDecimal); // BigDecimal
+            case Timestamp timestamp -> statement.setTimestamp(pos, timestamp);  // TimeStamp / LocalDateTime
+            case LocalDateTime localDateTime -> // Local Date Time
+                    statement.setTimestamp(pos, Timestamp.valueOf(localDateTime));
+            case LocalTime localTime -> statement.setTime(pos, Time.valueOf(localTime)); // LocalTime
+            case Float f -> statement.setFloat(pos, f);
+            case Double d -> statement.setDouble(pos, d);
+            
+            // Exception clause
+            default -> throw new Exception(String.format("Unable to configure param dataType of object being '%s' - %s"
+                    , object.toString(), object.getClass().getSimpleName()));
+        }
+    }
+    
+    //###############################################################################
+    // Validation Methods
+    //###############################################################################
+    public boolean get_DB_Connection_Status()
+    {
+        return db_Connection_Status;
+    }
+    
+    private boolean is_DB_Connected(String methodName)
+    {
+        if (! (get_DB_Connection_Status()))
+        {
+            System.err.printf("\n\nMyJDBC.java : %s \nDB couldn't successfully connect to DB '%s'!", methodName, databaseName);
+            return false;
+        }
+        
+        return true;
+    }
+    
+    //##############################################################################
+    // Error Handling Methods
+    //##############################################################################
     private void rollBack_Connection(Connection connection, String methodName, Object queries)
     {
         //#############################
@@ -1408,25 +1338,5 @@ public class MyJDBC
                 \nQuery : \n\n\"\"\" \n\n%s \n\n\"\"\"
                 \nParams: \n%s%n
                 \nError MSG:  \n\n\"\"\" \n%s \n\"\"\"""", line_Separator, method_Name, line_Separator, query, Arrays.toString(params), e);
-    }
-    
-    
-    //##################################################################################################################
-    // Validation Methods
-    //##################################################################################################################
-    public boolean get_DB_Connection_Status()
-    {
-        return db_Connection_Status;
-    }
-    
-    private boolean is_DB_Connected(String methodName)
-    {
-        if (! (get_DB_Connection_Status()))
-        {
-            System.err.printf("\n\nMyJDBC.java : %s \nDB couldn't successfully connect to DB '%s'!", methodName, databaseName);
-            return false;
-        }
-        
-        return true;
     }
 }

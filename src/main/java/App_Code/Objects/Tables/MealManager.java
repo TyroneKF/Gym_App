@@ -786,7 +786,7 @@ public class MealManager
         //##########################################
         // Upload Into Database Table
         //##########################################
-        if (! db.upload_Data2(uploadQuery, params, "Error, unable to change Meal Time!")) { return; }
+        if (! db.upload_Data(uploadQuery, params, "Error, unable to change Meal Time!")) { return; }
         
         //#########################################################################################################
         // Update GUI & Variables
@@ -914,7 +914,7 @@ public class MealManager
         
         Object[] params = new Object[]{ inputMealName, tempPlanID, meal_In_Plan_ID };
         
-        if (! db.upload_Data2(uploadQuery, params, "Error, unable to change Meal Name!")) { return; }
+        if (! db.upload_Data(uploadQuery, params, "Error, unable to change Meal Name!")) { return; }
         
         //#########################################################################################################
         // Change Variable DATA & Object
@@ -1081,7 +1081,7 @@ public class MealManager
         //##########################################
         // Execute Update
         //##########################################
-        if (! db.upload_Data2(query, params, "Table Un-Successfully Deleted!")) { return; }
+        if (! db.upload_Data(query, params, "Table Un-Successfully Deleted!")) { return; }
         
         //##########################################
         // Delete MealManager Actions
@@ -1179,7 +1179,7 @@ public class MealManager
         
         Object[] params = new Object[]{ meal_In_Plan_ID, tempPlanID };
         
-        if (! (db.upload_Data2(query1, params, "Error, Unable to DELETE IngredientsTable!!"))) { return; }
+        if (! (db.upload_Data(query1, params, "Error, Unable to DELETE IngredientsTable!!"))) { return; }
         
         delete_MealManager();
     }
@@ -1302,7 +1302,7 @@ public class MealManager
         //####################################################
         // Return Update /Output
         //####################################################
-        return db.upload_Data_Batch2(queries_And_Params, errorMSG);
+        return db.upload_Data_Batch(queries_And_Params, errorMSG);
     }
     
     //######################################

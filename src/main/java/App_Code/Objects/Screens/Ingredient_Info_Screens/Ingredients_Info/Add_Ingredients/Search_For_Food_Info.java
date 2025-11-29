@@ -11,9 +11,9 @@ import java.awt.*;
 
 import App_Code.Objects.API.Nutritionix.NutritionIx_API;
 import App_Code.Objects.Gui_Objects.IconButton;
-import App_Code.Objects.Gui_Objects.JTextFieldLimit;
+import App_Code.Objects.Gui_Objects.Text_Fields.JTextFieldLimit;
 import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
-import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredient_Form.Add_Ingredients_Form;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredient_Form.Ingredients_Form;
 
 import javax.imageio.ImageIO;
 
@@ -24,7 +24,7 @@ import java.util.LinkedHashMap;
 
 public class Search_For_Food_Info extends CollapsibleJPanel
 {
-    private Add_Ingredients_Form addIngredientsForm;
+    private Ingredients_Form addIngredientsForm;
 
     private GridBagConstraints gbc = new GridBagConstraints();
 
@@ -56,12 +56,12 @@ public class Search_For_Food_Info extends CollapsibleJPanel
             searchBarIconHeight = searchBarButtonHeight - 10,
             searchBarJPanelXPos = 0, searchBarJPanelYPos = 0;
 
-    public Search_For_Food_Info(Container parentContainer, Add_Ingredients_Form addIngredientsForm, String btnText, int btnWidth, int btnHeight)
+    public Search_For_Food_Info(Container parentContainer, Ingredients_Form ingredients_Form, String btnText)
     {
-        super(parentContainer, btnText, btnWidth, btnHeight);
+        super(parentContainer, btnText, 250, 50);
 
         this.parentContainer = parentContainer;
-        this.addIngredientsForm = addIngredientsForm;
+        this.addIngredientsForm = ingredients_Form;
         this.frameWidth = 430;
         this.frameHeight = 350;
 

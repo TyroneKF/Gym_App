@@ -17,7 +17,7 @@ public class Edit_Ingredients_Form extends Ingredients_Form
     // Variables
     //##################################################################################################################
     protected Integer ingredient_ID = null;
-    
+    protected ArrayList<Object> data;
     
     //##################################################################################################################
     // Constructor
@@ -35,6 +35,7 @@ public class Edit_Ingredients_Form extends Ingredients_Form
     {
         super.clear_Ingredients_Form();
         ingredient_ID = null;
+        data = null;
     }
     
     public void set_Data(ArrayList<Object> data_AL) throws Exception
@@ -45,6 +46,7 @@ public class Edit_Ingredients_Form extends Ingredients_Form
         // Set Ingredient ID & remove from Arraylist
         ingredient_ID = (Integer) data_AL.getFirst();
         data_AL.removeFirst();
+        data = data_AL;
         
         // Exit Clause
         int
@@ -78,5 +80,4 @@ public class Edit_Ingredients_Form extends Ingredients_Form
         // Reset Salt JComboBox
         salt_JC.set_Item("g");
     }
-    
 }

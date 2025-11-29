@@ -223,7 +223,7 @@ public class Ingredients_Screen extends Screen_JPanel
         //###########################
         // Upload
         //###########################
-        return db.upload_Data_Batch2(queries_And_Params, errorMSG);
+        return db.upload_Data_Batch(queries_And_Params, errorMSG);
     }
     
     //####################################################
