@@ -1003,7 +1003,7 @@ public class MyJDBC
     public ArrayList<String> get_Column_Names_AL(String tableName) throws Exception
     {
         // Setup Method_Name for diagnosis
-        String method_Name = String.format("%s()",  new Object() { }.getClass().getEnclosingMethod().getName());
+        String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
         
         // Query Setup
         String columnNamesQuery = """
@@ -1066,7 +1066,7 @@ public class MyJDBC
             ResultSet resultSet = statement.executeQuery();
             
             // checks if any data was returned
-            if (! resultSet.isBeforeFirst()) { return null; }
+            if (! resultSet.isBeforeFirst()) { return collection; }
             
             //#####################################################################
             // Getting Query Data Info
@@ -1106,9 +1106,9 @@ public class MyJDBC
         return get_2D_ArrayList_Internally(connection, method_Name, query, params, Object.class);
     }
     
-    //###########################################################
+    //#######################################
     // Different Types
-    //###########################################################
+    //#######################################
     public ArrayList<ArrayList<Object>> get_2D_Query_AL_Object(String query, Object[] params, String errorMSG)
     {
         //#############################
@@ -1129,15 +1129,25 @@ public class MyJDBC
         }
     }
     
-    //#####################################
-    // Different Types
-    //#####################################
-    /*public ArrayList<ArrayList<Object>> get_2D_Query_AL_Object(String query, Object[] params, String errorMSG)
+    public ArrayList<ArrayList<String>> get_2D_Query_AL_String(String query, Object[] params, String errorMSG)
     {
-        return ge(query, params, Object.class, errorMSG);
+        //#############################
+        // Query Setup
+        //#############################
+        String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+        try (Connection connection = dataSource.getConnection()) // Get a Connection from pool
+        {
+            return get_2D_ArrayList_Internally(connection, method_Name, query, params, String.class);
+        }
+        //#############################
+        // Error Handling
+        //#############################
+        catch (Exception e)
+        {
+            handleException_MYSQL(e, method_Name, query, errorMSG);
+            return null;
+        }
     }
-    */
-    
     
     //##################################################################################################################
     // Methods

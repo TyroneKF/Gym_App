@@ -6,6 +6,7 @@ import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 public class Screen_JFrame extends JFrame
@@ -145,7 +146,7 @@ public class Screen_JFrame extends JFrame
             }
         });
     }
-
+    
     protected void iconSetup(Container mainNorthPanel)
     {
     
@@ -173,6 +174,11 @@ public class Screen_JFrame extends JFrame
     public void closeJFrame()
     {
         dispose();
+    }
+    
+    protected boolean is_Results_Empty(Collection<?> c)
+    {
+        return c == null || c.isEmpty();
     }
     
     //##############################################
@@ -227,14 +233,14 @@ public class Screen_JFrame extends JFrame
     protected String formatStrings(String txt, boolean separateWords)
     {
         // Re-assign Re-Capitalised Value into list
-        return  separateWords ?
-                        Arrays.stream(txt.split("[ _]+"))
-                                .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
-                                .collect(Collectors.joining(" "))
-                        :
-                        Arrays.stream(txt.split("[ _]+"))
-                                .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
-                                .collect(Collectors.joining("_"));
+        return separateWords ?
+                Arrays.stream(txt.split("[ _]+"))
+                        .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
+                        .collect(Collectors.joining(" "))
+                :
+                Arrays.stream(txt.split("[ _]+"))
+                        .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
+                        .collect(Collectors.joining("_"));
     }
     
     //##################################################################################################################

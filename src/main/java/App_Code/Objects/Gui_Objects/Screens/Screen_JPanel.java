@@ -5,6 +5,7 @@ import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 public class Screen_JPanel extends JPanel
@@ -135,6 +136,11 @@ public class Screen_JPanel extends JPanel
             return false;
         }
         return true;
+    }
+    
+    protected boolean is_Results_Empty(Collection<?> c)
+    {
+        return c == null || c.isEmpty();
     }
     
     //##############################################

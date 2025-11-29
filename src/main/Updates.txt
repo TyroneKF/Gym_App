@@ -14,6 +14,8 @@ Work On:
 .) If an ingredient table is saved and its not in the DB because the mealManager isn't
  .) MealManagaer should be saved
 
+.) Condense JFrames and JPanel screen
+
 Add / Edit Ingredients Screen
 .) Update Other Screens
 .) Deleting stores / type ask if we want to delete children or assign them to a new parent
