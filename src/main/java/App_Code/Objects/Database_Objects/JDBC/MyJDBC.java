@@ -58,7 +58,7 @@ public class MyJDBC
         db_Connection_Address = String.format("%s/%s", initial_db_connection, databaseName);
         
         String
-                methodName = "Constructor()",
+                method_Name = "Constructor()",
                 errorMSG = "Error, initializing DB!";
         
         //####################################################################
@@ -119,7 +119,7 @@ public class MyJDBC
             // ############################################
             // Remove Connection
             // ############################################
-            handleException_MYSQL(x, methodName, null, errorMSG);
+            handleException_MYSQL(x, method_Name, null, errorMSG);
             close_Connection();
         }
     }
@@ -165,7 +165,7 @@ public class MyJDBC
         // #############################################################
         String
                 path = String.format("%s/%s", db_Script_Folder_Address, script_List_Name),
-                methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName()),
+                method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName()),
                 errorMSG = String.format("Error, running scripts : '%s'!", script_List_Name),
                 update_User_Query = "UPDATE users SET user_name = ? WHERE user_id = 1;";
         
@@ -178,7 +178,7 @@ public class MyJDBC
         }
         catch (Exception e)
         {
-            handleException_MYSQL(e, methodName, null, "Error, Connecting TO Initial DB!!");
+            handleException_MYSQL(e, method_Name, null, "Error, Connecting TO Initial DB!!");
             return false;
         }
         
@@ -213,13 +213,13 @@ public class MyJDBC
                     // Get Path of File
                     //###########################
                     String fileName = it.next();
-                    System.out.printf("\n\n\n%s \nMyJDBC.java %s Executing script: %s\n%s\n\n", line_Separator, methodName, fileName, line_Separator);
+                    System.out.printf("\n\n\n%s \nMyJDBC.java %s Executing script: %s\n%s\n\n", line_Separator, method_Name, fileName, line_Separator);
                     
                     try (InputStream scriptStream = getClass().getResourceAsStream(String.format("%s/%s", db_Script_Folder_Address, fileName)))
                     {
                         if (scriptStream == null)
                         {
-                            throw new Exception(String.format("\nMyJDBC.java %s Script not found: '%s'", methodName, fileName));
+                            throw new Exception(String.format("\nMyJDBC.java %s Script not found: '%s'", method_Name, fileName));
                         }
                         
                         //###########################
@@ -262,13 +262,13 @@ public class MyJDBC
             //##########################################################
             catch (Exception e)
             {
-                rollBack_Connection(connection, methodName, null);
+                rollBack_Connection(connection, method_Name, null);
                 throw e;
             }
         }
         catch (Exception e)
         {
-            handleException_File(e, methodName, errorMSG);
+            handleException_File(e, method_Name, errorMSG);
             close_Connection();
             return false;
         }
@@ -283,7 +283,7 @@ public class MyJDBC
         }
         catch (Exception e)
         {
-            handleException_File(e, methodName, "Error, Changing DB Path to DB!");
+            handleException_File(e, method_Name, "Error, Changing DB Path to App DB Path!");
             return false;
         }
     }
@@ -298,7 +298,7 @@ public class MyJDBC
         // ####################################################
         String
                 path = String.format("%s/%s", db_Script_Folder_Address, script_List_Name),
-                methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName()),
+                method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName()),
                 errorMSG = String.format("Error, running script a scripts in path: \n\n%s", path);
         
         // ####################################################
@@ -333,13 +333,13 @@ public class MyJDBC
                     // Get Path of File
                     //##########################################################
                     String fileName = it.next();
-                    System.out.printf("\nMyJDBC.java %s Executing script: %s \n\n", methodName, fileName);
+                    System.out.printf("\nMyJDBC.java %s Executing script: %s \n\n", method_Name, fileName);
                     
                     try (InputStream scriptStream = getClass().getResourceAsStream(String.format("%s/%s", db_Script_Folder_Address, fileName)))
                     {
                         if (scriptStream == null)
                         {
-                            throw new Exception(String.format("\nMyJDBC.java %s Script not found: '%s'", methodName, fileName));
+                            throw new Exception(String.format("\nMyJDBC.java %s Script not found: '%s'", method_Name, fileName));
                         }
                         
                         //##########################################################
@@ -351,7 +351,7 @@ public class MyJDBC
                             runner.setStopOnError(true);
                             runner.runScript(file_Reader);
                             
-                            System.out.printf("\nMyJDBC.java %s successfully executed script: %s", methodName, fileName);
+                            System.out.printf("\nMyJDBC.java %s successfully executed script: %s", method_Name, fileName);
                         }
                         catch (Exception e)
                         {
@@ -375,13 +375,13 @@ public class MyJDBC
             //##########################################################
             catch (Exception e)
             {
-                rollBack_Connection(connection, methodName, null);
+                rollBack_Connection(connection, method_Name, null);
                 throw e;
             }
         }
         catch (Exception e)
         {
-            handleException_File(e, methodName, errorMSG);
+            handleException_File(e, method_Name, errorMSG);
             return false;
         }
     }
@@ -396,7 +396,7 @@ public class MyJDBC
     //##################################################################################################################
     public boolean write_Txt_To_SQL_File(String sqlFilePath, String txt_To_Write_To_SQL_File, String errorMSG)
     {
-        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+        String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
         
         //##########################################################
         // Creating Temp File
@@ -435,20 +435,20 @@ public class MyJDBC
         //##########################################################
         catch (Exception e)
         {
-            handleException_File(e, methodName, errorMSG);
+            handleException_File(e, method_Name, errorMSG);
             return false;
         }
         
         //##########################################################
         // Renaming File
         //##########################################################
-        return rename_File(tempFilePath, sqlFilePath, methodName, errorMSG);
+        return rename_File(tempFilePath, sqlFilePath, method_Name, errorMSG);
     }
     
     public boolean replace_Txt_In_SQL_File(String sqlFilePath, boolean multiValues, String txt_To_Find, String
             txt_Replacement, String errorMSG)
     {
-        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+        String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
         
         //##########################################################
         // Creating Temp File
@@ -500,7 +500,7 @@ public class MyJDBC
             if (! replacementFound && ! new File(tempFilePath).delete())
             {
                 System.err.printf("\nMyJDBC.java %s \nError, SearchTxt Not Found ! Error, deleting Temp File \n' %s ' !",
-                        methodName, tempFilePath);
+                        method_Name, tempFilePath);
                 
                 return false;
             }
@@ -510,14 +510,14 @@ public class MyJDBC
         //##########################################################
         catch (Exception e)
         {
-            handleException_File(e, methodName, errorMSG);
+            handleException_File(e, method_Name, errorMSG);
             return false;
         }
         
         //##########################################################
         // Renaming File
         //##########################################################
-        return rename_File(tempFilePath, sqlFilePath, methodName, errorMSG);
+        return rename_File(tempFilePath, sqlFilePath, method_Name, errorMSG);
     }
     
     /*
@@ -529,7 +529,7 @@ public class MyJDBC
      */
     public boolean delete_Txt_In_File(String filePath, String txtToDelete, String errorMSG)
     {
-        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+        String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
         
         //#################################################################################
         // Creating Temp File
@@ -569,7 +569,7 @@ public class MyJDBC
             if (! found && ! new File(tempFilePath).delete())
             {
                 System.err.printf("\nMyJDBC.java %s \nError, SearchTxt Not Found ! Error, deleting Temp File \n' %s ' !",
-                        methodName, tempFilePath);
+                        method_Name, tempFilePath);
                 
                 return false;
             }
@@ -612,17 +612,17 @@ public class MyJDBC
         //#################################################################################
         catch (Exception e)
         {
-            handleException_File(e, methodName, errorMSG);
+            handleException_File(e, method_Name, errorMSG);
             return false;
         }
         
         //#################################################################################
         // Renaming File
         //#################################################################################
-        return rename_File(tempFilePath, filePath, methodName, errorMSG);
+        return rename_File(tempFilePath, filePath, method_Name, errorMSG);
     }
     
-    private boolean rename_File(String tempFilePath, String filePath, String methodName, String errorMSG)
+    private boolean rename_File(String tempFilePath, String filePath, String method_Name, String errorMSG)
     {
         //##########################################################
         // Renaming File
@@ -638,7 +638,7 @@ public class MyJDBC
         //##################################
         catch (Exception e)
         {
-            handleException_File(e, methodName, errorMSG);
+            handleException_File(e, method_Name, errorMSG);
             return false;
         }
     }
@@ -648,12 +648,7 @@ public class MyJDBC
     //##################################################################################################################
     public boolean upload_Data(String query, Object[] insertParameters, String errorMSG) // Singular Query Upload Methods
     {
-        //#############################################################################
-        // Check DB Status
-        //#############################################################################
-        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        
-        if (! is_DB_Connected(methodName)) { return false; }
+        String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
         
         //##############################################################################
         // Execute
@@ -663,7 +658,7 @@ public class MyJDBC
             connection.setAutoCommit(false); // Prevents each query from being singularly uploaded & is only made not temp when committed
             
             //###############################################
-            // For Loop Through Query Params & Execute
+            // For Loop Through Params & Execute  Query
             //###############################################
             boolean skipParams = insertParameters == null;
             try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS))
@@ -691,7 +686,7 @@ public class MyJDBC
             }
             catch (Exception e)
             {
-                rollBack_Connection(connection, methodName, query); // Rollback, in case it's not automatically done
+                rollBack_Connection(connection, method_Name, query); // Rollback, in case it's not automatically done
                 throw e;
             }
             finally
@@ -704,7 +699,7 @@ public class MyJDBC
         //##########################################################
         catch (Exception e)
         {
-            handleException_MYSQL(e, methodName, query, errorMSG);
+            handleException_MYSQL(e, method_Name, query, errorMSG);
             return false;
         }
     }
@@ -784,16 +779,14 @@ public class MyJDBC
         //###############################################################
         String
                 query = "",
-                methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        
-        if (! is_DB_Connected(methodName)) { return false; }
+                method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
         
         //############################################################
         // Execute
         //############################################################
         try (Connection connection = dataSource.getConnection())
         {
-            upload_Data_Batch_Internally(connection, methodName, queries_And_Params);  // Upload Batch
+            upload_Data_Batch_Internally(connection, method_Name, queries_And_Params);  // Upload Batch
             
             connection.commit(); // Commit Changes beyond current driver
             return true; // Return Output
@@ -803,7 +796,7 @@ public class MyJDBC
         //##########################################################
         catch (Exception e)
         {
-            handleException_MYSQL(e, methodName, query, errorMSG);
+            handleException_MYSQL(e, method_Name, query, errorMSG);
             return false;
         }
     }
@@ -832,9 +825,8 @@ public class MyJDBC
         //###############################################################
         // Check DB Status & Variables
         //###############################################################
-        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+        String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
         
-        if (! is_DB_Connected(methodName)) { return null; }
         
         //###############################################################
         // Variables
@@ -849,7 +841,7 @@ public class MyJDBC
             try
             {
                 // Upload Statements
-                upload_Data_Batch_Internally(connection, methodName, upload_Queries_And_Params);  // Upload Batch
+                upload_Data_Batch_Internally(connection, method_Name, upload_Queries_And_Params);  // Upload Batch
                 
                 // Execute Fetch Statements
                 for (Pair<String, Object[]> fetch_Obj : get_Queries_And_Params)  // Execute Get Statements
@@ -858,7 +850,7 @@ public class MyJDBC
                     Object[] params = fetch_Obj.getValue1();
                     
                     // Add Fetch Results To Object made for storing multiple queries
-                    query_Results.add_2D_Result(get_2D_Object_AL_Internally(connection, methodName, query, params));
+                    query_Results.add_2D_Result(get_2D_Object_AL_Internally(connection, method_Name, query, params));
                 }
                 
                 // Commit Changes beyond current driver
@@ -869,7 +861,7 @@ public class MyJDBC
             }
             catch (Exception e)
             {
-                rollBack_Connection(connection, methodName, null); // Rollback, in case it's not automatically done
+                rollBack_Connection(connection, method_Name, null); // Rollback, in case it's not automatically done
                 throw e;
             }
         }
@@ -878,7 +870,7 @@ public class MyJDBC
         //##########################################################
         catch (Exception e)
         {
-            handleException_MYSQL(e, methodName, null, errorMSG);
+            handleException_MYSQL(e, method_Name, null, errorMSG);
             return null; // Return Output
         }
     }
@@ -902,14 +894,12 @@ public class MyJDBC
      */
     
     private <T, C extends Collection<T>> C get_Single_Column_Internally
-    (String query, Object[] params, String errorMSG, Class<T> type, Supplier<C> collectionType)
+    (String query, Object[] params, String method_Name, String errorMSG, Class<T> type, Supplier<C> collectionType)
     {
         //##########################################################
         // Check DB Status
         //##########################################################
-        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        
-        if (! is_DB_Connected(methodName)) { return null; }
+        method_Name = String.format("%s -> %s()", method_Name, new Object() { }.getClass().getEnclosingMethod().getName());
         
         // Create List Object from Scratch inside method
         C collection = collectionType.get();
@@ -919,7 +909,7 @@ public class MyJDBC
         //##########################################################
         try (
                 Connection connection = dataSource.getConnection(); // Get a Connection from pool
-                PreparedStatement statement = connection.prepareStatement(query);
+                PreparedStatement statement = connection.prepareStatement(query)
         )
         {
             //############################################
@@ -939,7 +929,7 @@ public class MyJDBC
             //############################################
             ResultSet resultSet = statement.executeQuery();
             
-            if (! resultSet.isBeforeFirst()) { return null; } // checks if any data was returned
+            if (! resultSet.isBeforeFirst()) { return collection; } // checks if any data was returned
             
             //############################################
             // Catch Exception (Multiple Columns)
@@ -968,7 +958,7 @@ public class MyJDBC
         {
             query = String.format("\n\n%s \n%n%s", query, Arrays.toString(params));
             
-            handleException_MYSQL(e, methodName, query, errorMSG);
+            handleException_MYSQL(e, method_Name, query, errorMSG);
             return null;
         }
     }
@@ -978,24 +968,29 @@ public class MyJDBC
     //######################################################
     public ArrayList<String> get_Single_Col_Query_String(String query, Object[] params, String errorMSG)
     {
-        return get_Single_Column_Internally(query, params, errorMSG, String.class, ArrayList :: new);
+        String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+        return get_Single_Column_Internally(query, params, method_Name, errorMSG, String.class, ArrayList :: new);
     }
     
     public ArrayList<Object> get_Single_Col_Query_Obj(String query, Object[] params, String errorMSG)
     {
-        return get_Single_Column_Internally(query, params, errorMSG, Object.class, ArrayList :: new);
+        String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+        return get_Single_Column_Internally(query, params, method_Name, errorMSG, Object.class, ArrayList :: new);
     }
     
     public ArrayList<Integer> get_Single_Col_Query_Int(String query, Object[] params, String errorMSG)
     {
-        return get_Single_Column_Internally(query, params, errorMSG, Integer.class, ArrayList :: new);
+        String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+        return get_Single_Column_Internally(query, params, method_Name, errorMSG, Integer.class, ArrayList :: new);
     }
     
     public TreeSet<String> get_Single_Col_Query_Ordered_TS(String query, Object[] params, String errorMSG)
     {
+        String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
         return get_Single_Column_Internally(
                 query,
                 params,
+                method_Name,
                 errorMSG,
                 String.class,
                 () -> new TreeSet<>(Collator.getInstance())
@@ -1005,16 +1000,12 @@ public class MyJDBC
     //######################################################
     //  MetaData Methods (Done)
     //######################################################
-    public ArrayList<String> get_Column_Names_AL(String tableName)
+    public ArrayList<String> get_Column_Names_AL(String tableName) throws Exception
     {
-        //##########################################################
-        // Check DB Status
-        //##########################################################
-        if (! is_DB_Connected("get_Column_Names_AL()")) { return null; }
+        // Setup Method_Name for diagnosis
+        String method_Name = String.format("%s()",  new Object() { }.getClass().getEnclosingMethod().getName());
         
-        //##########################################################
         // Query Setup
-        //##########################################################
         String columnNamesQuery = """
                 SELECT column_name
                 FROM information_schema.columns
@@ -1022,13 +1013,21 @@ public class MyJDBC
                 AND table_name = ?
                 ORDER BY ordinal_position;""";
         
-        //##########################################################
+        
         // Setup Params
-        //##########################################################
         Object[] params = new Object[]{ databaseName, tableName };
         String errorMSG = String.format("Error, getting DataTypes get_Column_Names_AL() for Table: %s", tableName);
         
-        return get_Single_Col_Query_String(columnNamesQuery, params, errorMSG);
+        // Execute
+        ArrayList<String> colum_Names = get_Single_Col_Query_String(columnNamesQuery, params, errorMSG);
+        
+        // Output
+        if (colum_Names == null || colum_Names.isEmpty()) // Table Names cannot be null
+        {
+            throw new Exception(String.format("\n\nErrorMyJDBC.java -> %s = Empty Result", method_Name));
+        }
+        
+        return colum_Names;
     }
     
     //##################################################################################################################
@@ -1115,17 +1114,17 @@ public class MyJDBC
         //#############################
         // Query Setup
         //#############################
-        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+        String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
         try (Connection connection = dataSource.getConnection()) // Get a Connection from pool
         {
-            return get_2D_Object_AL_Internally(connection, methodName, query, params);
+            return get_2D_Object_AL_Internally(connection, method_Name, query, params);
         }
         //#############################
         // Error Handling
         //#############################
         catch (Exception e)
         {
-            handleException_MYSQL(e, methodName, query, errorMSG);
+            handleException_MYSQL(e, method_Name, query, errorMSG);
             return null;
         }
     }
@@ -1193,21 +1192,10 @@ public class MyJDBC
         return db_Connection_Status;
     }
     
-    private boolean is_DB_Connected(String methodName)
-    {
-        if (! (get_DB_Connection_Status()))
-        {
-            System.err.printf("\n\nMyJDBC.java : %s \nDB couldn't successfully connect to DB '%s'!", methodName, databaseName);
-            return false;
-        }
-        
-        return true;
-    }
-    
     //##############################################################################
     // Error Handling Methods
     //##############################################################################
-    private void rollBack_Connection(Connection connection, String methodName, Object queries)
+    private void rollBack_Connection(Connection connection, String method_Name, Object queries)
     {
         //#############################
         // Exit
@@ -1222,15 +1210,15 @@ public class MyJDBC
             if (connection.getAutoCommit()) { return; } // IF Rollback wasn't executed return
             
             connection.rollback(); // Execute Rollback
-            System.err.printf("\n\n%s \nRollback successful for method: %s \n%s\n\n\n", middle_line_Separator, methodName, middle_line_Separator);
+            System.err.printf("\n\n%s \nRollback successful for method: %s \n%s\n\n\n", middle_line_Separator, method_Name, middle_line_Separator);
         }
         catch (SQLException x)
         {
-            System.err.printf("\n\n%s \nRollback failed for method: %s \n\n\n", middle_line_Separator, methodName, middle_line_Separator);
+            System.err.printf("\n\n%s \nRollback failed for method: %s \n\n\n", middle_line_Separator, method_Name, middle_line_Separator);
             
             // Change Method Name to this method & Display Error
-            methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-            handleException_MYSQL(x, methodName, queries, null);
+            method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+            handleException_MYSQL(x, method_Name, queries, null);
         }
         finally
         {
@@ -1245,18 +1233,18 @@ public class MyJDBC
     //###########################################
     // SQL Methods Error Handling
     //###########################################
-    private void handleException_MYSQL(Exception e, String methodName, Object query, String errorMSG)
+    private void handleException_MYSQL(Exception e, String method_Name, Object query, String errorMSG)
     {
         //#########################
         //
         //#########################
         if (e instanceof SQLException x)
         {
-            print_SQL_ERR_MSG(x, methodName, query);
+            print_SQL_ERR_MSG(x, method_Name, query);
         }
         else
         {
-            print_Exception_ERR_MSG(e, methodName, query);
+            print_Exception_ERR_MSG(e, method_Name, query);
         }
         
         //#########################
@@ -1270,36 +1258,36 @@ public class MyJDBC
         JOptionPane.showMessageDialog(null, errorMSG, "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
     }
     
-    private void print_SQL_ERR_MSG(SQLException e, String methodName, Object query)
+    private void print_SQL_ERR_MSG(SQLException e, String method_Name, Object query)
     {
         System.err.printf("\n\n%s\nMyJDBC.java @%s SQL ERROR \n%s \n\nQuery: \n\"\"\"\n %s\n\"\"\" \n\nError Message: \n\n\"\"\" \n\n%s \n\n\"\"\" \n\nSQLState: %s \n\nErrorCode: %d\n\n",
-                line_Separator, methodName, line_Separator, query != null ? query.toString() : "", e.getMessage(), e.getSQLState(), e.getErrorCode());
+                line_Separator, method_Name, line_Separator, query != null ? query.toString() : "", e.getMessage(), e.getSQLState(), e.getErrorCode());
     }
     
-    private void print_Exception_ERR_MSG(Exception e, String methodName, Object query)
+    private void print_Exception_ERR_MSG(Exception e, String method_Name, Object query)
     {
-        System.err.printf("\n\nMyJDBC.java @%s Exception ERROR \n\n%s \n\n%s", methodName, query != null ? query.toString() : "", e.getMessage());
+        System.err.printf("\n\nMyJDBC.java @%s Exception ERROR \n\n%s \n\n%s", method_Name, query != null ? query.toString() : "", e.getMessage());
     }
     
     //###########################################
     // File Methods for Error Handling
     //###########################################
-    private void handleException_File(Exception e, String methodName, String errorMSG)
+    private void handleException_File(Exception e, String method_Name, String errorMSG)
     {
         //#########################
         // Switch Exceptions
         //#########################
         if (e instanceof FileNotFoundException x)
         {
-            print_File_Not_Found_ERR_MSG(x, methodName);
+            print_File_Not_Found_ERR_MSG(x, method_Name);
         }
         else if (e instanceof IOException x)
         {
-            print_IO_Exception_ERR_MSG(x, methodName);
+            print_IO_Exception_ERR_MSG(x, method_Name);
         }
         else
         {
-            print_Exception_ERR_MSG(e, methodName);
+            print_Exception_ERR_MSG(e, method_Name);
         }
         
         //#########################
@@ -1311,19 +1299,19 @@ public class MyJDBC
         JOptionPane.showMessageDialog(null, errorMSG, "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
     }
     
-    private void print_Exception_ERR_MSG(Exception e, String methodName)
+    private void print_Exception_ERR_MSG(Exception e, String method_Name)
     {
-        System.err.printf("\n\nMyJDBC.java @%s Exception ERROR \n\n%s", methodName, e.getMessage());
+        System.err.printf("\n\nMyJDBC.java @%s Exception ERROR \n\n%s", method_Name, e.getMessage());
     }
     
-    private void print_File_Not_Found_ERR_MSG(FileNotFoundException e, String methodName)
+    private void print_File_Not_Found_ERR_MSG(FileNotFoundException e, String method_Name)
     {
-        System.err.printf("\n\nMyJDBC.java @%s Exception ERROR \n\nFile not found: %s%n", methodName, e.getMessage());
+        System.err.printf("\n\nMyJDBC.java @%s Exception ERROR \n\nFile not found: %s%n", method_Name, e.getMessage());
     }
     
-    private void print_IO_Exception_ERR_MSG(IOException e, String methodName)
+    private void print_IO_Exception_ERR_MSG(IOException e, String method_Name)
     {
-        System.err.printf("\n\nMyJDBC.java @%s Exception ERROR \n\nI/O error while processing files: %s%n", methodName, e.getMessage());
+        System.err.printf("\n\nMyJDBC.java @%s Exception ERROR \n\nI/O error while processing files: %s%n", method_Name, e.getMessage());
     }
     
     //###########################################
