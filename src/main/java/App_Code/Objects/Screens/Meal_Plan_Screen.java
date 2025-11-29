@@ -348,36 +348,25 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###############################################################################
         // 2.) Getting Table Column Names
         //###############################################################################
-        // column names : ingredients_in_sections_of_meal_calculation
-        ingredients_ColumnNames = db.get_Column_Names_AL(tableIngredientsCalName);
-        
-        // column names : total_meal_view
-        meal_total_columnNames = db.get_Column_Names_AL(tableTotalMealsTableName);
-        
-        // column names : plan_macro_target_calculations
-        macroTargets_ColumnNames = db.get_Column_Names_AL(tablePlanMacroTargetsNameCalc);
-        
-        // Get table column names for plan_macros_left
-        macrosLeft_columnNames = db.get_Column_Names_AL(tablePlanMacrosLeftName);
-        
-        // Get table column names for macros_per_pound_and_limits
-        macros_And_Limits_ColumnNames = db.get_Column_Names_AL(tableMacrosPerPoundLimitName);
-        
-        //########################################
-        // Check IF Data Collections Are NULL
-        //########################################
-        if (ingredients_ColumnNames == null || meal_total_columnNames == null || macroTargets_ColumnNames == null ||
-                macrosLeft_columnNames == null || macros_And_Limits_ColumnNames == null)
+        try
         {
-            System.err.printf("Error, Gathering Column Names for Tables: \n%s = %s%n \n%s = %s%n \n%s = %s%n \n%s = %s%n \n%s = %s%n",
-                    
-                    tableIngredientsCalName, ingredients_ColumnNames,
-                    tableTotalMealsTableName, meal_total_columnNames,
-                    tablePlanMacroTargetsNameCalc, macroTargets_ColumnNames,
-                    tablePlanMacrosLeftName, macrosLeft_columnNames,
-                    tableMacrosPerPoundLimitName, macros_And_Limits_ColumnNames
-            );
+            // column names : ingredients_in_sections_of_meal_calculation
+            ingredients_ColumnNames = db.get_Column_Names_AL(tableIngredientsCalName);
             
+            // column names : total_meal_view
+            meal_total_columnNames = db.get_Column_Names_AL(tableTotalMealsTableName);
+            
+            // column names : plan_macro_target_calculations
+            macroTargets_ColumnNames = db.get_Column_Names_AL(tablePlanMacroTargetsNameCalc);
+            
+            // Get table column names for plan_macros_left
+            macrosLeft_columnNames = db.get_Column_Names_AL(tablePlanMacrosLeftName);
+            
+            // Get table column names for macros_per_pound_and_limits
+            macros_And_Limits_ColumnNames = db.get_Column_Names_AL(tableMacrosPerPoundLimitName);
+        }
+        catch (Exception e)
+        {
             JOptionPane.showMessageDialog(this, "Error, Getting Column Names For Tables In GUI !!");
             window_Closed_Event();
             return;
@@ -538,7 +527,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             return;
         }
         
-        if(! get_Measurement_Data())
+        if (! get_Measurement_Data())
         {
             loadingScreen.window_Closed_Event();
             JOptionPane.showMessageDialog(null, "\n\nError, Cannot Get Measurement DATA!");
@@ -743,7 +732,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         setFrameVisibility(true);
         scroll_To_Top_of_ScrollPane();
         
-        //open_Ingredients_Screen();
+        open_Ingredients_Screen();
     }
     
     //##################################################################################################################
@@ -771,7 +760,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###############################################
         Object[] params = new Object[]{ fromPlan, toPlan };
         
-        if (! (db.upload_Data2(query1, params, "Unable to Load / Transfer Plan Data!"))) { return false; }
+        if (! (db.upload_Data(query1, params, "Unable to Load / Transfer Plan Data!"))) { return false; }
         
         //###############################################
         // Output
@@ -815,7 +804,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################
         // Execute Upload Statements
         //####################################
-        if (! (db.upload_Data_Batch2(queries_And_Params, errorMSG))) { return false; }
+        if (! (db.upload_Data_Batch(queries_And_Params, errorMSG))) { return false; }
         
         if (showConfirmMsg)
         {
@@ -900,7 +889,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             add(new Pair<>(query15, null));
         }};
         
-        if (! (db.upload_Data_Batch2(queries_And_Params, errorMSG))) { return false; }
+        if (! (db.upload_Data_Batch(queries_And_Params, errorMSG))) { return false; }
         
         //####################################################
         // Output
@@ -929,12 +918,15 @@ public class Meal_Plan_Screen extends Screen_JFrame
             return false;
         }
         
-        //#################################################################################
-        // Get All The IngredientsType Inside The DB
-        //#################################################################################
+        //##############################################
+        // Execute
+        //#############################################
         String
                 query1 = String.format("SELECT ingredient_type_name FROM %s ORDER BY ingredient_type_name ASC;", tableIngredientsTypeName),
-                errorMSG1 = "Error, Unable to get Ingredient Types in Plan!";
+                errorMSG1 = "Error, Unable to get Ingredient Types in Plan!",
+                
+                query2 = String.format("SELECT store_name FROM %s ORDER BY store_name ASC;", tableStoresName),
+                errorMSG2 = "Error, Unable to get Ingredient Stores in Plan!";
         
         ingredientsTypesList = db.get_Single_Col_Query_Ordered_TS(query1, null, errorMSG1);
         
@@ -944,13 +936,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
             return false;
         }
         
-        //#################################################################################
+        //#########################################
         // Get All The Store Names Inside The DB
-        //#################################################################################
-        String
-                query2 = String.format("SELECT store_name FROM %s ORDER BY store_name ASC;", tableStoresName),
-                errorMSG2 = "Error, Unable to get Ingredient Stores in Plan!";
-        
+        //#########################################
         storesNamesList = db.get_Single_Col_Query_Ordered_TS(query2, null, errorMSG2);
         
         if (storesNamesList == null)
@@ -1041,7 +1029,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     }
     
     //#############################
-    //
+    // New Methods
     //#############################
     public boolean get_Stores_Data()
     {
@@ -1173,7 +1161,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         if (data == null) { return false; }
         
         // Add Measurement OBJ
-        for(ArrayList<Object> row : data)
+        for (ArrayList<Object> row : data)
         {
             int id = (int) row.get(0);
             String unit_Name = (String) row.get(1);
@@ -1679,7 +1667,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         
         Object[] params = new Object[]{ tempPlanID };
         
-        if (! db.upload_Data2(queryDelete, params, "Error, unable to DELETE meals in plan!")) { return; }
+        if (! db.upload_Data(queryDelete, params, "Error, unable to DELETE meals in plan!")) { return; }
         
         JOptionPane.showMessageDialog(this, "\n\nSuccessfully, DELETED all meals in plan!");
         
@@ -2047,7 +2035,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             
             Object[] params = new Object[]{ planID };
             
-            if (! (db.upload_Data2(query, params, "Error 2, Unable to Save Meal Data!"))) { return; }
+            if (! (db.upload_Data(query, params, "Error 2, Unable to Save Meal Data!"))) { return; }
         }
         else // because there are meals save them
         {

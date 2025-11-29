@@ -158,11 +158,10 @@ public abstract class Edit_Screen extends Add_Screen
         //################################
         // Check if Value Already Exists
         //################################
-        String
-                errorMSG = "Error, unable to access DB to process request!",
-                query = String.format("SELECT %s FROM %s WHERE %s = ?;",
-                        db_ColumnName_Field, db_TableName, db_ColumnName_Field);
         
+        // Variables
+        String errorMSG = "Error, unable to access DB to process request!";
+        String query = String.format("SELECT %s FROM %s WHERE %s = ?;", db_ColumnName_Field, db_TableName, db_ColumnName_Field);
         Object[] params = new Object[]{ jTextField_TXT };
         
         if (db.get_Single_Col_Query_Obj(query, params, errorMSG) != null)
@@ -179,15 +178,14 @@ public abstract class Edit_Screen extends Add_Screen
         String upload_Q1 = String.format("""
                         UPDATE %s
                         SET %s = ?
-                        WHERE %s = ?;""",
-                db_TableName, db_ColumnName_Field, id_ColumnName);
+                        WHERE %s = ?;""", db_TableName, db_ColumnName_Field, id_ColumnName);
         
         //################################
         // Return Query Result
         //################################
         String errorMSG_Upload = String.format("Unable to Update Ingredient %s to '%s'!", data_Gathering_Name, jTextField_TXT);
         
-        return db.upload_Data(upload_Q1, new Object[]{jTextField_TXT, object_ID}, errorMSG_Upload);
+        return db.upload_Data(upload_Q1, new Object[]{ jTextField_TXT, object_ID }, errorMSG_Upload);
     }
     
     @Override
@@ -199,7 +197,7 @@ public abstract class Edit_Screen extends Add_Screen
         
         return true;
     }
-
+    
     //###############################################
     // Upload Messages Output
     //###############################################

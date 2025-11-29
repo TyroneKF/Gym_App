@@ -176,7 +176,7 @@ public class MealManager
         //######################################
         // 3.) Create Sub-Meal
         //######################################
-        String upload_Q3 = String.format( """
+        String upload_Q3 = String.format("""
                 INSERT INTO divided_meal_sections (meal_in_plan_id, plan_id) VALUES
                 (%s, ?);""", var_Meal_ID);
         upload_Queries_And_Params.add(new Pair<>(upload_Q3, new Object[]{ tempPlanID }));
@@ -245,7 +245,7 @@ public class MealManager
         //#######################################################
         try
         {
-            meal_In_Plan_ID = ((Number)  results_OBJ.get_1D_Result_Into_Object(0)).intValue();
+            meal_In_Plan_ID = ((Number) results_OBJ.get_1D_Result_Into_Object(0)).intValue();
             sub_Meal_ID = ((Number) results_OBJ.get_1D_Result_Into_Object(1)).intValue();
             
             sub_Meal_DATA = results_OBJ.get_Fetched_Result_2D_AL(2);
@@ -256,7 +256,7 @@ public class MealManager
             System.err.printf("\n\n%s", e);
             return;
         }
-     
+        
         //#############################
         // Set Name & Time Variables
         //#############################
@@ -1016,7 +1016,7 @@ public class MealManager
         //#######################################################
         // Fetch Queries
         //#######################################################
- 
+        
         // 1.) Get Sub-Meal ID
         String get_Q1 = String.format("SELECT %s;", var_Sub_Meal_ID);
         fetch_Queries_And_Params.add(new Pair<>(get_Q1, null));
@@ -1060,10 +1060,10 @@ public class MealManager
         // Success MSG & Expand Meal View
         //#######################################################
         JOptionPane.showMessageDialog(null, String.format("Successfully Created Sub-Meal in %s at [%s]",
-                currentMealName, get_Current_Meal_Time_GUI() )); // Show Success MSG
-       
+                currentMealName, get_Current_Meal_Time_GUI())); // Show Success MSG
+        
         expand_JPanel(); // Expand Meal View
-       
+        
         meal_plan_screen.scrollToJPanelOnScreen(get_Collapsible_JP_Obj()); // Scroll GUI to MealManager
     }
     

@@ -12,6 +12,7 @@ import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Gui_Objects.Text_Fields.Field_JTxtField;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Parent_Forms_OBJ;
 import org.javatuples.Pair;
+
 import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
@@ -30,7 +31,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
     //#############################
     protected Shared_Data_Registry sharedDataRegistry;
     protected MyJDBC db;
-   
+    
     protected JPanel northPanel = new JPanel(new GridBagLayout());
     
     // Salt JC Object
@@ -68,7 +69,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         ingredient_Types_Obj_AL = sharedDataRegistry.get_All_Ingredient_Types_AL();
         
         ingredient_Measurement_Obj_AL = sharedDataRegistry.get_Ingredient_Measurement_Obj_AL();
-        ingredient_Measurement_Obj_AL.removeIf(e -> e.get_ID()== 3); // Remove N/A Measurement
+        ingredient_Measurement_Obj_AL.removeIf(e -> e.get_ID() == 3); // Remove N/A Measurement
         
         create_Field_Items_Map(); // Create Map, as values were needed from above ^^
         
@@ -78,7 +79,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         create_Ingredients_Form();
         collapsibleJPanel.expand_JPanel();
     }
-
+    
     //##################################################################################################################
     // Methods
     //##################################################################################################################
