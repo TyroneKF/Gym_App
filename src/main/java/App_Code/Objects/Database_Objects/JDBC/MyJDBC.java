@@ -28,6 +28,7 @@ public class MyJDBC
     // Variable
     //##################################################################################################################
     private String
+            class_Name = "MyJDBC.java",
             databaseName, // must be in lowercase
             userName,
             password,
@@ -819,8 +820,8 @@ public class MyJDBC
      *
      *
      */
-    public Query_Results upload_And_Get_Batch(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params,
-                                              LinkedHashSet<Pair<String, Object[]>> get_Queries_And_Params, String errorMSG)
+    public Fetched_Results upload_And_Get_Batch(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params,
+                                                LinkedHashSet<Pair<String, Object[]>> get_Queries_And_Params, String errorMSG)
     {
         //###############################################################
         // Check DB Status & Variables
@@ -831,7 +832,7 @@ public class MyJDBC
         //###############################################################
         // Variables
         //###############################################################
-        Query_Results query_Results = new Query_Results();
+        Fetched_Results fetched_Results = new Fetched_Results();
         
         //##############################################################
         // Execute Upload Params
@@ -850,14 +851,14 @@ public class MyJDBC
                     Object[] params = fetch_Obj.getValue1();
                     
                     // Add Fetch Results To Object made for storing multiple queries
-                    query_Results.add_2D_Result(get_2D_Object_AL_Internally(connection, method_Name, query, params));
+                    fetched_Results.add_2D_Result(get_2D_Object_AL_Internally(connection, method_Name, query, params));
                 }
                 
                 // Commit Changes beyond current driver
                 connection.commit();
                 
                 // Return Output
-                return query_Results;
+                return fetched_Results;
             }
             catch (Exception e)
             {
@@ -894,7 +895,7 @@ public class MyJDBC
      */
     
     private <T, C extends Collection<T>> C get_Single_Column_Internally
-    (String query, Object[] params, String method_Name, String errorMSG, Class<T> type, Supplier<C> collectionType)
+    (String query, Object[] params, String method_Name, String errorMSG, Class<T> type, Supplier<C> collectionType) throws Exception
     {
         //##########################################################
         // Check DB Status
@@ -959,7 +960,7 @@ public class MyJDBC
             query = String.format("\n\n%s \n%n%s", query, Arrays.toString(params));
             
             handleException_MYSQL(e, method_Name, query, errorMSG);
-            return null;
+            throw new Exception(throw_Exeception_Msg(method_Name));
         }
     }
     
@@ -968,11 +969,18 @@ public class MyJDBC
     //######################################################
     public ArrayList<String> get_Single_Col_Query_String(String query, Object[] params, String errorMSG)
     {
-        String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        return get_Single_Column_Internally(query, params, method_Name, errorMSG, String.class, ArrayList :: new);
+        try
+        {
+            String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+            return get_Single_Column_Internally(query, params, method_Name, errorMSG, String.class, ArrayList :: new);
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
     }
     
-    public ArrayList<Object> get_Single_Col_Query_Obj(String query, Object[] params, String errorMSG)
+    public ArrayList<Object> get_Single_Col_Query_Obj(String query, Object[] params, String errorMSG) throws Exception
     {
         String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
         return get_Single_Column_Internally(query, params, method_Name, errorMSG, Object.class, ArrayList :: new);
@@ -980,21 +988,35 @@ public class MyJDBC
     
     public ArrayList<Integer> get_Single_Col_Query_Int(String query, Object[] params, String errorMSG)
     {
-        String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        return get_Single_Column_Internally(query, params, method_Name, errorMSG, Integer.class, ArrayList :: new);
+        try
+        {
+            String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+            return get_Single_Column_Internally(query, params, method_Name, errorMSG, Integer.class, ArrayList :: new);
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
     }
     
     public TreeSet<String> get_Single_Col_Query_Ordered_TS(String query, Object[] params, String errorMSG)
     {
-        String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        return get_Single_Column_Internally(
-                query,
-                params,
-                method_Name,
-                errorMSG,
-                String.class,
-                () -> new TreeSet<>(Collator.getInstance())
-        );
+        try
+        {
+            String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+            return get_Single_Column_Internally(
+                    query,
+                    params,
+                    method_Name,
+                    errorMSG,
+                    String.class,
+                    () -> new TreeSet<>(Collator.getInstance())
+            );
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
     }
     
     //######################################################
@@ -1158,6 +1180,19 @@ public class MyJDBC
         {
             dataSource.close();
         }
+    }
+    
+    // -1 = Failed , 0 = Empty, 1 = Not Empty
+    public <T> boolean expected_Query_Output(int x, Collection<T> c) throws Exception
+    {
+        return is_Results_Empty(c) == x;
+    }
+    
+    public int is_Results_Empty(Collection<?> c) throws Exception
+    {
+        if (c == null) { return - 1; } // Failed
+        else if (c.isEmpty()) { return 0; } // Empty
+        else { return 1; } // Not empty
     }
     
     // Param Methods
@@ -1336,5 +1371,10 @@ public class MyJDBC
                 \nQuery : \n\n\"\"\" \n\n%s \n\n\"\"\"
                 \nParams: \n%s%n
                 \nError MSG:  \n\n\"\"\" \n%s \n\"\"\"""", line_Separator, method_Name, line_Separator, query, Arrays.toString(params), e);
+    }
+    
+    private String throw_Exeception_Msg(String method_Name)
+    {
+        return String.format("%s -> %s Error, Query Failed", class_Name, method_Name);
     }
 }
