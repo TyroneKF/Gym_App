@@ -960,7 +960,7 @@ public class MyJDBC
             query = String.format("\n\n%s \n%n%s", query, Arrays.toString(params));
             
             handleException_MYSQL(e, method_Name, query, errorMSG);
-            throw new Exception(throw_Exeception_Msg(method_Name));
+            throw new Exception(throw_Exception_Msg(method_Name));
         }
     }
     
@@ -986,17 +986,10 @@ public class MyJDBC
         return get_Single_Column_Internally(query, params, method_Name, errorMSG, Object.class, ArrayList :: new);
     }
     
-    public ArrayList<Integer> get_Single_Col_Query_Int(String query, Object[] params, String errorMSG)
+    public ArrayList<Integer> get_Single_Col_Query_Int(String query, Object[] params, String errorMSG) throws Exception
     {
-        try
-        {
-            String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-            return get_Single_Column_Internally(query, params, method_Name, errorMSG, Integer.class, ArrayList :: new);
-        }
-        catch (Exception e)
-        {
-            return null;
-        }
+        String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+        return get_Single_Column_Internally(query, params, method_Name, errorMSG, Integer.class, ArrayList :: new);
     }
     
     public TreeSet<String> get_Single_Col_Query_Ordered_TS(String query, Object[] params, String errorMSG)
@@ -1373,7 +1366,7 @@ public class MyJDBC
                 \nError MSG:  \n\n\"\"\" \n%s \n\"\"\"""", line_Separator, method_Name, line_Separator, query, Arrays.toString(params), e);
     }
     
-    private String throw_Exeception_Msg(String method_Name)
+    private String throw_Exception_Msg(String method_Name)
     {
         return String.format("%s -> %s Error, Query Failed", class_Name, method_Name);
     }
