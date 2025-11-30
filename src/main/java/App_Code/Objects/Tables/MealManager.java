@@ -47,7 +47,8 @@ public class MealManager
     private Integer meal_In_Plan_ID, tempPlanID, planID, yPoInternally = 0;
     
     // String Variables
-    String lineSeparator = "###############################################################################";
+    private String class_Name = new Object(){}.getClass().getEnclosingClass().getName();
+    private String lineSeparator = "###############################################################################";
     private String savedMealName = "", currentMealName = "";
     
     // Time Variables
@@ -702,12 +703,11 @@ public class MealManager
             if (! db.get_Single_Col_Query_Obj(query, params, errorMSG).isEmpty()) // Means value already exists, returns N/A if the value doesn't
             {
                 JOptionPane.showMessageDialog(getFrame(), String.format("A meal in this plan already has a meal %s of '%s' !!", variableName, input));
-                throw new Exception("Failed Query - Check Database if Value Already Exists");
+                throw new Exception(""); // Return null
             }
         }
         catch (Exception e)
         {
-            System.err.printf("\n\n%s", e);
             return null;
         }
         

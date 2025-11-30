@@ -5,6 +5,9 @@ mvn javafx:run "-DmainClass=Tests.ToggleSwitchDemo"
 Work On:
 ######################################################################################
 .) Edit ingredients Screen -> Define prior_Form_Validations() for JC boxes at the top of the screen
+.) Collapsible Panel prevent closing
+
+
 
 .) Can error msgs be refactored in shop and ingredients screen into parent screen
 .) Refactor shopForm GUI Methods

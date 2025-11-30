@@ -50,6 +50,8 @@ public abstract class Add_Screen extends Screen_JPanel
             db_TableName,
             process;
     
+    protected String class_Name = new Object() { }.getClass().getEnclosingClass().getName();
+    
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
@@ -226,7 +228,7 @@ public abstract class Add_Screen extends Screen_JPanel
         {
             failure_Upload_Message();
             
-            System.err.printf("\n\n%s", e);
+            System.err.printf("\n\n%s -> %s %s", class_Name, new Object() { }.getClass().getEnclosingMethod().getName(), e);
             return;
         }
         
