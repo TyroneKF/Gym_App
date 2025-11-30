@@ -1,6 +1,5 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form;
 
-import App_Code.Objects.Data_Objects.Field_Bindings.Shop_Form_Binding;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
 import App_Code.Objects.Gui_Objects.Combo_Boxes.Field_JCombo_Storable_ID;
 import App_Code.Objects.Gui_Objects.Text_Fields.Field_JTxtField;
