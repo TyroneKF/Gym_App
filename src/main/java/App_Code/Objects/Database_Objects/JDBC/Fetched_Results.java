@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
-public class Query_Results
+public class Fetched_Results
 {
     //##################################################################################################################
     // Variables
@@ -13,12 +13,12 @@ public class Query_Results
     private HashMap<Integer, ArrayList<ArrayList<Object>>> results_2D_Map = new HashMap<>();
     
     private int size = 0;
-    private String class_Name = "Query_Results ->";
+    private String class_Name = "Fetched_Results ->";
     
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Query_Results()
+    public Fetched_Results()
     { }
     
     //##################################################################################################################
@@ -66,6 +66,7 @@ public class Query_Results
     //##################################################################################################################
     public void clear_Results()
     {
+        size = 0;
         results_1D_Map.clear();
         results_2D_Map.clear();
     }

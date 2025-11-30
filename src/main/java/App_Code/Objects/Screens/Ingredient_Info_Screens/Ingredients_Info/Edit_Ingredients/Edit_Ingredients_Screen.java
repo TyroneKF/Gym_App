@@ -2,8 +2,8 @@ package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_I
 
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_Obj;
+import App_Code.Objects.Database_Objects.JDBC.Fetched_Results;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
-import App_Code.Objects.Database_Objects.JDBC.Query_Results;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.Combo_Boxes.Field_JCombo_Storable_ID;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredients_Screen;
@@ -194,7 +194,7 @@ public class Edit_Ingredients_Screen extends Ingredients_Screen
             
             if (id == null) { throw new Exception("Error, getting Ingredient ID!"); }
             
-            Query_Results queryResults = get_Ingredients_Info(id);
+            Fetched_Results queryResults = get_Ingredients_Info(id);
             
             //#########################
             // Format Data
@@ -221,12 +221,12 @@ public class Edit_Ingredients_Screen extends Ingredients_Screen
         }
     }
     
-    private Query_Results get_Ingredients_Info(int id) throws Exception
+    private Fetched_Results get_Ingredients_Info(int id) throws Exception
     {
         //#########################
         // Get DATA
         //#########################
-        Query_Results queryResults = new Query_Results();
+        Fetched_Results queryResults = new Fetched_Results();
         String error_MSG = "Unable to grab Ingredient Info & Shop Data!";
         
         // Get Ingredient Data

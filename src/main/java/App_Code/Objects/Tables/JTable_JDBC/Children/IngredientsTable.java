@@ -3,7 +3,7 @@ package App_Code.Objects.Tables.JTable_JDBC.Children;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.JDBC.Null_MYSQL_Field;
-import App_Code.Objects.Database_Objects.JDBC.Query_Results;
+import App_Code.Objects.Database_Objects.JDBC.Fetched_Results;
 import App_Code.Objects.Tables.JTable_JDBC.JDBC_JTable;
 import App_Code.Objects.Tables.MealManager;
 import App_Code.Objects.Gui_Objects.IconButton;
@@ -850,21 +850,21 @@ public class IngredientsTable extends JDBC_JTable
                 SELECT *
                 FROM ingredients_in_sections_of_meal_calculation
                 WHERE plan_id = ? AND ingredients_index = %s;""", var_Ingredient_ID);
-        fetch_Queries_And_Params.add(new Pair<>(get_Q1, new Object[]{ temp_Plan_ID}));
+        fetch_Queries_And_Params.add(new Pair<>(get_Q1, new Object[]{ temp_Plan_ID }));
         
         //#######################################################
         // Execute Query
         //#######################################################
-        Query_Results results_OBJ = db.upload_And_Get_Batch(upload_Queries_And_Params, fetch_Queries_And_Params, error_MSG);
+        Fetched_Results fetched_Results_OBJ = db.upload_And_Get_Batch(upload_Queries_And_Params, fetch_Queries_And_Params, error_MSG);
         
-        if (results_OBJ == null || results_OBJ.is_Empty()) { System.err.println("\n\n\nFailed Adding Ingredient"); return; }
+        if (fetched_Results_OBJ == null) { System.err.println("\n\n\nFailed Adding Ingredient"); return; }
         
         //#######################################################
         // Set Variables from Results
         //#######################################################
         try
         {
-            ingredient_DATA = results_OBJ.get_Result_1D_AL(0);
+            ingredient_DATA = fetched_Results_OBJ.get_Result_1D_AL(0);
             
             System.out.printf("\n\nIngredients Results: \n%s%n", ingredient_DATA);
         }
@@ -879,10 +879,10 @@ public class IngredientsTable extends JDBC_JTable
         //#######################################################
         
         set_Row_Being_Edited(); // stops endless loop being called for all cells being edited
-
+        
         tableModel.add_Row(); // Adding Row Data to Table Model
         int table_Row = get_Rows_In_Table() - 1;
-      
+        
         super.update_Table(ingredient_DATA, table_Row);
         
         set_Row_Being_Edited(); // stops endless loop being called for all cells being editted

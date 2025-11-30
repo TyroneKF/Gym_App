@@ -153,7 +153,7 @@ public abstract class Edit_Screen extends Add_Screen
     }
     
     @Override
-    protected boolean upload_DATA()
+    protected boolean upload_DATA() throws Exception
     {
         //################################
         // Check if Value Already Exists
@@ -164,7 +164,7 @@ public abstract class Edit_Screen extends Add_Screen
         String query = String.format("SELECT %s FROM %s WHERE %s = ?;", db_ColumnName_Field, db_TableName, db_ColumnName_Field);
         Object[] params = new Object[]{ jTextField_TXT };
         
-        if (db.get_Single_Col_Query_Obj(query, params, errorMSG) != null)
+        if (! db.get_Single_Col_Query_Obj(query, params, errorMSG).isEmpty())
         {
             JOptionPane.showMessageDialog(null, String.format("\n\n%s '' %s '' Already Exists!", data_Gathering_Name, jTextField_TXT));
             return false;

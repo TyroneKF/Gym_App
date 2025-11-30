@@ -1,9 +1,9 @@
 package App_Code.Objects.Tables;
 
 import App_Code.Objects.Data_Objects.ID_Objects.MetaData_ID_Object.Meal_ID;
+import App_Code.Objects.Database_Objects.JDBC.Fetched_Results;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.JDBC.Null_MYSQL_Field;
-import App_Code.Objects.Database_Objects.JDBC.Query_Results;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Tables.JTable_JDBC.Children.IngredientsTable;
 import App_Code.Objects.Tables.JTable_JDBC.Children.ViewDataTables.MacrosLeft_Table;
@@ -236,20 +236,20 @@ public class MealManager
         //#######################################################
         // Execute Query
         //#######################################################
-        Query_Results results_OBJ = db.upload_And_Get_Batch(upload_Queries_And_Params, fetch_Queries_And_Params, errorMSG);
+        Fetched_Results fetched_Results_OBJ = db.upload_And_Get_Batch(upload_Queries_And_Params, fetch_Queries_And_Params, errorMSG);
         
-        if (results_OBJ == null || results_OBJ.is_Empty()) { System.err.println("\n\n\nFailed Creating Meal"); return; }
+        if (fetched_Results_OBJ == null) { System.err.println("\n\n\nFailed Creating Meal"); return; }
         
         //#######################################################
         // Set Variables from Results
         //#######################################################
         try
         {
-            meal_In_Plan_ID = ((Number) results_OBJ.get_1D_Result_Into_Object(0)).intValue();
-            sub_Meal_ID = ((Number) results_OBJ.get_1D_Result_Into_Object(1)).intValue();
+            meal_In_Plan_ID = ((Number) fetched_Results_OBJ.get_1D_Result_Into_Object(0)).intValue();
+            sub_Meal_ID = ((Number) fetched_Results_OBJ.get_1D_Result_Into_Object(1)).intValue();
             
-            sub_Meal_DATA = results_OBJ.get_Fetched_Result_2D_AL(2);
-            total_Meal_Data = results_OBJ.get_Result_1D_AL(3);
+            sub_Meal_DATA = fetched_Results_OBJ.get_Fetched_Result_2D_AL(2);
+            total_Meal_Data = fetched_Results_OBJ.get_Result_1D_AL(3);
         }
         catch (Exception e)
         {
@@ -625,9 +625,9 @@ public class MealManager
         // Remove whitespace at the end of variable
         input = input.trim();
         
-        //##############################################################################################################
+        //#######################################################
         // Validation Checks
-        //##############################################################################################################
+        //#######################################################
         // Prior to this method being called the users input is checked if its null or "" and rejected
         LocalTime inputConvertedToLocalTime = null;
         Second inputConvertedToSeconds = null;
@@ -639,12 +639,11 @@ public class MealManager
             try
             {
                 inputConvertedToLocalTime = LocalTime.parse(input);
-                if (inputConvertedToLocalTime == null) { throw new Exception("\n\nError, time variable null"); }
             }
             catch (Exception e)
             {
                 System.err.printf("\n\nMealManager.java: inputValidation() | Error, converting input to time string! \n%s", e);
-                JOptionPane.showMessageDialog(getFrame(), "Error, converting input to time string !!");
+                JOptionPane.showMessageDialog(getFrame(), "Error, converting input to Time!!");
                 return null;
             }
         }
@@ -677,56 +676,38 @@ public class MealManager
             }
         }
         
-        // #############################################################################################################
+        // ######################################################
         // Check Database if Value Already Exists
-        // #############################################################################################################
-        String
-                query = "",
-                errorMSG = "";
-        
+        // ######################################################
+        String query = "", errorMSG = "";
         Object[] params;
         
         if (variableName.equals("time")) // Validate time String
         {
-            query = String.format("""
-                    SELECT IFNULL((
-                        SELECT meal_time
-                        FROM meals_in_plan
-                        WHERE plan_id = ? AND meal_time = ?
-                        LIMIT 1
-                    ), 'N/A') AS meal_time;""");
-            
+            query = " SELECT meal_time FROM meals_in_plan WHERE plan_id = ? AND meal_time = ?";
             errorMSG = "Error, Validating Meal Time!";
-            
             params = new Object[]{ tempPlanID, inputConvertedToLocalTime };
         }
         else // Last possible option based on logic is Meal Name
         {
             input = StringUtils.capitalize(input);
-            
-            query = """
-                    SELECT IFNULL((
-                        SELECT meal_name
-                        FROM meals_in_plan
-                        WHERE plan_id = ? AND meal_name = ?
-                        LIMIT 1
-                    ), 'N/A') AS meal_name;""";
-            
+            query = "SELECT meal_name FROM meals_in_plan WHERE plan_id = ? AND meal_name = ?";
             errorMSG = "Error, Validating Meal Name!";
-            
             params = new Object[]{ tempPlanID, input };
         }
         
-        // #########################################
         // Execute Query
-        // #########################################
-        ArrayList<Object> results = db.get_Single_Col_Query_Obj(query, params, errorMSG);
-        
-        if (results == null) { return null; } // Error occurred during script
-        
-        if (! results.getFirst().equals("N/A")) // Means value already exists, returns N/A if the value doesn't
+        try
         {
-            JOptionPane.showMessageDialog(getFrame(), String.format("A meal in this plan already has a meal %s of '%s' !!", variableName, input));
+            if (! db.get_Single_Col_Query_Obj(query, params, errorMSG).isEmpty()) // Means value already exists, returns N/A if the value doesn't
+            {
+                JOptionPane.showMessageDialog(getFrame(), String.format("A meal in this plan already has a meal %s of '%s' !!", variableName, input));
+                throw new Exception("Failed Query - Check Database if Value Already Exists");
+            }
+        }
+        catch (Exception e)
+        {
+            System.err.printf("\n\n%s", e);
             return null;
         }
         
@@ -1033,17 +1014,17 @@ public class MealManager
         //#######################################################
         // Execute Query
         //#######################################################
-        Query_Results results_OBJ = db.upload_And_Get_Batch(upload_Queries_And_Params, fetch_Queries_And_Params, errorMSG);
+        Fetched_Results fetched_Results_OBJ = db.upload_And_Get_Batch(upload_Queries_And_Params, fetch_Queries_And_Params, errorMSG);
         
-        if (results_OBJ == null || results_OBJ.is_Empty()) { System.err.println("\n\n\nFailed Creating Meal"); return; }
+        if (fetched_Results_OBJ == null) { System.err.println("\n\n\nFailed Creating Meal"); return; }
         
         //#######################################################
         // Set Variables from Results
         //#######################################################
         try
         {
-            sub_Meal_ID = ((Number) results_OBJ.get_1D_Result_Into_Object(0)).intValue();
-            sub_Meal_DATA = results_OBJ.get_Fetched_Result_2D_AL(1);
+            sub_Meal_ID = ((Number) fetched_Results_OBJ.get_1D_Result_Into_Object(0)).intValue();
+            sub_Meal_DATA = fetched_Results_OBJ.get_Fetched_Result_2D_AL(1);
         }
         catch (Exception e)
         {

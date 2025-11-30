@@ -2,8 +2,8 @@ package App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_T
 
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_Obj;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
+import App_Code.Objects.Database_Objects.JDBC.Fetched_Results;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
-import App_Code.Objects.Database_Objects.JDBC.Query_Results;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.Text_Fields.JTextFieldLimit;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
@@ -11,6 +11,7 @@ import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredi
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Ingredient_Types.Add_Ingredient_Type;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Stores.Add_Stores;
 import org.javatuples.Pair;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.LinkedHashSet;
@@ -28,7 +29,7 @@ public abstract class Add_Screen extends Screen_JPanel
     protected Parent_Screen parent_Screen;
     protected Ingredients_Info_Screen ingredient_Info_Screen;
     protected Shared_Data_Registry sharedDataRegistry;
-    protected Query_Results results_OBJ;
+    protected Fetched_Results fetched_Results_OBJ;
     
     // GUI Objects
     protected GridBagConstraints gbc = new GridBagConstraints();
@@ -211,24 +212,30 @@ public abstract class Add_Screen extends Screen_JPanel
     //#############################################################################
     private void submission_Btn_Action()
     {
-        if (validate_Form())
+        // Validate
+        if (! validate_Form()) { return; }
+        
+        // Execute Queries
+        try
         {
-            if (upload_DATA())
-            {
-                success_Upload_Message();
-                
-                if (! update_Shared_DATA()) { failed_Upload_Shared_Data_Message(); }
-                
-                update_Other_Screens();
-                parent_Screen.reset_Actions();
-            }
-            else
-            {
-                failure_Upload_Message();
-            }
+            if (! upload_DATA()) { throw new Exception("Failed Update"); }
             
-            results_OBJ.clear_Results(); // Clear Results
+            success_Upload_Message(); // Successful Query & Update DATA
         }
+        catch (Exception e)
+        {
+            failure_Upload_Message();
+            
+            System.err.printf("\n\n%s", e);
+            return;
+        }
+        
+        if (! update_Shared_DATA()) { failed_Upload_Shared_Data_Message(); }
+        
+        update_Other_Screens();
+        parent_Screen.reset_Actions();
+        
+        fetched_Results_OBJ = null;
     }
     
     //###############################################
@@ -268,7 +275,7 @@ public abstract class Add_Screen extends Screen_JPanel
     //###############################################
     // Update Methods
     //###############################################
-    protected boolean upload_DATA()
+    protected boolean upload_DATA() throws Exception
     {
         //########################
         // Variables
@@ -282,10 +289,10 @@ public abstract class Add_Screen extends Screen_JPanel
         // Validation Check
         //########################
         // Check if Value Already Exists
-        String query = String.format("SELECT %s  FROM %s WHERE %s = ?;", db_ColumnName_Field, db_TableName, db_ColumnName_Field);
+        String query = String.format("SELECT %s FROM %s WHERE %s = ?;", db_ColumnName_Field, db_TableName, db_ColumnName_Field);
         Object[] params = new Object[]{ jTextField_TXT };
         
-        if (db.get_Single_Col_Query_String(query, params, errorMSG) != null)
+        if (! db.get_Single_Col_Query_Obj(query, params, errorMSG).isEmpty())
         {
             JOptionPane.showMessageDialog(null, String.format("\n\n%s '' %s '' Already Exists!", data_Gathering_Name, jTextField_TXT));
             return false;
@@ -300,28 +307,18 @@ public abstract class Add_Screen extends Screen_JPanel
         upload_Queries_And_Params.add(new Pair<>(upload_Q1, new Object[]{ jTextField_TXT }));
         
         // Create Fetch Queries
-        String fetch_Q1 = " SELECT LAST_INSERT_ID();";
+        String fetch_Q1 = "SELECT LAST_INSERT_ID();";
         fetch_Queries_And_Params.add(new Pair<>(fetch_Q1, null));
         
         //########################
         // Execute Query
         //########################
-        results_OBJ = db.upload_And_Get_Batch(upload_Queries_And_Params, fetch_Queries_And_Params, errorMSG);
+        fetched_Results_OBJ = db.upload_And_Get_Batch(upload_Queries_And_Params, fetch_Queries_And_Params, errorMSG);
         
         //########################
         // Return
         //########################
-        try
-        {
-            System.out.printf("\n\n%s", results_OBJ.get_1D_Result_Into_Object(0));
-        }
-        catch (Exception e)
-        {
-            System.err.printf("\n\nUpload_DATA Error, \n\n%s", e);
-        }
-        
-        
-        return (results_OBJ != null && ! results_OBJ.is_Empty());
+        return (fetched_Results_OBJ != null);
     }
     
     protected boolean update_Shared_DATA()
@@ -334,7 +331,7 @@ public abstract class Add_Screen extends Screen_JPanel
         
         try
         {
-            id = ((Number) results_OBJ.get_1D_Result_Into_Object(0)).intValue();
+            id = ((Number) fetched_Results_OBJ.get_1D_Result_Into_Object(0)).intValue();
         }
         catch (Exception e)
         {
@@ -367,6 +364,7 @@ public abstract class Add_Screen extends Screen_JPanel
     //###############################################
     // Upload Messages Output
     //###############################################
+    
     /**
      * All the methods are Override by child class
      */
