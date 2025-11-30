@@ -157,12 +157,17 @@ public class Ingredients_Screen extends Screen_JPanel
         if (! are_You_Sure(title_Create, message_Create)) { return; }
         
         //###############################
-        // Ingredient / Shop Update
+        // Validate Screen / Forms
         //###############################
+        if (! prior_Form_Validations()) { return; }
+        
         boolean
                 ingredients_Form_Update = ingredients_Form.validate_Ingredients_Form(),
                 shop_Form_Update = shop_Form.validate_Form();
         
+        //###############################
+        // Update
+        //###############################
         if (! ingredients_Form_Update || ! shop_Form_Update) { return; }
         
         //###############################
@@ -196,6 +201,8 @@ public class Ingredients_Screen extends Screen_JPanel
         //################################
         clear_Interface();
     }
+    
+    protected boolean prior_Form_Validations() { return true; }
     
     protected boolean update_Both_Forms()
     {

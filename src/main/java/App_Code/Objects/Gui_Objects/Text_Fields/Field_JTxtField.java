@@ -117,6 +117,10 @@ public class Field_JTxtField extends JTextField
         }
     }
     
+    public boolean is_Txt_Field_Empty()
+    {
+        return get_Text().isEmpty();
+    }
     //#######################
     // Validation Decimals
     //#######################

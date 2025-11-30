@@ -72,6 +72,14 @@ public class Edit_Ingredients_Screen extends Ingredients_Screen
     }
     
     //##############################################
+    // Validation Methods
+    //##############################################
+    protected  boolean prior_Form_Validations()
+    {
+        return false;
+    }
+    
+    //##############################################
     // GUI Methods
     //##############################################
     protected void prior_GUI_Setup()

@@ -23,6 +23,9 @@ public class Ingredients_Form extends Parent_Forms_OBJ
     //##################################################################################################################
     // Variables
     //##################################################################################################################
+    // String
+    protected String class_Name = new Object() { }.getClass().getEnclosingClass().getName();
+    
     // Integers
     protected int digit_Char_Limit = 8, text_Char_Limit = 255;
     
@@ -492,13 +495,29 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         //###############################
         // Check Ingredient Name In DB
         //###############################
-        String label = "Ingredient Name";
-        ArrayList<String> ingredient_Name_Errors = error_Map.getOrDefault(label, new ArrayList<>());  // Get Or Create an Empty list if not available
-        
-        if (is_Ingredient_Name_In_DB()) // IF ingredient Name already exists add error msg
+        // Check if Ingredients Name Field is not Empty
+        if (! ((Field_JTxtField) field_Items_Map.get("name").get_Gui_Component()).is_Txt_Field_Empty())
         {
-            ingredient_Name_Errors.add(String.format("'%s' : Already Exists in DB!", label));
-            error_Map.put(label, ingredient_Name_Errors);
+            String error_Msg = "", label = "Ingredient Name";
+            
+            try
+            {
+                if (is_Ingredient_Name_In_DB())  //IF ingredient Name already exists add error error_Msg
+                {
+                    error_Msg = String.format("'%s' : Already Exists in DB!", label);
+                }
+            }
+            catch (Exception e)
+            {
+                error_Msg = "Failed Validating Ingredient Name in DB!";
+            }
+            
+            if (! error_Msg.isEmpty())
+            {
+                ArrayList<String> ingredient_Name_Errors = error_Map.getOrDefault(label, new ArrayList<>());  // Get Or Create an Empty list of errors if not available
+                ingredient_Name_Errors.add(error_Msg); // Add Error MSG to log in AL
+                error_Map.put(label, ingredient_Name_Errors); // Add to / back into Map of errors
+            }
         }
         
         //###############################
@@ -552,14 +571,14 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         return false;
     }
     
-    protected boolean is_Ingredient_Name_In_DB()
+    protected boolean is_Ingredient_Name_In_DB() throws Exception
     {
         //##################################
         // IS Ingredient Name Null or Empty
         //####################################
         String ingredient_Name = ((Field_JTxtField) field_Items_Map.get("name").get_Gui_Component()).get_Text();
         
-        if (ingredient_Name == null || ingredient_Name.isEmpty()) { return false; }
+        if (ingredient_Name == null || ingredient_Name.isEmpty()) { throw new Exception("No ingredient Created!"); }
         
         //##################################
         // Create Query
