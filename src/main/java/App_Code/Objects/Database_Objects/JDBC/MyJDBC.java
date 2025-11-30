@@ -967,17 +967,10 @@ public class MyJDBC
     //######################################################
     // Different Types Of Single Column Collections
     //######################################################
-    public ArrayList<String> get_Single_Col_Query_String(String query, Object[] params, String errorMSG)
+    public ArrayList<String> get_Single_Col_Query_String(String query, Object[] params, String errorMSG) throws Exception
     {
-        try
-        {
-            String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-            return get_Single_Column_Internally(query, params, method_Name, errorMSG, String.class, ArrayList :: new);
-        }
-        catch (Exception e)
-        {
-            return null;
-        }
+        String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+        return get_Single_Column_Internally(query, params, method_Name, errorMSG, String.class, ArrayList :: new);
     }
     
     public ArrayList<Object> get_Single_Col_Query_Obj(String query, Object[] params, String errorMSG) throws Exception
@@ -1039,7 +1032,7 @@ public class MyJDBC
         // Output
         if (colum_Names == null || colum_Names.isEmpty()) // Table Names cannot be null
         {
-            throw new Exception(String.format("\n\nErrorMyJDBC.java -> %s = Empty Result", method_Name));
+            throw new Exception(String.format("\n\nError %s -> %s = Empty Result", class_Name, method_Name));
         }
         
         return colum_Names;
