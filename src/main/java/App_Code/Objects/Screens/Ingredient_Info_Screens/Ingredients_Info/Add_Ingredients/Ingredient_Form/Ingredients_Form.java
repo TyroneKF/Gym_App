@@ -1,6 +1,5 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredient_Form;
 
-import App_Code.Objects.Data_Objects.Field_Bindings.Ingredients_Form_Binding;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_Obj;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Measurement_ID_OBJ;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;

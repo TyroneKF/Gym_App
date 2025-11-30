@@ -1,5 +1,6 @@
-package App_Code.Objects.Data_Objects.Field_Bindings;
+package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredient_Form;
 
+import App_Code.Objects.Data_Objects.Field_Bindings.Field_Binding;
 import App_Code.Objects.Gui_Objects.Combo_Boxes.Field_JComboBox;
 
 import java.awt.*;
