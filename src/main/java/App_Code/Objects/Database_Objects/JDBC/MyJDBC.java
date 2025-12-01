@@ -897,7 +897,7 @@ public class MyJDBC
      */
     
     private <T, C extends Collection<T>> C get_Single_Column_Internally
-    (String query, Object[] params, String method_Name, String errorMSG, Class<T> type, Supplier<C> collectionType) throws Exception
+    (String query, Object[] params, String method_Name, String errorMSG, boolean allow_No_Results, Class<T> type, Supplier<C> collectionType) throws Exception
     {
         //##########################################################
         // Check DB Status
@@ -932,7 +932,11 @@ public class MyJDBC
             //############################################
             ResultSet resultSet = statement.executeQuery();
             
-            if (! resultSet.isBeforeFirst()) { return collection; } // checks if any data was returned
+            if (! resultSet.isBeforeFirst()) // checks if any data was returned
+            {
+                if (allow_No_Results) { return collection; }
+                throw new Exception("Failed Query -> Empty Results");
+            }
             
             //############################################
             // Catch Exception (Multiple Columns)
@@ -969,22 +973,22 @@ public class MyJDBC
     //######################################################
     // Different Types Of Single Column Collections
     //######################################################
-    public ArrayList<String> get_Single_Col_Query_String(String query, Object[] params, String errorMSG) throws Exception
+    public ArrayList<String> get_Single_Col_Query_String(String query, Object[] params, String errorMSG, boolean allow_No_Results) throws Exception
     {
         String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        return get_Single_Column_Internally(query, params, method_Name, errorMSG, String.class, ArrayList :: new);
+        return get_Single_Column_Internally(query, params, method_Name, errorMSG, allow_No_Results, String.class, ArrayList :: new);
     }
     
-    public ArrayList<Object> get_Single_Col_Query_Obj(String query, Object[] params, String errorMSG) throws Exception
+    public ArrayList<Object> get_Single_Col_Query_Obj(String query, Object[] params, String errorMSG, boolean allow_No_Results) throws Exception
     {
         String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        return get_Single_Column_Internally(query, params, method_Name, errorMSG, Object.class, ArrayList :: new);
+        return get_Single_Column_Internally(query, params, method_Name, errorMSG, allow_No_Results, Object.class, ArrayList :: new);
     }
     
-    public ArrayList<Integer> get_Single_Col_Query_Int(String query, Object[] params, String errorMSG) throws Exception
+    public ArrayList<Integer> get_Single_Col_Query_Int(String query, Object[] params, String errorMSG, boolean allow_No_Results) throws Exception
     {
         String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        return get_Single_Column_Internally(query, params, method_Name, errorMSG, Integer.class, ArrayList :: new);
+        return get_Single_Column_Internally(query, params, method_Name, errorMSG, allow_No_Results, Integer.class, ArrayList :: new);
     }
     
     public TreeSet<String> get_Single_Col_Query_Ordered_TS(String query, Object[] params, String errorMSG)
@@ -997,6 +1001,7 @@ public class MyJDBC
                     params,
                     method_Name,
                     errorMSG,
+                    false,
                     String.class,
                     () -> new TreeSet<>(Collator.getInstance())
             );
@@ -1025,18 +1030,10 @@ public class MyJDBC
         
         // Setup Params
         Object[] params = new Object[]{ databaseName, tableName };
-        String errorMSG = String.format("Error, getting DataTypes get_Column_Names_AL() for Table: %s", tableName);
+        String errorMSG = String.format("Failed Getting Table Column Names for  : %s", tableName);
         
         // Execute
-        ArrayList<String> colum_Names = get_Single_Col_Query_String(columnNamesQuery, params, errorMSG);
-        
-        // Output
-        if (colum_Names.isEmpty()) // Table Names cannot be null
-        {
-            throw new Exception(String.format("\n\nTable %s -> Failed Getting Column Names = Empty ", tableName));
-        }
-        
-        return colum_Names;
+        return get_Single_Col_Query_String(columnNamesQuery, params, errorMSG, false);
     }
     
     //##################################################################################################################

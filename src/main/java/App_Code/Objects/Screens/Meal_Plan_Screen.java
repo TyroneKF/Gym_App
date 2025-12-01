@@ -370,8 +370,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
         }
         catch (Exception e)
         {
-            System.err.printf("\n\n%s", e);
-            JOptionPane.showMessageDialog(this, "Error, Getting Column Names For Tables In GUI !!");
             failed_Start_UP(loading_Screen);
             return;
         }

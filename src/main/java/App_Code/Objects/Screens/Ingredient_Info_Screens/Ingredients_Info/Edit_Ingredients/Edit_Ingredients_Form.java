@@ -38,6 +38,30 @@ public class Edit_Ingredients_Form extends Ingredients_Form
         data = null;
     }
     
+    @Override
+    protected boolean is_Ingredient_Name_In_DB() throws Exception
+    {
+        //##################################
+        // IS Ingredient Name Null or Empty
+        //####################################
+        String ingredient_Name = ((Field_JTxtField) field_Items_Map.get("name").get_Gui_Component()).get_Text();
+        
+        if (ingredient_Name == null || ingredient_Name.isEmpty()) { throw new Exception("No ingredient Created!"); }
+        
+        //##################################
+        // Create Query
+        //####################################
+        String errorMSG = "Error, Failed Validating Ingredient Name in DB!";
+        String query = "SELECT ingredient_id FROM ingredients_info WHERE Ingredient_Name = ? AND ingredient_id <> ?;";
+        
+        Object[] params = new Object[]{ ingredient_Name, ingredient_ID };
+        
+        //##################################
+        // Execute
+        //####################################
+        return ! db.get_Single_Col_Query_Int(query, params, errorMSG, true).isEmpty();
+    }
+    
     public void set_Data(ArrayList<Object> data_AL) throws Exception
     {
         // Clear Data
@@ -80,4 +104,6 @@ public class Edit_Ingredients_Form extends Ingredients_Form
         // Reset Salt JComboBox
         salt_JC.set_Item("g");
     }
+    
+    
 }

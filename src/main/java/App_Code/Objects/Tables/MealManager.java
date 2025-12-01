@@ -700,7 +700,7 @@ public class MealManager
         // Execute Query
         try
         {
-            if (! db.get_Single_Col_Query_Obj(query, params, errorMSG).isEmpty()) // Means value already exists, returns N/A if the value doesn't
+            if (! db.get_Single_Col_Query_Obj(query, params, errorMSG, true).isEmpty()) // Means value already exists, returns N/A if the value doesn't
             {
                 JOptionPane.showMessageDialog(getFrame(), String.format("A meal in this plan already has a meal %s of '%s' !!", variableName, input));
                 throw new Exception(""); // Return null
