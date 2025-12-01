@@ -148,27 +148,18 @@ public class Ingredients_Screen extends Screen_JPanel
     protected void submission_Btn_Action()
     {
         //###############################
-        // Ask to Add Ingredient / Products
-        //###############################
-        String
-                title_Create = "Create New Ingredient",
-                message_Create = "Are you sure you want to add this Ingredient?";
-        
-        if (! are_You_Sure(title_Create, message_Create)) { return; }
-        
-        //###############################
         // Validate Screen / Forms
         //###############################
         if (! prior_Form_Validations()) { return; }
         
         boolean
-                ingredients_Form_Update = ingredients_Form.validate_Ingredients_Form(),
-                shop_Form_Update = shop_Form.validate_Form();
+                ingredients_Form_Validated = ingredients_Form.validate_Ingredients_Form(),
+                shop_Form_Validated = shop_Form.validate_Form();
         
         //###############################
         // Update
         //###############################
-        if (! ingredients_Form_Update || ! shop_Form_Update) { return; }
+        if (! ingredients_Form_Validated || ! shop_Form_Validated) { return; }
         
         //###############################
         // Accept : Data Formatting
@@ -179,22 +170,38 @@ public class Ingredients_Screen extends Screen_JPanel
         
         if (! are_You_Sure(title_Upload, message_Upload)) { return; }
         
+        //#################################
+        // Ask to Add Ingredient / Products
+        //#################################
+        String
+                title_Create = "Create New Ingredient",
+                message_Create = "Are you sure you want to add this Ingredient?";
+        
+        if (! are_You_Sure(title_Create, message_Create)) { return; }
+        
         //###############################
         // Update Both Forms
         //###############################
-        if (! update_Both_Forms())
+        if (! update_Both_Forms()) // MYSQL
         {
             JOptionPane.showMessageDialog(null, "\n\nError, Uploading Ingredients / Product Values!");
             return;
         }
-        
-        ingredients_info_screen.set_Update_IngredientInfo(true);
         
         // Generate Update MSG depending on what was updated
         StringBuilder update_MSG = new StringBuilder("\n\nUpdated Ingredient Info & Product Info ! ");
         JOptionPane.showMessageDialog(get_Frame(), update_MSG);
         
         JOptionPane.showMessageDialog(get_Frame(), "The ingredient updates won't appear on the mealPlan screen until this window is closed!");
+        
+        //###############################
+        // Update Shared Registry
+        //###############################
+        
+        
+       
+        // Update Status
+        ingredients_info_screen.set_Update_IngredientInfo(true);
         
         //################################
         // Reset Form & Update GUI

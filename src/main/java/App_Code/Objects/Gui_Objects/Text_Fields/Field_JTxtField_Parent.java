@@ -8,7 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Field_JTxtField extends JTextField
+public class Field_JTxtField_Parent extends JTextField
 {
     //##################################################################################################################
     // Variables
@@ -26,7 +26,7 @@ public class Field_JTxtField extends JTextField
     // Constructor
     //##################################################################################################################
     // Text Field
-    public Field_JTxtField(String label, int char_Limit)
+    public Field_JTxtField_Parent(String label, int char_Limit)
     {
         constructor_Setup(label, char_Limit, null, null);
     }
@@ -34,12 +34,12 @@ public class Field_JTxtField extends JTextField
     //############################################
     // Decimal
     //############################################
-    public Field_JTxtField(String label, int char_Limit, boolean is_Decimal_Field, boolean can_Be_0) // Specific Decimal
+    public Field_JTxtField_Parent(String label, int char_Limit, boolean is_Decimal_Field, boolean can_Be_0) // Specific Decimal
     {
         constructor_Setup(label, char_Limit, is_Decimal_Field, can_Be_0);
     }
     
-    public Field_JTxtField(String label, int char_Limit, boolean is_Decimal_Field) // Generic Decimal
+    public Field_JTxtField_Parent(String label, int char_Limit, boolean is_Decimal_Field) // Generic Decimal
     {
         constructor_Setup(label, char_Limit, is_Decimal_Field, null);
     }

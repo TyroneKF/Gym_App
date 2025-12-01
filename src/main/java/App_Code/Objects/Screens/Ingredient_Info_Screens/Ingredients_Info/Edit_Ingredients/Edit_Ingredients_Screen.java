@@ -8,7 +8,8 @@ import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.Combo_Boxes.Field_JCombo_Storable_ID;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredients_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Search_For_Food_Info;
-import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.Shop_Form;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients.Ingredients_Form.Edit_Ingredients_Form;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients.Shop_Form.Edit_Shop_Form;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
 
 import javax.swing.*;
@@ -52,7 +53,7 @@ public class Edit_Ingredients_Screen extends Ingredients_Screen
     {
         ingredients_Form = new Edit_Ingredients_Form(scroll_JPanel, db, shared_Data_Registry, "Edit Ingredients Info");
         
-        shop_Form = new Shop_Form(scroll_JPanel, "Add Suppliers", this, shared_Data_Registry.get_Stores_AL());
+        shop_Form = new Edit_Shop_Form(scroll_JPanel, "Add Suppliers", this, shared_Data_Registry.get_Stores_AL());
         
         search_For_Ingredient_Info = new Search_For_Food_Info(scroll_JPanel, ingredients_Form, "Search For Food Info");
     }
@@ -74,9 +75,20 @@ public class Edit_Ingredients_Screen extends Ingredients_Screen
     //##############################################
     // Validation Methods
     //##############################################
-    protected  boolean prior_Form_Validations()
+    protected boolean prior_Form_Validations()
     {
-        return false;
+        if (! ingredient_Type_JC.is_Item_Selected())
+        {
+            JOptionPane.showMessageDialog(null, "Select an Ingredient Type to Edit an Ingredient!");
+            return false;
+        }
+        else if (! ingredient_Name_JC.is_Item_Selected())
+        {
+            JOptionPane.showMessageDialog(null, "Select an Ingredient Name to Edit !");
+            return false;
+        }
+        
+        return true;
     }
     
     //##############################################
@@ -195,18 +207,18 @@ public class Edit_Ingredients_Screen extends Ingredients_Screen
         
         try
         {
-            //#########################
+            //############################
             // Get Ingredient DATA
-            //#########################
+            //############################
             Integer id = ingredient_Name_JC.get_Selected_Item_ID();
             
             if (id == null) { throw new Exception("Error, getting Ingredient ID!"); }
             
-            Fetched_Results queryResults = get_Ingredients_Info(id);
+            Fetched_Results fetched_Results = get_Ingredients_Info(id);
             
-            //#########################
-            // Format Data
-            //#########################
+            //#############################
+            // Get Ingredient / Shop  Data
+            //#############################
             /*
                 Ingredient_Info Table:
              
@@ -214,12 +226,22 @@ public class Edit_Ingredients_Screen extends Ingredients_Screen
                 carbohydrates, sugars_of_carbs, fibre, fat, saturated_fat, salt, water_content, liquid_content, calories
              */
             
-            ArrayList<Object> ingredient_Info = queryResults.get_Result_1D_AL(0); // Get Data in 1D AL Form
+            ArrayList<Object> ingredient_Data = fetched_Results.get_Result_1D_AL(0); // Get Data in 1D AL Form
             
-            System.out.printf("\n\n%s%n", ingredient_Info);
+            //#############################
+            // Ingredients Form
+            //#############################
+            System.out.printf("\n\n Ingredients Info: \n%s%n", ingredient_Data);
             
-            ((Edit_Ingredients_Form) ingredients_Form).set_Data(ingredient_Info); // Set Data on form
+            ((Edit_Ingredients_Form) ingredients_Form).set_Data(ingredient_Data); // Set Data on form
             
+            //#############################
+            // ShopForm
+            //#############################
+            ArrayList<ArrayList<Object>> shop_Data = fetched_Results.get_Fetched_Result_2D_AL(1); // Get Data in 1D AL Form
+            System.out.printf("\n\n Shop Info: \n%s%n", shop_Data);
+            
+            ((Edit_Shop_Form) shop_Form).set_Data(shop_Data);
         }
         catch (Exception e)
         {

@@ -1,6 +1,6 @@
 package App_Code.Objects.Gui_Objects;
 
-import App_Code.Objects.Gui_Objects.Text_Fields.Field_JTxtField;
+import App_Code.Objects.Gui_Objects.Text_Fields.Field_JTxtField_Parent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -9,9 +9,9 @@ import java.util.LinkedHashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class Field_JTxtField_Test_String_Test
+class Field_JTxtField_Parent_Test_String_Test
 {
-    private Field_JTxtField field;
+    private Field_JTxtField_Parent field;
     private LinkedHashMap<String, ArrayList<String>> error_Map;
     private String input_TXT , label = "Based On Quantity";
     private final String seperator = "##################################################################";
@@ -20,7 +20,7 @@ class Field_JTxtField_Test_String_Test
     void setup()
     {
         error_Map = new LinkedHashMap<>();
-        field = new Field_JTxtField("Based On Quantity", 255);
+        field = new Field_JTxtField_Parent("Based On Quantity", 255);
     }
     
     void print_Results()

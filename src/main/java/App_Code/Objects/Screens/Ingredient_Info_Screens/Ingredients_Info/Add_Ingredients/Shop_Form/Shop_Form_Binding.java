@@ -7,13 +7,13 @@ import java.awt.*;
 
 public class Shop_Form_Binding<T>  extends Field_Binding<T>
 {
-    public Shop_Form_Binding(String gui_Label, Field_JComboBox<T> component, String mysql_Field)
+    public Shop_Form_Binding(String gui_Label, Field_JComboBox<T> component, String mysql_Field, int query_Field_Pos)
     {
-        super(gui_Label, component, mysql_Field);
+        super(gui_Label, component, mysql_Field, query_Field_Pos);
     }
     
-    public Shop_Form_Binding(String gui_Label, Component component, String mysql_Field, Class<T> type)
+    public Shop_Form_Binding(String gui_Label, Component component, String mysql_Field, int query_Field_Pos, Class<T> type)
     {
-        super(gui_Label, component, mysql_Field, type);
+        super(gui_Label, component, mysql_Field, query_Field_Pos, type);
     }
 }

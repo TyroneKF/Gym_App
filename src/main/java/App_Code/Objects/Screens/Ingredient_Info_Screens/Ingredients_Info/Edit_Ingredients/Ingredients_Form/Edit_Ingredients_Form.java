@@ -1,9 +1,9 @@
-package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients;
+package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients.Ingredients_Form;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.Combo_Boxes.Field_JCombo_Storable_ID;
-import App_Code.Objects.Gui_Objects.Text_Fields.Field_JTxtField;
+import App_Code.Objects.Gui_Objects.Text_Fields.Field_JTxtField_Parent;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredient_Form.Ingredients_Form;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredient_Form.Ingredients_Form_Binding;
 
@@ -44,7 +44,7 @@ public class Edit_Ingredients_Form extends Ingredients_Form
         //##################################
         // IS Ingredient Name Null or Empty
         //####################################
-        String ingredient_Name = ((Field_JTxtField) field_Items_Map.get("name").get_Gui_Component()).get_Text();
+        String ingredient_Name = ((Field_JTxtField_Parent) field_Items_Map.get("name").get_Gui_Component()).get_Text();
         
         if (ingredient_Name == null || ingredient_Name.isEmpty()) { throw new Exception("No ingredient Created!"); }
         
@@ -93,7 +93,7 @@ public class Edit_Ingredients_Form extends Ingredients_Form
             {
                 jComboBox.set_Item_By_ID((int) data);
             }
-            else if (component instanceof Field_JTxtField jTxtField)
+            else if (component instanceof Field_JTxtField_Parent jTxtField)
             {
                 jTxtField.setText(data.toString());
             }

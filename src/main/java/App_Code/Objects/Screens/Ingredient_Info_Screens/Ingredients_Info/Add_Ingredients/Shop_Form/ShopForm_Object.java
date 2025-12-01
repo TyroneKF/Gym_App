@@ -2,7 +2,7 @@ package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_In
 
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
 import App_Code.Objects.Gui_Objects.Combo_Boxes.Field_JCombo_Storable_ID;
-import App_Code.Objects.Gui_Objects.Text_Fields.Field_JTxtField;
+import App_Code.Objects.Gui_Objects.Text_Fields.Field_JTxtField_Parent;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -24,10 +24,10 @@ public class ShopForm_Object extends JPanel
     // GUI Objects
     protected Container parent_Container;
     protected Field_JCombo_Storable_ID<Store_ID_OBJ> stores_JC;
-    protected Field_JTxtField
-            product_Name_JT = new Field_JTxtField("name", string_Char_Limit),
-            product_Price_JT = new Field_JTxtField("price", decimal_Char_Limit, true, false),
-            quantity_JT = new Field_JTxtField("quantity", decimal_Char_Limit, true, false);
+    protected Field_JTxtField_Parent
+            product_Name_JT = new Field_JTxtField_Parent("name", string_Char_Limit),
+            product_Price_JT = new Field_JTxtField_Parent("price", decimal_Char_Limit, true, false),
+            quantity_JT = new Field_JTxtField_Parent("quantity", decimal_Char_Limit, true, false);
     
     // Objects
     protected Shop_Form shop_form;
@@ -64,36 +64,40 @@ public class ShopForm_Object extends JPanel
     private void create_Field_Items_Map()
     {
         field_Items_Map = new LinkedHashMap<>()
-        {
-            {
-               put("name", new Shop_Form_Binding<>(
-                        "Product Name",       // GUI Label
-                        product_Name_JT,               // Component
-                        "product_name",                // MySQL Field
-                        String.class                   // Field Type
-                ));
-                
-                put("quantity", new Shop_Form_Binding<>(
-                        "Quantity Per Pack",         // GUI Label
-                        quantity_JT,                          // Component
-                        "volume_per_unit",                   // MySQL Field
-                        BigDecimal.class                    // Field Type
-                ));
-                
-                put("price", new Shop_Form_Binding<>(
-                        "Product Price",         // GUI Label
-                        product_Price_JT,                // Component
-                        "cost_per_unit",                 // MySQL Field
-                        BigDecimal.class                // Field Type
-                ));
-                
-                put("store", new Shop_Form_Binding<>(
-                        "Select A Store",    // GUI Label
-                        stores_JC,                    // Component
-                        "store_id"                    // MySQL Field
-                ));
-            }
-        };
+        {{
+            // ingredient_in_shops -> Skips pdid, ingredient_id (Position starts at 2)
+            
+            put("store", new Shop_Form_Binding<>(
+                    "Select A Store",    // GUI Label
+                    stores_JC,                    // Component
+                    "store_id",                    // MySQL Field
+                    5
+            ));
+            
+            put("name", new Shop_Form_Binding<>(
+                    "Product Name",       // GUI Label
+                    product_Name_JT,               // Component
+                    "product_name",                // MySQL Field
+                    2,
+                    String.class                   // Field Type
+            ));
+            
+            put("price", new Shop_Form_Binding<>(
+                    "Product Price",         // GUI Label
+                    product_Price_JT,                // Component
+                    "cost_per_unit",                 // MySQL Field
+                    4,
+                    BigDecimal.class                // Field Type
+            ));
+            
+            put("quantity", new Shop_Form_Binding<>(
+                    "Quantity Per Pack",         // GUI Label
+                    quantity_JT,                          // Component
+                    "volume_per_unit",                   // MySQL Field
+                    3,
+                    BigDecimal.class                    // Field Type
+            ));
+        }};
     }
     
     protected void create_GUI()
@@ -135,7 +139,7 @@ public class ShopForm_Object extends JPanel
         // Centre Side
         //######################################################
         //Product Name JTextField
-        product_Name_JT = new Field_JTxtField("Product Name", 255);
+        product_Name_JT = new Field_JTxtField_Parent("Product Name", 255);
         
         JPanel jp = new JPanel(new GridLayout(1, 1));
         jp.setPreferredSize(new Dimension(270, 34));
@@ -144,7 +148,7 @@ public class ShopForm_Object extends JPanel
         centrePanel.add(jp, BorderLayout.WEST);
         
         // Product Price
-        product_Price_JT = new Field_JTxtField("Price", 8, true, false);
+        product_Price_JT = new Field_JTxtField_Parent("Price", 8, true, false);
         
         JPanel jp2 = new JPanel(new GridLayout(1, 1));
         jp2.setPreferredSize(new Dimension(10, 25));
@@ -153,7 +157,7 @@ public class ShopForm_Object extends JPanel
         centrePanel.add(jp2, BorderLayout.CENTER);
         
         // Quantity
-        quantity_JT = new Field_JTxtField("Quantity", 8, true, false);
+        quantity_JT = new Field_JTxtField_Parent("Quantity", 8, true, false);
         
         JPanel jp3 = new JPanel(new GridLayout(1, 1));
         jp3.setPreferredSize(new Dimension(120, 34));

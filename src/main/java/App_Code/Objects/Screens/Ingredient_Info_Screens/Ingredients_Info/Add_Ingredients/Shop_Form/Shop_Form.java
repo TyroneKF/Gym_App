@@ -29,7 +29,7 @@ public class Shop_Form extends Parent_Forms_OBJ
     // Collections
     //#############################
     protected ArrayList<Store_ID_OBJ> stores;
-    protected ArrayList<ShopForm_Object> shopFormObjects = new ArrayList<>();
+    protected ArrayList<ShopForm_Object> add_shop_Form_Objects = new ArrayList<>();
     
     //##################################################################################################################
     // Constructor
@@ -231,11 +231,11 @@ public class Shop_Form extends Parent_Forms_OBJ
     //#################################
     //  Btn Action Methods
     //#################################
-    private void add_Btn_Action()
+    protected void add_Btn_Action()
     {
         // Create ShopForm Object & Add
         ShopForm_Object add_shop_form_object = new ShopForm_Object(inputArea, this, stores);
-        shopFormObjects.add(add_shop_form_object);
+        add_shop_Form_Objects.add(add_shop_form_object);
         
         // Adding Object To GUI
         add_To_Container(inputArea, add_shop_form_object, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
@@ -249,12 +249,12 @@ public class Shop_Form extends Parent_Forms_OBJ
     //#################################
     protected void remove_Shop_Form_Obj(ShopForm_Object shop_Object)
     {
-        shopFormObjects.remove(shop_Object);
+        add_shop_Form_Objects.remove(shop_Object);
     }
     
     public void reload_Stores_JC()
     {
-        for (ShopForm_Object shopForm_object : shopFormObjects)
+        for (ShopForm_Object shopForm_object : add_shop_Form_Objects)
         {
             shopForm_object.reload_Stores_JC();
         }
@@ -270,9 +270,9 @@ public class Shop_Form extends Parent_Forms_OBJ
         //##################################
         // Get Errors Per Row / Add to DATA
         //##################################
-        for (int pos = 0; pos < shopFormObjects.size(); pos++)
+        for (int pos = 0; pos < add_shop_Form_Objects.size(); pos++)
         {
-            ShopForm_Object shopForm_object = shopFormObjects.get(pos); // Get Shop Form Object
+            ShopForm_Object shopForm_object = add_shop_Form_Objects.get(pos); // Get Shop Form Object
             
             LinkedHashMap<String, ArrayList<String>> error_Map = new LinkedHashMap<>(); // Create error Map
             
@@ -340,7 +340,7 @@ public class Shop_Form extends Parent_Forms_OBJ
         //###########################################
         // Exit Clause
         //###########################################
-        if (shopFormObjects.isEmpty()) { return; }
+        if (add_shop_Form_Objects.isEmpty()) { return; }
         
         
         //###########################################
@@ -356,7 +356,7 @@ public class Shop_Form extends Parent_Forms_OBJ
         // Create Query for Upload Products
         //###########################################
         int
-                size = shopFormObjects.size(),
+                size = add_shop_Form_Objects.size(),
                 input_Params_Per_Item = 4;
         
         //######################
@@ -376,7 +376,7 @@ public class Shop_Form extends Parent_Forms_OBJ
         {
             for (int pos = 0; pos < size; pos++)
             {
-                ShopForm_Object shopForm_object = shopFormObjects.get(pos);
+                ShopForm_Object shopForm_object = add_shop_Form_Objects.get(pos);
                 
                 int base = pos * input_Params_Per_Item;
                 
@@ -412,7 +412,7 @@ public class Shop_Form extends Parent_Forms_OBJ
     //################################################################
     public void clear_Shop_Form()
     {
-        Iterator<ShopForm_Object> it = shopFormObjects.iterator();
+        Iterator<ShopForm_Object> it = add_shop_Form_Objects.iterator();
         
         while (it.hasNext())
         {

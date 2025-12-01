@@ -1,6 +1,6 @@
 package App_Code.Objects.Gui_Objects;
 
-import App_Code.Objects.Gui_Objects.Text_Fields.Field_JTxtField;
+import App_Code.Objects.Gui_Objects.Text_Fields.Field_JTxtField_Parent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -9,13 +9,13 @@ import java.util.LinkedHashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class Field_JTxtField_Decimal_Test
+class Field_JTxtField_Parent_Decimal_Test
 {
     //##################################################################
     // Set-Up Methods & Variables
     //##################################################################
     // Arrange
-    private Field_JTxtField field;
+    private Field_JTxtField_Parent field;
     private LinkedHashMap<String, ArrayList<String>> error_Map;
     private String input_TXT , label = "Based On Quantity";
     private final String seperator = "##################################################################";
@@ -24,7 +24,7 @@ class Field_JTxtField_Decimal_Test
     void setup()
     {
         error_Map = new LinkedHashMap<>();
-        field = new Field_JTxtField("Based On Quantity", 8, true, true);
+        field = new Field_JTxtField_Parent("Based On Quantity", 8, true, true);
     }
     
     void print_Results()
@@ -455,7 +455,7 @@ class Field_JTxtField_Decimal_Test
     void decimal_Value_zero_invalid_plainZero()
     {
         input_TXT = "0";
-        field = new Field_JTxtField("Based On Quantity", 8, true, false);
+        field = new Field_JTxtField_Parent("Based On Quantity", 8, true, false);
         field.setText(input_TXT);
         
         boolean result = field.validation_Check(error_Map);
@@ -474,7 +474,7 @@ class Field_JTxtField_Decimal_Test
     void decimal_Value_zero_invalid_trailingDot()
     {
         input_TXT = "0.";
-        field = new Field_JTxtField("Based On Quantity", 8, true, false);
+        field = new Field_JTxtField_Parent("Based On Quantity", 8, true, false);
         field.setText(input_TXT);
         
         boolean result = field.validation_Check(error_Map);
@@ -493,7 +493,7 @@ class Field_JTxtField_Decimal_Test
     void decimal_Value_zero_invalid_singleDecimal()
     {
         input_TXT = "0.0";
-        field = new Field_JTxtField("Based On Quantity", 8, true, false);
+        field = new Field_JTxtField_Parent("Based On Quantity", 8, true, false);
         field.setText(input_TXT);
         
         boolean result = field.validation_Check(error_Map);
@@ -512,7 +512,7 @@ class Field_JTxtField_Decimal_Test
     void decimal_Value_zero_invalid_exactScale()
     {
         input_TXT = "0.00";
-        field = new Field_JTxtField("Based On Quantity", 8, true, false);
+        field = new Field_JTxtField_Parent("Based On Quantity", 8, true, false);
         field.setText(input_TXT);
         
         boolean result = field.validation_Check(error_Map);
@@ -531,7 +531,7 @@ class Field_JTxtField_Decimal_Test
     void decimal_Value_zero_invalid_multipleLeadingZeros()
     {
         input_TXT = "0000";
-        field = new Field_JTxtField("Based On Quantity", 8, true, false);
+        field = new Field_JTxtField_Parent("Based On Quantity", 8, true, false);
         field.setText(input_TXT);
         
         boolean result = field.validation_Check(error_Map);
@@ -550,7 +550,7 @@ class Field_JTxtField_Decimal_Test
     void decimal_Value_zero_invalid_leadingZerosDecimal()
     {
         input_TXT = "0000.000";
-        field = new Field_JTxtField("Based On Quantity", 8, true, false);
+        field = new Field_JTxtField_Parent("Based On Quantity", 8, true, false);
         field.setText(input_TXT);
         
         boolean result = field.validation_Check(error_Map);
@@ -569,7 +569,7 @@ class Field_JTxtField_Decimal_Test
     void decimal_Value_zero_invalid_fractionOnlyZero()
     {
         input_TXT = ".0";
-        field = new Field_JTxtField("Based On Quantity", 8, true, false);
+        field = new Field_JTxtField_Parent("Based On Quantity", 8, true, false);
         field.setText(input_TXT);
         
         boolean result = field.validation_Check(error_Map);
@@ -588,7 +588,7 @@ class Field_JTxtField_Decimal_Test
     void decimal_Value_zero_invalid_fractionOnlyZeros()
     {
         input_TXT = ".000";
-        field = new Field_JTxtField("Based On Quantity", 8, true, false);
+        field = new Field_JTxtField_Parent("Based On Quantity", 8, true, false);
         field.setText(input_TXT);
         
         boolean result = field.validation_Check(error_Map);
