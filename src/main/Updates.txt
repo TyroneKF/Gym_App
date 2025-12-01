@@ -8,6 +8,8 @@ Work On:
 .) Collapsible Panel prevent closing
 
 .) Make single columnn / row Myjdbc method
+.) Add ingredients screen -> shared data update
+.) Ingredients Form -> salt update
 
 .) Screen Objects need to be condensed into 1 class
 
