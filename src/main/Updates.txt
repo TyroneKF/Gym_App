@@ -7,7 +7,9 @@ Work On:
 .) Edit ingredients Screen -> Define prior_Form_Validations() for JC boxes at the top of the screen
 .) Collapsible Panel prevent closing
 
+.) Make single columnn / row Myjdbc method
 
+.) Screen Objects need to be condensed into 1 class
 
 .) Can error msgs be refactored in shop and ingredients screen into parent screen
 .) Refactor shopForm GUI Methods
@@ -91,6 +93,8 @@ New Features:
 .) Recime - screenshot image and gets ingredients
 .) Search on app for recommended meals with a GUI like studentPeak events page
 
+.) Goals tracker etc no Junk Food
+   .) Feature to edit daily meal = eaten that day if meal plan changed vs changing the whole plan gives daily analytics
 
 .) Barcode scanner using phone portal / tunnel as a connection
 .) Graphs / Charts of Meals

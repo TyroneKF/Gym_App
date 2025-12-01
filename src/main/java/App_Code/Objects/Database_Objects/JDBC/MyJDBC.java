@@ -28,7 +28,7 @@ public class MyJDBC
     // Variable
     //##################################################################################################################
     private String
-            class_Name = "MyJDBC.java",
+            class_Name,
             databaseName, // must be in lowercase
             userName,
             password,
@@ -57,6 +57,8 @@ public class MyJDBC
         this.databaseName = databaseName.toLowerCase();
         initial_db_connection = String.format("jdbc:mysql://%s:%s", host, port);
         db_Connection_Address = String.format("%s/%s", initial_db_connection, databaseName);
+        
+        this.class_Name = this.getClass().getName();
         
         String
                 method_Name = "Constructor()",
@@ -851,7 +853,7 @@ public class MyJDBC
                     Object[] params = fetch_Obj.getValue1();
                     
                     // Add Fetch Results To Object made for storing multiple queries
-                    fetched_Results.add_2D_Result(get_2D_Object_AL_Internally(connection, method_Name, query, params));
+                    fetched_Results.add_2D_Result(get_2D_Object_AL_Internally(connection, method_Name, query, params, false));
                 }
                 
                 // Commit Changes beyond current driver
@@ -960,7 +962,7 @@ public class MyJDBC
             query = String.format("\n\n%s \n%n%s", query, Arrays.toString(params));
             
             handleException_MYSQL(e, method_Name, query, errorMSG);
-            throw new Exception(throw_Exception_Msg(method_Name));
+            throw new Exception("");
         }
     }
     
@@ -1021,7 +1023,6 @@ public class MyJDBC
                 AND table_name = ?
                 ORDER BY ordinal_position;""";
         
-        
         // Setup Params
         Object[] params = new Object[]{ databaseName, tableName };
         String errorMSG = String.format("Error, getting DataTypes get_Column_Names_AL() for Table: %s", tableName);
@@ -1030,9 +1031,9 @@ public class MyJDBC
         ArrayList<String> colum_Names = get_Single_Col_Query_String(columnNamesQuery, params, errorMSG);
         
         // Output
-        if (colum_Names == null || colum_Names.isEmpty()) // Table Names cannot be null
+        if (colum_Names.isEmpty()) // Table Names cannot be null
         {
-            throw new Exception(String.format("\n\nError %s -> %s = Empty Result", class_Name, method_Name));
+            throw new Exception(String.format("\n\nTable %s -> Failed Getting Column Names = Empty ", tableName));
         }
         
         return colum_Names;
@@ -1041,8 +1042,8 @@ public class MyJDBC
     //##################################################################################################################
     // Multi Methods
     //##################################################################################################################
-    private <T> ArrayList<ArrayList<T>> get_2D_ArrayList_Internally(Connection connection, String method_Name, String query, Object[] params,
-                                                                    Class<T> typeCast) throws Exception
+    private <T> ArrayList<ArrayList<T>> get_2D_ArrayList_Internally
+    (Connection connection, String method_Name, String query, Object[] params, Class<T> typeCast, boolean allow_No_Results) throws Exception
     {
         //#########################################################################
         // Variables
@@ -1073,8 +1074,11 @@ public class MyJDBC
             //############################################
             ResultSet resultSet = statement.executeQuery();
             
-            // checks if any data was returned
-            if (! resultSet.isBeforeFirst()) { return collection; }
+            if (! resultSet.isBeforeFirst()) // checks if any data was returned
+            {
+                if (allow_No_Results) { return collection; }
+                throw new Exception("Failed Query -> Empty Results");
+            }
             
             //#####################################################################
             // Getting Query Data Info
@@ -1109,15 +1113,15 @@ public class MyJDBC
         }
     }
     
-    private ArrayList<ArrayList<Object>> get_2D_Object_AL_Internally(Connection connection, String method_Name, String query, Object[] params) throws Exception
+    //#######################################
+    // 2D Objects
+    //#######################################
+    private ArrayList<ArrayList<Object>> get_2D_Object_AL_Internally(Connection connection, String method_Name, String query, Object[] params, boolean allow_No_Results) throws Exception
     {
-        return get_2D_ArrayList_Internally(connection, method_Name, query, params, Object.class);
+        return get_2D_ArrayList_Internally(connection, method_Name, query, params, Object.class, allow_No_Results);
     }
     
-    //#######################################
-    // Different Types
-    //#######################################
-    public ArrayList<ArrayList<Object>> get_2D_Query_AL_Object(String query, Object[] params, String errorMSG)
+    public ArrayList<ArrayList<Object>> get_2D_Query_AL_Object(String query, Object[] params, String errorMSG, boolean allow_No_Results) throws Exception
     {
         //#############################
         // Query Setup
@@ -1125,35 +1129,15 @@ public class MyJDBC
         String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
         try (Connection connection = dataSource.getConnection()) // Get a Connection from pool
         {
-            return get_2D_Object_AL_Internally(connection, method_Name, query, params);
+            return get_2D_Object_AL_Internally(connection, method_Name, query, params, allow_No_Results);
         }
         //#############################
         // Error Handling
         //#############################
-        catch (Exception e)
+        catch (Exception e) // Exception needs to be handled here the methods above just pass on Exception & Half print error msg
         {
             handleException_MYSQL(e, method_Name, query, errorMSG);
-            return null;
-        }
-    }
-    
-    public ArrayList<ArrayList<String>> get_2D_Query_AL_String(String query, Object[] params, String errorMSG)
-    {
-        //#############################
-        // Query Setup
-        //#############################
-        String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        try (Connection connection = dataSource.getConnection()) // Get a Connection from pool
-        {
-            return get_2D_ArrayList_Internally(connection, method_Name, query, params, String.class);
-        }
-        //#############################
-        // Error Handling
-        //#############################
-        catch (Exception e)
-        {
-            handleException_MYSQL(e, method_Name, query, errorMSG);
-            return null;
+            throw new Exception(""); // Exception Already been handled but, notify external method calling this method
         }
     }
     
@@ -1167,20 +1151,7 @@ public class MyJDBC
             dataSource.close();
         }
     }
-    
-    // -1 = Failed , 0 = Empty, 1 = Not Empty
-    public <T> boolean expected_Query_Output(int x, Collection<T> c) throws Exception
-    {
-        return is_Results_Empty(c) == x;
-    }
-    
-    public int is_Results_Empty(Collection<?> c) throws Exception
-    {
-        if (c == null) { return - 1; } // Failed
-        else if (c.isEmpty()) { return 0; } // Empty
-        else { return 1; } // Not empty
-    }
-    
+   
     // Param Methods
     private void set_Statement_Params(PreparedStatement statement, int pos, Object object) throws Exception
     {
@@ -1283,9 +1254,6 @@ public class MyJDBC
         //#########################
         if (errorMSG == null) { return; }
         
-        /*JOptionPane.showMessageDialog(null, "\n\nDatabase Error: \nCheck Output !!",
-                "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);*/
-        
         JOptionPane.showMessageDialog(null, errorMSG, "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
     }
     
@@ -1324,9 +1292,6 @@ public class MyJDBC
         //#########################
         // Display MSGS
         //#########################
-        /*JOptionPane.showMessageDialog(null, "\n\nDatabase Error: \nCheck Output !!", "Alert Message: ",
-                JOptionPane.INFORMATION_MESSAGE);*/
-        
         JOptionPane.showMessageDialog(null, errorMSG, "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
     }
     
@@ -1362,5 +1327,23 @@ public class MyJDBC
     private String throw_Exception_Msg(String method_Name)
     {
         return String.format("%s -> %s Error, Query Failed", class_Name, method_Name);
+    }
+    
+    //###############################################
+    // Debugging Print Statements
+    //###############################################
+    protected String get_Class_Name()
+    {
+        return class_Name;
+    }
+    
+    protected String get_Method_Name()
+    {
+        return Thread.currentThread().getStackTrace()[1].getMethodName();
+    }
+    
+    protected String get_Class_And_Method_Name()
+    {
+        return String.format("%s -> %s", get_Class_Name(), get_Method_Name());
     }
 }

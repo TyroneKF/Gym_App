@@ -124,15 +124,13 @@ public abstract class MyJTable_DisplayData extends JDBC_JTable
         //##########################################################################
         String errorMSG = String.format("Error, Updating Table '%s'!", table_Name);
         
-        ArrayList<ArrayList<Object>> tableDataObject = db.get_2D_Query_AL_Object(get_Query(), get_Params(), errorMSG);
-        
-        if (tableDataObject == null)
+        try
         {
-            JOptionPane.showMessageDialog(null, String.format("Error, un-able to update %s Table!", table_Name));
-            return;
+            ArrayList<ArrayList<Object>> tableDataObject = db.get_2D_Query_AL_Object(get_Query(), get_Params(), errorMSG, false);
+            super.update_Table(tableDataObject.getFirst(), update_Row);
         }
-        
-        super.update_Table(tableDataObject.getFirst(), update_Row);
+        catch (Exception _)
+        { }
     }
     
     protected void set_Table_Model_Data(ArrayList<ArrayList<Object>> table_Model_Data)

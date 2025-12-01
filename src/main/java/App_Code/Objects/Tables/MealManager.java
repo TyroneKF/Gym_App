@@ -47,7 +47,7 @@ public class MealManager
     private Integer meal_In_Plan_ID, tempPlanID, planID, yPoInternally = 0;
     
     // String Variables
-    private String class_Name = new Object(){}.getClass().getEnclosingClass().getName();
+    private String class_Name = new Object() { }.getClass().getEnclosingClass().getName();
     private String lineSeparator = "###############################################################################";
     private String savedMealName = "", currentMealName = "";
     
@@ -1323,10 +1323,14 @@ public class MealManager
         
         Object[] params_refresh = new Object[]{ tempPlanID, tempPlanID, savedMealName, get_Saved_MealTime_GUI(), meal_In_Plan_ID };
         
-        ArrayList<ArrayList<Object>> results = db.get_2D_Query_AL_Object(query, params_refresh, errorMSG);
-        if (results == null)
+        ArrayList<ArrayList<Object>> results;
+        
+        try
         {
-            JOptionPane.showMessageDialog(getFrame(), errorMSG);
+            results = db.get_2D_Query_AL_Object(query, params_refresh, errorMSG, false);
+        }
+        catch (Exception e)
+        {
             return;
         }
         
@@ -1335,14 +1339,14 @@ public class MealManager
         //###########################################
         ArrayList<Object> positions = new ArrayList<>();
         
-        if (! results.isEmpty() && ! (results.get(0).get(0).toString()).equals("N/A"))
+        if ((results.get(0).getFirst().toString()).equals("N/A"))
         {
-            positions.add(results.get(0).get(0));
+            positions.add(results.get(0).getFirst());
         }
         
-        if (results.size() >= 2 && ! (results.get(1).get(0).toString()).equals("N/A"))
+        if (results.size() >= 2 && ! (results.get(1).getFirst().toString()).equals("N/A"))
         {
-            positions.add(results.get(1).get(0));
+            positions.add(results.get(1).getFirst());
         }
         
         if (! positions.isEmpty())

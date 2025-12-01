@@ -77,15 +77,16 @@ public class Macros_Targets_Screen extends Screen_JFrame
         
         Object[] params_Target = new Object[]{ temp_PlanID, temp_PlanID };
         
-        ArrayList<ArrayList<Object>> data = db.get_2D_Query_AL_Object(query_Target,params_Target, errorMSG_Target);
+        ArrayList<ArrayList<Object>> data;
         
-        if (data == null)
+        try
         {
-            JOptionPane.showMessageDialog(meal_plan_screen.getFrame(), errorMSG_Target);
+            macrosData = db.get_2D_Query_AL_Object(query_Target, params_Target, errorMSG_Target, false).getFirst();
+        }
+        catch (Exception _)
+        {
             return;
         }
-        
-        macrosData = data.getFirst();
         
         //##############################################################################################################
         // GUI Set-Up

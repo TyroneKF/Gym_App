@@ -21,6 +21,7 @@ public class Screen_JFrame extends JFrame
     // String
     protected String lineSeparator = "###############################################################################";
     protected String title;
+    private String class_Name;
     
     // Booleans
     private Boolean addScrollPane;
@@ -39,54 +40,42 @@ public class Screen_JFrame extends JFrame
     // Public: JPanels
     protected JPanel mainNorthPanel, mainSouthPanel, scrollPaneJPanel;
     
-    // Private: JPanels
-    private JPanel screenSectioned, mainCenterPanel;
-    
     //##################################################################################################################
     // Constructors
     //##################################################################################################################
-    public Screen_JFrame(MyJDBC db, Boolean addScrollPane, String title, int frameWidth, int frameHeight, int xPos, int yPos)
+    public Screen_JFrame(MyJDBC db, boolean addScrollPane, String title, int frameWidth, int frameHeight, int xPos, int yPos)
     {
-        //##############################################
-        // Variables
-        //##############################################
-        this.db = db;
-        this.addScrollPane = addScrollPane;
-        this.title = title;
-        this.frameHeight = frameHeight;
-        this.frameWidth = frameWidth;
-        this.xPos = xPos;
-        this.yPos = yPos;
+        this.db = db;  // Variables
         
-        //##############################################
         // Setup
-        //##############################################
-        setup();
+        setup(addScrollPane, title, frameWidth, frameHeight, xPos, yPos);
     }
     
-    public Screen_JFrame(Boolean addScrollPane, String title, int frameWidth, int frameHeight, int xPos, int yPos)
+    public Screen_JFrame(boolean addScrollPane, String title, int frameWidth, int frameHeight, int xPos, int yPos)
     {
-        //##############################################
-        // Variables
-        //##############################################
-        this.addScrollPane = addScrollPane;
-        this.title = title;
-        this.frameHeight = frameHeight;
-        this.frameWidth = frameWidth;
-        this.xPos = xPos;
-        this.yPos = yPos;
-        
-        //##############################################
         // Setup
-        //##############################################
-        setup();
+        setup(addScrollPane, title, frameWidth, frameHeight, xPos, yPos);
     }
     
     //##################################################################################################################
     // GUI Setup
     //##################################################################################################################
-    private void setup()
+    private void setup(boolean addScrollPane, String title, int frameWidth, int frameHeight, int xPos, int yPos)
     {
+        //########################################################
+        // Variables
+        //########################################################
+        this.class_Name = this.getClass().getName();
+        
+        this.addScrollPane = addScrollPane;
+        this.title = title;
+        this.frameHeight = frameHeight;
+        this.frameWidth = frameWidth;
+        this.xPos = xPos;
+        this.yPos = yPos;
+        
+        //########################################################
+        // Configurations
         //########################################################
         setVisible(false);
         set_Resizable(true);
@@ -102,7 +91,8 @@ public class Screen_JFrame extends JFrame
         //########################################################
         // Create Interface With Sections
         //########################################################
-        screenSectioned = new JPanel(new BorderLayout());
+        // Private: JPanels
+        JPanel screenSectioned = new JPanel(new BorderLayout());
         addToContainer(contentPane, screenSectioned, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
         
         // Top of GUI
@@ -110,17 +100,16 @@ public class Screen_JFrame extends JFrame
         screenSectioned.add(mainNorthPanel, BorderLayout.NORTH);
         
         // Centre of GUI
-        mainCenterPanel = new JPanel(new GridBagLayout());
+        JPanel mainCenterPanel = new JPanel(new GridBagLayout());
         screenSectioned.add(mainCenterPanel, BorderLayout.CENTER);
         
         // South of GUI
         mainSouthPanel = new JPanel(new GridBagLayout());
         screenSectioned.add(mainSouthPanel, BorderLayout.SOUTH);
         
-        //##########################################################
-        // Create ScrollPane & Add it to Centre of GUI
-        //##########################################################
-        
+        //#########################
+        // Create ScrollPane
+        //#########################
         if (addScrollPane)
         {
             // Attach ScrollPane to the centre of the screen
@@ -246,8 +235,36 @@ public class Screen_JFrame extends JFrame
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
+    protected String get_Class_Name()
+    {
+        return class_Name;
+    }
     
+    protected String get_Method_Name()
+    {
+        return Thread.currentThread().getStackTrace()[1].getMethodName();
+    }
+    
+    protected String get_Class_And_Method_Name()
+    {
+        return String.format("%s -> %s", get_Class_Name(), get_Method_Name());
+    }
+    // ##################################
+    // Get Int Methods
+    // ##################################
+    protected int getFrameWidth()
+    {
+        return frameWidth;
+    }
+    
+    protected int getFrameHeight()
+    {
+        return frameHeight;
+    }
+    
+    // ##################################
     // Other Objects
+    // ##################################
     public MyJDBC getDb()
     {
         return db;
@@ -285,19 +302,6 @@ public class Screen_JFrame extends JFrame
         spaceDivider.setPreferredSize(new Dimension(width, height));
         
         return spaceDivider;
-    }
-    
-    // ##################################
-    // Get Int Methods
-    // ##################################
-    protected int getFrameWidth()
-    {
-        return frameWidth;
-    }
-    
-    protected int getFrameHeight()
-    {
-        return frameHeight;
     }
     
     //##################################################################################################################

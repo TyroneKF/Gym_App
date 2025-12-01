@@ -18,6 +18,7 @@ public class Screen_JPanel extends JPanel
     protected int containerYPos = 0, frameWidth, frameHeight;
     
     // String
+    private String class_Name;
     protected String lineSeparator = "###############################################################################";
     protected String title;
     
@@ -36,8 +37,6 @@ public class Screen_JPanel extends JPanel
     // Public: JPanels
     protected JPanel mainNorthJPanel, mainSouthJPanel, scrollPaneJPanel;
     
-    // Private: JPanels
-    private JPanel screenSectioned, mainCenterPanel;
     private Container container;
     
     //##################################################################################################################
@@ -48,45 +47,42 @@ public class Screen_JPanel extends JPanel
         //##############################################
         // Variables
         //##############################################
-        this.container = container;
-        
-        this.addScrollPane = addScrollPane;
         this.frameHeight = frameHeight;
         this.frameWidth = frameWidth;
         
         //##############################################
         // Setup
         //##############################################
-        setup(); // Main GUI
+        setup(container, addScrollPane); // Main GUI
     }
     
     public Screen_JPanel(Container container, boolean addScrollPane)
     {
-        //##############################################
-        // Variables
-        //##############################################
-        this.container = container;
-        this.addScrollPane = addScrollPane;
-        
-        //##############################################
         // Setup
-        //##############################################
-        setup(); // Main GUI
+        setup(container, addScrollPane);
     }
-    
     
     //##################################################################################################################
     // GUI Setup
     //##################################################################################################################
-    protected void setup()
+    protected void setup(Container container, boolean addScrollPane)
     {
+        //########################################################
+        // Variables
+        //########################################################
+        this.class_Name = this.getClass().getName();
+        
+        this.container = container;
+        this.addScrollPane = addScrollPane;
+        
         //########################################################
         // Create Interface With Sections
         //########################################################
         setLayout(new GridLayout(1, 1));
         setVisible(true);
         
-        screenSectioned = new JPanel(new BorderLayout());
+        // Private: JPanels
+        JPanel screenSectioned = new JPanel(new BorderLayout());
         add_To_Container(this, screenSectioned, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
         
         // Top of GUI
@@ -94,7 +90,7 @@ public class Screen_JPanel extends JPanel
         screenSectioned.add(mainNorthJPanel, BorderLayout.NORTH);
         
         // Centre of GUI
-        mainCenterPanel = new JPanel(new GridBagLayout());
+        JPanel mainCenterPanel = new JPanel(new GridBagLayout());
         screenSectioned.add(mainCenterPanel, BorderLayout.CENTER);
         
         // South of GUI
@@ -194,7 +190,6 @@ public class Screen_JPanel extends JPanel
         // Return JP
         return title_JP;
     }
-
     
     //##############################################
     // Screen_JFrame Positioning
@@ -246,6 +241,39 @@ public class Screen_JPanel extends JPanel
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
+    
+    // String Methods
+    protected String get_Class_Name()
+    {
+        return class_Name;
+    }
+    
+    protected String get_Method_Name()
+    {
+        return String.format("%s()",Thread.currentThread().getStackTrace()[1].getMethodName());
+    }
+    
+    protected String get_Class_And_Method_Name()
+    {
+        return String.format("%s -> %s", get_Class_Name(), get_Method_Name());
+    }
+    
+    // ##############################################
+    // Get Int Methods
+    // ##############################################
+    protected int get_Frame_Width()
+    {
+        return frameWidth;
+    }
+    
+    protected int get_Frame_Height()
+    {
+        return frameHeight;
+    }
+    
+    // ##############################################
+    // Objects
+    // ##############################################
     public Container get_Container()
     {
         return (container == null) ? this : container;
@@ -273,19 +301,6 @@ public class Screen_JPanel extends JPanel
         spaceDivider.setPreferredSize(new Dimension(width, height));
         
         return spaceDivider;
-    }
-    
-    // ##################################
-    // Get Int Methods
-    // ##################################
-    protected int get_Frame_Width()
-    {
-        return frameWidth;
-    }
-    
-    protected int get_Frame_Height()
-    {
-        return frameHeight;
     }
     
     //##################################################################################################################

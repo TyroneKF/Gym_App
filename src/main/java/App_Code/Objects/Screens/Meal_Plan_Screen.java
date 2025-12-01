@@ -313,10 +313,12 @@ public class Meal_Plan_Screen extends Screen_JFrame
         super(db, true, "Gym App", 1925, 1082, 1300, 0);
         
         shared_Data_Registry = new Shared_Data_Registry(this);
+        Loading_Screen loading_Screen = null;
         
         //###############################################################################
         // 1.) Getting Selected User & Plan Info
         //###############################################################################
+        // Variables
         String errorMSG = "Error, Gathering Plan & Personal User Information!";
         
         String queryX = """
@@ -331,17 +333,18 @@ public class Meal_Plan_Screen extends Screen_JFrame
         
         Object[] params = new Object[]{ true, user_name };
         
-        ArrayList<ArrayList<Object>> results = db.get_2D_Query_AL_Object(queryX, params, errorMSG);
-        
-        ArrayList<Object> results1 = results != null ? results.getFirst() : null;
-        
-        user_id = results1 != null ? (Integer) results1.get(0) : null;
-        planID = results1 != null ? (Integer) results1.get(1) : null;
-        planName = results1 != null ? (String) results1.get(2) : null;
-        
-        if (planID == null || user_id == null || planName == null || user_name == null)
+        // Execute
+        try
         {
-            System.err.printf("\n\nUsername : %s \nUser ID : %s \n\nSelected Plan ID : %s  \nSelected Plan Name : %s\n", user_name, user_id, planID, planName);
+            ArrayList<ArrayList<Object>> db_results = db.get_2D_Query_AL_Object(queryX, params, errorMSG, false);
+            
+            user_id = (Integer) db_results.getFirst().get(0);
+            planID = (Integer) db_results.getFirst().get(1);
+            planName = (String) db_results.getFirst().get(2);
+        }
+        catch (Exception e)
+        {
+            failed_Start_UP(loading_Screen);
             return;
         }
         
@@ -367,8 +370,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
         }
         catch (Exception e)
         {
+            System.err.printf("\n\n%s", e);
             JOptionPane.showMessageDialog(this, "Error, Getting Column Names For Tables In GUI !!");
-            window_Closed_Event();
+            failed_Start_UP(loading_Screen);
             return;
         }
         
@@ -423,25 +427,24 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 ON P.plan_id = C.plan_id
                 WHERE P.plan_id = ?;""";
         
+        Object[] counts_Params = new Object[]{ planID };
+        
+        ArrayList<ArrayList<Object>> meal_Count_Results;
+        
         //#################################
         // Execute Query
         //#################################
-        Object[] counts_Params = new Object[]{ planID };
-        
-        ArrayList<ArrayList<Object>> meal_Count_Results = db.get_2D_Query_AL_Object(plan_Counts_Query, counts_Params, plan_Counts_ErrorMSG);
-        
-        //#################################
-        // Check Results
-        //#################################
-        if (meal_Count_Results == null)
+        try
         {
-            JOptionPane.showMessageDialog(this, plan_Counts_ErrorMSG);
+            meal_Count_Results = db.get_2D_Query_AL_Object(plan_Counts_Query, counts_Params, plan_Counts_ErrorMSG, false);
+        }
+        catch (Exception e)
+        {
+            failed_Start_UP(loading_Screen);
             return;
         }
         
-        //#################################
         // Format Results
-        //#################################
         int
                 no_of_meals = Math.toIntExact((Long) meal_Count_Results.getFirst().get(0)),
                 no_of_sub_meals = Math.toIntExact((Long) meal_Count_Results.getFirst().get(1));
@@ -463,124 +466,91 @@ public class Meal_Plan_Screen extends Screen_JFrame
         
         // Setting Up Loading Screen
         int totalProgress = no_of_meals + no_of_sub_meals + (7 * 10);
-        Loading_Screen loadingScreen = new Loading_Screen(totalProgress);
+        loading_Screen = new Loading_Screen(totalProgress);
         
         //####################################################
         // Transferring PLan Data To Temp
         //####################################################
-        if (! transfer_Plan_Data(planID, tempPlanID))
-        {
-            loadingScreen.window_Closed_Event();
-            return;
-        }
+        if (! transfer_Plan_Data(planID, tempPlanID)) { failed_Start_UP(loading_Screen); return; }
         
-        loadingScreen.increaseBar(10);
+        loading_Screen.increaseBar(10);
         System.out.printf("\nChosen Plan: %s  & Chosen Plan Name: %s \n\n%s", planID, planName, lineSeparator);
         
         //####################################################
         // Transferring Targets From Chosen PLan to Temp
         //####################################################
-        if (! transfer_Targets(planID, tempPlanID, true, false))
-        {
-            loadingScreen.window_Closed_Event();
-            return;
-        }
+        if (! transfer_Targets(planID, tempPlanID, true, false)) { failed_Start_UP(loading_Screen); return; }
         
-        loadingScreen.increaseBar(10);
+        loading_Screen.increaseBar(10);
         
         //####################################################
         // Transferring this plans Meals  Info to Temp-Plan
         //####################################################
-        if (! (transfer_Meal_Ingredients(planID, tempPlanID)))
-        {
-            loadingScreen.window_Closed_Event();
-            JOptionPane.showMessageDialog(null, "\n\nCannot Create Temporary Plan In DB to Allow Editing");
-            return;
-        }
+        if (! (transfer_Meal_Ingredients(planID, tempPlanID))) { failed_Start_UP(loading_Screen); return; }
         
-        loadingScreen.increaseBar(10);
+        loading_Screen.increaseBar(10);
         
         //###############################################################################
         // Get DATA Methods
         //###############################################################################
-        // Get IngredientTypes & Store Data
-        if (! get_Ingredient_And_Store_Data()) //HELLO Remove eventually
-        {
-            loadingScreen.window_Closed_Event();
-            JOptionPane.showMessageDialog(null, "\n\nError, Cannot Get Ingredients_Types & Stores Info!");
-            return;
-        }
+        // Get Ingredient_Types & Store Data
+        if (! get_Ingredient_And_Store_Data()) { failed_Start_UP(loading_Screen); return; }
         
         // Get Ingredient Types Mapped to Ingredient Names
-        if (! get_Ingredient_Types_And_Ingredient_Names())
-        {
-            loadingScreen.window_Closed_Event();
-            JOptionPane.showMessageDialog(null, "\n\nError, Cannot Get Ingredients Types DATA!");
-            return;
-        }
+        if (! get_Ingredient_Types_And_Ingredient_Names()) { failed_Start_UP(loading_Screen); return; }
         
         // Get Stores DATA
-        if (! get_Stores_Data())
-        {
-            loadingScreen.window_Closed_Event();
-            JOptionPane.showMessageDialog(null, "\n\nError, Cannot Get Ingredients Store DATA!");
-            return;
-        }
+        if (! get_Stores_Data()) { failed_Start_UP(loading_Screen); return; }
         
-        if (! get_Measurement_Data())
-        {
-            loadingScreen.window_Closed_Event();
-            JOptionPane.showMessageDialog(null, "\n\nError, Cannot Get Measurement DATA!");
-            return;
-        }
+        // Get Measurement DATA
+        if (! get_Measurement_Data()) { failed_Start_UP(loading_Screen); return; }
+     
+        // Get Meals Data
+        if (! get_Meal_Data()) { failed_Start_UP(loading_Screen); return; }
+  
+        // Get TotalMeals Datsa
+        if (! get_Total_Meals_Data()) { failed_Start_UP(loading_Screen); return; }
         
-        loadingScreen.increaseBar(10);
+        loading_Screen.increaseBar(10);
         
         //####################################################
         // Get MacroTargets DATA
         //####################################################
-        // Getting data for plan_macro_target_calculations
-        String
-                query_PlanCalc = String.format("SELECT * from %s WHERE plan_id = ?", tablePlanMacroTargetsNameCalc),
-                errorMSG1 = "Error, Gathering Macros Targets Data!";
+        String query_PlanCalc = String.format("SELECT * from %s WHERE plan_id = ?", tablePlanMacroTargetsNameCalc);
+        String errorMSG1 = "Error, Gathering Macros Targets Data!";
         
         Object[] params_planCalc = new Object[]{ tempPlanID };
         
-        ArrayList<ArrayList<Object>> planData = db.get_2D_Query_AL_Object(query_PlanCalc, params_planCalc, errorMSG1);
-        if (planData == null)
+        ArrayList<ArrayList<Object>> macros_plan_Data;
+        
+        // Execute
+        try
         {
-            JOptionPane.showMessageDialog(getFrame(), errorMSG1);
+            macros_plan_Data = db.get_2D_Query_AL_Object(query_PlanCalc, params_planCalc, errorMSG1, false);
+        }
+        catch (Exception e)
+        {
+            failed_Start_UP(loading_Screen);
             return;
         }
         
         //####################################################
         // Get MacrosLeft DATA
         //####################################################
-        // Get table data from plan_macros_left
-        String
-                query_Macros = String.format("SELECT * from %s WHERE plan_id = ?;", tablePlanMacrosLeftName),
-                errorMSG_ML = "Error, Unable to get Plan Macros Left!";
+        String query_Macros = String.format("SELECT * from %s WHERE plan_id = ?;", tablePlanMacrosLeftName);
+        String errorMSG_ML = "Error, Unable to get Plan Macros Left!";
         
         Object[] params_macros = new Object[]{ tempPlanID };
+        ArrayList<ArrayList<Object>> macrosData;
         
-        ArrayList<ArrayList<Object>> macrosData = db.get_2D_Query_AL_Object(query_Macros, params_macros, errorMSG_ML);
-        if (macrosData == null)
+        try
         {
-            JOptionPane.showMessageDialog(getFrame(), errorMSG_ML);
-            return;
+            macrosData = db.get_2D_Query_AL_Object(query_Macros, params_macros, errorMSG_ML, false);
         }
-        
-        //####################################################
-        // Get Meals Data (Sub-Meals & Ingredients)
-        //####################################################
-        if (! get_Meal_Data()) { JOptionPane.showMessageDialog(null, "Unable to get Meals Data! "); return; }
-        
-        //####################################################
-        // Get Total Meals Data (Totals Per Macro)
-        //####################################################
-        if (! get_Total_Meals_Data())
+        catch (Exception e)
         {
-            JOptionPane.showMessageDialog(null, "Unable to get Totals Data For Meals! "); return;
+            failed_Start_UP(loading_Screen);
+            return;
         }
         
         //###############################################################################
@@ -600,7 +570,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###################################
         // Increase Progress
         //###################################
-        loadingScreen.increaseBar(10);
+        loading_Screen.increaseBar(10);
         
         //####################################################
         // North :  JPanel
@@ -650,12 +620,12 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //############################
         // MacroTargets Table
         //############################
-        macros_Targets_Table = new MacrosTargets_Table(db, macrosInfoJPanel, planData, macroTargets_ColumnNames, planID, tempPlanID,
+        macros_Targets_Table = new MacrosTargets_Table(db, macrosInfoJPanel, macros_plan_Data, macroTargets_ColumnNames, planID, tempPlanID,
                 tablePlanMacroTargetsNameCalc, macroTargets_ColumnNames, null, macrosTargets_Table_ColToHide);
         
         addToContainer(macrosInfoJPanel, macros_Targets_Table, 0, macrosInfoJP_YPos += 1, + 1, 1, 0.25, 0.25, "both", 40, 0, null);
         
-        loadingScreen.increaseBar(10);
+        loading_Screen.increaseBar(10);
         
         //############################
         // plan_Macros_Left Table
@@ -665,7 +635,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         
         addToContainer(macrosInfoJPanel, macrosLeft_JTable, 0, macrosInfoJP_YPos += 1, 1, 1, 0.25, 0.25, "both", 30, 0, null);
         
-        loadingScreen.increaseBar(10);
+        loading_Screen.increaseBar(10);
         
         //####################################################
         // Centre : JPanel (Meals)
@@ -703,7 +673,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             add_And_Replace_MealManger_POS_GUI(mealManager, false, false); // Add to GUI
             
             // Update Progress
-            loadingScreen.increaseBar(1 + sub_Meal_DATA.size()); // + original meal + the sub-meal
+            loading_Screen.increaseBar(1 + sub_Meal_DATA.size()); // + original meal + the sub-meal
         }
         
         //##########################
@@ -716,10 +686,10 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###############################################################################
         // GUI Alignments & Configurations
         //##############################################################################
-        if (! loadingScreen.isFinished())
+        if (! loading_Screen.isFinished())
         {
             JOptionPane.showMessageDialog(getFrame(), "Error, in configuration! All Tasks Are Not Completed!");
-            window_Closed_Event();
+            failed_Start_UP(loading_Screen);
             return;
         }
         
@@ -738,7 +708,16 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //##################################################################################################################
     // Transfer SQL Data & Get Data Methods
     //##################################################################################################################
+    // Failed Startup
+    private void failed_Start_UP(Loading_Screen loadingScreen)
+    {
+        if (loadingScreen != null) { loadingScreen.window_Closed_Event(); } ;
+        window_Closed_Event();
+    }
+    
+    //#################################################
     // Transfer Data Methods
+    //#################################################
     private boolean transfer_Plan_Data(int fromPlan, int toPlan)
     {
         //###############################################
@@ -976,11 +955,13 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 
                 errorMSG = "\n\nUnable to update Ingredient Type Info";
         
-        ArrayList<ArrayList<Object>> ingredientTypesNameAndIDResults = db.get_2D_Query_AL_Object(queryTypes, null, errorMSG);
-        
-        if (ingredientTypesNameAndIDResults == null)
+        ArrayList<ArrayList<Object>> ingredientTypesNameAndIDResults;
+        try
         {
-            JOptionPane.showMessageDialog(getFrame(), errorMSG);
+            ingredientTypesNameAndIDResults = db.get_2D_Query_AL_Object(queryTypes, null, errorMSG, false);
+        }
+        catch (Exception e)
+        {
             return false;
         }
         
@@ -1043,9 +1024,15 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //#######################################
         // Execute Query
         //#######################################
-        ArrayList<ArrayList<Object>> results = db.get_2D_Query_AL_Object(query, null, errorMSG);
-        
-        if (results == null) { JOptionPane.showMessageDialog(null, errorMSG); return false; }
+        ArrayList<ArrayList<Object>> results;
+        try
+        {
+            results = db.get_2D_Query_AL_Object(query, null, errorMSG, false);
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
         
         //#######################################
         // Process Data
@@ -1094,9 +1081,16 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //#######################################
         // Execute Query
         //#######################################
-        ArrayList<ArrayList<Object>> results = db.get_2D_Query_AL_Object(query, null, errorMSG);
+        ArrayList<ArrayList<Object>> results;
         
-        if (results == null) { JOptionPane.showMessageDialog(null, errorMSG); return false; }
+        try
+        {
+            results = db.get_2D_Query_AL_Object(query, null, errorMSG, false);
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
         
         //#######################################
         // Go through Results
@@ -1155,10 +1149,16 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 errorMSG = "Unable, to get Measurments Data";
         
         // Execute Query
-        ArrayList<ArrayList<Object>> data = db.get_2D_Query_AL_Object(query, null, errorMSG);
+        ArrayList<ArrayList<Object>> data;
         
-        // Exit Clause
-        if (data == null) { return false; }
+        try
+        {
+            data = db.get_2D_Query_AL_Object(query, null, errorMSG, false);
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
         
         // Add Measurement OBJ
         for (ArrayList<Object> row : data)
@@ -1242,9 +1242,16 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //########################################################################
         // Execute Query
         //########################################################################
-        ArrayList<ArrayList<Object>> results = db.get_2D_Query_AL_Object(query, params, errorMSG);
+        ArrayList<ArrayList<Object>> results;
         
-        if (results == null) { JOptionPane.showMessageDialog(null, errorMSG); return false; }
+        try
+        {
+            results = db.get_2D_Query_AL_Object(query, params, errorMSG, false);
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
         
         //########################################################################
         // Go Through JSON DATA
@@ -1383,9 +1390,16 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //#################################
         // Execute Query
         //#################################
-        ArrayList<ArrayList<Object>> meals_Data = db.get_2D_Query_AL_Object(query, params, errorMSG);
+        ArrayList<ArrayList<Object>> meals_Data;
         
-        if (meals_Data == null) { JOptionPane.showMessageDialog(null, errorMSG); return false; }
+        try
+        {
+            meals_Data = db.get_2D_Query_AL_Object(query, params, errorMSG, false);
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
         
         //#################################
         // Go Through DATA
@@ -1692,7 +1706,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // ###############################################################
     private void recipeList_BtnAction_OpenScreen()
     {
-    
+        
     }
     
     // ###############################################################

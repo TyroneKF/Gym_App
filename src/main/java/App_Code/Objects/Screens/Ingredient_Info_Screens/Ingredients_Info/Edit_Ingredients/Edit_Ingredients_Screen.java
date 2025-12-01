@@ -239,11 +239,11 @@ public class Edit_Ingredients_Screen extends Ingredients_Screen
         
         // Get Ingredient Data
         String query_Get_Ingredient_Data = "SELECT * FROM ingredients_info WHERE ingredient_id = ?";
-        queryResults.add_2D_Result(db.get_2D_Query_AL_Object(query_Get_Ingredient_Data, new Object[]{ id }, error_MSG));
+        queryResults.add_2D_Result(db.get_2D_Query_AL_Object(query_Get_Ingredient_Data, new Object[]{ id }, error_MSG, false));
         
         // ShopForm Data
         String query_Shop = "SELECT * FROM ingredient_in_shops WHERE ingredient_id = ?";
-        //queryResults.add_2D_Result(db.get_2D_Query_AL_Object(query_Shop, new Object[]{ id }, error_MSG));
+        queryResults.add_2D_Result(db.get_2D_Query_AL_Object(query_Shop, new Object[]{ id }, error_MSG, true));
         
         //#########################
         // Return Data
