@@ -1,32 +1,33 @@
 package App_Code.Objects.Gui_Objects.Text_Fields.Parent;
 
 import javax.swing.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class Field_JTxtField_Parent  extends JTextField
+public abstract class Field_JTxtField_Parent<T> extends JTextField
 {
     //##################################################################################################################
     // Variables
     //##################################################################################################################
     protected String label;
     protected int char_Limit;
-    //protected Class<T> typeCast;
+    protected Class<T> type_Cast;
     
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
     // Text Field
-    public Field_JTxtField_Parent(String label, int char_Limit)
+    public Field_JTxtField_Parent(String label, int char_Limit, Class<T> type_Cast)
     {
         // Field All Constructors use
         this.label = label;
         this.char_Limit = char_Limit; // IF SeText is used on a text bigger than char_Limit the text is scrapped = ""
+        this.type_Cast = type_Cast;
         
-        // Optional
-        setDocument(new JTextFieldLimit(char_Limit));
+        setDocument(new JTextFieldLimit(char_Limit)); // Set Character Limit On Text Field
     }
     
     //##################################################################################################################
@@ -49,7 +50,7 @@ public abstract class Field_JTxtField_Parent  extends JTextField
     {
         super.setText(remove_Space_And_Hidden_Chars(txt));
     }
-        
+    
     //##############################################
     // Accessor Methods
     //##############################################
@@ -63,10 +64,17 @@ public abstract class Field_JTxtField_Parent  extends JTextField
         return get_Text().isEmpty();
     }
     
-    /*public Class<T> get_TypeCast()
+    public T get_Text_Casted_To_Type()
     {
-        return typeCast;
-    }*/
+        // Convert Txt to correlated Types
+        if (type_Cast == BigDecimal.class) { return type_Cast.cast(new BigDecimal(get_Text())); }
+        
+        else if (type_Cast == Integer.class) { return type_Cast.cast(Integer.valueOf(get_Text())); }
+        
+        else if (type_Cast == String.class) { return type_Cast.cast(get_Text()); }
+        
+        else { throw new IllegalStateException("Unexpected Type : " + type_Cast); }
+    }
     
     //##############################################
     // Validation Methods

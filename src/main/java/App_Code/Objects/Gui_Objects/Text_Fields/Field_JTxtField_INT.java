@@ -7,7 +7,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-public class Field_JTxtField_INT extends Field_JTxtField_Parent
+public class Field_JTxtField_INT extends Field_JTxtField_Parent<Integer>
 {
     //##################################################################################################################
     // Variables
@@ -20,19 +20,19 @@ public class Field_JTxtField_INT extends Field_JTxtField_Parent
     //##################################################################################################################
     public Field_JTxtField_INT(String label, int char_Limit)
     {
-        super(label, char_Limit);
+        super(label, char_Limit, Integer.class);
     }
     
     public Field_JTxtField_INT(String label, int char_Limit, boolean can_Be_0)
     {
-        super(label, char_Limit);
+        super(label, char_Limit, Integer.class);
         
         this.can_Be_0 = can_Be_0;
     }
     
     public Field_JTxtField_INT(String label, int char_Limit, int start_Range, int end_Range)
     {
-        super(label, char_Limit);
+        super(label, char_Limit, Integer.class);
         
         this.start_Range = start_Range;
         this.end_Range = end_Range;
@@ -40,7 +40,7 @@ public class Field_JTxtField_INT extends Field_JTxtField_Parent
     
     public Field_JTxtField_INT(String label, int char_Limit, boolean can_Be_0, int start_Range, int end_Range)
     {
-        super(label, char_Limit);
+        super(label, char_Limit, Integer.class);
         
         this.can_Be_0 = can_Be_0;
         this.start_Range = start_Range;
@@ -87,7 +87,7 @@ public class Field_JTxtField_INT extends Field_JTxtField_Parent
             //#################################
             // Range
             //#################################
-            if ( (start_Range != null && end_Range != null )   && (int_Value < start_Range || end_Range < int_Value))
+            if ((start_Range != null && end_Range != null) && (int_Value < start_Range || end_Range < int_Value))
             {
                 error_MSGs.add(String.format("Number Must be in Range of %s - %s Inclusive !", start_Range, end_Range));
                 error_Map.put(label, error_MSGs);

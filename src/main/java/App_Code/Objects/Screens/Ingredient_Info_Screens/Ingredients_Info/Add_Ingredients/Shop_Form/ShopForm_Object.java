@@ -8,7 +8,6 @@ import App_Code.Objects.Gui_Objects.Text_Fields.Field_JTxtField_String;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -27,7 +26,7 @@ public class ShopForm_Object extends JPanel
     protected Container parent_Container;
     protected Field_JCombo_Storable_ID<Store_ID_OBJ> stores_JC;
     
-    protected Field_JTxtField_String product_Name_JT ;
+    protected Field_JTxtField_String product_Name_JT;
     protected Field_JTxtField_BD product_Price_JT, quantity_JT;
     
     // Objects
@@ -82,24 +81,21 @@ public class ShopForm_Object extends JPanel
                     "Product Name",       // GUI Label
                     product_Name_JT,               // Component
                     "product_name",                // MySQL Field
-                    2,
-                    String.class                   // Field Type
+                    2
             ));
             
             put("price", new Shop_Form_Binding<>(
                     "Product Price",         // GUI Label
                     product_Price_JT,                // Component
                     "cost_per_unit",                 // MySQL Field
-                    4,
-                    BigDecimal.class                // Field Type
+                    4
             ));
             
             put("quantity", new Shop_Form_Binding<>(
                     "Quantity Per Pack",         // GUI Label
                     quantity_JT,                          // Component
                     "volume_per_unit",                   // MySQL Field
-                    3,
-                    BigDecimal.class                    // Field Type
+                    3
             ));
         }};
     }

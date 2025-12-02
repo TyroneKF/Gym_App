@@ -31,16 +31,16 @@ public class Ingredients_Form_Binding<T> extends Field_Binding<T>
     //####################################
     // Text Fields
     //####################################
-    public Ingredients_Form_Binding(String gui_Label, Component component, String mysql_Field, int query_Field_Pos, Class<T> type, String api_Field)
+    public Ingredients_Form_Binding(String gui_Label, Component component, String mysql_Field, int query_Field_Pos)
     {
-        super(gui_Label, component, mysql_Field, query_Field_Pos, type);
-        
-        this.nutrition_IX_Label = api_Field;
+        super(gui_Label, component, mysql_Field, query_Field_Pos);
     }
     
-    public Ingredients_Form_Binding(String gui_Label, Component component, String mysql_Field, int query_Field_Pos, Class<T> type)
+    public Ingredients_Form_Binding(String gui_Label, Component component, String mysql_Field, int query_Field_Pos, String api_Field)
     {
-        super(gui_Label, component, mysql_Field, query_Field_Pos, type);
+        super(gui_Label, component, mysql_Field, query_Field_Pos);
+        
+        this.nutrition_IX_Label = api_Field;
     }
     
     //##################################################################################################################

@@ -5,14 +5,14 @@ import App_Code.Objects.Gui_Objects.Text_Fields.Parent.Field_JTxtField_Parent;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-public class Field_JTxtField_String extends Field_JTxtField_Parent
+public class Field_JTxtField_String extends Field_JTxtField_Parent<String>
 {
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
     public Field_JTxtField_String(String label, int char_Limit)
     {
-        super(label, char_Limit);
+        super(label, char_Limit, String.class);
     }
     
     //##################################################################################################################

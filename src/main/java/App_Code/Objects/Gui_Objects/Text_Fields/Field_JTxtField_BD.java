@@ -7,7 +7,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-public class Field_JTxtField_BD extends Field_JTxtField_Parent
+public class Field_JTxtField_BD extends Field_JTxtField_Parent<BigDecimal>
 {
     //##################################################################################################################
     // Variables
@@ -22,13 +22,13 @@ public class Field_JTxtField_BD extends Field_JTxtField_Parent
     //##################################################################################################################
     public Field_JTxtField_BD(String label, int char_Limit)
     {
-        super(label, char_Limit);
+        super(label, char_Limit, BigDecimal.class);
         variable_Setup();
     }
     
     public Field_JTxtField_BD(String label, int char_Limit, boolean can_Be_0)
     {
-        super(label, char_Limit);
+        super(label, char_Limit, BigDecimal.class);
         this.can_Be_0 = can_Be_0;
         variable_Setup();
     }

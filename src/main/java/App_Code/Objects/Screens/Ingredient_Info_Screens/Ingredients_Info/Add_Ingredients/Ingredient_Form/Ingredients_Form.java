@@ -16,7 +16,6 @@ import org.javatuples.Pair;
 
 import javax.swing.*;
 import java.awt.*;
-import java.math.BigDecimal;
 import java.util.*;
 
 public class Ingredients_Form extends Parent_Forms_OBJ
@@ -98,135 +97,123 @@ public class Ingredients_Form extends Parent_Forms_OBJ
             int pos = 0;
             
             put("measurement", new Ingredients_Form_Binding<>(
-                    "Ingredient Measurement In",                                                   // GUI Label
+                    "Ingredient Measurement In",                      // GUI Label
+                                                                              // Component
                     new Field_JCombo_Storable_ID<>("Ingredient Measurement In", Measurement_ID_OBJ.class, ingredient_Measurement_Obj_AL),
-                    // Component
-                    "measurement_id",                                       // MySQL Field
-                    pos += 1, // Pos in MYSQL Table Query
+                    "measurement_id",                              // MySQL Field
+                    pos += 1,                                                 // Pos in MYSQL Table Query
                     "serving_unit"                                          // NutritionIX Field
             ));
             
             put("name", new Ingredients_Form_Binding<>(
-                    "Ingredient Name",                                                       // GUI Label
+                    "Ingredient Name",                                           // GUI Label
                     new Field_JTxtField_String("Ingredient Name", text_Char_Limit),  // Component
-                    "ingredient_name",                                                                // MySQL Field
-                    pos += 1, // Pos in MYSQL Table Query
-                    String.class,                                                                    // Field Type
-                    "food_name"                                                                   // NutritionIX Field
+                    "ingredient_name",                                                   // MySQL Field
+                    pos += 1,                                                            // Pos in MYSQL Table Query
+                    "food_name"                                                         // NutritionIX Field
             ));
             
             put("type", new Ingredients_Form_Binding<>(
-                    "Ingredient Type",                                             // GUI Label
-                    // Component
+                    "Ingredient Type",                                          // GUI Label
+                                                                                        // Component
                     new Field_JCombo_Storable_ID<>("Ingredient Type", Ingredient_Type_ID_Obj.class, ingredient_Types_Obj_AL),
-                    "ingredient_type_id",                                                   // MySQL Field
-                    pos += 1 // Pos in MYSQL Table Query
+                    "ingredient_type_id",                                   // MySQL Field
+                    pos += 1                                                          // Pos in MYSQL Table Query
             ));
             
             put("quantity", new Ingredients_Form_Binding<>(
-                    "Based On Quantity",                                                   // GUI Label
-                    // Component
+                    "Based On Quantity",                                      // GUI Label
+                                                                                      // Component
                     new Field_JTxtField_BD("Based On Quantity", digit_Char_Limit, false),
-                    "based_on_quantity",                                                // MySQL Field
-                    pos += 1, // Pos in MYSQL Table Query
-                    BigDecimal.class,                                                              // Field Type
-                    "serving_weight_grams"                                                        // NutritionIX Field
+                    "based_on_quantity",                                  // MySQL Field
+                    pos += 1,                                                       // Pos in MYSQL Table Query
+                    "serving_weight_grams"                                         // NutritionIX Field
             ));
             
             put("gi", new Ingredients_Form_Binding<>(
-                    "Glycemic Index",                                                  // GUI Label
-                    new Field_JTxtField_INT("Glycemic Index", digit_Char_Limit, 0, 100),  // Component
-                    "glycemic_index",                                                           // MySQL Field
-                    pos += 1, // Pos in MYSQL Table Query
-                    Integer.class                                                          // Field Type
+                    "Glycemic Index",                                  // GUI Label
+                                                                               // Component
+                    new Field_JTxtField_INT("Glycemic Index", digit_Char_Limit, 0, 100),
+                    "glycemic_index",                              // MySQL Field
+                    pos += 1                                                 // Pos in MYSQL Table Query
             ));
             
             put("protein", new Ingredients_Form_Binding<>(
-                    "Protein",                                                  // GUI Label
+                    "Protein",                                         // GUI Label
                     new Field_JTxtField_BD("Protein", digit_Char_Limit),  // Component
-                    "protein",                                                            // MySQL Field
-                    pos += 1, // Pos in MYSQL Table Query
-                    BigDecimal.class,                                                     // Field Type
-                    "nf_protein"                                                         // NutritionIX Field
+                    "protein",                                                 // MySQL Field
+                    pos += 1,                                                  // Pos in MYSQL Table Query
+                    "nf_protein"                                              // NutritionIX Field
             ));
             
             put("carbohydrates", new Ingredients_Form_Binding<>(
-                    "Carbohydrates",                                                   // GUI Label
+                    "Carbohydrates",                                         // GUI Label
                     new Field_JTxtField_BD("Carbohydrates", digit_Char_Limit),  // Component
-                    "carbohydrates",                                                           // MySQL Field
-                    pos += 1, // Pos in MYSQL Table Query
-                    BigDecimal.class,                                                          // Field Type
-                    "nf_total_carbohydrate"                                                    // NutritionIX Field
+                    "carbohydrates",                                                 // MySQL Field
+                    pos += 1,                                                       // Pos in MYSQL Table Query
+                    "nf_total_carbohydrate"                                         // NutritionIX Field
             ));
             
             put("sugars_of_carbs", new Ingredients_Form_Binding<>(
-                    "Sugars Of Carbs",                                                  // GUI Label
+                    "Sugars Of Carbs",                                         // GUI Label
                     new Field_JTxtField_BD("Sugars Of Carbs", digit_Char_Limit),  // Component
-                    "sugars_of_carbs",                                                           // MySQL Field
-                    pos += 1,
-                    BigDecimal.class,                                                           // Field Type
-                    "nf_sugars"                                                                 // NutritionIX Field
+                    "sugars_of_carbs",                                                 // MySQL Field
+                    pos += 1,                                                          // Pos in MYSQL Table Query
+                    "nf_sugars"                                                        // NutritionIX Field
             ));
             
             put("fibre", new Ingredients_Form_Binding<>(
-                    "Fibre",                                                   // GUI Label
+                    "Fibre",                                         // GUI Label
                     new Field_JTxtField_BD("Fibre", digit_Char_Limit),  // Component
-                    "fibre",                                                            // MySQL Field
-                    pos += 1, // Pos in MYSQL Table Query
-                    BigDecimal.class,                                                   // Field Type
-                    "nf_dietary_fiber"                                                  // NutritionIX Field
+                    "fibre",                                                 // MySQL Field
+                    pos += 1,                                                // Pos in MYSQL Table Query
+                    "nf_dietary_fiber"                                       // NutritionIX Field
             ));
             
             put("fat", new Ingredients_Form_Binding<>(
-                    "Fat",                                                        // GUI Label
+                    "Fat",                                              // GUI Label
                     new Field_JTxtField_BD("Fat", digit_Char_Limit),       // Component
-                    "fat",                                                                // MySQL Field
-                    pos += 1, // Pos in MYSQL Table Query
-                    BigDecimal.class,                                                     // Field Type
-                    "nf_total_fat"                                                        // NutritionIX Field
+                    "fat",                                                      // MySQL Field
+                    pos += 1,                                                   // Pos in MYSQL Table Query
+                    "nf_total_fat"                                              // NutritionIX Field
             ));
             
             put("sat_fat", new Ingredients_Form_Binding<>(
-                    "Saturated Fat",                                                  // GUI Label
+                    "Saturated Fat",                                         // GUI Label
                     new Field_JTxtField_BD("Saturated Fat", digit_Char_Limit),  // Component
-                    "saturated_fat",                                                           // MySQL Field
-                    pos += 1, // Pos in MYSQL Table Query
-                    BigDecimal.class,                                                         // Field Type
-                    "nf_saturated_fat"                                                        // NutritionIX Field
+                    "saturated_fat",                                                 // MySQL Field
+                    pos += 1,                                                       // Pos in MYSQL Table Query
+                    "nf_saturated_fat"                                             // NutritionIX Field
             ));
             
             put("salt", new Ingredients_Form_Binding<>(
-                    "Salt",                                                   // GUI Label
+                    "Salt",                                         // GUI Label
                     new Field_JTxtField_BD("Salt", digit_Char_Limit),  // Component
-                    "salt",                                                             // MySQL Field
-                    pos += 1, // Pos in MYSQL Table Query
-                    BigDecimal.class,                                                  // Field Type
-                    "nf_sodium"                                                        // NutritionIX Field
+                    "salt",                                                 // MySQL Field
+                    pos += 1,                                               // Pos in MYSQL Table Query
+                    "nf_sodium"                                             // NutritionIX Field
             ));
             
             put("water", new Ingredients_Form_Binding<>(
-                    "Water Content",                                                  // GUI Label
+                    "Water Content",                                         // GUI Label
                     new Field_JTxtField_BD("Water Content", digit_Char_Limit),  // Component
-                    "water_content",                                                           // MySQL Field
-                    pos += 1,
-                    BigDecimal.class                                                          // Field Type
+                    "water_content",                                                 // MySQL Field
+                    pos += 1                                                         // Pos in MYSQL Table Query
             ));
             
             put("liquid", new Ingredients_Form_Binding<>(
-                    "Liquid Content",                                                 // GUI Label
+                    "Liquid Content",                                      // GUI Label
                     new Field_JTxtField_BD("Liquid Content", digit_Char_Limit), // Component
-                    "liquid_content",                                                          // MySQL Field
-                    pos += 1, // Pos in MYSQL Table Query
-                    BigDecimal.class                                                        // Field Type
+                    "liquid_content",                                                // MySQL Field
+                    pos += 1                                                        // Pos in MYSQL Table Query
             ));
             
             put("calories", new Ingredients_Form_Binding<>(
-                    "Calories",                                                  // GUI Label
+                    "Calories",                                         // GUI Label
                     new Field_JTxtField_BD("Calories", digit_Char_Limit),  // Component
-                    "calories",                                                          // MySQL Field
-                    pos += 1, // Pos in MYSQL Table Query
-                    BigDecimal.class,                                                    // Field Type
-                    "nf_calories"                                                       // NutritionIX Field
+                    "calories",                                                  // MySQL Field
+                    pos += 1,                                                    // Pos in MYSQL Table Query
+                    "nf_calories"                                               // NutritionIX Field
             ));
         }};
     }
@@ -645,37 +632,26 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         try
         {
             int pos = 0;
-            for (Ingredients_Form_Binding<?> fb : field_Items_Map.values())
+            for (Ingredients_Form_Binding<?> field_Binding : field_Items_Map.values())
             {
                 boolean last_Iteration = pos == size - 1;
                 
                 // Add to Header
                 insert_Header.append(last_Iteration
-                        ? String.format("%s) VALUES ", fb.get_Mysql_Field_Name())
-                        : String.format("%s,", fb.get_Mysql_Field_Name())
+                        ? String.format("%s) VALUES ", field_Binding.get_Mysql_Field_Name())
+                        : String.format("%s,", field_Binding.get_Mysql_Field_Name())
                 );
                 
                 // Add to Values
                 values.append(last_Iteration ? "?);" : "?,");
                 
                 // Add to params
-                switch (fb.get_Gui_Component())
+                switch (field_Binding.get_Gui_Component())
                 {
                     case Field_JCombo_Storable_ID<?> jc -> params[pos] = jc.get_Selected_Item_ID();
-                    case Field_JTxtField_Parent jt ->  // Get Text & Type cast to expected type
-                    {
-                        Class<?> type = fb.get_Field_Type(); // Get Fields Expected type
-                        
-                        // Convert Txt to correlated Types
-                        if (type == BigDecimal.class) { params[pos] = new BigDecimal(jt.get_Text()); }
-                        
-                        else if (type == Integer.class) { params[pos] = Integer.valueOf(jt.get_Text()); }
-                        
-                        else if (type == String.class) { params[pos] = jt.get_Text(); }
-                        
-                        else { throw new IllegalStateException("Unexpected Type : " + type); }
-                    }
-                    default -> throw new IllegalStateException("Unexpected value: " + fb.get_Gui_Component());
+                    case Field_JTxtField_Parent<?> jt -> params[pos] = jt.get_Text_Casted_To_Type();
+                    default ->
+                            throw new IllegalStateException("Unexpected value: " + field_Binding.get_Gui_Component());
                 }
                 
                 pos++; // Increase pos

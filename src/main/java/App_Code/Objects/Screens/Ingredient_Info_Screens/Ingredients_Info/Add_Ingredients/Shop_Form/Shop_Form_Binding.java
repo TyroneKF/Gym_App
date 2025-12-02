@@ -12,8 +12,8 @@ public class Shop_Form_Binding<T>  extends Field_Binding<T>
         super(gui_Label, component, mysql_Field, query_Field_Pos);
     }
     
-    public Shop_Form_Binding(String gui_Label, Component component, String mysql_Field, int query_Field_Pos, Class<T> type)
+    public Shop_Form_Binding(String gui_Label, Component component, String mysql_Field, int query_Field_Pos)
     {
-        super(gui_Label, component, mysql_Field, query_Field_Pos, type);
+        super(gui_Label, component, mysql_Field, query_Field_Pos);
     }
 }

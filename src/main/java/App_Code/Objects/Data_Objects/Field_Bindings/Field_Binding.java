@@ -13,7 +13,6 @@ public class Field_Binding<T>
             gui_Label,
             mysql_Field_Name;
     
-    private Class<T> field_Type = null;
     private Component component;
     
     private int query_Field_Pos;
@@ -23,22 +22,21 @@ public class Field_Binding<T>
     //##################################################################################################################
     public Field_Binding(String gui_Label, Field_JComboBox<T> component, String mysql_Field, int query_Field_Pos)
     {
-        constructor_Setup(gui_Label, component, mysql_Field, query_Field_Pos, null);
+        constructor_Setup(gui_Label, component, mysql_Field, query_Field_Pos);
     }
     
-    public Field_Binding(String gui_Label, Component component, String mysql_Field, int query_Field_Pos, Class<T> type)
+    public Field_Binding(String gui_Label, Component component, String mysql_Field, int query_Field_Pos)
     {
-        constructor_Setup(gui_Label, component, mysql_Field, query_Field_Pos, type);
+        constructor_Setup(gui_Label, component, mysql_Field, query_Field_Pos);
     }
     
-    private void constructor_Setup(String gui_Label, Component component, String mysql_Field, int query_Field_Pos, Class<T> type)
+    private void constructor_Setup(String gui_Label, Component component, String mysql_Field, int query_Field_Pos)
     {
         this.gui_Label = gui_Label;
         this.component = component;
         this.mysql_Field_Name = mysql_Field;
         
         this.query_Field_Pos = query_Field_Pos;
-        if (type != null) { this.field_Type = type; }
     }
     
     //##################################################################################################################
@@ -57,11 +55,6 @@ public class Field_Binding<T>
     public String get_Mysql_Field_Name()
     {
         return mysql_Field_Name;
-    }
-    
-    public Class<T> get_Field_Type()
-    {
-        return field_Type;
     }
     
     public int get_Field_Query_Pos()
