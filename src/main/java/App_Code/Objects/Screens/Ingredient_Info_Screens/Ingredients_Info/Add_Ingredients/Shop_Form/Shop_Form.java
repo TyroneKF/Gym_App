@@ -281,8 +281,25 @@ public class Shop_Form extends Parent_Forms_OBJ
             all_Errors.add(error_Map);
         }
         
+        //###############################
+        // Escape Clause
+        //###############################
         if (all_Errors.isEmpty()) { return true; }
         
+        //###############################
+        // Display Errors
+        //###############################
+        UIManager.put("OptionPane.messageFont", new Font("Arial", Font.PLAIN, 16));
+        JOptionPane.showMessageDialog(null, build_Error_MSg(all_Errors), "Shops Form Error Messages", JOptionPane.INFORMATION_MESSAGE);
+        
+        //##################################
+        // Output
+        //##################################
+        return false;
+    }
+    
+    protected String build_Error_MSg(ArrayList<LinkedHashMap<String, ArrayList<String>>> all_Errors)
+    {
         //##################################
         // Build Error MSG
         //##################################
@@ -323,16 +340,10 @@ public class Shop_Form extends Parent_Forms_OBJ
         
         error_MSG.append("</html>");
         
-        //###############################
-        // Display Errors
-        //###############################
-        UIManager.put("OptionPane.messageFont", new Font("Arial", Font.PLAIN, 16));
-        JOptionPane.showMessageDialog(null, error_MSG, "Shops Form Error Messages", JOptionPane.INFORMATION_MESSAGE);
-        
         //##################################
-        // Output
+        // Return Output
         //##################################
-        return false;
+        return error_MSG.toString();
     }
     
     public void add_Update_Queries(LinkedHashSet<Pair<String, Object[]>> queries_And_Params) throws Exception
@@ -355,16 +366,14 @@ public class Shop_Form extends Parent_Forms_OBJ
         //###########################################
         // Create Query for Upload Products
         //###########################################
-        int
-                size = add_shop_Form_Objects.size(),
-                input_Params_Per_Item = 4;
+        int size = add_shop_Form_Objects.size();
+        int input_Params_Per_Item = 4; // Ingredient ID isn't a field inputted by the user
         
         //######################
         // Create Params Query
         //######################
-        StringBuilder insert_Header =
-                new StringBuilder("INSERT INTO ingredient_in_shops (ingredient_id, product_name, volume_per_unit, cost_per_unit, store_id) VALUES"),
-                values = new StringBuilder();
+        StringBuilder insert_Header = new StringBuilder("INSERT INTO ingredient_in_shops (ingredient_id, product_name, volume_per_unit, cost_per_unit, store_id) VALUES");
+        StringBuilder values = new StringBuilder();
         
         
         //######################

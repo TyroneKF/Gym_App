@@ -184,6 +184,20 @@ public class ShopForm_Object extends JPanel
     //##################################################################################################################
     // Other Methods
     //##################################################################################################################
+    
+    protected int no_of_Input_Fields()
+    {
+        return field_Items_Map.size();
+    }
+    
+    public LinkedHashMap<String, Shop_Form_Binding<?>> get_Field_Items_Map()
+    {
+        return field_Items_Map;
+    }
+    
+    //#################################################
+    // Action Methods
+    //#################################################
     protected void reload_Stores_JC()
     {
         stores_JC.reload_Items(); // Reload JC
