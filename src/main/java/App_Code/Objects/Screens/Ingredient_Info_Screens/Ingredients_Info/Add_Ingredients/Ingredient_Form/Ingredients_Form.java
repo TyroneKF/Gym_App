@@ -647,14 +647,16 @@ public class Ingredients_Form extends Parent_Forms_OBJ
             int pos = 0;
             for (Ingredients_Form_Binding<?> fb : field_Items_Map.values())
             {
+                boolean last_Iteration = pos == size - 1;
+                
                 // Add to Header
-                insert_Header.append(pos == size - 1
+                insert_Header.append(last_Iteration
                         ? String.format("%s) VALUES ", fb.get_Mysql_Field_Name())
                         : String.format("%s,", fb.get_Mysql_Field_Name())
                 );
                 
                 // Add to Values
-                values.append(pos == size - 1 ? "?);" : "?,");
+                values.append(last_Iteration ? "?);" : "?,");
                 
                 // Add to params
                 switch (fb.get_Gui_Component())
