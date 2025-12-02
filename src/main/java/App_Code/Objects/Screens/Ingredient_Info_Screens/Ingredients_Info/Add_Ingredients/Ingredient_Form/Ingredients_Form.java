@@ -547,6 +547,18 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         //###############################
         if (error_Map.isEmpty()) { return true; }
         
+        
+        //###############################
+        // Display Errors / Output
+        //###############################
+        UIManager.put("OptionPane.messageFont", new Font("Arial", Font.PLAIN, 16));
+        JOptionPane.showMessageDialog(null, build_Error_MSg(error_Map), "Ingredients Form Error Messages", JOptionPane.INFORMATION_MESSAGE);
+       
+        return false;
+    }
+    
+    protected String build_Error_MSg(LinkedHashMap<String, ArrayList<String>> error_Map)
+    {
         //###############################
         // Build Error MSGs
         //###############################
@@ -582,16 +594,11 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         error_MSG_String.append("</html>");
         
         //###############################
-        // Display Errors
+        // Return Output
         //###############################
-        UIManager.put("OptionPane.messageFont", new Font("Arial", Font.PLAIN, 16));
-        JOptionPane.showMessageDialog(null, error_MSG_String, "Ingredients Form Error Messages", JOptionPane.INFORMATION_MESSAGE);
-        
-        //###############################
-        // Outputs
-        //###############################
-        return false;
+        return error_MSG_String.toString();
     }
+    
     
     protected boolean is_Ingredient_Name_In_DB() throws Exception
     {
