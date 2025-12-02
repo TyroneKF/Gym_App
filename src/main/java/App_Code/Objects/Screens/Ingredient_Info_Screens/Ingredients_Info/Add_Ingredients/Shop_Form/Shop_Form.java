@@ -346,7 +346,7 @@ public class Shop_Form extends Parent_Forms_OBJ
         return error_MSG.toString();
     }
     
-    public void add_Update_Queries(LinkedHashSet<Pair<String, Object[]>> queries_And_Params) throws Exception
+    protected void add_Update_Queries(LinkedHashSet<Pair<String, Object[]>> queries_And_Params) throws Exception
     {
         //###########################################
         // Exit Clause
