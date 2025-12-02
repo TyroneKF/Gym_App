@@ -61,7 +61,7 @@ public class ShopForm_Object extends JPanel
         // Create GUI
         //###############################
         create_Field_Items_Map();
-        create_GUI2();
+        create_GUI();
     }
     
     //##################################################################################################################
@@ -119,89 +119,6 @@ public class ShopForm_Object extends JPanel
         //#########################################################
         setLayout(new BorderLayout()); // Define layout of Object
         
-        //###############################
-        // Creating Sections for GUI
-        //###############################
-        
-        //
-        JPanel westPanel = new JPanel(new GridLayout(1, 1));
-        westPanel.setBorder(new EmptyBorder(0, 0, 0, 10));
-        westPanel.setPreferredSize(new Dimension(150, 25)); // width, height
-        add(westPanel, BorderLayout.WEST);
-        
-        //
-        JPanel centrePanel = new JPanel(new BorderLayout());
-        centrePanel.setBackground(Color.BLUE);
-        add(centrePanel, BorderLayout.CENTER);
-        
-        // Delete row button section
-        JPanel eastPanel = new JPanel(new GridLayout(1, 1));
-        eastPanel.setBorder(new EmptyBorder(0, 5, 0, 0));
-        eastPanel.setPreferredSize(new Dimension(110, 34)); // width, height
-        add(eastPanel, BorderLayout.EAST);
-        
-        //######################################################
-        // West Side
-        //######################################################
-        // Create JComboBox
-        westPanel.add(stores_JC);
-        
-        //#####################################################
-        // Centre Side
-        //######################################################
-        //Product Name JTextField
-        
-        JPanel jp = new JPanel(new GridLayout(1, 1));
-        jp.setPreferredSize(new Dimension(270, 34));
-        jp.setBorder(new EmptyBorder(0, 0, 0, 0)); //Pushes object inside further along
-        jp.add(product_Name_JT);
-        centrePanel.add(jp, BorderLayout.WEST);
-        
-        // Product Price
-        //product_Price_JT = new Field_JTxtField_BD("Price", 8,  false);
-        
-        JPanel jp2 = new JPanel(new GridLayout(1, 1));
-        jp2.setPreferredSize(new Dimension(10, 25));
-        jp2.setBorder(new EmptyBorder(0, 5, 0, 0)); //Pushes object inside further along
-        jp2.add(product_Price_JT);
-        centrePanel.add(jp2, BorderLayout.CENTER);
-        
-        // Quantity
-        
-        JPanel jp3 = new JPanel(new GridLayout(1, 1));
-        jp3.setPreferredSize(new Dimension(120, 34));
-        jp3.setBorder(new EmptyBorder(0, 5, 0, 0)); //Pushes object inside further along
-        jp3.add(quantity_JT);
-        centrePanel.add(jp3, BorderLayout.EAST);
-        
-        //#####################################################
-        // East Side
-        //######################################################
-        // Creating submit button
-        JButton deleteRowBtn = new JButton("Delete Row");
-        deleteRowBtn.setPreferredSize(new Dimension(140, 34));
-        deleteRowBtn.setFont(new Font("Arial", Font.BOLD, 12)); // setting font
-        
-        // creating commands for submit button to execute on
-        deleteRowBtn.addActionListener(ae -> {
-            delete_Row_Action();
-        });
-        
-        JPanel jp4 = new JPanel(new GridLayout(1, 1));
-        jp4.setPreferredSize(new Dimension(140, 34));
-        jp4.setBorder(new EmptyBorder(0, 0, 0, 0)); //Pushes object inside further along
-        jp4.add(deleteRowBtn);
-        eastPanel.add(jp4);
-    }
-    
-    protected void create_GUI2()
-    {
-        //#########################################################
-        //Creating JPanel
-        //#########################################################
-        setLayout(new BorderLayout()); // Define layout of Object
-        
-        
         // East Panel
         JPanel eastPanel = create_Section_JP(110, 34, 0, 5, 0, 0);
         add(eastPanel, BorderLayout.EAST);
@@ -248,20 +165,19 @@ public class ShopForm_Object extends JPanel
         //######################################################
         // East Side
         //######################################################
-        JPanel delete_Btn_JPanel = create_Section_JP(140, 34,0, 0, 0, 0 );
-        eastPanel.add(delete_Btn_JPanel);
         
         // Creating submit button
         JButton delete_Row_Btn = new JButton("Delete Row");
         delete_Row_Btn.setPreferredSize(new Dimension(140, 34));
         delete_Row_Btn.setFont(new Font("Arial", Font.BOLD, 12)); // setting font
         
-        // creating commands for submit button to execute on
+        // Creating Events For Delete BTN
         delete_Row_Btn.addActionListener(ae -> {
             delete_Row_Action();
         });
         
-        delete_Btn_JPanel.add(delete_Row_Btn);
+        // Add Btn GUI
+        eastPanel.add(delete_Row_Btn);
     }
     
     
