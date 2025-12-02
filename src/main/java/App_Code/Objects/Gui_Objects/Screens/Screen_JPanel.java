@@ -3,6 +3,7 @@ package App_Code.Objects.Gui_Objects.Screens;
 import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.Collection;
@@ -134,11 +135,6 @@ public class Screen_JPanel extends JPanel
         return true;
     }
     
-    protected boolean is_Results_Empty(Collection<?> c)
-    {
-        return c == null || c.isEmpty();
-    }
-    
     //##############################################
     // Drawing Methods
     //##############################################
@@ -173,22 +169,38 @@ public class Screen_JPanel extends JPanel
         jp.add(scaledIcon);
     }*/
     
-    protected JPanel create_Label_JP(String title, Font font)
+    protected JPanel create_Label_JP(String title, Font font, Color color)
     {
         // Title JP
         JPanel title_JP = new JPanel();
-        title_JP.setBackground(Color.green);
+        title_JP.setBackground(color);
         
         // Creating Label
         JLabel label = new JLabel(title);
         label.setFont(font);
         label.setHorizontalAlignment(JLabel.CENTER);
+       
+        title_JP.add(label);  // Add Label to JP
+       
+        return title_JP;  // Return JP
+    }
+    
+    protected JPanel create_Section_JP(int width, int height, int top_padding, int left_padding, int bottom_padding, int right_padding)
+    {
+        JPanel jp = new JPanel(new GridLayout(1, 1));
+        jp.setBorder(new EmptyBorder(top_padding, left_padding, bottom_padding, right_padding));
+        jp.setPreferredSize(new Dimension(width, height)); // width, height
         
-        // Add Label to JP
-        title_JP.add(label);
+        return jp;
+    }
+    
+    protected JPanel create_Space_Divider(int width, int height, Color color)
+    {
+        JPanel spaceDivider = new JPanel(new GridBagLayout());
+        spaceDivider.setBackground(color);
+        spaceDivider.setPreferredSize(new Dimension(width, height));
         
-        // Return JP
-        return title_JP;
+        return spaceDivider;
     }
     
     //##############################################
@@ -293,15 +305,6 @@ public class Screen_JPanel extends JPanel
     }
     
     protected JPanel get_Main_South_JPanel() { return mainSouthJPanel; }
-    
-    protected JPanel create_Space_Divider(int width, int height, Color color)
-    {
-        JPanel spaceDivider = new JPanel(new GridBagLayout());
-        spaceDivider.setBackground(color);
-        spaceDivider.setPreferredSize(new Dimension(width, height));
-        
-        return spaceDivider;
-    }
     
     //##################################################################################################################
     // Sizing & Adding to GUI Methods

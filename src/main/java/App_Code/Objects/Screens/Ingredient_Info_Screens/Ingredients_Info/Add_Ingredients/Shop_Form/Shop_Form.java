@@ -23,7 +23,7 @@ public class Shop_Form extends Parent_Forms_OBJ
     
     // Screen Objects
     protected Container parentContainer;
-    protected JPanel inputArea;
+    protected JPanel input_Area, northPanel;
     
     //#############################
     // Collections
@@ -61,48 +61,130 @@ public class Shop_Form extends Parent_Forms_OBJ
     //  Create GUI Methods
     public void create_Gui()
     {
-        //############################################
-        // Creating Form
-        //############################################
-        JPanel mainJPanel = collapsibleJPanel.get_Centre_JPanel();
-        mainJPanel.setLayout(new BorderLayout());
+        int fontSize = 14;
+        //#############################################################
+        // Creating GUI Section
+        //#############################################################
+        JPanel screen_JP = collapsibleJPanel.get_Centre_JPanel();
+        screen_JP.setLayout(new BorderLayout());
         
-        //############################################
-        // North Frame
-        //############################################
+        //#############################################
+        // North
+        //#############################################
         // Creating North JPanel Area with 2 rows
-        JPanel northPanel = new JPanel(new GridBagLayout());
-        mainJPanel.add(northPanel, BorderLayout.NORTH);
+        northPanel = new JPanel(new GridBagLayout());
+        screen_JP.add(northPanel, BorderLayout.NORTH);
+        
+        // Main Label
+        JPanel title_Label_Panel = create_Label_JP("Add Suppliers", new Font("Verdana", Font.PLAIN, 24), Color.GREEN);
+        add_To_Container(northPanel, title_Label_Panel, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        
+        // Create Icons
+        create_Icon_Section();
         
         //############################################
-        // Creating area for North JPanel (title area)
+        // Centre
         //############################################
-        JLabel titleLabel = new JLabel("Add Suppliers");
-        titleLabel.setFont(new Font("Verdana", Font.PLAIN, 24));
-        titleLabel.setHorizontalAlignment(JLabel.CENTER);
+        input_Area = new JPanel(new GridBagLayout());
+        screen_JP.add(input_Area, BorderLayout.CENTER);
         
-        JPanel titlePanel = new JPanel();
-        titlePanel.setBackground(Color.green);
-        titlePanel.add(titleLabel);
+        JPanel shop_Form_Panel_GUI = new JPanel(new BorderLayout());
+        add_To_Container(input_Area, shop_Form_Panel_GUI, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
         
-        // Add title JPanel to North Panel Area
-        add_To_Container(northPanel, titlePanel, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        //##################
+        //
+        //##################
+        //
+        JPanel west_JPanel = create_Section_JP(150, 25,0, 0, 0, 10 );
+        shop_Form_Panel_GUI.add(west_JPanel, BorderLayout.WEST);
+        
+        // Panel
+        west_JPanel.setBorder(new EmptyBorder(0, 10, 0, 10));
+        west_JPanel.setBackground(Color.LIGHT_GRAY);
+        
+        // Label
+        JPanel westLabel = create_Label_JP("Select A Store",new Font("Arial", Font.BOLD, fontSize),Color.LIGHT_GRAY);
+        west_JPanel.add(westLabel);
+        
+        //###################
+        //
+        //###################
+        //
+        JPanel centre_JPanel = new JPanel(new BorderLayout());
+        shop_Form_Panel_GUI.add(centre_JPanel, BorderLayout.CENTER);
         
         //############################################
-        // Creating area for North JPanel (Add Icon)
+        // Centre Panel
         //############################################
+        JPanel jp = create_Section_JP(270, 34, 0, 80, 0, 0);
+        centre_JPanel.add(jp, BorderLayout.WEST);
+        
+        //Label
+        JPanel setProductNameLabel = create_Label_JP("Set Product Name", new Font("Arial", Font.BOLD, fontSize),Color.LIGHT_GRAY );
+        jp.add(setProductNameLabel);
+        
+        
+        //########################
+        //Label
+        JPanel jp2 = create_Section_JP(10, 25, 0, 5, 0, 0);
+        centre_JPanel.add(jp2, BorderLayout.CENTER);
+        
+        JPanel setPriceLabel = create_Label_JP("Set Price (£)", new Font("Arial", Font.BOLD, fontSize),Color.LIGHT_GRAY );
+        jp2.add(setPriceLabel);
+        
+        //########################
+        JPanel jp3 = create_Section_JP(120, 34, 0, 15, 0, 0);
+        jp3.setBackground(Color.LIGHT_GRAY);
+        centre_JPanel.add(jp3, BorderLayout.EAST);
+        
+        //Label
+        JPanel setQuantityLabel = create_Label_JP("Quantity (G,L)", new Font("Arial", Font.BOLD, fontSize),Color.LIGHT_GRAY);
+        jp3.add(setQuantityLabel);
+        
+        //############################################
+        // East Panel
+        //############################################
+        
+        // Delete row button section
+        JPanel east_JPanel = create_Section_JP(110, 34, 0, 5, 0, 0);
+        shop_Form_Panel_GUI.add(east_JPanel, BorderLayout.EAST);
+        
+        //panel
+        east_JPanel.setBackground(Color.LIGHT_GRAY);
+        
+        
+        JPanel jp4 = create_Section_JP(120, 34, 0, 10, 0, 0);
+        jp4.setBackground(Color.LIGHT_GRAY);
+        east_JPanel.add(jp4);
+        
+        //Label
+        JPanel deleteBtnLabel = create_Label_JP("Delete Row",new Font("Arial", Font.BOLD, fontSize), Color.LIGHT_GRAY );
+        jp4.add(deleteBtnLabel);
+        
+        //############################################
+        // Adding to GUI
+        //############################################
+      
+        resize_GUi();
+    }
+    
+    protected void create_Icon_Section()
+    {
+        //############################
+        // Icon Section
+        //############################
         IconPanel iconPanel = new IconPanel(1, 10, "East");
-        JPanel iconPanelInsert = iconPanel.getIconJpanel();
-        
         add_To_Container(northPanel, iconPanel.getIconAreaPanel(), 0, 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
         
-        //##########################
+        JPanel iconPanelInsert = iconPanel.getIconJpanel();
+        
+        //###############
         // Add BTN Icon
-        //##########################
-        int width = 30;
-        int height = 30;
+        //###############
+        int width = 30, height = 30;
         
         IconButton add_Icon_Btn = new IconButton("/images/add/++add.png", width, height, width, height, "centre", "right"); // btn text is useless here , refactor
+        iconPanelInsert.add(add_Icon_Btn); // Add btn to GUI
         
         JButton add_Btn = add_Icon_Btn.returnJButton();
         add_Icon_Btn.makeBTntransparent();
@@ -111,121 +193,6 @@ public class Shop_Form extends Parent_Forms_OBJ
             
             add_Btn_Action();
         });
-        
-        iconPanelInsert.add(add_Icon_Btn);
-        
-        //############################################
-        // Centre Form
-        //############################################
-        inputArea = new JPanel(new GridBagLayout());
-        mainJPanel.add(inputArea, BorderLayout.CENTER);
-        
-        //##############################
-        // ShopForm GUI
-        //##############################
-        JPanel shopFormPanelGUI = new JPanel(new BorderLayout());
-        
-        //###############################
-        // Creating Sections for GUI
-        //###############################
-        
-        //
-        JPanel westPanel = new JPanel(new GridLayout(1, 1));
-        westPanel.setBorder(new EmptyBorder(0, 0, 0, 10));
-        westPanel.setPreferredSize(new Dimension(150, 25)); // width, height
-        shopFormPanelGUI.add(westPanel, BorderLayout.WEST);
-        
-        //
-        JPanel centrePanel = new JPanel(new BorderLayout());
-        centrePanel.setBackground(Color.BLUE);
-        shopFormPanelGUI.add(centrePanel, BorderLayout.CENTER);
-        
-        // Delete row button section
-        JPanel eastPanel = new JPanel(new GridLayout(1, 1));
-        eastPanel.setBorder(new EmptyBorder(0, 5, 0, 0));
-        eastPanel.setPreferredSize(new Dimension(110, 34)); // width, height
-        shopFormPanelGUI.add(eastPanel, BorderLayout.EAST);
-        
-        //############################################
-        // West Panel
-        //############################################
-        int fontSize = 14;
-        
-        // Panel
-        westPanel.setBorder(new EmptyBorder(0, 10, 0, 10));
-        westPanel.setBackground(Color.LIGHT_GRAY);
-        
-        // Label
-        JLabel westLabel = new JLabel("Select A Store");
-        westLabel.setFont(new Font("Arial", Font.BOLD, fontSize)); // setting font
-        westPanel.add(westLabel);
-        
-        //############################################
-        // Centre Panel
-        //############################################
-        
-        //Label
-        JLabel setProductNameLabel = new JLabel("Set Product Name");
-        setProductNameLabel.setFont(new Font("Arial", Font.BOLD, fontSize)); // setting font
-        
-        JPanel jp = new JPanel(new GridLayout(1, 1));
-        jp.setPreferredSize(new Dimension(270, 34));
-        jp.setBorder(new EmptyBorder(0, 80, 0, 0)); //Pushes object inside further along
-        jp.setBackground(Color.LIGHT_GRAY);
-        
-        jp.add(setProductNameLabel);
-        centrePanel.add(jp, BorderLayout.WEST);
-        
-        //########################
-        //Label
-        JLabel setPriceLabel = new JLabel("Set Price (£)");
-        setPriceLabel.setFont(new Font("Arial", Font.BOLD, fontSize)); // setting font
-        
-        JPanel jp2 = new JPanel(new GridLayout(1, 1));
-        jp2.setPreferredSize(new Dimension(10, 25));
-        jp2.setBorder(new EmptyBorder(0, 5, 0, 0)); //Pushes object inside further along
-        
-        jp2.setBackground(Color.LIGHT_GRAY);
-        jp2.add(setPriceLabel);
-        centrePanel.add(jp2, BorderLayout.CENTER);
-        
-        //########################
-        //Label
-        JLabel setQuantityLabel = new JLabel("Quantity (G,L)");
-        setQuantityLabel.setFont(new Font("Arial", Font.BOLD, fontSize)); // setting font
-        
-        JPanel jp3 = new JPanel(new GridLayout(1, 1));
-        jp3.setPreferredSize(new Dimension(120, 34));
-        jp3.setBorder(new EmptyBorder(0, 15, 0, 0)); //Pushes object inside further along
-        
-        jp3.setBackground(Color.LIGHT_GRAY);
-        jp3.add(setQuantityLabel);
-        centrePanel.add(jp3, BorderLayout.EAST);
-        
-        //############################################
-        // East Panel
-        //############################################
-        
-        //panel
-        eastPanel.setBackground(Color.LIGHT_GRAY);
-        
-        //Label
-        JLabel deleteBtnLabel = new JLabel("Delete Row");
-        deleteBtnLabel.setFont(new Font("Arial", Font.BOLD, fontSize)); // setting font
-        
-        JPanel jp4 = new JPanel(new GridLayout(1, 1));
-        jp4.setBackground(Color.LIGHT_GRAY);
-        jp4.setPreferredSize(new Dimension(120, 34));
-        jp4.setBorder(new EmptyBorder(0, 10, 0, 0)); //Pushes object inside further along
-        
-        jp4.add(deleteBtnLabel);
-        eastPanel.add(jp4);
-        
-        //############################################
-        // Adding to GUI
-        //############################################
-        add_To_Container(inputArea, shopFormPanelGUI, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
-        parentContainer.revalidate();
     }
     
     //#################################
@@ -234,11 +201,11 @@ public class Shop_Form extends Parent_Forms_OBJ
     protected void add_Btn_Action()
     {
         // Create ShopForm Object & Add
-        ShopForm_Object add_shop_form_object = new ShopForm_Object(inputArea, this, stores);
+        ShopForm_Object add_shop_form_object = new ShopForm_Object(input_Area, this, stores);
         add_shop_Form_Objects.add(add_shop_form_object);
         
         // Adding Object To GUI
-        add_To_Container(inputArea, add_shop_form_object, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        add_To_Container(input_Area, add_shop_form_object, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
         
         // Resize GUI
         resize_GUI();
@@ -346,7 +313,7 @@ public class Shop_Form extends Parent_Forms_OBJ
         return error_MSG.toString();
     }
     
-    protected void add_Update_Queries(LinkedHashSet<Pair<String, Object[]>> queries_And_Params) throws Exception
+    public void add_Update_Queries(LinkedHashSet<Pair<String, Object[]>> queries_And_Params) throws Exception
     {
         //###########################################
         // Exit Clause
@@ -444,7 +411,7 @@ public class Shop_Form extends Parent_Forms_OBJ
     //################################################################
     public void resize_GUi()
     {
-        inputArea.revalidate();
+        input_Area.revalidate();
         parentContainer.revalidate();
         ingredient_Screen.resize_GUI();
     }

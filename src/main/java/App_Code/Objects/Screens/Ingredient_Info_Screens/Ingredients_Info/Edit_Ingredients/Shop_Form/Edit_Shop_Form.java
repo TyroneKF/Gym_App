@@ -36,11 +36,11 @@ public class Edit_Shop_Form extends Shop_Form
             for (ArrayList<Object> data : data_AL)  // Add Shop Form Objects to Form
             {
                 // Create ShopForm Object & Add
-                Edit_ShopForm_Object edit_shop_form_object = new Edit_ShopForm_Object(inputArea, this, stores, data);
+                Edit_ShopForm_Object edit_shop_form_object = new Edit_ShopForm_Object(input_Area, this, stores, data);
                 edit_Shop_Form_Objects.add(edit_shop_form_object);
                 
                 // Adding Object To GUI
-                add_To_Container(inputArea, edit_shop_form_object, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
+                add_To_Container(input_Area, edit_shop_form_object, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
             }
         }
        

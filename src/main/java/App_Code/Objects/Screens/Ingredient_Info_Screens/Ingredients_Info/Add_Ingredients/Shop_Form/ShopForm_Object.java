@@ -176,8 +176,7 @@ public class ShopForm_Object extends JPanel
             delete_Row_Action();
         });
         
-        // Add Btn GUI
-        eastPanel.add(delete_Row_Btn);
+        eastPanel.add(delete_Row_Btn); // Add Delete Btn GUI
     }
     
     

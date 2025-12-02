@@ -101,7 +101,7 @@ public class Edit_Ingredients_Screen extends Ingredients_Screen
         //#########################################
         
         // Title
-        JPanel ingredient_Type_Title_JP = create_Label_JP("Select Ingredient Type", new Font("Verdana", Font.PLAIN, 24));
+        JPanel ingredient_Type_Title_JP = create_Label_JP("Select Ingredient Type", new Font("Verdana", Font.PLAIN, 24), Color.GREEN);
         add_To_Container(mainCentre_JPanel, ingredient_Type_Title_JP, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
         
         //######################
@@ -132,7 +132,7 @@ public class Edit_Ingredients_Screen extends Ingredients_Screen
         // Ingredient Name Setup
         //#########################################
         // Title
-        JPanel ingredient_Name_Title_JP = create_Label_JP("Select Ingredient Name", new Font("Verdana", Font.PLAIN, 24));
+        JPanel ingredient_Name_Title_JP = create_Label_JP("Select Ingredient Name", new Font("Verdana", Font.PLAIN, 24), Color.GREEN);
         add_To_Container(mainCentre_JPanel, ingredient_Name_Title_JP, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
         
         //######################
