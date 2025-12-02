@@ -34,7 +34,7 @@ public class Shop_Form extends Parent_Forms_OBJ
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Shop_Form(Container parentContainer, String btn_Text,  Ingredients_Screen ingredient_Screen, ArrayList<Store_ID_OBJ> stores)
+    public Shop_Form(Container parentContainer, String btn_Text, Ingredients_Screen ingredient_Screen, ArrayList<Store_ID_OBJ> stores)
     {
         //############################################
         // Super
@@ -422,7 +422,6 @@ public class Shop_Form extends Parent_Forms_OBJ
         }
         
         extra_Clear_Shops_Form(); // Extra Clear elements
-        
         resize_GUi(); // Resize GUI  Elements
     }
     

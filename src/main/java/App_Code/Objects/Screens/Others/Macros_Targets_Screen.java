@@ -1,7 +1,7 @@
 package App_Code.Objects.Screens.Others;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
-import App_Code.Objects.Gui_Objects.Text_Fields.JTextFieldLimit;
+import App_Code.Objects.Gui_Objects.Text_Fields.Parent.JTextFieldLimit;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 

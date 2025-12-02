@@ -13,8 +13,7 @@ public class Field_Binding<T>
             gui_Label,
             mysql_Field_Name;
     
-    private Component gui_Component;
-    private Class<T> field_Type;
+    private Class<T> field_Type = null;
     private Component component;
     
     private int query_Field_Pos;

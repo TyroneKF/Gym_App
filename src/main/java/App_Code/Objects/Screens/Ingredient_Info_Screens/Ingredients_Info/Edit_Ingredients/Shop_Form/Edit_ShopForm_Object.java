@@ -2,7 +2,7 @@ package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_I
 
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
 import App_Code.Objects.Gui_Objects.Combo_Boxes.Field_JCombo_Storable_ID;
-import App_Code.Objects.Gui_Objects.Text_Fields.Field_JTxtField_Parent;
+import App_Code.Objects.Gui_Objects.Text_Fields.Parent.Field_JTxtField_Parent;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.ShopForm_Object;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.Shop_Form;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.Shop_Form_Binding;
@@ -42,25 +42,21 @@ public class Edit_ShopForm_Object extends ShopForm_Object
                 // Variables
                 int pos_In_Data = shop_form_binding.get_Field_Query_Pos();
                 Object data = data_AL.get(pos_In_Data);
-                
                 Component gui_Component = shop_form_binding.get_Gui_Component();
                 
                 // Set Data by Type
                 switch (gui_Component)
                 {
                     case Field_JCombo_Storable_ID<?> JCombo -> { JCombo.set_Item_By_ID((Integer) data); }
-                    case Field_JTxtField_Parent jTextField ->
-                    {
-                        jTextField.setText(data.toString());
-                        System.out.printf("\n\nName : %s\nTXt_Field: %s \nDataType: %s", shop_form_binding.get_Gui_Label(), data, shop_form_binding.get_Field_Type());
-                    }
+                    case Field_JTxtField_Parent jTextField -> jTextField.setText(data.toString());
                     default -> throw new IllegalStateException("Unexpected value: " + gui_Component);
                 }
             }
+            resize_GUI();
         }
         catch (Exception e)
         {
-            throw new RuntimeException(e);
+            System.err.printf("\n\nError \n%s", e);
         }
     }
 }

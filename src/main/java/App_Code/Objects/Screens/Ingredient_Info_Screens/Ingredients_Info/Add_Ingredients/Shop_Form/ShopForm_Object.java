@@ -2,7 +2,9 @@ package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_In
 
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
 import App_Code.Objects.Gui_Objects.Combo_Boxes.Field_JCombo_Storable_ID;
-import App_Code.Objects.Gui_Objects.Text_Fields.Field_JTxtField_Parent;
+import App_Code.Objects.Gui_Objects.Text_Fields.Field_JTxtField_BD;
+import App_Code.Objects.Gui_Objects.Text_Fields.Field_JTxtField_String;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -24,10 +26,9 @@ public class ShopForm_Object extends JPanel
     // GUI Objects
     protected Container parent_Container;
     protected Field_JCombo_Storable_ID<Store_ID_OBJ> stores_JC;
-    protected Field_JTxtField_Parent
-            product_Name_JT = new Field_JTxtField_Parent("name", string_Char_Limit),
-            product_Price_JT = new Field_JTxtField_Parent("price", decimal_Char_Limit, true, false),
-            quantity_JT = new Field_JTxtField_Parent("quantity", decimal_Char_Limit, true, false);
+    
+    protected Field_JTxtField_String product_Name_JT ;
+    protected Field_JTxtField_BD product_Price_JT, quantity_JT;
     
     // Objects
     protected Shop_Form shop_form;
@@ -52,7 +53,10 @@ public class ShopForm_Object extends JPanel
         this.shop_form = shop_form;
         this.stores = stores;  // Collections
         
+        product_Name_JT = new Field_JTxtField_String("name", string_Char_Limit);
         stores_JC = new Field_JCombo_Storable_ID<>("store", Store_ID_OBJ.class, stores);  // Component
+        product_Price_JT = new Field_JTxtField_BD("price", decimal_Char_Limit);
+        quantity_JT = new Field_JTxtField_BD("quantity", decimal_Char_Limit, false);
         
         //###############################
         // Create GUI
@@ -128,18 +132,16 @@ public class ShopForm_Object extends JPanel
         eastPanel.setPreferredSize(new Dimension(110, 34)); // width, height
         add(eastPanel, BorderLayout.EAST);
         
-        //#####################################################
+        //######################################################
         // West Side
         //######################################################
-        
-        // create JComboBox
-        westPanel.add(field_Items_Map.get("store").get_Gui_Component());
+        // Create JComboBox
+        westPanel.add(stores_JC);
         
         //#####################################################
         // Centre Side
         //######################################################
         //Product Name JTextField
-        product_Name_JT = new Field_JTxtField_Parent("Product Name", 255);
         
         JPanel jp = new JPanel(new GridLayout(1, 1));
         jp.setPreferredSize(new Dimension(270, 34));
@@ -148,7 +150,7 @@ public class ShopForm_Object extends JPanel
         centrePanel.add(jp, BorderLayout.WEST);
         
         // Product Price
-        product_Price_JT = new Field_JTxtField_Parent("Price", 8, true, false);
+        //product_Price_JT = new Field_JTxtField_BD("Price", 8,  false);
         
         JPanel jp2 = new JPanel(new GridLayout(1, 1));
         jp2.setPreferredSize(new Dimension(10, 25));
@@ -157,7 +159,6 @@ public class ShopForm_Object extends JPanel
         centrePanel.add(jp2, BorderLayout.CENTER);
         
         // Quantity
-        quantity_JT = new Field_JTxtField_Parent("Quantity", 8, true, false);
         
         JPanel jp3 = new JPanel(new GridLayout(1, 1));
         jp3.setPreferredSize(new Dimension(120, 34));
@@ -204,7 +205,7 @@ public class ShopForm_Object extends JPanel
     //#########################################################
     // Resizing Methods
     //#########################################################
-    protected void remove_From_Parent_Container()
+    public void remove_From_Parent_Container()
     {
         parent_Container.remove(this); //Remove from parent Container
     }

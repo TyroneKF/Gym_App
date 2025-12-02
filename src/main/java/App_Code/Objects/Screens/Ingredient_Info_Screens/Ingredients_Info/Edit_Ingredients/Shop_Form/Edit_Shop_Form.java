@@ -3,9 +3,9 @@ package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_I
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredients_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.Shop_Form;
-
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 
 public class Edit_Shop_Form extends Shop_Form
@@ -13,7 +13,7 @@ public class Edit_Shop_Form extends Shop_Form
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    protected ArrayList<Edit_Shop_Form> edit_Shop_Form_Objects = new ArrayList<>();
+    protected ArrayList<Edit_ShopForm_Object> edit_Shop_Form_Objects = new ArrayList<>();
     
     
     //##################################################################################################################
@@ -35,11 +35,9 @@ public class Edit_Shop_Form extends Shop_Form
         {
             for (ArrayList<Object> data : data_AL)  // Add Shop Form Objects to Form
             {
-                System.out.printf("\n\n########################### \n%s%n", data);
-                
                 // Create ShopForm Object & Add
                 Edit_ShopForm_Object edit_shop_form_object = new Edit_ShopForm_Object(inputArea, this, stores, data);
-                edit_shop_form_object.add(edit_shop_form_object);
+                edit_Shop_Form_Objects.add(edit_shop_form_object);
                 
                 // Adding Object To GUI
                 add_To_Container(inputArea, edit_shop_form_object, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
@@ -47,5 +45,18 @@ public class Edit_Shop_Form extends Shop_Form
         }
        
         resize_GUI();  // Resize GUI
+    }
+    
+    @Override
+    protected void extra_Clear_Shops_Form()
+    {
+        Iterator<Edit_ShopForm_Object> it = edit_Shop_Form_Objects.iterator();
+        
+        while (it.hasNext())
+        {
+            Edit_ShopForm_Object i = it.next();
+            i.remove_From_Parent_Container();
+            it.remove();
+        }
     }
 }

@@ -11,7 +11,7 @@ import java.awt.*;
 
 import App_Code.Objects.API.Nutritionix.NutritionIx_API;
 import App_Code.Objects.Gui_Objects.IconButton;
-import App_Code.Objects.Gui_Objects.Text_Fields.JTextFieldLimit;
+import App_Code.Objects.Gui_Objects.Text_Fields.Parent.JTextFieldLimit;
 import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredient_Form.Ingredients_Form;
 
