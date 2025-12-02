@@ -553,7 +553,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         //###############################
         UIManager.put("OptionPane.messageFont", new Font("Arial", Font.PLAIN, 16));
         JOptionPane.showMessageDialog(null, build_Error_MSg(error_Map), "Ingredients Form Error Messages", JOptionPane.INFORMATION_MESSAGE);
-       
+        
         return false;
     }
     
@@ -662,20 +662,16 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     case Field_JCombo_Storable_ID<?> jc -> params[pos] = jc.get_Selected_Item_ID();
                     case Field_JTxtField_Parent jt ->  // Get Text & Type cast to expected type
                     {
-                        Class<?> type = fb.get_Field_Type();
+                        Class<?> type = fb.get_Field_Type(); // Get Fields Expected type
                         
-                        if (type == BigDecimal.class)  // IF type is BigDecimal Convert TXT to
-                        {
-                            params[pos] = new BigDecimal(jt.get_Text());
-                        }
-                        else if (type == Integer.class)
-                        {
-                            params[pos] = Integer.valueOf(jt.get_Text());
-                        }
-                        else // Default is Text
-                        {
-                            params[pos] = jt.get_Text();
-                        }
+                        // Convert Txt to correlated Types
+                        if (type == BigDecimal.class) { params[pos] = new BigDecimal(jt.get_Text()); }
+                        
+                        else if (type == Integer.class) { params[pos] = Integer.valueOf(jt.get_Text()); }
+                        
+                        else if (type == String.class) { params[pos] = jt.get_Text(); }
+                        
+                        else { throw new IllegalStateException("Unexpected Type : " + type); }
                     }
                     default -> throw new IllegalStateException("Unexpected value: " + fb.get_Gui_Component());
                 }
