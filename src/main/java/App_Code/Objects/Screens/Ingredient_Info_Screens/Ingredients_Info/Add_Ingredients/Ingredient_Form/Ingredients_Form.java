@@ -371,7 +371,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
             {
                 jComboBox.reset_JC();
             }
-            else if (component instanceof Field_JTxtField_Parent jTxtField)
+            else if (component instanceof Field_JTxtField_Parent<?> jTxtField)
             {
                 jTxtField.reset_Txt_Field();
             }
@@ -496,7 +496,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
             switch (field_Binding.get_Gui_Component())
             {
                 case Field_JComboBox<?> jc -> jc.validation_Check(error_Map);
-                case Field_JTxtField_Parent jt -> jt.validation_Check(error_Map);
+                case Field_JTxtField_Parent<?> jt -> jt.validation_Check(error_Map);
                 default -> throw new IllegalStateException("Unexpected value: " + field_Binding.get_Gui_Component());
             }
         }
