@@ -64,16 +64,25 @@ public abstract class Field_JTxtField_Parent<T> extends JTextField
         return get_Text().isEmpty();
     }
     
-    public T get_Text_Casted_To_Type()
+    //##############################################
+    // Casting Types Methods
+    //##############################################
+    public T get_Text_Casted_To_Type() throws Exception
     {
-        // Convert Txt to correlated Types
-        if (type_Cast == BigDecimal.class) { return type_Cast.cast(new BigDecimal(get_Text())); }
+        return cast_Obj_To_Type(getText()); // JTextField version of getting text as the next method already does remove_Hidden TXT method
+    }
+    
+    private <D> T cast_Obj_To_Type(D object) throws Exception
+    {
+        String object_String = remove_Space_And_Hidden_Chars(object.toString()); // Get Object in TXT form
         
-        else if (type_Cast == Integer.class) { return type_Cast.cast(Integer.valueOf(get_Text())); }
+        if (type_Cast == BigDecimal.class) { return type_Cast.cast(new BigDecimal(object_String)); }
         
-        else if (type_Cast == String.class) { return type_Cast.cast(get_Text()); }
+        else if (type_Cast == Integer.class) { return type_Cast.cast(Integer.valueOf(object_String)); }
         
-        else { throw new IllegalStateException("Unexpected Type : " + type_Cast); }
+        else if (type_Cast == String.class) { return type_Cast.cast(object_String); }
+        
+        throw new Exception("Unexpected Type : " + type_Cast);
     }
     
     //##############################################
@@ -120,4 +129,26 @@ public abstract class Field_JTxtField_Parent<T> extends JTextField
         return m1.find();
     }
     
+    public <D> boolean is_Field_Data_Equal_To(D object)
+    {
+        try
+        {
+            T this_Object_Data = get_Text_Casted_To_Type(); // Get this objects Field TXT Type Casted
+            T object_Casted_Data = cast_Obj_To_Type(object);
+            
+            if (this_Object_Data == null || object_Casted_Data == null) // Case edge
+            {
+                return this_Object_Data == object_Casted_Data;
+            }
+            
+            // return are these objects equal
+            return type_Cast.equals(BigDecimal.class)
+                    ? ((BigDecimal) this_Object_Data).compareTo((BigDecimal) object_Casted_Data) == 0
+                    : this_Object_Data.equals(object_Casted_Data);
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+    }
 }
