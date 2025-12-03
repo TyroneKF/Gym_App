@@ -121,6 +121,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- 🎨 AtlantisFX Base: Modern JavaFX UI theme library providing styles, components, and utilities -->
+        <dependency>
+            <groupId>io.github.mkpaz</groupId>
+            <artifactId>atlantafx-base</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+
 
 
     </dependencies>
