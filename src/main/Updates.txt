@@ -6,7 +6,7 @@ Work On:
 ######################################################################################
 .) Edit ingredients Screen -> Define prior_Form_Validations() for JC boxes at the top of the screen
 .) Collapsible Panel prevent closing
-
+.) Make screens use Jframe / Panel classes
 .) Make single columnn / row Myjdbc method
 .) Add ingredients screen -> shared data update
 .) Ingredients Form -> salt update

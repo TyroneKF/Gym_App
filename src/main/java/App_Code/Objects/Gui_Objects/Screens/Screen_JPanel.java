@@ -179,18 +179,18 @@ public class Screen_JPanel extends JPanel
         JLabel label = new JLabel(title);
         label.setFont(font);
         label.setHorizontalAlignment(JLabel.CENTER);
-       
+        
         title_JP.add(label);  // Add Label to JP
-       
+        
         return title_JP;  // Return JP
     }
     
-    protected JPanel create_Section_JP(int width, int height, int top_padding, int left_padding, int bottom_padding, int right_padding)
+    protected JPanel create_Section_JP(Color color, int width, int height, int top_padding, int left_padding, int bottom_padding, int right_padding)
     {
         JPanel jp = new JPanel(new GridLayout(1, 1));
         jp.setBorder(new EmptyBorder(top_padding, left_padding, bottom_padding, right_padding));
         jp.setPreferredSize(new Dimension(width, height)); // width, height
-        
+        jp.setBackground(color);
         return jp;
     }
     
@@ -262,7 +262,7 @@ public class Screen_JPanel extends JPanel
     
     protected String get_Method_Name()
     {
-        return String.format("%s()",Thread.currentThread().getStackTrace()[1].getMethodName());
+        return String.format("%s()", Thread.currentThread().getStackTrace()[1].getMethodName());
     }
     
     protected String get_Class_And_Method_Name()
