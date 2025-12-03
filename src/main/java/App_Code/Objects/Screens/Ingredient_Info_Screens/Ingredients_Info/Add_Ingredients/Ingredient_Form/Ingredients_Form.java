@@ -627,37 +627,30 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         //##########################
         // Create Update Query
         //##########################
-        try
+        
+        int pos = 0;
+        for (Ingredients_Form_Binding<?> field_Binding : field_Items_Map.values())
         {
-            int pos = 0;
-            for (Ingredients_Form_Binding<?> field_Binding : field_Items_Map.values())
+            boolean last_Iteration = pos == size - 1;
+            
+            // Add to Header
+            insert_Header.append(last_Iteration
+                    ? String.format("%s) VALUES ", field_Binding.get_Mysql_Field_Name())
+                    : String.format("%s,", field_Binding.get_Mysql_Field_Name())
+            );
+            
+            // Add to Values
+            values.append(last_Iteration ? "?);" : "?,");
+            
+            // Add to params
+            switch (field_Binding.get_Gui_Component())
             {
-                boolean last_Iteration = pos == size - 1;
-                
-                // Add to Header
-                insert_Header.append(last_Iteration
-                        ? String.format("%s) VALUES ", field_Binding.get_Mysql_Field_Name())
-                        : String.format("%s,", field_Binding.get_Mysql_Field_Name())
-                );
-                
-                // Add to Values
-                values.append(last_Iteration ? "?);" : "?,");
-                
-                // Add to params
-                switch (field_Binding.get_Gui_Component())
-                {
-                    case Field_JCombo_Storable_ID<?> jc -> params[pos] = jc.get_Selected_Item_ID();
-                    case Field_JTxtField_Parent<?> jt -> params[pos] = jt.get_Text_Casted_To_Type();
-                    default ->
-                            throw new IllegalStateException("Unexpected value: " + field_Binding.get_Gui_Component());
-                }
-                
-                pos++; // Increase pos
+                case Field_JCombo_Storable_ID<?> jc -> params[pos] = jc.get_Selected_Item_ID();
+                case Field_JTxtField_Parent<?> jt -> params[pos] = jt.get_Text_Casted_To_Type();
+                default -> throw new IllegalStateException("Unexpected value: " + field_Binding.get_Gui_Component());
             }
-        }
-        catch (Exception e)
-        {
-            throw e;
+            
+            pos++; // Increase pos
         }
         
         System.out.printf("\n\nInsert Headers: \n%s \n\nValues: \n%s  \n\nParams: \n%s%n", insert_Header, values, Arrays.toString(params));
