@@ -3,6 +3,7 @@ package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_I
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredients_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.Shop_Form;
+
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -29,7 +30,7 @@ public class Edit_Shop_Form extends Shop_Form
     {
         clear_Shop_Form(); // Clear Form
         
-        if(! data_AL.isEmpty())
+        if (! data_AL.isEmpty())
         {
             for (ArrayList<Object> data : data_AL)  // Add Shop Form Objects to Form
             {
@@ -41,13 +42,15 @@ public class Edit_Shop_Form extends Shop_Form
                 add_To_Container(input_Area_JP, edit_shop_form_object, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
             }
         }
-       
+        
         resize_GUI();  // Resize GUI
     }
     
     @Override
-    protected void extra_Clear_Shops_Form()
+    public void clear_Shop_Form()
     {
         edit_Shop_Form_Objects.clear();
+        
+        super.clear_Shop_Form();
     }
 }

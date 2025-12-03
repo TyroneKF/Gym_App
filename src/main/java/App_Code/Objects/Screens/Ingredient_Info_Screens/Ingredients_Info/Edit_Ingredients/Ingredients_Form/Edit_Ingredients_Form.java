@@ -44,7 +44,7 @@ public class Edit_Ingredients_Form extends Ingredients_Form
         //##################################
         // IS Ingredient Name Null or Empty
         //####################################
-        String ingredient_Name = ((Field_JTxtField_Parent) field_Items_Map.get("name").get_Gui_Component()).get_Text();
+        String ingredient_Name = ((Field_JTxtField_Parent<?>) field_Items_Map.get("name").get_Gui_Component()).get_Text();
         
         if (ingredient_Name == null || ingredient_Name.isEmpty()) { throw new Exception("No ingredient Created!"); }
         
@@ -93,7 +93,7 @@ public class Edit_Ingredients_Form extends Ingredients_Form
             {
                 jComboBox.set_Item_By_ID((int) data);
             }
-            else if (component instanceof Field_JTxtField_Parent jTxtField)
+            else if (component instanceof Field_JTxtField_Parent<?> jTxtField)
             {
                 jTxtField.setText(data.toString());
             }
@@ -101,9 +101,7 @@ public class Edit_Ingredients_Form extends Ingredients_Form
             pos ++;
         }
         
-        // Reset Salt JComboBox
-        salt_JC.set_Item("g");
+        set_Salt_JC_To_Grams(); // Set Salt to Grams
     }
-    
     
 }

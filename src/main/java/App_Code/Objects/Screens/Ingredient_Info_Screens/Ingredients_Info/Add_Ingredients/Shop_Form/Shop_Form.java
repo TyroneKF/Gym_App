@@ -93,7 +93,7 @@ public class Shop_Form extends Parent_Forms_OBJ
         //##################
         // Store Section
         //##################
-        JPanel store_JP = create_Section_JP(Color.LIGHT_GRAY,150, 25, 0, 0, 0, 10);
+        JPanel store_JP = create_Section_JP(Color.LIGHT_GRAY, 150, 25, 0, 0, 0, 10);
         form_Labels_Section.add(store_JP, BorderLayout.WEST);
         
         // Store Label
@@ -109,17 +109,17 @@ public class Shop_Form extends Parent_Forms_OBJ
         //########################
         // Centre Left
         //########################
-        JPanel centre_Left_JP = create_Section_JP(Color.LIGHT_GRAY,330, 34, 0, 0, 0, 5);
+        JPanel centre_Left_JP = create_Section_JP(Color.LIGHT_GRAY, 330, 34, 0, 0, 0, 5);
         centre_JPanel.add(centre_Left_JP, BorderLayout.WEST);
         
         // Product Name Label
-        JPanel product_Name_Label_JP = create_Label_JP("Set Product Name", new Font("Arial", Font.BOLD, fontSize),Color.LIGHT_GRAY);
+        JPanel product_Name_Label_JP = create_Label_JP("Set Product Name", new Font("Arial", Font.BOLD, fontSize), Color.LIGHT_GRAY);
         centre_Left_JP.add(product_Name_Label_JP);
         
         //########################
         // Centre Middle
         //########################
-        JPanel centre_Middle_JP = create_Section_JP(Color.LIGHT_GRAY,5, 25, 0, 0, 0, 0);
+        JPanel centre_Middle_JP = create_Section_JP(Color.LIGHT_GRAY, 5, 25, 0, 0, 0, 0);
         centre_JPanel.add(centre_Middle_JP, BorderLayout.CENTER);
         
         // Price Label
@@ -129,7 +129,7 @@ public class Shop_Form extends Parent_Forms_OBJ
         //########################
         // Centre Right
         //########################
-        JPanel centre_Right_JP = create_Section_JP(Color.LIGHT_GRAY,90, 34, 0, 5, 0, 0);
+        JPanel centre_Right_JP = create_Section_JP(Color.LIGHT_GRAY, 90, 34, 0, 5, 0, 0);
         centre_JPanel.add(centre_Right_JP, BorderLayout.EAST);
         
         // Quantity Label
@@ -338,31 +338,24 @@ public class Shop_Form extends Parent_Forms_OBJ
         //######################
         Object[] params = new Object[size * input_Params_Per_Item];
         
-        try
+        for (int pos = 0; pos < size; pos++)
         {
-            for (int pos = 0; pos < size; pos++)
-            {
-                ShopForm_Object shopForm_object = add_shop_Form_Objects.get(pos);
-                
-                int base = pos * input_Params_Per_Item;
-                
-                // Add to Values
-                values.append(
-                        pos == size - 1
-                                ? String.format("(%s, ?, ?, ?, ?);", var_Ingredient_ID)
-                                : String.format("(%s, ?, ?, ?, ?),", var_Ingredient_ID)
-                );
-                
-                shopForm_object.add_Params(params, base); // Each Item add its update statements
-            }
-        }
-        catch (Exception e)
-        {
-            throw e;
+            ShopForm_Object shopForm_object = add_shop_Form_Objects.get(pos);
+            
+            int base = pos * input_Params_Per_Item;
+            
+            // Add to Values
+            values.append(
+                    pos == size - 1
+                            ? String.format("(%s, ?, ?, ?, ?);", var_Ingredient_ID)
+                            : String.format("(%s, ?, ?, ?, ?),", var_Ingredient_ID)
+            );
+            
+            shopForm_object.add_Params(params, base); // Each Item add its update statements
         }
         
         //###########################
-        // Edit Values Statement
+        //
         //###########################
         System.out.printf("\n\nInsert Headers: \n%s \n\nValues: \n%s  \n\nParams: \n%s%n", insert_Header, values, Arrays.toString(params));
         
@@ -378,25 +371,8 @@ public class Shop_Form extends Parent_Forms_OBJ
     //################################################################
     public void clear_Shop_Form()
     {
-        /*Iterator<ShopForm_Object> it = add_shop_Form_Objects.iterator();
-        
-        while (it.hasNext())
-        {
-            ShopForm_Object i = it.next();
-            i.remove_From_Parent_Container();
-            it.remove();
-        }
-        
-        extra_Clear_Shops_Form(); // Extra Clear elements
-        resize_GUi(); // Resize GUI  Elements*/
-        
         add_shop_Form_Objects.clear();
         input_Area_JP.removeAll();
-    }
-    
-    protected void extra_Clear_Shops_Form()
-    {
-    
     }
     
     //################################################################

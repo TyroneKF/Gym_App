@@ -87,8 +87,14 @@ public class Ingredients_Form extends Parent_Forms_OBJ
     //##################################################################################################################
     // Methods
     //##################################################################################################################
+    public void set_Salt_JC_To_Grams()
+    {
+        salt_JC.setSelectedItem("g");
+    }
     
-    
+    //###########################################################
+    // Create GUI Methods
+    //###########################################################
     private void create_Field_Items_Map()
     {
         field_Items_Map = new LinkedHashMap<>()
@@ -218,14 +224,6 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         }};
     }
     
-    public void set_Salt_JC_To_Grams()
-    {
-        salt_JC.setSelectedItem("g");
-    }
-    
-    //###########################################################
-    // Create GUI Methods
-    //###########################################################
     private void create_Ingredients_Form()
     {
         JPanel mainJPanel = collapsibleJPanel.get_Centre_JPanel();

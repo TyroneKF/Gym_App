@@ -6,9 +6,11 @@ import App_Code.Objects.Gui_Objects.Text_Fields.Parent.Field_JTxtField_Parent;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.ShopForm_Object;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.Shop_Form;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.Shop_Form_Binding;
+import org.javatuples.Pair;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 
 public class Edit_ShopForm_Object extends ShopForm_Object
 {
@@ -48,7 +50,7 @@ public class Edit_ShopForm_Object extends ShopForm_Object
                 switch (gui_Component)
                 {
                     case Field_JCombo_Storable_ID<?> JCombo -> { JCombo.set_Item_By_ID((Integer) data); }
-                    case Field_JTxtField_Parent jTextField -> jTextField.setText(data.toString());
+                    case Field_JTxtField_Parent<?> jTextField -> jTextField.setText(data.toString());
                     default -> throw new IllegalStateException("Unexpected value: " + gui_Component);
                 }
             }
