@@ -12,6 +12,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 
 public class Edit_Ingredients_Form extends Ingredients_Form
 {
@@ -19,7 +20,7 @@ public class Edit_Ingredients_Form extends Ingredients_Form
     // Variables
     //##################################################################################################################
     protected Integer ingredient_ID = null;
-    protected ArrayList<Object> data;
+    protected ArrayList<Object> data_AL;
     
     //##################################################################################################################
     // Constructor
@@ -37,7 +38,7 @@ public class Edit_Ingredients_Form extends Ingredients_Form
     {
         super.clear_Ingredients_Form();
         ingredient_ID = null;
-        data = null;
+        data_AL = null;
     }
     
     @Override
@@ -71,7 +72,7 @@ public class Edit_Ingredients_Form extends Ingredients_Form
         
         // Set Ingredient ID & remove from Arraylist
         ingredient_ID = (Integer) data_AL.getFirst();
-        data = data_AL;
+        this.data_AL = data_AL;
         
         // Set Data for each component
         for (Ingredients_Form_Binding<?> field_Binding : field_Items_Map.values())
@@ -86,7 +87,7 @@ public class Edit_Ingredients_Form extends Ingredients_Form
                 case Field_JCombo_Storable_ID<?> jComboBox -> jComboBox.set_Item_By_ID((int) data);
                 case Field_JTxtField_Parent<?> jTxtField -> jTxtField.setText(data.toString());
                 default ->
-                        throw new IllegalStateException(String.format("\n\n%s Unexpected value: %s ", get_Class_And_Method_Name(), component));
+                        throw new Exception(String.format("\n\n%s Unexpected value: %s ", get_Class_And_Method_Name(), component));
             }
         }
         
@@ -102,10 +103,10 @@ public class Edit_Ingredients_Form extends Ingredients_Form
         int size = field_Items_Map.size();
         
         StringBuilder
-                insert_Header = new StringBuilder("UPDATE ingredients_info SET"),
-                values = new StringBuilder("(");
+                insert_Header = new StringBuilder("UPDATE ingredients_info SET "),
+                values = new StringBuilder();
         
-        Object[] params = new Object[size];
+        Object[] params = new Object[size+1]; // Include where condition param
         
         //##########################
         // Create Update Query
@@ -114,31 +115,62 @@ public class Edit_Ingredients_Form extends Ingredients_Form
         int pos = 0;
         for (Ingredients_Form_Binding<?> field_Binding : field_Items_Map.values())
         {
-            boolean last_Iteration = pos == size - 1;
+            //######################################
+            // Variables
+            //######################################
+            Component component = field_Binding.get_Gui_Component(); // Get Component from binding
             
-            // Add to Header
-            insert_Header.append(last_Iteration
-                    ? String.format("%s) VALUES ", field_Binding.get_Mysql_Field_Name())
-                    : String.format("%s,", field_Binding.get_Mysql_Field_Name())
-            );
+            //######################################
+            // Compare Data - Skip if They're Equal
+            //######################################
+            int pos_In_Query = field_Binding.get_Field_Query_Pos(); // Position of data associated with binding in query
+            Object stored_Data = data_AL.get(pos_In_Query); // Get data from source
             
+            switch (component)
+            {
+                case Field_JCombo_Storable_ID<?> jc ->
+                {
+                    if (jc.does_Selected_Item_ID_Equal((int) stored_Data)) { continue; }
+                }
+                case Field_JTxtField_Parent<?> jt -> { if (jt.is_Field_Data_Equal_To(stored_Data)) { continue; } }
+                default ->
+                        throw new Exception(String.format("\n\n%s Unexpected value:  %s", get_Class_And_Method_Name(), field_Binding.get_Gui_Component()));
+            }
+            
+            //######################################
+            // Create Update Data
+            //#####################################
             // Add to Values
-            values.append(last_Iteration ? "?);" : "?,");
+            values.append(String.format("\n%s = ?,", field_Binding.get_Mysql_Field_Name()));
             
-            // Add to params
+            // Add to Params
             switch (field_Binding.get_Gui_Component())
             {
                 case Field_JCombo_Storable_ID<?> jc -> params[pos] = jc.get_Selected_Item_ID();
                 case Field_JTxtField_Parent<?> jt -> params[pos] = jt.get_Text_Casted_To_Type();
                 default ->
-                        throw new IllegalStateException(String.format("\n\n%s Unexpected value:  %s", get_Class_And_Method_Name(), field_Binding.get_Gui_Component()));
+                        throw new Exception(String.format("\n\n%s Unexpected value:  %s", get_Class_And_Method_Name(), field_Binding.get_Gui_Component()));
             }
             
             pos++; // Increase pos
         }
+       
+        //##########################
+        // Format Update Data
+        //##########################
+        if (values.isEmpty()) { return; } // If Nothing Changed Exit
+        
+        // Edit Ending of Query
+        values.deleteCharAt( values.length()-1); // delete last char ','
+        values.append("\nWHERE ingredient_id = ?;");
+        params[pos] = ingredient_ID;
+        
+        // Remove null values from values not changed
+        params = Arrays.stream(params)
+                .filter(Objects ::nonNull)
+                .toArray(Object[]::new);
         
         System.out.printf("\n\nInsert Headers: \n%s \n\nValues: \n%s  \n\nParams: \n%s%n", insert_Header, values, Arrays.toString(params));
-        
         //##########################
         // Add To Results
         //##########################
