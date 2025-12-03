@@ -24,6 +24,9 @@ public class Shop_Form extends Parent_Forms_OBJ
     protected Container parentContainer;
     protected JPanel input_Area_JP, northPanel;
     
+    // String
+    protected String var_Ingredient_ID = "@IngredientID";
+    
     //#############################
     // Collections
     //#############################
@@ -179,10 +182,7 @@ public class Shop_Form extends Parent_Forms_OBJ
         JButton add_Btn = add_Icon_Btn.returnJButton();
         add_Icon_Btn.makeBTntransparent();
         
-        add_Btn.addActionListener(ae -> {
-            
-            add_Btn_Action();
-        });
+        add_Btn.addActionListener(_ -> add_Btn_Action());
     }
     
     //#################################
@@ -227,10 +227,9 @@ public class Shop_Form extends Parent_Forms_OBJ
         //##################################
         // Get Errors Per Row / Add to DATA
         //##################################
-        for (int pos = 0; pos < add_shop_Form_Objects.size(); pos++)
+        // Get Shop Form Object
+        for (ShopForm_Object shopForm_object : add_shop_Form_Objects)
         {
-            ShopForm_Object shopForm_object = add_shop_Form_Objects.get(pos); // Get Shop Form Object
-            
             LinkedHashMap<String, ArrayList<String>> error_Map = new LinkedHashMap<>(); // Create error Map
             
             if (shopForm_object.validation_Check(error_Map)) { continue; } // If no error added continue
@@ -260,7 +259,7 @@ public class Shop_Form extends Parent_Forms_OBJ
         //##################################
         // Build Error MSG
         //##################################
-        /**
+        /*
          * HTML:
          * &nbsp; = space
          * <br> = line break
@@ -303,8 +302,27 @@ public class Shop_Form extends Parent_Forms_OBJ
         return error_MSG.toString();
     }
     
+    //################################
+    // Updates
+    //################################
+    protected String get_Ingredient_ID_SQL_Statement()
+    {
+        return String.format("Set %s = LAST_INSERT_ID();", var_Ingredient_ID);
+    }
+    
+    public void add_Update_Queries_Extra(LinkedHashSet<Pair<String, Object[]>> queries_And_Params) throws Exception
+    {
+    
+    }
+    
     public void add_Update_Queries(LinkedHashSet<Pair<String, Object[]>> queries_And_Params) throws Exception
     {
+        //###########################################
+        // Extra Queries
+        //###########################################
+        add_Update_Queries_Extra(queries_And_Params);
+        
+        
         //###########################################
         // Exit Clause
         //###########################################
@@ -315,9 +333,7 @@ public class Shop_Form extends Parent_Forms_OBJ
         // Get Inserted Ingredient ID Query
         //###########################################
         // Get Insert Statement
-        String var_Ingredient_ID = "@IngredientID";
-        String upload_Q1 = String.format("Set %s = LAST_INSERT_ID();", var_Ingredient_ID);
-        
+        String upload_Q1 = get_Ingredient_ID_SQL_Statement();
         queries_And_Params.add(new Pair<>(upload_Q1, null));
         
         //###########################################

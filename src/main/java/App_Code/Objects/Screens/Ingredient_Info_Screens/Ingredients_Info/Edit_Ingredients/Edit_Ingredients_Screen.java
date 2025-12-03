@@ -72,6 +72,13 @@ public class Edit_Ingredients_Screen extends Ingredients_Screen
         ingredient_Type_JC.reset_JC();
     }
     
+    @Override
+    protected void clear_Interface() // only available to reset screen
+    {
+        reset_JC(); // Change JC
+        super.clear_Interface(); // Parent Clean
+    }
+    
     //##############################################
     // Validation Methods
     //##############################################
@@ -143,7 +150,7 @@ public class Edit_Ingredients_Screen extends Ingredients_Screen
         add_To_Container(mainCentre_JPanel, ingredient_Name_JC_JP, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "horizontal", 10, 0, null);
         
         // Create JComboBox
-        ingredient_Name_JC = new Field_JCombo_Storable_ID<>("Ingredient Name", Ingredient_Name_ID_OBJ.class, new ArrayList<Ingredient_Name_ID_OBJ>())
+        ingredient_Name_JC = new Field_JCombo_Storable_ID<>("Ingredient Name", Ingredient_Name_ID_OBJ.class, new ArrayList<>())
         {
             @Override
             protected void actionListener()
@@ -198,9 +205,9 @@ public class Edit_Ingredients_Screen extends Ingredients_Screen
         }
     }
     
-    //##################################
+    //######################
     // Ingredient Name
-    //##################################
+    //######################
     private void name_JC_Action_Lister_Event()
     {
         if (! allow_Name_Action_Listener) { return; }

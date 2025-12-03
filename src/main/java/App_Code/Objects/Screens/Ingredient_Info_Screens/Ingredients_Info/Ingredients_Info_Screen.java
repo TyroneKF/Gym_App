@@ -75,10 +75,10 @@ public class Ingredients_Info_Screen extends Screen_JFrame
         //##################################################
         // Creating Edit Ingredients Screen
         //##################################################
-        edit_Ingredients_Screen = new Edit_Ingredients_Screen(this, db, shared_Data_Registry);
+       edit_Ingredients_Screen = new Edit_Ingredients_Screen(this, db, shared_Data_Registry);
         tp.add("Edit Ingredients", edit_Ingredients_Screen);
 
-         /*
+        /*
         //#################################################
         // Creating Edit Ingredient Types Screen
         //##################################################

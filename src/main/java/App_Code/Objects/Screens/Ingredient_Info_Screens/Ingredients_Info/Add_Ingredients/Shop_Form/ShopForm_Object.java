@@ -180,16 +180,9 @@ public class ShopForm_Object extends JPanel
         eastPanel.add(delete_Row_Btn); // Add Delete Btn GUI
     }
     
-    
     //##################################################################################################################
     // Other Methods
     //##################################################################################################################
-    
-    protected int no_of_Input_Fields()
-    {
-        return field_Items_Map.size();
-    }
-    
     public LinkedHashMap<String, Shop_Form_Binding<?>> get_Field_Items_Map()
     {
         return field_Items_Map;
@@ -239,7 +232,7 @@ public class ShopForm_Object extends JPanel
         return error_Map.isEmpty();
     }
     
-    public void add_Params(Object[] params, int base) throws Exception
+    public void add_Params(Object[] params, int base)
     {
         params[base] = product_Name_JT.getText();
         params[base + 1] = quantity_JT.getText();

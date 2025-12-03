@@ -243,7 +243,7 @@ public class Ingredients_Screen extends Screen_JPanel
     //####################################################
     // Clearing GUI Methods
     //####################################################
-    private void clear_Interface() // only available to reset screen
+    protected void clear_Interface() // only available to reset screen
     {
         clear_Search_For_Ingredient_Info_Form();
         clear_Ingredients_Form();
