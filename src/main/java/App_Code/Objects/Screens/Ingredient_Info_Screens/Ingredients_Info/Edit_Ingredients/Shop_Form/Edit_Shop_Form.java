@@ -50,13 +50,6 @@ public class Edit_Shop_Form extends Shop_Form
     @Override
     protected void extra_Clear_Shops_Form()
     {
-        Iterator<Edit_ShopForm_Object> it = edit_Shop_Form_Objects.iterator();
-        
-        while (it.hasNext())
-        {
-            Edit_ShopForm_Object i = it.next();
-            i.remove_From_Parent_Container();
-            it.remove();
-        }
+        edit_Shop_Form_Objects.clear();
     }
 }

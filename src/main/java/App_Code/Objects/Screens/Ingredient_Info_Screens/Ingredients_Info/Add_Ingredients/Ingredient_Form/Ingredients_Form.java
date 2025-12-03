@@ -98,7 +98,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
             
             put("measurement", new Ingredients_Form_Binding<>(
                     "Ingredient Measurement In",                      // GUI Label
-                                                                              // Component
+                    // Component
                     new Field_JCombo_Storable_ID<>("Ingredient Measurement In", Measurement_ID_OBJ.class, ingredient_Measurement_Obj_AL),
                     "measurement_id",                              // MySQL Field
                     pos += 1,                                                 // Pos in MYSQL Table Query
@@ -115,7 +115,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
             
             put("type", new Ingredients_Form_Binding<>(
                     "Ingredient Type",                                          // GUI Label
-                                                                                        // Component
+                    // Component
                     new Field_JCombo_Storable_ID<>("Ingredient Type", Ingredient_Type_ID_Obj.class, ingredient_Types_Obj_AL),
                     "ingredient_type_id",                                   // MySQL Field
                     pos += 1                                                          // Pos in MYSQL Table Query
@@ -123,7 +123,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
             
             put("quantity", new Ingredients_Form_Binding<>(
                     "Based On Quantity",                                      // GUI Label
-                                                                                      // Component
+                    // Component
                     new Field_JTxtField_BD("Based On Quantity", digit_Char_Limit, false),
                     "based_on_quantity",                                  // MySQL Field
                     pos += 1,                                                       // Pos in MYSQL Table Query
@@ -132,8 +132,8 @@ public class Ingredients_Form extends Parent_Forms_OBJ
             
             put("gi", new Ingredients_Form_Binding<>(
                     "Glycemic Index",                                  // GUI Label
-                                                                               // Component
-                    new Field_JTxtField_INT("Glycemic Index", digit_Char_Limit, 0, 100),
+                    // Component
+                    new Field_JTxtField_INT("Glycemic Index", digit_Char_Limit, true, 0, 100),
                     "glycemic_index",                              // MySQL Field
                     pos += 1                                                 // Pos in MYSQL Table Query
             ));

@@ -84,11 +84,11 @@ public class Shop_Form extends Parent_Forms_OBJ
         //############################################
         // West
         //############################################
-        input_Area_JP = new JPanel(new GridBagLayout());
-        screen_JP.add(input_Area_JP, BorderLayout.CENTER);
+        JPanel form_Area = new JPanel(new GridBagLayout());
+        screen_JP.add(form_Area, BorderLayout.CENTER);
         
         JPanel form_Labels_Section = new JPanel(new BorderLayout());
-        add_To_Container(input_Area_JP, form_Labels_Section, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        add_To_Container(form_Area, form_Labels_Section, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
         
         //##################
         // Store Section
@@ -145,6 +145,12 @@ public class Shop_Form extends Parent_Forms_OBJ
         // Delete Btn Label
         JPanel delete_Btn_Label = create_Label_JP("Delete Row", new Font("Arial", Font.BOLD, fontSize), Color.LIGHT_GRAY);
         east_JPanel.add(delete_Btn_Label);
+        
+        //############################################
+        // Add Section For Shop Objects
+        //############################################
+        input_Area_JP = new JPanel(new GridBagLayout());
+        add_To_Container(form_Area, input_Area_JP, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
         
         //############################################
         // Adding to GUI
@@ -372,7 +378,7 @@ public class Shop_Form extends Parent_Forms_OBJ
     //################################################################
     public void clear_Shop_Form()
     {
-        Iterator<ShopForm_Object> it = add_shop_Form_Objects.iterator();
+        /*Iterator<ShopForm_Object> it = add_shop_Form_Objects.iterator();
         
         while (it.hasNext())
         {
@@ -382,7 +388,10 @@ public class Shop_Form extends Parent_Forms_OBJ
         }
         
         extra_Clear_Shops_Form(); // Extra Clear elements
-        resize_GUi(); // Resize GUI  Elements
+        resize_GUi(); // Resize GUI  Elements*/
+        
+        add_shop_Form_Objects.clear();
+        input_Area_JP.removeAll();
     }
     
     protected void extra_Clear_Shops_Form()
