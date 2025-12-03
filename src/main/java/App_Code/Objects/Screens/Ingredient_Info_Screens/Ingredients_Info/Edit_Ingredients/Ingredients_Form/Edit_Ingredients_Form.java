@@ -85,7 +85,8 @@ public class Edit_Ingredients_Form extends Ingredients_Form
             {
                 case Field_JCombo_Storable_ID<?> jComboBox -> jComboBox.set_Item_By_ID((int) data);
                 case Field_JTxtField_Parent<?> jTxtField -> jTxtField.setText(data.toString());
-                default -> throw new IllegalStateException("set_Data() Unexpected value: " + component);
+                default ->
+                        throw new IllegalStateException(String.format("\n\n%s Unexpected value: %s ", get_Class_And_Method_Name(), component));
             }
         }
         
@@ -129,7 +130,8 @@ public class Edit_Ingredients_Form extends Ingredients_Form
             {
                 case Field_JCombo_Storable_ID<?> jc -> params[pos] = jc.get_Selected_Item_ID();
                 case Field_JTxtField_Parent<?> jt -> params[pos] = jt.get_Text_Casted_To_Type();
-                default -> throw new IllegalStateException("Unexpected value: " + field_Binding.get_Gui_Component());
+                default ->
+                        throw new IllegalStateException(String.format("\n\n%s Unexpected value:  %s", get_Class_And_Method_Name(), field_Binding.get_Gui_Component()));
             }
             
             pos++; // Increase pos
