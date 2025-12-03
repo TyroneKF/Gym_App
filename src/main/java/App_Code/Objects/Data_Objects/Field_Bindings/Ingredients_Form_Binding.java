@@ -1,11 +1,11 @@
-package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredient_Form;
+package App_Code.Objects.Data_Objects.Field_Bindings;
 
-import App_Code.Objects.Data_Objects.Field_Bindings.Field_Binding;
-import App_Code.Objects.Gui_Objects.Combo_Boxes.Field_JComboBox;
+import App_Code.Objects.Data_Objects.Field_Bindings.Parent.Field_Binding;
+import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Storable_IDS_Parent;
+import App_Code.Objects.Gui_Objects.Combo_Boxes.Field_JCombo_Storable_ID;
+import App_Code.Objects.Gui_Objects.Text_Fields.Parent.Field_JTxtField_Parent;
 
-import java.awt.*;
-
-public class Ingredients_Form_Binding<T> extends Field_Binding<T>
+public class Ingredients_Form_Binding<T extends Storable_IDS_Parent> extends Field_Binding<T>
 {
     //##################################################################################################################
     // Variables
@@ -17,12 +17,12 @@ public class Ingredients_Form_Binding<T> extends Field_Binding<T>
     // Constructor
     //##################################################################################################################
     // JComboBoxes
-    public Ingredients_Form_Binding(String gui_Label, Field_JComboBox<T> component, String mysql_Field, int query_Field_Pos)
+    public Ingredients_Form_Binding(String gui_Label, Field_JCombo_Storable_ID<T> component, String mysql_Field, int query_Field_Pos)
     {
         super(gui_Label, component, mysql_Field, query_Field_Pos);
     }
     
-    public Ingredients_Form_Binding(String gui_Label, Field_JComboBox<T> component, String mysql_Field, int query_Field_Pos, String api_Field)
+    public Ingredients_Form_Binding(String gui_Label, Field_JCombo_Storable_ID<T> component, String mysql_Field, int query_Field_Pos, String api_Field)
     {
         super(gui_Label, component, mysql_Field, query_Field_Pos);
         this.nutrition_IX_Label = api_Field;
@@ -31,12 +31,12 @@ public class Ingredients_Form_Binding<T> extends Field_Binding<T>
     //####################################
     // Text Fields
     //####################################
-    public Ingredients_Form_Binding(String gui_Label, Component component, String mysql_Field, int query_Field_Pos)
+    public Ingredients_Form_Binding(String gui_Label, Field_JTxtField_Parent<?> component, String mysql_Field, int query_Field_Pos)
     {
         super(gui_Label, component, mysql_Field, query_Field_Pos);
     }
     
-    public Ingredients_Form_Binding(String gui_Label, Component component, String mysql_Field, int query_Field_Pos, String api_Field)
+    public Ingredients_Form_Binding(String gui_Label, Field_JTxtField_Parent<?> component, String mysql_Field, int query_Field_Pos, String api_Field)
     {
         super(gui_Label, component, mysql_Field, query_Field_Pos);
         

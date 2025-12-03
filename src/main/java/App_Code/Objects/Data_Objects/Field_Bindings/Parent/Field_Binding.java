@@ -1,6 +1,7 @@
-package App_Code.Objects.Data_Objects.Field_Bindings;
+package App_Code.Objects.Data_Objects.Field_Bindings.Parent;
 
 import App_Code.Objects.Gui_Objects.Combo_Boxes.Field_JComboBox;
+import App_Code.Objects.Gui_Objects.Text_Fields.Parent.Field_JTxtField_Parent;
 
 import java.awt.*;
 
@@ -25,7 +26,7 @@ public class Field_Binding<T>
         constructor_Setup(gui_Label, component, mysql_Field, query_Field_Pos);
     }
     
-    public Field_Binding(String gui_Label, Component component, String mysql_Field, int query_Field_Pos)
+    public Field_Binding(String gui_Label, Field_JTxtField_Parent<?> component, String mysql_Field, int query_Field_Pos)
     {
         constructor_Setup(gui_Label, component, mysql_Field, query_Field_Pos);
     }

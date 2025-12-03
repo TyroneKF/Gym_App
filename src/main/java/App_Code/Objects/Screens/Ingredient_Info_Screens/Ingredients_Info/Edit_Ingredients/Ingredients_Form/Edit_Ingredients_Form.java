@@ -5,11 +5,13 @@ import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.Combo_Boxes.Field_JCombo_Storable_ID;
 import App_Code.Objects.Gui_Objects.Text_Fields.Parent.Field_JTxtField_Parent;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredient_Form.Ingredients_Form;
-import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredient_Form.Ingredients_Form_Binding;
+import App_Code.Objects.Data_Objects.Field_Bindings.Ingredients_Form_Binding;
+import org.javatuples.Pair;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 
 public class Edit_Ingredients_Form extends Ingredients_Form
 {
@@ -69,39 +71,77 @@ public class Edit_Ingredients_Form extends Ingredients_Form
         
         // Set Ingredient ID & remove from Arraylist
         ingredient_ID = (Integer) data_AL.getFirst();
-        data_AL.removeFirst();
         data = data_AL;
         
-        // Exit Clause
-        int
-                dataSize = data_AL.size(),
-                fieldSize = field_Items_Map.size(),
-                pos = 0;
-        
-        if (dataSize != fieldSize)
-        {
-            throw new Exception(String.format("Data doesn't match Field Count \nData Count : %s \nField Count: %s", dataSize, fieldSize));
-        }
-        
         // Set Data for each component
-        for (Map.Entry<String, Ingredients_Form_Binding<?>> field_Item : field_Items_Map.entrySet())
+        for (Ingredients_Form_Binding<?> field_Binding : field_Items_Map.values())
         {
-            Component component = field_Item.getValue().get_Gui_Component();
-            Object data = data_AL.get(pos);
+            int pos_In_Query = field_Binding.get_Field_Query_Pos(); // Position of data associated with binding in query
+            Object data = data_AL.get(pos_In_Query); // Get data from source
+            Component component = field_Binding.get_Gui_Component(); // Get Component from binding
             
-            if (component instanceof Field_JCombo_Storable_ID<?> jComboBox)
+            // Set Data depending on component
+            switch (component)
             {
-                jComboBox.set_Item_By_ID((int) data);
+                case Field_JCombo_Storable_ID<?> jComboBox -> jComboBox.set_Item_By_ID((int) data);
+                case Field_JTxtField_Parent<?> jTxtField -> jTxtField.setText(data.toString());
+                default -> throw new IllegalStateException("set_Data() Unexpected value: " + component);
             }
-            else if (component instanceof Field_JTxtField_Parent<?> jTxtField)
-            {
-                jTxtField.setText(data.toString());
-            }
-            
-            pos ++;
         }
         
         set_Salt_JC_To_Grams(); // Set Salt to Grams
+    }
+    
+    @Override
+    public void add_Update_Queries(LinkedHashSet<Pair<String, Object[]>> queries_And_Params) throws Exception
+    {
+        //##########################
+        // Variables
+        //##########################
+        int size = field_Items_Map.size();
+        
+        StringBuilder
+                insert_Header = new StringBuilder("UPDATE ingredients_info SET"),
+                values = new StringBuilder("(");
+        
+        Object[] params = new Object[size];
+        
+        //##########################
+        // Create Update Query
+        //##########################
+        
+        int pos = 0;
+        for (Ingredients_Form_Binding<?> field_Binding : field_Items_Map.values())
+        {
+            boolean last_Iteration = pos == size - 1;
+            
+            // Add to Header
+            insert_Header.append(last_Iteration
+                    ? String.format("%s) VALUES ", field_Binding.get_Mysql_Field_Name())
+                    : String.format("%s,", field_Binding.get_Mysql_Field_Name())
+            );
+            
+            // Add to Values
+            values.append(last_Iteration ? "?);" : "?,");
+            
+            // Add to params
+            switch (field_Binding.get_Gui_Component())
+            {
+                case Field_JCombo_Storable_ID<?> jc -> params[pos] = jc.get_Selected_Item_ID();
+                case Field_JTxtField_Parent<?> jt -> params[pos] = jt.get_Text_Casted_To_Type();
+                default -> throw new IllegalStateException("Unexpected value: " + field_Binding.get_Gui_Component());
+            }
+            
+            pos++; // Increase pos
+        }
+        
+        System.out.printf("\n\nInsert Headers: \n%s \n\nValues: \n%s  \n\nParams: \n%s%n", insert_Header, values, Arrays.toString(params));
+        
+        //##########################
+        // Add To Results
+        //##########################
+        StringBuilder update_Query = insert_Header.append(values);
+        queries_And_Params.add(new Pair<>(update_Query.toString(), params));
     }
     
 }
