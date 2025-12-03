@@ -3,7 +3,6 @@ package App_Code.Objects.Gui_Objects.Combo_Boxes;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Storable_IDS_Parent;
 
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -13,14 +12,10 @@ public class Field_JCombo_Storable_ID<T extends Storable_IDS_Parent> extends Fie
     {
         super(label, typeCast, data_AL);
         
-        addItemListener(new ItemListener()
-        {
-            public void itemStateChanged(ItemEvent ie)
+        addItemListener(ie -> {
+            if (ie.getStateChange() == ItemEvent.SELECTED)
             {
-                if (ie.getStateChange() == ItemEvent.SELECTED)
-                {
-                    actionListener();
-                }
+                actionListener();
             }
         });
     }
@@ -52,12 +47,10 @@ public class Field_JCombo_Storable_ID<T extends Storable_IDS_Parent> extends Fie
         return typeCast.cast(item).get_ID();
     }
     
-    public T get_Selected_Item()
+    public boolean does_Selected_Item_ID_Equal(int id)
     {
-        Object item = getSelectedItem();
+        Integer selected_ID = get_Selected_Item_ID();
         
-        if (item == null) { return null; }
-        
-        return typeCast.cast(item);
+        return selected_ID != null && id == selected_ID;
     }
 }

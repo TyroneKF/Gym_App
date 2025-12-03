@@ -1,8 +1,6 @@
 package App_Code.Objects.Gui_Objects.Combo_Boxes;
 
 import javax.swing.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -130,5 +128,17 @@ public class Field_JComboBox<T> extends JComboBox<T>
         if (! (data_AL.contains(obj))) { return; }
         
         setSelectedItem(obj);
+    }
+    
+    //##################################################################################################################
+    // Accessor Methods
+    //##################################################################################################################
+    public T get_Selected_Item()
+    {
+        Object item = getSelectedItem();
+        
+        if (item == null) { return null; }
+        
+        return typeCast.cast(item);
     }
 }
