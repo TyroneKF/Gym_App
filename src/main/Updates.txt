@@ -10,9 +10,16 @@ Screen JPanel / JFrame
 .) Screen Objects need to be condensed into 1 class
 .) Make screens use Jframe / Panel classes
 
+Shop_Form
+.)   ArrayList<LinkedHashMap<String, ArrayList<String>>> all_Errors = new ArrayList<>();
+     Can be replaced with ArrayList<Pair<String, ArrayList<String>>> all_Errors
 
 Add Registery
 .) Replace arraylists with Hashets for uniquenes because hashnet .add does contains and adds and return false it failed
+
+
+Meal_Plan_Screen
+.) Use arrayJson methods on refresh for everything totalMeals table etc : get_Meal_Data(), get_Total_Meals_Data()
 
 
 Add / Edit Ingredients Screen
@@ -24,7 +31,6 @@ Add / Edit Ingredients Screen
 .) Ingredients Form -> salt update
 .) Add ingredients screen -> shared data update
 .) Collapsible Panel prevent closing
-
 
 Icon_Button
 .) Condense methods etc make button transparent

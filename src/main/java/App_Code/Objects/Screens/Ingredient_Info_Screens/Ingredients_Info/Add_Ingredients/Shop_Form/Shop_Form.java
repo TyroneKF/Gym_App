@@ -225,86 +225,58 @@ public class Shop_Form extends Parent_Forms_OBJ
     //#################################################################
     public boolean validate_Form()
     {
-        ArrayList<LinkedHashMap<String, ArrayList<String>>> all_Errors = new ArrayList<>();
+        //###############################
+        // Form Syntax Validation
+        //###############################
+        // Row -> Row Items and its individual errors etc; price, quantity ...
+        ArrayList<LinkedHashMap<String, ArrayList<String>>> form_Syntax_Errors = new ArrayList<>();
+        boolean form_Syntax_Check = syntax_Validation(form_Syntax_Errors);
         
-        //################################
+        //###############################
+        // Product Info Validation
+        //###############################
+        LinkedHashMap<Integer, HashSet<String>> repeated_Products_By_Store = new LinkedHashMap<>(); // StoreName Repeated products
+        boolean no_repeated_Products_By_Store_Check = validate_No_Repeat_Products(repeated_Products_By_Store);
+        
+        //###############################
+        // Display Error MSGS
+        //###############################
+        if (! form_Syntax_Check)
+        {
+            // Display Errors
+            JOptionPane.showMessageDialog(null, syntax_Validation_Error_MSG(form_Syntax_Errors), "Shops Form Error Messages", JOptionPane.INFORMATION_MESSAGE);
+        }
+        
+        if (! no_repeated_Products_By_Store_Check)
+        {
+            JOptionPane.showMessageDialog(null, no_Repeated_Error_MSG(repeated_Products_By_Store), "Product Info Error Messages", JOptionPane.INFORMATION_MESSAGE);
+        }
+        
+        //###############################
+        // Return Output
+        //###############################
+        return form_Syntax_Check && no_repeated_Products_By_Store_Check;  // If both are true the tests passed
+    }
+    
+    //################################
+    // Syntax Validation
+    //################################
+    protected boolean syntax_Validation(ArrayList<LinkedHashMap<String, ArrayList<String>>> form_Errors)
+    {
         // Get Errors Per Row
-        //################################
-        // Get Shop Form Object
         for (ShopForm_Object shopForm_object : add_shop_Form_Objects)
         {
             LinkedHashMap<String, ArrayList<String>> error_Map = new LinkedHashMap<>(); // Create error Map
             
             if (shopForm_object.validation_Check(error_Map)) { continue; } // If no error added continue
             
-            all_Errors.add(error_Map);
+            form_Errors.add(error_Map);
         }
         
-        //################################
-        // Check Repeat Products
-        //###############################
-        validate_No_Repeat_Products(all_Errors);
-        
-        //###############################
-        // Escape Clause
-        //###############################
-        if (all_Errors.isEmpty()) { return true; }
-        
-        //###############################
-        // Display Errors
-        //###############################
-        UIManager.put("OptionPane.messageFont", new Font("Arial", Font.PLAIN, 16));
-        JOptionPane.showMessageDialog(null, build_Error_MSg(all_Errors), "Shops Form Error Messages", JOptionPane.INFORMATION_MESSAGE);
-        
-        //##################################
-        // Output
-        //##################################
-        return false;
+        return form_Errors.isEmpty();
     }
     
-    protected void validate_No_Repeat_Products(ArrayList<LinkedHashMap<String, ArrayList<String>>> all_Errors)
-    {
-        //################################
-        // Variables
-        //################################
-        HashMap<Integer, HashSet<String>> product_Name_To_Store = new HashMap<>();
-        ArrayList<String> errors = new ArrayList<>();
-        
-        //################################
-        // Check Duplicate Store / Products
-        //################################
-        for (ShopForm_Object shopForm_object : add_shop_Form_Objects)
-        {
-            String product_Name = shopForm_object.get_Product_Name().toLowerCase();
-            int store_ID = shopForm_object.get_Selected_Store_ID();
-            
-            // Get or Create entry
-            HashSet<String> product_Names = product_Name_To_Store
-                    .computeIfAbsent(store_ID, k -> new HashSet<>());
-            
-            // Add Product Name if it fails it's because it already exists
-            if (! product_Names.add(product_Name))
-            {
-                // Add Error
-                errors.add(String.format("Duplicate Store Name : %s and Product %s",
-                        shared_Data_Registry.get_Store_ID_Obj(store_ID).get_Name(), product_Name));
-            }
-        }
-        
-        //##################################
-        // Exit Clauses
-        //##################################
-        if (errors.isEmpty()) { return; }
-        
-        //##################################
-        // Add Errors
-        //##################################
-        LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
-        error_map.put("No Repeat Store Names", errors);
-        all_Errors.add(error_map);
-    }
-    
-    protected String build_Error_MSg(ArrayList<LinkedHashMap<String, ArrayList<String>>> all_Errors)
+    protected String syntax_Validation_Error_MSG(ArrayList<LinkedHashMap<String, ArrayList<String>>> all_Errors)
     {
         //##################################
         // Build Error MSG
@@ -320,17 +292,22 @@ public class Shop_Form extends Parent_Forms_OBJ
         
         for (int pos = 0; pos < all_Errors.size(); pos++)
         {
-            error_MSG.append(String.format("<br><br><div align='center'><b> Shop Form Row %s </b></div>", pos + 1));
             LinkedHashMap<String, ArrayList<String>> errors = all_Errors.get(pos); // = One Rows Errors
             
+            error_MSG.append(String.format("<br><br><br><div align='center'><b> Shop Form Row %s </b></div>", pos + 1));
+            
+            //############################
+            // Display Error MSGs
+            //############################
             for (Map.Entry<String, ArrayList<String>> error_Entry : errors.entrySet())
             {
+                // Display error msg
                 ArrayList<String> error_MSGs = error_Entry.getValue();
                 
                 // Singular Error MSG
                 if (error_MSGs.size() == 1)
                 {
-                    error_MSG.append(String.format("<br><br><b>%s&nbsp;:&nbsp;</b> %s", error_Entry.getKey(), error_MSGs.getFirst()));
+                    error_MSG.append(String.format("<br><br><b>%s&nbsp;:&nbsp;</b> %s &nbsp;&nbsp;", error_Entry.getKey(), error_MSGs.getFirst()));
                     continue;
                 }
                 
@@ -339,8 +316,92 @@ public class Shop_Form extends Parent_Forms_OBJ
                 
                 for (String error : error_MSGs)
                 {
-                    error_MSG.append(String.format("<br>&nbsp;&nbsp;&nbsp;&nbsp;<b>.</b>&nbsp; %s", error));
+                    error_MSG.append(String.format("<br>&nbsp;&nbsp;&nbsp;&nbsp;<b>.</b>&nbsp; %s &nbsp;&nbsp;", error));
                 }
+            }
+        }
+        
+        error_MSG.append("</html>");
+        
+        //##################################
+        // Return Output
+        //##################################
+        return error_MSG.toString();
+    }
+    
+    //################################
+    // Product Validation
+    //################################
+    protected boolean validate_No_Repeat_Products(LinkedHashMap<Integer, HashSet<String>> repeated_Product_Names_By_Store)
+    {
+        return validate_No_Repeat_Products_By_List(add_shop_Form_Objects, repeated_Product_Names_By_Store);
+    }
+    
+    protected boolean validate_No_Repeat_Products_By_List(ArrayList<? extends ShopForm_Object> shop_Form_Objects, LinkedHashMap<Integer, HashSet<String>> repeated_Product_Names_By_Store)
+    {
+        //################################
+        // Variables
+        //################################
+        HashMap<Integer, HashSet<String>> check_Product_Name_To_Store = new HashMap<>();
+        
+        //################################
+        // Check Duplicate Store / Products
+        //################################
+        for (ShopForm_Object shopForm_object : shop_Form_Objects)
+        {
+            // Get Field Values
+            String product_Name = shopForm_object.get_Product_Name().toLowerCase();
+            Integer store_ID = shopForm_object.get_Selected_Store_ID();
+            
+            // check only needs to include product name and store with values
+            if (product_Name.isEmpty() || store_ID == null) { continue; }
+            
+            // Get or Create entry
+            HashSet<String> product_Names = check_Product_Name_To_Store
+                    .computeIfAbsent(store_ID, k -> new HashSet<>());
+            
+            // Add Product Name if it fails it's because it already exists
+            if (! product_Names.add(product_Name))
+            {
+                // Get or Create entry
+                HashSet<String> product_Names_Repeated = repeated_Product_Names_By_Store
+                        .computeIfAbsent(store_ID, k -> new HashSet<>());
+                
+                // Add Error / Repeated Product Name
+                product_Names_Repeated.add(product_Name);
+            }
+        }
+        
+        //##################################
+        // Output
+        //##################################
+        return repeated_Product_Names_By_Store.isEmpty();// Output
+    }
+    
+    protected String no_Repeated_Error_MSG(LinkedHashMap<Integer, HashSet<String>> repeated_Products_By_Store)
+    {
+        //##################################
+        // Build Error MSG
+        //##################################
+        /*
+         * HTML:
+         * &nbsp; = space
+         * <br> = line break
+         * <b></b> = bold
+         */
+        
+        StringBuilder error_MSG = new StringBuilder("<html>");
+        
+        for(Map.Entry<Integer,  HashSet<String>> x : repeated_Products_By_Store.entrySet())
+        {
+            String store_Name = shared_Data_Registry.get_Store_ID_Obj(x.getKey()).get_Name();
+            
+            // Create Error MSg Header
+            error_MSG.append(String.format("<br><br><br><div align='center'> <b> Repeated Products By %s  </b> </div>", store_Name));
+            
+            for (String product_Name : x.getValue())
+            {
+                error_MSG.append(String.format("<br>&nbsp;&nbsp;&nbsp;&nbsp;<b>.) </b>&nbsp; <b>.%s</b> by  <b>%s</b> has been repeated multiple times. &nbsp;&nbsp;", product_Name, store_Name));
             }
         }
         

@@ -3,11 +3,11 @@ package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_I
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredients_Screen;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.ShopForm_Object;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.Shop_Form;
 import org.javatuples.Pair;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.*;
 
 public class Edit_Shop_Form extends Shop_Form
 {
@@ -79,5 +79,17 @@ public class Edit_Shop_Form extends Shop_Form
         {
             edit_shopForm_object.add_Updates(queries_And_Params);
         }
+    }
+    
+    @Override
+    protected boolean validate_No_Repeat_Products(LinkedHashMap<Integer, HashSet<String>> repeated_Product_Names_By_Store)
+    {
+        // Combine Lists to see combinations
+        ArrayList<ShopForm_Object> temp = new ArrayList<>(add_shop_Form_Objects);
+        temp.addAll(edit_Shop_Form_Objects_AL);
+        
+        validate_No_Repeat_Products_By_List(temp, repeated_Product_Names_By_Store); // Validate Lists together
+        
+        return repeated_Product_Names_By_Store.isEmpty(); // Output if no errors appeared
     }
 }

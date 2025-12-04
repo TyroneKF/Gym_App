@@ -68,8 +68,13 @@ public class Edit_Ingredients_Screen extends Ingredients_Screen
     
     private void reset_JC()
     {
-        ingredient_Name_JC.reset_JC();
         ingredient_Type_JC.reset_JC();
+        reset_Ingredient_Names_JC();
+    }
+    
+    private void reset_Ingredient_Names_JC()
+    {
+        ingredient_Name_JC.reset_JC();
     }
     
     @Override
@@ -191,6 +196,11 @@ public class Edit_Ingredients_Screen extends Ingredients_Screen
             ArrayList<Ingredient_Name_ID_OBJ> new_Ingredients = shared_Data_Registry.get_Ingredient_Names_From_Type_AL(selected_Type);
             
             ingredient_Name_JC.set_And_Load_Data(new_Ingredients);   // Set Data & Reload associated with JL
+            
+            // Clear Screen From Previous Info
+            ingredients_Form.clear_Ingredients_Form();
+            shop_Form.clear_Shop_Form();
+            reset_Ingredient_Names_JC();
         }
         catch (Exception e)
         {

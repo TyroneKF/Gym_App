@@ -315,6 +315,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
         shared_Data_Registry = new Shared_Data_Registry(this);
         Loading_Screen loading_Screen = null;
         
+        UIManager.put("OptionPane.messageFont", new Font("Arial", Font.PLAIN, 16)); // Set up window msg font
+        
         //###############################################################################
         // 1.) Getting Selected User & Plan Info
         //###############################################################################

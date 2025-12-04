@@ -53,10 +53,10 @@ public class ShopForm_Object extends JPanel
         this.shop_form = shop_form;
         this.stores = stores;  // Collections
         
-        product_Name_JT = new Field_JTxtField_String("name", string_Char_Limit);
-        stores_JC = new Field_JCombo_Storable_ID<>("store", Store_ID_OBJ.class, stores);  // Component
-        product_Price_JT = new Field_JTxtField_BD("price", decimal_Char_Limit);
-        quantity_JT = new Field_JTxtField_BD("quantity", decimal_Char_Limit, false);
+        product_Name_JT = new Field_JTxtField_String("Product Nme", string_Char_Limit);
+        stores_JC = new Field_JCombo_Storable_ID<>("Store Name", Store_ID_OBJ.class, stores);  // Component
+        product_Price_JT = new Field_JTxtField_BD("Price", decimal_Char_Limit);
+        quantity_JT = new Field_JTxtField_BD("Quantity", decimal_Char_Limit, false);
         
         //###############################
         // Create GUI
@@ -74,28 +74,28 @@ public class ShopForm_Object extends JPanel
         {{
             // ingredient_in_shops -> Skips pdid, ingredient_id (Position starts at 2)
             
-            put("store", new Shop_Form_Binding<>(
+            put("Store", new Shop_Form_Binding<>(
                     "Select A Store",    // GUI Label
                     stores_JC,                    // Component
                     "store_id",                    // MySQL Field
                     5
             ));
             
-            put("name", new Shop_Form_Binding<>(
+            put("Name", new Shop_Form_Binding<>(
                     "Product Name",       // GUI Label
                     product_Name_JT,               // Component
                     "product_name",                // MySQL Field
                     2
             ));
             
-            put("price", new Shop_Form_Binding<>(
+            put("Price", new Shop_Form_Binding<>(
                     "Product Price",         // GUI Label
                     product_Price_JT,                // Component
                     "cost_per_unit",                 // MySQL Field
                     4
             ));
             
-            put("quantity", new Shop_Form_Binding<>(
+            put("   Quantity", new Shop_Form_Binding<>(
                     "Quantity Per Pack",         // GUI Label
                     quantity_JT,                          // Component
                     "volume_per_unit",                   // MySQL Field
@@ -248,7 +248,7 @@ public class ShopForm_Object extends JPanel
         return product_Name_JT.get_Text();
     }
     
-    public int get_Selected_Store_ID()
+    public Integer get_Selected_Store_ID()
     {
         return stores_JC.get_Selected_Item_ID();
     }
