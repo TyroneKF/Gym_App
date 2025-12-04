@@ -198,7 +198,7 @@ public class ShopForm_Object extends JPanel
     
     protected void delete_Row_Action()
     {
-        shop_form.remove_Shop_Form_Obj(this);
+        shop_form.remove_Shop_Form_Obj_From_AL(this);
         
         remove_From_Parent_Container(); // remove all the  input GUI objects from memory
         resize_GUI();

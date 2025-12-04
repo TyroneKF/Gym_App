@@ -577,7 +577,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
             }
         }
         
-        error_MSG_String.append("</html>");
+        error_MSG_String.append("<br><br></html>");
         
         //###############################
         // Return Output

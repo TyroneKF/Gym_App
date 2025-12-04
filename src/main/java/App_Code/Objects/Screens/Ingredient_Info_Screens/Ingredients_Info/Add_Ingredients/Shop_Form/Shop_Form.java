@@ -33,7 +33,7 @@ public class Shop_Form extends Parent_Forms_OBJ
     // Collections
     //#############################
     protected ArrayList<Store_ID_OBJ> stores;
-    protected ArrayList<ShopForm_Object> add_shop_Form_Objects = new ArrayList<>();
+    protected ArrayList<ShopForm_Object> shop_Form_Objects = new ArrayList<>();
     
     //##################################################################################################################
     // Constructor
@@ -195,7 +195,7 @@ public class Shop_Form extends Parent_Forms_OBJ
     {
         // Create ShopForm Object & Add
         ShopForm_Object add_shop_form_object = new ShopForm_Object(input_Area_JP, this, stores);
-        add_shop_Form_Objects.add(add_shop_form_object);
+        shop_Form_Objects.add(add_shop_form_object);
         
         // Adding Object To GUI
         add_To_Container(input_Area_JP, add_shop_form_object, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
@@ -207,14 +207,14 @@ public class Shop_Form extends Parent_Forms_OBJ
     //#################################
     //  Others
     //#################################
-    protected void remove_Shop_Form_Obj(ShopForm_Object shop_Object)
+    protected void remove_Shop_Form_Obj_From_AL(ShopForm_Object shop_Object)
     {
-        add_shop_Form_Objects.remove(shop_Object);
+        shop_Form_Objects.remove(shop_Object);
     }
     
     public void reload_Stores_JC()
     {
-        for (ShopForm_Object shopForm_object : add_shop_Form_Objects)
+        for (ShopForm_Object shopForm_object : shop_Form_Objects)
         {
             shopForm_object.reload_Stores_JC();
         }
@@ -264,7 +264,7 @@ public class Shop_Form extends Parent_Forms_OBJ
     protected boolean syntax_Validation(ArrayList<LinkedHashMap<String, ArrayList<String>>> form_Errors)
     {
         // Get Errors Per Row
-        for (ShopForm_Object shopForm_object : add_shop_Form_Objects)
+        for (ShopForm_Object shopForm_object : shop_Form_Objects)
         {
             LinkedHashMap<String, ArrayList<String>> error_Map = new LinkedHashMap<>(); // Create error Map
             
@@ -321,7 +321,7 @@ public class Shop_Form extends Parent_Forms_OBJ
             }
         }
         
-        error_MSG.append("</html>");
+        error_MSG.append("<br><br></html>");
         
         //##################################
         // Return Output
@@ -334,7 +334,7 @@ public class Shop_Form extends Parent_Forms_OBJ
     //################################
     protected boolean validate_No_Repeat_Products(LinkedHashMap<Integer, HashSet<String>> repeated_Product_Names_By_Store)
     {
-        return validate_No_Repeat_Products_By_List(add_shop_Form_Objects, repeated_Product_Names_By_Store);
+        return validate_No_Repeat_Products_By_List(shop_Form_Objects, repeated_Product_Names_By_Store);
     }
     
     protected boolean validate_No_Repeat_Products_By_List(ArrayList<? extends ShopForm_Object> shop_Form_Objects, LinkedHashMap<Integer, HashSet<String>> repeated_Product_Names_By_Store)
@@ -437,7 +437,7 @@ public class Shop_Form extends Parent_Forms_OBJ
         //###########################################
         // Exit Clause
         //###########################################
-        if (add_shop_Form_Objects.isEmpty()) { return; }
+        if (shop_Form_Objects.isEmpty()) { return; }
         
         
         //###########################################
@@ -450,7 +450,7 @@ public class Shop_Form extends Parent_Forms_OBJ
         //###########################################
         // Create Query for Upload Products
         //###########################################
-        int size = add_shop_Form_Objects.size();
+        int size = shop_Form_Objects.size();
         int input_Params_Per_Item = 4; // Ingredient ID isn't a field inputted by the user
         
         //######################
@@ -467,7 +467,7 @@ public class Shop_Form extends Parent_Forms_OBJ
         
         for (int pos = 0; pos < size; pos++)
         {
-            ShopForm_Object shopForm_object = add_shop_Form_Objects.get(pos);
+            ShopForm_Object shopForm_object = shop_Form_Objects.get(pos);
             
             int base = pos * input_Params_Per_Item;
             
@@ -498,7 +498,7 @@ public class Shop_Form extends Parent_Forms_OBJ
     //################################################################
     public void clear_Shop_Form()
     {
-        add_shop_Form_Objects.clear();
+        shop_Form_Objects.clear();
         input_Area_JP.removeAll();
     }
     
