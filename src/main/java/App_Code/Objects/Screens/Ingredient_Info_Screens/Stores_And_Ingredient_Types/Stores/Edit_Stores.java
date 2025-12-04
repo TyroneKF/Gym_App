@@ -7,8 +7,8 @@ import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Store_ID
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
-import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Edit_Screen;
-import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Parent_Screen;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Parent.Edit_Screen;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Parent.Parent_Screen;
 import org.javatuples.Pair;
 
 import java.util.*;
@@ -51,5 +51,5 @@ public class Edit_Stores extends Edit_Screen
     }
     
     @Override
-    protected void update_Other_Screens() { }
+    protected void update_Other_Screens() { ingredient_Info_Screen.update_Stores_JC(); }
 }

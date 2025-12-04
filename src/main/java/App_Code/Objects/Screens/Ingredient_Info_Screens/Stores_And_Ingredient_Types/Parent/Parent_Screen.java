@@ -1,4 +1,4 @@
-package App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types;
+package App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Parent;
 
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Storable_IDS_Parent;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;

@@ -346,7 +346,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         
         if (! (object instanceof Field_JComboBox<?> jComboBox)) { return; }
         
-        jComboBox.reset_JC();
+        jComboBox.reload_Items();
     }
     
     public void reload_Ingredients_Measurements_JComboBox()

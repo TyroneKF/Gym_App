@@ -11,8 +11,7 @@ Screen JPanel / JFrame
 .) Make screens use Jframe / Panel classes
 
 Shop_Form
-.)   ArrayList<LinkedHashMap<String, ArrayList<String>>> all_Errors = new ArrayList<>();
-     Can be replaced with ArrayList<Pair<String, ArrayList<String>>> all_Errors
+.)   Errror Msg etc on row ... isn't accurate it only counts from where the errors are vs actual positiuon
 
 Add Registery
 .) Replace arraylists with Hashets for uniquenes because hashnet .add does contains and adds and return false it failed
@@ -23,12 +22,12 @@ Meal_Plan_Screen
 
 
 Add / Edit Ingredients Screen
+.) Delete btn for products and ingredients
 .) Update Other Screens
 .) Deleting stores / type ask if we want to delete children or assign them to a new parent
 .) Deleting ingredient / type should refresh meal plan
 .) Transfer in Bulk
 .) Can error msgs be refactored in shop and ingredients screen into parent screen
-.) Ingredients Form -> salt update
 .) Add ingredients screen -> shared data update
 .) Collapsible Panel prevent closing
 
@@ -50,23 +49,21 @@ Total_Meal:
 
 
 MealManager
-.) MealManager Update mealTime could just change time field on TotalMeal Vs reloading whole table
 .) Switch object make it LocalTime vs Second
 
+General
 .) Change all | or || bitwise or vs logical or
-.) Sql statements
+
 
 
 MYJDBC:
 .) Refactor method calls that check if null and return msg use N/A
-.) Prepared statements
 .) Switch to Arraylist from LinkedHashSet
 .) Make single columnn / row Myjdbc method
 .) IF DB Creation passes & the inserts don't fail the connection isn't rolledback the tables are still created - check create db method
 
 DB:
 .) Make plansLeft use max date for calculation of a plan
-.) Refactor Scripts with using statements
 .) Seperate Price database from macro ingredients cost
 
 
@@ -80,13 +77,13 @@ Meal_Plan_Screen:
 
 Macro_Targets
 .) MacroTargets Screen should add not update targets
+.) Include new Shared Field and data objects
 
 Macros_Left
 .) MacrosLeft should use the max time for a plan to calculate it
 
 
 ADD / Edit Stores /Types
-.) BackUp Files
 .) Items not needing to be in JComboList
 
 Loading Screen

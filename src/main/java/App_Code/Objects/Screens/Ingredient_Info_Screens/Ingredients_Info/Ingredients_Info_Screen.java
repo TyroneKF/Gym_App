@@ -7,6 +7,8 @@ import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredients_Screen;
 
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients.Edit_Ingredients_Screen;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Ingredient_Types.Ingredients_Types_Screen;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Stores.Ingredient_Stores_Screen;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
 
 import javax.swing.*;
@@ -46,55 +48,38 @@ public class Ingredients_Info_Screen extends Screen_JFrame
         //########################################################
         // Objects
         this.meal_Plan_Screen = meal_Plan_Screen;
-        
         this.main_frame = meal_Plan_Screen.getFrame();
         
         //########################################################
         // Frame Set-Up
         //########################################################
         set_Resizable(false);
+        setFrameVisibility(true); // Make Frame Visible
         
-        //####################################################
         // Create ContentPane
-        //####################################################
         getScrollPaneJPanel().setLayout(new GridLayout(1, 1));
-        
-        //##################################################
+       
         // Creating TabbedPane
-        //##################################################
         JTabbedPane tp = new JTabbedPane();
         getScrollPaneJPanel().add(tp);
-        
-        //##################################################
+      
         // Creating Add Ingredients Screen
-        //##################################################
         ingredients_Screen = new Ingredients_Screen(this, db, shared_Data_Registry);
         tp.add("Add Ingredients", ingredients_Screen);
         
-        
-        //##################################################
         // Creating Edit Ingredients Screen
-        //##################################################
-       edit_Ingredients_Screen = new Edit_Ingredients_Screen(this, db, shared_Data_Registry);
+        edit_Ingredients_Screen = new Edit_Ingredients_Screen(this, db, shared_Data_Registry);
         tp.add("Edit Ingredients", edit_Ingredients_Screen);
-
-        /*
-        //#################################################
-        // Creating Edit Ingredient Types Screen
-        //##################################################
-        Ingredients_Types_Screen edit_IngredientTypes = new Ingredients_Types_Screen(db, shared_Data_Registry, this, ingredientsTypesList);
-        tp.add("Edit Ingredient Types", edit_IngredientTypes);
         
-        //#################################################
+        // Creating Edit Ingredient Types Screen
+        Ingredients_Types_Screen ingredient_Types_Screen = new Ingredients_Types_Screen(db, shared_Data_Registry, this, shared_Data_Registry.get_All_Ingredient_Types_AL());
+        tp.add("Edit Ingredient Types", ingredient_Types_Screen);
+        
         // Creating Edit Ingredients Stores Screen
-        //##################################################
-        Ingredient_Stores_Screen edit_Stores_Screen = new Ingredient_Stores_Screen(db, shared_Data_Registry, this, storesNamesList);
-        tp.add("Edit Ingredient Stores", edit_Stores_Screen);
-    */
-        // ################################################################
-        // Make Frame Visible
-        // ################################################################
-        setFrameVisibility(true);
+        Ingredient_Stores_Screen stores_Screen = new Ingredient_Stores_Screen(db, shared_Data_Registry, this, shared_Data_Registry.get_Stores_AL());
+        tp.add("Edit Ingredient Stores", stores_Screen);
+        
+        // Resize GUI
         resizeGUI();
     }
     
@@ -117,8 +102,8 @@ public class Ingredients_Info_Screen extends Screen_JFrame
     
     public void update_Stores_JC()
     {
-       ingredients_Screen.reload_Stores_JC();
-       edit_Ingredients_Screen.reload_Stores_JC();
+        ingredients_Screen.reload_Stores_JC();
+        edit_Ingredients_Screen.reload_Stores_JC();
     }
     
     //##################################################################################################################
