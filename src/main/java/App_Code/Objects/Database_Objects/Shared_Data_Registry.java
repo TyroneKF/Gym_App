@@ -18,13 +18,13 @@ public class Shared_Data_Registry
     //##################################################################################################################
     // Collections
     //##################################################################################################################
-    /**
+    /*
      * LinkedHashMap<String, Pair<Integer, String>> totalMeal_macroColNamePos
      * LinkedHashMap<TotalMeal_MacroName, Pair< Position, Measurement>> totalMeal_macroColNamePos
      */
     private LinkedHashMap<String, Pair<Integer, String>> totalMeal_Macro_Pos_And_Symbol;
     
-    /**
+    /*
      * HashMap<String, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues = new HashMap<>();
      * Stores all the mealManagers TotalMealValues in collections by the macroName
      * <p>
@@ -393,7 +393,7 @@ public class Shared_Data_Registry
     // PieChart: Remove Methods
     public void remove_PieChart_DatasetValues(Integer mealInPlanID)
     {
-        if (pieChart_Dataset_HashMap.containsKey(mealInPlanID)) { pieChart_Dataset_HashMap.remove(mealInPlanID); }
+        pieChart_Dataset_HashMap.remove(mealInPlanID);
     }
     
     //#################################################################################################################

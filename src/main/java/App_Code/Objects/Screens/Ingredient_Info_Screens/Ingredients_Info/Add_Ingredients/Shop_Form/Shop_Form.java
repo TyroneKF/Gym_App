@@ -1,6 +1,7 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form;
 
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
+import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredients_Screen;
@@ -19,6 +20,7 @@ public class Shop_Form extends Parent_Forms_OBJ
     
     // Objects
     protected Ingredients_Screen ingredient_Screen;
+    protected Shared_Data_Registry shared_Data_Registry;
     
     // Screen Objects
     protected Container parentContainer;
@@ -36,7 +38,7 @@ public class Shop_Form extends Parent_Forms_OBJ
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Shop_Form(Container parentContainer, String btn_Text, Ingredients_Screen ingredient_Screen, ArrayList<Store_ID_OBJ> stores)
+    public Shop_Form(Container parentContainer, String btn_Text, Ingredients_Screen ingredient_Screen, Shared_Data_Registry shared_Data_Registry)
     {
         //############################################
         // Super
@@ -49,8 +51,9 @@ public class Shop_Form extends Parent_Forms_OBJ
         //############################################
         this.parentContainer = parentContainer;
         this.ingredient_Screen = ingredient_Screen;
-        this.stores = stores;
+        this.shared_Data_Registry = shared_Data_Registry;
         
+        stores = shared_Data_Registry.get_Stores_AL();
         //############################################
         // Create GUI
         //############################################
@@ -224,9 +227,9 @@ public class Shop_Form extends Parent_Forms_OBJ
     {
         ArrayList<LinkedHashMap<String, ArrayList<String>>> all_Errors = new ArrayList<>();
         
-        //##################################
-        // Get Errors Per Row / Add to DATA
-        //##################################
+        //################################
+        // Get Errors Per Row
+        //################################
         // Get Shop Form Object
         for (ShopForm_Object shopForm_object : add_shop_Form_Objects)
         {
@@ -236,6 +239,11 @@ public class Shop_Form extends Parent_Forms_OBJ
             
             all_Errors.add(error_Map);
         }
+        
+        //################################
+        // Check Repeat Products
+        //###############################
+        validate_No_Repeat_Products(all_Errors);
         
         //###############################
         // Escape Clause
@@ -252,6 +260,48 @@ public class Shop_Form extends Parent_Forms_OBJ
         // Output
         //##################################
         return false;
+    }
+    
+    protected void validate_No_Repeat_Products(ArrayList<LinkedHashMap<String, ArrayList<String>>> all_Errors)
+    {
+        //################################
+        // Variables
+        //################################
+        HashMap<Integer, HashSet<String>> product_Name_To_Store = new HashMap<>();
+        ArrayList<String> errors = new ArrayList<>();
+        
+        //################################
+        // Check Duplicate Store / Products
+        //################################
+        for (ShopForm_Object shopForm_object : add_shop_Form_Objects)
+        {
+            String product_Name = shopForm_object.get_Product_Name().toLowerCase();
+            int store_ID = shopForm_object.get_Selected_Store_ID();
+            
+            // Get or Create entry
+            HashSet<String> product_Names = product_Name_To_Store
+                    .computeIfAbsent(store_ID, k -> new HashSet<>());
+            
+            // Add Product Name if it fails it's because it already exists
+            if (! product_Names.add(product_Name))
+            {
+                // Add Error
+                errors.add(String.format("Duplicate Store Name : %s and Product %s",
+                        shared_Data_Registry.get_Store_ID_Obj(store_ID).get_Name(), product_Name));
+            }
+        }
+        
+        //##################################
+        // Exit Clauses
+        //##################################
+        if (errors.isEmpty()) { return; }
+        
+        //##################################
+        // Add Errors
+        //##################################
+        LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
+        error_map.put("No Repeat Store Names", errors);
+        all_Errors.add(error_map);
     }
     
     protected String build_Error_MSg(ArrayList<LinkedHashMap<String, ArrayList<String>>> all_Errors)

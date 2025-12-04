@@ -4,49 +4,44 @@ mvn javafx:run "-DmainClass=Tests.ToggleSwitchDemo"
 ######################################################################################
 Work On:
 ######################################################################################
-.) Edit ingredients Screen -> Define prior_Form_Validations() for JC boxes at the top of the screen
-.) Collapsible Panel prevent closing
-.) Multiple Shop objects with the same store and name
-.) Make screens use Jframe / Panel classes
-.) Make single columnn / row Myjdbc method
-.) Add ingredients screen -> shared data update
-.) Ingredients Form -> salt update
 
-.) Screen Objects need to be condensed into 1 class
-
-.) Can error msgs be refactored in shop and ingredients screen into parent screen
-.) Refactor shopForm GUI Methods
-
-.) IF DB Creation passes & the inserts don't fail the connection isn't rolledback the tables are still created - check create db method
-.) What happens when a db query fails and is empty! Differentiate between empty and null results.
-           Null for failed and empty Collection
-
-.) If an ingredient table is saved and its not in the DB because the mealManager isn't
- .) MealManagaer should be saved
-
+Screen JPanel / JFrame
 .) Condense JFrames and JPanel screen
+.) Screen Objects need to be condensed into 1 class
+.) Make screens use Jframe / Panel classes
+
+
+Add Registery
+.) Replace arraylists with Hashets for uniquenes because hashnet .add does contains and adds and return false it failed
+
 
 Add / Edit Ingredients Screen
 .) Update Other Screens
 .) Deleting stores / type ask if we want to delete children or assign them to a new parent
 .) Deleting ingredient / type should refresh meal plan
 .) Transfer in Bulk
+.) Can error msgs be refactored in shop and ingredients screen into parent screen
+.) Ingredients Form -> salt update
+.) Add ingredients screen -> shared data update
+.) Collapsible Panel prevent closing
 
 
-IconButton
+Icon_Button
 .) Condense methods etc make button transparent
     iconPanelInsert.add(delete_Icon_Btn);
     delete_Icon_Btn.makeBTntransparent();
 
-
-IngredientsTable
+Ingredients_Table
 .) Redraw if ingredient / Info in edit Screen is being edited needs to be reflcected on Tables (Redrawn)
    etc shop selected thats been deleted all products need to be reloaded.
+.) If an ingredient table is saved and its not in the DB because the mealManager isn't
+   .) MealManagaer should be saved
 
 
-TotalMeal:
+Total_Meal:
 .) Ingredient Count
 .) Refresh Meal - Redraws screen and what's happens to pie charts open from unsaved meals it should be removed
+
 
 MealManager
 .) MealManager Update mealTime could just change time field on TotalMeal Vs reloading whole table
@@ -60,6 +55,14 @@ MYJDBC:
 .) Refactor method calls that check if null and return msg use N/A
 .) Prepared statements
 .) Switch to Arraylist from LinkedHashSet
+.) Make single columnn / row Myjdbc method
+.) IF DB Creation passes & the inserts don't fail the connection isn't rolledback the tables are still created - check create db method
+
+DB:
+.) Make plansLeft use max date for calculation of a plan
+.) Refactor Scripts with using statements
+.) Seperate Price database from macro ingredients cost
+
 
 Meal_Plan_Screen:
 .) Get rid of table name variables its hard to read
@@ -69,26 +72,20 @@ Meal_Plan_Screen:
 
 .) on ingredientsTable ingreidents info  pop up screen with food label & PieChart
 
-
 Macro_Targets
 .) MacroTargets Screen should add not update targets
 
-MacrosLeft
+Macros_Left
 .) MacrosLeft should use the max time for a plan to calculate it
 
-DB:
-.) Make plansLeft use max date for calculation of a plan
 
 ADD / Edit Stores /Types
 .) BackUp Files
 .) Items not needing to be in JComboList
 
 Loading Screen
-.) Include DB Creation in Loading screen progress
-
-
-Loading Screen
 .) Move the loading screen to before the DB scripts
+.) Include DB Creation in Loading screen progress
 
 ######################################################################################
 New Features:

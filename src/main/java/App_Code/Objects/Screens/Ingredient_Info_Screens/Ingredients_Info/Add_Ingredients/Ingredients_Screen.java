@@ -79,7 +79,7 @@ public class Ingredients_Screen extends Screen_JPanel
     {
         ingredients_Form = new Ingredients_Form(scroll_JPanel, db, shared_Data_Registry, "Add Ingredients Info");
         
-        shop_Form = new Shop_Form(scroll_JPanel, "Add Suppliers", this, shared_Data_Registry.get_Stores_AL());
+        shop_Form = new Shop_Form(scroll_JPanel, "Add Suppliers", this, shared_Data_Registry);
         
         search_For_Ingredient_Info = new Search_For_Food_Info(scroll_JPanel, ingredients_Form, "Search For Food Info");
     }

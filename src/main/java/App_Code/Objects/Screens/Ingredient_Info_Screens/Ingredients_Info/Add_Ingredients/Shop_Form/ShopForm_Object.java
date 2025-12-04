@@ -239,5 +239,18 @@ public class ShopForm_Object extends JPanel
         params[base + 2] = product_Price_JT.getText();
         params[base + 3] = stores_JC.get_Selected_Item_ID();
     }
+    
+    //#########################################################
+    //  Accessor Methods
+    //#########################################################
+    public String get_Product_Name()
+    {
+        return product_Name_JT.get_Text();
+    }
+    
+    public int get_Selected_Store_ID()
+    {
+        return stores_JC.get_Selected_Item_ID();
+    }
 }
 
