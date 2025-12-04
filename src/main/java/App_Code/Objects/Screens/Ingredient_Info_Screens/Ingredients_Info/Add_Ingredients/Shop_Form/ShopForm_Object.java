@@ -74,28 +74,28 @@ public class ShopForm_Object extends JPanel
         {{
             // ingredient_in_shops -> Skips pdid, ingredient_id (Position starts at 2)
             
-            put("Store", new Shop_Form_Binding<>(
+            put("store", new Shop_Form_Binding<>(
                     "Select A Store",    // GUI Label
                     stores_JC,                    // Component
                     "store_id",                    // MySQL Field
                     5
             ));
             
-            put("Name", new Shop_Form_Binding<>(
+            put("name", new Shop_Form_Binding<>(
                     "Product Name",       // GUI Label
                     product_Name_JT,               // Component
                     "product_name",                // MySQL Field
                     2
             ));
             
-            put("Price", new Shop_Form_Binding<>(
+            put("price", new Shop_Form_Binding<>(
                     "Product Price",         // GUI Label
                     product_Price_JT,                // Component
                     "cost_per_unit",                 // MySQL Field
                     4
             ));
             
-            put("   Quantity", new Shop_Form_Binding<>(
+            put("quantity", new Shop_Form_Binding<>(
                     "Quantity Per Pack",         // GUI Label
                     quantity_JT,                          // Component
                     "volume_per_unit",                   // MySQL Field

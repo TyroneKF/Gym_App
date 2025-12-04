@@ -17,6 +17,8 @@ import org.javatuples.Pair;
 
 import javax.swing.*;
 import java.awt.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 public class Ingredients_Form extends Parent_Forms_OBJ
@@ -531,8 +533,11 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         //###############################
         // IF no errors returns True
         //###############################
-        if (error_Map.isEmpty()) { return true; }
-        
+        if (error_Map.isEmpty())
+        {
+            salt_Formating();  // Convert Salt from MG to Grams if needed
+            return true;
+        }
         
         //###############################
         // Display Errors / Output
@@ -548,7 +553,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         //###############################
         // Build Error MSGs
         //###############################
-        /**
+        /*
          * HTML:
          * &nbsp; = space
          * <br> = line break
@@ -583,6 +588,35 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         // Return Output
         //###############################
         return error_MSG_String.toString();
+    }
+    
+    protected void salt_Formating()
+    {
+        try
+        {
+            if (salt_JC.get_Selected_Item().equals("g")) { return; } // If Salt JC has Mg Selected
+            
+            // Get Salt Component
+            Field_JTxtField_BD salt_Obj = (Field_JTxtField_BD) field_Items_Map.get("salt").get_Gui_Component();
+            
+            // Convert mg to G
+            BigDecimal salt_MG_Value = (BigDecimal) salt_Obj.get_Text_Casted_To_Type();
+            
+            // Convert MG to G value
+            BigDecimal new_Value_G = salt_MG_Value.divide(new BigDecimal("1000"), 2, RoundingMode.HALF_UP);
+            
+            // Set Salt Field to Grams Value
+            System.out.printf("\n\nNew Salt %s", new_Value_G);
+            salt_Obj.setText(new_Value_G.toPlainString());
+            
+            // Set Salt JC to G Salt
+            set_Salt_JC_To_Grams();
+        }
+        catch (Exception e)
+        {
+            System.err.printf("%s", e);
+            throw new RuntimeException(e);
+        }
     }
     
     
