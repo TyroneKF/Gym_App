@@ -36,6 +36,7 @@ public class Ingredients_Screen extends Screen_JPanel
     protected Search_For_Food_Info search_For_Ingredient_Info;
     protected Ingredients_Info_Screen ingredients_info_screen;
     protected Shared_Data_Registry shared_Data_Registry;
+    private Fetched_Results fetched_Results;
     
     //##################################################################################################################
     // Constructor
@@ -77,7 +78,6 @@ public class Ingredients_Screen extends Screen_JPanel
     //##################################################################################################################
     // Methods
     //##################################################################################################################
-    
     // Create GUI Methods
     protected void create_GUI_Objects()
     {
@@ -177,16 +177,15 @@ public class Ingredients_Screen extends Screen_JPanel
         //#################################
         // Ask to Add Ingredient / Products
         //#################################
-        String
-                title_Create = "Create New Ingredient",
-                message_Create = "Are you sure you want to add this Ingredient?";
+        String title_Create = "Create New Ingredient";
+        String message_Create = "Are you sure you want to add this Ingredient?";
         
         if (! are_You_Sure(title_Create, message_Create)) { return; }
         
-        //###############################
-        // Update Both Forms & Shared Data
-        //###############################
-        if (! update_DATA()) // MYSQL & Shared Data
+        //##################################
+        // Update Both Forms
+        //##################################
+        if (! update_Both_Forms()) // MYSQL & Shared Data
         {
             JOptionPane.showMessageDialog(null, "\n\nError, Uploading Ingredients / Product Values!");
             return;
@@ -196,12 +195,18 @@ public class Ingredients_Screen extends Screen_JPanel
         StringBuilder update_MSG = new StringBuilder("\n\nUpdated Ingredient Info & Product Info ! ");
         JOptionPane.showMessageDialog(get_Frame(), update_MSG);
         
-        JOptionPane.showMessageDialog(get_Frame(), "The ingredient updates won't appear on the mealPlan screen until this window is closed!");
-        
-        //###############################
-        // Update Shared Registry
-        //###############################
-        ingredients_info_screen.set_Update_IngredientInfo(true); // Update Status
+        //##################################
+        // Update Shared Data
+        //##################################
+        if (! update_Shared_Data()) // Update Shared Data with Fetched Results
+        {
+            JOptionPane.showMessageDialog(null, "Failed Adding Ingredient to GUI, Reload App will Fix Issue!");
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(get_Frame(), "The ingredient updates won't appear on the mealPlan screen until this window is closed!");
+            ingredients_info_screen.set_Update_IngredientInfo(true); // Update Status
+        }
         
         //################################
         // Reset Form & Update GUI
@@ -217,47 +222,6 @@ public class Ingredients_Screen extends Screen_JPanel
     //###########################
     // Update Methods
     //###########################
-    protected boolean update_DATA()
-    {
-        Fetched_Results fetched_Results = update_Both_Forms(); // Update Both Forms and Get Fetched Results
-        
-        if (fetched_Results == null) { return false; } // If Update Failed == null, No Fetched Results
-        
-        if (! update_Shared_Data(fetched_Results)) // Update Shared Data with Fetched Results
-        {
-            JOptionPane.showMessageDialog(null, "Failed Adding Ingredient to GUI, Reload App will Fix Issue!");
-        }
-        
-        return true;  // Output
-    }
-    
-    //######################################
-    // Update Methods
-    //######################################
-    private Fetched_Results update_Both_Forms()
-    {
-        //######################
-        // Create Variables
-        //######################
-        String errorMSG = "Error, Unable to add new Ingredient !"; // Error MSG
-        
-        // Get Upload Queries & Params
-        LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params = get_Update_Query_And_Params();
-        
-        if (upload_Queries_And_Params == null) { return null; } // IF getting elements failed, return false
-        
-        //######################
-        // Create Fetch Query
-        //######################
-        LinkedHashSet<Pair<String, Object[]>> fetch_Queries_And_Params = new LinkedHashSet<>();
-        fetch_Queries_And_Params.add(new Pair<>("SELECT LAST_INSERT_ID();", null));
-        
-        //######################
-        // Return Fetched Results
-        //######################
-        return db.upload_And_Get_Batch(upload_Queries_And_Params, fetch_Queries_And_Params, errorMSG);
-    }
-    
     protected final LinkedHashSet<Pair<String, Object[]>> get_Update_Query_And_Params()
     {
         LinkedHashSet<Pair<String, Object[]>> queries_And_Params = new LinkedHashSet<>();
@@ -279,7 +243,33 @@ public class Ingredients_Screen extends Screen_JPanel
         }
     }
     
-    protected boolean update_Shared_Data(Fetched_Results fetched_Results)
+    protected boolean update_Both_Forms()
+    {
+        //######################
+        // Create Variables
+        //######################
+        String errorMSG = "Error, Unable to add new Ingredient !"; // Error MSG
+        
+        // Get Upload Queries & Params
+        LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params = get_Update_Query_And_Params();
+        
+        if (upload_Queries_And_Params == null) { return false; } // IF getting elements failed, return false
+        
+        //######################
+        // Create Fetch Query
+        //######################
+        LinkedHashSet<Pair<String, Object[]>> fetch_Queries_And_Params = new LinkedHashSet<>();
+        fetch_Queries_And_Params.add(new Pair<>("SELECT LAST_INSERT_ID();", null));
+        
+        //######################
+        // Return Fetched Results
+        //######################
+        fetched_Results = db.upload_And_Get_Batch(upload_Queries_And_Params, fetch_Queries_And_Params, errorMSG);
+        
+        return fetched_Results != null;
+    }
+    
+    protected boolean update_Shared_Data()
     {
         try
         {
@@ -322,11 +312,16 @@ public class Ingredients_Screen extends Screen_JPanel
     //##################################################################
     protected void clear_Interface() // only available to reset screen
     {
+        clear_All_Screens();
+        fetched_Results = null;
+        resize_GUI();
+    }
+    
+    protected void clear_All_Screens()
+    {
         clear_Search_For_Ingredient_Info_Form();
         clear_Ingredients_Form();
         clear_Shop_Form();
-        
-        resize_GUI();
     }
     
     protected void clear_Search_For_Ingredient_Info_Form()

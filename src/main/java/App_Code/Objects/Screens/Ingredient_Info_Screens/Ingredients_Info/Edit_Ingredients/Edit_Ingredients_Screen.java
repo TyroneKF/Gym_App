@@ -49,59 +49,7 @@ public class Edit_Ingredients_Screen extends Ingredients_Screen
     //##################################################################################################################
     // Methods
     //##################################################################################################################
-    @Override
-    public void reload_Ingredient_Type_JC()
-    {
-        ingredient_Type_JC.reload_Items(); // Reload Main Ingredients Type JC on Page
-        
-        super.reload_Ingredient_Type_JC(); // do main reload
-    }
-    
-    //##############################################
-    // Validation Methods
-    //##############################################
-    protected boolean prior_Form_Validations()
-    {
-        if (! ingredient_Type_JC.is_Item_Selected())
-        {
-            JOptionPane.showMessageDialog(null, "Select an Ingredient Type to Edit an Ingredient!");
-            return false;
-        }
-        else if (! ingredient_Name_JC.is_Item_Selected())
-        {
-            JOptionPane.showMessageDialog(null, "Select an Ingredient Name to Edit !");
-            return false;
-        }
-        
-        return true;
-    }
-    
-    //##############################################
-    // Update Methods
-    //##############################################
-    @Override
-    protected boolean update_DATA()
-    {
-        return update_Both_Forms();
-    }
-    
-    private boolean update_Both_Forms()
-    {
-        //###########################
-        // Create Variables
-        //###########################
-        String errorMSG = "Error, Unable to Edit Ingredient Info!"; // Error MSG
-        
-        LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params = get_Update_Query_And_Params(); // Upload Query & Params
-        
-        if (upload_Queries_And_Params == null) { return false; } // IF getting elements failed, return false
-        
-        //###########################
-        // Upload
-        //###########################
-        return db.upload_Data_Batch(upload_Queries_And_Params, errorMSG);
-    }
-    
+    // GUI Methods
     @Override
     protected void create_GUI_Objects()
     {
@@ -112,30 +60,6 @@ public class Edit_Ingredients_Screen extends Ingredients_Screen
         search_For_Ingredient_Info = new Search_For_Food_Info(scroll_JPanel, ingredients_Form, "Search For Food Info");
     }
     
-    //##############################################
-    // Clear Methods
-    //##############################################
-    private void reset_JC()
-    {
-        ingredient_Type_JC.reset_JC();
-        reset_Ingredient_Names_JC();
-    }
-    
-    private void reset_Ingredient_Names_JC()
-    {
-        ingredient_Name_JC.reset_JC();
-    }
-    
-    @Override
-    protected void clear_Interface() // only available to reset screen
-    {
-        reset_JC(); // Change JC
-        super.clear_Interface(); // Parent Clean
-    }
-    
-    //##############################################
-    // GUI Methods
-    //##############################################
     protected void prior_GUI_Setup()
     {
         //#########################################
@@ -210,6 +134,82 @@ public class Edit_Ingredients_Screen extends Ingredients_Screen
         
         return jPanel;
     }
+    
+    //##############################################
+    // Validation Methods
+    //##############################################
+    protected boolean prior_Form_Validations()
+    {
+        if (! ingredient_Type_JC.is_Item_Selected())
+        {
+            JOptionPane.showMessageDialog(null, "Select an Ingredient Type to Edit an Ingredient!");
+            return false;
+        }
+        else if (! ingredient_Name_JC.is_Item_Selected())
+        {
+            JOptionPane.showMessageDialog(null, "Select an Ingredient Name to Edit !");
+            return false;
+        }
+        
+        return true;
+    }
+    
+    //##############################################
+    // Update Methods
+    //##############################################
+    protected boolean update_Both_Forms()
+    {
+        //###########################
+        // Create Variables
+        //###########################
+        String errorMSG = "Error, Unable to Edit Ingredient Info!"; // Error MSG
+        
+        LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params = get_Update_Query_And_Params(); // Upload Query & Params
+        
+        if (upload_Queries_And_Params == null) { return false; } // IF getting elements failed, return false
+        
+        //###########################
+        // Upload
+        //###########################
+        return db.upload_Data_Batch(upload_Queries_And_Params, errorMSG);
+    }
+    
+    @Override
+    public void reload_Ingredient_Type_JC()
+    {
+        ingredient_Type_JC.reload_Items(); // Reload Main Ingredients Type JC on Page
+        
+        ingredients_Form.reload_Type_JComboBox(); // do main reload
+    }
+    
+    //##############################################
+    // Clear Methods
+    //##############################################
+    @Override
+    protected void clear_Interface() // only available to reset screen
+    {
+        clear_All_Screens(); // Normal Methods
+        
+        reset_JC(); // Specific to this screen & Change JC
+        
+        resize_GUI(); // resize GUI
+    }
+    
+    //################################
+    // Reset JC Methods
+    //################################
+    private void reset_JC()
+    {
+        reset_Ingredient_Types_JC();
+        reset_Ingredient_Names_JC();
+    }
+    
+    private void reset_Ingredient_Names_JC()
+    {
+        ingredient_Name_JC.reset_JC();
+    }
+    
+    private void reset_Ingredient_Types_JC(){ ingredient_Type_JC.reset_JC();}
     
     //##############################################
     // ActionListener Methods
