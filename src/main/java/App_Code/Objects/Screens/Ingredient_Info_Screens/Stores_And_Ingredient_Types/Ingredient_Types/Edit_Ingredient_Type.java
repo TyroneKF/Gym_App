@@ -64,6 +64,6 @@ public class Edit_Ingredient_Type extends Edit_Screen
     @Override
     protected void update_Other_Screens()
     {
-        ingredient_Info_Screen.update_Types_JC();
+        ingredient_Info_Screen.update_All_Types_JC();
     }
 }

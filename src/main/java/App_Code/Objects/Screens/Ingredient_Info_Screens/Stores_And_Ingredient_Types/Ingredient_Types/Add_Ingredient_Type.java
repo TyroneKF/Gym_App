@@ -39,6 +39,6 @@ public class Add_Ingredient_Type extends Add_Screen
     @Override
     protected final void update_Other_Screens()
     {
-        ingredient_Info_Screen.update_Types_JC();
+        ingredient_Info_Screen.update_All_Types_JC();
     }
 }

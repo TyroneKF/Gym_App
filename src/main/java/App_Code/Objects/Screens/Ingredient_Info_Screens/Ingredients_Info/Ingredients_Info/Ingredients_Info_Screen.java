@@ -91,20 +91,48 @@ public class Ingredients_Info_Screen extends Screen_JFrame
     }
     
     //##################################################################################################################
-    // Update Methods
+    // Methods
     //##################################################################################################################
-    public void update_Types_JC()
+    // Reset Methods
+    public void reset_Add_Screen()
     {
-        ingredients_Screen.reload_Ingredient_Type_JC();
-        edit_Ingredients_Screen.reload_Ingredient_Type_JC();
+    
     }
     
+    public void reset_Edit_Screen()
+    {
+    
+    }
+    
+    //#############################
+    // Updates
+    //#############################
+    // Update Methods
     public void update_Stores_JC()
     {
         ingredients_Screen.reload_Stores_JC();
         edit_Ingredients_Screen.reload_Stores_JC();
     }
     
+    //############
+    // Type JC
+    //############
+    public void update_All_Types_JC()
+    {
+        update_Add_Types();
+        update_Edit_Types();
+    }
+    
+    public void update_Add_Types()
+    {
+        ingredients_Screen.reload_Ingredient_Type_JC();
+    }
+    
+    public void update_Edit_Types()
+    {
+        edit_Ingredients_Screen.reload_Ingredient_Type_JC();
+    }
+
     //##################################################################################################################
     // Mutator Methods
     //##################################################################################################################

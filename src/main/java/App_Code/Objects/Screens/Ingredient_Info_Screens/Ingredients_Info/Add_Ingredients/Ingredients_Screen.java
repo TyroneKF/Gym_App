@@ -24,8 +24,6 @@ public class Ingredients_Screen extends Parent_Ingredients_Screen
     private Fetched_Results fetched_Results;
     
     
-    
-    
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
@@ -129,6 +127,12 @@ public class Ingredients_Screen extends Parent_Ingredients_Screen
             System.err.printf("\n\n%s Error \n%s", get_Class_And_Method_Name(), e);
             return false;
         }
+    }
+    
+    @Override
+    protected void update_Other_Screens()
+    {
+       ingredients_info_screen.update_Edit_Types();
     }
     
     //##################################################################

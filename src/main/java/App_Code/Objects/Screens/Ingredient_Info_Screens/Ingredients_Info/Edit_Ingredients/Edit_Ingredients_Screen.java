@@ -179,6 +179,12 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
     }
     
     @Override
+    protected void update_Other_Screens()
+    {
+    
+    }
+    
+    @Override
     public void reload_Ingredient_Type_JC()
     {
         ingredient_Main_Type_JC.reload_Items(); // Reload Main Ingredients Type JC on Page
