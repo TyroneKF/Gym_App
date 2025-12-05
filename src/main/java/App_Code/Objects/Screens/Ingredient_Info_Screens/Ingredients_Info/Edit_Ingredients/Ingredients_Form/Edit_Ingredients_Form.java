@@ -106,7 +106,7 @@ public class Edit_Ingredients_Form extends Ingredients_Form
                 insert_Header = new StringBuilder("UPDATE ingredients_info SET "),
                 values = new StringBuilder();
         
-        Object[] params = new Object[size+1]; // Include where condition param
+        Object[] params = new Object[size + 1]; // Include where condition param
         
         //##########################
         // Create Update Query
@@ -153,21 +153,21 @@ public class Edit_Ingredients_Form extends Ingredients_Form
             
             pos++; // Increase pos
         }
-       
+        
         //##########################
         // Format Update Data
         //##########################
         if (values.isEmpty()) { return; } // If Nothing Changed Exit
         
         // Edit Ending of Query
-        values.deleteCharAt( values.length()-1); // delete last char ','
+        values.deleteCharAt(values.length() - 1); // delete last char ','
         values.append("\nWHERE ingredient_id = ?;");
         params[pos] = ingredient_ID;
         
         // Remove null values from values not changed
         params = Arrays.stream(params)
-                .filter(Objects ::nonNull)
-                .toArray(Object[]::new);
+                .filter(Objects :: nonNull)
+                .toArray(Object[] :: new);
         
         System.out.printf("\n\nInsert Headers: \n%s \n\nValues: \n%s  \n\nParams: \n%s%n", insert_Header, values, Arrays.toString(params));
         
@@ -177,5 +177,4 @@ public class Edit_Ingredients_Form extends Ingredients_Form
         StringBuilder update_Query = insert_Header.append(values);
         queries_And_Params.add(new Pair<>(update_Query.toString(), params));
     }
-    
 }

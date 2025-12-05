@@ -1,5 +1,8 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients;
 
+import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
+import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_Obj;
+import App_Code.Objects.Database_Objects.JDBC.Fetched_Results;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
@@ -10,6 +13,7 @@ import org.javatuples.Pair;
 
 import javax.swing.*;
 import java.awt.*;
+import java.math.BigInteger;
 import java.util.*;
 
 
@@ -144,7 +148,7 @@ public class Ingredients_Screen extends Screen_JPanel
     
     //##################################################################
     // Submission Button Actions
-    //#################################################################
+    //##################################################################
     protected void submission_Btn_Action()
     {
         //###############################
@@ -180,9 +184,9 @@ public class Ingredients_Screen extends Screen_JPanel
         if (! are_You_Sure(title_Create, message_Create)) { return; }
         
         //###############################
-        // Update Both Forms
+        // Update Both Forms & Shared Data
         //###############################
-        if (! update_Both_Forms()) // MYSQL
+        if (! update_DATA()) // MYSQL & Shared Data
         {
             JOptionPane.showMessageDialog(null, "\n\nError, Uploading Ingredients / Product Values!");
             return;
@@ -197,11 +201,7 @@ public class Ingredients_Screen extends Screen_JPanel
         //###############################
         // Update Shared Registry
         //###############################
-        
-        
-       
-        // Update Status
-        ingredients_info_screen.set_Update_IngredientInfo(true);
+        ingredients_info_screen.set_Update_IngredientInfo(true); // Update Status
         
         //################################
         // Reset Form & Update GUI
@@ -209,15 +209,57 @@ public class Ingredients_Screen extends Screen_JPanel
         clear_Interface();
     }
     
+    //###########################
+    // Validation Methods
+    //###########################
     protected boolean prior_Form_Validations() { return true; }
     
-    protected boolean update_Both_Forms()
+    //###########################
+    // Update Methods
+    //###########################
+    protected boolean update_DATA()
     {
-        //###########################
-        // Create Variables
-        //###########################
-        String errorMSG = "Error, Unable to add new Ingredient !";
+        Fetched_Results fetched_Results = update_Both_Forms(); // Update Both Forms and Get Fetched Results
         
+        if (fetched_Results == null) { return false; } // If Update Failed == null, No Fetched Results
+        
+        if (! update_Shared_Data(fetched_Results)) // Update Shared Data with Fetched Results
+        {
+            JOptionPane.showMessageDialog(null, "Failed Adding Ingredient to GUI, Reload App will Fix Issue!");
+        }
+        
+        return true;  // Output
+    }
+    
+    //######################################
+    // Update Methods
+    //######################################
+    private Fetched_Results update_Both_Forms()
+    {
+        //######################
+        // Create Variables
+        //######################
+        String errorMSG = "Error, Unable to add new Ingredient !"; // Error MSG
+        
+        // Get Upload Queries & Params
+        LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params = get_Update_Query_And_Params();
+        
+        if (upload_Queries_And_Params == null) { return null; } // IF getting elements failed, return false
+        
+        //######################
+        // Create Fetch Query
+        //######################
+        LinkedHashSet<Pair<String, Object[]>> fetch_Queries_And_Params = new LinkedHashSet<>();
+        fetch_Queries_And_Params.add(new Pair<>("SELECT LAST_INSERT_ID();", null));
+        
+        //######################
+        // Return Fetched Results
+        //######################
+        return db.upload_And_Get_Batch(upload_Queries_And_Params, fetch_Queries_And_Params, errorMSG);
+    }
+    
+    protected final LinkedHashSet<Pair<String, Object[]>> get_Update_Query_And_Params()
+    {
         LinkedHashSet<Pair<String, Object[]>> queries_And_Params = new LinkedHashSet<>();
         
         //###########################
@@ -227,22 +269,57 @@ public class Ingredients_Screen extends Screen_JPanel
         {
             ingredients_Form.add_Update_Queries(queries_And_Params);
             shop_Form.add_Update_Queries(queries_And_Params);
+            
+            return queries_And_Params;
         }
         catch (Exception e)
         {
             System.out.printf("\n\n%s", e);
-            return false;
+            return null;
         }
-        
-        //###########################
-        // Upload
-        //###########################
-        return db.upload_Data_Batch(queries_And_Params, errorMSG);
     }
     
-    //####################################################
+    protected boolean update_Shared_Data(Fetched_Results fetched_Results)
+    {
+        try
+        {
+            // Get Ingredient Name Variables
+            int ingredient_ID = ((BigInteger) fetched_Results.get_1D_Result_Into_Object(0)).intValueExact();
+            String ingredient_Name = (String) ingredients_Form.get_Component_Field_Value("name");
+            
+            // Get Ingredient Type ID OBJ
+            Ingredient_Type_ID_Obj ingredient_Type_ID_Obj = (Ingredient_Type_ID_Obj) ingredients_Form.get_Component_Field_Value("type");
+            
+            // Safety Check
+            if (ingredient_Name == null || ingredient_Type_ID_Obj == null)
+            {
+                throw new Exception(String.format("""
+                                Failed Getting Either Ingredient ID, Ingredient Name, Ingredient_Type_ID
+                                
+                                Ingredient ID : %s
+                                Ingredient Name : %s
+                                Ingredient_Type_ID : %s""",
+                        ingredient_ID, ingredient_Name, ingredient_Type_ID_Obj != null ? ingredient_Type_ID_Obj.toString() : null));
+            }
+            
+            // Create & Add Ingredient Name OBJ
+            shared_Data_Registry.add_Ingredient_Name(
+                    new Ingredient_Name_ID_OBJ(ingredient_ID, ingredient_Name, ingredient_Type_ID_Obj),
+                    true
+            );
+            
+            return true;
+        }
+        catch (Exception e)
+        {
+            System.err.printf("\n\n%s Error \n%s", get_Class_And_Method_Name(), e);
+            return false;
+        }
+    }
+    
+    //##################################################################
     // Clearing GUI Methods
-    //####################################################
+    //##################################################################
     protected void clear_Interface() // only available to reset screen
     {
         clear_Search_For_Ingredient_Info_Form();
@@ -267,12 +344,12 @@ public class Ingredients_Screen extends Screen_JPanel
         shop_Form.clear_Shop_Form();
     }
     
-    //####################################################
+    //##################################################################
     // Update Methods
-    //####################################################
+    //##################################################################
     public void reload_Ingredient_Type_JC()
     {
-        ingredients_Form.reload_Ingredients_Type_JComboBox();
+        ingredients_Form.reload_Type_JComboBox();
     }
     
     public void reload_Stores_JC()
@@ -280,9 +357,9 @@ public class Ingredients_Screen extends Screen_JPanel
         shop_Form.reload_Stores_JC();
     }
     
-    //##########################################################
+    //##################################################################
     // Accessor Methods
-    //##########################################################
+    //##################################################################
     public Frame get_Frame()
     {
         return frame;

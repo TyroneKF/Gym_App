@@ -20,6 +20,10 @@ Add Registery
 Meal_Plan_Screen
 .) Use arrayJson methods on refresh for everything totalMeals table etc : get_Meal_Data(), get_Total_Meals_Data()
 
+Shared_Data_Registry
+.) Data Objects make ID BigInt instead of int
+
+
 
 Add / Edit Ingredients Screen
 .) Delete btn for products and ingredients
@@ -250,6 +254,7 @@ Other Screens
 Check for
 ################################################################
 .) Public / Private Methods
+.) Final methods ( don't need to be overridden or changed by child classes
 .) Refactoring
 .) Grouping Methods
 .) Foreign Keys Deleting

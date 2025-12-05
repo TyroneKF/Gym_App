@@ -540,11 +540,7 @@ public class MealManager
         int reply = JOptionPane.showConfirmDialog(getFrame(), String.format("You are requesting to %s ! \n\nAre you sure you want to %s?", process, process),
                 "Notification", JOptionPane.YES_NO_OPTION); //HELLO Edit
         
-        if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
-        {
-            return false;
-        }
-        return true;
+        return reply != JOptionPane.NO_OPTION && reply != JOptionPane.CLOSED_OPTION;
     }
     
     //#################################################################################

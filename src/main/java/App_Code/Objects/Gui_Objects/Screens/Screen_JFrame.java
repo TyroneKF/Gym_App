@@ -235,6 +235,7 @@ public class Screen_JFrame extends JFrame
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
+    // String Methods
     protected String get_Class_Name()
     {
         return class_Name;
@@ -242,12 +243,17 @@ public class Screen_JFrame extends JFrame
     
     protected String get_Method_Name()
     {
-        return Thread.currentThread().getStackTrace()[1].getMethodName();
+        return String.format("%s()", Thread.currentThread().getStackTrace()[2].getMethodName());
+    }
+    
+    protected String get_Method_Name(int thread_Pos)
+    {
+        return String.format("%s()", Thread.currentThread().getStackTrace()[thread_Pos].getMethodName());
     }
     
     protected String get_Class_And_Method_Name()
     {
-        return String.format("%s -> %s", get_Class_Name(), get_Method_Name());
+        return String.format("%s -> %s", get_Class_Name(), get_Method_Name(3));
     }
     // ##################################
     // Get Int Methods

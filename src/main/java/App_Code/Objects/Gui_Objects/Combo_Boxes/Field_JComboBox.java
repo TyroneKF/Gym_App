@@ -141,4 +141,10 @@ public class Field_JComboBox<T> extends JComboBox<T>
         
         return typeCast.cast(item);
     }
+    
+    public String get_Selected_Item_TXT()
+    {
+        T obj = get_Selected_Item();
+        return obj != null ? get_Selected_Item().toString() : null;
+    }
 }

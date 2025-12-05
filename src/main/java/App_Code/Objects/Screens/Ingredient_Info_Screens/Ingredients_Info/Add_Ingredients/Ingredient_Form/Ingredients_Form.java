@@ -340,7 +340,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
     //##############################
     // Load JComboBox
     //##############################
-    public void reload_Ingredients_Type_JComboBox()
+    public void reload_Type_JComboBox()
     {
         Component object = field_Items_Map.get("type").get_Gui_Component();
         
@@ -349,7 +349,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         jComboBox.reload_Items();
     }
     
-    public void reload_Ingredients_Measurements_JComboBox()
+    public void reload_Measurements_JComboBox()
     {
         Component object = field_Items_Map.get("measurement").get_Gui_Component();
         
@@ -695,5 +695,26 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         //##########################
         StringBuilder update_Query = insert_Header.append(values);
         queries_And_Params.add(new Pair<>(update_Query.toString(), params));
+    }
+    
+    //##################################################################################################################
+    // Accessor Methods
+    //##################################################################################################################
+    public Component get_Component(String key)
+    {
+        return field_Items_Map.containsKey(key) ? field_Items_Map.get(key).get_Gui_Component() : null;
+    }
+    
+    public Object get_Component_Field_Value(String key) throws Exception // Cast Output to Type
+    {
+        Component component = get_Component(key);
+        
+        switch (component)
+        {
+            case Field_JTxtField_Parent<?> jt -> { return jt.get_Text_Casted_To_Type(); } // Returns Obj txt in form etc bd, string ...
+            case Field_JCombo_Storable_ID<?> jc -> { return jc.get_Selected_Item(); }
+            case Field_JComboBox<?> jc -> { return jc.get_Selected_Item_TXT(); } // Returns selected obj to.String methoed
+            default -> throw new Exception("Unexpected value: " + component);
+        }
     }
 }

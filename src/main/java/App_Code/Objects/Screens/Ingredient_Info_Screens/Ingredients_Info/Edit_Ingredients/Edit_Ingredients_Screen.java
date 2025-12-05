@@ -11,10 +11,12 @@ import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ing
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients.Ingredients_Form.Edit_Ingredients_Form;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients.Shop_Form.Edit_Shop_Form;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info_Screen;
+import org.javatuples.Pair;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 
 public class Edit_Ingredients_Screen extends Ingredients_Screen
 {
@@ -47,41 +49,12 @@ public class Edit_Ingredients_Screen extends Ingredients_Screen
     //##################################################################################################################
     // Methods
     //##################################################################################################################
-    
-    @Override
-    protected void create_GUI_Objects()
-    {
-        ingredients_Form = new Edit_Ingredients_Form(scroll_JPanel, db, shared_Data_Registry, "Edit Ingredients Info");
-        
-        shop_Form = new Edit_Shop_Form(scroll_JPanel, "Add Suppliers", this, shared_Data_Registry);
-        
-        search_For_Ingredient_Info = new Search_For_Food_Info(scroll_JPanel, ingredients_Form, "Search For Food Info");
-    }
-    
     @Override
     public void reload_Ingredient_Type_JC()
     {
         ingredient_Type_JC.reload_Items(); // Reload Main Ingredients Type JC on Page
         
-        ingredients_Form.reload_Ingredients_Type_JComboBox(); // Reload on ingredients Form
-    }
-    
-    private void reset_JC()
-    {
-        ingredient_Type_JC.reset_JC();
-        reset_Ingredient_Names_JC();
-    }
-    
-    private void reset_Ingredient_Names_JC()
-    {
-        ingredient_Name_JC.reset_JC();
-    }
-    
-    @Override
-    protected void clear_Interface() // only available to reset screen
-    {
-        reset_JC(); // Change JC
-        super.clear_Interface(); // Parent Clean
+        super.reload_Ingredient_Type_JC(); // do main reload
     }
     
     //##############################################
@@ -101,6 +74,63 @@ public class Edit_Ingredients_Screen extends Ingredients_Screen
         }
         
         return true;
+    }
+    
+    //##############################################
+    // Update Methods
+    //##############################################
+    @Override
+    protected boolean update_DATA()
+    {
+        return update_Both_Forms();
+    }
+    
+    private boolean update_Both_Forms()
+    {
+        //###########################
+        // Create Variables
+        //###########################
+        String errorMSG = "Error, Unable to Edit Ingredient Info!"; // Error MSG
+        
+        LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params = get_Update_Query_And_Params(); // Upload Query & Params
+        
+        if (upload_Queries_And_Params == null) { return false; } // IF getting elements failed, return false
+        
+        //###########################
+        // Upload
+        //###########################
+        return db.upload_Data_Batch(upload_Queries_And_Params, errorMSG);
+    }
+    
+    @Override
+    protected void create_GUI_Objects()
+    {
+        ingredients_Form = new Edit_Ingredients_Form(scroll_JPanel, db, shared_Data_Registry, "Edit Ingredients Info");
+        
+        shop_Form = new Edit_Shop_Form(scroll_JPanel, "Add Suppliers", this, shared_Data_Registry);
+        
+        search_For_Ingredient_Info = new Search_For_Food_Info(scroll_JPanel, ingredients_Form, "Search For Food Info");
+    }
+    
+    //##############################################
+    // Clear Methods
+    //##############################################
+    private void reset_JC()
+    {
+        ingredient_Type_JC.reset_JC();
+        reset_Ingredient_Names_JC();
+    }
+    
+    private void reset_Ingredient_Names_JC()
+    {
+        ingredient_Name_JC.reset_JC();
+    }
+    
+    @Override
+    protected void clear_Interface() // only available to reset screen
+    {
+        reset_JC(); // Change JC
+        super.clear_Interface(); // Parent Clean
     }
     
     //##############################################
@@ -182,7 +212,7 @@ public class Edit_Ingredients_Screen extends Ingredients_Screen
     }
     
     //##############################################
-    // ActionListener
+    // ActionListener Methods
     //##############################################
     private void type_JC_Action_Lister_Event()
     {
