@@ -150,7 +150,7 @@ public class ShopForm_Object extends JPanel
         //############################
         // Product Price : JTextField
         //############################
-        JPanel product_Price_JP = create_Section_JP(5, 25,0, 0, 5, 0 );
+        JPanel product_Price_JP = create_Section_JP(5, 25, 0, 0, 5, 0);
         centrePanel.add(product_Price_JP, BorderLayout.CENTER);
         
         product_Price_JP.add(product_Price_JT); // Add JComboBox to GUI
@@ -158,7 +158,7 @@ public class ShopForm_Object extends JPanel
         //############################
         // Quantity : JTextField
         //############################
-        JPanel quantity_JP = create_Section_JP(90, 34,0, 5, 5, 0 );
+        JPanel quantity_JP = create_Section_JP(90, 34, 0, 5, 5, 0);
         centrePanel.add(quantity_JP, BorderLayout.EAST);
         
         quantity_JP.add(quantity_JT); // Add JComboBox to GUI
@@ -183,41 +183,12 @@ public class ShopForm_Object extends JPanel
     //##################################################################################################################
     // Other Methods
     //##################################################################################################################
-    public LinkedHashMap<String, Shop_Form_Binding<?>> get_Field_Items_Map()
-    {
-        return field_Items_Map;
-    }
-    
-    //#################################################
     // Action Methods
-    //#################################################
     protected void reload_Stores_JC()
     {
         stores_JC.reload_Items(); // Reload JC
     }
     
-    protected void delete_Row_Action()
-    {
-        shop_form.remove_Shop_Form_Obj_From_AL(this);
-        
-        remove_From_Parent_Container(); // remove all the  input GUI objects from memory
-        resize_GUI();
-    }
-    
-    //#########################################################
-    // Resizing Methods
-    //#########################################################
-    public void remove_From_Parent_Container()
-    {
-        parent_Container.remove(this); //Remove from parent Container
-    }
-    
-    protected void resize_GUI()
-    {
-        parent_Container.revalidate(); //Resizing
-        
-        shop_form.resize_GUI(); //Resizing Form
-    }
     
     //#########################################################
     // Validation & Update Methods
@@ -238,6 +209,29 @@ public class ShopForm_Object extends JPanel
         params[base + 1] = quantity_JT.getText();
         params[base + 2] = product_Price_JT.getText();
         params[base + 3] = stores_JC.get_Selected_Item_ID();
+    }
+    
+    //#########################################################
+    // Resizing Methods
+    //#########################################################
+    protected void delete_Row_Action()
+    {
+        shop_form.remove_Shop_Form_Obj_From_AL(this);
+        
+        remove_From_Parent_Container(); // remove all the  input GUI objects from memory
+        resize_GUI();
+    }
+    
+    public void remove_From_Parent_Container()
+    {
+        parent_Container.remove(this); //Remove from parent Container
+    }
+    
+    protected void resize_GUI()
+    {
+        parent_Container.revalidate(); //Resizing
+        
+        shop_form.resize_GUI(); //Resizing Form
     }
     
     //#########################################################

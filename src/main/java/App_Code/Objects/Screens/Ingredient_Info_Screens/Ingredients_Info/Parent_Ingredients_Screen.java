@@ -188,6 +188,7 @@ public abstract class Parent_Ingredients_Screen extends Screen_JPanel
         else
         {
             JOptionPane.showMessageDialog(get_Frame(), "The ingredient updates won't appear on the mealPlan screen until this window is closed!");
+            update_Other_Screens();
         }
         
         //###############################
@@ -233,6 +234,8 @@ public abstract class Parent_Ingredients_Screen extends Screen_JPanel
     protected abstract boolean update_Both_Forms();
     
     protected abstract boolean update_Shared_Data();
+    
+    protected abstract void update_Other_Screens();
     
     //##################################################################
     // Clearing GUI Methods
