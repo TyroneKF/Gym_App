@@ -4,8 +4,8 @@ import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Store_ID
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
-import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredients_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Parent_Forms_OBJ;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Parent_Ingredients_Screen;
 import org.javatuples.Pair;
 
 import javax.swing.*;
@@ -19,7 +19,7 @@ public class Shop_Form extends Parent_Forms_OBJ
     //##################################################################################################################
     
     // Objects
-    protected Ingredients_Screen ingredient_Screen;
+    protected Parent_Ingredients_Screen ingredient_Screen;
     protected Shared_Data_Registry shared_Data_Registry;
     
     // Screen Objects
@@ -38,7 +38,7 @@ public class Shop_Form extends Parent_Forms_OBJ
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Shop_Form(Container parentContainer, String btn_Text, Ingredients_Screen ingredient_Screen, Shared_Data_Registry shared_Data_Registry)
+    public Shop_Form(Container parentContainer, String btn_Text, Parent_Ingredients_Screen ingredient_Screen, Shared_Data_Registry shared_Data_Registry)
     {
         //############################################
         // Super

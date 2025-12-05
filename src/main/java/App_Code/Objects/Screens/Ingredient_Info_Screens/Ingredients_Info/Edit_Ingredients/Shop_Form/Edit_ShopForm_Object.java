@@ -24,7 +24,7 @@ public class Edit_ShopForm_Object extends ShopForm_Object
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Edit_ShopForm_Object(Container parent_Container, Shop_Form shop_form, ArrayList<Store_ID_OBJ> stores, ArrayList<Object> data) throws Exception
+    public Edit_ShopForm_Object(Container parent_Container, Edit_Shop_Form shop_form, ArrayList<Store_ID_OBJ> stores, ArrayList<Object> data) throws Exception
     {
         super(parent_Container, shop_form, stores);
         set_Data(data);

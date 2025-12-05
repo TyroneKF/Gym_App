@@ -4,6 +4,7 @@ import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredients_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.ShopForm_Object;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.Shop_Form;
+import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients.Edit_Ingredients_Screen;
 import org.javatuples.Pair;
 import java.awt.*;
 import java.util.*;
@@ -19,7 +20,7 @@ public class Edit_Shop_Form extends Shop_Form
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Edit_Shop_Form(Container parentContainer, String btn_Text, Ingredients_Screen ingredient_Screen, Shared_Data_Registry shared_Data_Registry)
+    public Edit_Shop_Form(Container parentContainer, String btn_Text, Edit_Ingredients_Screen ingredient_Screen, Shared_Data_Registry shared_Data_Registry)
     {
         super(parentContainer, btn_Text, ingredient_Screen, shared_Data_Registry);
     }
