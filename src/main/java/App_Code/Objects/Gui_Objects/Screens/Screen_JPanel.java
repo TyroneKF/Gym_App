@@ -1,12 +1,9 @@
 package App_Code.Objects.Gui_Objects.Screens;
 
-import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.stream.Collectors;
 
 public class Screen_JPanel extends JPanel

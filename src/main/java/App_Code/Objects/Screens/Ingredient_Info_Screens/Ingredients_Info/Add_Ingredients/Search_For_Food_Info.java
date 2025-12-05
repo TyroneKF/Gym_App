@@ -12,7 +12,7 @@ import java.awt.*;
 import App_Code.Objects.API.Nutritionix.NutritionIx_API;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.Text_Fields.Parent.JTextFieldLimit;
-import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
+import App_Code.Objects.Gui_Objects.Screens.ScrollPaneCreator;
 
 import javax.imageio.ImageIO;
 

@@ -7,7 +7,7 @@ package Tests.Resizing;
 //https://stackoverflow.com/questions/2989107/change-font-size-of-a-jpanel-and-all-its-elements
 // Multiple windows error withy getting frame size (research)
 
-import App_Code.Objects.Gui_Objects.ScrollPaneCreator;
+import App_Code.Objects.Gui_Objects.Screens.ScrollPaneCreator;
 
 import javax.swing.*;
 import java.awt.*;

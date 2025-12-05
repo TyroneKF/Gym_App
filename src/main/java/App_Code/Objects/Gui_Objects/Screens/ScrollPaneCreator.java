@@ -1,4 +1,4 @@
-package App_Code.Objects.Gui_Objects;
+package App_Code.Objects.Gui_Objects.Screens;
 
 import javax.swing.*;
 import java.awt.*;
