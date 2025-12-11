@@ -103,7 +103,7 @@ public class Ingredients_Screen extends Parent_Ingredients_Screen
             Ingredient_Type_ID_Obj ingredient_Type_ID_Obj = (Ingredient_Type_ID_Obj) ingredients_Form.get_Component_Field_Value("type");
             
             // Safety Check
-            if (ingredient_Name == null || ingredient_Type_ID_Obj == null)
+            if ( ingredient_Type_ID_Obj == null)
             {
                 throw new Exception(String.format("""
                                 Failed Getting Either Ingredient ID, Ingredient Name, Ingredient_Type_ID
@@ -111,7 +111,7 @@ public class Ingredients_Screen extends Parent_Ingredients_Screen
                                 Ingredient ID : %s
                                 Ingredient Name : %s
                                 Ingredient_Type_ID : %s""",
-                        ingredient_ID, ingredient_Name, ingredient_Type_ID_Obj != null ? ingredient_Type_ID_Obj.toString() : null));
+                        ingredient_ID, ingredient_Name, null));
             }
             
             // Create & Add Ingredient Name OBJ
@@ -124,7 +124,7 @@ public class Ingredients_Screen extends Parent_Ingredients_Screen
         }
         catch (Exception e)
         {
-            System.err.printf("\n\n%s Error \n%s", get_Class_And_Method_Name(), e);
+            System.err.printf("\n\n%s Error \n\n%s", get_Class_And_Method_Name(), e);
             return false;
         }
     }
