@@ -711,9 +711,9 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         
         switch (component)
         {
-            case Field_JTxtField_Parent<?> jt -> { return jt.get_Text_Casted_To_Type(); } // Returns Obj txt in form etc bd, string ...
+            case Field_JTxtField_Parent<?> jt -> { return jt.get_Text_Casted_To_Type(); } // Returns Selected Obj Type
             case Field_JCombo_Storable_ID<?> jc -> { return jc.get_Selected_Item(); }
-            case Field_JComboBox<?> jc -> { return jc.get_Selected_Item_TXT(); } // Returns selected obj to.String methoed
+            case Field_JComboBox<?> jc -> { return jc.get_Selected_Item_TXT(); } // Returns selected obj to.String
             default -> throw new Exception("Unexpected value: " + component);
         }
     }
