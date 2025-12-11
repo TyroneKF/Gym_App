@@ -131,9 +131,9 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
         return jPanel;
     }
     
-    //##############################################
+    //######################################################################
     // Validation Methods
-    //##############################################
+    //######################################################################
     @Override
     protected boolean prior_Form_Validations()
     {
@@ -151,9 +151,9 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
         return true;
     }
     
-    //##############################################
+    //######################################################################
     // Update Methods
-    //##############################################
+    //######################################################################
     @Override
     protected boolean update_Both_Forms()
     {
@@ -172,11 +172,6 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
         return db.upload_Data_Batch(upload_Queries_And_Params, errorMSG);
     }
     
-    @Override
-    protected boolean update_Shared_Data()
-    {
-        return false;
-    }
     
     @Override
     protected void update_Other_Screens()
@@ -192,9 +187,44 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
         ingredients_Form.reload_Type_JComboBox(); // do main reload
     }
     
-    //##############################################
-    // Clear Methods
-    //##############################################
+    //############################################
+    // Shared Data Updates
+    //############################################
+    @Override
+    protected boolean update_Shared_Data()
+    {
+        try
+        {
+            Edit_Ingredients_Form ingredients_form = (Edit_Ingredients_Form) ingredients_Form;
+            
+            // Update Ingredient Name in Shared Data if Changed
+            if (ingredients_form.has_Ingredient_Name_Changed()) { update_Ingredient_Name_Shared_Data(); }
+            
+            // Update Ingredient Type in Shared Data if Changed
+            if (ingredients_form.has_Ingredient_Type_Changed()) { update_Ingredient_Type_Shared_Data(); }
+            
+            return true;
+        }
+        catch (Exception e)
+        {
+            System.err.printf("\n\n%s -> \n%s", get_Class_And_Method_Name(), e);
+        }
+        return false;
+    }
+    
+    protected void update_Ingredient_Name_Shared_Data()
+    {
+        System.out.println("\n\nUpdate Ingredients Name!");
+    }
+    
+    protected void update_Ingredient_Type_Shared_Data()
+    {
+        System.out.println("\n\nUpdate Ingredients Type!");
+    }
+    
+    //######################################################################
+    // Clear / Reset Methods
+    //######################################################################
     @Override
     protected void clear_Interface() // only available to reset screen
     {
@@ -205,9 +235,6 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
         resize_GUI(); // resize GUI
     }
     
-    //################################
-    // Reset JC Methods
-    //################################
     private void reset_JC()
     {
         reset_Ingredient_Types_JC();
@@ -219,11 +246,11 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
         ingredient_Main_Name_JC.reset_JC();
     }
     
-    private void reset_Ingredient_Types_JC(){ ingredient_Main_Type_JC.reset_JC();}
+    private void reset_Ingredient_Types_JC() { ingredient_Main_Type_JC.reset_JC(); }
     
-    //##############################################
+    //######################################################################
     // ActionListener Methods
-    //##############################################
+    //######################################################################
     private void type_JC_Action_Lister_Event()
     {
         try
@@ -255,9 +282,9 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
         }
     }
     
-    //######################
+    //################################
     // Ingredient Name
-    //######################
+    //###############################
     private void name_JC_Action_Lister_Event()
     {
         if (! allow_Name_Action_Listener) { return; }

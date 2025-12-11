@@ -97,47 +97,47 @@ Loading Screen
 ######################################################################################
 New Features:
 ######################################################################################
-.) Recime - screenshot image and gets ingredients
-.) Search on app for recommended meals with a GUI like studentPeak events page
 
-.) Goals tracker etc no Junk Food
-   .) Feature to edit daily meal = eaten that day if meal plan changed vs changing the whole plan gives daily analytics
+Image Recognition
+  .) Progress Tracker using image recognition and measurements we can track your composition changes using 3d model avatar too
+  .) Barcode scanner using phone portal / tunnel as a connection
+  .) Recime - screenshot image and gets ingredients
+  .) Drag and drop a screenshot into the app of food nutrition form /shop form (autofill)
+  .) Search on app for recommended meals with a GUI like studentPeak events page
 
-.) Barcode scanner using phone portal / tunnel as a connection
+  .) Goals tracker etc no Junk Food
+  .) Feature to edit daily meal = eaten that day if meal plan changed vs changing the whole plan gives daily analytics
+
+AI
+.) Food inspiration, show it a picture or give it prompts and generate a meal plan
+.) AI Meal Suggester
+
+Progress Tracking
+  .) Progress analytics line chart:
+  .) Body Weight & Tracked Meals eaten
+  .) Size Measurements
+  .) % of meals eaten vs progress
+  .) Personal goal tracker (linked with mobile phone) shows you how much % of your targets = meals eaten & others you've achieved
+  .) Sync with strong data app
+  .) targets - cut mode / bulk graph analytics changes in terms of measuring progress
+
+Others
 .) Graphs / Charts of Meals
 .) Shopping Evaluator / Stock
-.) AI Meal Suggester
 .) Being Able to  define font size
 .) Hiding Columns preferences
 .) Mobile App that's aligns with meals one pc & tracks progress shows % of how much of your meals you eat on a daily
 .) Track body weight & body fat % in a graph to see meal plans efficiency
-
 .) Switch Fully to JAVAFX
 .) Switch to AWS RDS / AWS Cognito for login authentication
 .) Use.env
-
 .) Vegan mode for % of protein
 .) Vitamins
-
-.) Progress analytics line chart:
-   Body Weight & Tracked Meals eaten
-   Size Measurements
-   % of meals eaten vs progress
-
-.) targets - cut mode / bulk graph analytics changes in terms of measuring progress
-
 .) chat messaging
 .) Friends challenge - create a group and compare results
-
-.) Personal goal tracker (linked with mobile phone) shows you how much % of your targets = meals eaten & others
-   you've achieved
-
-.) Sync with strong data app
-
 .) Search for food exterior window
 
-AI
-.) Food inspiration, show it a picture or give it prompts and generate a meal plan
+
 
 ######################################################################################
 OVERALL:
@@ -148,10 +148,7 @@ OVERALL:
 .) Columns in table sizes
 .) Demo Screen
 
-.) SQL injections on Input
-
 .) Has data changed in ingredients table
-.) Refactor db requests method if nulll into a method that return boolean
 
 .) Docked Window / side by side screens (diet planner  & Graphs)
 
@@ -178,7 +175,6 @@ MYJDBC:
 ######################################################################################
 .) Refactor script setup 
 .) Create a user log in page
-.) Execute and return value methods vs execute query does result == null, this can be refactored
 
 ######################################################################################
 Ingredients_Table:
@@ -205,9 +201,8 @@ Total_Meal_View:
 ######################################################################################
 Meal_Manager:
 ######################################################################################
-.) Graph GUI Display per meal
+.) Graph GUI Display per meal should include calories in piechart title
 .) Scroll_To_End - let mealManager do this process at the end
-.) What happens if you have a meal set to a time and reset an old meal and there are 2 with the same name now
 
 
 ######################################################################################

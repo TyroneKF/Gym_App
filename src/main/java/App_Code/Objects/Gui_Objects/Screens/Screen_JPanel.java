@@ -68,7 +68,7 @@ public class Screen_JPanel extends JPanel
         //########################################################
         // Variables
         //########################################################
-        this.class_Name = this.getClass().getName();
+        this.class_Name = this.getClass().getSimpleName();
         
         this.container = container;
         this.addScrollPane = addScrollPane;

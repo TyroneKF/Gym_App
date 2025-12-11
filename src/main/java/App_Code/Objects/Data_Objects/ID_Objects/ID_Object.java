@@ -8,12 +8,12 @@ public class ID_Object implements Comparable<ID_Object>
     // Variables
     // #################################################################################################################
     private String  name;
-    private int id;
+    private Integer id;
     
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
-    protected ID_Object(int id, String name)
+    protected ID_Object(Integer id, String name)
     {
         //############################################
         // Variables
@@ -38,7 +38,7 @@ public class ID_Object implements Comparable<ID_Object>
         return name;
     }
     
-    public int get_ID()
+    public Integer get_ID()
     {
         return id;
     }
@@ -65,7 +65,7 @@ public class ID_Object implements Comparable<ID_Object>
         if (obj == null || getClass() != obj.getClass()) { return false; }
         
         ID_Object other = (ID_Object) obj;
-        return get_ID() == other.get_ID();
+        return Objects.equals(get_ID(), other.get_ID());
     }
     
     @Override

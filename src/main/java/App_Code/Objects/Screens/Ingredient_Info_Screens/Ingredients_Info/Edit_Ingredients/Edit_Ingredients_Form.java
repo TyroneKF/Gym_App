@@ -1,5 +1,6 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients;
 
+import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Storable_IDS_Parent;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.Combo_Boxes.Field_JCombo_Storable_ID;
@@ -9,6 +10,8 @@ import App_Code.Objects.Data_Objects.Field_Bindings.Ingredients_Form_Binding;
 import org.javatuples.Pair;
 
 import java.awt.*;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -41,6 +44,10 @@ public class Edit_Ingredients_Form extends Ingredients_Form
         data_AL = null;
     }
     
+    
+    //##########################################
+    // Validation methods
+    //##########################################
     @Override
     protected boolean is_Ingredient_Name_In_DB() throws Exception
     {
@@ -65,6 +72,77 @@ public class Edit_Ingredients_Form extends Ingredients_Form
         return ! db.get_Single_Col_Query_Int(query, params, errorMSG, true).isEmpty();
     }
     
+    private boolean has_Field_Value_Changed_From_DB_Data(String key) throws Exception
+    {
+        // Get Desired Keys Object on the Form Value
+        Object field_Value_On_Form = get_Component_Field_Value(key);
+        
+        // Get Desired Keys Equivalent Value in DATA
+        int query_Pos = field_Items_Map.get(key).get_Field_Query_Pos(); // Query Position for field Value
+        Object field_Value_In_DB_Data = data_AL.get(query_Pos);
+        
+        //########################
+        // Exit Clauses
+        //########################
+        if (field_Value_In_DB_Data == null) { return false; } // Form Value cant be null due to validation but, db can
+        
+        if (field_Value_On_Form instanceof Storable_IDS_Parent storable_ID_Obj)
+        {
+            switch (field_Value_In_DB_Data)
+            {
+                case BigInteger x -> { return ! (storable_ID_Obj.get_ID()).equals(x.intValueExact()); }
+                case Integer x -> { return ! x.equals(storable_ID_Obj.get_ID()); }
+                default ->
+                        throw new Exception(String.format("\n\n%s Error ID Object for Key '%s' \nUnexpected value: %s \nClass Type : %s", get_Class_And_Method_Name(), key,
+                                field_Value_In_DB_Data, field_Value_In_DB_Data.getClass()));
+            }
+        }
+        
+        if (field_Value_On_Form.getClass() != field_Value_In_DB_Data.getClass()) // Type MisMatch
+        {
+            throw new Exception(String.format("""
+                            \n\n %s Error Different Object Types
+                            
+                            \nForm
+                            Class : %s
+                            Value : %s
+                            
+                            \nDB
+                            Class : %s
+                            Value : %s""",
+                    get_Class_And_Method_Name(),
+                    field_Value_On_Form.getClass(), field_Value_On_Form.toString(),
+                    field_Value_In_DB_Data.getClass(), field_Value_In_DB_Data.toString()
+            ));
+        }
+        
+        //########################
+        // Compare
+        //########################
+        switch (field_Value_On_Form)
+        {
+            case BigDecimal form_Value -> { return form_Value.compareTo(((BigDecimal) field_Value_In_DB_Data)) != 0; }
+            case BigInteger form_Value -> { return ! form_Value.equals(((BigInteger) field_Value_In_DB_Data)); }
+            case Integer form_Value -> { return ! form_Value.equals(((Integer) field_Value_In_DB_Data)); }
+            case String form_Value -> { return ! form_Value.equals(((String) field_Value_In_DB_Data)); }
+            default -> throw new IllegalStateException(String.format("\n\n%s Error \nUnexpected value: %s ",
+                    get_Class_And_Method_Name(), field_Value_On_Form));
+        }
+    }
+    
+    protected boolean has_Ingredient_Type_Changed() throws Exception
+    {
+        return has_Field_Value_Changed_From_DB_Data("type");
+    }
+    
+    protected boolean has_Ingredient_Name_Changed() throws Exception
+    {
+        return has_Field_Value_Changed_From_DB_Data("name");
+    }
+    
+    //##########################################
+    // Update methods
+    //##########################################
     public void set_Data(ArrayList<Object> data_AL) throws Exception
     {
         // Clear Data
