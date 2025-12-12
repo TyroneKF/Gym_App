@@ -600,7 +600,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
             Field_JTxtField_BD salt_Obj = (Field_JTxtField_BD) field_Items_Map.get("salt").get_Gui_Component();
             
             // Convert mg to G
-            BigDecimal salt_MG_Value = (BigDecimal) salt_Obj.get_Text_Casted_To_Type();
+            BigDecimal salt_MG_Value = salt_Obj.get_Text_Casted_To_Type();
             
             // Convert MG to G value
             BigDecimal new_Value_G = salt_MG_Value.divide(new BigDecimal("1000"), 2, RoundingMode.HALF_UP);

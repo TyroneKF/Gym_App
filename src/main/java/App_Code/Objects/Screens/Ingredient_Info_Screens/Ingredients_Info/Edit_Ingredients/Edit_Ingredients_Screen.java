@@ -6,6 +6,7 @@ import App_Code.Objects.Database_Objects.JDBC.Fetched_Results;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.Combo_Boxes.Field_JCombo_Storable_ID;
+import App_Code.Objects.Gui_Objects.Text_Fields.Field_JTxtField_String;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Search_For_Food_Info;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients.Shop_Form.Edit_Shop_Form;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info.Ingredients_Info_Screen;
@@ -27,7 +28,10 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
     protected Field_JCombo_Storable_ID<Ingredient_Type_ID_Obj> ingredient_Main_Type_JC;
     protected Field_JCombo_Storable_ID<Ingredient_Name_ID_OBJ> ingredient_Main_Name_JC;
     
-    protected boolean allow_Name_Action_Listener = true;
+    protected boolean
+            allow_Name_Action_Listener = true,
+            has_Ingredient_Name_Changed = false,
+            has_Ingredient_Type_Changed = false;
     
     //##################################################################################################################
     // Constructor
@@ -121,7 +125,6 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
         add_To_Container(mainCentre_JPanel, new JPanel(), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 10, 0, null);
     }
     
-    
     private JPanel create_JComboBox_JP()
     {
         JPanel jPanel = new JPanel(new GridLayout(1, 1));
@@ -155,6 +158,19 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
     // Update Methods
     //######################################################################
     @Override
+    public void reload_Ingredient_Type_JC()
+    {
+        reload_Main_Ingredient_Type_JC(); // Reload Main Ingredients Type JC on Page
+        
+        ingredients_Form.reload_Type_JComboBox(); // do main reload
+    }
+    
+    private void reload_Main_Ingredient_Type_JC()
+    {
+        ingredient_Main_Type_JC.reload_Items(); // Reload Main Ingredients Type JC on Page
+    }
+    
+    @Override
     protected boolean update_Both_Forms()
     {
         //###########################
@@ -172,20 +188,16 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
         return db.upload_Data_Batch(upload_Queries_And_Params, errorMSG);
     }
     
-    
     @Override
     protected void update_Other_Screens()
     {
-    
-    }
-    
-    @Override
-    public void reload_Ingredient_Type_JC()
-    {
-        ingredient_Main_Type_JC.reload_Items(); // Reload Main Ingredients Type JC on Page
+        // Update Ingredients Types Objects If Changed On This Screen & related things
+        if (has_Ingredient_Type_Changed) { reload_Main_Ingredient_Type_JC(); }
         
-        ingredients_Form.reload_Type_JComboBox(); // do main reload
+        // Update Ingredients Name Related Things
+        if (has_Ingredient_Name_Changed) { }
     }
+    
     
     //############################################
     // Shared Data Updates
@@ -195,31 +207,51 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
     {
         try
         {
-            Edit_Ingredients_Form ingredients_form = (Edit_Ingredients_Form) ingredients_Form;
+            Edit_Ingredients_Form edit_Ingredients_Form = (Edit_Ingredients_Form) ingredients_Form; // Cast to Type
             
-            // Update Ingredient Name in Shared Data if Changed
-            if (ingredients_form.has_Ingredient_Name_Changed()) { update_Ingredient_Name_Shared_Data(); }
+            // Get Ingredient Name OBj Used in Both Updates
+            Ingredient_Name_ID_OBJ ingredient_name_id_obj = ingredient_Main_Name_JC.get_Selected_Item();
             
             // Update Ingredient Type in Shared Data if Changed
-            if (ingredients_form.has_Ingredient_Type_Changed()) { update_Ingredient_Type_Shared_Data(); }
+            if (edit_Ingredients_Form.has_Ingredient_Type_Changed())
+            {
+                if (! update_Ingredient_Type_Shared_Data(ingredient_name_id_obj, edit_Ingredients_Form)) // Failed Update
+                {
+                    return false;
+                }
+                has_Ingredient_Type_Changed = true;
+            }
             
-            return true;
+            if (edit_Ingredients_Form.has_Ingredient_Name_Changed()) // Update Ingredient Name in Shared Data if Changed
+            {
+                update_Ingredient_Name_Shared_Data(ingredient_name_id_obj, edit_Ingredients_Form);
+                has_Ingredient_Name_Changed = true;
+            }
+            
+            return true; // Output
         }
         catch (Exception e)
         {
-            System.err.printf("\n\n%s -> \n%s", get_Class_And_Method_Name(), e);
+            System.err.printf("\n\n%s -> \n\n%s", get_Class_And_Method_Name(), e);
         }
         return false;
     }
     
-    protected void update_Ingredient_Name_Shared_Data()
+    protected void update_Ingredient_Name_Shared_Data(Ingredient_Name_ID_OBJ ingredient_name_id_obj, Edit_Ingredients_Form edit_ingredients_form) throws Exception
     {
-        System.out.println("\n\nUpdate Ingredients Name!");
+        // Get New Ingredient Name Value From Form
+        String txt = (String) edit_ingredients_form.get_Component_Field_Value("name");
+        
+        ingredient_name_id_obj.set_Name(txt); // Update Name Field Inside Object
     }
     
-    protected void update_Ingredient_Type_Shared_Data()
+    protected boolean update_Ingredient_Type_Shared_Data(Ingredient_Name_ID_OBJ ingredient_name_id_obj, Edit_Ingredients_Form edit_ingredients_form) throws Exception
     {
-        System.out.println("\n\nUpdate Ingredients Type!");
+        // Get Ingredient Type JC Associated with this field
+        Ingredient_Type_ID_Obj ingredient_type_id_obj = (Ingredient_Type_ID_Obj) edit_ingredients_form.get_Component_Field_Value("type");
+        
+        // Change Ingredient Type on Ingredient Name
+        return shared_Data_Registry.change_Ingredient_Type(ingredient_type_id_obj, ingredient_name_id_obj);
     }
     
     //######################################################################
@@ -228,11 +260,19 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
     @Override
     protected void clear_Interface() // only available to reset screen
     {
+        reset_Variables(); // Reset Variables
+        
         clear_All_Screens(); // Normal Methods
         
         reset_JC(); // Specific to this screen & Change JC
         
         resize_GUI(); // resize GUI
+    }
+    
+    private void reset_Variables()
+    {
+        has_Ingredient_Name_Changed = false;
+        has_Ingredient_Type_Changed = false;
     }
     
     private void reset_JC()
