@@ -61,19 +61,15 @@ CREATE TABLE IF NOT EXISTS macros_per_pound_and_limits
     water_target DECIMAL(7,2) NOT NULL,
 	liquid_target DECIMAL(7,2) NOT NULL,
 
-	additional_calories DECIMAL(7,2) NOT NULL,
+	additional_calories DECIMAL(,2) NOT NULL,
 
 	PRIMARY KEY (plan_id, date_time_of_creation)
 );
 
 -- ######################################
-
-DROP VIEW IF EXISTS plan_macro_target_calculations;
-
 CREATE VIEW plan_macro_target_calculations AS
 	
-WITH 
-	P AS (SELECT plan_id, plan_name FROM plans),
+WITH
 	C AS (	
 			SELECT
 			
@@ -96,7 +92,9 @@ SELECT
 
 	P.plan_id,
 	P.plan_name,
+	
 	C.date_time_of_creation,
+	
 	IFNULL(C.protein, 0) AS expected_protein_grams,
 	IFNULL(C.carbs, 0) AS expected_carbs_grams,
 	IFNULL(C.fibre, 0) AS expected_fibre_grams,
@@ -105,10 +103,11 @@ SELECT
 	IFNULL(C.salt_limit, 0) AS salt_limit_grams,
 	IFNULL(C.water_target, 0) AS water_content_target,
 	IFNULL(C.liquid_target, 0) AS liquid_content_target,
-	IFNULL(ROUND((C.protein * 4) + (C.carbs * 4) + (C.fats*9) ,2), 0) AS calories_target,
-	IFNULL(ROUND((C.protein * 4) + (C.carbs * 4) + (C.fats*9) + C.additional_calories ,2), 0) AS additional_calories_target
+	
+	IFNULL(ROUND((C.protein * 4) + (C.carbs * 4) + (C.fats * 9) ,2), 0) AS calories_target,
+	IFNULL(ROUND((C.protein * 4) + (C.carbs * 4) + (C.fats * 9) + C.additional_calories ,2), 0) AS additional_calories_target
 
-FROM P
+FROM plans P 
 LEFT JOIN C ON P.plan_id = C.plan_id;
 
 -- ######################################
@@ -225,9 +224,7 @@ CREATE TABLE IF NOT EXISTS divided_meal_sections
         REFERENCES meals_in_plan (meal_in_plan_id, plan_id)
         ON DELETE CASCADE,
 		
-   PRIMARY KEY(div_meal_sections_id, plan_id), -- div_meal_sections_id isn't unique enough because its duplicated in temp meal plan for temp data it becomes unique with plan_id
-   UNIQUE KEY no_repeat_sub_meals_per_plan(div_meal_sections_id, plan_id) -- need to be able to uniquely identify each sub meal, allowing duplicating doesn't do this
-
+   PRIMARY KEY(div_meal_sections_id, plan_id) -- div_meal_sections_id isn't unique enough because its duplicated in temp meal plan for temp data it becomes unique with plan_id
 );
 
 -- ######################################
@@ -255,15 +252,7 @@ CREATE TABLE IF NOT EXISTS ingredients_in_sections_of_meal
 );
 
 -- ######################################
-
-DROP VIEW IF EXISTS ingredients_in_sections_of_meal_calculation;
-
 CREATE VIEW ingredients_in_sections_of_meal_calculation AS
-	
-WITH 
-	I    AS (SELECT ingredients_index, div_meal_sections_id, plan_id, ingredient_id, quantity FROM ingredients_in_sections_of_meal),
-	Info AS (SELECT * FROM ingredients_info),
-	T    AS (SELECT * FROM ingredient_types)	
 
 SELECT
 
@@ -292,19 +281,18 @@ SELECT
 
 	'Delete Row' AS `delete button`
 
-FROM I
-LEFT JOIN Info ON Info.ingredient_id = I.ingredient_id
-LEFT JOIN T ON Info.ingredient_type_id = T.ingredient_type_id;
+FROM  ingredients_in_sections_of_meal I
+LEFT JOIN ingredients_info Info ON Info.ingredient_id = I.ingredient_id	
+LEFT JOIN ingredient_types T ON Info.ingredient_type_id = T.ingredient_type_id;
 
 -- ######################################
-
-DROP VIEW IF EXISTS divided_meal_sections_calculations;
 CREATE VIEW divided_meal_sections_calculations AS
 
 SELECT
 
 	plan_id, 
 	div_meal_sections_id,
+	
 	IFNULL(ROUND(SUM(protein),2),0) as total_protein,
 	IFNULL(ROUND(SUM(carbohydrates),2),0) as total_carbohydrates,
 	IFNULL(ROUND(SUM(sugars_of_carbs),2),0) as total_sugars_of_carbs,
@@ -316,18 +304,14 @@ SELECT
 	IFNULL(ROUND(SUM(liquid_content),2),0) as total_liquid_content,
 	IFNULL(ROUND(SUM(calories),2),0) as total_calories
 
-FROM  ingredients_in_sections_of_meal_calculation
+FROM ingredients_in_sections_of_meal_calculation
 GROUP BY div_meal_sections_id, plan_id;
 
 -- ######################################
-
-DROP VIEW IF EXISTS total_meal_view;
-
 CREATE VIEW total_meal_view AS
 
-WITH 
+WITH
 	
-	M  AS ( SELECT * FROM meals_in_plan ), -- MEALS
 	DI AS (
 			SELECT 
 			
@@ -378,28 +362,20 @@ SELECT
 	DI.total_liquid_content AS total_liquid,
 	DI.total_calories
 		
-FROM M
+FROM meals_in_plan M
 
-LEFT JOIN DI 
-	ON M.plan_id = DI.plan_id AND M.meal_in_plan_id = DI.meal_in_plan_id;
-
+LEFT JOIN DI ON M.plan_id = DI.plan_id AND M.meal_in_plan_id = DI.meal_in_plan_id;
 
 -- ######################################
-
-DROP VIEW IF EXISTS total_plan_view;
-
 CREATE VIEW total_plan_view AS
-	
-WITH
-	P AS (	SELECT * FROM plans	),
-	T AS (	SELECT * FROM total_meal_view )
 
 SELECT 
 
 	P.plan_id, 
 	P.plan_name, -- needs to be here to prevent ONLY_FULL_GROUP_BY
 	
-	COUNT(T.meal_in_plan_id) AS no_of_meals, -- always returns 0 or greater
+	COUNT(T.meal_in_plan_id) AS no_of_meals, -- always returns 0 or greater || This could be its own CTE if the DB scales Higher
+	
 	IFNULL(ROUND(SUM(T.total_protein),2),0) AS protein_in_plan,
 	IFNULL(ROUND(SUM(T.total_carbohydrates),2),0) AS carbohydrates_in_Plan,
 	IFNULL(ROUND(SUM(T.total_sugars_of_carbs),2),0) AS sugars_of_carbs_in_plan,
@@ -407,41 +383,19 @@ SELECT
 	IFNULL(ROUND(SUM(T.total_fats),2),0) AS fats_in_plan,
 	IFNULL(ROUND(SUM(T.total_saturated_fat),2),0) AS saturated_fat_in_plan,
 	IFNULL(ROUND(SUM(T.total_salt),2),0) AS salt_in_plan,
+	
 	IFNULL(ROUND(SUM(T.total_water),2),0) AS water_content_in_plan,
 	IFNULL(ROUND(SUM(T.total_liquid),2),0) AS liquid_content_in_plan,
+	
 	IFNULL(ROUND(SUM(T.total_calories),2),0) AS total_calories_in_plan
 
-FROM P
-
-LEFT JOIN  T
-	ON P.plan_id = T.plan_id
+FROM  plans P
+LEFT JOIN total_meal_view T ON P.plan_id = T.plan_id
 
 GROUP BY P.plan_id, P.plan_name;
 
 -- ######################################
-
-DROP VIEW IF EXISTS plan_macros_left;
-
 CREATE VIEW  plan_macros_left AS
-WITH 
-    C AS (	SELECT * FROM plan_macro_target_calculations ),
-	P AS (
-			SELECT
-			
-			   plan_id,
-			   plan_name,
-			   protein_in_plan,
-			   carbohydrates_in_Plan,
-			   fibre_in_plan,
-			   fats_in_plan,
-			   saturated_fat_in_plan,
-			   salt_in_plan,
-			   water_content_in_plan,
-			   liquid_content_in_plan,
-			   total_calories_in_plan
-			   
-			FROM total_plan_view
-	)
 
 SELECT
 
@@ -454,10 +408,12 @@ SELECT
 	IFNULL(ROUND(C.expected_fats_grams - P.fats_in_plan ,2),0) AS fat_grams_left,
 	IFNULL(ROUND(C.saturated_fat_limit - P.saturated_fat_in_plan ,2),0) AS potential_sat_fat_grams_left,
 	IFNULL(ROUND(C.salt_limit_grams - P.salt_in_plan ,2),0) AS potential_salt_grams_left,
+	
 	IFNULL(ROUND(C.water_content_target - P.water_content_in_plan ,2),0) AS  water_left_to_drink,
 	IFNULL(ROUND(C.liquid_content_target - P.liquid_content_in_plan ,2),0) AS  liquids_left,
+	
 	IFNULL(ROUND(C.calories_target - P.total_calories_in_plan ,2),0) AS calories_left,
 	IFNULL(ROUND(C.additional_calories_target - P.total_calories_in_plan ,2),0) AS added_calories_left
 
-FROM P
-LEFT JOIN C ON C.plan_id = P.plan_id;
+FROM total_plan_view P
+LEFT JOIN plan_macro_target_calculations C ON C.plan_id = P.plan_id;
