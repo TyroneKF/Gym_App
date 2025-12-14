@@ -68,60 +68,44 @@ CREATE TABLE IF NOT EXISTS macros_per_pound_and_limits
 
 -- ######################################
 
-DROP VIEW IF EXISTS plan_macro_target_calculations;
 CREATE VIEW plan_macro_target_calculations AS
-
+	
+WITH 
+	P AS (SELECT plan_id, plan_name FROM plans),
+	C AS (	
+			SELECT
+			plan_id,
+			date_time_of_creation,
+			ROUND(current_weight_in_pounds * protein_per_pound, 2) AS protein, -- returns null if 1 of the values are empty
+			ROUND(current_weight_in_pounds * carbohydrates_per_pound, 2) AS carbs,
+			fibre,
+			ROUND(current_weight_in_pounds * fats_per_pound, 2) AS fats,
+			saturated_fat_limit,
+			salt_limit,
+			water_target,
+			liquid_target,
+			additional_calories
+			FROM macros_per_pound_and_limits
+	)
+	
 SELECT
 
 P.plan_id,
 P.plan_name,
-
 C.date_time_of_creation,
-
-IFNULL(C.expected_protein_grams, 0) AS expected_protein_grams,
-IFNULL(C.expected_carbohydrates_grams, 0) AS expected_carbs_grams,
+IFNULL(C.protein, 0) AS expected_protein_grams,
+IFNULL(C.carbs, 0) AS expected_carbs_grams,
 IFNULL(C.fibre, 0) AS expected_fibre_grams,
-IFNULL(C.expected_fats_grams, 0) AS expected_fats_grams,
+IFNULL(C.fats, 0) AS expected_fats_grams,
 IFNULL(C.saturated_fat_limit, 0) AS saturated_fat_limit,
 IFNULL(C.salt_limit, 0) AS salt_limit_grams,
 IFNULL(C.water_target, 0) AS water_content_target,
 IFNULL(C.liquid_target, 0) AS liquid_content_target,
-IFNULL(C.calories_target, 0) AS calories_target,
-IFNULL(C.additional_calories_target, 0) AS additional_calories_target
+IFNULL(ROUND((C.protein * 4) + (C.carbs * 4) + (C.fats*9) ,2), 0) AS calories_target,
+IFNULL(ROUND((C.protein * 4) + (C.carbs * 4) + (C.fats*9) + C.additional_calories ,2), 0) AS additional_calories_target
 
-FROM
-(
-	SELECT  plan_id, plan_name FROM plans
-)  P
-LEFT JOIN
-(
-    SELECT
-
-    plan_id,
-    date_time_of_creation,
-	ROUND(current_weight_in_pounds * protein_per_pound, 2) AS expected_protein_grams, -- returns null if 1 of the values are empty
-	ROUND(current_weight_in_pounds * carbohydrates_per_pound, 2) AS expected_carbohydrates_grams,
-	fibre,
-	ROUND(current_weight_in_pounds * fats_per_pound, 2) AS expected_fats_grams,
-	saturated_fat_limit,
-    salt_limit,
-    water_target,
-	liquid_target,
-	(
-	    ROUND((current_weight_in_pounds * protein_per_pound) * 4, 2) +
-		ROUND((current_weight_in_pounds * carbohydrates_per_pound) * 4, 2) +
-		ROUND((current_weight_in_pounds * fats_per_pound) * 9, 2)
-	) AS calories_target,
-	(
-	    ROUND((current_weight_in_pounds * protein_per_pound) * 4, 2) +
-		ROUND((current_weight_in_pounds * carbohydrates_per_pound) * 4, 2) +
-		ROUND((current_weight_in_pounds * fats_per_pound) * 9, 2) +
-		additional_calories
-	) AS additional_calories_target
-
-	FROM macros_per_pound_and_limits
-)  C
-ON P.plan_id = C.plan_id;
+FROM P
+LEFT JOIN C ON P.plan_id = C.plan_id;
 
 -- ######################################
 

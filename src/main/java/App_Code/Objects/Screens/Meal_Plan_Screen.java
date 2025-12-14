@@ -67,15 +67,16 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //###############################################
     // Collections
     //###############################################
-    private ArrayList<String> meal_total_columnNames, ingredients_ColumnNames, macroTargets_ColumnNames,
-            macrosLeft_columnNames, macros_And_Limits_ColumnNames;
-    
+    private ArrayList<String> meal_total_columnNames;
+    private ArrayList<String> ingredients_ColumnNames;
+   
+    // DELETE
     private TreeSet<String>
             ingredientsTypesList,
             storesNamesList;
     
     // Sorted Hashmap by key String
-    private TreeMap<String, TreeSet<String>> map_ingredientTypesToNames = new TreeMap<String, TreeSet<String>>(new Comparator<String>()
+    private TreeMap<String, TreeSet<String>> map_ingredientTypesToNames = new TreeMap<>(new Comparator<String>()
     {
         public int compare(String o1, String o2)
         {
@@ -149,13 +150,12 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // Ingredients Table Columns
     //##################################################################################################################
     // Table: ingredients_in_sections_of_meal_calculation
-    private final ArrayList<String>
-            
-            ingredients_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList(
-            "ingredient_type", "ingredient_name", "supplier", "product_name")),
+    private final ArrayList<String> ingredients_Table_Col_Avoid_Centering
+            = new ArrayList<>(Arrays.asList("ingredient_type", "ingredient_name")),
     
     ingredientsTableUnEditableCells = new ArrayList<>(Arrays.asList(
-            "ingredients_index", "ingredient_id", "ingredient_cost", "protein", "gi", "carbohydrates", "sugars_of_carbs",
+            "ingredients_index", "ingredient_id",
+            "protein", "gi", "carbohydrates", "sugars_of_carbs",
             "fibre", "fat", "saturated_fat", "salt", "water_content", "liquid_content", "calories")),
     
     ingredientsInMeal_Table_ColToHide = new ArrayList<>(Arrays.asList("plan_id", "div_meal_sections_id", "ingredients_index",
@@ -172,7 +172,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
      * LinkedHashMap<String, Pair<Integer, String>> totalMeal_macroColNamePos
      * LinkedHashMap<TotalMeal_MacroName, Pair< Position, Measurement>> totalMeal_macroColNamePos
      */
-    private LinkedHashMap<String, Pair<Integer, String>> totalMeal_macroColName_And_Pos = new LinkedHashMap<>()
+    private final LinkedHashMap<String, Pair<Integer, String>> totalMeal_macroColName_And_Pos = new LinkedHashMap<>()
     {{
         put("total_protein", new Pair<>(null, "g"));
         put("total_carbohydrates", new Pair<>(null, "g"));
@@ -186,7 +186,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // put("total_liquid",new Pair<>(null, "g"));
     }};
     
-    private HashMap<String, Integer> totalMeal_Other_Cols_Pos = new HashMap<>()
+    private final HashMap<String, Integer> totalMeal_Other_Cols_Pos = new HashMap<>()
     {{
         put("meal_time", null);
         put("meal_name", null);
@@ -353,6 +353,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###############################################################################
         // 2.) Getting Table Column Names
         //###############################################################################
+        ArrayList<String> macrosLeft_columnNames;
+        ArrayList<String> macroTargets_ColumnNames;
+        
         try
         {
             // column names : ingredients_in_sections_of_meal_calculation
@@ -366,9 +369,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
             
             // Get table column names for plan_macros_left
             macrosLeft_columnNames = db.get_Column_Names_AL(tablePlanMacrosLeftName);
-            
-            // Get table column names for macros_per_pound_and_limits
-            macros_And_Limits_ColumnNames = db.get_Column_Names_AL(tableMacrosPerPoundLimitName);
         }
         catch (Exception e)
         {
@@ -504,10 +504,10 @@ public class Meal_Plan_Screen extends Screen_JFrame
         
         // Get Measurement DATA
         if (! get_Measurement_Data()) { failed_Start_UP(loading_Screen); return; }
-     
+        
         // Get Meals Data
         if (! get_Meal_Data()) { failed_Start_UP(loading_Screen); return; }
-  
+        
         // Get TotalMeals Datsa
         if (! get_Total_Meals_Data()) { failed_Start_UP(loading_Screen); return; }
         
@@ -1207,9 +1207,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 			'type',        Q.ingredient_type,
                 			'ingred_name', Q.ingredient_name,
                 			'quantity',    Q.quantity,
-                			'supplier',    Q.supplier,
-                			'prod_name',   Q.product_name,
-                			'ingred_cost', Q.ingredient_cost,
                 			'gi',          Q.gi,
                 			'protein',     Q.protein,
                 			'carbs',       Q.carbohydrates,
@@ -1326,11 +1323,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     
                     ingredient_macros.add(ingredient_node.get("ingred_name").asText());
                     ingredient_macros.add(new BigDecimal(ingredient_node.get("quantity").asText()));
-                    ingredient_macros.add(ingredient_node.get("supplier").asText());
-                    
-                    ingredient_macros.add(ingredient_node.get("prod_name").asText());
-                    
-                    ingredient_macros.add(new BigDecimal(ingredient_node.get("ingred_cost").asText()));
+                
                     ingredient_macros.add(ingredient_node.get("gi").asInt());
                     ingredient_macros.add(new BigDecimal(ingredient_node.get("protein").asText()));
                     ingredient_macros.add(new BigDecimal(ingredient_node.get("carbs").asText()));
