@@ -18,6 +18,7 @@ Add Registery
 
 
 Meal_Plan_Screen
+.) Move all the personal table customisations into the table classes etc IngredientTable Hidden Cols ....
 .) Use arrayJson methods on refresh for everything totalMeals table etc : get_Meal_Data(), get_Total_Meals_Data()
 
 Shared_Data_Registry
@@ -69,6 +70,7 @@ MYJDBC:
 DB:
 .) Make plansLeft use max date for calculation of a plan
 .) Seperate Price database from macro ingredients cost
+.) Remove Weight Fields
 
 
 Meal_Plan_Screen:

@@ -4,7 +4,7 @@ import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Tables.MealManager;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 
 public class TotalMeal_Table extends MyJTable_DisplayData
 {
@@ -25,7 +25,7 @@ public class TotalMeal_Table extends MyJTable_DisplayData
         super(
                 db,
                 mealManager.get_Collapsible_JP_Obj().get_South_JPanel(),
-                new ArrayList<>(Arrays.asList(data)),
+                new ArrayList<>(Collections.singletonList(data)),
                 mealManager.get_Total_Meal_Table_Column_Names(),
                 mealManager.get_Plan_ID(),
                 mealManager.get_Temp_PlanID(),
