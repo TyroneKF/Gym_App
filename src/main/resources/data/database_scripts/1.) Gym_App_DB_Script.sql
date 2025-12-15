@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS macros_per_pound_and_limits
     water_target DECIMAL(7,2) NOT NULL,
 	liquid_target DECIMAL(7,2) NOT NULL,
 
-	additional_calories DECIMAL(,2) NOT NULL,
+	additional_calories DECIMAL(7,2) NOT NULL,
 
 	PRIMARY KEY (plan_id, date_time_of_creation)
 );
