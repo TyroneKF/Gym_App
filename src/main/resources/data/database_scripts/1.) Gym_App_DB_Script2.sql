@@ -6,11 +6,12 @@ CREATE DATABASE gymapp00001 CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 USE gymapp00001;
 
 -- ######################################
-CREATE TABLE IF NOT EXISTS users
+CREATE TABLE users
 (
   user_id INT PRIMARY KEY AUTO_INCREMENT,
   user_name VARCHAR(100) NOT NULL,
   
+  -- Forces App to only have 1 user active at a time
   is_user_selected BOOLEAN NOT NULL DEFAULT FALSE,
   selected_user_flag BOOLEAN GENERATED ALWAYS AS (IF(is_user_selected, TRUE, NULL)) STORED,
   
@@ -18,53 +19,80 @@ CREATE TABLE IF NOT EXISTS users
 );
 
 -- ######################################
-CREATE TABLE IF NOT EXISTS plans
+CREATE TABLE plans
 (
     plan_id INT PRIMARY KEY AUTO_INCREMENT,
-    plan_name VARCHAR(100) NOT NULL,
+	date_time_of_creation DATETIME NOT NULL	
+);
 
+CREATE TABLE plan_versions
+(
+    plan_version_id INT PRIMARY KEY AUTO_INCREMENT,	
+	
+	plan_id INT NOT NULL,	
+		FOREIGN KEY (plan_id) REFERENCES plans(plan_id) 
+			ON DELETE CASCADE,
+			
+	date_time_of_last_edited DATETIME NOT NULL,
+	version_number INT NOT NULL,
+	
+	plan_name VARCHAR(100) NOT NULL,
+	
 	user_id INT NOT NULL,
-	FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+		FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
 
-    is_selected_plan BOOLEAN NOT NULL DEFAULT FALSE,
-    vegan BOOLEAN NOT NULL DEFAULT FALSE,
+	vegan BOOLEAN NOT NULL DEFAULT FALSE,
+	
+    is_selected_plan BOOLEAN NOT NULL DEFAULT FALSE,    
 
     -- Ensures a user can only have one active plan, by using this field as an (identifier)
     selected_plan_flag BOOLEAN GENERATED ALWAYS AS (IF(is_selected_plan, TRUE, NULL)) STORED,
 
-    UNIQUE KEY no_multiple_active_plans_per_user (user_id, selected_plan_flag)
+    UNIQUE KEY no_repeated_vs_numbers_per_plan(plan_version_id, version_number),
+    UNIQUE KEY no_multiple_active_plans_per_user(user_id, selected_plan_flag)	
 );
 
 -- ######################################
-
-CREATE TABLE IF NOT EXISTS macros_per_pound_and_limits
+CREATE TABLE macros_per_pound_and_limits
 (   	
-    plan_id INT NOT NULL,
-    FOREIGN KEY (plan_id) REFERENCES plans(plan_id) ON DELETE CASCADE,
+    macros_ID INT PRIMARY KEY AUTO_INCREMENT	
+);
 
+CREATE TABLE macros_per_pound_and_limits_versions
+(
+	macros_version_id INT PRIMARY KEY AUTO_INCREMENT,	
 	date_time_of_creation DATETIME NOT NULL,
+	version_number INT NOT NULL,
+		
+	macros_ID INT NOT NULL,
+		FOREIGN KEY (macros_ID) REFERENCES macros_per_pound_and_limits(macros_ID) 
+			ON DELETE CASCADE,
+	
+	plan_version_id INT NOT NULL,
+		FOREIGN KEY (plan_version_id) REFERENCES plan_versions(plan_version_id) 
+			ON DELETE CASCADE,	
+			
+	user_id INT NOT NULL,
+		FOREIGN KEY (user_id) REFERENCES users(user_id) 
+			ON DELETE CASCADE,
 
 	current_weight_kg DECIMAL(7,2) NOT NULL,
 	current_weight_in_pounds DECIMAL(7,2) NOT NULL,
-
 	body_fat_percentage DECIMAL(7,2) NOT NULL,
-
 	protein_per_pound DECIMAL(7,2) NOT NULL,
 	carbohydrates_per_pound DECIMAL(7,2) NOT NULL,
-	fibre DECIMAL(7,2) NOT NULL,
-	
+	fibre DECIMAL(7,2) NOT NULL,	
 	fats_per_pound DECIMAL(7,2) NOT NULL,
-	saturated_fat_limit DECIMAL(7,2) NOT NULL,
-	
+	saturated_fat_limit DECIMAL(7,2) NOT NULL,	
 	salt_limit DECIMAL(7,2) NOT NULL,
-
     water_target DECIMAL(7,2) NOT NULL,
 	liquid_target DECIMAL(7,2) NOT NULL,
-
-	additional_calories DECIMAL(,2) NOT NULL,
-
-	PRIMARY KEY (plan_id, date_time_of_creation)
+	additional_calories DECIMAL(7,2) NOT NULL,
+	
+	UNIQUE KEY unique_date_per_macros_in_plan (plan_version_id, date_time_of_creation),
+	UNIQUE KEY unique_macros_version (macros_ID, version_number)
 );
+
 
 -- ######################################
 CREATE VIEW plan_macro_target_calculations AS
@@ -73,8 +101,12 @@ WITH
 	C AS (	
 			SELECT
 			
-				plan_id,
+			    macros_version_id,
 				date_time_of_creation,
+				version_number,
+				
+				plan_version_id,				
+				
 				ROUND(current_weight_in_pounds * protein_per_pound, 2) AS protein, -- returns null if 1 of the values are empty
 				ROUND(current_weight_in_pounds * carbohydrates_per_pound, 2) AS carbs,
 				fibre,
@@ -85,15 +117,17 @@ WITH
 				liquid_target,
 				additional_calories
 				
-			FROM macros_per_pound_and_limits
+			FROM macros_per_pound_and_limits_versions
 		)
 	
 SELECT
 
-	P.plan_id,
+	P.plan_version_id,
 	P.plan_name,
 	
+	C.macros_version_id,
 	C.date_time_of_creation,
+	C.version_number,
 	
 	IFNULL(C.protein, 0) AS expected_protein_grams,
 	IFNULL(C.carbs, 0) AS expected_carbs_grams,
@@ -107,12 +141,12 @@ SELECT
 	IFNULL(ROUND((C.protein * 4) + (C.carbs * 4) + (C.fats * 9) ,2), 0) AS calories_target,
 	IFNULL(ROUND((C.protein * 4) + (C.carbs * 4) + (C.fats * 9) + C.additional_calories ,2), 0) AS additional_calories_target
 
-FROM plans P 
-LEFT JOIN C ON P.plan_id = C.plan_id;
+FROM plan_versions P 
+LEFT JOIN C ON P.plan_version_id = C.plan_version_id;
 
 -- ######################################
 
-CREATE TABLE IF NOT EXISTS ingredient_types
+CREATE TABLE ingredient_types
 (
     ingredient_type_id INT  PRIMARY KEY AUTO_INCREMENT,
 
@@ -122,7 +156,7 @@ CREATE TABLE IF NOT EXISTS ingredient_types
 
 -- ######################################
 
-CREATE TABLE IF NOT EXISTS measurements
+CREATE TABLE measurements
  (
     -- PRIMARY KEYS
     measurement_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -136,7 +170,7 @@ CREATE TABLE IF NOT EXISTS measurements
  
 -- ######################################
 
-CREATE TABLE IF NOT EXISTS ingredients_info
+CREATE TABLE ingredients_info
 (
     -- PRIMARY KEYS
     ingredient_id INT  PRIMARY KEY AUTO_INCREMENT,
@@ -166,7 +200,7 @@ CREATE TABLE IF NOT EXISTS ingredients_info
 );
 
 -- ######################################
-CREATE TABLE IF NOT EXISTS stores
+CREATE TABLE stores
 (
     -- PRIMARY KEYS
     store_id INT  PRIMARY KEY AUTO_INCREMENT,
@@ -176,13 +210,14 @@ CREATE TABLE IF NOT EXISTS stores
 );
 -- ######################################
 
-CREATE TABLE IF NOT EXISTS ingredient_in_shops
+CREATE TABLE ingredient_in_shops
 (
     -- PRIMARY KEY , UNIQUE To this Table
     pdid INT  PRIMARY KEY AUTO_INCREMENT,
 
     ingredient_id INT  NOT NULL,
-	FOREIGN KEY (ingredient_id) REFERENCES ingredients_info(ingredient_id) ON DELETE CASCADE,
+		FOREIGN KEY (ingredient_id) REFERENCES ingredients_info(ingredient_id) 
+			ON DELETE CASCADE,
 
     product_name VARCHAR(100) NOT NULL,
 
@@ -190,75 +225,112 @@ CREATE TABLE IF NOT EXISTS ingredient_in_shops
 	cost_per_unit DECIMAL(7,2) NOT NULL,
 
 	store_id INT NOT NULL,
-	FOREIGN KEY (store_id) REFERENCES stores(store_id) ON DELETE CASCADE,
+		FOREIGN KEY (store_id) REFERENCES stores(store_id) 
+			ON DELETE CASCADE,
 
     UNIQUE KEY no_repeat_products_in_store(store_id, product_name)
 );
 -- ######################################
 
-CREATE TABLE IF NOT EXISTS meals_in_plan
+CREATE TABLE meals_in_plan
 (
-   meal_in_plan_id INT NOT NULL AUTO_INCREMENT,
-
-   plan_id INT NOT NULL,
-   FOREIGN KEY (plan_id) REFERENCES plans(plan_id) ON DELETE CASCADE,
-
-   meal_name VARCHAR(100) NOT NULL,
-   meal_time TIME NOT NULL,
-
-   PRIMARY KEY(meal_in_plan_id, plan_id), -- meal_in_plan_id isn't unique enough because its duplicated in temp meal plan for temp data it becomes unique with plan_id
-   UNIQUE KEY no_repeat_meal_times_in_plan(plan_id, meal_time), -- Only one meal can be at one time
-   UNIQUE KEY no_repeat_meal_names_in_plan(plan_id, meal_name) -- can't have 2 of the same meal_names in a plan
+   meal_in_plan_id INT PRIMARY KEY AUTO_INCREMENT,
+   date_time_of_creation DATETIME NOT NULL	   
 );
 
--- ######################################
 
-CREATE TABLE IF NOT EXISTS divided_meal_sections
+CREATE TABLE meals_in_plan_versions
 (
-   div_meal_sections_id INT AUTO_INCREMENT,
-
-   meal_in_plan_id  INT  NOT NULL,
-   plan_id INT NOT NULL,
-   
-   FOREIGN KEY (meal_in_plan_id, plan_id)
-        REFERENCES meals_in_plan (meal_in_plan_id, plan_id)
-        ON DELETE CASCADE,
-		
-   PRIMARY KEY(div_meal_sections_id, plan_id) -- div_meal_sections_id isn't unique enough because its duplicated in temp meal plan for temp data it becomes unique with plan_id
-);
-
--- ######################################
-CREATE TABLE IF NOT EXISTS ingredients_in_sections_of_meal
-(
-    ingredients_index INT  AUTO_INCREMENT,
-
-    div_meal_sections_id INT NOT NULL,
-	plan_id INT NOT NULL,
+	meal_in_plan_version_id INT PRIMARY KEY AUTO_INCREMENT,	
 	
-	FOREIGN KEY (div_meal_sections_id, plan_id)
-		REFERENCES divided_meal_sections(div_meal_sections_id, plan_id)
-		ON DELETE CASCADE,
+	meal_in_plan_id INT NOT NULL,
+		FOREIGN KEY (meal_in_plan_id) REFERENCES meals_in_plan(meal_in_plan_id) 
+			ON DELETE CASCADE,
+
+	plan_version_id INT NOT NULL,
+		FOREIGN KEY (plan_version_id) REFERENCES plan_versions(plan_version_id) 
+			ON DELETE CASCADE,
+
+	meal_name VARCHAR(100) NOT NULL,
+	meal_time TIME NOT NULL,
+
+	UNIQUE KEY unique_versions_per_plan(meal_in_plan_version_id, plan_version_id), -- meal_in_plan_id isn't unique enough because its duplicated in temp meal plan for temp data it becomes unique with plan_id
+	UNIQUE KEY no_repeat_meal_times_in_plan(plan_version_id, meal_time), -- Only one meal can be at one time
+	UNIQUE KEY no_repeat_meal_names_in_plan(plan_version_id, meal_name) -- can't have 2 of the same meal_names in a plan
+);
+
+-- ######################################
+
+-- Sections are snapshotted per meal version; no independent section versioning
+
+CREATE TABLE divided_meal_sections
+(
+   div_meal_sections_id INT PRIMARY KEY AUTO_INCREMENT   
+);
+
+CREATE TABLE divided_meal_sections_versions
+(	
+	div_meal_sections_version_id INT PRIMARY KEY AUTO_INCREMENT,
+	sub_meal_name VARCHAR(100), -- can be null
+
+	div_meal_sections_id INT NOT NULL,
+		FOREIGN KEY (div_meal_sections_id) 
+			REFERENCES divided_meal_sections(div_meal_sections_id)
+			ON DELETE CASCADE,
+
+	meal_in_plan_version_id INT NOT NULL,
+		FOREIGN KEY (meal_in_plan_version_id) 
+			REFERENCES meals_in_plan_versions(meal_in_plan_version_id)
+			ON DELETE CASCADE,
+	
+	UNIQUE KEY no_repeated_versions(div_meal_sections_id, meal_in_plan_version_id)
+);
+
+
+-- ######################################
+
+-- Ingredients are snapshotted per sub-meal version; no independent ingredient versioning
+
+CREATE TABLE ingredients_in_sections_of_meal
+(
+    ingredients_index INT PRIMARY KEY AUTO_INCREMENT
+);
+
+CREATE TABLE ingredients_in_sections_of_meal_versions
+(
+	ingredients_index_version_id INT PRIMARY KEY AUTO_INCREMENT,
+	
+	ingredients_index INT NOT NULL,
+		FOREIGN KEY (ingredients_index) REFERENCES ingredients_in_sections_of_meal(ingredients_index) 
+			ON DELETE CASCADE,
+
+    div_meal_sections_version_id INT NOT NULL,
+		FOREIGN KEY (div_meal_sections_version_id) 
+			REFERENCES divided_meal_sections_versions(div_meal_sections_version_id) 
+				ON DELETE CASCADE,
 
     ingredient_id INT NOT NULL,
-	FOREIGN KEY (ingredient_id) REFERENCES ingredients_info(ingredient_id) ON DELETE CASCADE,
+		FOREIGN KEY (ingredient_id) REFERENCES ingredients_info(ingredient_id) 
+			ON DELETE CASCADE,
 
 	quantity DECIMAL(15,2) NOT NULL,
 
-	pdid INT NULL,
- 	FOREIGN KEY (pdid) REFERENCES ingredient_in_shops(pdid), -- Needs to be manually removed when deleted as we don't want the whole row being deleted
-
-	PRIMARY KEY (ingredients_index, plan_id),
-	UNIQUE KEY no_repeat_records(ingredients_index, div_meal_sections_id, plan_id)
+	pdid INT NULL,	   
+		FOREIGN KEY (pdid) REFERENCES ingredient_in_shops(pdid), 
+		 -- Needs to be manually removed when deleted as we don't want the whole row being deleted
+		
+	UNIQUE KEY no_repeat_records(ingredients_index_version_id, div_meal_sections_version_id)
 );
 
 -- ######################################
+DROP VIEW IF EXISTS ingredients_in_sections_of_meal_calculation;
+
 CREATE VIEW ingredients_in_sections_of_meal_calculation AS
 
 SELECT
 
-	I.plan_id, 
-	I.div_meal_sections_id,
-	I.ingredients_index,
+	I.ingredients_index_version_id,
+	I.div_meal_sections_version_id,
 	I.ingredient_id, 
 
 	T.ingredient_type_name AS ingredient_type,
@@ -281,17 +353,18 @@ SELECT
 
 	'Delete Row' AS `delete button`
 
-FROM  ingredients_in_sections_of_meal I
+FROM ingredients_in_sections_of_meal_versions I
 LEFT JOIN ingredients_info Info ON Info.ingredient_id = I.ingredient_id	
 LEFT JOIN ingredient_types T ON Info.ingredient_type_id = T.ingredient_type_id;
+
+
 
 -- ######################################
 CREATE VIEW divided_meal_sections_calculations AS
 
 SELECT
 
-	plan_id, 
-	div_meal_sections_id,
+	div_meal_sections_version_id,
 	
 	IFNULL(ROUND(SUM(protein),2),0) as total_protein,
 	IFNULL(ROUND(SUM(carbohydrates),2),0) as total_carbohydrates,
@@ -305,7 +378,7 @@ SELECT
 	IFNULL(ROUND(SUM(calories),2),0) as total_calories
 
 FROM ingredients_in_sections_of_meal_calculation
-GROUP BY div_meal_sections_id, plan_id;
+GROUP BY div_meal_sections_version_id;
 
 -- ######################################
 CREATE VIEW total_meal_view AS
@@ -315,8 +388,7 @@ WITH
 	DI AS (
 			SELECT 
 			
-			    D.plan_id,
-				D.meal_in_plan_id,
+				D.meal_in_plan_version_id,				
 				
 				IFNULL(COUNT(DISTINCT ingredient_id),0) AS cnt,				
 				
@@ -331,21 +403,22 @@ WITH
 				IFNULL(ROUND(SUM(DI.total_liquid_content),2),0) as total_liquid_content,
 				IFNULL(ROUND(SUM(DI.total_calories),2),0) as total_calories
 				
-			FROM divided_meal_sections D
+			FROM divided_meal_sections_versions D
 			
 			LEFT JOIN divided_meal_sections_calculations DI
-				ON DI.div_meal_sections_id = D.div_meal_sections_id AND DI.plan_id = D.plan_id
+				ON DI.div_meal_sections_version_id = D.div_meal_sections_version_id
 			
-			LEFT JOIN ingredients_in_sections_of_meal I 
-				ON I.div_meal_sections_id = D.div_meal_sections_id AND I.plan_id = D.plan_id
+			LEFT JOIN ingredients_in_sections_of_meal_versions I 
+				ON I.div_meal_sections_version_id = DI.div_meal_sections_version_id
 			
-			GROUP BY D.plan_id, D.meal_in_plan_id			
+			GROUP BY D.meal_in_plan_version_id		
 		  )
 	
 SELECT 
 
-	M.plan_id, 
-	M.meal_in_plan_id,
+	M.plan_version_id, 
+	M.meal_in_plan_version_id,
+	
 	M.meal_time,
 	M.meal_name,	
 	
@@ -362,19 +435,20 @@ SELECT
 	DI.total_liquid_content AS total_liquid,
 	DI.total_calories
 		
-FROM meals_in_plan M
+FROM meals_in_plan_versions M
 
-LEFT JOIN DI ON M.plan_id = DI.plan_id AND M.meal_in_plan_id = DI.meal_in_plan_id;
+LEFT JOIN DI ON 
+	DI.meal_in_plan_version_id = M.meal_in_plan_version_id;
 
 -- ######################################
 CREATE VIEW total_plan_view AS
 
 SELECT 
 
-	P.plan_id, 
+	P.plan_version_id, 
 	P.plan_name, -- needs to be here to prevent ONLY_FULL_GROUP_BY
 	
-	COUNT(T.meal_in_plan_id) AS no_of_meals, -- always returns 0 or greater || This could be its own CTE if the DB scales Higher
+	COUNT(T.meal_in_plan_version_id) AS no_of_meals, -- always returns 0 or greater || This could be its own CTE if the DB scales Higher
 	
 	IFNULL(ROUND(SUM(T.total_protein),2),0) AS protein_in_plan,
 	IFNULL(ROUND(SUM(T.total_carbohydrates),2),0) AS carbohydrates_in_Plan,
@@ -389,17 +463,43 @@ SELECT
 	
 	IFNULL(ROUND(SUM(T.total_calories),2),0) AS total_calories_in_plan
 
-FROM  plans P
-LEFT JOIN total_meal_view T ON P.plan_id = T.plan_id
+FROM  plan_versions P
 
-GROUP BY P.plan_id, P.plan_name;
+LEFT JOIN total_meal_view T ON P.plan_version_id = T.plan_version_id
+
+GROUP BY P.plan_version_id, P.plan_name;
 
 -- ######################################
-CREATE VIEW  plan_macros_left AS
+CREATE VIEW plan_macros_left AS
+	
+WITH 
+    M AS ( -- GRAIN per Plan get Target ID of max date associate with each plan
+				
+			SELECT macros_version_id, plan_version_id
+			FROM (
+					SELECT
+					macros_version_id,	
+					plan_version_id,
+					ROW_NUMBER() OVER ( -- SPlit 
+						PARTITION BY plan_version_id -- Split the result set into groups based on plan_version_id
+						ORDER BY date_time_of_creation DESC -- ORDER BY date
+					) AS rn					
+				FROM macros_per_pound_and_limits_versions
+			) T
+			WHERE T.rn = 1 -- Get First the first row per group 
+	),
+	
+	C AS ( -- GRAIN Per Plan : TARGETS Calulcations 
+			SELECT * 			
+			FROM plan_macro_target_calculations T
+			
+			INNER JOIN M ON M.macros_version_id = T.macros_version_id -- JOIN enforces relationship 
+				AND M.plan_version_id = T.plan_version_id
+    )
 
 SELECT
 
-	P.plan_id,
+	P.plan_version_id,
 	P.plan_name,
 
 	IFNULL(ROUND(C.expected_protein_grams - P.protein_in_plan ,2),0) AS protein_grams_left,
@@ -416,4 +516,11 @@ SELECT
 	IFNULL(ROUND(C.additional_calories_target - P.total_calories_in_plan ,2),0) AS added_calories_left
 
 FROM total_plan_view P
-LEFT JOIN plan_macro_target_calculations C ON C.plan_id = P.plan_id;
+LEFT JOIN C ON C.plan_version_id = P.plan_version_id;
+
+
+
+
+
+
+
