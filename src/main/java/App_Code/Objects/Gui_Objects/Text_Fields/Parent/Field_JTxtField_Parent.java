@@ -72,7 +72,7 @@ public abstract class Field_JTxtField_Parent<T> extends JTextField
         return cast_Obj_To_Type(getText()); // JTextField version of getting text as the next method already does remove_Hidden TXT method
     }
     
-    private <D> T cast_Obj_To_Type(D object) throws Exception
+    private T cast_Obj_To_Type(Object object) throws Exception
     {
         String object_String = remove_Space_And_Hidden_Chars(object.toString()); // Get Object in TXT form
         
@@ -129,7 +129,7 @@ public abstract class Field_JTxtField_Parent<T> extends JTextField
         return m1.find();
     }
     
-    public <D> boolean is_Field_Data_Equal_To(D object)
+    public boolean is_Field_Data_Equal_To(Object object)
     {
         try
         {

@@ -1,10 +1,8 @@
 package App_Code.Objects.Tables.JTable_JDBC.Children.ViewDataTables;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
-import App_Code.Objects.Tables.JTable_JDBC.Parent.JDBC_JTable;
-
+import App_Code.Objects.Tables.JTable_JDBC.JDBC_JTable;
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.util.ArrayList;
@@ -111,7 +109,7 @@ public abstract class MyJTable_DisplayData extends JDBC_JTable
     protected void extra_TableModel_Setup() { }
     
     @Override
-    protected void table_Data_Changed_Action(TableModelEvent evt) { }
+    protected void table_Data_Changed_Action(int row_Model, int column_Model) { }
     
     protected abstract String get_Query();
     

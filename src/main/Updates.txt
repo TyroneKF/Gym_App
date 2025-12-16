@@ -5,8 +5,18 @@ mvn javafx:run "-DmainClass=Tests.ToggleSwitchDemo"
 Work On:
 ######################################################################################
 
+USE get_Class_name_method for error handling
+
+
 Icon_BTN
 .) Add makeBTntransparent() into constructor
+
+
+Meal_Plan_Screen
+.) Queries based on User_ID, refactor select statements using pointless CTE / column reductions
+
+.) Move all the personal table customisations into the table classes etc IngredientTable Hidden Cols ....
+.) Use arrayJson methods on refresh for everything totalMeals table etc : get_Meal_Data(), get_Total_Meals_Data()
 
 
 Screen JPanel / JFrame
@@ -21,9 +31,6 @@ Add Registery
 .) Replace arraylists with Hashets for uniquenes because hashnet .add does contains and adds and return false it failed
 
 
-Meal_Plan_Screen
-.) Move all the personal table customisations into the table classes etc IngredientTable Hidden Cols ....
-.) Use arrayJson methods on refresh for everything totalMeals table etc : get_Meal_Data(), get_Total_Meals_Data()
 
 Shared_Data_Registry
 .) Data Objects make ID BigInt instead of int
