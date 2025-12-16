@@ -1,4 +1,4 @@
-package App_Code.Objects.Tables.JTable_JDBC;
+package App_Code.Objects.Tables.JTable_JDBC.Parent;
 
 // Packages to import
 // https://stackoverflow.com/questions/10347983/making-a-jbutton-clickable-inside-a-jtable

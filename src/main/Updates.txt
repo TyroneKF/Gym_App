@@ -5,6 +5,10 @@ mvn javafx:run "-DmainClass=Tests.ToggleSwitchDemo"
 Work On:
 ######################################################################################
 
+Icon_BTN
+.) Add makeBTntransparent() into constructor
+
+
 Screen JPanel / JFrame
 .) Condense JFrames and JPanel screen
 .) Screen Objects need to be condensed into 1 class

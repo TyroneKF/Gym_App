@@ -518,7 +518,7 @@ public class MealManager
         JPanel spaceDivider = new JPanel();
         
         IngredientsTable ingredients_Table =
-                new IngredientsTable(db, this, div_id, sub_Meal_Data, is_Sub_Meal_In_DB, spaceDivider);
+                new IngredientsTable(db, this, sharedDataRegistry, div_id, sub_Meal_Data, is_Sub_Meal_In_DB, spaceDivider);
         
         //################################################
         // Add Ingredients Table To GUI

@@ -701,8 +701,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
         resizeGUI();
         setFrameVisibility(true);
         scroll_To_Top_of_ScrollPane();
-        
-        open_Ingredients_Screen();
     }
     
     //##################################################################################################################

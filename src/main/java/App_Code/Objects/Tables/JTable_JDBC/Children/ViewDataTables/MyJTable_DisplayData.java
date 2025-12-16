@@ -1,7 +1,7 @@
 package App_Code.Objects.Tables.JTable_JDBC.Children.ViewDataTables;
 
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
-import App_Code.Objects.Tables.JTable_JDBC.JDBC_JTable;
+import App_Code.Objects.Tables.JTable_JDBC.Parent.JDBC_JTable;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
