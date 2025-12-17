@@ -258,12 +258,10 @@ SELECT
 
 	I.plan_id, 
 	I.div_meal_sections_id,
-	I.ingredients_index,
-	I.ingredient_id, 
+	I.ingredients_index,	
 
-	T.ingredient_type_name AS ingredient_type,
-		
-	Info.ingredient_name,
+	Info.ingredient_type_id,
+	I.ingredient_id, 
 
 	I.quantity,
 
@@ -281,9 +279,8 @@ SELECT
 
 	'Delete Row' AS `delete button`
 
-FROM  ingredients_in_sections_of_meal I
-LEFT JOIN ingredients_info Info ON Info.ingredient_id = I.ingredient_id	
-LEFT JOIN ingredient_types T ON Info.ingredient_type_id = T.ingredient_type_id;
+FROM ingredients_in_sections_of_meal I
+LEFT JOIN ingredients_info Info ON Info.ingredient_id = I.ingredient_id;
 
 -- ######################################
 CREATE VIEW divided_meal_sections_calculations AS

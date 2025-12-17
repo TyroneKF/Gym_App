@@ -330,12 +330,10 @@ CREATE VIEW ingredients_in_sections_of_meal_calculation AS
 SELECT
 
 	I.ingredients_index_version_id,
-	I.div_meal_sections_version_id,
-	I.ingredient_id, 
+	I.div_meal_sections_version_id,	
 
-	T.ingredient_type_name AS ingredient_type,
-		
-	Info.ingredient_name,
+	Info.ingredient_type_id,
+	I.ingredient_id, 
 
 	I.quantity,
 
@@ -354,10 +352,7 @@ SELECT
 	'Delete Row' AS `delete button`
 
 FROM ingredients_in_sections_of_meal_versions I
-LEFT JOIN ingredients_info Info ON Info.ingredient_id = I.ingredient_id	
-LEFT JOIN ingredient_types T ON Info.ingredient_type_id = T.ingredient_type_id;
-
-
+LEFT JOIN ingredients_info Info ON Info.ingredient_id = I.ingredient_id;
 
 -- ######################################
 CREATE VIEW divided_meal_sections_calculations AS
@@ -475,12 +470,12 @@ CREATE VIEW plan_macros_left AS
 WITH 
     M AS ( -- GRAIN per Plan get Target ID of max date associate with each plan
 				
-			SELECT macros_version_id, plan_version_id
+			SELECT macros_version_id AS macro_ID, plan_version_id AS plan_version_id_x
 			FROM (
 					SELECT
 					macros_version_id,	
 					plan_version_id,
-					ROW_NUMBER() OVER ( -- SPlit 
+					ROW_NUMBER() OVER ( -- Split AND ORDER BY
 						PARTITION BY plan_version_id -- Split the result set into groups based on plan_version_id
 						ORDER BY date_time_of_creation DESC -- ORDER BY date
 					) AS rn					
@@ -493,8 +488,8 @@ WITH
 			SELECT * 			
 			FROM plan_macro_target_calculations T
 			
-			INNER JOIN M ON M.macros_version_id = T.macros_version_id -- JOIN enforces relationship 
-				AND M.plan_version_id = T.plan_version_id
+			INNER JOIN M ON M.macro_ID = T.macros_version_id -- JOIN enforces relationship 
+				AND M.plan_version_id_x = T.plan_version_id
     )
 
 SELECT
