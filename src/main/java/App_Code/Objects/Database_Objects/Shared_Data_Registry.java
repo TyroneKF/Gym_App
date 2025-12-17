@@ -645,7 +645,7 @@ public class Shared_Data_Registry
         return remove_ID_Object(from_Type_Id_Obj, all_Ingredient_Types_Obj_AL, ingredient_Types_Obj_Map);
     }
     
-    public Ingredient_Type_ID_OBJ get_Type_ID_Obj(int id)
+    public Ingredient_Type_ID_OBJ get_Type_ID_Obj_By_ID(int id)
     {
         return ingredient_Types_Obj_Map.get(id);
     }
