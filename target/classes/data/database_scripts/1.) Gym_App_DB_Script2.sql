@@ -323,10 +323,8 @@ CREATE TABLE ingredients_in_sections_of_meal_versions
 );
 
 -- ######################################
-DROP VIEW IF EXISTS ingredients_in_sections_of_meal_calculation;
-
 CREATE VIEW ingredients_in_sections_of_meal_calculation AS
-
+	
 SELECT
 
 	I.ingredients_index_version_id,
@@ -347,15 +345,33 @@ SELECT
 	IFNULL(ROUND((Info.salt /Info.based_on_quantity)*I.quantity,2),0) AS salt,
 	IFNULL(ROUND((Info.water_content /Info.based_on_quantity)*I.quantity,2),0) AS water_content,
 	IFNULL(ROUND((Info.liquid_content /Info.based_on_quantity)*I.quantity,2),0) AS liquid_content,
-	IFNULL(ROUND((Info.calories /Info.based_on_quantity)*I.quantity,2),0) AS calories,
-
-	'Delete Row' AS `delete button`
+	IFNULL(ROUND((Info.calories /Info.based_on_quantity)*I.quantity,2),0) AS calories
 
 FROM ingredients_in_sections_of_meal_versions I
-LEFT JOIN ingredients_info Info ON Info.ingredient_id = I.ingredient_id	
-LEFT JOIN ingredient_types T ON Info.ingredient_type_id = T.ingredient_type_id;
+LEFT JOIN ingredients_info Info ON Info.ingredient_id = I.ingredient_id;
 
 
+CREATE VIEW ingredients_in_sections_of_meal_calculation_gui AS
+SELECT
+    ingredients_index_version_id,
+    div_meal_sections_version_id,
+	
+    ingredient_type_id AS ingredient_type_name,
+    ingredient_id AS ingredient_name,
+    quantity,
+    gi,
+    protein,
+    carbohydrates,
+    sugars_of_carbs,
+    fibre,
+    fat,
+    saturated_fat,
+    salt,
+    water_content,
+    liquid_content,
+    calories
+	
+FROM ingredients_in_sections_of_meal_calculation;
 
 -- ######################################
 CREATE VIEW divided_meal_sections_calculations AS
@@ -468,7 +484,6 @@ LEFT JOIN total_meal_view T ON P.plan_version_id = T.plan_version_id
 GROUP BY P.plan_version_id, P.plan_name;
 
 -- ######################################
-DROP VIEW IF EXISTS plan_macros_left;
 CREATE VIEW plan_macros_left AS
 	
 WITH 
@@ -479,7 +494,7 @@ WITH
 					SELECT
 					macros_version_id,	
 					plan_version_id,
-					ROW_NUMBER() OVER ( -- SPlit AND ORDER BY
+					ROW_NUMBER() OVER ( -- Split AND ORDER BY
 						PARTITION BY plan_version_id -- Split the result set into groups based on plan_version_id
 						ORDER BY date_time_of_creation DESC -- ORDER BY date
 					) AS rn					

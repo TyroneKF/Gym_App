@@ -5,9 +5,9 @@ import App_Code.Objects.Database_Objects.JDBC.Fetched_Results;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.JDBC.Null_MYSQL_Field;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
-import App_Code.Objects.Tables.JTable_JDBC.Children.IngredientsTable;
-import App_Code.Objects.Tables.JTable_JDBC.Children.ViewDataTables.MacrosLeft_Table;
-import App_Code.Objects.Tables.JTable_JDBC.Children.ViewDataTables.TotalMeal_Table;
+import App_Code.Objects.Tables.JTable_JDBC.Children.Ingredients_Table.IngredientsTable;
+import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Children.MacrosLeft_Table;
+import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Children.TotalMeal_Table;
 import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
@@ -57,10 +57,14 @@ public class MealManager
     
     // Collections
     private ArrayList<String> mealTotalTable_ColumnNames, ingredientsTable_ColumnNames;
-    private ArrayList<String> totalMeal_Table_ColToHide, ingredientsTableUnEditableCells, ingredients_Table_Col_Avoid_Centering,
+    
+    private ArrayList<String>
+            totalMeal_Table_ColToHide,
+            ingredientsTableUnEditableCells,
+            ingredients_Table_Col_Avoid_Centering,
             ingredientsInMeal_Table_ColToHide;
-    private TreeMap<String, TreeSet<String>> map_ingredientTypesToNames;
-    private ArrayList<IngredientsTable> ingredientTables_In_MealManager = new ArrayList<>();
+    
+    private final ArrayList<IngredientsTable> ingredientTables_In_MealManager = new ArrayList<>();
     private HashMap<String, Integer> totalMeal_Other_Cols_Pos;
     
     //################################################################################
@@ -449,12 +453,11 @@ public class MealManager
         
         // Total Meal
         mealTotalTable_ColumnNames = meal_plan_screen.getMeal_total_columnNames();
-        totalMeal_Table_ColToHide = meal_plan_screen.getTotalMeal_Table_ColToHide();
+        totalMeal_Table_ColToHide = meal_plan_screen.getTotalMeal_Table_Col_To_Hide();
         totalMeal_Other_Cols_Pos = meal_plan_screen.get_TotalMeal_Other_Cols_Pos();
         
         // Ingredients Table
-        map_ingredientTypesToNames = meal_plan_screen.getMap_ingredientTypesToNames();
-        ingredientsTableUnEditableCells = meal_plan_screen.getIngredientsTableUnEditableCells();
+        ingredientsTableUnEditableCells = meal_plan_screen.getIngredients_Table_Un_Editable_Cells();
         ingredients_Table_Col_Avoid_Centering = meal_plan_screen.getIngredients_Table_Col_Avoid_Centering();
         ingredientsInMeal_Table_ColToHide = meal_plan_screen.getIngredientsInMeal_Table_ColToHide();
         ingredientsTable_ColumnNames = meal_plan_screen.getIngredients_ColumnNames();
@@ -1612,19 +1615,9 @@ public class MealManager
         return totalMeal_Table_ColToHide;
     }
     
-    public ArrayList<String> get_TotalMeal_Table_UnEditable_Cells()
-    {
-        return get_Total_Meal_Table_Column_Names(); // All the cells are un-editable
-    }
-    
     // ############################
     // Ingredients Table
     // ############################
-    public TreeMap<String, TreeSet<String>> getMap_ingredient_Types_To_Names()
-    {
-        return map_ingredientTypesToNames;
-    }
-    
     public ArrayList<String> get_Ingredients_Table_Col_Avoid_Centering()
     {
         return ingredients_Table_Col_Avoid_Centering;

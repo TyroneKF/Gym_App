@@ -1,14 +1,14 @@
 package App_Code.Objects.Screens;
 
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
-import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_Obj;
+import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
 import App_Code.Objects.Data_Objects.ID_Objects.MetaData_ID_Object.Meal_ID;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Measurement_ID_OBJ;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
-import App_Code.Objects.Tables.JTable_JDBC.Children.ViewDataTables.MacrosLeft_Table;
-import App_Code.Objects.Tables.JTable_JDBC.Children.ViewDataTables.MacrosTargets_Table;
+import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Children.MacrosLeft_Table;
+import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Children.MacrosTargets_Table;
 import App_Code.Objects.Tables.MealManager;
 import App_Code.Objects.Gui_Objects.*;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
@@ -69,20 +69,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //###############################################
     private ArrayList<String> meal_total_columnNames;
     private ArrayList<String> ingredients_ColumnNames;
-   
-    // DELETE
-    private TreeSet<String>
-            ingredientsTypesList,
-            storesNamesList;
-    
-    // Sorted Hashmap by key String
-    private TreeMap<String, TreeSet<String>> map_ingredientTypesToNames = new TreeMap<>(new Comparator<String>()
-    {
-        public int compare(String o1, String o2)
-        {
-            return o1.toLowerCase().compareTo(o2.toLowerCase());
-        }
-    });
     
     //########################
     // Meals Data Collections
@@ -101,16 +87,16 @@ public class Meal_Plan_Screen extends Screen_JFrame
      */
     private LinkedHashMap<Integer, LinkedHashMap<Integer, ArrayList<ArrayList<Object>>>> sub_Meals_Data_Map = new LinkedHashMap<>();
     
-    private LinkedHashMap<Integer, ArrayList<Object>> total_Meals_Data_Map = new LinkedHashMap<>();
+    private final LinkedHashMap<Integer, ArrayList<Object>> total_Meals_Data_Map = new LinkedHashMap<>();
     
     //#################################################
     // Objects
     //#################################################
     // DATA Object
-    private Shared_Data_Registry shared_Data_Registry;
+    private final Shared_Data_Registry shared_Data_Registry;
     
     // JPanels
-    private JPanel scrollJPanelCenter, scrollJPanelBottom;
+    private JPanel scrollJPanelCenter;
     
     // Table Objects
     private MacrosLeft_Table macrosLeft_JTable;
@@ -141,7 +127,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     tableMealsInPlanName = "meals_in_plan",
             tableSub_MealsName = "divided_meal_sections",
             tableIngredientsInMealSections = "ingredients_in_sections_of_meal",
-            tableIngredientsCalName = "ingredients_in_sections_of_meal_calculation",
+            tableIngredientsCalName = "ingredients_in_sections_of_meal_calculation_gui",
             tableTotalMealsTableName = "total_meal_view",
             tableTotalPlanTableName = "total_plan_view",
             tablePlanMacrosLeftName = "plan_macros_left";
@@ -150,22 +136,23 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // Ingredients Table Columns
     //##################################################################################################################
     // Table: ingredients_in_sections_of_meal_calculation
-    private final ArrayList<String> ingredients_Table_Col_Avoid_Centering
-            = new ArrayList<>(Arrays.asList("ingredient_type", "ingredient_name")),
+    private final ArrayList<String> ingredients_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList(
+            "ingredient_type", "ingredient_name"));
     
-    ingredientsTableUnEditableCells = new ArrayList<>(Arrays.asList(
-            "ingredients_index", "ingredient_id",
-            "protein", "gi", "carbohydrates", "sugars_of_carbs",
-            "fibre", "fat", "saturated_fat", "salt", "water_content", "liquid_content", "calories")),
+    private final ArrayList<String> ingredients_Table_Un_Editable_Cells = new ArrayList<>(Arrays.asList(
+            "ingredients_index", "protein", "gi", "carbohydrates", "sugars_of_carbs",
+            "fibre", "fat", "saturated_fat", "salt", "water_content", "liquid_content", "calories"
+    ));
     
-    ingredientsInMeal_Table_ColToHide = new ArrayList<>(Arrays.asList("plan_id", "div_meal_sections_id", "ingredients_index",
-            "ingredient_id", "liquid_content", "water_content"));
+    private final ArrayList<String> ingredientsInMeal_Table_ColToHide = new ArrayList<>(Arrays.asList(
+            "plan_id", "div_meal_sections_id", "ingredients_index", "liquid_content", "water_content"
+    ));
     
     //##################################################################################################################
     // TotalMealView Table
     //##################################################################################################################
-    private final ArrayList<String> totalMeal_Table_ColToHide = new ArrayList<String>(Arrays.asList(
-            "plan_id", "meal_name", "meal_in_plan_id", "weight_of_meal"
+    private final ArrayList<String> totalMeal_Table_Col_To_Hide = new ArrayList<String>(Arrays.asList(
+            "plan_id", "meal_name", "meal_in_plan_id"
     ));
     
     /**
@@ -195,13 +182,13 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //##################################################################################################################
     // Other Table Customisations
     //##################################################################################################################
-    private final ArrayList<String>
-            
-            // Table : plan_macro_target_calculations
-            macrosTargets_Table_ColToHide = new ArrayList<String>(Arrays.asList("plan_id", "plan_name", "date_time_of_creation")),
+    // Table : plan_macro_target_calculations
+    private final ArrayList<String> macros_Targets_Table_Col_To_Hide = new ArrayList<String>(Arrays.asList(
+            "plan_id", "plan_name", "date_time_of_creation"
+    ));
     
     // Table : plan_macros_left
-    macrosLeft_Table_ColToHide = new ArrayList<String>(Arrays.asList("plan_id", "plan_name"));
+    private final ArrayList<String> macros_Left_Table_Col_To_Hide = new ArrayList<String>(Arrays.asList("plan_id", "plan_name"));
     
     //##################################################################################################################
     // Constructor & Main
@@ -493,9 +480,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###############################################################################
         // Get DATA Methods
         //###############################################################################
-        // Get Ingredient_Types & Store Data
-        if (! get_Ingredient_And_Store_Data()) { failed_Start_UP(loading_Screen); return; }
-        
         // Get Ingredient Types Mapped to Ingredient Names
         if (! get_Ingredient_Types_And_Ingredient_Names()) { failed_Start_UP(loading_Screen); return; }
         
@@ -564,7 +548,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         scrollJPanelCenter = new JPanel(new GridBagLayout());
         addToContainer(getScrollPaneJPanel(), scrollJPanelCenter, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, "center");
         
-        scrollJPanelBottom = new JPanel(new GridBagLayout());
+        JPanel scrollJPanelBottom = new JPanel(new GridBagLayout());
         addToContainer(getScrollPaneJPanel(), scrollJPanelBottom, 0, 1, 1, 1, 0.25, 0.25, "both", 0, 0, "end");
         
         //###################################
@@ -620,8 +604,16 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //############################
         // MacroTargets Table
         //############################
-        macros_Targets_Table = new MacrosTargets_Table(db, macrosInfoJPanel, macros_plan_Data, macroTargets_ColumnNames, planID, tempPlanID,
-                tablePlanMacroTargetsNameCalc, macroTargets_ColumnNames, null, macrosTargets_Table_ColToHide);
+        macros_Targets_Table = new MacrosTargets_Table(
+                db,
+                macrosInfoJPanel,
+                macros_plan_Data,
+                macroTargets_ColumnNames,
+                planID,
+                tempPlanID,
+                null,
+                macros_Targets_Table_Col_To_Hide
+        );
         
         addToContainer(macrosInfoJPanel, macros_Targets_Table, 0, macrosInfoJP_YPos += 1, + 1, 1, 0.25, 0.25, "both", 40, 0, null);
         
@@ -630,8 +622,16 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //############################
         // plan_Macros_Left Table
         //############################
-        macrosLeft_JTable = new MacrosLeft_Table(db, macrosInfoJPanel, macrosData, macrosLeft_columnNames, planID, tempPlanID,
-                tablePlanMacrosLeftName, macrosLeft_columnNames, null, macrosLeft_Table_ColToHide);
+        macrosLeft_JTable = new MacrosLeft_Table(
+                db,
+                macrosInfoJPanel,
+                macrosData,
+                macrosLeft_columnNames,
+                planID,
+                tempPlanID,
+                null,
+                macros_Left_Table_Col_To_Hide
+        );
         
         addToContainer(macrosInfoJPanel, macrosLeft_JTable, 0, macrosInfoJP_YPos += 1, 1, 1, 0.25, 0.25, "both", 30, 0, null);
         
@@ -878,138 +878,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //#################################################
     // Get / Update Methods
     //#################################################
-    
-    /**
-     * Ingredient Types Mapped to Ingredient Names
-     * IngredientTypes,
-     * Stores
-     */
-    public boolean get_Ingredient_And_Store_Data()
-    {
-        //#################################################################################
-        // Map IngredientTypes  To IngredientNames
-        //#################################################################################
-        if (! get_Ingredient_Types_Mapped_To_Names())
-        {
-            JOptionPane.showMessageDialog(this, "\n\nUnable to get 'Ingredient Types To Names'!");
-            return false;
-        }
-        
-        //##############################################
-        // Execute
-        //#############################################
-        String
-                query1 = String.format("SELECT ingredient_type_name FROM %s ORDER BY ingredient_type_name ASC;", tableIngredientsTypeName),
-                errorMSG1 = "Error, Unable to get Ingredient Types in Plan!",
-                
-                query2 = String.format("SELECT store_name FROM %s ORDER BY store_name ASC;", tableStoresName),
-                errorMSG2 = "Error, Unable to get Ingredient Stores in Plan!";
-        
-        ingredientsTypesList = db.get_Single_Col_Query_Ordered_TS(query1, null, errorMSG1);
-        
-        if (ingredientsTypesList == null)
-        {
-            JOptionPane.showMessageDialog(this, errorMSG1);
-            return false;
-        }
-        
-        //#########################################
-        // Get All The Store Names Inside The DB
-        //#########################################
-        storesNamesList = db.get_Single_Col_Query_Ordered_TS(query2, null, errorMSG2);
-        
-        if (storesNamesList == null)
-        {
-            JOptionPane.showMessageDialog(this, errorMSG2);
-            return false;
-        }
-        
-        //#################################################################################
-        // Success MSG
-        //#################################################################################
-        System.out.printf("\nIngredient Types & Store Names Successfully transferred! \n\n%s", lineSeparator);
-        return true;
-    }
-    
-    public boolean get_Ingredient_Types_Mapped_To_Names()
-    {
-        //###########################################################
-        // Store ingredientTypes ID's & IngredientTypeName that occur
-        //###########################################################
-        String
-                queryTypes = String.format(
-                """
-                        SELECT I.ingredient_type_id, N.ingredient_type_name
-                        FROM
-                        (
-                           SELECT DISTINCT(ingredient_type_id) FROM %s
-                        ) AS I
-                        INNER JOIN
-                        (
-                           SELECT ingredient_type_id, ingredient_type_name FROM %s
-                        ) AS N
-                        ON I.ingredient_type_id = N.ingredient_type_id
-                        ORDER BY N.ingredient_type_name;""", tableIngredientsInfoName, tableIngredientsTypeName),
-                
-                errorMSG = "\n\nUnable to update Ingredient Type Info";
-        
-        ArrayList<ArrayList<Object>> ingredientTypesNameAndIDResults;
-        try
-        {
-            ingredientTypesNameAndIDResults = db.get_2D_Query_AL_Object(queryTypes, null, errorMSG, false);
-        }
-        catch (Exception e)
-        {
-            return false;
-        }
-        
-        //###########################################################
-        // Clear List
-        //###########################################################
-        map_ingredientTypesToNames.clear();
-        
-        //######################################
-        // Store all ingredient types & names
-        //######################################
-        for (ArrayList<Object> rowData : ingredientTypesNameAndIDResults)
-        {
-            Integer ID = (Integer) rowData.get(0);
-            String ingredientType = (String) rowData.get(1);
-            
-            //########################################
-            // Get IngredientNames for Type
-            //########################################
-            String
-                    query_Type_Names = String.format("SELECT ingredient_name FROM %s WHERE ingredient_type_id = ? ORDER BY ingredient_name;",
-                    tableIngredientsInfoName),
-                    
-                    errorMSG2 = String.format("Error, Unable to get Ingredient Names for Ingredient Type '%s'!", ingredientType);
-            
-            Object[] params = new Object[]{ ID };
-            
-            TreeSet<String> ingredientNames = db.get_Single_Col_Query_Ordered_TS(query_Type_Names, params, errorMSG2);
-            
-            if (ingredientNames == null)
-            {
-                System.err.printf("\n\n%s", errorMSG);
-                return false;
-            }
-            
-            //########################################
-            // Mapping Ingredient Type to Names
-            //########################################
-            map_ingredientTypesToNames.put(ingredientType, ingredientNames);
-        }
-        
-        //########################################
-        // Output
-        //########################################
-        return true;
-    }
-    
-    //#############################
-    // New Methods
-    //#############################
     public boolean get_Stores_Data()
     {
         //#######################################
@@ -1055,11 +923,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // Create Get Query Results
         //#######################################
         String query = """
-                WITH
-                    I AS (SELECT ingredient_id, ingredient_name, ingredient_type_id FROM ingredients_info),
-                	T AS (SELECT * FROM ingredient_types)
-                
                 SELECT
+                
                     T.ingredient_type_id AS type_id,
                 	T.ingredient_type_name AS type_name,
                 
@@ -1069,8 +934,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
                         )
                     ) AS matched_ingredients
                 
-                FROM  T
-                LEFT JOIN I ON T.ingredient_type_id = I.ingredient_type_id
+                FROM  ingredient_types T
+                LEFT JOIN  ingredients_info I ON T.ingredient_type_id = I.ingredient_type_id
+                
                 GROUP BY T.ingredient_type_id, T.ingredient_type_name
                 ORDER BY T.ingredient_type_name ASC;""";
         
@@ -1094,7 +960,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // Go through Results
         //#######################################
         ObjectMapper mapper = new ObjectMapper();
-        HashMap<Ingredient_Type_ID_Obj, ArrayList<Ingredient_Name_ID_OBJ>> mapped_Data = new HashMap<>();
+        HashMap<Ingredient_Type_ID_OBJ, ArrayList<Ingredient_Name_ID_OBJ>> mapped_Data = new HashMap<>();
         
         try
         {
@@ -1106,7 +972,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 int type_ID = (int) row.get(0);
                 String type_name = (String) row.get(1);
                 
-                Ingredient_Type_ID_Obj type_OBJ = new Ingredient_Type_ID_Obj(type_ID, type_name);
+                Ingredient_Type_ID_OBJ type_OBJ = new Ingredient_Type_ID_OBJ(type_ID, type_name);
                 
                 // Add to DATA
                 shared_Data_Registry.add_Ingredient_Type(type_OBJ, false); // Add ingredient Type
@@ -1185,50 +1051,48 @@ public class Meal_Plan_Screen extends Screen_JFrame
         String query = """
                 -- Divs with Ingredients
                 
-                WITH
-                   M AS (SELECT * FROM meals_in_plan ORDER BY meal_time ASC),
-                   D AS (SELECT * FROM divided_meal_sections ORDER BY div_meal_sections_id ASC ),
-                   I AS (SELECT * FROM ingredients_in_sections_of_meal_calculation ORDER BY ingredients_index ASC)
-                
                 SELECT DISTINCT
-                    Q.plan_id,
-                	Q.meal_in_plan_id,
-                	Q.Meal_Name,
-                	Q.meal_time,
+                	M.plan_id,
+                	M.meal_in_plan_id,
+                	M.Meal_Name,
+                	M.meal_time,
+                
+                	/*M.div_meal_sections_id,*/
                 
                 	JSON_ARRAYAGG(
-                        JSON_OBJECT(
-                		    'plan_id',     Q.plan_id,
-                            'div_id',      Q.div_meal_sections_id,
-                			'index',       Q.ingredients_index,
-                			'id',          Q.ingredient_id,
-                			'type',        Q.ingredient_type,
-                			'ingred_name', Q.ingredient_name,
-                			'quantity',    Q.quantity,
-                			'gi',          Q.gi,
-                			'protein',     Q.protein,
-                			'carbs',       Q.carbohydrates,
-                			'sugar_carbs', Q.sugars_of_carbs,
-                			'fibre',       Q.fibre,
-                			'fat',         Q.fat,
-                			'sat_fat',     Q.saturated_fat,
-                			'salt',        Q.salt,
-                			'water',       Q.water_content,
-                			'liquid',      Q.liquid_content,
-                			'calories',    Q.calories,
-                			'delete_btn',  Q.`delete button`
-                        )
-                    ) AS matched_ingredients
+                		JSON_OBJECT(
+                			'plan_id',     I.plan_id,
+                			'div_id',      I.div_meal_sections_id,
+                			'index',       I.ingredients_index,
+                			'type_id',     I.ingredient_type_name,
+                			'id',          I.ingredient_name,
+                			'quantity',    I.quantity,
+                			'gi',          I.gi,
+                			'protein',     I.protein,
+                			'carbs',       I.carbohydrates,
+                			'sugar_carbs', I.sugars_of_carbs,
+                			'fibre',       I.fibre,
+                			'fat',         I.fat,
+                			'sat_fat',     I.saturated_fat,
+                			'salt',        I.salt,
+                			'water',       I.water_content,
+                			'liquid',      I.liquid_content,
+                			'calories',    I.calories,
+                			'delete_btn',  I.`delete button`
+                		)
+                	) AS matched_ingredients
                 
-                FROM
-                (
-                	SELECT M.plan_id AS p_id, M.meal_in_plan_id , M.Meal_Name, M.meal_time, I.*
-                	FROM M
-                	LEFT JOIN D ON M.plan_id = D.plan_id AND M.meal_in_plan_id = D.meal_in_plan_id
-                 	INNER JOIN I ON I.plan_id = D.plan_id AND I.div_meal_sections_id = D.div_meal_sections_id
-                ) AS Q
-                WHERE Q.plan_id = ?
-                GROUP BY Q.plan_id, Q.meal_in_plan_id, Q.meal_time  /*, Q.div_meal_sections_id */;""";
+                FROM meals_in_plan M
+                
+                LEFT JOIN divided_meal_sections D ON
+                	M.plan_id = D.plan_id AND M.meal_in_plan_id = D.meal_in_plan_id
+                
+                INNER JOIN ingredients_in_sections_of_meal_calculation_gui I ON
+                	I.plan_id = D.plan_id AND I.div_meal_sections_id = D.div_meal_sections_id
+                
+                WHERE M.plan_id = ?
+                GROUP BY M.plan_id, M.meal_in_plan_id, M.meal_time  /*, M.div_meal_sections_id*/
+                ORDER BY M.meal_time ASC""";
         
         String errorMSG = "Unable to get Ingredient Types & Ingredient Names";
         
@@ -1251,7 +1115,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //########################################################################
         // Go Through JSON DATA
         //#########################################################################
-        /**
+        /*
          * Meals Collection:
          *
          * LinkedHashMap<Integer, Meal_ID> meals_Data = new LinkedHashMap<>();
@@ -1260,7 +1124,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
          * Meal_ID = Meal ID / Name/ Time inside Object
          */
         
-        /**
+        /*
          *  Sub-Meals Collection:
          *
          *  HashMap<Integer, HashMap<Integer, ArrayList<ArrayList<Object>>>> sub_Meals_Data = new HashMap<>();
@@ -1315,13 +1179,19 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     ingredient_macros.add(div_id);
                     
                     ingredient_macros.add(ingredient_node.get("index").asInt());
-                    ingredient_macros.add(ingredient_node.get("id").asInt());
                     
-                    ingredient_macros.add(ingredient_node.get("type").asText());
+                    // Ingredient Name OBJ
+                    int ingredient_Type_ID = ingredient_node.get("type_id").asInt();
+                    ingredient_macros.add(shared_Data_Registry.get_Type_ID_Obj_By_ID(ingredient_Type_ID));
                     
-                    ingredient_macros.add(ingredient_node.get("ingred_name").asText());
+                    // Ingredient Name Object
+                    int ingredient_Name_ID = ingredient_node.get("id").asInt();
+                    ingredient_macros.add(shared_Data_Registry.get_Ingredient_Name_ID_OBJ_By_ID(ingredient_Name_ID));
+                    
+                    // Quantity
                     ingredient_macros.add(new BigDecimal(ingredient_node.get("quantity").asText()));
-                
+                    
+                    // Macro Values
                     ingredient_macros.add(ingredient_node.get("gi").asInt());
                     ingredient_macros.add(new BigDecimal(ingredient_node.get("protein").asText()));
                     ingredient_macros.add(new BigDecimal(ingredient_node.get("carbs").asText()));
@@ -2328,7 +2198,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
         }
     }
     
-    
     //##################################################################################################################
     //  Macro Targets/Left Table Methods
     //##################################################################################################################
@@ -2433,28 +2302,10 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // Collections :  Accessor Methods
     //#####################################################################
     
-    // Others
-    public TreeMap<String, TreeSet<String>> getMap_ingredientTypesToNames()
-    {
-        return map_ingredientTypesToNames;
-    }
-    
-    public TreeSet<String> get_IngredientsTypes_List()
-    {
-        return ingredientsTypesList;
-    }
-    
-    public TreeSet<String> get_StoresNames_List()
-    {
-        return storesNamesList;
-    }
-    
-    //###########################################
     // TotalMeal Table Collections
-    //###########################################
-    public ArrayList<String> getTotalMeal_Table_ColToHide()
+    public ArrayList<String> getTotalMeal_Table_Col_To_Hide()
     {
-        return totalMeal_Table_ColToHide;
+        return totalMeal_Table_Col_To_Hide;
     }
     
     public ArrayList<String> getMeal_total_columnNames()
@@ -2480,9 +2331,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
         return ingredients_ColumnNames;
     }
     
-    public ArrayList<String> getIngredientsTableUnEditableCells()
+    public ArrayList<String> getIngredients_Table_Un_Editable_Cells()
     {
-        return ingredientsTableUnEditableCells;
+        return ingredients_Table_Un_Editable_Cells;
     }
     
     public ArrayList<String> getIngredients_Table_Col_Avoid_Centering()

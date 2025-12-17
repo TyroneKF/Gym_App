@@ -323,10 +323,8 @@ CREATE TABLE ingredients_in_sections_of_meal_versions
 );
 
 -- ######################################
-DROP VIEW IF EXISTS ingredients_in_sections_of_meal_calculation;
-
 CREATE VIEW ingredients_in_sections_of_meal_calculation AS
-
+	
 SELECT
 
 	I.ingredients_index_version_id,
@@ -347,12 +345,34 @@ SELECT
 	IFNULL(ROUND((Info.salt /Info.based_on_quantity)*I.quantity,2),0) AS salt,
 	IFNULL(ROUND((Info.water_content /Info.based_on_quantity)*I.quantity,2),0) AS water_content,
 	IFNULL(ROUND((Info.liquid_content /Info.based_on_quantity)*I.quantity,2),0) AS liquid_content,
-	IFNULL(ROUND((Info.calories /Info.based_on_quantity)*I.quantity,2),0) AS calories,
-
-	'Delete Row' AS `delete button`
+	IFNULL(ROUND((Info.calories /Info.based_on_quantity)*I.quantity,2),0) AS calories
 
 FROM ingredients_in_sections_of_meal_versions I
 LEFT JOIN ingredients_info Info ON Info.ingredient_id = I.ingredient_id;
+
+
+CREATE VIEW ingredients_in_sections_of_meal_calculation_gui AS
+SELECT
+    ingredients_index_version_id,
+    div_meal_sections_version_id,
+	
+    ingredient_type_id AS ingredient_type_name,
+    ingredient_id AS ingredient_name,
+    quantity,
+    gi,
+    protein,
+    carbohydrates,
+    sugars_of_carbs,
+    fibre,
+    fat,
+    saturated_fat,
+    salt,
+    water_content,
+    liquid_content,
+    calories,
+    'Delete Row' AS `delete button`
+	
+FROM ingredients_in_sections_of_meal_calculation;
 
 -- ######################################
 CREATE VIEW divided_meal_sections_calculations AS
