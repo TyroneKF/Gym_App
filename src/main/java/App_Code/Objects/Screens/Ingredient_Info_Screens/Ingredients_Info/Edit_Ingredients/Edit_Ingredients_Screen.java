@@ -1,12 +1,11 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients;
 
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
-import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_Obj;
+import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
 import App_Code.Objects.Database_Objects.JDBC.Fetched_Results;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.Combo_Boxes.Field_JCombo_Storable_ID;
-import App_Code.Objects.Gui_Objects.Text_Fields.Field_JTxtField_String;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Search_For_Food_Info;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients.Shop_Form.Edit_Shop_Form;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info.Ingredients_Info_Screen;
@@ -25,7 +24,7 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
     //##################################################################################################################
     
     // JComboBox Objects
-    protected Field_JCombo_Storable_ID<Ingredient_Type_ID_Obj> ingredient_Main_Type_JC;
+    protected Field_JCombo_Storable_ID<Ingredient_Type_ID_OBJ> ingredient_Main_Type_JC;
     protected Field_JCombo_Storable_ID<Ingredient_Name_ID_OBJ> ingredient_Main_Name_JC;
     
     protected boolean
@@ -77,7 +76,7 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
         add_To_Container(mainCentre_JPanel, ingredientType_JC_JP, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "horizontal", 10, 0, null);
         
         // Create JCombBox
-        ingredient_Main_Type_JC = new Field_JCombo_Storable_ID<>("Ingredient Type", Ingredient_Type_ID_Obj.class, shared_Data_Registry.get_Mapped_Ingredient_Types())
+        ingredient_Main_Type_JC = new Field_JCombo_Storable_ID<>("Ingredient Type", Ingredient_Type_ID_OBJ.class, shared_Data_Registry.get_Mapped_Ingredient_Types())
         {
             @Override
             protected void actionListener()
@@ -248,7 +247,7 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
     protected boolean update_Ingredient_Type_Shared_Data(Ingredient_Name_ID_OBJ ingredient_name_id_obj, Edit_Ingredients_Form edit_ingredients_form) throws Exception
     {
         // Get Ingredient Type JC Associated with this field
-        Ingredient_Type_ID_Obj ingredient_type_id_obj = (Ingredient_Type_ID_Obj) edit_ingredients_form.get_Component_Field_Value("type");
+        Ingredient_Type_ID_OBJ ingredient_type_id_obj = (Ingredient_Type_ID_OBJ) edit_ingredients_form.get_Component_Field_Value("type");
         
         // Change Ingredient Type on Ingredient Name
         return shared_Data_Registry.change_Ingredient_Type(ingredient_type_id_obj, ingredient_name_id_obj);

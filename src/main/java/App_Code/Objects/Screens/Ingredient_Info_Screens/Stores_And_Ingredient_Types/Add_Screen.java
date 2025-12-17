@@ -1,6 +1,6 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types;
 
-import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_Obj;
+import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
 import App_Code.Objects.Database_Objects.JDBC.Fetched_Results;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
@@ -350,7 +350,7 @@ public abstract class Add_Screen extends Screen_JPanel
         }
         else if (this instanceof Add_Ingredient_Type)
         {
-            sharedDataRegistry.add_Ingredient_Type(new Ingredient_Type_ID_Obj(id, jTextField_TXT), true);
+            sharedDataRegistry.add_Ingredient_Type(new Ingredient_Type_ID_OBJ(id, jTextField_TXT), true);
         }
         else
         {

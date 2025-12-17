@@ -88,14 +88,13 @@ public class Edit_Ingredients_Form extends Ingredients_Form
         
         if (field_Value_On_Form instanceof Storable_IDS_Parent storable_ID_Obj)
         {
-            switch (field_Value_In_DB_Data)
+            // case BigInteger x -> { return ! (storable_ID_Obj.get_ID()).equals(x.intValueExact()); }
+            if (field_Value_In_DB_Data instanceof Integer x)
             {
-                case BigInteger x -> { return ! (storable_ID_Obj.get_ID()).equals(x.intValueExact()); }
-                case Integer x -> { return ! x.equals(storable_ID_Obj.get_ID()); }
-                default ->
-                        throw new Exception(String.format("\n\n%s Error ID Object for Key '%s' \nUnexpected value: %s \nClass Type : %s", get_Class_And_Method_Name(), key,
-                                field_Value_In_DB_Data, field_Value_In_DB_Data.getClass()));
+                return ! x.equals(storable_ID_Obj.get_ID());
             }
+            throw new Exception(String.format("\n\n%s Error ID Object for Key '%s' \nUnexpected value: %s \nClass Type : %s", get_Class_And_Method_Name(), key,
+                    field_Value_In_DB_Data, field_Value_In_DB_Data.getClass()));
         }
         
         if (field_Value_On_Form.getClass() != field_Value_In_DB_Data.getClass()) // Type MisMatch

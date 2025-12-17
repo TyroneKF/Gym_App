@@ -1,7 +1,7 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Ingredient_Types;
 
 import App_Code.Objects.Data_Objects.ID_Objects.ID_Object;
-import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_Obj;
+import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Storable_IDS_Parent;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
@@ -57,8 +57,7 @@ public class Edit_Ingredient_Type extends Edit_Screen
     protected boolean delete_Shared_Data_Action()
     {
         Storable_IDS_Parent item_ID_Obj = (Storable_IDS_Parent) jCombo_Box.getSelectedItem();
-        
-        return sharedDataRegistry.remove_Ingredient_Type((Ingredient_Type_ID_Obj) item_ID_Obj);
+        return sharedDataRegistry.remove_Ingredient_Type((Ingredient_Type_ID_OBJ) item_ID_Obj);
     }
     
     @Override

@@ -1,7 +1,7 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients;
 
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
-import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_Obj;
+import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
 import App_Code.Objects.Database_Objects.JDBC.Fetched_Results;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
@@ -100,7 +100,7 @@ public class Ingredients_Screen extends Parent_Ingredients_Screen
             String ingredient_Name = (String) ingredients_Form.get_Component_Field_Value("name");
             
             // Get Ingredient Type ID OBJ
-            Ingredient_Type_ID_Obj ingredient_Type_ID_Obj = (Ingredient_Type_ID_Obj) ingredients_Form.get_Component_Field_Value("type");
+            Ingredient_Type_ID_OBJ ingredient_Type_ID_Obj = (Ingredient_Type_ID_OBJ) ingredients_Form.get_Component_Field_Value("type");
             
             // Safety Check
             if ( ingredient_Type_ID_Obj == null)

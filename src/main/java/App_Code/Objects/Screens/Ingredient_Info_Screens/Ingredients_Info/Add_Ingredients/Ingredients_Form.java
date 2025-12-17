@@ -1,7 +1,7 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients;
 
 import App_Code.Objects.Data_Objects.Field_Bindings.Ingredients_Form_Binding;
-import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_Obj;
+import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Measurement_ID_OBJ;
 import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
@@ -47,7 +47,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
     //#############################
     // Collections
     //#############################
-    protected ArrayList<Ingredient_Type_ID_Obj> ingredient_Types_Obj_AL;
+    protected ArrayList<Ingredient_Type_ID_OBJ> ingredient_Types_Obj_AL;
     protected ArrayList<Measurement_ID_OBJ> ingredient_Measurement_Obj_AL;
     
     //############
@@ -125,7 +125,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
             put("type", new Ingredients_Form_Binding<>(
                     "Ingredient Type",                                          // GUI Label
                     // Component
-                    new Field_JCombo_Storable_ID<>("Ingredient Type", Ingredient_Type_ID_Obj.class, ingredient_Types_Obj_AL),
+                    new Field_JCombo_Storable_ID<>("Ingredient Type", Ingredient_Type_ID_OBJ.class, ingredient_Types_Obj_AL),
                     "ingredient_type_id",                                   // MySQL Field
                     pos += 1                                                          // Pos in MYSQL Table Query
             ));

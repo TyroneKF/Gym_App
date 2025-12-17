@@ -7,12 +7,12 @@ public final class Ingredient_Name_ID_OBJ extends Storable_IDS_Parent
     // #################################################################################################################
     // Variables
     // #################################################################################################################
-    private Ingredient_Type_ID_Obj ingredient_Type_ID_Obj = null;
+    private Ingredient_Type_ID_OBJ ingredient_Type_ID_Obj = null;
     
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
-    public Ingredient_Name_ID_OBJ(int id, String name, Ingredient_Type_ID_Obj type_ID_OBJ)
+    public Ingredient_Name_ID_OBJ(int id, String name, Ingredient_Type_ID_OBJ type_ID_OBJ)
     {
         super(id, name);
         
@@ -22,7 +22,7 @@ public final class Ingredient_Name_ID_OBJ extends Storable_IDS_Parent
     // #################################################################################################################
     // Mutator Methods
     // #################################################################################################################
-    public void set_Ingredient_Type_ID_Obj(Ingredient_Type_ID_Obj ingredient_type_ID_Obj)
+    public void set_Ingredient_Type_ID_Obj(Ingredient_Type_ID_OBJ ingredient_type_ID_Obj)
     {
         Objects.requireNonNull(ingredient_type_ID_Obj, "Ingredient type cannot be null");
         this.ingredient_Type_ID_Obj = ingredient_type_ID_Obj;
@@ -31,7 +31,7 @@ public final class Ingredient_Name_ID_OBJ extends Storable_IDS_Parent
     // #################################################################################################################
     // Accessor Methods
     // #################################################################################################################
-    public Ingredient_Type_ID_Obj get_Ingredient_Type_Obj()
+    public Ingredient_Type_ID_OBJ get_Ingredient_Type_Obj()
     {
         return ingredient_Type_ID_Obj;
     }

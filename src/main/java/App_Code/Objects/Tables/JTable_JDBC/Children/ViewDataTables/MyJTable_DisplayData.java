@@ -96,7 +96,7 @@ public abstract class MyJTable_DisplayData extends JDBC_JTable
             }
         };
         
-        for (int i = 0; i < jTable.getColumnCount(); i++) // Apply this to all the columns in Jtable
+        for (int i = 0; i < jTable.getColumnCount(); i++) // Apply this to all the columns in JTable
         {
             jTable.getColumnModel().getColumn(i).setCellRenderer(cellRenderer);
         }
@@ -109,7 +109,7 @@ public abstract class MyJTable_DisplayData extends JDBC_JTable
     protected void extra_TableModel_Setup() { }
     
     @Override
-    protected void table_Data_Changed_Action(int row_Model, int column_Model) { }
+    protected boolean table_Data_Changed_Action(int row_Model, int column_Model, Object newValue) { return false; }
     
     protected abstract String get_Query();
     
@@ -127,8 +127,8 @@ public abstract class MyJTable_DisplayData extends JDBC_JTable
             ArrayList<ArrayList<Object>> tableDataObject = db.get_2D_Query_AL_Object(get_Query(), get_Params(), errorMSG, false);
             super.update_Table(tableDataObject.getFirst(), update_Row);
         }
-        catch (Exception _)
-        { }
+        catch (Exception _) // Error is already handled by DB classs
+        {}
     }
     
     protected void set_Table_Model_Data(ArrayList<ArrayList<Object>> table_Model_Data)

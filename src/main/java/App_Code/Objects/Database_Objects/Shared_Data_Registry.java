@@ -50,12 +50,12 @@ public class Shared_Data_Registry
     //##################
     // Ingredient Types
     //##################
-    private HashMap<Integer, Ingredient_Type_ID_Obj> ingredient_Types_Obj_Map = new HashMap<>();
-    private ArrayList<Ingredient_Type_ID_Obj> all_Ingredient_Types_Obj_AL = new ArrayList<>();
+    private HashMap<Integer, Ingredient_Type_ID_OBJ> ingredient_Types_Obj_Map = new HashMap<>();
+    private ArrayList<Ingredient_Type_ID_OBJ> all_Ingredient_Types_Obj_AL = new ArrayList<>();
     
     // Ingredient Types To Names
     private HashMap<Integer, ArrayList<Ingredient_Name_ID_OBJ>> ingredient_Types_To_Names_Map = new HashMap<>();
-    private ArrayList<Ingredient_Type_ID_Obj> ingredient_Types_With_Ingredients_AL = new ArrayList<>();
+    private ArrayList<Ingredient_Type_ID_OBJ> ingredient_Types_With_Ingredients_AL = new ArrayList<>();
     
     //##################
     // Ingredient Names
@@ -432,13 +432,13 @@ public class Shared_Data_Registry
     //###############################################################
     // HashMap Ingredient Types To Ingredient Names
     //###############################################################
-    private void remove_Mapped_Ingredient_Type(Ingredient_Type_ID_Obj type_Obj)
+    private void remove_Mapped_Ingredient_Type(Ingredient_Type_ID_OBJ type_Obj)
     {
         ingredient_Types_To_Names_Map.remove(type_Obj.get_ID());
         ingredient_Types_With_Ingredients_AL.remove(type_Obj);
     }
     
-    private void add_Mapped_Ingredient_Type(Ingredient_Type_ID_Obj type_Obj, ArrayList<Ingredient_Name_ID_OBJ> ingredient_Names)
+    private void add_Mapped_Ingredient_Type(Ingredient_Type_ID_OBJ type_Obj, ArrayList<Ingredient_Name_ID_OBJ> ingredient_Names)
     {
         ingredient_Types_To_Names_Map.put(type_Obj.get_ID(), ingredient_Names);
         
@@ -447,13 +447,13 @@ public class Shared_Data_Registry
     }
     
     // Change Methods
-    public boolean change_Ingredient_Type(Ingredient_Type_ID_Obj to_Type_Obj, Ingredient_Name_ID_OBJ ingredient_Name_Obj)
+    public boolean change_Ingredient_Type(Ingredient_Type_ID_OBJ to_Type_Obj, Ingredient_Name_ID_OBJ ingredient_Name_Obj)
     {
         //####################################
         // Get Object Info
         //####################################
         // Get ingredient_Type Obj & ID Associated with Ingredient_Name
-        Ingredient_Type_ID_Obj from_Type_Obj = ingredient_Name_Obj.get_Ingredient_Type_Obj();
+        Ingredient_Type_ID_OBJ from_Type_Obj = ingredient_Name_Obj.get_Ingredient_Type_Obj();
         int from_Type_id = from_Type_Obj.get_ID();  // Get Ingredient Type Associated with current Ingredient Name
         
         int to_Type_ID = to_Type_Obj.get_ID();
@@ -510,7 +510,7 @@ public class Shared_Data_Registry
     }
     
     // Bulk
-    private void move_Ingredients_In_Bulk_To_Type(Ingredient_Type_ID_Obj from_Type_Obj, Ingredient_Type_ID_Obj to_Type_Obj)
+    private void move_Ingredients_In_Bulk_To_Type(Ingredient_Type_ID_OBJ from_Type_Obj, Ingredient_Type_ID_OBJ to_Type_Obj)
     {
         //#####################################
         // Check if From Key is Valid
@@ -564,7 +564,7 @@ public class Shared_Data_Registry
         // Add Ingredient_Name to Type
         //##################################
         // Get Ingredient_Type OBJ & ID Associated with Ingredient_Name
-        Ingredient_Type_ID_Obj ingredient_Type_ID_Obj = ingredient_Name_Id_Obj.get_Ingredient_Type_Obj();
+        Ingredient_Type_ID_OBJ ingredient_Type_ID_Obj = ingredient_Name_Id_Obj.get_Ingredient_Type_Obj();
         int ingredient_Type_Id = ingredient_Type_ID_Obj.get_ID();
         
         // Get Ingredient_Names associated with Ingredient_Type Or Create it
@@ -596,7 +596,7 @@ public class Shared_Data_Registry
         // Remove from Ingredients Type Map
         //###################################
         // Get Ingredients Type OBJ
-        Ingredient_Type_ID_Obj ingredient_Type_ID_Obj = ingredient_Name_ID_Obj.get_Ingredient_Type_Obj();
+        Ingredient_Type_ID_OBJ ingredient_Type_ID_Obj = ingredient_Name_ID_Obj.get_Ingredient_Type_Obj();
         int type_id = ingredient_Type_ID_Obj.get_ID();
         
         // Check IF Map Contains this Ingredient Type
@@ -620,18 +620,23 @@ public class Shared_Data_Registry
         return remove_ID_Object(ingredient_Name_ID_Obj, ingredient_Names_Obj_AL, ingredient_Names_Obj_Map);
     }
     
+    public Ingredient_Name_ID_OBJ get_Ingredient_Name_ID_OBJ_By_ID(int id)
+    {
+        return ingredient_Names_Obj_Map.get(id);
+    }
+    
     //##############################################################
     // Ingredient Types - Singular List
     //##############################################################
-    public void add_Ingredient_Type(Ingredient_Type_ID_Obj ingredient_type_Obj, boolean sort)
+    public void add_Ingredient_Type(Ingredient_Type_ID_OBJ ingredient_type_Obj, boolean sort)
     {
         add_ID_Object(ingredient_type_Obj, all_Ingredient_Types_Obj_AL, sort, ingredient_Types_Obj_Map);
     }
     
-    public boolean remove_Ingredient_Type(Ingredient_Type_ID_Obj from_Type_Id_Obj)
+    public boolean remove_Ingredient_Type(Ingredient_Type_ID_OBJ from_Type_Id_Obj)
     {
         // Get 'Un-Assigned' Type
-        Ingredient_Type_ID_Obj to_Type_ID = ingredient_Types_Obj_Map.get(2);
+        Ingredient_Type_ID_OBJ to_Type_ID = ingredient_Types_Obj_Map.get(2);
         
         // Move & Delete From Ingredient Type to Un-Assigned
         move_Ingredients_In_Bulk_To_Type(from_Type_Id_Obj, to_Type_ID);
@@ -640,7 +645,7 @@ public class Shared_Data_Registry
         return remove_ID_Object(from_Type_Id_Obj, all_Ingredient_Types_Obj_AL, ingredient_Types_Obj_Map);
     }
     
-    public Ingredient_Type_ID_Obj get_Type_ID_Obj(int id)
+    public Ingredient_Type_ID_OBJ get_Type_ID_Obj(int id)
     {
         return ingredient_Types_Obj_Map.get(id);
     }
@@ -694,12 +699,12 @@ public class Shared_Data_Registry
     //##########################
     // Types
     //##########################
-    public ArrayList<Ingredient_Type_ID_Obj> get_All_Ingredient_Types_AL()
+    public ArrayList<Ingredient_Type_ID_OBJ> get_All_Ingredient_Types_AL()
     {
         return all_Ingredient_Types_Obj_AL;
     }
     
-    public ArrayList<Ingredient_Type_ID_Obj> get_Mapped_Ingredient_Types() { return ingredient_Types_With_Ingredients_AL; }
+    public ArrayList<Ingredient_Type_ID_OBJ> get_Mapped_Ingredient_Types() { return ingredient_Types_With_Ingredients_AL; }
     
     public ArrayList<Ingredient_Name_ID_OBJ> get_Ingredient_Names_From_Type_AL(Integer ingredient_Type_ID)
     {
