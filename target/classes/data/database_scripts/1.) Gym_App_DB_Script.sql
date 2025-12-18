@@ -82,7 +82,6 @@ WITH
 				saturated_fat_limit,
 				salt_limit,
 				water_target,
-				liquid_target,
 				additional_calories
 				
 			FROM macros_per_pound_and_limits
@@ -102,7 +101,6 @@ SELECT
 	IFNULL(C.saturated_fat_limit, 0) AS saturated_fat_limit,
 	IFNULL(C.salt_limit, 0) AS salt_limit_grams,
 	IFNULL(C.water_target, 0) AS water_content_target,
-	IFNULL(C.liquid_target, 0) AS liquid_content_target,
 	
 	IFNULL(ROUND((C.protein * 4) + (C.carbs * 4) + (C.fats * 9) ,2), 0) AS calories_target,
 	IFNULL(ROUND((C.protein * 4) + (C.carbs * 4) + (C.fats * 9) + C.additional_calories ,2), 0) AS additional_calories_target
@@ -274,7 +272,6 @@ SELECT
 	IFNULL(ROUND((Info.saturated_fat /Info.based_on_quantity)*I.quantity,2),0) AS saturated_fat,
 	IFNULL(ROUND((Info.salt /Info.based_on_quantity)*I.quantity,2),0) AS salt,
 	IFNULL(ROUND((Info.water_content /Info.based_on_quantity)*I.quantity,2),0) AS water_content,
-	IFNULL(ROUND((Info.liquid_content /Info.based_on_quantity)*I.quantity,2),0) AS liquid_content,
 	IFNULL(ROUND((Info.calories /Info.based_on_quantity)*I.quantity,2),0) AS calories
 
 FROM ingredients_in_sections_of_meal I
@@ -300,7 +297,6 @@ SELECT
     saturated_fat,
     salt,
     water_content,
-    liquid_content,
     calories,
     'Delete Row' AS `delete button`
 	
@@ -323,7 +319,6 @@ SELECT
 	IFNULL(ROUND(SUM(saturated_fat),2),0) as total_saturated_fat,
 	IFNULL(ROUND(SUM(salt),2),0) as total_salt,
 	IFNULL(ROUND(SUM(water_content),2),0) as total_water_content,
-	IFNULL(ROUND(SUM(liquid_content),2),0) as total_liquid_content,
 	IFNULL(ROUND(SUM(calories),2),0) as total_calories
 
 FROM ingredients_in_sections_of_meal_calculation
@@ -335,7 +330,7 @@ CREATE VIEW total_meal_view AS
 
 WITH	
 	
-	I AS (	-- Grain : Ingredients Count per Meal
+	I AS (	
 			SELECT 
 			
 				D.plan_id,
@@ -364,7 +359,6 @@ WITH
 				IFNULL(ROUND(SUM(DI.total_saturated_fat),2),0) as total_saturated_fat,
 				IFNULL(ROUND(SUM(DI.total_salt),2),0) as total_salt,
 				IFNULL(ROUND(SUM(DI.total_water_content),2),0) as total_water_content,
-				IFNULL(ROUND(SUM(DI.total_liquid_content),2),0) as total_liquid_content,
 				IFNULL(ROUND(SUM(DI.total_calories),2),0) as total_calories
 				
 			FROM divided_meal_sections D
@@ -391,8 +385,7 @@ SELECT
 	DI.total_fats,
 	DI.total_saturated_fat,
 	DI.total_salt, 
-	DI.total_water_content AS total_water, 
-	DI.total_liquid_content AS total_liquid,
+	DI.total_water_content AS total_water,
 	DI.total_calories
 		
 FROM meals_in_plan M
@@ -419,10 +412,8 @@ SELECT
 	IFNULL(ROUND(SUM(T.total_fibre),2),0) AS fibre_in_plan,
 	IFNULL(ROUND(SUM(T.total_fats),2),0) AS fats_in_plan,
 	IFNULL(ROUND(SUM(T.total_saturated_fat),2),0) AS saturated_fat_in_plan,
-	IFNULL(ROUND(SUM(T.total_salt),2),0) AS salt_in_plan,
-	
+	IFNULL(ROUND(SUM(T.total_salt),2),0) AS salt_in_plan,	
 	IFNULL(ROUND(SUM(T.total_water),2),0) AS water_content_in_plan,
-	IFNULL(ROUND(SUM(T.total_liquid),2),0) AS liquid_content_in_plan,
 	
 	IFNULL(ROUND(SUM(T.total_calories),2),0) AS total_calories_in_plan
 
@@ -444,10 +435,8 @@ SELECT
 	IFNULL(ROUND(C.expected_fibre_grams  - P.fibre_in_plan ,2),0) AS fibre_grams_left,
 	IFNULL(ROUND(C.expected_fats_grams - P.fats_in_plan ,2),0) AS fat_grams_left,
 	IFNULL(ROUND(C.saturated_fat_limit - P.saturated_fat_in_plan ,2),0) AS potential_sat_fat_grams_left,
-	IFNULL(ROUND(C.salt_limit_grams - P.salt_in_plan ,2),0) AS potential_salt_grams_left,
-	
+	IFNULL(ROUND(C.salt_limit_grams - P.salt_in_plan ,2),0) AS potential_salt_grams_left,	
 	IFNULL(ROUND(C.water_content_target - P.water_content_in_plan ,2),0) AS  water_left_to_drink,
-	IFNULL(ROUND(C.liquid_content_target - P.liquid_content_in_plan ,2),0) AS  liquids_left,
 	
 	IFNULL(ROUND(C.calories_target - P.total_calories_in_plan ,2),0) AS calories_left,
 	IFNULL(ROUND(C.additional_calories_target - P.total_calories_in_plan ,2),0) AS added_calories_left

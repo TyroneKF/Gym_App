@@ -141,18 +141,18 @@ public class Meal_Plan_Screen extends Screen_JFrame
     
     private final ArrayList<String> ingredients_Table_Un_Editable_Cells = new ArrayList<>(Arrays.asList(
             "ingredients_index", "protein", "gi", "carbohydrates", "sugars_of_carbs",
-            "fibre", "fat", "saturated_fat", "salt", "water_content", "liquid_content", "calories"
+            "fibre", "fat", "saturated_fat", "salt", "water_content", "calories"
     ));
     
     private final ArrayList<String> ingredientsInMeal_Table_ColToHide = new ArrayList<>(Arrays.asList(
-            "plan_id", "div_meal_sections_id", "ingredients_index", "liquid_content", "water_content"
+            "plan_id", "div_meal_sections_id", "ingredients_index", "water_content"
     ));
     
     //##################################################################################################################
     // TotalMealView Table
     //##################################################################################################################
     private final ArrayList<String> totalMeal_Table_Col_To_Hide = new ArrayList<String>(Arrays.asList(
-            "plan_id", "meal_name", "meal_in_plan_id", "total_liquid"
+            "plan_id", "meal_name", "meal_in_plan_id"
     ));
     
     /**
@@ -170,7 +170,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
         put("total_fibre", new Pair<>(null, "g"));
         put("total_water", new Pair<>(null, "ml"));
         put("total_calories", new Pair<>(null, "kcal"));
-        // put("total_liquid",new Pair<>(null, "g"));
     }};
     
     private final HashMap<String, Integer> totalMeal_Other_Cols_Pos = new HashMap<>()
@@ -1076,7 +1075,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 			'sat_fat',     I.saturated_fat,
                 			'salt',        I.salt,
                 			'water',       I.water_content,
-                			'liquid',      I.liquid_content,
                 			'calories',    I.calories,
                 			'delete_btn',  I.`delete button`
                 		)
@@ -1201,7 +1199,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     ingredient_macros.add(new BigDecimal(ingredient_node.get("sat_fat").asText()));
                     ingredient_macros.add(new BigDecimal(ingredient_node.get("salt").asText()));
                     ingredient_macros.add(new BigDecimal(ingredient_node.get("water").asText()));
-                    ingredient_macros.add(new BigDecimal(ingredient_node.get("liquid").asText()));
                     ingredient_macros.add(new BigDecimal(ingredient_node.get("calories").asText()));
                     
                     ingredient_macros.add(ingredient_node.get("delete_btn").asText());

@@ -3,3 +3,5 @@
 /scripts/production_setup_scripts/Gym_App.jar
 /scripts/production_setup_scripts/.env
 /target/classes/production_setup/.env
+/src/main/resources/data/database_scripts/Tests/
+/target/classes/data/database_scripts/Tests/
