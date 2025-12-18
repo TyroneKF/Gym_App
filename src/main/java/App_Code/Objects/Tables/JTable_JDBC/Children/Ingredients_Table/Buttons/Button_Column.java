@@ -1,5 +1,8 @@
 package App_Code.Objects.Tables.JTable_JDBC.Children.Ingredients_Table.Buttons;
 
+import App_Code.Objects.Tables.JTable_JDBC.Children.Ingredients_Table.IngredientsTable;
+import App_Code.Objects.Tables.JTable_JDBC.Parent.JDBC_JTable;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
@@ -7,10 +10,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 
 /**
  * http://www.camick.com/java/source/ButtonColumn.java
@@ -29,31 +29,68 @@ import java.awt.event.MouseListener;
 
 public class Button_Column extends AbstractCellEditor implements TableCellRenderer, TableCellEditor, ActionListener, MouseListener
 {
+    //##################################################################################################################
+    // Variables
+    //##################################################################################################################
     private JTable table;
-    private Action action;
+    
+    private final Action action;
     private int mnemonic;
-    private Border originalBorder;
+    private final Border originalBorder;
     private Border focusBorder;
     
-    private JButton renderButton;
-    private JButton editButton;
+    private final JButton renderButton;
+    private final JButton editButton;
     private Object editorValue;
     private boolean isButtonColumnEditor;
+    
+    //##################################################################################################################
+    // Constructor
+    //##################################################################################################################
     
     /**
      * Create the Button_Column to be used as a renderer and editor. The
      * renderer and editor will automatically be installed on the TableColumn
-     * of the specified column.
+     * of the specified delete_Btn_Column.
+     * <p>
+     * table  the table containing the button renderer/editor
      *
-     * @param table  the table containing the button renderer/editor
-     * @param action the Action to be invoked when the button is invoked
-     * @param column the column to which the button renderer/editor is added
+     * @param delete_Btn_Column the delete_Btn_Column to which the button renderer/editor is added
      */
-    public Button_Column(JTable table, Action action, int column)
+    public Button_Column(IngredientsTable ingredients_Table, int delete_Btn_Column, int ingredients_Index_Column)
     {
-        this.table = table;
-        this.action = action;
+        //##############################################
+        // Variables
+        //##############################################
+        table = ingredients_Table.get_JTable();
         
+        // Action
+        action = new AbstractAction()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                JTable table = (JTable) e.getSource();
+                int row = table.getSelectedRow();
+                
+                int ingredients_Index = (Integer) ingredients_Table.get_Value_On_Model_Data(row, ingredients_Index_Column);
+               
+                ingredients_Table.delete_Row_Action(ingredients_Index, row); // command to update db
+                
+                /*
+                
+                JTable table = (JTable) e.getSource();
+                JDBC_JTable.CustomTableModel jTable_Model = (JDBC_JTable.CustomTableModel) table.getModel();
+                
+                Integer ingredients_Index = (Integer) jTable_Model.getValueAt(table.getSelectedRow(), ingredients_Index_Column);
+                
+                int model_Row = Integer.parseInt(e.getActionCommand());
+                ingredients_Table.delete_Row_Action(ingredients_Index, model_Row); // command to update db*/
+            }
+        };
+        
+        //##############################################
+        //
+        //##############################################
         renderButton = new JButton();
         editButton = new JButton();
         editButton.setFocusPainted(false);
@@ -62,11 +99,16 @@ public class Button_Column extends AbstractCellEditor implements TableCellRender
         setFocusBorder(new LineBorder(Color.BLUE));
         
         TableColumnModel columnModel = table.getColumnModel();
-        columnModel.getColumn(column).setCellRenderer(this);
-        columnModel.getColumn(column).setCellEditor(this);
+        columnModel.getColumn(delete_Btn_Column).setCellRenderer(this);
+        columnModel.getColumn(delete_Btn_Column).setCellEditor(this);
         table.addMouseListener(this);
+        
+        setMnemonic(KeyEvent.VK_D);
     }
     
+    //##################################################################################################################
+    // Methods
+    //##################################################################################################################
     
     /**
      * Get foreground color of the button when the cell has focus

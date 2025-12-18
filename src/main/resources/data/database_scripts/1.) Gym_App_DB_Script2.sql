@@ -352,7 +352,9 @@ LEFT JOIN ingredients_info Info ON Info.ingredient_id = I.ingredient_id;
 
 
 CREATE VIEW ingredients_in_sections_of_meal_calculation_gui AS
+	
 SELECT
+
     ingredients_index_version_id,
     div_meal_sections_version_id,
 	
@@ -399,13 +401,24 @@ GROUP BY div_meal_sections_version_id;
 CREATE VIEW total_meal_view AS
 
 WITH
+	I AS (	
+			SELECT 
+
+				D.meal_in_plan_version_id,			
+				IFNULL(COUNT(DISTINCT ingredient_id),0) AS cnt
+
+			FROM divided_meal_sections_versions D
+
+			LEFT JOIN ingredients_in_sections_of_meal_versions I 
+				ON I.div_meal_sections_version_id = D.div_meal_sections_version_id
+
+			GROUP BY D.meal_in_plan_version_id
+	),
 	
 	DI AS (
 			SELECT 
 			
-				D.meal_in_plan_version_id,				
-				
-				IFNULL(COUNT(DISTINCT ingredient_id),0) AS cnt,				
+				D.meal_in_plan_version_id,
 				
 				IFNULL(ROUND(SUM(DI.total_protein),2),0) as total_protein,
 				IFNULL(ROUND(SUM(DI.total_carbohydrates),2),0) as total_carbohydrates,
@@ -427,7 +440,7 @@ WITH
 				ON I.div_meal_sections_version_id = DI.div_meal_sections_version_id
 			
 			GROUP BY D.meal_in_plan_version_id		
-		  )
+	)
 	
 SELECT 
 
@@ -437,7 +450,7 @@ SELECT
 	M.meal_time,
 	M.meal_name,	
 	
-	DI.cnt AS no_of_ingredients,
+	I.cnt AS no_of_ingredients,
 	
 	DI.total_protein,
 	DI.total_carbohydrates, 
@@ -451,6 +464,9 @@ SELECT
 	DI.total_calories
 		
 FROM meals_in_plan_versions M
+
+LEFT JOIN I ON
+	I.meal_in_plan_version_id = M.meal_in_plan_version_id
 
 LEFT JOIN DI ON 
 	DI.meal_in_plan_version_id = M.meal_in_plan_version_id;

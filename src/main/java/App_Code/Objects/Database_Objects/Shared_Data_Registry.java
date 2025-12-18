@@ -157,7 +157,7 @@ public class Shared_Data_Registry
             String macroName = mapEntry.getKey();
             Integer macroPos = mapEntry.getValue().getValue0();
             
-            BigDecimal macroValue = (BigDecimal) totalMealTable.get_Value_On_Table(0, macroPos);
+            BigDecimal macroValue = (BigDecimal) totalMealTable.get_Value_On_Model_Data(0, macroPos);
             
             /**
              *  <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>

@@ -152,7 +152,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // TotalMealView Table
     //##################################################################################################################
     private final ArrayList<String> totalMeal_Table_Col_To_Hide = new ArrayList<String>(Arrays.asList(
-            "plan_id", "meal_name", "meal_in_plan_id"
+            "plan_id", "meal_name", "meal_in_plan_id", "total_liquid"
     ));
     
     /**

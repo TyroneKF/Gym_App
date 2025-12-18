@@ -306,9 +306,8 @@ SELECT
 	
 FROM ingredients_in_sections_of_meal_calculation;
 
-
-
 -- ######################################
+DROP VIEW IF EXISTS divided_meal_sections_calculations;
 CREATE VIEW divided_meal_sections_calculations AS
 
 SELECT
@@ -328,20 +327,34 @@ SELECT
 	IFNULL(ROUND(SUM(calories),2),0) as total_calories
 
 FROM ingredients_in_sections_of_meal_calculation
-GROUP BY div_meal_sections_id, plan_id;
+GROUP BY  plan_id, div_meal_sections_id;
 
 -- ######################################
+
 CREATE VIEW total_meal_view AS
 
-WITH
+WITH	
 	
-	DI AS (
+	I AS (	-- Grain : Ingredients Count per Meal
+			SELECT 
+			
+				D.plan_id,
+				D.meal_in_plan_id,			
+				IFNULL(COUNT(DISTINCT ingredient_id),0) AS cnt
+			
+			FROM divided_meal_sections D
+			
+			LEFT JOIN ingredients_in_sections_of_meal I 
+				ON I.div_meal_sections_id = D.div_meal_sections_id AND I.plan_id = D.plan_id	
+				
+			GROUP BY  D.meal_in_plan_id, D.plan_id
+	),
+	
+	DI AS ( -- Grain : Totals per Meal
 			SELECT 
 			
 			    D.plan_id,
 				D.meal_in_plan_id,
-				
-				IFNULL(COUNT(DISTINCT ingredient_id),0) AS cnt,				
 				
 				IFNULL(ROUND(SUM(DI.total_protein),2),0) as total_protein,
 				IFNULL(ROUND(SUM(DI.total_carbohydrates),2),0) as total_carbohydrates,
@@ -359,11 +372,8 @@ WITH
 			LEFT JOIN divided_meal_sections_calculations DI
 				ON DI.div_meal_sections_id = D.div_meal_sections_id AND DI.plan_id = D.plan_id
 			
-			LEFT JOIN ingredients_in_sections_of_meal I 
-				ON I.div_meal_sections_id = D.div_meal_sections_id AND I.plan_id = D.plan_id
-			
-			GROUP BY D.plan_id, D.meal_in_plan_id			
-		  )
+			GROUP BY D.meal_in_plan_id, D.plan_id			
+	)
 	
 SELECT 
 
@@ -372,7 +382,7 @@ SELECT
 	M.meal_time,
 	M.meal_name,	
 	
-	DI.cnt AS no_of_ingredients,
+	I.cnt AS no_of_ingredients,
 	
 	DI.total_protein,
 	DI.total_carbohydrates, 
@@ -387,7 +397,11 @@ SELECT
 		
 FROM meals_in_plan M
 
-LEFT JOIN DI ON M.plan_id = DI.plan_id AND M.meal_in_plan_id = DI.meal_in_plan_id;
+LEFT JOIN I ON 
+	M.plan_id = I.plan_id AND M.meal_in_plan_id = I.meal_in_plan_id
+
+LEFT JOIN DI ON 
+	M.plan_id = DI.plan_id AND M.meal_in_plan_id = DI.meal_in_plan_id;
 
 -- ######################################
 CREATE VIEW total_plan_view AS
