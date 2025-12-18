@@ -103,8 +103,8 @@ public class MealManager
         this.macrosLeft_JTable = macrosLeft_JTable;
         
         meal_In_Plan_ID = meal_ID_Obj.get_ID();
-        tempPlanID = meal_plan_screen.getTempPlanID();
-        planID = meal_plan_screen.getPlanID();
+        tempPlanID = meal_plan_screen.getTemp_Plan_ID();
+        planID = meal_plan_screen.getPlan_ID();
         
         // Set Meal Time Variables
         Second timeStringFormatted = localTimeToSecond(meal_ID_Obj.get_Meal_Time()); // turns etc 09:30:00 into 09:30 for GUI purposes & in second format
@@ -134,8 +134,8 @@ public class MealManager
         this.macrosLeft_JTable = macrosLeft_JTable;
         this.db = db;
         
-        tempPlanID = meal_plan_screen.getTempPlanID();
-        planID = meal_plan_screen.getPlanID();
+        tempPlanID = meal_plan_screen.getTemp_Plan_ID();
+        planID = meal_plan_screen.getPlan_ID();
         
         //############################################################################
         // Getting user input for Meal Name & Time
@@ -443,7 +443,7 @@ public class MealManager
         // Variables
         //################################################################
         gbc = new GridBagConstraints();
-        container = meal_plan_screen.getScrollJPanelCenter();
+        container = meal_plan_screen.getScroll_JPanel_Center();
         sharedDataRegistry = meal_plan_screen.get_MealManagerRegistry();
         macrosLeft_JTable = meal_plan_screen.get_MacrosLeft_JTable();
         
@@ -452,15 +452,15 @@ public class MealManager
         //############################
         
         // Total Meal
-        mealTotalTable_ColumnNames = meal_plan_screen.getMeal_total_columnNames();
-        totalMeal_Table_ColToHide = meal_plan_screen.getTotalMeal_Table_Col_To_Hide();
+        mealTotalTable_ColumnNames = meal_plan_screen.getMeal_total_column_Names();
+        totalMeal_Table_ColToHide = meal_plan_screen.getTotal_Meal_Table_Col_To_Hide();
         totalMeal_Other_Cols_Pos = meal_plan_screen.get_TotalMeal_Other_Cols_Pos();
         
         // Ingredients Table
         ingredientsTableUnEditableCells = meal_plan_screen.getIngredients_Table_Un_Editable_Cells();
         ingredients_Table_Col_Avoid_Centering = meal_plan_screen.getIngredients_Table_Col_Avoid_Centering();
-        ingredientsInMeal_Table_ColToHide = meal_plan_screen.getIngredientsInMeal_Table_ColToHide();
-        ingredientsTable_ColumnNames = meal_plan_screen.getIngredients_ColumnNames();
+        ingredientsInMeal_Table_ColToHide = meal_plan_screen.getIngredients_In_Meal_Table_Col_To_Hide();
+        ingredientsTable_ColumnNames = meal_plan_screen.getIngredients_Column_Names();
         
         //################################################################
         // Create Collapsible Object

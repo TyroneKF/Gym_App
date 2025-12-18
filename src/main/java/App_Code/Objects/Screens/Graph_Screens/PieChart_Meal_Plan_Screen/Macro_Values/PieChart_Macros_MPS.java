@@ -123,10 +123,10 @@ public class PieChart_Macros_MPS extends Screen_JPanel
         this.meal_plan_screen = meal_plan_screen;
         this.shared_Data_Registry = meal_plan_screen.get_MealManagerRegistry();
         
-        this.planName = meal_plan_screen.getPlanName();
+        this.planName = meal_plan_screen.getPlan_Name();
         
         // #####################################
-        /// Collections
+        // Collections
         // ######################################
         mealManagers_TotalMeal_MacroValues = shared_Data_Registry.get_MealManagers_MacroValues();
         totalMeal_Macro_Pos_And_Symbol = shared_Data_Registry.get_TotalMeal_Macro_Pos_And_Symbol();

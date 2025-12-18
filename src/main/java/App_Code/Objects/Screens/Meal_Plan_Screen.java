@@ -36,8 +36,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // Variables
     //##################################################################################################################
     // Integers
-    private final Integer tempPlanID = 1;
-    private Integer planID;
+    private final Integer temp_Plan_ID = 1;
+    private Integer plan_ID;
     private static Integer user_id;
     
     //###############################################
@@ -49,26 +49,24 @@ public class Meal_Plan_Screen extends Screen_JFrame
             user_name = "root",
             password = "password";
     
-    private String JFrameName = database_Name;
+    private String JFrame_Name = database_Name;
     
-    private String
-            planName,
-            lineSeparator = "###############################################################################";
+    private String plan_Name;
     
     //###############################################
     // Booleans
     //###############################################
     private boolean
             screen_Created = false,
-            macroTargetsChanged = false;
+            macro_Targets_Changed = false;
     
     private static boolean production = false;
     
     //###############################################
     // Collections
     //###############################################
-    private ArrayList<String> meal_total_columnNames;
-    private ArrayList<String> ingredients_ColumnNames;
+    private ArrayList<String> meal_total_column_Names;
+    private ArrayList<String> ingredients_Column_Names;
     
     //########################
     // Meals Data Collections
@@ -96,15 +94,15 @@ public class Meal_Plan_Screen extends Screen_JFrame
     private final Shared_Data_Registry shared_Data_Registry;
     
     // JPanels
-    private JPanel scrollJPanelCenter;
+    private JPanel scroll_JPanel_Center;
     
     // Table Objects
-    private MacrosLeft_Table macrosLeft_JTable;
+    private MacrosLeft_Table macros_Left_JTable;
     private MacrosTargets_Table macros_Targets_Table;
     
     // Screen Objects
-    private Macros_Targets_Screen macrosTargets_Screen = null;
-    private Ingredients_Info_Screen ingredientsInfoScreen = null;
+    private Macros_Targets_Screen macros_Targets_Screen = null;
+    private Ingredients_Info_Screen ingredients_Info_Screen = null;
     
     private PieChart_Screen_MPS pieChart_Screen_MPS = null;
     private LineChart_MPS lineChart_MPS = null;
@@ -117,20 +115,20 @@ public class Meal_Plan_Screen extends Screen_JFrame
             db_File_Script_List_Name = "0.) Script_List.txt",
     
     // Table Names Frequently Used
-    tablePlansName = "plans",
-            tableMacrosPerPoundLimitName = "macros_per_pound_and_limits",
-            tablePlanMacroTargetsNameCalc = "plan_macro_target_calculations",
-            tableIngredientsInfoName = "ingredients_info",
-            tableIngredientsTypeName = "ingredient_types",
-            tableStoresName = "stores",
+    table_Plans_Name = "plans_versions",
+            table_Macros_Per_Pound_Limit_Name = "macros_per_pound_and_limits_versions",
+            table_Plan_Macro_Targets_Name_Calc = "plan_macro_target_calculations",
+            table_Ingredients_Info_Name = "ingredients_info",
+            table_Ingredients_Type_Name = "ingredient_types",
+            table_Stores_Name = "stores",
     
-    tableMealsInPlanName = "meals_in_plan",
-            tableSub_MealsName = "divided_meal_sections",
-            tableIngredientsInMealSections = "ingredients_in_sections_of_meal",
-            tableIngredientsCalName = "ingredients_in_sections_of_meal_calculation_gui",
-            tableTotalMealsTableName = "total_meal_view",
-            tableTotalPlanTableName = "total_plan_view",
-            tablePlanMacrosLeftName = "plan_macros_left";
+    table_Meals_In_Plan_Name = "meals_in_plan",
+            table_Sub_MealsName = "divided_meal_sections_versions",
+            table_Ingredients_In_Meal_Sections = "ingredients_in_sections_of_meal_versions",
+            table_Ingredients_Calculation_Name = "ingredients_in_sections_of_meal_calculation_gui",
+            table_Total_Meals_Table_Name = "total_meal_view",
+            table_Total_Plan_Table_Name = "total_plan_view",
+            table_Plan_Macros_Left_Name = "plan_macros_left";
     
     //##################################################################################################################
     // Ingredients Table Columns
@@ -144,14 +142,14 @@ public class Meal_Plan_Screen extends Screen_JFrame
             "fibre", "fat", "saturated_fat", "salt", "water_content", "calories"
     ));
     
-    private final ArrayList<String> ingredientsInMeal_Table_ColToHide = new ArrayList<>(Arrays.asList(
+    private final ArrayList<String> ingredients_In_Meal_Table_Col_To_Hide = new ArrayList<>(Arrays.asList(
             "plan_id", "div_meal_sections_id", "ingredients_index", "water_content"
     ));
     
     //##################################################################################################################
     // TotalMealView Table
     //##################################################################################################################
-    private final ArrayList<String> totalMeal_Table_Col_To_Hide = new ArrayList<String>(Arrays.asList(
+    private final ArrayList<String> total_Meal_Table_Col_To_Hide = new ArrayList<String>(Arrays.asList(
             "plan_id", "meal_name", "meal_in_plan_id"
     ));
     
@@ -159,7 +157,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
      * LinkedHashMap<String, Pair<Integer, String>> totalMeal_macroColNamePos
      * LinkedHashMap<TotalMeal_MacroName, Pair< Position, Measurement>> totalMeal_macroColNamePos
      */
-    private final LinkedHashMap<String, Pair<Integer, String>> totalMeal_macroColName_And_Pos = new LinkedHashMap<>()
+    private final LinkedHashMap<String, Pair<Integer, String>> total_Meal_Macro_Col_Name_And_Positions = new LinkedHashMap<>()
     {{
         put("total_protein", new Pair<>(null, "g"));
         put("total_carbohydrates", new Pair<>(null, "g"));
@@ -172,7 +170,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         put("total_calories", new Pair<>(null, "kcal"));
     }};
     
-    private final HashMap<String, Integer> totalMeal_Other_Cols_Pos = new HashMap<>()
+    private final HashMap<String, Integer> total_Meal_Other_Cols_Positions = new HashMap<>()
     {{
         put("meal_time", null);
         put("meal_name", null);
@@ -327,8 +325,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
             ArrayList<ArrayList<Object>> db_results = db.get_2D_Query_AL_Object(queryX, params, errorMSG, false);
             
             user_id = (Integer) db_results.getFirst().get(0);
-            planID = (Integer) db_results.getFirst().get(1);
-            planName = (String) db_results.getFirst().get(2);
+            plan_ID = (Integer) db_results.getFirst().get(1);
+            plan_Name = (String) db_results.getFirst().get(2);
         }
         catch (Exception e)
         {
@@ -345,16 +343,16 @@ public class Meal_Plan_Screen extends Screen_JFrame
         try
         {
             // column names : ingredients_in_sections_of_meal_calculation
-            ingredients_ColumnNames = db.get_Column_Names_AL(tableIngredientsCalName);
+            ingredients_Column_Names = db.get_Column_Names_AL(table_Ingredients_Calculation_Name);
             
             // column names : total_meal_view
-            meal_total_columnNames = db.get_Column_Names_AL(tableTotalMealsTableName);
+            meal_total_column_Names = db.get_Column_Names_AL(table_Total_Meals_Table_Name);
             
             // column names : plan_macro_target_calculations
-            macroTargets_ColumnNames = db.get_Column_Names_AL(tablePlanMacroTargetsNameCalc);
+            macroTargets_ColumnNames = db.get_Column_Names_AL(table_Plan_Macro_Targets_Name_Calc);
             
             // Get table column names for plan_macros_left
-            macrosLeft_columnNames = db.get_Column_Names_AL(tablePlanMacrosLeftName);
+            macrosLeft_columnNames = db.get_Column_Names_AL(table_Plan_Macros_Left_Name);
         }
         catch (Exception e)
         {
@@ -365,18 +363,18 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //########################################
         // Column Names : Total_Meal_View
         //########################################
-        for (int pos = 0; pos < meal_total_columnNames.size(); pos++)
+        for (int pos = 0; pos < meal_total_column_Names.size(); pos++)
         {
-            String columnName = meal_total_columnNames.get(pos);
+            String columnName = meal_total_column_Names.get(pos);
             
-            if (totalMeal_macroColName_And_Pos.containsKey(columnName))
+            if (total_Meal_Macro_Col_Name_And_Positions.containsKey(columnName))
             {
-                String symbol = totalMeal_macroColName_And_Pos.get(columnName).getValue1();
-                totalMeal_macroColName_And_Pos.put(columnName, new Pair<>(pos, symbol));
+                String symbol = total_Meal_Macro_Col_Name_And_Positions.get(columnName).getValue1();
+                total_Meal_Macro_Col_Name_And_Positions.put(columnName, new Pair<>(pos, symbol));
             }
-            else if (totalMeal_Other_Cols_Pos.containsKey(columnName))
+            else if (total_Meal_Other_Cols_Positions.containsKey(columnName))
             {
-                totalMeal_Other_Cols_Pos.put(columnName, pos);
+                total_Meal_Other_Cols_Positions.put(columnName, pos);
             }
         }
         
@@ -413,7 +411,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 ON P.plan_id = C.plan_id
                 WHERE P.plan_id = ?;""";
         
-        Object[] counts_Params = new Object[]{ planID };
+        Object[] counts_Params = new Object[]{ plan_ID };
         
         ArrayList<ArrayList<Object>> meal_Count_Results;
         
@@ -457,22 +455,22 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################################
         // Transferring PLan Data To Temp
         //####################################################
-        if (! transfer_Plan_Data(planID, tempPlanID)) { failed_Start_UP(loading_Screen); return; }
+        if (! transfer_Plan_Data(plan_ID, temp_Plan_ID)) { failed_Start_UP(loading_Screen); return; }
         
         loading_Screen.increaseBar(10);
-        System.out.printf("\nChosen Plan: %s  & Chosen Plan Name: %s \n\n%s", planID, planName, lineSeparator);
+        System.out.printf("\nChosen Plan: %s  & Chosen Plan Name: %s \n\n%s", plan_ID, plan_Name, lineSeparator);
         
         //####################################################
         // Transferring Targets From Chosen PLan to Temp
         //####################################################
-        if (! transfer_Targets(planID, tempPlanID, true, false)) { failed_Start_UP(loading_Screen); return; }
+        if (! transfer_Targets(plan_ID, temp_Plan_ID, true, false)) { failed_Start_UP(loading_Screen); return; }
         
         loading_Screen.increaseBar(10);
         
         //####################################################
         // Transferring this plans Meals  Info to Temp-Plan
         //####################################################
-        if (! (transfer_Meal_Ingredients(planID, tempPlanID))) { failed_Start_UP(loading_Screen); return; }
+        if (! (transfer_Meal_Ingredients(plan_ID, temp_Plan_ID))) { failed_Start_UP(loading_Screen); return; }
         
         loading_Screen.increaseBar(10);
         
@@ -499,10 +497,10 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################################
         // Get MacroTargets DATA
         //####################################################
-        String query_PlanCalc = String.format("SELECT * from %s WHERE plan_id = ?", tablePlanMacroTargetsNameCalc);
+        String query_PlanCalc = String.format("SELECT * from %s WHERE plan_id = ?", table_Plan_Macro_Targets_Name_Calc);
         String errorMSG1 = "Error, Gathering Macros Targets Data!";
         
-        Object[] params_planCalc = new Object[]{ tempPlanID };
+        Object[] params_planCalc = new Object[]{ temp_Plan_ID };
         
         ArrayList<ArrayList<Object>> macros_plan_Data;
         
@@ -520,10 +518,10 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################################
         // Get MacrosLeft DATA
         //####################################################
-        String query_Macros = String.format("SELECT * from %s WHERE plan_id = ?;", tablePlanMacrosLeftName);
+        String query_Macros = String.format("SELECT * from %s WHERE plan_id = ?;", table_Plan_Macros_Left_Name);
         String errorMSG_ML = "Error, Unable to get Plan Macros Left!";
         
-        Object[] params_macros = new Object[]{ tempPlanID };
+        Object[] params_macros = new Object[]{ temp_Plan_ID };
         ArrayList<ArrayList<Object>> macrosData;
         
         try
@@ -544,8 +542,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //##############################
         // Splitting Scroll JPanel
         //##############################
-        scrollJPanelCenter = new JPanel(new GridBagLayout());
-        addToContainer(getScrollPaneJPanel(), scrollJPanelCenter, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, "center");
+        scroll_JPanel_Center = new JPanel(new GridBagLayout());
+        addToContainer(getScrollPaneJPanel(), scroll_JPanel_Center, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, "center");
         
         JPanel scrollJPanelBottom = new JPanel(new GridBagLayout());
         addToContainer(getScrollPaneJPanel(), scrollJPanelBottom, 0, 1, 1, 1, 0.25, 0.25, "both", 0, 0, "end");
@@ -608,8 +606,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 macrosInfoJPanel,
                 macros_plan_Data,
                 macroTargets_ColumnNames,
-                planID,
-                tempPlanID,
+                plan_ID,
+                temp_Plan_ID,
                 null,
                 macros_Targets_Table_Col_To_Hide
         );
@@ -621,18 +619,18 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //############################
         // plan_Macros_Left Table
         //############################
-        macrosLeft_JTable = new MacrosLeft_Table(
+        macros_Left_JTable = new MacrosLeft_Table(
                 db,
                 macrosInfoJPanel,
                 macrosData,
                 macrosLeft_columnNames,
-                planID,
-                tempPlanID,
+                plan_ID,
+                temp_Plan_ID,
                 null,
                 macros_Left_Table_Col_To_Hide
         );
         
-        addToContainer(macrosInfoJPanel, macrosLeft_JTable, 0, macrosInfoJP_YPos += 1, 1, 1, 0.25, 0.25, "both", 30, 0, null);
+        addToContainer(macrosInfoJPanel, macros_Left_JTable, 0, macrosInfoJP_YPos += 1, 1, 1, 0.25, 0.25, "both", 30, 0, null);
         
         loading_Screen.increaseBar(10);
         
@@ -663,7 +661,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             ArrayList<Object> total_Meal_DATA = total_Meals_Data_Map.get(meal_ID);
             
             // Create MealManager
-            MealManager mealManager = new MealManager(this, db, macrosLeft_JTable, meal_ID_Obj, sub_Meal_DATA, total_Meal_DATA);
+            MealManager mealManager = new MealManager(this, db, macros_Left_JTable, meal_ID_Obj, sub_Meal_DATA, total_Meal_DATA);
             
             // ADD MealManager To Memory
             shared_Data_Registry.addMealManager(mealManager);
@@ -729,7 +727,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 SET
                     `P`.`plan_name` = concat("(Temp) ",`SRC`.`plan_name`),`P`.`vegan` = `SRC`.`vegan`
                 WHERE
-                    `P`.`plan_id` = ?;""", tablePlansName);
+                    `P`.`plan_id` = ?;""", table_Plans_Name);
         
         //###############################################
         // Upload / Params
@@ -750,16 +748,16 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################
         // Queries
         //####################################
-        String query00 = String.format("DELETE FROM %s WHERE plan_id = ?;", tableMacrosPerPoundLimitName);
-        String query01 = String.format("DROP TABLE IF EXISTS temp_%s;", tableMacrosPerPoundLimitName);
+        String query00 = String.format("DELETE FROM %s WHERE plan_id = ?;", table_Macros_Per_Pound_Limit_Name);
+        String query01 = String.format("DROP TABLE IF EXISTS temp_%s;", table_Macros_Per_Pound_Limit_Name);
         
         String query02 = String.format("CREATE TABLE temp_%s AS SELECT * FROM %s WHERE plan_id = ?;",
-                tableMacrosPerPoundLimitName, tableMacrosPerPoundLimitName);
+                table_Macros_Per_Pound_Limit_Name, table_Macros_Per_Pound_Limit_Name);
         
-        String query03 = String.format("UPDATE temp_%s SET plan_id = ?;", tableMacrosPerPoundLimitName);
-        String query04 = String.format("INSERT INTO %s SELECT * FROM temp_%s;", tableMacrosPerPoundLimitName, tableMacrosPerPoundLimitName);
+        String query03 = String.format("UPDATE temp_%s SET plan_id = ?;", table_Macros_Per_Pound_Limit_Name);
+        String query04 = String.format("INSERT INTO %s SELECT * FROM temp_%s;", table_Macros_Per_Pound_Limit_Name, table_Macros_Per_Pound_Limit_Name);
         
-        String query05 = String.format("DROP TABLE temp_%s;", tableMacrosPerPoundLimitName);
+        String query05 = String.format("DROP TABLE temp_%s;", table_Macros_Per_Pound_Limit_Name);
         
         //####################################
         // Prepare Inputs For Execution
@@ -799,29 +797,29 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //################################################################
         // Delete temp tables if they already exist
         //################################################################
-        String query0 = String.format("DROP TABLE IF EXISTS temp_%s;", tableIngredientsInMealSections);
-        String query1 = String.format("DROP TABLE IF EXISTS temp_%s;", tableSub_MealsName);
-        String query2 = String.format("DROP TABLE IF EXISTS temp_%s;", tableMealsInPlanName);
+        String query0 = String.format("DROP TABLE IF EXISTS temp_%s;", table_Ingredients_In_Meal_Sections);
+        String query1 = String.format("DROP TABLE IF EXISTS temp_%s;", table_Sub_MealsName);
+        String query2 = String.format("DROP TABLE IF EXISTS temp_%s;", table_Meals_In_Plan_Name);
         
         //################################################################
         // Delete Meals
         //################################################################
-        String query3 = String.format("DELETE FROM %s WHERE plan_id = ?;", tableMealsInPlanName);
+        String query3 = String.format("DELETE FROM %s WHERE plan_id = ?;", table_Meals_In_Plan_Name);
         
         //################################################################
         // Transferring Meals From One Plan To Another
         //################################################################
-        String query4 = String.format("CREATE table temp_%s AS SELECT * FROM %s WHERE plan_id = ? ORDER BY meal_in_plan_id;", tableMealsInPlanName, tableMealsInPlanName);
+        String query4 = String.format("CREATE table temp_%s AS SELECT * FROM %s WHERE plan_id = ? ORDER BY meal_in_plan_id;", table_Meals_In_Plan_Name, table_Meals_In_Plan_Name);
         
-        String query5 = String.format("UPDATE temp_%s SET plan_id = ?;", tableMealsInPlanName);
-        String query6 = String.format("INSERT INTO %s SELECT * FROM temp_%s;", tableMealsInPlanName, tableMealsInPlanName);
+        String query5 = String.format("UPDATE temp_%s SET plan_id = ?;", table_Meals_In_Plan_Name);
+        String query6 = String.format("INSERT INTO %s SELECT * FROM temp_%s;", table_Meals_In_Plan_Name, table_Meals_In_Plan_Name);
         
         //################################################################
         // Transferring Sections Of Meals From One Plan To Another
         //################################################################
-        String query7 = String.format("CREATE table temp_%s AS SELECT * FROM %s WHERE plan_id = ? ORDER BY div_meal_sections_id;", tableSub_MealsName, tableSub_MealsName);
-        String query8 = String.format("UPDATE temp_%s SET plan_id = ?;", tableSub_MealsName);
-        String query9 = String.format("INSERT INTO %s SELECT * FROM temp_%s;", tableSub_MealsName, tableSub_MealsName);
+        String query7 = String.format("CREATE table temp_%s AS SELECT * FROM %s WHERE plan_id = ? ORDER BY div_meal_sections_id;", table_Sub_MealsName, table_Sub_MealsName);
+        String query8 = String.format("UPDATE temp_%s SET plan_id = ?;", table_Sub_MealsName);
+        String query9 = String.format("INSERT INTO %s SELECT * FROM temp_%s;", table_Sub_MealsName, table_Sub_MealsName);
         
         //################################################################
         // Transferring this plans Ingredients to Temp-Plan
@@ -831,14 +829,14 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 CREATE table temp_%s AS
                 SELECT i.*
                 FROM %s i
-                WHERE i.plan_id = ?;""", tableIngredientsInMealSections, tableIngredientsInMealSections);
+                WHERE i.plan_id = ?;""", table_Ingredients_In_Meal_Sections, table_Ingredients_In_Meal_Sections);
         
-        String query11 = String.format("UPDATE temp_%s SET plan_id = ?;", tableIngredientsInMealSections);
-        String query12 = String.format("INSERT INTO %s SELECT * FROM temp_%s;", tableIngredientsInMealSections, tableIngredientsInMealSections);
+        String query11 = String.format("UPDATE temp_%s SET plan_id = ?;", table_Ingredients_In_Meal_Sections);
+        String query12 = String.format("INSERT INTO %s SELECT * FROM temp_%s;", table_Ingredients_In_Meal_Sections, table_Ingredients_In_Meal_Sections);
         
-        String query13 = String.format("DROP TABLE temp_%s;", tableMealsInPlanName);
-        String query14 = String.format("DROP TABLE temp_%s;", tableIngredientsInMealSections);
-        String query15 = String.format("DROP TABLE temp_%s;", tableSub_MealsName);
+        String query13 = String.format("DROP TABLE temp_%s;", table_Meals_In_Plan_Name);
+        String query14 = String.format("DROP TABLE temp_%s;", table_Ingredients_In_Meal_Sections);
+        String query15 = String.format("DROP TABLE temp_%s;", table_Sub_MealsName);
         
         //####################################################
         // Update
@@ -884,7 +882,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //#######################################
         String
                 errorMSG = "Error, Unable to get Ingredient Stores in Plan!",
-                query = String.format("SELECT store_id, store_name FROM %s ORDER BY store_name ASC;", tableStoresName);
+                query = String.format("SELECT store_id, store_name FROM %s ORDER BY store_name ASC;", table_Stores_Name);
         
         //#######################################
         // Execute Query
@@ -1094,7 +1092,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         
         String errorMSG = "Unable to get Ingredient Types & Ingredient Names";
         
-        Object[] params = new Object[]{ tempPlanID };
+        Object[] params = new Object[]{ temp_Plan_ID };
         
         //########################################################################
         // Execute Query
@@ -1239,11 +1237,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //#################################
         // Create Get Query Results
         //#################################
-        String query = String.format("Select * FROM %s WHERE plan_id = ? ORDER BY meal_in_plan_id;", tableTotalMealsTableName);
+        String query = String.format("Select * FROM %s WHERE plan_id = ? ORDER BY meal_in_plan_id;", table_Total_Meals_Table_Name);
         
         String errorMSG = "Unable to get Total Meals Data for Plan!!";
         
-        Object[] params = new Object[]{ tempPlanID };
+        Object[] params = new Object[]{ temp_Plan_ID };
         
         //#################################
         // Execute Query
@@ -1537,7 +1535,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###########################################################
         String queryDelete = "DELETE FROM meals_in_plan WHERE plan_id = ?";
         
-        Object[] params = new Object[]{ tempPlanID };
+        Object[] params = new Object[]{ temp_Plan_ID };
         
         if (! db.upload_Data(queryDelete, params, "Error, unable to DELETE meals in plan!")) { return; }
         
@@ -1728,7 +1726,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################################################
         // Refresh DB Data
         //####################################################################
-        if (! (transfer_Meal_Ingredients(planID, tempPlanID))) // transfer meals and ingredients from temp plan to original plan
+        if (! (transfer_Meal_Ingredients(plan_ID, temp_Plan_ID))) // transfer meals and ingredients from temp plan to original plan
         {
             JOptionPane.showMessageDialog(this, "`\n\nError couldn't transfer ingredients data from temp to real plan !!");
             return;
@@ -1775,7 +1773,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //##############################################################################################################
         // Add MealManager To GUI & Charts
         //##############################################################################################################
-        MealManager mealManager = new MealManager(this, db, macrosLeft_JTable);
+        MealManager mealManager = new MealManager(this, db, macros_Left_JTable);
         
         //###############################################
         // If Object Creation Failed Exit
@@ -1813,8 +1811,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###############################################
         if (! reOrder) // Just add to GUI
         {
-            addToContainer(scrollJPanelCenter, mealManager.get_Collapsible_JP_Obj(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
-            addToContainer(scrollJPanelCenter, mealManager.getSpaceDividerForMealManager(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 50, 0, null);
+            addToContainer(scroll_JPanel_Center, mealManager.get_Collapsible_JP_Obj(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
+            addToContainer(scroll_JPanel_Center, mealManager.getSpaceDividerForMealManager(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 50, 0, null);
         }
         
         //###############################################
@@ -1845,7 +1843,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     {
         shared_Data_Registry.sort_MealManager_AL(); // Sort
         
-        scrollJPanelCenter.removeAll(); // Clear Screen
+        scroll_JPanel_Center.removeAll(); // Clear Screen
         
         // Re-Draw all MealManager to GUI
         ArrayList<MealManager> mealManager_ArrayList = shared_Data_Registry.get_MealManager_ArrayList();
@@ -1857,11 +1855,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
             mm.collapse_MealManager(); // Collapse all meals
             
             // Add MealManager and its Space Separator to GUI
-            addToContainer(scrollJPanelCenter, mm.get_Collapsible_JP_Obj(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
-            addToContainer(scrollJPanelCenter, mm.getSpaceDividerForMealManager(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 50, 0, null);
+            addToContainer(scroll_JPanel_Center, mm.get_Collapsible_JP_Obj(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
+            addToContainer(scroll_JPanel_Center, mm.getSpaceDividerForMealManager(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 50, 0, null);
         }
         
-        scrollJPanelCenter.repaint();
+        scroll_JPanel_Center.repaint();
     }
     
     // ###############################################################
@@ -1903,15 +1901,15 @@ public class Meal_Plan_Screen extends Screen_JFrame
         {
             System.out.println("\n\n#################################### \n1.) saveMealData() Empty Meal Plan Save");
             
-            String query = String.format("DELETE FROM %s WHERE plan_id = ?;", tableMealsInPlanName);
+            String query = String.format("DELETE FROM %s WHERE plan_id = ?;", table_Meals_In_Plan_Name);
             
-            Object[] params = new Object[]{ planID };
+            Object[] params = new Object[]{ plan_ID };
             
             if (! (db.upload_Data(query, params, "Error 2, Unable to Save Meal Data!"))) { return; }
         }
         else // because there are meals save them
         {
-            if ((! (transfer_Meal_Ingredients(tempPlanID, planID)))) // transfer meals and ingredients from temp plan to original plan
+            if ((! (transfer_Meal_Ingredients(temp_Plan_ID, plan_ID)))) // transfer meals and ingredients from temp plan to original plan
             {
                 System.out.println("\n\n#################################### \n2.) saveMealData() Meals Transferred to Original Plan");
                 
@@ -1944,21 +1942,21 @@ public class Meal_Plan_Screen extends Screen_JFrame
     {
         if (is_IngredientScreen_Open())
         {
-            ingredientsInfoScreen.makeJFrameVisible();
+            ingredients_Info_Screen.makeJFrameVisible();
             return;
         }
         
-        ingredientsInfoScreen = new Ingredients_Info_Screen(db, this, shared_Data_Registry);
+        ingredients_Info_Screen = new Ingredients_Info_Screen(db, this, shared_Data_Registry);
     }
     
     private Boolean is_IngredientScreen_Open()
     {
-        return ingredientsInfoScreen != null;
+        return ingredients_Info_Screen != null;
     }
     
     public void remove_Ingredients_Info_Screen()
     {
-        ingredientsInfoScreen = null;
+        ingredients_Info_Screen = null;
     }
     
     public void updateIngredientsNameAndTypesInJTables(boolean ingredientsAddedOrRemove)
@@ -1985,31 +1983,31 @@ public class Meal_Plan_Screen extends Screen_JFrame
         
         if (is_MacroTargetsScreen_Open())
         {
-            macrosTargets_Screen.makeJFrameVisible();
+            macros_Targets_Screen.makeJFrameVisible();
             return;
         }
-        macrosTargets_Screen = new Macros_Targets_Screen(db, this, tempPlanID, planName);
+        macros_Targets_Screen = new Macros_Targets_Screen(db, this, temp_Plan_ID, plan_Name);
     }
     
     private boolean is_MacroTargetsScreen_Open()
     {
-        return macrosTargets_Screen != null;
+        return macros_Targets_Screen != null;
     }
     
     public void remove_macrosTargets_Screen()
     {
-        macrosTargets_Screen = null;
+        macros_Targets_Screen = null;
     }
     
     public void macrosTargetsChanged(boolean bool)
     {
-        macroTargetsChanged = bool;
+        macro_Targets_Changed = bool;
     }
     
     // Booleans
     public boolean hasMacroTargetsChanged()
     {
-        return macroTargetsChanged;
+        return macro_Targets_Changed;
     }
     
     private void saveMacroTargets(boolean askPermission, boolean showUpdateMsg)
@@ -2036,7 +2034,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             }
         }
         
-        if (transfer_Targets(tempPlanID, planID, false, showUpdateMsg))
+        if (transfer_Targets(temp_Plan_ID, plan_ID, false, showUpdateMsg))
         {
             macrosTargetsChanged(false);
             update_Targets_And_MacrosLeftTables();
@@ -2077,11 +2075,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // ##########################################
         if (is_MacroTargetsScreen_Open())
         {
-            macrosTargets_Screen.window_Closed_Event();
+            macros_Targets_Screen.window_Closed_Event();
         }
         if (is_IngredientScreen_Open()) // HELLO Refactor into screen method
         {
-            ingredientsInfoScreen.window_Closed_Event();
+            ingredients_Info_Screen.window_Closed_Event();
         }
         if (is_PieChart_Screen_Open())
         {
@@ -2224,7 +2222,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             
             if (reply == JOptionPane.YES_OPTION)
             {
-                if (transfer_Targets(planID, tempPlanID, true, false))
+                if (transfer_Targets(plan_ID, temp_Plan_ID, true, false))
                 {
                     JOptionPane.showMessageDialog(this, "\n\nMacro-Targets Successfully Refreshed!!");
                     macrosTargetsChanged(false);
@@ -2240,12 +2238,12 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //#########################################
     public void update_MacrosLeftTable()
     {
-        macrosLeft_JTable.update_Table();
+        macros_Left_JTable.update_Table();
     }
     
     public MacrosLeft_Table get_MacrosLeft_JTable()
     {
-        return macrosLeft_JTable;
+        return macros_Left_JTable;
     }
     
     //##################################################################################################################
@@ -2253,7 +2251,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //##################################################################################################################
     public boolean get_IsPlanSelected()
     {
-        if (planID == null)
+        if (plan_ID == null)
         {
             JOptionPane.showMessageDialog(this, "Please Select A Plan First!");
             return false;
@@ -2264,22 +2262,22 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //###########################################
     // String
     //###########################################
-    public String getPlanName()
+    public String getPlan_Name()
     {
-        return planName;
+        return plan_Name;
     }
     
     //###########################################
     // Integers
     //###########################################
-    public Integer getTempPlanID()
+    public Integer getTemp_Plan_ID()
     {
-        return tempPlanID;
+        return temp_Plan_ID;
     }
     
-    public Integer getPlanID()
+    public Integer getPlan_ID()
     {
-        return planID;
+        return plan_ID;
     }
     
     //###########################################
@@ -2290,9 +2288,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
         return shared_Data_Registry;
     }
     
-    public JPanel getScrollJPanelCenter()
+    public JPanel getScroll_JPanel_Center()
     {
-        return scrollJPanelCenter;
+        return scroll_JPanel_Center;
     }
     
     //####################################################################
@@ -2300,32 +2298,32 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //#####################################################################
     
     // TotalMeal Table Collections
-    public ArrayList<String> getTotalMeal_Table_Col_To_Hide()
+    public ArrayList<String> getTotal_Meal_Table_Col_To_Hide()
     {
-        return totalMeal_Table_Col_To_Hide;
+        return total_Meal_Table_Col_To_Hide;
     }
     
-    public ArrayList<String> getMeal_total_columnNames()
+    public ArrayList<String> getMeal_total_column_Names()
     {
-        return meal_total_columnNames;
+        return meal_total_column_Names;
     }
     
     public HashMap<String, Integer> get_TotalMeal_Other_Cols_Pos()
     {
-        return totalMeal_Other_Cols_Pos;
+        return total_Meal_Other_Cols_Positions;
     }
     
     public LinkedHashMap<String, Pair<Integer, String>> get_TotalMeal_macro_Col_Name_And_Pos()
     {
-        return totalMeal_macroColName_And_Pos;
+        return total_Meal_Macro_Col_Name_And_Positions;
     }
     
     //###########################################
     // Ingredients Table Collections
     //###########################################
-    public ArrayList<String> getIngredients_ColumnNames()
+    public ArrayList<String> getIngredients_Column_Names()
     {
-        return ingredients_ColumnNames;
+        return ingredients_Column_Names;
     }
     
     public ArrayList<String> getIngredients_Table_Un_Editable_Cells()
@@ -2336,8 +2334,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
     public ArrayList<String> getIngredients_Table_Col_Avoid_Centering()
     { return ingredients_Table_Col_Avoid_Centering; }
     
-    public ArrayList<String> getIngredientsInMeal_Table_ColToHide()
+    public ArrayList<String> getIngredients_In_Meal_Table_Col_To_Hide()
     {
-        return ingredientsInMeal_Table_ColToHide;
+        return ingredients_In_Meal_Table_Col_To_Hide;
     }
 }

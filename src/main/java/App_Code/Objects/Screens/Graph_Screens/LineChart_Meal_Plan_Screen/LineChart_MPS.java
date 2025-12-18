@@ -34,7 +34,7 @@ public class LineChart_MPS extends Screen_JFrame
         // ################################################################
         // Super Constructor
         // ################################################################
-        super(db, false, String.format(" %s Pie Chart: Plan Macros", meal_plan_screen.getPlanName()), 1900, 1200, 0, 0);
+        super(db, false, String.format(" %s Pie Chart: Plan Macros", meal_plan_screen.getPlan_Name()), 1900, 1200, 0, 0);
         set_Resizable(true);
         
         // ################################################################
@@ -64,7 +64,7 @@ public class LineChart_MPS extends Screen_JFrame
                 "total_fibre"
         ));
         
-        String title = String.format("%s : Macros Over 24 Hours", meal_plan_screen.getPlanName());
+        String title = String.format("%s : Macros Over 24 Hours", meal_plan_screen.getPlan_Name());
         
         lineChart_Main_Macros_MPS = new LineChart_Macros_MPS(db, meal_plan_screen, title, macros_To_Check, 1000, 900);
         
@@ -82,7 +82,7 @@ public class LineChart_MPS extends Screen_JFrame
                 //,"total_liquid"
         ));
     
-        String title2 = String.format("%s : Calories & Water Over 24 Hours", meal_plan_screen.getPlanName());
+        String title2 = String.format("%s : Calories & Water Over 24 Hours", meal_plan_screen.getPlan_Name());
         
         lineChart_Bigger_Macros_MPS = new LineChart_Macros_MPS(db, meal_plan_screen, title2, macros_To_Check2, 1000, 900);
         

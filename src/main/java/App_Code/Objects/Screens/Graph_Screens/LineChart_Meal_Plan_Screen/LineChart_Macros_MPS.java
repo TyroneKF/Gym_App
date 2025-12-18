@@ -71,7 +71,7 @@ class LineChart_Macros_MPS extends Screen_JPanel
         this.shared_Data_Registry = meal_plan_screen.get_MealManagerRegistry();
         
         // String
-        this.planName = meal_plan_screen.getPlanName();
+        this.planName = meal_plan_screen.getPlan_Name();
         
         // Collections
         this.macros_To_Check = macros_To_Check;
@@ -148,7 +148,7 @@ class LineChart_Macros_MPS extends Screen_JPanel
     //##################################################
     public void update_LineChart_Title()
     {
-        planName = meal_plan_screen.getPlanName();
+        planName = meal_plan_screen.getPlan_Name();
         line_chart.setTitle(planName);
     }
     
