@@ -5,8 +5,7 @@ import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
 import javax.swing.*;
 import java.awt.*;
 
-// Shop Form and Ingredients Form
-public class Parent_Forms_OBJ extends Screen_JPanel
+public class Parent_Forms_OBJ extends Screen_JPanel // Shop Form and Ingredients Form
 {
     //##################################################################################################################
     // Variables
@@ -33,6 +32,4 @@ public class Parent_Forms_OBJ extends Screen_JPanel
         get_ScrollPane_JPanel().setLayout(new GridLayout(1, 1));
         get_ScrollPane_JPanel().add(collapsibleJPanel);
     }
-    
-
 }
