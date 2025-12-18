@@ -253,7 +253,7 @@ public class IngredientsTable extends JDBC_JTable
         //################################
         int ingredient_Type_Column = get_IngredientType_Col(false);
         
-        new Ingredient_Type_JComboBox_Column<Ingredient_Type_ID_OBJ>(
+        new Ingredient_Type_JComboBox_Column(
                 get_JTable(),
                 ingredient_Type_Column,
                 "Select Ingredient Type to Change Ingredient Names!",
@@ -263,10 +263,9 @@ public class IngredientsTable extends JDBC_JTable
         //################################
         // Ingredients Name JC Setup
         //################################
-        new Ingredient_Name_JComboBox_Column<Ingredient_Name_ID_OBJ>(
+        new Ingredient_Name_JComboBox_Column(
                 get_JTable(),
                 shared_Data_Registry,
-                Ingredient_Name_ID_OBJ.class,
                 get_Ingredient_Name_Col(false),
                 ingredient_Type_Column,
                 "Select Ingredient Name!"
