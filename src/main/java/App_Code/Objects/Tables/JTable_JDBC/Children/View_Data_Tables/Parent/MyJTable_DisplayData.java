@@ -137,14 +137,4 @@ public abstract class MyJTable_DisplayData extends JDBC_JTable
         {
         }
     }
-    
-    protected void set_Table_Model_Data(ArrayList<ArrayList<Object>> table_Model_Data)
-    {
-        super.set_Table_Model_Data(table_Model_Data);
-    }
-    
-    protected void update_Table_Cell_Value(Object data, int row, int col)
-    {
-        super.update_Table_Cell_Value(data, row, col);
-    }
 }

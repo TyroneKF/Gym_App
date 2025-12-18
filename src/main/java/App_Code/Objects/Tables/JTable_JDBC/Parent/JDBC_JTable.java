@@ -30,7 +30,7 @@ public abstract class JDBC_JTable extends JPanel
     // Table Customization Variables
     //##############################################
     protected JTable jTable = new JTable();
-    protected CustomTableModel tableModel;
+    private CustomTableModel tableModel;
     protected ArrayList<ArrayList<Object>> saved_Data;
     
     protected String table_Name;
@@ -135,7 +135,145 @@ public abstract class JDBC_JTable extends JPanel
     }
     
     //##################################################################################################################
-    // Table Model Set Up Methods
+    // Table Setup Methods
+    //##################################################################################################################
+    protected void tableSetup(ArrayList<ArrayList<Object>> data, ArrayList<String> column_Names)
+    {
+        extra_Table_Setup();
+        
+        //###################################################################################
+        // Table Setup
+        //###################################################################################
+        jTable = new JTable(); //Creating Table
+        
+        jTable.setRowHeight(jTable.getRowHeight() + 15);
+        jTable.setFillsViewportHeight(true);
+        jTable.getTableHeader().setPreferredSize(new Dimension(100, 50));  // setting header size
+        set_Table_Header_Font(new Font("Dialog", Font.BOLD, 16));    // setting text size
+        
+        tableModel_Setup(data, column_Names); // sets JTable Model
+        
+        //################################################################################
+        // Adding JTable to JScrollPane
+        //################################################################################
+        
+        // Create the scroll pane and add the table to it, has to be added to a scrollpane as otherwise it doesnt work
+        
+        scrollPane.setViewportView(jTable);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        
+        add_To_Container(this, scrollPane, 0, 1, 1, 1, 0.25, 0.25, "both", "");
+        
+        //#################################################################################
+        // Sizing
+        //#################################################################################
+        resize_Object();
+    }
+    
+    protected abstract void extra_Table_Setup();
+    
+    protected void tableModel_Setup(ArrayList<ArrayList<Object>> data, ArrayList<String> column_Names)
+    {
+        tableModel = new CustomTableModel(data, column_Names);
+        jTable.setModel(tableModel);
+        
+        //#################################################################################
+        // Table Personalisation
+        //#################################################################################
+        
+        //initColumnSizes();
+        set_Cell_Renderer();
+        
+        if (table_Initialised)  //first time this method is called, special columns aren't defined
+        {
+            if (get_Columns_To_Hide() != null)
+            {
+                SetUp_Hidden_Table_Columns(columns_To_Hide);
+            }
+        }
+        else
+        {
+            table_Initialised = true;
+        }
+        resize_Object();
+    }
+    
+    /**
+     * This needs to be done before hiding columns
+     * Set Column alignment
+     */
+    protected void set_Cell_Renderer()
+    {
+        // ###############################################################
+        // Centering Column Txt
+        // ###############################################################
+        
+        DefaultTableCellRenderer right_Renderer = new DefaultTableCellRenderer();
+        right_Renderer.setHorizontalAlignment(0);
+        
+        int pos = - 1;
+        for (String column_Name : column_Names)
+        {
+            pos++;
+            
+            if (col_To_Avoid_Centering != null && col_To_Avoid_Centering.contains(column_Name))
+            {
+                continue;
+            }
+            
+            jTable.getColumnModel().getColumn(pos).setCellRenderer(right_Renderer); // Center Column Data
+        }
+    }
+    
+    /*
+       As columns are hidden the position changes by -1 for the next time its called
+     */
+    protected void SetUp_Hidden_Table_Columns(ArrayList<String> columns_To_Hide)
+    {
+        int pos = 0, no_Of_Columns_Hidden = 0, jTable_Pos_After_Hiding = 0;
+        
+        for (Map.Entry<String, Integer[]> jTable_Column : column_Names_And_Positions.entrySet())
+        {
+            jTable_Pos_After_Hiding = pos - no_Of_Columns_Hidden;
+            
+            //########################################################################
+            // Extracting Info
+            //#######################################################################
+            String column_Name = jTable_Column.getKey();
+
+            /*
+             Pos 1 column original position in JTable Data
+             Pos 2 column position in JTable after columns are hidden
+            */
+            Integer[] column_Positions_List = jTable_Column.getValue();
+            
+            //#######################################################################
+            // Hide Or Update Column Pos After Hiding
+            //#######################################################################
+            
+            if (columns_To_Hide.contains(column_Name)) // Hide Column In JTable
+            {
+                column_Positions_List[1] = null; // No Longer In The JTable so position is null
+                column_Names_And_Positions.replace(column_Name, column_Positions_List); // Update position
+                
+                jTable.removeColumn(jTable.getColumnModel().getColumn(jTable_Pos_After_Hiding)); // Hide Column in JTable
+                
+                no_Of_Columns_Hidden++;
+            }
+            else // Adjust current column position
+            {
+                column_Positions_List[1] = jTable_Pos_After_Hiding;
+                column_Names_And_Positions.replace(column_Name, column_Positions_List);
+            }
+            //#######################################################################
+            
+            pos++;
+        }
+    }
+    
+    //##################################################################################################################
+    // Table Model
     //##################################################################################################################
     public class CustomTableModel extends AbstractTableModel
     {
@@ -166,7 +304,12 @@ public abstract class JDBC_JTable extends JPanel
         @Override
         public Object getValueAt(int row, int col)
         {
-            return current_Table_Data.get(row).get(col);
+            if (row < 0 || row >= current_Table_Data.size()) { return null; }
+            
+            ArrayList<Object> r = current_Table_Data.get(row);
+            if (col < 0 || col >= r.size()) { return null; }
+            
+            return r.get(col);
         }
         
         @Override
@@ -247,6 +390,10 @@ public abstract class JDBC_JTable extends JPanel
             {
                 return ((BigDecimal) old_Value).compareTo(((BigDecimal) new_Value)) != 0;
             }
+            else if (type == String.class)
+            {
+                return ! ((String) old_Value).equals(((String) new_Value));
+            }
             
             //########################################
             //  Edge Cases : Error (Unexpected Type)
@@ -263,22 +410,31 @@ public abstract class JDBC_JTable extends JPanel
         @Override
         public Class<?> getColumnClass(int c)
         {
-            return getValueAt(0, c).getClass();
+            if (current_Table_Data.isEmpty())
+            {
+                return Object.class;
+            }
+            
+            Object value = current_Table_Data.getFirst().get(c);
+            return value == null ? Object.class : value.getClass();
         }
         
         public void remove_Row(int model_Row)
         {
+            set_Row_Being_Edited(true);
+            
             current_Table_Data.remove(model_Row);
             fireTableRowsDeleted(model_Row, model_Row); // notify JTable
+            
+            set_Row_Being_Edited(false);
         }
         
         public void add_Row(ArrayList<Object> new_Row_Data)
         {
             current_Table_Data.add(new_Row_Data); // Adding new Data to Data Structure backed by model
-            
-            // Trigger JTable Update Methods
             int size = current_Table_Data.size() - 1;
             fireTableRowsInserted(size, size); // Alerts JTable has been updated and refreshes JTable
+            
             resize_Object(); // resize GUI
         }
         
@@ -288,7 +444,7 @@ public abstract class JDBC_JTable extends JPanel
             // Clear DATA
             // ######################################################
             current_Table_Data.clear();
-            current_Table_Data = clone_Data(get_Saved_Data());
+            current_Table_Data = clone_Data(saved_Data);
             
             // ######################################################
             //
@@ -333,169 +489,40 @@ public abstract class JDBC_JTable extends JPanel
             }
             return temp_Data;
         }
-        
-        protected ArrayList<ArrayList<Object>> get_TableModel_Data()
-        {
-            return current_Table_Data;
-        }
     }
     
-    protected void set_Row_Being_Edited(boolean state)
+    //##############################################
+    // Table Model Methods
+    //##############################################
+    // Accessor Method
+    public Object get_Value_On_Model_Data(int row, int col)
     {
-        is_row_Being_Edited = state;
+        return tableModel.getValueAt(row, col);
     }
     
-    //###################################################
-    // Table Setup Methods
-    //###################################################
-    protected abstract void extra_Table_Setup();
-    
-    protected void tableSetup(ArrayList<ArrayList<Object>> data, ArrayList<String> column_Names)
+    //###########################
+    //
+    //###########################
+    public void add_Row(ArrayList<Object> data)
     {
-        extra_Table_Setup();
-        
-        //###################################################################################
-        // Table Setup
-        //###################################################################################
-        jTable = new JTable(); //Creating Table
-        
-        jTable.setRowHeight(jTable.getRowHeight() + 15);
-        jTable.setFillsViewportHeight(true);
-        jTable.getTableHeader().setPreferredSize(new Dimension(100, 50));  // setting header size
-        set_Table_Header_Font(new Font("Dialog", Font.BOLD, 16));    // setting text size
-        
-        tableModel_Setup(data, column_Names); // sets JTable Model
-        
-        //################################################################################
-        // Adding JTable to JScrollPane
-        //################################################################################
-        
-        // Create the scroll pane and add the table to it, has to be added to a scrollpane as otherwise it doesnt work
-        
-        scrollPane.setViewportView(jTable);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-        
-        add_To_Container(this, scrollPane, 0, 1, 1, 1, 0.25, 0.25, "both", "");
-        
-        //#################################################################################
-        // Sizing
-        //#################################################################################
-        resize_Object();
+        tableModel.add_Row(data);
     }
     
-    protected void tableModel_Setup(ArrayList<ArrayList<Object>> data, ArrayList<String> column_Names)
+    public void delete_Row(int model_Row)
     {
-        tableModel = new CustomTableModel(data, column_Names);
-        jTable.setModel(tableModel);
-        
-        //#################################################################################
-        // Table Personalisation
-        //#################################################################################
-        
-        //initColumnSizes();
-        set_Cell_Renderer();
-        
-        if (table_Initialised)  //first time this method is called, special columns aren't defined
-        {
-            if (get_Columns_To_Hide() != null)
-            {
-                SetUp_Hidden_Table_Columns(columns_To_Hide);
-            }
-        }
-        else
-        {
-            table_Initialised = true;
-        }
-        resize_Object();
+        tableModel.remove_Row(model_Row);
     }
     
-    /**
-     * This needs to be done before hiding columns
-     * Set Column alignment
-     */
-    protected void set_Cell_Renderer()
+    public void refresh_Data()
     {
-        // ###############################################################
-        // Centering Column Txt
-        // ###############################################################
-        
-        DefaultTableCellRenderer right_Renderer = new DefaultTableCellRenderer();
-        right_Renderer.setHorizontalAlignment(0);
-        
-        int pos = - 1;
-        for (String column_Name : column_Names)
-        {
-            pos++;
-            
-            if (col_To_Avoid_Centering != null && col_To_Avoid_Centering.contains(column_Name))
-            {
-                continue;
-            }
-            
-            jTable.getColumnModel().getColumn(pos).setCellRenderer(right_Renderer); // Center Column Data
-        }
+        tableModel.refresh_Data();
     }
     
-   
+    public void save_Data() { tableModel.save_Data(); }
     
-    protected void set_Table_Model_Data(ArrayList<ArrayList<Object>> table_Model_Data)
-    {
-        this.saved_Data = table_Model_Data;
-        resize_Object();
-    }
-    
-    //###################################################
-    // Table Model Setup Methods
-    //###################################################
-    /*
-       As columns are hidden the position changes by -1 for the next time its called
-     */
-    protected void SetUp_Hidden_Table_Columns(ArrayList<String> columns_To_Hide)
-    {
-        int pos = 0, no_Of_Columns_Hidden = 0, jTable_Pos_After_Hiding = 0;
-        
-        for (Map.Entry<String, Integer[]> jTable_Column : column_Names_And_Positions.entrySet())
-        {
-            jTable_Pos_After_Hiding = pos - no_Of_Columns_Hidden;
-            
-            //########################################################################
-            // Extracting Info
-            //#######################################################################
-            String column_Name = jTable_Column.getKey();
-
-            /*
-             Pos 1 column original position in JTable Data
-             Pos 2 column position in JTable after columns are hidden
-            */
-            Integer[] column_Positions_List = jTable_Column.getValue();
-            
-            //#######################################################################
-            // Hide Or Update Column Pos After Hiding
-            //#######################################################################
-            
-            if (columns_To_Hide.contains(column_Name)) // Hide Column In JTable
-            {
-                column_Positions_List[1] = null; // No Longer In The JTable so position is null
-                column_Names_And_Positions.replace(column_Name, column_Positions_List); // Update position
-                
-                jTable.removeColumn(jTable.getColumnModel().getColumn(jTable_Pos_After_Hiding)); // Hide Column in JTable
-                
-                no_Of_Columns_Hidden++;
-            }
-            else // Adjust current column position
-            {
-                column_Positions_List[1] = jTable_Pos_After_Hiding;
-                column_Names_And_Positions.replace(column_Name, column_Positions_List);
-            }
-            //#######################################################################
-            
-            pos++;
-        }
-    }
-    
-    protected abstract boolean table_Data_Changed_Action(int row_Model, int column_Model, Object newValue) throws Exception;
-    
+    //###########################
+    // Update Methods
+    //###########################
     protected void update_Table_Cell_Value(Object data, int row, int col)
     {
         //####################################
@@ -509,10 +536,14 @@ public abstract class JDBC_JTable extends JPanel
         //########################################################################
         // Updating Table Info
         //########################################################################
+        set_Row_Being_Edited(true); // Avoid Cell Processing
+        
         for (int column_Pos = 0; column_Pos < tableModel.getColumnCount(); column_Pos++)
         {
             tableModel.setValueAt(update_Data.get(column_Pos), update_Row, column_Pos);
         }
+        
+        set_Row_Being_Edited(false); // Return to default
         
         //########################################################################
         // Redraw JTable
@@ -520,12 +551,12 @@ public abstract class JDBC_JTable extends JPanel
         jTable.repaint();
     }
     
-    public void refresh_Data()
+    protected void set_Row_Being_Edited(boolean state)
     {
-        tableModel.refresh_Data();
+        is_row_Being_Edited = state;
     }
     
-    public void save_Data() { tableModel.save_Data(); }
+    protected abstract boolean table_Data_Changed_Action(int row_Model, int column_Model, Object newValue) throws Exception;
     
     //##################################################################################################################
     // Action Methods
@@ -566,27 +597,9 @@ public abstract class JDBC_JTable extends JPanel
         return tableModel.getRowCount();
     }
     
-    protected JTable get_JTable()
+    public JTable get_JTable()
     {
         return jTable;
-    }
-    
-    //######################################################
-    // Get Data Methods
-    //######################################################
-    protected Object get_Value_On_Table(int row, int col)
-    {
-        return get_Current_Data().get(row).get(col);
-    }
-    
-    protected ArrayList<ArrayList<Object>> get_Saved_Data()
-    {
-        return saved_Data;
-    }
-    
-    protected ArrayList<ArrayList<Object>> get_Current_Data()
-    {
-        return tableModel.get_TableModel_Data();
     }
     
     //##################################################################################################################

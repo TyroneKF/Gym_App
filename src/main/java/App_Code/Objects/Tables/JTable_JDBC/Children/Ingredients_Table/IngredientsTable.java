@@ -15,9 +15,6 @@ import App_Code.Objects.Tables.MealManager;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import org.javatuples.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -290,7 +287,7 @@ public class IngredientsTable extends JDBC_JTable
         //##################################################################
         // Variables
         //##################################################################
-        int ingredient_Index = (Integer) tableModel.getValueAt(row_In_Model, get_IngredientIndex_Col(true));
+        int ingredient_Index = (Integer) get_Value_On_Model_Data(row_In_Model, get_IngredientIndex_Col(true));
         
         //##################################################################
         // Identify Trigger Column
@@ -411,7 +408,7 @@ public class IngredientsTable extends JDBC_JTable
         // Fetch
         //###################################
         LinkedHashSet<Pair<String, Object[]>> fetch_Queries_And_Params = new LinkedHashSet<>();
-        String fetch_Query_1 = "SELECT * FROM ingredients_in_sections_of_meal_calculation WHERE ingredients_index = ? AND plan_id = ?;";
+        String fetch_Query_1 = String.format("SELECT * FROM %s WHERE ingredients_index = ? AND plan_id = ?;", table_Name);
         Object[] params_Fetch_1 = new Object[]{ ingredient_Index, temp_Plan_ID };
         
         fetch_Queries_And_Params.add(new Pair<>(fetch_Query_1, params_Fetch_1));
@@ -431,7 +428,9 @@ public class IngredientsTable extends JDBC_JTable
             // Get First Row Results & Format Data to include Storable_ID_Objects
             ArrayList<Object> formatted_Data = format_DB_Results_For_ID_Objects(fetched_Results.get_Result_1D_AL(0));
             
-            super.update_Table(formatted_Data, row_In_Model); // Update Table
+            super.update_Table(formatted_Data, row_In_Model); // Update This Table
+            
+            update_All_Tables_Data();// Update ALl Other Tables
             return true;
         }
         catch (Exception e)
@@ -484,24 +483,10 @@ public class IngredientsTable extends JDBC_JTable
     //##################################################################################################################
     public void setup_Delete_Btn_Column(int delete_Btn_Column)
     {
-        Action delete = new AbstractAction()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                JTable table = (JTable) e.getSource();
-                CustomTableModel jTable_Model = (CustomTableModel) table.getModel();
-                
-                Object ingredients_Index = jTable_Model.getValueAt(table.getSelectedRow(), get_IngredientIndex_Col(true));
-                
-                int model_Row = Integer.parseInt(e.getActionCommand());
-                delete_Row_Action(ingredients_Index, model_Row); // command to update db
-            }
-        };
-        Button_Column working_Button_Column = new Button_Column(jTable, delete, delete_Btn_Column);
-        working_Button_Column.setMnemonic(KeyEvent.VK_D);
+        new Button_Column(this, delete_Btn_Column, get_IngredientIndex_Col(true));
     }
     
-    protected void delete_Row_Action(Object ingredient_Index, int modelRow)
+    public void delete_Row_Action(int ingredient_Index, int model_Row)
     {
         //#################################################
         // Can't have an empty Table
@@ -521,31 +506,23 @@ public class IngredientsTable extends JDBC_JTable
             {
                 delete_Table_Action();
             }
-            else // instead of delete last ingredient, replace with ingredient None Of Above
-            {
-                return;
-            }
+            
+             return; // Exit
         }
         
         //#################################################
-        // Remove From Row From DB
-        //##################################################
-        if (ingredient_Index != null)
-        {
-            //#################################################
-            // Delete Ingredient From Temp Meal
-            //#################################################
-            String query = "DELETE FROM ingredients_in_sections_of_meal WHERE ingredients_index = ? AND plan_id = ?;";
-            
-            Object[] params = new Object[]{ (Integer) ingredient_Index, temp_Plan_ID };
-            
-            if (! db.upload_Data(query, params, "Error, Unable to delete Ingredient in Table!")) { return; }
-        }
+        // Delete Ingredient From Temp Meal
+        //#################################################
+        String query = "DELETE FROM ingredients_in_sections_of_meal WHERE ingredients_index = ? AND plan_id = ?;";
+        
+        Object[] params = new Object[]{ ingredient_Index, temp_Plan_ID };
+        
+        if (! db.upload_Data(query, params, "Error, Unable to delete Ingredient in Table!")) { return; }
         
         //#################################################
         // Remove From Table
         //##################################################
-        tableModel.remove_Row(modelRow);
+        delete_Row(model_Row);
         resize_Object();
         
         //#################################################
@@ -677,8 +654,8 @@ public class IngredientsTable extends JDBC_JTable
         // 1.) Get Ingredient ID
         String get_Q1 = String.format("""
                 SELECT *
-                FROM ingredients_in_sections_of_meal_calculation
-                WHERE plan_id = ? AND ingredients_index = %s;""", var_Ingredient_ID);
+                FROM %s
+                WHERE plan_id = ? AND ingredients_index = %s;""", table_Name, var_Ingredient_ID);
         fetch_Queries_And_Params.add(new Pair<>(get_Q1, new Object[]{ temp_Plan_ID }));
         
         //#######################################################
@@ -693,7 +670,7 @@ public class IngredientsTable extends JDBC_JTable
         //#######################################################
         try
         {
-            ingredient_DATA = fetched_Results_OBJ.get_Result_1D_AL(0);
+            ingredient_DATA = format_DB_Results_For_ID_Objects(fetched_Results_OBJ.get_Result_1D_AL(0));
             
             System.out.printf("\n\nIngredients Results: \n%s%n", ingredient_DATA);
         }
@@ -706,7 +683,7 @@ public class IngredientsTable extends JDBC_JTable
         //#######################################################
         //   Updating Ingredients With New Ingredients DATA
         //#######################################################
-        tableModel.add_Row(ingredient_DATA); // Adding Row Data to Table Model
+        add_Row(ingredient_DATA); // Adding Row Data to Table Model
         
         //#######################################################
         // Update Table Data
@@ -944,7 +921,7 @@ public class IngredientsTable extends JDBC_JTable
         {
             // Get Ingredient Name OBJ
             Ingredient_Name_ID_OBJ ingredient_name_id_obj =
-                    (Ingredient_Name_ID_OBJ) tableModel.getValueAt(row, get_Ingredient_Name_Col(true));
+                    (Ingredient_Name_ID_OBJ) get_Value_On_Model_Data(row, get_Ingredient_Name_Col(true));
             
             Integer ingredient_OBJ_ID = ingredient_name_id_obj.get_ID(); // Get ID of Ingredient Name
             
