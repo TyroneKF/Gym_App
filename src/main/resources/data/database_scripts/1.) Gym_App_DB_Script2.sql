@@ -15,6 +15,7 @@ CREATE TABLE users
   is_user_selected BOOLEAN NOT NULL DEFAULT FALSE,
   selected_user_flag BOOLEAN GENERATED ALWAYS AS (IF(is_user_selected, TRUE, NULL)) STORED,
   
+  UNIQUE KEY no_multiple_active_user(selected_user_flag),
   UNIQUE KEY no_repeat_user_names(user_name)
 );
 
@@ -22,7 +23,14 @@ CREATE TABLE users
 CREATE TABLE plans
 (
     plan_id INT PRIMARY KEY AUTO_INCREMENT,
-	date_time_of_creation DATETIME NOT NULL	
+	plan_name VARCHAR(100) NOT NULL,
+	date_time_of_creation DATETIME NOT NULL,
+	
+	user_id INT NOT NULL,
+		FOREIGN KEY (user_id) REFERENCES users(user_id) 
+			ON DELETE CASCADE,	
+	
+	vegan BOOLEAN NOT NULL DEFAULT FALSE	
 );
 
 CREATE TABLE plan_versions
@@ -32,16 +40,13 @@ CREATE TABLE plan_versions
 	plan_id INT NOT NULL,	
 		FOREIGN KEY (plan_id) REFERENCES plans(plan_id) 
 			ON DELETE CASCADE,
-			
-	date_time_of_last_edited DATETIME NOT NULL,
-	version_number INT NOT NULL,
-	
-	plan_name VARCHAR(100) NOT NULL,
 	
 	user_id INT NOT NULL,
-		FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-
-	vegan BOOLEAN NOT NULL DEFAULT FALSE,
+		FOREIGN KEY (user_id) REFERENCES users(user_id) 
+			ON DELETE CASCADE,
+	
+	date_time_of_last_edited DATETIME NOT NULL,
+	version_number INT NOT NULL,
 	
     is_selected_plan BOOLEAN NOT NULL DEFAULT FALSE,    
 

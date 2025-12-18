@@ -37,7 +37,10 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //##################################################################################################################
     // Integers
     private final Integer temp_Plan_ID = 1;
-    private Integer plan_ID;
+    private Integer
+            selected_Plan_ID,
+            selected_Plan_Version_ID;
+    
     private static Integer user_id;
     
     //###############################################
@@ -115,7 +118,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
             db_File_Script_List_Name = "0.) Script_List.txt",
     
     // Table Names Frequently Used
-    table_Plans_Name = "plans_versions",
+    table_Plans_Name = "plans",
+            table_Plans_Version_Name = "plans_versions",
             table_Macros_Per_Pound_Limit_Name = "macros_per_pound_and_limits_versions",
             table_Plan_Macro_Targets_Name_Calc = "plan_macro_target_calculations",
             table_Ingredients_Info_Name = "ingredients_info",
@@ -302,31 +306,42 @@ public class Meal_Plan_Screen extends Screen_JFrame
         UIManager.put("OptionPane.messageFont", new Font("Arial", Font.PLAIN, 16)); // Set up window msg font
         
         //###############################################################################
-        // 1.) Getting Selected User & Plan Info
+        // 1.) Getting Selected User & Their Active Plan Info
         //###############################################################################
         // Variables
         String errorMSG = "Error, Gathering Plan & Personal User Information!";
         
-        String queryX = """
-                SELECT U.user_id, P.plan_id, P.plan_name
-                FROM
-                (
-                  SELECT plan_id, plan_name, user_id, selected_plan_flag from plans
-                ) P
-                LEFT JOIN users U
-                ON U.user_id = P.user_id
-                WHERE P.selected_plan_flag = ? AND U.user_name = ?;""";
+        String queryX = String.format("""
+                SELECT
+                	U.user_id,
+                	PV.plan_version_id,
+                	PV.plan_id,
+                	P.plan_name
+                
+                FROM users U
+                
+                LEFT JOIN %s PV
+                	ON U.user_id = PV.user_id
+                	AND PV.selected_plan_flag = ?
+                
+                LEFT JOIN %s P
+                	ON PV.plan_id = P.plan_id
+                
+                WHERE
+                	  U.selected_user_flag = ?;""", table_Plans_Version_Name, table_Plans_Name);
         
-        Object[] params = new Object[]{ true, user_name };
+        Object[] params = new Object[]{ true, true };
         
         // Execute
         try
         {
             ArrayList<ArrayList<Object>> db_results = db.get_2D_Query_AL_Object(queryX, params, errorMSG, false);
             
+            // App Must assume by default there is a selected user and 1 plan active otherwise this causes an eror
             user_id = (Integer) db_results.getFirst().get(0);
-            plan_ID = (Integer) db_results.getFirst().get(1);
-            plan_Name = (String) db_results.getFirst().get(2);
+            selected_Plan_Version_ID = (Integer) db_results.getFirst().get(1);
+            selected_Plan_ID = (Integer) db_results.getFirst().get(2);
+            plan_Name = (String) db_results.getFirst().get(3);
         }
         catch (Exception e)
         {
@@ -382,36 +397,38 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // Getting Number Of Meals & Sub meals Count
         //###############################################################################
         String plan_Counts_ErrorMSG = "Unable to get Meals & Sub-Meals Count!";
-        String plan_Counts_Query = """
-                WITH
-                    plans AS (SELECT plan_id FROM plans),
-                	meals AS (SELECT plan_id, meal_in_plan_id FROM meals_in_plan),
-                	subs AS (SELECT plan_id, div_meal_sections_id FROM divided_meal_sections),
+        String plan_Counts_Query = String.format("""
+                        WITH
+                            plans AS (SELECT plan_id FROM plans),
+                        	meals AS (SELECT plan_id, meal_in_plan_id FROM meals_in_plan),
+                        	subs AS (SELECT plan_id, div_meal_sections_id FROM divided_meal_sections),
+                        
+                        	count_cte AS (
+                        
+                        		SELECT p.plan_id,
+                        
+                        		COUNT(DISTINCT(M.meal_in_plan_id)) AS total_meals,
+                           		COUNT(DISTINCT(S.div_meal_sections_id)) AS total_sub_meals
+                        
+                        		FROM plans p
+                        		LEFT JOIN meals M ON P.plan_id = M.plan_id
+                        		LEFT JOIN subs S ON P.plan_id = S.plan_id
+                        
+                        		GROUP BY P.plan_id
+                        	)
+                        
+                        SELECT
+                        	COALESCE(C.total_meals, 0) AS meal_count,
+                        	COALESCE(C.total_sub_meals, 0) AS sub_count
+                        
+                        FROM %s P
+                        LEFT JOIN count_cte C
+                        ON P.plan_id = C.plan_id
+                        WHERE P.plan_id = ?;"""
                 
-                	count_cte AS (
-                
-                		SELECT p.plan_id,
-                
-                		COUNT(DISTINCT(M.meal_in_plan_id)) AS total_meals,
-                   		COUNT(DISTINCT(S.div_meal_sections_id)) AS total_sub_meals
-                
-                		FROM plans p
-                		LEFT JOIN meals M ON P.plan_id = M.plan_id
-                		LEFT JOIN subs S ON P.plan_id = S.plan_id
-                
-                		GROUP BY P.plan_id
-                	)
-                
-                SELECT
-                	COALESCE(C.total_meals, 0) AS meal_count,
-                	COALESCE(C.total_sub_meals, 0) AS sub_count
-                
-                FROM plans P
-                LEFT JOIN count_cte C
-                ON P.plan_id = C.plan_id
-                WHERE P.plan_id = ?;""";
+                , table_Plans_Version_Name);
         
-        Object[] counts_Params = new Object[]{ plan_ID };
+        Object[] counts_Params = new Object[]{ selected_Plan_Version_ID };
         
         ArrayList<ArrayList<Object>> meal_Count_Results;
         
@@ -455,22 +472,28 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################################
         // Transferring PLan Data To Temp
         //####################################################
-        if (! transfer_Plan_Data(plan_ID, temp_Plan_ID)) { failed_Start_UP(loading_Screen); return; }
+        if (! transfer_Plan_Data(selected_Plan_Version_ID, temp_Plan_ID)) { failed_Start_UP(loading_Screen); return; }
         
         loading_Screen.increaseBar(10);
-        System.out.printf("\nChosen Plan: %s  & Chosen Plan Name: %s \n\n%s", plan_ID, plan_Name, lineSeparator);
+        System.out.printf("\nChosen Plan: %s  & Chosen Plan Name: %s \n\n%s", selected_Plan_Version_ID, plan_Name, lineSeparator);
         
         //####################################################
         // Transferring Targets From Chosen PLan to Temp
         //####################################################
-        if (! transfer_Targets(plan_ID, temp_Plan_ID, true, false)) { failed_Start_UP(loading_Screen); return; }
+        if (! transfer_Targets(selected_Plan_Version_ID, temp_Plan_ID, true, false))
+        {
+            failed_Start_UP(loading_Screen); return;
+        }
         
         loading_Screen.increaseBar(10);
         
         //####################################################
         // Transferring this plans Meals  Info to Temp-Plan
         //####################################################
-        if (! (transfer_Meal_Ingredients(plan_ID, temp_Plan_ID))) { failed_Start_UP(loading_Screen); return; }
+        if (! (transfer_Meal_Ingredients(selected_Plan_Version_ID, temp_Plan_ID)))
+        {
+            failed_Start_UP(loading_Screen); return;
+        }
         
         loading_Screen.increaseBar(10);
         
@@ -606,7 +629,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 macrosInfoJPanel,
                 macros_plan_Data,
                 macroTargets_ColumnNames,
-                plan_ID,
+                selected_Plan_Version_ID,
                 temp_Plan_ID,
                 null,
                 macros_Targets_Table_Col_To_Hide
@@ -624,7 +647,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 macrosInfoJPanel,
                 macrosData,
                 macrosLeft_columnNames,
-                plan_ID,
+                selected_Plan_Version_ID,
                 temp_Plan_ID,
                 null,
                 macros_Left_Table_Col_To_Hide
@@ -727,7 +750,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 SET
                     `P`.`plan_name` = concat("(Temp) ",`SRC`.`plan_name`),`P`.`vegan` = `SRC`.`vegan`
                 WHERE
-                    `P`.`plan_id` = ?;""", table_Plans_Name);
+                    `P`.`plan_id` = ?;""", table_Plans_Version_Name);
         
         //###############################################
         // Upload / Params
@@ -1726,7 +1749,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################################################
         // Refresh DB Data
         //####################################################################
-        if (! (transfer_Meal_Ingredients(plan_ID, temp_Plan_ID))) // transfer meals and ingredients from temp plan to original plan
+        if (! (transfer_Meal_Ingredients(selected_Plan_Version_ID, temp_Plan_ID))) // transfer meals and ingredients from temp plan to original plan
         {
             JOptionPane.showMessageDialog(this, "`\n\nError couldn't transfer ingredients data from temp to real plan !!");
             return;
@@ -1903,13 +1926,13 @@ public class Meal_Plan_Screen extends Screen_JFrame
             
             String query = String.format("DELETE FROM %s WHERE plan_id = ?;", table_Meals_In_Plan_Name);
             
-            Object[] params = new Object[]{ plan_ID };
+            Object[] params = new Object[]{ selected_Plan_Version_ID };
             
             if (! (db.upload_Data(query, params, "Error 2, Unable to Save Meal Data!"))) { return; }
         }
         else // because there are meals save them
         {
-            if ((! (transfer_Meal_Ingredients(temp_Plan_ID, plan_ID)))) // transfer meals and ingredients from temp plan to original plan
+            if ((! (transfer_Meal_Ingredients(temp_Plan_ID, selected_Plan_Version_ID)))) // transfer meals and ingredients from temp plan to original plan
             {
                 System.out.println("\n\n#################################### \n2.) saveMealData() Meals Transferred to Original Plan");
                 
@@ -2034,7 +2057,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             }
         }
         
-        if (transfer_Targets(temp_Plan_ID, plan_ID, false, showUpdateMsg))
+        if (transfer_Targets(temp_Plan_ID, selected_Plan_Version_ID, false, showUpdateMsg))
         {
             macrosTargetsChanged(false);
             update_Targets_And_MacrosLeftTables();
@@ -2222,7 +2245,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             
             if (reply == JOptionPane.YES_OPTION)
             {
-                if (transfer_Targets(plan_ID, temp_Plan_ID, true, false))
+                if (transfer_Targets(selected_Plan_Version_ID, temp_Plan_ID, true, false))
                 {
                     JOptionPane.showMessageDialog(this, "\n\nMacro-Targets Successfully Refreshed!!");
                     macrosTargetsChanged(false);
@@ -2251,7 +2274,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //##################################################################################################################
     public boolean get_IsPlanSelected()
     {
-        if (plan_ID == null)
+        if (selected_Plan_Version_ID == null)
         {
             JOptionPane.showMessageDialog(this, "Please Select A Plan First!");
             return false;
@@ -2275,9 +2298,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
         return temp_Plan_ID;
     }
     
-    public Integer getPlan_ID()
+    public Integer getSelected_Plan_Version_ID()
     {
-        return plan_ID;
+        return selected_Plan_Version_ID;
     }
     
     //###########################################

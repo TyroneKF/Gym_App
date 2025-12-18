@@ -104,7 +104,7 @@ public class MealManager
         
         meal_In_Plan_ID = meal_ID_Obj.get_ID();
         tempPlanID = meal_plan_screen.getTemp_Plan_ID();
-        planID = meal_plan_screen.getPlan_ID();
+        planID = meal_plan_screen.getSelected_Plan_Version_ID();
         
         // Set Meal Time Variables
         Second timeStringFormatted = localTimeToSecond(meal_ID_Obj.get_Meal_Time()); // turns etc 09:30:00 into 09:30 for GUI purposes & in second format
@@ -135,7 +135,7 @@ public class MealManager
         this.db = db;
         
         tempPlanID = meal_plan_screen.getTemp_Plan_ID();
-        planID = meal_plan_screen.getPlan_ID();
+        planID = meal_plan_screen.getSelected_Plan_Version_ID();
         
         //############################################################################
         // Getting user input for Meal Name & Time
