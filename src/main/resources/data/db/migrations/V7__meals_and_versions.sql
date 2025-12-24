@@ -28,7 +28,7 @@ CREATE TABLE meals_in_plan_versions
 
 	UNIQUE KEY unique_versions_per_plan (meal_in_plan_id, plan_version_id), -- one version of a meal per plan version
 	UNIQUE KEY no_repeat_meal_times_in_plan(plan_version_id, meal_time), -- Only one meal can be at one time
-	UNIQUE KEY no_repeat_meal_names_in_plan(plan_version_id, meal_name) -- can't have 2 of the same meal_names in a plan,
+	UNIQUE KEY no_repeat_meal_names_in_plan(plan_version_id, meal_name), -- can't have 2 of the same meal_names in a plan,
 	
 	INDEX idx_meals_by_plan (plan_version_id, meal_time),
 	INDEX idx_meal_versions_plan_version (plan_version_id)

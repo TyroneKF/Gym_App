@@ -30,6 +30,8 @@ V10__seed_reference_data.sql        ← always prod-safe
 V11__seed_minimal_prod_data.sql    ← one system user / plan
 V12__seed_demo_data.sql            ← dev/test only (conditional)
 
+CREATE TEMPORARY TABLE
+
 ######################################################################################
 Work On:
 ######################################################################################
