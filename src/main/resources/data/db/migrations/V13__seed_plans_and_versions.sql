@@ -40,6 +40,9 @@ WHERE user_id = @active_user_id
 	AND plan_name = @plan_name
 LIMIT 1;
 
+-- Validate Variable
+CALL assert_id_not_null(@plan_id, 'Seed failed: plan @plan_id could not be resolved');
+
 -- #############################################
 -- Temp Plan
 -- #############################################
@@ -80,21 +83,32 @@ WHERE user_id = @active_user_id
 	AND plan_name = @temp_plan_name
 LIMIT 1;
 
+
+-- Validate Variable
+CALL assert_id_not_null(@temp_plan_id, 'Seed failed: plans @temp_plan_id could not be resolved');
+
+
 -- DELETE ALL potential temp edit versions
 DELETE FROM plan_versions WHERE plan_id = @temp_plan_id;
 
 -- ###############################################################################
---  Plan Versions
+--  Plan Versions Insert
 -- ###############################################################################
 
--- GET MAX Version Number for Plan
+-- GET MAX Version Number for Plan_version for chosen meal plan
 SELECT COALESCE(MAX(version_number), 0) + 1
 INTO @next_version
 FROM plan_versions
-WHERE plan_id = @plan_id AND user_id = @active_user_id
+WHERE plan_id = @plan_id 
+	AND user_id = @active_user_id
 FOR UPDATE; -- Locks 
 
+-- Validate Variable
+CALL assert_id_not_null(@next_version, 'Seed failed: plans @next_version could not be resolved');
+
+-- #####################################
 -- Insert Into Plan Version
+-- #####################################
 INSERT INTO plan_versions
 (
 	plan_id, 
@@ -109,18 +123,28 @@ INSERT INTO plan_versions
 -- Get Plan_Version_ID
 SET @plan_Version_id := LAST_INSERT_ID(); -- Get last insert PK (plan_Version_ID)
 
+SELECT plan_version_id
+INTO @plan_version_id
+FROM plan_versions
+WHERE plan_id = @plan_id 
+	AND user_id = @active_user_id
+	AND version_number = @next_version
+FOR UPDATE; -- Locks 
+
+-- Validate Variable
+CALL assert_id_not_null(@plan_version_id, 'Seed failed: plans @plan_version_id could not be resolved');
+
 -- #######################################
 -- Temp Plan Versions
 -- #######################################
 
--- SET Plans To False
+-- SET Other Plans To False so this plan can be activated
 UPDATE plan_versions
 SET 
 	is_selected_plan = FALSE,
 	date_time_last_edited = NOW(6)
 WHERE is_selected_plan = TRUE 
 	AND user_id = @active_user_id;
-
 
 INSERT INTO plan_versions
 (
@@ -136,5 +160,7 @@ INSERT INTO plan_versions
 -- Get Plan_Version_ID
 SET @plan_temp_version_id := LAST_INSERT_ID(); -- Get last insert PK (plan_Version_ID)
 
+-- Validate Variable
+CALL assert_id_not_null(@plan_temp_version_id, 'Seed failed: plans @plan_temp_version_id could not be resolved');
 
 COMMIT;

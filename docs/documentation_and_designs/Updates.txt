@@ -32,6 +32,8 @@ V12__seed_demo_data.sql            ← dev/test only (conditional)
 
 CREATE TEMPORARY TABLE
 
+Triggers with seed files - all allowed columns have to be updated as one unit
+
 ######################################################################################
 Work On:
 ######################################################################################
