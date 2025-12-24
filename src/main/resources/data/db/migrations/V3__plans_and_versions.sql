@@ -9,8 +9,7 @@
 
 CREATE TABLE plans
 (
-    plan_id INT PRIMARY KEY AUTO_INCREMENT,
-	is_system BOOLEAN NOT NULL DEFAULT FALSE,	
+    plan_id INT PRIMARY KEY AUTO_INCREMENT,	
 	
 	date_time_of_creation DATETIME(6) NOT NULL,	
 	

@@ -59,7 +59,7 @@ INSERT INTO measurements
 (TRUE, 'N/A', 'N/A', 'N/A')
 
 ON DUPLICATE KEY UPDATE -- Incase of duplicate, ensures fields match correctly to new insert
-    unit_name = VALUES(unit_name),
+    unit_name = unit_name,
 	unit_symbol = VALUES(unit_symbol);
 
 -- #####################################################
@@ -117,7 +117,7 @@ INSERT INTO stores
 (TRUE, 'No Shop')
 
 ON DUPLICATE KEY UPDATE -- Incase of duplicate, ensures fields match correctly to new insert
-    store_name = VALUES(store_name);
+    store_name = store_name;
 
 -- ##########################
 -- Set Variable
