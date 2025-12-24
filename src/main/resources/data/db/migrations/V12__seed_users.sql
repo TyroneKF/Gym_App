@@ -1,9 +1,11 @@
+
 -- ###############################################################################
 -- USERS | Seed DATA
 -- ###############################################################################
 
--- INSERT into users if no active user
+START TRANSACTION;
 
+-- INSERT into users if no active user
 INSERT INTO users 
 (
 	user_name, 
@@ -31,9 +33,9 @@ SELECT user_id
 INTO @active_user_id
 FROM users
 WHERE selected_user_flag = TRUE
-FOR UPDATE
-LIMIT 1;
-
+ORDER BY user_id
+LIMIT 1
+FOR UPDATE;
 /*
 	FOR UPDATE:
 	This puts a lock on the rows matching this condition, 
@@ -43,10 +45,6 @@ LIMIT 1;
 -- #####################################################
 -- Variable Validation 
 -- #####################################################
-DO
-CASE
-    WHEN @active_user_id IS NULL
-    THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Seed failed: no active user could be resolved';
-END CASE;
+CALL assert_id_not_null(@active_user_id, 'Seed failed: no active user could be resolved');
+
+COMMIT;
