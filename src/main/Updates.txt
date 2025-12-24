@@ -1,6 +1,35 @@
 
 mvn javafx:run "-DmainClass=Tests.ToggleSwitchDemo"
 
+
+if (!schemaVersionExists()) {
+    runMigrations();
+}
+
+if (!schemaVersionIsExpected()) {
+    throw new IllegalStateException(
+        "Database schema mismatch. Application cannot start."
+    );
+}
+
+db/
+ ├── migrations/
+ │    ├── V1__create_core_schema.sql
+ │    ├── V2__create_views.sql
+ │    ├── V3__seed_measurements.sql
+ │    ├── V4__seed_ingredient_types.sql
+ │    ├── V5__add_macros_tables.sql
+ │    └── V6__seed_initial_user.sql
+ │
+ └── README.md
+
+-- Prevents a table from being updated
+
+
+V10__seed_reference_data.sql        ← always prod-safe
+V11__seed_minimal_prod_data.sql    ← one system user / plan
+V12__seed_demo_data.sql            ← dev/test only (conditional)
+
 ######################################################################################
 Work On:
 ######################################################################################
@@ -71,7 +100,6 @@ General
 .) Change all | or || bitwise or vs logical or
 
 
-
 MYJDBC:
 .) Refactor method calls that check if null and return msg use N/A
 .) Switch to Arraylist from LinkedHashSet
@@ -79,9 +107,7 @@ MYJDBC:
 .) IF DB Creation passes & the inserts don't fail the connection isn't rolledback the tables are still created - check create db method
 
 DB:
-.) Make plansLeft use max date for calculation of a plan
-.) Seperate Price database from macro ingredients cost
-.) Remove Weight Fields
+.) User db - inilization script what if insert already has 1 active user?
 
 
 Meal_Plan_Screen:

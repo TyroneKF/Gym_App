@@ -313,6 +313,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         
         String queryX = String.format("""
                 SELECT
+                
                 	U.user_id,
                 	PV.plan_version_id,
                 	PV.plan_id,
@@ -320,15 +321,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 
                 FROM users U
                 
-                LEFT JOIN %s PV
-                	ON U.user_id = PV.user_id
-                	AND PV.selected_plan_flag = ?
+                LEFT JOIN %s PV ON U.user_id = PV.user_id AND PV.selected_plan_flag = ?
                 
-                LEFT JOIN %s P
-                	ON PV.plan_id = P.plan_id
+                LEFT JOIN %s P ON PV.plan_id = P.plan_id
                 
-                WHERE
-                	  U.selected_user_flag = ?;""", table_Plans_Version_Name, table_Plans_Name);
+                WHERE U.selected_user_flag = ?;""", table_Plans_Version_Name, table_Plans_Name);
         
         Object[] params = new Object[]{ true, true };
         

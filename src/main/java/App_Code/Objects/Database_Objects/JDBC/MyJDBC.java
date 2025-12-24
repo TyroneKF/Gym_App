@@ -161,6 +161,15 @@ public class MyJDBC
         System.out.printf("\n\n\n%s\nConnection pool initialized successfully!\n%s", line_Separator, line_Separator);
     }
     
+    /*
+    * 1.) Connect to DB
+    * 2.) Check schema_version
+    * 3.) If empty → apply migrations
+    * 4.) If mismatch → FAIL STARTUP
+    * 5.) Log error clearly
+    * 6.) Exit
+     */
+    
     public boolean create_DB(String db_Script_Folder_Address, String script_List_Name)
     {
         // #############################################################
@@ -169,8 +178,8 @@ public class MyJDBC
         String
                 path = String.format("%s/%s", db_Script_Folder_Address, script_List_Name),
                 method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName()),
-                errorMSG = String.format("Error, running scripts : '%s'!", script_List_Name),
-                update_User_Query = "UPDATE users SET user_name = ? WHERE user_id = 1;";
+                errorMSG = "Error, running migration Scripts!",
+                update_User_Query = "UPDATE users SET user_name = ? WHERE user_name = '@USERNAME@';";
         
         // #############################################################
         //  Connect to LocalHost To Create DB
@@ -192,6 +201,8 @@ public class MyJDBC
              InputStream listStream = getClass().getResourceAsStream(path)
         )
         {
+            connection.setAutoCommit(false); // Prevents each query from being singularly uploaded & is only made not temp when committed
+            
             if (listStream == null)
             {
                 throw new Exception(String.format("\n\nrun_SQL_Script_Folder() Error Loading = NULL \n%s", path));
@@ -204,8 +215,6 @@ public class MyJDBC
                  PreparedStatement statement = connection.prepareStatement(update_User_Query, Statement.RETURN_GENERATED_KEYS)
             )
             {
-                connection.setAutoCommit(false); // Prevents each query from being singularly uploaded & is only made not temp when committed
-                
                 // #######################################
                 // Create DB Schema
                 // #######################################
@@ -238,12 +247,12 @@ public class MyJDBC
                         }
                         catch (Exception e)
                         {
-                            throw e;
+                            return handle_Failed_DB_Creation( e, method_Name,  errorMSG);
                         }
                     }
                     catch (Exception e)
                     {
-                        throw e;
+                        return handle_Failed_DB_Creation( e, method_Name,  errorMSG);
                     }
                 }
                 
@@ -265,15 +274,12 @@ public class MyJDBC
             //##########################################################
             catch (Exception e)
             {
-                rollBack_Connection(connection, method_Name, null);
-                throw e;
+                return handle_Failed_DB_Creation( e, method_Name,  errorMSG);
             }
         }
         catch (Exception e)
         {
-            handleException_File(e, method_Name, errorMSG);
-            close_Connection();
-            return false;
+            return handle_Failed_DB_Creation( e, method_Name,  errorMSG);
         }
         
         // #############################################################
@@ -286,9 +292,15 @@ public class MyJDBC
         }
         catch (Exception e)
         {
-            handleException_File(e, method_Name, "Error, Changing DB Path to App DB Path!");
-            return false;
+            return handle_Failed_DB_Creation( e, method_Name,  "Error, Changing DB Path to App DB Path!");
         }
+    }
+    
+    private boolean handle_Failed_DB_Creation(Exception e, String method_Name, String errorMSG)
+    {
+        handleException_File(e, method_Name, errorMSG);
+        close_Connection();
+        return false;
     }
     
     //##################################################################################################################
@@ -1148,7 +1160,7 @@ public class MyJDBC
             dataSource.close();
         }
     }
-   
+    
     // Param Methods
     private void set_Statement_Params(PreparedStatement statement, int pos, Object object) throws Exception
     {
@@ -1194,6 +1206,24 @@ public class MyJDBC
     //##############################################################################
     // Error Handling Methods
     //##############################################################################
+    /*
+     * Will only work on DML Transactions:
+     * INSERT
+     * UPDATE
+     * DELETE
+     * REPLACE
+     * LOAD DATA (when using InnoDB and not in autocommit)
+     * SELECT … FOR UPDATE / LOCK IN SHARE MODE
+     *
+     * DDL Transaction this won't work on:
+     * CREATE TABLE
+     * DROP TABLE
+     * ALTER TABLE
+     * TRUNCATE TABLE
+     * RENAME TABLE
+     * CREATE INDEX
+     * DROP INDEX
+     */
     private void rollBack_Connection(Connection connection, String method_Name, Object queries)
     {
         //#############################

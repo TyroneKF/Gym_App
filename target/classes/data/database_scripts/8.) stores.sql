@@ -1,4 +1,10 @@
-INSERT INTO stores (store_id, store_name) VALUES
+INSERT INTO stores 
+(
+	store_id, 
+	store_name
+	
+) VALUES
+
 (1,     'No Shop'),
 (null,  'Aldi'),
 (null,  'Amazon'),

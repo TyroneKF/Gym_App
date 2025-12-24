@@ -1,10 +1,22 @@
+-- DDL SCRIPT
 DROP DATABASE IF EXISTS gymapp00001;
 
--- ######################################
 CREATE DATABASE gymapp00001 CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
 USE gymapp00001;
 
+
+-- ######################################
+--
+-- ######################################
+CREATE TABLE schema_version (
+    version INT PRIMARY KEY,
+    applied_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- ######################################
+-- App Setup 	
 -- ######################################
 CREATE TABLE users
 (
@@ -15,6 +27,7 @@ CREATE TABLE users
   is_user_selected BOOLEAN NOT NULL DEFAULT FALSE,
   selected_user_flag BOOLEAN GENERATED ALWAYS AS (IF(is_user_selected, TRUE, NULL)) STORED,
   
+  UNIQUE KEY no_multiple_active_user(selected_user_flag),
   UNIQUE KEY no_repeat_user_names(user_name)
 );
 
@@ -22,7 +35,16 @@ CREATE TABLE users
 CREATE TABLE plans
 (
     plan_id INT PRIMARY KEY AUTO_INCREMENT,
-	date_time_of_creation DATETIME NOT NULL	
+	plan_name VARCHAR(100) NOT NULL,
+	date_time_of_creation DATETIME NOT NULL,
+	
+	user_id INT NOT NULL,
+		FOREIGN KEY (user_id) REFERENCES users(user_id) 
+			ON DELETE CASCADE,	
+	
+	vegan BOOLEAN NOT NULL DEFAULT FALSE,
+	
+	UNIQUE KEY unique_plan_name_by_user(user_id, plan_name)	
 );
 
 CREATE TABLE plan_versions
@@ -32,23 +54,20 @@ CREATE TABLE plan_versions
 	plan_id INT NOT NULL,	
 		FOREIGN KEY (plan_id) REFERENCES plans(plan_id) 
 			ON DELETE CASCADE,
-			
-	date_time_of_last_edited DATETIME NOT NULL,
-	version_number INT NOT NULL,
-	
-	plan_name VARCHAR(100) NOT NULL,
 	
 	user_id INT NOT NULL,
-		FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-
-	vegan BOOLEAN NOT NULL DEFAULT FALSE,
+		FOREIGN KEY (user_id) REFERENCES users(user_id) 
+			ON DELETE CASCADE,
+	
+	version_number INT NOT NULL,
+	date_time_of_last_edited DATETIME NOT NULL,	
 	
     is_selected_plan BOOLEAN NOT NULL DEFAULT FALSE,    
 
     -- Ensures a user can only have one active plan, by using this field as an (identifier)
     selected_plan_flag BOOLEAN GENERATED ALWAYS AS (IF(is_selected_plan, TRUE, NULL)) STORED,
 
-    UNIQUE KEY no_repeated_vs_numbers_per_plan(plan_version_id, version_number),
+    UNIQUE KEY no_repeated_vs_numbers_per_plan(plan_id, version_number),
     UNIQUE KEY no_multiple_active_plans_per_user(user_id, selected_plan_flag)	
 );
 
@@ -61,20 +80,21 @@ CREATE TABLE macros_per_pound_and_limits
 CREATE TABLE macros_per_pound_and_limits_versions
 (
 	macros_version_id INT PRIMARY KEY AUTO_INCREMENT,	
-	date_time_of_creation DATETIME NOT NULL,
-	version_number INT NOT NULL,
-		
+	
 	macros_ID INT NOT NULL,
 		FOREIGN KEY (macros_ID) REFERENCES macros_per_pound_and_limits(macros_ID) 
 			ON DELETE CASCADE,
 	
-	plan_version_id INT NOT NULL,
-		FOREIGN KEY (plan_version_id) REFERENCES plan_versions(plan_version_id) 
-			ON DELETE CASCADE,	
-			
 	user_id INT NOT NULL,
 		FOREIGN KEY (user_id) REFERENCES users(user_id) 
 			ON DELETE CASCADE,
+	
+	plan_version_id INT NOT NULL,
+		FOREIGN KEY (plan_version_id) REFERENCES plan_versions(plan_version_id) 
+			ON DELETE CASCADE,		
+	
+	date_time_of_creation DATETIME NOT NULL,
+	version_number INT NOT NULL,	
 
 	current_weight_kg DECIMAL(7,2) NOT NULL,
 	current_weight_in_pounds DECIMAL(7,2) NOT NULL,
@@ -86,11 +106,12 @@ CREATE TABLE macros_per_pound_and_limits_versions
 	saturated_fat_limit DECIMAL(7,2) NOT NULL,	
 	salt_limit DECIMAL(7,2) NOT NULL,
     water_target DECIMAL(7,2) NOT NULL,
-	liquid_target DECIMAL(7,2) NOT NULL,
+
 	additional_calories DECIMAL(7,2) NOT NULL,
 	
-	UNIQUE KEY unique_date_per_macros_in_plan (plan_version_id, date_time_of_creation),
-	UNIQUE KEY unique_macros_version (macros_ID, version_number)
+	UNIQUE KEY unique_macros_version (macros_ID, version_number),
+	UNIQUE KEY unique_date_per_macros_in_plan (plan_version_id, date_time_of_creation)
+	
 );
 
 
@@ -121,7 +142,8 @@ WITH
 	
 SELECT
 
-	P.plan_version_id,
+	PV.plan_version_id,
+	
 	P.plan_name,
 	
 	C.macros_version_id,
@@ -139,8 +161,13 @@ SELECT
 	IFNULL(ROUND((C.protein * 4) + (C.carbs * 4) + (C.fats * 9) ,2), 0) AS calories_target,
 	IFNULL(ROUND((C.protein * 4) + (C.carbs * 4) + (C.fats * 9) + C.additional_calories ,2), 0) AS additional_calories_target
 
-FROM plan_versions P 
-LEFT JOIN C ON P.plan_version_id = C.plan_version_id;
+FROM plan_versions PV 
+
+LEFT JOIN plans P ON
+	P.plan_id = PV.plan_id
+
+LEFT JOIN C 
+	ON C.plan_version_id = PV.plan_version_id;
 
 -- ######################################
 
@@ -174,12 +201,16 @@ CREATE TABLE ingredients_info
     ingredient_id INT  PRIMARY KEY AUTO_INCREMENT,
 	
 	measurement_id INT NOT NULL,
-	FOREIGN KEY (measurement_id) REFERENCES measurements(measurement_id),
+	FOREIGN KEY (measurement_id) 
+		REFERENCES measurements(measurement_id)
+		ON DELETE RESTRICT, -- Re-assign meassurment if FK meassurment is deleted vs Deleting ingredient too,
 		
 	ingredient_name VARCHAR(100) NOT NULL,
 	
 	ingredient_type_id  INT NOT NULL,
-	FOREIGN KEY (ingredient_type_id) REFERENCES ingredient_types(ingredient_type_id) ON DELETE CASCADE,
+	FOREIGN KEY (ingredient_type_id) 
+		REFERENCES ingredient_types(ingredient_type_id) 
+		ON DELETE RESTRICT, -- Re-assign ingredient Type if FK Type is deleted vs Deleting ingredient too,
 
 	based_on_quantity DECIMAL(7,2) NOT NULL,
     glycemic_index INT NOT NULL,
@@ -244,6 +275,8 @@ CREATE TABLE meals_in_plan_versions
 	meal_in_plan_id INT NOT NULL,
 		FOREIGN KEY (meal_in_plan_id) REFERENCES meals_in_plan(meal_in_plan_id) 
 			ON DELETE CASCADE,
+			
+    date_time_last_edit DATETIME NOT NULL,
 
 	plan_version_id INT NOT NULL,
 		FOREIGN KEY (plan_version_id) REFERENCES plan_versions(plan_version_id) 
@@ -314,7 +347,9 @@ CREATE TABLE ingredients_in_sections_of_meal_versions
 	quantity DECIMAL(15,2) NOT NULL,
 
 	pdid INT NULL,	   
-		FOREIGN KEY (pdid) REFERENCES ingredient_in_shops(pdid), 
+		FOREIGN KEY (pdid) 
+			REFERENCES ingredient_in_shops(pdid)
+			ON DELETE RESTRICT, -- Prevents deleting ingredient if product is being deleted, app logic will have to set this value to null first then delete parent
 		 -- Needs to be manually removed when deleted as we don't want the whole row being deleted
 		
 	UNIQUE KEY no_repeat_records(ingredients_index_version_id, div_meal_sections_version_id)
@@ -428,11 +463,8 @@ WITH
 				
 			FROM divided_meal_sections_versions D
 			
-			LEFT JOIN divided_meal_sections_calculations DI
+			LEFT JOIN divided_meal_sections_calculations DI 
 				ON DI.div_meal_sections_version_id = D.div_meal_sections_version_id
-			
-			LEFT JOIN ingredients_in_sections_of_meal_versions I 
-				ON I.div_meal_sections_version_id = DI.div_meal_sections_version_id
 			
 			GROUP BY D.meal_in_plan_version_id		
 	)
@@ -464,13 +496,12 @@ LEFT JOIN I ON
 
 LEFT JOIN DI ON 
 	DI.meal_in_plan_version_id = M.meal_in_plan_version_id;
-
 -- ######################################
 CREATE VIEW total_plan_view AS
 
 SELECT 
 
-	P.plan_version_id, 
+	PV.plan_version_id, 
 	P.plan_name, -- needs to be here to prevent ONLY_FULL_GROUP_BY
 	
 	COUNT(T.meal_in_plan_version_id) AS no_of_meals, -- always returns 0 or greater || This could be its own CTE if the DB scales Higher
@@ -486,11 +517,15 @@ SELECT
 	
 	IFNULL(ROUND(SUM(T.total_calories),2),0) AS total_calories_in_plan
 
-FROM  plan_versions P
+FROM plan_versions PV
 
-LEFT JOIN total_meal_view T ON P.plan_version_id = T.plan_version_id
+LEFT JOIN plans P 
+	ON P.plan_id = PV.plan_id
+	
+LEFT JOIN total_meal_view T 
+	ON PV.plan_version_id = T.plan_version_id
 
-GROUP BY P.plan_version_id, P.plan_name;
+GROUP BY PV.plan_version_id, P.plan_name;
 
 -- ######################################
 CREATE VIEW plan_macros_left AS
