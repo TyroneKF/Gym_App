@@ -150,7 +150,7 @@ FROM last_7_meals_vs;
 
 
 -- ##########################
--- Breakfast Meal ID \! cls;
+-- Breakfast Meal ID
 -- ##########################
 
 -- Assign Breakfast Meal ID

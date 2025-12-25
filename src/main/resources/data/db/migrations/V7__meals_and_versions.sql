@@ -32,5 +32,4 @@ CREATE TABLE meals_in_plan_versions
 	
 	INDEX idx_meals_by_plan (plan_version_id, meal_time),
 	INDEX idx_meal_versions_plan_version (plan_version_id)
-
 );

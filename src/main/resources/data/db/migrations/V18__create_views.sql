@@ -8,7 +8,7 @@ C AS (
 			SELECT
 			
 			    macros_version_id,
-				date_time_of_creation,
+				date_time_last_edited,
 				version_number,
 				
 				plan_version_id,				
@@ -32,7 +32,7 @@ SELECT
 	P.plan_name,
 	
 	C.macros_version_id,
-	C.date_time_of_creation,
+	C.date_time_last_edited,
 	C.version_number,
 	
 	IFNULL(C.protein, 0) AS expected_protein_grams,
@@ -226,20 +226,6 @@ LEFT JOIN total_meal_view T
 
 GROUP BY PV.plan_version_id, P.plan_name;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 -- ######################################
 CREATE VIEW plan_macros_left AS
 	
@@ -253,7 +239,7 @@ WITH
 					plan_version_id,
 					ROW_NUMBER() OVER ( -- Split AND ORDER BY
 						PARTITION BY plan_version_id -- Split the result set into groups based on plan_version_id
-						ORDER BY date_time_of_creation DESC -- ORDER BY date
+						ORDER BY date_time_last_edited DESC -- ORDER BY date
 					) AS rn					
 				FROM macros_per_pound_and_limits_versions
 			) T
