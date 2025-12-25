@@ -1,6 +1,15 @@
 
 mvn javafx:run "-DmainClass=Tests.ToggleSwitchDemo"
+ -- #################################
+flyaway migration handling
 
+Example (Java + Hikari)
+Flyway.configure()
+  .dataSource(dataSource)
+  .locations("classpath:db/migration")
+  .load()
+  .migrate();
+ -- #################################
 
 if (!schemaVersionExists()) {
     runMigrations();
