@@ -1,17 +1,9 @@
--- #############################################################################
--- #############################################################################
-
-
 -- ##################################################
 -- Step 1.)
 -- ##################################################
-/*	
-	Step 1: “Make sure placeholders exist”
-	Insert 7 rows once, with a safety switch that prevents inserting again.
-	
-    This is effectively “insert 7 rows once.”
-	The bottom part prevents inserting again.
-	The numbers do not represent meals, IDs, or meanings — they only force repetition.
+/*
+	The Values 1-7 are discarded but, this section just inserts 7X date values 
+	and union combines each row into rows for an insert
 */
 
 INSERT INTO meals_in_plan 
@@ -21,7 +13,7 @@ INSERT INTO meals_in_plan
 SELECT NOW(6) -- Put the current timestamp into date_time_of_creation with microsecond pricision
 FROM          -- EACH SELECT produces one row and union combines them all to produce an insert statement x 7
 (             
-	    
+	    -- Just Inserts x7 
 		-- Row generator: produces exactly 7 rows
 		-- Values are discarded; they do NOT represent meal IDs or meanings
 		SELECT 1 UNION ALL -- 1  # For Breakfast later
@@ -32,13 +24,7 @@ FROM          -- EACH SELECT produces one row and union combines them all to pro
 		SELECT 6 UNION ALL -- 6  # For Dinner later 
 		SELECT 7           -- 7  # For Bed Snack later 
 		
-) AS seed 
-WHERE NOT EXISTS -- Safety switch: Only insert rows if the table has fewer than 7 rows
-(
-    SELECT 1 
-	FROM meals_in_plan
-    LIMIT 7
-);
+) AS seed;
 
 -- ##################################################
 -- Step 2.)
@@ -48,6 +34,7 @@ WHERE NOT EXISTS -- Safety switch: Only insert rows if the table has fewer than 
 	Job of this section: create a reliable way to refer to anchor rows without ever hard-coding their IDs.
 	It only answers this question: Which anchor row should be treated as the 1st, 2nd, 3rd… meal slot?
 */
+
 CREATE TEMPORARY TABLE tmp_meal_anchors 
 (
     rn INT PRIMARY KEY,
@@ -55,18 +42,26 @@ CREATE TEMPORARY TABLE tmp_meal_anchors
 );
 
 INSERT INTO tmp_meal_anchors 
-(
+( 
 	rn, 
-	meal_in_plan_id	
+	meal_in_plan_id
 )
-SELECT
+WITH last_7_meals AS 
+(
+	SELECT
+		meal_in_plan_id
+	FROM meals_in_plan
+	ORDER BY meal_in_plan_id DESC
+	LIMIT 7
 
-    ROW_NUMBER() OVER (ORDER BY meal_in_plan_id) AS rn, -- for each for produces rn  | meal_in_plan_id
-    meal_in_plan_id
+)
+SELECT 
+
+	ROW_NUMBER() OVER (ORDER BY meal_in_plan_id ASC) AS rn,    
+	meal_in_plan_id
 	
-FROM meals_in_plan
-ORDER BY meal_in_plan_id
-LIMIT 7; -- Only map for 7 anchors we care about being the 7 slots for 7 meals
+FROM last_7_meals;
+
 /*	
 tmp_meal_anchors:
 	rn  | meal_in_plan_id
@@ -81,15 +76,13 @@ tmp_meal_anchors:
 */
 
 
-
-
-
 -- ##################################################
 -- Step 3.)
 -- ##################################################
-Step 3: “Attach meaning to placeholders”
+/*
+	Step 3: “Attach meaning to placeholders”
 
-
+*/
 
 INSERT INTO meals_in_plan_versions
 (
@@ -110,11 +103,161 @@ SELECT
 FROM tmp_meal_anchors a
 JOIN 
 (
-    SELECT 1 AS rn,  'Breakfast'    AS meal_name, '08:00' AS meal_time UNION ALL
-    SELECT 2,        'Mid Morning',               '10:30' UNION ALL
-    SELECT 3,        'Lunch',                     '13:00' UNION ALL
-    SELECT 4,        'Pre Workout',               '16:30' UNION ALL
-    SELECT 5,        'Post Workout',              '18:00' UNION ALL
-    SELECT 6,        'Dinner',                    '20:00' UNION ALL
-    SELECT 7,        'Bed Snack',                 '22:00'
+    SELECT 1 AS rn,  'Breakfast1'    AS meal_name, '08:20' AS meal_time UNION ALL
+    SELECT 2,        'Mid Morning1',               '10:10' UNION ALL
+    SELECT 3,        'Lunch1',                     '13:20' UNION ALL
+    SELECT 4,        'Pre Workout1',               '16:40' UNION ALL
+    SELECT 5,        'Post Workout1',              '18:50' UNION ALL
+    SELECT 6,        'Dinner1',                    '20:40' UNION ALL
+    SELECT 7,        'Bed Snack1',                 '22:20'
 ) v ON v.rn = a.rn;
+
+-- ##################################################
+-- Step 4.) Map meal_in_plan_version_id
+-- ##################################################
+/*
+	Assign Macro Version ID
+*/
+
+-- Create Temporary Table for Meals just inserted
+
+CREATE TEMPORARY TABLE tmp_meal_version_anchors 
+( 
+	rn INT PRIMARY KEY,
+    meal_in_plan_version_id INT NOT NULL
+);
+
+INSERT INTO tmp_meal_version_anchors 
+( 
+	rn, 
+	meal_in_plan_version_id
+)
+WITH last_7_meals_vs AS 
+(
+	SELECT
+		 meal_in_plan_version_id
+	FROM meals_in_plan_versions
+	ORDER BY meal_in_plan_version_id DESC
+	LIMIT 7
+
+)
+SELECT 
+
+	ROW_NUMBER() OVER (ORDER BY meal_in_plan_version_id ASC) AS rn,    
+	meal_in_plan_version_id
+	
+FROM last_7_meals_vs;
+
+
+-- ##########################
+-- Breakfast Meal ID \! cls;
+-- ##########################
+
+-- Assign Breakfast Meal ID
+SELECT meal_in_plan_version_id
+INTO @breakfast_mv_id
+FROM tmp_meal_version_anchors 
+ORDER BY meal_in_plan_version_id
+LIMIT 1 OFFSET 0;
+
+CALL assert_id_not_null(@breakfast_mv_id, 'Seed failed: meal_in_plan_versions @breakfast_mv_id could not be resolved');
+
+-- ##########################
+-- Mid-Morning Snack Meal ID 
+-- ##########################
+
+-- Assign Mid-Morning Snack Meal ID
+SELECT meal_in_plan_version_id
+INTO @mid_morning_snack_mv_id
+FROM tmp_meal_version_anchors 
+ORDER BY meal_in_plan_version_id
+LIMIT 1 OFFSET 1;
+
+CALL assert_id_not_null(@mid_morning_snack_mv_id, 'Seed failed: meal_in_plan_versions @mid_morning_snack_mv_id could not be resolved');
+
+-- ##########################
+-- Lunch Meal ID 
+-- ##########################
+
+-- Assign Lunch ID
+SELECT meal_in_plan_version_id
+INTO @lunch_mv_id
+FROM tmp_meal_version_anchors 
+ORDER BY meal_in_plan_version_id
+LIMIT 1 OFFSET 2;
+
+CALL assert_id_not_null(@lunch_mv_id, 'Seed failed: meal_in_plan_versions @lunch_mv_id could not be resolved');
+
+-- ##########################
+-- Pre-Workout ID 
+-- ##########################
+
+-- Assign Lunch ID
+SELECT meal_in_plan_version_id
+INTO @pre_workout_mv_id
+FROM tmp_meal_version_anchors 
+ORDER BY meal_in_plan_version_id
+LIMIT 1 OFFSET 3;
+
+CALL assert_id_not_null(@pre_workout_mv_id, 'Seed failed: meal_in_plan_versions @pre_workout_mv_id could not be resolved');
+
+-- ##########################
+-- Post-Workout ID 
+-- ##########################
+
+-- Assign Post-Workout ID
+SELECT meal_in_plan_version_id
+INTO @post_workout_mv_id
+FROM tmp_meal_version_anchors 
+ORDER BY meal_in_plan_version_id
+LIMIT 1 OFFSET 4;
+
+CALL assert_id_not_null(@post_workout_mv_id, 'Seed failed: meal_in_plan_versions @post_workout_mv_id could not be resolved');
+
+-- ##########################
+-- Dinner ID 
+-- ##########################
+
+-- Assign Dinner ID
+SELECT meal_in_plan_version_id
+INTO @dinner_mv_id
+FROM tmp_meal_version_anchors 
+ORDER BY meal_in_plan_version_id
+LIMIT 1 OFFSET 5;
+
+CALL assert_id_not_null(@dinner_mv_id, 'Seed failed: meal_in_plan_versions @dinner_mv_id could not be resolved');
+
+-- ##########################
+-- Bed Snack ID 
+-- ##########################
+
+-- Assign Dinner ID
+SELECT meal_in_plan_version_id
+INTO @bed_snack_mv_id
+FROM tmp_meal_version_anchors 
+ORDER BY meal_in_plan_version_id
+LIMIT 1 OFFSET 6;
+
+CALL assert_id_not_null(@bed_snack_mv_id, 'Seed failed: meal_in_plan_versions @bed_snack_mv_id could not be resolved');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

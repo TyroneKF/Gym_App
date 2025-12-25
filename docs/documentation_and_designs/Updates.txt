@@ -34,6 +34,22 @@ CREATE TEMPORARY TABLE
 
 Triggers with seed files - all allowed columns have to be updated as one unit
 
+INSERT INTO measurements
+(
+    is_system,
+    unit_name,
+    unit_symbol,
+    measured_material_type
+)
+VALUES
+    (TRUE, 'Litres', 'L', 'Liquids'),
+    (TRUE, 'Grams', 'g', 'Solids'),
+    (TRUE, 'N/A', 'N/A', 'N/A')
+AS new_vals
+ON DUPLICATE KEY UPDATE
+    unit_name   = new_vals.unit_name,
+    unit_symbol = new_vals.unit_symbol;
+
 ######################################################################################
 Work On:
 ######################################################################################
