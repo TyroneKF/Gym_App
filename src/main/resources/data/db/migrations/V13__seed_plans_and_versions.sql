@@ -106,9 +106,7 @@ FOR UPDATE; -- Locks
 -- Validate Variable
 CALL assert_id_not_null(@next_version, 'Seed failed: plans @next_version could not be resolved');
 
--- #####################################
--- Insert Into Plan Version
--- #####################################
+-- Insert Statement
 INSERT INTO plan_versions
 (
 	plan_id, 
