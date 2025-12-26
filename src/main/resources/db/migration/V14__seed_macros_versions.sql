@@ -34,8 +34,8 @@ INSERT INTO macros_per_pound_and_limits_versions
 	
 	additional_calories
 	
-) VALUES
-
+)
+VALUES
 (@macros_id, @active_user_id, @plan_Version_id, NOW(6), 1, 102.5, 225.5, 25, 1, 2, 30, 0.4, 30, 30, 5000, 400);
 
 -- Set Macros Version ID

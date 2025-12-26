@@ -3,8 +3,6 @@
 -- USERS | Seed DATA
 -- ###############################################################################
 
-START TRANSACTION;
-
 -- INSERT into users if no active user
 INSERT INTO users 
 (
@@ -24,28 +22,27 @@ ON DUPLICATE KEY UPDATE
     user_name = user_name; -- keeps the existing active user
 
 
--- ####################################
--- SET active user ID
--- ####################################
+-- #####################################################
+-- Create Variable
+-- #####################################################
 
--- Lock and resolve active user
+-- SET active user ID
 SELECT user_id
 INTO @active_user_id
 FROM users
 WHERE selected_user_flag = TRUE
 ORDER BY user_id
-LIMIT 1
-FOR UPDATE;
-/*
-	FOR UPDATE:
-	This puts a lock on the rows matching this condition, 
-	other transactions cannot update / delete these rows until released by transaction.
-*/
+LIMIT 1;
 
--- #####################################################
--- Variable Validation 
--- #####################################################
+-- Variable Validation
 CALL assert_id_not_null(@active_user_id, 'Seed failed: no active user could be resolved');
 
-COMMIT;
+-- Insert Into Seed Registry Table
+INSERT INTO seed_registry (seed_key, entity_table_name, entity_id_value)
+VALUES
+    ('active_user_id', 'users' , @active_user_id)
+AS new_vals
+ON DUPLICATE KEY UPDATE -- In case of duplicate, ensures fields match correctly to new insert
+	entity_id_value = new_vals.entity_id_value;
+
 

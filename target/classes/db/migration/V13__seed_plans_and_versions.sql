@@ -1,8 +1,8 @@
 -- ###############################################################################
--- Set Variables
+-- Get Active User From Seed
 -- ###############################################################################
 
--- Get Active User From Seed
+-- SET active user ID
 SELECT entity_id_value
 INTO @active_user_id
 FROM seed_registry
