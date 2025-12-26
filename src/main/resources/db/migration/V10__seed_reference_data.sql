@@ -157,7 +157,7 @@ INSERT INTO ingredients_info
 	
 ) VALUES
 
-(TRUE, @na_meassurement_id, @na_ingredient_name, @na_type_id, 0,0,0,0,0,0,0,0,0,0,0,0)
+(TRUE, @na_measurement_id, @na_ingredient_name, @na_type_id, 0,0,0,0,0,0,0,0,0,0,0,0)
 
 ON DUPLICATE KEY UPDATE -- Incase of duplicate, ensures fields match correctly to new insert
 	ingredient_name = ingredient_name;
