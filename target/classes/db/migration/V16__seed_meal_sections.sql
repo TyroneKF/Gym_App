@@ -1,6 +1,22 @@
--- ##################################################
+-- ###############################################################################
+-- Set Variables
+-- ###############################################################################
+-- Get Active Plan Version From Seed
+SELECT entity_id_value
+INTO @plan_Version_id
+FROM seed_registry
+WHERE seed_key = 'plan_Version_id';
+
+-- Variable Validation
+CALL assert_id_not_null(@plan_Version_id, 'Seed failed: @plan_Version_id could be resolved');
+
+
+
+
+
+-- ###############################################################################
 -- Step 1.)
--- ##################################################
+-- ###############################################################################
 /*
 	The Values 1-7 are discarded but, this section just inserts 7X date values 
 	and union combines each row into rows for an insert
@@ -43,9 +59,9 @@ FROM    -- Just Inserts x15
 		
 ) AS seed;
 
--- ##################################################
+-- ###############################################################################
 -- Step 2.)
--- ##################################################
+-- ###############################################################################
 /*
 	Step 2: “Figure out which placeholder belongs to which ID
 	Job of this section: create a reliable way to refer to anchor rows without ever hard-coding their IDs.
@@ -79,9 +95,9 @@ SELECT
 	
 FROM last_15_div_meals;
 
--- ##################################################
+-- ###############################################################################
 -- Step 3.)
--- ##################################################
+-- ###############################################################################
 /*
 	Step 3: “Attach meaning to placeholders”
 

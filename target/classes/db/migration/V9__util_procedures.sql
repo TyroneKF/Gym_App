@@ -35,6 +35,32 @@ BEGIN
 
 END;
 
+-- ################################################################
+--
+-- ################################################################
+
+
+CREATE FUNCTION get_seed_id_by_key (seed_key VARCHAR(100))
+RETURNS INT
+DETERMINISTIC
+BEGIN
+
+    DECLARE seed_id int;
+
+    SELECT
+        entity_id_value
+    INTO seed_id
+    FROM seed_registry
+    WHERE seed_key = seed_key
+    LIMIT 1;
+
+    RETURN seed_id;
+
+END;
+
+
+
+
 
 
 

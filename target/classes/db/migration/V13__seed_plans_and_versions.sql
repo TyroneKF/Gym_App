@@ -3,10 +3,7 @@
 -- ###############################################################################
 
 -- Get Active User From Seed
-SELECT entity_id_value
-INTO @active_user_id
-FROM seed_registry
-WHERE seed_key = 'active_user_id';
+SET @active_user_id= get_seed_id_by_key('active_user_id');
 
 -- Variable Validation
 CALL assert_id_not_null(@active_user_id, 'Seed failed: no active user could be resolved');
