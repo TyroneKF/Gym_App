@@ -135,6 +135,14 @@
             <version>10.11.0</version>
         </dependency>
 
+        <!-- 🗄️ Flyway MySQL: Database migration support for MySQL using Flyway schema versioning -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-mysql</artifactId>
+            <version>10.11.0</version>
+        </dependency>
+
+
 
 
     </dependencies>
