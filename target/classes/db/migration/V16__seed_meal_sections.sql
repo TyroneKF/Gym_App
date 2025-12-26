@@ -6,8 +6,6 @@
 	and union combines each row into rows for an insert
 */
 
-\! cls;
-
 INSERT INTO divided_meal_sections(div_meal_sections_id)
 SELECT NULL -- 
 FROM    -- Just Inserts x15     
