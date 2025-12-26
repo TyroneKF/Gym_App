@@ -61,12 +61,7 @@ LIMIT 1;
 CALL assert_id_not_null(@plan_id, 'Seed failed: plan @plan_id could not be resolved');
 
 -- Insert Into Seed Registry Table
-INSERT INTO seed_registry (seed_key, entity_table_name, entity_id_value)
-VALUES
-    ('plan_id', 'plans' , @plan_id)
-AS new_vals
-ON DUPLICATE KEY UPDATE -- In case of duplicate, ensures fields match correctly to new insert
-	entity_id_value = new_vals.entity_id_value;
+CALL insert_into_seed_registry('plan_id', 'plans' , @plan_id);
 
 -- ###############################################################################
 --  Plan Versions Insert
@@ -104,9 +99,4 @@ SET @plan_Version_id := LAST_INSERT_ID(); -- Get last insert PK (plan_Version_ID
 -- #################################
 -- Insert Into Seed Registry Table
 -- #################################
-INSERT INTO seed_registry (seed_key, entity_table_name, entity_id_value)
-VALUES
-    ('plan_Version_id', 'plan_versions' , @plan_Version_id)
-AS new_vals
-ON DUPLICATE KEY UPDATE -- In case of duplicate, ensures fields match correctly to new insert
-	entity_id_value = new_vals.entity_id_value;
+CALL insert_into_seed_registry('plan_Version_id', 'plan_versions' , @plan_Version_id);

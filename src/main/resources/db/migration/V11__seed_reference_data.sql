@@ -32,12 +32,7 @@ LIMIT 1;
 CALL assert_id_not_null(@na_type_id, 'Seed failed: @na_type_id (ingredient types) could not be resolved');
 
 -- Insert Into Seed Registry Table
-INSERT INTO seed_registry (seed_key, entity_table_name, entity_id_value)
-VALUES
-    ('na_type_id', 'ingredient_types' , @na_type_id)
-AS new_vals
-ON DUPLICATE KEY UPDATE -- In case of duplicate, ensures fields match correctly to new insert
-	entity_id_value  = new_vals.entity_id_value;
+CALL insert_into_seed_registry('na_type_id', 'ingredient_types', @na_type_id);
 
 -- #################################################################################################
 -- Ingredient Measurements
@@ -81,12 +76,7 @@ LIMIT 1;
 CALL assert_id_not_null(@litres_id, 'Seed failed: @litres_id (measurement) could not be resolved');
 
 -- Insert Into Seed Registry Table
-INSERT INTO seed_registry (seed_key, entity_table_name, entity_id_value)
-VALUES
-    ('litres_id', 'measurements' , @litres_id)
-AS new_vals
-ON DUPLICATE KEY UPDATE -- In case of duplicate, ensures fields match correctly to new insert
-	entity_id_value  = new_vals.entity_id_value;
+CALL insert_into_seed_registry('litres_id', 'measurements' , @litres_id);
 
 -- ############################
 -- Grams
@@ -121,12 +111,8 @@ LIMIT 1;
 CALL assert_id_not_null(@na_measurement_id, 'Seed failed: @na_measurement_id (measurement) could not be resolved');
 
 -- Insert Into Seed Registry Table
-INSERT INTO seed_registry (seed_key, entity_table_name, entity_id_value)
-VALUES
-    ('na_measurement_id', 'measurements' , @na_measurement_id)
-AS new_vals
-ON DUPLICATE KEY UPDATE -- In case of duplicate, ensures fields match correctly to new insert
-	entity_id_value = new_vals.entity_id_value;
+CALL insert_into_seed_registry('na_measurement_id', 'measurements' , @na_measurement_id);
+
 
 -- #################################################################################################
 -- Ingredient Stores
@@ -163,12 +149,7 @@ LIMIT 1;
 CALL assert_id_not_null(@na_store_id, 'Seed failed: Store ID @na_store_id could not be resolved');
 
 -- Insert Into Seed Registry Table
-INSERT INTO seed_registry (seed_key, entity_table_name, entity_id_value)
-VALUES
-    ('na_store_id', 'stores' , @na_store_id)
-AS new_vals
-ON DUPLICATE KEY UPDATE -- In case of duplicate, ensures fields match correctly to new insert
-    entity_id_value = new_vals.entity_id_value;
+CALL insert_into_seed_registry('na_store_id', 'stores' , @na_store_id);
 
 -- #################################################################################################
 -- Creating N/A Ingredient
@@ -217,10 +198,4 @@ LIMIT 1;
 CALL assert_id_not_null(@na_ingredient_id, 'Seed failed: Ingredient ID @na_ingredient_id could not be resolved');
 
 -- Insert Into Seed Registry Table
-INSERT INTO seed_registry (seed_key, entity_table_name, entity_id_value)
-VALUES
-    ('na_ingredient_id', 'ingredients_info' , @na_ingredient_id)
-AS new_vals
-ON DUPLICATE KEY UPDATE -- In case of duplicate, ensures fields match correctly to new insert
-	entity_id_value = new_vals.entity_id_value;
-
+CALL insert_into_seed_registry('na_ingredient_id', 'ingredients_info' , @na_ingredient_id);

@@ -70,10 +70,4 @@ SET @macros_version_id := LAST_INSERT_ID();
 CALL assert_id_not_null(@macros_version_id, 'Seed failed: macros_per_pound_and_limits @macros_version_id could not be resolved');
 
 -- Insert Into Seed Registry Table
-INSERT INTO seed_registry (seed_key, entity_table_name, entity_id_value)
-VALUES
-    ('macros_version_id', 'macros_per_pound_and_limits_versions' , @macros_version_id)
-AS new_vals
-ON DUPLICATE KEY UPDATE -- In case of duplicate, ensures fields match correctly to new insert
-	entity_id_value = new_vals.entity_id_value;
-
+CALL insert_into_seed_registry('macros_version_id', 'macros_per_pound_and_limits_versions' , @macros_version_id);

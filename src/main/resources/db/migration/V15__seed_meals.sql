@@ -1,7 +1,21 @@
--- ##################################################
--- Step 1.)
--- ##################################################
+-- ###############################################################################
+-- Set Variables
+-- ###############################################################################
+-- Get Active Plan Version From Seed
+SELECT entity_id_value
+INTO @plan_Version_id
+FROM seed_registry
+WHERE seed_key = 'plan_Version_id';
+
+-- Variable Validation
+CALL assert_id_not_null(@plan_Version_id, 'Seed failed: @plan_Version_id could be resolved');
+
+-- ###############################################################################
+--  Step 1.) Insert Into Meals
+-- ###############################################################################
 /*
+
+
 	The Values 1-7 are discarded but, this section just inserts 7X date values 
 	and union combines each row into rows for an insert
 */
@@ -26,21 +40,39 @@ FROM          -- EACH SELECT produces one row and union combines them all to pro
 		
 ) AS seed;
 
--- ##################################################
--- Step 2.)
--- ##################################################
+-- ###############################################################################
+-- Step 2.) Create Anchors For Meals
+-- ###############################################################################
 /*
 	Step 2: “Figure out which placeholder belongs to which ID
 	Job of this section: create a reliable way to refer to anchor rows without ever hard-coding their IDs.
 	It only answers this question: Which anchor row should be treated as the 1st, 2nd, 3rd… meal slot?
+
+	tmp_meal_anchors:
+    	rn  | meal_in_plan_id
+        _______________________
+    	1	| 14
+    	2	| 22
+    	3	| 31
+    	4	| 45
+    	5	| 58
+    	6	| 61
+    	7	| 79
+
 */
 
+-- ###########################
+-- Create Anchor Table
+-- ###########################
 CREATE TEMPORARY TABLE tmp_meal_anchors 
 (
     rn INT PRIMARY KEY,
     meal_in_plan_id INT NOT NULL
 );
 
+-- ###########################
+-- Insert Into Anchor Table
+-- ###########################
 INSERT INTO tmp_meal_anchors 
 ( 
 	rn, 
@@ -62,23 +94,9 @@ SELECT
 	
 FROM last_7_meals;
 
-/*	
-tmp_meal_anchors:
-	rn  | meal_in_plan_id
-    _______________________
-	1	| 14
-	2	| 22
-	3	| 31
-	4	| 45
-	5	| 58
-	6	| 61
-	7	| 79
-*/
-
-
--- ##################################################
--- Step 3.)
--- ##################################################
+-- ###############################################################################
+-- Step 3.) Insert Into meals_in_plan_versions
+-- ###############################################################################
 /*
 	Step 3: “Attach meaning to placeholders”
 
@@ -103,30 +121,33 @@ SELECT
 FROM tmp_meal_anchors a
 JOIN 
 (
-    SELECT 1 AS rn,  'Breakfast1'    AS meal_name, '08:20' AS meal_time UNION ALL
-    SELECT 2,        'Mid Morning1',               '10:10' UNION ALL
-    SELECT 3,        'Lunch1',                     '13:20' UNION ALL
-    SELECT 4,        'Pre Workout1',               '16:40' UNION ALL
-    SELECT 5,        'Post Workout1',              '18:50' UNION ALL
-    SELECT 6,        'Dinner1',                    '20:40' UNION ALL
-    SELECT 7,        'Bed Snack1',                 '22:20'
+    SELECT 1 AS rn,  'Breakfast'    AS meal_name, '08:20' AS meal_time UNION ALL
+    SELECT 2,        'Mid Morning',               '10:10' UNION ALL
+    SELECT 3,        'Lunch',                     '13:20' UNION ALL
+    SELECT 4,        'Pre Workout',               '16:40' UNION ALL
+    SELECT 5,        'Post Workout',              '18:50' UNION ALL
+    SELECT 6,        'Dinner',                    '20:40' UNION ALL
+    SELECT 7,        'Bed Snack',                 '22:20'
 ) v ON v.rn = a.rn;
 
--- ##################################################
--- Step 4.) Map meal_in_plan_version_id
--- ##################################################
+-- ###############################################################################
+-- Step 4.) Insert Into meal_in_plan_version_id by Mapping with Anchors
+-- ###############################################################################
 /*
 	Assign Macro Version ID
 */
-
--- Create Temporary Table for Meals just inserted
-
+-- ##################################
+-- Create Temporary Table for Meals
+-- ##################################
 CREATE TEMPORARY TABLE tmp_meal_version_anchors 
 ( 
 	rn INT PRIMARY KEY,
     meal_in_plan_version_id INT NOT NULL
 );
 
+-- ##################################
+-- Insert Into Anchor Table
+-- ##################################
 INSERT INTO tmp_meal_version_anchors 
 ( 
 	rn, 
@@ -139,7 +160,6 @@ WITH last_7_meals_vs AS
 	FROM meals_in_plan_versions
 	ORDER BY meal_in_plan_version_id DESC
 	LIMIT 7
-
 )
 SELECT 
 
@@ -148,10 +168,9 @@ SELECT
 	
 FROM last_7_meals_vs;
 
-
--- ##########################
--- Breakfast Meal ID
--- ##########################
+-- ###############################################################################
+-- Set Variables
+-- ###############################################################################
 
 -- Assign Breakfast Meal ID
 SELECT meal_in_plan_version_id
@@ -160,7 +179,11 @@ FROM tmp_meal_version_anchors
 ORDER BY meal_in_plan_version_id
 LIMIT 1 OFFSET 0;
 
+-- Variable Validation
 CALL assert_id_not_null(@breakfast_mv_id, 'Seed failed: meal_in_plan_versions @breakfast_mv_id could not be resolved');
+
+-- Insert Into Seed Registry Table
+CALL insert_into_seed_registry('breakfast_mv_id', 'meals_in_plan_versions', @breakfast_mv_id);
 
 -- ##########################
 -- Mid-Morning Snack Meal ID 
@@ -173,7 +196,11 @@ FROM tmp_meal_version_anchors
 ORDER BY meal_in_plan_version_id
 LIMIT 1 OFFSET 1;
 
+-- Variable Validation
 CALL assert_id_not_null(@mid_morning_snack_mv_id, 'Seed failed: meal_in_plan_versions @mid_morning_snack_mv_id could not be resolved');
+
+-- Insert Into Seed Registry Table
+CALL insert_into_seed_registry('mid_morning_snack_mv_id', 'meals_in_plan_versions', @mid_morning_snack_mv_id);
 
 -- ##########################
 -- Lunch Meal ID 
@@ -186,7 +213,11 @@ FROM tmp_meal_version_anchors
 ORDER BY meal_in_plan_version_id
 LIMIT 1 OFFSET 2;
 
+-- Variable Validation
 CALL assert_id_not_null(@lunch_mv_id, 'Seed failed: meal_in_plan_versions @lunch_mv_id could not be resolved');
+
+-- Insert Into Seed Registry Table
+CALL insert_into_seed_registry('lunch_mv_id', 'meals_in_plan_versions', @lunch_mv_id);
 
 -- ##########################
 -- Pre-Workout ID 
@@ -199,7 +230,11 @@ FROM tmp_meal_version_anchors
 ORDER BY meal_in_plan_version_id
 LIMIT 1 OFFSET 3;
 
+-- Variable Validation
 CALL assert_id_not_null(@pre_workout_mv_id, 'Seed failed: meal_in_plan_versions @pre_workout_mv_id could not be resolved');
+
+-- Insert Into Seed Registry Table
+CALL insert_into_seed_registry('pre_workout_mv_id', 'meals_in_plan_versions', @pre_workout_mv_id);
 
 -- ##########################
 -- Post-Workout ID 
@@ -212,7 +247,11 @@ FROM tmp_meal_version_anchors
 ORDER BY meal_in_plan_version_id
 LIMIT 1 OFFSET 4;
 
+-- Variable Validation
 CALL assert_id_not_null(@post_workout_mv_id, 'Seed failed: meal_in_plan_versions @post_workout_mv_id could not be resolved');
+
+-- Insert Into Seed Registry Table
+CALL insert_into_seed_registry('post_workout_mv_id', 'meals_in_plan_versions', @post_workout_mv_id);
 
 -- ##########################
 -- Dinner ID 
@@ -225,7 +264,11 @@ FROM tmp_meal_version_anchors
 ORDER BY meal_in_plan_version_id
 LIMIT 1 OFFSET 5;
 
+-- Variable Validation
 CALL assert_id_not_null(@dinner_mv_id, 'Seed failed: meal_in_plan_versions @dinner_mv_id could not be resolved');
+
+-- Insert Into Seed Registry Table
+CALL insert_into_seed_registry('dinner_mv_id', 'meals_in_plan_versions', @dinner_mv_id);
 
 -- ##########################
 -- Bed Snack ID 
@@ -238,10 +281,11 @@ FROM tmp_meal_version_anchors
 ORDER BY meal_in_plan_version_id
 LIMIT 1 OFFSET 6;
 
+-- Variable Validation
 CALL assert_id_not_null(@bed_snack_mv_id, 'Seed failed: meal_in_plan_versions @bed_snack_mv_id could not be resolved');
 
-
-
+-- Insert Into Seed Registry Table
+CALL insert_into_seed_registry('bed_snack_mv_id', 'meals_in_plan_versions', @bed_snack_mv_id);
 
 
 

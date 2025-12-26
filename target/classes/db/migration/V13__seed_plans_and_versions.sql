@@ -61,17 +61,15 @@ LIMIT 1;
 CALL assert_id_not_null(@plan_id, 'Seed failed: plan @plan_id could not be resolved');
 
 -- Insert Into Seed Registry Table
-INSERT INTO seed_registry (seed_key, entity_table_name, entity_id_value)
-VALUES
-    ('plan_id', 'plans' , @plan_id)
-AS new_vals
-ON DUPLICATE KEY UPDATE -- In case of duplicate, ensures fields match correctly to new insert
-	entity_id_value = new_vals.entity_id_value;
+CALL insert_into_seed_registry('plan_id', 'plans' , @plan_id);
 
 -- ###############################################################################
 --  Plan Versions Insert
 -- ###############################################################################
 
+-- #################################
+-- Get Next Version No For Plan
+-- #################################
 -- GET MAX Version Number for Plan_version for chosen meal plan
 SELECT COALESCE(MAX(version_number), 0) + 1
 INTO @next_version
@@ -96,17 +94,9 @@ INSERT INTO plan_versions
 VALUES
 (@plan_id, @active_user_id, @next_version, now(6), FALSE);
 
--- #################################
--- Create Variable
--- #################################
-
- -- Set Variable ID
 SET @plan_Version_id := LAST_INSERT_ID(); -- Get last insert PK (plan_Version_ID)
 
--- Insert Into Seed Data
-INSERT INTO seed_registry (seed_key, entity_table_name, entity_id_value)
-VALUES
-    ('plan_Version_id', 'plan_versions' , @plan_Version_id)
-AS new_vals
-ON DUPLICATE KEY UPDATE -- In case of duplicate, ensures fields match correctly to new insert
-	entity_id_value = new_vals.entity_id_value;
+-- #################################
+-- Insert Into Seed Registry Table
+-- #################################
+CALL insert_into_seed_registry('plan_Version_id', 'plan_versions' , @plan_Version_id);

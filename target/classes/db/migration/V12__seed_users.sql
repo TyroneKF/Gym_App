@@ -38,11 +38,5 @@ LIMIT 1;
 CALL assert_id_not_null(@active_user_id, 'Seed failed: no active user could be resolved');
 
 -- Insert Into Seed Registry Table
-INSERT INTO seed_registry (seed_key, entity_table_name, entity_id_value)
-VALUES
-    ('active_user_id', 'users' , @active_user_id)
-AS new_vals
-ON DUPLICATE KEY UPDATE -- In case of duplicate, ensures fields match correctly to new insert
-	entity_id_value = new_vals.entity_id_value;
-
+CALL insert_into_seed_registry('active_user_id', 'users' , @active_user_id);
 

@@ -20,7 +20,7 @@ WHERE seed_key = 'plan_Version_id';
 CALL assert_id_not_null(@plan_Version_id, 'Seed failed: @plan_Version_id could be resolved');
 
 -- ###############################################################################
--- Macro
+-- Insert Into Macro
 -- ###############################################################################
 -- Inserting Macro
 INSERT INTO macros_per_pound_and_limits (macros_ID) VALUES
@@ -31,10 +31,9 @@ SET @macros_id := LAST_INSERT_ID();
 -- Validate Variable
 CALL assert_id_not_null(@macros_id, 'Seed failed: macros_per_pound_and_limits @macros_id could not be resolved');
 
-
--- ######################################
--- Inserting Macro Document Version
--- ######################################
+-- ###############################################################################
+-- Inserting Macro Versions
+-- ###############################################################################
 INSERT INTO macros_per_pound_and_limits_versions
 (
 	macros_ID,
@@ -60,6 +59,10 @@ INSERT INTO macros_per_pound_and_limits_versions
 VALUES
 (@macros_id, @active_user_id, @plan_Version_id, NOW(6), 1, 102.5, 225.5, 25, 1, 2, 30, 0.4, 30, 30, 5000, 400);
 
+-- ######################################
+-- Create Variable
+-- ######################################
+
 -- Set Macros Version ID
 SET @macros_version_id := LAST_INSERT_ID();
 
@@ -67,10 +70,4 @@ SET @macros_version_id := LAST_INSERT_ID();
 CALL assert_id_not_null(@macros_version_id, 'Seed failed: macros_per_pound_and_limits @macros_version_id could not be resolved');
 
 -- Insert Into Seed Registry Table
-INSERT INTO seed_registry (seed_key, entity_table_name, entity_id_value)
-VALUES
-    ('macros_version_id', 'macros_per_pound_and_limits_versions' , @macros_version_id)
-AS new_vals
-ON DUPLICATE KEY UPDATE -- In case of duplicate, ensures fields match correctly to new insert
-	entity_id_value = new_vals.entity_id_value;
-
+CALL insert_into_seed_registry('macros_version_id', 'macros_per_pound_and_limits_versions' , @macros_version_id);

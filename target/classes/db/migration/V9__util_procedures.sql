@@ -1,4 +1,7 @@
 
+-- ################################################################
+--
+-- ################################################################
 CREATE PROCEDURE assert_id_not_null
 (
     IN p_id INT,
@@ -11,5 +14,27 @@ BEGIN
                 MESSAGE_TEXT = p_message;
     END IF;
 END;
+
+-- ################################################################
+--
+-- ################################################################
+CREATE PROCEDURE insert_into_seed_registry
+(
+    IN  seed_key  VARCHAR(100),
+    IN  entity_table_name  VARCHAR(100),
+    IN  entity_id_value    INT
+)
+BEGIN
+
+    INSERT INTO seed_registry (seed_key, entity_table_name, entity_id_value)
+    VALUES
+        (seed_key, entity_table_name , entity_id_value)
+    AS new_vals
+    ON DUPLICATE KEY UPDATE -- In case of duplicate, ensures fields match correctly to new insert
+        entity_id_value = new_vals.entity_id_value;
+
+END;
+
+
 
 
