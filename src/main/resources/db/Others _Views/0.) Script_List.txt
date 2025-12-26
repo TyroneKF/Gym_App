@@ -1,0 +1,10 @@
+1.) Gym_App_DB_Script2.sql
+2.) users.sql
+3.) plans.sql
+4.) macros_per_pound_and_limits.sql
+5.) ingredient_types.sql
+6.) measurements.sql
+7.) ingredients_info.sql
+8.) stores.sql
+9.) ingredient_in_shops.sql
+10.) meals_in_plan.sql
