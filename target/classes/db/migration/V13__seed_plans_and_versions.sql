@@ -1,8 +1,8 @@
 -- ###############################################################################
--- Get Active User From Seed
+-- Set Variables
 -- ###############################################################################
 
--- SET active user ID
+-- Get Active User From Seed
 SELECT entity_id_value
 INTO @active_user_id
 FROM seed_registry
@@ -72,9 +72,6 @@ ON DUPLICATE KEY UPDATE -- In case of duplicate, ensures fields match correctly 
 --  Plan Versions Insert
 -- ###############################################################################
 
--- #################################
--- Get Next Version No For Plan
--- #################################
 -- GET MAX Version Number for Plan_version for chosen meal plan
 SELECT COALESCE(MAX(version_number), 0) + 1
 INTO @next_version
@@ -99,11 +96,14 @@ INSERT INTO plan_versions
 VALUES
 (@plan_id, @active_user_id, @next_version, now(6), FALSE);
 
+-- #################################
+-- Create Variable
+-- #################################
+
+ -- Set Variable ID
 SET @plan_Version_id := LAST_INSERT_ID(); -- Get last insert PK (plan_Version_ID)
 
--- #################################
--- Insert Into Seed Registry Table
--- #################################
+-- Insert Into Seed Data
 INSERT INTO seed_registry (seed_key, entity_table_name, entity_id_value)
 VALUES
     ('plan_Version_id', 'plan_versions' , @plan_Version_id)
