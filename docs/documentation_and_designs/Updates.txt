@@ -59,6 +59,10 @@ ON DUPLICATE KEY UPDATE
     unit_name   = new_vals.unit_name,
     unit_symbol = new_vals.unit_symbol;
 
+Can this not be a singular table since there's no versioning
+    ingredients_in_sections_of_meal_versions
+    ingredients_in_sections_of_meal
+
 ######################################################################################
 Work On:
 ######################################################################################

@@ -1,6 +1,6 @@
 
 -- ################################################################
---
+-- Validate ID Variable isn't null
 -- ################################################################
 CREATE PROCEDURE assert_id_not_null
 (
@@ -16,13 +16,13 @@ BEGIN
 END;
 
 -- ################################################################
---
+-- Insert ID
 -- ################################################################
 CREATE PROCEDURE insert_into_seed_registry
 (
     IN  seed_key  VARCHAR(100),
     IN  entity_table_name  VARCHAR(100),
-    IN  entity_id_value    INT
+    IN  entity_id_value  INT
 )
 BEGIN
 
@@ -35,12 +35,34 @@ BEGIN
 
 END;
 
--- ################################################################
---
--- ################################################################
+-- #############################################
+-- Validate & Insert Into Seed Registry Table
+-- ##############################################
+CREATE PROCEDURE validate_and_insert_into_seed_registry
+(
+    IN  seed_key  VARCHAR(100),
+    IN  entity_table_name  VARCHAR(100),
+    IN  entity_id_value  INT,
+    IN p_message VARCHAR(255)
+)
+BEGIN
+
+    CALL assert_id_not_null(entity_id_value, p_message);
+
+    CALL insert_into_seed_registry(seed_key, entity_table_name, entity_id_value);
+
+END;
 
 
-CREATE FUNCTION get_seed_id_by_key (seed_key VARCHAR(100))
+-- ################################################################
+-- Get ID
+-- ################################################################
+
+CREATE FUNCTION get_seed_id_by_key
+(
+    seed_key VARCHAR(100),
+    p_message VARCHAR(255)
+)
 RETURNS INT
 DETERMINISTIC
 BEGIN
@@ -53,6 +75,8 @@ BEGIN
     FROM seed_registry
     WHERE seed_key = seed_key
     LIMIT 1;
+
+    CALL assert_id_not_null(seed_id, p_message);
 
     RETURN seed_id;
 

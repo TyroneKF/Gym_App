@@ -2,23 +2,17 @@
 -- Set Variables
 -- ###############################################################################
 
--- Get Active User From Seed
-SET @active_user_id= get_seed_id_by_key('active_user_id');
+-- Get Active User From Seed & Validate
+SET @active_user_id := get_seed_id_by_key('active_user_id', 'Seed failed: no active user could be resolved');
 
--- Variable Validation
-CALL assert_id_not_null(@active_user_id, 'Seed failed: no active user could be resolved');
+-- Create Variable for plan name
+set @plan_name := 'My Daily Gym Diet'; -- Plan Name
 
 -- ###############################################################################
 -- Plans | Seed DATA
 -- ###############################################################################
 
--- Create Variable for plan name
-set @plan_name := 'My Daily Gym Diet'; -- Plan Name
-
--- #####################################################
--- Insert / Get Plan Data if Exists
--- #####################################################
-INSERT INTO plans  
+INSERT INTO plans   -- Insert / Get Plan Data if Exists
 (
 	date_time_of_creation, 
 	user_id, 
@@ -54,20 +48,20 @@ WHERE user_id = @active_user_id
 	AND plan_name = @plan_name
 LIMIT 1;
 
--- Validate Variable
-CALL assert_id_not_null(@plan_id, 'Seed failed: plan @plan_id could not be resolved');
-
--- Insert Into Seed Registry Table
-CALL insert_into_seed_registry('plan_id', 'plans' , @plan_id);
+-- Validate & Insert Into Seed Registry Table
+CALL validate_and_insert_into_seed_registry
+(
+    'plan_id',
+    'plans' ,
+     @plan_id,
+     'Seed failed: plan @plan_id could not be resolved'
+ );
 
 -- ###############################################################################
 --  Plan Versions Insert
 -- ###############################################################################
 
--- #################################
--- Get Next Version No For Plan
--- #################################
--- GET MAX Version Number for Plan_version for chosen meal plan
+-- Get Next Version No For Plan |  GET MAX Version Number for Plan_version for chosen meal plan
 SELECT COALESCE(MAX(version_number), 0) + 1
 INTO @next_version
 FROM plan_versions
@@ -91,9 +85,16 @@ INSERT INTO plan_versions
 VALUES
 (@plan_id, @active_user_id, @next_version, now(6), FALSE);
 
+-- Set Variable
 SET @plan_Version_id := LAST_INSERT_ID(); -- Get last insert PK (plan_Version_ID)
 
 -- #################################
 -- Insert Into Seed Registry Table
 -- #################################
-CALL insert_into_seed_registry('plan_Version_id', 'plan_versions' , @plan_Version_id);
+CALL validate_and_insert_into_seed_registry
+(
+    'plan_Version_id',
+    'plan_versions',
+    @plan_Version_id,
+    'Seed failed: plans @plan_Version_id could not be resolved'
+);

@@ -34,9 +34,12 @@ WHERE selected_user_flag = TRUE
 ORDER BY user_id
 LIMIT 1;
 
--- Variable Validation
-CALL assert_id_not_null(@active_user_id, 'Seed failed: no active user could be resolved');
-
--- Insert Into Seed Registry Table
-CALL insert_into_seed_registry('active_user_id', 'users' , @active_user_id);
+-- Validate & Insert Into Seed Registry Table
+CALL validate_and_insert_into_seed_registry
+(
+    'active_user_id',
+    'users' ,
+    @active_user_id,
+    'Seed failed: no active user could be resolved'
+);
 

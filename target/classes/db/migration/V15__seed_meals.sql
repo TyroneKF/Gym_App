@@ -1,21 +1,15 @@
 -- ###############################################################################
 -- Set Variables
 -- ###############################################################################
--- Get Active Plan Version From Seed
-SELECT entity_id_value
-INTO @plan_Version_id
-FROM seed_registry
-WHERE seed_key = 'plan_Version_id';
 
--- Variable Validation
-CALL assert_id_not_null(@plan_Version_id, 'Seed failed: @plan_Version_id could be resolved');
+-- Get Plan ID From Seed & Validate
+SET @plan_Version_id := get_seed_id_by_key('plan_Version_id', 'Seed failed: @plan_Version_id could be resolved');
+
 
 -- ###############################################################################
 --  Step 1.) Insert Into Meals
 -- ###############################################################################
 /*
-
-
 	The Values 1-7 are discarded but, this section just inserts 7X date values 
 	and union combines each row into rows for an insert
 */
@@ -127,15 +121,17 @@ JOIN
     SELECT 4,        'Pre Workout',               '16:40' UNION ALL
     SELECT 5,        'Post Workout',              '18:50' UNION ALL
     SELECT 6,        'Dinner',                    '20:40' UNION ALL
-    SELECT 7,        'Bed Snack',                 '22:20'
-) v ON v.rn = a.rn;
+    SELECT 7,        'Bedtime',                   '22:20'
+) v
+ON v.rn = a.rn;
 
 -- ###############################################################################
 -- Step 4.) Insert Into meal_in_plan_version_id by Mapping with Anchors
 -- ###############################################################################
 /*
-	Assign Macro Version ID
+	Assign meal_in_plan_version_id to table of the last 7 inserted meals
 */
+
 -- ##################################
 -- Create Temporary Table for Meals
 -- ##################################
@@ -169,21 +165,30 @@ SELECT
 FROM last_7_meals_vs;
 
 -- ###############################################################################
--- Set Variables
+-- 5.) Set Variables
 -- ###############################################################################
+/*
 
+
+*/
+
+-- #################################
 -- Assign Breakfast Meal ID
+-- #################################
 SELECT meal_in_plan_version_id
 INTO @breakfast_mv_id
 FROM tmp_meal_version_anchors 
 ORDER BY meal_in_plan_version_id
 LIMIT 1 OFFSET 0;
 
--- Variable Validation
-CALL assert_id_not_null(@breakfast_mv_id, 'Seed failed: meal_in_plan_versions @breakfast_mv_id could not be resolved');
-
--- Insert Into Seed Registry Table
-CALL insert_into_seed_registry('breakfast_mv_id', 'meals_in_plan_versions', @breakfast_mv_id);
+-- Validate & Insert Into Seed Registry Table
+CALL validate_and_insert_into_seed_registry
+(
+    'breakfast_mv_id',
+    'meals_in_plan_versions',
+    @breakfast_mv_id,
+    'Seed failed: meal_in_plan_versions @breakfast_mv_id could not be resolved'
+);
 
 -- ##########################
 -- Mid-Morning Snack Meal ID 
@@ -196,11 +201,15 @@ FROM tmp_meal_version_anchors
 ORDER BY meal_in_plan_version_id
 LIMIT 1 OFFSET 1;
 
--- Variable Validation
-CALL assert_id_not_null(@mid_morning_snack_mv_id, 'Seed failed: meal_in_plan_versions @mid_morning_snack_mv_id could not be resolved');
 
--- Insert Into Seed Registry Table
-CALL insert_into_seed_registry('mid_morning_snack_mv_id', 'meals_in_plan_versions', @mid_morning_snack_mv_id);
+-- Validate & Insert Into Seed Registry Table
+CALL validate_and_insert_into_seed_registry
+(
+    'mid_morning_snack_mv_id',
+    'meals_in_plan_versions',
+    @mid_morning_snack_mv_id,
+    'Seed failed: meal_in_plan_versions @mid_morning_snack_mv_id could not be resolved'
+);
 
 -- ##########################
 -- Lunch Meal ID 
@@ -213,11 +222,14 @@ FROM tmp_meal_version_anchors
 ORDER BY meal_in_plan_version_id
 LIMIT 1 OFFSET 2;
 
--- Variable Validation
-CALL assert_id_not_null(@lunch_mv_id, 'Seed failed: meal_in_plan_versions @lunch_mv_id could not be resolved');
-
--- Insert Into Seed Registry Table
-CALL insert_into_seed_registry('lunch_mv_id', 'meals_in_plan_versions', @lunch_mv_id);
+-- Validate & Insert Into Seed Registry Table
+CALL validate_and_insert_into_seed_registry
+(
+    'lunch_mv_id',
+    'meals_in_plan_versions',
+    @lunch_mv_id,
+    'Seed failed: meal_in_plan_versions @lunch_mv_id could not be resolved'
+);
 
 -- ##########################
 -- Pre-Workout ID 
@@ -230,11 +242,14 @@ FROM tmp_meal_version_anchors
 ORDER BY meal_in_plan_version_id
 LIMIT 1 OFFSET 3;
 
--- Variable Validation
-CALL assert_id_not_null(@pre_workout_mv_id, 'Seed failed: meal_in_plan_versions @pre_workout_mv_id could not be resolved');
-
--- Insert Into Seed Registry Table
-CALL insert_into_seed_registry('pre_workout_mv_id', 'meals_in_plan_versions', @pre_workout_mv_id);
+-- Validate & Insert Into Seed Registry Table
+CALL validate_and_insert_into_seed_registry
+(
+    'pre_workout_mv_id',
+    'meals_in_plan_versions',
+    @pre_workout_mv_id,
+    'Seed failed: meal_in_plan_versions @pre_workout_mv_id could not be resolved'
+);
 
 -- ##########################
 -- Post-Workout ID 
@@ -247,11 +262,14 @@ FROM tmp_meal_version_anchors
 ORDER BY meal_in_plan_version_id
 LIMIT 1 OFFSET 4;
 
--- Variable Validation
-CALL assert_id_not_null(@post_workout_mv_id, 'Seed failed: meal_in_plan_versions @post_workout_mv_id could not be resolved');
-
--- Insert Into Seed Registry Table
-CALL insert_into_seed_registry('post_workout_mv_id', 'meals_in_plan_versions', @post_workout_mv_id);
+-- Validate & Insert Into Seed Registry Table
+CALL validate_and_insert_into_seed_registry
+(
+    'post_workout_mv_id',
+    'meals_in_plan_versions',
+    @post_workout_mv_id,
+    'Seed failed: meal_in_plan_versions @post_workout_mv_id could not be resolved'
+);
 
 -- ##########################
 -- Dinner ID 
@@ -264,30 +282,34 @@ FROM tmp_meal_version_anchors
 ORDER BY meal_in_plan_version_id
 LIMIT 1 OFFSET 5;
 
--- Variable Validation
-CALL assert_id_not_null(@dinner_mv_id, 'Seed failed: meal_in_plan_versions @dinner_mv_id could not be resolved');
-
--- Insert Into Seed Registry Table
-CALL insert_into_seed_registry('dinner_mv_id', 'meals_in_plan_versions', @dinner_mv_id);
+-- Validate & Insert Into Seed Registry Table
+CALL validate_and_insert_into_seed_registry
+(
+    'dinner_mv_id',
+    'meals_in_plan_versions',
+    @dinner_mv_id,
+    'Seed failed: meal_in_plan_versions @dinner_mv_id could not be resolved'
+);
 
 -- ##########################
--- Bed Snack ID 
+-- Bedtime ID
 -- ##########################
 
 -- Assign Dinner ID
 SELECT meal_in_plan_version_id
-INTO @bed_snack_mv_id
+INTO @bedtime_mv_id
 FROM tmp_meal_version_anchors 
 ORDER BY meal_in_plan_version_id
 LIMIT 1 OFFSET 6;
 
--- Variable Validation
-CALL assert_id_not_null(@bed_snack_mv_id, 'Seed failed: meal_in_plan_versions @bed_snack_mv_id could not be resolved');
-
--- Insert Into Seed Registry Table
-CALL insert_into_seed_registry('bed_snack_mv_id', 'meals_in_plan_versions', @bed_snack_mv_id);
-
-
+-- Validate & Insert Into Seed Registry Table
+CALL validate_and_insert_into_seed_registry
+(
+    'bedtime_mv_id',
+    'meals_in_plan_versions',
+    @bedtime_mv_id,
+    'Seed failed: meal_in_plan_versions @bedtime_mv_id could not be resolved'
+);
 
 
 

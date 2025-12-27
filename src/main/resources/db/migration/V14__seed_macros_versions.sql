@@ -1,28 +1,16 @@
 -- ###############################################################################
 -- Set Variables
 -- ###############################################################################
--- Get Active User From Seed
-SELECT entity_id_value
-INTO @active_user_id
-FROM seed_registry
-WHERE seed_key = 'active_user_id';
 
--- Variable Validation
-CALL assert_id_not_null(@active_user_id, 'Seed failed: no active user could be resolved');
+-- Get Active User From Seed & Validate
+SET @active_user_id := get_seed_id_by_key('active_user_id', 'Seed failed: no active user could be resolved');
 
--- Get Active Plan Version From Seed
-SELECT entity_id_value
-INTO @plan_Version_id
-FROM seed_registry
-WHERE seed_key = 'plan_Version_id';
-
--- Variable Validation
-CALL assert_id_not_null(@plan_Version_id, 'Seed failed: @plan_Version_id could be resolved');
+-- Get Plan ID From Seed & Validate
+SET @plan_Version_id := get_seed_id_by_key('plan_Version_id', 'Seed failed: @plan_Version_id could be resolved');
 
 -- ###############################################################################
 -- Insert Into Macro
 -- ###############################################################################
--- Inserting Macro
 INSERT INTO macros_per_pound_and_limits (macros_ID) VALUES
 (null);
 
@@ -59,15 +47,18 @@ INSERT INTO macros_per_pound_and_limits_versions
 VALUES
 (@macros_id, @active_user_id, @plan_Version_id, NOW(6), 1, 102.5, 225.5, 25, 1, 2, 30, 0.4, 30, 30, 5000, 400);
 
--- ######################################
--- Create Variable
--- ######################################
+-- #################################
+-- Insert Into Seed Registry Table
+-- #################################
 
 -- Set Macros Version ID
 SET @macros_version_id := LAST_INSERT_ID();
 
--- Validate Variable
-CALL assert_id_not_null(@macros_version_id, 'Seed failed: macros_per_pound_and_limits @macros_version_id could not be resolved');
-
--- Insert Into Seed Registry Table
-CALL insert_into_seed_registry('macros_version_id', 'macros_per_pound_and_limits_versions' , @macros_version_id);
+-- Validate & Insert Into Seed Registry Table
+CALL validate_and_insert_into_seed_registry
+(
+    'macros_version_id',
+    'macros_per_pound_and_limits_versions',
+    @macros_version_id,
+    'Seed failed: macros_per_pound_and_limits @macros_per_pound_and_limits_versions could not be resolved'
+);

@@ -28,11 +28,14 @@ FROM ingredient_types
 WHERE ingredient_type_name = @na_ingredient_type_name
 LIMIT 1;
 
--- Validate Variable N/A
-CALL assert_id_not_null(@na_type_id, 'Seed failed: @na_type_id (ingredient types) could not be resolved');
-
--- Insert Into Seed Registry Table
-CALL insert_into_seed_registry('na_type_id', 'ingredient_types', @na_type_id);
+-- Validate Variable N/A & Insert Into Seed Registry Table
+CALL validate_and_insert_into_seed_registry
+(
+    'na_type_id',
+    'ingredient_types',
+    @na_type_id,
+    'Seed failed: @na_type_id (ingredient types) could not be resolved'
+);
 
 -- #################################################################################################
 -- Ingredient Measurements
@@ -72,11 +75,14 @@ FROM measurements
 WHERE unit_name = @litres_measurement_name
 LIMIT 1;
 
--- Litres Variable Validation 
-CALL assert_id_not_null(@litres_id, 'Seed failed: @litres_id (measurement) could not be resolved');
-
--- Insert Into Seed Registry Table
-CALL insert_into_seed_registry('litres_id', 'measurements' , @litres_id);
+-- Validate & Insert Into Seed Registry Table
+CALL validate_and_insert_into_seed_registry
+(
+    'litres_id',
+    'measurements',
+    @litres_id,
+    'Seed failed: @litres_id (measurement) could not be resolved'
+);
 
 -- ############################
 -- Grams
@@ -87,16 +93,14 @@ FROM measurements
 WHERE unit_name = @grams_measurement_name
 LIMIT 1;
 
--- Grams Variable Validation 
-CALL assert_id_not_null(@grams_id, 'Seed failed: @grams_id (measurement) could not be resolved');
-
--- Insert Into Seed Registry Table
-INSERT INTO seed_registry (seed_key, entity_table_name, entity_id_value)
-VALUES
-    ('grams_id', 'measurements' , @grams_id)
-AS new_vals
-ON DUPLICATE KEY UPDATE -- In case of duplicate, ensures fields match correctly to new insert
-	entity_id_value  = new_vals.entity_id_value;
+-- Validate & Insert Into Seed Registry Table
+CALL validate_and_insert_into_seed_registry
+(
+    'grams_id',
+    'measurements',
+    @grams_id,
+    'Seed failed: @grams_id (measurement) could not be resolved'
+);
 
 -- ############################
 -- N/A
@@ -107,12 +111,14 @@ FROM measurements
 WHERE unit_name = @na_measurement_name
 LIMIT 1;
 
--- N/A Variable Validation 
-CALL assert_id_not_null(@na_measurement_id, 'Seed failed: @na_measurement_id (measurement) could not be resolved');
-
--- Insert Into Seed Registry Table
-CALL insert_into_seed_registry('na_measurement_id', 'measurements' , @na_measurement_id);
-
+-- Validate & Insert Into Seed Registry Table
+CALL validate_and_insert_into_seed_registry
+(
+    'na_measurement_id',
+    'measurements' ,
+     @na_measurement_id,
+     'Seed failed: @na_measurement_id (measurement) could not be resolved'
+ );
 
 -- #################################################################################################
 -- Ingredient Stores
@@ -145,11 +151,14 @@ FROM stores
 WHERE store_name = @na_store_name
 LIMIT 1;
 
--- Variable Validation 
-CALL assert_id_not_null(@na_store_id, 'Seed failed: Store ID @na_store_id could not be resolved');
-
--- Insert Into Seed Registry Table
-CALL insert_into_seed_registry('na_store_id', 'stores' , @na_store_id);
+-- Validate & Insert Into Seed Registry Table
+CALL validate_and_insert_into_seed_registry
+(
+    'na_store_id',
+    'stores' ,
+    @na_store_id,
+    'Seed failed: Store ID @na_store_id could not be resolved'
+);
 
 -- #################################################################################################
 -- Creating N/A Ingredient
@@ -194,8 +203,11 @@ FROM ingredients_info
 WHERE ingredient_name = @na_ingredient_name
 LIMIT 1;
 
--- Variable Validation 
-CALL assert_id_not_null(@na_ingredient_id, 'Seed failed: Ingredient ID @na_ingredient_id could not be resolved');
-
--- Insert Into Seed Registry Table
-CALL insert_into_seed_registry('na_ingredient_id', 'ingredients_info' , @na_ingredient_id);
+-- Validate & Insert Into Seed Registry Table
+CALL validate_and_insert_into_seed_registry
+(
+    'na_ingredient_id',
+    'ingredients_info' ,
+    @na_ingredient_id,
+    'Seed failed: Ingredient ID @na_ingredient_id could not be resolved'
+);
