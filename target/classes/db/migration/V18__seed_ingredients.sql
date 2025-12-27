@@ -208,3 +208,752 @@ INSERT INTO ingredients_info
 
 ON DUPLICATE KEY UPDATE  -- Incase of duplicate, ensures fields match correctly to new insert
     ingredient_type_id = VALUES(ingredient_type_id);
+
+-- ###############################################################################
+-- 5.) Set Variables
+-- ###############################################################################
+/*
+
+
+*/
+
+-- ###############################################################################
+-- Set Ingredient ID Variables (Alphabetical Order)
+-- ###############################################################################
+
+-- #####################################
+-- Alpro Organic Soya
+-- #####################################
+SELECT ingredient_id
+INTO @alpro_organic_soya_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Alpro Organic Soya';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'alpro_organic_soya_ingredient_id',
+    'ingredients_info',
+    @alpro_organic_soya_ingredient_id,
+    'Seed failed: ingredients_info @alpro_organic_soya_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Alpro Soya Light Long Life Drink
+-- #####################################
+SELECT ingredient_id
+INTO @alpro_soya_light_long_life_drink_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Alpro Soya Light Long Life Drink';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'alpro_soya_light_long_life_drink_ingredient_id',
+    'ingredients_info',
+    @alpro_soya_light_long_life_drink_ingredient_id,
+    'Seed failed: ingredients_info @alpro_soya_light_long_life_drink_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- ASDA Scottish Porridge Oats
+-- #####################################
+SELECT ingredient_id
+INTO @asda_scottish_porridge_oats_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'ASDA Scottish Porridge Oats';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'asda_scottish_porridge_oats_ingredient_id',
+    'ingredients_info',
+    @asda_scottish_porridge_oats_ingredient_id,
+    'Seed failed: ingredients_info @asda_scottish_porridge_oats_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Banana
+-- #####################################
+SELECT ingredient_id
+INTO @banana_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Banana';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'banana_ingredient_id',
+    'ingredients_info',
+    @banana_ingredient_id,
+    'Seed failed: ingredients_info @banana_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Be-Ro Plain Flour
+-- #####################################
+SELECT ingredient_id
+INTO @be_ro_plain_flour_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Be-Ro Plain Flour';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'be_ro_plain_flour_ingredient_id',
+    'ingredients_info',
+    @be_ro_plain_flour_ingredient_id,
+    'Seed failed: ingredients_info @be_ro_plain_flour_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Bertolli Olive Oil Spread
+-- #####################################
+SELECT ingredient_id
+INTO @bertolli_olive_oil_spread_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Bertolli Olive Oil Spread';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'bertolli_olive_oil_spread_ingredient_id',
+    'ingredients_info',
+    @bertolli_olive_oil_spread_ingredient_id,
+    'Seed failed: ingredients_info @bertolli_olive_oil_spread_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Billingtons Brown Sugar
+-- #####################################
+SELECT ingredient_id
+INTO @billingtons_brown_sugar_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Billingtons Brown Sugar';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'billingtons_brown_sugar_ingredient_id',
+    'ingredients_info',
+    @billingtons_brown_sugar_ingredient_id,
+    'Seed failed: ingredients_info @billingtons_brown_sugar_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Black Beans
+-- #####################################
+SELECT ingredient_id
+INTO @black_beans_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Black Beans';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'black_beans_ingredient_id',
+    'ingredients_info',
+    @black_beans_ingredient_id,
+    'Seed failed: ingredients_info @black_beans_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Brocolli
+-- #####################################
+SELECT ingredient_id
+INTO @brocolli_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Brocolli';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'brocolli_ingredient_id',
+    'ingredients_info',
+    @brocolli_ingredient_id,
+    'Seed failed: ingredients_info @brocolli_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Carrots
+-- #####################################
+SELECT ingredient_id
+INTO @carrots_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Carrots';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'carrots_ingredient_id',
+    'ingredients_info',
+    @carrots_ingredient_id,
+    'Seed failed: ingredients_info @carrots_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Cashew Nuts
+-- #####################################
+SELECT ingredient_id
+INTO @cashew_nuts_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Cashew Nuts';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'cashew_nuts_ingredient_id',
+    'ingredients_info',
+    @cashew_nuts_ingredient_id,
+    'Seed failed: ingredients_info @cashew_nuts_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Celery
+-- #####################################
+SELECT ingredient_id
+INTO @celery_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Celery';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'celery_ingredient_id',
+    'ingredients_info',
+    @celery_ingredient_id,
+    'Seed failed: ingredients_info @celery_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Chicken Mince (ASDA)
+-- #####################################
+SELECT ingredient_id
+INTO @chicken_mince_asda_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Chicken Mince (ASDA)';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'chicken_mince_asda_ingredient_id',
+    'ingredients_info',
+    @chicken_mince_asda_ingredient_id,
+    'Seed failed: ingredients_info @chicken_mince_asda_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Corned Beef (Princess Reduced Fat)
+-- #####################################
+SELECT ingredient_id
+INTO @corned_beef_princess_reduced_fat_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Corned Beef (Princess Reduced Fat)';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'corned_beef_princess_reduced_fat_ingredient_id',
+    'ingredients_info',
+    @corned_beef_princess_reduced_fat_ingredient_id,
+    'Seed failed: ingredients_info @corned_beef_princess_reduced_fat_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Creatine Monohydrate (MyProtein)
+-- #####################################
+SELECT ingredient_id
+INTO @creatine_monohydrate_myprotein_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Creatine Monohydrate (MyProtein)';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'creatine_monohydrate_myprotein_ingredient_id',
+    'ingredients_info',
+    @creatine_monohydrate_myprotein_ingredient_id,
+    'Seed failed: ingredients_info @creatine_monohydrate_myprotein_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Dolmio Bolognese Pasta Sauce Low Fat
+-- #####################################
+SELECT ingredient_id
+INTO @dolmio_bolognese_pasta_sauce_low_fat_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Dolmio Bolognese Pasta Sauce Low Fat';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'dolmio_bolognese_pasta_sauce_low_fat_ingredient_id',
+    'ingredients_info',
+    @dolmio_bolognese_pasta_sauce_low_fat_ingredient_id,
+    'Seed failed: ingredients_info @dolmio_bolognese_pasta_sauce_low_fat_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Fage Greek Yoghurt
+-- #####################################
+SELECT ingredient_id
+INTO @fage_greek_yoghurt_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Fage Greek Yoghurt';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'fage_greek_yoghurt_ingredient_id',
+    'ingredients_info',
+    @fage_greek_yoghurt_ingredient_id,
+    'Seed failed: ingredients_info @fage_greek_yoghurt_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Frozen Blueberries (ASDA)
+-- #####################################
+SELECT ingredient_id
+INTO @frozen_blueberries_asda_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Frozen Blueberries (ASDA)';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'frozen_blueberries_asda_ingredient_id',
+    'ingredients_info',
+    @frozen_blueberries_asda_ingredient_id,
+    'Seed failed: ingredients_info @frozen_blueberries_asda_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Frozen Mangoes (ASDA)
+-- #####################################
+SELECT ingredient_id
+INTO @frozen_mangoes_asda_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Frozen Mangoes (ASDA)';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'frozen_mangoes_asda_ingredient_id',
+    'ingredients_info',
+    @frozen_mangoes_asda_ingredient_id,
+    'Seed failed: ingredients_info @frozen_mangoes_asda_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Frozen Pineapple (ASDA)
+-- #####################################
+SELECT ingredient_id
+INTO @frozen_pineapple_asda_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Frozen Pineapple (ASDA)';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'frozen_pineapple_asda_ingredient_id',
+    'ingredients_info',
+    @frozen_pineapple_asda_ingredient_id,
+    'Seed failed: ingredients_info @frozen_pineapple_asda_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Frozen Raspberries (ASDA)
+-- #####################################
+SELECT ingredient_id
+INTO @frozen_raspberries_asda_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Frozen Raspberries (ASDA)';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'frozen_raspberries_asda_ingredient_id',
+    'ingredients_info',
+    @frozen_raspberries_asda_ingredient_id,
+    'Seed failed: ingredients_info @frozen_raspberries_asda_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Frozen Strawberries (ASDA)
+-- #####################################
+SELECT ingredient_id
+INTO @frozen_strawberries_asda_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Frozen Strawberries (ASDA)';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'frozen_strawberries_asda_ingredient_id',
+    'ingredients_info',
+    @frozen_strawberries_asda_ingredient_id,
+    'Seed failed: ingredients_info @frozen_strawberries_asda_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Grapefruit
+-- #####################################
+SELECT ingredient_id
+INTO @grapefruit_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Grapefruit';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'grapefruit_ingredient_id',
+    'ingredients_info',
+    @grapefruit_ingredient_id,
+    'Seed failed: ingredients_info @grapefruit_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Heinz Classic Barbecue Sauce
+-- #####################################
+SELECT ingredient_id
+INTO @heinz_classic_barbecue_sauce_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Heinz Classic Barbecue Sauce';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'heinz_classic_barbecue_sauce_ingredient_id',
+    'ingredients_info',
+    @heinz_classic_barbecue_sauce_ingredient_id,
+    'Seed failed: ingredients_info @heinz_classic_barbecue_sauce_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Kale
+-- #####################################
+SELECT ingredient_id
+INTO @kale_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Kale';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'kale_ingredient_id',
+    'ingredients_info',
+    @kale_ingredient_id,
+    'Seed failed: ingredients_info @kale_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Large Eggs (60g)
+-- #####################################
+SELECT ingredient_id
+INTO @large_eggs_60g_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Large Eggs (60g)';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'large_eggs_60g_ingredient_id',
+    'ingredients_info',
+    @large_eggs_60g_ingredient_id,
+    'Seed failed: ingredients_info @large_eggs_60g_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Lean Turkey Mince (ASDA)
+-- #####################################
+SELECT ingredient_id
+INTO @lean_turkey_mince_asda_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Lean Turkey Mince (ASDA)';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'lean_turkey_mince_asda_ingredient_id',
+    'ingredients_info',
+    @lean_turkey_mince_asda_ingredient_id,
+    'Seed failed: ingredients_info @lean_turkey_mince_asda_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Maca (VivoLife)
+-- #####################################
+SELECT ingredient_id
+INTO @maca_vivolife_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Maca (VivoLife)';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'maca_vivolife_ingredient_id',
+    'ingredients_info',
+    @maca_vivolife_ingredient_id,
+    'Seed failed: ingredients_info @maca_vivolife_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Oranges
+-- #####################################
+SELECT ingredient_id
+INTO @oranges_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Oranges';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'oranges_ingredient_id',
+    'ingredients_info',
+    @oranges_ingredient_id,
+    'Seed failed: ingredients_info @oranges_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Pistachios
+-- #####################################
+SELECT ingredient_id
+INTO @pistachios_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Pistachios';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'pistachios_ingredient_id',
+    'ingredients_info',
+    @pistachios_ingredient_id,
+    'Seed failed: ingredients_info @pistachios_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Plantin
+-- #####################################
+SELECT ingredient_id
+INTO @plantin_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Plantin';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'plantin_ingredient_id',
+    'ingredients_info',
+    @plantin_ingredient_id,
+    'Seed failed: ingredients_info @plantin_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Pumpkin Seeds
+-- #####################################
+SELECT ingredient_id
+INTO @pumpkin_seeds_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Pumpkin Seeds';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'pumpkin_seeds_ingredient_id',
+    'ingredients_info',
+    @pumpkin_seeds_ingredient_id,
+    'Seed failed: ingredients_info @pumpkin_seeds_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Rice Dream Original Organic Milk
+-- #####################################
+SELECT ingredient_id
+INTO @rice_dream_original_organic_milk_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Rice Dream Original Organic Milk';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'rice_dream_original_organic_milk_ingredient_id',
+    'ingredients_info',
+    @rice_dream_original_organic_milk_ingredient_id,
+    'Seed failed: ingredients_info @rice_dream_original_organic_milk_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Rowse Organic Honey
+-- #####################################
+SELECT ingredient_id
+INTO @rowse_organic_honey_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Rowse Organic Honey';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'rowse_organic_honey_ingredient_id',
+    'ingredients_info',
+    @rowse_organic_honey_ingredient_id,
+    'Seed failed: ingredients_info @rowse_organic_honey_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Semi Skin Cow Milk
+-- #####################################
+SELECT ingredient_id
+INTO @semi_skin_cow_milk_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Semi Skin Cow Milk';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'semi_skin_cow_milk_ingredient_id',
+    'ingredients_info',
+    @semi_skin_cow_milk_ingredient_id,
+    'Seed failed: ingredients_info @semi_skin_cow_milk_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Slow-Release Casein Vanilla (MyProtein)
+-- #####################################
+SELECT ingredient_id
+INTO @slow_release_casein_vanilla_myprotein_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Slow-Release Casein Vanilla (MyProtein)';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'slow_release_casein_vanilla_myprotein_ingredient_id',
+    'ingredients_info',
+    @slow_release_casein_vanilla_myprotein_ingredient_id,
+    'Seed failed: ingredients_info @slow_release_casein_vanilla_myprotein_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Spinach
+-- #####################################
+SELECT ingredient_id
+INTO @spinach_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Spinach';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'spinach_ingredient_id',
+    'ingredients_info',
+    @spinach_ingredient_id,
+    'Seed failed: ingredients_info @spinach_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Sunflower Seeds
+-- #####################################
+SELECT ingredient_id
+INTO @sunflower_seeds_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Sunflower Seeds';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'sunflower_seeds_ingredient_id',
+    'ingredients_info',
+    @sunflower_seeds_ingredient_id,
+    'Seed failed: ingredients_info @sunflower_seeds_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Sweet Potatoe
+-- #####################################
+SELECT ingredient_id
+INTO @sweet_potatoe_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Sweet Potatoe';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'sweet_potatoe_ingredient_id',
+    'ingredients_info',
+    @sweet_potatoe_ingredient_id,
+    'Seed failed: ingredients_info @sweet_potatoe_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Sweetcorn
+-- #####################################
+SELECT ingredient_id
+INTO @sweetcorn_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Sweetcorn';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'sweetcorn_ingredient_id',
+    'ingredients_info',
+    @sweetcorn_ingredient_id,
+    'Seed failed: ingredients_info @sweetcorn_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Thrive (VivoLife)
+-- #####################################
+SELECT ingredient_id
+INTO @thrive_vivolife_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Thrive (VivoLife)';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'thrive_vivolife_ingredient_id',
+    'ingredients_info',
+    @thrive_vivolife_ingredient_id,
+    'Seed failed: ingredients_info @thrive_vivolife_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Water
+-- #####################################
+SELECT ingredient_id
+INTO @water_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Water';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'water_ingredient_id',
+    'ingredients_info',
+    @water_ingredient_id,
+    'Seed failed: ingredients_info @water_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Whey Isolate Chocolate Smooth (MyProtein)
+-- #####################################
+SELECT ingredient_id
+INTO @whey_isolate_chocolate_smooth_myprotein_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Whey Isolate Chocolate Smooth (MyProtein)';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'whey_isolate_chocolate_smooth_myprotein_ingredient_id',
+    'ingredients_info',
+    @whey_isolate_chocolate_smooth_myprotein_ingredient_id,
+    'Seed failed: ingredients_info @whey_isolate_chocolate_smooth_myprotein_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Whey Isolate Natural Strawberry (MyProtein)
+-- #####################################
+SELECT ingredient_id
+INTO @whey_isolate_natural_strawberry_myprotein_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Whey Isolate Natural Strawberry (MyProtein)';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'whey_isolate_natural_strawberry_myprotein_ingredient_id',
+    'ingredients_info',
+    @whey_isolate_natural_strawberry_myprotein_ingredient_id,
+    'Seed failed: ingredients_info @whey_isolate_natural_strawberry_myprotein_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Wholemeal Wraps (Tesco)
+-- #####################################
+SELECT ingredient_id
+INTO @wholemeal_wraps_tesco_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Wholemeal Wraps (Tesco)';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'wholemeal_wraps_tesco_ingredient_id',
+    'ingredients_info',
+    @wholemeal_wraps_tesco_ingredient_id,
+    'Seed failed: ingredients_info @wholemeal_wraps_tesco_ingredient_id could not be resolved'
+);
+
+-- #####################################
+-- Wholewheat Spaghetti (ASDA)
+-- #####################################
+SELECT ingredient_id
+INTO @wholewheat_spaghetti_asda_ingredient_id
+FROM ingredients_info
+WHERE ingredient_name = 'Wholewheat Spaghetti (ASDA)';
+
+CALL validate_and_insert_into_seed_registry
+(
+    'wholewheat_spaghetti_asda_ingredient_id',
+    'ingredients_info',
+    @wholewheat_spaghetti_asda_ingredient_id,
+    'Seed failed: ingredients_info @wholewheat_spaghetti_asda_ingredient_id could not be resolved'
+);
+
