@@ -1,6 +1,6 @@
 
 -- ################################################################
---
+-- Validate ID Variable isn't null
 -- ################################################################
 CREATE PROCEDURE assert_id_not_null
 (
@@ -35,9 +35,9 @@ BEGIN
 
 END;
 
--- #####################################
---
--- #####################################
+-- #############################################
+-- Validate & Insert Into Seed Registry Table
+-- ##############################################
 CREATE PROCEDURE validate_and_insert_into_seed_registry
 (
     IN  seed_key  VARCHAR(100),
@@ -82,7 +82,7 @@ BEGIN
 
 END;
 
--- Validate & Insert Into Seed Registry Table
+
 
 
 

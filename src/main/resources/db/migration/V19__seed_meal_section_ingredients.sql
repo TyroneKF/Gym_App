@@ -1,6 +1,60 @@
--- #####################################################
--- Inserting BULK Non-Seed DATA
--- #####################################################
+-- #################################################################################################
+-- Seed Ingredient  Types For Demo Data
+-- #################################################################################################
+
+
+
+
+
+
+SELECT
+    'breads'                     AS type, @breads                     IS NULL AS missing UNION ALL
+SELECT 'cake',                        @cake                        IS NULL UNION ALL
+SELECT 'cereals',                     @cereals                     IS NULL UNION ALL
+SELECT 'cereal_bars',                 @cereal_bars                 IS NULL UNION ALL
+SELECT 'cheese',                      @cheese                      IS NULL UNION ALL
+SELECT 'chocolate',                   @chocolate                   IS NULL UNION ALL
+SELECT 'dairy',                       @dairy                       IS NULL UNION ALL
+SELECT 'desserts',                    @desserts                    IS NULL UNION ALL
+SELECT 'fish',                        @fish                        IS NULL UNION ALL
+SELECT 'flour',                       @flour                       IS NULL UNION ALL
+SELECT 'frozen_fruit',                @frozen_fruit                IS NULL UNION ALL
+SELECT 'frozen_vegetables',           @frozen_vegetables           IS NULL UNION ALL
+SELECT 'fruit',                       @fruit                       IS NULL UNION ALL
+SELECT 'fruit_juice',                 @fruit_juice                 IS NULL UNION ALL
+SELECT 'grains_and_legumes',           @grains_and_legumes           IS NULL UNION ALL
+SELECT 'juice',                       @juice                       IS NULL UNION ALL
+SELECT 'lean_meat',                   @lean_meat                   IS NULL UNION ALL
+SELECT 'liquids',                     @liquids                     IS NULL UNION ALL
+SELECT 'meat',                        @meat                        IS NULL UNION ALL
+SELECT 'milk',                        @milk                        IS NULL UNION ALL
+SELECT 'noodles',                     @noodles                     IS NULL UNION ALL
+SELECT 'nut_powder',                  @nut_powder                  IS NULL UNION ALL
+SELECT 'nuts_and_seeds',              @nuts_and_seeds              IS NULL UNION ALL
+SELECT 'other_grains',                @other_grains                IS NULL UNION ALL
+SELECT 'pasta',                       @pasta                       IS NULL UNION ALL
+SELECT 'plant_milk',                  @plant_milk                  IS NULL UNION ALL
+SELECT 'poultry',                     @poultry                     IS NULL UNION ALL
+SELECT 'potatoes',                    @potatoes                    IS NULL UNION ALL
+SELECT 'protein_powder',              @protein_powder              IS NULL UNION ALL
+SELECT 'rice',                        @rice                        IS NULL UNION ALL
+SELECT 'sauce',                       @sauce                       IS NULL UNION ALL
+SELECT 'smoothie',                    @smoothie                    IS NULL UNION ALL
+SELECT 'spices_and_herb_packs',        @spices_and_herb_packs        IS NULL UNION ALL
+SELECT 'sugar',                       @sugar                       IS NULL UNION ALL
+SELECT 'syrup_and_spreads',            @syrup_and_spreads            IS NULL UNION ALL
+SELECT 'vegan_vitamin_powders',        @vegan_vitamin_powders        IS NULL UNION ALL
+SELECT 'vegan_milk',                  @vegan_milk                  IS NULL UNION ALL
+SELECT 'vegetables',                  @vegetables                  IS NULL UNION ALL
+SELECT 'vitamins',                    @vitamins                    IS NULL UNION ALL
+SELECT 'whole_wheat',                 @whole_wheat                 IS NULL UNION ALL
+SELECT 'yoghurt',                     @yoghurt                     IS NULL;
+
+-- #################################################################################################
+-- Seed Ingredients For Demo Dat
+-- #################################################################################################
+
+-- Create Ingredients
 INSERT INTO ingredients_info
 (
     ingredient_name,
@@ -17,8 +71,8 @@ INSERT INTO ingredients_info
     water_content,
     liquid_content,
     calories
-	
-) VALUES
+)
+VALUES
 
 ("Water", @liquids, 100.00, 0, 0, 0, 0, 0, 0, 0, 0, 100, 100, 0),
 ("Banana", @fruit, 100.00, 51, 1.1, 23, 12, 2.6, 0.3, 0.1, 0, 0, 0, 89),
@@ -75,9 +129,8 @@ INSERT INTO ingredients_info
 ("Bertolli Olive Oil Spread", @dairy, 100.00, 0, 0.5, 0.5, 0.5, 0, 59, 17, 1.1, 0, 0, 531),
 ("Allinson Self-Raising Wholemeal Flour", @flour, 100.00, 60, 11, 69.3, 1.1, 10, 2.4, 0.4, 1.1, 0, 0, 359),
 ("Plantin", @fruit, 100.00, 40, 1.3, 32, 15, 2.3, 0.4, 0.1, 0, 0, 0, 122),
-("Billingtons Brown Sugar", @sugar, 100.00, 70, 0, 99, 99, 0, 0, 0, 0.25, 0, 0, 398)
+("Billingtons Brown Sugar", @sugar, 100.00, 70, 0, 99, 99, 0, 0, 0, 0.25, 0, 0, 398);
 
-ON DUPLICATE KEY UPDATE  -- Incase of duplicate, ensures fields match correctly to new insert
-	ingredient_type_name = VALUES(ingredient_type_name),
-	measurement_id = VALUES(measurement_id),
-    ingredient_type_id = VALUES(ingredient_type_id); 
+-- ##########################################################
+-- Create Variables for Ingredients
+-- ##########################################################

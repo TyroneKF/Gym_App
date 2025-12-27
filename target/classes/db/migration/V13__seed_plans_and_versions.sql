@@ -54,7 +54,7 @@ CALL validate_and_insert_into_seed_registry
     'plan_id',
     'plans' ,
      @plan_id,
-     'Seed failed: plan @plan_id could not be resolved'
+     'Seed failed: plans @plan_id could not be resolved'
  );
 
 -- ###############################################################################

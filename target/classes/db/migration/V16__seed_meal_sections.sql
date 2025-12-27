@@ -348,7 +348,7 @@ LIMIT 1 OFFSET 6;
 -- Validate & Insert Into Seed Registry Table
 CALL validate_and_insert_into_seed_registry
 (
-    '@lunch_meal_lunch_div_vs_id',
+    'lunch_meal_lunch_div_vs_id',
     'divided_meal_sections_versions',
     @lunch_meal_lunch_div_vs_id,
     'Seed failed: divided_meal_sections_versions @lunch_meal_lunch_div_vs_id could not be resolved'
@@ -366,7 +366,7 @@ LIMIT 1 OFFSET 7;
 -- Validate & Insert Into Seed Registry Table
 CALL validate_and_insert_into_seed_registry
 (
-    '@nuts_lunch_div_vs_id',
+    'nuts_lunch_div_vs_id',
     'divided_meal_sections_versions',
     @nuts_lunch_div_vs_id,
     'Seed failed: divided_meal_sections_versions @nuts_lunch_div_vs_id could not be resolved'
@@ -410,7 +410,7 @@ LIMIT 1 OFFSET 9;
 -- Validate & Insert Into Seed Registry Table
 CALL validate_and_insert_into_seed_registry
 (
-    '@fruit_smoothie_pre_workout_div_vs_id',
+    'fruit_smoothie_pre_workout_div_vs_id',
     'divided_meal_sections_versions',
     @fruit_smoothie_pre_workout_div_vs_id,
     'Seed failed: divided_meal_sections_versions @fruit_smoothie_pre_workout_div_vs_id could not be resolved'
@@ -524,7 +524,7 @@ LIMIT 1 OFFSET 14;
 -- Validate & Insert Into Seed Registry Table
 CALL validate_and_insert_into_seed_registry
 (
-    '@protein_shake_bedtime_vs_id',
+    'protein_shake_bedtime_vs_id',
     'divided_meal_sections_versions',
     @protein_shake_bedtime_vs_id,
     'Seed failed: divided_meal_sections_versions @protein_shake_bedtime_vs_id could not be resolved'

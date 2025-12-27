@@ -60,5 +60,5 @@ CALL validate_and_insert_into_seed_registry
     'macros_version_id',
     'macros_per_pound_and_limits_versions',
     @macros_version_id,
-    'Seed failed: plans @macros_per_pound_and_limits_versions could not be resolved'
+    'Seed failed: macros_per_pound_and_limits @macros_per_pound_and_limits_versions could not be resolved'
 );

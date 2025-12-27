@@ -70,7 +70,7 @@ ON DUPLICATE KEY UPDATE -- In case of duplicate, ensures fields match correctly 
 
 -- Litres
 SELECT measurement_id
-INTO @litres_id
+INTO @litres_measurement_id
 FROM measurements
 WHERE unit_name = @litres_measurement_name
 LIMIT 1;
@@ -78,17 +78,17 @@ LIMIT 1;
 -- Validate & Insert Into Seed Registry Table
 CALL validate_and_insert_into_seed_registry
 (
-    'litres_id',
+    'litres_measurement_id',
     'measurements',
-    @litres_id,
-    'Seed failed: @litres_id (measurement) could not be resolved'
+    @litres_measurement_id,
+    'Seed failed: @litres_measurement_id (measurement) could not be resolved'
 );
 
 -- ############################
 -- Grams
 -- ############################
 SELECT measurement_id
-INTO @grams_id
+INTO @grams_measurement_id
 FROM measurements
 WHERE unit_name = @grams_measurement_name
 LIMIT 1;
@@ -96,10 +96,10 @@ LIMIT 1;
 -- Validate & Insert Into Seed Registry Table
 CALL validate_and_insert_into_seed_registry
 (
-    'grams_id',
+    'grams_measurement_id',
     'measurements',
-    @grams_id,
-    'Seed failed: @grams_id (measurement) could not be resolved'
+    @grams_measurement_id,
+    'Seed failed: @grams_measurement_id (measurement) could not be resolved'
 );
 
 -- ############################

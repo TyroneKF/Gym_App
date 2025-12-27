@@ -11,7 +11,7 @@ CREATE TABLE ingredients_info
 	measurement_id INT NOT NULL,
 	FOREIGN KEY (measurement_id) 
 		REFERENCES measurements(measurement_id)
-		ON DELETE RESTRICT, -- Re-assign meassurment if FK meassurment is deleted vs Deleting ingredient too,
+		ON DELETE RESTRICT, -- Re-assign measurement if FK measurement is deleted vs Deleting ingredient too,
 		
 	ingredient_name VARCHAR(100) NOT NULL,
 	
