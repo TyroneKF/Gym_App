@@ -72,6 +72,16 @@ WHERE plan_id = @plan_id
 CALL assert_id_not_null(@next_version, 'Seed failed: plans @next_version could not be resolved');
 
 -- #################################
+-- Set All Meals to False
+-- #################################
+
+-- Set Previous Meal to False
+UPDATE plan_versions
+SET is_selected_plan = FALSE
+WHERE is_selected_plan = TRUE;
+
+
+-- #################################
 -- Insert Plan Version
 -- #################################
 INSERT INTO plan_versions
@@ -83,7 +93,7 @@ INSERT INTO plan_versions
 	is_selected_plan
 )
 VALUES
-(@plan_id, @active_user_id, @next_version, now(6), FALSE);
+(@plan_id, @active_user_id, @next_version, now(6), TRUE);
 
 -- Set Variable
 SET @plan_Version_id := LAST_INSERT_ID(); -- Get last insert PK (plan_Version_ID)
