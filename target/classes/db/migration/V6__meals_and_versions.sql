@@ -1,7 +1,13 @@
 -- #########################################################################
 -- DDL SCRIPT | App Setup
 -- #########################################################################
+/*
 
+*/
+
+-- ####################################################
+-- Main Document
+-- ####################################################
 CREATE TABLE meals_in_plan
 (
    meal_in_plan_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -11,6 +17,9 @@ ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4;
 
 
+-- ####################################################
+-- Document Versions
+-- ####################################################
 CREATE TABLE meals_in_plan_versions
 (
 	meal_in_plan_version_id INT PRIMARY KEY AUTO_INCREMENT,	
@@ -18,12 +27,12 @@ CREATE TABLE meals_in_plan_versions
 	meal_in_plan_id INT NOT NULL,
 		FOREIGN KEY (meal_in_plan_id) REFERENCES meals_in_plan(meal_in_plan_id) 
 			ON DELETE CASCADE,
-			
-    date_time_last_edited DATETIME(6) NOT NULL,
 
 	plan_version_id INT NOT NULL,
 		FOREIGN KEY (plan_version_id) REFERENCES plan_versions(plan_version_id) 
 			ON DELETE CASCADE,
+
+	date_time_last_edited DATETIME(6) NOT NULL,
 
 	meal_name VARCHAR(100) NOT NULL,
 	meal_time TIME NOT NULL,

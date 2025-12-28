@@ -1,8 +1,11 @@
--- ###########################################################################
+-- #######################################################################################
 -- Trigger Syntax
--- ###########################################################################
+-- #######################################################################################
 
 /*
+    #################################################
+    Structure of Imutable Table Trigger
+    #################################################
 
 	CREATE TRIGGER prevent_any_update
 	BEFORE UPDATE ON some_table
@@ -17,31 +20,47 @@
 	THEN OK
 	ELSE SIGNAL;
 
+	#################################################
+    Structure of Imutable Table Trigger
+    #################################################
+
+    DELIMITER $$
+        CREATE TRIGGER trg_table_name_allow_only_safe_updates
+        BEFORE UPDATE ON plan_versions
+        FOR EACH ROW
+        BEGIN
+            IF NOT (
+
+                -- Immutable Columns (Not Allowed)
+                NEW.colum_name           <=> OLD.colum_name
+                AND NEW.colum_name        <=> OLD.colum_name
+                ......
+
+                -- Mutable Columns (Implicitly Allowed):
+                    -- colum_name
+                    -- colum_name
+                    ......
+
+            ) THEN
+                SIGNAL SQLSTATE '45000'
+                    SET MESSAGE_TEXT =
+                    'Trigger - Only approved columns may be updated on plan_versions';
+            END IF;
+        END$$
+
+    DELIMITER ;
 */
 
--- ###########################################################################
+-- ############################################################################
 -- Users Trigger | Allows only certain rows to be updated
--- ###########################################################################
+-- ############################################################################
 
-DELIMITER $$
 
-	CREATE TRIGGER trg_users_allow_only_safe_updates
-	BEFORE UPDATE ON users
-	FOR EACH ROW
-	BEGIN
-		IF NOT -- any column not listed here is not updated
-		(
-		    NEW.user_name <=> OLD.user_name
-			AND NEW.is_user_selected <=> OLD.is_user_selected
-		) 
-		THEN
-			SIGNAL SQLSTATE '45000'
-				SET MESSAGE_TEXT =
-					'Only : user_name and is_user_selected may be updated on users table';
-		END IF;
-	END$$
 
-DELIMITER ;
+
+
+
+
 
 -- ###########################################################################
 -- Plans Trigger | Prevents table from being updated
@@ -62,22 +81,27 @@ DELIMITER ;
 -- Plans_versions | Allows only certain rows to be updated
 -- ###########################################################################
 DELIMITER $$
+    CREATE TRIGGER trg_plans_versions_allow_only_safe_updates
+    BEFORE UPDATE ON plan_versions
+    FOR EACH ROW
+    BEGIN
+        IF NOT (
+        
+            -- Immutable Columns (Not Allowed)
+            NEW.plan_id           <=> OLD.plan_id
+            AND NEW.user_id        <=> OLD.user_id
+            AND NEW.version_number <=> OLD.version_number
 
-	CREATE TRIGGER trg_plan_versions_allow_only_safe_updates
-	BEFORE UPDATE ON plan_versions
-	FOR EACH ROW
-	BEGIN
-		IF NOT -- any column not listed here is not updated
-		(
-			NEW.date_time_last_edited <=> OLD.date_time_last_edited
-			AND NEW.is_selected_plan <=> OLD.is_selected_plan
-		) 
-		THEN
-			SIGNAL SQLSTATE '45000'
-				SET MESSAGE_TEXT =
-					'Only is_selected_plan and date_time_last_edited may be updated on plan_versions';
-		END IF;
-	END$$
+            -- Mutable Columns (Implicitly Allowed):
+                -- date_time_last_edited
+                -- is_selected_plan BOOLEAN
+
+        ) THEN
+            SIGNAL SQLSTATE '45000'
+                SET MESSAGE_TEXT =
+                'Trigger - Only approved columns may be updated on plan_versions';
+        END IF;
+    END$$
 
 DELIMITER ;
 
@@ -105,22 +129,27 @@ DELIMITER $$
 	BEFORE UPDATE ON macros_per_pound_and_limits_versions
 	FOR EACH ROW
 	BEGIN
-		IF NOT -- any column not listed here is not updated
+		IF NOT
 		(
-			NEW.date_time_last_edited <=> OLD.date_time_last_edited
-			
-			AND NEW.current_weight_kg <=> OLD.current_weight_kg
-			AND NEW.current_weight_in_pounds <=> OLD.current_weight_in_pounds			
-			AND NEW.body_fat_percentage <=> OLD.body_fat_percentage
-			AND NEW.protein_per_pound <=> OLD.protein_per_pound			
-			AND NEW.carbohydrates_per_pound <=> OLD.carbohydrates_per_pound			
-			AND NEW.fibre <=> OLD.fibre			
-			AND NEW.fats_per_pound <=> OLD.fats_per_pound			
-			AND NEW.saturated_fat_limit <=> OLD.saturated_fat_limit
-			AND NEW.salt_limit <=> OLD.salt_limit
-			AND NEW.water_target <=> OLD.water_target
-			
-			AND NEW.additional_calories <=> OLD.additional_calories
+		    -- Immutable Columns (Not Allowed)
+			NEW.macros_ID <=> OLD.macros_ID
+			AND NEW.user_id <=> OLD.user_id
+			AND NEW.plan_version_id <=> OLD.plan_version_id
+			AND NEW.version_number <=> OLD.version_number
+
+			-- Mutable Columns (Implicitly Allowed):
+                --  date_time_last_edited
+                --  current_weight_kg
+                --  current_weight_in_pounds
+                --  body_fat_percentage
+                --  protein_per_pound
+                --  carbohydrates_per_pound
+                --  fibre
+                --  fats_per_pound
+                --  saturated_fat_limit
+                --  salt_limit
+                --  water_target
+                --  additional_calories
 		) 
 		THEN
 			SIGNAL SQLSTATE '45000'
@@ -135,14 +164,17 @@ DELIMITER ;
 -- ingredient_types Trigger | Allows only certain rows to be updated
 -- ###########################################################################
 DELIMITER $$
-
 	CREATE TRIGGER trg_ingredient_types_allow_only_safe_updates
 	BEFORE UPDATE ON ingredient_types
 	FOR EACH ROW
 	BEGIN
-		IF NOT -- any column not listed here is not updated
+		IF NOT
 		(
-			NEW.ingredient_type_name <=> OLD.ingredient_type_name		
+		    -- Immutable Columns (Not Allowed)
+			NEW.is_system <=> OLD.is_system
+
+			-- Mutable Columns (Implicitly Allowed):
+			    -- ingredient_type_name
 		) 
 		THEN
 			SIGNAL SQLSTATE '45000'
@@ -162,11 +194,15 @@ DELIMITER $$
 	BEFORE UPDATE ON measurements
 	FOR EACH ROW
 	BEGIN
-		IF NOT -- any column not listed here is not updated
+		IF NOT 
 		(
-			NEW.unit_name <=> OLD.unit_name
-			AND NEW.unit_symbol <=> OLD.unit_symbol
-			AND NEW.measured_material_type <=> OLD.measured_material_type
+		    -- Immutable Columns (Not Allowed)
+		   NEW.is_system <=> OLD.is_system
+           
+           	-- Mutable Columns (Implicitly Allowed):          			    
+                -- unit_name  
+                -- unit_symbol  
+                -- measured_material_type  
 		) 
 		THEN
 			SIGNAL SQLSTATE '45000'
@@ -186,28 +222,27 @@ DELIMITER $$
 	BEFORE UPDATE ON ingredients_info
 	FOR EACH ROW
 	BEGIN
-		IF NOT -- any column not listed here is not updated
+		IF NOT 
 		(
-			NEW.measurement_id <=> OLD.measurement_id
-			AND NEW.ingredient_name <=> OLD.ingredient_name
-			AND NEW.ingredient_type_id <=> OLD.ingredient_type_id
-			
-			AND NEW.based_on_quantity <=> OLD.based_on_quantity
-			AND NEW.glycemic_index <=> OLD.glycemic_index
-			
-			AND NEW.protein <=> OLD.protein
-			AND NEW.carbohydrates <=> OLD.carbohydrates
-			AND NEW.sugars_of_carbs <=> OLD.sugars_of_carbs
-			
-			AND NEW.fibre <=> OLD.fibre
-			AND NEW.fat <=> OLD.fat
-			AND NEW.saturated_fat <=> OLD.saturated_fat
-			AND NEW.salt <=> OLD.salt
-			
-			AND NEW.water_content <=> OLD.water_content
-			AND NEW.liquid_content <=> OLD.liquid_content
-			
-			AND NEW.calories <=> OLD.calories
+		    -- Immutable Columns (Not Allowed)
+		    NEW.is_system <=> OLD.is_system
+		
+			-- Mutable Columns (Implicitly Allowed):
+                -- measurement_id
+                -- ingredient_name
+                -- ingredient_type_id
+                -- based_on_quantity
+                -- glycemic_index
+                -- protein
+                -- carbohydrates
+                -- sugars_of_carbs
+                -- fibre
+                -- fat
+                -- saturated_fat
+                -- salt
+                -- water_content
+                -- liquid_content
+			    -- calories
 		) 
 		THEN
 			SIGNAL SQLSTATE '45000'
@@ -227,9 +262,13 @@ DELIMITER $$
 	BEFORE UPDATE ON stores
 	FOR EACH ROW
 	BEGIN
-		IF NOT -- any column not listed here is not updated
+		IF NOT 
 		(
-			NEW.store_name <=> OLD.store_name
+		    -- Immutable Columns (Not Allowed)
+			NEW.is_system <=> OLD.is_system
+
+			-- Mutable Columns (Implicitly Allowed):
+			    -- store_name
 		) 
 		THEN
 			SIGNAL SQLSTATE '45000'
@@ -249,12 +288,17 @@ DELIMITER $$
 	BEFORE UPDATE ON ingredient_in_shops
 	FOR EACH ROW
 	BEGIN
-		IF NOT -- any column not listed here is not updated
+		IF NOT 
 		(
-			NEW.product_name <=> OLD.product_name
-			AND NEW.volume_per_unit <=> OLD.volume_per_unit
-			AND NEW.cost_per_unit <=> OLD.cost_per_unit
-			AND NEW.store_id <=> OLD.store_id
+		    -- Immutable Columns (Not Allowed)
+            NEW.is_system <=> OLD.is_system
+            AND NEW.ingredient_id <=> OLD.ingredient_id
+            
+            -- Mutable Columns (Implicitly Allowed):
+			    -- product_name
+			    -- volume_per_unit
+			    -- cost_per_unit
+			    -- store_id
 		) 
 		THEN
 			SIGNAL SQLSTATE '45000'
@@ -289,11 +333,16 @@ DELIMITER $$
 	BEFORE UPDATE ON meals_in_plan_versions
 	FOR EACH ROW
 	BEGIN
-		IF NOT -- any column not listed here is not updated
+		IF NOT
 		(
-			NEW.date_time_last_edited <=> OLD.date_time_last_edited
-			AND NEW.meal_name <=> OLD.meal_name
-			AND NEW.meal_time <=> OLD.meal_time
+		    -- Immutable Columns (Not Allowed)
+		    NEW.meal_in_plan_id <=> OLD.meal_in_plan_id
+            AND NEW.plan_version_id <=> OLD.plan_version_id           
+
+		    -- Mutable Columns (Implicitly Allowed):
+                -- date_time_last_edited
+                -- meal_name
+                -- meal_time
 		) 
 		THEN
 			SIGNAL SQLSTATE '45000'
@@ -329,10 +378,15 @@ DELIMITER $$
 	BEFORE UPDATE ON divided_meal_sections_versions
 	FOR EACH ROW
 	BEGIN
-		IF NOT -- any column not listed here is not updated
+		IF NOT 
 		(
-			NEW.date_time_last_edited <=> OLD.date_time_last_edited
-			AND NEW.sub_meal_name <=> OLD.sub_meal_name
+		    -- Immutable Columns (Not Allowed)
+			NEW.div_meal_sections_id <=> OLD.div_meal_sections_id
+			AND NEW.meal_in_plan_version_id <=> OLD.sub_meal_name
+			
+			-- Mutable Columns (Implicitly Allowed):
+                -- date_time_last_edited
+                -- sub_meal_name
 		) 
 		THEN
 			SIGNAL SQLSTATE '45000'
@@ -346,6 +400,7 @@ DELIMITER ;
 -- ###########################################################################
 -- ingredients_in_sections_of_meal Trigger | Prevents table from being updated
 -- ###########################################################################
+/*
 DELIMITER $$
 
 	CREATE TRIGGER trg_ingredients_in_sections_of_meal_prevent_any_update
@@ -357,9 +412,10 @@ DELIMITER $$
 	END$$
 
 DELIMITER ;
+*/
 
 -- ###########################################################################
--- ingredients_in_sections_of_meal_versions Trigger | Allows only certain rows to be updated
+-- ingredients_in_sections_of_meal Trigger | Allows only certain rows to be updated
 -- ###########################################################################
 DELIMITER $$
 
@@ -367,11 +423,15 @@ DELIMITER $$
 	BEFORE UPDATE ON ingredients_in_sections_of_meal
 	FOR EACH ROW
 	BEGIN
-		IF NOT -- any column not listed here is not updated
+		IF NOT 
 		(
-			NEW.ingredient_id <=> OLD.ingredient_id
-			AND NEW.quantity <=> OLD.quantity
-			AND NEW.pdid <=> OLD.pdid
+		    -- Immutable Columns (Not Allowed)
+			NEW.div_meal_sections_version_id <=> OLD.div_meal_sections_version_id
+			
+			-- Mutable Columns (Implicitly Allowed):
+                -- ingredient_id
+                -- quantity
+                -- pdid
 		) 
 		THEN
 			SIGNAL SQLSTATE '45000'

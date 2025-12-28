@@ -1,8 +1,14 @@
 -- #########################################################################
 -- DDL SCRIPT | App Setup
 -- #########################################################################
+/*
 
 
+*/
+
+-- ####################################################
+-- Main Document
+-- ####################################################
 CREATE TABLE macros_per_pound_and_limits
 (   	
     macros_ID INT PRIMARY KEY AUTO_INCREMENT,
@@ -11,6 +17,9 @@ CREATE TABLE macros_per_pound_and_limits
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4;
 
+-- ####################################################
+-- Document Versions
+-- ####################################################
 CREATE TABLE macros_per_pound_and_limits_versions
 (
 	macros_version_id INT PRIMARY KEY AUTO_INCREMENT,	
@@ -26,10 +35,10 @@ CREATE TABLE macros_per_pound_and_limits_versions
 	plan_version_id INT NOT NULL,
 		FOREIGN KEY (plan_version_id) REFERENCES plan_versions(plan_version_id) 
 			ON DELETE CASCADE,		
-	
-	date_time_last_edited DATETIME(6) NOT NULL,
-	version_number INT NOT NULL,	
 
+	version_number INT NOT NULL,
+
+	date_time_last_edited DATETIME(6) NOT NULL,
 	current_weight_kg DECIMAL(7,2) NOT NULL,
 	current_weight_in_pounds DECIMAL(7,2) NOT NULL,
 	body_fat_percentage DECIMAL(7,2) NOT NULL,

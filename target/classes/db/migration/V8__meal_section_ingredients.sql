@@ -2,7 +2,7 @@
 -- DDL SCRIPT | App Setup
 -- #########################################################################
 
--- Ingredients are snapshotted per sub-meal version; no independent ingredient versioning
+-- Ingredients are snapshot per sub-meal version; no independent ingredient versioning
 
 CREATE TABLE ingredients_in_sections_of_meal
 (

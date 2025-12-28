@@ -7,6 +7,9 @@
 	.) The user doesn’t own the whole plan.”
 **/
 
+-- ####################################################
+-- Main Document
+-- ####################################################
 CREATE TABLE plans
 (
     plan_id INT PRIMARY KEY AUTO_INCREMENT,	
@@ -28,6 +31,9 @@ CREATE TABLE plans
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4;
 
+-- ####################################################
+-- Document Versions
+-- ####################################################
 CREATE TABLE plan_versions
 (
     plan_version_id INT PRIMARY KEY AUTO_INCREMENT,	
@@ -55,7 +61,6 @@ CREATE TABLE plan_versions
 	INDEX idx_active_plan_lookup (user_id, is_selected_plan),
 	INDEX idx_plan_versions_plan (plan_id),
 	INDEX idx_plan_versions_user (user_id)
-
 )
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4;

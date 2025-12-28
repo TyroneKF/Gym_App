@@ -21,18 +21,6 @@ if (!schemaVersionIsExpected()) {
     );
 }
 
-db/
- ├── migrations/
- │    ├── V1__create_core_schema.sql
- │    ├── V2__create_views.sql
- │    ├── V3__seed_measurements.sql
- │    ├── V4__seed_ingredient_types.sql
- │    ├── V5__add_macros_tables.sql
- │    └── V6__seed_initial_user.sql
- │
- └── README.md
-
--- Prevents a table from being updated
 
 
 V10__seed_reference_data.sql        ← always prod-safe
@@ -41,7 +29,7 @@ V12__seed_demo_data.sql            ← dev/test only (conditional)
 
 CREATE TEMPORARY TABLE
 
-Triggers with seed files - all allowed columns have to be updated as one unit
+
 
 INSERT INTO measurements
 (
@@ -59,9 +47,7 @@ ON DUPLICATE KEY UPDATE
     unit_name   = new_vals.unit_name,
     unit_symbol = new_vals.unit_symbol;
 
-Can this not be a singular table since there's no versioning
-    ingredients_in_sections_of_meal_versions
-    ingredients_in_sections_of_meal
+Triggers do the opposite especially for plans
 
 ######################################################################################
 Work On:

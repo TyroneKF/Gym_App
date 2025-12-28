@@ -1,7 +1,14 @@
 -- #########################################################################
 -- DDL SCRIPT | App Setup
 -- #########################################################################
+/*
 
+
+*/
+
+-- ####################################################
+-- ingredient_types
+-- ####################################################
 CREATE TABLE ingredient_types
 (
     ingredient_type_id INT  PRIMARY KEY AUTO_INCREMENT,
@@ -13,8 +20,9 @@ CREATE TABLE ingredient_types
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4;
 
--- ######################################
-
+-- ####################################################
+-- Measurements
+-- ####################################################
 CREATE TABLE measurements
  (
     -- PRIMARY KEYS

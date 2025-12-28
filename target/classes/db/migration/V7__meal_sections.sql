@@ -1,9 +1,16 @@
 -- #########################################################################
 -- DDL SCRIPT | App Setup
 -- #########################################################################
+/*
 
--- Sections are snapshot per meal version; no independent section versioning
+    Sections are snapshot per meal version; no independent section versioning
 
+*/
+
+
+-- ####################################################
+-- Main Document
+-- ####################################################
 CREATE TABLE divided_meal_sections
 (
    div_meal_sections_id INT PRIMARY KEY AUTO_INCREMENT   
@@ -11,6 +18,9 @@ CREATE TABLE divided_meal_sections
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4;
 
+-- ####################################################
+-- Document Versions
+-- ####################################################
 CREATE TABLE divided_meal_sections_versions
 (	
 	div_meal_sections_version_id INT PRIMARY KEY AUTO_INCREMENT,
