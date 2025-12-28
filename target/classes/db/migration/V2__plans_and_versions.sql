@@ -10,11 +10,6 @@
 -- ####################################################
 -- Main Document
 -- ####################################################
-
--- Immutable Columns (Not Allowed)
--- Mutable Columns (Implicitly Allowed):
-
-
 CREATE TABLE plans
 (
     plan_id INT PRIMARY KEY AUTO_INCREMENT,	

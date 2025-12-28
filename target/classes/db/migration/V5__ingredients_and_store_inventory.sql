@@ -63,7 +63,6 @@ DEFAULT CHARSET=utf8mb4;
 -- ####################################################
 -- Product Suppliers
 -- ####################################################
-
 CREATE TABLE ingredient_in_shops
 (
     -- PRIMARY KEY , UNIQUE To this Table

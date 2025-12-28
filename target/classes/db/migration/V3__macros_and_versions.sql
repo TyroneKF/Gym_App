@@ -49,7 +49,6 @@ CREATE TABLE macros_per_pound_and_limits_versions
 	saturated_fat_limit DECIMAL(7,2) NOT NULL,	
 	salt_limit DECIMAL(7,2) NOT NULL,
     water_target DECIMAL(7,2) NOT NULL,
-
 	additional_calories DECIMAL(7,2) NOT NULL,
 	
 	UNIQUE KEY unique_macros_version (macros_ID, version_number),
