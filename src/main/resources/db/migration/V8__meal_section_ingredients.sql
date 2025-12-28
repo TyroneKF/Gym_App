@@ -6,18 +6,7 @@
 
 CREATE TABLE ingredients_in_sections_of_meal
 (
-    ingredients_index INT PRIMARY KEY AUTO_INCREMENT
-)
-ENGINE=InnoDB
-DEFAULT CHARSET=utf8mb4;
-
-CREATE TABLE ingredients_in_sections_of_meal_versions
-(
-	ingredients_index_version_id INT PRIMARY KEY AUTO_INCREMENT,
-	
-	ingredients_index INT NOT NULL,
-		FOREIGN KEY (ingredients_index) REFERENCES ingredients_in_sections_of_meal(ingredients_index) 
-			ON DELETE CASCADE,
+    ingredients_index INT PRIMARY KEY AUTO_INCREMENT,
 
     div_meal_sections_version_id INT NOT NULL,
 		FOREIGN KEY (div_meal_sections_version_id) 
@@ -30,7 +19,7 @@ CREATE TABLE ingredients_in_sections_of_meal_versions
 
 	quantity DECIMAL(15,2) NOT NULL,
 
-	pdid INT NULL,	   
+	pdid INT DEFAULT NULL,
 		FOREIGN KEY (pdid) 
 			REFERENCES ingredient_in_shops(pdid)
 			ON DELETE RESTRICT, -- Prevents deleting ingredient if product is being deleted, app logic will have to set this value to null first then delete parent

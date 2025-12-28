@@ -83,31 +83,31 @@ INSERT INTO divided_meal_sections_versions
 	
 ) VALUES
 
--- # Breakfast : 
-(1, 1,  1,  "Pancakes "),  -- 1  = Pancakes 
+-- # Breakfast :
+(1, 1,  1,  "Pancakes "),  -- 1  = Pancakes
 (1, 2,  2,  "Eggs + Plantain"),  -- 2  = Eggs + Plantain
 (1, 3,  3,  "Celery Drink"),  -- 3  = Celery Drink
 
--- # MidMorning :   
+-- # MidMorning :
 (2, 4,  4,  "Oatmeal"),  -- 4  = Oatmeal
 (2, 5,  5,  "Bananas"),  -- 5  = Bananas
 (2, 6,  6,  "Mango Smoothie"),  -- 6  = Mango Smoothie
 
---  # Lunch :   
+--  # Lunch :
 (3, 7,  7,  "Lunch Meal"),  -- 7  = Lunch Meal
 (3, 8,  8,  "Nuts"),  -- 8  = Nuts
 (3, 9,  9,  "Multivitamin Shake"),  -- 9  = Multivitamin Shake
 
---  # Pre-Workout :   
+--  # Pre-Workout :
 (4, 10, 10, "Fruit Smoothie"), -- 10 = Fruit Smoothie
 
---  # Post-Workout :   
+--  # Post-Workout :
 (5, 11, 11, "Bananas"), -- 11 = Bananas
 (5, 12, 12, "Whey Protein Shake"), -- 12 = Protein Shake
 (5, 13, 13, "Vegetable Meal"), -- 13 = Veg Meal
 
---  # Dinner :   
-(6, 14, 14, "Pasta Meal"), -- 14 = Pasta Meal 
+--  # Dinner :
+(6, 14, 14, "Pasta Meal"), -- 14 = Pasta Meal
 
 --  # Bed Snack
 (7, 15, 15, "Casein Shake"); -- 15 = Protein Shake
@@ -134,7 +134,8 @@ INSERT INTO ingredients_in_sections_of_meal_versions
 	ingredient_id, 
 	quantity
 	
-) VALUES
+)
+VALUES
 
 -- #####################################################
 -- # Breakfast

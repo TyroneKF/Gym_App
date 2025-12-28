@@ -191,13 +191,13 @@ CALL validate_and_insert_into_seed_registry
 );
 
 -- ##########################
--- Mid-Morning Snack Meal ID 
+-- Mid-Morning Snack Meal ID
 -- ##########################
 
 -- Assign Mid-Morning Snack Meal ID
 SELECT meal_in_plan_version_id
 INTO @mid_morning_snack_mv_id
-FROM tmp_meal_version_anchors 
+FROM tmp_meal_version_anchors
 ORDER BY meal_in_plan_version_id
 LIMIT 1 OFFSET 1;
 
@@ -212,7 +212,7 @@ CALL validate_and_insert_into_seed_registry
 );
 
 -- ##########################
--- Lunch Meal ID 
+-- Lunch Meal ID
 -- ##########################
 
 -- Assign Lunch ID
@@ -232,10 +232,10 @@ CALL validate_and_insert_into_seed_registry
 );
 
 -- ##########################
--- Pre-Workout ID 
+-- Pre-Workout ID
 -- ##########################
 
--- Assign Lunch ID
+-- Assign Pre-Workout ID
 SELECT meal_in_plan_version_id
 INTO @pre_workout_mv_id
 FROM tmp_meal_version_anchors 
@@ -252,7 +252,7 @@ CALL validate_and_insert_into_seed_registry
 );
 
 -- ##########################
--- Post-Workout ID 
+-- Post-Workout ID
 -- ##########################
 
 -- Assign Post-Workout ID
@@ -272,7 +272,7 @@ CALL validate_and_insert_into_seed_registry
 );
 
 -- ##########################
--- Dinner ID 
+-- Dinner ID
 -- ##########################
 
 -- Assign Dinner ID
@@ -295,7 +295,7 @@ CALL validate_and_insert_into_seed_registry
 -- Bedtime ID
 -- ##########################
 
--- Assign Dinner ID
+-- Assign Bedtime ID
 SELECT meal_in_plan_version_id
 INTO @bedtime_mv_id
 FROM tmp_meal_version_anchors 

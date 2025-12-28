@@ -363,8 +363,8 @@ DELIMITER ;
 -- ###########################################################################
 DELIMITER $$
 
-	CREATE TRIGGER trg_ingredients_in_sections_of_meal_versions_allow_only_safe_updates
-	BEFORE UPDATE ON ingredients_in_sections_of_meal_versions
+	CREATE TRIGGER trg_ingredients_in_meal_allow_only_safe_updates
+	BEFORE UPDATE ON ingredients_in_sections_of_meal
 	FOR EACH ROW
 	BEGIN
 		IF NOT -- any column not listed here is not updated
@@ -376,7 +376,7 @@ DELIMITER $$
 		THEN
 			SIGNAL SQLSTATE '45000'
 				SET MESSAGE_TEXT =
-					'Only ingredient_id, quantity and pdid can be updated on ingredients_in_sections_of_meal_versions';
+					'Only ingredient_id, quantity and pdid can be updated on ingredients_in_sections_of_meal';
 		END IF;
 	END$$
 

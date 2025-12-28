@@ -147,7 +147,8 @@ INSERT INTO ingredients_info
     liquid_content,
     calories
 	
-) VALUES
+)
+VALUES
 
 ("Water", @litres_measurement_id, @liquids_type_id, 100.00, 0, 0, 0, 0, 0, 0, 0, 0, 100, 100, 0),
 ("Banana", @grams_measurement_id, @fruit_type_id, 100.00, 51, 1.1, 23, 12, 2.6, 0.3, 0.1, 0, 0, 0, 89),
@@ -155,9 +156,9 @@ INSERT INTO ingredients_info
 ("Spinach", @grams_measurement_id, @vegetables_type_id, 100.00, 15, 2.9, 3.6, 0.4, 2.2, 0.4, 0.1, 0, 0, 0, 23),
 ("Heinz Classic Barbecue Sauce", @grams_measurement_id, @sauce_type_id, 100.00, 0, 0.9, 34, 29, 0, 0.2, 0.1, 1.2, 0, 100, 138),
 ("Kale", @grams_measurement_id, @vegetables_type_id, 100.00, 3, 2.92, 4.42, 0.8, 4.1, 1.49, 0, 0, 0, 0, 20),
-("Sweet Potatoe", @grams_measurement_id, @vegetables_type_id, 100.00, 68, 1.6, 20, 4.2, 3, 0.1, 0, 0, 0, 0, 86),
+("Sweet Potato", @grams_measurement_id, @vegetables_type_id, 100.00, 68, 1.6, 20, 4.2, 3, 0.1, 0, 0, 0, 0, 86),
 ("Carrots", @grams_measurement_id, @vegetables_type_id, 100.00, 41, 0.9, 10, 4.7, 2.8, 0.2, 0, 0, 0, 0, 41),
-("Brocolli", @grams_measurement_id, @vegetables_type_id, 100.00, 15, 2.57, 6.27, 1.4, 2.4, 0.34, 0.03, 0, 0, 0, 39),
+("Broccolli", @grams_measurement_id, @vegetables_type_id, 100.00, 15, 2.57, 6.27, 1.4, 2.4, 0.34, 0.03, 0, 0, 0, 39),
 ("Celery", @grams_measurement_id, @vegetables_type_id, 100.00, 35, 0.49, 3.32, 0, 0, 0.16, 0, 0, 0, 0, 17),
 
 ("Frozen Mangoes (ASDA)", @grams_measurement_id, @frozen_fruit_type_id, 100.00, 53, 0.7, 14, 14, 2.6, 0, 0, 0, 0, 0, 66),
@@ -210,16 +211,12 @@ ON DUPLICATE KEY UPDATE  -- Incase of duplicate, ensures fields match correctly 
     ingredient_type_id = VALUES(ingredient_type_id);
 
 -- ###############################################################################
--- 5.) Set Variables
+-- 5.) Set Ingredient ID Variables (Alphabetical Order)
 -- ###############################################################################
 /*
 
 
 */
-
--- ###############################################################################
--- Set Ingredient ID Variables (Alphabetical Order)
--- ###############################################################################
 
 -- #####################################
 -- Alpro Organic Soya
@@ -350,19 +347,19 @@ CALL validate_and_insert_into_seed_registry
 );
 
 -- #####################################
--- Brocolli
+-- Broccolli
 -- #####################################
 SELECT ingredient_id
-INTO @brocolli_ingredient_id
+INTO @broccoli_ingredient_id
 FROM ingredients_info
-WHERE ingredient_name = 'Brocolli';
+WHERE ingredient_name = 'Broccolli';
 
 CALL validate_and_insert_into_seed_registry
 (
-    'brocolli_ingredient_id',
+    'broccoli_ingredient_id',
     'ingredients_info',
-    @brocolli_ingredient_id,
-    'Seed failed: ingredients_info @brocolli_ingredient_id could not be resolved'
+    @broccoli_ingredient_id,
+    'Seed failed: ingredients_info @broccoli_ingredient_id could not be resolved'
 );
 
 -- #####################################
@@ -830,19 +827,19 @@ CALL validate_and_insert_into_seed_registry
 );
 
 -- #####################################
--- Sweet Potatoe
+-- Sweet Potato
 -- #####################################
 SELECT ingredient_id
-INTO @sweet_potatoe_ingredient_id
+INTO @sweet_potato_ingredient_id
 FROM ingredients_info
-WHERE ingredient_name = 'Sweet Potatoe';
+WHERE ingredient_name = 'Sweet Potato';
 
 CALL validate_and_insert_into_seed_registry
 (
-    'sweet_potatoe_ingredient_id',
+    'sweet_potato_ingredient_id',
     'ingredients_info',
-    @sweet_potatoe_ingredient_id,
-    'Seed failed: ingredients_info @sweet_potatoe_ingredient_id could not be resolved'
+    @sweet_potato_ingredient_id,
+    'Seed failed: ingredients_info @sweet_potato_ingredient_id could not be resolved'
 );
 
 -- #####################################

@@ -1,136 +1,646 @@
 -- #################################################################################################
--- Seed Ingredient  Types For Demo Data
--- #################################################################################################
+-- Set Variables | Meals & Sub-Meals
+-- ################################################################################################
+/*
 
+*/
 
+-- ####################################################
+-- Breakfast Sub-Meal
+-- ####################################################
 
-
-
-
-SELECT
-    'breads'                     AS type, @breads                     IS NULL AS missing UNION ALL
-SELECT 'cake',                        @cake                        IS NULL UNION ALL
-SELECT 'cereals',                     @cereals                     IS NULL UNION ALL
-SELECT 'cereal_bars',                 @cereal_bars                 IS NULL UNION ALL
-SELECT 'cheese',                      @cheese                      IS NULL UNION ALL
-SELECT 'chocolate',                   @chocolate                   IS NULL UNION ALL
-SELECT 'dairy',                       @dairy                       IS NULL UNION ALL
-SELECT 'desserts',                    @desserts                    IS NULL UNION ALL
-SELECT 'fish',                        @fish                        IS NULL UNION ALL
-SELECT 'flour',                       @flour                       IS NULL UNION ALL
-SELECT 'frozen_fruit',                @frozen_fruit                IS NULL UNION ALL
-SELECT 'frozen_vegetables',           @frozen_vegetables           IS NULL UNION ALL
-SELECT 'fruit',                       @fruit                       IS NULL UNION ALL
-SELECT 'fruit_juice',                 @fruit_juice                 IS NULL UNION ALL
-SELECT 'grains_and_legumes',           @grains_and_legumes           IS NULL UNION ALL
-SELECT 'juice',                       @juice                       IS NULL UNION ALL
-SELECT 'lean_meat',                   @lean_meat                   IS NULL UNION ALL
-SELECT 'liquids',                     @liquids                     IS NULL UNION ALL
-SELECT 'meat',                        @meat                        IS NULL UNION ALL
-SELECT 'milk',                        @milk                        IS NULL UNION ALL
-SELECT 'noodles',                     @noodles                     IS NULL UNION ALL
-SELECT 'nut_powder',                  @nut_powder                  IS NULL UNION ALL
-SELECT 'nuts_and_seeds',              @nuts_and_seeds              IS NULL UNION ALL
-SELECT 'other_grains',                @other_grains                IS NULL UNION ALL
-SELECT 'pasta',                       @pasta                       IS NULL UNION ALL
-SELECT 'plant_milk',                  @plant_milk                  IS NULL UNION ALL
-SELECT 'poultry',                     @poultry                     IS NULL UNION ALL
-SELECT 'potatoes',                    @potatoes                    IS NULL UNION ALL
-SELECT 'protein_powder',              @protein_powder              IS NULL UNION ALL
-SELECT 'rice',                        @rice                        IS NULL UNION ALL
-SELECT 'sauce',                       @sauce                       IS NULL UNION ALL
-SELECT 'smoothie',                    @smoothie                    IS NULL UNION ALL
-SELECT 'spices_and_herb_packs',        @spices_and_herb_packs        IS NULL UNION ALL
-SELECT 'sugar',                       @sugar                       IS NULL UNION ALL
-SELECT 'syrup_and_spreads',            @syrup_and_spreads            IS NULL UNION ALL
-SELECT 'vegan_vitamin_powders',        @vegan_vitamin_powders        IS NULL UNION ALL
-SELECT 'vegan_milk',                  @vegan_milk                  IS NULL UNION ALL
-SELECT 'vegetables',                  @vegetables                  IS NULL UNION ALL
-SELECT 'vitamins',                    @vitamins                    IS NULL UNION ALL
-SELECT 'whole_wheat',                 @whole_wheat                 IS NULL UNION ALL
-SELECT 'yoghurt',                     @yoghurt                     IS NULL;
-
--- #################################################################################################
--- Seed Ingredients For Demo Dat
--- #################################################################################################
-
--- Create Ingredients
-INSERT INTO ingredients_info
+-- Breakfast Meal ID
+SET @breakfast_mv_id := get_seed_id_by_key
 (
-    ingredient_name,
-    ingredient_type_id,
-    based_on_quantity,
-    glycemic_index,
-    protein,
-    carbohydrates,
-    sugars_of_carbs,
-    fibre,
-    fat,
-    saturated_fat,
-    salt,
-    water_content,
-    liquid_content,
-    calories
+    'breakfast_mv_id',
+    'Seed failed: meals_in_plan_versions  @breakfast_mv_id could not be resolved'
+);
+
+-- ####################
+-- Sub-Meals
+-- ####################
+SET @pancakes_breakfast_div_vs_id := get_seed_id_by_key
+(
+    'pancakes_breakfast_div_vs_id',
+    'Seed failed: divided_meal_sections_versions  @pancakes_breakfast_div_vs_id could not be resolved'
+);
+
+SET @eggs_breakfast_div_vs_id := get_seed_id_by_key
+(
+    'eggs_breakfast_div_vs_id',
+    'Seed failed: divided_meal_sections_versions  @eggs_breakfast_div_vs_id could not be resolved'
+);
+
+SET @celery_breakfast_div_vs_id := get_seed_id_by_key
+(
+    'celery_breakfast_div_vs_id',
+    'Seed failed: divided_meal_sections_versions  @celery_breakfast_div_vs_id could not be resolved'
+);
+
+-- ####################################################
+-- Mid-Morning Snack Meal
+-- ####################################################
+
+-- Mid-Morning Snack Meal ID
+SET @mid_morning_snack_mv_id := get_seed_id_by_key
+(
+    'mid_morning_snack_mv_id',
+    'Seed failed: meals_in_plan_versions  @mid_morning_snack_mv_id not be resolved'
+);
+
+-- ####################
+-- Sub-Meals
+-- ####################
+SET @oatmeal_mid_morning_div_vs_id := get_seed_id_by_key
+(
+    'oatmeal_mid_morning_div_vs_id',
+    'Seed failed: divided_meal_sections_versions  @oatmeal_mid_morning_div_vs_id could not be resolved'
+);
+
+SET @bananas_mid_morning_div_vs_id := get_seed_id_by_key
+(
+    'bananas_mid_morning_div_vs_id',
+    'Seed failed: divided_meal_sections_versions  @bananas_mid_morning_div_vs_id could not be resolved'
+);
+
+SET @mango_smoothie_mid_morning_div_vs_id := get_seed_id_by_key
+(
+    'mango_smoothie_mid_morning_div_vs_id',
+    'Seed failed: divided_meal_sections_versions @mango_smoothie_mid_morning_div_vs_id could not be resolved'
+);
+
+
+-- ####################################################
+-- Lunch Meal
+-- ####################################################
+
+-- Lunch Meal ID
+SET @lunch_mv_idd :=  get_seed_id_by_key
+(
+    'lunch_mv_id',
+    'Seed failed: meals_in_plan_versions  @lunch_mv_id could not be resolved'
+);
+
+-- ####################
+-- Sub-Meals
+-- ####################
+SET @lunch_meal_lunch_div_vs_id := get_seed_id_by_key
+(
+    'pancakes_breakfast_div_vs_id',
+    'Seed failed: divided_meal_sections_versions  @div_meal_sections_version_id could not be resolved'
+);
+
+SET @nuts_lunch_div_vs_id := get_seed_id_by_key
+(
+    'nuts_lunch_div_vs_id',
+    'Seed failed: divided_meal_sections_versions  @nuts_lunch_div_vs_id could not be resolved'
+);
+
+SET @multivitamin_shake_lunch_div_vs_id := get_seed_id_by_key
+(
+    'multivitamin_shake_lunch_div_vs_id',
+    'Seed failed: divided_meal_sections_versions  @multivitamin_shake_lunch_div_vs_id could not be resolved'
+);
+
+-- ####################################################
+-- Pre-Workout Meal
+-- ####################################################
+
+-- Pre-Workout Meal ID
+SET @pre_workout_mv_id :=  get_seed_id_by_key
+(
+    'pre_workout_mv_id',
+    'Seed failed: meals_in_plan_versions  @pre_workout_mv_id could not be resolved'
+);
+
+-- ####################
+-- Sub-Meals
+-- ####################
+SET @fruit_smoothie_pre_workout_div_vs_id := get_seed_id_by_key
+(
+    'fruit_smoothie_pre_workout_div_vs_id',
+    'Seed failed: divided_meal_sections_versions  @fruit_smoothie_pre_workout_div_vs_id could not be resolved'
+);
+
+-- ####################################################
+-- Post-Workout Meal
+-- ####################################################
+
+-- Post-Workout Meal ID
+SET @post_workout_mv_id :=  get_seed_id_by_key
+(
+    'post_workout_mv_id',
+    'Seed failed: meals_in_plan_versions  @post_workout_mv_id could not be resolved'
+);
+
+-- ####################
+-- Sub-Meals
+-- ####################
+SET @bananas_post_workout_div_vs_id := get_seed_id_by_key
+(
+    'bananas_post_workout_div_vs_id',
+    'Seed failed: divided_meal_sections_versions  @bananas_post_workout_div_vs_id could not be resolved'
+);
+
+SET @protein_shake_post_workout_div_vs_id := get_seed_id_by_key
+(
+    'protein_shake_post_workout_div_vs_id',
+    'Seed failed: divided_meal_sections_versions  @protein_shake_post_workout_div_vs_id could not be resolved'
+);
+
+SET @veg_meal_post_workout_div_vs_id := get_seed_id_by_key
+(
+    'veg_meal_post_workout_div_vs_id',
+    'Seed failed: divided_meal_sections_versions  @veg_meal_post_workout_div_vs_id could not be resolved'
+);
+
+-- ####################################################
+-- Dinner Meal
+-- ####################################################
+
+-- Dinner ID
+SET @dinner_mv_id :=  get_seed_id_by_key
+(
+    'dinner_mv_id',
+    'Seed failed: meals_in_plan_versions  @dinner_mv_id could not be resolved'
+);
+
+-- ####################
+-- Sub-Meals
+-- ####################
+SET @dinner_div_vs_id := get_seed_id_by_key
+(
+    'dinner_div_vs_id',
+    'Seed failed: divided_meal_sections_versions  @dinner_div_vs_id could not be resolved'
+);
+
+-- ####################################################
+-- Bedtime Meal
+-- ####################################################
+
+-- Bedtime ID
+SET @bedtime_mv_id :=  get_seed_id_by_key
+(
+    'bedtime_mv_id',
+    'Seed failed: meals_in_plan_versions  @bedtime_mv_id could not be resolved'
+);
+
+-- ####################
+-- Sub-Meals
+-- ####################
+SET @protein_shake_bedtime_vs_id := get_seed_id_by_key
+(
+    'protein_shake_bedtime_vs_id',
+    'Seed failed: divided_meal_sections_versions  @protein_shake_bedtime_vs_id could not be resolved'
+);
+
+-- #################################################################################################
+-- Set Ingredients Variables (Alphabetical Order)
+-- #################################################################################################
+
+-- Alpro Organic Soya
+SET @alpro_organic_soya_ingredient_id := get_seed_id_by_key
+(
+    'alpro_organic_soya_ingredient_id',
+    'Seed failed: ingredients_info  @alpro_organic_soya_ingredient_id could not be resolved'
+);
+
+-- Alpro Soya Light Long Life Drink
+SET @alpro_soya_light_long_life_drink_ingredient_id := get_seed_id_by_key
+(
+    'alpro_soya_light_long_life_drink_ingredient_id',
+    'Seed failed: ingredients_info  @alpro_soya_light_long_life_drink_ingredient_id could not be resolved'
+);
+
+-- ASDA Scottish Porridge Oats
+SET @asda_scottish_porridge_oats_ingredient_id := get_seed_id_by_key
+(
+    'asda_scottish_porridge_oats_ingredient_id',
+    'Seed failed: ingredients_info  @asda_scottish_porridge_oats_ingredient_id could not be resolved'
+);
+
+-- Banana
+SET @banana_ingredient_id := get_seed_id_by_key
+(
+    'banana_ingredient_id',
+    'Seed failed: ingredients_info  @banana_ingredient_id could not be resolved'
+);
+
+-- Be-Ro Plain Flour
+SET @be_ro_plain_flour_ingredient_id := get_seed_id_by_key
+(
+    'be_ro_plain_flour_ingredient_id',
+    'Seed failed: ingredients_info  @be_ro_plain_flour_ingredient_id could not be resolved'
+);
+
+-- Bertolli Olive Oil Spread
+SET @bertolli_olive_oil_spread_ingredient_id := get_seed_id_by_key
+(
+    'bertolli_olive_oil_spread_ingredient_id',
+    'Seed failed: ingredients_info  @bertolli_olive_oil_spread_ingredient_id could not be resolved'
+);
+
+-- Billingtons Brown Sugar
+SET @billingtons_brown_sugar_ingredient_id := get_seed_id_by_key
+(
+    'billingtons_brown_sugar_ingredient_id',
+    'Seed failed: ingredients_info  @billingtons_brown_sugar_ingredient_id could not be resolved'
+);
+
+-- Black Beans
+SET @black_beans_ingredient_id := get_seed_id_by_key
+(
+    'black_beans_ingredient_id',
+    'Seed failed: ingredients_info  @black_beans_ingredient_id could not be resolved'
+);
+
+-- Brocolli
+SET @broccoli_ingredient_id := get_seed_id_by_key
+(
+    'broccoli_ingredient_id',
+    'Seed failed: ingredients_info  @broccoli_ingredient_id could not be resolved'
+);
+
+-- Carrots
+SET @carrots_ingredient_id := get_seed_id_by_key
+(
+    'carrots_ingredient_id',
+    'Seed failed: ingredients_info  @carrots_ingredient_id could not be resolved'
+);
+
+-- Cashew Nuts
+SET @cashew_nuts_ingredient_id := get_seed_id_by_key
+(
+    'cashew_nuts_ingredient_id',
+    'Seed failed: ingredients_info  @cashew_nuts_ingredient_id could not be resolved'
+);
+
+-- Celery
+SET @celery_ingredient_id := get_seed_id_by_key
+(
+    'celery_ingredient_id',
+    'Seed failed: ingredients_info  @celery_ingredient_id could not be resolved'
+);
+
+-- Chicken Mince (ASDA)
+SET @chicken_mince_asda_ingredient_id := get_seed_id_by_key
+(
+    'chicken_mince_asda_ingredient_id',
+    'Seed failed: ingredients_info  @chicken_mince_asda_ingredient_id could not be resolved'
+);
+
+-- Corned Beef (Princess Reduced Fat)
+SET @corned_beef_princess_reduced_fat_ingredient_id := get_seed_id_by_key
+(
+    'corned_beef_princess_reduced_fat_ingredient_id',
+    'Seed failed: ingredients_info  @corned_beef_princess_reduced_fat_ingredient_id could not be resolved'
+);
+
+-- Creatine Monohydrate (MyProtein)
+SET @creatine_monohydrate_myprotein_ingredient_id := get_seed_id_by_key
+(
+    'creatine_monohydrate_myprotein_ingredient_id',
+    'Seed failed: ingredients_info  @creatine_monohydrate_myprotein_ingredient_id could not be resolved'
+);
+
+-- Dolmio Bolognese Pasta Sauce Low Fat
+SET @dolmio_bolognese_pasta_sauce_low_fat_ingredient_id := get_seed_id_by_key
+(
+    'dolmio_bolognese_pasta_sauce_low_fat_ingredient_id',
+    'Seed failed: ingredients_info  @dolmio_bolognese_pasta_sauce_low_fat_ingredient_id could not be resolved'
+);
+
+-- Fage Greek Yoghurt
+SET @fage_greek_yoghurt_ingredient_id := get_seed_id_by_key
+(
+    'fage_greek_yoghurt_ingredient_id',
+    'Seed failed: ingredients_info  @fage_greek_yoghurt_ingredient_id could not be resolved'
+);
+
+-- Frozen Blueberries (ASDA)
+SET @frozen_blueberries_asda_ingredient_id := get_seed_id_by_key
+(
+    'frozen_blueberries_asda_ingredient_id',
+    'Seed failed: ingredients_info  @frozen_blueberries_asda_ingredient_id could not be resolved'
+);
+
+-- Frozen Mangoes (ASDA)
+SET @frozen_mangoes_asda_ingredient_id := get_seed_id_by_key
+(
+    'frozen_mangoes_asda_ingredient_id',
+    'Seed failed: ingredients_info  @frozen_mangoes_asda_ingredient_id could not be resolved'
+);
+
+-- Frozen Pineapple (ASDA)
+SET @frozen_pineapple_asda_ingredient_id := get_seed_id_by_key
+(
+    'frozen_pineapple_asda_ingredient_id',
+    'Seed failed: ingredients_info  @frozen_pineapple_asda_ingredient_id could not be resolved'
+);
+
+-- Frozen Raspberries (ASDA)
+SET @frozen_raspberries_asda_ingredient_id := get_seed_id_by_key
+(
+    'frozen_raspberries_asda_ingredient_id',
+    'Seed failed: ingredients_info  @frozen_raspberries_asda_ingredient_id could not be resolved'
+);
+
+-- Frozen Strawberries (ASDA)
+SET @frozen_strawberries_asda_ingredient_id := get_seed_id_by_key
+(
+    'frozen_strawberries_asda_ingredient_id',
+    'Seed failed: ingredients_info  @frozen_strawberries_asda_ingredient_id could not be resolved'
+);
+
+-- Grapefruit
+SET @grapefruit_ingredient_id := get_seed_id_by_key
+(
+    'grapefruit_ingredient_id',
+    'Seed failed: ingredients_info  @grapefruit_ingredient_id could not be resolved'
+);
+
+-- Heinz Classic Barbecue Sauce
+SET @heinz_classic_barbecue_sauce_ingredient_id := get_seed_id_by_key
+(
+    'heinz_classic_barbecue_sauce_ingredient_id',
+    'Seed failed: ingredients_info  @heinz_classic_barbecue_sauce_ingredient_id could not be resolved'
+);
+
+-- Kale
+SET @kale_ingredient_id := get_seed_id_by_key
+(
+    'kale_ingredient_id',
+    'Seed failed: ingredients_info  @kale_ingredient_id could not be resolved'
+);
+
+-- Large Eggs (60g)
+SET @large_eggs_60g_ingredient_id := get_seed_id_by_key
+(
+    'large_eggs_60g_ingredient_id',
+    'Seed failed: ingredients_info  @large_eggs_60g_ingredient_id could not be resolved'
+);
+
+-- Lean Turkey Mince (ASDA)
+SET @lean_turkey_mince_asda_ingredient_id := get_seed_id_by_key
+(
+    'lean_turkey_mince_asda_ingredient_id',
+    'Seed failed: ingredients_info  @lean_turkey_mince_asda_ingredient_id could not be resolved'
+);
+
+-- Maca (VivoLife)
+SET @maca_vivolife_ingredient_id := get_seed_id_by_key
+(
+    'maca_vivolife_ingredient_id',
+    'Seed failed: ingredients_info  @maca_vivolife_ingredient_id could not be resolved'
+);
+
+-- Oranges
+SET @oranges_ingredient_id := get_seed_id_by_key
+(
+    'oranges_ingredient_id',
+    'Seed failed: ingredients_info  @oranges_ingredient_id could not be resolved'
+);
+
+-- Pistachios
+SET @pistachios_ingredient_id := get_seed_id_by_key
+(
+    'pistachios_ingredient_id',
+    'Seed failed: ingredients_info  @pistachios_ingredient_id could not be resolved'
+);
+
+-- Plantin
+SET @plantin_ingredient_id := get_seed_id_by_key
+(
+    'plantin_ingredient_id',
+    'Seed failed: ingredients_info  @plantin_ingredient_id could not be resolved'
+);
+
+-- Pumpkin Seeds
+SET @pumpkin_seeds_ingredient_id := get_seed_id_by_key
+(
+    'pumpkin_seeds_ingredient_id',
+    'Seed failed: ingredients_info  @pumpkin_seeds_ingredient_id could not be resolved'
+);
+
+-- Rice Dream Original Organic Milk
+SET @rice_dream_original_organic_milk_ingredient_id := get_seed_id_by_key
+(
+    'rice_dream_original_organic_milk_ingredient_id',
+    'Seed failed: ingredients_info  @rice_dream_original_organic_milk_ingredient_id could not be resolved'
+);
+
+-- Rowse Organic Honey
+SET @rowse_organic_honey_ingredient_id := get_seed_id_by_key
+(
+    'rowse_organic_honey_ingredient_id',
+    'Seed failed: ingredients_info  @rowse_organic_honey_ingredient_id could not be resolved'
+);
+
+-- Semi Skin Cow Milk
+SET @semi_skin_cow_milk_ingredient_id := get_seed_id_by_key
+(
+    'semi_skin_cow_milk_ingredient_id',
+    'Seed failed: ingredients_info  @semi_skin_cow_milk_ingredient_id could not be resolved'
+);
+
+-- Slow-Release Casein Vanilla (MyProtein)
+SET @slow_release_casein_vanilla_myprotein_ingredient_id := get_seed_id_by_key
+(
+    'slow_release_casein_vanilla_myprotein_ingredient_id',
+    'Seed failed: ingredients_info  @slow_release_casein_vanilla_myprotein_ingredient_id could not be resolved'
+);
+
+-- Spinach
+SET @spinach_ingredient_id := get_seed_id_by_key
+(
+    'spinach_ingredient_id',
+    'Seed failed: ingredients_info  @spinach_ingredient_id could not be resolved'
+);
+
+-- Sunflower Seeds
+SET @sunflower_seeds_ingredient_id := get_seed_id_by_key
+(
+    'sunflower_seeds_ingredient_id',
+    'Seed failed: ingredients_info  @sunflower_seeds_ingredient_id could not be resolved'
+);
+
+-- Sweet Potatoe
+SET @sweet_potato_ingredient_id := get_seed_id_by_key
+(
+    'sweet_potato_ingredient_id',
+    'Seed failed: ingredients_info  @sweet_potato_ingredient_id could not be resolved'
+);
+
+-- Sweetcorn
+SET @sweetcorn_ingredient_id := get_seed_id_by_key
+(
+    'sweetcorn_ingredient_id',
+    'Seed failed: ingredients_info  @sweetcorn_ingredient_id could not be resolved'
+);
+
+-- Thrive (VivoLife)
+SET @thrive_vivolife_ingredient_id := get_seed_id_by_key
+(
+    'thrive_vivolife_ingredient_id',
+    'Seed failed: ingredients_info  @thrive_vivolife_ingredient_id could not be resolved'
+);
+
+-- Water
+SET @water_ingredient_id := get_seed_id_by_key
+(
+    'water_ingredient_id',
+    'Seed failed: ingredients_info  @water_ingredient_id could not be resolved'
+);
+
+-- Whey Isolate Chocolate Smooth (MyProtein)
+SET @whey_isolate_chocolate_smooth_myprotein_ingredient_id := get_seed_id_by_key
+(
+    'whey_isolate_chocolate_smooth_myprotein_ingredient_id',
+    'Seed failed: ingredients_info  @whey_isolate_chocolate_smooth_myprotein_ingredient_id could not be resolved'
+);
+
+-- Whey Isolate Natural Strawberry (MyProtein)
+SET @whey_isolate_natural_strawberry_myprotein_ingredient_id := get_seed_id_by_key
+(
+    'whey_isolate_natural_strawberry_myprotein_ingredient_id',
+    'Seed failed: ingredients_info  @whey_isolate_natural_strawberry_myprotein_ingredient_id could not be resolved'
+);
+
+-- Wholemeal Wraps (Tesco)
+SET @wholemeal_wraps_tesco_ingredient_id := get_seed_id_by_key
+(
+    'wholemeal_wraps_tesco_ingredient_id',
+    'Seed failed: ingredients_info  @wholemeal_wraps_tesco_ingredient_id could not be resolved'
+);
+
+-- Wholewheat Spaghetti (ASDA)
+SET @wholewheat_spaghetti_asda_ingredient_id := get_seed_id_by_key
+(
+    'wholewheat_spaghetti_asda_ingredient_id',
+    'Seed failed: ingredients_info  @wholewheat_spaghetti_asda_ingredient_id could not be resolved'
+);
+
+
+
+-- #################################################################################################
+-- Insert Ingredients Into Meals
+-- #################################################################################################
+
+INSERT INTO ingredients_in_sections_of_meal
+(
+	div_meal_sections_version_id,
+
+	ingredient_id,
+	quantity
 )
+
 VALUES
 
-("Water", @liquids, 100.00, 0, 0, 0, 0, 0, 0, 0, 0, 100, 100, 0),
-("Banana", @fruit, 100.00, 51, 1.1, 23, 12, 2.6, 0.3, 0.1, 0, 0, 0, 89),
-("Wholemeal Wraps (Tesco)", @breads, 1.00, 30, 5.5, 27.9, 2, 4.2, 3.2, 1.5, 0.55, 0, 0, 170),
-("Spinach", @vegetables, 100.00, 15, 2.9, 3.6, 0.4, 2.2, 0.4, 0.1, 0, 0, 0, 23),
-("Heinz Classic Barbecue Sauce", @sauce, 100.00, 0, 0.9, 34, 29, 0, 0.2, 0.1, 1.2, 0, 100, 138),
-("Kale", @vegetables, 100.00, 3, 2.92, 4.42, 0.8, 4.1, 1.49, 0, 0, 0, 0, 20),
-("Sweet Potatoe", @vegetables, 100.00, 68, 1.6, 20, 4.2, 3, 0.1, 0, 0, 0, 0, 86),
-("Carrots", @vegetables, 100.00, 41, 0.9, 10, 4.7, 2.8, 0.2, 0, 0, 0, 0, 41),
-("Brocolli", @vegetables, 100.00, 15, 2.57, 6.27, 1.4, 2.4, 0.34, 0.03, 0, 0, 0, 39),
-("Celery", @vegetables, 100.00, 35, 0.49, 3.32, 0, 0, 0.16, 0, 0, 0, 0, 17),
+-- #####################################################
+-- # Breakfast
+-- #####################################################
 
-("Frozen Mangoes (ASDA)", @frozen_fruit, 100.00, 53, 0.7, 14, 14, 2.6, 0, 0, 0, 0, 0, 66),
-("Frozen Pineapple (ASDA)", @frozen_fruit, 100.00, 62, 0, 10, 10, 1.2, 0, 0, 0, 0, 0, 46),
-("Oranges", @fruit, 100.00, 40, 0.9, 12, 9, 2.4, 0.1, 0, 0, 0, 0, 47),
-("Frozen Strawberries (ASDA)", @frozen_fruit, 100.00, 40, 0.6, 6.1, 6.1, 3.8, 0, 0, 0, 0, 0, 39),
-("Frozen Blueberries (ASDA)", @frozen_fruit, 100.00, 53, 0.9, 9.1, 9.1, 1.5, 0, 0, 0, 0, 0, 45),
-("Frozen Raspberries (ASDA)", @frozen_fruit, 100.00, 32, 0.8, 5.1, 5.1, 3.7, 0, 0, 0, 0, 0, 34),
+-- # Breakfast Part 1 (Pancakes)
+(@pancakes_breakfast_div_vs_id,  @large_eggs_60g_ingredient_id, 3),  -- EGGS
+(@pancakes_breakfast_div_vs_id,  @be_ro_plain_flour_ingredient_id, 110), -- Flour
+-- (@pancakes_breakfast_div_vs_id,  , 28), -- Butter
+(@pancakes_breakfast_div_vs_id,  @billingtons_brown_sugar_ingredient_id, 28), -- Sugar
+(@pancakes_breakfast_div_vs_id,  @alpro_soya_light_long_life_drink_ingredient_id, 140), -- Milk
+(@pancakes_breakfast_div_vs_id,  @fage_greek_yoghurt_ingredient_id, 110), -- Yoghurt
 
-("Pumpkin Seeds", @nuts_and_seeds, 100.00, 25, 19, 54, 0, 18, 19, 3.7, 0, 0, 0, 446),
-("Sunflower Seeds", @nuts_and_seeds, 100.00, 22, 21, 20, 2.6, 9, 51, 4.5, 0, 0, 0, 584),
-("Pistachios", @nuts_and_seeds, 100.00, 15, 20, 28, 8, 10, 45, 6, 0, 0, 0, 562),
-("Cashew Nuts", @nuts_and_seeds, 100.00, 25, 18, 30, 6, 3.3, 44, 8, 0, 0, 0, 553),
 
-("Chicken Mince (ASDA)", @poultry, 100.00, 0, 28, 0.5, 0, 0.5, 5.7, 1.5, 0, 0, 0, 166),
-("Lean Turkey Mince (ASDA)", @poultry, 100.00, 0, 19, 0.5, 0.5, 0.5, 6.8, 1.9, 0.25, 0, 0, 140),
+-- # Breakfast Part 2 (Eggs + Plantain)
+(@eggs_breakfast_div_vs_id,   @large_eggs_60g_ingredient_id, 3), -- EGGS
+(@eggs_breakfast_div_vs_id,   @alpro_soya_light_long_life_drink_ingredient_id, 40), -- Milk
+(@eggs_breakfast_div_vs_id,   @plantin_ingredient_id, 120), -- Plantain
 
-("Maca (VivoLife)", @vegan_vitamin_powders, 100.00, 54, 10, 75, 25, 8.5, 2.2, 0, 0, 0, 0, 377),
-("Thrive (VivoLife)", @vegan_vitamin_powders, 1.00, 0, 0.4, 3.4, 0.9, 2.5, 0.05, 0.02, 0.08, 0, 0, 21),
+-- # Breakfast Part 3 (Celery Drink)
+(@celery_breakfast_div_vs_id,  @celery_ingredient_id, 110), -- Celery
+(@celery_breakfast_div_vs_id,  @water_ingredient_id, 500), -- Water
 
-("ASDA Scottish Porridge Oats", @cereals, 100.00, 55, 1.6, 7.8, 0.5, 1.3, 0.8, 0.1, 0.01, 0, 0, 47),
-("Rowse Organic Honey", @syrup_and_spreads, 100.00, 58, 0.5, 81.5, 80.8, 0.5, 0.5, 0.2, 0.03, 0, 100, 329),
+-- #####################################################
+-- # Mid-Morning
+-- #####################################################
 
-("Rice Dream Original Organic Milk", @plant_milk, 100.00, 86, 0.1, 9.9, 7.1, 0, 1.1, 0.1, 0.07, 0, 100, 50),
-("Alpro Soya Light Long Life Drink", @plant_milk, 100.00, 30, 2.1, 1.7, 1.5, 0.9, 1.2, 0.2, 0.11, 0, 100, 28),
-("Alpro Organic Soya", @plant_milk, 100.00, 30, 3.3, 0, 0, 0.6, 1.9, 0.3, 0.03, 0, 100, 32),
+-- # Oatmeal Part 4
+(@oatmeal_mid_morning_div_vs_id,  @asda_scottish_porridge_oats_ingredient_id, 110), -- Oatmeal
+-- (@oatmeal_mid_morning_div_vs_id,  p, 35), -- Nut Powder
+(@oatmeal_mid_morning_div_vs_id, @alpro_soya_light_long_life_drink_ingredient_id, 450), -- Milk
+(@oatmeal_mid_morning_div_vs_id, @rowse_organic_honey_ingredient_id, 16), -- Honey
 
-("Creatine Monohydrate (MyProtein)", @protein_powder, 4.00, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-("Whey Isolate Natural Strawberry (MyProtein)", @protein_powder, 25.00, 0, 22, 1.5, 1.5, 0, 0.1, 0.1, 0.13, 0, 0, 93),
-("Whey Isolate Chocolate Smooth (MyProtein)", @protein_powder, 25.00, 0, 21, 1.6, 0.6, 0, 0.2, 0.1, 0.13, 0, 0, 91),
-("Slow-Release Casein Vanilla (MyProtein)", @protein_powder, 30.00, 0, 25, 3, 2.4, 0, 0.4, 0.2, 0.08, 0, 0, 116),
+-- # Bananas Part 5
+(@bananas_mid_morning_div_vs_id,  @banana_ingredient_id, 200 ), -- Bananas
 
-("Dolmio Bolognese Pasta Sauce Low Fat", @sauce, 100.00, 35, 1.3, 6.7, 3.8, 1.1, 0.5, 0.1, 0.71, 0, 100, 36),
-("Wholewheat Spaghetti (ASDA)", @pasta, 100.00, 40, 4.8, 28, 0.5, 3.7, 0.9, 0.2, 0.03, 0, 0, 148),
-("Sweetcorn", @vegetables, 100.00, 55, 3.2, 19, 3.2, 2.7, 1.2, 0.2, 0, 0, 0, 86),
-("Semi Skin Cow Milk", @milk, 100.00, 31, 3.6, 4.8, 4.8, 0, 1.8, 1.1, 0.11, 0, 100, 50),
-("Black Beans", @grains_and_legumes, 172.00, 30, 15.2, 40.8, 0.6, 15, 0.9, 0.2, 0, 0, 0, 227),
-("Grapefruit", @fruit, 100.00, 25, 0.6, 8.1, 7, 1.1, 0.1, 0, 0, 0, 0, 32),
-("Corned Beef (Princess Reduced Fat)", @meat, 100.00, 0, 25, 0, 0, 0, 13.5, 6.5, 1.4, 0, 0, 222),
-("Large Eggs (60g)", @poultry, 1.00, 0, 8.3, 0.5, 0.5, 0.5, 5.7, 1.6, 0.22, 0, 0, 85),
-("Fage Greek Yoghurt", @yoghurt, 100.00, 12, 10.3, 3, 3, 0, 0, 0, 0.1, 0, 100, 54),
-("Be-Ro Plain Flour", @flour, 100.00, 85, 10.4, 70.1, 1.4, 3.2, 1.3, 0.2, 0, 0, 0, 340),
-("Allisons Wholemeal Flour", @flour, 100.00, 60, 12, 65, 1.4, 10, 2.6, 0.5, 0.03, 0, 0, 350),
-("Bertolli Olive Oil Spread", @dairy, 100.00, 0, 0.5, 0.5, 0.5, 0, 59, 17, 1.1, 0, 0, 531),
-("Allinson Self-Raising Wholemeal Flour", @flour, 100.00, 60, 11, 69.3, 1.1, 10, 2.4, 0.4, 1.1, 0, 0, 359),
-("Plantin", @fruit, 100.00, 40, 1.3, 32, 15, 2.3, 0.4, 0.1, 0, 0, 0, 122),
-("Billingtons Brown Sugar", @sugar, 100.00, 70, 0, 99, 99, 0, 0, 0, 0.25, 0, 0, 398);
+-- # Mango & Pineapple Smoothie Part 6
+(@mango_smoothie_mid_morning_div_vs_id,  @frozen_mangoes_asda_ingredient_id, 110), -- Mango
+(@mango_smoothie_mid_morning_div_vs_id,  @frozen_pineapple_asda_ingredient_id, 110), -- Pineapple
+(@mango_smoothie_mid_morning_div_vs_id,  @water_ingredient_id,  500), -- Water
 
--- ##########################################################
--- Create Variables for Ingredients
--- ##########################################################
+-- #####################################################
+-- # Lunch
+-- #####################################################
+
+-- # Lunch  Part 7
+(@lunch_meal_lunch_div_vs_id,  @wholemeal_wraps_tesco_ingredient_id, 2),    -- Wraps
+(@lunch_meal_lunch_div_vs_id,  @chicken_mince_asda_ingredient_id, 150), -- Chicken Mince
+-- (@lunch_meal_lunch_div_vs_id,  @ ,60),    -- BBQ Sauce
+
+
+-- # Nuts  Part 8
+(@nuts_lunch_div_vs_id,  @sunflower_seeds_ingredient_id, 7),  -- Sunflower Seeds
+(@nuts_lunch_div_vs_id,   @pumpkin_seeds_ingredient_id, 7),  -- Pumpkin Seeds
+(@nuts_lunch_div_vs_id,   @pistachios_ingredient_id, 12), -- Pistachios
+
+-- # Multivitamin Shake Part 9
+(@multivitamin_shake_lunch_div_vs_id,  @maca_vivolife_ingredient_id , 5), -- Maca
+(@multivitamin_shake_lunch_div_vs_id,  @thrive_vivolife_ingredient_id, 3), -- Vivo Life
+(@multivitamin_shake_lunch_div_vs_id,  @water_ingredient_id, 500), -- Water
+
+-- #####################################################
+-- # Pre-Workout (null, 2, null, 4, , ), --
+-- #####################################################
+
+-- # Fruit Smoothie Part 10
+(@fruit_smoothie_pre_workout_div_vs_id,  @frozen_raspberries_asda_ingredient_id, 60),  -- Raspberry
+(@fruit_smoothie_pre_workout_div_vs_id,  @frozen_blueberries_asda_ingredient_id, 60),  -- Blueberries
+(@fruit_smoothie_pre_workout_div_vs_id,  @frozen_strawberries_asda_ingredient_id, 60),  -- Strawberry
+(@fruit_smoothie_pre_workout_div_vs_id,  @grapefruit_ingredient_id, 110), -- Grapefruit
+(@fruit_smoothie_pre_workout_div_vs_id,  @oranges_ingredient_id, 110), -- Oranges
+(@fruit_smoothie_pre_workout_div_vs_id,  @water_ingredient_id, 1000), -- Water
+
+-- #####################################################
+-- # Post-Workout
+-- #####################################################
+
+-- # Bananas Part 11
+(@bananas_post_workout_div_vs_id,  @banana_ingredient_id, 200 ), -- Bananas
+
+-- # Protein Shake Part 12
+(@protein_shake_post_workout_div_vs_id,  @whey_isolate_natural_strawberry_myprotein_ingredient_id, 35), -- Protein Powder
+(@protein_shake_post_workout_div_vs_id,  @creatine_monohydrate_myprotein_ingredient_id, 5),  -- Creatine
+(@protein_shake_post_workout_div_vs_id,  @alpro_soya_light_long_life_drink_ingredient_id, 450),   -- Milk
+
+-- # Veg Meal Part 13
+(@veg_meal_post_workout_div_vs_id,  @broccoli_ingredient_id, 110),  -- Broccoli
+(@veg_meal_post_workout_div_vs_id,  @carrots_ingredient_id,  110 ), -- Carrots
+(@veg_meal_post_workout_div_vs_id,  @sweet_potato_ingredient_id,  110 ), -- Sweet Potato
+(@veg_meal_post_workout_div_vs_id,  @kale_ingredient_id, 110 ), -- Kale
+
+-- #####################################################
+-- # Dinner
+-- #####################################################
+
+-- # Pasta Meal Part 14
+(@dinner_div_vs_id,  @dolmio_bolognese_pasta_sauce_low_fat_ingredient_id, 60),    -- Dolmio Sauce
+(@dinner_div_vs_id,  @wholewheat_spaghetti_asda_ingredient_id, 75),  --  Pasta
+(@dinner_div_vs_id,  @lean_turkey_mince_asda_ingredient_id, 150), --  Turkey Mince
+(@dinner_div_vs_id,  @sweetcorn_ingredient_id, 60),  --  Sweetcorn
+
+-- #####################################################
+-- # Bed Snack
+-- #####################################################
+
+-- # Protein Shake Part 15
+(@protein_shake_bedtime_vs_id,  @slow_release_casein_vanilla_myprotein_ingredient_id, 35),   -- Casein
+(@protein_shake_bedtime_vs_id,  @alpro_organic_soya_ingredient_id, 450 );   -- Milk
+

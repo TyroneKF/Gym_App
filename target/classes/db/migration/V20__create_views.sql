@@ -1,6 +1,7 @@
 
-
-
+-- ################################################################################
+--
+-- ################################################################################
 CREATE VIEW plan_macro_target_calculations AS
 	
 WITH
@@ -54,12 +55,14 @@ LEFT JOIN plans P ON
 LEFT JOIN C 
 	ON C.plan_version_id = PV.plan_version_id;
 
--- ######################################
+-- ################################################################################
+--
+-- ################################################################################
 CREATE VIEW ingredients_in_sections_of_meal_calculation AS
 	
 SELECT
 
-	I.ingredients_index_version_id,
+	I.ingredients_index,
 	I.div_meal_sections_version_id,	
 
 	Info.ingredient_type_id,
@@ -78,7 +81,7 @@ SELECT
 	IFNULL(ROUND((Info.water_content /Info.based_on_quantity)*I.quantity,2),0) AS water_content,
 	IFNULL(ROUND((Info.calories /Info.based_on_quantity)*I.quantity,2),0) AS calories
 
-FROM ingredients_in_sections_of_meal_versions I
+FROM ingredients_in_sections_of_meal I
 LEFT JOIN ingredients_info Info ON Info.ingredient_id = I.ingredient_id;
 
 
@@ -86,7 +89,7 @@ CREATE VIEW ingredients_in_sections_of_meal_calculation_gui AS
 	
 SELECT
 
-    ingredients_index_version_id,
+    ingredients_index,
     div_meal_sections_version_id,
 	
     ingredient_type_id AS ingredient_type_name,
@@ -106,7 +109,9 @@ SELECT
 	
 FROM ingredients_in_sections_of_meal_calculation;
 
--- ######################################
+-- ################################################################################
+--
+-- ################################################################################
 CREATE VIEW divided_meal_sections_calculations AS
 
 SELECT
@@ -126,7 +131,9 @@ SELECT
 FROM ingredients_in_sections_of_meal_calculation
 GROUP BY div_meal_sections_version_id;
 
--- ######################################
+-- ################################################################################
+--
+-- ################################################################################
 CREATE VIEW total_meal_view AS
 
 WITH
@@ -138,7 +145,7 @@ WITH
 
 			FROM divided_meal_sections_versions D
 
-			LEFT JOIN ingredients_in_sections_of_meal_versions I 
+			LEFT JOIN ingredients_in_sections_of_meal I
 				ON I.div_meal_sections_version_id = D.div_meal_sections_version_id
 
 			GROUP BY D.meal_in_plan_version_id
@@ -195,7 +202,10 @@ LEFT JOIN I ON
 
 LEFT JOIN DI ON 
 	DI.meal_in_plan_version_id = M.meal_in_plan_version_id;
--- ######################################
+
+-- ################################################################################
+--
+-- ################################################################################
 CREATE VIEW total_plan_view AS
 
 SELECT 
@@ -226,7 +236,10 @@ LEFT JOIN total_meal_view T
 
 GROUP BY PV.plan_version_id, P.plan_name;
 
--- ######################################
+
+-- ################################################################################
+--
+-- ################################################################################
 CREATE VIEW plan_macros_left AS
 	
 WITH 
