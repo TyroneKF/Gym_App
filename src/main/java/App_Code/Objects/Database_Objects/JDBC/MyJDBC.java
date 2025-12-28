@@ -46,8 +46,16 @@ public class MyJDBC
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public MyJDBC(String host, String port, String userName, String password, String databaseName,
-                  String db_Script_Folder_Address, String script_List_Name)
+    public MyJDBC
+    (
+            String host,
+            String port,
+            String userName,
+            String password,
+            String databaseName,
+            String db_Script_Folder_Address,
+            String script_List_Name
+    )
     {
         //####################################################################
         //  Setting Variables
@@ -55,14 +63,14 @@ public class MyJDBC
         this.userName = userName;
         this.password = password;
         this.databaseName = databaseName.toLowerCase();
+        
         initial_db_connection = String.format("jdbc:mysql://%s:%s", host, port);
         db_Connection_Address = String.format("%s/%s", initial_db_connection, databaseName);
         
         this.class_Name = this.getClass().getName();
         
-        String
-                method_Name = "Constructor()",
-                errorMSG = "Error, initializing DB!";
+        String method_Name = "Constructor()";
+        String errorMSG = "Error, initializing DB!";
         
         //####################################################################
         //  Attempt DP Connection
@@ -162,12 +170,12 @@ public class MyJDBC
     }
     
     /*
-    * 1.) Connect to DB
-    * 2.) Check schema_version
-    * 3.) If empty → apply migrations
-    * 4.) If mismatch → FAIL STARTUP
-    * 5.) Log error clearly
-    * 6.) Exit
+     * 1.) Connect to DB
+     * 2.) Check schema_version
+     * 3.) If empty → apply migrations
+     * 4.) If mismatch → FAIL STARTUP
+     * 5.) Log error clearly
+     * 6.) Exit
      */
     
     public boolean create_DB(String db_Script_Folder_Address, String script_List_Name)
@@ -247,12 +255,12 @@ public class MyJDBC
                         }
                         catch (Exception e)
                         {
-                            return handle_Failed_DB_Creation( e, method_Name,  errorMSG);
+                            return handle_Failed_DB_Creation(e, method_Name, errorMSG);
                         }
                     }
                     catch (Exception e)
                     {
-                        return handle_Failed_DB_Creation( e, method_Name,  errorMSG);
+                        return handle_Failed_DB_Creation(e, method_Name, errorMSG);
                     }
                 }
                 
@@ -274,12 +282,12 @@ public class MyJDBC
             //##########################################################
             catch (Exception e)
             {
-                return handle_Failed_DB_Creation( e, method_Name,  errorMSG);
+                return handle_Failed_DB_Creation(e, method_Name, errorMSG);
             }
         }
         catch (Exception e)
         {
-            return handle_Failed_DB_Creation( e, method_Name,  errorMSG);
+            return handle_Failed_DB_Creation(e, method_Name, errorMSG);
         }
         
         // #############################################################
@@ -292,7 +300,7 @@ public class MyJDBC
         }
         catch (Exception e)
         {
-            return handle_Failed_DB_Creation( e, method_Name,  "Error, Changing DB Path to App DB Path!");
+            return handle_Failed_DB_Creation(e, method_Name, "Error, Changing DB Path to App DB Path!");
         }
     }
     
