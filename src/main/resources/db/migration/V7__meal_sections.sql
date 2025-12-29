@@ -14,9 +14,7 @@
 CREATE TABLE divided_meal_sections
 (
    div_meal_sections_id INT PRIMARY KEY AUTO_INCREMENT   
-)
-ENGINE=InnoDB
-DEFAULT CHARSET=utf8mb4;
+);
 
 -- ####################################################
 -- Document Versions
@@ -40,6 +38,4 @@ CREATE TABLE divided_meal_sections_versions
 	
 	UNIQUE KEY no_repeated_versions(div_meal_sections_id, meal_in_plan_version_id),
 	INDEX idx_sections_meal_version (meal_in_plan_version_id)
-)
-ENGINE=InnoDB
-DEFAULT CHARSET=utf8mb4;
+);

@@ -12,10 +12,7 @@ CREATE TABLE meals_in_plan
 (
    meal_in_plan_id INT PRIMARY KEY AUTO_INCREMENT,
    date_time_of_creation DATETIME(6) NOT NULL	   
-)
-ENGINE=InnoDB
-DEFAULT CHARSET=utf8mb4;
-
+);
 
 -- ####################################################
 -- Document Versions
@@ -43,7 +40,5 @@ CREATE TABLE meals_in_plan_versions
 	
 	INDEX idx_meals_by_plan (plan_version_id, meal_time),
 	INDEX idx_meal_versions_plan_version (plan_version_id)
-)
-ENGINE=InnoDB
-DEFAULT CHARSET=utf8mb4;
+);
 

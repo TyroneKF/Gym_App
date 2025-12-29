@@ -13,9 +13,7 @@ CREATE TABLE macros_per_pound_and_limits
 (   	
     macros_ID INT PRIMARY KEY AUTO_INCREMENT,
 	created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)
-)
-ENGINE=InnoDB
-DEFAULT CHARSET=utf8mb4;
+);
 
 -- ####################################################
 -- Document Versions
@@ -56,6 +54,4 @@ CREATE TABLE macros_per_pound_and_limits_versions
 	
 	INDEX idx_macros_latest_per_plan (plan_version_id, date_time_last_edited DESC),
 	INDEX idx_macros_user (user_id)
-)
-ENGINE=InnoDB
-DEFAULT CHARSET=utf8mb4;
+);

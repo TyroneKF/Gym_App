@@ -27,9 +27,7 @@ CREATE TABLE plans
 	UNIQUE KEY unique_plan_name_by_user(user_id, plan_name),
 	
 	INDEX idx_plans_user (user_id)
-)
-ENGINE=InnoDB
-DEFAULT CHARSET=utf8mb4;
+);
 
 -- ####################################################
 -- Document Versions
@@ -61,7 +59,5 @@ CREATE TABLE plan_versions
 	INDEX idx_active_plan_lookup (user_id, is_selected_plan),
 	INDEX idx_plan_versions_plan (plan_id),
 	INDEX idx_plan_versions_user (user_id)
-)
-ENGINE=InnoDB
-DEFAULT CHARSET=utf8mb4;
+);
 

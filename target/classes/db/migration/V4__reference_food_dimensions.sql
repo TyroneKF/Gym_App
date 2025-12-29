@@ -16,9 +16,18 @@ CREATE TABLE ingredient_types
 
 	ingredient_type_name VARCHAR(100) NOT NULL,
 	UNIQUE KEY no_repeat_ingredient_type_name (ingredient_type_name)
-)
-ENGINE=InnoDB
-DEFAULT CHARSET=utf8mb4;
+);
+
+-- ####################################################
+-- Measurements Material Type
+-- ####################################################
+CREATE TABLE measurement_material_type
+(
+    measurement_material_type_id INT PRIMARY KEY AUTO_INCREMENT,
+    measurement_material_type_name VARCHAR(100) NOT NULL,
+
+    UNIQUE KEY no_repeat_material_type_name(measurement_material_type_name)
+);
 
 -- ####################################################
 -- Measurements
@@ -31,9 +40,11 @@ CREATE TABLE measurements
 
 	unit_name VARCHAR(100) NOT NULL,
 	unit_symbol VARCHAR(10) NOT NULL,
-	measured_material_type ENUM('solids', 'liquids', 'N/A') NOT NULL,
+
+	measurement_material_type_id INT NOT NULL,
+    		FOREIGN KEY (measurement_material_type_id)
+    		    REFERENCES measurement_material_type(measurement_material_type_id)
+    			    ON DELETE CASCADE,
 	
 	UNIQUE KEY no_repeat_unit_names(unit_name)
- )
-ENGINE=InnoDB
-DEFAULT CHARSET=utf8mb4;
+ );

@@ -13,7 +13,5 @@ CREATE TABLE users
   
   UNIQUE KEY no_multiple_active_user(selected_user_flag),
   UNIQUE KEY no_repeat_user_names(user_name)
-)
-ENGINE=InnoDB
-DEFAULT CHARSET=utf8mb4;
+);
 

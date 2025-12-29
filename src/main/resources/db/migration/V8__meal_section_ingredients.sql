@@ -30,6 +30,4 @@ CREATE TABLE ingredients_in_sections_of_meal
 	INDEX idx_ingredients_by_section (div_meal_sections_version_id),
 	INDEX idx_ingredients_by_ingredient (ingredient_id),
 	INDEX idx_ingredient_index (ingredients_index)
-)
-ENGINE=InnoDB
-DEFAULT CHARSET=utf8mb4;
+);

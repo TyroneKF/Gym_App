@@ -186,6 +186,21 @@ DELIMITER $$
 DELIMITER ;
 
 -- ###########################################################################
+-- Measurements Material Type Trigger | Once insert Immutable
+-- ###########################################################################
+DELIMITER $$
+
+	CREATE TRIGGER trg_measurement_material_type_prevent_any_update
+	BEFORE UPDATE ON measurement_material_type
+	FOR EACH ROW
+	BEGIN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'measurement_material_type table is immutable';
+	END$$
+
+DELIMITER ;
+
+-- ###########################################################################
 -- measurements Trigger | Allows only certain rows to be updated
 -- ###########################################################################
 DELIMITER $$

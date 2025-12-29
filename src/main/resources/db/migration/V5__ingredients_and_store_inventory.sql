@@ -40,9 +40,7 @@ CREATE TABLE ingredients_info
 	calories DECIMAL(7,2) NOT NULL,
 
 	UNIQUE KEY no_repeat_ingredient_names(ingredient_name)
-)
-ENGINE=InnoDB
-DEFAULT CHARSET=utf8mb4;
+);
 
 -- ####################################################
 -- Stores
@@ -56,9 +54,7 @@ CREATE TABLE stores
 	store_name VARCHAR(255) NOT NULL,
 	UNIQUE KEY no_repeat_store_names (store_name)
 
-)
-ENGINE=InnoDB
-DEFAULT CHARSET=utf8mb4;
+);
 
 -- ####################################################
 -- Product Suppliers
@@ -85,7 +81,5 @@ CREATE TABLE ingredient_in_shops
     UNIQUE KEY no_repeat_products_in_store(store_id, product_name),
 	INDEX idx_shop_ingredient (ingredient_id),
 	INDEX idx_shop_store (store_id)
-)
-ENGINE=InnoDB
-DEFAULT CHARSET=utf8mb4;
+);
 

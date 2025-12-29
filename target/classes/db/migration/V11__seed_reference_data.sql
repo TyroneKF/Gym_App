@@ -40,6 +40,73 @@ CALL validate_and_insert_into_seed_registry
 -- #################################################################################################
 -- Ingredient Measurements
 -- #################################################################################################
+/*
+
+*/
+
+-- ###################################################################
+-- Measured Material Types
+-- ####################################################################
+
+-- Set Measured_Material_Type Variables
+SET @solids_material_type_name := 'Solids';
+SET @liquids_material_type_name := 'Liquids';
+SET @na_material_type_name := 'N/A';
+
+-- ###############################################
+-- Insert SEED DATA for Measurement Variables
+-- ###############################################
+INSERT INTO measurement_material_type
+(
+	measurement_material_type_name
+)
+VALUES
+    (@solids_material_type_name),
+    (@liquids_material_type_name),
+    (@na_material_type_name)
+
+ON DUPLICATE KEY UPDATE -- In case of duplicate, ensures fields match correctly to new insert
+    measurement_material_type_name = measurement_material_type_name;
+
+
+-- ###############################################
+-- Variable Setting
+-- ###############################################
+-- Solids
+SELECT measurement_material_type_id
+INTO @solids_material_type_id
+FROM measurement_material_type
+WHERE measurement_material_type_name = @solids_material_type_name
+LIMIT 1;
+
+-- Validate
+CALL assert_id_not_null(@solids_material_type_id, 'Seed failed: @solids_material_type_id (measurement_material_type) could not be resolved');
+
+-- Liquids
+SELECT measurement_material_type_id
+INTO @liquids_material_type_id
+FROM measurement_material_type
+WHERE measurement_material_type_name = @liquids_material_type_name
+LIMIT 1;
+
+-- Validate
+CALL assert_id_not_null (@liquids_material_type_id, 'Seed failed: @liquids_material_type_id (measurement_material_type) could not be resolved');
+
+
+-- N/A
+SELECT measurement_material_type_id
+INTO @na_material_type_id
+FROM measurement_material_type
+WHERE measurement_material_type_name = @na_material_type_name
+LIMIT 1;
+
+-- Validate
+CALL assert_id_not_null (@na_material_type_id, 'Seed failed: @na_material_type_id (measurement_material_type) could not be resolved');
+
+
+-- ####################################################################
+-- Measurements
+-- ####################################################################
 
 -- Set Measurement Variables
 SET @litres_measurement_name := 'Litres';
@@ -48,18 +115,18 @@ SET @na_measurement_name := 'N/A';
 
 -- ###############################################
 -- Inserting SEED DATA for Measurement Variables
--- ##############################################
+-- ###############################################
 INSERT INTO measurements 
 ( 
 	is_system,
 	unit_name, 
 	unit_symbol,
-	measured_material_type
+	measurement_material_type_id
 )
 VALUES
-    (TRUE, @litres_measurement_name, 'L', 'Liquids'),
-    (TRUE, @grams_measurement_name, 'g', 'Solids'),
-    (TRUE, @na_measurement_name, 'N/A', 'N/A')
+    (TRUE, @litres_measurement_name, 'L', @liquids_material_type_id),
+    (TRUE, @grams_measurement_name, 'g',  @solids_material_type_id),
+    (TRUE, @na_measurement_name, 'N/A',   @na_material_type_id)
 
 ON DUPLICATE KEY UPDATE -- In case of duplicate, ensures fields match correctly to new insert
     unit_name = unit_name;
