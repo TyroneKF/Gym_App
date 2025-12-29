@@ -1,25 +1,6 @@
 
 mvn javafx:run "-DmainClass=Tests.ToggleSwitchDemo"
- -- #################################
-flyaway migration handling
 
-Example (Java + Hikari)
-Flyway.configure()
-  .dataSource(dataSource)
-  .locations("classpath:db/migration")
-  .load()
-  .migrate();
- -- #################################
-
-if (!schemaVersionExists()) {
-    runMigrations();
-}
-
-if (!schemaVersionIsExpected()) {
-    throw new IllegalStateException(
-        "Database schema mismatch. Application cannot start."
-    );
-}
 
 
 
@@ -29,25 +10,8 @@ V12__seed_demo_data.sql            ← dev/test only (conditional)
 
 CREATE TEMPORARY TABLE
 
+use delete triggers to prevent core data being deleted
 
-
-INSERT INTO measurements
-(
-    is_system,
-    unit_name,
-    unit_symbol,
-    measured_material_type
-)
-VALUES
-    (TRUE, 'Litres', 'L', 'Liquids'),
-    (TRUE, 'Grams', 'g', 'Solids'),
-    (TRUE, 'N/A', 'N/A', 'N/A')
-AS new_vals
-ON DUPLICATE KEY UPDATE
-    unit_name   = new_vals.unit_name,
-    unit_symbol = new_vals.unit_symbol;
-
-Triggers do the opposite especially for plans
 
 ######################################################################################
 Work On:
