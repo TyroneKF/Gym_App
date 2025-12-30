@@ -171,6 +171,7 @@
                 <version>0.0.8</version>
                 <configuration>
                     <!-- Main class for JavaFX application -->
+                    <!--suppress UnresolvedMavenProperty -->
                     <mainClass>${mainClass}</mainClass>
                 </configuration>
             </plugin>
