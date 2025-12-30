@@ -8,23 +8,31 @@ import javax.sql.DataSource;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-class FlywayMigrationTest
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+class FlywaySQLiteMigrationTest
 {
-    
     private static DataSource dataSource;
+    private static Path dbFile;
     
     @BeforeAll
-    static void setupDataSource()
+    static void setupDataSource() throws Exception
     {
+        dbFile = Files.createTempFile("gymapp-test", ".db");
+        
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl(
-                "jdbc:mysql://localhost:3306/gymapp00001" +
-                        "?useSSL=false&allowPublicKeyRetrieval=true"
-        );
-        config.setUsername("root");
-        config.setPassword("password");
+        config.setJdbcUrl("jdbc:sqlite:" + dbFile.toAbsolutePath());
+        config.setMaximumPoolSize(1);
+        config.setConnectionTestQuery("SELECT 1");
         
         dataSource = new HikariDataSource(config);
+    }
+    
+    @AfterAll
+    static void cleanup() throws Exception
+    {
+        Files.deleteIfExists(dbFile);
     }
     
     @BeforeEach
@@ -32,11 +40,11 @@ class FlywayMigrationTest
     {
         Flyway flyway = Flyway.configure()
                 .dataSource(dataSource)
-                .locations("classpath:db/migration")
                 .cleanDisabled(false)
                 .locations(
-                        "classpath:db/migration/mysql"
-                ).load();
+                        "classpath:db/migration/sqlite"
+                )
+                .load();
         
         flyway.clean();
         flyway.migrate();
@@ -45,6 +53,7 @@ class FlywayMigrationTest
     @Test
     void migrationsApplyWithoutError()
     {
+        // If we reached here, migrations succeeded
         Assertions.assertTrue(true);
     }
 }
