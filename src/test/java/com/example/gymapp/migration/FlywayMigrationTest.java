@@ -34,7 +34,10 @@ class FlywayMigrationTest
                 .dataSource(dataSource)
                 .locations("classpath:db/migration")
                 .cleanDisabled(false)
-                .load();
+                .locations(
+                        "classpath:db/migration/common",
+                        "classpath:db/migration/mysql"
+                ).load();
         
         flyway.clean();
         flyway.migrate();
