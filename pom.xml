@@ -142,8 +142,12 @@
             <version>10.11.0</version>
         </dependency>
 
-
-
+        <!-- 🗄️ SQLite JDBC: JDBC driver for connecting Java applications to SQLite databases -->
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.45.3.0</version>
+        </dependency>
 
     </dependencies>
 
