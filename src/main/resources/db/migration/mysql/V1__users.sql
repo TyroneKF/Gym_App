@@ -22,15 +22,3 @@ CREATE TABLE users
   UNIQUE KEY no_repeat_user_names(user_name)
 );
 
--- ########################################
---
--- ########################################
-CREATE TABLE active_user
-(
-  id INT PRIMARY KEY CHECK (id = 1),
-
-  user_id INT NULL,
-  		FOREIGN KEY (user_id) REFERENCES users(user_id)
-  			ON DELETE RESTRICT -- Prevents the whole row from being deleted when an active user is deleted
-  			                   -- This must be set to null first, then the user can be deleted
-);
