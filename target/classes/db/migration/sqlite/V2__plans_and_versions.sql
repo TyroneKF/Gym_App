@@ -1,73 +1,116 @@
--- #########################################################################
+-- ##############################################################################################################
 -- DDL SCRIPT | App Setup
--- #########################################################################
+-- ##############################################################################################################
+    /**
+        .) A user could clone someone else’s plan version.
+        .) The user doesn’t own the whole plan but, they own plan_versions
 
-/**
-	.) A user could clone someone else’s plan version.
-	.) The user doesn’t own the whole plan.”
-**/
+    **/
 
--- ####################################################
+
+-- ##############################################################################################################
 -- Main Document
--- ####################################################
+-- ##############################################################################################################
     CREATE TABLE plans
     (
-        plan_id INT PRIMARY KEY AUTO_INCREMENT,
+        plan_id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-        date_time_of_creation DATETIME(6) NOT NULL,
+        date_time_of_creation TEXT NOT NULL
+            DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now')),
 
-        user_id INT NOT NULL,
-            FOREIGN KEY (user_id) REFERENCES users(user_id)
-                ON DELETE CASCADE,
+        user_id INTEGER NOT NULL, -- FK has to be defined at the bottom
 
-        vegan BOOLEAN NOT NULL DEFAULT FALSE,
+        vegan INTEGER NOT NULL DEFAULT 0
+            CHECK (vegan IN (0,1)),   -- Default = FALSE
 
-        plan_name VARCHAR(100) NOT NULL,
+        plan_name TEXT NOT NULL
+            CHECK (length(plan_name) <= 100),
 
-        UNIQUE KEY unique_plan_name_by_user(user_id, plan_name),
-
-        INDEX idx_plans_user (user_id)
+        -- Foreign Keys (must be declared at the end in SQLite)
+        FOREIGN KEY (user_id)
+            REFERENCES users(user_id)
+                ON DELETE CASCADE
     );
 
--- ####################################################
+
+    -- ####################################################
+    -- Constraints (Unique Keys)
+    -- ####################################################
+        CREATE UNIQUE INDEX unique_plan_name_by_user
+            ON plans (user_id, plan_name);
+
+        -- Unique Indexes
+        CREATE INDEX idx_plans_user
+            ON plans (user_id);
+
+-- ##############################################################################################################
 -- Document Versions
--- ####################################################
+-- ##############################################################################################################
+
     CREATE TABLE plan_versions
     (
-        plan_version_id INT PRIMARY KEY AUTO_INCREMENT,
+        plan_version_id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-        plan_id INT NOT NULL,
-            FOREIGN KEY (plan_id) REFERENCES plans(plan_id)
+        plan_id INTEGER NOT NULL, -- FK has to be defined at the bottom
+        user_id INTEGER NOT NULL, -- FK has to be defined at the bottom
+
+        version_number INTEGER NOT NULL
+            CHECK (version_number > 0),
+
+        date_time_last_edited TEXT NOT NULL
+            DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now')), -- Defined on Insertion
+
+        -- Foreign Keys (must be declared at the end in SQLite)
+        FOREIGN KEY (plan_id)
+            REFERENCES plans(plan_id)
                 ON DELETE CASCADE,
 
-        user_id INT NOT NULL,
-            FOREIGN KEY (user_id) REFERENCES users(user_id)
-                ON DELETE CASCADE,
-
-        version_number INT NOT NULL,
-        date_time_last_edited DATETIME(6) NOT NULL,
-
-        UNIQUE KEY no_repeated_vs_numbers_per_plan(plan_id, version_number),
-
-        INDEX idx_plan_versions_plan (plan_id),
-        INDEX idx_plan_versions_user (user_id)
+        FOREIGN KEY (user_id)
+            REFERENCES users(user_id)
+                ON DELETE CASCADE
     );
 
--- ####################################################
+    -- ####################################################
+    -- Constraints (Unique Keys)
+    -- ####################################################
+        CREATE UNIQUE INDEX no_repeated_vs_numbers_per_plan
+            ON plan_versions (plan_id, version_number);
+
+    -- ####################################################
+    -- Unique Indexes
+    -- ####################################################
+        CREATE INDEX idx_plan_versions_plan
+            ON plan_versions (plan_id);
+
+        CREATE INDEX idx_plan_versions_user
+            ON plan_versions (user_id);
+
+-- ##############################################################################################################
 -- Active Document
--- ####################################################
+-- ##############################################################################################################
+
     CREATE TABLE active_plans
     (
-        row_id INT PRIMARY KEY AUTO_INCREMENT,
+        row_id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-        plan_version_id INT NOT NULL,
-            FOREIGN KEY (plan_version_id) REFERENCES plan_versions(plan_version_id)
+        plan_version_id INTEGER NOT NULL, -- FK has to be defined at the bottom
+        user_id INTEGER NOT NULL, -- FK has to be defined at the bottom
+
+        -- Foreign Keys (must be declared at the end in SQLite)
+        FOREIGN KEY (plan_version_id)
+            REFERENCES plan_versions(plan_version_id)
                 ON DELETE CASCADE,
 
-        user_id INT NOT NULL,
-                FOREIGN KEY (user_id) REFERENCES users(user_id)
-                    ON DELETE CASCADE,
-
-        UNIQUE KEY only_one_active_plan_per_user(user_id),
-        UNIQUE KEY unique_ownership_plan_active(plan_version_id)
+        FOREIGN KEY (user_id)
+            REFERENCES users(user_id)
+                ON DELETE CASCADE
     );
+
+    -- ####################################################
+    -- Unique Indexes
+    -- ####################################################
+        CREATE UNIQUE INDEX only_one_active_plan_per_user
+            ON active_plans (user_id);
+
+        CREATE UNIQUE INDEX unique_ownership_plan_active
+            ON active_plans (plan_version_id);

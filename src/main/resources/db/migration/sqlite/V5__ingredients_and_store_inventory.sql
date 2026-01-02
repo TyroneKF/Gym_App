@@ -1,85 +1,118 @@
--- #########################################################################
--- DDL SCRIPT | App Setup
--- #########################################################################
-/*
-
-*/
-
--- ####################################################
+-- ##############################################################################################################
 -- Ingredients Info
--- ####################################################
-CREATE TABLE ingredients_info
-(
-    -- PRIMARY KEYS
-    ingredient_id INT  PRIMARY KEY AUTO_INCREMENT,
-	is_system BOOLEAN NOT NULL DEFAULT FALSE,
-	
-	measurement_id INT NOT NULL,
-	FOREIGN KEY (measurement_id) 
-		REFERENCES measurements(measurement_id)
-		ON DELETE RESTRICT, -- Re-assign measurement if FK measurement is deleted vs Deleting ingredient too,
-		
-	ingredient_name VARCHAR(100) NOT NULL,
-	
-	ingredient_type_id  INT NOT NULL,
-	FOREIGN KEY (ingredient_type_id) 
-		REFERENCES ingredient_types(ingredient_type_id) 
-		ON DELETE RESTRICT, -- Re-assign ingredient Type if FK Type is deleted vs Deleting ingredient too,
+-- ##############################################################################################################
+    CREATE TABLE ingredients_info
+    (
+        ingredient_id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-	based_on_quantity DECIMAL(7,2) NOT NULL,
-    glycemic_index INT NOT NULL,
-	protein DECIMAL(7,2) NOT NULL,
-	carbohydrates DECIMAL(7,2) NOT NULL,
-	sugars_of_carbs DECIMAL(7,2) NOT NULL,
-	fibre DECIMAL(7,2) NOT NULL,
-	fat DECIMAL(7,2) NOT NULL,
-	saturated_fat DECIMAL(7,2) NOT NULL,
-	salt DECIMAL(7,2) NOT NULL,
-	water_content DECIMAL(7,2) NOT NULL,
-	liquid_content DECIMAL(7,2) NOT NULL, 
-	calories DECIMAL(7,2) NOT NULL,
+        is_system INTEGER NOT NULL DEFAULT 0 -- DEFAULT FALSE
+            CHECK (is_system IN (0,1)),
 
-	UNIQUE KEY no_repeat_ingredient_names(ingredient_name)
-);
+        measurement_id INTEGER NOT NULL, -- FK has to be defined at the bottom
+        ingredient_type_id INTEGER NOT NULL, -- FK has to be defined at the bottom
 
--- ####################################################
+        ingredient_name TEXT NOT NULL
+            CHECK (length(ingredient_name) <= 100),
+
+        based_on_quantity REAL NOT NULL
+            CHECK (based_on_quantity >= 0),
+
+        glycemic_index INTEGER NOT NULL
+            CHECK (glycemic_index >= 0 AND glycemic_index <= 100),
+
+        protein REAL NOT NULL,
+        carbohydrates REAL NOT NULL,
+        sugars_of_carbs REAL NOT NULL,
+        fibre REAL NOT NULL,
+        fat REAL NOT NULL,
+        saturated_fat REAL NOT NULL,
+        salt REAL NOT NULL,
+        water_content REAL NOT NULL,
+        liquid_content REAL NOT NULL,
+        calories REAL NOT NULL,
+
+        -- Foreign Keys (must be declared at the end in SQLite)
+        FOREIGN KEY(measurement_id)
+            REFERENCES measurements(measurement_id)
+                ON DELETE RESTRICT,
+
+        FOREIGN KEY(ingredient_type_id)
+            REFERENCES ingredient_types(ingredient_type_id)
+                ON DELETE RESTRICT
+    );
+
+    -- ####################################################
+    -- Constraints (Unique Keys)
+    -- ####################################################
+        CREATE UNIQUE INDEX no_repeat_ingredient_names
+            ON ingredients_info (ingredient_name);
+
+
+-- ##############################################################################################################
 -- Stores
--- ####################################################
-CREATE TABLE stores
-(
-    -- PRIMARY KEYS
-    store_id INT  PRIMARY KEY AUTO_INCREMENT,
-	is_system BOOLEAN NOT NULL DEFAULT FALSE,
-	
-	store_name VARCHAR(255) NOT NULL,
-	UNIQUE KEY no_repeat_store_names (store_name)
+-- ##############################################################################################################
 
-);
+    CREATE TABLE stores
+    (
+        store_id INTEGER PRIMARY KEY AUTOINCREMENT,
 
--- ####################################################
--- Product Suppliers
--- ####################################################
-CREATE TABLE ingredient_in_shops
-(
-    -- PRIMARY KEY , UNIQUE To this Table
-    pdid INT  PRIMARY KEY AUTO_INCREMENT,
-	is_system BOOLEAN NOT NULL DEFAULT FALSE,
+        is_system INTEGER NOT NULL DEFAULT 0
+            CHECK (is_system IN (0,1)),
 
-    ingredient_id INT  NOT NULL,
-		FOREIGN KEY (ingredient_id) REFERENCES ingredients_info(ingredient_id) 
-			ON DELETE CASCADE,
+        store_name TEXT NOT NULL
+            CHECK (length(store_name) <= 100)
+    );
 
-    product_name VARCHAR(100) NOT NULL,
+    -- ####################################################
+    -- Constraints (Unique Keys)
+    -- ####################################################
+        CREATE UNIQUE INDEX no_repeat_store_names
+            ON stores (store_name);
 
-	volume_per_unit DECIMAL(7,2) NOT NULL,
-	cost_per_unit DECIMAL(7,2) NOT NULL,
 
-	store_id INT NOT NULL,
-		FOREIGN KEY (store_id) REFERENCES stores(store_id) 
-			ON DELETE CASCADE,
+-- ##############################################################################################################
+-- Ingredient Products in Shops
+-- ##############################################################################################################
+    CREATE TABLE ingredient_in_shops
+    (
+        pdid INTEGER PRIMARY KEY AUTOINCREMENT,
 
-    UNIQUE KEY no_repeat_products_in_store(store_id, product_name),
-	INDEX idx_shop_ingredient (ingredient_id),
-	INDEX idx_shop_store (store_id)
-);
+        is_system INTEGER NOT NULL DEFAULT 0 -- DEFAULT FALSE
+            CHECK (is_system IN (0,1)),
 
+        ingredient_id INTEGER NOT NULL, -- FK has to be defined at the bottom
+        store_id INTEGER NOT NULL,  -- FK has to be defined at the bottom
+
+        product_name TEXT NOT NULL
+            CHECK (length(product_name) <= 100),
+
+        volume_per_unit REAL NOT NULL
+            CHECK (volume_per_unit > 0),
+
+        cost_per_unit REAL NOT NULL
+            CHECK (cost_per_unit >= 0),
+
+        -- Foreign Keys (must be declared at the end in SQLite)
+        FOREIGN KEY (ingredient_id)
+            REFERENCES ingredients_info(ingredient_id)
+                ON DELETE CASCADE,
+
+        FOREIGN KEY (store_id)
+            REFERENCES stores(store_id)
+                ON DELETE CASCADE
+    );
+
+    -- ####################################################
+    -- Constraints (Unique Keys)
+    -- ####################################################
+        CREATE UNIQUE INDEX no_repeat_products_in_store
+            ON ingredient_in_shops (store_id, product_name);
+
+    -- ####################################################
+    -- Indexes
+    -- ####################################################
+        CREATE INDEX idx_shop_ingredient
+            ON ingredient_in_shops (ingredient_id);
+
+        CREATE INDEX idx_shop_store
+            ON ingredient_in_shops (store_id);

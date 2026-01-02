@@ -1,57 +1,74 @@
--- #########################################################################
--- DDL SCRIPT | App Setup
--- #########################################################################
-/*
 
-
-*/
-
--- ####################################################
+-- ##############################################################################################################
 -- Main Document
--- ####################################################
-CREATE TABLE macros_per_pound_and_limits
-(   	
-    macros_ID INT PRIMARY KEY AUTO_INCREMENT,
-	created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)
-);
+-- ##############################################################################################################
+    CREATE TABLE macros_per_pound_and_limits
+    (
+        macros_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+        created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now'))
+    );
 
--- ####################################################
+-- ###############################################################################################################
 -- Document Versions
--- ####################################################
-CREATE TABLE macros_per_pound_and_limits_versions
-(
-	macros_version_id INT PRIMARY KEY AUTO_INCREMENT,	
-	
-	macros_ID INT NOT NULL,
-		FOREIGN KEY (macros_ID) REFERENCES macros_per_pound_and_limits(macros_ID) 
-			ON DELETE CASCADE,
-	
-	user_id INT NOT NULL,
-		FOREIGN KEY (user_id) REFERENCES users(user_id) 
-			ON DELETE CASCADE,
-	
-	plan_version_id INT NOT NULL,
-		FOREIGN KEY (plan_version_id) REFERENCES plan_versions(plan_version_id) 
-			ON DELETE CASCADE,		
+-- ##############################################################################################################
+    CREATE TABLE macros_per_pound_and_limits_versions
+    (
+        macros_version_id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-	version_number INT NOT NULL,
+        macros_ID INTEGER NOT NULL,  -- FK has to be defined at the bottom
+        user_id INTEGER NOT NULL, -- FK has to be defined at the bottom
+        plan_version_id INTEGER NOT NULL,  -- FK has to be defined at the bottom
 
-	date_time_last_edited DATETIME(6) NOT NULL,
-	current_weight_kg DECIMAL(7,2) NOT NULL,
-	current_weight_in_pounds DECIMAL(7,2) NOT NULL,
-	body_fat_percentage DECIMAL(7,2) NOT NULL,
-	protein_per_pound DECIMAL(7,2) NOT NULL,
-	carbohydrates_per_pound DECIMAL(7,2) NOT NULL,
-	fibre DECIMAL(7,2) NOT NULL,	
-	fats_per_pound DECIMAL(7,2) NOT NULL,
-	saturated_fat_limit DECIMAL(7,2) NOT NULL,	
-	salt_limit DECIMAL(7,2) NOT NULL,
-    water_target DECIMAL(7,2) NOT NULL,
-	additional_calories DECIMAL(7,2) NOT NULL,
-	
-	UNIQUE KEY unique_macros_version (macros_ID, version_number),
-	UNIQUE KEY unique_date_per_macros_in_plan (plan_version_id, date_time_last_edited),
-	
-	INDEX idx_macros_latest_per_plan (plan_version_id, date_time_last_edited DESC),
-	INDEX idx_macros_user (user_id)
-);
+        version_number INTEGER NOT NULL
+             CHECK (version_number > 0),
+
+        date_time_last_edited TEXT NOT NULL
+             DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now')), -- Creates date at insertion
+
+        current_weight_kg REAL NOT NULL,
+        current_weight_in_pounds REAL NOT NULL,
+        body_fat_percentage REAL NOT NULL,
+
+        protein_per_pound REAL NOT NULL,
+        carbohydrates_per_pound REAL NOT NULL,
+        fibre REAL NOT NULL,
+        fats_per_pound REAL NOT NULL,
+
+        saturated_fat_limit REAL NOT NULL,
+        salt_limit REAL NOT NULL,
+        water_target REAL NOT NULL,
+        additional_calories REAL NOT NULL,
+
+        -- Foreign Keys (must be declared at the end in SQLite)
+        FOREIGN KEY (macros_ID)
+            REFERENCES macros_per_pound_and_limits(macros_ID)
+                ON DELETE CASCADE,
+
+        FOREIGN KEY (user_id)
+            REFERENCES users(user_id)
+                ON DELETE CASCADE,
+
+        FOREIGN KEY (plan_version_id)
+            REFERENCES plan_versions(plan_version_id)
+                ON DELETE CASCADE
+    );
+
+    -- ####################################################
+     -- Constraints (Unique Keys)
+    -- ####################################################
+        CREATE UNIQUE INDEX unique_macros_version
+                ON macros_per_pound_and_limits_versions(macros_ID, version_number);
+
+         CREATE UNIQUE INDEX unique_date_per_macros_in_plan
+                ON macros_per_pound_and_limits_versions(plan_version_id, date_time_last_edited);
+
+    -- ####################################################
+    -- Unique Indexes
+    -- ####################################################
+        CREATE INDEX idx_macros_latest_per_plan
+            ON macros_per_pound_and_limits_versions
+                (plan_version_id, date_time_last_edited DESC);
+
+        CREATE INDEX idx_macros_user
+            ON macros_per_pound_and_limits_versions (user_id);
+

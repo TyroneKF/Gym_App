@@ -25,6 +25,7 @@ class FlywaySQLiteMigrationTest
         config.setJdbcUrl("jdbc:sqlite:" + dbFile.toAbsolutePath());
         config.setMaximumPoolSize(1);
         config.setConnectionTestQuery("SELECT 1");
+        config.setConnectionInitSql("PRAGMA foreign_keys = ON"); // Ensures FK Checks
         
         dataSource = new HikariDataSource(config);
     }

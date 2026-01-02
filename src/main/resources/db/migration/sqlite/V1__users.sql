@@ -1,25 +1,32 @@
 -- #########################################################################
 -- DDL SCRIPT | App Setup
 -- #########################################################################
-/*
+    /*
 
 
-*/
+    */
 
--- ########################################
+
+-- #########################################################################
 --
--- ########################################
+-- #########################################################################
     CREATE TABLE users
     (
-      user_id INT PRIMARY KEY AUTO_INCREMENT,
-      user_name VARCHAR(100) NOT NULL,
+      user_id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-      UNIQUE KEY no_repeat_user_names(user_name)
+      user_name TEXT NOT NULL,
+      CHECK (length(user_name) <= 100) -- restricts variable length
     );
 
--- ########################################
+    -- ####################################################
+    -- Unique Indexes
+    -- ####################################################
+        CREATE UNIQUE INDEX no_repeat_user_names
+            ON users (user_name);
+
+-- #########################################################################
 --
--- ########################################
+-- #########################################################################
     CREATE TABLE active_user
     (
         singleton_id INT PRIMARY KEY CHECK (singleton_id = 1), -- at max one row at a time

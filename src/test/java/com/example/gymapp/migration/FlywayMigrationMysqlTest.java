@@ -8,7 +8,7 @@ import javax.sql.DataSource;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-class FlywayMigrationTest
+class FlywayMigrationMysqlTest
 {
     
     private static DataSource dataSource;
