@@ -8,17 +8,6 @@
 -- ####################################################
 -- Breakfast Sub-Meal
 -- ####################################################
-
--- Breakfast Meal ID
-SET @breakfast_mv_id := get_seed_id_by_key
-(
-    'breakfast_mv_id',
-    'Seed failed: meals_in_plan_versions  @breakfast_mv_id could not be resolved'
-);
-
--- ####################
--- Sub-Meals
--- ####################
 SET @pancakes_breakfast_div_vs_id := get_seed_id_by_key
 (
     'pancakes_breakfast_div_vs_id',
@@ -38,19 +27,9 @@ SET @celery_breakfast_div_vs_id := get_seed_id_by_key
 );
 
 -- ####################################################
--- Mid-Morning Snack Meal
+-- Mid-Morning Snack - Sub-Meals
 -- ####################################################
 
--- Mid-Morning Snack Meal ID
-SET @mid_morning_snack_mv_id := get_seed_id_by_key
-(
-    'mid_morning_snack_mv_id',
-    'Seed failed: meals_in_plan_versions  @mid_morning_snack_mv_id not be resolved'
-);
-
--- ####################
--- Sub-Meals
--- ####################
 SET @oatmeal_mid_morning_div_vs_id := get_seed_id_by_key
 (
     'oatmeal_mid_morning_div_vs_id',
@@ -71,19 +50,9 @@ SET @mango_smoothie_mid_morning_div_vs_id := get_seed_id_by_key
 
 
 -- ####################################################
--- Lunch Meal
+-- Lunch Meal - Sub-Meals
 -- ####################################################
 
--- Lunch Meal ID
-SET @lunch_mv_idd :=  get_seed_id_by_key
-(
-    'lunch_mv_id',
-    'Seed failed: meals_in_plan_versions  @lunch_mv_id could not be resolved'
-);
-
--- ####################
--- Sub-Meals
--- ####################
 SET @lunch_meal_lunch_div_vs_id := get_seed_id_by_key
 (
     'pancakes_breakfast_div_vs_id',
@@ -103,19 +72,8 @@ SET @multivitamin_shake_lunch_div_vs_id := get_seed_id_by_key
 );
 
 -- ####################################################
--- Pre-Workout Meal
+-- Pre-Workout Meal  - Sub-Meals
 -- ####################################################
-
--- Pre-Workout Meal ID
-SET @pre_workout_mv_id :=  get_seed_id_by_key
-(
-    'pre_workout_mv_id',
-    'Seed failed: meals_in_plan_versions  @pre_workout_mv_id could not be resolved'
-);
-
--- ####################
--- Sub-Meals
--- ####################
 SET @fruit_smoothie_pre_workout_div_vs_id := get_seed_id_by_key
 (
     'fruit_smoothie_pre_workout_div_vs_id',
@@ -123,19 +81,8 @@ SET @fruit_smoothie_pre_workout_div_vs_id := get_seed_id_by_key
 );
 
 -- ####################################################
--- Post-Workout Meal
+-- Post-Workout Meal  - Sub-Meals
 -- ####################################################
-
--- Post-Workout Meal ID
-SET @post_workout_mv_id :=  get_seed_id_by_key
-(
-    'post_workout_mv_id',
-    'Seed failed: meals_in_plan_versions  @post_workout_mv_id could not be resolved'
-);
-
--- ####################
--- Sub-Meals
--- ####################
 SET @bananas_post_workout_div_vs_id := get_seed_id_by_key
 (
     'bananas_post_workout_div_vs_id',
@@ -155,19 +102,8 @@ SET @veg_meal_post_workout_div_vs_id := get_seed_id_by_key
 );
 
 -- ####################################################
--- Dinner Meal
+-- Dinner Meal  - Sub-Meals
 -- ####################################################
-
--- Dinner ID
-SET @dinner_mv_id :=  get_seed_id_by_key
-(
-    'dinner_mv_id',
-    'Seed failed: meals_in_plan_versions  @dinner_mv_id could not be resolved'
-);
-
--- ####################
--- Sub-Meals
--- ####################
 SET @dinner_div_vs_id := get_seed_id_by_key
 (
     'dinner_div_vs_id',
@@ -175,19 +111,8 @@ SET @dinner_div_vs_id := get_seed_id_by_key
 );
 
 -- ####################################################
--- Bedtime Meal
+-- Bedtime Meal  - Sub-Meals
 -- ####################################################
-
--- Bedtime ID
-SET @bedtime_mv_id :=  get_seed_id_by_key
-(
-    'bedtime_mv_id',
-    'Seed failed: meals_in_plan_versions  @bedtime_mv_id could not be resolved'
-);
-
--- ####################
--- Sub-Meals
--- ####################
 SET @protein_shake_bedtime_vs_id := get_seed_id_by_key
 (
     'protein_shake_bedtime_vs_id',

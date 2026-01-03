@@ -4,9 +4,32 @@
 -- ##############################################################################################################
     CREATE TABLE macros_per_pound_and_limits
     (
-        macros_ID INTEGER PRIMARY KEY AUTOINCREMENT,
-        created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now'))
+        macros_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now')),
+
+        target_number INTEGER NOT NULL
+             CHECK (target_number > 0),
+
+        user_id INTEGER NOT NULL, -- FK has to be defined at the bottom
+            FOREIGN KEY (user_id)
+                REFERENCES users(user_id)
+                    ON DELETE CASCADE
     );
+
+    -- ####################################################
+     -- Constraints (Unique Keys)
+    -- ####################################################
+        CREATE UNIQUE INDEX unique_target_number_per_user
+            ON macros_per_pound_and_limits(user_id, target_number);
+
+    -- ####################################################
+    -- Unique Indexes
+    -- ####################################################
+        CREATE INDEX idx_macros_user
+            ON macros_per_pound_and_limits(user_id);
+
+        CREATE INDEX idx_target_number
+            ON macros_per_pound_and_limits(target_number);
 
 -- ###############################################################################################################
 -- Document Versions
@@ -15,8 +38,7 @@
     (
         macros_version_id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-        macros_ID INTEGER NOT NULL,  -- FK has to be defined at the bottom
-        user_id INTEGER NOT NULL, -- FK has to be defined at the bottom
+        macros_id INTEGER NOT NULL,  -- FK has to be defined at the bottom
         plan_version_id INTEGER NOT NULL,  -- FK has to be defined at the bottom
 
         version_number INTEGER NOT NULL
@@ -40,12 +62,8 @@
         additional_calories REAL NOT NULL,
 
         -- Foreign Keys (must be declared at the end in SQLite)
-        FOREIGN KEY (macros_ID)
-            REFERENCES macros_per_pound_and_limits(macros_ID)
-                ON DELETE CASCADE,
-
-        FOREIGN KEY (user_id)
-            REFERENCES users(user_id)
+        FOREIGN KEY (macros_id)
+            REFERENCES macros_per_pound_and_limits(macros_id)
                 ON DELETE CASCADE,
 
         FOREIGN KEY (plan_version_id)
@@ -57,10 +75,10 @@
      -- Constraints (Unique Keys)
     -- ####################################################
         CREATE UNIQUE INDEX unique_macros_version
-                ON macros_per_pound_and_limits_versions(macros_ID, version_number);
+            ON macros_per_pound_and_limits_versions(macros_id, version_number);
 
          CREATE UNIQUE INDEX unique_date_per_macros_in_plan
-                ON macros_per_pound_and_limits_versions(plan_version_id, date_time_last_edited);
+            ON macros_per_pound_and_limits_versions(plan_version_id, date_time_last_edited);
 
     -- ####################################################
     -- Unique Indexes
@@ -69,6 +87,4 @@
             ON macros_per_pound_and_limits_versions
                 (plan_version_id, date_time_last_edited DESC);
 
-        CREATE INDEX idx_macros_user
-            ON macros_per_pound_and_limits_versions (user_id);
 

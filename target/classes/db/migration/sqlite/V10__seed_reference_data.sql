@@ -26,7 +26,6 @@
                 SELECT ingredient_type_id
                 FROM ingredient_types
                 WHERE ingredient_type_name = 'N/A'
-                LIMIT 1
             )
         )
         ON CONFLICT(seed_key)   -- In case of duplicate, ensures fields match correctly to new insert
@@ -54,6 +53,7 @@
         ON CONFLICT(measurement_material_type_name)   -- In case of duplicate, ensures fields match correctly to new insert
             DO UPDATE SET
             measurement_material_type_name = excluded.measurement_material_type_name; -- On update triggered by PK or unique Key
+
     -- ####################################################################
     -- Variables : Insert Into Seed Registry Table
     -- ####################################################################
@@ -72,7 +72,6 @@
                 SELECT measurement_material_type_id
                 FROM measurement_material_type
                 WHERE measurement_material_type_name = 'Solids'
-                LIMIT 1
             )
         )
         ON CONFLICT(seed_key) -- In case of duplicate, ensures fields match correctly to new insert
@@ -91,7 +90,6 @@
                 SELECT measurement_material_type_id
                 FROM measurement_material_type
                 WHERE measurement_material_type_name = 'Liquids'
-                LIMIT 1
             )
         )
         ON CONFLICT(seed_key) -- In case of duplicate, ensures fields match correctly to new insert
@@ -110,7 +108,6 @@
                 SELECT measurement_material_type_id
                 FROM measurement_material_type
                 WHERE measurement_material_type_name = 'N/A'
-                LIMIT 1
             )
         )
         ON CONFLICT(seed_key)  -- In case of duplicate, ensures fields match correctly to new insert
@@ -177,7 +174,7 @@
        INSERT INTO seed_registry (seed_key, entity_table_name, entity_id_value)
        VALUES
        (
-            'litres_measurement_id',
+            'grams_measurement_id',
             'measurements',
             (
                 SELECT measurement_id

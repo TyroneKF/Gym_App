@@ -40,6 +40,7 @@ class FlywayMigrationMysqlTest
         
         flyway.clean();
         flyway.migrate();
+        ((HikariDataSource) dataSource).close(); // ensure close
     }
     
     @Test

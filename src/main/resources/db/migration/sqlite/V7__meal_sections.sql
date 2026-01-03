@@ -11,7 +11,9 @@
 
     CREATE TABLE divided_meal_sections
     (
-        div_meal_sections_id INTEGER PRIMARY KEY AUTOINCREMENT
+        div_meal_sections_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date_time_of_creation TEXT NOT NULL -- Defined on Insertion
+            DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now'))
     );
 
 -- ##############################################################################################################

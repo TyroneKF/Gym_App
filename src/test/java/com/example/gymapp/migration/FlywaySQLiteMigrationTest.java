@@ -10,6 +10,7 @@ import com.zaxxer.hikari.HikariDataSource;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.SQLException;
 
 class FlywaySQLiteMigrationTest
 {
@@ -37,7 +38,7 @@ class FlywaySQLiteMigrationTest
     }
     
     @BeforeEach
-    void cleanAndMigrate()
+    void cleanAndMigrate() throws SQLException
     {
         Flyway flyway = Flyway.configure()
                 .dataSource(dataSource)
@@ -49,6 +50,7 @@ class FlywaySQLiteMigrationTest
         
         flyway.clean();
         flyway.migrate();
+        ((HikariDataSource) dataSource).close(); // ensure close
     }
     
     @Test

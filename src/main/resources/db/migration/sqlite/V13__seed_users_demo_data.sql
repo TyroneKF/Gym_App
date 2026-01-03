@@ -5,27 +5,26 @@
     INSERT INTO users (user_name)
     SELECT
         '@USERNAME@'
-    WHERE NOT EXISTS
+    WHERE NOT EXISTS -- NOT EXISTS prevents creating a second active user
     (
         SELECT 1 FROM active_user
-    ) -- NOT EXISTS prevents creating a second active user
+    )
     ON CONFLICT(user_name) -- In case of duplicate, ensures fields match correctly to new insert
         DO UPDATE SET
         user_name = excluded.user_name; -- In case of duplicate, ensures fields match correctly to new insert is
-
 
 -- ###############################################################################
 -- Active_USERS | Seed DATA
 -- ###############################################################################
     INSERT INTO active_user(user_id)
-        SELECT user_id
-        FROM users
-        WHERE user_name = '@USERNAME@'
-    AND
-    NOT EXISTS
+    SELECT
+        user_id
+    FROM users
+    WHERE user_name = '@USERNAME@'
+    AND NOT EXISTS  -- NOT EXISTS prevents creating a second active user
     (
         SELECT 1 FROM active_user
-    ); -- NOT EXISTS prevents creating a second active user
+    );
 
 -- ###############################################################################
 -- Insert Into Seed Registry Table
@@ -35,7 +34,7 @@
     (
         'active_user_id',
         'active_user',
-        ( SELECT user_id FROM active_user LIMIT 1 )
+        ( SELECT user_id FROM active_user )
     )
     ON CONFLICT(seed_key)   -- In case of duplicate, ensures fields match correctly to new insert
         DO UPDATE SET

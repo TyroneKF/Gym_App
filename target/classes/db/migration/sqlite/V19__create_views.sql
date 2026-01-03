@@ -245,7 +245,7 @@ CREATE VIEW plan_macros_left AS
 WITH 
     M AS ( -- GRAIN per Plan get Target ID of max date associate with each plan
 				
-			SELECT macros_version_id AS macro_ID, plan_version_id AS plan_version_id_x
+			SELECT macros_version_id AS macro_vs_id, plan_version_id AS plan_version_id_x
 			FROM (
 					SELECT
 					macros_version_id,	
@@ -259,11 +259,11 @@ WITH
 			WHERE T.rn = 1 -- Get First the first row per group 
 	),
 	
-	C AS ( -- GRAIN Per Plan : TARGETS Calulcations 
+	C AS ( -- GRAIN Per Plan : TARGETS Calculations
 			SELECT * 			
 			FROM plan_macro_target_calculations T
 			
-			INNER JOIN M ON M.macro_ID = T.macros_version_id -- JOIN enforces relationship 
+			INNER JOIN M ON M.macro_vs_id = T.macros_version_id -- JOIN enforces relationship 
 				AND M.plan_version_id_x = T.plan_version_id
     )
 
