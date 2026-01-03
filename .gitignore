@@ -5,3 +5,5 @@
 /target/classes/production_setup/.env
 /src/main/resources/data/database_scripts/Tests/
 /target/classes/data/database_scripts/Tests/
+/data/root.mv.db
+/data/root.trace.db
