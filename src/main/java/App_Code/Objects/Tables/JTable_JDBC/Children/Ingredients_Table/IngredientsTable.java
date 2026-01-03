@@ -3,7 +3,7 @@ package App_Code.Objects.Tables.JTable_JDBC.Children.Ingredients_Table;
 
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
-import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
+import App_Code.Objects.Database_Objects.JDBC.MyJDBC_MySQL;
 import App_Code.Objects.Database_Objects.JDBC.Null_MYSQL_Field;
 import App_Code.Objects.Database_Objects.JDBC.Fetched_Results;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
@@ -17,7 +17,6 @@ import App_Code.Objects.Gui_Objects.IconPanel;
 import org.javatuples.Pair;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.math.BigDecimal;
 import java.sql.Types;
 import java.util.*;
@@ -58,7 +57,7 @@ public class IngredientsTable extends JDBC_JTable
     //##################################################################################################################
     // Ingredients Table
     public IngredientsTable(
-            MyJDBC db,
+            MyJDBC_MySQL db,
             MealManager mealManager,
             Shared_Data_Registry shared_Data_Registry,
             int sub_Meal_ID,

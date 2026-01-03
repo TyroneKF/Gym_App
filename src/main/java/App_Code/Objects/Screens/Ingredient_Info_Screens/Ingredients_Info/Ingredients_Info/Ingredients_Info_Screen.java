@@ -1,7 +1,7 @@
 
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info;
 
-import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
+import App_Code.Objects.Database_Objects.JDBC.MyJDBC_MySQL;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredients_Screen;
@@ -35,7 +35,7 @@ public class Ingredients_Info_Screen extends Screen_JFrame
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Ingredients_Info_Screen(MyJDBC db, Meal_Plan_Screen meal_Plan_Screen, Shared_Data_Registry shared_Data_Registry)
+    public Ingredients_Info_Screen(MyJDBC_MySQL db, Meal_Plan_Screen meal_Plan_Screen, Shared_Data_Registry shared_Data_Registry)
     {
         //########################################################
         // Super Constructor

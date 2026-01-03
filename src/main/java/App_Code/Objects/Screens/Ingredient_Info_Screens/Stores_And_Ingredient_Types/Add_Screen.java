@@ -3,7 +3,7 @@ package App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_T
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
 import App_Code.Objects.Database_Objects.JDBC.Fetched_Results;
-import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
+import App_Code.Objects.Database_Objects.JDBC.MyJDBC_MySQL;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.Text_Fields.Parent.JTextFieldLimit;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
@@ -25,7 +25,7 @@ public abstract class Add_Screen extends Screen_JPanel
     //##################################################################################################################
     
     // Objects
-    protected MyJDBC db;
+    protected MyJDBC_MySQL db;
     protected Parent_Screen parent_Screen;
     protected Ingredients_Info_Screen ingredient_Info_Screen;
     protected Shared_Data_Registry sharedDataRegistry;
@@ -55,7 +55,7 @@ public abstract class Add_Screen extends Screen_JPanel
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Add_Screen(MyJDBC db, Shared_Data_Registry shared_Data_Registry, Ingredients_Info_Screen ingredient_Info_Screen, Parent_Screen parent_Screen)
+    public Add_Screen(MyJDBC_MySQL db, Shared_Data_Registry shared_Data_Registry, Ingredients_Info_Screen ingredient_Info_Screen, Parent_Screen parent_Screen)
     {
         //########################################
         //

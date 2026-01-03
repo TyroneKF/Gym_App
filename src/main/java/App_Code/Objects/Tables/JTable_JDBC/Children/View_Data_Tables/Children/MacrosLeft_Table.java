@@ -1,6 +1,6 @@
 package App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Children;
 
-import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
+import App_Code.Objects.Database_Objects.JDBC.MyJDBC_MySQL;
 import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Parent.MyJTable_DisplayData;
 
 import java.awt.*;
@@ -10,7 +10,7 @@ public class MacrosLeft_Table extends MyJTable_DisplayData
 {
     
     public MacrosLeft_Table(
-            MyJDBC db,
+            MyJDBC_MySQL db,
             Container parentContainer,
             ArrayList<ArrayList<Object>> data,
             ArrayList<String> columnNames,

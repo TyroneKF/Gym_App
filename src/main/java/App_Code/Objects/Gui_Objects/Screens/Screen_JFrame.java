@@ -1,6 +1,6 @@
 package App_Code.Objects.Gui_Objects.Screens;
 
-import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
+import App_Code.Objects.Database_Objects.JDBC.MyJDBC_MySQL;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,7 +28,7 @@ public class Screen_JFrame extends JFrame
     //##############################################
     // Objects
     //##############################################
-    protected MyJDBC db;
+    protected MyJDBC_MySQL db;
     protected GridBagConstraints gbc = new GridBagConstraints();
     protected Container contentPane;
     protected ScrollPaneCreator scrollPane = new ScrollPaneCreator();
@@ -42,7 +42,7 @@ public class Screen_JFrame extends JFrame
     //##################################################################################################################
     // Constructors
     //##################################################################################################################
-    public Screen_JFrame(MyJDBC db, boolean addScrollPane, String title, int frameWidth, int frameHeight, int xPos, int yPos)
+    public Screen_JFrame(MyJDBC_MySQL db, boolean addScrollPane, String title, int frameWidth, int frameHeight, int xPos, int yPos)
     {
         this.db = db;  // Variables
         
@@ -270,7 +270,7 @@ public class Screen_JFrame extends JFrame
     // ##################################
     // Other Objects
     // ##################################
-    public MyJDBC getDb()
+    public MyJDBC_MySQL getDb()
     {
         return db;
     }

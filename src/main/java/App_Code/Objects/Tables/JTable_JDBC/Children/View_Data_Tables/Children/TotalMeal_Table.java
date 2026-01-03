@@ -1,6 +1,6 @@
 package App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Children;
 
-import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
+import App_Code.Objects.Database_Objects.JDBC.MyJDBC_MySQL;
 import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Parent.MyJTable_DisplayData;
 import App_Code.Objects.Tables.MealManager;
 
@@ -17,7 +17,7 @@ public class TotalMeal_Table extends MyJTable_DisplayData
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public TotalMeal_Table(MyJDBC db, MealManager mealManager, int meal_In_Plan_ID, ArrayList<Object> data)
+    public TotalMeal_Table(MyJDBC_MySQL db, MealManager mealManager, int meal_In_Plan_ID, ArrayList<Object> data)
     
     {
         //##########################################

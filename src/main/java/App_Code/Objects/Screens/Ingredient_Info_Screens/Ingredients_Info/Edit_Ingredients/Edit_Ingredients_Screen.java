@@ -3,7 +3,7 @@ package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_I
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
 import App_Code.Objects.Database_Objects.JDBC.Fetched_Results;
-import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
+import App_Code.Objects.Database_Objects.JDBC.MyJDBC_MySQL;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.Combo_Boxes.Field_JCombo_Storable_ID;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Search_For_Food_Info;
@@ -35,7 +35,7 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Edit_Ingredients_Screen(Ingredients_Info_Screen ingredients_info_screen, MyJDBC db, Shared_Data_Registry shared_Data_Registry)
+    public Edit_Ingredients_Screen(Ingredients_Info_Screen ingredients_info_screen, MyJDBC_MySQL db, Shared_Data_Registry shared_Data_Registry)
     {
         super(ingredients_info_screen, db, shared_Data_Registry);  // Super Constructor
         

@@ -2,7 +2,7 @@ package App_Code.Objects.Tables;
 
 import App_Code.Objects.Data_Objects.ID_Objects.MetaData_ID_Object.Meal_ID;
 import App_Code.Objects.Database_Objects.JDBC.Fetched_Results;
-import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
+import App_Code.Objects.Database_Objects.JDBC.MyJDBC_MySQL;
 import App_Code.Objects.Database_Objects.JDBC.Null_MYSQL_Field;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Tables.JTable_JDBC.Children.Ingredients_Table.IngredientsTable;
@@ -73,7 +73,7 @@ public class MealManager
     
     // Other Objects
     private JPanel collapsibleCenterJPanel, spaceDividerForMealManager = new JPanel();
-    private MyJDBC db;
+    private MyJDBC_MySQL db;
     private GridBagConstraints gbc;
     private Container container;
     private CollapsibleJPanel collapsibleJpObj;
@@ -90,7 +90,7 @@ public class MealManager
     //##################################################################################################################
     // Constructors
     //##################################################################################################################
-    public MealManager(Meal_Plan_Screen meal_plan_screen, MyJDBC db, MacrosLeft_Table macrosLeft_JTable,
+    public MealManager(Meal_Plan_Screen meal_plan_screen, MyJDBC_MySQL db, MacrosLeft_Table macrosLeft_JTable,
                        Meal_ID meal_ID_Obj, LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> sub_Meal_DATA,
                        ArrayList<Object> total_Meal_Data
     )
@@ -125,7 +125,7 @@ public class MealManager
     }
     
     //
-    public MealManager(Meal_Plan_Screen meal_plan_screen, MyJDBC db, MacrosLeft_Table macrosLeft_JTable)
+    public MealManager(Meal_Plan_Screen meal_plan_screen, MyJDBC_MySQL db, MacrosLeft_Table macrosLeft_JTable)
     {
         //############################################################################
         // Setting Variables

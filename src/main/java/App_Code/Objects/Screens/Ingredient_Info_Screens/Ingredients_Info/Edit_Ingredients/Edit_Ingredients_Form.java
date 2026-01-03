@@ -1,7 +1,7 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients;
 
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Storable_IDS_Parent;
-import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
+import App_Code.Objects.Database_Objects.JDBC.MyJDBC_MySQL;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.Combo_Boxes.Field_JCombo_Storable_ID;
 import App_Code.Objects.Gui_Objects.Text_Fields.Parent.Field_JTxtField_Parent;
@@ -28,7 +28,7 @@ public class Edit_Ingredients_Form extends Ingredients_Form
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Edit_Ingredients_Form(Container parentContainer, MyJDBC db, Shared_Data_Registry sharedDataRegistry, String btn_Txt)
+    public Edit_Ingredients_Form(Container parentContainer, MyJDBC_MySQL db, Shared_Data_Registry sharedDataRegistry, String btn_Txt)
     {
         super(parentContainer, db, sharedDataRegistry, btn_Txt);
     }

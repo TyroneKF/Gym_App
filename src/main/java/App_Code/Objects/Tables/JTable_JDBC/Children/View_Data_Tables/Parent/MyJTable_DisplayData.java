@@ -1,6 +1,6 @@
 package App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Parent;
 
-import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
+import App_Code.Objects.Database_Objects.JDBC.MyJDBC_MySQL;
 import App_Code.Objects.Tables.JTable_JDBC.Parent.JDBC_JTable;
 
 import javax.swing.*;
@@ -14,7 +14,7 @@ public abstract class MyJTable_DisplayData extends JDBC_JTable
     protected int update_Row = 0;
     
     public MyJTable_DisplayData(
-            MyJDBC db,
+            MyJDBC_MySQL db,
             Container parent_Container,
             ArrayList<ArrayList<Object>> data,
             ArrayList<String> column_Names,

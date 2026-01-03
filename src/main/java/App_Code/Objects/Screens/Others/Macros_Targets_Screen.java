@@ -1,6 +1,6 @@
 package App_Code.Objects.Screens.Others;
 
-import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
+import App_Code.Objects.Database_Objects.JDBC.MyJDBC_MySQL;
 import App_Code.Objects.Gui_Objects.Text_Fields.Parent.JTextFieldLimit;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
@@ -42,7 +42,7 @@ public class Macros_Targets_Screen extends Screen_JFrame
     // ################################################################################################################
     // Constructor
     // ################################################################################################################
-    public Macros_Targets_Screen(MyJDBC db, Meal_Plan_Screen meal_plan_screen, int temp_PlanID, String planName)
+    public Macros_Targets_Screen(MyJDBC_MySQL db, Meal_Plan_Screen meal_plan_screen, int temp_PlanID, String planName)
     {
         // #############################################################################################################
         // Super Constructors & Variables

@@ -1,6 +1,6 @@
 package App_Code.Objects.Screens.Loading_Screen;
 
-import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
+import App_Code.Objects.Database_Objects.JDBC.MyJDBC_MySQL;
 //import org.imgscalr.Scalr;
 
 import javax.swing.*;
@@ -18,7 +18,7 @@ public class Intro extends JFrame
             db_Script_List_Folder_Path = "/data/database_scripts/",
             db_Script_List_Name = "0.) Script_List.txt";
 
-    private MyJDBC db;
+    private MyJDBC_MySQL db;
     private Container contentPane;
     private GridBagConstraints gbc = new GridBagConstraints();
 
@@ -27,7 +27,7 @@ public class Intro extends JFrame
 
     private int jFrameWidth = 600, jFrameHeight = 600;
 
-    public Intro(MyJDBC db)
+    public Intro(MyJDBC_MySQL db)
     {
         this.db = db;
 
@@ -87,7 +87,7 @@ public class Intro extends JFrame
 
     public void checkIfTablesExist()
     {
-        /*db = new MyJDBC("root", "password", databaseName, db_Script_List_Folder_Path, db_Script_List_Name);
+        /*db = new MyJDBC_MySQL("root", "password", databaseName, db_Script_List_Folder_Path, db_Script_List_Name);
         if (!(db.get_DB_Connection_Status()))
         {
             JOptionPane.showMessageDialog(null, "ERROR, Cannot Connect To Database!");
@@ -97,7 +97,7 @@ public class Intro extends JFrame
 
     public static void main(String[] args)
     {
-       /* MyJDBC db = new MyJDBC("root", "password", databaseName, db_Script_List_Folder_Path, db_Script_List_Name);
+       /* MyJDBC_MySQL db = new MyJDBC_MySQL("root", "password", databaseName, db_Script_List_Folder_Path, db_Script_List_Name);
         new Intro(db);*/
     }
 }

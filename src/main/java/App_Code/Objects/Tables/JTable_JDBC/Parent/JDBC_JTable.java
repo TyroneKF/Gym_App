@@ -6,7 +6,7 @@ package App_Code.Objects.Tables.JTable_JDBC.Parent;
 
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
-import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
+import App_Code.Objects.Database_Objects.JDBC.MyJDBC_MySQL;
 
 import javax.swing.*;
 import javax.swing.table.*;
@@ -21,7 +21,7 @@ public abstract class JDBC_JTable extends JPanel
     //##############################################
     // Objects
     //##############################################
-    protected MyJDBC db;
+    protected MyJDBC_MySQL db;
     protected Container parent_Container;
     protected JScrollPane scrollPane = new JScrollPane();
     protected static GridBagConstraints gbc = new GridBagConstraints(); //HELLO DELETE
@@ -65,7 +65,7 @@ public abstract class JDBC_JTable extends JPanel
     //##################################################################################################################
     public JDBC_JTable
     (
-            MyJDBC db,
+            MyJDBC_MySQL db,
             Container parent_Container,
             boolean add_JTable_Action,
             String table_Name,

@@ -1,6 +1,6 @@
 package App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen;
 
-import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
+import App_Code.Objects.Database_Objects.JDBC.MyJDBC_MySQL;
 import App_Code.Objects.Tables.MealManager;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
@@ -31,7 +31,7 @@ public class PieChart_Screen_MPS extends Screen_JFrame
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
-    public PieChart_Screen_MPS(MyJDBC db, Meal_Plan_Screen meal_plan_screen)
+    public PieChart_Screen_MPS(MyJDBC_MySQL db, Meal_Plan_Screen meal_plan_screen)
     {
         // ################################################################
         // Super Constructor
