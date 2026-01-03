@@ -1,6 +1,6 @@
 package App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Children;
 
-import App_Code.Objects.Database_Objects.JDBC.MyJDBC_MySQL;
+import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_MySQL;
 import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Parent.MyJTable_DisplayData;
 
 import java.awt.*;

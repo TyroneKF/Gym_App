@@ -2,8 +2,8 @@ package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_In
 
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
-import App_Code.Objects.Database_Objects.JDBC.Fetched_Results;
-import App_Code.Objects.Database_Objects.JDBC.MyJDBC_MySQL;
+import App_Code.Objects.Database_Objects.Fetched_Results;
+import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_MySQL;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.Shop_Form;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info.Ingredients_Info_Screen;

@@ -1,6 +1,6 @@
 package App_Code.Objects.Gui_Objects.Screens;
 
-import App_Code.Objects.Database_Objects.JDBC.MyJDBC_MySQL;
+import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_MySQL;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,9 +1,9 @@
 package App_Code.Objects.Tables;
 
 import App_Code.Objects.Data_Objects.ID_Objects.MetaData_ID_Object.Meal_ID;
-import App_Code.Objects.Database_Objects.JDBC.Fetched_Results;
-import App_Code.Objects.Database_Objects.JDBC.MyJDBC_MySQL;
-import App_Code.Objects.Database_Objects.JDBC.Null_MYSQL_Field;
+import App_Code.Objects.Database_Objects.Fetched_Results;
+import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_MySQL;
+import App_Code.Objects.Database_Objects.Null_MYSQL_Field;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Tables.JTable_JDBC.Children.Ingredients_Table.IngredientsTable;
 import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Children.MacrosLeft_Table;

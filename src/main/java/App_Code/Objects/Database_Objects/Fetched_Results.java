@@ -1,4 +1,4 @@
-package App_Code.Objects.Database_Objects.JDBC;
+package App_Code.Objects.Database_Objects;
 
 import java.util.ArrayList;
 import java.util.Collection;

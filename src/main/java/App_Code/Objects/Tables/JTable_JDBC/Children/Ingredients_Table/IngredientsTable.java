@@ -3,9 +3,9 @@ package App_Code.Objects.Tables.JTable_JDBC.Children.Ingredients_Table;
 
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
-import App_Code.Objects.Database_Objects.JDBC.MyJDBC_MySQL;
-import App_Code.Objects.Database_Objects.JDBC.Null_MYSQL_Field;
-import App_Code.Objects.Database_Objects.JDBC.Fetched_Results;
+import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_MySQL;
+import App_Code.Objects.Database_Objects.Null_MYSQL_Field;
+import App_Code.Objects.Database_Objects.Fetched_Results;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Tables.JTable_JDBC.Children.Ingredients_Table.Buttons.Button_Column;
 import App_Code.Objects.Tables.JTable_JDBC.Children.Ingredients_Table.JCombo_Boxes.Child.Ingredient_Name_JComboBox_Column;

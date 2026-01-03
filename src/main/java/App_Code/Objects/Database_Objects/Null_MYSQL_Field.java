@@ -1,4 +1,4 @@
-package App_Code.Objects.Database_Objects.JDBC;
+package App_Code.Objects.Database_Objects;
 
 public class Null_MYSQL_Field
 {

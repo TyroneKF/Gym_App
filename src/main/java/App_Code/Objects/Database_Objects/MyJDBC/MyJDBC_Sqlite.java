@@ -1,5 +1,7 @@
-package App_Code.Objects.Database_Objects.JDBC;
+package App_Code.Objects.Database_Objects.MyJDBC;
 
+import App_Code.Objects.Database_Objects.Fetched_Results;
+import App_Code.Objects.Database_Objects.Null_MYSQL_Field;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -24,7 +26,7 @@ import java.util.stream.Collectors;
 
 import org.flywaydb.core.Flyway;
 
-public class MyJDBC_Sqlite
+public class MyJDBC_Sqlite extends MyJDBC_MySQL
 {
     //##################################################################################################################
     // Variable

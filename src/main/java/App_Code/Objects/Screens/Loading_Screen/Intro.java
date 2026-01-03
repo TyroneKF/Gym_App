@@ -1,6 +1,6 @@
 package App_Code.Objects.Screens.Loading_Screen;
 
-import App_Code.Objects.Database_Objects.JDBC.MyJDBC_MySQL;
+import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_MySQL;
 //import org.imgscalr.Scalr;
 
 import javax.swing.*;

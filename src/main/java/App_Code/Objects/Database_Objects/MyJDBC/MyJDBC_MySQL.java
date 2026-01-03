@@ -1,5 +1,7 @@
-package App_Code.Objects.Database_Objects.JDBC;
+package App_Code.Objects.Database_Objects.MyJDBC;
 
+import App_Code.Objects.Database_Objects.Fetched_Results;
+import App_Code.Objects.Database_Objects.Null_MYSQL_Field;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -46,6 +48,9 @@ public class MyJDBC_MySQL
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
+    public MyJDBC_MySQL()
+    {}
+    
     public MyJDBC_MySQL
     (
             String host,
