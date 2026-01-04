@@ -52,160 +52,60 @@ public class MyJDBC_Sqlite extends MyJDBC_MySQL
     //##################################################################################################################
     public MyJDBC_Sqlite
     (
-            String host,
-            String port,
-            String user_Name,
-            String password,
-            String databaseName,
-            String db_Script_Folder_Address,
-            String script_List_Name
+            String database_Name
     )
-    {
-        //####################################################################
-        //  Setting Variables
-        //####################################################################
-        this.user_Name = user_Name;
-        this.password = password;
-        this.database_Name = databaseName.toLowerCase();
-        
-        initial_db_connection = String.format("jdbc:mysql://%s:%s", host, port);
-        db_Connection_Address = String.format("%s/%s", initial_db_connection, databaseName);
-        
-        this.class_Name = this.getClass().getName();
-        
-        String method_Name = "Constructor()";
-        String errorMSG = "Error, initializing DB!";
-        
-        //####################################################################
-        //  Attempt DP Connection
-        //####################################################################
-        try
-        {
-            // User Feedback
-            System.out.printf("\n\n%s \nTesting User Credentials: '%s@%s' & DB: %s \n%s\n\n",
-                    line_Separator, user_Name, host, databaseName, line_Separator);
-            
-            // Connect TO DB
-            reconnect_Hikari_DB_Connection(db_Connection_Address); // Throws an Error if configuration fails
-            
-            // Set Configuration Variable
-            db_Connection_Status = true;
-        }
-        catch (Exception x)
-        {
-            // ############################################
-            // Configure Error & Create DB IF Needed
-            // ############################################
-            if (x.getCause() instanceof SQLException e) // Hikari throws an HikariPool$PoolInitializationException Exception
-            {
-                // ############################################
-                // Catch Exception ERROR
-                // ############################################
-                int errorCode = e.getErrorCode();// 2003 = Can't connect to MySQL server, 0	= General connection failure
-                
-                /**
-                 *  1045: Access denied (bad username or password)
-                 *  2003 : Cannot connect to MySQL
-                 *  1049 : Unknown database
-                 */
-                switch (errorCode)
-                {
-                    case 1045 -> errorMSG = "Error, incorrect DB User / Password Details in .ENV File!";
-                    case 2003 -> errorMSG = "Error, cannot connect to MySQL Server!";
-                    case 1049 ->  // Unknown DB / Hasn't been created yet
-                    {
-                        // #################################################
-                        // Re-setup Database
-                        // #################################################
-                        System.out.printf("\n\n%s\nAttempting to create Database Structure! \n%s", line_Separator, line_Separator);
-                        
-                        if (create_DB(db_Script_Folder_Address, script_List_Name))
-                        {
-                            db_Connection_Status = true;
-                            return; // Exit method if DB creation succeeded
-                        }
-                        
-                        errorMSG = "Error, Creating DB SCHEMA!";
-                    }
-                    default -> errorMSG = "Error, Unknown SQL DB Error!";
-                }
-            }
-            
-            // ############################################
-            // Remove Connection
-            // ############################################
-            handleException_MYSQL(x, method_Name, null, errorMSG);
-            close_Connection();
-        }
-    }
-    
-    
-    
-    public MyJDBC_Sqlite
-            (
-                    String database_Name,
-                    String user_Name,
-                    String password,
-                    boolean h2_Mode
-            )
     {
         //#############################################
         // Variables
         //#############################################
         class_Name = get_Class_Name();
         
-        this.database_Name =database_Name;
-        this.user_Name = user_Name;
-        this.password = password;
+        this.database_Name = database_Name;
         
-        db_Connection_Address = String.format(
-                "jdbc:h2:file:./data/%s;" +
-                        "MODE=MySQL;" +
-                        "DATABASE_TO_LOWER=TRUE;" +
-                        "CASE_INSENSITIVE_IDENTIFIERS=TRUE;", database_Name);
-        
+        db_Connection_Address = String.format("jdbc:sqlite:file:./data/%s;", database_Name); // Sqlite ignores username / password
+    }
+    
+    public void begin_migration() throws Exception
+    {
         //#############################################
-        // DB Migration
+        // Configure Hikari
         //#############################################
         /*
             If the DB file does not exist:
                  . H2 creates it
                  . Creates the user automatically
-         */
-        
-        Flyway flyway = Flyway.configure()
-                .dataSource(db_Connection_Address, user_Name, password)
-                .baselineOnMigrate(true)
-                .locations(
-                        "classpath:db/migration/common",
-                        h2_Mode ?
-                                "classpath:db/migration/h2"
-                                :
-                                "classpath:db/migration/mysql"
-                ).load();
-        
-        flyway.migrate();
-        
-        //#############################################
-        // Configure Hikari
-        //#############################################
+        */
         try
         {
-            reconnect_Hikari_DB_Connection(db_Connection_Address);
             
-            db_Connection_Status = true;
+            Flyway flyway = Flyway.configure()
+                    .dataSource(db_Connection_Address, null, null)
+                    .baselineOnMigrate(true)
+                    .locations("classpath:db/migration/sqlite")
+                    .load();
+            
+            flyway.migrate();
         }
         catch (Exception e)
         {
             handleException_MYSQL(e, get_Method_Name(), null, "Error, initializing DB!");
             close_Connection();
+            
+            throw new Exception("Failed Migration!");
         }
+        
+        //#############################################
+        // Configure Hikari
+        //#############################################
+        reconnect_Hikari_DB_Connection(db_Connection_Address);
+        
+        db_Connection_Status = true;
     }
     
     // #######################################################
     // DB Setup Methods
     // #######################################################
-    private void reconnect_Hikari_DB_Connection(String connection_Address) throws Exception
+    private void reconnect_Hikari_DB_Connection(String connection_Address)
     {
         // ####################################################
         //  Close Connection
@@ -217,16 +117,21 @@ public class MyJDBC_Sqlite extends MyJDBC_MySQL
         // ####################################################
         HikariConfig config = new HikariConfig();
         
+        // SQLite connection PRAGMAs:
+        // Required SQLite connection initialization for correctness, concurrency, and stability
+        // - foreign_keys        : Enforces FK constraints (OFF by default in SQLite)
+        // - journal_mode = WAL  : Improves concurrency and reduces locking
+        // - synchronous = NORMAL: Balanced durability vs performance
+        // - busy_timeout        : Waits for locks instead of failing immediately
         config.setJdbcUrl(connection_Address);
-        config.setUsername(user_Name);
-        config.setPassword(password);
-        config.setMaximumPoolSize(10); // how many connections to keep open
-        config.setMinimumIdle(2);
-        config.setIdleTimeout(60000);  // close idle connections after 60s
-        config.setConnectionTimeout(30000); // wait 30s max for a connection
-        config.setLeakDetectionThreshold(2000); // optional for debugging
-        
-        config.setInitializationFailTimeout(5000); // fail if connection can't connect within 5s
+        config.setMaximumPoolSize(1); // sqlite can only handle 1 connection / not good at concurrency
+        config.setConnectionTestQuery("SELECT 1");
+        config.setConnectionInitSql(
+                "PRAGMA foreign_keys = ON;" +
+                        "PRAGMA journal_mode = WAL;" +
+                        "PRAGMA synchronous = NORMAL;" +
+                        "PRAGMA busy_timeout = 5000;"
+        );
         
         // ####################################################
         //  Create Connection & Test
