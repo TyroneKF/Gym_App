@@ -7,3 +7,7 @@
 /target/classes/data/database_scripts/Tests/
 /data/root.mv.db
 /data/root.trace.db
+data/root;
+/data/*.db
+/data/*.db-shm
+/data/*.db-wal

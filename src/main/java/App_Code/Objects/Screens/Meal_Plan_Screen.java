@@ -5,7 +5,8 @@ import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredie
 import App_Code.Objects.Data_Objects.ID_Objects.MetaData_ID_Object.Meal_ID;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Measurement_ID_OBJ;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
-import App_Code.Objects.Database_Objects.JDBC.MyJDBC;
+import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_MySQL;
+import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Children.MacrosLeft_Table;
 import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Children.MacrosTargets_Table;
@@ -19,13 +20,11 @@ import App_Code.Objects.Screens.Loading_Screen.Loading_Screen;
 import App_Code.Objects.Screens.Others.Macros_Targets_Screen;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.cdimascio.dotenv.Dotenv;
 import org.javatuples.Pair;
 import org.jfree.data.time.Second;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.*;
@@ -119,7 +118,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
     
     // Table Names Frequently Used
     table_Plans_Name = "plans",
-            table_Plans_Version_Name = "plans_versions",
+            table_name_active_plans = "active_plans",
+            table_Plans_Version_Name = "plan_versions",
             table_Macros_Per_Pound_Limit_Name = "macros_per_pound_and_limits_versions",
             table_Plan_Macro_Targets_Name_Calc = "plan_macro_target_calculations",
             table_Ingredients_Info_Name = "ingredients_info",
@@ -196,104 +196,27 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //##################################################################################################################
     public static void main(String[] args)
     {
-        if (production)
+        //###################################################
+        // Create DB Object & run SQL Script
+        //####################################################
+        MyJDBC_Sqlite db = new MyJDBC_Sqlite();
+        
+        try
         {
-            try
-            {
-                // #########################################
-                // Set Path Files
-                // #########################################
-                String userDirectory = new File("").getAbsolutePath(); // get path file of where this is being executed
-                
-                System.out.printf("\nDirectory: \n%s \n\n\nScripts Directory:\n%s", userDirectory, db_Scripts_Folder_Path);
-                System.out.println("\n\n\nReading ENV Variables: host, port, user_name, ****, db_name");
-                
-                // #########################################
-                // Get .env variables
-                // #########################################
-                Dotenv dotenv = Dotenv.configure()
-                        .directory(userDirectory)
-                        .filename(".env") // instead of '.env', use 'env'
-                        .load();
-                
-                String host = dotenv.get("DB_HOST");
-                String port = dotenv.get("DB_PORT");
-                
-                database_Name = dotenv.get("DB_NAME");
-                user_name = dotenv.get("DB_USER");
-                
-                String password = dotenv.get("DB_PASS");
-                
-                if (host == null || port == null || user_name == null || password == null || database_Name == null)
-                {
-                    System.err.printf("\n\nDB Values: \nhost: %s \nport: %s \nuser_name: %s \ndatabase_Name: %s",
-                            host, port, user_name, database_Name);
-                    
-                    throw new RuntimeException("Missing one or more required DB environment variables.");
-                }
-                
-                System.out.println("\n\nSuccessfully retrieved ENV Variables: host, port, user_name, *****, db_name");
-                
-                // #########################################
-                // Assigning values to variables &
-                // #########################################
-                
-                // #########################################
-                // Create DB Object & run SQL Scripts
-                // #########################################
-                
-                MyJDBC db = new MyJDBC(
-                        host,
-                        port,
-                        user_name,
-                        password,
-                        database_Name,
-                        db_Scripts_Folder_Path,
-                        db_File_Script_List_Name
-                );
-                
-                if (db.get_DB_Connection_Status())
-                {
-                    new Meal_Plan_Screen(db);
-                }
-                else
-                {
-                    JOptionPane.showMessageDialog(null, "ERROR, Cannot Connect To Database!");
-                    return;
-                }
-            }
-            catch (Exception e)
-            {
-                System.err.printf("\n\nError Meal_Plan_Screen() \n%s", e);
-                return;
-            }
+            db.begin_migration();
+            if (! db.get_DB_Connection_Status()) { throw new Exception("Failed Initialization!"); }
         }
-        else
+        catch (Exception e)
         {
-            //###################################################
-            // Create DB Object & run SQL Script
-            //####################################################
-            MyJDBC db = new MyJDBC(
-                    "localhost",
-                    "3306",
-                    user_name,
-                    password,
-                    database_Name,
-                    db_Scripts_Folder_Path,
-                    db_File_Script_List_Name
-            );
-            
-            if (! db.get_DB_Connection_Status())
-            {
-                JOptionPane.showMessageDialog(null, "ERROR, Cannot Connect To Database!");
-                return;
-            }
-            
-            new Meal_Plan_Screen(db);
+            System.err.printf("\n\n %s", e);
+            JOptionPane.showMessageDialog(null, "ERROR, Cannot Connect To Database!");
+            return;
         }
+        
+        new Meal_Plan_Screen(db);
     }
     
-    public Meal_Plan_Screen(MyJDBC db)
+    public Meal_Plan_Screen(MyJDBC_MySQL db)
     {
         //###############################################################################
         // Super / Variables
@@ -311,28 +234,31 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // Variables
         String errorMSG = "Error, Gathering Plan & Personal User Information!";
         
-        String queryX = String.format("""
+        String queryX = """
                 SELECT
                 
                 	U.user_id,
+                
                 	PV.plan_version_id,
-                	PV.plan_id,
+                
+                	P.plan_id,
                 	P.plan_name
                 
-                FROM users U
+                FROM active_user U
                 
-                LEFT JOIN %s PV ON U.user_id = PV.user_id AND PV.selected_plan_flag = ?
+                LEFT JOIN active_plans AP
+                    ON U.user_id = AP.user_id
                 
-                LEFT JOIN %s P ON PV.plan_id = P.plan_id
+                LEFT JOIN plan_versions PV
+                    ON AP.plan_version_id = PV.plan_version_id
                 
-                WHERE U.selected_user_flag = ?;""", table_Plans_Version_Name, table_Plans_Name);
-        
-        Object[] params = new Object[]{ true, true };
+                LEFT JOIN plans P
+                    ON PV.plan_id = P.plan_id;""";
         
         // Execute
         try
         {
-            ArrayList<ArrayList<Object>> db_results = db.get_2D_Query_AL_Object(queryX, params, errorMSG, false);
+            ArrayList<ArrayList<Object>> db_results = db.get_2D_Query_AL_Object(queryX, null, errorMSG, false);
             
             // App Must assume by default there is a selected user and 1 plan active otherwise this causes an eror
             user_id = (Integer) db_results.getFirst().get(0);
@@ -395,33 +321,33 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###############################################################################
         String plan_Counts_ErrorMSG = "Unable to get Meals & Sub-Meals Count!";
         String plan_Counts_Query = String.format("""
-                        WITH
-                            plans AS (SELECT plan_id FROM plans),
-                        	meals AS (SELECT plan_id, meal_in_plan_id FROM meals_in_plan),
-                        	subs AS (SELECT plan_id, div_meal_sections_id FROM divided_meal_sections),
-                        
-                        	count_cte AS (
-                        
-                        		SELECT p.plan_id,
-                        
-                        		COUNT(DISTINCT(M.meal_in_plan_id)) AS total_meals,
-                           		COUNT(DISTINCT(S.div_meal_sections_id)) AS total_sub_meals
-                        
-                        		FROM plans p
-                        		LEFT JOIN meals M ON P.plan_id = M.plan_id
-                        		LEFT JOIN subs S ON P.plan_id = S.plan_id
-                        
-                        		GROUP BY P.plan_id
-                        	)
-                        
-                        SELECT
-                        	COALESCE(C.total_meals, 0) AS meal_count,
-                        	COALESCE(C.total_sub_meals, 0) AS sub_count
-                        
-                        FROM %s P
-                        LEFT JOIN count_cte C
-                        ON P.plan_id = C.plan_id
-                        WHERE P.plan_id = ?;"""
+            WITH
+                plans AS (SELECT plan_id FROM plans),
+                meals AS (SELECT plan_id, meal_in_plan_id FROM meals_in_plan),
+                subs AS (SELECT plan_id, div_meal_sections_id FROM divided_meal_sections),
+            
+                count_cte AS (
+            
+                    SELECT p.plan_id,
+            
+                    COUNT(DISTINCT(M.meal_in_plan_id)) AS total_meals,
+                    COUNT(DISTINCT(S.div_meal_sections_id)) AS total_sub_meals
+            
+                    FROM plans p
+                    LEFT JOIN meals M ON P.plan_id = M.plan_id
+                    LEFT JOIN subs S ON P.plan_id = S.plan_id
+            
+                    GROUP BY P.plan_id
+                )
+            
+            SELECT
+                COALESCE(C.total_meals, 0) AS meal_count,
+                COALESCE(C.total_sub_meals, 0) AS sub_count
+            
+            FROM %s P
+            LEFT JOIN count_cte C
+            ON P.plan_id = C.plan_id
+            WHERE P.plan_id = ?;"""
                 
                 , table_Plans_Version_Name);
         

@@ -4,17 +4,12 @@ import App_Code.Objects.Database_Objects.Fetched_Results;
 import App_Code.Objects.Database_Objects.Null_MYSQL_Field;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-
 import java.sql.Connection;
 import java.sql.SQLException;
-
-import org.apache.ibatis.jdbc.ScriptRunner;
 import org.javatuples.Pair;
-
 import javax.swing.*;
 import java.io.*;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.sql.*;
 import java.text.Collator;
@@ -22,22 +17,18 @@ import java.time.LocalTime;
 import java.util.*;
 import java.time.LocalDateTime;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
+
 
 import org.flywaydb.core.Flyway;
 
-public class MyJDBC_Sqlite extends MyJDBC_MySQL
+public class MyJDBC_Sqlite extends MyJDBC_MySQL // remove extends eventually
 {
     //##################################################################################################################
     // Variable
     //##################################################################################################################
-    private String
-            class_Name,
-            database_Name, // must be in lowercase
-            user_Name,
-            password,
-            initial_db_connection = "jdbc:mysql://localhost:3306",
-            db_Connection_Address = initial_db_connection;
+    private final String class_Name;
+    private String database_Name = "gym_app00001"; // must be in lowercase
+    private final String db_Connection_Address;
     
     private final String
             line_Separator = "############################################################################################################################",
@@ -50,18 +41,12 @@ public class MyJDBC_Sqlite extends MyJDBC_MySQL
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public MyJDBC_Sqlite
-    (
-            String database_Name
-    )
+    public MyJDBC_Sqlite()
     {
         //#############################################
         // Variables
         //#############################################
         class_Name = get_Class_Name();
-        
-        this.database_Name = database_Name;
-        
         db_Connection_Address = String.format("jdbc:sqlite:file:./data/%s;", database_Name); // Sqlite ignores username / password
     }
     
@@ -139,503 +124,6 @@ public class MyJDBC_Sqlite extends MyJDBC_MySQL
         dataSource = new HikariDataSource(config); // Connection pool which provides a connection
         
         System.out.printf("\n\n\n%s\nConnection pool initialized successfully!\n%s", line_Separator, line_Separator);
-    }
-    
-    /*
-     * 1.) Connect to DB
-     * 2.) Check schema_version
-     * 3.) If empty → apply migrations
-     * 4.) If mismatch → FAIL STARTUP
-     * 5.) Log error clearly
-     * 6.) Exit
-     */
-    
-    public boolean create_DB(String db_Script_Folder_Address, String script_List_Name)
-    {
-        // #############################################################
-        //  Variables
-        // #############################################################
-        String
-                path = String.format("%s/%s", db_Script_Folder_Address, script_List_Name),
-                method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName()),
-                errorMSG = "Error, running migration Scripts!",
-                update_User_Query = "UPDATE users SET user_name = ? WHERE user_name = '@USERNAME@';";
-        
-        // #############################################################
-        //  Connect to LocalHost To Create DB
-        // #############################################################
-        try
-        {
-            reconnect_Hikari_DB_Connection(initial_db_connection);
-        }
-        catch (Exception e)
-        {
-            handleException_MYSQL(e, method_Name, null, "Error, Connecting TO Initial DB!!");
-            return false;
-        }
-        
-        // #############################################################
-        //  Get Folder Path
-        // #############################################################
-        try (Connection connection = dataSource.getConnection(); // if connection fails, error is thrown, script stops here)
-             InputStream listStream = getClass().getResourceAsStream(path)
-        )
-        {
-            connection.setAutoCommit(false); // Prevents each query from being singularly uploaded & is only made not temp when committed
-            
-            if (listStream == null)
-            {
-                throw new Exception(String.format("\n\nrun_SQL_Script_Folder() Error Loading = NULL \n%s", path));
-            }
-            
-            // ############################################################
-            //  Create DB Schema Through Scripts
-            // #############################################################
-            try (BufferedReader file_Names_Reader = new BufferedReader(new InputStreamReader(listStream, StandardCharsets.UTF_8));
-                 PreparedStatement statement = connection.prepareStatement(update_User_Query, Statement.RETURN_GENERATED_KEYS)
-            )
-            {
-                // #######################################
-                // Create DB Schema
-                // #######################################
-                Iterator<String> it = file_Names_Reader.lines().iterator();
-                while (it.hasNext())
-                {
-                    //############################
-                    // Get Path of File
-                    //###########################
-                    String fileName = it.next();
-                    System.out.printf("\n\n\n%s \nMyJDBC_MySQL.java %s Executing script: %s\n%s\n\n", line_Separator, method_Name, fileName, line_Separator);
-                    
-                    try (InputStream scriptStream = getClass().getResourceAsStream(String.format("%s/%s", db_Script_Folder_Address, fileName)))
-                    {
-                        if (scriptStream == null)
-                        {
-                            throw new Exception(String.format("\nMyJDBC_MySQL.java %s Script not found: '%s'", method_Name, fileName));
-                        }
-                        
-                        //###########################
-                        // Execute File Script
-                        //###########################
-                        try (Reader file_Reader = new InputStreamReader(scriptStream, StandardCharsets.UTF_8))
-                        {
-                            ScriptRunner runner = new ScriptRunner(connection);
-                            runner.setStopOnError(true);
-                            runner.runScript(file_Reader);
-                            
-                            System.out.printf("\n\n%s\nSuccessfully executed script: %s\n%s", middle_line_Separator, fileName, middle_line_Separator);
-                        }
-                        catch (Exception e)
-                        {
-                            return handle_Failed_DB_Creation(e, method_Name, errorMSG);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        return handle_Failed_DB_Creation(e, method_Name, errorMSG);
-                    }
-                }
-                
-                // #######################################
-                // Replace User Credentials in  DB
-                // #######################################
-                statement.setString(1, user_Name);
-                statement.executeUpdate();
-                
-                // ########################################
-                // Commit Changes
-                // ########################################
-                connection.commit(); // Commit Changes beyond current driver
-                System.out.printf("\n\n\n%s \nUser & Database Credentials are valid !\n%s", line_Separator, line_Separator);
-            }
-            
-            //##########################################################
-            // Error Handling
-            //##########################################################
-            catch (Exception e)
-            {
-                return handle_Failed_DB_Creation(e, method_Name, errorMSG);
-            }
-        }
-        catch (Exception e)
-        {
-            return handle_Failed_DB_Creation(e, method_Name, errorMSG);
-        }
-        
-        // #############################################################
-        //  Return DB to Correct Path
-        // #############################################################
-        try
-        {
-            reconnect_Hikari_DB_Connection(db_Connection_Address);
-            return true;
-        }
-        catch (Exception e)
-        {
-            return handle_Failed_DB_Creation(e, method_Name, "Error, Changing DB Path to App DB Path!");
-        }
-    }
-    
-    private boolean handle_Failed_DB_Creation(Exception e, String method_Name, String errorMSG)
-    {
-        handleException_File(e, method_Name, errorMSG);
-        close_Connection();
-        return false;
-    }
-    
-    //##################################################################################################################
-    // Script Reading :  Methods
-    //##################################################################################################################
-    public boolean run_SQL_Script_Folder(String db_Script_Folder_Address, String script_List_Name)
-    {
-        // ####################################################
-        //  Variables
-        // ####################################################
-        String
-                path = String.format("%s/%s", db_Script_Folder_Address, script_List_Name),
-                method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName()),
-                errorMSG = String.format("Error, running script a scripts in path: \n\n%s", path);
-        
-        // ####################################################
-        //  Get Folder Path
-        // ####################################################
-        try (Connection connection = dataSource.getConnection(); // if connection fails, error is thrown, script stops here
-             InputStream listStream = getClass().getResourceAsStream(path)
-        )
-        {
-            if (listStream == null)
-            {
-                throw new Exception(String.format("\n\nrun_SQL_Script_Folder() Error Loading = NULL \n%s", path));
-            }
-            
-            // ####################################################
-            //  Connect to LocalHost To Create DB
-            // ####################################################
-            reconnect_Hikari_DB_Connection(initial_db_connection);
-            
-            // ####################################################
-            //  Reading Script List & Executing Each Script in List
-            // ####################################################
-            // Resources automatically released in try block / no need for reader.close()
-            try (BufferedReader file_Names_Reader = new BufferedReader(new InputStreamReader(listStream, StandardCharsets.UTF_8)))
-            {
-                connection.setAutoCommit(false); // Prevents each query from being singularly uploaded & is only made not temp when committed
-                
-                Iterator<String> it = file_Names_Reader.lines().iterator();
-                while (it.hasNext())
-                {
-                    //##########################################################
-                    // Get Path of File
-                    //##########################################################
-                    String fileName = it.next();
-                    System.out.printf("\nMyJDBC_MySQL.java %s Executing script: %s \n\n", method_Name, fileName);
-                    
-                    try (InputStream scriptStream = getClass().getResourceAsStream(String.format("%s/%s", db_Script_Folder_Address, fileName)))
-                    {
-                        if (scriptStream == null)
-                        {
-                            throw new Exception(String.format("\nMyJDBC_MySQL.java %s Script not found: '%s'", method_Name, fileName));
-                        }
-                        
-                        //##########################################################
-                        // Execute File Script
-                        //##########################################################
-                        try (Reader file_Reader = new InputStreamReader(scriptStream, StandardCharsets.UTF_8))
-                        {
-                            ScriptRunner runner = new ScriptRunner(connection);
-                            runner.setStopOnError(true);
-                            runner.runScript(file_Reader);
-                            
-                            System.out.printf("\nMyJDBC_MySQL.java %s successfully executed script: %s", method_Name, fileName);
-                        }
-                        catch (Exception e)
-                        {
-                            throw e;
-                        }
-                    }
-                    //##########################################################
-                    // Error Handling
-                    //##########################################################
-                    catch (Exception e)
-                    {
-                        throw e;
-                    }
-                }
-                
-                connection.commit(); // Commit Changes beyond current driver
-                return true;
-            }
-            //##########################################################
-            // Error Handling
-            //##########################################################
-            catch (Exception e)
-            {
-                rollBack_Connection(connection, method_Name, null);
-                throw e;
-            }
-        }
-        catch (Exception e)
-        {
-            handleException_File(e, method_Name, errorMSG);
-            return false;
-        }
-    }
-    
-    private boolean run_SQL_Script(String sql_Script_Address)
-    {
-        return false;
-    }
-    
-    //##################################################################################################################
-    // File Writing : Methods
-    //##################################################################################################################
-    public boolean write_Txt_To_SQL_File(String sqlFilePath, String txt_To_Write_To_SQL_File, String errorMSG)
-    {
-        String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        
-        //##########################################################
-        // Creating Temp File
-        //##########################################################
-        String[] filenameAndExt = sqlFilePath.split("\\.(?=[^\\.]+$)"); // file name [0] & ext [1]
-        String tempFilePath = String.format("%sTmp.%s", filenameAndExt[0], filenameAndExt[1]);
-        
-        //##########################################################
-        // Reading File & Writing
-        //##########################################################
-        try (BufferedReader reader = new BufferedReader(new FileReader(sqlFilePath)); // resources automatically released in try block / no need for reader.close()
-             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFilePath), "UTF-8")))
-        {
-            boolean first = true;
-            
-            Iterator<String> it = reader.lines().iterator();
-            while (it.hasNext()) // iterate through txt file
-            {
-                if (first) { first = false; writer.write(it.next().trim()); continue; }
-                
-                String line = System.lineSeparator() + it.next();
-                
-                // IF Last Line : Format  last line to regular line as there's a new last line being appended afterward
-                if (! it.hasNext()) { line = line.replace(";", ","); }
-                
-                writer.write(line);
-            }
-            
-            //#############################
-            // Write Last Line (New ADD)
-            //#############################
-            writer.write(System.lineSeparator() + txt_To_Write_To_SQL_File + ";");
-        }
-        //##########################################################
-        // Error Handling
-        //##########################################################
-        catch (Exception e)
-        {
-            handleException_File(e, method_Name, errorMSG);
-            return false;
-        }
-        
-        //##########################################################
-        // Renaming File
-        //##########################################################
-        return rename_File(tempFilePath, sqlFilePath, method_Name, errorMSG);
-    }
-    
-    public boolean replace_Txt_In_SQL_File(String sqlFilePath, boolean multiValues, String txt_To_Find, String
-            txt_Replacement, String errorMSG)
-    {
-        String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        
-        //##########################################################
-        // Creating Temp File
-        //##########################################################
-        String[] filenameAndExt = sqlFilePath.split("\\.(?=[^\\.]+$)"); // file name [0] & ext [1]
-        String tempFilePath = String.format("%sTmp.%s", filenameAndExt[0], filenameAndExt[1]);
-        
-        //##########################################################
-        // Reading File & Writing
-        //##########################################################
-        try (BufferedReader reader = new BufferedReader(new FileReader(sqlFilePath)); // resources automatically released in try block / no need for reader.close()
-             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFilePath), "UTF-8")))
-        {
-            boolean first = true, replacementFound = false;
-            
-            Iterator<String> it = reader.lines().iterator();
-            while (it.hasNext()) // iterate through txt file
-            {
-                // ###########################
-                // First Line Avoid Editing
-                // ###########################
-                if (first) { first = false; writer.write(it.next().trim()); continue; }
-                
-                // ###########################
-                // General Line
-                // ###########################
-                String currentLine = System.lineSeparator() + it.next().trim();
-                
-                /**
-                 *  Triggered in conditions:
-                 *    1.) If replacement has not been found & Current Line contains search txt execute
-                 *    2.) If replacement has been found and multi-values & line contains search txt execute
-                 */
-                if ((! replacementFound || multiValues) && currentLine.contains(txt_To_Find))
-                {
-                    System.out.printf("\n\nReplacement made: %s", currentLine);
-                    
-                    currentLine = currentLine.contains(";") ? txt_Replacement + ";" : txt_Replacement + ",";
-                    
-                    replacementFound = true;
-                }
-                
-                writer.write(currentLine);// Writing Line to File
-            }
-            
-            //################################
-            // Not Found & Error Delete Temp
-            //################################
-            if (! replacementFound && ! new File(tempFilePath).delete())
-            {
-                System.err.printf("\nMyJDBC_MySQL.java %s \nError, SearchTxt Not Found ! Error, deleting Temp File \n' %s ' !",
-                        method_Name, tempFilePath);
-                
-                return false;
-            }
-        }
-        //##########################################################
-        // Error Handling
-        //##########################################################
-        catch (Exception e)
-        {
-            handleException_File(e, method_Name, errorMSG);
-            return false;
-        }
-        
-        //##########################################################
-        // Renaming File
-        //##########################################################
-        return rename_File(tempFilePath, sqlFilePath, method_Name, errorMSG);
-    }
-    
-    /*
-     * In most files there's at least one insert value which avoids completely deleting all elements and the file no ending in an ';'
-     *
-     * @param filePath
-     * @param txtToDelete
-     * @return
-     */
-    public boolean delete_Txt_In_File(String filePath, String txtToDelete, String errorMSG)
-    {
-        String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        
-        //#################################################################################
-        // Creating Temp File
-        //#################################################################################
-        String[] filenameAndExt = filePath.split("\\.(?=[^\\.]+$)"); // file name [0] & ext [1]
-        String tempFilePath = String.format("%sTmp.%s", filenameAndExt[0], filenameAndExt[1]);
-        
-        //#################################################################################
-        // Reading File & Deleting
-        //#################################################################################
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), StandardCharsets.UTF_8)); // resources automatically released in try block / no need for reader.close()
-             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFilePath), StandardCharsets.UTF_8)))
-        {
-            //###########################################
-            // Find TXT & Delete it
-            //###########################################
-            boolean first = true, found = false;
-            
-            List<String> lines = reader.lines().collect(Collectors.toList()); // Read File into memory
-            
-            Iterator<String> it1 = lines.iterator();
-            while (it1.hasNext())
-            {
-                if (first) { first = false; continue; }
-                
-                String line = it1.next().trim();
-                
-                if (line.contains(txtToDelete))
-                {
-                    found = true; it1.remove();
-                }
-            }
-            
-            //############################################
-            // Not Found & Error Delete Temp
-            //############################################
-            if (! found && ! new File(tempFilePath).delete())
-            {
-                System.err.printf("\nMyJDBC_MySQL.java %s \nError, SearchTxt Not Found ! Error, deleting Temp File \n' %s ' !",
-                        method_Name, tempFilePath);
-                
-                return false;
-            }
-            
-            //###########################################
-            // Add ";" at the end of the file
-            //###########################################
-            first = true;
-            
-            Iterator<String> it = lines.iterator();
-            while (it.hasNext()) // iterate through txt file
-            {
-                // ###########################
-                // First Line Avoid Editing
-                // ###########################
-                if (first) { first = false; writer.write(it.next().trim()); continue; }
-                
-                // ###########################
-                // General TXT
-                // ###########################
-                String currentLine = System.lineSeparator() + it.next().trim();
-                
-                //###########################
-                // Special Case Last Line
-                //###########################
-                if (! it.hasNext())
-                {
-                    currentLine = currentLine.substring(0, currentLine.length() - 1); // removes ',' at the end if its there potentially could be ';' too
-                    currentLine += ";"; // replaces with ';' because this is the new last line now
-                }
-                
-                //###########################
-                //  Write
-                //###########################
-                writer.write(currentLine);// Writing Line to File
-            }
-        }
-        //#################################################################################
-        // Error Handling
-        //#################################################################################
-        catch (Exception e)
-        {
-            handleException_File(e, method_Name, errorMSG);
-            return false;
-        }
-        
-        //#################################################################################
-        // Renaming File
-        //#################################################################################
-        return rename_File(tempFilePath, filePath, method_Name, errorMSG);
-    }
-    
-    private boolean rename_File(String tempFilePath, String filePath, String method_Name, String errorMSG)
-    {
-        //##########################################################
-        // Renaming File
-        //##########################################################
-        try
-        {
-            // Replaces first file with the second
-            Files.move(Paths.get(tempFilePath), Paths.get(filePath), StandardCopyOption.REPLACE_EXISTING);
-            return true;
-        }
-        //#################################
-        // Error Handling
-        //##################################
-        catch (Exception e)
-        {
-            handleException_File(e, method_Name, errorMSG);
-            return false;
-        }
     }
     
     //##################################################################################################################
@@ -1009,23 +497,52 @@ public class MyJDBC_Sqlite extends MyJDBC_MySQL
     //######################################################
     public ArrayList<String> get_Column_Names_AL(String tableName) throws Exception
     {
+        //##########################################################
+        // Query Setup
+        //##########################################################
         // Setup Method_Name for diagnosis
         String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+        String error_MSG = String.format("Failed Getting Table Column Names for  : %s", tableName);
+        String column_Names_Query = String.format("PRAGMA table_info(%s);", tableName);  // Query doesn't work in prepared statement
+ 
         
-        // Query Setup
-        String columnNamesQuery = """
-                SELECT column_name
-                FROM information_schema.columns
-                WHERE table_schema = ?
-                AND table_name = ?
-                ORDER BY ordinal_position;""";
-        
-        // Setup Params
-        Object[] params = new Object[]{ database_Name, tableName };
-        String errorMSG = String.format("Failed Getting Table Column Names for  : %s", tableName);
-        
-        // Execute
-        return get_Single_Col_Query_String(columnNamesQuery, params, errorMSG, false);
+        //##########################################################
+        // Query Execution
+        //##########################################################
+        try (
+                Connection connection = dataSource.getConnection(); // Get a Connection from pool
+                PreparedStatement statement = connection.prepareStatement(column_Names_Query)
+        )
+        {
+            //############################################
+            // Execute Query
+            //############################################
+            ResultSet resultSet = statement.executeQuery();
+            
+            if (! resultSet.isBeforeFirst()) // checks if any data was returned
+            {
+                throw new Exception("Failed Query -> Empty Results");
+            }
+            
+            //############################################
+            // Storing query_And_Params data in String[]
+            //############################################
+            ArrayList<String> column_names_AL = new ArrayList<>();
+            
+            while (resultSet.next())
+            {
+               column_names_AL.add(resultSet.getString("name"));
+            }
+            return column_names_AL;
+        }
+        //##########################################################
+        // Error Handling
+        //##########################################################
+        catch (Exception e)
+        {
+            handleException_MYSQL(e, method_Name, column_Names_Query, error_MSG);
+            throw new Exception("");
+        }
     }
     
     //##################################################################################################################
