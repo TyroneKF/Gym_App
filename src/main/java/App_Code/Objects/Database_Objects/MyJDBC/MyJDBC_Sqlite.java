@@ -21,7 +21,7 @@ import java.util.function.Supplier;
 
 import org.flywaydb.core.Flyway;
 
-public class MyJDBC_Sqlite extends MyJDBC_MySQL // remove extends eventually
+public class MyJDBC_Sqlite  // remove extends eventually
 {
     //##################################################################################################################
     // Variable
