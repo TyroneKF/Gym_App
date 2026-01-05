@@ -11,3 +11,4 @@ data/root;
 /data/*.db
 /data/*.db-shm
 /data/*.db-wal
+/data/gym_app00001;

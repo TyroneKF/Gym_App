@@ -6,25 +6,31 @@
         and union combines each row into rows for an insert
     */
 
-    INSERT INTO meals_in_plan
-    (
-        date_time_of_creation
-    )
-    SELECT strftime('%Y-%m-%dT%H:%M:%f', 'now') -- Put the current timestamp into date_time_of_creation with microsecond precision
-    FROM          -- EACH SELECT produces one row and union combines them all to produce an insert statement x 7
-    (
-            -- Just Inserts x7
-            -- Row generator: produces exactly 7 rows
-            -- Values are discarded; they do NOT represent meal IDs or meanings
-            SELECT 1 UNION ALL -- 1  # For Breakfast later
-            SELECT 2 UNION ALL -- 2  # For MidMorning later
-            SELECT 3 UNION ALL -- 3  # For Lunch later
-            SELECT 4 UNION ALL -- 4  # For Pre-Workout later
-            SELECT 5 UNION ALL -- 5  # For Post - Workout later
-            SELECT 6 UNION ALL -- 6  # For Dinner later
-            SELECT 7           -- 7  # For Bed Snack later
+    -- #########################################
+    --
+    -- #########################################
+       /*
+           Defines a recursive CTE that generates a sequential integer set.
+           The anchor query starts the sequence at 1, and the recursive step
+           repeatedly increments the value by 1, referencing the CTE itself.
+           Recursion terminates when the upper bound (n < 7) is reached.
+       */
 
-    ) AS seed;
+        WITH RECURSIVE seq(n) AS (
+           SELECT 1
+           UNION ALL
+           SELECT n + 1
+           FROM seq
+           WHERE n < 7
+        )
+
+        INSERT INTO meals_in_plan
+        (
+            date_time_of_creation
+        )
+        SELECT
+            strftime('%Y-%m-%dT%H:%M:%f', 'now')
+        FROM seq;
 
 -- ###############################################################################
 -- Step 2.) Create Anchors For Meals

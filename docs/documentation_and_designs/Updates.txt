@@ -1,7 +1,8 @@
 
 mvn javafx:run "-DmainClass=Tests.ToggleSwitchDemo"
 
-
+Use triggers to update other tables
+etc update ingredient = update meal = update plan
 
 
 V10__seed_reference_data.sql        ← always prod-safe

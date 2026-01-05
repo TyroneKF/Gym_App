@@ -419,22 +419,36 @@
         SELECT RAISE(ABORT, 'Only date_time_last_edited, sub_meal_name can be updated on divided_meal_sections_versions');
     END;
 
+
+
+-- ###########################################################################
+-- ingredients_in_sections_of_meal Trigger | Prevents table from being updated
+-- ###########################################################################
+    CREATE TRIGGER trg_ingredients_in_sections_of_meal_prevent_any_update
+    BEFORE UPDATE ON ingredients_in_sections_of_meal
+    FOR EACH ROW
+    BEGIN
+        SELECT RAISE(ABORT, 'ingredients_in_sections_of_meal table is immutable');
+    END;
+
+
 -- ###########################################################################
 -- ingredients_in_sections_of_meal Trigger | Allows only certain rows to be updated
 -- ###########################################################################
-    CREATE TRIGGER trg_ingredients_in_meal_allow_only_safe_updates
-    BEFORE UPDATE ON ingredients_in_sections_of_meal
+    CREATE TRIGGER trg_ingredients_in_meal_versions_allow_only_safe_updates
+    BEFORE UPDATE ON ingredients_in_sections_of_meal_versions
     FOR EACH ROW
     WHEN
         -- Immutable Columns (Not Allowed)
-        NEW.div_meal_sections_version_id != OLD.div_meal_sections_version_id
+        NEW.ingredients_index != OLD.ingredients_index
+        AND NEW.div_meal_sections_version_id != OLD.div_meal_sections_version_id
 
         -- Mutable Columns (Implicitly Allowed):
             -- ingredient_id
             -- quantity
             -- pdid
     BEGIN
-        SELECT RAISE(ABORT,'Only ingredient_id, quantity and pdid can be updated on ingredients_in_sections_of_meal');
+        SELECT RAISE(ABORT,'Only ingredient_id, quantity and pdid can be updated on ingredients_in_sections_of_meal_versions');
     END;
 
 

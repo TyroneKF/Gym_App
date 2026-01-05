@@ -81,7 +81,7 @@ SELECT
 	IFNULL(ROUND((Info.water_content /Info.based_on_quantity)*I.quantity,2),0) AS water_content,
 	IFNULL(ROUND((Info.calories /Info.based_on_quantity)*I.quantity,2),0) AS calories
 
-FROM ingredients_in_sections_of_meal I
+FROM ingredients_in_sections_of_meal_versions I
 LEFT JOIN ingredients_info Info ON Info.ingredient_id = I.ingredient_id;
 
 
@@ -145,7 +145,7 @@ WITH
 
 			FROM divided_meal_sections_versions D
 
-			LEFT JOIN ingredients_in_sections_of_meal I
+			LEFT JOIN ingredients_in_sections_of_meal_versions I
 				ON I.div_meal_sections_version_id = D.div_meal_sections_version_id
 
 			GROUP BY D.meal_in_plan_version_id

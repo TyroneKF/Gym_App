@@ -6,43 +6,31 @@
         and union combines each row into rows for an insert
     */
 
+    -- #########################################
+    --
+    -- #########################################
+   /*
+       Defines a recursive CTE that generates a sequential integer set.
+       The anchor query starts the sequence at 1, and the recursive step
+       repeatedly increments the value by 1, referencing the CTE itself.
+       Recursion terminates when the upper bound (n < 15) is reached.
+   */
+
+    WITH RECURSIVE seq(n) AS (
+       SELECT 1
+       UNION ALL
+       SELECT n + 1
+       FROM seq
+       WHERE n < 15
+    )
+
     INSERT INTO divided_meal_sections
     (
         date_time_of_creation
     )
-    SELECT strftime('%Y-%m-%dT%H:%M:%f', 'now') -- Put the current timestamp into date_time_of_creation with microsecond precision
-    FROM
-    (
-            -- # Breakfast :
-            SELECT 1 UNION ALL -- #  Pancakes
-            SELECT 2 UNION ALL -- #  Eggs + Plantain
-            SELECT 3 UNION ALL -- #  Celery Drink
-
-            -- # Mid-Morning :
-            SELECT 4 UNION ALL -- #  Oatmeal
-            SELECT 5 UNION ALL -- #  Bananas
-            SELECT 6 UNION ALL -- #  Mango Smoothie
-
-            --  # Lunch :
-            SELECT 7 UNION ALL -- #  Lunch Meal
-            SELECT 8 UNION ALL -- #  Nuts
-            SELECT 9 UNION ALL -- #  Multivitamin Shake
-
-            --  # Pre-Workout :
-            SELECT 10 UNION ALL -- #  Fruit Smoothie
-
-            --  # Post-Workout :
-            SELECT 11 UNION ALL -- #  Bananas
-            SELECT 12 UNION ALL -- #  Protein Shake
-            SELECT 13 UNION ALL -- #  Veg Meal
-
-            --  # Dinner :
-            SELECT 14 UNION ALL -- #  Pasta Meal
-
-            --  # Bedtime
-            SELECT 15          -- #  Protein Shake
-
-    ) AS seed;
+    SELECT
+        strftime('%Y-%m-%dT%H:%M:%f', 'now')
+    FROM seq;
 
 
 -- ###############################################################################
