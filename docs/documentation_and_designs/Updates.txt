@@ -121,6 +121,11 @@ Loading Screen
 New Features:
 ######################################################################################
 
+Strava / Gym Tracker / Goal Tracker App for PR's & a leaderboard with your friends
+    .) Runs / Walks
+    .) Gym progress / PR's
+    .) Successful Week / Completing Gym / Nutrition Goals etc; Gym 6 x times & Eating All Meals / Eating Meals before 6pm
+
 Image Recognition
   .) Progress Tracker using image recognition and measurements we can track your composition changes using 3d model avatar too
   .) Barcode scanner using phone portal / tunnel as a connection
