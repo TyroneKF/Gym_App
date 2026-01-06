@@ -1,11 +1,5 @@
-    !! Notice !!
 
-
-This directory contains database migrations.
-
-  
-  
-    Plan Editing & Versioning Model Overview
+> ###       Plan Editing & Versioning Model Overview 
 
 This application uses a two-layer persistence model:
 
@@ -14,22 +8,35 @@ This application uses a two-layer persistence model:
 
 These layers must never be mixed.
 
-    Draft Layer (Editing / Calculations)
+> ##### In Other Words
 
-Purpose:
+This application uses a draft + versioned snapshot architecture to support safe editing, 
+accurate macro calculations, and full plan history without data corruption.
+
+The schema is intentionally split into three conceptual layers:
+
+- Reference / Identity data
+- Draft (working copy) data
+- Versioned (immutable history) data
+
+
+> ###    Draft Layer (Editing / Calculations)
+
+
+ ***Purpose:***
 
 - Supports live editing of plans, meals, sub-meals, and ingredients
 - Enables macro / nutrient calculations using SQL queries
 - Prevents accidental corruption of historical data
 
-Characteristics
+***Characteristics***
 
 - One active draft per user + plan
 - Fully mutable (INSERT, UPDATE, DELETE allowed)
 - Automatically created when editing starts
 - Automatically deleted on cancel or after commit
 
-Tables
+***Tables***
 - draft_plans
 - raft_meals
 - draft_meal_sections
@@ -37,22 +44,22 @@ Tables
 
 (Draft tables mirror the structure of version tables but contain no history.)
 
-    Version Layer (History / Revert)
+> ###     Version Layer (History / Revert)
 
-Purpose:
+***Purpose:***
 
 - Stores immutable snapshots of a plan
 - Enables rollback, audit, and version history
 - Represents user-intentional commits only
 
-Characteristics:
+***Characteristics:***
 
 - Append-only (INSERT only)
 - Never updated or deleted
 - Created only on explicit Save / Commit Plan
 - Old versions are preserved indefinitely (or pruned by policy)
 
-Tables:
+***Tables:***
 - plans
 - plan_versions
 - meals_in_plan_versions
@@ -60,17 +67,17 @@ Tables:
 - ingredient_versions
 
 
-    SQL Action Rules
+> ###     SQL Action Rules
 
 Editing (Meal / Sub-meal / Ingredient)
 
-Action
+***Action***
 
 - “Save meal”
 - “Save sub-meal”
 - “Update ingredient quantity”
 
-Database behavior
+***Database Behavior***
 
 -   UPDATE draft_*
 
@@ -79,20 +86,20 @@ Database behavior
     DELETE FROM draft_*
 
 
-Important
+***Important***
 
 - No plan version is created
 - No history is modified
 
-    
-    Save / Commit Plan
 
-Action
+> ###     Save / Commit Plan
+
+***Action***
 
 - “Save plan”
 - “Commit changes”
 
-Database Behavior
+***Database Behavior***
 
 -   INSERT INTO plan_versions
 
@@ -105,46 +112,46 @@ Database Behavior
     DELETE FROM draft_*
 
 
-Result
+***Result***
 
 -   A new immutable plan version is created
 -   Draft data is discarded
 -   The new version becomes the active plan
 
 
-     Cancel Editing
+> ###     Cancel Editing
 
-Action
+***Action***
 
 - “Cancel”
 - Exit without saving
 
-Database behavior
+***Database Behavior***
 
 - DELETE FROM draft_*
 
 
-Result
+***Result***
 
 - All uncommitted changes are discarded
 - No version is created
 - 
 
 
-    Revert to Previous Version
+> ###     Revert to Previous Version
 
-Action
+***Action***
 
 -   “Revert to version X”
 
-Database Behavior
+***Database Behavior***
 
 -   UPDATE active_plans
 
     SET plan_version_id = X
 
 
-Result
+***Result***
 
 -   No data is copied
 -   No new version is created
@@ -152,7 +159,7 @@ Result
 - 
 
 
-    Invariants (Must Never Be Violated)
+> ###    Invariants (Must Never Be Violated)
 -   Draft tables are mutable
 -   Version tables are immutable
 -   Draft rows are never referenced by version rows
@@ -161,9 +168,9 @@ Result
 -   Only explicit user save creates a new plan version
 
 
-    Design Rationale
+> ###     Design Rationale
 
-This model:
+***This model:***
 
 -   Prevents history corruption
 -   Supports SQL-based calculations during editing
@@ -172,7 +179,7 @@ This model:
 -   Scales cleanly with future features
 
 
-    Rules:
+> ###     Rules:
 
 - Migrations are append-only
 - Never edit or delete applied migrations
@@ -181,7 +188,13 @@ This model:
 - Schema, views, and seed data evolve via new migrations
 
 
-    App Data Logic:
+> ###     App Data Logic:
 
-- Meal and sub-meal saves persist working data for calculations and UI refresh via draft tables,
+Meal and sub-meal saves persist working data for calculations and UI refresh via draft tables,
   while saving the plan is a separate SQL-level commit that creates a new immutable version.
+
+
+> #    !! Notice !!
+
+
+**This directory contains database migrations.**
