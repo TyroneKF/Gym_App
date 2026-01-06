@@ -8,7 +8,7 @@ This application uses a two-layer persistence model:
 
 These layers must never be mixed.
 
-> ##### In Other Words
+> ###### In Other Words
 
 This application uses a draft + versioned snapshot architecture to support safe editing, 
 accurate macro calculations, and full plan history without data corruption.
@@ -18,6 +18,14 @@ The schema is intentionally split into three conceptual layers:
 - Reference / Identity data
 - Draft (working copy) data
 - Versioned (immutable history) data
+
+> ##### Core Concepts
+-   Drafts represent in-progress, editable data used while a user is actively modifying a plan.
+-   Versions represent committed, immutable snapshots of a plan that can be reverted to later.
+-   Drafts are mutable and temporary.
+-   Versions are append-only and permanent.
+-   Drafts are for work. Versions are for history. These two concepts are never mixed.
+
 
 
 > ###    Draft Layer (Editing / Calculations)
@@ -43,6 +51,80 @@ The schema is intentionally split into three conceptual layers:
 - draft_ingredients
 
 (Draft tables mirror the structure of version tables but contain no history.)
+
+> ### Tables
+sdjsdksdksksksss
+
+> #### Table Roles
+***Users and Active State***
+-   users (Application users).
+
+- active_user (Tracks which user/session is currently active).
+
+***Plans (Logical Ownership)***
+
+***plans***
+-   The logical plan entity (name, user ownership, metadata).
+-   A plan does not change over time.
+-   All edits occur via versions.
+
+> #### Versioned Plan History (Single-Ownership Snapshots)
+
+***These tables implement single-parent (owned) versioning.
+Each version belongs to exactly one parent plan version and is never reused.***
+
+-   plan_versions (Immutable snapshots of a plan).
+-   meals_in_plan_versions
+-   divided_meal_sections_versions
+-   ingredients_in_sections_of_meal_versions
+-   macros_per_pound_and_limits_versions
+
+***Key properties:***
+
+-  Versions are created only on explicit “Save Plan” actions
+-  Old versions are never updated or deleted
+-  Reverting a plan means switching which plan_version is active
+
+> #### Draft / Working Copy Tables (Mutable)
+
+These tables store editable working data while a user is modifying a plan.
+
+-  meals_in_plan
+-  divided_meal_sections
+-  ingredients_in_sections_of_meal
+-  macros_per_pound_and_limits
+
+***Key properties:***
+
+- Fully mutable (INSERT, UPDATE, DELETE allowed)
+- There is only one active draft per user per plan
+
+***Used For:***
+- live macro calculations
+- UI refreshes
+- incremental saves of meals and sub-meals
+
+***Draft data is never treated as history.***
+
+> ### . Versioning Model Used
+
+***This schema uses:***
+
+> ###### Single-Ownership (Owned Snapshot) Versioning
+
+- Each version row belongs to exactly one parent version
+- No snapshot reuse across versions
+- All version trees are cloned on commit
+- Predictable, simple, and safe
+
+***This model was chosen because:***
+
+- Plans are small to medium in size
+- Edits are human-driven
+- Storage is inexpensive
+- Correctness and clarity matter more than deduplication
+
+
 
 > ###     Version Layer (History / Revert)
 
@@ -158,6 +240,50 @@ Editing (Meal / Sub-meal / Ingredient)
 -   History remains unchanged
 - 
 
+> ### Save, Delete, and Commit Semantics
+<br>
+
+> ###### ***For Meal / Sub-Meal Save***
+
+
+***Triggered by application actions such as:***
+
+- Saving an ingredient
+- Saving a sub-meal
+- Saving a meal
+
+***SQL Behavior:***
+- Writes only to draft tables
+- Updates macro calculations
+- No version is created
+- Existing history is untouched
+
+> ######  For Save Plan (Commit)
+
+Triggered only by an explicit user action.
+
+***SQL Behavior:***
+
+-   Read current draft tables
+-   Create a new plan_versions row
+-   Clone draft data into: *_versions tables
+-   Mark the new plan version as active
+-   Delete draft rows
+
+***This is the only operation that creates history.***
+
+> ###### For Cancel / Discard Changes
+
+-   Draft rows are deleted
+-   No version is created
+-   Last committed version remains active
+
+> ######  For Delete Plan
+
+-   Deletes the logical plan
+-   Cascades to all plan versions
+-   Drafts (if any) are also removed
+
 
 > ###    Invariants (Must Never Be Violated)
 -   Draft tables are mutable
@@ -166,6 +292,17 @@ Editing (Meal / Sub-meal / Ingredient)
 -   Version rows are never updated or deleted
 -   Only one draft exists per user per plan
 -   Only explicit user save creates a new plan version
+
+> ###### In Other Words
+
+-   The following rules must always hold:
+-   Draft tables may be updated; version tables may not.
+-   Version tables are append-only.
+-   Meal / sub-meal saves never create plan versions.
+-   Only “Save Plan” creates a plan_version.
+-   Draft data is disposable and never referenced by history.
+
+***If these rules are respected, the system remains consistent and safe.***
 
 
 > ###     Design Rationale
