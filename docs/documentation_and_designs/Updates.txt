@@ -92,6 +92,11 @@ MYJDBC:
 
 DB:
 .) add meal time to divided_meal_sections - time for sub-meal to be eaten at
+.) enforce
+       CREATE UNIQUE INDEX no_duplicate_ingredient_per_section
+       ON ingredients_in_sections_of_meal
+          (div_meal_sections_version_id, ingredient_id);
+       at application lvl
 
 Meal_Plan_Screen:
 .) Get rid of table name variables its hard to read

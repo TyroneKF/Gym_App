@@ -16,7 +16,7 @@
     BEFORE UPDATE ON plan_versions
     FOR EACH ROW
     WHEN
-        
+
         -- Immutable Columns (Not Allowed)
         NEW.plan_id           != OLD.plan_id
         AND NEW.user_id        != OLD.user_id
@@ -25,12 +25,21 @@
         -- Mutable Columns (Implicitly Allowed):
             -- date_time_last_edited
             -- is_selected_plan BOOLEAN
-            
+
     BEGIN
             SELECT RAISE(ABORT, 'Trigger - Only approved columns may be updated on plan_versions');
     END;
 
+-- ###########################################################################
+-- draft_plans | Prevents table from being updated
+-- ###########################################################################
 
+    CREATE TRIGGER trg_draft_plans_prevent_any_update
+    BEFORE UPDATE ON draft_plans
+    FOR EACH ROW
+    BEGIN
+      SELECT RAISE(ABORT, 'draft_plans table is immutable');
+    END;
 
 -- ###########################################################################
 -- macros_per_pound_and_limits Trigger | Prevents table from being updated
