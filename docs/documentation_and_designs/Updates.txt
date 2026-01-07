@@ -132,6 +132,9 @@ Strava / Gym Tracker / Goal Tracker App for PR's & a leaderboard with your frien
     .) Gym progress / PR's
     .) Successful Week / Completing Gym / Nutrition Goals etc; Gym 6 x times & Eating All Meals / Eating Meals before 6pm
 
+Leaderboard:
+    .) Workout verification - location / selfies (Be-reals vibes) posts of your workout to friends
+
 Image Recognition
   .) Progress Tracker using image recognition and measurements we can track your composition changes using 3d model avatar too
   .) Barcode scanner using phone portal / tunnel as a connection
@@ -164,7 +167,6 @@ Others
 .) Track body weight & body fat % in a graph to see meal plans efficiency
 .) Switch Fully to JAVAFX
 .) Switch to AWS RDS / AWS Cognito for login authentication
-.) Use.env
 .) Vegan mode for % of protein
 .) Vitamins
 .) chat messaging

@@ -11,9 +11,9 @@
 -- ##############################################################################################################
     CREATE TABLE draft_plans -- Equivalent of plan_versions for drafts
     (
-        draft_plan_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        -- Enforces one draft per plan as this is the FK / Unique
+        plan_id INTEGER PRIMARY KEY, -- FK has to be defined at the bottom
 
-        plan_id INTEGER NOT NULL, -- FK has to be defined at the bottom
         user_id INTEGER NOT NULL, -- FK has to be defined at the bottom
 
         -- Foreign Keys (must be declared at the end in SQLite)
@@ -29,18 +29,9 @@
     -- ####################################################
     -- Constraints (Unique Keys)
     -- ####################################################
-        CREATE UNIQUE INDEX one_draft_plan_per_user
+        CREATE UNIQUE INDEX one_draft_per_user_for_active_plan
             ON draft_plans (user_id);
 
-        CREATE UNIQUE INDEX no_repeat_draft_plans
-            ON draft_plans (plan_id);
 
-    -- ####################################################
-    -- Unique Indexes
-    -- ####################################################
-        CREATE INDEX idx_draft_plans_plan_id
-            ON draft_plans (plan_id);
 
-        CREATE INDEX idx_draft_plans_user
-            ON draft_plans (user_id);
 

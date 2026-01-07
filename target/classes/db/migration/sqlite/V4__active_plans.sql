@@ -4,26 +4,22 @@
 
     CREATE TABLE active_plans
     (
-        row_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER PRIMARY KEY,      -- FK has to be defined at the bottom / Only allows 1 plan per user_ID
 
         plan_version_id INTEGER NOT NULL, -- FK has to be defined at the bottom
-        user_id INTEGER NOT NULL, -- FK has to be defined at the bottom
 
         -- Foreign Keys (must be declared at the end in SQLite)
-        FOREIGN KEY (plan_version_id)
-            REFERENCES plan_versions(plan_version_id)
-                ON DELETE CASCADE,
-
         FOREIGN KEY (user_id)
             REFERENCES users(user_id)
+                ON DELETE CASCADE
+
+        FOREIGN KEY (plan_version_id)
+            REFERENCES plan_versions(plan_version_id)
                 ON DELETE CASCADE
     );
 
     -- ####################################################
-    -- Unique Indexes
+    -- Constraints (Unique Keys)
     -- ####################################################
-        CREATE UNIQUE INDEX only_one_active_plan_per_user
-            ON active_plans (user_id);
-
-        CREATE UNIQUE INDEX unique_ownership_plan_active
+        CREATE UNIQUE INDEX unique_ownership_per_plan
             ON active_plans (plan_version_id);

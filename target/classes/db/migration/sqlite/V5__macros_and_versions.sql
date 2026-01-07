@@ -10,7 +10,7 @@
         plan_version_id INTEGER NOT NULL,   -- FK has to be defined at the bottom
 
         date_time_of_creation TEXT NOT NULL
-             DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now')), -- Creates date at insertion
+            DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now')), -- Creates date at insertion
 
         current_weight_kg REAL NOT NULL,
         current_weight_in_pounds REAL NOT NULL,
@@ -39,21 +39,7 @@
     -- ####################################################
     -- Constraints (Unique Keys)
     -- ####################################################
-        CREATE UNIQUE INDEX unique_macros_per_plan_version
+        CREATE UNIQUE INDEX unique_macros_per_plan_version -- 1 to 1 relationship, 1 macro  per plan version
             ON macros_per_pound_and_limits(plan_version_id);
-
-        CREATE UNIQUE INDEX unique_macro_date_per_user_per_macro
-            ON macros_per_pound_and_limits(user_id, date_time_of_creation);
-
-    -- ####################################################
-    -- Unique Indexes
-    -- ####################################################
-       CREATE INDEX idx_macros_user_id
-           ON macros_per_pound_and_limits
-               (user_id);
-
-       CREATE INDEX idx_macros_latest_per_plan
-            ON macros_per_pound_and_limits
-                (plan_version_id, date_time_of_creation DESC);
 
 

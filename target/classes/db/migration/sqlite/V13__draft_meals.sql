@@ -12,24 +12,29 @@
 -- ##############################################################################################################
     CREATE TABLE draft_meals_in_plan
     (
+        -- Enforces one draft per draft meal as this is the FK / Unique
         draft_meal_in_plan_id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-        draft_plan_id INTEGER NOT NULL,     -- FK has to be defined at the bottom
-        meal_in_plan_id INTEGER NULL, -- FK has to be defined at the bottom
+        meal_in_plan_id INTEGER NULL DEFAULT NULL, -- FK has to be defined at the bottom
+                                                   -- Can be null might not have a version to attach to
+
+        plan_id INTEGER NOT NULL,     -- FK has to be defined at the bottom     
+                                      -- Application layer enforcement has to be done to ensure
+                                      -- A draft meal linked to a versioned meal must belong to the same plan as that meal’s plan version.
 
         meal_name TEXT NOT NULL
             CHECK (length(meal_name) <= 100),
 
-        -- TIME does not exist in SQLite; store as ISO time TEXT (HH:MM or HH:MM:SS)
-        meal_time TEXT NOT NULL,
+        meal_time TEXT NOT NULL   -- TIME does not exist in SQLite; store as ISO time TEXT (HH:MM or HH:MM:SS)
+            CHECK (meal_time GLOB '[0-2][0-9]:[0-5][0-9]*'),
 
         -- Foreign Keys (must be declared at the end in SQLite)
         FOREIGN KEY (meal_in_plan_id)
             REFERENCES meals_in_plan(meal_in_plan_id)
                 ON DELETE CASCADE,
 
-        FOREIGN KEY (draft_plan_id)
-            REFERENCES draft_plans(draft_plan_id)
+        FOREIGN KEY (plan_id)
+            REFERENCES draft_plans(plan_id)
                 ON DELETE CASCADE
     );
 
@@ -37,27 +42,18 @@
     -- Constraints (Unique Keys)
     -- ####################################################
 
-        -- One version of a meal per plan
-        CREATE UNIQUE INDEX one_draft_per_meal_in_plan
-            ON draft_meals_in_plan (meal_in_plan_id);
-
         -- Only one meal per time per plan
         CREATE UNIQUE INDEX no_repeat_draft_meal_times_in_plan
-            ON draft_meals_in_plan (draft_plan_id, meal_time);
+            ON draft_meals_in_plan (plan_id, meal_time);
 
         -- No duplicate meal names per plan
         CREATE UNIQUE INDEX no_repeat_draft_meal_names_in_plan
-            ON draft_meals_in_plan (draft_plan_id, meal_name);
+            ON draft_meals_in_plan (plan_id, meal_name);
 
     -- ####################################################
-    -- Indexes
+    -- Constraints (Unique Keys)
     -- ####################################################
-
-        CREATE INDEX idx_draft_meals_by_name_in_plan
-            ON draft_meals_in_plan (draft_plan_id, meal_name);
-
-        CREATE INDEX idx_draft_meals_by_time_in_plan
-            ON draft_meals_in_plan (draft_plan_id, meal_time);
-
-        CREATE INDEX idx_draft_meal_versions_plan_version
-            ON draft_meals_in_plan (draft_plan_id);
+       -- Creates an index when value exists
+       CREATE UNIQUE INDEX one_draft_row_per_versioned_meal
+            ON draft_meals_in_plan (meal_in_plan_id)
+                WHERE meal_in_plan_id IS NOT NULL;

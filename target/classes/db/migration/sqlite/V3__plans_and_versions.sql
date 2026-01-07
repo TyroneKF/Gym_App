@@ -31,16 +31,20 @@
                 ON DELETE CASCADE
     );
 
-
     -- ####################################################
     -- Constraints (Unique Keys)
     -- ####################################################
         CREATE UNIQUE INDEX unique_plan_name_by_user
             ON plans (user_id, plan_name);
 
-        -- Unique Indexes
-        CREATE INDEX idx_plans_user
-            ON plans (user_id);
+    -- ####################################################
+    -- Unique Indexes
+    -- ####################################################
+        CREATE INDEX idx_plans_name -- global index incase you search by plan_name for any user to copy a plan from
+            ON plans (plan_name);
+
+        CREATE INDEX idx_latest_plans_by_user
+            ON plans (user_id, date_time_of_creation DESC);
 
 -- ##############################################################################################################
 -- Document Versions
@@ -78,9 +82,8 @@
     -- ####################################################
     -- Unique Indexes
     -- ####################################################
-        CREATE INDEX idx_plan_versions_plan
-            ON plan_versions (plan_id);
-
-        CREATE INDEX idx_plan_versions_user
+        CREATE INDEX idx_plan_versions_by_user
             ON plan_versions (user_id);
 
+        CREATE INDEX idx_latest_plan_version_per_plan
+            ON plan_versions (plan_id, version_number DESC);

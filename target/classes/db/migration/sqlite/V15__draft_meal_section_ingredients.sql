@@ -12,9 +12,7 @@
     (
         draft_ingredients_index INTEGER PRIMARY KEY AUTOINCREMENT,
 
-        ingredients_index INTEGER  NULL, -- FK has to be defined at the bottom
         draft_div_meal_sections_id INTEGER NOT NULL, -- FK has to be defined at the bottom
-
         ingredient_id INTEGER NOT NULL, -- FK has to be defined at the bottom
         pdid INTEGER DEFAULT NULL, -- FK has to be defined at the bottom
 
@@ -22,10 +20,6 @@
             CHECK (quantity > 0),
 
         -- Foreign Keys (SQLite requires table-level declaration)
-        FOREIGN KEY (ingredients_index)
-            REFERENCES ingredients_in_sections_of_meal(ingredients_index)
-                ON DELETE CASCADE,
-
         FOREIGN KEY (draft_div_meal_sections_id)
             REFERENCES draft_divided_meal_sections(draft_div_meal_sections_id)
                 ON DELETE CASCADE,
@@ -39,25 +33,24 @@
                 ON DELETE RESTRICT
     );
 
--- ####################################################
--- Constraints (Unique Keys)
--- ####################################################
+    -- ####################################################
+    -- Constraints (Unique Keys)
+    -- ####################################################
+       /*
+       CREATE UNIQUE INDEX no_duplicate_ingredients_per_draft_section
+           ON draft_ingredients_in_sections_of_meal
+              (draft_div_meal_sections_id, ingredient_id);
+       */
 
-    CREATE UNIQUE INDEX unique_index_reference_per_row
-        ON draft_ingredients_in_sections_of_meal(ingredients_index);
+    -- ####################################################
+    -- Indexes
+    -- ####################################################
 
-    CREATE UNIQUE INDEX unique_pdid_per_ingredient
-        ON draft_ingredients_in_sections_of_meal(pdid);
+        CREATE INDEX idx_draft_ingredients_by_section
+            ON draft_ingredients_in_sections_of_meal (draft_div_meal_sections_id);
 
--- ####################################################
--- Indexes
--- ####################################################
+        CREATE INDEX idx_draft_ingredients_by_ingredient
+            ON draft_ingredients_in_sections_of_meal (ingredient_id);
 
-    CREATE INDEX idx_draft_ingredients_by_section
-        ON draft_ingredients_in_sections_of_meal (draft_div_meal_sections_id);
-
-    CREATE INDEX idx_draft_ingredients_by_ingredient
-        ON draft_ingredients_in_sections_of_meal (ingredient_id);
-
-    CREATE INDEX idx_draft_ingredient_index
-        ON draft_ingredients_in_sections_of_meal (draft_ingredients_index);
+        CREATE INDEX idx_draft_ingredient_index
+            ON draft_ingredients_in_sections_of_meal (draft_ingredients_index);

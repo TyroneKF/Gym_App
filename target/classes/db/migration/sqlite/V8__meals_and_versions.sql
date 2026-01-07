@@ -36,7 +36,8 @@
             CHECK (length(meal_name) <= 100),
 
         -- TIME does not exist in SQLite; store as ISO time TEXT (HH:MM or HH:MM:SS)
-        meal_time TEXT NOT NULL,
+        meal_time TEXT NOT NULL
+            CHECK (meal_time GLOB '[0-2][0-9]:[0-5][0-9]*'),
 
         -- Foreign Keys (must be declared at the end in SQLite)
         FOREIGN KEY (meal_in_plan_id)
@@ -51,25 +52,14 @@
     -- ####################################################
     -- Constraints (Unique Keys)
     -- ####################################################
+        -- One meal can only be reference once per plan version / maybe later can be used in other plans
+        CREATE UNIQUE INDEX unique_versions_per_plan
+            ON meals_in_plan_versions (meal_in_plan_id, plan_version_id);
 
-    -- One version of a meal per plan version
-    CREATE UNIQUE INDEX unique_versions_per_plan
-        ON meals_in_plan_versions (meal_in_plan_id, plan_version_id);
+        -- Only one meal per time per plan version
+        CREATE UNIQUE INDEX no_repeat_meal_times_in_plan
+            ON meals_in_plan_versions (plan_version_id, meal_time);
 
-    -- Only one meal per time per plan version
-    CREATE UNIQUE INDEX no_repeat_meal_times_in_plan
-        ON meals_in_plan_versions (plan_version_id, meal_time);
-
-    -- No duplicate meal names per plan version
-    CREATE UNIQUE INDEX no_repeat_meal_names_in_plan
-        ON meals_in_plan_versions (plan_version_id, meal_name);
-
-    -- ####################################################
-    -- Indexes
-    -- ####################################################
-
-    CREATE INDEX idx_meals_by_plan
-        ON meals_in_plan_versions (plan_version_id, meal_time);
-
-    CREATE INDEX idx_meal_versions_plan_version
-        ON meals_in_plan_versions (plan_version_id);
+        -- No duplicate meal names per plan version
+        CREATE UNIQUE INDEX no_repeat_meal_names_in_plan
+            ON meals_in_plan_versions (plan_version_id, meal_name);
