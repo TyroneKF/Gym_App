@@ -1,10 +1,10 @@
 -- ##############################################################################################################
 -- DDL SCRIPT | App Setup
 -- ##############################################################################################################
-/*
-    Ingredients are snapshot per sub-meal version; no independent ingredient versioning
-*/
+    /*
 
+
+    */
 -- ##############################################################################################################
 -- Main Document
 -- ##############################################################################################################
@@ -55,9 +55,11 @@
 -- Constraints (Unique Keys)
 -- ####################################################
 
-    CREATE UNIQUE INDEX no_repeat_records
-        ON ingredients_in_sections_of_meal_versions
-           (ingredients_index_version_id, div_meal_sections_version_id);
+    CREATE UNIQUE INDEX no_repeat_index_per_records
+        ON ingredients_in_sections_of_meal_versions (ingredients_index_version_id);
+
+    CREATE UNIQUE INDEX no_repeat_pdid_per_records
+        ON ingredients_in_sections_of_meal_versions (pdid);
 
 -- ####################################################
 -- Indexes

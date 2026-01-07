@@ -46,11 +46,16 @@ The schema is intentionally split into three conceptual layers:
 
 ***Tables***
 - draft_plans
-- raft_meals
+- draft_meals
 - draft_meal_sections
-- draft_ingredients
+- draft_ingredients_in_meals
 
-(Draft tables mirror the structure of version tables but contain no history.)
+***(Draft tables mirror the structure of version tables but contain no history.)***
+
+***(If a column exists only to support history or auditing, it does not belong in draft tables.)***
+
+Draft tables mirror version tables structurally but represent mutable working state, not historical versions; 
+therefore, drafts reference plans and users directly and enforce single ownership per user per plan.
 
 > ### Tables
 sdjsdksdksksksss

@@ -91,8 +91,7 @@ MYJDBC:
 .) IF DB Creation passes & the inserts don't fail the connection isn't rolledback the tables are still created - check create db method
 
 DB:
-.) User db - inilization script what if insert already has 1 active user?
-
+.) add meal time to divided_meal_sections - time for sub-meal to be eaten at
 
 Meal_Plan_Screen:
 .) Get rid of table name variables its hard to read
@@ -116,6 +115,8 @@ ADD / Edit Stores /Types
 Loading Screen
 .) Move the loading screen to before the DB scripts
 .) Include DB Creation in Loading screen progress
+
+
 
 ######################################################################################
 New Features:

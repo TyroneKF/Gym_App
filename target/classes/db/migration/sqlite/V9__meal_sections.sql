@@ -46,12 +46,12 @@
     -- ####################################################
     -- Constraints (Unique Keys)
     -- ####################################################
-        CREATE UNIQUE INDEX no_repeated_versions
+        CREATE UNIQUE INDEX no_repeated_meal_sections_vs_per_plan
             ON divided_meal_sections_versions
                (div_meal_sections_id, meal_in_plan_version_id);
 
     -- ####################################################
     -- Indexes
     -- ####################################################
-        CREATE INDEX idx_sections_meal_version
+        CREATE INDEX idx_meal_version_id
             ON divided_meal_sections_versions (meal_in_plan_version_id);
