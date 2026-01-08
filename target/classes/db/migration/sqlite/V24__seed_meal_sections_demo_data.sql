@@ -13,6 +13,7 @@
        Defines a recursive CTE that generates a sequential integer set.
        The anchor query starts the sequence at 1, and the recursive step
        repeatedly increments the value by 1, referencing the CTE itself.
+
        Recursion terminates when the upper bound (n < 15) is reached.
    */
 
@@ -82,6 +83,11 @@
     */
 
     WITH
+
+        -- Plan_Vs
+        p_id AS (SELECT entity_id_value FROM seed_registry WHERE seed_key = 'plan_id'), -- plan_id,
+
+        -- Sub-Meals
         breakfast_mv_id AS (SELECT entity_id_value FROM seed_registry WHERE seed_key = 'breakfast_mv_id'),
         mid_morning_snack_mv_id AS (SELECT entity_id_value FROM seed_registry WHERE seed_key = 'mid_morning_snack_mv_id'),
         lunch_mv_id AS (SELECT entity_id_value FROM seed_registry WHERE seed_key = 'lunch_mv_id'),
@@ -94,45 +100,49 @@
     (
         div_meal_sections_id,
         meal_in_plan_version_id,
-        sub_meal_name
+        plan_version_id,
+        sub_meal_name,
+        sub_meal_time
     )
     SELECT
 
         d.div_meal_sections_id,
         v.meal_id,
-        v.sub_name
+        (SELECT entity_id_value FROM p_id ),
+        v.sub_name,
+        v.sub_meal_time
 
     FROM tmp_div_meal_anchors  d
     JOIN
     (
         -- # Breakfast :
-        SELECT 1 AS rn,   (SELECT entity_id_value FROM breakfast_mv_id LIMIT 1) AS meal_id,  'Pancakes' AS sub_name  UNION ALL
-        SELECT 2 ,        (SELECT entity_id_value FROM breakfast_mv_id LIMIT 1) ,            'Eggs + Plantain'       UNION ALL
-        SELECT 3 ,        (SELECT entity_id_value FROM breakfast_mv_id LIMIT 1) ,            'Celery Drink'          UNION ALL
+        SELECT 1 AS rn,   (SELECT entity_id_value FROM breakfast_mv_id LIMIT 1) AS meal_id,  'Pancakes' AS sub_name,  '06:00' AS sub_meal_time  UNION ALL
+        SELECT 2 ,        (SELECT entity_id_value FROM breakfast_mv_id LIMIT 1) ,            'Eggs + Plantain',       '07:15'                   UNION ALL
+        SELECT 3 ,        (SELECT entity_id_value FROM breakfast_mv_id LIMIT 1) ,            'Celery Drink',          '08:00'                   UNION ALL
 
         -- # Mid-Morning :
-        SELECT 4 ,        (SELECT entity_id_value FROM mid_morning_snack_mv_id LIMIT 1) ,    'Oatmeal'               UNION ALL
-        SELECT 5 ,        (SELECT entity_id_value FROM mid_morning_snack_mv_id LIMIT 1),     'Bananas'               UNION ALL
-        SELECT 6 ,        (SELECT entity_id_value FROM mid_morning_snack_mv_id LIMIT 1) ,    'Mango Smoothie'        UNION ALL
+        SELECT 4 ,        (SELECT entity_id_value FROM mid_morning_snack_mv_id LIMIT 1) ,    'Oatmeal',               '11:00'    UNION ALL
+        SELECT 5 ,        (SELECT entity_id_value FROM mid_morning_snack_mv_id LIMIT 1),     'Bananas',               '11:30'    UNION ALL
+        SELECT 6 ,        (SELECT entity_id_value FROM mid_morning_snack_mv_id LIMIT 1) ,    'Mango Smoothie',        '11:45'    UNION ALL
 
         --  # Lunch :
-        SELECT 7 ,        (SELECT entity_id_value FROM lunch_mv_id LIMIT 1) ,                'Lunch Meal'            UNION ALL
-        SELECT 8 ,        (SELECT entity_id_value FROM lunch_mv_id LIMIT 1) ,                'Nuts'                  UNION ALL
-        SELECT 9 ,        (SELECT entity_id_value FROM lunch_mv_id LIMIT 1) ,                'Multivitamin Shake'    UNION ALL
+        SELECT 7 ,        (SELECT entity_id_value FROM lunch_mv_id LIMIT 1) ,                'Lunch Meal',            '14:00'   UNION ALL
+        SELECT 8 ,        (SELECT entity_id_value FROM lunch_mv_id LIMIT 1) ,                'Nuts',                  '14:30'   UNION ALL
+        SELECT 9 ,        (SELECT entity_id_value FROM lunch_mv_id LIMIT 1) ,                'Multivitamin Shake',    '14:45'   UNION ALL
 
         --  # Pre-Workout :
-        SELECT 10 ,       (SELECT entity_id_value FROM pre_workout_mv_id LIMIT 1) ,          'Fruit Smoothie'        UNION ALL
+        SELECT 10 ,       (SELECT entity_id_value FROM pre_workout_mv_id LIMIT 1) ,          'Fruit Smoothie',        '17:00'   UNION ALL
 
         --  # Post-Workout :
-        SELECT 11 ,       (SELECT entity_id_value FROM post_workout_mv_id LIMIT 1) ,         'Bananas'               UNION ALL
-        SELECT 12 ,       (SELECT entity_id_value FROM post_workout_mv_id LIMIT 1) ,         'Whey Protein Shake'    UNION ALL
-        SELECT 13 ,       (SELECT entity_id_value FROM post_workout_mv_id LIMIT 1) ,         'Vegetable Meal'        UNION ALL
+        SELECT 11 ,       (SELECT entity_id_value FROM post_workout_mv_id LIMIT 1) ,         'Bananas',               '19:00'   UNION ALL
+        SELECT 12 ,       (SELECT entity_id_value FROM post_workout_mv_id LIMIT 1) ,         'Whey Protein Shake',    '19:15'   UNION ALL
+        SELECT 13 ,       (SELECT entity_id_value FROM post_workout_mv_id LIMIT 1) ,         'Vegetable Meal',        '19:30'   UNION ALL
 
         --  # Dinner :
-        SELECT 14 ,       (SELECT entity_id_value FROM dinner_mv_id LIMIT 1) ,               'Pasta Meal'            UNION ALL
+        SELECT 14 ,       (SELECT entity_id_value FROM dinner_mv_id LIMIT 1) ,               'Pasta Meal',            '21:30'   UNION ALL
 
         --  # Bedtime
-        SELECT 15 ,      (SELECT entity_id_value FROM bedtime_mv_id LIMIT 1) ,               'Casein Shake'
+        SELECT 15 ,      (SELECT entity_id_value FROM bedtime_mv_id LIMIT 1) ,               'Casein Shake',          '23:30'
 
     ) v
     ON v.rn = d.rn;

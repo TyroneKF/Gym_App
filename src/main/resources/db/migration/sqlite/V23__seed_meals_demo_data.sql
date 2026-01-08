@@ -106,7 +106,7 @@
     SELECT
 
         a.meal_in_plan_id,
-        (SELECT entity_id_value FROM p_id LIMIT 1),
+        (SELECT entity_id_value FROM p_id ),
         v.meal_name,
         v.meal_time
 
