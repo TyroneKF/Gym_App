@@ -13,7 +13,7 @@
         draft_div_meal_sections_id INTEGER PRIMARY KEY,
 
         div_meal_sections_id INTEGER NULL DEFAULT NULL,   -- FK has to be defined at the bottom
-                                                           -- Can be null might not have a version to attach to
+                                                          -- Can be null might not have a version to attach to
 
         draft_meal_in_plan_id INTEGER NOT NULL, -- FK has to be defined at the bottom
         plan_id INTEGER NOT NULL,               -- FK has to be defined at the bottom
