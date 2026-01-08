@@ -1,72 +1,70 @@
 -- ###########################################################################
--- Plans Trigger | Prevents table from being updated
+-- Plans Trigger | Prevents CERTAIN Rows from being updated
 -- ###########################################################################
-    CREATE TRIGGER trg_plans_prevent_any_update
+    CREATE TRIGGER trg_plans_allow_only_safe_updates
     BEFORE UPDATE ON plans
-    FOR EACH ROW
-    BEGIN
-            SELECT RAISE(ABORT, 'plans table is immutable');
-    END;
-
--- ###########################################################################
--- Plans_versions | Allows only certain rows to be updated
--- ###########################################################################
-
-    CREATE TRIGGER trg_plans_versions_allow_only_safe_updates
-    BEFORE UPDATE ON plan_versions
     FOR EACH ROW
     WHEN
 
         -- Immutable Columns (Not Allowed)
-        NEW.plan_id           != OLD.plan_id
-        AND NEW.user_id        != OLD.user_id
-        AND NEW.version_number != OLD.version_number
+        NEW.date_time_of_creation  != OLD.date_time_of_creation
+        AND NEW.user_id            != OLD.user_id
+        AND NEW.vegan              != OLD.vegan
 
         -- Mutable Columns (Implicitly Allowed):
-            -- date_time_last_edited
-            -- is_selected_plan BOOLEAN
+            -- plan_name
 
     BEGIN
-            SELECT RAISE(ABORT, 'Trigger - Only approved columns may be updated on plan_versions');
+            SELECT RAISE(ABORT, "Trigger - Only approved columns may be updated on 'plans': being 'plan_name'");
     END;
 
 -- ###########################################################################
--- draft_plans | Prevents table from being updated
+-- Plans_versions | Prevents table from being updated
 -- ###########################################################################
-
-    CREATE TRIGGER trg_draft_plans_prevent_any_update
-    BEFORE UPDATE ON draft_plans
+    CREATE TRIGGER trg_draft_plans_versions_prevent_any_update
+    BEFORE UPDATE ON plan_versions
     FOR EACH ROW
     BEGIN
-      SELECT RAISE(ABORT, 'draft_plans table is immutable');
+      SELECT RAISE(ABORT, ' Trigger -  plans_versions table is immutable');
+    END;
+
+-- ###########################################################################
+-- draft_plans | Prevent Certain Rows from being updated
+-- ###########################################################################
+    CREATE TRIGGER trg_draft_plans_allow_only_safe_updates
+    BEFORE UPDATE ON draft_plans
+    FOR EACH ROW
+    WHEN
+        -- Immutable Columns (Not Allowed)
+        NEW.user_id  != user_id
+
+        -- Mutable Columns (Implicitly Allowed):
+            -- date_time_last_edited
+    BEGIN
+            SELECT RAISE(ABORT, "Trigger -  'draft_plans' Only approved columns may be updated on : being 'date_time_last_edited'");
     END;
 
 -- ###########################################################################
 -- macros_per_pound_and_limits Trigger | Prevents table from being updated
 -- ###########################################################################
-
     CREATE TRIGGER trg_macros_per_pound_and_limits_prevent_any_update
     BEFORE UPDATE ON macros_per_pound_and_limits
     FOR EACH ROW
     BEGIN
-            SELECT RAISE(ABORT, 'macros_per_pound_and_limits table is immutable');
+            SELECT RAISE(ABORT, ' Trigger - macros_per_pound_and_limits table is immutable');
     END;
 
 -- ###########################################################################
--- macros_per_pound_and_limits_versions | Allows only certain rows to be updated
+-- draft_macros_per_pound_and_limits | Allows only certain rows to be updated
 -- ###########################################################################
-    CREATE TRIGGER trg_macros_per_pound_and_limits_versions_allow_only_safe_updates
-    BEFORE UPDATE ON macros_per_pound_and_limits_versions
+    CREATE TRIGGER trg_draft_macros_per_pound_and_limits_allow_only_safe_updates
+    BEFORE UPDATE ON draft_macros_per_pound_and_limits
     FOR EACH ROW
     WHEN
         -- Immutable Columns (Not Allowed)
-        NEW.macros_ID != OLD.macros_ID
-        AND NEW.user_id != OLD.user_id
-        AND NEW.plan_version_id != OLD.plan_version_id
-        AND NEW.version_number != OLD.version_number
+        NEW.user_id != OLD.user_id
 
-        -- Mutable Columns (Implicitly Allowed):
-            --  date_time_last_edited
+        -- Mutable Columns (Implicitly Allowed):     
             --  current_weight_kg
             --  current_weight_in_pounds
             --  body_fat_percentage
@@ -80,7 +78,7 @@
             --  additional_calories
 
     BEGIN
-        SELECT RAISE(ABORT, 'Only date & Macro Values can be updated on macros_per_pound_and_limits_versions');
+        SELECT RAISE(ABORT, ' Trigger - draft_macros_per_pound_and_limits only date & Macro Values can be updated ! ');
     END;
 
 -- ###########################################################################
@@ -100,7 +98,7 @@
         WHEN
              OLD.is_system = 1
         BEGIN
-            SELECT RAISE(ABORT, 'Update not allowed on ingredient_types: record is FINAL');
+            SELECT RAISE(ABORT, ' Trigger -   - Update not allowed on ingredient_types: record is FINAL');
         END;
 
     -- #############################################
@@ -112,7 +110,7 @@
         WHEN
             OLD.is_system = 1
         BEGIN
-            SELECT RAISE(ABORT, 'Deletion not allowed on record with is_system');
+            SELECT RAISE(ABORT, ' Trigger -   - Deletion not allowed on record with is_system');
         END;
 
     -- #################################################
@@ -128,7 +126,7 @@
                 -- Mutable Columns (Implicitly Allowed):
                     -- ingredient_type_name
         BEGIN
-            SELECT RAISE(ABORT, 'Only ingredient_type_name may be updated on ingredient_types');
+            SELECT RAISE(ABORT, ' Trigger -  Only ingredient_type_name may be updated on ingredient_types');
         END;
 
 -- ###########################################################################
@@ -146,7 +144,7 @@
         BEFORE DELETE ON measurement_material_type
         FOR EACH ROW
         BEGIN
-            SELECT RAISE(ABORT, 'DELETE is not allowed on this measurement_material_type');
+            SELECT RAISE(ABORT, ' Trigger -  DELETE is not allowed on this measurement_material_type');
         END;
 
     -- #################################################
@@ -156,7 +154,7 @@
         BEFORE UPDATE ON measurement_material_type
         FOR EACH ROW
         BEGIN
-            SELECT RAISE(ABORT, 'measurement_material_type table is immutable');
+            SELECT RAISE(ABORT, ' Trigger -  measurement_material_type table is immutable');
         END;
 
     -- #################################################
@@ -172,9 +170,9 @@
 -- ###########################################################################
 -- measurements Trigger | Allows only certain rows to be updated
 -- ###########################################################################
-        /*
+    /*
 
-        */
+    */
 
     -- #################################################
     --  Prevents Table Deletions
@@ -183,7 +181,7 @@
         BEFORE DELETE ON measurements
         FOR EACH ROW
         BEGIN
-            SELECT RAISE(ABORT, 'DELETE is not allowed on this measurements');
+            SELECT RAISE(ABORT, ' Trigger -  DELETE is not allowed on this measurements');
         END;
 
     -- #################################################
@@ -193,7 +191,7 @@
         BEFORE UPDATE ON measurements
         FOR EACH ROW
         BEGIN
-                SELECT RAISE(ABORT, 'measurements table is immutable');
+                SELECT RAISE(ABORT, ' Trigger -  measurements table is immutable');
         END;
 
     -- #################################################
@@ -203,7 +201,7 @@
         BEFORE INSERT ON measurements
         FOR EACH ROW
         BEGIN
-             SELECT RAISE(ABORT, 'Inserts are not allowed on table measurements');
+             SELECT RAISE(ABORT, ' Trigger -  Inserts are not allowed on table measurements');
         END;
 
 -- ###########################################################################
@@ -221,7 +219,7 @@
         WHEN
              OLD.is_system = 1
         BEGIN
-            SELECT RAISE(ABORT, 'Deletion not allowed: ingredients_info is_System');
+            SELECT RAISE(ABORT, ' Trigger -  Deletion not allowed: ingredients_info is_System');
         END;
 
     -- #############################################
@@ -233,7 +231,7 @@
         WHEN
             OLD.is_system = 1
         BEGIN
-            SELECT RAISE(ABORT, 'Update not allowed on ingredients_info: record is FINAL');
+            SELECT RAISE(ABORT, ' Trigger -  Update not allowed on ingredients_info: record is FINAL');
         END;
 
     -- #################################################
@@ -264,7 +262,7 @@
                 -- calories
 
         BEGIN
-            SELECT RAISE(ABORT, 'Only : measurement_id, ingredient_name, ingredient_type_id, based_on_quantity, glycemic_index, protein, carbohydrates, sugars_of_carbs, fibre, fat, saturated_fat, salt, water_content, liquid_content, calories can be updated on ingredients_info');
+            SELECT RAISE(ABORT, ' Trigger -  Only : measurement_id, ingredient_name, ingredient_type_id, based_on_quantity, glycemic_index, protein, carbohydrates, sugars_of_carbs, fibre, fat, saturated_fat, salt, water_content, liquid_content, calories can be updated on ingredients_info');
         END;
 
 -- ###########################################################################
@@ -284,7 +282,7 @@
         WHEN
              OLD.is_system = 1
         BEGIN
-            SELECT RAISE(ABORT, 'Deletion not allowed: stores is_System');
+            SELECT RAISE(ABORT, ' Trigger -  Deletion not allowed: stores is_System');
         END;
 
     -- #############################################
@@ -296,7 +294,7 @@
         WHEN
             OLD.is_system = 1
         BEGIN
-            SELECT RAISE(ABORT, 'Update not allowed on stores: record is FINAL');
+            SELECT RAISE(ABORT, ' Trigger -  Update not allowed on stores: record is FINAL');
         END;
 
     -- #################################################
@@ -329,7 +327,7 @@
         WHEN
              OLD.is_system = 1
         BEGIN
-            SELECT RAISE(ABORT, 'Deletion not allowed: ingredient_in_shops is_System');
+            SELECT RAISE(ABORT, ' Trigger -  Deletion not allowed: ingredient_in_shops is_System');
         END;
 
     -- #############################################
@@ -341,7 +339,7 @@
         WHEN
              OLD.is_system = 1
         BEGIN
-            SELECT RAISE(ABORT, 'Update not allowed on ingredient_in_shops: record is FINAL');
+            SELECT RAISE(ABORT, ' Trigger -  Update not allowed on ingredient_in_shops: record is FINAL');
         END;
 
     -- #################################################
@@ -362,7 +360,7 @@
                 -- store_id
 
         BEGIN
-            SELECT RAISE(ABORT, 'Only product_name, volume_per_unit, cost_per_unit, store_id  can be updated on ingredient_in_shops');
+            SELECT RAISE(ABORT, ' Trigger -  Only product_name, volume_per_unit, cost_per_unit, store_id  can be updated on ingredient_in_shops');
         END;
 
 
@@ -370,34 +368,41 @@
 -- ###########################################################################
 -- meals_in_plan  Trigger | Prevents table from being updated
 -- ###########################################################################
-
     CREATE TRIGGER trg_meals_in_plan_prevent_any_update
     BEFORE UPDATE ON meals_in_plan
     FOR EACH ROW
     BEGIN
-            SELECT RAISE(ABORT, 'meals_in_plan table is immutable');
+            SELECT RAISE(ABORT, ' Trigger -  meals_in_plan table is immutable');
     END;
 
-
-
 -- ###########################################################################
--- meals_in_plan_versions Trigger | Allows only certain rows to be updated
+-- meals_in_plan_versions Trigger | Prevent Table From Being Updated
 -- ###########################################################################
-    CREATE TRIGGER trg_meals_in_plan_versions_allow_only_safe_updates
+    CREATE TRIGGER trg_meals_in_plan_versions_prevent_any_update
     BEFORE UPDATE ON meals_in_plan_versions
     FOR EACH ROW
-    WHEN
-        -- Immutable Columns (Not Allowed)
-        NEW.meal_in_plan_id != OLD.meal_in_plan_id
-        AND NEW.plan_version_id != OLD.plan_version_id
-
-        -- Mutable Columns (Implicitly Allowed):
-            -- date_time_last_edited
-            -- meal_name
-            -- meal_time
-
     BEGIN
-        SELECT RAISE(ABORT, 'Only date_time_last_edited, meal_name, meal_time can be updated on meals_in_plan_versions');
+        SELECT RAISE(ABORT, ' Trigger -  meals_in_plan_versions table is immutable');
+    END;
+    
+-- ###########################################################################
+-- draft_meals_in_plan Trigger | Prevent Certain Rows From Being Updated
+-- ###########################################################################
+    CREATE TRIGGER trg_draft_meals_in_plan_prevent_any_update
+    BEFORE UPDATE ON draft_meals_in_plan
+    FOR EACH ROW
+    WHEN
+            -- Immutable Columns (Not Allowed)
+            NEW.meal_in_plan_id != OLD.meal_in_plan_id
+            AND NEW.plan_id != OLD.plan_id
+    
+            -- Mutable Columns (Implicitly Allowed):
+                -- meal_name
+                -- meal_time
+                -- date_time_last_edited
+    
+    BEGIN
+        SELECT RAISE(ABORT, ' Trigger -  draft_meals_in_plan table only the following fields are mutable: meal_name, meal_time, date_time_last_edited! ');
     END;
 
 -- ###########################################################################
@@ -407,28 +412,38 @@
     BEFORE UPDATE ON divided_meal_sections
     FOR EACH ROW
     BEGIN
-        SELECT RAISE(ABORT, 'divided_meal_sections table is immutable');
+        SELECT RAISE(ABORT, ' Trigger -  divided_meal_sections table is immutable');
     END;
 
 -- ###########################################################################
 -- divided_meal_sections_versions Trigger | Allows only certain rows to be updated
 -- ###########################################################################
-    CREATE TRIGGER trg_divided_meal_sections_versions_allow_only_safe_updates
+    CREATE TRIGGER trg_divided_meal_sections_versions_prevent_any_update
     BEFORE UPDATE ON divided_meal_sections_versions
+    FOR EACH ROW
+    BEGIN
+        SELECT RAISE(ABORT, ' Trigger -  divided_meal_sections_versions table is immutable');
+    END;
+
+-- ###########################################################################
+-- draft_divided_meal_sections Trigger | Allows only certain rows to be updated
+-- ###########################################################################
+    CREATE TRIGGER trg_draft_divided_meal_sections_allow_only_safe_updates
+    BEFORE UPDATE ON draft_divided_meal_sections
     FOR EACH ROW
     WHEN
         -- Immutable Columns (Not Allowed)
         NEW.div_meal_sections_id != OLD.div_meal_sections_id
-        AND NEW.meal_in_plan_version_id != OLD.sub_meal_name
+        AND NEW.draft_meal_in_plan_id != OLD.draft_meal_in_plan_id
+        AND NEW.plan_id != OLD.plan_id
 
         -- Mutable Columns (Implicitly Allowed):
-            -- date_time_last_edited
             -- sub_meal_name
+            -- sub_meal_time
+            -- date_time_last_edited
     BEGIN
-        SELECT RAISE(ABORT, 'Only date_time_last_edited, sub_meal_name can be updated on divided_meal_sections_versions');
+        SELECT RAISE(ABORT,'Trigger - draft_divided_meal_sections Only: sub_meal_name, sub_meal_time, date_time_last_edited can be updated!');
     END;
-
-
 
 -- ###########################################################################
 -- ingredients_in_sections_of_meal Trigger | Prevents table from being updated
@@ -437,7 +452,7 @@
     BEFORE UPDATE ON ingredients_in_sections_of_meal
     FOR EACH ROW
     BEGIN
-        SELECT RAISE(ABORT, 'ingredients_in_sections_of_meal table is immutable');
+        SELECT RAISE(ABORT, ' Trigger -  ingredients_in_sections_of_meal table is immutable');
     END;
 
 
@@ -445,11 +460,11 @@
 -- ingredients_in_sections_of_meal Trigger | Allows only certain rows to be updated
 -- ###########################################################################
     CREATE TRIGGER trg_ingredients_in_meal_versions_allow_only_safe_updates
-    BEFORE UPDATE ON ingredients_in_sections_of_meal_versions
+    BEFORE UPDATE ON draft_ingredients_in_sections_of_meal
     FOR EACH ROW
     WHEN
         -- Immutable Columns (Not Allowed)
-        NEW.ingredients_index != OLD.ingredients_index
+        NEW.draft_div_meal_sections_id != OLD.draft_div_meal_sections_id
         AND NEW.div_meal_sections_version_id != OLD.div_meal_sections_version_id
 
         -- Mutable Columns (Implicitly Allowed):
@@ -457,7 +472,7 @@
             -- quantity
             -- pdid
     BEGIN
-        SELECT RAISE(ABORT,'Only ingredient_id, quantity and pdid can be updated on ingredients_in_sections_of_meal_versions');
+        SELECT RAISE(ABORT,'Trigger - draft_ingredients_in_sections_of_meal Only: ingredient_id, quantity and pdid can be updated on draft_ingredients_in_sections_of_meal');
     END;
 
 

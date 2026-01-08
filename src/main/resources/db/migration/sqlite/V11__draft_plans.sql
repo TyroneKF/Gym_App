@@ -16,6 +16,9 @@
 
         user_id INTEGER NOT NULL, -- FK has to be defined at the bottom
 
+        date_time_last_edited TEXT NOT NULL
+            DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now')), -- Defined on Insertion
+
         -- Foreign Keys (must be declared at the end in SQLite)
         FOREIGN KEY (plan_id)
             REFERENCES plans(plan_id)

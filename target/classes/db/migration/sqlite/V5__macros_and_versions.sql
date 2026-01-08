@@ -4,7 +4,7 @@
 -- ##############################################################################################################
     CREATE TABLE macros_per_pound_and_limits
     (
-        macros_version_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        macros_id INTEGER PRIMARY KEY AUTOINCREMENT,
 
         user_id INTEGER NOT NULL,           -- FK has to be defined at the bottom
         plan_version_id INTEGER NOT NULL,   -- FK has to be defined at the bottom
