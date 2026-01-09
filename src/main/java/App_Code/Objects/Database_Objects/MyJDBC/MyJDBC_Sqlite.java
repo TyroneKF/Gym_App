@@ -46,7 +46,7 @@ public class MyJDBC_Sqlite  // remove extends eventually
         //#############################################
         // Variables
         //#############################################
-        class_Name = get_Class_Name();
+        class_Name = this.getClass().getSimpleName();
         db_Connection_Address = String.format("jdbc:sqlite:file:./data/%s;", database_Name); // Sqlite ignores username / password
     }
     
@@ -502,9 +502,8 @@ public class MyJDBC_Sqlite  // remove extends eventually
         //##########################################################
         // Setup Method_Name for diagnosis
         String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        String error_MSG = String.format("Failed Getting Table Column Names for  : %s", tableName);
+        String error_MSG = "Failed Getting Table Column Names";
         String column_Names_Query = String.format("PRAGMA table_info(%s);", tableName);  // Query doesn't work in prepared statement
- 
         
         //##########################################################
         // Query Execution
@@ -521,7 +520,7 @@ public class MyJDBC_Sqlite  // remove extends eventually
             
             if (! resultSet.isBeforeFirst()) // checks if any data was returned
             {
-                throw new Exception("Failed Query -> Empty Results");
+                throw new Exception("Failed Query -> Empty Results On Table");
             }
             
             //############################################
@@ -531,7 +530,7 @@ public class MyJDBC_Sqlite  // remove extends eventually
             
             while (resultSet.next())
             {
-               column_names_AL.add(resultSet.getString("name"));
+                column_names_AL.add(resultSet.getString("name"));
             }
             return column_names_AL;
         }
@@ -541,7 +540,7 @@ public class MyJDBC_Sqlite  // remove extends eventually
         catch (Exception e)
         {
             handleException_MYSQL(e, method_Name, column_Names_Query, error_MSG);
-            throw new Exception("");
+            throw new Exception(String.format("Failed Getting Column Names for Table %s", tableName));
         }
     }
     
@@ -783,55 +782,14 @@ public class MyJDBC_Sqlite  // remove extends eventually
     
     private void print_SQL_ERR_MSG(SQLException e, String method_Name, Object query)
     {
-        System.err.printf("\n\n%s\nMyJDBC_MySQL.java @%s SQL ERROR \n%s \n\nQuery: \n\"\"\"\n %s\n\"\"\" \n\nError Message: \n\n\"\"\" \n\n%s \n\n\"\"\" \n\nSQLState: %s \n\nErrorCode: %d\n\n",
-                line_Separator, method_Name, line_Separator, query != null ? query.toString() : "", e.getMessage(), e.getSQLState(), e.getErrorCode());
+        System.err.printf("\n\n%s\n%s ->  @%s SQL ERROR \n%s \n\nQuery: \n\"\"\"\n %s\n\"\"\" \n\nError Message: \n\n\"\"\" \n\n%s \n\n\"\"\" \n\nSQLState: %s \n\nErrorCode: %d\n\n",
+                line_Separator, get_Class_Name(), method_Name, line_Separator, query != null ? query.toString() : "", e.getMessage(), e.getSQLState(), e.getErrorCode());
     }
     
     private void print_Exception_ERR_MSG(Exception e, String method_Name, Object query)
     {
-        System.err.printf("\n\nMyJDBC_MySQL.java @%s Exception ERROR \n\n%s \n\n%s", method_Name, query != null ? query.toString() : "", e.getMessage());
-    }
-    
-    //###########################################
-    // File Methods for Error Handling
-    //###########################################
-    private void handleException_File(Exception e, String method_Name, String errorMSG)
-    {
-        //#########################
-        // Switch Exceptions
-        //#########################
-        if (e instanceof FileNotFoundException x)
-        {
-            print_File_Not_Found_ERR_MSG(x, method_Name);
-        }
-        else if (e instanceof IOException x)
-        {
-            print_IO_Exception_ERR_MSG(x, method_Name);
-        }
-        else
-        {
-            print_Exception_ERR_MSG(e, method_Name);
-        }
-        
-        //#########################
-        // Display MSGS
-        //#########################
-        JOptionPane.showMessageDialog(null, errorMSG, "Alert Message: ", JOptionPane.INFORMATION_MESSAGE);
-    }
-    
-    private void print_Exception_ERR_MSG(Exception e, String method_Name)
-    {
-        System.err.printf("\n\nMyJDBC_MySQL.java @%s Exception ERROR \n\n%s", method_Name, e.getMessage());
-    }
-    
-    private void print_File_Not_Found_ERR_MSG(FileNotFoundException e, String method_Name)
-    {
-        System.err.printf("\n\nMyJDBC_MySQL.java @%s Exception ERROR \n\nFile not found: %s%n", method_Name, e.getMessage());
-    }
-    
-    private void print_IO_Exception_ERR_MSG(IOException e, String method_Name)
-    {
-        System.err.printf("\n\nMyJDBC_MySQL.java @%s Exception ERROR \n\nI/O error while processing files: %s%n", method_Name, e.getMessage());
+        System.err.printf("\n\n%s \n%s -> @%s ERROR \n%s \n\nQuery: \n\"\"\"\n%s\n\"\"\" \n\nError Message: \n\n\"\"\"\n  %s \n\"\"\" ",
+                line_Separator, get_Class_Name(), method_Name, line_Separator, query != null ? query.toString() : "", e);
     }
     
     //###########################################
@@ -846,11 +804,6 @@ public class MyJDBC_Sqlite  // remove extends eventually
                 \nQuery : \n\n\"\"\" \n\n%s \n\n\"\"\"
                 \nParams: \n%s%n
                 \nError MSG:  \n\n\"\"\" \n%s \n\"\"\"""", line_Separator, method_Name, line_Separator, query, Arrays.toString(params), e);
-    }
-    
-    private String throw_Exception_Msg(String method_Name)
-    {
-        return String.format("%s -> %s Error, Query Failed", class_Name, method_Name);
     }
     
     //###############################################
@@ -868,6 +821,6 @@ public class MyJDBC_Sqlite  // remove extends eventually
     
     protected String get_Class_And_Method_Name()
     {
-        return String.format("%s -> %s", get_Class_Name(), get_Method_Name());
+        return String.format("%s -> @%s", get_Class_Name(), get_Method_Name());
     }
 }

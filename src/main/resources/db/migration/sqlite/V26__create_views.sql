@@ -22,7 +22,7 @@
 
                         user_id,
                         current_weight_kg,
-                        current_weight_in_pound,
+                        current_weight_in_pounds,
                         body_fat_percentage,
                         protein_per_pound,
                         carbohydrates_per_pound,
@@ -45,7 +45,7 @@
 
                         user_id,
                         current_weight_kg,
-                        current_weight_in_pound,
+                        current_weight_in_pounds,
                         body_fat_percentage,
                         protein_per_pound,
                         carbohydrates_per_pound,
@@ -64,9 +64,9 @@
                         record_state,
                         plan_id,
 
-                        ROUND(current_weight_in_pound * protein_per_pound, 2) AS t_protein, -- returns null if 1 of the values are empty
-                        ROUND(current_weight_in_pound * carbohydrates_per_pound, 2) AS t_carbs,
-                        ROUND(current_weight_in_pound * fats_per_pound, 2) AS t_fats
+                        ROUND(current_weight_in_pounds * protein_per_pound, 2) AS t_protein, -- returns null if 1 of the values are empty
+                        ROUND(current_weight_in_pounds * carbohydrates_per_pound, 2) AS t_carbs,
+                        ROUND(current_weight_in_pounds * fats_per_pound, 2) AS t_fats
                     FROM C1
                 ),
                 C3 AS ( -- Base Calories Calculations
@@ -368,7 +368,7 @@
 --
 -- ################################################################################
     /*
-    
+
     */
     -- ###################################
     -- All Total Meal | Draft + Versioned
@@ -511,17 +511,24 @@
 
             FROM all_total_meal_view
             WHERE record_state = 'draft';
-    
-    
+
+    -- ###################################
+    -- Draft Total Meals
+    -- ###################################
+        CREATE VIEW draft_gui_total_meal_view AS
+
+            SELECT *
+            FROM all_total_meal_view
+            WHERE record_state = 'draft';
 
 -- ################################################################################
 --
 -- ################################################################################
     /*
-    
-    
+
+
     */
-    
+
     -- #############################################
     -- ALL Total_Plan_View | Draft + Versioned Plans
     -- #############################################
