@@ -18,14 +18,14 @@
         draft_meal_in_plan_id INTEGER NOT NULL, -- FK has to be defined at the bottom
         plan_id INTEGER NOT NULL,               -- FK has to be defined at the bottom
 
+        date_time_last_edited TEXT NOT NULL
+            DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now')), -- Defined on Insertion
+
         sub_meal_name TEXT NULL
             CHECK (length(sub_meal_name) <= 100),
 
         sub_meal_time TEXT NOT NULL
             CHECK (sub_meal_time GLOB '[0-2][0-9]:[0-5][0-9]*'),
-
-        date_time_last_edited TEXT NOT NULL
-            DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now')), -- Defined on Insertion
 
         -- Foreign Keys (SQLite requires table-level declaration)
         FOREIGN KEY (div_meal_sections_id)

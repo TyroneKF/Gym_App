@@ -1,6 +1,6 @@
 
 -- ################################################################################
---
+-- Macro Calculations
 -- ################################################################################
     /*
 
@@ -149,41 +149,104 @@
 -- ################################################################################
 --
 -- ################################################################################
-    CREATE VIEW ingredients_in_sections_of_meal_calculation AS
+    /*
+
+
+    */
+
+    -- ###########################################
+    --
+    -- ###########################################
+        CREATE VIEW all_ingredients_in_sections_of_meal_calculation AS
+
+            WITH
+                D AS ( -- DATA from draft_ingredients_in_sections_of_meal & ingredients_in_sections_of_meal
+
+                        SELECT
+                           'draft' AS record_state,
+                            draft_ingredients_index AS id,
+                            draft_div_meal_sections_id AS div_id,
+                            ingredient_id,
+                            pdid,
+                            quantity
+
+                        FROM draft_ingredients_in_sections_of_meal
+
+                        UNION ALL
+
+                        SELECT
+                            'versioned' AS record_state,
+                            ingredients_index AS id,
+                            div_meal_sections_version_id AS div_id,
+                            ingredient_id,
+                            pdid,
+                            quantity
+
+                        FROM ingredients_in_sections_of_meal
+                )
+
+            SELECT
+
+                D.record_state,
+                D.id,
+                D.div_id,
+
+                Info.ingredient_type_id,
+                D.ingredient_id,
+                D.quantity,
+
+                IFNULL(Info.glycemic_index, 0)                                                    AS gi,
+                IFNULL(ROUND((Info.protein / Info.based_on_quantity) * D.quantity,2),0)           AS protein,
+                IFNULL(ROUND((Info.carbohydrates / Info.based_on_quantity) * D.quantity,2),0)     AS carbohydrates,
+                IFNULL(ROUND((Info.sugars_of_carbs / Info.based_on_quantity) * D.quantity,2),0)   AS sugars_of_carbs,
+                IFNULL(ROUND((Info.fibre / Info.based_on_quantity) * D.quantity,2),0)             AS fibre,
+                IFNULL(ROUND((Info.fat / Info.based_on_quantity) * D.quantity,2),0)               AS fat,
+                IFNULL(ROUND((Info.saturated_fat / Info.based_on_quantity) * D.quantity,2),0)     AS saturated_fat,
+                IFNULL(ROUND((Info.salt / Info.based_on_quantity) * D.quantity,2),0)              AS salt,
+                IFNULL(ROUND((Info.water_content / Info.based_on_quantity) * D.quantity,2),0)     AS water_content,
+                IFNULL(ROUND((Info.calories / Info.based_on_quantity) * D.quantity,2),0)          AS calories
+
+            FROM ingredients_in_sections_of_meal D
+
+            LEFT JOIN ingredients_info Info
+                ON Info.ingredient_id = I.ingredient_id;
+
+    -- ###########################################
+    -- Versioned : Ingredients_In_Meal
+    -- ###########################################
+        CREATE VIEW versioned_ingredients_in_sections_of_meal_calculation AS
+
+            SELECT
+
+                id  AS ingredients_index,
+                div_id AS div_meal_sections_version_id,
+
+                ingredient_type_id AS ingredient_type_name,
+                ingredient_id AS ingredient_name,
+                quantity,
+                gi,
+                protein,
+                carbohydrates,
+                sugars_of_carbs,
+                fibre,
+                fat,
+                saturated_fat,
+                salt,
+                water_content,
+                calories
+
+        FROM all_ingredients_in_sections_of_meal_calculation
+        WHERE record_state = 'versioned';
+
+    -- ###########################################
+    -- Draft : Ingredients_In_Meal
+    -- ###########################################
+        CREATE VIEW draft_ingredients_in_sections_of_meal_calculation AS
 
         SELECT
 
-            I.ingredients_index,
-            I.div_meal_sections_version_id,
-
-            Info.ingredient_type_id,
-            I.ingredient_id,
-
-            I.quantity,
-
-            IFNULL(Info.glycemic_index, 0) AS gi,
-            IFNULL(ROUND((Info.protein /Info.based_on_quantity)*I.quantity,2),0) AS protein,
-            IFNULL(ROUND((Info.carbohydrates /Info.based_on_quantity)*I.quantity,2),0) AS carbohydrates,
-            IFNULL(ROUND((Info.sugars_of_carbs /Info.based_on_quantity)*I.quantity,2),0) AS sugars_of_carbs,
-            IFNULL(ROUND((Info.fibre /Info.based_on_quantity)*I.quantity,2),0) AS fibre,
-            IFNULL(ROUND((Info.fat /Info.based_on_quantity)*I.quantity,2),0) AS fat,
-            IFNULL(ROUND((Info.saturated_fat /Info.based_on_quantity)*I.quantity,2),0) AS saturated_fat,
-            IFNULL(ROUND((Info.salt /Info.based_on_quantity)*I.quantity,2),0) AS salt,
-            IFNULL(ROUND((Info.water_content /Info.based_on_quantity)*I.quantity,2),0) AS water_content,
-            IFNULL(ROUND((Info.calories /Info.based_on_quantity)*I.quantity,2),0) AS calories
-
-        FROM ingredients_in_sections_of_meal I
-
-        LEFT JOIN ingredients_info Info
-            ON Info.ingredient_id = I.ingredient_id;
-
-
-    CREATE VIEW ingredients_in_sections_of_meal_calculation_gui AS
-
-        SELECT
-
-            ingredients_index,
-            div_meal_sections_version_id,
+            id  AS draft_ingredients_index,
+            div_id AS draft_div_meal_sections_id,
 
             ingredient_type_id AS ingredient_type_name,
             ingredient_id AS ingredient_name,
@@ -197,15 +260,38 @@
             saturated_fat,
             salt,
             water_content,
-            calories,
+            calories
+
+        FROM all_ingredients_in_sections_of_meal_calculation
+        WHERE record_state = 'draft';
+
+    -- ###########################################
+    -- Draft GUI : Ingredients_In_Meal
+    -- ###########################################
+        CREATE VIEW draft_gui_ingredients_in_sections_of_meal_calculation_gui AS
+
+        SELECT
+            D.*,
             'Delete Row' AS `delete button`
 
-        FROM ingredients_in_sections_of_meal_calculation;
+        FROM draft_ingredients_in_sections_of_meal_calculation D;
 
 -- ################################################################################
 --
 -- ################################################################################
+    /*
+
+
+    */
+
+    -- ###########################################
+    --
+    -- ###########################################
     CREATE VIEW divided_meal_sections_calculations AS
+
+        WITH A AS (
+
+        )
 
         SELECT
 
@@ -223,6 +309,51 @@
 
         FROM ingredients_in_sections_of_meal_calculation
         GROUP BY div_meal_sections_version_id;
+
+
+    -- ###########################################
+    --
+    -- ###########################################
+        CREATE VIEW divided_meal_sections_calculations AS
+
+            SELECT
+
+                div_meal_sections_version_id,
+
+                IFNULL(ROUND(SUM(protein),2),0) as total_protein,
+                IFNULL(ROUND(SUM(carbohydrates),2),0) as total_carbohydrates,
+                IFNULL(ROUND(SUM(sugars_of_carbs),2),0) as total_sugars_of_carbs,
+                IFNULL(ROUND(SUM(fibre),2),0) as total_fibre,
+                IFNULL(ROUND(SUM(fat),2),0) as total_fats,
+                IFNULL(ROUND(SUM(saturated_fat),2),0) as total_saturated_fat,
+                IFNULL(ROUND(SUM(salt),2),0) as total_salt,
+                IFNULL(ROUND(SUM(water_content),2),0) as total_water_content,
+                IFNULL(ROUND(SUM(calories),2),0) as total_calories
+
+            FROM ingredients_in_sections_of_meal_calculation
+            GROUP BY div_meal_sections_version_id;
+
+    -- ###########################################
+    --
+    -- ###########################################
+        CREATE VIEW divided_meal_sections_calculations AS
+
+            SELECT
+
+                div_meal_sections_version_id,
+
+                IFNULL(ROUND(SUM(protein),2),0) as total_protein,
+                IFNULL(ROUND(SUM(carbohydrates),2),0) as total_carbohydrates,
+                IFNULL(ROUND(SUM(sugars_of_carbs),2),0) as total_sugars_of_carbs,
+                IFNULL(ROUND(SUM(fibre),2),0) as total_fibre,
+                IFNULL(ROUND(SUM(fat),2),0) as total_fats,
+                IFNULL(ROUND(SUM(saturated_fat),2),0) as total_saturated_fat,
+                IFNULL(ROUND(SUM(salt),2),0) as total_salt,
+                IFNULL(ROUND(SUM(water_content),2),0) as total_water_content,
+                IFNULL(ROUND(SUM(calories),2),0) as total_calories
+
+            FROM ingredients_in_sections_of_meal_calculation
+            GROUP BY div_meal_sections_version_id;
 
 -- ################################################################################
 --

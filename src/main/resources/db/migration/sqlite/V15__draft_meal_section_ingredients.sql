@@ -13,6 +13,7 @@
         draft_ingredients_index INTEGER PRIMARY KEY AUTOINCREMENT,
 
         draft_div_meal_sections_id INTEGER NOT NULL, -- FK has to be defined at the bottom
+
         ingredient_id INTEGER NOT NULL,              -- FK has to be defined at the bottom
         pdid INTEGER DEFAULT NULL,                   -- FK has to be defined at the bottom
 
