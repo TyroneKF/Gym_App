@@ -22,15 +22,14 @@
                                       -- Application layer enforcement has to be done to ensure
                                       -- A draft meal linked to a versioned meal must belong to the same plan as that meal’s plan version.
 
+        date_time_last_edited TEXT NOT NULL
+            DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now')), -- Defined on Insertion
+
         meal_name TEXT NOT NULL
             CHECK (length(meal_name) <= 100),
 
         meal_time TEXT NOT NULL   -- TIME does not exist in SQLite; store as ISO time TEXT (HH:MM or HH:MM:SS)
             CHECK (meal_time GLOB '[0-2][0-9]:[0-5][0-9]*'),
-
-        date_time_last_edited TEXT NOT NULL
-            DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now')), -- Defined on Insertion
-
 
         -- Foreign Keys (must be declared at the end in SQLite)
         FOREIGN KEY (meal_in_plan_id)
