@@ -2,70 +2,149 @@
 -- ################################################################################
 --
 -- ################################################################################
-    CREATE VIEW plan_macro_target_calculations AS
+    /*
 
-        WITH
-        C AS ( -- Macro Calculations
-                SELECT
+    */
 
-                    macros_id,
-                    plan_version_id,
+    -- ############################################
+    --
+    -- ############################################
+        CREATE VIEW all_plan_macro_target_calculations AS
 
-                    date_time_of_creation,
+            WITH
+                C1 AS (
 
-                    ROUND(current_weight_in_pounds * protein_per_pound, 2) AS protein, -- returns null if 1 of the values are empty
-                    ROUND(current_weight_in_pounds * carbohydrates_per_pound, 2) AS carbs,
-                    fibre,
-                    ROUND(current_weight_in_pounds * fats_per_pound, 2) AS fats,
-                    saturated_fat_limit,
-                    salt_limit,
-                    water_target,
-                    additional_calories
+                    SELECT
+                       'draft' AS record_state,
+                        plan_id AS source_id,
 
-                FROM macros_per_pound_and_limits
-        ),
-        Cal AS ( -- Calories Calculations + Additional Calories Formatting
+                        NULL AS date_time_of_creation,
 
-              SELECT
+                        user_id,
+                        current_weight_kg,
+                        current_weight_in_pound,
+                        body_fat_percentage,
+                        protein_per_pound,
+                        carbohydrates_per_pound,
+                        fibre,
+                        fats_per_pound,
+                        saturated_fat_limit,
+                        salt_limit,
+                        water_target,
+                        additional_calories
 
-                  macros_id,
-                  IFNULL(ROUND((C.protein * 4) + (C.carbs * 4) + (C.fats * 9) ,2), 0) AS calories_target,
-                  IFNULL(C.additional_calories, 0) AS additional_calories
+                    FROM draft_macros_per_pound_and_limits
 
-              FROM C
-        )
+                    UNION ALL
 
+                    SELECT
+                       'versioned' AS record_state,
+                        plan_version_id AS source_id,
+
+                        date_time_of_creation,
+
+                        user_id,
+                        current_weight_kg,
+                        current_weight_in_pound,
+                        body_fat_percentage,
+                        protein_per_pound,
+                        carbohydrates_per_pound,
+                        fibre,
+                        fats_per_pound,
+                        saturated_fat_limit,
+                        salt_limit,
+                        water_target,
+                        additional_calories
+
+                    FROM macros_per_pound_and_limits
+                ),
+                C2 AS ( -- Macro Target Calculations
+
+                    SELECT
+                        record_state,
+                        source_id,
+
+                        ROUND(current_weight_in_pound * protein_per_pound, 2) AS t_protein, -- returns null if 1 of the values are empty
+                        ROUND(current_weight_in_pound * carbohydrates_per_pound, 2) AS t_carbs,
+                        ROUND(current_weight_in_pound * fats_per_pound, 2) AS t_fats
+                    FROM C1
+                ),
+                C3 AS ( -- Base Calories Calculations
+
+                      SELECT
+                          source_id,
+                          record_state,
+
+                          ROUND((t_protein * 4) + (t_carbs * 4) + (t_fats * 9) ,2) AS calories_target
+                      FROM C2
+                )
+
+            SELECT
+                C1.record_state,
+                C1.source_id,
+                C1.user_id,
+
+                C1.date_time_of_creation,
+
+                C2.t_protein             AS expected_protein_grams,
+                C2.t_carbs               AS expected_carbs_grams,
+                C1.fibre                 AS expected_fibre_grams,
+                C2.t_fats                AS expected_fats_grams,
+                C1.saturated_fat_limit   AS saturated_fat_limit,
+                C1.salt_limit            AS salt_limit_grams,
+                C1.water_target          AS water_content_target,
+
+                ROUND(C3.calories_target ,2) AS calories_target,
+                ROUND(C3.calories_target + C1.additional_calories ,2) AS additional_calories_target
+
+            FROM C1
+
+            LEFT JOIN C2
+                ON C1.record_state = C2.record_state AND C1.source_id = C2.source_id
+
+            LEFT JOIN C3
+                ON C2.record_state = C3.record_state AND C2.source_id = C3.source_id;
+
+    -- ############################################
+    -- Draft : View For Macro Calculations
+    -- ############################################
+       CREATE VIEW draft_plan_macro_target_calculations AS
+       SELECT
+            source_id AS plan_id,
+
+            expected_protein_grams,
+            expected_carbs_grams,
+            expected_fats_grams,
+            saturated_fat_limit,
+            expected_fibre_grams,
+            salt_limit_grams,
+            water_content_target,
+            calories_target,
+            additional_calories_target
+
+       FROM all_plan_macro_target_calculations
+       WHERE record_state = 'draft';
+
+    -- ############################################
+    -- Versioned : View For Macro Calculations
+    -- ############################################
+        CREATE VIEW versioned_plan_macro_target_calculations AS
         SELECT
+            source_id AS plan_version_id,
+            date_time_of_creation,
 
-            PV.plan_version_id,
+            expected_protein_grams,
+            expected_carbs_grams,
+            expected_fats_grams,
+            saturated_fat_limit,
+            expected_fibre_grams,
+            salt_limit_grams,
+            water_content_target,
+            calories_target,
+            additional_calories_target
 
-            P.plan_name,
-
-            C.macros_id,
-
-            C.date_time_of_creation,
-
-            IFNULL(C.protein, 0) AS expected_protein_grams,
-            IFNULL(C.carbs, 0) AS expected_carbs_grams,
-            IFNULL(C.fibre, 0) AS expected_fibre_grams,
-            IFNULL(C.fats, 0) AS expected_fats_grams,
-            IFNULL(C.saturated_fat_limit, 0) AS saturated_fat_limit,
-            IFNULL(C.salt_limit, 0) AS salt_limit_grams,
-            IFNULL(C.water_target, 0) AS water_content_target,
-
-            ROUND(C2.calories_target ,2) AS calories_target,
-            ROUND(C2.calories_target + C2.additional_calories ,2) AS additional_calories_target
-
-        FROM plan_versions PV
-
-        LEFT JOIN plans P ON
-            P.plan_id = PV.plan_id
-
-        LEFT JOIN C
-            ON C.plan_version_id = PV.plan_version_id
-
-        LEFT JOIN Cal C2
-            ON C.macros_id = C2.macros_id;
+        FROM all_plan_macro_target_calculations
+        WHERE record_state = 'versioned';
 
 -- ################################################################################
 --

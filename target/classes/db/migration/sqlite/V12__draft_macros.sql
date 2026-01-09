@@ -20,12 +20,10 @@
         current_weight_kg REAL NOT NULL,
         current_weight_in_pounds REAL NOT NULL,
         body_fat_percentage REAL NOT NULL,
-
         protein_per_pound REAL NOT NULL,
         carbohydrates_per_pound REAL NOT NULL,
         fibre REAL NOT NULL,
         fats_per_pound REAL NOT NULL,
-
         saturated_fat_limit REAL NOT NULL,
         salt_limit REAL NOT NULL,
         water_target REAL NOT NULL,

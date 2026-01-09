@@ -66,7 +66,7 @@
         WHEN
             OLD.is_system = 1
         BEGIN
-            SELECT RAISE(ABORT, ' Trigger - ingredient_types Deletion not allowed on record with is_system');
+            SELECT RAISE(ABORT, ' Trigger - ingredient_types Deletion not allowed on record with is_system = true');
         END;
 
     -- #################################################
