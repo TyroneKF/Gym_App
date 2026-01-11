@@ -2,13 +2,20 @@ package App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS;
 
 public final class Measurement_ID_OBJ extends Storable_IDS_Parent
 {
-    private String unit_Symbol, measured_material_type;
+    private String unit_Symbol;
+    private Measurement_Material_Type_ID_OBJ measurement_material_type_id_obj;
     
-    public Measurement_ID_OBJ(int id, String unit_Name, String unit_Symbol, String measured_material_type)
+    public Measurement_ID_OBJ(
+            int id,
+            boolean is_system,
+            String unit_Name,
+            String unit_Symbol,
+            Measurement_Material_Type_ID_OBJ measurement_material_type_id_obj
+    )
     {
-        super(id, unit_Name);
+        super(id, is_system, unit_Name);
         this.unit_Symbol = unit_Symbol;
-        this.measured_material_type = measured_material_type;
+        this.measurement_material_type_id_obj = measurement_material_type_id_obj;
     }
     
     public String get_Unit_Symbol()
@@ -16,8 +23,8 @@ public final class Measurement_ID_OBJ extends Storable_IDS_Parent
         return  unit_Symbol;
     }
     
-    public String get_Measured_Material_Type()
+    public Measurement_Material_Type_ID_OBJ get_Measured_Material_Type()
     {
-        return measured_material_type;
+        return measurement_material_type_id_obj;
     }
 }

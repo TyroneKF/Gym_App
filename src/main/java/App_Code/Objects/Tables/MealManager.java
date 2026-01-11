@@ -3,6 +3,7 @@ package App_Code.Objects.Tables;
 import App_Code.Objects.Data_Objects.ID_Objects.MetaData_ID_Object.Meal_ID;
 import App_Code.Objects.Database_Objects.Fetched_Results;
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_MySQL;
+import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
 import App_Code.Objects.Database_Objects.Null_MYSQL_Field;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Tables.JTable_JDBC.Children.Ingredients_Table.IngredientsTable;
@@ -74,6 +75,7 @@ public class MealManager
     // Other Objects
     private JPanel collapsibleCenterJPanel, spaceDividerForMealManager = new JPanel();
     private MyJDBC_MySQL db;
+    private MyJDBC_Sqlite db_Sqlite;
     private GridBagConstraints gbc;
     private Container container;
     private CollapsibleJPanel collapsibleJpObj;
@@ -90,7 +92,7 @@ public class MealManager
     //##################################################################################################################
     // Constructors
     //##################################################################################################################
-    public MealManager(Meal_Plan_Screen meal_plan_screen, MyJDBC_MySQL db, MacrosLeft_Table macrosLeft_JTable,
+    public MealManager(Meal_Plan_Screen meal_plan_screen, MyJDBC_Sqlite db_Sqlite, MacrosLeft_Table macrosLeft_JTable,
                        Meal_ID meal_ID_Obj, LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> sub_Meal_DATA,
                        ArrayList<Object> total_Meal_Data
     )
@@ -99,11 +101,10 @@ public class MealManager
         // Global Variables
         //################################################
         this.meal_plan_screen = meal_plan_screen;
-        this.db = db;
+        this.db_Sqlite = db_Sqlite;
         this.macrosLeft_JTable = macrosLeft_JTable;
         
         meal_In_Plan_ID = meal_ID_Obj.get_ID();
-        tempPlanID = meal_plan_screen.getTemp_Plan_ID();
         planID = meal_plan_screen.getSelected_Plan_Version_ID();
         
         // Set Meal Time Variables
@@ -125,14 +126,14 @@ public class MealManager
     }
     
     //
-    public MealManager(Meal_Plan_Screen meal_plan_screen, MyJDBC_MySQL db, MacrosLeft_Table macrosLeft_JTable)
+    public MealManager(Meal_Plan_Screen meal_plan_screen, MyJDBC_Sqlite db_Sqlite, MacrosLeft_Table macrosLeft_JTable)
     {
         //############################################################################
         // Setting Variables
         //############################################################################
         this.meal_plan_screen = meal_plan_screen;
         this.macrosLeft_JTable = macrosLeft_JTable;
-        this.db = db;
+        this.db_Sqlite = db_Sqlite;
         
         tempPlanID = meal_plan_screen.getTemp_Plan_ID();
         planID = meal_plan_screen.getSelected_Plan_Version_ID();
@@ -478,7 +479,7 @@ public class MealManager
         //################################################################
         // Create TotalMeal Objects
         //################################################################
-        totalMealTable = new TotalMeal_Table(db, this, meal_In_Plan_ID, total_Meal_Data);
+        totalMealTable = new TotalMeal_Table(db_Sqlite, this, meal_In_Plan_ID, total_Meal_Data);
         
         //######################################
         // TotalMeal_Table to Collapsible Object
@@ -521,7 +522,7 @@ public class MealManager
         JPanel spaceDivider = new JPanel();
         
         IngredientsTable ingredients_Table =
-                new IngredientsTable(db, this, sharedDataRegistry, div_id, sub_Meal_Data, is_Sub_Meal_In_DB, spaceDivider);
+                new IngredientsTable(db_Sqlite, this, sharedDataRegistry, div_id, sub_Meal_Data, is_Sub_Meal_In_DB, spaceDivider);
         
         //################################################
         // Add Ingredients Table To GUI
@@ -1644,11 +1645,6 @@ public class MealManager
     public int get_Meal_In_Plan_ID()
     {
         return meal_In_Plan_ID;
-    }
-    
-    public int get_Temp_PlanID()
-    {
-        return tempPlanID;
     }
     
     public int get_Plan_ID()

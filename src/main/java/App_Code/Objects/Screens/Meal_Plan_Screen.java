@@ -993,9 +993,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 
                     T.ingredient_type_id AS type_id,
                 	T.ingredient_type_name AS type_name,
+                	T.is_system,
                 
                 	json_group_array(
                         JSON_OBJECT('id', I.ingredient_id,
+                            'is_System', I.is_System,
                             'name', I.ingredient_name
                         )
                     ) AS matched_ingredients
@@ -1038,8 +1040,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 //#########################
                 int type_ID = (int) row.get(0);
                 String type_name = (String) row.get(1);
+                boolean is_System = ((int) row.get(2)) == 1; // 1 is true
                 
-                Ingredient_Type_ID_OBJ type_OBJ = new Ingredient_Type_ID_OBJ(type_ID, type_name);
+                Ingredient_Type_ID_OBJ type_OBJ = new Ingredient_Type_ID_OBJ(type_ID, is_System, type_name);
                 
                 // Add to DATA
                 shared_Data_Registry.add_Ingredient_Type(type_OBJ, false); // Add ingredient Type
@@ -1047,18 +1050,27 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 //#########################
                 // Parsing JSON DATA
                 //#########################
-                JsonNode json_array = mapper.readTree((String) row.get(2));
+                JsonNode json_array = mapper.readTree((String) row.get(3));
                 
                 for (JsonNode node : json_array) // For loop through each node of Ingredients
                 {
-                    // Per Object Ingredient Object
-                    JsonNode id = node.get("id");
-                    JsonNode name = node.get("name");
+                    JsonNode id = node.get("id"); // Per Object Ingredient Object get ID
                     
                     if (id.isNull()) { continue; }  // If values are empty skip
                     
+                    // Convert Ingredient Values
+                    int id_Value = id.asInt();
+                    String name = node.get("name").asText();
+                    boolean is_System_Ingredient = (node.get("is_System").asInt()) == 1;
+                    
                     // Add Ingredient_Name to DATA IF not NULL
-                    Ingredient_Name_ID_OBJ ingredient_Name_ID = new Ingredient_Name_ID_OBJ(id.asInt(), name.asText(), type_OBJ);
+                    Ingredient_Name_ID_OBJ ingredient_Name_ID = new Ingredient_Name_ID_OBJ(
+                            id_Value,
+                            is_System_Ingredient,
+                            name,
+                            type_OBJ
+                    );
+                    
                     shared_Data_Registry.add_Ingredient_Name(ingredient_Name_ID, true);
                 }
             }
@@ -1080,7 +1092,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //#######################################
         String
                 errorMSG = "Error, Unable to get Ingredient Stores in Plan!",
-                query = String.format("SELECT store_id, store_name FROM %s ORDER BY store_name ASC;", table_Stores_Name);
+                query = String.format("SELECT * FROM %s ORDER BY store_name ASC;", table_Stores_Name);
         
         //#######################################
         // Execute Query
@@ -1102,7 +1114,13 @@ public class Meal_Plan_Screen extends Screen_JFrame
         for (ArrayList<Object> row : results)
         {
             // Add to DATA
-            shared_Data_Registry.add_Store(new Store_ID_OBJ((int) row.get(0), (String) row.get(1)), false);
+            shared_Data_Registry.add_Store(
+                    new Store_ID_OBJ(
+                            (int) row.get(0),
+                            (int) row.get(1) == 1, // IF True = 1
+                            (String) row.get(2)),
+                    false
+            );
         }
         
         //#######################################
@@ -1139,7 +1157,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             String measurement_material_type_name = (String) row.get(1);
             
             shared_Data_Registry.add_Measurement_Material_Type(
-                    new Measurement_Material_Type_ID_OBJ(id, measurement_material_type_name),
+                    new Measurement_Material_Type_ID_OBJ(id, true,  measurement_material_type_name),
                     false
             );
         }

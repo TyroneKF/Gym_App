@@ -9,6 +9,7 @@ public class ID_Object implements Comparable<ID_Object>
     // #################################################################################################################
     private String  name;
     private Integer id;
+    private boolean is_System;
     
     // #################################################################################################################
     // Constructor
@@ -20,6 +21,16 @@ public class ID_Object implements Comparable<ID_Object>
         //############################################
         this.id = id;
         set_Name(name);
+    }
+    
+    protected ID_Object(Integer id, boolean is_System, String name)
+    {
+        //############################################
+        // Variables
+        //############################################
+        this.id = id;
+        set_Name(name);
+        this.is_System = is_System;
     }
     
     // #################################################################################################################
@@ -46,6 +57,11 @@ public class ID_Object implements Comparable<ID_Object>
     public String get_String_Values()
     {
         return String.format("%s - %s", id, name);
+    }
+    
+    public boolean get_is_System()
+    {
+        return is_System;
     }
     
     // #################################################################################################################

@@ -116,7 +116,12 @@ public class Ingredients_Screen extends Parent_Ingredients_Screen
             
             // Create & Add Ingredient Name OBJ
             shared_Data_Registry.add_Ingredient_Name(
-                    new Ingredient_Name_ID_OBJ(ingredient_ID, ingredient_Name, ingredient_Type_ID_Obj),
+                    new Ingredient_Name_ID_OBJ(
+                            ingredient_ID,
+                            false,
+                            ingredient_Name,
+                            ingredient_Type_ID_Obj
+                    ),
                     true
             );
             

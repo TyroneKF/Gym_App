@@ -346,11 +346,17 @@ public abstract class Add_Screen extends Screen_JPanel
         //########################
         if (this instanceof Add_Stores)
         {
-            sharedDataRegistry.add_Store(new Store_ID_OBJ(id, jTextField_TXT), true);
+            sharedDataRegistry.add_Store(
+                    new Store_ID_OBJ(id, false, jTextField_TXT),
+                    true
+            );
         }
         else if (this instanceof Add_Ingredient_Type)
         {
-            sharedDataRegistry.add_Ingredient_Type(new Ingredient_Type_ID_OBJ(id, jTextField_TXT), true);
+            sharedDataRegistry.add_Ingredient_Type(
+                    new Ingredient_Type_ID_OBJ(id, false, jTextField_TXT),
+                    true
+            );
         }
         else
         {

@@ -12,9 +12,9 @@ public final class Ingredient_Name_ID_OBJ extends Storable_IDS_Parent
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
-    public Ingredient_Name_ID_OBJ(int id, String name, Ingredient_Type_ID_OBJ type_ID_OBJ)
+    public Ingredient_Name_ID_OBJ(int id, boolean is_System, String name, Ingredient_Type_ID_OBJ type_ID_OBJ)
     {
-        super(id, name);
+        super(id, is_System, name);
         
         set_Ingredient_Type_ID_Obj(type_ID_OBJ);
     }
