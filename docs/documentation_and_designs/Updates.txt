@@ -13,6 +13,7 @@ CREATE TEMPORARY TABLE
 
 use delete triggers to prevent core data being deleted
 
+Edit Views to match on plan_id as well as meal_id
 
 ######################################################################################
 Work On:
