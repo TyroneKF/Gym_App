@@ -6,8 +6,7 @@ package App_Code.Objects.Tables.JTable_JDBC.Parent;
 
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
-import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_MySQL;
-
+import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
@@ -21,7 +20,7 @@ public abstract class JDBC_JTable extends JPanel
     //##############################################
     // Objects
     //##############################################
-    protected MyJDBC_MySQL db;
+    protected MyJDBC_Sqlite sqlite_db;
     protected Container parent_Container;
     protected JScrollPane scrollPane = new JScrollPane();
     protected static GridBagConstraints gbc = new GridBagConstraints(); //HELLO DELETE
@@ -52,6 +51,7 @@ public abstract class JDBC_JTable extends JPanel
     //##############################################
     // String
     private final String class_Name;
+    protected String lineSeparator = "###############################################################################";
     
     // Booleans
     protected boolean
@@ -65,7 +65,7 @@ public abstract class JDBC_JTable extends JPanel
     //##################################################################################################################
     public JDBC_JTable
     (
-            MyJDBC_MySQL db,
+            MyJDBC_Sqlite sqlite_db,
             Container parent_Container,
             boolean add_JTable_Action,
             String table_Name,
@@ -81,7 +81,7 @@ public abstract class JDBC_JTable extends JPanel
         //##############################################################
         // Variables
         //##############################################################
-        this.db = db;
+        this.sqlite_db = sqlite_db;
         this.saved_Data = saved_Data != null ? saved_Data : new ArrayList<>();
         
         this.parent_Container = parent_Container;
@@ -286,7 +286,16 @@ public abstract class JDBC_JTable extends JPanel
             //
             // ######################################################
             this.column_Names = column_Names;
-            this.current_Table_Data = clone_Data(input_Data);
+            
+            try // Validate
+            {
+                this.current_Table_Data = clone_Data(input_Data);
+            }
+            catch (Exception e)
+            {
+                System.err.printf("\n\n%s \n%s Error -> > Failed Setting Table Data \n%s \n\n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
+                JOptionPane.showMessageDialog(null, String.format("Table Data & Expected Data Miss-Match - '%s'!", table_Name));
+            }
         }
         
         @Override
@@ -440,49 +449,62 @@ public abstract class JDBC_JTable extends JPanel
         
         public void refresh_Data()
         {
-            // ######################################################
-            // Clear DATA
-            // ######################################################
-            current_Table_Data.clear();
-            current_Table_Data = clone_Data(saved_Data);
+           
+            try // Refresh Data
+            {
+                current_Table_Data = clone_Data(saved_Data);
+            }
+            catch (Exception e)
+            {
+                JOptionPane.showMessageDialog(null, String.format("Unable to Refresh Table - '%s'!", table_Name));
+                System.err.printf("\n\n%s \n%s Error -> > Failed Setting Table Data \n%s \n\n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
+                return;
+            }
             
-            // ######################################################
-            //
-            // ######################################################
+            // Apply Updates
             fireTableDataChanged(); // notifies JTable to redraw everything
             resize_Object();
         }
         
         public void save_Data()
         {
-            saved_Data.clear();
-            saved_Data = clone_Data(current_Table_Data);
+            try
+            {
+                saved_Data = clone_Data(current_Table_Data);
+            }
+            catch (Exception e)
+            {
+                System.err.printf("\n\n%s \n%s Error -> > Failed Setting Table Data \n%s \n\n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
+                JOptionPane.showMessageDialog(null, String.format("Unable to Save Table - '%s'!", table_Name));
+            }
         }
         
-        private ArrayList<ArrayList<Object>> clone_Data(ArrayList<ArrayList<Object>> source_Data)
+        private ArrayList<ArrayList<Object>> clone_Data(ArrayList<ArrayList<Object>> source_Data) throws Exception
         {
+            // ######################################################
+            // Validation Checks
+            // ######################################################
+            validate_source_data(get_Method_Name(3), source_Data);
+            
+            // ######################################################
+            // Create DataSet by manually adding each Cell
+            // ######################################################
             /*
-             * Although this does look long alternative methods dont work
+             * Although this does look long alternative methods don't work
              * .clone() references the original list so still creates error when recalling savedData list
              * Datatypes like BigDecimal & LocalTime needed to be completely recreated from scratch as they
              * will still reference the original source.
              */
             
-            // ######################################################
-            // Create DataSet by manually adding each Cell
-            // ######################################################
             ArrayList<ArrayList<Object>> temp_Data = new ArrayList<>();
             
-            int row_Size = source_Data.size(), column_Size = column_Names.size();
-            
-            for (int row = 0; row < row_Size; row++)
+            for (ArrayList<Object> reading_Row : source_Data)
             {
-                ArrayList<Object> reading_Row = source_Data.get(row);
                 ArrayList<Object> new_Row = new ArrayList<>();
                 
-                for (int col = 0; col < column_Size; col++)
+                for (Object obj : reading_Row)
                 {
-                    new_Row.add(reading_Row.get(col));
+                    new_Row.add(obj);
                 }
                 
                 temp_Data.add(new_Row);
@@ -498,6 +520,33 @@ public abstract class JDBC_JTable extends JPanel
     public Object get_Value_On_Model_Data(int row, int col)
     {
         return tableModel.getValueAt(row, col);
+    }
+    
+    private void validate_source_data(String method_name, ArrayList<?> source_Data) throws Exception
+    {
+        if (source_Data == null) // null data causes an error
+        {
+            throw new Exception(String.format("\n\n%s Error \nSource_Data cannot be null!", get_Class_And_Method_Name()));
+        }
+        
+        int column_name_size = column_Names.size();
+        
+        boolean is_2D = source_Data.getFirst() instanceof ArrayList<?>;
+ 
+        int source_data_size = is_2D ? ((ArrayList<ArrayList<?>>) source_Data).getFirst().size():  source_Data.size();
+        
+        if (source_data_size != column_name_size) // Source Data has to provide data for each expected column
+        {
+            throw new Exception(String.format("""
+                    %s @ -> %s Error
+                    Source_Data Column Count Mis-Match!
+                    
+                    Column Names (%s):
+                    %s%n
+                    
+                    Expected %s
+                    Received  %s""", get_Class_Name(), method_name, column_name_size, column_Names, column_name_size, source_data_size));
+        }
     }
     
     //###########################
@@ -531,8 +580,21 @@ public abstract class JDBC_JTable extends JPanel
         tableModel.setValueAt(data, row, col);
     }
     
-    protected void update_Table(ArrayList<Object> update_Data, int update_Row)
+    protected void update_Table_Row(ArrayList<Object> update_Data, int update_Row) throws Exception
     {
+        //########################################################################
+        // Validate Source Data
+        //########################################################################
+        try
+        {
+            validate_source_data(get_Method_Name(3), update_Data);
+        }
+        catch (Exception e)
+        {
+            System.err.printf("\n\n%s \n%s Error -> > Failed Setting Table Data \n%s \n\n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
+            throw new Exception("\n\nFailed Update");
+        }
+        
         //########################################################################
         // Updating Table Info
         //########################################################################

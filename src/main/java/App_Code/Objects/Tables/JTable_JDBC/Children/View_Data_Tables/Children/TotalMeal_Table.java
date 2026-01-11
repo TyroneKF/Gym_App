@@ -1,6 +1,6 @@
 package App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Children;
 
-import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_MySQL;
+import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
 import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Parent.MyJTable_DisplayData;
 import App_Code.Objects.Tables.MealManager;
 
@@ -17,7 +17,7 @@ public class TotalMeal_Table extends MyJTable_DisplayData
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public TotalMeal_Table(MyJDBC_MySQL db, MealManager mealManager, int meal_In_Plan_ID, ArrayList<Object> data)
+    public TotalMeal_Table(MyJDBC_Sqlite db, MealManager mealManager, int meal_In_Plan_ID, ArrayList<Object> data)
     
     {
         //##########################################
@@ -29,8 +29,7 @@ public class TotalMeal_Table extends MyJTable_DisplayData
                 new ArrayList<>(Collections.singletonList(data)),
                 mealManager.get_Total_Meal_Table_Column_Names(),
                 mealManager.get_Plan_ID(),
-                mealManager.get_Temp_PlanID(),
-                "total_meal_view",
+                "draft_gui_total_meal_view",
                 mealManager.get_Total_Meal_Table_Column_Names(),
                 null,
                 mealManager.get_TotalMeal_Table_Cols_To_Hide()

@@ -13,8 +13,6 @@ import java.util.*;
 
 public class Shared_Data_Registry
 {
-    private Meal_Plan_Screen meal_plan_screen;
-    
     //##################################################################################################################
     // Collections
     //##################################################################################################################
@@ -64,6 +62,12 @@ public class Shared_Data_Registry
     private ArrayList<Ingredient_Name_ID_OBJ> ingredient_Names_Obj_AL = new ArrayList<>();
     
     //##################
+    // Material Type
+    //##################
+    private HashMap<Integer, Measurement_Material_Type_ID_OBJ> measurement_Material_Type_Obj_Map = new HashMap<>();
+    private ArrayList<Measurement_Material_Type_ID_OBJ> measurement_Material_Type_Obj_AL = new ArrayList<>();
+    
+    //##################
     // Measurements
     //##################
     private HashMap<Integer, Measurement_ID_OBJ> ingredient_Measurement_Obj_Map = new HashMap<>();
@@ -77,7 +81,6 @@ public class Shared_Data_Registry
         //##################################
         // Variables
         //##################################
-        this.meal_plan_screen = meal_plan_screen;
         this.totalMeal_Macro_Pos_And_Symbol = meal_plan_screen.get_TotalMeal_macro_Col_Name_And_Pos();
         
         //##################################
@@ -580,7 +583,7 @@ public class Shared_Data_Registry
         sort_ID_Objects_AL(ingredient_Names_Objs_AL);
         
         // Add Ingredient Types to Map
-        if(previous_Ingredients)
+        if (previous_Ingredients)
         {
             ingredient_Types_To_Names_Map.put(ingredient_Type_Id, ingredient_Names_Objs_AL);
         }
@@ -668,8 +671,22 @@ public class Shared_Data_Registry
         return stores_Obj_Map.get(id);
     }
     
+    
     //#################################################################
-    // Stores
+    // Measurement Material Type
+    //#################################################################
+    public void add_Measurement_Material_Type(Measurement_Material_Type_ID_OBJ measurement_material_id_obj, boolean sort)
+    {
+        add_ID_Object(measurement_material_id_obj, measurement_Material_Type_Obj_AL, sort, measurement_Material_Type_Obj_Map);
+    }
+    
+    public Measurement_Material_Type_ID_OBJ get_Measurement_Material_Type_ID_OBJ(int id)
+    {
+        return measurement_Material_Type_Obj_Map.get(id);
+    }
+    
+    //#################################################################
+    // Measurement
     //#################################################################
     public void add_Measurement(Measurement_ID_OBJ measurement_id_obj, boolean sort)
     {

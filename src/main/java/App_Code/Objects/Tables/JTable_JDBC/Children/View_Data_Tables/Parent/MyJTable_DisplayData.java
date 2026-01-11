@@ -1,6 +1,6 @@
 package App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Parent;
 
-import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_MySQL;
+import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
 import App_Code.Objects.Tables.JTable_JDBC.Parent.JDBC_JTable;
 
 import javax.swing.*;
@@ -14,12 +14,11 @@ public abstract class MyJTable_DisplayData extends JDBC_JTable
     protected int update_Row = 0;
     
     public MyJTable_DisplayData(
-            MyJDBC_MySQL db,
+            MyJDBC_Sqlite db,
             Container parent_Container,
             ArrayList<ArrayList<Object>> data,
             ArrayList<String> column_Names,
             int plan_ID,
-            int temp_Plan_ID,
             String table_Name,
             ArrayList<String> un_Editable_Columns,
             ArrayList<String> col_Avoid_Centering,
@@ -42,7 +41,6 @@ public abstract class MyJTable_DisplayData extends JDBC_JTable
         );
         
         this.plan_ID = plan_ID;
-        this.temp_Plan_ID = temp_Plan_ID;
         
         // #################################################
         // Stop Rows From Being Highlighted From Selection
@@ -130,11 +128,12 @@ public abstract class MyJTable_DisplayData extends JDBC_JTable
         
         try
         {
-            ArrayList<ArrayList<Object>> tableDataObject = db.get_2D_Query_AL_Object(get_Query(), get_Params(), errorMSG, false);
-            super.update_Table(tableDataObject.getFirst(), update_Row);
+            ArrayList<ArrayList<Object>> tableDataObject = sqlite_db.get_2D_Query_AL_Object(get_Query(), get_Params(), errorMSG, false);
+            super.update_Table_Row(tableDataObject.getFirst(), update_Row);
         }
-        catch (Exception _) // Error is already handled by DB classs
+        catch (Exception _) // Error is already handled by DB class
         {
+            JOptionPane.showMessageDialog(null, String.format("Unable to Update Table - '%s'!", table_Name));
         }
     }
 }

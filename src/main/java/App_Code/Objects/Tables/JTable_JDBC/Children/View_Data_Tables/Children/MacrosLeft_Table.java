@@ -1,6 +1,7 @@
 package App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Children;
 
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_MySQL;
+import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
 import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Parent.MyJTable_DisplayData;
 
 import java.awt.*;
@@ -10,12 +11,11 @@ public class MacrosLeft_Table extends MyJTable_DisplayData
 {
     
     public MacrosLeft_Table(
-            MyJDBC_MySQL db,
+            MyJDBC_Sqlite db,
             Container parentContainer,
             ArrayList<ArrayList<Object>> data,
             ArrayList<String> columnNames,
             int planID,
-            int temp_PlanID,
             ArrayList<String> colAvoidCentering,
             ArrayList<String> columnsToHide
     )
@@ -26,8 +26,7 @@ public class MacrosLeft_Table extends MyJTable_DisplayData
                 data,
                 columnNames,
                 planID,
-                temp_PlanID,
-                "plan_macros_left",
+                "draft_gui_plan_macros_left",
                 columnNames,
                 colAvoidCentering,
                 columnsToHide

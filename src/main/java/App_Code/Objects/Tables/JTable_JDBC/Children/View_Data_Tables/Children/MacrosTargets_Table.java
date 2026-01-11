@@ -1,6 +1,7 @@
 package App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Children;
 
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_MySQL;
+import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
 import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Parent.MyJTable_DisplayData;
 
 import java.awt.*;
@@ -9,12 +10,11 @@ import java.util.ArrayList;
 public class MacrosTargets_Table extends MyJTable_DisplayData
 {
     public MacrosTargets_Table(
-            MyJDBC_MySQL db,
+            MyJDBC_Sqlite db,
             Container parentContainer,
             ArrayList<ArrayList<Object>> data,
             ArrayList<String> columnNames,
             int planID,
-            int temp_PlanID,
             ArrayList<String> colAvoidCentering,
             ArrayList<String> columnsToHide
     )
@@ -25,8 +25,7 @@ public class MacrosTargets_Table extends MyJTable_DisplayData
                 data,
                 columnNames,
                 planID,
-                temp_PlanID,
-                "plan_macro_target_calculations",
+                "draft_gui_plan_macro_target_calculations",
                 columnNames,
                 colAvoidCentering,
                 columnsToHide

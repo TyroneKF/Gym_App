@@ -1,10 +1,7 @@
 package App_Code.Objects.Screens;
 
-import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
-import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
+import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.*;
 import App_Code.Objects.Data_Objects.ID_Objects.MetaData_ID_Object.Meal_ID;
-import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Measurement_ID_OBJ;
-import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Children.MacrosLeft_Table;
@@ -21,12 +18,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.javatuples.Pair;
 import org.jfree.data.time.Second;
-
 import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.List;
 
 public class Meal_Plan_Screen extends Screen_JFrame
 {
@@ -55,7 +53,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     
     private PieChart_Screen_MPS pieChart_Screen_MPS = null;
     private LineChart_MPS lineChart_MPS = null;
-   
+    
     //###############################################
     // Integers
     //###############################################
@@ -93,7 +91,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
      * <p>
      * Meal_ID = Meal ID / Name/ Time inside Object
      */
-    private LinkedHashMap<Integer, Meal_ID> meals_Data_Map = new LinkedHashMap<>();
+    private LinkedHashMap<Integer, Meal_ID> meals_ID_OBJ_Map = new LinkedHashMap<>();
     
     /**
      * HashMap<Integer, HashMap<Integer, ArrayList<ArrayList<Object>>>> sub_Meals_Data = new HashMap<>();
@@ -107,48 +105,38 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // Database Table Names
     //##################################################
     private final static String
-            db_Scripts_Folder_Path = "/data/database_scripts",
-            db_File_Script_List_Name = "0.) Script_List.txt",
-    
-    // Table Names Frequently Used
-    table_Plans_Name = "plans",
-            table_name_active_plans = "active_plans",
-            table_Plans_Version_Name = "plan_versions",
+            
+            // Table Names Frequently Used
+            
             table_Macros_Per_Pound_Limit_Name = "macros_per_pound_and_limits_versions",
-            table_Plan_Macro_Targets_Name_Calc = "plan_macro_target_calculations",
-            table_Ingredients_Info_Name = "ingredients_info",
-            table_Ingredients_Type_Name = "ingredient_types",
-            table_Stores_Name = "stores",
+    
+    table_Stores_Name = "stores",
     
     table_Meals_In_Plan_Name = "meals_in_plan",
             table_Sub_MealsName = "divided_meal_sections_versions",
-            table_Ingredients_In_Meal_Sections = "ingredients_in_sections_of_meal_versions",
-            table_Ingredients_Calculation_Name = "ingredients_in_sections_of_meal_calculation_gui",
-            table_Total_Meals_Table_Name = "total_meal_view",
-            table_Total_Plan_Table_Name = "total_plan_view",
-            table_Plan_Macros_Left_Name = "plan_macros_left";
+            table_Ingredients_In_Meal_Sections = "ingredients_in_sections_of_meal";
     
     //##################################################################################################################
     // Ingredients Table Columns
     //##################################################################################################################
-    // Table: ingredients_in_sections_of_meal_calculation
+    // Table: draft_gui_ingredients_in_sections_of_meal_calculation
     private final ArrayList<String> ingredients_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList(
             "ingredient_type", "ingredient_name"));
     
     private final ArrayList<String> ingredients_Table_Un_Editable_Cells = new ArrayList<>(Arrays.asList(
-            "ingredients_index", "protein", "gi", "carbohydrates", "sugars_of_carbs",
+            "draft_ingredients_index", "protein", "gi", "carbohydrates", "sugars_of_carbs",
             "fibre", "fat", "saturated_fat", "salt", "water_content", "calories"
     ));
     
     private final ArrayList<String> ingredients_In_Meal_Table_Col_To_Hide = new ArrayList<>(Arrays.asList(
-            "plan_id", "div_meal_sections_id", "ingredients_index", "water_content"
+            "draft_ingredients_index", "water_content"
     ));
     
     //##################################################################################################################
-    // TotalMealView Table
+    // Total_Meal_View Table : draft_gui_total_meal_view
     //##################################################################################################################
     private final ArrayList<String> total_Meal_Table_Col_To_Hide = new ArrayList<String>(Arrays.asList(
-            "plan_id", "meal_name", "meal_in_plan_id"
+            "draft_meal_in_plan_id", "meal_name"
     ));
     
     /**
@@ -169,7 +157,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     }};
     
     private final HashMap<String, Integer> total_Meal_Other_Cols_Positions = new HashMap<>()
-    {{
+    {{ // These 2 columns are needed for external charts
         put("meal_time", null);
         put("meal_name", null);
     }};
@@ -177,13 +165,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //##################################################################################################################
     // Other Table Customisations
     //##################################################################################################################
-    // Table : plan_macro_target_calculations
-    private final ArrayList<String> macros_Targets_Table_Col_To_Hide = new ArrayList<String>(Arrays.asList(
-            "plan_id", "plan_name", "date_time_of_creation"
-    ));
+    // Table : draft_gui_plan_macro_target_calculations
+    private final ArrayList<String> macros_Targets_Table_Col_To_Hide = new ArrayList<String>(List.of("plan_id"));
     
-    // Table : plan_macros_left
-    private final ArrayList<String> macros_Left_Table_Col_To_Hide = new ArrayList<String>(Arrays.asList("plan_id", "plan_name"));
+    // Table : draft_gui_plan_macros_left
+    private final ArrayList<String> macros_Left_Table_Col_To_Hide = new ArrayList<String>(List.of("plan_id"));
     
     //##################################################################################################################
     // Constructor & Main
@@ -230,15 +216,14 @@ public class Meal_Plan_Screen extends Screen_JFrame
          *  1.) Getting Selected User Info & Their Active Plan Info
          *  2.) Getting Table Column Names
          *  3.) Getting Number Of Meals & Sub meals Count for Active Plan         *
-         *  4.) Transferring PLan Data To Temp Plan_Data
+         *  4.) Transferring PLan Data To DRAFT  Plan_Data
+         *  5.) Transfer Plan Targets
+         *  6.) Transferring Meals Data
+         *  7.) Main GUI Setup (excluding adding meals)
+         *  8.) MacroTargets Setup
+         *  9.) MacrosLeft Setup
          *
-         *  5.) Main GUI Setup (excluding adding meals)
-         *  6.) MacroTargets Setup
-         *  7.) MacrosLeft Setup
          *
-         *  1.) Transfer Plan Data
-         *  2.) Transfer Plan Targets
-         *  3.) Transferring Meals Data
          *  4.) Get Ingredient Names & Types
          *  5.) Main GUI Setup (excluding adding meals)
          *  6.) MacroTargets Setup
@@ -260,15 +245,14 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################################
         // Transferring PLan Data To Temp
         //####################################################
-        if (! transfer_Plan_Data(selected_Plan_Version_ID)) { failed_Start_UP(loading_Screen); return; }
+        if (! setup_transfer_Plan_Data()) { failed_Start_UP(loading_Screen); return; }
         
         loading_Screen.increaseBar(10);
-        System.out.printf("\nChosen Plan: %s  & Chosen Plan Name: %s \n\n%s", selected_Plan_Version_ID, plan_Name, lineSeparator);
         
         //####################################################
         // Transferring Targets From Chosen PLan to Temp
         //####################################################
-        if (! transfer_Targets(selected_Plan_Version_ID, temp_Plan_ID, true, false))
+        if (! setup_transfer_Targets())
         {
             failed_Start_UP(loading_Screen); return;
         }
@@ -278,7 +262,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################################
         // Transferring this plans Meals  Info to Temp-Plan
         //####################################################
-        if (! (transfer_Meal_Ingredients(selected_Plan_Version_ID, temp_Plan_ID)))
+        if (! setup_transfer_Meal_Data())
         {
             failed_Start_UP(loading_Screen); return;
         }
@@ -288,11 +272,16 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################################
         // Get DATA Methods
         //####################################################
+        System.out.printf("\n\n%s \nGetting Meta Data Objects \n%s ", lineSeparator, lineSeparator);
+        
         // Get Ingredient Types Mapped to Ingredient Names
         if (! setup_Get_Ingredient_Types_And_Ingredient_Names()) { failed_Start_UP(loading_Screen); return; }
         
         // Get Stores DATA
         if (! setup_Get_Stores_Data()) { failed_Start_UP(loading_Screen); return; }
+        
+        // Get Measurement Material Type DATA
+        if (! setup_Get_Measurement_Material_Type_Data()) { failed_Start_UP(loading_Screen); return; }
         
         // Get Measurement DATA
         if (! setup_Get_Measurement_Data()) { failed_Start_UP(loading_Screen); return; }
@@ -317,7 +306,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###############################################################################
         // Build GUI
         //###############################################################################
-        System.out.printf("\nMeal_Plan_Screen.java : Creating GUI Screen \n%s", lineSeparator); // Update
+        System.out.printf("\n\n%s \nMeal_Plan_Screen.java : Creating GUI Screen \n%s ", lineSeparator, lineSeparator); // Update
         
         //##############################
         // Splitting Scroll JPanel
@@ -382,12 +371,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // MacroTargets Table
         //############################
         macros_Targets_Table = new MacrosTargets_Table(
-                db,
+                db_Sqlite,
                 macrosInfoJPanel,
                 macros_plan_Data,
                 macroTargets_ColumnNames,
-                selected_Plan_Version_ID,
-                temp_Plan_ID,
+                selected_Plan_ID,
                 null,
                 macros_Targets_Table_Col_To_Hide
         );
@@ -400,12 +388,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // plan_Macros_Left Table
         //############################
         macros_Left_JTable = new MacrosLeft_Table(
-                db,
+                db_Sqlite,
                 macrosInfoJPanel,
                 macrosData,
                 macrosLeft_columnNames,
-                selected_Plan_Version_ID,
-                temp_Plan_ID,
+                selected_Plan_ID,
                 null,
                 macros_Left_Table_Col_To_Hide
         );
@@ -426,13 +413,13 @@ public class Meal_Plan_Screen extends Screen_JFrame
          *  HashMap<Integer, HashMap<Integer, ArrayList<ArrayList<Object>>>> sub_Meals_Data = new HashMap<>();
          *  HashMap<Meal_ID [Meal_ID, Meal_Time, Meal_Name], HashMap<Div_ID, List Of Ingredients>
          */
-        for (Map.Entry<Integer, Meal_ID> meal_Entry : meals_Data_Map.entrySet())
+        for (Map.Entry<Integer, Meal_ID> meal_Entry : meals_ID_OBJ_Map.entrySet())
         {
             // Get Meal ID
             int meal_ID = meal_Entry.getKey();
             
             // Get Meal OBJ Data From Map
-            Meal_ID meal_ID_Obj = meals_Data_Map.get(meal_ID);
+            Meal_ID meal_ID_Obj = meals_ID_OBJ_Map.get(meal_ID);
             
             // Get Associated Sub-Meals
             LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> sub_Meal_DATA = sub_Meals_Data_Map.get(meal_ID);
@@ -441,7 +428,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             ArrayList<Object> total_Meal_DATA = total_Meals_Data_Map.get(meal_ID);
             
             // Create MealManager
-            MealManager mealManager = new MealManager(this, db, macros_Left_JTable, meal_ID_Obj, sub_Meal_DATA, total_Meal_DATA);
+            MealManager mealManager = new MealManager(this, db_Sqlite, macros_Left_JTable, meal_ID_Obj, sub_Meal_DATA, total_Meal_DATA);
             
             // ADD MealManager To Memory
             shared_Data_Registry.addMealManager(mealManager);
@@ -453,6 +440,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             loading_Screen.increaseBar(1 + sub_Meal_DATA.size()); // + original meal + the sub-meal
         }
         
+        loading_Screen.increaseBar(11);
         //###############################################################################
         //
         //###############################################################################
@@ -508,9 +496,325 @@ public class Meal_Plan_Screen extends Screen_JFrame
         macros_plan_Data = null;
         macrosData = null;
         
-        meals_Data_Map = null;
+        meals_ID_OBJ_Map = null;
         sub_Meals_Data_Map = null;
         total_Meals_Data_Map.clear();
+    }
+    
+    //#################################################
+    // Transfer Data Methods
+    //#################################################
+    private boolean setup_transfer_Plan_Data()
+    {
+        //###############################################
+        // Variables
+        //###############################################
+        LinkedHashSet<Pair<String, Object[]>> upload_queries_and_params = new LinkedHashSet<>();
+        String errorMSG = "Unable to Transfer Plan Data!";
+        
+        //###############################################
+        // Upload Queries
+        //###############################################
+        
+        // Delete Users Old Active Plan and Replace
+        String query1 = "DELETE FROM draft_plans WHERE plan_id = ?";
+        upload_queries_and_params.add(new Pair<>(query1, new Object[]{ selected_Plan_ID }));
+        
+        // Create New Draft Plan Based On Active Plan
+        String query2 = "INSERT INTO draft_plans (plan_id, user_id) VALUES (?,?);";
+        upload_queries_and_params.add(new Pair<>(query2, new Object[]{ selected_Plan_ID, user_id }));
+        
+        //####################################
+        // Execute Upload Statements
+        //####################################
+        if (! (db_Sqlite.upload_Data_Batch(upload_queries_and_params, errorMSG)))
+        {
+            System.err.printf("\n\n%s \n%s Error \n%s \nFailed Transferring Plan_Data",
+                    lineSeparator, get_Class_And_Method_Name(), lineSeparator);
+            
+            return false;
+        }
+        
+        //###############################################
+        // Output
+        //###############################################
+        System.out.printf("\n\n%s \nPlanData Successfully Transferred! \n%s", lineSeparator, lineSeparator);
+        System.out.printf("\nChosen Plan: %s  \nChosen Plan Name: %s", selected_Plan_Version_ID, plan_Name);
+        
+        return true;
+    }
+    
+    private boolean setup_transfer_Targets()
+    {
+        //###############################################
+        // Variables
+        //###############################################
+        LinkedHashSet<Pair<String, Object[]>> upload_queries_and_params = new LinkedHashSet<>();
+        String errorMSG = "Unable to Transfer Plan Macro Targets!";
+        
+        //###############################################
+        // Upload Queries
+        //###############################################
+        
+        // Create Temp Table From Chosen Plan Macro Data
+        String query_01 = "CREATE TEMPORARY TABLE temp_targets AS SELECT * FROM macros_per_pound_and_limits WHERE plan_version_id = ?;";
+        
+        upload_queries_and_params.add(new Pair<>(query_01, new Object[]{ selected_Plan_Version_ID }));
+        
+        // Insert Plan_Version Macros
+        String query_03 = """
+                
+                INSERT INTO draft_macros_per_pound_and_limits
+                (
+                    plan_id,
+                    user_id,
+                    current_weight_kg,
+                    current_weight_in_pounds,
+                    body_fat_percentage,
+                    protein_per_pound,
+                    carbohydrates_per_pound,
+                    fibre,
+                    fats_per_pound,
+                    saturated_fat_limit,
+                    salt_limit,
+                    water_target,
+                    additional_calories
+                )
+                SELECT
+                
+                    ?,
+                    user_id,
+                    current_weight_kg,
+                    current_weight_in_pounds,
+                    body_fat_percentage,
+                    protein_per_pound,
+                    carbohydrates_per_pound,
+                    fibre,
+                    fats_per_pound,
+                    saturated_fat_limit,
+                    salt_limit,
+                    water_target,
+                    additional_calories
+                
+                FROM temp_targets;""";
+        
+        upload_queries_and_params.add(new Pair<>(query_03, new Object[]{ selected_Plan_ID }));
+        
+        //###############################################
+        // Execute Upload Statements
+        //###############################################
+        if (! (db_Sqlite.upload_Data_Batch(upload_queries_and_params, errorMSG)))
+        {
+            System.err.printf("\n\n%s \n%s Error \n%s \nFailed Transferring Macro Plan Targets!",
+                    lineSeparator, get_Class_And_Method_Name(), lineSeparator);
+            
+            return false;
+        }
+        
+        //###############################################
+        // Output
+        //###############################################
+        System.out.printf("\n\n%s \nMacro Plan Target Data Successfully Transferred! \n%s", lineSeparator, lineSeparator);
+        return true;
+    }
+    
+    private boolean setup_transfer_Meal_Data()
+    {
+        //################################################################
+        // Variables
+        //################################################################
+        LinkedHashSet<Pair<String, Object[]>> upload_queries_and_params = new LinkedHashSet<>();
+        String errorMSG = "Unable to Transfer Meals Data Into Plan!";
+        
+        
+        //################################################################
+        // Transferring Meals From Versioned to Draft Meals
+        //################################################################
+        
+        // Copy Versioned Meals From Plan_Version Into Temp Table ORDERED by meal_in_plan_version_id
+        String query_1 = """
+                CREATE TEMPORARY TABLE temp_versioned_meals AS
+                
+                    SELECT
+                
+                        ROW_NUMBER() OVER (ORDER BY meal_in_plan_version_id ASC) AS rn,
+                
+                        meal_in_plan_version_id,
+                        meal_in_plan_id,
+                
+                        plan_version_id,
+                        date_time_last_edited,
+                        meal_name,
+                        meal_time
+                
+                    FROM meals_in_plan_versions
+                    WHERE plan_version_id = ?
+                    ORDER BY meal_in_plan_version_id ASC;""";
+        
+        upload_queries_and_params.add(new Pair<>(query_1, new Object[]{ selected_Plan_Version_ID }));
+        
+        // Insert Into Draft Meals Using Meal Versions MetaData
+        String query_03 = """
+                INSERT INTO draft_meals_in_plan
+                (
+                    meal_in_plan_id,
+                    plan_id,
+                    date_time_last_edited,
+                    meal_name,
+                    meal_time
+                )
+                SELECT
+                
+                    meal_in_plan_id,
+                    ?,
+                    date_time_last_edited,
+                    meal_name,
+                    meal_time
+                
+                FROM temp_versioned_meals
+                ORDER BY rn;""";
+        
+        upload_queries_and_params.add(new Pair<>(query_03, new Object[]{ selected_Plan_ID }));
+        
+        // Insert Created Meals Into Anchor Table & Order Draft Meals By Creation Order (ID)
+        String query_04 = """
+                CREATE TEMPORARY TABLE temp_draft_meals_anchor AS
+                SELECT
+                
+                    ROW_NUMBER() OVER (ORDER BY draft_meal_in_plan_id ASC) AS rn,
+                    draft_meal_in_plan_id,
+                    meal_in_plan_id
+                
+                
+                FROM draft_meals_in_plan
+                WHERE plan_id = ?
+                ORDER BY draft_meal_in_plan_id ASC;""";
+        
+        upload_queries_and_params.add(new Pair<>(query_04, new Object[]{ selected_Plan_ID }));
+        
+        //################################################################
+        // Transferring Versioned Sub-Meals To Draft
+        //################################################################
+        
+        // Insert All Sub-Meals From Versioned Into Temp
+        String query_05 = """
+                CREATE TEMPORARY TABLE temp_versioned_sub_meals AS
+                
+                    SELECT
+                
+                        ROW_NUMBER() OVER (ORDER BY div_meal_sections_version_id ASC) AS rn,
+                
+                        div_meal_sections_version_id,
+                        div_meal_sections_id,
+                
+                        meal_in_plan_version_id,
+                        date_time_last_edited,
+                        sub_meal_name,
+                        sub_meal_time
+                
+                    FROM divided_meal_sections_versions
+                    WHERE plan_version_id = ?
+                    ORDER BY div_meal_sections_version_id ASC;""";
+        
+        upload_queries_and_params.add(new Pair<>(query_05, new Object[]{ selected_Plan_ID }));
+        
+        // Insert Versioned Sub-Meals Into Draft Sub-Meals In Order
+        String query_06 = """
+                INSERT INTO draft_divided_meal_sections
+                (
+                    div_meal_sections_id,
+                    draft_meal_in_plan_id,
+                    plan_id,
+                    date_time_last_edited,
+                    sub_meal_name,
+                    sub_meal_time
+                )
+                SELECT
+                
+                    S.div_meal_sections_id,
+                    T.draft_meal_in_plan_id,
+                    ?,
+                    S.date_time_last_edited,
+                    S.sub_meal_name,
+                    S.sub_meal_time
+                
+                FROM temp_versioned_sub_meals S
+                
+                INNER JOIN temp_versioned_meals M
+                    ON S.meal_in_plan_version_id = M.meal_in_plan_version_id
+                
+                INNER JOIN temp_draft_meals_anchor T
+                    ON M.meal_in_plan_id = T.meal_in_plan_id
+                
+                ORDER BY S.rn;""";
+        
+        upload_queries_and_params.add(new Pair<>(query_06, new Object[]{ selected_Plan_ID }));
+        
+        // Insert Created Sub-Meals Into Anchor Table & Order Draft Sub-Meals By Creation Order (ID)
+        String query_07 = """
+                CREATE TEMPORARY TABLE tmp_draft_sub_meal_anchors AS
+                SELECT
+                
+                    ROW_NUMBER() OVER (ORDER BY draft_div_meal_sections_id ASC) AS rn,
+                    draft_div_meal_sections_id,
+                    div_meal_sections_id
+                
+                FROM draft_divided_meal_sections
+                WHERE plan_id = ?
+                ORDER BY draft_div_meal_sections_id ASC;""";
+        
+        upload_queries_and_params.add(new Pair<>(query_07, new Object[]{ selected_Plan_ID }));
+        
+        //################################################################
+        // Transferring Ingredients From Versioned Sub-Meals To Draft
+        //################################################################
+        
+        // Insert Ingredients By Sub-Meal Order then by Index Order (Creation Order)
+        String query_08 = """
+                INSERT INTO draft_ingredients_in_sections_of_meal
+                (
+                    draft_div_meal_sections_id,
+                    ingredient_id,
+                    pdid,
+                    quantity
+                )
+                SELECT
+                
+                      A.draft_div_meal_sections_id,
+                      I.ingredient_id,
+                      I.pdid,
+                      I.quantity
+                
+                FROM ingredients_in_sections_of_meal I
+                
+                INNER JOIN temp_versioned_sub_meals T
+                    ON I.div_meal_sections_version_id = T.div_meal_sections_version_id
+                
+                INNER JOIN tmp_draft_sub_meal_anchors A
+                   ON T.div_meal_sections_id = A.div_meal_sections_id
+                
+                ORDER BY -- Order by sub_meals div order in temp table & then Ingredient index Order
+                    T.rn ASC, I.ingredients_index ASC;""";
+        
+        upload_queries_and_params.add(new Pair<>(query_08, null));
+        
+        //################################################################
+        // Execute
+        //################################################################
+        if (! (db_Sqlite.upload_Data_Batch(upload_queries_and_params, errorMSG)))
+        {
+            System.err.printf("\n\n%s \n%s Error \n%s \nFailed Transferring Plan Meals Data!",
+                    lineSeparator, get_Class_And_Method_Name(), lineSeparator);
+            
+            return false;
+        }
+        
+        //################################################################
+        // Output
+        //################################################################
+        System.out.printf("\n\n%s \nMeal Ingredients Successfully Transferred! \n%s", lineSeparator, lineSeparator);
+        
+        return true;
     }
     
     //#################################################
@@ -553,6 +857,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
             selected_Plan_ID = (Integer) db_results.getFirst().get(2);
             plan_Name = (String) db_results.getFirst().get(3);
             
+            System.out.printf("\n\nUser_ID : %s \nPlan_Version_ID  : %s \nPlan_ID : %s \nPlan_Name : %s",
+                    user_id, selected_Plan_Version_ID, selected_Plan_ID, plan_Name);
+            
             return true;
         }
         catch (Exception e)
@@ -567,20 +874,20 @@ public class Meal_Plan_Screen extends Screen_JFrame
         try
         {
             // column names : ingredients_in_sections_of_meal_calculation
-            ingredients_Column_Names = db_Sqlite.get_Column_Names_AL(table_Ingredients_Calculation_Name);
+            ingredients_Column_Names = db_Sqlite.get_Column_Names_AL("draft_gui_ingredients_in_sections_of_meal_calculation");
             
             // column names : total_meal_view
-            meal_total_column_Names = db_Sqlite.get_Column_Names_AL(table_Total_Meals_Table_Name);
+            meal_total_column_Names = db_Sqlite.get_Column_Names_AL("draft_gui_total_meal_view");
             
             // column names : plan_macro_target_calculations
-            macroTargets_ColumnNames = db_Sqlite.get_Column_Names_AL(table_Plan_Macro_Targets_Name_Calc);
+            macroTargets_ColumnNames = db_Sqlite.get_Column_Names_AL("draft_gui_plan_macro_target_calculations");
             
             // Get table column names for plan_macros_left
-            macrosLeft_columnNames = db_Sqlite.get_Column_Names_AL(table_Plan_Macros_Left_Name);
+            macrosLeft_columnNames = db_Sqlite.get_Column_Names_AL("draft_gui_plan_macros_left");
         }
         catch (Exception e)
         {
-            System.err.printf("\n\n%s \n%s Error \n%s  \n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
+            System.err.printf("\n\n%s \n%s Error \n%s \n\n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
             return false;
         }
         
@@ -608,178 +915,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
         return true;
     }
     
-    //#######################
-    // MetData
-    //#######################
-    public boolean setup_Get_Stores_Data()
-    {
-        //#######################################
-        // Create Get Query Results
-        //#######################################
-        String
-                errorMSG = "Error, Unable to get Ingredient Stores in Plan!",
-                query = String.format("SELECT store_id, store_name FROM %s ORDER BY store_name ASC;", table_Stores_Name);
-        
-        //#######################################
-        // Execute Query
-        //#######################################
-        ArrayList<ArrayList<Object>> results;
-        try
-        {
-            results = db.get_2D_Query_AL_Object(query, null, errorMSG, false);
-        }
-        catch (Exception e)
-        {
-            System.err.printf("\n\n%s \n%s Error \n%s  \n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
-            return false;
-        }
-        
-        //#######################################
-        // Process Data
-        //#######################################
-        for (ArrayList<Object> row : results)
-        {
-            // Add to DATA
-            shared_Data_Registry.add_Store(new Store_ID_OBJ((int) row.get(0), (String) row.get(1)), false);
-        }
-        
-        //#######################################
-        // Output
-        //#######################################
-        return true;
-    }
-    
-    public boolean setup_Get_Ingredient_Types_And_Ingredient_Names()
-    {
-        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        
-        //#######################################
-        // Create Get Query Results
-        //#######################################
-        String query = """
-                SELECT
-                
-                    T.ingredient_type_id AS type_id,
-                	T.ingredient_type_name AS type_name,
-                
-                	JSON_ARRAYAGG(
-                        JSON_OBJECT('id', I.ingredient_id,
-                            'name', I.ingredient_name
-                        )
-                    ) AS matched_ingredients
-                
-                FROM  ingredient_types T
-                LEFT JOIN  ingredients_info I ON T.ingredient_type_id = I.ingredient_type_id
-                
-                GROUP BY T.ingredient_type_id, T.ingredient_type_name
-                ORDER BY T.ingredient_type_name ASC;""";
-        
-        String errorMSG = "Unable to get Ingredient Types & Ingredient Names";
-        
-        //#######################################
-        // Execute Query
-        //#######################################
-        ArrayList<ArrayList<Object>> results;
-        
-        try
-        {
-            results = db.get_2D_Query_AL_Object(query, null, errorMSG, false);
-        }
-        catch (Exception e)
-        {
-            System.err.printf("\n\n%s \n%s Error \n%s  \n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
-            return false;
-        }
-        
-        //#######################################
-        // Go through Results
-        //#######################################
-        ObjectMapper mapper = new ObjectMapper();
-        HashMap<Ingredient_Type_ID_OBJ, ArrayList<Ingredient_Name_ID_OBJ>> mapped_Data = new HashMap<>();
-        
-        try
-        {
-            for (ArrayList<Object> row : results)
-            {
-                //#########################
-                // Get Info
-                //#########################
-                int type_ID = (int) row.get(0);
-                String type_name = (String) row.get(1);
-                
-                Ingredient_Type_ID_OBJ type_OBJ = new Ingredient_Type_ID_OBJ(type_ID, type_name);
-                
-                // Add to DATA
-                shared_Data_Registry.add_Ingredient_Type(type_OBJ, false); // Add ingredient Type
-                
-                //#########################
-                // Parsing JSON DATA
-                //#########################
-                JsonNode json_array = mapper.readTree((String) row.get(2));
-                
-                for (JsonNode node : json_array) // For loop through each node of Ingredients
-                {
-                    // Per Object Ingredient Object
-                    JsonNode id = node.get("id");
-                    JsonNode name = node.get("name");
-                    
-                    if (id.isNull()) { continue; }  // If values are empty skip
-                    
-                    // Add Ingredient_Name to DATA IF not NULL
-                    Ingredient_Name_ID_OBJ ingredient_Name_ID = new Ingredient_Name_ID_OBJ(id.asInt(), name.asText(), type_OBJ);
-                    shared_Data_Registry.add_Ingredient_Name(ingredient_Name_ID, true);
-                }
-            }
-            
-            return true;
-        }
-        catch (Exception e)
-        {
-            System.err.printf("\n\n%s error \n\n%s", methodName, e);
-            return false;
-        }
-    }
-    
-    public boolean setup_Get_Measurement_Data()
-    {
-        // Set Variables
-        String
-                query = "SELECT * FROM measurements ORDER BY unit_name;",
-                errorMSG = "Unable, to get Measurments Data";
-        
-        // Execute Query
-        ArrayList<ArrayList<Object>> data;
-        
-        try
-        {
-            data = db.get_2D_Query_AL_Object(query, null, errorMSG, false);
-        }
-        catch (Exception e)
-        {
-            System.err.printf("\n\n%s \n%s Error \n%s  \n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
-            return false;
-        }
-        
-        // Add Measurement OBJ
-        for (ArrayList<Object> row : data)
-        {
-            int id = (int) row.get(0);
-            String unit_Name = (String) row.get(1);
-            String unit_Symbol = (String) row.get(2);
-            String measured_Material_Type = (String) row.get(3);
-            
-            shared_Data_Registry.add_Measurement(
-                    new Measurement_ID_OBJ(id, unit_Name, unit_Symbol, measured_Material_Type), false
-            );
-        }
-        
-        // Return Output
-        return true;
-    }
-    
-    //#######################
-    // Meals Data
-    //#######################
     private boolean setup_Get_Meal_Counts()
     {
         String plan_Counts_ErrorMSG = "Unable to get Meals & Sub-Meals Count!";
@@ -831,7 +966,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
             no_of_meals = (Integer) meal_Count_Results.getFirst().get(0);
             no_of_sub_meals = (Integer) meal_Count_Results.getFirst().get(1);
             
-            System.out.printf("\n\n%s \nMeals In Plan: %s\nSub-Meals In Plan: %s \n", lineSeparator, no_of_meals, no_of_sub_meals);
+            System.out.printf("\n\n%s \nSuccessfully Got Meal Counts \n%s \nMeals In Plan: %s\nSub-Meals In Plan: %s",
+                    lineSeparator, lineSeparator, no_of_meals, no_of_sub_meals);
             
             return true;  // Execute Query
         }
@@ -842,6 +978,226 @@ public class Meal_Plan_Screen extends Screen_JFrame
         }
     }
     
+    //#######################
+    //  Transfer MetaData
+    //#######################
+    public boolean setup_Get_Ingredient_Types_And_Ingredient_Names()
+    {
+        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+        
+        //#######################################
+        // Create Get Query Results
+        //#######################################
+        String query = """
+                SELECT
+                
+                    T.ingredient_type_id AS type_id,
+                	T.ingredient_type_name AS type_name,
+                
+                	json_group_array(
+                        JSON_OBJECT('id', I.ingredient_id,
+                            'name', I.ingredient_name
+                        )
+                    ) AS matched_ingredients
+                
+                FROM  ingredient_types T
+                LEFT JOIN  ingredients_info I ON T.ingredient_type_id = I.ingredient_type_id
+                
+                GROUP BY T.ingredient_type_id, T.ingredient_type_name
+                ORDER BY T.ingredient_type_name ASC;""";
+        
+        String errorMSG = "Unable to get Ingredient Types & Ingredient Names";
+        
+        //#######################################
+        // Execute Query
+        //#######################################
+        ArrayList<ArrayList<Object>> results;
+        
+        try
+        {
+            results = db_Sqlite.get_2D_Query_AL_Object(query, null, errorMSG, false);
+        }
+        catch (Exception e)
+        {
+            System.err.printf("\n\n%s \n%s Error \n%s  \n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
+            return false;
+        }
+        
+        //#######################################
+        // Go through Results
+        //#######################################
+        ObjectMapper mapper = new ObjectMapper();
+        HashMap<Ingredient_Type_ID_OBJ, ArrayList<Ingredient_Name_ID_OBJ>> mapped_Data = new HashMap<>();
+        
+        try
+        {
+            for (ArrayList<Object> row : results)
+            {
+                //#########################
+                // Get Info
+                //#########################
+                int type_ID = (int) row.get(0);
+                String type_name = (String) row.get(1);
+                
+                Ingredient_Type_ID_OBJ type_OBJ = new Ingredient_Type_ID_OBJ(type_ID, type_name);
+                
+                // Add to DATA
+                shared_Data_Registry.add_Ingredient_Type(type_OBJ, false); // Add ingredient Type
+                
+                //#########################
+                // Parsing JSON DATA
+                //#########################
+                JsonNode json_array = mapper.readTree((String) row.get(2));
+                
+                for (JsonNode node : json_array) // For loop through each node of Ingredients
+                {
+                    // Per Object Ingredient Object
+                    JsonNode id = node.get("id");
+                    JsonNode name = node.get("name");
+                    
+                    if (id.isNull()) { continue; }  // If values are empty skip
+                    
+                    // Add Ingredient_Name to DATA IF not NULL
+                    Ingredient_Name_ID_OBJ ingredient_Name_ID = new Ingredient_Name_ID_OBJ(id.asInt(), name.asText(), type_OBJ);
+                    shared_Data_Registry.add_Ingredient_Name(ingredient_Name_ID, true);
+                }
+            }
+            
+            System.out.println("    \n.) Ingredient Types / Names Objects Successfully Transferred! ");
+            return true;
+        }
+        catch (Exception e)
+        {
+            System.err.printf("\n\n%s error \n\n%s", methodName, e);
+            return false;
+        }
+    }
+    
+    public boolean setup_Get_Stores_Data()
+    {
+        //#######################################
+        // Create Get Query Results
+        //#######################################
+        String
+                errorMSG = "Error, Unable to get Ingredient Stores in Plan!",
+                query = String.format("SELECT store_id, store_name FROM %s ORDER BY store_name ASC;", table_Stores_Name);
+        
+        //#######################################
+        // Execute Query
+        //#######################################
+        ArrayList<ArrayList<Object>> results;
+        try
+        {
+            results = db_Sqlite.get_2D_Query_AL_Object(query, null, errorMSG, false);
+        }
+        catch (Exception e)
+        {
+            System.err.printf("\n\n%s \n%s Error \n%s  \n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
+            return false;
+        }
+        
+        //#######################################
+        // Process Data
+        //#######################################
+        for (ArrayList<Object> row : results)
+        {
+            // Add to DATA
+            shared_Data_Registry.add_Store(new Store_ID_OBJ((int) row.get(0), (String) row.get(1)), false);
+        }
+        
+        //#######################################
+        // Output
+        //#######################################
+        System.out.println("    \n.) Store Objects Successfully Transferred!");
+        return true;
+    }
+    
+    public boolean setup_Get_Measurement_Material_Type_Data()
+    {
+        // Set Variables
+        String
+                query = "SELECT * FROM measurement_material_type ORDER BY measurement_material_type_name;",
+                errorMSG = "Unable, to get Measurements Material Type Data";
+        
+        // Execute Query
+        ArrayList<ArrayList<Object>> data;
+        
+        try
+        {
+            data = db_Sqlite.get_2D_Query_AL_Object(query, null, errorMSG, false);
+        }
+        catch (Exception e)
+        {
+            System.err.printf("\n\n%s \n%s Error \n%s  \n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
+            return false;
+        }
+        
+        // Add Measurement OBJ
+        for (ArrayList<Object> row : data)
+        {
+            int id = (int) row.get(0);
+            String measurement_material_type_name = (String) row.get(1);
+            
+            shared_Data_Registry.add_Measurement_Material_Type(
+                    new Measurement_Material_Type_ID_OBJ(id, measurement_material_type_name),
+                    false
+            );
+        }
+        
+        // Return Output
+        System.out.println("    \n.) Measurement Material Type Objects Successfully Transferred!");
+        return true;
+    }
+    
+    public boolean setup_Get_Measurement_Data()
+    {
+        // Set Variables
+        String
+                query = "SELECT * FROM measurements ORDER BY unit_name;",
+                errorMSG = "Unable, to get Measurements Data";
+        
+        // Execute Query
+        ArrayList<ArrayList<Object>> data;
+        
+        try
+        {
+            data = db_Sqlite.get_2D_Query_AL_Object(query, null, errorMSG, false);
+        }
+        catch (Exception e)
+        {
+            System.err.printf("\n\n%s \n%s Error \n%s  \n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
+            return false;
+        }
+        
+        // Add Measurement OBJ
+        for (ArrayList<Object> row : data)
+        {
+            int id = (int) row.get(0);
+            boolean is_system = ((int) row.get(1)) == 1; // 1 = true
+            String unit_Name = (String) row.get(2);
+            String unit_Symbol = (String) row.get(3);
+            int measurement_Material_Type_ID = (int) row.get(4);
+            
+            shared_Data_Registry.add_Measurement(
+                    new Measurement_ID_OBJ(
+                            id,
+                            is_system,
+                            unit_Name,
+                            unit_Symbol,
+                            shared_Data_Registry.get_Measurement_Material_Type_ID_OBJ(measurement_Material_Type_ID)
+                    ),
+                    false
+            );
+        }
+        
+        // Return Output
+        System.out.println("    \n.) Measurement Objects Successfully Transferred!");
+        return true;
+    }
+    
+    //#######################
+    // Meals Data
+    //#######################
     public boolean setup_Get_Meal_Data()
     {
         String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
@@ -852,51 +1208,52 @@ public class Meal_Plan_Screen extends Screen_JFrame
         String query = """
                 -- Divs with Ingredients
                 
-                SELECT DISTINCT
-                	M.plan_id,
-                	M.meal_in_plan_id,
-                	M.Meal_Name,
-                	M.meal_time,
-                
-                	/*M.div_meal_sections_id,*/
-                
-                	JSON_ARRAYAGG(
-                		JSON_OBJECT(
-                			'plan_id',     I.plan_id,
-                			'div_id',      I.div_meal_sections_id,
-                			'index',       I.ingredients_index,
-                			'type_id',     I.ingredient_type_name,
-                			'id',          I.ingredient_name,
-                			'quantity',    I.quantity,
-                			'gi',          I.gi,
-                			'protein',     I.protein,
-                			'carbs',       I.carbohydrates,
-                			'sugar_carbs', I.sugars_of_carbs,
-                			'fibre',       I.fibre,
-                			'fat',         I.fat,
-                			'sat_fat',     I.saturated_fat,
-                			'salt',        I.salt,
-                			'water',       I.water_content,
-                			'calories',    I.calories,
-                			'delete_btn',  I.`delete button`
-                		)
-                	) AS matched_ingredients
-                
-                FROM meals_in_plan M
-                
-                LEFT JOIN divided_meal_sections D ON
-                	M.plan_id = D.plan_id AND M.meal_in_plan_id = D.meal_in_plan_id
-                
-                INNER JOIN ingredients_in_sections_of_meal_calculation_gui I ON
-                	I.plan_id = D.plan_id AND I.div_meal_sections_id = D.div_meal_sections_id
-                
+                SELECT
+                    M.draft_meal_in_plan_id,
+                    M.meal_in_plan_id,
+                    M.plan_id,
+                    M.Meal_Name,
+                    M.meal_time,
+
+                    /*M.div_meal_sections_id,*/
+
+                    json_group_array(
+                        JSON_OBJECT(
+                            'div_id',      I.draft_div_meal_sections_id,
+                            'index',       I.draft_ingredients_index,
+
+                            'type_id',     I.ingredient_type_id,
+                            'id',          I.ingredient_id,
+
+                            'quantity',    I.quantity,
+                            'gi',          I.gi,
+                            'protein',     I.protein,
+                            'carbs',       I.carbohydrates,
+                            'sugar_carbs', I.sugars_of_carbs,
+                            'fibre',       I.fibre,
+                            'fat',         I.fat,
+                            'sat_fat',     I.saturated_fat,
+                            'salt',        I.salt,
+                            'water',       I.water_content,
+                            'calories',    I.calories
+                        )
+                    ) AS matched_ingredients
+
+                FROM draft_meals_in_plan M
+
+                INNER JOIN draft_divided_meal_sections D
+                    ON M.draft_meal_in_plan_id = D.draft_meal_in_plan_id
+
+                INNER JOIN draft_ingredients_in_sections_of_meal_calculation I
+                    ON D.draft_div_meal_sections_id = I.draft_div_meal_sections_id
+
                 WHERE M.plan_id = ?
-                GROUP BY M.plan_id, M.meal_in_plan_id, M.meal_time  /*, M.div_meal_sections_id*/
-                ORDER BY M.meal_time ASC""";
+                GROUP BY M.draft_meal_in_plan_id  /*, M.div_meal_sections_id*/
+                ORDER BY M.meal_time ASC;""";
         
-        String errorMSG = "Unable to get Ingredient Types & Ingredient Names";
+        String errorMSG = "Unable to get Meal Data";
         
-        Object[] params = new Object[]{ temp_Plan_ID };
+        Object[] params = new Object[]{ selected_Plan_ID };
         
         //########################################################################
         // Execute Query
@@ -905,7 +1262,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         
         try
         {
-            results = db.get_2D_Query_AL_Object(query, params, errorMSG, false);
+            results = db_Sqlite.get_2D_Query_AL_Object(query, params, errorMSG, false);
         }
         catch (Exception e)
         {
@@ -939,9 +1296,16 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 //######################################################
                 // Get Meal Info
                 //#####################################################
-                int meal_ID = (int) row.get(1);
-                String meal_name = (String) row.get(2);
-                LocalTime meal_Time = ((java.sql.Time) row.get(3)).toLocalTime();
+                int meal_ID = (int) row.get(0);
+                String meal_name = (String) row.get(3);
+                
+                // Time Conversion
+                String meal_Time_From_Db = (String) row.get(4);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern(
+                        meal_Time_From_Db.length() == 5 ? "HH:mm" : "HH:mm:ss"
+                );
+                
+                LocalTime meal_Time = LocalTime.parse(meal_Time_From_Db, formatter);
                 
                 //############################
                 // Add Meal DATA / Collections
@@ -949,7 +1313,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 
                 // Add to Meals Data
                 Meal_ID meal_ID_Obj = new Meal_ID(meal_ID, meal_name, meal_Time);
-                meals_Data_Map.put(meal_ID, meal_ID_Obj);
+                meals_ID_OBJ_Map.put(meal_ID, meal_ID_Obj);
                 
                 // Add to Sub-Meals Data
                 LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> div_Meal_Sections = new LinkedHashMap<>();
@@ -959,7 +1323,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 // Parsing JSON DATA - Ingredients in Meals
                 //######################################################
                 ObjectMapper mapper = new ObjectMapper();
-                JsonNode ingredients_json_array = mapper.readTree((String) row.get(4));
+                JsonNode ingredients_json_array = mapper.readTree((String) row.get(5));
                 
                 //######################################
                 // For Each Ingredient
@@ -974,10 +1338,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     //###########################
                     // Get Ingredients DATA
                     //###########################
-                    ingredient_macros.add(ingredient_node.get("plan_id").asInt());
-                    
                     int div_id = ingredient_node.get("div_id").asInt();
-                    ingredient_macros.add(div_id);
+                    //ingredient_macros.add(div_id);
                     
                     ingredient_macros.add(ingredient_node.get("index").asInt());
                     
@@ -1004,7 +1366,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     ingredient_macros.add(new BigDecimal(ingredient_node.get("water").asText()));
                     ingredient_macros.add(new BigDecimal(ingredient_node.get("calories").asText()));
                     
-                    ingredient_macros.add(ingredient_node.get("delete_btn").asText());
+                    ingredient_macros.add("Delete Row"); // For Delete BTN
                     
                     //###########################
                     // Store DATA in DIV
@@ -1022,31 +1384,31 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     }
                 }
             }
+            
+            System.out.printf("\n\n%s \nIngredients In Meal Data Successfully Transferred  \n%s ", lineSeparator, lineSeparator);
+            return true;
         }
         catch (Exception e)
         {
             System.err.printf("\n\n%s ERROR \n%s", methodName, e);
             return false;
         }
-        
-        //#######################################
-        // Return DATA
-        //#######################################
-        return true;
     }
     
     public boolean setup_Get_Total_Meals_Data()
     {
-        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        
         //#################################
         // Create Get Query Results
         //#################################
-        String query = String.format("Select * FROM %s WHERE plan_id = ? ORDER BY meal_in_plan_id;", table_Total_Meals_Table_Name);
+        String query = """
+                SELECT *
+                FROM draft_gui_total_meal_view
+                WHERE draft_meal_in_plan_id IN (SELECT draft_meal_in_plan_id FROM draft_meals_in_plan WHERE plan_id = ?)
+                ORDER BY draft_meal_in_plan_id;""";
         
         String errorMSG = "Unable to get Total Meals Data for Plan!!";
         
-        Object[] params = new Object[]{ temp_Plan_ID };
+        Object[] params = new Object[]{ selected_Plan_ID };
         
         //#################################
         // Execute Query
@@ -1055,7 +1417,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         
         try
         {
-            meals_Data = db.get_2D_Query_AL_Object(query, params, errorMSG, false);
+            meals_Data = db_Sqlite.get_2D_Query_AL_Object(query, params, errorMSG, false);
         }
         catch (Exception e)
         {
@@ -1068,7 +1430,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //#################################
         for (ArrayList<Object> meal_Data : meals_Data) // For LOOP through each Meal
         {
-            int meal_ID = (int) meal_Data.get(1); // Get Meal Info
+            int meal_ID = (int) meal_Data.getFirst(); // Get Meal Info
             
             total_Meals_Data_Map.put(meal_ID, meal_Data); // Add total Meals Data to storage
         }
@@ -1076,20 +1438,23 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //#################################
         // Return Output
         //#################################
+        System.out.printf("\n\n%s \nTotal Meal Data Successfully Retrieved \n%s ", lineSeparator, lineSeparator);
+        
         return true;
     }
     
     private boolean setup_Get_Macros_Targets_Data()
     {
-        String query_PlanCalc = String.format("SELECT * from %s WHERE plan_id = ?", table_Plan_Macro_Targets_Name_Calc);
+        String query_PlanCalc = "SELECT * from draft_gui_plan_macro_target_calculations WHERE plan_id = ?";
         String errorMSG1 = "Error, Gathering Macros Targets Data!";
         
-        Object[] params_planCalc = new Object[]{ temp_Plan_ID };
+        Object[] params_planCalc = new Object[]{ selected_Plan_ID };
         
         // Execute
         try
         {
             macros_plan_Data = db_Sqlite.get_2D_Query_AL_Object(query_PlanCalc, params_planCalc, errorMSG1, false);
+            System.out.printf("\n\n%s \nPlan Targets Data Successfully Retrieved \n%s ", lineSeparator, lineSeparator);
             return true;
         }
         catch (Exception e)
@@ -1101,14 +1466,15 @@ public class Meal_Plan_Screen extends Screen_JFrame
     
     private boolean setup_Get_Macros_Left_Data()
     {
-        String query_Macros = String.format("SELECT * from %s WHERE plan_id = ?;", table_Plan_Macros_Left_Name);
+        String query_Macros = "SELECT * from draft_gui_plan_macros_left WHERE plan_id = ?;";
         String errorMSG_ML = "Error, Unable to get Plan Macros Left!";
         
-        Object[] params_macros = new Object[]{ temp_Plan_ID };
+        Object[] params_macros = new Object[]{ selected_Plan_ID };
         
         try
         {
             macrosData = db_Sqlite.get_2D_Query_AL_Object(query_Macros, params_macros, errorMSG_ML, false);
+            System.out.printf("\n\n%s \nPlan Macros Left Data Successfully Retrieved \n%s ", lineSeparator, lineSeparator);
             return true;
         }
         catch (Exception e)
@@ -1119,42 +1485,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
     }
     
     //#################################################
-    // Transfer Data Methods
+    // Others
     //#################################################
-    private boolean transfer_Plan_Data(int from_Plan_Version_ID)
-    {
-        //###############################################
-        // Queries
-        //###############################################
-        String query1 = String.format("""
-                UPDATE `plans` AS `P`,
-                (
-                	SELECT plan_name, vegan FROM %s WHERE plan_id = ?
-                ) AS `SRC`
-                
-                SET
-                    `P`.`plan_name` = concat("(Temp) ",`SRC`.`plan_name`),`P`.`vegan` = `SRC`.`vegan`
-                WHERE
-                    `P`.`plan_id` = ?;""", table_Plans_Version_Name);
-        
-        //###############################################
-        // Upload / Params
-        //###############################################
-        Object[] params = new Object[]{ from_Plan_Version_ID, null };
-        
-        if (! (db_Sqlite.upload_Data(query1, params, "Unable to Load / Transfer Plan Data!")))
-        {
-            System.err.printf("\n\n%s \n%s Error \nFailed Transferring Plan_Data \n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator);
-            return false;
-        }
-        
-        //###############################################
-        // Output
-        //###############################################
-        System.out.printf("\nPlanData Successfully transferred! \n\n%s", lineSeparator);
-        return true;
-    }
-    
     private boolean transfer_Targets(int fromPlan, int toPlan, boolean deleteFromToPlan, boolean showConfirmMsg)
     {
         //####################################
@@ -1533,7 +1865,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     
     // ################################################################
     // Delete BTN Actions
-    // ###############################################################
+    // ################################################################
     private void delete_btnAction()
     {
         //###########################################################
@@ -1784,7 +2116,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //##############################################################################################################
         // Add MealManager To GUI & Charts
         //##############################################################################################################
-        MealManager mealManager = new MealManager(this, db, macros_Left_JTable);
+        MealManager mealManager = new MealManager(this, db_Sqlite, macros_Left_JTable);
         
         //###############################################
         // If Object Creation Failed Exit
@@ -2114,7 +2446,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // ##########################################
         // Close DB Pool
         // ##########################################
-        db.close_Connection();
+        if (db != null) { db.close_Connection(); }
     }
     
     public void update_External_Charts(boolean mealPlanScreen_Action, String action, MealManager mealManager,

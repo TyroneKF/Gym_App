@@ -111,6 +111,27 @@
        CREATE VIEW draft_plan_macro_target_calculations AS
        SELECT
             plan_id AS plan_id,
+            date_time_of_creation,
+
+            expected_protein_grams,
+            expected_carbs_grams,
+            expected_fats_grams,
+            saturated_fat_limit,
+            expected_fibre_grams,
+            salt_limit_grams,
+            water_content_target,
+            calories_target,
+            additional_calories_target
+
+       FROM all_plan_macro_target_calculations
+       WHERE record_state = 'draft';
+
+    -- ############################################
+    -- Draft : View For Macro Calculations
+    -- ############################################
+       CREATE VIEW draft_gui_plan_macro_target_calculations AS
+       SELECT
+            plan_id AS plan_id,
 
             expected_protein_grams,
             expected_carbs_grams,
@@ -272,7 +293,7 @@
 
         SELECT
 
-            draft_ingredients_index,
+            id  AS draft_ingredients_index,
             ingredient_type_id AS ingredient_type_name,
             ingredient_id AS ingredient_name,
             quantity,
@@ -288,7 +309,7 @@
             calories,
             'Delete Row' AS delete_button
 
-        FROM draft_ingredients_in_sections_of_meal_calculation D;
+        FROM all_ingredients_in_sections_of_meal_calculation D;
 
 -- ################################################################################
 --
@@ -373,94 +394,94 @@
     -- ###################################
     -- All Total Meal | Draft + Versioned
     -- ###################################
-    CREATE VIEW all_total_meal_view AS
+        CREATE VIEW all_total_meal_view AS
 
-        WITH
-            I AS (         -- Per Meal : Ingredient Counts (Versioned & Drafted)
-                    SELECT -- Ingredients Count Per Versioned Meal
+            WITH
+                I AS (         -- Per Meal : Ingredient Counts (Versioned & Drafted)
+                        SELECT -- Ingredients Count Per Versioned Meal
 
-                        'versioned' AS record_state,
-                        D.meal_in_plan_version_id AS meal_id,
-                        IFNULL(COUNT(DISTINCT I.ingredient_id),0) AS cnt
+                            'versioned' AS record_state,
+                            D.meal_in_plan_version_id AS meal_id,
+                            IFNULL(COUNT(DISTINCT I.ingredient_id),0) AS cnt
 
-                    FROM divided_meal_sections_versions  D
-                    LEFT JOIN ingredients_in_sections_of_meal I
-                        ON D.div_meal_sections_version_id = I.div_meal_sections_version_id
-                    GROUP BY D.meal_in_plan_version_id
+                        FROM divided_meal_sections_versions  D
+                        LEFT JOIN ingredients_in_sections_of_meal I
+                            ON D.div_meal_sections_version_id = I.div_meal_sections_version_id
+                        GROUP BY D.meal_in_plan_version_id
 
-                    UNION ALL
+                        UNION ALL
 
-                    SELECT -- Ingredients Count Per Draft Meal
+                        SELECT -- Ingredients Count Per Draft Meal
 
-                        'draft' AS record_state,
-                        D.draft_meal_in_plan_id AS meal_id,
-                        IFNULL(COUNT(DISTINCT I.ingredient_id),0) AS cnt
+                            'draft' AS record_state,
+                            D.draft_meal_in_plan_id AS meal_id,
+                            IFNULL(COUNT(DISTINCT I.ingredient_id),0) AS cnt
 
-                    FROM draft_divided_meal_sections  D
-                    LEFT JOIN draft_ingredients_in_sections_of_meal I
-                        ON D.draft_div_meal_sections_id = I.draft_div_meal_sections_id
-                    GROUP BY D.draft_meal_in_plan_id
-            ),
-            M AS (      -- Per Sub-Meal & Meal Meta Info (Versioned & Draft)
+                        FROM draft_divided_meal_sections  D
+                        LEFT JOIN draft_ingredients_in_sections_of_meal I
+                            ON D.draft_div_meal_sections_id = I.draft_div_meal_sections_id
+                        GROUP BY D.draft_meal_in_plan_id
+                ),
+                M AS (      -- Per Sub-Meal & Meal Meta Info (Versioned & Draft)
 
-                    SELECT
-                        'versioned'                     AS record_state,
-                        D.div_meal_sections_version_id  AS div_id,
-                        D.meal_in_plan_version_id       AS meal_id,
-                        M.plan_version_id               AS plan_id,
-                        M.meal_name,
-                        M.meal_time
+                        SELECT
+                            'versioned'                     AS record_state,
+                            D.div_meal_sections_version_id  AS div_id,
+                            D.meal_in_plan_version_id       AS meal_id,
+                            M.plan_version_id               AS plan_id,
+                            M.meal_name,
+                            M.meal_time
 
-                    FROM divided_meal_sections_versions D
-                    LEFT JOIN meals_in_plan_versions M
-                        ON D.meal_in_plan_version_id = M.meal_in_plan_version_id
+                        FROM divided_meal_sections_versions D
+                        LEFT JOIN meals_in_plan_versions M
+                            ON D.meal_in_plan_version_id = M.meal_in_plan_version_id
 
-                    UNION ALL
+                        UNION ALL
 
-                    SELECT
-                        'draft'                         AS record_state,
-                        D.draft_div_meal_sections_id    AS div_id,
-                        D.draft_meal_in_plan_id         AS meal_id,
-                        M.plan_id                       AS plan_id,
-                        M.meal_name,
-                        M.meal_time
+                        SELECT
+                            'draft'                         AS record_state,
+                            D.draft_div_meal_sections_id    AS div_id,
+                            D.draft_meal_in_plan_id         AS meal_id,
+                            M.plan_id                       AS plan_id,
+                            M.meal_name,
+                            M.meal_time
 
-                    FROM draft_divided_meal_sections D
-                    LEFT JOIN draft_meals_in_plan M
-                        ON D.draft_meal_in_plan_id = M.draft_meal_in_plan_id
-            )
+                        FROM draft_divided_meal_sections D
+                        LEFT JOIN draft_meals_in_plan M
+                            ON D.draft_meal_in_plan_id = M.draft_meal_in_plan_id
+                )
 
-        SELECT
+            SELECT
 
-            M.record_state,
-            M.meal_id,
+                M.record_state,
+                M.meal_id,
 
-            MAX(M.plan_id)   AS plan_id,  -- Max's are used just to satisfy aggregate & strict mysql mode vs having them in the group by clause
-            MAX(M.meal_time) AS meal_time, -- Max's are used just to satisfy aggregate & strict mysql mode vs having them in the group by clause
-            MAX(M.meal_name) AS meal_name, -- Max's are used just to satisfy aggregate & strict mysql mode vs having them in the group by clause
+                MAX(M.plan_id)   AS plan_id,  -- Max's are used just to satisfy aggregate & strict mysql mode vs having them in the group by clause
+                MAX(M.meal_time) AS meal_time, -- Max's are used just to satisfy aggregate & strict mysql mode vs having them in the group by clause
+                MAX(M.meal_name) AS meal_name, -- Max's are used just to satisfy aggregate & strict mysql mode vs having them in the group by clause
 
-            MAX(I.cnt) AS no_of_ingredients, -- Used to to satisfy SQL grouping rules / make the dependency explicit and SQL-portable although, it isn't needed MAX
+                MAX(I.cnt) AS no_of_ingredients, -- Used to to satisfy SQL grouping rules / make the dependency explicit and SQL-portable although, it isn't needed MAX
 
-            IFNULL(ROUND(SUM(DI.total_protein),2),0) AS total_protein,
-            IFNULL(ROUND(SUM(DI.total_carbohydrates),2),0) AS total_carbohydrates,
-            IFNULL(ROUND(SUM(DI.total_sugars_of_carbs),2),0) AS total_sugars_of_carbs,
-            IFNULL(ROUND(SUM(DI.total_fibre),2),0) AS total_fibre,
-            IFNULL(ROUND(SUM(DI.total_fats),2),0) AS total_fats,
-            IFNULL(ROUND(SUM(DI.total_saturated_fat),2),0) AS total_saturated_fat,
-            IFNULL(ROUND(SUM(DI.total_salt),2),0) AS total_salt,
-            IFNULL(ROUND(SUM(DI.total_water_content),2),0) AS total_water,
+                IFNULL(ROUND(SUM(DI.total_protein),2),0) AS total_protein,
+                IFNULL(ROUND(SUM(DI.total_carbohydrates),2),0) AS total_carbohydrates,
+                IFNULL(ROUND(SUM(DI.total_sugars_of_carbs),2),0) AS total_sugars_of_carbs,
+                IFNULL(ROUND(SUM(DI.total_fibre),2),0) AS total_fibre,
+                IFNULL(ROUND(SUM(DI.total_fats),2),0) AS total_fats,
+                IFNULL(ROUND(SUM(DI.total_saturated_fat),2),0) AS total_saturated_fat,
+                IFNULL(ROUND(SUM(DI.total_salt),2),0) AS total_salt,
+                IFNULL(ROUND(SUM(DI.total_water_content),2),0) AS total_water,
 
-            IFNULL(ROUND(SUM(DI.total_calories),2),0) AS total_calories
+                IFNULL(ROUND(SUM(DI.total_calories),2),0) AS total_calories
 
-        FROM  M -- Meals INFO
+            FROM  M -- Meals INFO
 
-        LEFT JOIN I -- Meals Counts
-            ON M.record_state = I.record_state AND M.meal_id = I.meal_id
+            LEFT JOIN I -- Meals Counts
+                ON M.record_state = I.record_state AND M.meal_id = I.meal_id
 
-        LEFT JOIN all_divided_meal_sections_calculations DI
-            ON M.record_state = DI.record_state AND M.div_id = DI.div_id
+            LEFT JOIN all_divided_meal_sections_calculations DI
+                ON M.record_state = DI.record_state AND M.div_id = DI.div_id
 
-        GROUP BY M.record_state, M.meal_id;
+            GROUP BY M.record_state, M.meal_id;
 
     -- ###################################
     -- Versioned Total Meals
@@ -493,9 +514,8 @@
         CREATE VIEW draft_total_meal_view AS
 
             SELECT
-
-                meal_id AS draft_meal_in_plan_id,
                 plan_id,
+                meal_id AS draft_meal_in_plan_id,
                 meal_time,
                 meal_name,
                 no_of_ingredients,
@@ -513,11 +533,26 @@
             WHERE record_state = 'draft';
 
     -- ###################################
-    -- Draft Total Meals
+    -- Draft GUI Total Meals
     -- ###################################
         CREATE VIEW draft_gui_total_meal_view AS
 
-            SELECT *
+            SELECT
+
+                meal_id AS draft_meal_in_plan_id,
+                meal_time,
+                meal_name,
+                no_of_ingredients,
+                total_protein,
+                total_carbohydrates,
+                total_sugars_of_carbs,
+                total_fibre,
+                total_fats,
+                total_saturated_fat,
+                total_salt,
+                total_water,
+                total_calories
+
             FROM all_total_meal_view
             WHERE record_state = 'draft';
 
@@ -731,3 +766,25 @@
 
         FROM all_plan_macros_left P
         WHERE record_state = 'draft';
+
+        -- #########################################
+        -- Draft GUI Macros Left
+        -- #########################################
+            CREATE VIEW draft_gui_plan_macros_left AS
+
+            SELECT
+
+              P.plan_id,
+
+              protein_grams_left,
+              carb_grams_left,
+              fibre_grams_left,
+              fat_grams_left,
+              potential_sat_fat_grams_left,
+              potential_salt_grams_left,
+              water_left_to_drink,
+              calories_left,
+              added_calories_left
+
+            FROM all_plan_macros_left P
+            WHERE record_state = 'draft';

@@ -4,13 +4,12 @@ import App_Code.Objects.Database_Objects.Fetched_Results;
 import App_Code.Objects.Database_Objects.Null_MYSQL_Field;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.SQLException;
 import org.javatuples.Pair;
 import javax.swing.*;
-import java.io.*;
 import java.math.BigDecimal;
-import java.nio.file.*;
 import java.sql.*;
 import java.text.Collator;
 import java.time.LocalTime;
@@ -27,7 +26,6 @@ public class MyJDBC_Sqlite  // remove extends eventually
     // Variable
     //##################################################################################################################
     private final String class_Name;
-    private String database_Name = "gym_app00001"; // must be in lowercase
     private final String db_Connection_Address;
     
     private final String
@@ -47,7 +45,11 @@ public class MyJDBC_Sqlite  // remove extends eventually
         // Variables
         //#############################################
         class_Name = this.getClass().getSimpleName();
-        db_Connection_Address = String.format("jdbc:sqlite:file:./data/%s;", database_Name); // Sqlite ignores username / password
+        // Sqlite ignores username / password
+        
+        //db_Connection_Address = "jdbc:sqlite:file:./data/gym_app00001;";  // Production
+        db_Connection_Address = "jdbc:sqlite:C:/sqlite-data/gym_app00001.db"; // Debugging
+        
     }
     
     public void begin_migration() throws Exception
@@ -143,11 +145,10 @@ public class MyJDBC_Sqlite  // remove extends eventually
             //###############################################
             // For Loop Through Params & Execute  Query
             //###############################################
-            boolean skipParams = insertParameters == null;
             try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS))
             {
                 // Setup Params if statement has any
-                if (! skipParams)
+                if (process_Params(insertParameters))
                 {
                     // Prepare Statements
                     for (int pos = 1; pos <= insertParameters.length; pos++)
@@ -217,15 +218,13 @@ public class MyJDBC_Sqlite  // remove extends eventually
             query = entry.getValue0();
             insertParameters = entry.getValue1();
             
-            boolean skipParams = insertParameters == null;
-            
             //#########################
             // Execute Queries
             //#########################
             try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS))
             {
                 // Setup Params if statement has any
-                if (! skipParams)
+                if (process_Params(insertParameters))
                 {
                     // Prepare Statements
                     for (int pos = 1; pos <= insertParameters.length; pos++)
@@ -398,7 +397,7 @@ public class MyJDBC_Sqlite  // remove extends eventually
             //############################################
             // Prepare Params
             //############################################
-            if (params != null)
+            if (process_Params(params))
             {
                 for (int pos = 1; pos <= params.length; pos++)
                 {
@@ -434,7 +433,13 @@ public class MyJDBC_Sqlite  // remove extends eventually
             //############################################
             while (resultSet.next())
             {
-                collection.add(type.cast(resultSet.getObject(1)));
+                if (type == Object.class) // If Class Type is Object Normalise DB Data As Expecting Multiple Data Types
+                {
+                    collection.add(type.cast(map_Object_To_Domain_Type(resultSet.getObject(1))));
+                    continue;
+                }
+                
+                collection.add(type.cast(resultSet.getObject(1))); // Else Apply Type Cast Specifically Provided
             }
             return collection;
         }
@@ -565,7 +570,7 @@ public class MyJDBC_Sqlite  // remove extends eventually
             //############################################
             // Prepare Params
             //############################################
-            if (params != null)
+            if (process_Params(params))
             {
                 for (int pos = 1; pos <= params.length; pos++)
                 {
@@ -600,9 +605,15 @@ public class MyJDBC_Sqlite  // remove extends eventually
                 
                 for (int col = 1; col <= columnSize; col++) // Filter Through Query Result Data
                 {
-                    Object obj = resultSet.getObject(col);
+                    Object obj = resultSet.getObject(col); // Get Object & Cast to Object
                     
-                    rowData.add(typeCast.cast(obj)); // Converts Object to type and casts it
+                    if (typeCast == Object.class) // If TypeCast is Objects We're Expecting Multiple Types Then Cast
+                    {
+                        rowData.add(typeCast.cast(map_Object_To_Domain_Type(obj)));
+                        continue;
+                    }
+                   
+                    rowData.add(typeCast.cast(obj)); // Converts Object to provided type and casts it
                 }
                 collection.add(rowData);
             }
@@ -691,12 +702,31 @@ public class MyJDBC_Sqlite  // remove extends eventually
         }
     }
     
+    private Object map_Object_To_Domain_Type(Object db_Object)
+    {
+        switch (db_Object)
+        {
+            case null -> { return null; }
+            case Double d -> { return BigDecimal.valueOf(d).setScale(2, RoundingMode.HALF_UP); }
+            case Object o -> { return o; }
+        }
+    }
+    
     //###############################################################################
     // Validation Methods
     //###############################################################################
     public boolean get_DB_Connection_Status()
     {
         return db_Connection_Status;
+    }
+    
+    private boolean process_Params(Object[] params) throws Exception
+    {
+        if (params == null) { return false; }
+        
+        if (params.length == 0) { throw new Exception("Params are Empty New Object[]{}"); }
+        
+        return true;
     }
     
     //##############################################################################

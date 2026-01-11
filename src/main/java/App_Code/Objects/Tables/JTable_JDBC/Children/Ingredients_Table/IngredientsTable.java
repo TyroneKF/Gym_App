@@ -3,7 +3,7 @@ package App_Code.Objects.Tables.JTable_JDBC.Children.Ingredients_Table;
 
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
-import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_MySQL;
+import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
 import App_Code.Objects.Database_Objects.Null_MYSQL_Field;
 import App_Code.Objects.Database_Objects.Fetched_Results;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
@@ -36,7 +36,9 @@ public class IngredientsTable extends JDBC_JTable
     //#################################################################################################################
     // Other Variables
     //#################################################################################################################
-    private final int plan_ID, temp_Plan_ID, meal_In_Plan_ID, sub_Meal_ID;
+    private final int plan_ID,  meal_In_Plan_ID, sub_Meal_ID;
+    
+    private final Integer temp_Plan_ID = null;
     
     private boolean meal_In_DB, object_Deleted = false;
     
@@ -57,7 +59,7 @@ public class IngredientsTable extends JDBC_JTable
     //##################################################################################################################
     // Ingredients Table
     public IngredientsTable(
-            MyJDBC_MySQL db,
+            MyJDBC_Sqlite db,
             MealManager mealManager,
             Shared_Data_Registry shared_Data_Registry,
             int sub_Meal_ID,
@@ -68,7 +70,7 @@ public class IngredientsTable extends JDBC_JTable
         super(db,
                 mealManager.getCollapsibleCenterJPanel(),
                 true,
-                "ingredients_in_sections_of_meal_calculation_gui",
+                "draft_gui_ingredients_in_sections_of_meal_calculation",
                 data,
                 mealManager.get_Ingredients_Table_Column_Names(),
                 mealManager.get_Ingredients_Table_UnEditable_Cells(),
@@ -91,8 +93,7 @@ public class IngredientsTable extends JDBC_JTable
         // Values From MealManager
         //#################################
         meal_In_Plan_ID = mealManager.get_Meal_In_Plan_ID();
-        temp_Plan_ID = mealManager.get_Temp_PlanID();
-        plan_ID = mealManager.get_Temp_PlanID();
+        plan_ID = mealManager.get_Plan_ID();
         
         parent_Container = mealManager.getCollapsibleCenterJPanel();
         frame = mealManager.getFrame();
@@ -102,11 +103,11 @@ public class IngredientsTable extends JDBC_JTable
         //##############################################################
         
         // Table : ingredients_in_sections_of_meal_calculation
-        set_Model_IngredientIndex_Col(column_Names_And_Positions.get("ingredients_index")[0]);
+        set_Model_IngredientIndex_Col(column_Names_And_Positions.get("draft_ingredients_index")[0]);
         set_Model_Quantity_Col(column_Names_And_Positions.get("quantity")[0]);
         set_Model_IngredientType_Col(column_Names_And_Positions.get("ingredient_type_name")[0]);
         set_Model_IngredientName_Col(column_Names_And_Positions.get("ingredient_name")[0]);
-        set_Model_DeleteBTN_Col(column_Names_And_Positions.get("delete button")[0]);
+        set_Model_DeleteBTN_Col(column_Names_And_Positions.get("delete_button")[0]);
         
         // Setting Up JComboBox  / Delete BTN Column Fields on Table
         setup_Special_Columns();
@@ -414,7 +415,7 @@ public class IngredientsTable extends JDBC_JTable
         //##############################################
         // Execute
         //##############################################
-        Fetched_Results fetched_Results = db.upload_And_Get_Batch(upload_Queries_And_Params, fetch_Queries_And_Params, error_MSG);
+        Fetched_Results fetched_Results = sqlite_db.upload_And_Get_Batch(upload_Queries_And_Params, fetch_Queries_And_Params, error_MSG);
         
         if (fetched_Results == null) { return false; } // Upload & Fetch Failed
         
@@ -426,7 +427,7 @@ public class IngredientsTable extends JDBC_JTable
             // Get First Row Results & Format Data to include Storable_ID_Objects
             ArrayList<Object> formatted_Data = format_DB_Results_For_ID_Objects(fetched_Results.get_Result_1D_AL(0));
             
-            super.update_Table(formatted_Data, row_In_Model); // Update This Table
+            super.update_Table_Row(formatted_Data, row_In_Model); // Update This Table
             
             update_All_Tables_Data();// Update ALl Other Tables
             return true;
@@ -434,6 +435,7 @@ public class IngredientsTable extends JDBC_JTable
         catch (Exception e)
         {
             System.err.printf("\n\n%s \n\n%s", get_Class_And_Method_Name(), e);
+            JOptionPane.showMessageDialog(null, String.format("Unable to Update Table - '%s'!", table_Name));
             return false;
         }
     }
@@ -515,7 +517,7 @@ public class IngredientsTable extends JDBC_JTable
         
         Object[] params = new Object[]{ ingredient_Index, temp_Plan_ID };
         
-        if (! db.upload_Data(query, params, "Error, Unable to delete Ingredient in Table!")) { return; }
+        if (! sqlite_db.upload_Data(query, params, "Error, Unable to delete Ingredient in Table!")) { return; }
         
         //#################################################
         // Remove From Table
@@ -543,7 +545,7 @@ public class IngredientsTable extends JDBC_JTable
         
         Object[] params = new Object[]{ sub_Meal_ID, temp_Plan_ID };
         
-        if (! db.upload_Data(query, params, "Error, Table Un-Successfully Deleted! ")) { return; }
+        if (! sqlite_db.upload_Data(query, params, "Error, Table Un-Successfully Deleted! ")) { return; }
         
         //################################################
         // Hide JTable object & Collapsible OBJ
@@ -659,7 +661,7 @@ public class IngredientsTable extends JDBC_JTable
         //#######################################################
         // Execute Query
         //#######################################################
-        Fetched_Results fetched_Results_OBJ = db.upload_And_Get_Batch(upload_Queries_And_Params, fetch_Queries_And_Params, error_MSG);
+        Fetched_Results fetched_Results_OBJ = sqlite_db.upload_And_Get_Batch(upload_Queries_And_Params, fetch_Queries_And_Params, error_MSG);
         
         if (fetched_Results_OBJ == null) { System.err.println("\n\n\nFailed Adding Ingredient"); return; }
         
@@ -851,7 +853,7 @@ public class IngredientsTable extends JDBC_JTable
             add(new Pair<>(query7, null));
         }};
         
-        if (! (db.upload_Data_Batch(queries_And_Params, error_MSG))) { return false; }
+        if (! (sqlite_db.upload_Data_Batch(queries_And_Params, error_MSG))) { return false; }
         
         //####################################################
         // Output
