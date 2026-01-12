@@ -99,25 +99,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
     
     private final LinkedHashMap<Integer, ArrayList<Object>> total_Meals_Data_Map = new LinkedHashMap<>();
     
-    //##################################################
-    // Database Table Names
-    //##################################################
-    // Generic Table
-    private final String macros_Table = "macros_per_pound_and_limits";
-    
-    //#####################
-    // Draft Tables
-    //#####################
-    private final String table_draft_plans = "draft_meals_in_plan";
-    private final String table_draft_meals = "draft_meals_in_plan";
-    private final String table_draft_sub_meals = "draft_divided_meal_sections";
-    private final String table_draft_ingredients_in_sub_meal = "draft_ingredients_in_sections_of_meal";
-    
-    //#####################
-    // Draft Views
-    //#####################
-    
-    
     //##################################################################################################################
     // Ingredients Table Columns
     //##################################################################################################################
@@ -1279,7 +1260,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 GROUP BY M.draft_meal_in_plan_id  /*, M.div_meal_sections_id*/
                 ORDER BY M.meal_time ASC;""";
         
-        String errorMSG = "Unable to get Meal Data";
+        String errorMSG = "Unable to get Meal Data!";
         
         Object[] params = new Object[]{ selected_Plan_ID };
         
@@ -1335,26 +1316,24 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 
                 LocalTime meal_Time = LocalTime.parse(meal_Time_From_Db, formatter);
                 
-                //############################
-                // Add Meal DATA / Collections
-                //############################
-                
                 // Add to Meals Data
                 Meal_ID meal_ID_Obj = new Meal_ID(meal_ID, meal_name, meal_Time);
                 meals_ID_OBJ_Map.put(meal_ID, meal_ID_Obj);
                 
-                // Add to Sub-Meals Data
+                //######################################################
+                // Create Sub-Meal Collections Per Meal
+                //######################################################
                 LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> div_Meal_Sections = new LinkedHashMap<>();
                 sub_Meals_Data_Map.put(meal_ID, div_Meal_Sections); // ADD to memory
                 
                 //######################################################
-                // Parsing JSON DATA - Ingredients in Meals
+                // Parsing JSON DATA - Sub-Meals -> Ingredients
                 //######################################################
                 ObjectMapper mapper = new ObjectMapper();
                 JsonNode ingredients_json_array = mapper.readTree((String) row.get(5));
                 
                 //######################################
-                // For Each Ingredient
+                // For Each Ingredient In Sub-Meal
                 //######################################
                 for (JsonNode ingredient_node : ingredients_json_array) // For loop through each Ingredient belonging to a  Sub-DIV
                 {

@@ -17,9 +17,15 @@ Edit Views to match on plan_id as well as meal_id
 
 .) MPS Progress Count
 
+Ingredients Table
+    .) Update Table field
+    .) Data gathering table field
+
+
 ######################################################################################
 Work On:
 ######################################################################################
+Hard coded variables replace with commonly fetched variable id's in MPS
 
 USE get_Class_name_method for error handling
 CHECK Edit_Ingredients_Form.java -> has_Field_Value_Changed_From_DB_Data equivalence
@@ -69,6 +75,7 @@ Icon_Button
     delete_Icon_Btn.makeBTntransparent();
 
 Ingredients_Table
+.) Flip un-editable & editable columns around makes it easier for adding new columns
 .) Redraw if ingredient / Info in edit Screen is being edited needs to be reflcected on Tables (Redrawn)
    etc shop selected thats been deleted all products need to be reloaded.
 .) If an ingredient table is saved and its not in the DB because the mealManager isn't
@@ -129,6 +136,10 @@ Loading Screen
 ######################################################################################
 New Features:
 ######################################################################################
+
+.) R relational data being able to define your own goals and variables to see how
+   increase in x increases goals.
+
 
 Strava / Gym Tracker / Goal Tracker App for PR's & a leaderboard with your friends
     .) Runs / Walks

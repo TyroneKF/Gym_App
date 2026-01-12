@@ -14,5 +14,4 @@ public class ComboBox_Table_Cell_Renderer<T extends Storable_IDS_Parent> extends
         setSelectedItem(value);
         return this;
     }
-    
 }

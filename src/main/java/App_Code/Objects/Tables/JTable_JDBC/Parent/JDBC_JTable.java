@@ -32,7 +32,11 @@ public abstract class JDBC_JTable extends JPanel
     private CustomTableModel tableModel;
     protected ArrayList<ArrayList<Object>> saved_Data;
     
-    protected String table_Name;
+    protected String db_row_id_column_name;
+    protected String table_name;
+    protected String db_read_view_name;
+    protected String db_write_table_name;
+    
     protected ArrayList<String> column_Names, gui_Column_Names;
     
     // Collection : Customisation Options
@@ -68,7 +72,10 @@ public abstract class JDBC_JTable extends JPanel
             MyJDBC_Sqlite sqlite_db,
             Container parent_Container,
             boolean add_JTable_Action,
-            String table_Name,
+            String db_row_id_column_name,
+            String table_name,
+            String db_write_table_name,
+            String db_read_view_name,
             ArrayList<ArrayList<Object>> saved_Data,
             ArrayList<String> column_Names,
             ArrayList<String> un_Editable_Column_Names,
@@ -86,7 +93,11 @@ public abstract class JDBC_JTable extends JPanel
         
         this.parent_Container = parent_Container;
         this.add_JTable_Action = add_JTable_Action;
-        this.table_Name = table_Name;
+        
+        this.db_row_id_column_name = db_row_id_column_name;
+        this.table_name = table_name;
+        this.db_read_view_name = db_read_view_name;
+        this.db_write_table_name = db_write_table_name;
         
         this.class_Name = this.getClass().getSimpleName();
         
@@ -293,8 +304,8 @@ public abstract class JDBC_JTable extends JPanel
             }
             catch (Exception e)
             {
-                System.err.printf("\n\n%s \n%s Error -> > Failed Setting Table Data \n%s \n\n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
-                JOptionPane.showMessageDialog(null, String.format("Table Data & Expected Data Miss-Match - '%s'!", table_Name));
+                System.err.printf("\n\n%s \n%s Error -> Failed Setting Table Data \n%s \n\n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
+                JOptionPane.showMessageDialog(null, String.format("Table Columns & Expected Data Miss-Match - '%s'!", table_name));
             }
         }
         
@@ -337,7 +348,7 @@ public abstract class JDBC_JTable extends JPanel
                 //###########################################
                 if (newValue == null) // EXIT Clause
                 {
-                    throw new Exception(String.format("\n\n%s Error \nValue Cannot be null", get_Class_And_Method_Name()));
+                    throw new Exception(String.format("\n\n%s Error \nValue Cannot be null - '%s'!", get_Class_And_Method_Name(), table_name));
                 }
                 
                 //###########################################
@@ -362,11 +373,11 @@ public abstract class JDBC_JTable extends JPanel
                 current_Table_Data.get(row).set(col, newValue);
                 fireTableCellUpdated(row, col); // Notifies TableModelListeners, JTable that the value has changed = repaint
                 
-                System.out.printf("\n\n%s \nValue Changed From %s -> %s", get_Class_And_Method_Name(), old_Value, newValue);
+                System.out.printf("\n\n%s -> %s \nValue Changed From %s -> %s", get_Class_And_Method_Name(), table_name, old_Value, newValue);
             }
             catch (Exception e)
             {
-                JOptionPane.showMessageDialog(null, String.format("\n\nError Accepting Value  ' %s ' in Form!", newValue));
+                JOptionPane.showMessageDialog(null, String.format("\n\nError Accepting Value  ' %s ' in '%s'!", table_name, newValue));
                 System.err.printf("%s", e);
                 
                 set_Row_Being_Edited(false);
@@ -407,7 +418,7 @@ public abstract class JDBC_JTable extends JPanel
             //########################################
             //  Edge Cases : Error (Unexpected Type)
             //########################################
-            throw new Exception(String.format("\n\n%s Error \nUnexpected Class Type: %s", get_Class_And_Method_Name(), new_Value.getClass()));
+            throw new Exception(String.format("\n\n%s Error \nUnexpected Class Type: %s - %s", get_Class_And_Method_Name(), new_Value.getClass(), table_name));
         }
         
         @Override
@@ -456,7 +467,7 @@ public abstract class JDBC_JTable extends JPanel
             }
             catch (Exception e)
             {
-                JOptionPane.showMessageDialog(null, String.format("Unable to Refresh Table - '%s'!", table_Name));
+                JOptionPane.showMessageDialog(null, String.format("Unable to Refresh Table - '%s'!", table_name));
                 System.err.printf("\n\n%s \n%s Error -> > Failed Setting Table Data \n%s \n\n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
                 return;
             }
@@ -475,7 +486,7 @@ public abstract class JDBC_JTable extends JPanel
             catch (Exception e)
             {
                 System.err.printf("\n\n%s \n%s Error -> > Failed Setting Table Data \n%s \n\n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
-                JOptionPane.showMessageDialog(null, String.format("Unable to Save Table - '%s'!", table_Name));
+                JOptionPane.showMessageDialog(null, String.format("Unable to Save Table - '%s'!", table_name));
             }
         }
         

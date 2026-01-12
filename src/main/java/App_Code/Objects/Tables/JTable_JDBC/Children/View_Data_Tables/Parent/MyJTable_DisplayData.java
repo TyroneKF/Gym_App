@@ -10,19 +10,27 @@ import java.util.ArrayList;
 
 public abstract class MyJTable_DisplayData extends JDBC_JTable
 {
-    protected Integer plan_ID, temp_Plan_ID;
+    //##################################################################################################################
+    // Variables
+    //##################################################################################################################
     protected int update_Row = 0;
     
-    public MyJTable_DisplayData(
-            MyJDBC_Sqlite db,
-            Container parent_Container,
-            ArrayList<ArrayList<Object>> data,
-            ArrayList<String> column_Names,
-            int plan_ID,
-            String table_Name,
-            ArrayList<String> un_Editable_Columns,
-            ArrayList<String> col_Avoid_Centering,
-            ArrayList<String> columns_To_Hide
+    //##################################################################################################################
+    // Constructor
+    //##################################################################################################################
+    public MyJTable_DisplayData
+    (
+                    MyJDBC_Sqlite db,
+                    Container parent_Container,
+                    ArrayList<ArrayList<Object>> data,
+                    ArrayList<String> column_Names,
+                    String db_row_id_column_name,
+                    String table_Name,
+                    String db_write_table_name,
+                    String db_read_view_name,
+                    ArrayList<String> un_Editable_Columns,
+                    ArrayList<String> col_Avoid_Centering,
+                    ArrayList<String> columns_To_Hide
     )
     {
         // #################################################
@@ -32,15 +40,16 @@ public abstract class MyJTable_DisplayData extends JDBC_JTable
                 db,
                 parent_Container,
                 false,
+                db_row_id_column_name,
                 table_Name,
+                db_write_table_name,
+                db_read_view_name,
                 data,
                 column_Names,
                 un_Editable_Columns,
                 col_Avoid_Centering,
                 columns_To_Hide
         );
-        
-        this.plan_ID = plan_ID;
         
         // #################################################
         // Stop Rows From Being Highlighted From Selection
@@ -68,6 +77,9 @@ public abstract class MyJTable_DisplayData extends JDBC_JTable
         set_Table_Text_Font(new Font("Dialog", Font.PLAIN, 14));
     }
     
+    //##################################################################################################################
+    // Variables
+    //##################################################################################################################
     @Override
     protected void set_Cell_Renderer()
     {
@@ -115,7 +127,10 @@ public abstract class MyJTable_DisplayData extends JDBC_JTable
     @Override
     protected boolean table_Data_Changed_Action(int row_Model, int column_Model, Object newValue) { return false; }
     
-    protected abstract String get_Query();
+    private String get_Query()
+    {
+        return String.format("SELECT * FROM %s WHERE %s = ?;", db_read_view_name, db_row_id_column_name);
+    }
     
     protected abstract Object[] get_Params();
     
@@ -124,7 +139,7 @@ public abstract class MyJTable_DisplayData extends JDBC_JTable
         //###########################################################################
         //   Updating MacrosLeft_Table
         //##########################################################################
-        String errorMSG = String.format("Error, Updating Table '%s'!", table_Name);
+        String errorMSG = String.format("Error, Updating Table '%s'!", table_name);
         
         try
         {
@@ -133,7 +148,7 @@ public abstract class MyJTable_DisplayData extends JDBC_JTable
         }
         catch (Exception _) // Error is already handled by DB class
         {
-            JOptionPane.showMessageDialog(null, String.format("Unable to Update Table - '%s'!", table_Name));
+            JOptionPane.showMessageDialog(null, String.format("Unable to Update Table - '%s'!", table_name));
         }
     }
 }

@@ -36,9 +36,10 @@ public class IngredientsTable extends JDBC_JTable
     //#################################################################################################################
     // Other Variables
     //#################################################################################################################
-    private final int plan_ID,  meal_In_Plan_ID, sub_Meal_ID;
-    
-    private final Integer temp_Plan_ID = null;
+    private final int
+            plan_ID,
+            meal_In_Plan_ID,
+            sub_Meal_ID;
     
     private boolean meal_In_DB, object_Deleted = false;
     
@@ -58,18 +59,24 @@ public class IngredientsTable extends JDBC_JTable
     // Constructor
     //##################################################################################################################
     // Ingredients Table
-    public IngredientsTable(
+    public IngredientsTable
+    (
             MyJDBC_Sqlite db,
             MealManager mealManager,
             Shared_Data_Registry shared_Data_Registry,
             int sub_Meal_ID,
             ArrayList<ArrayList<Object>> data,
             boolean meal_In_DB,
-            JPanel space_Divider)
+            JPanel space_Divider
+    )
     {
-        super(db,
+        super(
+                db,
                 mealManager.getCollapsibleCenterJPanel(),
                 true,
+                "draft_ingredients_index",
+                "Ingredients Table",
+                "draft_ingredients_in_sections_of_meal",
                 "draft_gui_ingredients_in_sections_of_meal_calculation",
                 data,
                 mealManager.get_Ingredients_Table_Column_Names(),
@@ -102,8 +109,8 @@ public class IngredientsTable extends JDBC_JTable
         // Setting Up Columns
         //##############################################################
         
-        // Table : ingredients_in_sections_of_meal_calculation
-        set_Model_IngredientIndex_Col(column_Names_And_Positions.get("draft_ingredients_index")[0]);
+        // Table : draft_ingredients_in_sections_of_meal_calculation
+        set_Model_IngredientIndex_Col(column_Names_And_Positions.get(db_row_id_column_name)[0]);
         set_Model_Quantity_Col(column_Names_And_Positions.get("quantity")[0]);
         set_Model_IngredientType_Col(column_Names_And_Positions.get("ingredient_type_name")[0]);
         set_Model_IngredientName_Col(column_Names_And_Positions.get("ingredient_name")[0]);
@@ -293,14 +300,14 @@ public class IngredientsTable extends JDBC_JTable
         //##################################################################
         
         // Ingredients Type Column
-        if (column_In_Model == get_IngredientType_Col(true)) { return true; }
+        if (column_In_Model == get_IngredientType_Col(true)) { return true; } // Nothing to process inside db lvl
         
         //##########################################
         // Ingredients Name Column
         //##########################################
         else if (column_In_Model == get_Ingredient_Name_Col(true))
         {
-            System.out.println("\n\n@tableDataChange_Action() Ingredient Name Changed");
+            System.out.printf("\n\n@tableDataChange_Action() Ingredient Name Changed - %s", table_name);
             
             Ingredient_Name_ID_OBJ selected_Ingredient_Name_OBJ = (Ingredient_Name_ID_OBJ) new_Value;
             int selected_Ingredient_Name_ID = selected_Ingredient_Name_OBJ.get_ID();
@@ -328,12 +335,12 @@ public class IngredientsTable extends JDBC_JTable
         // ###############################
         else if (column_In_Model == get_Quantity_Col(true))
         {
-            System.out.println("\ntableDataChange_Action() Quantity Being Changed");
+            System.out.printf("\ntableDataChange_Action() Quantity Being Changed - %s", table_name);
             return update_Table_Values_By_Quantity(row_In_Model, ingredient_Index, (BigDecimal) new_Value);
         }
         else
         {
-            throw new Exception(String.format("\n\n%s Un-handled Column Event Trigger", get_Method_Name(2)));
+            throw new Exception(String.format("\n\n%s Un-handled Column Event Trigger - %s", get_Method_Name(2), table_name));
         }
     }
     
@@ -343,26 +350,25 @@ public class IngredientsTable extends JDBC_JTable
         // Update & Fetch In MYSQL
         //##################################################################
         
-        String error_MSG = "Error, Updating Ingredient Table by Ingredient Name!";
+        String error_MSG = String.format("Error, Updating Ingredient Name on '%s'!", table_name);
         LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params = new LinkedHashSet<>();
         
         //###########################
         // Update
         //###########################
-        String upload_Query_1 = """
-                UPDATE  ingredients_in_sections_of_meal
+        String upload_Query = String.format("""
+                UPDATE %s
                 SET ingredient_id = ?,
                 pdid = ?
-                WHERE ingredients_index = ? AND plan_id = ?;""";
+                WHERE %s = ?;""",  db_write_table_name, db_row_id_column_name);
         
-        Object[] params_Upload_1 = new Object[]{
+        Object[] params_Upload = new Object[]{
                 selected_Ingredient_Name_ID,
                 new Null_MYSQL_Field(Types.INTEGER),
-                ingredient_Index,
-                temp_Plan_ID
+                ingredient_Index
         };
         
-        upload_Queries_And_Params.add(new Pair<>(upload_Query_1, params_Upload_1));
+        upload_Queries_And_Params.add(new Pair<>(upload_Query, params_Upload));
         
         //##############################################
         // Execute
@@ -382,18 +388,12 @@ public class IngredientsTable extends JDBC_JTable
         //###########################
         // Update
         //###########################
-        String upload_Query_1 = """
-                UPDATE  ingredients_in_sections_of_meal
+        String upload_Query = String.format("""
+                UPDATE  %s
                 SET quantity = ?
-                WHERE ingredients_index = ? AND plan_id = ?;""";
+                WHERE %s = ?;""",  db_write_table_name, db_row_id_column_name);
         
-        Object[] params_Upload_1 = new Object[]{
-                quantity,
-                ingredient_Index,
-                temp_Plan_ID
-        };
-        
-        upload_Queries_And_Params.add(new Pair<>(upload_Query_1, params_Upload_1));
+        upload_Queries_And_Params.add(new Pair<>(upload_Query, new Object[]{ quantity, ingredient_Index}));
         
         //##############################################
         // Execute
@@ -407,10 +407,9 @@ public class IngredientsTable extends JDBC_JTable
         // Fetch
         //###################################
         LinkedHashSet<Pair<String, Object[]>> fetch_Queries_And_Params = new LinkedHashSet<>();
-        String fetch_Query_1 = String.format("SELECT * FROM %s WHERE ingredients_index = ? AND plan_id = ?;", table_Name);
-        Object[] params_Fetch_1 = new Object[]{ ingredient_Index, temp_Plan_ID };
         
-        fetch_Queries_And_Params.add(new Pair<>(fetch_Query_1, params_Fetch_1));
+        String fetch_Query = String.format("SELECT * FROM %s WHERE %s = ?;",  db_read_view_name, db_row_id_column_name);
+        fetch_Queries_And_Params.add(new Pair<>(fetch_Query, new Object[]{ ingredient_Index }));
         
         //##############################################
         // Execute
@@ -435,7 +434,7 @@ public class IngredientsTable extends JDBC_JTable
         catch (Exception e)
         {
             System.err.printf("\n\n%s \n\n%s", get_Class_And_Method_Name(), e);
-            JOptionPane.showMessageDialog(null, String.format("Unable to Update Table - '%s'!", table_Name));
+            JOptionPane.showMessageDialog(null, String.format("Unable to Update - '%s'!", table_name));
             return false;
         }
     }
@@ -507,17 +506,16 @@ public class IngredientsTable extends JDBC_JTable
                 delete_Table_Action();
             }
             
-             return; // Exit
+            return; // Exit
         }
         
         //#################################################
         // Delete Ingredient From Temp Meal
         //#################################################
-        String query = "DELETE FROM ingredients_in_sections_of_meal WHERE ingredients_index = ? AND plan_id = ?;";
+        String query = String.format("DELETE FROM %s WHERE %s = ? ;",  db_write_table_name,db_row_id_column_name);
+        String error_msg = String.format("Error, unable to delete from '%s' !", table_name);
         
-        Object[] params = new Object[]{ ingredient_Index, temp_Plan_ID };
-        
-        if (! sqlite_db.upload_Data(query, params, "Error, Unable to delete Ingredient in Table!")) { return; }
+        if (! sqlite_db.upload_Data(query, new Object[]{ ingredient_Index }, error_msg)) { return; }
         
         //#################################################
         // Remove From Table
@@ -541,11 +539,12 @@ public class IngredientsTable extends JDBC_JTable
             Delete meal from meals database
          */
         
-        String query = "DELETE FROM divided_meal_sections WHERE div_meal_sections_id = ? AND plan_id = ?;";
+        String query = "DELETE FROM draft_divided_meal_sections WHERE draft_div_meal_sections_id = ? ;";
+        String error_msg = String.format("Unable to delete from '%s' !", table_name);
         
-        Object[] params = new Object[]{ sub_Meal_ID, temp_Plan_ID };
+        Object[] params = new Object[]{ sub_Meal_ID };
         
-        if (! sqlite_db.upload_Data(query, params, "Error, Table Un-Successfully Deleted! ")) { return; }
+        if (! sqlite_db.upload_Data(query, params, error_msg)) { return; }
         
         //################################################
         // Hide JTable object & Collapsible OBJ
@@ -631,22 +630,20 @@ public class IngredientsTable extends JDBC_JTable
         //###############################################
         
         // 1.) Insert Ingredient to Ingredients Table
-        String upload_Q1 = """
-                INSERT IGNORE INTO ingredients_in_sections_of_meal
-                (plan_id, pdid, div_meal_sections_id, ingredient_id, quantity) VALUES
-                (?, ?, ?, ?, ?);""";
+        String upload_Q1 = String.format( """
+                INSERT INTO %s
+                (
+                    draft_div_meal_sections_id,
+                    ingredient_id,
+                    pdid,
+                    quantity
+                )
+                VALUES
+                (?, ?, ?, ?);""", db_write_table_name);
         
         upload_Queries_And_Params.add(new Pair<>(upload_Q1,
-                new Object[]{ temp_Plan_ID, none_Of_The_Above_PDID, sub_Meal_ID, none_Of_The_Above_ID, 0 }));
-        
-        //######################################
-        // 2.) Get Ingredient Index
-        //######################################
-        String var_Ingredient_ID = "@ingredientIndex";
-        String upload_Q2 = String.format("Set %s = LAST_INSERT_ID();", var_Ingredient_ID);
-        
-        upload_Queries_And_Params.add(new Pair<>(upload_Q2, null));
-        
+                new Object[]{ sub_Meal_ID, none_Of_The_Above_ID, none_Of_The_Above_PDID, 0 }));
+    
         //#######################################################
         // Fetch Queries
         //#######################################################
@@ -655,8 +652,8 @@ public class IngredientsTable extends JDBC_JTable
         String get_Q1 = String.format("""
                 SELECT *
                 FROM %s
-                WHERE plan_id = ? AND ingredients_index = %s;""", table_Name, var_Ingredient_ID);
-        fetch_Queries_And_Params.add(new Pair<>(get_Q1, new Object[]{ temp_Plan_ID }));
+                WHERE %s = (SELECT last_insert_rowid());""", db_read_view_name, db_row_id_column_name);
+        fetch_Queries_And_Params.add(new Pair<>(get_Q1, null));
         
         //#######################################################
         // Execute Query
@@ -676,7 +673,8 @@ public class IngredientsTable extends JDBC_JTable
         }
         catch (Exception e)
         {
-            System.err.printf("\n\n%s", e);
+            JOptionPane.showMessageDialog(null,String.format("Unable to add Ingredient to %s", table_name));
+            System.err.printf("\n\n%s \n%s", get_Class_And_Method_Name(), e);
             return;
         }
         
@@ -699,7 +697,7 @@ public class IngredientsTable extends JDBC_JTable
         //#############################
         // Reset DB Data
         //#############################
-        if (! (transfer_Meal_Data_From_Plans(plan_ID, temp_Plan_ID)))
+        if (! (transfer_Meal_Data_From_Plans(plan_ID, null)))
         {
             JOptionPane.showMessageDialog(frame, "\n\nUnable to transfer ingredients data from  original plan to temp plan!!");
             return;
@@ -753,7 +751,7 @@ public class IngredientsTable extends JDBC_JTable
         //######################################################################
         // Transfer Data from temp plan to origin plan
         //######################################################################
-        if (! (transfer_Meal_Data_From_Plans(temp_Plan_ID, plan_ID)))     // If Meal Not In Original PlanID Add To PlanID
+        if (! (transfer_Meal_Data_From_Plans(null, plan_ID)))     // If Meal Not In Original PlanID Add To PlanID
         {
             if (show_Message)
             {
@@ -789,9 +787,9 @@ public class IngredientsTable extends JDBC_JTable
     //################################################
     // Events For Refresh & Save
     //################################################
-    public boolean transfer_Meal_Data_From_Plans(int from_Plan_ID, int to_Plan_ID)
+    public boolean transfer_Meal_Data_From_Plans(Integer from_Plan_ID, Integer to_Plan_ID)
     {
-        //########################################################
+       /* //########################################################
         // Clear Old Data from toPlan and & Temp Tables
         //########################################################
         // Delete tables if they already exist
@@ -799,8 +797,8 @@ public class IngredientsTable extends JDBC_JTable
         
         // Delete ingredients in meal Data from original plan with this mealID
         String query1 = """
-                DELETE FROM ingredients_in_sections_of_meal
-                WHERE div_meal_sections_id = ? AND plan_id = ?;""";
+                DELETE FROM draft_ingredients_in_sections_of_meal
+                WHERE div_meal_sections_id = ? ;""";
         
         //########################################################
         // Insert Meal & dividedMealSections If Not in DB In toPlan
@@ -814,7 +812,7 @@ public class IngredientsTable extends JDBC_JTable
                 (?, ?, ?);""";
         
         String query3 = """
-                INSERT IGNORE INTO divided_meal_sections
+                INSERT IGNORE INTO draft_divided_meal_sections
                 (div_meal_sections_id, meal_in_plan_id, plan_id)
                 VALUES
                 (?,?,?);""";
@@ -827,12 +825,12 @@ public class IngredientsTable extends JDBC_JTable
         String query4 = """
                 CREATE table temp_ingredients_in_meal  AS
                 SELECT i.*
-                FROM ingredients_in_sections_of_meal i
+                FROM draft_ingredients_in_sections_of_meal i
                 WHERE i.div_meal_sections_id = ? AND i.plan_id = ?;""";
         
         String query5 = "UPDATE temp_ingredients_in_meal  SET plan_id = ?;";
         
-        String query6 = "INSERT INTO ingredients_in_sections_of_meal SELECT * FROM temp_ingredients_in_meal;";
+        String query6 = "INSERT INTO draft_ingredients_in_sections_of_meal SELECT * FROM temp_ingredients_in_meal;";
         
         String query7 = "DROP TABLE IF EXISTS temp_ingredients_in_meal;";
         
@@ -859,7 +857,9 @@ public class IngredientsTable extends JDBC_JTable
         // Output
         //####################################################
         System.out.printf("\nMealIngredients Successfully Transferred! \n\n%s", line_Separator);
-        return true;
+        return true;*/
+        
+        return false;
     }
     
     //##################################################################################################################
@@ -1012,6 +1012,4 @@ public class IngredientsTable extends JDBC_JTable
         
         return jTable.convertColumnIndexToView(model_DeleteBTN_Col);
     }
-    
-    //##################################################################################################################
 }

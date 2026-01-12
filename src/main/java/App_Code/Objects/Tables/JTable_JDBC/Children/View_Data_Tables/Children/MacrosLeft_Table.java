@@ -1,6 +1,5 @@
 package App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Children;
 
-import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_MySQL;
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
 import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Parent.MyJTable_DisplayData;
 
@@ -9,13 +8,21 @@ import java.util.ArrayList;
 
 public class MacrosLeft_Table extends MyJTable_DisplayData
 {
+    //##################################################################################################################
+    // Variables
+    //##################################################################################################################
+    protected int plan_ID;
     
-    public MacrosLeft_Table(
+    //##################################################################################################################
+    // Constructor
+    //##################################################################################################################
+    public MacrosLeft_Table
+    (
             MyJDBC_Sqlite db,
             Container parentContainer,
             ArrayList<ArrayList<Object>> data,
             ArrayList<String> columnNames,
-            int planID,
+            int plan_ID,
             ArrayList<String> colAvoidCentering,
             ArrayList<String> columnsToHide
     )
@@ -25,23 +32,27 @@ public class MacrosLeft_Table extends MyJTable_DisplayData
                 parentContainer,
                 data,
                 columnNames,
-                planID,
+                "plan_id",
+                "Macros Left Table",
+                null,
                 "draft_gui_plan_macros_left",
                 columnNames,
                 colAvoidCentering,
                 columnsToHide
         );
+        
+        //##########################################
+        // Variables
+        //###########################################
+        this.plan_ID = plan_ID;
     }
     
-    @Override
-    protected String get_Query()
-    {
-        return String.format("SELECT * FROM %s WHERE plan_id = ?;", table_Name);
-    }
-    
+    //##################################################################################################################
+    // Methods
+    //##################################################################################################################
     @Override
     protected Object[] get_Params()
     {
-        return new Object[]{ temp_Plan_ID };
+        return new Object[]{ plan_ID };
     }
 }

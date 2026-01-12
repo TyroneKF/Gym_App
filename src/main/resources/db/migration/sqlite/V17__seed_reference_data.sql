@@ -204,7 +204,7 @@
 
 
 -- ##############################################################################################################
- -- Ingredient Stores
+ -- Stores
 -- ##############################################################################################################
    /*
 
@@ -248,10 +248,10 @@
 
 
 -- ##############################################################################################################
- -- Creating N/A Ingredient
+ -- Creating Ingredients
 -- ##############################################################################################################
 
-    INSERT INTO ingredients_info
+    INSERT INTO ingredients_info --  Creating N/A Ingredient
     (
         is_system,
         measurement_id,
@@ -301,4 +301,32 @@
         )
         ON CONFLICT(seed_key)   -- In case of duplicate, ensures fields match correctly to new insert
             DO UPDATE SET
+
             entity_id_value = excluded.entity_id_value; -- On update triggered by PK or unique Key
+
+-- ##############################################################################################################
+ -- Creating Ingredient_in_Shops
+-- ##############################################################################################################
+    WITH
+
+        na_ingredient_id AS (SELECT entity_id_value FROM seed_registry WHERE seed_key = 'na_ingredient_id'),
+        na_store_id      AS (SELECT entity_id_value FROM seed_registry WHERE seed_key = 'na_store_id')
+
+    INSERT INTO ingredient_in_shops
+    (
+        is_system,
+        ingredient_id,
+        store_id,
+        product_name,
+        volume_per_unit,
+        cost_per_unit
+    )
+    VALUES
+    (
+        1,
+        (SELECT entity_id_value FROM na_ingredient_id),
+        (SELECT entity_id_value FROM na_store_id),
+        'N/A',
+        0,
+        0
+    );

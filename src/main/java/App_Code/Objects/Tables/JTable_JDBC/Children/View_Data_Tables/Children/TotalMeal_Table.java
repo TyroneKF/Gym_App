@@ -12,13 +12,18 @@ public class TotalMeal_Table extends MyJTable_DisplayData
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    private final Integer meal_In_Plan_ID;
+    private final int meal_In_Plan_ID;
     
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public TotalMeal_Table(MyJDBC_Sqlite db, MealManager mealManager, int meal_In_Plan_ID, ArrayList<Object> data)
-    
+    public TotalMeal_Table
+    (
+            MyJDBC_Sqlite db,
+            MealManager mealManager,
+            int meal_In_Plan_ID,
+            ArrayList<Object> data
+    )
     {
         //##########################################
         // Super
@@ -28,7 +33,9 @@ public class TotalMeal_Table extends MyJTable_DisplayData
                 mealManager.get_Collapsible_JP_Obj().get_South_JPanel(),
                 new ArrayList<>(Collections.singletonList(data)),
                 mealManager.get_Total_Meal_Table_Column_Names(),
-                mealManager.get_Plan_ID(),
+                "draft_meal_in_plan_id",
+                "Total Meal Table",
+                "draft_meals_in_plan",
                 "draft_gui_total_meal_view",
                 mealManager.get_Total_Meal_Table_Column_Names(),
                 null,
@@ -55,15 +62,9 @@ public class TotalMeal_Table extends MyJTable_DisplayData
     }
     
     @Override
-    protected String get_Query()
-    {
-        return String.format("SELECT * FROM %s WHERE meal_in_plan_id = ? AND plan_id = ?;", table_Name);
-    }
-    
-    @Override
     protected Object[] get_Params()
     {
-        return new Object[]{ meal_In_Plan_ID, temp_Plan_ID };
+        return new Object[]{ meal_In_Plan_ID };
     }
 }
 
