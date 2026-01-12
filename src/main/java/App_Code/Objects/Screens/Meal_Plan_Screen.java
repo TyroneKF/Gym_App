@@ -58,10 +58,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // Integers
     //###############################################
     private static Integer user_id;
-    private Integer temp_Plan_ID;
     private Integer selected_Plan_ID;
     private Integer selected_Plan_Version_ID;
-    
     private Integer no_of_meals;
     private Integer no_of_sub_meals;
     
@@ -104,17 +102,21 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //##################################################
     // Database Table Names
     //##################################################
-    private final static String
-            
-            // Table Names Frequently Used
-            
-            table_Macros_Per_Pound_Limit_Name = "macros_per_pound_and_limits_versions",
+    // Generic Table
+    private final String macros_Table = "macros_per_pound_and_limits";
     
-    table_Stores_Name = "stores",
+    //#####################
+    // Draft Tables
+    //#####################
+    private final String table_draft_plans = "draft_meals_in_plan";
+    private final String table_draft_meals = "draft_meals_in_plan";
+    private final String table_draft_sub_meals = "draft_divided_meal_sections";
+    private final String table_draft_ingredients_in_sub_meal = "draft_ingredients_in_sections_of_meal";
     
-    table_Meals_In_Plan_Name = "meals_in_plan",
-            table_Sub_MealsName = "divided_meal_sections_versions",
-            table_Ingredients_In_Meal_Sections = "ingredients_in_sections_of_meal";
+    //#####################
+    // Draft Views
+    //#####################
+    
     
     //##################################################################################################################
     // Ingredients Table Columns
@@ -196,12 +198,12 @@ public class Meal_Plan_Screen extends Screen_JFrame
         new Meal_Plan_Screen(db);
     }
     
-    public Meal_Plan_Screen(MyJDBC_Sqlite db_Sqlite)
+    public Meal_Plan_Screen(MyJDBC_Sqlite db)
     {
         //###############################################################################
         // Super / Variables
         //###############################################################################
-        super(db_Sqlite, true, "Gym App", 1925, 1082, 1300, 0);
+        super(db, true, "Gym App", 1925, 1082, 1300, 0);
         
         shared_Data_Registry = new Shared_Data_Registry(this);
         
@@ -371,7 +373,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // MacroTargets Table
         //############################
         macros_Targets_Table = new MacrosTargets_Table(
-                db_Sqlite,
+                db,
                 macrosInfoJPanel,
                 macros_plan_Data,
                 macroTargets_ColumnNames,
@@ -388,7 +390,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // plan_Macros_Left Table
         //############################
         macros_Left_JTable = new MacrosLeft_Table(
-                db_Sqlite,
+                db,
                 macrosInfoJPanel,
                 macrosData,
                 macrosLeft_columnNames,
@@ -428,7 +430,15 @@ public class Meal_Plan_Screen extends Screen_JFrame
             ArrayList<Object> total_Meal_DATA = total_Meals_Data_Map.get(meal_ID);
             
             // Create MealManager
-            MealManager mealManager = new MealManager(this, db_Sqlite, macros_Left_JTable, meal_ID_Obj, sub_Meal_DATA, total_Meal_DATA);
+            MealManager mealManager = new MealManager(
+                    this,
+                    shared_Data_Registry,
+                    db,
+                    macros_Left_JTable,
+                    meal_ID_Obj,
+                    sub_Meal_DATA,
+                    total_Meal_DATA
+            );
             
             // ADD MealManager To Memory
             shared_Data_Registry.addMealManager(mealManager);
@@ -440,7 +450,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             loading_Screen.increaseBar(1 + sub_Meal_DATA.size()); // + original meal + the sub-meal
         }
         
-        loading_Screen.increaseBar(11);
+        loading_Screen.increaseBar(8);
         //###############################################################################
         //
         //###############################################################################
@@ -527,7 +537,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################
         // Execute Upload Statements
         //####################################
-        if (! (db_Sqlite.upload_Data_Batch(upload_queries_and_params, errorMSG)))
+        if (! (db.upload_Data_Batch(upload_queries_and_params, errorMSG)))
         {
             System.err.printf("\n\n%s \n%s Error \n%s \nFailed Transferring Plan_Data",
                     lineSeparator, get_Class_And_Method_Name(), lineSeparator);
@@ -603,7 +613,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###############################################
         // Execute Upload Statements
         //###############################################
-        if (! (db_Sqlite.upload_Data_Batch(upload_queries_and_params, errorMSG)))
+        if (! (db.upload_Data_Batch(upload_queries_and_params, errorMSG)))
         {
             System.err.printf("\n\n%s \n%s Error \n%s \nFailed Transferring Macro Plan Targets!",
                     lineSeparator, get_Class_And_Method_Name(), lineSeparator);
@@ -801,7 +811,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //################################################################
         // Execute
         //################################################################
-        if (! (db_Sqlite.upload_Data_Batch(upload_queries_and_params, errorMSG)))
+        if (! (db.upload_Data_Batch(upload_queries_and_params, errorMSG)))
         {
             System.err.printf("\n\n%s \n%s Error \n%s \nFailed Transferring Plan Meals Data!",
                     lineSeparator, get_Class_And_Method_Name(), lineSeparator);
@@ -849,7 +859,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // Execute
         try
         {
-            ArrayList<ArrayList<Object>> db_results = db_Sqlite.get_2D_Query_AL_Object(queryX, null, errorMSG, false);
+            ArrayList<ArrayList<Object>> db_results = db.get_2D_Query_AL_Object(queryX, null, errorMSG, false);
             
             // App Must assume by default there is a selected user and 1 plan active otherwise this causes an eror
             user_id = (Integer) db_results.getFirst().get(0);
@@ -874,16 +884,16 @@ public class Meal_Plan_Screen extends Screen_JFrame
         try
         {
             // column names : ingredients_in_sections_of_meal_calculation
-            ingredients_Column_Names = db_Sqlite.get_Column_Names_AL("draft_gui_ingredients_in_sections_of_meal_calculation");
+            ingredients_Column_Names = db.get_Column_Names_AL("draft_gui_ingredients_in_sections_of_meal_calculation");
             
             // column names : total_meal_view
-            meal_total_column_Names = db_Sqlite.get_Column_Names_AL("draft_gui_total_meal_view");
+            meal_total_column_Names = db.get_Column_Names_AL("draft_gui_total_meal_view");
             
             // column names : plan_macro_target_calculations
-            macroTargets_ColumnNames = db_Sqlite.get_Column_Names_AL("draft_gui_plan_macro_target_calculations");
+            macroTargets_ColumnNames = db.get_Column_Names_AL("draft_gui_plan_macro_target_calculations");
             
             // Get table column names for plan_macros_left
-            macrosLeft_columnNames = db_Sqlite.get_Column_Names_AL("draft_gui_plan_macros_left");
+            macrosLeft_columnNames = db.get_Column_Names_AL("draft_gui_plan_macros_left");
         }
         catch (Exception e)
         {
@@ -960,7 +970,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //#################################
         try
         {
-            meal_Count_Results = db_Sqlite.get_2D_Query_AL_Object(plan_Counts_Query, counts_Params, plan_Counts_ErrorMSG, false);
+            meal_Count_Results = db.get_2D_Query_AL_Object(plan_Counts_Query, counts_Params, plan_Counts_ErrorMSG, false);
             
             // Format Results
             no_of_meals = (Integer) meal_Count_Results.getFirst().get(0);
@@ -1017,7 +1027,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         
         try
         {
-            results = db_Sqlite.get_2D_Query_AL_Object(query, null, errorMSG, false);
+            results = db.get_2D_Query_AL_Object(query, null, errorMSG, false);
         }
         catch (Exception e)
         {
@@ -1092,7 +1102,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //#######################################
         String
                 errorMSG = "Error, Unable to get Ingredient Stores in Plan!",
-                query = String.format("SELECT * FROM %s ORDER BY store_name ASC;", table_Stores_Name);
+                query = "SELECT * FROM stores ORDER BY store_name ASC;";
         
         //#######################################
         // Execute Query
@@ -1100,7 +1110,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         ArrayList<ArrayList<Object>> results;
         try
         {
-            results = db_Sqlite.get_2D_Query_AL_Object(query, null, errorMSG, false);
+            results = db.get_2D_Query_AL_Object(query, null, errorMSG, false);
         }
         catch (Exception e)
         {
@@ -1142,7 +1152,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         
         try
         {
-            data = db_Sqlite.get_2D_Query_AL_Object(query, null, errorMSG, false);
+            data = db.get_2D_Query_AL_Object(query, null, errorMSG, false);
         }
         catch (Exception e)
         {
@@ -1157,7 +1167,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             String measurement_material_type_name = (String) row.get(1);
             
             shared_Data_Registry.add_Measurement_Material_Type(
-                    new Measurement_Material_Type_ID_OBJ(id, true,  measurement_material_type_name),
+                    new Measurement_Material_Type_ID_OBJ(id, true, measurement_material_type_name),
                     false
             );
         }
@@ -1179,7 +1189,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         
         try
         {
-            data = db_Sqlite.get_2D_Query_AL_Object(query, null, errorMSG, false);
+            data = db.get_2D_Query_AL_Object(query, null, errorMSG, false);
         }
         catch (Exception e)
         {
@@ -1232,17 +1242,17 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     M.plan_id,
                     M.Meal_Name,
                     M.meal_time,
-
+                
                     /*M.div_meal_sections_id,*/
-
+                
                     json_group_array(
                         JSON_OBJECT(
                             'div_id',      I.draft_div_meal_sections_id,
                             'index',       I.draft_ingredients_index,
-
+                
                             'type_id',     I.ingredient_type_id,
                             'id',          I.ingredient_id,
-
+                
                             'quantity',    I.quantity,
                             'gi',          I.gi,
                             'protein',     I.protein,
@@ -1256,15 +1266,15 @@ public class Meal_Plan_Screen extends Screen_JFrame
                             'calories',    I.calories
                         )
                     ) AS matched_ingredients
-
+                
                 FROM draft_meals_in_plan M
-
+                
                 INNER JOIN draft_divided_meal_sections D
                     ON M.draft_meal_in_plan_id = D.draft_meal_in_plan_id
-
+                
                 INNER JOIN draft_ingredients_in_sections_of_meal_calculation I
                     ON D.draft_div_meal_sections_id = I.draft_div_meal_sections_id
-
+                
                 WHERE M.plan_id = ?
                 GROUP BY M.draft_meal_in_plan_id  /*, M.div_meal_sections_id*/
                 ORDER BY M.meal_time ASC;""";
@@ -1280,7 +1290,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         
         try
         {
-            results = db_Sqlite.get_2D_Query_AL_Object(query, params, errorMSG, false);
+            results = db.get_2D_Query_AL_Object(query, params, errorMSG, false);
         }
         catch (Exception e)
         {
@@ -1435,7 +1445,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         
         try
         {
-            meals_Data = db_Sqlite.get_2D_Query_AL_Object(query, params, errorMSG, false);
+            meals_Data = db.get_2D_Query_AL_Object(query, params, errorMSG, false);
         }
         catch (Exception e)
         {
@@ -1471,7 +1481,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // Execute
         try
         {
-            macros_plan_Data = db_Sqlite.get_2D_Query_AL_Object(query_PlanCalc, params_planCalc, errorMSG1, false);
+            macros_plan_Data = db.get_2D_Query_AL_Object(query_PlanCalc, params_planCalc, errorMSG1, false);
             System.out.printf("\n\n%s \nPlan Targets Data Successfully Retrieved \n%s ", lineSeparator, lineSeparator);
             return true;
         }
@@ -1491,7 +1501,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         
         try
         {
-            macrosData = db_Sqlite.get_2D_Query_AL_Object(query_Macros, params_macros, errorMSG_ML, false);
+            macrosData = db.get_2D_Query_AL_Object(query_Macros, params_macros, errorMSG_ML, false);
             System.out.printf("\n\n%s \nPlan Macros Left Data Successfully Retrieved \n%s ", lineSeparator, lineSeparator);
             return true;
         }
@@ -1507,131 +1517,12 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //#################################################
     private boolean transfer_Targets(int fromPlan, int toPlan, boolean deleteFromToPlan, boolean showConfirmMsg)
     {
-        //####################################
-        // Queries
-        //####################################
-        String query00 = String.format("DELETE FROM %s WHERE plan_id = ?;", table_Macros_Per_Pound_Limit_Name);
-        String query01 = String.format("DROP TABLE IF EXISTS temp_%s;", table_Macros_Per_Pound_Limit_Name);
-        
-        String query02 = String.format("CREATE TABLE temp_%s AS SELECT * FROM %s WHERE plan_id = ?;",
-                table_Macros_Per_Pound_Limit_Name, table_Macros_Per_Pound_Limit_Name);
-        
-        String query03 = String.format("UPDATE temp_%s SET plan_id = ?;", table_Macros_Per_Pound_Limit_Name);
-        String query04 = String.format("INSERT INTO %s SELECT * FROM temp_%s;", table_Macros_Per_Pound_Limit_Name, table_Macros_Per_Pound_Limit_Name);
-        
-        String query05 = String.format("DROP TABLE temp_%s;", table_Macros_Per_Pound_Limit_Name);
-        
-        //####################################
-        // Prepare Inputs For Execution
-        //####################################
-        String errorMSG = "Unable to Transfer Targets Data!";
-        
-        LinkedHashSet<Pair<String, Object[]>> queries_And_Params = new LinkedHashSet<>()
-        {{
-            if (deleteFromToPlan) { add(new Pair<>(query00, new Object[]{ toPlan })); }
-            
-            add(new Pair<>(query01, null));
-            add(new Pair<>(query02, new Object[]{ fromPlan }));
-            add(new Pair<>(query03, new Object[]{ toPlan }));
-            add(new Pair<>(query04, null));
-            add(new Pair<>(query05, null));
-        }};
-        
-        //####################################
-        // Execute Upload Statements
-        //####################################
-        if (! (db_Sqlite.upload_Data_Batch(queries_And_Params, errorMSG))) { return false; }
-        
-        if (showConfirmMsg)
-        {
-            JOptionPane.showMessageDialog(getFrame(), "\n\nTargets Successfully Saved");
-        }
-        
-        //####################################
-        // Return Output
-        //####################################
-        System.out.printf("\nTargets Successfully transferred! \n\n%s", lineSeparator);
-        return true;
+        return false;
     }
     
     private boolean transfer_Meal_Ingredients(int fromPlanID, int toPlanID)
     {
-        //################################################################
-        // Delete temp tables if they already exist
-        //################################################################
-        String query0 = String.format("DROP TABLE IF EXISTS temp_%s;", table_Ingredients_In_Meal_Sections);
-        String query1 = String.format("DROP TABLE IF EXISTS temp_%s;", table_Sub_MealsName);
-        String query2 = String.format("DROP TABLE IF EXISTS temp_%s;", table_Meals_In_Plan_Name);
-        
-        //################################################################
-        // Delete Meals
-        //################################################################
-        String query3 = String.format("DELETE FROM %s WHERE plan_id = ?;", table_Meals_In_Plan_Name);
-        
-        //################################################################
-        // Transferring Meals From One Plan To Another
-        //################################################################
-        String query4 = String.format("CREATE table temp_%s AS SELECT * FROM %s WHERE plan_id = ? ORDER BY meal_in_plan_id;", table_Meals_In_Plan_Name, table_Meals_In_Plan_Name);
-        
-        String query5 = String.format("UPDATE temp_%s SET plan_id = ?;", table_Meals_In_Plan_Name);
-        String query6 = String.format("INSERT INTO %s SELECT * FROM temp_%s;", table_Meals_In_Plan_Name, table_Meals_In_Plan_Name);
-        
-        //################################################################
-        // Transferring Sections Of Meals From One Plan To Another
-        //################################################################
-        String query7 = String.format("CREATE table temp_%s AS SELECT * FROM %s WHERE plan_id = ? ORDER BY div_meal_sections_id;", table_Sub_MealsName, table_Sub_MealsName);
-        String query8 = String.format("UPDATE temp_%s SET plan_id = ?;", table_Sub_MealsName);
-        String query9 = String.format("INSERT INTO %s SELECT * FROM temp_%s;", table_Sub_MealsName, table_Sub_MealsName);
-        
-        //################################################################
-        // Transferring this plans Ingredients to Temp-Plan
-        //################################################################
-        // Create Table to transfer ingredients from original plan to temp
-        String query10 = String.format("""
-                CREATE table temp_%s AS
-                SELECT i.*
-                FROM %s i
-                WHERE i.plan_id = ?;""", table_Ingredients_In_Meal_Sections, table_Ingredients_In_Meal_Sections);
-        
-        String query11 = String.format("UPDATE temp_%s SET plan_id = ?;", table_Ingredients_In_Meal_Sections);
-        String query12 = String.format("INSERT INTO %s SELECT * FROM temp_%s;", table_Ingredients_In_Meal_Sections, table_Ingredients_In_Meal_Sections);
-        
-        String query13 = String.format("DROP TABLE temp_%s;", table_Meals_In_Plan_Name);
-        String query14 = String.format("DROP TABLE temp_%s;", table_Ingredients_In_Meal_Sections);
-        String query15 = String.format("DROP TABLE temp_%s;", table_Sub_MealsName);
-        
-        //####################################################
-        // Update
-        //####################################################
-        String errorMSG = "Error, Unable to Transfer Meal Ingredients";
-        
-        LinkedHashSet<Pair<String, Object[]>> queries_And_Params = new LinkedHashSet<>()
-        {{
-            add(new Pair<>(query0, null));
-            add(new Pair<>(query1, null));
-            add(new Pair<>(query2, null));
-            add(new Pair<>(query3, new Object[]{ toPlanID }));
-            add(new Pair<>(query4, new Object[]{ fromPlanID }));
-            add(new Pair<>(query5, new Object[]{ toPlanID }));
-            add(new Pair<>(query6, null));
-            add(new Pair<>(query7, new Object[]{ fromPlanID }));
-            add(new Pair<>(query8, new Object[]{ toPlanID }));
-            add(new Pair<>(query9, null));
-            add(new Pair<>(query10, new Object[]{ fromPlanID }));
-            add(new Pair<>(query11, new Object[]{ toPlanID }));
-            add(new Pair<>(query12, null));
-            add(new Pair<>(query13, null));
-            add(new Pair<>(query14, null));
-            add(new Pair<>(query15, null));
-        }};
-        
-        if (! (db_Sqlite.upload_Data_Batch(queries_And_Params, errorMSG))) { return false; }
-        
-        //####################################################
-        // Output
-        //####################################################
-        System.out.printf("\nMealIngredients Successfully Transferred! \n\n%s", lineSeparator);
-        return true;
+        return false;
     }
     
     //##################################################################################################################
@@ -1894,9 +1785,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###########################################################
         // Delete all the meals in the plans in SQL
         //###########################################################
-        String queryDelete = "DELETE FROM meals_in_plan WHERE plan_id = ?";
+        String queryDelete = "DELETE FROM table_draft_meals  WHERE plan_id = ?";
         
-        Object[] params = new Object[]{ temp_Plan_ID };
+        Object[] params = new Object[]{ selected_Plan_ID };
         
         if (! db.upload_Data(queryDelete, params, "Error, unable to DELETE meals in plan!")) { return; }
         
@@ -1947,7 +1838,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             return;
         }
         
-        pieChart_Screen_MPS = new PieChart_Screen_MPS(db, this);
+        pieChart_Screen_MPS = new PieChart_Screen_MPS(db, shared_Data_Registry, this);
     }
     
     // #############################
@@ -2020,7 +1911,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     {
         if (! is_LineChart_Screen_Open())
         {
-            lineChart_MPS = new LineChart_MPS(db, this);
+            lineChart_MPS = new LineChart_MPS(db, shared_Data_Registry, this);
             return;
         }
         
@@ -2087,7 +1978,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################################################
         // Refresh DB Data
         //####################################################################
-        if (! (transfer_Meal_Ingredients(selected_Plan_Version_ID, temp_Plan_ID))) // transfer meals and ingredients from temp plan to original plan
+        if (! (transfer_Meal_Ingredients(selected_Plan_Version_ID, selected_Plan_ID))) // transfer meals and ingredients from temp plan to original plan
         {
             JOptionPane.showMessageDialog(this, "`\n\nError couldn't transfer ingredients data from temp to real plan !!");
             return;
@@ -2134,7 +2025,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //##############################################################################################################
         // Add MealManager To GUI & Charts
         //##############################################################################################################
-        MealManager mealManager = new MealManager(this, db_Sqlite, macros_Left_JTable);
+        MealManager mealManager = new MealManager(this, shared_Data_Registry, db, macros_Left_JTable);
         
         //###############################################
         // If Object Creation Failed Exit
@@ -2262,7 +2153,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         {
             System.out.println("\n\n#################################### \n1.) saveMealData() Empty Meal Plan Save");
             
-            String query = String.format("DELETE FROM %s WHERE plan_id = ?;", table_Meals_In_Plan_Name);
+            String query = "DELETE FROM %s WHERE plan_id = ?;";
             
             Object[] params = new Object[]{ selected_Plan_Version_ID };
             
@@ -2270,7 +2161,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         }
         else // because there are meals save them
         {
-            if ((! (transfer_Meal_Ingredients(temp_Plan_ID, selected_Plan_Version_ID)))) // transfer meals and ingredients from temp plan to original plan
+            if ((! (transfer_Meal_Ingredients(selected_Plan_ID, selected_Plan_Version_ID)))) // transfer meals and ingredients from temp plan to original plan
             {
                 System.out.println("\n\n#################################### \n2.) saveMealData() Meals Transferred to Original Plan");
                 
@@ -2347,7 +2238,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             macros_Targets_Screen.makeJFrameVisible();
             return;
         }
-        macros_Targets_Screen = new Macros_Targets_Screen(db, this, temp_Plan_ID, plan_Name);
+        macros_Targets_Screen = new Macros_Targets_Screen(db, this, selected_Plan_ID, plan_Name);
     }
     
     private boolean is_MacroTargetsScreen_Open()
@@ -2395,7 +2286,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             }
         }
         
-        if (transfer_Targets(temp_Plan_ID, selected_Plan_Version_ID, false, showUpdateMsg))
+        if (transfer_Targets(selected_Plan_ID, selected_Plan_Version_ID, false, showUpdateMsg))
         {
             macrosTargetsChanged(false);
             update_Targets_And_MacrosLeftTables();
@@ -2583,13 +2474,13 @@ public class Meal_Plan_Screen extends Screen_JFrame
             
             if (reply == JOptionPane.YES_OPTION)
             {
-                if (transfer_Targets(selected_Plan_Version_ID, temp_Plan_ID, true, false))
+                /*if (transfer_Targets(selected_Plan_Version_ID, null, true, false))
                 {
                     JOptionPane.showMessageDialog(this, "\n\nMacro-Targets Successfully Refreshed!!");
                     macrosTargetsChanged(false);
                     
                     macros_Targets_Table.refresh_Data();
-                }
+                }*/
             }
         }
     }
@@ -2631,11 +2522,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //###########################################
     // Integers
     //###########################################
-    public Integer getTemp_Plan_ID()
-    {
-        return temp_Plan_ID;
-    }
-    
     public Integer getSelected_Plan_Version_ID()
     {
         return selected_Plan_Version_ID;
