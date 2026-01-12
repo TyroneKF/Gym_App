@@ -1,6 +1,5 @@
 package App_Code.Objects.Gui_Objects.Screens;
 
-import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_MySQL;
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
 
 import javax.swing.*;
@@ -26,7 +25,7 @@ public class Screen_JFrame extends JFrame
     //##############################################
     // Objects
     //##############################################
-    protected MyJDBC_Sqlite db_Sqlite;
+    protected MyJDBC_Sqlite db;
     protected GridBagConstraints gbc = new GridBagConstraints();
     protected Container contentPane;
     protected ScrollPaneCreator scrollPane = new ScrollPaneCreator();
@@ -40,9 +39,9 @@ public class Screen_JFrame extends JFrame
     //##################################################################################################################
     // Constructors
     //##################################################################################################################
-   public Screen_JFrame(MyJDBC_Sqlite db_Sqlite, boolean addScrollPane, String title, int frameWidth, int frameHeight, int xPos, int yPos)
+   public Screen_JFrame(MyJDBC_Sqlite db, boolean addScrollPane, String title, int frameWidth, int frameHeight, int xPos, int yPos)
     {
-        this.db_Sqlite = db_Sqlite;  // Variables
+        this.db = db;  // Variables
         
         // Setup
         setup(addScrollPane, title, frameWidth, frameHeight, xPos, yPos);
@@ -270,7 +269,7 @@ public class Screen_JFrame extends JFrame
     // ##################################
     public MyJDBC_Sqlite getDb()
     {
-        return db_Sqlite;
+        return db;
     }
     
     public GridBagConstraints getGbc()

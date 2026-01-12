@@ -8,7 +8,6 @@ import App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Me
 import org.jfree.chart.title.LegendTitle;
 import org.jfree.chart.ui.HorizontalAlignment;
 import org.jfree.data.general.DefaultPieDataset;
-
 import java.awt.*;
 import java.util.Random;
 
@@ -133,7 +132,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen_JFrame
     //###########################################################################################
     // Constructor
     //###########################################################################################
-    public Pie_Chart_Meal_Manager_Screen(MyJDBC_Sqlite db, MealManager mealManager)
+    public Pie_Chart_Meal_Manager_Screen(MyJDBC_Sqlite db, Shared_Data_Registry shared_Data_Registry, MealManager mealManager)
     {
         // ##########################################
         // Super Constructors & Variables
@@ -146,8 +145,8 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen_JFrame
         // ##########################################
         // Variables
         // ##########################################
+        this.shared_Data_Registry = shared_Data_Registry;
         this.mealManager = mealManager;
-        this.shared_Data_Registry = mealManager.getMealManagerRegistry();
         
         this.mealInPlanID = mealManager.get_Meal_In_Plan_ID();
         this.meal_name = mealManager.get_Current_Meal_Name();

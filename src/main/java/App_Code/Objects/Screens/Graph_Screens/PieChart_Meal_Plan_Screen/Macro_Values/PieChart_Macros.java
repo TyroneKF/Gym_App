@@ -18,15 +18,25 @@ public class PieChart_Macros extends Pie_Chart
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
-    public PieChart_Macros(String macroName, String measurementSymbol, Color[] colors, int frameWidth, int frameHeight, int rotateDelay,
-                           Font titleFont, Font labelFont, Font legendFont, DefaultPieDataset<PieChart_MacroKey> datasetInput)
-
+    public PieChart_Macros(
+            
+            String macroName,
+            String measurementSymbol,
+            Color[] colors,
+            int frameWidth,
+            int frameHeight,
+            int rotateDelay,
+            Font titleFont,
+            Font labelFont,
+            Font legendFont,
+            DefaultPieDataset<PieChart_MacroKey> datasetInput
+    )
     {
         //#################################################################
         // Super Constructor & Variables
         //#################################################################
         super(macroName, colors, frameWidth, frameHeight, rotateDelay, titleFont, labelFont, legendFont, datasetInput);
-    
+        
         this.macroName = macroName;
         this.measurementSymbol = measurementSymbol;
         
@@ -44,26 +54,26 @@ public class PieChart_Macros extends Pie_Chart
                 PieChart_MacroKey macroKey = (PieChart_MacroKey) key;
                 BigDecimal macroValue = (BigDecimal) dataset.getValue(key);
                 
-                ///#######################################
+                //#######################################
                 // Return Label
                 //#######################################
                 return String.format("\u00A0\u00A0\u00A0[%s]\u00A0%s  (%d%%) -  %s %s\u00A0\u00A0",
                         macroKey.get_MealTime_GUI(), macroKey.get_MealName(),
                         percent_Calculator(macroValue, get_DatasetTotal()), macroValue, macroKey.get_MacroSymbol());
             }
-        
+            
             @Override
             public AttributedString generateAttributedSectionLabel(PieDataset pieDataset, Comparable comparable)
             {
                 return null;
             }
         };
-    
+        
         //#################################################################
         // Set Label Generator
         //#################################################################
         plot.setLegendLabelGenerator(labelGen);
-    
+        
         //#################################################################
         // Update Title On Initialization
         //#################################################################

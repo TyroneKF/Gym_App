@@ -31,7 +31,7 @@ public class PieChart_Screen_MPS extends Screen_JFrame
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
-    public PieChart_Screen_MPS(MyJDBC_Sqlite db, Meal_Plan_Screen meal_plan_screen)
+    public PieChart_Screen_MPS(MyJDBC_Sqlite db, Shared_Data_Registry shared_Data_Registry, Meal_Plan_Screen meal_plan_screen)
     {
         // ################################################################
         // Super Constructor
@@ -43,7 +43,7 @@ public class PieChart_Screen_MPS extends Screen_JFrame
         // Variables
         // ################################################################
         this.meal_plan_screen = meal_plan_screen;
-        this.shared_Data_Registry = meal_plan_screen.get_MealManagerRegistry();
+        this.shared_Data_Registry = shared_Data_Registry;
         
         //###################################################################################
         // Create ContentPane
@@ -62,7 +62,7 @@ public class PieChart_Screen_MPS extends Screen_JFrame
         //#################################################
         // Creating Macros Screen
         //#################################################
-        pieChart_Macros_MPS = new PieChart_Macros_MPS(meal_plan_screen);
+        pieChart_Macros_MPS = new PieChart_Macros_MPS(shared_Data_Registry, meal_plan_screen);
         tp.add("Macros Meal Plan ", pieChart_Macros_MPS);
         
         // ################################################################

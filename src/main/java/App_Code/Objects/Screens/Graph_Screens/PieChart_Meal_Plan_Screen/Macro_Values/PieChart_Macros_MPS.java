@@ -112,16 +112,16 @@ public class PieChart_Macros_MPS extends Screen_JPanel
     //##################################################################################################################
     // Constructors
     //##################################################################################################################
-    public PieChart_Macros_MPS(Meal_Plan_Screen meal_plan_screen)
+    public PieChart_Macros_MPS(Shared_Data_Registry shared_Data_Registry, Meal_Plan_Screen meal_plan_screen)
     {
         super(null, true);
         
         // ################################################################
         // Variables
         // ################################################################
-        // Objects
+        
+        this.shared_Data_Registry = shared_Data_Registry;
         this.meal_plan_screen = meal_plan_screen;
-        this.shared_Data_Registry = meal_plan_screen.get_MealManagerRegistry();
         
         this.planName = meal_plan_screen.getPlan_Name();
         
@@ -132,7 +132,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
         totalMeal_Macro_Pos_And_Symbol = shared_Data_Registry.get_TotalMeal_Macro_Pos_And_Symbol();
         
         // #####################################
-        /// Create GUI
+        // Create GUI
         // ######################################
         create_And_Draw_GUI();
     }
@@ -146,17 +146,17 @@ public class PieChart_Macros_MPS extends Screen_JPanel
         // Clean & Build / Clear
         // ################################################################
         int rows = get_RowsCount();
-    
+        
         get_ScrollPane_JPanel().removeAll();
         get_ScrollPane_JPanel().setLayout(new GridLayout(rows, col));
-    
+        
         macroValue_Dataset_Map.clear(); // Clear Storage
-    
+        
         // ################################################################
         // Generate Color Palette
         // ################################################################
         Color[] colorPalette = generate_Random_Palette_Order();
-    
+        
         // ################################################################
         // Build DATA
         // ################################################################
@@ -171,7 +171,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
             //##################################
             String macroKey = it.next();
             String macroName = String.format("%s", format_Strings(macroKey, true));
-    
+            
             /**
              * LinkedHashMap<String, Pair<Integer, String>> totalMeal_macroColNamePos
              * LinkedHashMap<TotalMeal_MacroName, Pair< Position, Measurement>> totalMeal_macroColNamePos
@@ -183,24 +183,24 @@ public class PieChart_Macros_MPS extends Screen_JPanel
             //##################################
             DefaultPieDataset<PieChart_MacroKey> pieDataset = create_Macro_PieChart_Dataset(macroKey);
             macroValue_Dataset_Map.put(macroKey, pieDataset); // Put Data into memory
-        
+            
             PieChart_Macros pieChart = new PieChart_Macros(macroName, macroSymbol, colorPalette, pieWidth, pieHeight, rotateDelay, titleFont,
                     labelFont, legendFont, macroValue_Dataset_Map.get(macroKey));
-        
+            
             //##################################
             // Add PieChart to GUI
             //##################################
             JPanel x = new JPanel(new GridBagLayout());
             get_ScrollPane_JPanel().add(x);
-        
+            
             add_To_Container(x, pieChart, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 10, 10, null);
-        
+            
             add_To_Container(x, create_Space_Divider(20, 50, java.awt.Color.WHITE), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
         }
-    
+        
         //##################################
         // Re-paint GUI
-        ///##################################
+        //##################################
         resize_GUI();
     }
     
@@ -213,7 +213,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
          *   <Key: MealManager, Value: Quantity >>
          */
         Map<MealManager, BigDecimal> macroValues = mealManagers_TotalMeal_MacroValues.get(macroName);
-    
+        
         /**
          * LinkedHashMap<String, Pair<Integer, String>> totalMeal_macroColNamePos
          * LinkedHashMap<TotalMeal_MacroName, Pair< Position, Measurement>> totalMeal_macroColNamePos
@@ -235,7 +235,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
                 {
                     MealManager mealManager = totalMeal_Values.getKey();
                     BigDecimal macroValue = totalMeal_Values.getValue();
-                   
+                    
                     macroDataset.setValue(new PieChart_MacroKey(mealManager, macroName, macroSymbol), macroValue);
                 });
         

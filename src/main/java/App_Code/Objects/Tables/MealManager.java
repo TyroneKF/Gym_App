@@ -76,7 +76,7 @@ public class MealManager
     private GridBagConstraints gbc;
     private Container container;
     private CollapsibleJPanel collapsibleJpObj;
-    private Shared_Data_Registry sharedDataRegistry;
+    private Shared_Data_Registry shared_Data_Registry;
     
     // Screens
     private Pie_Chart_Meal_Manager_Screen pie_chart_meal_manager_screen;
@@ -92,6 +92,7 @@ public class MealManager
     public MealManager(
             
             Meal_Plan_Screen meal_plan_screen,
+            Shared_Data_Registry shared_Data_Registry,
             MyJDBC_Sqlite db,
             MacrosLeft_Table macrosLeft_JTable,
             Meal_ID meal_ID_Obj,
@@ -103,6 +104,7 @@ public class MealManager
         // Global Variables
         //################################################
         this.meal_plan_screen = meal_plan_screen;
+        this.shared_Data_Registry = shared_Data_Registry;
         this.db = db;
         this.macrosLeft_JTable = macrosLeft_JTable;
         
@@ -128,12 +130,19 @@ public class MealManager
     }
     
     //
-    public MealManager(Meal_Plan_Screen meal_plan_screen, MyJDBC_Sqlite db, MacrosLeft_Table macrosLeft_JTable)
+    public MealManager(
+            
+            Meal_Plan_Screen meal_plan_screen,
+            Shared_Data_Registry shared_Data_Registry,
+            MyJDBC_Sqlite db,
+            MacrosLeft_Table macrosLeft_JTable
+    )
     {
         //############################################################################
         // Setting Variables
         //############################################################################
         this.meal_plan_screen = meal_plan_screen;
+        this.shared_Data_Registry = shared_Data_Registry;
         this.macrosLeft_JTable = macrosLeft_JTable;
         this.db = db;
         
@@ -446,8 +455,6 @@ public class MealManager
         //################################################################
         gbc = new GridBagConstraints();
         container = meal_plan_screen.getScroll_JPanel_Center();
-        sharedDataRegistry = meal_plan_screen.get_MealManagerRegistry();
-        macrosLeft_JTable = meal_plan_screen.get_MacrosLeft_JTable();
         
         //############################
         // Lists & Arraylists & Maps
@@ -526,7 +533,7 @@ public class MealManager
                 new IngredientsTable(
                         db,
                         this,
-                        sharedDataRegistry,
+                        shared_Data_Registry,
                         div_id,
                         sub_Meal_Data,
                         is_Sub_Meal_In_DB,
@@ -570,7 +577,7 @@ public class MealManager
             return;
         }
         
-        pie_chart_meal_manager_screen = new Pie_Chart_Meal_Manager_Screen(db, this);
+        pie_chart_meal_manager_screen = new Pie_Chart_Meal_Manager_Screen(db, shared_Data_Registry, this);
     }
     
     private void pieChart_UpdateMealName()
@@ -599,7 +606,7 @@ public class MealManager
         //############################################
         if (meal_plan_screen.is_PieChart_Screen_Open()) { return; }
         
-        sharedDataRegistry.remove_PieChart_DatasetValues(meal_In_Plan_ID);
+        shared_Data_Registry.remove_PieChart_DatasetValues(meal_In_Plan_ID);
     }
     
     // External Call Usage
@@ -616,7 +623,7 @@ public class MealManager
          * Update data behind pieCharts which will effectively update all pieCharts actively using this data
          */
         
-        if (! sharedDataRegistry.update_PieChart_Values(this))
+        if (! shared_Data_Registry.update_PieChart_Values(this))
         {
             System.err.printf("\n\nShared_Data_Registry.java : updatePieChart_MM_Values() \nPieChart not Open %s", meal_In_Plan_ID);
         }
@@ -1099,7 +1106,7 @@ public class MealManager
         //##########################################
         // Update Registry Data
         //##########################################
-        sharedDataRegistry.delete_MealManager(this);
+        shared_Data_Registry.delete_MealManager(this);
         
         //##########################################
         // Hide JTable object & Collapsible OBJ
@@ -1541,7 +1548,7 @@ public class MealManager
         update_TotalMeal_Table();
         
         // Update Registry Data (Second)
-        sharedDataRegistry.add_OR_Replace_MealManager_Macros_DATA(this);
+        shared_Data_Registry.add_OR_Replace_MealManager_Macros_DATA(this);
         
         // Update Charts
         updateCharts(updateInternalCharts, updateExternalCharts);
@@ -1587,7 +1594,7 @@ public class MealManager
     
     public Shared_Data_Registry getMealManagerRegistry()
     {
-        return sharedDataRegistry;
+        return shared_Data_Registry;
     }
     
     // ############################################

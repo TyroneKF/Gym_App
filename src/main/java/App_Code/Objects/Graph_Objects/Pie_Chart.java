@@ -54,8 +54,18 @@ public class Pie_Chart<K extends Comparable<K>> extends JPanel
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
-    public Pie_Chart(String title, Color[] colors, int frameWidth, int frameHeight, int rotateDelay, Font titleFont,
-                     Font labelFont, Font legendFont, DefaultPieDataset<K> datasetInput)
+    public Pie_Chart(
+            
+            String title,
+            Color[] colors,
+            int frameWidth,
+            int frameHeight,
+            int rotateDelay,
+            Font titleFont,
+            Font labelFont,
+            Font legendFont,
+            DefaultPieDataset<K> datasetInput
+    )
     {
         //############################################
         // Set Layout Dimensions

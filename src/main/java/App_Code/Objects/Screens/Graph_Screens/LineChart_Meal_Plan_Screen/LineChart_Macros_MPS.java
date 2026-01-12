@@ -1,6 +1,5 @@
 package App_Code.Objects.Screens.Graph_Screens.LineChart_Meal_Plan_Screen;
 
-import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_MySQL;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Tables.MealManager;
 import App_Code.Objects.Graph_Objects.Line_Chart;
@@ -9,7 +8,6 @@ import App_Code.Objects.Screens.Meal_Plan_Screen;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
-
 import java.awt.*;
 import java.math.BigDecimal;
 import java.util.*;
@@ -27,8 +25,6 @@ class LineChart_Macros_MPS extends Screen_JPanel
     //##############################################
     private Meal_Plan_Screen meal_plan_screen;
     private Shared_Data_Registry shared_Data_Registry;
-    
-    private MyJDBC_MySQL db;
     
     //##############################################
     // Collections
@@ -53,8 +49,15 @@ class LineChart_Macros_MPS extends Screen_JPanel
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
-    public LineChart_Macros_MPS(MyJDBC_MySQL db, Meal_Plan_Screen meal_plan_screen, String title, ArrayList<String> macros_To_Check,
-                                int frameWidth, int frameHeight)
+    public LineChart_Macros_MPS(
+            
+            Shared_Data_Registry shared_Data_Registry,
+            Meal_Plan_Screen meal_plan_screen,
+            String title,
+            ArrayList<String> macros_To_Check,
+            int frameWidth,
+            int frameHeight
+    )
     {
         // ##########################################
         // Super Constructors & Variables
@@ -66,9 +69,8 @@ class LineChart_Macros_MPS extends Screen_JPanel
         // Variables
         // ##########################################
         // Objects
-        this.db = db;
+        this.shared_Data_Registry = shared_Data_Registry;
         this.meal_plan_screen = meal_plan_screen;
-        this.shared_Data_Registry = meal_plan_screen.get_MealManagerRegistry();
         
         // String
         this.planName = meal_plan_screen.getPlan_Name();
