@@ -86,7 +86,7 @@
         (
             SELECT  (SELECT entity_id_value FROM large_eggs_60g_ingredient_id) AS ingredient_id,   3 AS quantity  UNION ALL   -- EGGS
             SELECT  (SELECT entity_id_value FROM alpro_soya_light_long_life_drink_ingredient_id), 110             UNION ALL   -- Milk
-            SELECT  (SELECT entity_id_value FROM plantin_ingredient_id),                          28                          -- Plantain
+            SELECT  (SELECT entity_id_value FROM plantin_ingredient_id),                          150                          -- Plantain
         ) v;
         
 
@@ -164,10 +164,10 @@
         FROM 
         
         (
-            SELECT (SELECT entity_id_value FROM alpro_soya_light_long_life_drink_ingredient_id) AS ingredient_id,  110 AS quantity  UNION ALL   -- Oatmeal
+            SELECT (SELECT entity_id_value FROM alpro_soya_light_long_life_drink_ingredient_id) AS ingredient_id,  450 AS quantity  UNION ALL   -- Oatmeal
              -- ((SELECT entity_id_value FROM oatmeal_mid_morning_div_vs_id), , 35), -- Nut Powder
-            SELECT (SELECT entity_id_value FROM asda_scottish_porridge_oats_ingredient_id),                        500              UNION ALL   -- Milk
-            SELECT (SELECT entity_id_value FROM rowse_organic_honey_ingredient_id),                                500                          -- Honey
+            SELECT (SELECT entity_id_value FROM asda_scottish_porridge_oats_ingredient_id),                        110              UNION ALL   -- Milk
+            SELECT (SELECT entity_id_value FROM rowse_organic_honey_ingredient_id),                                15                           -- Honey
         ) v;
         
 
@@ -367,14 +367,17 @@
         -- #################################
         -- Breakfast Sub-Meals
         -- #################################
-           nuts_lunch_div_vs_id AS (SELECT entity_id_value FROM seed_registry WHERE seed_key = 'nuts_lunch_div_vs_id'),
+           fruit_smoothie_div_vs_id AS (SELECT entity_id_value FROM seed_registry WHERE seed_key = 'fruit_smoothie_pre_workout_div_vs_id'),
 
         -- #################################
         -- Ingredients
         -- #################################
-           pistachios_ingredient_id AS (SELECT entity_id_value FROM seed_registry WHERE seed_key = 'pistachios_ingredient_id'),
-           pumpkin_seeds_ingredient_id AS (SELECT entity_id_value FROM seed_registry WHERE seed_key = 'pumpkin_seeds_ingredient_id'),
-           sunflower_seeds_ingredient_id AS (SELECT entity_id_value FROM seed_registry WHERE seed_key = 'sunflower_seeds_ingredient_id')
+           frozen_blueberries_asda_ingredient_id  AS (SELECT entity_id_value FROM seed_registry WHERE seed_key = 'frozen_blueberries_asda_ingredient_id'),
+           frozen_raspberries_asda_ingredient_id  AS (SELECT entity_id_value FROM seed_registry WHERE seed_key = 'frozen_raspberries_asda_ingredient_id'),
+           frozen_strawberries_asda_ingredient_id AS (SELECT entity_id_value FROM seed_registry WHERE seed_key = 'frozen_strawberries_asda_ingredient_id'),
+           grapefruit_ingredient_id AS (SELECT entity_id_value FROM seed_registry WHERE seed_key = 'grapefruit_ingredient_id'),
+           oranges_ingredient_id AS (SELECT entity_id_value FROM seed_registry WHERE seed_key = 'oranges_ingredient_id'),
+           water_ingredient_id AS (SELECT entity_id_value FROM seed_registry WHERE seed_key = 'water_ingredient_id')
 
 
     -- #####################################################
@@ -388,15 +391,18 @@
         )
         SELECT
             
-            (SELECT entity_id_value FROM nuts_lunch_div_vs_id),
+            (SELECT entity_id_value FROM fruit_smoothie_div_vs_id),
             v.ingredient_id,
             v.quantity
 
         FROM
         (
-            SELECT  (SELECT entity_id_value FROM sunflower_seeds_ingredient_id) AS ingredient_id,      7    AS quantity  UNION ALL   -- Sunflower Seeds
-            SELECT  (SELECT entity_id_value FROM pumpkin_seeds_ingredient_id),                         7                 UNION ALL   -- Pumpkin Seeds
-            SELECT  (SELECT entity_id_value FROM pistachios_ingredient_id),                            12                            -- Pistachios
+            SELECT  (SELECT entity_id_value FROM frozen_blueberries_asda_ingredient_id) AS ingredient_id,   110  AS  quantity   UNION ALL   -- Frozen Blueberries
+            SELECT  (SELECT entity_id_value FROM frozen_raspberries_asda_ingredient_id),                    110                 UNION ALL   -- Frozen Raspberries
+            SELECT  (SELECT entity_id_value FROM frozen_strawberries_asda_ingredient_id),                   110                 UNION ALL   -- Frozen Strawberries
+            SELECT  (SELECT entity_id_value FROM grapefruit_ingredient_id),                                 110                 UNION ALL   -- GrapeFruit
+            SELECT  (SELECT entity_id_value FROM oranges_ingredient_id),                                    110                 UNION ALL   -- Oranges
+            SELECT  (SELECT entity_id_value FROM water_ingredient_id),                                      500                             -- Water
         ) v;
         
 
@@ -435,7 +441,7 @@
         -- #################################
         -- Breakfast Sub-Meals
         -- #################################
-           nuts_lunch_div_vs_id AS (SELECT entity_id_value FROM seed_registry WHERE seed_key = 'nuts_lunch_div_vs_id'),
+            protein_shake_post_div_id AS (SELECT entity_id_value FROM seed_registry WHERE seed_key = 'protein_shake_post_workout_div_vs_id'),
 
         -- #################################
         -- Ingredients
@@ -455,7 +461,7 @@
         )
         SELECT
 
-            (SELECT entity_id_value FROM nuts_lunch_div_vs_id),
+            (SELECT entity_id_value FROM protein_shake_post_div_id),
             v.ingredient_id,
             v.quantity
 
