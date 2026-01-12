@@ -17,7 +17,7 @@
         pdid INTEGER DEFAULT NULL, -- FK has to be defined at the bottom
 
         quantity REAL NOT NULL
-            CHECK (quantity > 0),
+            CHECK (quantity >= 0),
 
         -- Foreign Keys (SQLite requires table-level declaration)
         FOREIGN KEY (div_meal_sections_version_id)
