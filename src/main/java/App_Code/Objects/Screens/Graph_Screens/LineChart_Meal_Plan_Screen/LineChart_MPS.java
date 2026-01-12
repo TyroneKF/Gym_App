@@ -1,6 +1,6 @@
 package App_Code.Objects.Screens.Graph_Screens.LineChart_Meal_Plan_Screen;
 
-import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_MySQL;
+import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
 import App_Code.Objects.Tables.MealManager;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
@@ -29,7 +29,7 @@ public class LineChart_MPS extends Screen_JFrame
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
-    public LineChart_MPS(MyJDBC_MySQL db, Meal_Plan_Screen meal_plan_screen)
+    public LineChart_MPS(MyJDBC_Sqlite db, Meal_Plan_Screen meal_plan_screen)
     {
         // ################################################################
         // Super Constructor
@@ -81,7 +81,7 @@ public class LineChart_MPS extends Screen_JFrame
                 "total_water", "total_calories"
                 //,"total_liquid"
         ));
-    
+        
         String title2 = String.format("%s : Calories & Water Over 24 Hours", meal_plan_screen.getPlan_Name());
         
         lineChart_Bigger_Macros_MPS = new LineChart_Macros_MPS(db, meal_plan_screen, title2, macros_To_Check2, 1000, 900);

@@ -1,6 +1,6 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Stores;
 
-import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_MySQL;
+import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info.Ingredients_Info_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Add_Screen;
@@ -8,7 +8,13 @@ import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Ty
 
 public  class Add_Stores extends Add_Screen
 {
-    public Add_Stores(MyJDBC_MySQL db, Shared_Data_Registry shared_Data_Registry, Ingredients_Info_Screen ingredient_Info_Screen, Parent_Screen parent_Screen)
+    public Add_Stores(
+            
+            MyJDBC_Sqlite db,
+            Shared_Data_Registry shared_Data_Registry,
+            Ingredients_Info_Screen ingredient_Info_Screen,
+            Parent_Screen parent_Screen
+    )
     {
         super(db, shared_Data_Registry, ingredient_Info_Screen, parent_Screen);
     }

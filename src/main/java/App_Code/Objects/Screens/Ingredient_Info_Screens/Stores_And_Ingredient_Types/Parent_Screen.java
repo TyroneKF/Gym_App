@@ -1,7 +1,7 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types;
 
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Storable_IDS_Parent;
-import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_MySQL;
+import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
@@ -43,7 +43,7 @@ public abstract class Parent_Screen extends Screen_JPanel
     //############################
     // Objects
     //############################
-    protected MyJDBC_MySQL db;
+    protected MyJDBC_Sqlite db;
     protected Shared_Data_Registry shared_Data_Registry;
     protected GridBagConstraints gbc = new GridBagConstraints();
     
@@ -66,7 +66,7 @@ public abstract class Parent_Screen extends Screen_JPanel
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Parent_Screen(MyJDBC_MySQL db, Shared_Data_Registry shared_Data_Registry, Ingredients_Info_Screen ingredients_Info_Screen,
+    public Parent_Screen(MyJDBC_Sqlite db, Shared_Data_Registry shared_Data_Registry, Ingredients_Info_Screen ingredients_Info_Screen,
                          String process, ArrayList<? extends Storable_IDS_Parent> jComboBox_List)
     {
         //####################################

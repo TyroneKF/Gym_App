@@ -3,7 +3,7 @@ package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_In
 import App_Code.Objects.Data_Objects.Field_Bindings.Ingredients_Form_Binding;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Measurement_ID_OBJ;
-import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_MySQL;
+import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.Combo_Boxes.Field_JCombo_Storable_ID;
 import App_Code.Objects.Gui_Objects.Combo_Boxes.Field_JComboBox;
@@ -36,7 +36,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
     // Objects
     //#############################
     protected Shared_Data_Registry sharedDataRegistry;
-    protected MyJDBC_MySQL db;
+    protected MyJDBC_Sqlite db;
     
     protected JPanel northPanel = new JPanel(new GridBagLayout());
     
@@ -58,7 +58,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Ingredients_Form(Container parentContainer, MyJDBC_MySQL db, Shared_Data_Registry sharedDataRegistry, String btn_Txt)
+    public Ingredients_Form(Container parentContainer, MyJDBC_Sqlite db, Shared_Data_Registry sharedDataRegistry, String btn_Txt)
     {
         //############################################
         // Super Constructor

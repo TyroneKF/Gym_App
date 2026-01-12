@@ -1,22 +1,27 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Stores;
 
-
 import App_Code.Objects.Data_Objects.ID_Objects.ID_Object;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Storable_IDS_Parent;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
-import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_MySQL;
+import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info.Ingredients_Info_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Edit_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Parent_Screen;
 import org.javatuples.Pair;
-
 import java.util.*;
+
 
 public class Edit_Stores extends Edit_Screen
 {
-    public Edit_Stores(MyJDBC_MySQL db, Shared_Data_Registry shared_Data_Registry, Ingredients_Info_Screen ingredient_Info_Screen,
-                       Parent_Screen parent_Screen, ArrayList<? extends Storable_IDS_Parent> jComboBox_List)
+    public Edit_Stores(
+            
+            MyJDBC_Sqlite db,
+            Shared_Data_Registry shared_Data_Registry,
+            Ingredients_Info_Screen ingredient_Info_Screen,
+            Parent_Screen parent_Screen,
+            ArrayList<? extends Storable_IDS_Parent> jComboBox_List
+    )
     {
         super(db, shared_Data_Registry, ingredient_Info_Screen, parent_Screen, jComboBox_List);
     }

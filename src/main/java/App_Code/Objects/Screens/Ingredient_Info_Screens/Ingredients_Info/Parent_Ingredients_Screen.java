@@ -1,6 +1,6 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info;
 
-import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_MySQL;
+import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredients_Form;
@@ -21,7 +21,7 @@ public abstract class Parent_Ingredients_Screen extends Screen_JPanel
     protected JPanel scroll_JPanel, mainCentre_JPanel;
     
     // Objects
-    protected MyJDBC_MySQL db;
+    protected MyJDBC_Sqlite db;
     protected Frame frame;
     
     // Screen Objects
@@ -34,7 +34,7 @@ public abstract class Parent_Ingredients_Screen extends Screen_JPanel
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Parent_Ingredients_Screen(Ingredients_Info_Screen ingredients_info_screen, MyJDBC_MySQL db, Shared_Data_Registry shared_Data_Registry)
+    public Parent_Ingredients_Screen(Ingredients_Info_Screen ingredients_info_screen, MyJDBC_Sqlite db, Shared_Data_Registry shared_Data_Registry)
     {
         //##########################################################
         // Super Constructor

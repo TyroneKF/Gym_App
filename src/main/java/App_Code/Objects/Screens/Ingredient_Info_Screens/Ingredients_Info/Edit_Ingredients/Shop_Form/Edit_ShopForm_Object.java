@@ -4,7 +4,6 @@ import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Store_ID
 import App_Code.Objects.Gui_Objects.Combo_Boxes.Field_JCombo_Storable_ID;
 import App_Code.Objects.Gui_Objects.Text_Fields.Parent.Field_JTxtField_Parent;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.ShopForm_Object;
-import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.Shop_Form;
 import App_Code.Objects.Data_Objects.Field_Bindings.Shop_Form_Binding;
 import org.javatuples.Pair;
 import java.awt.*;

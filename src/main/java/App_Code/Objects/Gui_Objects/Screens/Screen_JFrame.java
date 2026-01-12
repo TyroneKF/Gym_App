@@ -23,13 +23,9 @@ public class Screen_JFrame extends JFrame
     protected String title;
     private String class_Name;
     
-    // Booleans
-    private Boolean addScrollPane;
-    
     //##############################################
     // Objects
     //##############################################
-    protected MyJDBC_MySQL db;
     protected MyJDBC_Sqlite db_Sqlite;
     protected GridBagConstraints gbc = new GridBagConstraints();
     protected Container contentPane;
@@ -44,15 +40,7 @@ public class Screen_JFrame extends JFrame
     //##################################################################################################################
     // Constructors
     //##################################################################################################################
-    public Screen_JFrame(MyJDBC_MySQL db, boolean addScrollPane, String title, int frameWidth, int frameHeight, int xPos, int yPos)
-    {
-        this.db = db;  // Variables
-        
-        // Setup
-        setup(addScrollPane, title, frameWidth, frameHeight, xPos, yPos);
-    }
-    
-    public Screen_JFrame(MyJDBC_Sqlite db_Sqlite, boolean addScrollPane, String title, int frameWidth, int frameHeight, int xPos, int yPos)
+   public Screen_JFrame(MyJDBC_Sqlite db_Sqlite, boolean addScrollPane, String title, int frameWidth, int frameHeight, int xPos, int yPos)
     {
         this.db_Sqlite = db_Sqlite;  // Variables
         
@@ -76,7 +64,7 @@ public class Screen_JFrame extends JFrame
         //########################################################
         this.class_Name = this.getClass().getSimpleName();
         
-        this.addScrollPane = addScrollPane;
+        // Booleans
         this.title = title;
         this.frameHeight = frameHeight;
         this.frameWidth = frameWidth;
@@ -280,9 +268,9 @@ public class Screen_JFrame extends JFrame
     // ##################################
     // Other Objects
     // ##################################
-    public MyJDBC_MySQL getDb()
+    public MyJDBC_Sqlite getDb()
     {
-        return db;
+        return db_Sqlite;
     }
     
     public GridBagConstraints getGbc()
