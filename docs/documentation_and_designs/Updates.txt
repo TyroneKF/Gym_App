@@ -75,6 +75,8 @@ Icon_Button
     delete_Icon_Btn.makeBTntransparent();
 
 Ingredients_Table
+.) GUI names appearing on Tables
+.) Shorten Delete BTN
 .) Flip un-editable & editable columns around makes it easier for adding new columns
 .) Redraw if ingredient / Info in edit Screen is being edited needs to be reflcected on Tables (Redrawn)
    etc shop selected thats been deleted all products need to be reloaded.

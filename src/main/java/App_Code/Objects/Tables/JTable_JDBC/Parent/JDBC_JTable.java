@@ -4,13 +4,10 @@ package App_Code.Objects.Tables.JTable_JDBC.Parent;
 // https://stackoverflow.com/questions/10347983/making-a-jbutton-clickable-inside-a-jtable
 //http://tips4java.wordpress.com/2009/07/12/table-button-column/
 
-import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
-import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -20,7 +17,7 @@ public abstract class JDBC_JTable extends JPanel
     //##############################################
     // Objects
     //##############################################
-    protected MyJDBC_Sqlite sqlite_db;
+    protected MyJDBC_Sqlite db;
     protected Container parent_Container;
     protected JScrollPane scrollPane = new JScrollPane();
     protected static GridBagConstraints gbc = new GridBagConstraints(); //HELLO DELETE
@@ -62,14 +59,14 @@ public abstract class JDBC_JTable extends JPanel
             table_Initialised = false,
             add_JTable_Action,
             is_row_Being_Edited = false,
-            data_Changed_In_Table = false;
+            has_data_changed_in_table = false;
     
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
     public JDBC_JTable
     (
-            MyJDBC_Sqlite sqlite_db,
+            MyJDBC_Sqlite db,
             Container parent_Container,
             boolean add_JTable_Action,
             String db_row_id_column_name,
@@ -88,7 +85,7 @@ public abstract class JDBC_JTable extends JPanel
         //##############################################################
         // Variables
         //##############################################################
-        this.sqlite_db = sqlite_db;
+        this.db = db;
         this.saved_Data = saved_Data != null ? saved_Data : new ArrayList<>();
         
         this.parent_Container = parent_Container;
@@ -358,7 +355,8 @@ public abstract class JDBC_JTable extends JPanel
                 
                 if (add_JTable_Action && ! is_row_Being_Edited)
                 {
-                    if (! has_Cell_Data_Changed(old_Value, newValue, col)) { return; } // If Nothing Changed Exit
+                    // If Nothing Changed Exit
+                    if (! has_Cell_Data_Changed(getColumnClass(col), old_Value, newValue, col)) { return; }
                     
                     set_Row_Being_Edited(true);
                     boolean tabled_Action_Check = table_Data_Changed_Action(row, col, newValue);
@@ -373,6 +371,7 @@ public abstract class JDBC_JTable extends JPanel
                 current_Table_Data.get(row).set(col, newValue);
                 fireTableCellUpdated(row, col); // Notifies TableModelListeners, JTable that the value has changed = repaint
                 
+                has_data_changed_in_table = true;
                 System.out.printf("\n\n%s -> %s \nValue Changed From %s -> %s", get_Class_And_Method_Name(), table_name, old_Value, newValue);
             }
             catch (Exception e)
@@ -382,43 +381,6 @@ public abstract class JDBC_JTable extends JPanel
                 
                 set_Row_Being_Edited(false);
             }
-        }
-        
-        private boolean has_Cell_Data_Changed(Object old_Value, Object new_Value, int col) throws Exception
-        {
-            //########################################
-            //  Comparison For Other Types
-            //########################################
-            
-            /*
-             *  The Compared Types are only needed for cells that are editable by the user, if the cell isn't editable
-             *  has_Cell_Data_Changed isn't called.
-             *
-             */
-            
-            Class<?> type = getColumnClass(col);
-            
-            if (type == Ingredient_Type_ID_OBJ.class) // Ingredient Type
-            {
-                return ! ((Ingredient_Type_ID_OBJ) old_Value).equals(((Ingredient_Type_ID_OBJ) new_Value));
-            }
-            else if (type == Ingredient_Name_ID_OBJ.class) // Ingredient Name
-            {
-                return ! ((Ingredient_Name_ID_OBJ) old_Value).equals(((Ingredient_Name_ID_OBJ) new_Value));
-            }
-            else if (type == BigDecimal.class) // Quantity Field = Big Decimal
-            {
-                return ((BigDecimal) old_Value).compareTo(((BigDecimal) new_Value)) != 0;
-            }
-            else if (type == String.class)
-            {
-                return ! ((String) old_Value).equals(((String) new_Value));
-            }
-            
-            //########################################
-            //  Edge Cases : Error (Unexpected Type)
-            //########################################
-            throw new Exception(String.format("\n\n%s Error \nUnexpected Class Type: %s - %s", get_Class_And_Method_Name(), new_Value.getClass(), table_name));
         }
         
         @Override
@@ -460,7 +422,6 @@ public abstract class JDBC_JTable extends JPanel
         
         public void refresh_Data()
         {
-           
             try // Refresh Data
             {
                 current_Table_Data = clone_Data(saved_Data);
@@ -524,6 +485,8 @@ public abstract class JDBC_JTable extends JPanel
         }
     }
     
+    protected abstract boolean has_Cell_Data_Changed(Class<?> type, Object old_Value, Object new_Value, int col) throws Exception;
+    
     //##############################################
     // Table Model Methods
     //##############################################
@@ -543,8 +506,8 @@ public abstract class JDBC_JTable extends JPanel
         int column_name_size = column_Names.size();
         
         boolean is_2D = source_Data.getFirst() instanceof ArrayList<?>;
- 
-        int source_data_size = is_2D ? ((ArrayList<ArrayList<?>>) source_Data).getFirst().size():  source_Data.size();
+        
+        int source_data_size = is_2D ? ((ArrayList<ArrayList<?>>) source_Data).getFirst().size() : source_Data.size();
         
         if (source_data_size != column_name_size) // Source Data has to provide data for each expected column
         {

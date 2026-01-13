@@ -127,6 +127,12 @@ public abstract class MyJTable_DisplayData extends JDBC_JTable
     @Override
     protected boolean table_Data_Changed_Action(int row_Model, int column_Model, Object newValue) { return false; }
     
+    @Override
+    protected boolean has_Cell_Data_Changed(Class<?> type, Object old_Value, Object new_Value, int col) throws Exception
+    {
+        throw new Exception(String.format("%s -> doesn't need a has_Cell_Data_Changed() Method to called, logic Error!", table_name));
+    }
+    
     private String get_Query()
     {
         return String.format("SELECT * FROM %s WHERE %s = ?;", db_read_view_name, db_row_id_column_name);
@@ -143,7 +149,7 @@ public abstract class MyJTable_DisplayData extends JDBC_JTable
         
         try
         {
-            ArrayList<ArrayList<Object>> tableDataObject = sqlite_db.get_2D_Query_AL_Object(get_Query(), get_Params(), errorMSG, false);
+            ArrayList<ArrayList<Object>> tableDataObject = db.get_2D_Query_AL_Object(get_Query(), get_Params(), errorMSG, false);
             super.update_Table_Row(tableDataObject.getFirst(), update_Row);
         }
         catch (Exception _) // Error is already handled by DB class

@@ -24,8 +24,10 @@ import java.util.*;
 public class IngredientsTable extends JDBC_JTable
 {
     //#################################################################################################################
-    // Objects
+    // Variables
     //#################################################################################################################
+   
+    // Objects
     private final MealManager mealManager;
     private final Shared_Data_Registry shared_Data_Registry;
     
@@ -33,15 +35,17 @@ public class IngredientsTable extends JDBC_JTable
     private final JPanel space_Divider;
     private final Frame frame;
     
-    //#################################################################################################################
+    //################################################
     // Other Variables
-    //#################################################################################################################
+    //################################################
     private final int
             plan_ID,
             meal_In_Plan_ID,
             sub_Meal_ID;
     
-    private boolean meal_In_DB, object_Deleted = false;
+    private boolean
+            meal_In_DB,
+            object_Deleted = false;
     
     private int
             model_Ingredient_Index_Col,
@@ -52,8 +56,6 @@ public class IngredientsTable extends JDBC_JTable
     
     private final int none_Of_The_Above_ID = 1;
     private final int none_Of_The_Above_PDID = 1;
-    
-    private String line_Separator = "###############################################################################";
     
     //##################################################################################################################
     // Constructor
@@ -127,7 +129,7 @@ public class IngredientsTable extends JDBC_JTable
     }
     
     //##################################################################################################################
-    // Table Setup
+    // Table Setup / Special Column Methods
     //##################################################################################################################
     @Override
     protected void extra_Table_Setup()
@@ -284,9 +286,97 @@ public class IngredientsTable extends JDBC_JTable
         setup_Delete_Btn_Column(get_DeleteBTN_Col(false));
     }
     
+    //###################################
+    // Delete Row Btn
+    //###################################
+    private void setup_Delete_Btn_Column(int delete_Btn_Column)
+    {
+        new Button_Column(this, delete_Btn_Column, get_IngredientIndex_Col(true));
+    }
+    
+    public void delete_Row_Action(int ingredient_Index, int model_Row)
+    {
+        //#################################################
+        // Can't have an empty Table
+        //##################################################
+        if (get_Rows_In_Table() == 1)
+        {
+            String question = """
+                    \n\nThere is only 1  ingredient in this subMeal!
+                    
+                    If you delete this ingredient, this table will also be deleted.
+                    
+                    Would you still like to proceed?""";
+            
+            int reply = JOptionPane.showConfirmDialog(null, question, "Delete Ingredients", JOptionPane.YES_NO_OPTION); //HELLO Edit
+            
+            if (reply == JOptionPane.YES_OPTION)
+            {
+                delete_Table_Action();
+            }
+            
+            return; // Exit
+        }
+        
+        //#################################################
+        // Delete Ingredient From Temp Meal
+        //#################################################
+        String query = String.format("DELETE FROM %s WHERE %s = ? ;",  db_write_table_name,db_row_id_column_name);
+        String error_msg = String.format("Error, unable to delete from '%s' !", table_name);
+        
+        if (! db.upload_Data(query, new Object[]{ ingredient_Index }, error_msg)) { return; }
+        
+        //#################################################
+        // Remove From Table
+        //##################################################
+        delete_Row(model_Row);
+        resize_Object();
+        
+        //#################################################
+        // Update Table Data
+        //##################################################
+        update_All_Tables_Data();
+    }
+    
     //##################################################################################################################
     // Data Changing In Cells Actions
     //##################################################################################################################
+    @Override
+    protected boolean has_Cell_Data_Changed(Class<?> type, Object old_Value, Object new_Value, int col) throws Exception
+    {
+        //########################################
+        //  Comparison For Other Types
+        //########################################
+        
+        /*
+         *  The Compared Types are only needed for cells that are editable by the user, if the cell isn't editable
+         *  has_Cell_Data_Changed isn't called.
+         *
+         */
+        
+        if (type == Ingredient_Type_ID_OBJ.class) // Ingredient Type
+        {
+            return ! ((Ingredient_Type_ID_OBJ) old_Value).equals(((Ingredient_Type_ID_OBJ) new_Value));
+        }
+        else if (type == Ingredient_Name_ID_OBJ.class) // Ingredient Name
+        {
+            return ! ((Ingredient_Name_ID_OBJ) old_Value).equals(((Ingredient_Name_ID_OBJ) new_Value));
+        }
+        else if (type == BigDecimal.class) // Quantity Field = Big Decimal
+        {
+            return ((BigDecimal) old_Value).compareTo(((BigDecimal) new_Value)) != 0;
+        }
+        else if (type == String.class)
+        {
+            return ! ((String) old_Value).equals(((String) new_Value));
+        }
+        
+        //########################################
+        //  Edge Cases : Error (Unexpected Type)
+        //########################################
+        throw new Exception(String.format("\n\n%s Error \nUnexpected Class Type: %s - %s", get_Class_And_Method_Name(), new_Value.getClass(), table_name));
+    }
+    
     @Override
     protected boolean table_Data_Changed_Action(int row_In_Model, int column_In_Model, Object new_Value) throws Exception
     {
@@ -414,7 +504,7 @@ public class IngredientsTable extends JDBC_JTable
         //##############################################
         // Execute
         //##############################################
-        Fetched_Results fetched_Results = sqlite_db.upload_And_Get_Batch(upload_Queries_And_Params, fetch_Queries_And_Params, error_MSG);
+        Fetched_Results fetched_Results = db.upload_And_Get_Batch(upload_Queries_And_Params, fetch_Queries_And_Params, error_MSG);
         
         if (fetched_Results == null) { return false; } // Upload & Fetch Failed
         
@@ -478,129 +568,6 @@ public class IngredientsTable extends JDBC_JTable
     }
     
     //##################################################################################################################
-    // Delete Button Methods
-    //##################################################################################################################
-    public void setup_Delete_Btn_Column(int delete_Btn_Column)
-    {
-        new Button_Column(this, delete_Btn_Column, get_IngredientIndex_Col(true));
-    }
-    
-    public void delete_Row_Action(int ingredient_Index, int model_Row)
-    {
-        //#################################################
-        // Can't have an empty Table
-        //##################################################
-        if (get_Rows_In_Table() == 1)
-        {
-            String question = """
-                    \n\nThere is only 1  ingredient in this subMeal!
-                    
-                    If you delete this ingredient, this table will also be deleted.
-                    
-                    Would you still like to proceed?""";
-            
-            int reply = JOptionPane.showConfirmDialog(null, question, "Delete Ingredients", JOptionPane.YES_NO_OPTION); //HELLO Edit
-            
-            if (reply == JOptionPane.YES_OPTION)
-            {
-                delete_Table_Action();
-            }
-            
-            return; // Exit
-        }
-        
-        //#################################################
-        // Delete Ingredient From Temp Meal
-        //#################################################
-        String query = String.format("DELETE FROM %s WHERE %s = ? ;",  db_write_table_name,db_row_id_column_name);
-        String error_msg = String.format("Error, unable to delete from '%s' !", table_name);
-        
-        if (! sqlite_db.upload_Data(query, new Object[]{ ingredient_Index }, error_msg)) { return; }
-        
-        //#################################################
-        // Remove From Table
-        //##################################################
-        delete_Row(model_Row);
-        resize_Object();
-        
-        //#################################################
-        // Update Table Data
-        //##################################################
-        update_All_Tables_Data();
-    }
-    
-    public void delete_Table_Action()
-    {
-        //################################################
-        // Delete table from database
-        //################################################
-         /*
-            Delete all ingredients from this meal (using mealID) from table "ingredients_in_meal"
-            Delete meal from meals database
-         */
-        
-        String query = "DELETE FROM draft_divided_meal_sections WHERE draft_div_meal_sections_id = ? ;";
-        String error_msg = String.format("Unable to delete from '%s' !", table_name);
-        
-        Object[] params = new Object[]{ sub_Meal_ID };
-        
-        if (! sqlite_db.upload_Data(query, params, error_msg)) { return; }
-        
-        //################################################
-        // Hide JTable object & Collapsible OBJ
-        //################################################
-        hide_Ingredients_Table();
-        
-        //################################################
-        // Update MacrosLeft Table & TotalMeal Table
-        //################################################
-        update_All_Tables_Data();
-        
-        //################################################
-        // Tell MealManager This Table Has Been Deleted
-        //################################################
-        mealManager.ingredientsTableHasBeenDeleted();
-        
-        //################################################
-        // Progress Message
-        //################################################
-        JOptionPane.showMessageDialog(frame, "Table Successfully Deleted!");
-    }
-    
-    public void completely_Delete_Ingredients_Table()
-    {
-        // Hide Ingredients Table
-        hide_Ingredients_Table();
-        
-        // remove JTable from GUI
-        parent_Container.remove(this);
-        
-        // remove Space Divider
-        parent_Container.remove(space_Divider);
-        
-        // Tell Parent container to resize
-        parent_Container.revalidate();
-    }
-    
-    public void set_Visibility(boolean condition)
-    {
-        this.setVisible(condition);
-        space_Divider.setVisible(condition);
-    }
-    
-    private void hide_Ingredients_Table()
-    {
-        set_Visibility(false); // hide collapsible Object
-        set_Object_Deleted(true);
-    }
-    
-    private void unHide_Ingredients_Table()
-    {
-        set_Visibility(true); // hide collapsible Object
-        set_Object_Deleted(false); // set this object as deleted
-    }
-    
-    //##################################################################################################################
     // Button Events
     //##################################################################################################################
     // Add Button
@@ -658,7 +625,7 @@ public class IngredientsTable extends JDBC_JTable
         //#######################################################
         // Execute Query
         //#######################################################
-        Fetched_Results fetched_Results_OBJ = sqlite_db.upload_And_Get_Batch(upload_Queries_And_Params, fetch_Queries_And_Params, error_MSG);
+        Fetched_Results fetched_Results_OBJ = db.upload_And_Get_Batch(upload_Queries_And_Params, fetch_Queries_And_Params, error_MSG);
         
         if (fetched_Results_OBJ == null) { System.err.println("\n\n\nFailed Adding Ingredient"); return; }
         
@@ -709,84 +676,6 @@ public class IngredientsTable extends JDBC_JTable
         refresh_Data(true, true);
     }
     
-    public void refresh_Data(boolean update_MacrosLeft_Table, boolean update_TotalMeal_Table)
-    {
-        //#############################################################################################
-        // Reset Variable
-        //#############################################################################################
-        data_Changed_In_Table = false;
-        
-        if (is_Table_Deleted())  // If Meal was previously deleted reset variables & state
-        {
-            unHide_Ingredients_Table();
-        }
-        
-        //##############################################################################################
-        // Reset Table Model data
-        //#############################################################################################
-        refresh_Data();
-        
-        //#############################################################################################
-        // Reset Meal Total  Table Data
-        //#############################################################################################
-        if (update_TotalMeal_Table)
-        {
-            mealManager.update_MealManager_DATA(true, true);
-        }
-        
-        //#############################################################################################
-        // Update Other Tables Data
-        //#############################################################################################
-        if (update_MacrosLeft_Table)
-        {
-            mealManager.update_MacrosLeft_Table();
-        }
-    }
-    
-    //###################################################
-    // Save Button
-    //###################################################
-    public boolean save_Btn_Action(boolean show_Message)
-    {
-        //######################################################################
-        // Transfer Data from temp plan to origin plan
-        //######################################################################
-        if (! (transfer_Meal_Data_From_Plans(null, plan_ID)))     // If Meal Not In Original PlanID Add To PlanID
-        {
-            if (show_Message)
-            {
-                JOptionPane.showMessageDialog(frame, "\n\nUnable to transfer ingredients data from temp to original plan ");
-            }
-            return false;
-        }
-        
-        //######################################################################
-        // Update Table Model
-        //######################################################################
-        save_Data();
-        
-        //######################################################################
-        // Success Message
-        //######################################################################
-        if (show_Message)
-        {
-            JOptionPane.showMessageDialog(frame, "Table Successfully Updated!");
-        }
-        
-        //#############################################################################################
-        // Reset Variable
-        //#############################################################################################
-        meal_In_DB = true;
-        data_Changed_In_Table = false;
-        
-        //#############################################################################################
-        
-        return true;
-    }
-    
-    //################################################
-    // Events For Refresh & Save
-    //################################################
     public boolean transfer_Meal_Data_From_Plans(Integer from_Plan_ID, Integer to_Plan_ID)
     {
        /* //########################################################
@@ -860,6 +749,122 @@ public class IngredientsTable extends JDBC_JTable
         return true;*/
         
         return false;
+    }
+    
+    public void refresh_Data(boolean update_MacrosLeft_Table, boolean update_TotalMeal_Table)
+    {
+        //#############################################################################################
+        // Reset Variable
+        //#############################################################################################
+        // If Meal was Previously Deleted Reset Variables & State
+        if (is_Table_Deleted())
+        {
+            unHide_Ingredients_Table();
+        }
+        
+        // Reset Table Model data
+        refresh_Data();
+        
+        // Reset Meal Total  Table Data
+        if (update_TotalMeal_Table)
+        {
+            mealManager.update_MealManager_DATA(true, true);
+        }
+        
+        // Update Other Tables Data
+        if (update_MacrosLeft_Table)
+        {
+            mealManager.update_MacrosLeft_Table();
+        }
+    }
+    
+    //###################################################
+    // Save Button
+    //###################################################
+    public boolean save_Btn_Action(boolean show_Message)
+    {
+        save_Data(); // Update Table Model
+     
+        if (show_Message) // Success Message
+        {
+            JOptionPane.showMessageDialog(frame, "Table Successfully Updated!");
+        }
+        
+        return true; // Output
+    }
+    
+    //####################################################
+    // Delete Button Methods
+    //####################################################
+    public void delete_Table_Action()
+    {
+        //################################################
+        // Delete table from database
+        //################################################
+         /*
+            Delete all ingredients from this meal (using mealID) from table "ingredients_in_meal"
+            Delete meal from meals database
+         */
+        
+        String query = "DELETE FROM draft_divided_meal_sections WHERE draft_div_meal_sections_id = ? ;";
+        String error_msg = String.format("Unable to delete from '%s' !", table_name);
+        
+        Object[] params = new Object[]{ sub_Meal_ID };
+        
+        if (! db.upload_Data(query, params, error_msg)) { return; }
+        
+        //################################################
+        // Hide JTable object & Collapsible OBJ
+        //################################################
+        hide_Ingredients_Table();
+        
+        //################################################
+        // Update MacrosLeft Table & TotalMeal Table
+        //################################################
+        update_All_Tables_Data();
+        
+        //################################################
+        // Tell MealManager This Table Has Been Deleted
+        //################################################
+        mealManager.ingredientsTableHasBeenDeleted();
+        
+        //################################################
+        // Progress Message
+        //################################################
+        JOptionPane.showMessageDialog(frame, "Table Successfully Deleted!");
+    }
+    
+    public void completely_Delete_Ingredients_Table()
+    {
+        // Hide Ingredients Table
+        hide_Ingredients_Table();
+        
+        // remove JTable from GUI
+        parent_Container.remove(this);
+        
+        // remove Space Divider
+        parent_Container.remove(space_Divider);
+        
+        // Tell Parent container to resize
+        parent_Container.revalidate();
+    }
+    
+    public void set_Visibility(boolean condition)
+    {
+        this.setVisible(condition);
+        space_Divider.setVisible(condition);
+    }
+    
+    private void hide_Ingredients_Table()
+    {
+        set_Visibility(false); // hide collapsible Object
+        set_Object_Deleted(true);
+    }
+    
+    private void unHide_Ingredients_Table()
+    {
+        set_Visibility(true); // hide collapsible Object
+        set_Object_Deleted(false); // set this object as deleted
     }
     
     //##################################################################################################################
@@ -978,35 +983,35 @@ public class IngredientsTable extends JDBC_JTable
     //#############################################################
     // Accessor For Table Column Positions
     //#############################################################
-    private int get_IngredientIndex_Col(Boolean model_Index)
+    private int get_IngredientIndex_Col(boolean model_Index)
     {
         if (model_Index) { return model_Ingredient_Index_Col; }
         
         return jTable.convertColumnIndexToView(model_Ingredient_Index_Col);
     }
     
-    private int get_Quantity_Col(Boolean model_Index)
+    private int get_Quantity_Col(boolean model_Index)
     {
         if (model_Index) { return model_Quantity_Col; }
         
         return jTable.convertColumnIndexToView(model_Quantity_Col);
     }
     
-    private int get_IngredientType_Col(Boolean model_Index)
+    private int get_IngredientType_Col(boolean model_Index)
     {
         if (model_Index) { return model_Ingredient_Type_Col; }
         
         return jTable.convertColumnIndexToView(model_Ingredient_Type_Col);
     }
     
-    private int get_Ingredient_Name_Col(Boolean model_Index)
+    private int get_Ingredient_Name_Col(boolean model_Index)
     {
         if (model_Index) { return model_Ingredient_Name_Col; }
         
         return jTable.convertColumnIndexToView(model_Ingredient_Name_Col);
     }
     
-    private Integer get_DeleteBTN_Col(Boolean model_Index)
+    private Integer get_DeleteBTN_Col(boolean model_Index)
     {
         if (model_Index) { return model_DeleteBTN_Col; }
         
