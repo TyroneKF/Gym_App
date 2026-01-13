@@ -84,13 +84,13 @@
         store_id INTEGER NOT NULL,  -- FK has to be defined at the bottom
 
         product_name TEXT NOT NULL
-            CHECK (length(product_name) <= 100),-- enforce on app lvl being bigger than 0
-                                                -- N/A product needs 0 on this value
+            CHECK (length(product_name) <= 100),
 
         volume_per_unit REAL NOT NULL -- enforce on app lvl being bigger than 0
                                       -- N/A product needs 0 on this value
 
-            CHECK (volume_per_unit >= 0),
+            CHECK (volume_per_unit >= 0),-- enforce on app lvl being bigger than 0
+                                         -- N/A product needs 0 on this value
 
         cost_per_unit REAL NOT NULL
             CHECK (cost_per_unit >= 0),
