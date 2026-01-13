@@ -31,13 +31,13 @@
 
         102.5,   -- current_weight_kg
         225.5,   -- current_weight_in_pounds
-        25,   -- body_fat_percentage
-        1,    -- protein_per_pound
-        2,    -- carbohydrates_per_pound
-        30,   -- fibre
-        0.4,  -- fats_per_pound
-        30,   -- saturated_fat_limit
-        30,   -- salt_limit
-        5000, -- water_target,
-        400 -- additional_calories
+        25,      -- body_fat_percentage
+        1,       -- protein_per_pound
+        2,       -- carbohydrates_per_pound
+        30,      -- fibre
+        0.4,     -- fats_per_pound
+        30,      -- saturated_fat_limit
+        30,      -- salt_limit
+        5000,    -- water_target,
+        400      -- additional_calories
     );
