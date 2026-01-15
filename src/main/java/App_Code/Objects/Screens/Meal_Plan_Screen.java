@@ -1,7 +1,7 @@
 package App_Code.Objects.Screens;
 
+import App_Code.Objects.Data_Objects.ID_Objects.MetaData_ID_Object.Meal_ID_OBJ;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.*;
-import App_Code.Objects.Data_Objects.ID_Objects.MetaData_ID_Object.Meal_ID;
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Children.MacrosLeft_Table;
@@ -64,10 +64,10 @@ public class Meal_Plan_Screen extends Screen_JFrame
     private Integer no_of_sub_meals;
     
     //###############################################
-    // Booleans
+    // booleans
     //###############################################
     private boolean macro_Targets_Changed = false;
-    private Boolean screen_Created = false;
+    private boolean screen_Created = false;
     
     //###############################################
     // Collections
@@ -83,19 +83,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //########################
     // Meals Data Collections
     //########################
-    /**
-     * LinkedHashMap<Integer, Meal_ID> meals_Data = new LinkedHashMap<>();
-     * LinkedHashMap<Meal_ID, Meal_ID> meals_Data
-     * <p>
-     * Meal_ID = Meal ID / Name/ Time inside Object
-     */
-    private LinkedHashMap<Integer, Meal_ID> meals_ID_OBJ_Map = new LinkedHashMap<>();
-    
-    /**
-     * HashMap<Integer, HashMap<Integer, ArrayList<ArrayList<Object>>>> sub_Meals_Data = new HashMap<>();
-     * HashMap<Meal_ID [Meal_ID, Meal_Time, Meal_Name], HashMap<Div_ID, List Of Ingredients>
-     */
-    private LinkedHashMap<Integer, LinkedHashMap<Integer, ArrayList<ArrayList<Object>>>> sub_Meals_Data_Map = new LinkedHashMap<>();
+    private ArrayList<Meals_And_Sub_Meals_OBJ> meals_and_sub_meals_AL = new ArrayList<>();
     
     private final LinkedHashMap<Integer, ArrayList<Object>> total_Meals_Data_Map = new LinkedHashMap<>();
     
@@ -126,7 +114,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
      * LinkedHashMap<String, Pair<Integer, String>> totalMeal_macroColNamePos
      * LinkedHashMap<TotalMeal_MacroName, Pair< Position, Measurement>> totalMeal_macroColNamePos
      */
-    private final LinkedHashMap<String, Pair<Integer, String>> total_Meal_Macro_Col_Name_And_Positions = new LinkedHashMap<>()
+    private final LinkedHashMap<String, Pair<Integer, String>> total_Meal_Macro_Col_Name_Positions_And_Symbol = new LinkedHashMap<>()
     {{
         put("total_protein", new Pair<>(null, "g"));
         put("total_carbohydrates", new Pair<>(null, "g"));
@@ -388,27 +376,19 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // Centre : JPanel (Meals)
         //####################################################
         /**
-         * LinkedHashMap<Integer, Meal_ID> meals_Data = new LinkedHashMap<>();
-         * LinkedHashMap<Meal_ID, Meal_ID> meals_Data
          *
-         * Meal_ID = Meal ID / Name/ Time inside Object
-         *
-         *  HashMap<Integer, HashMap<Integer, ArrayList<ArrayList<Object>>>> sub_Meals_Data = new HashMap<>();
-         *  HashMap<Meal_ID [Meal_ID, Meal_Time, Meal_Name], HashMap<Div_ID, List Of Ingredients>
          */
-        for (Map.Entry<Integer, Meal_ID> meal_Entry : meals_ID_OBJ_Map.entrySet())
+        for (Meals_And_Sub_Meals_OBJ meal_and_sub_meals : meals_and_sub_meals_AL)
         {
-            // Get Meal ID
-            int meal_ID = meal_Entry.getKey();
-            
-            // Get Meal OBJ Data From Map
-            Meal_ID meal_ID_Obj = meals_ID_OBJ_Map.get(meal_ID);
-            
+            // Get Details
+            Meal_ID_OBJ meal_id_obj = meal_and_sub_meals.get_Meal_ID_OBJ();
+            int draft_meal_id = meal_id_obj.get_Draft_Meal_ID();
+       
             // Get Associated Sub-Meals
-            LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> sub_Meal_DATA = sub_Meals_Data_Map.get(meal_ID);
+            LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> sub_Meal_DATA = meal_and_sub_meals.get_Sub_Meals_Data_Map();
             
             // Total Meals DATA
-            ArrayList<Object> total_Meal_DATA = total_Meals_Data_Map.get(meal_ID);
+            ArrayList<Object> total_Meal_DATA = total_Meals_Data_Map.get(draft_meal_id);
             
             // Create MealManager
             MealManager mealManager = new MealManager(
@@ -416,7 +396,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     shared_Data_Registry,
                     db,
                     macros_Left_JTable,
-                    meal_ID_Obj,
+                    meal_id_obj,
                     sub_Meal_DATA,
                     total_Meal_DATA
             );
@@ -487,9 +467,169 @@ public class Meal_Plan_Screen extends Screen_JFrame
         macros_plan_Data = null;
         macrosData = null;
         
-        meals_ID_OBJ_Map = null;
-        sub_Meals_Data_Map = null;
+        meals_and_sub_meals_AL.clear();
         total_Meals_Data_Map.clear();
+    }
+    
+    //#################################################
+    // Get DATA Methods
+    //#################################################
+    private boolean setup_Get_User_And_Plan_Info()
+    {
+        // Variables
+        String errorMSG = "Error, Gathering Plan & Personal User Information!";
+        
+        String queryX = """
+                SELECT
+                
+                	U.user_id,
+                
+                	PV.plan_version_id,
+                
+                	P.plan_id,
+                	P.plan_name
+                
+                FROM active_user U
+                
+                LEFT JOIN active_plans AP
+                    ON U.user_id = AP.user_id
+                
+                LEFT JOIN plan_versions PV
+                    ON AP.plan_version_id = PV.plan_version_id
+                
+                LEFT JOIN plans P
+                    ON PV.plan_id = P.plan_id;""";
+        
+        // Execute
+        try
+        {
+            ArrayList<ArrayList<Object>> db_results = db.get_2D_Query_AL_Object(queryX, null, errorMSG, false);
+            
+            // App Must assume by default there is a selected user and 1 plan active otherwise this causes an eror
+            user_id = (Integer) db_results.getFirst().get(0);
+            selected_Plan_Version_ID = (Integer) db_results.getFirst().get(1);
+            selected_Plan_ID = (Integer) db_results.getFirst().get(2);
+            plan_Name = (String) db_results.getFirst().get(3);
+            
+            System.out.printf("\n\nUser_ID : %s \nPlan_Version_ID  : %s \nPlan_ID : %s \nPlan_Name : %s",
+                    user_id, selected_Plan_Version_ID, selected_Plan_ID, plan_Name);
+            
+            return true;
+        }
+        catch (Exception e)
+        {
+            System.err.printf("\n\n%s \n%s Error \n%s  \n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
+            return false;
+        }
+    }
+    
+    private boolean setup_Get_Column_Names()
+    {
+        try
+        {
+            // column names : ingredients_in_sections_of_meal_calculation
+            ingredients_Column_Names = db.get_Column_Names_AL("draft_gui_ingredients_in_sections_of_meal_calculation");
+            
+            // column names : total_meal_view
+            meal_total_column_Names = db.get_Column_Names_AL("draft_gui_total_meal_view");
+            
+            // column names : plan_macro_target_calculations
+            macroTargets_ColumnNames = db.get_Column_Names_AL("draft_gui_plan_macro_target_calculations");
+            
+            // Get table column names for plan_macros_left
+            macrosLeft_columnNames = db.get_Column_Names_AL("draft_gui_plan_macros_left");
+        }
+        catch (Exception e)
+        {
+            System.err.printf("\n\n%s \n%s Error \n%s \n\n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
+            return false;
+        }
+        
+        //########################################
+        // Column Names : Total_Meal_View
+        //########################################
+        for (int pos = 0; pos < meal_total_column_Names.size(); pos++)
+        {
+            String columnName = meal_total_column_Names.get(pos);
+            
+            if (total_Meal_Macro_Col_Name_Positions_And_Symbol.containsKey(columnName))
+            {
+                String symbol = total_Meal_Macro_Col_Name_Positions_And_Symbol.get(columnName).getValue1();
+                total_Meal_Macro_Col_Name_Positions_And_Symbol.put(columnName, new Pair<>(pos, symbol));
+            }
+            else if (total_Meal_Other_Cols_Positions.containsKey(columnName))
+            {
+                total_Meal_Other_Cols_Positions.put(columnName, pos);
+            }
+        }
+        
+        //########################################
+        // Output
+        //########################################
+        return true;
+    }
+    
+    private boolean setup_Get_Meal_Counts()
+    {
+        String plan_Counts_ErrorMSG = "Unable to get Meals & Sub-Meals Count!";
+        String plan_Counts_Query = """
+                WITH
+                
+                    active_plan_id AS (
+                        SELECT plan_version_id FROM active_plans WHERE user_id = ?
+                    ),
+                
+                    count_cte AS (
+                
+                        SELECT
+                
+                            P.plan_version_id,
+                            COUNT(DISTINCT(M.meal_in_plan_id)) AS total_meals,
+                            COUNT(DISTINCT(D.div_meal_sections_id)) AS total_sub_meals
+                
+                        FROM active_plan_id P
+                
+                        LEFT JOIN meals_in_plan_versions M
+                            ON P.plan_version_id = M.plan_version_id
+                
+                        LEFT JOIN divided_meal_sections_versions D
+                            ON M.meal_in_plan_version_id = D.meal_in_plan_version_id
+                
+                        GROUP BY P.plan_version_id
+                    )
+                
+                SELECT
+                
+                    COALESCE(C.total_meals, 0) AS meal_count,
+                    COALESCE(C.total_sub_meals, 0) AS sub_count
+                
+                FROM count_cte C;""";
+        
+        Object[] counts_Params = new Object[]{ user_id };
+        
+        ArrayList<ArrayList<Object>> meal_Count_Results;
+        
+        //#################################
+        // Execute Query
+        //#################################
+        try
+        {
+            meal_Count_Results = db.get_2D_Query_AL_Object(plan_Counts_Query, counts_Params, plan_Counts_ErrorMSG, false);
+            
+            // Format Results
+            no_of_meals = (Integer) meal_Count_Results.getFirst().get(0);
+            no_of_sub_meals = (Integer) meal_Count_Results.getFirst().get(1);
+            
+            System.out.printf("\n\n%s \nSuccessfully Got Meal Counts \n%s \nMeals In Plan: %s\nSub-Meals In Plan: %s",
+                    lineSeparator, lineSeparator, no_of_meals, no_of_sub_meals);
+            
+            return true;  // Execute Query
+        }
+        catch (Exception e)
+        {
+            System.err.printf("\n\n%s \n%s Error \n%s  \n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
+            return false;
+        }
     }
     
     //#################################################
@@ -546,12 +686,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###############################################
         // Upload Queries
         //###############################################
-        
-        // Create Temp Table From Chosen Plan Macro Data
-        String query_01 = "CREATE TEMPORARY TABLE temp_targets AS SELECT * FROM macros_per_pound_and_limits WHERE plan_version_id = ?;";
-        
-        upload_queries_and_params.add(new Pair<>(query_01, new Object[]{ selected_Plan_Version_ID }));
-        
         // Insert Plan_Version Macros
         String query_03 = """
                 
@@ -587,9 +721,10 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     water_target,
                     additional_calories
                 
-                FROM temp_targets;""";
+                FROM macros_per_pound_and_limits
+                WHERE plan_version_id = ?;""";
         
-        upload_queries_and_params.add(new Pair<>(query_03, new Object[]{ selected_Plan_ID }));
+        upload_queries_and_params.add(new Pair<>(query_03, new Object[]{ selected_Plan_ID, selected_Plan_Version_ID }));
         
         //###############################################
         // Execute Upload Statements
@@ -808,170 +943,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
         return true;
     }
     
-    //#################################################
-    // Get DATA Methods
-    //#################################################
-    private boolean setup_Get_User_And_Plan_Info()
-    {
-        // Variables
-        String errorMSG = "Error, Gathering Plan & Personal User Information!";
-        
-        String queryX = """
-                SELECT
-                
-                	U.user_id,
-                
-                	PV.plan_version_id,
-                
-                	P.plan_id,
-                	P.plan_name
-                
-                FROM active_user U
-                
-                LEFT JOIN active_plans AP
-                    ON U.user_id = AP.user_id
-                
-                LEFT JOIN plan_versions PV
-                    ON AP.plan_version_id = PV.plan_version_id
-                
-                LEFT JOIN plans P
-                    ON PV.plan_id = P.plan_id;""";
-        
-        // Execute
-        try
-        {
-            ArrayList<ArrayList<Object>> db_results = db.get_2D_Query_AL_Object(queryX, null, errorMSG, false);
-            
-            // App Must assume by default there is a selected user and 1 plan active otherwise this causes an eror
-            user_id = (Integer) db_results.getFirst().get(0);
-            selected_Plan_Version_ID = (Integer) db_results.getFirst().get(1);
-            selected_Plan_ID = (Integer) db_results.getFirst().get(2);
-            plan_Name = (String) db_results.getFirst().get(3);
-            
-            System.out.printf("\n\nUser_ID : %s \nPlan_Version_ID  : %s \nPlan_ID : %s \nPlan_Name : %s",
-                    user_id, selected_Plan_Version_ID, selected_Plan_ID, plan_Name);
-            
-            return true;
-        }
-        catch (Exception e)
-        {
-            System.err.printf("\n\n%s \n%s Error \n%s  \n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
-            return false;
-        }
-    }
-    
-    private boolean setup_Get_Column_Names()
-    {
-        try
-        {
-            // column names : ingredients_in_sections_of_meal_calculation
-            ingredients_Column_Names = db.get_Column_Names_AL("draft_gui_ingredients_in_sections_of_meal_calculation");
-            
-            // column names : total_meal_view
-            meal_total_column_Names = db.get_Column_Names_AL("draft_gui_total_meal_view");
-            
-            // column names : plan_macro_target_calculations
-            macroTargets_ColumnNames = db.get_Column_Names_AL("draft_gui_plan_macro_target_calculations");
-            
-            // Get table column names for plan_macros_left
-            macrosLeft_columnNames = db.get_Column_Names_AL("draft_gui_plan_macros_left");
-        }
-        catch (Exception e)
-        {
-            System.err.printf("\n\n%s \n%s Error \n%s \n\n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
-            return false;
-        }
-        
-        //########################################
-        // Column Names : Total_Meal_View
-        //########################################
-        for (int pos = 0; pos < meal_total_column_Names.size(); pos++)
-        {
-            String columnName = meal_total_column_Names.get(pos);
-            
-            if (total_Meal_Macro_Col_Name_And_Positions.containsKey(columnName))
-            {
-                String symbol = total_Meal_Macro_Col_Name_And_Positions.get(columnName).getValue1();
-                total_Meal_Macro_Col_Name_And_Positions.put(columnName, new Pair<>(pos, symbol));
-            }
-            else if (total_Meal_Other_Cols_Positions.containsKey(columnName))
-            {
-                total_Meal_Other_Cols_Positions.put(columnName, pos);
-            }
-        }
-        
-        //########################################
-        // Output
-        //########################################
-        return true;
-    }
-    
-    private boolean setup_Get_Meal_Counts()
-    {
-        String plan_Counts_ErrorMSG = "Unable to get Meals & Sub-Meals Count!";
-        String plan_Counts_Query = """
-                WITH
-                
-                    active_plan_id AS (
-                        SELECT plan_version_id FROM active_plans WHERE user_id = ?
-                    ),
-                
-                    count_cte AS (
-                
-                        SELECT
-                
-                            P.plan_version_id,
-                            COUNT(DISTINCT(M.meal_in_plan_id)) AS total_meals,
-                            COUNT(DISTINCT(D.div_meal_sections_id)) AS total_sub_meals
-                
-                        FROM active_plan_id P
-                
-                        LEFT JOIN meals_in_plan_versions M
-                            ON P.plan_version_id = M.plan_version_id
-                
-                        LEFT JOIN divided_meal_sections_versions D
-                            ON M.meal_in_plan_version_id = D.meal_in_plan_version_id
-                
-                        GROUP BY P.plan_version_id
-                    )
-                
-                SELECT
-                
-                    COALESCE(C.total_meals, 0) AS meal_count,
-                    COALESCE(C.total_sub_meals, 0) AS sub_count
-                
-                FROM count_cte C;""";
-        
-        Object[] counts_Params = new Object[]{ user_id };
-        
-        ArrayList<ArrayList<Object>> meal_Count_Results;
-        
-        //#################################
-        // Execute Query
-        //#################################
-        try
-        {
-            meal_Count_Results = db.get_2D_Query_AL_Object(plan_Counts_Query, counts_Params, plan_Counts_ErrorMSG, false);
-            
-            // Format Results
-            no_of_meals = (Integer) meal_Count_Results.getFirst().get(0);
-            no_of_sub_meals = (Integer) meal_Count_Results.getFirst().get(1);
-            
-            System.out.printf("\n\n%s \nSuccessfully Got Meal Counts \n%s \nMeals In Plan: %s\nSub-Meals In Plan: %s",
-                    lineSeparator, lineSeparator, no_of_meals, no_of_sub_meals);
-            
-            return true;  // Execute Query
-        }
-        catch (Exception e)
-        {
-            System.err.printf("\n\n%s \n%s Error \n%s  \n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
-            return false;
-        }
-    }
-    
-    //#######################
+    //###########################
     //  Transfer MetaData
-    //#######################
+    //###########################
     public boolean setup_Get_Ingredient_Types_And_Ingredient_Names()
     {
         String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
@@ -979,6 +953,12 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //#######################################
         // Create Get Query Results
         //#######################################
+        /*
+            This query needs to be a left join as this call gets all ingredient types & joins their associated ingredients if any
+            if the join has 0 ingredients its null and the ingredient type is recorded by itself with no ingredients
+            if the ingredients do exist its joined into a map and processed
+         */
+        
         String query = """
                 SELECT
                 
@@ -1283,19 +1263,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // Go Through JSON DATA
         //#########################################################################
         /*
-         * Meals Collection:
          *
-         * LinkedHashMap<Integer, Meal_ID> meals_Data = new LinkedHashMap<>();
-         * LinkedHashMap<Meal_ID, Meal_ID> meals_Data
-         *
-         * Meal_ID = Meal ID / Name/ Time inside Object
-         */
-        
-        /*
-         *  Sub-Meals Collection:
-         *
-         *  HashMap<Integer, HashMap<Integer, ArrayList<ArrayList<Object>>>> sub_Meals_Data = new HashMap<>();
-         *  HashMap<Meal_ID [Meal_ID, Meal_Time, Meal_Name], HashMap<Div_ID, List Of Ingredients>
          */
         
         try
@@ -1305,7 +1273,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 //######################################################
                 // Get Meal Info
                 //#####################################################
-                int meal_ID = (int) row.get(0);
+                int draft_meal_id = (int) row.get(0);
+                int source_meal_id = (int) row.get(1);
+                
                 String meal_name = (String) row.get(3);
                 
                 // Time Conversion
@@ -1316,15 +1286,13 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 
                 LocalTime meal_Time = LocalTime.parse(meal_Time_From_Db, formatter);
                 
-                // Add to Meals Data
-                Meal_ID meal_ID_Obj = new Meal_ID(meal_ID, meal_name, meal_Time);
-                meals_ID_OBJ_Map.put(meal_ID, meal_ID_Obj);
+                //######################################################
+                // Create Meal & Sub-Meal Collections Per Meal & Add
+                //######################################################
+                Meal_ID_OBJ meal_ID_Obj = new Meal_ID_OBJ(draft_meal_id, source_meal_id, meal_name, meal_Time); //
+                LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> sub_meals_and_ingredients_Map = new LinkedHashMap<>();
                 
-                //######################################################
-                // Create Sub-Meal Collections Per Meal
-                //######################################################
-                LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> div_Meal_Sections = new LinkedHashMap<>();
-                sub_Meals_Data_Map.put(meal_ID, div_Meal_Sections); // ADD to memory
+                meals_and_sub_meals_AL.add(new Meals_And_Sub_Meals_OBJ(meal_ID_Obj, sub_meals_and_ingredients_Map));
                 
                 //######################################################
                 // Parsing JSON DATA - Sub-Meals -> Ingredients
@@ -1340,55 +1308,47 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     //###########################
                     // Store Ingredients Data
                     //###########################
-                    ArrayList<Object> ingredient_macros = new ArrayList<>();
+                    ArrayList<Object> ingredients_values = new ArrayList<>();
                     
                     //###########################
                     // Get Ingredients DATA
                     //###########################
                     int div_id = ingredient_node.get("div_id").asInt();
-                    //ingredient_macros.add(div_id);
+                    //ingredients_values.add(div_id);
                     
-                    ingredient_macros.add(ingredient_node.get("index").asInt());
+                    ingredients_values.add(ingredient_node.get("index").asInt());
                     
                     // Ingredient Name OBJ
                     int ingredient_Type_ID = ingredient_node.get("type_id").asInt();
-                    ingredient_macros.add(shared_Data_Registry.get_Type_ID_Obj_By_ID(ingredient_Type_ID));
+                    ingredients_values.add(shared_Data_Registry.get_Type_ID_Obj_By_ID(ingredient_Type_ID));
                     
                     // Ingredient Name Object
                     int ingredient_Name_ID = ingredient_node.get("id").asInt();
-                    ingredient_macros.add(shared_Data_Registry.get_Ingredient_Name_ID_OBJ_By_ID(ingredient_Name_ID));
+                    ingredients_values.add(shared_Data_Registry.get_Ingredient_Name_ID_OBJ_By_ID(ingredient_Name_ID));
                     
                     // Quantity
-                    ingredient_macros.add(new BigDecimal(ingredient_node.get("quantity").asText()));
+                    ingredients_values.add(new BigDecimal(ingredient_node.get("quantity").asText()));
                     
                     // Macro Values
-                    ingredient_macros.add(ingredient_node.get("gi").asInt());
-                    ingredient_macros.add(new BigDecimal(ingredient_node.get("protein").asText()));
-                    ingredient_macros.add(new BigDecimal(ingredient_node.get("carbs").asText()));
-                    ingredient_macros.add(new BigDecimal(ingredient_node.get("sugar_carbs").asText()));
-                    ingredient_macros.add(new BigDecimal(ingredient_node.get("fibre").asText()));
-                    ingredient_macros.add(new BigDecimal(ingredient_node.get("fat").asText()));
-                    ingredient_macros.add(new BigDecimal(ingredient_node.get("sat_fat").asText()));
-                    ingredient_macros.add(new BigDecimal(ingredient_node.get("salt").asText()));
-                    ingredient_macros.add(new BigDecimal(ingredient_node.get("water").asText()));
-                    ingredient_macros.add(new BigDecimal(ingredient_node.get("calories").asText()));
+                    ingredients_values.add(ingredient_node.get("gi").asInt());
+                    ingredients_values.add(new BigDecimal(ingredient_node.get("protein").asText()));
+                    ingredients_values.add(new BigDecimal(ingredient_node.get("carbs").asText()));
+                    ingredients_values.add(new BigDecimal(ingredient_node.get("sugar_carbs").asText()));
+                    ingredients_values.add(new BigDecimal(ingredient_node.get("fibre").asText()));
+                    ingredients_values.add(new BigDecimal(ingredient_node.get("fat").asText()));
+                    ingredients_values.add(new BigDecimal(ingredient_node.get("sat_fat").asText()));
+                    ingredients_values.add(new BigDecimal(ingredient_node.get("salt").asText()));
+                    ingredients_values.add(new BigDecimal(ingredient_node.get("water").asText()));
+                    ingredients_values.add(new BigDecimal(ingredient_node.get("calories").asText()));
                     
-                    ingredient_macros.add("Delete Row"); // For Delete BTN
+                    ingredients_values.add("Delete Row"); // For Delete BTN
                     
                     //###########################
                     // Store DATA in DIV
                     //###########################
-                    if (div_Meal_Sections.containsKey(div_id)) // IF Div already exists add ingredient
-                    {
-                        div_Meal_Sections.get(div_id).add(ingredient_macros);
-                    }
-                    else // Create & ADD
-                    {
-                        ArrayList<ArrayList<Object>> div_Meal = new ArrayList<>();   // Create Meal Div Section
-                        div_Meal_Sections.put(div_id, div_Meal); // Add Div to meals Collection
-                        
-                        div_Meal.add(ingredient_macros); // Add ingredients data
-                    }
+                    sub_meals_and_ingredients_Map // For Meals and Sub-Meals Map
+                            .computeIfAbsent(div_id, k -> new ArrayList<>()) // Get or, Section for Div with ingredients
+                            .add(ingredients_values); // Add Ingredients Values to list
                 }
             }
             
@@ -1437,9 +1397,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //#################################
         for (ArrayList<Object> meal_Data : meals_Data) // For LOOP through each Meal
         {
-            int meal_ID = (int) meal_Data.getFirst(); // Get Meal Info
+            int draft_meal_id = (int) meal_Data.getFirst(); // Get Meal ID
             
-            total_Meals_Data_Map.put(meal_ID, meal_Data); // Add total Meals Data to storage
+            total_Meals_Data_Map.put(draft_meal_id, meal_Data); // Add total Meals Data to storage
         }
         
         //#################################
@@ -1453,14 +1413,14 @@ public class Meal_Plan_Screen extends Screen_JFrame
     private boolean setup_Get_Macros_Targets_Data()
     {
         String query_PlanCalc = "SELECT * from draft_gui_plan_macro_target_calculations WHERE plan_id = ?";
-        String errorMSG1 = "Error, Gathering Macros Targets Data!";
+        String errorMSG = "Error, Gathering Macros Targets Data!";
         
         Object[] params_planCalc = new Object[]{ selected_Plan_ID };
         
         // Execute
         try
         {
-            macros_plan_Data = db.get_2D_Query_AL_Object(query_PlanCalc, params_planCalc, errorMSG1, false);
+            macros_plan_Data = db.get_2D_Query_AL_Object(query_PlanCalc, params_planCalc, errorMSG, false);
             System.out.printf("\n\n%s \nPlan Targets Data Successfully Retrieved \n%s ", lineSeparator, lineSeparator);
             return true;
         }
@@ -1799,7 +1759,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // ###############################################################
     // Pie Chart BTN Actions
     // ###############################################################
-    public Boolean is_PieChart_Screen_Open()
+    public boolean is_PieChart_Screen_Open()
     {
         return pieChart_Screen_MPS != null;
     }
@@ -1851,11 +1811,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
         pieChart_Screen_MPS.update_PieChart_MealTime(mealInPlanID);
     }
     
-    private void update_PieChart_DATA()
+    private void update_PieChart_DATA(MealManager mealManager)
     {
         if (! is_PieChart_Screen_Open()) { return; }
         
-        pieChart_Screen_MPS.updateData();
+        pieChart_Screen_MPS.updateData(mealManager);
     }
     
     private void add_Meal_Manager_PieChart(MealManager mealManager)
@@ -2081,7 +2041,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         for (MealManager mm : mealManager_ArrayList)
         {
             System.out.printf("\n\nMealManagerID: %s \nMealName : %s \nMealTime : %s",
-                    mm.get_Meal_In_Plan_ID(), mm.get_Current_Meal_Name(), mm.get_Current_Meal_Time_GUI());
+                    mm.get_Draft_Meal_In_Plan_ID(), mm.get_Current_Meal_Name(), mm.get_Current_Meal_Time_GUI());
             
             mm.collapse_MealManager(); // Collapse all meals
             
@@ -2180,7 +2140,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         ingredients_Info_Screen = new Ingredients_Info_Screen(db, this, shared_Data_Registry);
     }
     
-    private Boolean is_IngredientScreen_Open()
+    private boolean is_IngredientScreen_Open()
     {
         return ingredients_Info_Screen != null;
     }
@@ -2235,7 +2195,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         macro_Targets_Changed = bool;
     }
     
-    // Booleans
+    // booleans
     public boolean hasMacroTargetsChanged()
     {
         return macro_Targets_Changed;
@@ -2345,29 +2305,26 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################################################
         if (mealPlanScreen_Action)
         {
-            if (action.equals("add")) // New MealManager Added to GUI
+            switch (action)
             {
-                // LineChart Add
-                add_Meal_To_LineChart(mealManager);
-                
-                // PieChart MPS Screen
-                add_Meal_Manager_PieChart(mealManager);
-            }
-            else if (action.equals("clear")) // Delete Button requested on MealPlanScreen
-            {
-                // Clear LineChart Data
-                clearLineChartDataSet();
-                
-                // Clear PieChart Screen
-                clear_PieChart_DATA_MPS();
-            }
-            else if (action.equals("refresh"))
-            {
-                // Refresh LineChart Data
-                refresh_LineChart_Data();
-                
-                //Refresh PieChart Screen
-                refresh_PieChart_DATA_MPS();
+                case "add" -> // New MealManager Added to GUI
+                {
+                    add_Meal_To_LineChart(mealManager); // LineChart Add
+                    
+                    add_Meal_Manager_PieChart(mealManager); // PieChart MPS Screen
+                }
+                case "clear" ->  // Delete Button requested on MealPlanScreen
+                {
+                    clearLineChartDataSet(); // Clear LineChart Data
+                    
+                    clear_PieChart_DATA_MPS(); // Clear PieChart Screen
+                }
+                case "refresh" -> // Refresh Button requested on MealPlanScreen
+                {
+                    refresh_LineChart_Data(); // Refresh LineChart Data
+                    
+                    refresh_PieChart_DATA_MPS(); //Refresh PieChart Screen
+                }
             }
             
             //##########################
@@ -2379,48 +2336,43 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################################################
         // MealManager Requested Action
         //####################################################################
-        if (action.equals("update")) // Update MealManager Time
+        switch (action)
         {
-            // Update LineChart Data
-            updateLineChartData(mealManager, previousMealTime, currentMealTime);
-            
-            // Update PieChart DATA
-            update_PieChart_DATA();
-        }
-        else if (action.equals("delete")) // Deleted MealManager
-        {
-            // Delete LineChart Data
-            deleteLineChartData(previousMealTime);
-            
-            // Delete PieChart AKA Re-draw GUI
-            delete_MealManager_PieChart(mealManager);
-        }
-        else if (action.equals("mealTime")) // MealTime on MealManager Changed
-        {
-            // Change data points time on LineChart Data
-            updateLineChartData(mealManager, previousMealTime, currentMealTime);
-            
-            // Update PieChart Title OF Meal & Refresh Interface
-            update_PieChart_MealTime(mealManager.get_Meal_In_Plan_ID());
-        }
-        else if (action.equals("mealName")) // MealTime on MealManager Changed
-        {
-            //############################
-            // LineChart
-            //############################
-            // Nothing Changes
-            
-            // Change PieChart MealName
-            update_PieChart_MealName(mealManager.get_Meal_In_Plan_ID());
-        }
-        else if (action.equals("refresh")) // Refresh mealPlan was requested
-        {
-            
-            // Refresh MealManager
-            updateLineChartData(mealManager, previousMealTime, currentMealTime);
-            
-            // Change PieChart MealName
-            update_PieChart_MealName(mealManager.get_Meal_In_Plan_ID());
+            case "update" ->  // Update Data
+            {
+                updateLineChartData(mealManager, previousMealTime, currentMealTime);   // Update LineChart Data
+                
+                update_PieChart_DATA(mealManager);  // Update PieChart DATA
+            }
+            case "delete" -> // Deleted MealManager
+            {
+                deleteLineChartData(previousMealTime);   // Delete LineChart Data
+                
+                delete_MealManager_PieChart(mealManager); // Delete PieChart AKA Re-draw GUI
+            }
+            case "mealTime" -> // MealTime on MealManager Changed
+            {
+                // Change data points time on LineChart Data
+                updateLineChartData(mealManager, previousMealTime, currentMealTime);
+                
+                // Update PieChart Title OF Meal & Refresh Interface
+                update_PieChart_MealTime(mealManager.get_Draft_Meal_In_Plan_ID());
+            }
+            case "mealName" ->  // Meal Name on MealManager Changed
+            {
+                // LineChart = Nothing Changes
+      
+                // Change PieChart MealName
+                update_PieChart_MealName(mealManager.get_Draft_Meal_In_Plan_ID());
+            }
+            case "refresh" ->   // Change Meal Managers Data
+            {
+                // Refresh MealManager
+                updateLineChartData(mealManager, previousMealTime, currentMealTime);
+                
+                // Change PieChart MealName
+                update_PieChart_MealName(mealManager.get_Draft_Meal_In_Plan_ID());
+            }
         }
     }
     
@@ -2539,9 +2491,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
         return total_Meal_Other_Cols_Positions;
     }
     
-    public LinkedHashMap<String, Pair<Integer, String>> get_TotalMeal_macro_Col_Name_And_Pos()
+    public LinkedHashMap<String, Pair<Integer, String>> get_TotalMeal_macro_Col_Name_Pos_And_Symbol()
     {
-        return total_Meal_Macro_Col_Name_And_Positions;
+        return total_Meal_Macro_Col_Name_Positions_And_Symbol;
     }
     
     //###########################################

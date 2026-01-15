@@ -25,8 +25,12 @@ Ingredients Table
 ######################################################################################
 Work On:
 ######################################################################################
-PiePlot3D is depreciated
+Use an enum for table column names
+split mps list of total_Meal_Macro_Col_Name_And_Positions into 2 lists
 
+
+PiePlot3D is depreciated
+include meal in plan id and draft id in meal manager
 Hard coded variables replace with commonly fetched variable id's in MPS
 
 USE get_Class_name_method for error handling

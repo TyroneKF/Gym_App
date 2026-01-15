@@ -39,8 +39,7 @@ public class IngredientsTable extends JDBC_JTable
     // Other Variables
     //################################################
     private final int
-            plan_ID,
-            meal_In_Plan_ID,
+            draft_meal_id,
             sub_Meal_ID;
     
     private boolean
@@ -101,8 +100,7 @@ public class IngredientsTable extends JDBC_JTable
         //#################################
         // Values From MealManager
         //#################################
-        meal_In_Plan_ID = mealManager.get_Meal_In_Plan_ID();
-        plan_ID = mealManager.get_Plan_ID();
+        draft_meal_id = mealManager.get_Draft_Meal_In_Plan_ID();
         
         parent_Container = mealManager.getCollapsibleCenterJPanel();
         frame = mealManager.getFrame();
@@ -664,7 +662,7 @@ public class IngredientsTable extends JDBC_JTable
         //#############################
         // Reset DB Data
         //#############################
-        if (! (transfer_Meal_Data_From_Plans(plan_ID, null)))
+        if (! (transfer_Meal_Data_From_Plans(null, null)))
         {
             JOptionPane.showMessageDialog(frame, "\n\nUnable to transfer ingredients data from  original plan to temp plan!!");
             return;
@@ -907,9 +905,9 @@ public class IngredientsTable extends JDBC_JTable
         return sub_Meal_ID;
     }
     
-    public Integer get_Meal_In_Plan_ID()
+    public Integer get_Draft_Meal_ID()
     {
-        return meal_In_Plan_ID;
+        return draft_meal_id;
     }
     
     public boolean is_Table_Deleted()
