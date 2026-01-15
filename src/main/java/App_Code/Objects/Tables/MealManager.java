@@ -1,6 +1,6 @@
 package App_Code.Objects.Tables;
 
-import App_Code.Objects.Data_Objects.ID_Objects.MetaData_ID_Object.Meal_ID;
+import App_Code.Objects.Data_Objects.ID_Objects.MetaData_ID_Object.Meal_ID_OBJ;
 import App_Code.Objects.Database_Objects.Fetched_Results;
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
 import App_Code.Objects.Database_Objects.Null_MYSQL_Field;
@@ -43,7 +43,10 @@ public class MealManager
             hasMealTimeBeenChanged = false;
     
     // Integer Variables
-    private Integer meal_In_Plan_ID, tempPlanID, planID, yPoInternally = 0;
+    private int 
+            source_meal_id,
+            draft_meal_ID, 
+            yPoInternally = 0;
     
     // String Variables
     private String class_Name = new Object() { }.getClass().getEnclosingClass().getName();
@@ -89,14 +92,14 @@ public class MealManager
     //##################################################################################################################
     // Constructors
     //##################################################################################################################
-    public MealManager(
-            
+    public MealManager
+    (
             Meal_Plan_Screen meal_plan_screen,
             Shared_Data_Registry shared_Data_Registry,
             MyJDBC_Sqlite db,
             MacrosLeft_Table macrosLeft_JTable,
-            Meal_ID meal_ID_Obj,
-            LinkedHashMap<Integer,ArrayList<ArrayList<Object>>> sub_Meal_DATA,
+            Meal_ID_OBJ meal_ID_Obj,
+            LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> sub_Meal_DATA,
             ArrayList<Object> total_Meal_Data
     )
     {
@@ -108,8 +111,8 @@ public class MealManager
         this.db = db;
         this.macrosLeft_JTable = macrosLeft_JTable;
         
-        meal_In_Plan_ID = meal_ID_Obj.get_ID();
-        planID = meal_plan_screen.getSelected_Plan_Version_ID();
+        draft_meal_ID = meal_ID_Obj.get_Draft_Meal_ID();
+        source_meal_id = meal_ID_Obj.get_Source_Meal_ID();
         
         // Set Meal Time Variables
         Second timeStringFormatted = localTimeToSecond(meal_ID_Obj.get_Meal_Time()); // turns etc 09:30:00 into 09:30 for GUI purposes & in second format
@@ -146,8 +149,6 @@ public class MealManager
         this.macrosLeft_JTable = macrosLeft_JTable;
         this.db = db;
         
-        planID = meal_plan_screen.getSelected_Plan_Version_ID();
-        
         //############################################################################
         // Getting user input for Meal Name & Time
         //############################################################################
@@ -180,7 +181,7 @@ public class MealManager
         
         // 1.) Create Meal Upload
         String upload_Q1 = "INSERT INTO meals_in_plan (plan_id, meal_name, meal_time) VALUES (?,?,?);";
-        upload_Queries_And_Params.add(new Pair<>(upload_Q1, new Object[]{ tempPlanID, new_Meal_Name, new_Meal_Time }));
+        upload_Queries_And_Params.add(new Pair<>(upload_Q1, new Object[]{ null, new_Meal_Name, new_Meal_Time }));
         
         //######################################
         // 2.) Set Meal ID
@@ -195,7 +196,7 @@ public class MealManager
         String upload_Q3 = String.format("""
                 INSERT INTO divided_meal_sections (meal_in_plan_id, plan_id) VALUES
                 (%s, ?);""", var_Meal_ID);
-        upload_Queries_And_Params.add(new Pair<>(upload_Q3, new Object[]{ tempPlanID }));
+        upload_Queries_And_Params.add(new Pair<>(upload_Q3, new Object[]{ null }));
         
         //######################################
         // 4.) Set Sub-Meal ID
@@ -215,13 +216,13 @@ public class MealManager
                 (?, ?, %s, ?, ?);""", var_Sub_Meal_ID);
         
         upload_Queries_And_Params.add(new Pair<>(upload_Q5,
-                new Object[]{ tempPlanID, new Null_MYSQL_Field(Types.INTEGER), 1, 0 }));
+                new Object[]{ null, new Null_MYSQL_Field(Types.INTEGER), 1, 0 }));
         
         //#######################################################
         // Fetch Queries
         //#######################################################
         
-        // 1.) Get Meal_ID
+        // 1.) Get Meal_ID_OBJ
         String get_Q1 = String.format("SELECT %s;", var_Meal_ID);
         fetch_Queries_And_Params.add(new Pair<>(get_Q1, null));
         
@@ -238,7 +239,7 @@ public class MealManager
                 SELECT *
                 FROM ingredients_in_sections_of_meal_calculation
                 WHERE plan_id = ? AND div_meal_sections_id = %s;""", var_Sub_Meal_ID);
-        fetch_Queries_And_Params.add(new Pair<>(get_Q3, new Object[]{ tempPlanID }));
+        fetch_Queries_And_Params.add(new Pair<>(get_Q3, new Object[]{ null }));
         
         //#############################
         // 4.) Get Total Meal DATA
@@ -247,7 +248,7 @@ public class MealManager
                 SELECT *
                 FROM total_meal_view
                 WHERE plan_id = ? AND meal_in_plan_id = %s;""", var_Meal_ID);
-        fetch_Queries_And_Params.add(new Pair<>(get_Q4, new Object[]{ tempPlanID }));
+        fetch_Queries_And_Params.add(new Pair<>(get_Q4, new Object[]{ null }));
         
         //#######################################################
         // Execute Query
@@ -261,7 +262,7 @@ public class MealManager
         //#######################################################
         try
         {
-            meal_In_Plan_ID = ((Number) fetched_Results_OBJ.get_1D_Result_Into_Object(0)).intValue();
+            draft_meal_ID = ((Number) fetched_Results_OBJ.get_1D_Result_Into_Object(0)).intValue();
             sub_Meal_ID = ((Number) fetched_Results_OBJ.get_1D_Result_Into_Object(1)).intValue();
             
             sub_Meal_DATA = fetched_Results_OBJ.get_Fetched_Result_2D_AL(2);
@@ -487,7 +488,7 @@ public class MealManager
         //################################################################
         // Create TotalMeal Objects
         //################################################################
-        totalMealTable = new TotalMeal_Table(db, this, meal_In_Plan_ID, total_Meal_Data);
+        totalMealTable = new TotalMeal_Table(db, this, draft_meal_ID, total_Meal_Data);
         
         //######################################
         // TotalMeal_Table to Collapsible Object
@@ -606,7 +607,7 @@ public class MealManager
         //############################################
         if (meal_plan_screen.is_PieChart_Screen_Open()) { return; }
         
-        shared_Data_Registry.remove_PieChart_DatasetValues(meal_In_Plan_ID);
+        shared_Data_Registry.remove_PieChart_DatasetValues(draft_meal_ID);
     }
     
     // External Call Usage
@@ -625,7 +626,7 @@ public class MealManager
         
         if (! shared_Data_Registry.update_PieChart_Values(this))
         {
-            System.err.printf("\n\nShared_Data_Registry.java : updatePieChart_MM_Values() \nPieChart not Open %s", meal_In_Plan_ID);
+            System.err.printf("\n\nShared_Data_Registry.java : updatePieChart_MM_Values() \nPieChart not Open %s", draft_meal_ID);
         }
     }
     
@@ -703,14 +704,14 @@ public class MealManager
         {
             query = " SELECT meal_time FROM meals_in_plan WHERE plan_id = ? AND meal_time = ?";
             errorMSG = "Error, Validating Meal Time!";
-            params = new Object[]{ tempPlanID, inputConvertedToLocalTime };
+            params = new Object[]{ null, inputConvertedToLocalTime };
         }
         else // Last possible option based on logic is Meal Name
         {
             input = StringUtils.capitalize(input);
             query = "SELECT meal_name FROM meals_in_plan WHERE plan_id = ? AND meal_name = ?";
             errorMSG = "Error, Validating Meal Name!";
-            params = new Object[]{ tempPlanID, input };
+            params = new Object[]{ null, input };
         }
         
         // Execute Query
@@ -778,7 +779,7 @@ public class MealManager
                 SET meal_time = ?
                 WHERE plan_id = ? AND meal_in_plan_id = ?;""";
         
-        Object[] params = new Object[]{ newMealTime, tempPlanID, meal_In_Plan_ID };
+        Object[] params = new Object[]{ newMealTime, null, draft_meal_ID };
         
         //##########################################
         // Upload Into Database Table
@@ -909,7 +910,7 @@ public class MealManager
                 SET meal_name = ?
                 WHERE plan_id = ? AND meal_in_plan_id = ?;""";
         
-        Object[] params = new Object[]{ inputMealName, tempPlanID, meal_In_Plan_ID };
+        Object[] params = new Object[]{ inputMealName, null, draft_meal_ID };
         
         if (! db.upload_Data(uploadQuery, params, "Error, unable to change Meal Name!")) { return; }
         
@@ -988,7 +989,7 @@ public class MealManager
         String upload_Q1 = """
                 INSERT INTO divided_meal_sections (meal_in_plan_id, plan_id) VALUES
                 (?, ?);""";
-        upload_Queries_And_Params.add(new Pair<>(upload_Q1, new Object[]{ meal_In_Plan_ID, tempPlanID }));
+        upload_Queries_And_Params.add(new Pair<>(upload_Q1, new Object[]{ draft_meal_ID, null }));
         
         //######################################
         // 2.) Set Sub-Meal ID
@@ -1008,7 +1009,7 @@ public class MealManager
                 (?, ?, %s, ?, ?);""", var_Sub_Meal_ID);
         
         upload_Queries_And_Params.add(new Pair<>(upload_Q3,
-                new Object[]{ tempPlanID, new Null_MYSQL_Field(Types.INTEGER), 1, 0 }));
+                new Object[]{ null, new Null_MYSQL_Field(Types.INTEGER), 1, 0 }));
         
         //#######################################################
         // Fetch Queries
@@ -1025,7 +1026,7 @@ public class MealManager
                 SELECT *
                 FROM ingredients_in_sections_of_meal_calculation
                 WHERE plan_id = ? AND div_meal_sections_id = %s;""", var_Sub_Meal_ID);
-        fetch_Queries_And_Params.add(new Pair<>(get_Q2, new Object[]{ tempPlanID }));
+        fetch_Queries_And_Params.add(new Pair<>(get_Q2, new Object[]{ null }));
         
         //#######################################################
         // Execute Query
@@ -1073,7 +1074,7 @@ public class MealManager
         // Delete MealManager Queries
         //##########################################
         String query = "DELETE FROM meals_in_plan WHERE meal_in_plan_id = ? AND plan_id = ?";
-        Object[] params = new Object[]{ meal_In_Plan_ID, tempPlanID };
+        Object[] params = new Object[]{ draft_meal_ID, null };
         
         //##########################################
         // Execute Update
@@ -1174,7 +1175,7 @@ public class MealManager
         //##########################################
         String query1 = "DELETE FROM meals_in_plan WHERE meal_in_plan_id = ? AND plan_id = ?;";
         
-        Object[] params = new Object[]{ meal_In_Plan_ID, tempPlanID };
+        Object[] params = new Object[]{ draft_meal_ID, null };
         
         if (! (db.upload_Data(query1, params, "Error, Unable to DELETE IngredientsTable!!"))) { return; }
         
@@ -1206,7 +1207,7 @@ public class MealManager
     //#################################################################################
     // Save & Refresh Methods
     //#################################################################################
-    private boolean transferMealDataToPlan(String process, int fromPlanID, int toPlanID)
+    private boolean transferMealDataToPlan(String process, Integer fromPlanID, Integer toPlanID)
     {
         System.out.printf("\n\n%s transferMealDataToPlan()  %s %s %s", lineSeparator, process, fromPlanID, toPlanID);
         //########################################################
@@ -1282,14 +1283,14 @@ public class MealManager
                         SET meal_name = ?, meal_time = ?
                         WHERE plan_id = ? AND meal_in_plan_id = ?;""";
                 
-                add(new Pair<>(uploadQuery, new Object[]{ updateMealName, updateMealTime, toPlanID, meal_In_Plan_ID }));
+                add(new Pair<>(uploadQuery, new Object[]{ updateMealName, updateMealTime, toPlanID, draft_meal_ID }));
             }
             
-            add(new Pair<>(query2, new Object[]{ meal_In_Plan_ID, toPlanID })); // Already in correct dataType
-            add(new Pair<>(query3, new Object[]{ meal_In_Plan_ID, fromPlanID })); //
+            add(new Pair<>(query2, new Object[]{ draft_meal_ID, toPlanID })); // Already in correct dataType
+            add(new Pair<>(query3, new Object[]{ draft_meal_ID, fromPlanID })); //
             add(new Pair<>(query4, new Object[]{ toPlanID }));
             add(new Pair<>(query5, null));
-            add(new Pair<>(query6, new Object[]{ meal_In_Plan_ID, fromPlanID, fromPlanID }));
+            add(new Pair<>(query6, new Object[]{ draft_meal_ID, fromPlanID, fromPlanID }));
             add(new Pair<>(query7, new Object[]{ toPlanID }));
             add(new Pair<>(query8, null));
             add(new Pair<>(query9, null));
@@ -1337,7 +1338,7 @@ public class MealManager
                 AND (M.meal_name = ? OR M.meal_time = ?)
                 AND M.meal_in_plan_id != ?;""";
         
-        Object[] params_refresh = new Object[]{ tempPlanID, tempPlanID, savedMealName, get_Saved_MealTime_GUI(), meal_In_Plan_ID };
+        Object[] params_refresh = new Object[]{ null, null, savedMealName, get_Saved_MealTime_GUI(), draft_meal_ID };
         
         ArrayList<ArrayList<Object>> results;
         
@@ -1386,7 +1387,7 @@ public class MealManager
         //##############################################################################################
         // Reset DB Data
         //##############################################################################################
-        if (! (transferMealDataToPlan("refresh", planID, tempPlanID)))
+        if (! (transferMealDataToPlan("refresh", null, null)))
         {
             JOptionPane.showMessageDialog(null, "\n\nUnable to transfer mealData toS!!");
             return;
@@ -1399,7 +1400,7 @@ public class MealManager
         
         //##############################################################################################
         // Remove & Re-add to GUI
-        ///##############################################################################################
+        //##############################################################################################
         meal_plan_screen.add_And_Replace_MealManger_POS_GUI(this, true, true);
     }
     
@@ -1462,7 +1463,7 @@ public class MealManager
         // ###############################################################################
         // Transferring Meals & Ingredients from FromPlan to toPlan
         // ###############################################################################
-        if (! (transferMealDataToPlan("saving", tempPlanID, planID))) // transfer meals and ingredients from temp plan to original plan
+        if (! (transferMealDataToPlan("saving", null, null))) // transfer meals and ingredients from temp plan to original plan
         {
             System.out.println("\n\n#################################### \nError MealManager saveMealData()");
             
@@ -1580,8 +1581,20 @@ public class MealManager
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
+    // Value on TotalMeal Table
+    public Object get_Value_On_Total_Meal_Table(String db_column_name)
+    {
+        int column_pos = Objects.requireNonNull(shared_Data_Registry.get_Total_Meal_Column_Pos_By_Name(db_column_name),
+                String.format("\n\n%s : \nGetting Result by Column Name Resulted in NULL ", get_Class_And_Method_Name()));
+        
+        return totalMealTable.get_Value_On_Model_Data(0, column_pos);
     
+    }
+    
+    
+    // ############################################
     // Other Objects
+    // ############################################
     public Frame getFrame()
     {
         return meal_plan_screen.getFrame();
@@ -1590,11 +1603,6 @@ public class MealManager
     public JPanel getSpaceDividerForMealManager()
     {
         return spaceDividerForMealManager;
-    }
-    
-    public Shared_Data_Registry getMealManagerRegistry()
-    {
-        return shared_Data_Registry;
     }
     
     // ############################################
@@ -1658,14 +1666,14 @@ public class MealManager
     // ############################################
     // Integers
     // ############################################
-    public int get_Meal_In_Plan_ID()
+    public int get_Draft_Meal_In_Plan_ID()
     {
-        return meal_In_Plan_ID;
+        return draft_meal_ID;
     }
     
-    public int get_Plan_ID()
+    public int get_Source_Meal_ID()
     {
-        return planID;
+        return source_meal_id;
     }
     
     // #############################################
@@ -1674,11 +1682,6 @@ public class MealManager
     public TotalMeal_Table get_Total_Meal_Table()
     {
         return totalMealTable;
-    }
-    
-    public Meal_Plan_Screen get_Meal_plan_screen()
-    {
-        return meal_plan_screen;
     }
     
     //##################################################################################################################
@@ -1732,5 +1735,23 @@ public class MealManager
             }
         }
         container.add(addToContainer, gbc);
+    }
+    
+    //##################################################################################################################
+    // Debugging Print Statements
+    //##################################################################################################################
+    protected String get_Class_Name()
+    {
+        return class_Name;
+    }
+    
+    protected String get_Method_Name()
+    {
+        return String.format("%s()", Thread.currentThread().getStackTrace()[2].getMethodName());
+    }
+    
+    protected String get_Class_And_Method_Name()
+    {
+        return String.format("%s -> @%s", get_Class_Name(), get_Method_Name());
     }
 }
