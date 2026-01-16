@@ -16,11 +16,11 @@ public class Shared_Data_Registry
     //##################################################################################################################
     // Collections
     //##################################################################################################################
-    /*
-     * LinkedHashMap<String, Pair<Integer, String>> totalMeal_macroColNamePos
-     * LinkedHashMap<TotalMeal_MacroName, Pair< Position, Measurement>> totalMeal_macroColNamePos
-     */
-    private LinkedHashMap<String, Pair<Integer, String>> totalMeal_Macro_Pos_And_Symbol;
+    private ArrayList<MealManager> mealManager_ArrayList = new ArrayList<>();
+    
+    private LinkedHashMap<String, Integer> total_meal_macro_pos;
+    private LinkedHashMap<String, String> total_meal_macro_symbol;
+    
     
     /*
      * HashMap<String, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues = new HashMap<>();
@@ -29,19 +29,27 @@ public class Shared_Data_Registry
      * <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
      * Etc;  <Key: Salt | Value: HashMap<MealManager, Quantity: 300g >>
      */
-    private LinkedHashMap<String, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues = new LinkedHashMap<>(); // Can be refactored to include mealManager
+    private LinkedHashMap<String, HashMap<MealManager, BigDecimal>> macro_values_by_meal_map = new LinkedHashMap<>(); // Can be refactored to include mealManager
     
-    private ArrayList<MealManager> mealManager_ArrayList = new ArrayList<>();
+    
+    // private Map<MealManager, EnumMap<Macro, BigDecimal>> totalsByMeal;
     
     //##############################
     // Chart Data Collections
     //##############################
     private HashMap<Integer, DefaultPieDataset<String>> pieChart_Dataset_HashMap = new HashMap<>();
     
-    //##############################
-    // Table / Form Data Collections
-    //##############################
+    
+    //#######################################################
+    //
+    //#######################################################
+    /*
+     
+     */
+    
+    //##################
     // Stores
+    //##################
     private HashMap<Integer, Store_ID_OBJ> stores_Obj_Map = new HashMap<>();
     private ArrayList<Store_ID_OBJ> stores_Obj_AL = new ArrayList<>();
     
@@ -81,7 +89,8 @@ public class Shared_Data_Registry
         //##################################
         // Variables
         //##################################
-        this.totalMeal_Macro_Pos_And_Symbol = meal_plan_screen.get_TotalMeal_macro_Col_Name_And_Pos();
+        total_meal_macro_pos = meal_plan_screen.get_Total_Meal_Macro_Col_Pos();
+        total_meal_macro_symbol = meal_plan_screen.get_Total_Meal_Macro_Symbols();
         
         //##################################
         // Create Macros Collection
@@ -94,14 +103,14 @@ public class Shared_Data_Registry
     //##################################################################################################################
     public void initialize_MealManagers_MacrosValues()
     {
-        mealManagers_TotalMeal_MacroValues.clear();
+        macro_values_by_meal_map.clear();
         
         //##################################
         // Create Macros Collection
         //##################################
-        for (String macroName : totalMeal_Macro_Pos_And_Symbol.keySet())
+        for (String macroName : total_meal_macro_pos.keySet())
         {
-            mealManagers_TotalMeal_MacroValues.put(macroName, new HashMap<>());
+            macro_values_by_meal_map.put(macroName, new HashMap<>());
         }
     }
     
@@ -152,13 +161,14 @@ public class Shared_Data_Registry
          * Etc;  <Key: Salt | Value: HashMap<MealManager, Quantity: 300g >>
          */
         
-        Iterator<Map.Entry<String, Pair<Integer, String>>> it = totalMeal_Macro_Pos_And_Symbol.entrySet().iterator();
-        
-        while (it.hasNext())
+        /**
+         *  <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
+         *   Put, Replace have the same effect
+         */
+        for (Map.Entry<String, Integer> macro : total_meal_macro_pos.entrySet())
         {
-            Map.Entry<String, Pair<Integer, String>> mapEntry = it.next();
-            String macroName = mapEntry.getKey();
-            Integer macroPos = mapEntry.getValue().getValue0();
+            String macroName = macro.getKey();
+            Integer macroPos = macro.getValue();
             
             BigDecimal macroValue = (BigDecimal) totalMealTable.get_Value_On_Model_Data(0, macroPos);
             
@@ -167,7 +177,7 @@ public class Shared_Data_Registry
              *   Put, Replace have the same effect
              */
             
-            mealManagers_TotalMeal_MacroValues.get(macroName).put(mealManager, macroValue);
+            macro_values_by_meal_map.get(macroName).put(mealManager, macroValue);
         }
     }
     
@@ -184,7 +194,7 @@ public class Shared_Data_Registry
         //###########################################
         // Remove MealManager PieChart Data
         //###########################################
-        int mealManagerID = mealManager.get_Meal_In_Plan_ID();
+        int mealManagerID = mealManager.get_Draft_Meal_In_Plan_ID();
         remove_PieChart_DatasetValues(mealManagerID);
     }
     
@@ -198,14 +208,9 @@ public class Shared_Data_Registry
          * Etc;  <Key: Salt | Value: HashMap<MealManager, Quantity: 300g >>
          */
         
-        Iterator<String> it = totalMeal_Macro_Pos_And_Symbol.keySet().iterator();
-        
-        while (it.hasNext())
+        for (String macroName : total_meal_macro_pos.keySet()) // <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
         {
-            String macroName = it.next();
-            
-            // <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
-            mealManagers_TotalMeal_MacroValues.get(macroName).remove(mealManager);
+            macro_values_by_meal_map.get(macroName).remove(mealManager);
         }
     }
     
@@ -287,7 +292,7 @@ public class Shared_Data_Registry
         //#########################################
         // MealManager Info
         //#########################################
-        int mealInPlanID = mealManager.get_Meal_In_Plan_ID();
+        int mealInPlanID = mealManager.get_Draft_Meal_In_Plan_ID();
         
         //##############################################
         // Add to HashMapDataset
@@ -319,13 +324,13 @@ public class Shared_Data_Registry
             // ###########################
             // Protein
             // ###########################
-            put("Protein", mealManagers_TotalMeal_MacroValues.get("total_protein").get(mealManager));
+            put("Protein", macro_values_by_meal_map.get("total_protein").get(mealManager));
             
             // ###########################
             // Carbs
             // ###########################
-            BigDecimal sugarCarbsValue = mealManagers_TotalMeal_MacroValues.get("total_sugars_of_carbs").get(mealManager);
-            BigDecimal carbsValue = mealManagers_TotalMeal_MacroValues.get("total_carbohydrates").get(mealManager);
+            BigDecimal sugarCarbsValue = macro_values_by_meal_map.get("total_sugars_of_carbs").get(mealManager);
+            BigDecimal carbsValue = macro_values_by_meal_map.get("total_carbohydrates").get(mealManager);
             
             put("Carbohydrates", carbsValue.subtract(sugarCarbsValue));
             put("Sugars Of Carbs", sugarCarbsValue);
@@ -333,8 +338,8 @@ public class Shared_Data_Registry
             // ###########################
             // Fats
             // ###########################
-            BigDecimal satFatsValue = mealManagers_TotalMeal_MacroValues.get("total_saturated_fat").get(mealManager);
-            BigDecimal fatsValue = mealManagers_TotalMeal_MacroValues.get("total_fats").get(mealManager);
+            BigDecimal satFatsValue = macro_values_by_meal_map.get("total_saturated_fat").get(mealManager);
+            BigDecimal fatsValue = macro_values_by_meal_map.get("total_fats").get(mealManager);
             
             put("Fats", fatsValue.subtract(satFatsValue));
             put("Saturated Fats", satFatsValue);
@@ -355,12 +360,12 @@ public class Shared_Data_Registry
     //############################
     //  Update Methods
     //############################
-    public Boolean update_PieChart_Values(MealManager mealManager)
+    public boolean update_PieChart_Values(MealManager mealManager)
     {
         //#########################################
         //
         //#########################################
-        int mealInPlanID = mealManager.get_Meal_In_Plan_ID();
+        int mealInPlanID = mealManager.get_Draft_Meal_In_Plan_ID();
         
         //#########################################
         // IF PieChart Not Open Exit
@@ -736,6 +741,33 @@ public class Shared_Data_Registry
         return (int) mealManager_ArrayList.stream().filter(mealManager -> ! mealManager.is_Meal_Deleted()).count();
     }
     
+    public Integer get_Total_Meal_Column_Pos_By_Name(String column_name)
+    {
+        return total_meal_macro_pos.get(column_name); // Gets position of column by its name
+    }
+    
+    public Object get_Meals_Macro_Value(MealManager mealManager, String macro_name) throws Exception
+    {
+        if (! macro_values_by_meal_map.containsKey(macro_name))
+        {
+            throw new Exception(String.format("Key: Macro Name %s doesn't exist!", macro_name));
+        }
+        
+        Object value = macro_values_by_meal_map.get(macro_name).get(mealManager);
+        
+        if (value == null)
+        {
+            throw new Exception(String.format("Meal ID: Doesn't have a value for  Macro Name %s!", mealManager.get_Draft_Meal_In_Plan_ID(), macro_name));
+        }
+        
+        return value;
+    }
+    
+    public LinkedHashMap<String, String> get_Total_Meal_Macro_Symbols()
+    {
+        return total_meal_macro_symbol;
+    }
+    
     //############################
     // MealManagers / TotalMeal
     //#############################
@@ -746,11 +778,6 @@ public class Shared_Data_Registry
     
     public LinkedHashMap<String, HashMap<MealManager, BigDecimal>> get_MealManagers_MacroValues()
     {
-        return mealManagers_TotalMeal_MacroValues;
-    }
-    
-    public LinkedHashMap<String, Pair<Integer, String>> get_TotalMeal_Macro_Pos_And_Symbol()
-    {
-        return totalMeal_Macro_Pos_And_Symbol;
+        return macro_values_by_meal_map;
     }
 }

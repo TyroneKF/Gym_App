@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.javatuples.Pair;
 import org.jfree.data.time.Second;
+
 import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
@@ -64,32 +65,37 @@ public class Meal_Plan_Screen extends Screen_JFrame
     private Integer no_of_sub_meals;
     
     //###############################################
-    // booleans
+    // Booleans
     //###############################################
     private boolean macro_Targets_Changed = false;
     private boolean screen_Created = false;
     
-    //###############################################
+    //#########################################################################################
     // Collections
-    //###############################################
+    //#########################################################################################
+    // Meals & Plan Data
+    private ArrayList<ArrayList<Object>> macros_targets_plan_data_AL;
+    private ArrayList<ArrayList<Object>> macros_left_plan_data_AL;
+    private ArrayList<Meals_And_Sub_Meals_OBJ> meals_and_sub_meals_AL = new ArrayList<>();
+    
+    //#######################################
+    // Column Names
+    //#######################################
     private ArrayList<String> meal_total_column_Names;
     private ArrayList<String> ingredients_Column_Names;
-    private ArrayList<String> macrosLeft_columnNames;
+    private ArrayList<String> macros_left_columnNames;
     private ArrayList<String> macroTargets_ColumnNames;
     
-    private ArrayList<ArrayList<Object>> macros_plan_Data;
-    private ArrayList<ArrayList<Object>> macrosData;
-    
-    //########################
+    //#######################################
     // Meals Data Collections
-    //########################
-    private ArrayList<Meals_And_Sub_Meals_OBJ> meals_and_sub_meals_AL = new ArrayList<>();
+    //#######################################
+    
     
     private final LinkedHashMap<Integer, ArrayList<Object>> total_Meals_Data_Map = new LinkedHashMap<>();
     
-    //##################################################################################################################
+    //#######################################
     // Ingredients Table Columns
-    //##################################################################################################################
+    //#######################################
     // Table: draft_gui_ingredients_in_sections_of_meal_calculation
     private final ArrayList<String> ingredients_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList(
             "ingredient_type", "ingredient_name"));
@@ -103,9 +109,22 @@ public class Meal_Plan_Screen extends Screen_JFrame
             "draft_ingredients_index", "water_content"
     ));
     
-    //##################################################################################################################
-    // Total_Meal_View Table : draft_gui_total_meal_view
-    //##################################################################################################################
+    //#######################################
+    // Macro_Targets
+    //#######################################
+    // Table : draft_gui_plan_macro_target_calculations
+    private final ArrayList<String> macros_Targets_Table_Col_To_Hide = new ArrayList<String>(List.of("plan_id"));
+    
+    //#######################################
+    //Macro_Left
+    //#######################################
+    // Table : draft_gui_plan_macros_left
+    private final ArrayList<String> macros_Left_Table_Col_To_Hide = new ArrayList<String>(List.of("plan_id"));
+    
+    //#######################################
+    // Total_Meal_View Table
+    //#######################################
+    // draft_gui_total_meal_view
     private final ArrayList<String> total_Meal_Table_Col_To_Hide = new ArrayList<String>(Arrays.asList(
             "draft_meal_in_plan_id", "meal_name"
     ));
@@ -114,33 +133,37 @@ public class Meal_Plan_Screen extends Screen_JFrame
      * LinkedHashMap<String, Pair<Integer, String>> totalMeal_macroColNamePos
      * LinkedHashMap<TotalMeal_MacroName, Pair< Position, Measurement>> totalMeal_macroColNamePos
      */
-    private final LinkedHashMap<String, Pair<Integer, String>> total_Meal_Macro_Col_Name_Positions_And_Symbol = new LinkedHashMap<>()
+    private final LinkedHashMap<String, Integer> total_meal_macro_col_positions = new LinkedHashMap<>()
     {{
-        put("total_protein", new Pair<>(null, "g"));
-        put("total_carbohydrates", new Pair<>(null, "g"));
-        put("total_sugars_of_carbs", new Pair<>(null, "g"));
-        put("total_fats", new Pair<>(null, "g"));
-        put("total_saturated_fat", new Pair<>(null, "g"));
-        put("total_salt", new Pair<>(null, "g"));
-        put("total_fibre", new Pair<>(null, "g"));
-        put("total_water", new Pair<>(null, "ml"));
-        put("total_calories", new Pair<>(null, "kcal"));
+        put("total_protein", null);
+        put("total_carbohydrates", null);
+        put("total_sugars_of_carbs", null);
+        put("total_fats", null);
+        put("total_saturated_fat", null);
+        put("total_salt", null);
+        put("total_fibre", null);
+        put("total_water", null);
+        put("total_calories", null);
     }};
     
-    private final HashMap<String, Integer> total_Meal_Other_Cols_Positions = new HashMap<>()
-    {{ // These 2 columns are needed for external charts
+    private final HashMap<String, Integer> total_meal_other_cols_positions = new HashMap<>() // These 2 columns are needed for external charts
+    {{
         put("meal_time", null);
         put("meal_name", null);
     }};
     
-    //##################################################################################################################
-    // Other Table Customisations
-    //##################################################################################################################
-    // Table : draft_gui_plan_macro_target_calculations
-    private final ArrayList<String> macros_Targets_Table_Col_To_Hide = new ArrayList<String>(List.of("plan_id"));
-    
-    // Table : draft_gui_plan_macros_left
-    private final ArrayList<String> macros_Left_Table_Col_To_Hide = new ArrayList<String>(List.of("plan_id"));
+    private final LinkedHashMap<String, String> total_meal_macro_symbol = new LinkedHashMap<>()
+    {{
+        put("total_protein", "g");
+        put("total_carbohydrates", "g");
+        put("total_sugars_of_carbs", "g");
+        put("total_fats", "g");
+        put("total_saturated_fat", "g");
+        put("total_salt", "g");
+        put("total_fibre", "g");
+        put("total_water", "ml");
+        put("total_calories", "kcal");
+    }};
     
     //##################################################################################################################
     // Constructor & Main
@@ -344,7 +367,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         macros_Targets_Table = new MacrosTargets_Table(
                 db,
                 macrosInfoJPanel,
-                macros_plan_Data,
+                macros_targets_plan_data_AL,
                 macroTargets_ColumnNames,
                 selected_Plan_ID,
                 null,
@@ -361,8 +384,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
         macros_Left_JTable = new MacrosLeft_Table(
                 db,
                 macrosInfoJPanel,
-                macrosData,
-                macrosLeft_columnNames,
+                macros_left_plan_data_AL,
+                macros_left_columnNames,
                 selected_Plan_ID,
                 null,
                 macros_Left_Table_Col_To_Hide
@@ -383,7 +406,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             // Get Details
             Meal_ID_OBJ meal_id_obj = meal_and_sub_meals.get_Meal_ID_OBJ();
             int draft_meal_id = meal_id_obj.get_Draft_Meal_ID();
-       
+            
             // Get Associated Sub-Meals
             LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> sub_Meal_DATA = meal_and_sub_meals.get_Sub_Meals_Data_Map();
             
@@ -461,11 +484,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
         no_of_meals = null;
         no_of_sub_meals = null;
         
-        macrosLeft_columnNames = null;
+        macros_left_columnNames = null;
         macroTargets_ColumnNames = null;
         
-        macros_plan_Data = null;
-        macrosData = null;
+        macros_targets_plan_data_AL = null;
+        macros_left_plan_data_AL = null;
         
         meals_and_sub_meals_AL.clear();
         total_Meals_Data_Map.clear();
@@ -537,7 +560,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             macroTargets_ColumnNames = db.get_Column_Names_AL("draft_gui_plan_macro_target_calculations");
             
             // Get table column names for plan_macros_left
-            macrosLeft_columnNames = db.get_Column_Names_AL("draft_gui_plan_macros_left");
+            macros_left_columnNames = db.get_Column_Names_AL("draft_gui_plan_macros_left");
         }
         catch (Exception e)
         {
@@ -552,14 +575,13 @@ public class Meal_Plan_Screen extends Screen_JFrame
         {
             String columnName = meal_total_column_Names.get(pos);
             
-            if (total_Meal_Macro_Col_Name_Positions_And_Symbol.containsKey(columnName))
+            if (total_meal_macro_col_positions.containsKey(columnName))
             {
-                String symbol = total_Meal_Macro_Col_Name_Positions_And_Symbol.get(columnName).getValue1();
-                total_Meal_Macro_Col_Name_Positions_And_Symbol.put(columnName, new Pair<>(pos, symbol));
+                total_meal_macro_col_positions.put(columnName, pos);
             }
-            else if (total_Meal_Other_Cols_Positions.containsKey(columnName))
+            else if (total_meal_other_cols_positions.containsKey(columnName))
             {
-                total_Meal_Other_Cols_Positions.put(columnName, pos);
+                total_meal_other_cols_positions.put(columnName, pos);
             }
         }
         
@@ -1420,7 +1442,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // Execute
         try
         {
-            macros_plan_Data = db.get_2D_Query_AL_Object(query_PlanCalc, params_planCalc, errorMSG, false);
+            macros_targets_plan_data_AL = db.get_2D_Query_AL_Object(query_PlanCalc, params_planCalc, errorMSG, false);
             System.out.printf("\n\n%s \nPlan Targets Data Successfully Retrieved \n%s ", lineSeparator, lineSeparator);
             return true;
         }
@@ -1440,7 +1462,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         
         try
         {
-            macrosData = db.get_2D_Query_AL_Object(query_Macros, params_macros, errorMSG_ML, false);
+            macros_left_plan_data_AL = db.get_2D_Query_AL_Object(query_Macros, params_macros, errorMSG_ML, false);
             System.out.printf("\n\n%s \nPlan Macros Left Data Successfully Retrieved \n%s ", lineSeparator, lineSeparator);
             return true;
         }
@@ -2361,7 +2383,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             case "mealName" ->  // Meal Name on MealManager Changed
             {
                 // LineChart = Nothing Changes
-      
+                
                 // Change PieChart MealName
                 update_PieChart_MealName(mealManager.get_Draft_Meal_In_Plan_ID());
             }
@@ -2488,12 +2510,17 @@ public class Meal_Plan_Screen extends Screen_JFrame
     
     public HashMap<String, Integer> get_TotalMeal_Other_Cols_Pos()
     {
-        return total_Meal_Other_Cols_Positions;
+        return total_meal_other_cols_positions;
     }
     
-    public LinkedHashMap<String, Pair<Integer, String>> get_TotalMeal_macro_Col_Name_Pos_And_Symbol()
+    public LinkedHashMap<String, Integer> get_Total_Meal_Macro_Col_Pos()
     {
-        return total_Meal_Macro_Col_Name_Positions_And_Symbol;
+        return total_meal_macro_col_positions;
+    }
+    
+    public LinkedHashMap<String, String> get_Total_Meal_Macro_Symbols()
+    {
+        return total_meal_macro_symbol;
     }
     
     //###########################################
@@ -2510,7 +2537,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
     }
     
     public ArrayList<String> getIngredients_Table_Col_Avoid_Centering()
-    { return ingredients_Table_Col_Avoid_Centering; }
+    {
+        return ingredients_Table_Col_Avoid_Centering;
+    }
     
     public ArrayList<String> getIngredients_In_Meal_Table_Col_To_Hide()
     {
