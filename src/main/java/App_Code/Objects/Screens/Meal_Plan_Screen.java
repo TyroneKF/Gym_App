@@ -129,10 +129,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
             "draft_meal_in_plan_id", "meal_name"
     ));
     
-    /**
-     * LinkedHashMap<String, Pair<Integer, String>> totalMeal_macroColNamePos
-     * LinkedHashMap<TotalMeal_MacroName, Pair< Position, Measurement>> totalMeal_macroColNamePos
-     */
     private final LinkedHashMap<String, Integer> total_meal_macro_col_positions = new LinkedHashMap<>()
     {{
         put("total_protein", null);
