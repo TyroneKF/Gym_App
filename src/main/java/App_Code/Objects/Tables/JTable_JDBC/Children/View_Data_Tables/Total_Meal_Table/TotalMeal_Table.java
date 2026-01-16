@@ -1,9 +1,8 @@
-package App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Children;
+package App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Total_Meal_Table;
 
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
-import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Parent.MyJTable_DisplayData;
+import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.MyJTable_DisplayData;
 import App_Code.Objects.Tables.MealManager;
-
 import java.util.ArrayList;
 import java.util.Collections;
 

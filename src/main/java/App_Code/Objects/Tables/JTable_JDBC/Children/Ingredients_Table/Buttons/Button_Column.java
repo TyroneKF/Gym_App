@@ -1,7 +1,6 @@
 package App_Code.Objects.Tables.JTable_JDBC.Children.Ingredients_Table.Buttons;
 
 import App_Code.Objects.Tables.JTable_JDBC.Children.Ingredients_Table.IngredientsTable;
-import App_Code.Objects.Tables.JTable_JDBC.Parent.JDBC_JTable;
 
 import javax.swing.*;
 import javax.swing.border.Border;

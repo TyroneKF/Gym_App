@@ -1,12 +1,10 @@
-package App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Children;
+package App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables;
 
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
-import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Parent.MyJTable_DisplayData;
-
 import java.awt.*;
 import java.util.ArrayList;
 
-public class MacrosLeft_Table extends MyJTable_DisplayData
+public class MacrosTargets_Table extends MyJTable_DisplayData
 {
     //##################################################################################################################
     // Variables
@@ -16,7 +14,7 @@ public class MacrosLeft_Table extends MyJTable_DisplayData
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public MacrosLeft_Table
+    public MacrosTargets_Table
     (
             MyJDBC_Sqlite db,
             Container parentContainer,
@@ -33,9 +31,9 @@ public class MacrosLeft_Table extends MyJTable_DisplayData
                 data,
                 columnNames,
                 "plan_id",
-                "Macros Left Table",
-                null,
-                "draft_gui_plan_macros_left",
+                "Macro Targets Table",
+                "macros_per_pound_and_limits",
+                "draft_gui_plan_macro_target_calculations",
                 columnNames,
                 colAvoidCentering,
                 columnsToHide

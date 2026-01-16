@@ -1,4 +1,4 @@
-package App_Code.Objects.Tables.JTable_JDBC.Parent;
+package App_Code.Objects.Tables.JTable_JDBC;
 
 // Packages to import
 // https://stackoverflow.com/questions/10347983/making-a-jbutton-clickable-inside-a-jtable
@@ -372,7 +372,6 @@ public abstract class JDBC_JTable extends JPanel
                 fireTableCellUpdated(row, col); // Notifies TableModelListeners, JTable that the value has changed = repaint
                 
                 has_data_changed_in_table = true;
-                System.out.printf("\n\n%s -> %s \nValue Changed From %s -> %s", get_Class_And_Method_Name(), table_name, old_Value, newValue);
             }
             catch (Exception e)
             {

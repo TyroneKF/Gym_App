@@ -1,8 +1,7 @@
-package App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Parent;
+package App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables;
 
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
-import App_Code.Objects.Tables.JTable_JDBC.Parent.JDBC_JTable;
-
+import App_Code.Objects.Tables.JTable_JDBC.JDBC_JTable;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;

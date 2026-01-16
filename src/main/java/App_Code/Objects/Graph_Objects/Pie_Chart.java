@@ -54,8 +54,8 @@ public class Pie_Chart<K extends Comparable<K>> extends JPanel
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
-    public Pie_Chart(
-            
+    public Pie_Chart
+    (
             String title,
             Color[] colors,
             int frameWidth,

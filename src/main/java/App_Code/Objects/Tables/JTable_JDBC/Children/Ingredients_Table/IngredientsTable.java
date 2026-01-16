@@ -10,7 +10,7 @@ import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Tables.JTable_JDBC.Children.Ingredients_Table.Buttons.Button_Column;
 import App_Code.Objects.Tables.JTable_JDBC.Children.Ingredients_Table.JCombo_Boxes.Child.Ingredient_Name_JComboBox_Column;
 import App_Code.Objects.Tables.JTable_JDBC.Children.Ingredients_Table.JCombo_Boxes.Child.Ingredient_Type_JComboBox_Column;
-import App_Code.Objects.Tables.JTable_JDBC.Parent.JDBC_JTable;
+import App_Code.Objects.Tables.JTable_JDBC.JDBC_JTable;
 import App_Code.Objects.Tables.MealManager;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;

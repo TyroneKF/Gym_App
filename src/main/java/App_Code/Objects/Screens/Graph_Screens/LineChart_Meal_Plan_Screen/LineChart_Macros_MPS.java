@@ -1,6 +1,7 @@
 package App_Code.Objects.Screens.Graph_Screens.LineChart_Meal_Plan_Screen;
 
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
+import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Total_Meal_Table.Total_Meal_Macro_Columns;
 import App_Code.Objects.Tables.MealManager;
 import App_Code.Objects.Graph_Objects.Line_Chart;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
@@ -29,7 +30,7 @@ class LineChart_Macros_MPS extends Screen_JPanel
     //##############################################
     // Collections
     //##############################################
-    private ArrayList<String> macros_To_Check;
+    private ArrayList<Total_Meal_Macro_Columns> macros_To_Check;
     
     /**
      * HashMap<String, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues = new HashMap<>();
@@ -38,7 +39,7 @@ class LineChart_Macros_MPS extends Screen_JPanel
      * <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
      * Etc;  <Key: Salt | Value: HashMap<MealManager, Quantity: 300g >>
      */
-    private LinkedHashMap<String, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues;
+    private LinkedHashMap<Total_Meal_Macro_Columns, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues;
     
     //##############################################
     // Datasets Objects
@@ -49,12 +50,12 @@ class LineChart_Macros_MPS extends Screen_JPanel
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
-    public LineChart_Macros_MPS(
-            
+    public LineChart_Macros_MPS
+    (
             Shared_Data_Registry shared_Data_Registry,
             Meal_Plan_Screen meal_plan_screen,
             String title,
-            ArrayList<String> macros_To_Check,
+            ArrayList<Total_Meal_Macro_Columns> macros_To_Check,
             int frameWidth,
             int frameHeight
     )
@@ -98,11 +99,10 @@ class LineChart_Macros_MPS extends Screen_JPanel
     {
         dataset = new TimeSeriesCollection();
         
-        for (String macroName : macros_To_Check)
+        for (Total_Meal_Macro_Columns macro_name : macros_To_Check)
         {
-            
             // Create a series for each macroName
-            TimeSeries macroTimeSeries = new TimeSeries(convert_MacroName_To_GUI_Version(macroName));
+            TimeSeries macroTimeSeries = new TimeSeries(convert_MacroName_To_GUI_Version(macro_name.key()));
             dataset.addSeries(macroTimeSeries);
             
             // Add all the values from this macroName into the series
@@ -113,7 +113,7 @@ class LineChart_Macros_MPS extends Screen_JPanel
              * Etc;  <Key: Salt | Value: <MealManagerID: 1, <MealTime: 14:00 , Quantity: 300g >>
              */
             
-            HashMap<MealManager, BigDecimal> macroValues = mealManagers_TotalMeal_MacroValues.get(macroName);
+            HashMap<MealManager, BigDecimal> macroValues = mealManagers_TotalMeal_MacroValues.get(macro_name);
             Iterator<Map.Entry<MealManager, BigDecimal>> it = macroValues.entrySet().iterator();
             
             while (it.hasNext()) // Iterate through the recorded MealManager Values for this macro
@@ -169,20 +169,20 @@ class LineChart_Macros_MPS extends Screen_JPanel
         // ####################################################
         // Get MealManager Info
         // ####################################################
-        Boolean timeChanged = ! previousTime.equals(currentTime);
+        boolean timeChanged = ! previousTime.equals(currentTime);
         
         // ####################################################
         // Get MealManager MacroInfo & Replace
         // ####################################################
-        Iterator<String> it = macros_To_Check.iterator();
         
-        while (it.hasNext())
+        /**
+         *  <Key: MacroName | Value: HashMap<Key: MealManagerID, Value: < MealManager, Quantity>>
+         */
+        for (Total_Meal_Macro_Columns macro_name :  macros_To_Check)
         {
             // ############################################
             // Macro Info
             // ############################################
-            String macroName = it.next();
-            
             // ############################################
             // Create TimeSeries New Info For Macro
             // ############################################
@@ -191,10 +191,10 @@ class LineChart_Macros_MPS extends Screen_JPanel
              */
             
             // Get Macro Info Specific to this mealManager correlating to macroName
-            BigDecimal newMacroValue = mealManagers_TotalMeal_MacroValues.get(macroName).get(mealManager);
+            BigDecimal newMacroValue = mealManagers_TotalMeal_MacroValues.get(macro_name).get(mealManager);
             
             // Convert Table Column to Key in TimeSeries Collection
-            String macroNameGUI = convert_MacroName_To_GUI_Version(macroName);
+            String macroNameGUI = convert_MacroName_To_GUI_Version(macro_name.key());
             
             // #######################################
             // Same Time: Update MacroValue

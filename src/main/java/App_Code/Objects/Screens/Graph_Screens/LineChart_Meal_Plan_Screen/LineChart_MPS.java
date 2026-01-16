@@ -1,6 +1,7 @@
 package App_Code.Objects.Screens.Graph_Screens.LineChart_Meal_Plan_Screen;
 
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
+import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Total_Meal_Table.Total_Meal_Macro_Columns;
 import App_Code.Objects.Tables.MealManager;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
@@ -18,11 +19,11 @@ public class LineChart_MPS extends Screen_JFrame
     // #################################################################################################################
     
     // Objects
-    private Meal_Plan_Screen meal_plan_screen;
+    private final Meal_Plan_Screen meal_plan_screen;
     
     // Screens
-    private LineChart_Macros_MPS lineChart_Main_Macros_MPS, lineChart_Bigger_Macros_MPS;
-    
+    private final LineChart_Macros_MPS lineChart_Main_Macros_MPS;
+    private final LineChart_Macros_MPS lineChart_Bigger_Macros_MPS;
     
     // #################################################################################################################
     // Constructor
@@ -51,14 +52,14 @@ public class LineChart_MPS extends Screen_JFrame
         //#################################################
         // Creating Macros LineChart Screen
         //#################################################
-        ArrayList<String> macros_To_Check = new ArrayList<>(Arrays.asList(
-                "total_protein",
-                "total_carbohydrates",
-                "total_sugars_of_carbs",
-                "total_fats",
-                "total_saturated_fat",
-                "total_salt",
-                "total_fibre"
+        ArrayList<Total_Meal_Macro_Columns> macros_To_Check = new ArrayList<>(Arrays.asList(
+               Total_Meal_Macro_Columns.TOTAL_PROTEIN,
+                Total_Meal_Macro_Columns.TOTAL_CARBOHYDRATES,
+                Total_Meal_Macro_Columns.TOTAL_SUGARS_OF_CARBS,
+                Total_Meal_Macro_Columns.TOTAL_FATS,
+                Total_Meal_Macro_Columns.TOTAL_SATURATED_FAT,
+                Total_Meal_Macro_Columns.TOTAL_SALT,
+                Total_Meal_Macro_Columns.TOTAL_FIBRE
         ));
         
         String title = String.format("%s : Macros Over 24 Hours", meal_plan_screen.getPlan_Name());
@@ -81,9 +82,9 @@ public class LineChart_MPS extends Screen_JFrame
          *  Create and override methods that display data as we're just interested in calories and water in this chart
          */
         
-        ArrayList<String> macros_To_Check2 = new ArrayList<>(Arrays.asList(
-                "total_water", "total_calories"
-                //,"total_liquid"
+        ArrayList<Total_Meal_Macro_Columns> macros_To_Check2 = new ArrayList<>(Arrays.asList(
+                Total_Meal_Macro_Columns.TOTAL_WATER,
+                Total_Meal_Macro_Columns.TOTAL_CALORIES
         ));
         
         String title2 = String.format("%s : Calories & Water Over 24 Hours", meal_plan_screen.getPlan_Name());
