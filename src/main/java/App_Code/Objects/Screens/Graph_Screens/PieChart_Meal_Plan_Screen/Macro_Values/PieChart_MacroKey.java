@@ -1,5 +1,6 @@
 package App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Macro_Values;
 
+import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Total_Meal_Table.Total_Meal_Macro_Columns;
 import App_Code.Objects.Tables.MealManager;
 
 import java.util.Objects;
@@ -15,20 +16,21 @@ public class PieChart_MacroKey implements Comparable<PieChart_MacroKey>
     
     // Integers
     private int mealInPlanID;
-    private String macroName, macroSymbol;
+    private String macroSymbol;
+    private Total_Meal_Macro_Columns macro_name;
     
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
-    public PieChart_MacroKey(MealManager mealManager, String macroName, String macroSymbol)
+    public PieChart_MacroKey(MealManager mealManager, Total_Meal_Macro_Columns macro_name, String macroSymbol)
     {
         //############################################
         // Variables
         //############################################
         this.mealManager = mealManager;
         
-        this.mealInPlanID = mealManager.get_Meal_In_Plan_ID();
-        this.macroName = macroName;
+        this.mealInPlanID = mealManager.get_Draft_Meal_In_Plan_ID();
+        this.macro_name = macro_name;
         this.macroSymbol = macroSymbol;
     }
     
@@ -59,7 +61,7 @@ public class PieChart_MacroKey implements Comparable<PieChart_MacroKey>
     
     public String get_MacroName()
     {
-        return macroName;
+        return macro_name.key();
     }
     
     // #################################################################################################################

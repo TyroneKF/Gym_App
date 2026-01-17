@@ -1,10 +1,11 @@
 package App_Code.Objects.Screens.Graph_Screens.PieChart_MealManager_Screen;
 
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
+import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Total_Meal_Table.Total_Meal_Macro_Columns;
 import App_Code.Objects.Tables.MealManager;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
-import App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Meals.PieChart_Totals;
+import App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Meals.Pie_Chart_Totals;
 import org.jfree.chart.title.LegendTitle;
 import org.jfree.chart.ui.HorizontalAlignment;
 import org.jfree.data.general.DefaultPieDataset;
@@ -19,28 +20,20 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen_JFrame
     
     
     //#####################################
-    // Objects
-    //#####################################
-    private MealManager mealManager;
-    private PieChart_Totals pieChart;
-    private Shared_Data_Registry shared_Data_Registry;
-    
-    //#####################################
-    // Strings
-    //#####################################
-    private String meal_name;
-    
-    //#####################################
     // Integers
     //#####################################
-    private int
-            frameWidth = 800,
-            frameHeight = 600,
-            mealInPlanID;
+    private int frameWidth = 800;
+    private int frameHeight = 600;
     
-    //##############################################
+    //######################################
+    // Objects
+    //######################################
+    private final MealManager mealManager;
+    private final Pie_Chart_Totals pieChart;
+    
+    //######################################
     // Colors
-    //##############################################
+    //######################################
     private Random randomIntGenerator = new Random();
     private Color[][] colors = {
             {
@@ -132,7 +125,12 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen_JFrame
     //###########################################################################################
     // Constructor
     //###########################################################################################
-    public Pie_Chart_Meal_Manager_Screen(MyJDBC_Sqlite db, Shared_Data_Registry shared_Data_Registry, MealManager mealManager)
+    public Pie_Chart_Meal_Manager_Screen
+    (
+            MyJDBC_Sqlite db,
+            Shared_Data_Registry shared_Data_Registry,
+            MealManager mealManager
+    )
     {
         // ##########################################
         // Super Constructors & Variables
@@ -145,21 +143,16 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen_JFrame
         // ##########################################
         // Variables
         // ##########################################
-        this.shared_Data_Registry = shared_Data_Registry;
         this.mealManager = mealManager;
-        
-        this.mealInPlanID = mealManager.get_Meal_In_Plan_ID();
-        this.meal_name = mealManager.get_Current_Meal_Name();
         
         //############################################
         // Creating Macros / Dataset
         //############################################
-        DefaultPieDataset<String> dataset = shared_Data_Registry.get_OR_Create_PieChart_Dataset(mealManager);
+        DefaultPieDataset<Total_Meal_Macro_Columns> dataset = shared_Data_Registry.get_OR_Create_PieChart_Dataset(mealManager);
         
         //#####################################
         // Graph Preferences
         //#####################################
-        String title = String.format("[%s]      %s Macros", mealManager.get_Current_Meal_Time_GUI(), mealManager.get_Current_Meal_Name());
         int
                 pieWidth = frameWidth - 50,
                 pieHeight = frameHeight - 20;
@@ -179,8 +172,8 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen_JFrame
         //#####################################
         // Create PieChart
         //#####################################
-        pieChart = new PieChart_Totals(title, colorPalette, pieWidth, pieHeight, 150, titleFont, labelFont, legendFont, dataset){
-           
+        pieChart = new Pie_Chart_Totals(mealManager, colorPalette, pieWidth, pieHeight, 150, titleFont, labelFont, legendFont, dataset)
+        {
             @Override
             protected String getSpace()
             {
@@ -195,7 +188,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen_JFrame
                 legend.setHorizontalAlignment(HorizontalAlignment.CENTER);
             }
         };
-       
+        
         addToContainer(getScrollPaneJPanel(), pieChart, 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
         
         //#####################################
@@ -215,7 +208,6 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen_JFrame
     //####################################
     public void update_PieChart_Title()
     {
-        String title = String.format("[%s]      %s Macros", mealManager.get_Current_Meal_Time_GUI(), mealManager.get_Current_Meal_Name());
-        pieChart.setTitle(title);
+        pieChart.update_PieChart_Title();
     }
 }

@@ -10,21 +10,16 @@ public class PieChart_Totals_Entry_MPS
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    Integer mealInPlanID;
-    
-    //#######################################
     // Objects
-    //#######################################
     MealManager mealManager;
-    Pie_Chart pieChart;
+    Pie_Chart_Totals pieChart;
     
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    PieChart_Totals_Entry_MPS(Integer mealInPlanID, MealManager mealManager, Pie_Chart pieChart)
+    PieChart_Totals_Entry_MPS(MealManager mealManager, Pie_Chart_Totals pieChart)
     {
         this.mealManager = mealManager;
-        this.mealInPlanID = mealInPlanID;
         this.pieChart = pieChart;
     }
     
@@ -33,8 +28,7 @@ public class PieChart_Totals_Entry_MPS
     //##################################################################################################################
     public void update_PieChart_Title()
     {
-        String title = String.format("[%s]      %s Macros", mealManager.get_Current_Meal_Time_GUI(), mealManager.get_Current_Meal_Name());
-        pieChart.setTitle(title);
+        pieChart.update_PieChart_Title();
     }
     
     //##################################################################################################################
@@ -43,11 +37,6 @@ public class PieChart_Totals_Entry_MPS
     public Second get_MealTime()
     {
         return mealManager.getCurrentMealTime();
-    }
-    
-    public int get_MealInPlanID()
-    {
-        return mealInPlanID;
     }
     
     public Pie_Chart get_PieChart()

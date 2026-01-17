@@ -4,8 +4,11 @@ import App_Code.Objects.Data_Objects.ID_Objects.MetaData_ID_Object.Meal_ID_OBJ;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.*;
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
-import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Children.MacrosLeft_Table;
-import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Children.MacrosTargets_Table;
+import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.MacrosLeft_Table;
+import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.MacrosTargets_Table;
+import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Total_Meal_Table.Total_Meal_Macro_Columns;
+import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Total_Meal_Table.Total_Meal_Other_Columns;
+import App_Code.Objects.Tables.JTable_JDBC.My_Enum;
 import App_Code.Objects.Tables.MealManager;
 import App_Code.Objects.Gui_Objects.*;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
@@ -129,36 +132,36 @@ public class Meal_Plan_Screen extends Screen_JFrame
             "draft_meal_in_plan_id", "meal_name"
     ));
     
-    private final LinkedHashMap<String, Integer> total_meal_macro_col_positions = new LinkedHashMap<>()
+    private final LinkedHashMap<Total_Meal_Macro_Columns, Integer> total_meal_macro_col_positions = new LinkedHashMap<>()
     {{
-        put("total_protein", null);
-        put("total_carbohydrates", null);
-        put("total_sugars_of_carbs", null);
-        put("total_fats", null);
-        put("total_saturated_fat", null);
-        put("total_salt", null);
-        put("total_fibre", null);
-        put("total_water", null);
-        put("total_calories", null);
+        put(Total_Meal_Macro_Columns.TOTAL_PROTEIN, null);
+        put(Total_Meal_Macro_Columns.TOTAL_CARBOHYDRATES, null);
+        put(Total_Meal_Macro_Columns.TOTAL_SUGARS_OF_CARBS, null);
+        put(Total_Meal_Macro_Columns.TOTAL_FATS, null);
+        put(Total_Meal_Macro_Columns.TOTAL_SATURATED_FAT, null);
+        put(Total_Meal_Macro_Columns.TOTAL_SALT, null);
+        put(Total_Meal_Macro_Columns.TOTAL_FIBRE, null);
+        put(Total_Meal_Macro_Columns.TOTAL_WATER, null);
+        put(Total_Meal_Macro_Columns.TOTAL_CALORIES, null);
     }};
     
-    private final HashMap<String, Integer> total_meal_other_cols_positions = new HashMap<>() // These 2 columns are needed for external charts
+    private final HashMap<Total_Meal_Other_Columns, Integer> total_meal_other_cols_positions = new HashMap<>() // These 2 columns are needed for external charts
     {{
-        put("meal_time", null);
-        put("meal_name", null);
+        put(Total_Meal_Other_Columns.MEAL_TIME, null);
+        put(Total_Meal_Other_Columns.MEAL_NAME, null);
     }};
     
-    private final LinkedHashMap<String, String> total_meal_macro_symbol = new LinkedHashMap<>()
+    private final LinkedHashMap<Total_Meal_Macro_Columns, String> total_meal_macro_symbol = new LinkedHashMap<>()
     {{
-        put("total_protein", "g");
-        put("total_carbohydrates", "g");
-        put("total_sugars_of_carbs", "g");
-        put("total_fats", "g");
-        put("total_saturated_fat", "g");
-        put("total_salt", "g");
-        put("total_fibre", "g");
-        put("total_water", "ml");
-        put("total_calories", "kcal");
+        put(Total_Meal_Macro_Columns.TOTAL_PROTEIN, "g");
+        put(Total_Meal_Macro_Columns.TOTAL_CARBOHYDRATES, "g");
+        put(Total_Meal_Macro_Columns.TOTAL_SUGARS_OF_CARBS, "g");
+        put(Total_Meal_Macro_Columns.TOTAL_FATS, "g");
+        put(Total_Meal_Macro_Columns.TOTAL_SATURATED_FAT, "g");
+        put(Total_Meal_Macro_Columns.TOTAL_SALT, "g");
+        put(Total_Meal_Macro_Columns.TOTAL_FIBRE, "g");
+        put(Total_Meal_Macro_Columns.TOTAL_WATER, "ml");
+        put(Total_Meal_Macro_Columns.TOTAL_CALORIES, "kcal");
     }};
     
     //##################################################################################################################
@@ -544,6 +547,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
     
     private boolean setup_Get_Column_Names()
     {
+        //########################################
+        // Get Column Names
+        //########################################
         try
         {
             // column names : ingredients_in_sections_of_meal_calculation
@@ -569,15 +575,22 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //########################################
         for (int pos = 0; pos < meal_total_column_Names.size(); pos++)
         {
-            String columnName = meal_total_column_Names.get(pos);
+            // Get Column Name
+            String column_name = meal_total_column_Names.get(pos);
             
-            if (total_meal_macro_col_positions.containsKey(columnName))
+            // See if the column Name is an Other Columns Enum
+            Optional<Total_Meal_Macro_Columns> column_enum = My_Enum.get_Enum_From_Key(Total_Meal_Macro_Columns.class, column_name);
+            if(column_enum.isPresent())
             {
-                total_meal_macro_col_positions.put(columnName, pos);
+                total_meal_macro_col_positions.put(column_enum.get(), pos);
+                continue;
             }
-            else if (total_meal_other_cols_positions.containsKey(columnName))
+            
+            // See if the column Name is an Other Columns Enum
+            Optional<Total_Meal_Other_Columns> other_column_enum = My_Enum.get_Enum_From_Key(Total_Meal_Other_Columns.class, column_name);
+            if(other_column_enum.isPresent())
             {
-                total_meal_other_cols_positions.put(columnName, pos);
+                total_meal_other_cols_positions.put(other_column_enum.get(), pos);
             }
         }
         
@@ -1815,18 +1828,18 @@ public class Meal_Plan_Screen extends Screen_JFrame
         pieChart_Screen_MPS.refresh();
     }
     
-    private void update_PieChart_MealName(Integer mealInPlanID)
+    private void update_PieChart_MealName(MealManager mealManager)
     {
         if (! is_PieChart_Screen_Open()) { return; }
         
-        pieChart_Screen_MPS.update_PieChart_MealName(mealInPlanID);
+        pieChart_Screen_MPS.update_PieChart_MealName(mealManager);
     }
     
-    private void update_PieChart_MealTime(Integer mealInPlanID)
+    private void update_PieChart_MealTime(MealManager mealManager)
     {
         if (! is_PieChart_Screen_Open()) { return; }
         
-        pieChart_Screen_MPS.update_PieChart_MealTime(mealInPlanID);
+        pieChart_Screen_MPS.update_PieChart_MealTime(mealManager);
     }
     
     private void update_PieChart_DATA(MealManager mealManager)
@@ -2374,14 +2387,14 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 updateLineChartData(mealManager, previousMealTime, currentMealTime);
                 
                 // Update PieChart Title OF Meal & Refresh Interface
-                update_PieChart_MealTime(mealManager.get_Draft_Meal_In_Plan_ID());
+                update_PieChart_MealTime(mealManager);
             }
             case "mealName" ->  // Meal Name on MealManager Changed
             {
                 // LineChart = Nothing Changes
                 
                 // Change PieChart MealName
-                update_PieChart_MealName(mealManager.get_Draft_Meal_In_Plan_ID());
+                update_PieChart_MealName(mealManager);
             }
             case "refresh" ->   // Change Meal Managers Data
             {
@@ -2389,7 +2402,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 updateLineChartData(mealManager, previousMealTime, currentMealTime);
                 
                 // Change PieChart MealName
-                update_PieChart_MealName(mealManager.get_Draft_Meal_In_Plan_ID());
+                update_PieChart_MealName(mealManager);
             }
         }
     }
@@ -2504,17 +2517,17 @@ public class Meal_Plan_Screen extends Screen_JFrame
         return meal_total_column_Names;
     }
     
-    public HashMap<String, Integer> get_TotalMeal_Other_Cols_Pos()
+    public HashMap<Total_Meal_Other_Columns, Integer> get_TotalMeal_Other_Cols_Pos()
     {
         return total_meal_other_cols_positions;
     }
     
-    public LinkedHashMap<String, Integer> get_Total_Meal_Macro_Col_Pos()
+    public LinkedHashMap<Total_Meal_Macro_Columns, Integer> get_Total_Meal_Macro_Col_Pos()
     {
         return total_meal_macro_col_positions;
     }
     
-    public LinkedHashMap<String, String> get_Total_Meal_Macro_Symbols()
+    public LinkedHashMap<Total_Meal_Macro_Columns, String> get_Total_Meal_Macro_Symbols()
     {
         return total_meal_macro_symbol;
     }

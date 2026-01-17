@@ -1,10 +1,10 @@
 package App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Macro_Values;
 
+import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Total_Meal_Table.Total_Meal_Macro_Columns;
 import App_Code.Objects.Tables.MealManager;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
-import org.javatuples.Pair;
 import org.jfree.data.general.DefaultPieDataset;
 import javax.swing.*;
 import java.awt.*;
@@ -30,8 +30,6 @@ public class PieChart_Macros_MPS extends Screen_JPanel
             titleFont = new Font("Serif", Font.PLAIN, 27),
             labelFont = new Font("SansSerif", Font.BOLD, 22),
             legendFont = new Font("Serif", Font.PLAIN, 21);
-    
-    private String planName;
     
     //##############################################
     // Colors
@@ -99,15 +97,11 @@ public class PieChart_Macros_MPS extends Screen_JPanel
      * <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
      * Etc;  <Key: Salt | Value: HashMap<MealManager, Quantity: 300g >>
      */
-    private LinkedHashMap<String, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues;
+    private LinkedHashMap<Total_Meal_Macro_Columns, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues;
     
-    private LinkedHashMap<String, DefaultPieDataset<PieChart_MacroKey>> macroValue_Dataset_Map = new LinkedHashMap<>();
+    private LinkedHashMap<Total_Meal_Macro_Columns, DefaultPieDataset<PieChart_MacroKey>> macroValue_Dataset_Map = new LinkedHashMap<>();
     
-    /**
-     * LinkedHashMap<String, Pair<Integer, String>> totalMeal_macroColNamePos
-     * LinkedHashMap<TotalMeal_MacroName, Pair< Position, Measurement>> totalMeal_macroColNamePos
-     */
-    private LinkedHashMap<String, Pair<Integer, String>> totalMeal_Macro_Pos_And_Symbol;
+    private LinkedHashMap<Total_Meal_Macro_Columns, String> total_meal_macro_symbol;
     
     //##################################################################################################################
     // Constructors
@@ -123,13 +117,11 @@ public class PieChart_Macros_MPS extends Screen_JPanel
         this.shared_Data_Registry = shared_Data_Registry;
         this.meal_plan_screen = meal_plan_screen;
         
-        this.planName = meal_plan_screen.getPlan_Name();
-        
         // #####################################
         // Collections
         // ######################################
         mealManagers_TotalMeal_MacroValues = shared_Data_Registry.get_MealManagers_MacroValues();
-        totalMeal_Macro_Pos_And_Symbol = shared_Data_Registry.get_TotalMeal_Macro_Pos_And_Symbol();
+        total_meal_macro_symbol = shared_Data_Registry.get_Total_Meal_Macro_Symbols();
         
         // #####################################
         // Create GUI
@@ -163,29 +155,41 @@ public class PieChart_Macros_MPS extends Screen_JPanel
         /**
          *   <Key: Salt | Value: HashMap<MealManager, Quantity: 300g >>
          */
-        Iterator<String> it = mealManagers_TotalMeal_MacroValues.keySet().iterator();
-        while (it.hasNext())
+        /**
+         * LinkedHashMap<String, Pair<Integer, String>> totalMeal_macroColNamePos
+         * LinkedHashMap<TotalMeal_MacroName, Pair< Position, Measurement>> totalMeal_macroColNamePos
+         */
+        for (Total_Meal_Macro_Columns macro_enum :  mealManagers_TotalMeal_MacroValues.keySet())
         {
             //##################################
             // Macro Info
             //##################################
-            String macroKey = it.next();
-            String macroName = String.format("%s", format_Strings(macroKey, true));
+            String macroName = String.format("%s", format_Strings(macro_enum.key(), true));
             
             /**
              * LinkedHashMap<String, Pair<Integer, String>> totalMeal_macroColNamePos
              * LinkedHashMap<TotalMeal_MacroName, Pair< Position, Measurement>> totalMeal_macroColNamePos
              */
-            String macroSymbol = totalMeal_Macro_Pos_And_Symbol.get(macroKey).getValue1();
+            String macroSymbol = total_meal_macro_symbol.get(macro_enum);
             
             //##################################
             // Get PieChart DATA & Add to List
             //##################################
-            DefaultPieDataset<PieChart_MacroKey> pieDataset = create_Macro_PieChart_Dataset(macroKey);
-            macroValue_Dataset_Map.put(macroKey, pieDataset); // Put Data into memory
+            DefaultPieDataset<PieChart_MacroKey> pieDataset = create_Macro_PieChart_Dataset(macro_enum);
+            macroValue_Dataset_Map.put(macro_enum, pieDataset); // Put Data into memory
             
-            PieChart_Macros pieChart = new PieChart_Macros(macroName, macroSymbol, colorPalette, pieWidth, pieHeight, rotateDelay, titleFont,
-                    labelFont, legendFont, macroValue_Dataset_Map.get(macroKey));
+            PieChart_Macros pieChart = new PieChart_Macros(
+                    macroName,
+                    macroSymbol,
+                    colorPalette,
+                    pieWidth,
+                    pieHeight,
+                    rotateDelay,
+                    titleFont,
+                    labelFont,
+                    legendFont,
+                    macroValue_Dataset_Map.get(macro_enum)
+            );
             
             //##################################
             // Add PieChart to GUI
@@ -195,7 +199,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
             
             add_To_Container(x, pieChart, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 10, 10, null);
             
-            add_To_Container(x, create_Space_Divider(20, 50, java.awt.Color.WHITE), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
+            add_To_Container(x, create_Space_Divider(20, 50, Color.WHITE), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
         }
         
         //##################################
@@ -204,7 +208,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
         resize_GUI();
     }
     
-    private DefaultPieDataset<PieChart_MacroKey> create_Macro_PieChart_Dataset(String macroName)
+    private DefaultPieDataset<PieChart_MacroKey> create_Macro_PieChart_Dataset(Total_Meal_Macro_Columns macro_name)
     {
         //##############################################
         // Macro Info
@@ -212,13 +216,13 @@ public class PieChart_Macros_MPS extends Screen_JPanel
         /**
          *   <Key: MealManager, Value: Quantity >>
          */
-        Map<MealManager, BigDecimal> macroValues = mealManagers_TotalMeal_MacroValues.get(macroName);
+        Map<MealManager, BigDecimal> macroValues = mealManagers_TotalMeal_MacroValues.get(macro_name);
         
         /**
          * LinkedHashMap<String, Pair<Integer, String>> totalMeal_macroColNamePos
          * LinkedHashMap<TotalMeal_MacroName, Pair< Position, Measurement>> totalMeal_macroColNamePos
          */
-        String macroSymbol = totalMeal_Macro_Pos_And_Symbol.get(macroName).getValue1();
+        String macro_symbol = total_meal_macro_symbol.get(macro_name);
         
         //##############################################
         //  Sort Data & Create Dataset
@@ -229,14 +233,16 @@ public class PieChart_Macros_MPS extends Screen_JPanel
          * Sort List by time values
          * <Key: MealManager, Value: Quantity >>
          */
-        macroValues.entrySet().stream()
+        macroValues
+                .entrySet()
+                .stream()
                 .sorted(Comparator.comparingLong(e -> e.getKey().getCurrentMealTime().getFirstMillisecond()))
                 .forEachOrdered(totalMeal_Values ->
                 {
                     MealManager mealManager = totalMeal_Values.getKey();
                     BigDecimal macroValue = totalMeal_Values.getValue();
                     
-                    macroDataset.setValue(new PieChart_MacroKey(mealManager, macroName, macroSymbol), macroValue);
+                    macroDataset.setValue(new PieChart_MacroKey(mealManager, macro_name, macro_symbol), macroValue);
                 });
         
         //##############################################
@@ -250,21 +256,18 @@ public class PieChart_Macros_MPS extends Screen_JPanel
         // ############################################################################
         // Paint GUI
         // ############################################################################
-        Iterator<Map.Entry<String, DefaultPieDataset<PieChart_MacroKey>>> it = macroValue_Dataset_Map.entrySet().iterator();
-        while (it.hasNext())
+        for (Map.Entry<Total_Meal_Macro_Columns, DefaultPieDataset<PieChart_MacroKey>> pie_entry : macroValue_Dataset_Map.entrySet())
         {
             // #########################################
             // Get Info
             // #########################################
-            Map.Entry<String, DefaultPieDataset<PieChart_MacroKey>> pieEntry = it.next();
-            
-            String macroName = pieEntry.getKey();
-            DefaultPieDataset<PieChart_MacroKey> pieDataset = pieEntry.getValue();
+            Total_Meal_Macro_Columns macro_Name = pie_entry.getKey();
+            DefaultPieDataset<PieChart_MacroKey> pieDataset = pie_entry.getValue();
             
             // #########################################
             // Get Updated Data
             // #########################################
-            DefaultPieDataset<PieChart_MacroKey> updated_Dataset = create_Macro_PieChart_Dataset(macroName);
+            DefaultPieDataset<PieChart_MacroKey> updated_Dataset = create_Macro_PieChart_Dataset(macro_Name);
             
             // #########################################
             // Transfer Data Over into PieChart Dataset

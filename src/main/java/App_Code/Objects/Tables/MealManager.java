@@ -6,13 +6,15 @@ import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
 import App_Code.Objects.Database_Objects.Null_MYSQL_Field;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Tables.JTable_JDBC.Children.Ingredients_Table.IngredientsTable;
-import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Children.MacrosLeft_Table;
-import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Children.TotalMeal_Table;
+import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.MacrosLeft_Table;
+import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Total_Meal_Table.TotalMeal_Table;
 import App_Code.Objects.Gui_Objects.CollapsibleJPanel;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Screens.Graph_Screens.PieChart_MealManager_Screen.Pie_Chart_Meal_Manager_Screen;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
+import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Total_Meal_Table.Total_Meal_Macro_Columns;
+import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Total_Meal_Table.Total_Meal_Other_Columns;
 import org.apache.commons.lang3.StringUtils;
 import org.javatuples.Pair;
 import org.jfree.data.time.Second;
@@ -43,10 +45,12 @@ public class MealManager
             hasMealTimeBeenChanged = false;
     
     // Integer Variables
-    private int 
+    private int
             source_meal_id,
-            draft_meal_ID, 
+            draft_meal_ID,
             yPoInternally = 0;
+    
+    private final UUID internalId = UUID.randomUUID();
     
     // String Variables
     private String class_Name = new Object() { }.getClass().getEnclosingClass().getName();
@@ -67,7 +71,7 @@ public class MealManager
             ingredientsInMeal_Table_ColToHide;
     
     private final ArrayList<IngredientsTable> ingredientTables_In_MealManager = new ArrayList<>();
-    private HashMap<String, Integer> totalMeal_Other_Cols_Pos;
+    private HashMap<Total_Meal_Other_Columns, Integer> totalMeal_Other_Cols_Pos;
     
     //################################################################################
     // Objects
@@ -607,7 +611,7 @@ public class MealManager
         //############################################
         if (meal_plan_screen.is_PieChart_Screen_Open()) { return; }
         
-        shared_Data_Registry.remove_PieChart_DatasetValues(draft_meal_ID);
+        shared_Data_Registry.remove_PieChart_DatasetValues(this);
     }
     
     // External Call Usage
@@ -796,7 +800,7 @@ public class MealManager
         //#######################################
         // Update total Meal View Time Col
         //#######################################
-        totalMealTable.set_Value_On_Table(newMealTime, 0, totalMeal_Other_Cols_Pos.get("meal_time"));
+        totalMealTable.set_Value_On_Table(newMealTime, 0, totalMeal_Other_Cols_Pos.get(Total_Meal_Other_Columns.MEAL_TIME));
         
         //#######################################
         // Update Time Variables
@@ -923,7 +927,7 @@ public class MealManager
         //#########################################################################################################
         // Update total Meal View Time Col
         //#########################################################################################################
-        totalMealTable.set_Value_On_Table(inputMealName, 0, totalMeal_Other_Cols_Pos.get("meal_name"));
+        totalMealTable.set_Value_On_Table(inputMealName, 0, totalMeal_Other_Cols_Pos.get(Total_Meal_Other_Columns.MEAL_NAME));
         
         //#########################################################################################################
         // Internal / External Graphs
@@ -1543,7 +1547,7 @@ public class MealManager
     //##################################################################################################################
     // Updating Other Tables
     //##################################################################################################################
-    public void update_MealManager_DATA(Boolean updateInternalCharts, Boolean updateExternalCharts)
+    public void update_MealManager_DATA(boolean updateInternalCharts, boolean updateExternalCharts)
     {
         // Update TotalMealView (Has to be first)
         update_TotalMeal_Table();
@@ -1582,13 +1586,12 @@ public class MealManager
     // Accessor Methods
     //##################################################################################################################
     // Value on TotalMeal Table
-    public Object get_Value_On_Total_Meal_Table(String db_column_name)
+    public Object get_Value_On_Total_Meal_Table(Total_Meal_Macro_Columns macro_name)
     {
-        int column_pos = Objects.requireNonNull(shared_Data_Registry.get_Total_Meal_Column_Pos_By_Name(db_column_name),
+        int column_pos = Objects.requireNonNull(shared_Data_Registry.get_Total_Meal_Column_Pos_By_Name(macro_name),
                 String.format("\n\n%s : \nGetting Result by Column Name Resulted in NULL ", get_Class_And_Method_Name()));
         
         return totalMealTable.get_Value_On_Model_Data(0, column_pos);
-    
     }
     
     
@@ -1753,5 +1756,24 @@ public class MealManager
     protected String get_Class_And_Method_Name()
     {
         return String.format("%s -> @%s", get_Class_Name(), get_Method_Name());
+    }
+    
+    //##################################################################################################################
+    //
+    //##################################################################################################################
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) { return true; }
+        
+        if (! (o instanceof MealManager other)) { return false; }
+        
+        return internalId.equals(other.internalId);
+    }
+    
+    @Override
+    public int hashCode()
+    {
+        return internalId.hashCode();
     }
 }

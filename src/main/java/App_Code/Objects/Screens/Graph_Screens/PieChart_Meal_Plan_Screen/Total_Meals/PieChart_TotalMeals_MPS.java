@@ -1,15 +1,13 @@
 package App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Meals;
 
+import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Total_Meal_Table.Total_Meal_Macro_Columns;
 import App_Code.Objects.Tables.MealManager;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Graph_Objects.Pie_Chart;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
-
 import java.util.Random;
-
 import org.jfree.data.general.DefaultPieDataset;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
@@ -150,7 +148,6 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
         // Super
         // ################################################################
         super(null, true);
-        
         setVisible(true);
         
         // ################################################################
@@ -160,12 +157,12 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
         this.shared_Data_Registry = meal_plan_screen.get_MealManagerRegistry();
         
         // #####################################
-        /// Collections
+        // Collections
         // ######################################
         mealManager_ArrayList = shared_Data_Registry.get_MealManager_ArrayList();
         
         // #####################################
-        /// Create GUI
+        // Create GUI
         // ######################################
         create_And_Draw_GUI();
     }
@@ -195,33 +192,27 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
         // ################################################################
         // Build DATA
         // ################################################################
-        Iterator<MealManager> it = mealManager_ArrayList.iterator();
-        while (it.hasNext())
+        for (MealManager mealManager : mealManager_ArrayList)
         {
-            //##############################
-            // Get Info
-            //##############################
-            MealManager mealManager = it.next();
-            Integer mealPlanID = mealManager.get_Meal_In_Plan_ID();
+            if (mealManager.is_Meal_Deleted()) { continue; } // IF Meal is Deleted: Continue
             
-            //##############################
-            // IF Meal is Deleted: Continue
-            //##############################
-            if (mealManager.is_Meal_Deleted()) { continue; }
-            
-            //##############################
+     
             // Get / Create PieChart Data
-            //##############################
-            DefaultPieDataset<String> pieDataset = shared_Data_Registry.get_OR_Create_PieChart_Dataset(mealManager);
+            DefaultPieDataset<Total_Meal_Macro_Columns> pieDataset = shared_Data_Registry.get_OR_Create_PieChart_Dataset(mealManager);
             
-            //##############################
-            // Create PieChart & Add to List
-            //##############################
-            String title = String.format("[%s]      %s Macros", mealManager.get_Current_Meal_Time_GUI(), mealManager.get_Current_Meal_Name());
+            Pie_Chart_Totals pieChart = new Pie_Chart_Totals( // Create PieChart
+                    mealManager,
+                    colorPalette,
+                    pieWidth,
+                    pieHeight,
+                    rotateDelay,
+                    titleFont,
+                    labelFont,
+                    legendFont,
+                    pieDataset
+            );
             
-            PieChart_Totals pieChart = new PieChart_Totals(title, colorPalette, pieWidth, pieHeight, rotateDelay, titleFont, labelFont, legendFont, pieDataset);
-            
-            pieChart_MPS_Entries.add(new PieChart_Totals_Entry_MPS(mealPlanID, mealManager, pieChart));
+            pieChart_MPS_Entries.add(new PieChart_Totals_Entry_MPS(mealManager, pieChart)); // Add  PieChart  to List
             
             //##############################
             // Add PieChart to GUI
@@ -231,7 +222,7 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
             
             add_To_Container(x, pieChart, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 10, 10, null);
             
-            add_To_Container(x, create_Space_Divider(20, 50, java.awt.Color.WHITE), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
+            add_To_Container(x, create_Space_Divider(20, 50, Color.WHITE), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
         }
         
         //##############################
@@ -356,60 +347,51 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
     // #################################################################################################################
     //  Methods
     // #################################################################################################################
-    public void update_PieChart_Title(int mealInPlanID)
+    public void update_PieChart_Title(MealManager mealManager)
     {
-        Iterator<PieChart_Totals_Entry_MPS> it = pieChart_MPS_Entries.iterator();
-        while (it.hasNext())
-        {
-            PieChart_Totals_Entry_MPS pieChart_Entry = it.next();
-            
-            if (pieChart_Entry.get_MealInPlanID() == mealInPlanID) { pieChart_Entry.update_PieChart_Title(); break; }
-        }
+        pieChart_MPS_Entries
+                .stream()
+                .filter(e -> e.get_MealManager() == mealManager)
+                .findFirst()
+                .ifPresent(PieChart_Totals_Entry_MPS :: update_PieChart_Title);
     }
     
     public void add_MealManager_To_GUI(MealManager mealManager)
     {
-        //##############################
         // Get / Create PieChart Data
-        //##############################
-        Integer mealPlanID = mealManager.get_Meal_In_Plan_ID();
-        DefaultPieDataset<String> pieDataset = shared_Data_Registry.get_OR_Create_PieChart_Dataset(mealManager);
+        DefaultPieDataset<Total_Meal_Macro_Columns> pieDataset = shared_Data_Registry.get_OR_Create_PieChart_Dataset(mealManager);
         
-        //##############################
         // Create PieChart & Add to List
-        //##############################
-        String title = String.format("[%s]      %s Macros", mealManager.get_Current_Meal_Time_GUI(), mealManager.get_Current_Meal_Name());
+        Pie_Chart_Totals pieChart = new Pie_Chart_Totals(
+                mealManager,
+                colorPalette,
+                pieWidth,
+                pieHeight,
+                rotateDelay,
+                titleFont,
+                labelFont,
+                legendFont,
+                pieDataset
+        );
         
-        PieChart_Totals pieChart = new PieChart_Totals(title, colorPalette, pieWidth, pieHeight, rotateDelay, titleFont, labelFont, legendFont, pieDataset);
-        pieChart_MPS_Entries.add(new PieChart_Totals_Entry_MPS(mealPlanID, mealManager, pieChart));
-        
-        //##############################
-        // Sort Meals in Pie MPS
-        //##############################
-        sort_PieChartEntry_AL();
-        
-        //##############################
-        // Redraw GUI
-        //##############################
-        redraw_GUI();
+        pieChart_MPS_Entries.add(new PieChart_Totals_Entry_MPS(mealManager, pieChart));
+    
+        sort_PieChartEntry_AL();       // Sort Meals in Pie MPS
+
+        redraw_GUI();   // Redraw GUI
     }
     
     public void delete_MealManager(MealManager mealManager)
     {
-        //############################################
-        // Remove from PieChart Screen Objects
-        //############################################
         System.out.printf("\n\ndelete_MealManager() %s",
                 pieChart_MPS_Entries.stream()
-                        .anyMatch(m -> m.get_MealInPlanID() == mealManager.get_Meal_In_Plan_ID()));
+                        .anyMatch(m -> m.get_MealManager().equals(mealManager)));
         
-        pieChart_MPS_Entries.removeIf(e -> e.get_MealInPlanID() == mealManager.get_Meal_In_Plan_ID());
+        // Remove from PieChart Screen Objects
+        pieChart_MPS_Entries.removeIf(e -> e.get_MealManager().equals(mealManager));
         
-        
-        //############################################
-        // Re-Draw GUI
-        //############################################
-        redraw_GUI();
+   
+        redraw_GUI();  // Re-Draw GUI
     }
     
     // #################################################################################################################
