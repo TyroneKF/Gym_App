@@ -4,12 +4,12 @@ import App_Code.Objects.Data_Objects.ID_Objects.MetaData_ID_Object.Meal_ID_OBJ;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.*;
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
-import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.MacrosLeft_Table;
-import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.MacrosTargets_Table;
-import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Total_Meal_Table.Total_Meal_Macro_Columns;
-import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Total_Meal_Table.Total_Meal_Other_Columns;
-import App_Code.Objects.Tables.JTable_JDBC.My_Enum;
-import App_Code.Objects.Tables.MealManager;
+import App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Children.MacrosLeft_Table;
+import App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Children.MacrosTargets_Table;
+import App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Children.Total_Meal_Table.Total_Meal_Macro_Columns;
+import App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Children.Total_Meal_Table.Total_Meal_Other_Columns;
+import App_Code.Objects.Table_Objects.Tables.Parent.My_Enum;
+import App_Code.Objects.Table_Objects.MealManager;
 import App_Code.Objects.Gui_Objects.*;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
 import App_Code.Objects.Screens.Graph_Screens.LineChart_Meal_Plan_Screen.LineChart_MPS;
@@ -422,9 +422,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     sub_Meal_DATA,
                     total_Meal_DATA
             );
-            
-            // ADD MealManager To Memory
-            shared_Data_Registry.addMealManager(mealManager);
             
             // ADD to GUI
             add_And_Replace_MealManger_POS_GUI(mealManager, false, false); // Add to GUI
@@ -2004,12 +2001,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         
         JOptionPane.showMessageDialog(null, String.format("Successfully Created Meal in %s at [%s]",
                 mealManager.get_Current_Meal_Name(), mealManager.get_Current_Meal_Time_GUI()));
-        
-        //###############################################
-        // ADD MealManager Info to DATA
-        //###############################################
-        shared_Data_Registry.addMealManager(mealManager);
-        
+              
         //###############################################
         // ADD to GUI & Charts
         //###############################################

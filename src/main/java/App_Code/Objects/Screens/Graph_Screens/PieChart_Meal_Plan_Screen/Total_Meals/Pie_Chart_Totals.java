@@ -1,8 +1,9 @@
 package App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Meals;
 
+import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Graph_Objects.Pie_Chart;
-import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Total_Meal_Table.Total_Meal_Macro_Columns;
-import App_Code.Objects.Tables.MealManager;
+import App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Children.Total_Meal_Table.Total_Meal_Macro_Columns;
+import App_Code.Objects.Table_Objects.MealManager;
 import org.jfree.chart.labels.PieSectionLabelGenerator;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.general.PieDataset;
@@ -17,6 +18,7 @@ public class Pie_Chart_Totals extends Pie_Chart
     // Variables
     // #################################################################################################################
     protected MealManager mealManager;
+    protected Shared_Data_Registry shared_data_registry;
     
     // #################################################################################################################
     // Constructor
@@ -24,6 +26,7 @@ public class Pie_Chart_Totals extends Pie_Chart
     public Pie_Chart_Totals
     (
             MealManager mealManager,
+            Shared_Data_Registry shared_data_registry,
             Color[] colors,
             int frameWidth,
             int frameHeight,
@@ -40,6 +43,7 @@ public class Pie_Chart_Totals extends Pie_Chart
         super("", colors, frameWidth, frameHeight, rotateDelay, titleFont, labelFont, legendFont, datasetInput);
         
         this.mealManager = mealManager;
+        this.shared_data_registry = shared_data_registry;
         
         //#################################################################
         // Override Generic Label Generator
@@ -125,7 +129,7 @@ public class Pie_Chart_Totals extends Pie_Chart
         String title = String.format("[%s]      %s Macros       [ %s   kcal]",
                 mealManager.get_Current_Meal_Time_GUI(),
                 mealManager.get_Current_Meal_Name(),
-                mealManager.get_Value_On_Total_Meal_Table(Total_Meal_Macro_Columns.TOTAL_CALORIES));
+                shared_data_registry.get_Meal_Macro_Value(mealManager, Total_Meal_Macro_Columns.TOTAL_CALORIES));
         
         setTitle(title);
     }

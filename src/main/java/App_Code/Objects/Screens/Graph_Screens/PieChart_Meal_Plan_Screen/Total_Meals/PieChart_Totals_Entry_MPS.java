@@ -1,6 +1,6 @@
 package App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Meals;
 
-import App_Code.Objects.Tables.MealManager;
+import App_Code.Objects.Table_Objects.MealManager;
 import App_Code.Objects.Graph_Objects.Pie_Chart;
 import org.jfree.data.time.Second;
 

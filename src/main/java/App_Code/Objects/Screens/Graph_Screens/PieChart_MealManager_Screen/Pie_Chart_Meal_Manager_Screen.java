@@ -1,8 +1,8 @@
 package App_Code.Objects.Screens.Graph_Screens.PieChart_MealManager_Screen;
 
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
-import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Total_Meal_Table.Total_Meal_Macro_Columns;
-import App_Code.Objects.Tables.MealManager;
+import App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Children.Total_Meal_Table.Total_Meal_Macro_Columns;
+import App_Code.Objects.Table_Objects.MealManager;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
 import App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Meals.Pie_Chart_Totals;
@@ -172,7 +172,18 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen_JFrame
         //#####################################
         // Create PieChart
         //#####################################
-        pieChart = new Pie_Chart_Totals(mealManager, colorPalette, pieWidth, pieHeight, 150, titleFont, labelFont, legendFont, dataset)
+        pieChart = new Pie_Chart_Totals(
+                mealManager,
+                shared_Data_Registry,
+                colorPalette,
+                pieWidth,
+                pieHeight,
+                150,
+                titleFont,
+                labelFont,
+                legendFont,
+                dataset
+        )
         {
             @Override
             protected String getSpace()

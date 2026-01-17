@@ -1,11 +1,11 @@
 package App_Code.Objects.Database_Objects;
 
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.*;
-import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Total_Meal_Table.TotalMeal_Table;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
-import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Total_Meal_Table.Total_Meal_Macro_Columns;
-import App_Code.Objects.Tables.MealManager;
+import App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Children.Total_Meal_Table.Total_Meal_Macro_Columns;
+import App_Code.Objects.Table_Objects.MealManager;
 import org.jfree.data.general.DefaultPieDataset;
+
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -30,14 +30,14 @@ public class Shared_Data_Registry
      */
     private final LinkedHashMap<Total_Meal_Macro_Columns, HashMap<MealManager, BigDecimal>> totals_by_macro = new LinkedHashMap<>();
     
-    private Map<MealManager, EnumMap<Total_Meal_Macro_Columns, BigDecimal>> totals_by_meal;
-
+    private final Map<MealManager, EnumMap<Total_Meal_Macro_Columns, BigDecimal>> totals_by_meal = new HashMap<>();
+    
     //#######################################################
     //
     //#######################################################
     /*
      
-    */
+     */
     
     //##################
     // Stores
@@ -83,32 +83,18 @@ public class Shared_Data_Registry
         //##################################
         total_meal_macro_pos = meal_plan_screen.get_Total_Meal_Macro_Col_Pos();
         total_meal_macro_symbol = meal_plan_screen.get_Total_Meal_Macro_Symbols();
-        
-        //##################################
-        // Create Macros Collection
-        //##################################
-        initialize_MealManagers_MacrosValues();
     }
     
     //##################################################################################################################
-    //  Methods
+    //
     //##################################################################################################################
-    public void initialize_MealManagers_MacrosValues()
-    {
-        totals_by_macro.clear();
-        
-        //##################################
-        // Create Macros Collection
-        //##################################
-        for (Total_Meal_Macro_Columns macro_enum : total_meal_macro_pos.keySet())
-        {
-            totals_by_macro.put(macro_enum, new HashMap<>());
-        }
-    }
+    /*
+     
+     */
     
-    //##################################################################################################################
+    //###############################################################################
     // Sort Methods
-    //##################################################################################################################
+    //###############################################################################
     public void sort_MealManager_AL()
     {
         mealManager_ArrayList.sort((a, b) -> a.getCurrentMealTime().compareTo(b.getCurrentMealTime()));
@@ -117,31 +103,17 @@ public class Shared_Data_Registry
     //###############################################################################
     // ADD Methods
     //###############################################################################
-    public void addMealManager(MealManager mealManager) // ADD Pie DATA
+    public void addMealManager(MealManager mealManager, ArrayList<Object> total_meal_data) // ADD Pie DATA
     {
-        //##########################################
-        // Add MealManager to Collection & Sort
-        //##########################################
-        mealManager_ArrayList.add(mealManager);
+        mealManager_ArrayList.add(mealManager); // Add MealManager to Collection & Sort
         
-        //###############################################
-        // Add MealManager Macro Values
-        //###############################################
-        add_OR_Replace_MealManager_Macros_DATA(mealManager);
+        add_OR_Replace_MealManager_Macros_DATA(mealManager, total_meal_data); // Add MealManager Macro Values
         
-        //###############################################
-        // Sort LISTS
-        //###############################################
-        sort_MealManager_AL();
+        sort_MealManager_AL();   // Sort LISTS
     }
     
-    public void add_OR_Replace_MealManager_Macros_DATA(MealManager mealManager) // Update done by replacing data
+    public void add_OR_Replace_MealManager_Macros_DATA(MealManager mealManager, ArrayList<Object> total_meal_data) // Update done by replacing data
     {
-        //##########################################
-        // mealManager Info
-        //##########################################
-        TotalMeal_Table totalMealTable = mealManager.get_Total_Meal_Table();
-        
         //##########################################
         // Remove MealManager Results to Collection
         //##########################################
@@ -160,16 +132,21 @@ public class Shared_Data_Registry
         for (Map.Entry<Total_Meal_Macro_Columns, Integer> macro : total_meal_macro_pos.entrySet())
         {
             Total_Meal_Macro_Columns macro_name = macro.getKey();
-            Integer macroPos = macro.getValue();
+            int macroPos = macro.getValue();
             
-            BigDecimal macro_value = (BigDecimal) totalMealTable.get_Value_On_Model_Data(0, macroPos);
+            BigDecimal macro_value = (BigDecimal) total_meal_data.get(macroPos);
             
             /**
              *  <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
              *   Put, Replace have the same effect
              */
+            totals_by_macro
+                    .computeIfAbsent(macro_name, k -> new HashMap<>())
+                    .put(mealManager, macro_value);
             
-            totals_by_macro.get(macro_name).put(mealManager, macro_value);
+            totals_by_meal
+                    .computeIfAbsent(mealManager, k -> new EnumMap<>(Total_Meal_Macro_Columns.class))
+                    .put(macro_name, macro_value);
         }
     }
     
@@ -178,25 +155,27 @@ public class Shared_Data_Registry
     //###############################################################################
     public void delete_MealManager(MealManager mealManager)
     {
-        remove_MealManager_MacroValues(mealManager);     // Remove MealManager MacroValues
-       
+        remove_MealManager_Macro_Values(mealManager);     // Remove MealManager MacroValues
+        
         remove_PieChart_DatasetValues(mealManager);  // Remove MealManager PieChart Data
     }
     
-    private void remove_MealManager_MacroValues(MealManager mealManager)
+    private void remove_MealManager_Macro_Values(MealManager mealManager)
     {
         /**
          * HashMap<String, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues = new HashMap<>();
          * Stores all the mealManagers TotalMealValues in collections by the macroName
-         *
          * <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
          * Etc;  <Key: Salt | Value: HashMap<MealManager, Quantity: 300g >>
          */
         
-        for (Total_Meal_Macro_Columns macro_key : total_meal_macro_pos.keySet()) // <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
+        for (Total_Meal_Macro_Columns macro_key : total_meal_macro_pos.keySet())
         {
+            // <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
             totals_by_macro.get(macro_key).remove(mealManager);
         }
+        
+        totals_by_meal.remove(mealManager);
     }
     
     //################################################
@@ -207,16 +186,16 @@ public class Shared_Data_Registry
         //###########################################################
         // Delete MealManagers
         //###########################################################
-        Iterator<MealManager> it = mealManager_ArrayList.iterator();
-        while (it.hasNext())
+        for (MealManager mealManager : mealManager_ArrayList)
         {
-            it.next().delete_MealManager(); // Hide Meal Managers
+            mealManager.delete_MealManager(); // Hide Meal Managers
         }
         
         //###########################################################
         // Clear / Recreate EMPTY Collection
         //###########################################################
-        initialize_MealManagers_MacrosValues();
+        totals_by_macro.clear();
+        totals_by_meal.clear();
     }
     
     //###############################################################################
@@ -253,7 +232,7 @@ public class Shared_Data_Registry
             //#################################################################
             // Re-Upload Or, Change Meal MacroData
             //#################################################################
-            add_OR_Replace_MealManager_Macros_DATA(mealManager);
+            // add_OR_Replace_MealManager_Macros_DATA(mealManager);
         }
         
         //#################################################################
@@ -716,31 +695,15 @@ public class Shared_Data_Registry
         return (int) mealManager_ArrayList.stream().filter(mealManager -> ! mealManager.is_Meal_Deleted()).count();
     }
     
-    public Integer get_Total_Meal_Column_Pos_By_Name(Total_Meal_Macro_Columns macro_name)
-    {
-        return total_meal_macro_pos.get(macro_name); // Gets position of column by its name
-    }
-    
-    public Object get_Meals_Macro_Value(MealManager mealManager, Total_Meal_Macro_Columns macro_name) throws Exception
-    {
-        if (! totals_by_macro.containsKey(macro_name))
-        {
-            throw new Exception(String.format("Key: Macro Name %s doesn't exist!", macro_name.key()));
-        }
-        
-        Object value = totals_by_macro.get(macro_name).get(mealManager);
-        
-        if (value == null)
-        {
-            throw new Exception(String.format("Meal ID:  %s \nDoesn't have a value for  Macro Name %s!", mealManager.get_Draft_Meal_In_Plan_ID(), macro_name.key()));
-        }
-        
-        return value;
-    }
-    
     public LinkedHashMap<Total_Meal_Macro_Columns, String> get_Total_Meal_Macro_Symbols()
     {
         return total_meal_macro_symbol;
+    }
+    
+    public BigDecimal get_Meal_Macro_Value(MealManager mealManager, Total_Meal_Macro_Columns macro_name)
+    {
+        EnumMap<Total_Meal_Macro_Columns, BigDecimal> outer = totals_by_meal.get(mealManager);
+        return outer != null ? outer.get(macro_name) : null;
     }
     
     //############################

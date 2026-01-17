@@ -1,7 +1,7 @@
 package App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Meals;
 
-import App_Code.Objects.Tables.JTable_JDBC.Children.View_Data_Tables.Total_Meal_Table.Total_Meal_Macro_Columns;
-import App_Code.Objects.Tables.MealManager;
+import App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Children.Total_Meal_Table.Total_Meal_Macro_Columns;
+import App_Code.Objects.Table_Objects.MealManager;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Graph_Objects.Pie_Chart;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
@@ -202,6 +202,7 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
             
             Pie_Chart_Totals pieChart = new Pie_Chart_Totals( // Create PieChart
                     mealManager,
+                    shared_Data_Registry,
                     colorPalette,
                     pieWidth,
                     pieHeight,
@@ -364,6 +365,7 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
         // Create PieChart & Add to List
         Pie_Chart_Totals pieChart = new Pie_Chart_Totals(
                 mealManager,
+                shared_Data_Registry,
                 colorPalette,
                 pieWidth,
                 pieHeight,
