@@ -110,7 +110,7 @@ public class LineChart_MPS extends Screen_JFrame
     @Override
     public void window_Closed_Event()
     {
-        meal_plan_screen.removeLineChartScreen();
+        meal_plan_screen.remove_Line_Chart_Screen();
         closeJFrame();
     }
     

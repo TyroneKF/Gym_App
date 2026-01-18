@@ -12,8 +12,21 @@ import java.util.*;
 public class Shared_Data_Registry
 {
     //##################################################################################################################
-    // Collections
+    // Variables
     //##################################################################################################################
+    // Strings
+    private String plan_Name;
+    
+    //###############################################
+    // Integers
+    //###############################################
+    
+    private Integer selected_Plan_ID;
+    private Integer selected_Plan_Version_ID;
+    
+    //######################################################################
+    // Collections
+    //######################################################################
     // Meta Data
     private LinkedHashMap<Total_Meal_Macro_Columns, Integer> total_meal_macro_pos;
     private LinkedHashMap<Total_Meal_Macro_Columns, String> total_meal_macro_symbol;
@@ -32,9 +45,9 @@ public class Shared_Data_Registry
     
     private final Map<MealManager, EnumMap<Total_Meal_Macro_Columns, BigDecimal>> totals_by_meal = new HashMap<>();
     
-    //#######################################################
-    //
-    //#######################################################
+    //###############################################
+    // Meta Data Objects
+    //###############################################
     /*
      
      */

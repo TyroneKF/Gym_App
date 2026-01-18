@@ -115,9 +115,8 @@ public class Pie_Chart_Totals extends Pie_Chart
     // Variables
     // #################################################################################################################
     @Override
-    protected void dataset_ActionEvents()
+    protected void dataset_Action_Events()
     {
-        System.out.printf("\n\ndataset_ActionEvents()");
         calculate_Dataset_Total();
         is_PieChart_Empty_MSG();
         reDraw_Legend();

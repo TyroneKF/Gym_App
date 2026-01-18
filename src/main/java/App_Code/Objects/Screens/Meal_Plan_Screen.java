@@ -55,8 +55,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
     private Macros_Targets_Screen macros_Targets_Screen = null;
     private Ingredients_Info_Screen ingredients_Info_Screen = null;
     
-    private PieChart_Screen_MPS pieChart_Screen_MPS = null;
-    private LineChart_MPS lineChart_MPS = null;
+    private PieChart_Screen_MPS pie_Chart_Screen = null;
+    private LineChart_MPS line_Chart = null;
     
     //###############################################
     // Integers
@@ -1584,7 +1584,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         lineChart_Btn.setToolTipText("Display Macronutrient Data in LineChart"); //Hover message over icon
         
         lineChart_Btn.addActionListener(ae -> {
-            lineChart_Btn_Action_OpenScreen();
+            line_Chart_Btn_Action_Open_Screen();
         });
         
         iconPanelInsert.add(lineChart_Btn);
@@ -1789,100 +1789,100 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // ###############################################################
     public boolean is_PieChart_Screen_Open()
     {
-        return pieChart_Screen_MPS != null;
+        return pie_Chart_Screen != null;
     }
     
     public void removePieChartScreen()
     {
-        pieChart_Screen_MPS = null;
+        pie_Chart_Screen = null;
     }
     
     private void pieChart_BtnAction_OpenScreen()
     {
         if (is_PieChart_Screen_Open())
         {
-            pieChart_Screen_MPS.makeJFrameVisible();
+            pie_Chart_Screen.makeJFrameVisible();
             return;
         }
         
-        pieChart_Screen_MPS = new PieChart_Screen_MPS(db, shared_Data_Registry, this);
+        pie_Chart_Screen = new PieChart_Screen_MPS(db, shared_Data_Registry, this);
     }
     
     // #############################
     // PieChart DATA Methods
     // #############################
-    private void clear_PieChart_DATA_MPS()
+    private void clear_Pie_Chart_Dataset()
     {
         if (! is_PieChart_Screen_Open()) { return; }
         
-        pieChart_Screen_MPS.clear();
+        pie_Chart_Screen.clear();
     }
     
-    private void refresh_PieChart_DATA_MPS()
+    private void refresh_Pie_Chart_Data()
     {
         if (! is_PieChart_Screen_Open()) { return; }
         
-        pieChart_Screen_MPS.refresh();
+        pie_Chart_Screen.refresh();
     }
     
-    private void update_PieChart_MealName(MealManager mealManager)
+    private void update_Pie_Chart_Meal_Name(MealManager mealManager)
     {
         if (! is_PieChart_Screen_Open()) { return; }
         
-        pieChart_Screen_MPS.update_PieChart_MealName(mealManager);
+        pie_Chart_Screen.update_PieChart_MealName(mealManager);
     }
     
-    private void update_PieChart_MealTime(MealManager mealManager)
+    private void update_Pie_Chart_Meal_Time(MealManager mealManager)
     {
         if (! is_PieChart_Screen_Open()) { return; }
         
-        pieChart_Screen_MPS.update_PieChart_MealTime(mealManager);
+        pie_Chart_Screen.update_PieChart_MealTime(mealManager);
     }
     
-    private void update_PieChart_DATA(MealManager mealManager)
+    private void update_Pie_Chart_DATA(MealManager mealManager)
     {
         if (! is_PieChart_Screen_Open()) { return; }
         
-        pieChart_Screen_MPS.updateData(mealManager);
+        pie_Chart_Screen.updateData(mealManager);
     }
     
-    private void add_Meal_Manager_PieChart(MealManager mealManager)
+    private void add_Meal_To_Pie_Chart_Screen(MealManager mealManager)
     {
         if (! is_PieChart_Screen_Open()) { return; }
         
-        pieChart_Screen_MPS.add_MealManager_To_GUI(mealManager);
+        pie_Chart_Screen.add_MealManager_To_GUI(mealManager);
     }
     
-    private void delete_MealManager_PieChart(MealManager mealManager)
+    private void delete_Meal_From_Pie_Chart_Screen(MealManager mealManager)
     {
         if (! is_PieChart_Screen_Open()) { return; }
         
         // Data Handling already been processed, screen just needs to be re-drawn
-        pieChart_Screen_MPS.deleted_MealManager_PieChart(mealManager);
+        pie_Chart_Screen.deleted_MealManager_PieChart(mealManager);
     }
     
     // ###############################################################
     // Line Chart BTN Actions
     // ###############################################################
-    private boolean is_LineChart_Screen_Open()
+    private boolean is_Line_Chart_Screen_Open()
     {
-        return lineChart_MPS != null;
+        return line_Chart != null;
     }
     
-    public void removeLineChartScreen()
+    public void remove_Line_Chart_Screen()
     {
-        lineChart_MPS = null;
+        line_Chart = null;
     }
     
-    private void lineChart_Btn_Action_OpenScreen()
+    private void line_Chart_Btn_Action_Open_Screen()
     {
-        if (! is_LineChart_Screen_Open())
+        if (! is_Line_Chart_Screen_Open())
         {
-            lineChart_MPS = new LineChart_MPS(db, shared_Data_Registry, this);
+            line_Chart = new LineChart_MPS(db, shared_Data_Registry, this);
             return;
         }
         
-        lineChart_MPS.makeJFrameVisible();
+        line_Chart.makeJFrameVisible();
     }
     
     // #############################
@@ -1890,37 +1890,37 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // #############################
     private void updateLineChartData(MealManager mealManager, Second previousTime, Second currentTime)
     {
-        if (! is_LineChart_Screen_Open()) { return; }
+        if (! is_Line_Chart_Screen_Open()) { return; }
         
-        lineChart_MPS.update_MealManager_ChartData(mealManager, previousTime, currentTime);
+        line_Chart.update_MealManager_ChartData(mealManager, previousTime, currentTime);
     }
     
     private void add_Meal_To_LineChart(MealManager mealManager)
     {
-        if (! is_LineChart_Screen_Open()) { return; }
+        if (! is_Line_Chart_Screen_Open()) { return; }
         
-        lineChart_MPS.add_New_MealManager_Data(mealManager);
+        line_Chart.add_New_MealManager_Data(mealManager);
     }
     
     private void deleteLineChartData(Second currentTime)
     {
-        if (! is_LineChart_Screen_Open()) { return; }
+        if (! is_Line_Chart_Screen_Open()) { return; }
         
-        lineChart_MPS.delete_MealManager_Data(currentTime);
+        line_Chart.delete_MealManager_Data(currentTime);
     }
     
-    private void clearLineChartDataSet()
+    private void clear_Line_Chart_DataSet()
     {
-        if (! is_LineChart_Screen_Open()) { return; }
+        if (! is_Line_Chart_Screen_Open()) { return; }
         
-        lineChart_MPS.clear_LineChart_Dataset();
+        line_Chart.clear_LineChart_Dataset();
     }
     
     private void refresh_LineChart_Data()
     {
-        if (! is_LineChart_Screen_Open()) { return; }
+        if (! is_Line_Chart_Screen_Open()) { return; }
         
-        lineChart_MPS.refresh_Data();
+        line_Chart.refresh_Data();
     }
     
     // ###############################################################
@@ -2297,11 +2297,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
         }
         if (is_PieChart_Screen_Open())
         {
-            pieChart_Screen_MPS.window_Closed_Event();
+            pie_Chart_Screen.window_Closed_Event();
         }
-        if (is_LineChart_Screen_Open())
+        if (is_Line_Chart_Screen_Open())
         {
-            lineChart_MPS.window_Closed_Event();
+            line_Chart.window_Closed_Event();
         }
         
         // ##########################################
@@ -2334,19 +2334,19 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 {
                     add_Meal_To_LineChart(mealManager); // LineChart Add
                     
-                    add_Meal_Manager_PieChart(mealManager); // PieChart MPS Screen
+                    add_Meal_To_Pie_Chart_Screen(mealManager); // PieChart MPS Screen
                 }
                 case "clear" ->  // Delete Button requested on MealPlanScreen
                 {
-                    clearLineChartDataSet(); // Clear LineChart Data
+                    clear_Line_Chart_DataSet(); // Clear LineChart Data
                     
-                    clear_PieChart_DATA_MPS(); // Clear PieChart Screen
+                    clear_Pie_Chart_Dataset(); // Clear PieChart Screen
                 }
                 case "refresh" -> // Refresh Button requested on MealPlanScreen
                 {
                     refresh_LineChart_Data(); // Refresh LineChart Data
                     
-                    refresh_PieChart_DATA_MPS(); //Refresh PieChart Screen
+                    refresh_Pie_Chart_Data(); //Refresh PieChart Screen
                 }
             }
             
@@ -2365,13 +2365,13 @@ public class Meal_Plan_Screen extends Screen_JFrame
             {
                 updateLineChartData(mealManager, previousMealTime, currentMealTime);   // Update LineChart Data
                 
-                update_PieChart_DATA(mealManager);  // Update PieChart DATA
+                update_Pie_Chart_DATA(mealManager);  // Update PieChart DATA
             }
             case "delete" -> // Deleted MealManager
             {
                 deleteLineChartData(previousMealTime);   // Delete LineChart Data
                 
-                delete_MealManager_PieChart(mealManager); // Delete PieChart AKA Re-draw GUI
+                delete_Meal_From_Pie_Chart_Screen(mealManager); // Delete PieChart AKA Re-draw GUI
             }
             case "mealTime" -> // MealTime on MealManager Changed
             {
@@ -2379,14 +2379,14 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 updateLineChartData(mealManager, previousMealTime, currentMealTime);
                 
                 // Update PieChart Title OF Meal & Refresh Interface
-                update_PieChart_MealTime(mealManager);
+                update_Pie_Chart_Meal_Time(mealManager);
             }
             case "mealName" ->  // Meal Name on MealManager Changed
             {
                 // LineChart = Nothing Changes
                 
                 // Change PieChart MealName
-                update_PieChart_MealName(mealManager);
+                update_Pie_Chart_Meal_Name(mealManager);
             }
             case "refresh" ->   // Change Meal Managers Data
             {
@@ -2394,7 +2394,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 updateLineChartData(mealManager, previousMealTime, currentMealTime);
                 
                 // Change PieChart MealName
-                update_PieChart_MealName(mealManager);
+                update_Pie_Chart_Meal_Name(mealManager);
             }
         }
     }
@@ -2471,15 +2471,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
     public String getPlan_Name()
     {
         return plan_Name;
-    }
-    
-    //###########################################
-    // Integers
-    //###########################################
-    public Integer getSelected_Plan_Version_ID()
-    {
-        return selected_Plan_Version_ID;
-    }
+    }    
+ 
     
     //###########################################
     // Objects

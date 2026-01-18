@@ -1,17 +1,13 @@
 
 mvn javafx:run "-DmainClass=Tests.ToggleSwitchDemo"
 
-Use triggers to update other tables
-etc update ingredient = update meal = update plan
 
 
-V10__seed_reference_data.sql        ← always prod-safe
-V11__seed_minimal_prod_data.sql    ← one system user / plan
-V12__seed_demo_data.sql            ← dev/test only (conditional)
+
 
 CREATE TEMPORARY TABLE
 
-use delete triggers to prevent core data being deleted
+
 
 Edit Views to match on plan_id as well as meal_id
 
@@ -25,10 +21,9 @@ Ingredients Table
 ######################################################################################
 Work On:
 ######################################################################################
+move all changeable info like plan_id / plan_version id into shared_registry when these values change its easier to locate it in one area to update vs every object
 Use an enum for table column names
-split mps list of total_Meal_Macro_Col_Name_And_Positions into 2 lists
 Ingredients Table id and source id
-JDBC Table get_Value_On_Model_Data can this not be avoided
 
 PiePlot3D is depreciated
 include meal in plan id and draft id in meal manager

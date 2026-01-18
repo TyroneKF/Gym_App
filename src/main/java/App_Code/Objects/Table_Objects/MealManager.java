@@ -566,77 +566,6 @@ public class MealManager
     }
     
     //#################################################################################
-    // Pie Charts
-    //#################################################################################
-    private void pieChart_Action()
-    {
-        // If pieChart is already created bring up to the surface and make it visible
-        if (is_PieChartOpen())
-        {
-            System.out.println("\n\nB : pieChart_Action() 1 !!!!");
-            
-            pie_chart_meal_manager_screen.makeJFrameVisible();
-            return;
-        }
-        
-        pie_chart_meal_manager_screen = new Pie_Chart_Meal_Manager_Screen(db, shared_Data_Registry, this);
-    }
-    
-    private void pieChart_UpdateMealName()
-    {
-        //#########################################################################################################
-        // Change Internal Graph Title if exists
-        //#########################################################################################################
-        if (is_PieChartOpen())
-        {
-            pie_chart_meal_manager_screen.update_PieChart_Title();
-        }
-    }
-    
-    /**
-     * 1.) Remove Pie Chart Object
-     * <p>
-     * 2.) IF Meal_Plan_Screen PieChart Screen is NULL, Pie Data can be removed
-     * as it's not in use and not on display somewhere else     *
-     */
-    public void removePieChartScreen()
-    {
-        pie_chart_meal_manager_screen = null;
-        
-        //############################################
-        // External DATA if not USED
-        //############################################
-        if (meal_plan_screen.is_PieChart_Screen_Open()) { return; }
-        
-        shared_Data_Registry.remove_PieChart_DatasetValues(this);
-    }
-    
-    // External Call Usage
-    public void close_PieChartScreen()
-    {
-        if (! is_PieChartOpen()) { return; }
-        
-        pie_chart_meal_manager_screen.window_Closed_Event();
-    }
-    
-    private void update_Pie_Chart_Screen()
-    {
-        /**
-         * Update data behind pieCharts which will effectively update all pieCharts actively using this data
-         */
-        
-        if (! shared_Data_Registry.update_PieChart_Values(this))
-        {
-            System.err.printf("\n\nShared_Data_Registry.java : updatePieChart_MM_Values() \nPieChart not Open %s", draft_meal_ID);
-        }
-    }
-    
-    public Boolean is_PieChartOpen()
-    {
-        return pie_chart_meal_manager_screen != null;
-    }
-    
-    //#################################################################################
     // Meal Name & Meal Time Functions
     //#################################################################################
     private Object inputValidation(String variableName, String input, boolean comparison, boolean skipConfirmation)
@@ -1539,6 +1468,77 @@ public class MealManager
     public void collapse_MealManager()
     {
         get_Collapsible_JP_Obj().collapse_JPanel();
+    }
+    
+    //#################################################################################
+    // Pie Charts
+    //#################################################################################
+    private void pieChart_Action()
+    {
+        // If pieChart is already created bring up to the surface and make it visible
+        if (is_PieChartOpen())
+        {
+            System.out.println("\n\nB : pieChart_Action() 1 !!!!");
+            
+            pie_chart_meal_manager_screen.makeJFrameVisible();
+            return;
+        }
+        
+        pie_chart_meal_manager_screen = new Pie_Chart_Meal_Manager_Screen(db, shared_Data_Registry, this);
+    }
+    
+    private void pieChart_UpdateMealName()
+    {
+        //#########################################################################################################
+        // Change Internal Graph Title if exists
+        //#########################################################################################################
+        if (is_PieChartOpen())
+        {
+            pie_chart_meal_manager_screen.update_PieChart_Title();
+        }
+    }
+    
+    /**
+     * 1.) Remove Pie Chart Object
+     * <p>
+     * 2.) IF Meal_Plan_Screen PieChart Screen is NULL, Pie Data can be removed
+     * as it's not in use and not on display somewhere else     *
+     */
+    public void removePieChartScreen()
+    {
+        pie_chart_meal_manager_screen = null;
+        
+        //############################################
+        // External DATA if not USED
+        //############################################
+        if (meal_plan_screen.is_PieChart_Screen_Open()) { return; }
+        
+        shared_Data_Registry.remove_PieChart_DatasetValues(this);
+    }
+    
+    // External Call Usage
+    public void close_PieChartScreen()
+    {
+        if (! is_PieChartOpen()) { return; }
+        
+        pie_chart_meal_manager_screen.window_Closed_Event();
+    }
+    
+    private void update_Pie_Chart_Screen()
+    {
+        /**
+         * Update data behind pieCharts which will effectively update all pieCharts actively using this data
+         */
+        
+        if (! shared_Data_Registry.update_PieChart_Values(this))
+        {
+            System.err.printf("\n\nShared_Data_Registry.java : updatePieChart_MM_Values() \nPieChart not Open %s", draft_meal_ID);
+        }
+    }
+    
+    public Boolean is_PieChartOpen()
+    {
+        return pie_chart_meal_manager_screen != null;
     }
     
     //##################################################################################################################

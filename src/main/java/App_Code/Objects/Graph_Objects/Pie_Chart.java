@@ -169,7 +169,7 @@ public class Pie_Chart<K extends Comparable<K>> extends JPanel
          */
         
         dataset.addChangeListener(event -> {
-            dataset_ActionEvents();
+            dataset_Action_Events();
         });
         
         //############################################
@@ -189,7 +189,7 @@ public class Pie_Chart<K extends Comparable<K>> extends JPanel
     // #################################################################################################################
     // Methods
     // #################################################################################################################
-    protected void dataset_ActionEvents()
+    protected void dataset_Action_Events()
     {
         calculate_Dataset_Total();
         is_PieChart_Empty_MSG();
