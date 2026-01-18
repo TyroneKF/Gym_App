@@ -23,10 +23,10 @@ Work On:
 ######################################################################################
 move all changeable info like plan_id / plan_version id into shared_registry when these values change its easier to locate it in one area to update vs every object
 Use an enum for table column names
-Ingredients Table id and source id
+
 
 PiePlot3D is depreciated
-include meal in plan id and draft id in meal manager
+
 Hard coded variables replace with commonly fetched variable id's in MPS
 
 USE get_Class_name_method for error handling
@@ -77,63 +77,66 @@ Icon_Button
     delete_Icon_Btn.makeBTntransparent();
 
 Ingredients_Table
-.) GUI names appearing on Tables
-.) Shorten Delete BTN
-.) Flip un-editable & editable columns around makes it easier for adding new columns
-.) Redraw if ingredient / Info in edit Screen is being edited needs to be reflcected on Tables (Redrawn)
-   etc shop selected thats been deleted all products need to be reloaded.
-.) If an ingredient table is saved and its not in the DB because the mealManager isn't
-   .) MealManagaer should be saved
+    .) Ingredients Table id and source id
+    .) GUI names appearing on Tables
+    .) Shorten Delete BTN
+    .) Flip un-editable & editable columns around makes it easier for adding new columns
+    .) Redraw if ingredient / Info in edit Screen is being edited needs to be reflcected on Tables (Redrawn)
+       etc shop selected thats been deleted all products need to be reloaded.
+    .) If an ingredient table is saved and its not in the DB because the mealManager isn't
+       .) MealManagaer should be saved
 
 
 Total_Meal:
-.) Ingredient Count
-.) Refresh Meal - Redraws screen and what's happens to pie charts open from unsaved meals it should be removed
+    .) Ingredient Count
+    .) Refresh Meal - Redraws screen and what's happens to pie charts open from unsaved meals it should be removed
 
 
 MealManager
-.) Switch object make it LocalTime vs Second
+    .) Switch object make it LocalTime vs Second
+    .) Pie Chart logical update pie data order
+    .) include meal in plan id and draft id in meal manager
 
 General
-.) Change all | or || bitwise or vs logical or
+    .) Change all | or || bitwise or vs logical or
 
 
 MYJDBC:
-.) Refactor method calls that check if null and return msg use N/A
-.) Switch to Arraylist from LinkedHashSet
-.) Make single columnn / row Myjdbc method
-.) IF DB Creation passes & the inserts don't fail the connection isn't rolledback the tables are still created - check create db method
+    .) Refactor method calls that check if null and return msg use N/A
+    .) Switch to Arraylist from LinkedHashSet
+    .) Make single columnn / row Myjdbc method
+    .) IF DB Creation passes & the inserts don't fail the connection isn't rolledback the tables are still created - check create db method
 
 DB:
-.) add meal time to divided_meal_sections - time for sub-meal to be eaten at
-.) enforce
-       CREATE UNIQUE INDEX no_duplicate_ingredient_per_section
-       ON ingredients_in_sections_of_meal
-          (div_meal_sections_version_id, ingredient_id);
-       at application lvl
+    .) add meal time to divided_meal_sections - time for sub-meal to be eaten at
+    .) enforce
+           CREATE UNIQUE INDEX no_duplicate_ingredient_per_section
+           ON ingredients_in_sections_of_meal
+              (div_meal_sections_version_id, ingredient_id);
+           at application lvl
 
 Meal_Plan_Screen:
-.) Get rid of table name variables its hard to read
-.) Edit Transfer methods
-.) Remove un-necessary delete methods
-.) Use ID's in collections on MealPlanScreen for IngredientTypes / Name & Stores
+    .) Get rid of table name variables its hard to read
+    .) Edit Transfer methods
+    .) Remove un-necessary delete methods
+    .) Use ID's in collections on MealPlanScreen for IngredientTypes / Name & Stores
 
-.) on ingredientsTable ingreidents info  pop up screen with food label & PieChart
+    .) on ingredientsTable ingreidents info  pop up screen with food label & PieChart
 
 Macro_Targets
-.) MacroTargets Screen should add not update targets
-.) Include new Shared Field and data objects
+    .) MacroTargets Screen should add not update targets
+    .) Include new Shared Field and data objects
 
 Macros_Left
-.) MacrosLeft should use the max time for a plan to calculate it
+    .) MacrosLeft should use the max time for a plan to calculate it
 
 
 ADD / Edit Stores /Types
-.) Items not needing to be in JComboList
+    .) Items not needing to be in JComboList
 
 Loading Screen
-.) Move the loading screen to before the DB scripts
-.) Include DB Creation in Loading screen progress
+    .) Move the loading screen to before the DB scripts
+    .) Include DB Creation in Loading screen progress
 
 
 
