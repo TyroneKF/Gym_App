@@ -36,7 +36,7 @@ public class MealManager
     // Variables
     //##################################################################################################################
     
-    // Boolean Variables
+    // boolean Variables
     private boolean
             isObjectCreated = false,
             mealManagerInDB = false,
@@ -86,7 +86,7 @@ public class MealManager
     private Shared_Data_Registry shared_Data_Registry;
     
     // Screens
-    private Pie_Chart_Meal_Manager_Screen pie_chart_meal_manager_screen;
+    private Pie_Chart_Meal_Manager_Screen pie_chart_screen;
     
     // Table Objects
     private MacrosLeft_Table macrosLeft_JTable;
@@ -137,8 +137,8 @@ public class MealManager
     }
     
     //
-    public MealManager(
-            
+    public MealManager
+    (
             Meal_Plan_Screen meal_plan_screen,
             Shared_Data_Registry shared_Data_Registry,
             MyJDBC_Sqlite db,
@@ -536,6 +536,7 @@ public class MealManager
                         db,
                         this,
                         shared_Data_Registry,
+                        macrosLeft_JTable,
                         div_id,
                         sub_Meal_Data,
                         is_Sub_Meal_In_DB,
@@ -557,7 +558,7 @@ public class MealManager
     //##################################################################################################################
     // Actions
     //##################################################################################################################
-    private Boolean areYouSure(String process)
+    private boolean areYouSure(String process)
     {
         int reply = JOptionPane.showConfirmDialog(getFrame(), String.format("You are requesting to %s ! \n\nAre you sure you want to %s?", process, process),
                 "Notification", JOptionPane.YES_NO_OPTION); //HELLO Edit
@@ -736,7 +737,7 @@ public class MealManager
         //#######################################
         // Update Internal PieChart Name
         //#######################################
-        pieChart_UpdateMealName();
+        pie_Chart_Update_Title();
         
         //#######################################
         //  Update GUI
@@ -858,7 +859,7 @@ public class MealManager
         //#########################################################################################################
         // Internal / External Graphs
         //#########################################################################################################
-        pieChart_UpdateMealName(); // Change Internal Graph Title if exists
+        pie_Chart_Update_Title(); // Change Internal Graph Title if exists
         
         // Update External
         meal_plan_screen.update_External_Charts(false, "mealName", this, null, null);
@@ -1062,7 +1063,7 @@ public class MealManager
         //##########################################
         // Delete PieChart (Meal is Gone)
         //##########################################
-        close_PieChartScreen();
+        close_Pie_Chart_Screen();
     }
     
     private void unHideMealManager()
@@ -1326,7 +1327,7 @@ public class MealManager
         //##############################################################################################
         // RELOAD IngredientsTable & TotalMeal Table & Update  Chart DATA
         //##############################################################################################
-        reloadTableAndChartsData(true, true);
+        reload_Table_And_Charts_Data(true, true);
         
         //##############################################################################################
         // Remove & Re-add to GUI
@@ -1334,7 +1335,7 @@ public class MealManager
         meal_plan_screen.add_And_Replace_MealManger_POS_GUI(this, true, true);
     }
     
-    public void reloadTableAndChartsData(boolean updateMacrosLeft, boolean updateExternalCharts)
+    public void reload_Table_And_Charts_Data(boolean updateMacrosLeft, boolean updateExternalCharts)
     {
         //#############################################################################################
         // Reset GUI  & Variables
@@ -1372,7 +1373,7 @@ public class MealManager
         //##############################################################################################
         update_MealManager_DATA(true, updateExternalCharts);
         
-        pieChart_UpdateMealName(); // Update Internal PieChart Name
+        pie_Chart_Update_Title(); // Update Internal PieChart Title
         
         //##############################################################################################
         // Refresh MacrosLeft
@@ -1476,25 +1477,22 @@ public class MealManager
     private void pieChart_Action()
     {
         // If pieChart is already created bring up to the surface and make it visible
-        if (is_PieChartOpen())
+        if (is_Pie_Chart_Open())
         {
             System.out.println("\n\nB : pieChart_Action() 1 !!!!");
             
-            pie_chart_meal_manager_screen.makeJFrameVisible();
+            pie_chart_screen.makeJFrameVisible();
             return;
         }
         
-        pie_chart_meal_manager_screen = new Pie_Chart_Meal_Manager_Screen(db, shared_Data_Registry, this);
+        pie_chart_screen = new Pie_Chart_Meal_Manager_Screen(db, shared_Data_Registry, this);
     }
     
-    private void pieChart_UpdateMealName()
+    private void pie_Chart_Update_Title()
     {
-        //#########################################################################################################
-        // Change Internal Graph Title if exists
-        //#########################################################################################################
-        if (is_PieChartOpen())
+        if (is_Pie_Chart_Open())  // Change Internal Graph Title if exists
         {
-            pie_chart_meal_manager_screen.update_PieChart_Title();
+            pie_chart_screen.update_Pie_Chart_Title();
         }
     }
     
@@ -1504,9 +1502,9 @@ public class MealManager
      * 2.) IF Meal_Plan_Screen PieChart Screen is NULL, Pie Data can be removed
      * as it's not in use and not on display somewhere else     *
      */
-    public void removePieChartScreen()
+    public void remove_Pie_Chart_Screen()
     {
-        pie_chart_meal_manager_screen = null;
+        pie_chart_screen = null;
         
         //############################################
         // External DATA if not USED
@@ -1517,28 +1515,16 @@ public class MealManager
     }
     
     // External Call Usage
-    public void close_PieChartScreen()
+    public void close_Pie_Chart_Screen()
     {
-        if (! is_PieChartOpen()) { return; }
+        if (! is_Pie_Chart_Open()) { return; }
         
-        pie_chart_meal_manager_screen.window_Closed_Event();
+        pie_chart_screen.window_Closed_Event();
     }
     
-    private void update_Pie_Chart_Screen()
+    public boolean is_Pie_Chart_Open()
     {
-        /**
-         * Update data behind pieCharts which will effectively update all pieCharts actively using this data
-         */
-        
-        if (! shared_Data_Registry.update_PieChart_Values(this))
-        {
-            System.err.printf("\n\nShared_Data_Registry.java : updatePieChart_MM_Values() \nPieChart not Open %s", draft_meal_ID);
-        }
-    }
-    
-    public Boolean is_PieChartOpen()
-    {
-        return pie_chart_meal_manager_screen != null;
+        return pie_chart_screen != null;
     }
     
     //##################################################################################################################
@@ -1560,27 +1546,33 @@ public class MealManager
         }
     }
     
-    private ArrayList<Object> update_TotalMeal_Table() throws Exception
-    {
-        return  totalMealTable.update_Table();
-    }
-    
-    public void update_MacrosLeft_Table()
-    {
-        macrosLeft_JTable.update_Table();
-    }
-    
-    private void updateCharts(Boolean updateInternalCharts, Boolean updateExternalCharts)
+    private void updateCharts(boolean updateInternalCharts, boolean updateExternalCharts)
     {
         if (updateInternalCharts)
         {
-            update_Pie_Chart_Screen(); // Update Pie Chart Screen
+            /**
+             * Update data behind pieCharts which will effectively update all pieCharts actively using this data
+             */
+            if (! shared_Data_Registry.update_PieChart_Values(this))
+            {
+                System.err.printf("\n\nMPS : update_Pie_Chart_DATA() \nPieChart not Open %s", get_Draft_Meal_In_Plan_ID());
+            }
         }
         
         if (updateExternalCharts) // Update External Charts
         {
             meal_plan_screen.update_External_Charts(false, "update", this, getCurrentMealTime(), getCurrentMealTime());
         }
+    }
+    
+    private ArrayList<Object> update_TotalMeal_Table() throws Exception
+    {
+        return totalMealTable.update_Table();
+    }
+    
+    private void update_MacrosLeft_Table()
+    {
+        macrosLeft_JTable.update_Table();
     }
     
     //##################################################################################################################
@@ -1671,7 +1663,7 @@ public class MealManager
     {
         return source_meal_id;
     }
-
+    
     //##################################################################################################################
     // Resizing GUI
     //##################################################################################################################
