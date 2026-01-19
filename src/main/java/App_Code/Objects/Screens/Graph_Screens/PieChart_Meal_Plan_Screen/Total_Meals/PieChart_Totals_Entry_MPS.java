@@ -2,7 +2,7 @@ package App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_M
 
 import App_Code.Objects.Table_Objects.MealManager;
 import App_Code.Objects.Graph_Objects.Pie_Chart;
-import org.jfree.data.time.Second;
+import java.time.LocalTime;
 
 public class PieChart_Totals_Entry_MPS
 {
@@ -34,9 +34,9 @@ public class PieChart_Totals_Entry_MPS
     //##################################################################################################################
     // Accessors
     //##################################################################################################################
-    public Second get_MealTime()
+    public LocalTime get_MealTime()
     {
-        return mealManager.getCurrentMealTime();
+        return mealManager.get_Current_Meal_Time();
     }
     
     public Pie_Chart get_PieChart()

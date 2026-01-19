@@ -9,6 +9,7 @@ import App_Code.Objects.Screens.Meal_Plan_Screen;
 import org.jfree.data.time.Second;
 import javax.swing.*;
 import java.awt.*;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -117,7 +118,7 @@ public class LineChart_MPS extends Screen_JFrame
     // #################################################################################################################
     // Methods
     // #################################################################################################################
-    public void update_MealManager_ChartData(MealManager mealManager, Second previousTime, Second currentTime)
+    public void update_MealManager_ChartData(MealManager mealManager, LocalTime previousTime, LocalTime currentTime)
     {
         // LineChart Main Macros
         lineChart_Main_Macros_MPS.update_MealManager_ChartData(mealManager, previousTime, currentTime);
@@ -180,7 +181,7 @@ public class LineChart_MPS extends Screen_JFrame
     /*
        Based on MealManagers time the data is deleted in the series collection
     */
-    public void delete_MealManager_Data(Second mealTime)
+    public void delete_MealManager_Data(LocalTime mealTime)
     {
         // LineChart Main Macros
         lineChart_Main_Macros_MPS.delete_MealManager_Data(mealTime);

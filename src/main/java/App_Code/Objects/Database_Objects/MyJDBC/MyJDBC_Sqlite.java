@@ -13,11 +13,10 @@ import java.math.BigDecimal;
 import java.sql.*;
 import java.text.Collator;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.time.LocalDateTime;
 import java.util.function.Supplier;
-
-
 import org.flywaydb.core.Flyway;
 
 public class MyJDBC_Sqlite  // remove extends eventually
@@ -170,8 +169,9 @@ public class MyJDBC_Sqlite  // remove extends eventually
             }
             catch (Exception e)
             {
+                handleException_MYSQL(e, method_Name, query, errorMSG);
                 rollBack_Connection(connection, method_Name, query); // Rollback, in case it's not automatically done
-                throw e;
+                throw new Exception();
             }
             finally
             {
@@ -181,9 +181,8 @@ public class MyJDBC_Sqlite  // remove extends eventually
         //##########################################################
         // Error Handling
         //##########################################################
-        catch (Exception e)
+        catch (Exception _)
         {
-            handleException_MYSQL(e, method_Name, query, errorMSG);
             return false;
         }
     }
@@ -612,7 +611,7 @@ public class MyJDBC_Sqlite  // remove extends eventually
                         rowData.add(typeCast.cast(map_Object_To_Domain_Type(obj)));
                         continue;
                     }
-                   
+                    
                     rowData.add(typeCast.cast(obj)); // Converts Object to provided type and casts it
                 }
                 collection.add(rowData);
@@ -687,12 +686,22 @@ public class MyJDBC_Sqlite  // remove extends eventually
             
             case String s -> statement.setString(pos, s); // String
             case Integer i -> statement.setInt(pos, i); // Integer
-            case Boolean b -> statement.setBoolean(pos, b); // Boolean
-            case BigDecimal bigDecimal -> statement.setBigDecimal(pos, bigDecimal); // BigDecimal
+            case Boolean b -> statement.setInt(pos, b ? 1 : 0); // Boolean are represented as Integers
+            case BigDecimal bigDecimal -> // BigDecimal to Integer
+            {
+                /*long long_conversion = bigDecimal
+                        .movePointRight(2)
+                        .longValueExact();
+                
+                statement.setLong(pos, long_conversion);  */
+                
+                statement.setBigDecimal(pos, bigDecimal);
+            }
             case Timestamp timestamp -> statement.setTimestamp(pos, timestamp);  // TimeStamp / LocalDateTime
             case LocalDateTime localDateTime -> // Local Date Time
                     statement.setTimestamp(pos, Timestamp.valueOf(localDateTime));
-            case LocalTime localTime -> statement.setTime(pos, Time.valueOf(localTime)); // LocalTime
+            case LocalTime localTime ->
+                    statement.setString(pos, localTime.format(DateTimeFormatter.ofPattern("HH:mm"))); // LocalTime converted to Glob String
             case Float f -> statement.setFloat(pos, f);
             case Double d -> statement.setDouble(pos, d);
             

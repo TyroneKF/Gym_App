@@ -126,7 +126,7 @@ public class Pie_Chart_Totals extends Pie_Chart
     public void update_PieChart_Title()
     {
         String title = String.format("[%s]      %s Macros       [ %s   kcal]",
-                mealManager.get_Current_Meal_Time_GUI(),
+                mealManager.get_Current_Meal_Time(),
                 mealManager.get_Current_Meal_Name(),
                 shared_data_registry.get_Meal_Macro_Value(mealManager, Total_Meal_Macro_Columns.TOTAL_CALORIES));
         

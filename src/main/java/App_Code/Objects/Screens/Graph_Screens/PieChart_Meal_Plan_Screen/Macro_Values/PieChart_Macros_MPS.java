@@ -236,7 +236,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
         macroValues
                 .entrySet()
                 .stream()
-                .sorted(Comparator.comparingLong(e -> e.getKey().getCurrentMealTime().getFirstMillisecond()))
+                .sorted(Comparator.comparing(e -> e.getKey().get_Current_Meal_Time()))
                 .forEachOrdered(totalMeal_Values ->
                 {
                     MealManager mealManager = totalMeal_Values.getKey();

@@ -2,7 +2,7 @@ package App_Code.Objects.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Macro_V
 
 import App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Children.Total_Meal_Table.Total_Meal_Macro_Columns;
 import App_Code.Objects.Table_Objects.MealManager;
-
+import java.time.LocalTime;
 import java.util.Objects;
 
 public class PieChart_MacroKey implements Comparable<PieChart_MacroKey>
@@ -42,14 +42,14 @@ public class PieChart_MacroKey implements Comparable<PieChart_MacroKey>
         return mealInPlanID;
     }
     
-    public long get_MealTime()
+    public LocalTime get_MealTime()
     {
-        return mealManager.getCurrentMealTime().getFirstMillisecond();
+        return mealManager.get_Current_Meal_Time();
     }
     
     public String get_MealTime_GUI()
     {
-        return mealManager.get_Current_Meal_Time_GUI().toString();
+        return mealManager.get_Current_Meal_Time().toString();
     }
     
     public String get_MealName() { return mealManager.get_Current_Meal_Name(); }
@@ -70,7 +70,7 @@ public class PieChart_MacroKey implements Comparable<PieChart_MacroKey>
     @Override
     public int compareTo(PieChart_MacroKey other)
     {
-        return Long.compare(this.get_MealTime(), other.get_MealTime());
+        return this.get_MealTime().compareTo(other.get_MealTime());
     }
     
     @Override

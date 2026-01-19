@@ -16,14 +16,10 @@ import App_Code.Objects.Screens.Meal_Plan_Screen;
 import App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Children.Total_Meal_Table.Total_Meal_Other_Columns;
 import org.apache.commons.lang3.StringUtils;
 import org.javatuples.Pair;
-import org.jfree.data.time.Second;
-
 import javax.swing.*;
 import java.awt.*;
 import java.sql.Types;
-import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
 import java.util.*;
@@ -55,11 +51,11 @@ public class MealManager
     // String Variables
     private String class_Name = new Object() { }.getClass().getEnclosingClass().getName();
     private String lineSeparator = "###############################################################################";
-    private String savedMealName = "", currentMealName = "";
+    private String saved_meal_name = "", currentMealName = "";
     
     // Time Variables
-    private Second savedMealTime = null, currentMealTime = null;
-    private DateTimeFormatter strictTimeFormatter = DateTimeFormatter.ofPattern("HH:mm").withResolverStyle(ResolverStyle.STRICT);
+    private LocalTime saved_meal_time = null, current_meal_time = null;
+    private DateTimeFormatter time_Formatter = DateTimeFormatter.ofPattern("HH:mm").withResolverStyle(ResolverStyle.STRICT);
     
     // Collections
     private ArrayList<String> mealTotalTable_ColumnNames, ingredientsTable_ColumnNames;
@@ -119,12 +115,12 @@ public class MealManager
         source_meal_id = meal_ID_Obj.get_Source_Meal_ID();
         
         // Set Meal Time Variables
-        Second timeStringFormatted = localTimeToSecond(meal_ID_Obj.get_Meal_Time()); // turns etc 09:30:00 into 09:30 for GUI purposes & in second format
-        setTimeVariables(false, timeStringFormatted, timeStringFormatted); // Set MealTime Variables
+        LocalTime meal_time = meal_ID_Obj.get_Meal_Time();
+        set_Time_Variables(false, meal_time, meal_time); // Set MealTime Variables
         
         // Set Meal Name Variables
         String mealName = meal_ID_Obj.get_Name();
-        setMealNameVariables(false, mealName, mealName); // Set MealName Variables
+        set_Meal_Name_Variables(false, mealName, mealName); // Set MealName Variables
         
         setMealManagerInDB(true);  // Set Variable which identifies in this meal associated with this object is in the database
         
@@ -156,14 +152,14 @@ public class MealManager
         //############################################################################
         // Getting user input for Meal Name & Time
         //############################################################################
-        String new_Meal_Name = promptUserForMealName(true, false);
+        String new_Meal_Name = prompt_User_For_Meal_Name(true, false);
         
         if (new_Meal_Name == null) { return; } // Error occurred in validation checks above
         
         //############################################################################
         // Validating User Input
         //############################################################################
-        LocalTime new_Meal_Time = promptUserForMealTime(true, false);
+        LocalTime new_Meal_Time = prompt_User_For_Meal_Time(true, false);
         
         if (new_Meal_Time == null) { return; } // Error occurred in validation checks above
         
@@ -281,11 +277,9 @@ public class MealManager
         //#############################
         // Set Name & Time Variables
         //#############################
-        setMealNameVariables(false, new_Meal_Name, new_Meal_Name); // Set MealName Variables
+        set_Meal_Name_Variables(false, new_Meal_Name, new_Meal_Name); // Set MealName Variables
         
-        Second convertedNewMealTime = localTimeToSecond(new_Meal_Time);
-        
-        setTimeVariables(false, convertedNewMealTime, convertedNewMealTime);     // Set MealTime Variables
+        set_Time_Variables(false, new_Meal_Time, new_Meal_Time);     // Set MealTime Variables
         
         setMealManagerInDB(false);
         
@@ -362,7 +356,7 @@ public class MealManager
         editTime_Icon_Btn.makeBTntransparent();
         
         editTime_Btn.addActionListener(ae -> {
-            editTime_Btn_Action();
+            edit_Time_Btn_Action();
         });
         
         iconPanelInsert.add(editTime_Icon_Btn);
@@ -479,8 +473,8 @@ public class MealManager
         //################################################################
         // Create Collapsible Object
         //################################################################
-        //collapsibleJpObj = new CollapsibleJPanel(container, removeSecondsOnTimeString(savedMealTime), 150, 50); // time as btn txt
-        collapsibleJpObj = new CollapsibleJPanel(container, savedMealName, 180, 50); // time as btn txt
+        //collapsibleJpObj = new CollapsibleJPanel(container, remove_Seconds_On_Time_String(savedMealTime), 150, 50); // time as btn txt
+        collapsibleJpObj = new CollapsibleJPanel(container, saved_meal_name, 180, 50); // time as btn txt
         collapsibleCenterJPanel = collapsibleJpObj.get_Centre_JPanel();
         collapsibleCenterJPanel.setBackground(Color.YELLOW);
         
@@ -569,36 +563,104 @@ public class MealManager
     //#################################################################################
     // Meal Name & Meal Time Functions
     //#################################################################################
-    private Object inputValidation(String variableName, String input, boolean comparison, boolean skipConfirmation)
+    private boolean contains_Symbols(String string_To_Check)
     {
-        // Remove whitespace at the end of variable
-        input = input.trim();
+        Pattern pattern = Pattern.compile("^[a-zA-Z0-9 '\\-&]+$");
+        Matcher matcher = pattern.matcher(string_To_Check);
         
+        return ! matcher.matches();
+    }
+    
+    //########################################################
+    // Meal Time Functions
+    //########################################################
+    private void edit_Time_Btn_Action()
+    {
+        //###############################
+        // Prompt User for time Input
+        //###############################
+        
+        LocalTime new_meal_time = prompt_User_For_Meal_Time(false, true);
+        LocalTime old_current_time = get_Current_Meal_Time();
+        
+        if (new_meal_time == null) { return; } // Error occurred in validation checks above
+        
+        //###############################
+        // Update
+        //###############################
+        String uploadQuery = """
+                UPDATE draft_meals_in_plan
+                SET meal_time = ?
+                WHERE draft_meal_in_plan_id = ?;""";
+        
+        Object[] params = new Object[]{ new_meal_time, draft_meal_ID };
+        
+        //###############################
+        // Upload Into Database Table
+        //###############################
+        if (! db.upload_Data(uploadQuery, params, "Error, unable to change Meal Time!")) { return; }
+        
+        //###############################
+        // Update GUI & Variables
+        //###############################
+        
+        JOptionPane.showMessageDialog(getFrame(), String.format("Successfully, changed meal time from '%s' to '%s'",
+                old_current_time, new_meal_time)); // Success MSG
+        
+        //###############################
+        // Update total Meal Table Time
+        //###############################
+        totalMealTable.set_Value_On_Table(new_meal_time, 0, totalMeal_Other_Cols_Pos.get(Total_Meal_Other_Columns.MEAL_TIME));
+        
+        //###############################
+        // Update Time Variables
+        //###############################
+        set_Time_Variables(true, saved_meal_time, new_meal_time); // Set Meal Time Variables
+        
+        //###############################
+        // Update Internal PieChart Name
+        //###############################
+        pie_Chart_Update_Title();
+        
+        //###############################
+        //  Update GUI
+        //###############################
+        meal_plan_screen.add_And_Replace_MealManger_POS_GUI(this, true, true);
+        
+        //###############################
+        // Update External Charts
+        //###############################
+        meal_plan_screen.update_External_Charts(false, "mealTime", this, old_current_time, new_meal_time);
+    }
+    
+    private LocalTime prompt_User_For_Meal_Time(boolean skip_confirmation, boolean comparison)
+    {
+        // User info prompt
+        String input_meal_time = JOptionPane.showInputDialog("Input Meal Time etc \"09:00\"?");
+        
+        if (input_meal_time == null || input_meal_time.isEmpty()) { return null; }
+        
+        return input_Meal_Time_Validation(input_meal_time, skip_confirmation, comparison);
+    }
+    
+    private LocalTime input_Meal_Time_Validation(String input_meal_time_string, boolean skip_confirmation, boolean comparison)
+    {
         //#######################################################
         // Validation Checks
         //#######################################################
-        // Prior to this method being called the users input is checked if its null or "" and rejected
-        LocalTime inputConvertedToLocalTime = null;
-        Second inputConvertedToSeconds = null;
         
-        if (variableName.equals("time"))
+        // Prior to this method being called the users input_meal_time_string is checked if its null or "" and rejected
+        LocalTime new_input_time_local_time = null;
+        LocalTime old_current_meal_time = get_Current_Meal_Time();
+        
+        try
         {
-            input = removeSecondsOnTimeString(input);
-            
-            try
-            {
-                inputConvertedToLocalTime = LocalTime.parse(input);
-            }
-            catch (Exception e)
-            {
-                System.err.printf("\n\nMealManager.java: inputValidation() | Error, converting input to time string! \n%s", e);
-                JOptionPane.showMessageDialog(getFrame(), "Error, converting input to Time!!");
-                return null;
-            }
+            new_input_time_local_time = LocalTime.parse(input_meal_time_string, time_Formatter);
         }
-        else if (containsSymbols(input)) // Name: check if any symbols are inside
+        catch (Exception e)
         {
-            JOptionPane.showMessageDialog(getFrame(), String.format("\n\nError, '%s' cannot contain symbols!", variableName));
+            System.err.printf("\n\nMealManager.java: input_Meal_Time_Validation() | Error, converting input_meal_time_string to time string! \n%s", e);
+            JOptionPane.showMessageDialog(getFrame(), "Error, converting input_meal_time_string to Time!!");
             return null;
         }
         
@@ -607,217 +669,68 @@ public class MealManager
         // ####################################################
         if (comparison)
         {
-            // User enters same meal name
-            if (variableName.equals("name") && input.equals(get_Current_Meal_Name()))
+            if (old_current_meal_time.equals(new_input_time_local_time)) // Time : User enters same meal time
             {
-                JOptionPane.showMessageDialog(getFrame(), String.format("This meal '%s' already has the value '%s' !!", variableName, get_Current_Meal_Name()));
+                JOptionPane.showMessageDialog(getFrame(), String.format("This meal 'time' already has the value '%s' !!", old_current_meal_time));
                 return null;
-            }
-            else if (variableName.equals("time"))
-            {
-                inputConvertedToSeconds = convertMysqlTimeToSecond(input);
-                
-                if (getCurrentMealTime().equals(inputConvertedToSeconds)) // Time : User enters same meal time
-                {
-                    JOptionPane.showMessageDialog(getFrame(), String.format("This meal '%s' already has the value '%s' !!", variableName, get_Current_Meal_Time_GUI()));
-                    return null;
-                }
             }
         }
         
         // ######################################################
         // Check Database if Value Already Exists
         // ######################################################
-        String query = "", errorMSG = "";
-        Object[] params;
-        
-        if (variableName.equals("time")) // Validate time String
-        {
-            query = " SELECT meal_time FROM meals_in_plan WHERE plan_id = ? AND meal_time = ?";
-            errorMSG = "Error, Validating Meal Time!";
-            params = new Object[]{ null, inputConvertedToLocalTime };
-        }
-        else // Last possible option based on logic is Meal Name
-        {
-            input = StringUtils.capitalize(input);
-            query = "SELECT meal_name FROM meals_in_plan WHERE plan_id = ? AND meal_name = ?";
-            errorMSG = "Error, Validating Meal Name!";
-            params = new Object[]{ null, input };
-        }
+        String query = " SELECT 1 FROM draft_meals_in_plan WHERE plan_id = ? AND meal_time = ?";
+        String errorMSG = "Error, Validating Meal Time!";
+        Object[] params = new Object[]{ shared_Data_Registry.get_Selected_Plan_ID(), new_input_time_local_time };
         
         // Execute Query
         try
         {
             if (! db.get_Single_Col_Query_Obj(query, params, errorMSG, true).isEmpty()) // Means value already exists, returns N/A if the value doesn't
             {
-                JOptionPane.showMessageDialog(getFrame(), String.format("A meal in this plan already has a meal %s of '%s' !!", variableName, input));
-                throw new Exception(""); // Return null
+                JOptionPane.showMessageDialog(getFrame(), String.format("A meal in this plan already has a meal time of '%s' !!", new_input_time_local_time));
+                throw new Exception(); // Return null
             }
         }
         catch (Exception e)
         {
+            System.err.printf("\n\n%s", e);
             return null;
         }
         
-        //##############################################################################################################
+        //#############################################################################
         // User Confirmation
-        //##############################################################################################################
-        if (! skipConfirmation) // If requested not to skip a confirmation msg prompt confirmation
+        //#############################################################################
+        if (! skip_confirmation) // If requested not to skip a confirmation msg prompt confirmation
         {
-            String currentVariableValue = variableName.equals("name") ? get_Current_Meal_Name() : get_Current_Meal_Time_GUI().toString();
-            if (! areYouSure(String.format("change meal %s from '%s' to '%s'", variableName, currentVariableValue, input)))
+            if (! areYouSure(String.format("change meal time from '%s' to '%s'", get_Current_Meal_Time().toString(), input_meal_time_string)))
             {
                 return null;
             }
         }
         
-        //##############################################################################################################
+        //################################################################
         // Return Value
-        //##############################################################################################################
-        if (variableName.equals("name")) { return input; }
-        else { return inputConvertedToLocalTime; }
+        //#################################################################
+        return new_input_time_local_time;
     }
     
-    private boolean containsSymbols(String stringToCheck)
-    {
-        Pattern pattern = Pattern.compile("^[a-zA-Z0-9 '\\-&]+$");
-        Matcher matcher = pattern.matcher(stringToCheck);
-        
-        return ! matcher.matches();
-    }
-    
-    //####################################
-    // Meal Time Functions
-    //####################################
-    private void editTime_Btn_Action()
-    {
-        //#########################################################################################################
-        // Prompt User for time Input
-        //#########################################################################################################
-        
-        LocalTime newMealTime = promptUserForMealTime(false, true);
-        
-        if (newMealTime == null) { return; } // Error occurred in validation checks above
-        
-        Second newMealSecond = localTimeToSecond(newMealTime);
-        Second oldMealSeconds = getCurrentMealTime();
-        
-        //#########################################################################################################
-        // Update
-        //#########################################################################################################
-        String uploadQuery = """
-                UPDATE meals_in_plan
-                SET meal_time = ?
-                WHERE plan_id = ? AND meal_in_plan_id = ?;""";
-        
-        Object[] params = new Object[]{ newMealTime, null, draft_meal_ID };
-        
-        //##########################################
-        // Upload Into Database Table
-        //##########################################
-        if (! db.upload_Data(uploadQuery, params, "Error, unable to change Meal Time!")) { return; }
-        
-        //#########################################################################################################
-        // Update GUI & Variables
-        //#########################################################################################################
-        
-        JOptionPane.showMessageDialog(getFrame(), String.format("Successfully, changed meal time from '%s' to '%s'",
-                get_Current_Meal_Time_GUI(), newMealTime)); // Success MSG
-        
-        //#######################################
-        // Update total Meal View Time Col
-        //#######################################
-        totalMealTable.set_Value_On_Table(newMealTime, 0, totalMeal_Other_Cols_Pos.get(Total_Meal_Other_Columns.MEAL_TIME));
-        
-        //#######################################
-        // Update Time Variables
-        //#######################################
-        setTimeVariables(true, savedMealTime, newMealSecond); // Set Meal Time Variables
-        
-        //#######################################
-        // Update Internal PieChart Name
-        //#######################################
-        pie_Chart_Update_Title();
-        
-        //#######################################
-        //  Update GUI
-        //#######################################
-        meal_plan_screen.add_And_Replace_MealManger_POS_GUI(this, true, true);
-        
-        //#######################################
-        // Update External Charts
-        //#######################################
-        meal_plan_screen.update_External_Charts(false, "mealTime", this, oldMealSeconds, newMealSecond);
-    }
-    
-    private LocalTime promptUserForMealTime(boolean skipConfirmation, boolean comparison)
-    {
-        // User info prompt
-        String inputMealTime = JOptionPane.showInputDialog("Input Meal Time etc \"09:00\"?");
-        
-        if (inputMealTime == null || inputMealTime.equals("")) { return null; }
-        
-        return (LocalTime) inputValidation("time", inputMealTime, comparison, skipConfirmation);
-    }
-    
-    private Second convertMysqlTimeToSecond(String timeString)
-    {
-        return localTimeToSecond(LocalTime.parse(removeSecondsOnTimeString(timeString)));
-    }
-    
-    private Second localTimeToSecond(LocalTime localTime)
-    {
-        // Convert LocalTime -> Date (fixed base date)
-        Date date = Date.from(localTime.atDate(LocalDate.of(1970, 1, 1))
-                .atZone(ZoneId.systemDefault())
-                .toInstant());
-        
-        // Wrap into JFree Second
-        return new Second(date);
-    }
-    
-    private String removeSecondsOnTimeString(String mealTime)
-    {
-        StringBuilder returnString = new StringBuilder();
-        int colonCount = 0;
-        
-        for (char c : mealTime.toCharArray())
-        {
-            if (c == ':') { colonCount++; if (colonCount == 2) { return returnString.toString(); } }
-            returnString.append(c);
-        }
-        
-        return mealTime;
-    }
-    
-    
-    private void setTimeVariables(boolean hasMealTimeBeenChanged, Second savedMealTime, Second currentMealTime)
+    private void set_Time_Variables(boolean hasMealTimeBeenChanged, LocalTime savedMealTime, LocalTime currentMealTime)
     {
         this.hasMealTimeBeenChanged = hasMealTimeBeenChanged;
-        this.savedMealTime = savedMealTime;
-        this.currentMealTime = currentMealTime;
+        this.saved_meal_time = savedMealTime;
+        this.current_meal_time = currentMealTime;
     }
     
     // Accessor Methods
-    public Second getCurrentMealTime()
+    public LocalTime get_Current_Meal_Time()
     {
-        return currentMealTime;
+        return current_meal_time;
     }
     
-    public LocalTime get_Current_Meal_Time_GUI()
+    public LocalTime get_Saved_Meal_Time()
     {
-        return currentMealTime.getStart()
-                .toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalTime();
-    }
-    
-    public LocalTime get_Saved_MealTime_GUI()
-    {
-        return savedMealTime.getStart()
-                .toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalTime();
+        return saved_meal_time;
     }
     
     //####################################
@@ -829,32 +742,32 @@ public class MealManager
         // Validation Checks
         //#########################################################################################################
         // Get User Input
-        String inputMealName = promptUserForMealName(false, true);
+        String new_input_meal_name = prompt_User_For_Meal_Name(false, true);
         
-        if (inputMealName == null) { return; } // Error occurred in validation checks above
+        if (new_input_meal_name == null) { return; } // Error occurred in validation checks above
         
         //#########################################################################################################
         // Update DB
         //#########################################################################################################
-        String uploadQuery = """
-                UPDATE meals_in_plan
+        String upload_query = """
+                UPDATE draft_meals_in_plan
                 SET meal_name = ?
-                WHERE plan_id = ? AND meal_in_plan_id = ?;""";
+                WHERE draft_meal_in_plan_id = ?;""";
         
-        Object[] params = new Object[]{ inputMealName, null, draft_meal_ID };
+        Object[] params = new Object[]{ new_input_meal_name, draft_meal_ID };
         
-        if (! db.upload_Data(uploadQuery, params, "Error, unable to change Meal Name!")) { return; }
+        if (! db.upload_Data(upload_query, params, "Error, unable to change Meal Name!")) { return; }
         
         //#########################################################################################################
         // Change Variable DATA & Object
         //#########################################################################################################
-        collapsibleJpObj.set_Icon_Btn_Text(inputMealName);
-        setMealNameVariables(true, savedMealName, inputMealName);  // Set Meal Name Variables
+        collapsibleJpObj.set_Icon_Btn_Text(new_input_meal_name);
+        set_Meal_Name_Variables(true, saved_meal_name, new_input_meal_name);  // Set Meal Name Variables
         
         //#########################################################################################################
         // Update total Meal View Time Col
         //#########################################################################################################
-        totalMealTable.set_Value_On_Table(inputMealName, 0, totalMeal_Other_Cols_Pos.get(Total_Meal_Other_Columns.MEAL_NAME));
+        totalMealTable.set_Value_On_Table(new_input_meal_name, 0, totalMeal_Other_Cols_Pos.get(Total_Meal_Other_Columns.MEAL_NAME));
         
         //#########################################################################################################
         // Internal / External Graphs
@@ -868,25 +781,90 @@ public class MealManager
         // Change Button Text & Related Variables
         //#########################################################################################################
         // Success MSG
-        JOptionPane.showMessageDialog(getFrame(), String.format("Successfully, changed meal name from ' %s ' to ' %s ' ", currentMealName, inputMealName));
+        JOptionPane.showMessageDialog(getFrame(), String.format("Successfully, changed meal name from ' %s ' to ' %s ' ", currentMealName, new_input_meal_name));
     }
     
-    private String promptUserForMealName(boolean skipConfirmation, boolean comparison)
+    private String prompt_User_For_Meal_Name(boolean skip_confirmation, boolean comparison)
     {
         // Get User Input For Meal Name
-        String newMealName = JOptionPane.showInputDialog(getFrame(), "Input Meal Name?");
+        String new_meal_name = JOptionPane.showInputDialog(getFrame(), "Input Meal Name?");
         
         // User Cancelled or entered nothing
-        if (newMealName == null || newMealName.equals("")) { return null; }
+        if (new_meal_name == null || new_meal_name.isEmpty()) { return null; }
         
         // validate user input
-        return (String) inputValidation("name", newMealName, comparison, skipConfirmation);
+        return input_Meal_Name_Validation(new_meal_name, comparison, skip_confirmation);
     }
     
-    private void setMealNameVariables(boolean hasMealNameBeenChanged, String savedMealName, String currentMealName)
+    private String input_Meal_Name_Validation(String new_meal_name, boolean comparison, boolean skipConfirmation)
+    {
+        // Remove whitespace at the end of variable
+        new_meal_name = StringUtils.capitalize(new_meal_name.trim());
+        
+        //#######################################################
+        // Validation Checks
+        //#######################################################
+        if (contains_Symbols(new_meal_name)) // Name: check if any symbols are inside
+        {
+            JOptionPane.showMessageDialog(getFrame(), "\n\nError, 'Meal Name' cannot contain symbols!");
+            return null;
+        }
+        
+        // ####################################################
+        // Compare with saved correlating values
+        // ####################################################
+        if (comparison)
+        {
+            // User enters same meal name
+            if (new_meal_name.equals(get_Current_Meal_Name()))
+            {
+                JOptionPane.showMessageDialog(getFrame(), String.format("This meal 'Meal Name' already has the value '%s' !!", get_Current_Meal_Name()));
+                return null;
+            }
+        }
+        
+        // ######################################################
+        // Check Database if Value Already Exists
+        // ######################################################
+        String query = "SELECT 1 FROM draft_meals_in_plan WHERE plan_id = ? AND meal_name = ?";
+        String errorMSG = "Error, Validating Meal Name!";
+        Object[] params = new Object[]{ shared_Data_Registry.get_Selected_Plan_ID(), new_meal_name };
+        
+        // Execute Query
+        try
+        {
+            if (! db.get_Single_Col_Query_Obj(query, params, errorMSG, true).isEmpty()) // Means value already exists, returns N/A if the value doesn't
+            {
+                JOptionPane.showMessageDialog(getFrame(), String.format("A meal in this plan already has a meal Meal Name of '%s' !!", new_meal_name));
+                throw new Exception(); // Return null
+            }
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+        
+        //##############################################################################################################
+        // User Confirmation
+        //##############################################################################################################
+        if (! skipConfirmation) // If requested not to skip a confirmation msg prompt confirmation
+        {
+            if (! areYouSure(String.format("change meal Meal Name from '%s' to '%s'", get_Current_Meal_Name(), new_meal_name)))
+            {
+                return null;
+            }
+        }
+        
+        //##############################################################################################################
+        // Return Value
+        //##############################################################################################################
+        return new_meal_name;
+    }
+    
+    private void set_Meal_Name_Variables(boolean hasMealNameBeenChanged, String savedMealName, String currentMealName)
     {
         this.hasMealNameBeenChanged = hasMealNameBeenChanged;
-        this.savedMealName = savedMealName;
+        this.saved_meal_name = savedMealName;
         this.currentMealName = currentMealName;
     }
     
@@ -989,7 +967,7 @@ public class MealManager
         // Success MSG & Expand Meal View
         //#######################################################
         JOptionPane.showMessageDialog(null, String.format("Successfully Created Sub-Meal in %s at [%s]",
-                currentMealName, get_Current_Meal_Time_GUI())); // Show Success MSG
+                currentMealName, get_Current_Meal_Time())); // Show Success MSG
         
         expand_JPanel(); // Expand Meal View
         
@@ -1025,7 +1003,7 @@ public class MealManager
         //##########################################
         // Delete in External Charts
         //##########################################
-        meal_plan_screen.update_External_Charts(false, "delete", this, getCurrentMealTime(), getCurrentMealTime());
+        meal_plan_screen.update_External_Charts(false, "delete", this, get_Current_Meal_Time(), get_Current_Meal_Time());
         
         //##########################################
         // Show MSG
@@ -1193,8 +1171,8 @@ public class MealManager
         //#####################################################
         // Meal Name & Time Updates If Changed
         //#####################################################
-        String updateMealName = process.equals("refresh") ? savedMealName : currentMealName; // set mealName to refresh
-        LocalTime updateMealTime = process.equals("refresh") ? get_Saved_MealTime_GUI() : get_Current_Meal_Time_GUI(); // set mealTime to time
+        String updateMealName = process.equals("refresh") ? saved_meal_name : currentMealName; // set mealName to refresh
+        LocalTime updateMealTime = process.equals("refresh") ? get_Saved_Meal_Time() : get_Current_Meal_Time(); // set mealTime to time
         
         //#####################################################
         // Create Query Formatted Data for Method
@@ -1269,7 +1247,7 @@ public class MealManager
                 AND (M.meal_name = ? OR M.meal_time = ?)
                 AND M.meal_in_plan_id != ?;""";
         
-        Object[] params_refresh = new Object[]{ null, null, savedMealName, get_Saved_MealTime_GUI(), draft_meal_ID };
+        Object[] params_refresh = new Object[]{ null, null, saved_meal_name, get_Saved_Meal_Time(), draft_meal_ID };
         
         ArrayList<ArrayList<Object>> results;
         
@@ -1309,8 +1287,8 @@ public class MealManager
                             Change those values first at positions : %s in this plan
                             to be able to refresh this meal!
                             
-                            Or, refresh the whole plan if the other meals won't be affected !""", savedMealName,
-                    savedMealTime, positions, positions));
+                            Or, refresh the whole plan if the other meals won't be affected !""", saved_meal_name,
+                    saved_meal_time, positions, positions));
             
             return;
         }
@@ -1341,10 +1319,10 @@ public class MealManager
         // Reset GUI  & Variables
         //##############################################################################################
         // Reset Time & MealName Variables
-        setTimeVariables(false, savedMealTime, savedMealTime);
-        setMealNameVariables(false, savedMealName, savedMealName);
+        set_Time_Variables(false, saved_meal_time, saved_meal_time);
+        set_Meal_Name_Variables(false, saved_meal_name, saved_meal_name);
         
-        collapsibleJpObj.set_Icon_Btn_Text(savedMealName); // Reset Meal Name in GUI to Old Txt
+        collapsibleJpObj.set_Icon_Btn_Text(saved_meal_name); // Reset Meal Name in GUI to Old Txt
         
         //##############################################################################################
         // Refresh IngredientTables
@@ -1410,8 +1388,8 @@ public class MealManager
         // ###############################################################################
         // Set Variables
         // ###############################################################################
-        setTimeVariables(false, currentMealTime, currentMealTime);
-        setMealNameVariables(false, currentMealName, currentMealName);
+        set_Time_Variables(false, current_meal_time, current_meal_time);
+        set_Meal_Name_Variables(false, currentMealName, currentMealName);
         setMealManagerInDB(true);
         
         // ###############################################################################
@@ -1565,7 +1543,7 @@ public class MealManager
         //#########################
         if (updateExternalCharts)
         {
-            meal_plan_screen.update_External_Charts(false, "update", this, getCurrentMealTime(), getCurrentMealTime());
+            meal_plan_screen.update_External_Charts(false, "update", this, get_Current_Meal_Time(), get_Current_Meal_Time());
         }
     }
     

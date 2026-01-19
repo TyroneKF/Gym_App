@@ -586,7 +586,7 @@ public class IngredientsTable extends JDBC_JTable
         // Upload & Fetch Variables
         //################################################################
         String error_MSG = String.format("\n\nError Adding Additional Ingredient to Meal: \n\nMeal Name: '%s' \nMeal Time: %s!",
-                mealManager.get_Current_Meal_Name(), mealManager.get_Current_Meal_Time_GUI());
+                mealManager.get_Current_Meal_Name(), mealManager.get_Current_Meal_Time());
         
         LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params = new LinkedHashSet<>();
         LinkedHashSet<Pair<String, Object[]>> fetch_Queries_And_Params = new LinkedHashSet<>();

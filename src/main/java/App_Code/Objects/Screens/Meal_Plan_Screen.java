@@ -20,8 +20,6 @@ import App_Code.Objects.Screens.Others.Macros_Targets_Screen;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.javatuples.Pair;
-import org.jfree.data.time.Second;
-
 import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
@@ -42,7 +40,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // Objects
     //#################################################
     // DATA Object
-    private final Shared_Data_Registry shared_Data_Registry;
+    private Shared_Data_Registry shared_Data_Registry;
     
     // JPanels
     private JPanel scroll_JPanel_Center;
@@ -196,8 +194,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###############################################################################
         super(db, true, "Gym App", 1925, 1082, 1300, 0);
         
-        shared_Data_Registry = new Shared_Data_Registry(this);
-        
         Loading_Screen loading_Screen = new Loading_Screen(100);
         
         UIManager.put("OptionPane.messageFont", new Font("Arial", Font.PLAIN, 16)); // Set up window msg font
@@ -228,6 +224,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################################
         // 1.) Getting Selected User Info & Their Active Plan Info
         if (! setup_Get_User_And_Plan_Info()) { failed_Start_UP(loading_Screen); return; }
+        
+        shared_Data_Registry = new Shared_Data_Registry(this, plan_Name, selected_Plan_ID, selected_Plan_Version_ID);
         
         // 2.) Getting Table Column Names
         if (! setup_Get_Column_Names()) { failed_Start_UP(loading_Screen); return; }
@@ -971,8 +969,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
         return true;
     }
     
-    //###########################
-    //  Transfer MetaData
+    //############################
+    //  Transfer Meta Data
     //###########################
     public boolean setup_Get_Ingredient_Types_And_Ingredient_Names()
     {
@@ -1212,9 +1210,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
         return true;
     }
     
-    //#######################
+    //###########################
     // Meals Data
-    //#######################
+    //###########################
     public boolean setup_Get_Meal_Data()
     {
         String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
@@ -1888,7 +1886,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // #############################
     // LineChart DATA Methods
     // #############################
-    private void updateLineChartData(MealManager mealManager, Second previousTime, Second currentTime)
+    private void updateLineChartData(MealManager mealManager, LocalTime previousTime, LocalTime currentTime)
     {
         if (! is_Line_Chart_Screen_Open()) { return; }
         
@@ -1902,7 +1900,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         line_Chart.add_New_MealManager_Data(mealManager);
     }
     
-    private void deleteLineChartData(Second currentTime)
+    private void deleteLineChartData(LocalTime currentTime)
     {
         if (! is_Line_Chart_Screen_Open()) { return; }
         
@@ -2000,7 +1998,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         if (! mealManager.isObjectCreated()) { return; }
         
         JOptionPane.showMessageDialog(null, String.format("Successfully Created Meal in %s at [%s]",
-                mealManager.get_Current_Meal_Name(), mealManager.get_Current_Meal_Time_GUI()));
+                mealManager.get_Current_Meal_Name(), mealManager.get_Current_Meal_Time()));
               
         //###############################################
         // ADD to GUI & Charts
@@ -2010,7 +2008,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###############################################
         // Add to External Charts
         //###############################################
-        update_External_Charts(true, "add", mealManager, null, mealManager.getCurrentMealTime());
+        update_External_Charts(true, "add", mealManager, null, mealManager.get_Current_Meal_Time());
     }
     
     public void add_And_Replace_MealManger_POS_GUI(MealManager mealManager, boolean reOrder, boolean expandView)
@@ -2021,18 +2019,14 @@ public class Meal_Plan_Screen extends Screen_JFrame
         if (! mealManager.isObjectCreated()) { return; }
         
         //###############################################
-        // Add to GUI Meal Manager & Its Space Divider
+        
         //###############################################
-        if (! reOrder) // Just add to GUI
+        if (! reOrder) // Just add to GUI / Add to GUI Meal Manager & Its Space Divider
         {
             addToContainer(scroll_JPanel_Center, mealManager.get_Collapsible_JP_Obj(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
             addToContainer(scroll_JPanel_Center, mealManager.getSpaceDividerForMealManager(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 50, 0, null);
         }
-        
-        //###############################################
-        // Clear and Redraw
-        //###############################################
-        else
+        else // Clear and Redraw
         {
             reDraw_GUI();
         }
@@ -2064,7 +2058,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         for (MealManager mm : mealManager_ArrayList)
         {
             System.out.printf("\n\nMealManagerID: %s \nMealName : %s \nMealTime : %s",
-                    mm.get_Draft_Meal_In_Plan_ID(), mm.get_Current_Meal_Name(), mm.get_Current_Meal_Time_GUI());
+                    mm.get_Draft_Meal_In_Plan_ID(), mm.get_Current_Meal_Name(), mm.get_Current_Meal_Time());
             
             mm.collapse_MealManager(); // Collapse all meals
             
@@ -2321,7 +2315,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     }
     
     public void update_External_Charts(boolean mealPlanScreen_Action, String action, MealManager mealManager,
-                                       Second previousMealTime, Second currentMealTime)
+                                       LocalTime previousMealTime, LocalTime currentMealTime)
     {
         //####################################################################
         // MealPlanScreen
@@ -2384,9 +2378,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
             case "mealName" ->  // Meal Name on MealManager Changed
             {
                 // LineChart = Nothing Changes
-                
-                // Change PieChart MealName
-                update_Pie_Chart_Meal_Name(mealManager);
+               
+                update_Pie_Chart_Meal_Name(mealManager);  // Change PieChart MealName
             }
             case "refresh" ->   // Change Meal Managers Data
             {

@@ -103,6 +103,7 @@ General
 
 
 MYJDBC:
+    .) BigDecimal to Long in converison in mysqlite
     .) Refactor method calls that check if null and return msg use N/A
     .) Switch to Arraylist from LinkedHashSet
     .) Make single columnn / row Myjdbc method

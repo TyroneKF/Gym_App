@@ -11,6 +11,9 @@ import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import java.awt.*;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -123,8 +126,9 @@ class LineChart_Macros_MPS extends Screen_JPanel
                 // Add time and Value for MealManager
                 MealManager mealManager = mealManagers_Info.getKey();
                 BigDecimal macroValue = mealManagers_Info.getValue();
+                Second meal_time_in_seconds = local_Time_ToSecond(mealManager.get_Current_Meal_Time());
                 
-                macroTimeSeries.add(mealManager.getCurrentMealTime(), macroValue);
+                macroTimeSeries.add(meal_time_in_seconds, macroValue);
             }
         }
     }
@@ -144,6 +148,17 @@ class LineChart_Macros_MPS extends Screen_JPanel
     // #################################################################################################################
     // Methods
     // #################################################################################################################
+    private Second local_Time_ToSecond(LocalTime localTime)
+    {
+        // Convert LocalTime -> Date (fixed base date)
+        Date date = Date.from(localTime.atDate(LocalDate.of(1970, 1, 1))
+                .atZone(ZoneId.systemDefault())
+                .toInstant());
+        
+        // Wrap into JFree Second
+        return new Second(date);
+    }
+    
     
     //##################################################
     //  Update  Methods
@@ -157,19 +172,22 @@ class LineChart_Macros_MPS extends Screen_JPanel
     /**
      * * @param mealManager - MealManager responsible for the changes made
      *
-     * @param previousTime - old meal time
-     * @param currentTime  - current meal time
+     * @param previous_time_input - old meal time
+     * @param current_time  - current meal time
      *                     <p>
      *                     For Loop through each macroNutrient Name in HashMap (Outer)
      *                     (Inner HashMap) Contains all the values for all the MealManagers
      *                     Update the values specific to this mealManager
      */
-    public void update_MealManager_ChartData(MealManager mealManager, Second previousTime, Second currentTime)
+    public void update_MealManager_ChartData(MealManager mealManager, LocalTime previous_time_input, LocalTime current_time)
     {
         // ####################################################
         // Get MealManager Info
         // ####################################################
-        boolean timeChanged = ! previousTime.equals(currentTime);
+        boolean time_changed = ! previous_time_input.equals(current_time);
+        
+        Second previous_time_in_seconds = local_Time_ToSecond(previous_time_input);
+        Second current_time_in_seconds = local_Time_ToSecond(current_time);
         
         // ####################################################
         // Get MealManager MacroInfo & Replace
@@ -178,7 +196,7 @@ class LineChart_Macros_MPS extends Screen_JPanel
         /**
          *  <Key: MacroName | Value: HashMap<Key: MealManagerID, Value: < MealManager, Quantity>>
          */
-        for (Total_Meal_Macro_Columns macro_name :  macros_To_Check)
+        for (Total_Meal_Macro_Columns macro_name : macros_To_Check)
         {
             // ############################################
             // Macro Info
@@ -202,17 +220,17 @@ class LineChart_Macros_MPS extends Screen_JPanel
             // Get TimeSeries correlated to MacroName in collection
             TimeSeries macroSeries = dataset.getSeries(macroNameGUI);
             
-            if (! timeChanged) // IF the time hasn't changed just update the series value with the old time
+            if (! time_changed) // IF the time hasn't changed just update the series value with the old time
             {
-                macroSeries.addOrUpdate(previousTime, newMacroValue); // update value
+                macroSeries.addOrUpdate(previous_time_in_seconds, newMacroValue); // update value
                 continue;
             }
             
             // ########################################
             // New Time : Delete Time & Add New Value
             // ########################################
-            macroSeries.delete(previousTime); // IF the time has changed delete the old time from series value
-            macroSeries.add(currentTime, newMacroValue); // Add new value to Series with new Time
+            macroSeries.delete(previous_time_in_seconds); // IF the time has changed delete the old time from series value
+            macroSeries.add(current_time_in_seconds, newMacroValue); // Add new value to Series with new Time
         }
     }
     
@@ -223,7 +241,7 @@ class LineChart_Macros_MPS extends Screen_JPanel
     {
         
         // Add MealTime with value of 0 for each Macro because it's essentially initialised null
-        Second mealTime = mealManager.getCurrentMealTime();
+        Second mealTime = local_Time_ToSecond(mealManager.get_Current_Meal_Time());
         
         for (Object objectSeries : dataset.getSeries())
         {
@@ -263,7 +281,7 @@ class LineChart_Macros_MPS extends Screen_JPanel
     /*
        Based on MealManagers time the data is deleted in the series collection
      */
-    public void delete_MealManager_Data(Second mealTime)
+    public void delete_MealManager_Data(LocalTime meal_time)
     {
         //###############################################
         // Delete time point from all series
@@ -271,7 +289,7 @@ class LineChart_Macros_MPS extends Screen_JPanel
         for (int i = 0; i < dataset.getSeriesCount(); i++)
         {
             TimeSeries series = dataset.getSeries(i);
-            series.delete(mealTime);
+            series.delete(local_Time_ToSecond(meal_time));
         }
     }
 }

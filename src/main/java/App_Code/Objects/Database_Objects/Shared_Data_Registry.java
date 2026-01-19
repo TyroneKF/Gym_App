@@ -89,13 +89,17 @@ public class Shared_Data_Registry
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Shared_Data_Registry(Meal_Plan_Screen meal_plan_screen)
+    public Shared_Data_Registry(Meal_Plan_Screen meal_plan_screen, String plan_Name, int selected_Plan_ID, int selected_Plan_Version_ID)
     {
         //##################################
         // Variables
         //##################################
         total_meal_macro_pos = meal_plan_screen.get_Total_Meal_Macro_Col_Pos();
         total_meal_macro_symbol = meal_plan_screen.get_Total_Meal_Macro_Symbols();
+        
+        this.plan_Name = plan_Name;
+        this.selected_Plan_ID = selected_Plan_ID;
+        this.selected_Plan_Version_ID = selected_Plan_Version_ID;
     }
     
     //##################################################################################################################
@@ -110,7 +114,7 @@ public class Shared_Data_Registry
     //###############################################################################
     public void sort_MealManager_AL()
     {
-        mealManager_ArrayList.sort((a, b) -> a.getCurrentMealTime().compareTo(b.getCurrentMealTime()));
+        mealManager_ArrayList.sort((a, b) -> a.get_Current_Meal_Time().compareTo(b.get_Current_Meal_Time()));
     }
     
     //###############################################################################
@@ -708,6 +712,21 @@ public class Shared_Data_Registry
     public int get_Active_MealCount()
     {
         return (int) mealManager_ArrayList.stream().filter(mealManager -> ! mealManager.is_Meal_Deleted()).count();
+    }
+    
+    public Integer get_Selected_Plan_ID()
+    {
+        return selected_Plan_ID;
+    }
+    
+    public Integer get_Selected_Plan_Version_ID()
+    {
+        return selected_Plan_Version_ID;
+    }
+    
+    public String get_Plan_Name()
+    {
+        return plan_Name;
     }
     
     public LinkedHashMap<Total_Meal_Macro_Columns, String> get_Total_Meal_Macro_Symbols()
