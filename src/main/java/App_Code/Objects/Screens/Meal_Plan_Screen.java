@@ -2310,7 +2310,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         Iterator<MealManager> it = shared_Data_Registry.get_MealManager_ArrayList().iterator();
         while (it.hasNext())
         {
-            it.next().close_PieChartScreen();
+            it.next().close_Pie_Chart_Screen();
             it.remove();
         }
         

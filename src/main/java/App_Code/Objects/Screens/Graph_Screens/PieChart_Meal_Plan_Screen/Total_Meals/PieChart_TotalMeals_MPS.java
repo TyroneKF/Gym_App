@@ -195,10 +195,9 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
         for (MealManager mealManager : mealManager_ArrayList)
         {
             if (mealManager.is_Meal_Deleted()) { continue; } // IF Meal is Deleted: Continue
-            
      
             // Get / Create PieChart Data
-            DefaultPieDataset<Total_Meal_Macro_Columns> pieDataset = shared_Data_Registry.get_OR_Create_PieChart_Dataset(mealManager);
+            DefaultPieDataset<Total_Meal_Macro_Columns> pieDataset = shared_Data_Registry.get_OR_Create_Updated_PieChart_Dataset(mealManager);
             
             Pie_Chart_Totals pieChart = new Pie_Chart_Totals( // Create PieChart
                     mealManager,
@@ -360,7 +359,7 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
     public void add_MealManager_To_GUI(MealManager mealManager)
     {
         // Get / Create PieChart Data
-        DefaultPieDataset<Total_Meal_Macro_Columns> pieDataset = shared_Data_Registry.get_OR_Create_PieChart_Dataset(mealManager);
+        DefaultPieDataset<Total_Meal_Macro_Columns> pieDataset = shared_Data_Registry.get_OR_Create_Updated_PieChart_Dataset(mealManager);
         
         // Create PieChart & Add to List
         Pie_Chart_Totals pieChart = new Pie_Chart_Totals(

@@ -1,6 +1,5 @@
 package App_Code.Objects.Table_Objects.Tables.Children.Ingredients_Table;
 
-
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
@@ -10,6 +9,7 @@ import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Table_Objects.Tables.Children.Ingredients_Table.Buttons.Button_Column;
 import App_Code.Objects.Table_Objects.Tables.Children.Ingredients_Table.JCombo_Boxes.Child.Ingredient_Name_JComboBox_Column;
 import App_Code.Objects.Table_Objects.Tables.Children.Ingredients_Table.JCombo_Boxes.Child.Ingredient_Type_JComboBox_Column;
+import App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Children.MacrosLeft_Table;
 import App_Code.Objects.Table_Objects.Tables.Parent.JDBC_JTable;
 import App_Code.Objects.Table_Objects.MealManager;
 import App_Code.Objects.Gui_Objects.IconButton;
@@ -30,6 +30,7 @@ public class IngredientsTable extends JDBC_JTable
     // Objects
     private final MealManager mealManager;
     private final Shared_Data_Registry shared_Data_Registry;
+    private final MacrosLeft_Table macrosLeft_table;
     
     // Screen Objects
     private final JPanel space_Divider;
@@ -65,6 +66,7 @@ public class IngredientsTable extends JDBC_JTable
             MyJDBC_Sqlite db,
             MealManager mealManager,
             Shared_Data_Registry shared_Data_Registry,
+            MacrosLeft_Table macrosLeft_table,
             int sub_Meal_ID,
             ArrayList<ArrayList<Object>> data,
             boolean meal_In_DB,
@@ -91,6 +93,7 @@ public class IngredientsTable extends JDBC_JTable
         //##############################################################
         this.mealManager = mealManager;
         this.shared_Data_Registry = shared_Data_Registry;
+        this.macrosLeft_table = macrosLeft_table;
         
         this.sub_Meal_ID = sub_Meal_ID;
         
@@ -760,19 +763,16 @@ public class IngredientsTable extends JDBC_JTable
             unHide_Ingredients_Table();
         }
         
-        // Reset Table Model data
-        refresh_Data();
+        refresh_Data(); // Reset Table Model data
         
-        // Reset Meal Total  Table Data
-        if (update_TotalMeal_Table)
+        if (update_TotalMeal_Table) // Reset Meal Total  Table Data
         {
             mealManager.update_MealManager_DATA(true, true);
         }
         
-        // Update Other Tables Data
-        if (update_MacrosLeft_Table)
+        if (update_MacrosLeft_Table) // Update Other Tables Data
         {
-            mealManager.update_MacrosLeft_Table();
+            macrosLeft_table.update_Table();
         }
     }
     
@@ -871,7 +871,7 @@ public class IngredientsTable extends JDBC_JTable
     private void update_All_Tables_Data()
     {
         mealManager.update_MealManager_DATA(true, true);
-        mealManager.update_MacrosLeft_Table();
+        macrosLeft_table.update_Table();
     }
     
     //##################################################################################################################

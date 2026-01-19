@@ -148,7 +148,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen_JFrame
         //############################################
         // Creating Macros / Dataset
         //############################################
-        DefaultPieDataset<Total_Meal_Macro_Columns> dataset = shared_Data_Registry.get_OR_Create_PieChart_Dataset(mealManager);
+        DefaultPieDataset<Total_Meal_Macro_Columns> dataset = shared_Data_Registry.get_OR_Create_Updated_PieChart_Dataset(mealManager);
         
         //#####################################
         // Graph Preferences
@@ -212,12 +212,12 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen_JFrame
     // Methods
     //###########################################################################################
     @Override
-    public void window_Closed_Event() { mealManager.removePieChartScreen(); closeJFrame(); }
+    public void window_Closed_Event() { mealManager.remove_Pie_Chart_Screen(); closeJFrame(); }
     
     //####################################
     // Update Methods
     //####################################
-    public void update_PieChart_Title()
+    public void update_Pie_Chart_Title()
     {
         pieChart.update_PieChart_Title();
     }

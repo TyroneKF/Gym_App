@@ -96,7 +96,7 @@ public class PieChart_Screen_MPS extends Screen_JFrame
             MealManager mealManager = pieChart_entry_mps.get_MealManager();
             
             // IF MealManager Associated with Entry isn't open, remove its dataset
-            if (! mealManager.is_PieChartOpen())
+            if (! mealManager.is_Pie_Chart_Open())
             {
                 shared_Data_Registry.remove_PieChart_DatasetValues(mealManager);
             }
@@ -137,7 +137,7 @@ public class PieChart_Screen_MPS extends Screen_JFrame
     
     public void updateData(MealManager mealManager)
     {
-        pieChart_TotalMeals_MPS.update_PieChart_Title(mealManager); // TotalMeal PieChart MPS
+        // TotalMeal PieChart MPS nothing needs to be handled everything updates once the data is updated in the MPS
         
         pieChart_Macros_MPS.update_DATA();   // Macros PieChart MPS
     }

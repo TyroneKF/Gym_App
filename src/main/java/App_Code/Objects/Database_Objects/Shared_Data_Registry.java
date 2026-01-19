@@ -240,7 +240,7 @@ public class Shared_Data_Registry
             //#################################################################
             // Reload MealManager Data
             //#################################################################
-            mealManager.reloadTableAndChartsData(false, false);
+            mealManager.reload_Table_And_Charts_Data(false, false);
             
             //#################################################################
             // Re-Upload Or, Change Meal MacroData
@@ -264,34 +264,70 @@ public class Shared_Data_Registry
      * This method is used to retrieve pieChart Data based on MealInPlanID
      * if it exists it is returned. Otherwise, it's created and added to DATA (Collection) and then it's returned.
      */
-    public DefaultPieDataset<Total_Meal_Macro_Columns> get_OR_Create_PieChart_Dataset(MealManager mealManager)
+    public DefaultPieDataset<Total_Meal_Macro_Columns> get_OR_Create_Updated_PieChart_Dataset(MealManager mealManager)
     {
-        //##############################################
-        // Add to HashMapDataset
-        //##############################################
+        //################################################
+        // IF Meals Pie Data Exists Return it
+        //################################################
         if (pieChart_Dataset_Map.containsKey(mealManager))
         {
             System.err.printf("\ncreate_MM_MacroInfo_PieChart() Already Created %s", mealManager.get_Draft_Meal_In_Plan_ID());
             return pieChart_Dataset_Map.get(mealManager);
         }
         
-        //##############################################
-        // Add to HashMapDataset
-        //##############################################
-        pieChart_Dataset_Map.put(mealManager, get_Updated_PieChart_Dataset(mealManager));
+        //#################################################
+        // Pie Chart Data Doesn't Exist Create it & Add it
+        //#################################################
+        pieChart_Dataset_Map.put(mealManager, create_Updated_PieChart_Dataset(mealManager));
         
-        //##############################################
-        // Add to HashMapDataset
-        //##############################################
+        //################################################
+        // Return retrieved Dataset
+        //################################################
         return pieChart_Dataset_Map.get(mealManager);
     }
     
-    private DefaultPieDataset<Total_Meal_Macro_Columns> get_Updated_PieChart_Dataset(MealManager mealManager)
+    //############################
+    //  Update Methods
+    //############################
+    public boolean update_PieChart_Values(MealManager mealManager)
+    {
+        //#########################################
+        // IF PieChart Not Open Exit
+        //#########################################
+        if (! pieChart_Dataset_Map.containsKey(mealManager)) { return false; }
+        
+        //#########################################
+        // Updated Saved Dataset With New Values
+        //#########################################
+        DefaultPieDataset<Total_Meal_Macro_Columns> newGenerated = create_Updated_PieChart_Dataset(mealManager);
+        DefaultPieDataset<Total_Meal_Macro_Columns> mm_PieData = pieChart_Dataset_Map.get(mealManager);
+        
+        // Stop PieDataset event listener from being triggered on each key update and instead on batch (avoids key races)
+        mm_PieData.setNotify(false);
+        
+        // Clear Data First
+        mm_PieData.clear();
+        
+        // Transfer Data Over into this dataset
+        newGenerated.getKeys().forEach(key -> {
+            mm_PieData.setValue(key, newGenerated.getValue(key));
+        });
+        
+        // Turn Notifications back on
+        mm_PieData.setNotify(true);
+        
+        //#########################################
+        // Updated Saved Dataset With New Values
+        //#########################################
+        return true;
+    }
+    
+    private DefaultPieDataset<Total_Meal_Macro_Columns> create_Updated_PieChart_Dataset(MealManager mealManager)
     {
         //###################################################
         // Get Macros
         //###################################################
-        LinkedHashMap<Total_Meal_Macro_Columns, BigDecimal> data = new LinkedHashMap<Total_Meal_Macro_Columns, BigDecimal>()
+        LinkedHashMap<Total_Meal_Macro_Columns, BigDecimal> data = new LinkedHashMap<>()
         {{
             // ###########################
             // Protein
@@ -330,42 +366,8 @@ public class Shared_Data_Registry
     }
     
     //############################
-    //  Update Methods
-    //############################
-    public boolean update_PieChart_Values(MealManager mealManager)
-    {
-        //#########################################
-        // IF PieChart Not Open Exit
-        //#########################################
-        if (! pieChart_Dataset_Map.containsKey(mealManager)) { return false; }
-        
-        //#########################################
-        // Updated Saved Dataset With New Values
-        //#########################################
-        DefaultPieDataset<Total_Meal_Macro_Columns> newGenerated = get_Updated_PieChart_Dataset(mealManager);
-        DefaultPieDataset<Total_Meal_Macro_Columns> mm_PieData = pieChart_Dataset_Map.get(mealManager);
-        
-        // Stop PieDataset event listener from being triggered on each key update and instead on batch (avoids key races)
-        mm_PieData.setNotify(false);
-        
-        // Clear Data First
-        mm_PieData.clear();
-        
-        // Transfer Data Over into this dataset
-        newGenerated.getKeys().forEach(key -> {
-            mm_PieData.setValue(key, newGenerated.getValue(key));
-        });
-        
-        // Turn Notifications back on
-        mm_PieData.setNotify(true);
-        
-        //#########################################
-        // Updated Saved Dataset With New Values
-        //#########################################
-        return true;
-    }
-    
     // PieChart: Remove Methods
+    //############################
     public void remove_PieChart_DatasetValues(MealManager meal_manager)
     {
         pieChart_Dataset_Map.remove(meal_manager);
