@@ -56,7 +56,7 @@ public class TotalMeal_Table extends MyJTable_Display_Data
         super.update_Table_Cell_Value(data, row, col);
     }
     
-    public ArrayList<Object> update_Table() throws Exception
+    public ArrayList<Object> update_Table_And_Get_Data() throws Exception
     {
         ArrayList<Object> data = get_Update_Data();
         

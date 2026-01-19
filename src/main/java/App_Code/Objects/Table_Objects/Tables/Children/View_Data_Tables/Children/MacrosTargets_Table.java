@@ -47,19 +47,4 @@ public class MacrosTargets_Table extends MyJTable_Display_Data
         //###########################################
         this.plan_ID = plan_ID;
     }
-    
-    //##################################################################################################################
-    // Methods
-    //##################################################################################################################
-    public void update_Table()
-    {
-        try
-        {
-            super.update_Table_Row(get_Update_Data(), update_Row);
-        }
-        catch (Exception _) // Error is already handled by DB class / get_Update_Data()
-        {
-        
-        }
-    }
 }

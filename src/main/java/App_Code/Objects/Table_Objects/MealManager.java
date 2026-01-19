@@ -1371,7 +1371,7 @@ public class MealManager
         //##############################################################################################
         // Refresh TotalMeal_Table DATA & Charts
         //##############################################################################################
-        update_MealManager_DATA(true, updateExternalCharts);
+        update_MealManager_DATA(updateExternalCharts);
         
         pie_Chart_Update_Title(); // Update Internal PieChart Title
         
@@ -1530,15 +1530,15 @@ public class MealManager
     //##################################################################################################################
     // Updating Other Tables
     //##################################################################################################################
-    public void update_MealManager_DATA(boolean updateInternalCharts, boolean updateExternalCharts)
+    public void update_MealManager_DATA(boolean update_External_Charts)
     {
         try
         {
-            ArrayList<Object> total_meal_data = update_TotalMeal_Table(); // Update TotalMealView (Has to be first)
+            ArrayList<Object> total_meal_data = update_TotalMeal_Table_And_Get_Data(); // Update TotalMealView (Has to be first)
             
             shared_Data_Registry.add_OR_Replace_MealManager_Macros_DATA(this, total_meal_data);  // Update Registry Data (Second)
             
-            updateCharts(updateInternalCharts, updateExternalCharts); // Update Charts
+            update_Charts(update_External_Charts); // Update Charts
         }
         catch (Exception e)
         {
@@ -1546,28 +1546,37 @@ public class MealManager
         }
     }
     
-    private void updateCharts(boolean updateInternalCharts, boolean updateExternalCharts)
+    private void update_Charts(boolean updateExternalCharts)
     {
-        if (updateInternalCharts)
+        //#########################
+        // Update Internal Charts
+        //#########################
+        /**
+         * Update data behind pieCharts which will effectively update all pieCharts actively using this data
+         * etc the MPS totals pie chart screen
+         */
+        if (! shared_Data_Registry.update_PieChart_Values(this))
         {
-            /**
-             * Update data behind pieCharts which will effectively update all pieCharts actively using this data
-             */
-            if (! shared_Data_Registry.update_PieChart_Values(this))
-            {
-                System.err.printf("\n\nMPS : update_Pie_Chart_DATA() \nPieChart not Open %s", get_Draft_Meal_In_Plan_ID());
-            }
+            System.err.printf("\n\nMPS : update_Pie_Chart_DATA() \nPieChart not Open %s", get_Draft_Meal_In_Plan_ID());
         }
         
-        if (updateExternalCharts) // Update External Charts
+        //#########################
+        // Update External Charts
+        //#########################
+        if (updateExternalCharts)
         {
             meal_plan_screen.update_External_Charts(false, "update", this, getCurrentMealTime(), getCurrentMealTime());
         }
     }
     
-    private ArrayList<Object> update_TotalMeal_Table() throws Exception
+    private ArrayList<Object> update_TotalMeal_Table_And_Get_Data() throws Exception
     {
-        return totalMealTable.update_Table();
+        return totalMealTable.update_Table_And_Get_Data();
+    }
+    
+    public void update_Total_Meal()
+    {
+        totalMealTable.update_Table();
     }
     
     private void update_MacrosLeft_Table()

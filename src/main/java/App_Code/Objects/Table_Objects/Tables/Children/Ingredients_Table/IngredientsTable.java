@@ -654,7 +654,7 @@ public class IngredientsTable extends JDBC_JTable
         //#######################################################
         // Update Table Data
         //#######################################################
-        mealManager.update_MealManager_DATA(false, false); // No Macros have changed to change data
+        mealManager.update_Total_Meal();
     }
     
     //###################################################
@@ -767,7 +767,7 @@ public class IngredientsTable extends JDBC_JTable
         
         if (update_TotalMeal_Table) // Reset Meal Total  Table Data
         {
-            mealManager.update_MealManager_DATA(true, true);
+            mealManager.update_MealManager_DATA(true);
         }
         
         if (update_MacrosLeft_Table) // Update Other Tables Data
@@ -870,7 +870,7 @@ public class IngredientsTable extends JDBC_JTable
     //##################################################################################################################
     private void update_All_Tables_Data()
     {
-        mealManager.update_MealManager_DATA(true, true);
+        mealManager.update_MealManager_DATA(true);
         macrosLeft_table.update_Table();
     }
     

@@ -141,7 +141,6 @@ public abstract class MyJTable_Display_Data extends JDBC_JTable
     {
         return String.format("SELECT * FROM %s WHERE %s = ?;", db_read_view_name, db_row_id_column_name);
     }
-
     
     protected ArrayList<Object> get_Update_Data() throws Exception
     {
@@ -157,8 +156,20 @@ public abstract class MyJTable_Display_Data extends JDBC_JTable
         }
         catch (Exception _) // Error is already handled by DB class
         {
+            throw new Exception(String.format("%s - Failed Getting Updated Data", table_name));
+        }
+    }
+    
+    public void update_Table()
+    {
+        try
+        {
+            super.update_Table_Row(get_Update_Data(), update_Row);
+        }
+        catch (Exception e) // Error is already handled by DB class / get_Update_Data()
+        {
             JOptionPane.showMessageDialog(null, String.format("Unable to Update Table - '%s'!", table_name));
-            throw new Exception(String.format("%s - Failed Update", table_name));
+            System.err.printf("\n\n%s", e);
         }
     }
 }
