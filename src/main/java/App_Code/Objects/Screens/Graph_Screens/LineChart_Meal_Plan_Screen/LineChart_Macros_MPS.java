@@ -5,7 +5,6 @@ import App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Children.
 import App_Code.Objects.Table_Objects.MealManager;
 import App_Code.Objects.Graph_Objects.Line_Chart;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
-import App_Code.Objects.Screens.Meal_Plan_Screen;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
@@ -22,12 +21,11 @@ class LineChart_Macros_MPS extends Screen_JPanel
     //#################################################################################################################
     // Variables
     //#################################################################################################################
-    private String planName;
+    private String title;
     
     //##############################################
     // Objects
     //##############################################
-    private Meal_Plan_Screen meal_plan_screen;
     private Shared_Data_Registry shared_Data_Registry;
     
     //##############################################
@@ -50,13 +48,13 @@ class LineChart_Macros_MPS extends Screen_JPanel
     private TimeSeriesCollection dataset = new TimeSeriesCollection(); // Clear Dataset;
     private Line_Chart line_chart;
     
+    
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
     public LineChart_Macros_MPS
     (
             Shared_Data_Registry shared_Data_Registry,
-            Meal_Plan_Screen meal_plan_screen,
             String title,
             ArrayList<Total_Meal_Macro_Columns> macros_To_Check,
             int frameWidth,
@@ -74,10 +72,9 @@ class LineChart_Macros_MPS extends Screen_JPanel
         // ##########################################
         // Objects
         this.shared_Data_Registry = shared_Data_Registry;
-        this.meal_plan_screen = meal_plan_screen;
         
         // String
-        this.planName = meal_plan_screen.getPlan_Name();
+        this.title = title;
         
         // Collections
         this.macros_To_Check = macros_To_Check;
@@ -91,7 +88,7 @@ class LineChart_Macros_MPS extends Screen_JPanel
         // ##########################################
         // Create Graph Object & Adding to GUI
         // ##########################################
-        line_chart = new Line_Chart(title, frameWidth - 100, frameHeight - 60, dataset);
+        line_chart = new Line_Chart(get_Title_String(), frameWidth - 100, frameHeight - 60, dataset);
         add_To_Container(get_ScrollPane_JPanel(), line_chart, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
     }
     
@@ -163,10 +160,15 @@ class LineChart_Macros_MPS extends Screen_JPanel
     //##################################################
     //  Update  Methods
     //##################################################
+    public String get_Title_String()
+    {
+        return String.format("%s : %s", shared_Data_Registry.get_Plan_Name(), title);
+    }
+    
+    
     public void update_LineChart_Title()
     {
-        planName = meal_plan_screen.getPlan_Name();
-        line_chart.setTitle(planName);
+        line_chart.setTitle(get_Title_String());
     }
     
     /**

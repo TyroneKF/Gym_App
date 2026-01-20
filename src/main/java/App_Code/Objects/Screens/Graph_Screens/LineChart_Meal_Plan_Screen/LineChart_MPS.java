@@ -6,7 +6,6 @@ import App_Code.Objects.Table_Objects.MealManager;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
-import org.jfree.data.time.Second;
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalTime;
@@ -21,6 +20,7 @@ public class LineChart_MPS extends Screen_JFrame
     
     // Objects
     private final Meal_Plan_Screen meal_plan_screen;
+    private Shared_Data_Registry shared_Data_Registry;
     
     // Screens
     private final LineChart_Macros_MPS lineChart_Main_Macros_MPS;
@@ -34,13 +34,14 @@ public class LineChart_MPS extends Screen_JFrame
         // ################################################################
         // Super Constructor
         // ################################################################
-        super(db, false, String.format(" %s Pie Chart: Plan Macros", meal_plan_screen.getPlan_Name()), 1900, 1200, 0, 0);
+        super(db, false, String.format(" %s Line Chart: Plan Macros", shared_Data_Registry.get_Plan_Name()), 1900, 1200, 0, 0);
         set_Resizable(true);
         
         // ################################################################
         // Variables
         // ################################################################
         this.meal_plan_screen = meal_plan_screen;
+        this.shared_Data_Registry = shared_Data_Registry;
         
         //###################################################################################
         // Create ContentPane
@@ -63,12 +64,9 @@ public class LineChart_MPS extends Screen_JFrame
                 Total_Meal_Macro_Columns.TOTAL_FIBRE
         ));
         
-        String title = String.format("%s : Macros Over 24 Hours", meal_plan_screen.getPlan_Name());
-        
         lineChart_Main_Macros_MPS = new LineChart_Macros_MPS(
                 shared_Data_Registry,
-                meal_plan_screen,
-                title,
+                "Macros Over 24 Hours",
                 macros_To_Check,
                 1000,
                 900
@@ -88,12 +86,9 @@ public class LineChart_MPS extends Screen_JFrame
                 Total_Meal_Macro_Columns.TOTAL_CALORIES
         ));
         
-        String title2 = String.format("%s : Calories & Water Over 24 Hours", meal_plan_screen.getPlan_Name());
-        
         lineChart_Bigger_Macros_MPS = new LineChart_Macros_MPS(
                 shared_Data_Registry,
-                meal_plan_screen,
-                title2,
+                "Calories & Water Over 24 Hours",
                 macros_To_Check2,
                 1000,
                 900

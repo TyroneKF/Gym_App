@@ -36,7 +36,7 @@ public class PieChart_Screen_MPS extends Screen_JFrame
         // ################################################################
         // Super Constructor
         // ################################################################
-        super(db, false, String.format(" %s Pie Chart: Plan Macros", meal_plan_screen.getPlan_Name()), 1900, 1200, 0, 0);
+        super(db, false, String.format(" %s Pie Chart: Plan Macros", shared_Data_Registry.get_Plan_Name()), 1900, 1200, 0, 0);
         set_Resizable(true);
         
         // ################################################################
