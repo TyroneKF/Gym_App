@@ -18,6 +18,7 @@ import java.util.*;
 import java.time.LocalDateTime;
 import java.util.function.Supplier;
 import org.flywaydb.core.Flyway;
+import org.sqlite.SQLiteConfig;
 
 public class MyJDBC_Sqlite  // remove extends eventually
 {
@@ -99,30 +100,50 @@ public class MyJDBC_Sqlite  // remove extends eventually
         close_Connection();
         
         // ####################################################
-        //  Create Pool Connection Configuration
+        //  SQLite-specific config
         // ####################################################
-        HikariConfig config = new HikariConfig();
-        
-        // SQLite connection PRAGMAs:
-        // Required SQLite connection initialization for correctness, concurrency, and stability
-        // - foreign_keys        : Enforces FK constraints (OFF by default in SQLite)
-        // - journal_mode = WAL  : Improves concurrency and reduces locking
-        // - synchronous = NORMAL: Balanced durability vs performance
-        // - busy_timeout        : Waits for locks instead of failing immediately
-        config.setJdbcUrl(connection_Address);
-        config.setMaximumPoolSize(1); // sqlite can only handle 1 connection / not good at concurrency
-        config.setConnectionTestQuery("SELECT 1");
-        config.setConnectionInitSql(
-                "PRAGMA foreign_keys = ON;" +
-                        "PRAGMA journal_mode = WAL;" +
-                        "PRAGMA synchronous = NORMAL;" +
-                        "PRAGMA busy_timeout = 5000;"
-        );
+        SQLiteConfig sqliteConfig = new SQLiteConfig();
+        sqliteConfig.enforceForeignKeys(true);
+        sqliteConfig.setJournalMode(SQLiteConfig.JournalMode.WAL);
+        sqliteConfig.setSynchronous(SQLiteConfig.SynchronousMode.NORMAL);
+        sqliteConfig.setBusyTimeout(5000);
         
         // ####################################################
-        //  Create Connection & Test
+        //  Hikari configuration
         // ####################################################
-        dataSource = new HikariDataSource(config); // Connection pool which provides a connection
+        HikariConfig hikariConfig = new HikariConfig();
+        hikariConfig.setJdbcUrl(connection_Address);
+        hikariConfig.setMaximumPoolSize(1); // correct for SQLite
+        hikariConfig.setConnectionTestQuery("SELECT 1");
+        
+        // 🔑 THIS IS THE IMPORTANT LINE
+        hikariConfig.setDataSourceProperties(sqliteConfig.toProperties());
+        
+        /*
+        
+               HikariConfig config = new HikariConfig();
+            
+            // SQLite connection PRAGMAs:
+            // Required SQLite connection initialization for correctness, concurrency, and stability
+            // - foreign_keys        : Enforces FK constraints (OFF by default in SQLite)
+            // - journal_mode = WAL  : Improves concurrency and reduces locking
+            // - synchronous = NORMAL: Balanced durability vs performance
+            // - busy_timeout        : Waits for locks instead of failing immediately
+            config.setJdbcUrl(connection_Address);
+            config.setMaximumPoolSize(1); // sqlite can only handle 1 connection / not good at concurrency
+            config.setConnectionTestQuery("SELECT 1");
+            config.setConnectionInitSql(
+                    "PRAGMA foreign_keys = ON;" +
+                            "PRAGMA journal_mode = WAL;" +
+                            "PRAGMA synchronous = NORMAL;" +
+                            "PRAGMA busy_timeout = 5000;"
+            );
+         */
+        
+        // ####################################################
+        //  Create pool
+        // ####################################################
+        dataSource = new HikariDataSource(hikariConfig);
         
         System.out.printf("\n\n\n%s\nConnection pool initialized successfully!\n%s", line_Separator, line_Separator);
     }
@@ -239,7 +260,6 @@ public class MyJDBC_Sqlite  // remove extends eventually
             catch (Exception e)
             {
                 print_Internal_Method_Err_MSG(method_Name, query, insertParameters, e);
-                
                 throw e;
             }
             
@@ -285,7 +305,6 @@ public class MyJDBC_Sqlite  // remove extends eventually
     
     /***
      * @param upload_Queries_And_Params
-     * @param errorMSG
      * @return
      *
      * DataTypes of params need to be converted to their expected Type  before being passed in as a param in java equivalent
@@ -301,18 +320,12 @@ public class MyJDBC_Sqlite  // remove extends eventually
      *
      */
     public Fetched_Results upload_And_Get_Batch(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params,
-                                                LinkedHashSet<Pair<String, Object[]>> get_Queries_And_Params, String errorMSG)
+                                                LinkedHashSet<Pair<String, Object[]>> get_Queries_And_Params, String error_msg)
     {
         //###############################################################
         // Check DB Status & Variables
         //###############################################################
         String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        
-        
-        //###############################################################
-        // Variables
-        //###############################################################
-        Fetched_Results fetched_Results = new Fetched_Results();
         
         //##############################################################
         // Execute Upload Params
@@ -321,38 +334,20 @@ public class MyJDBC_Sqlite  // remove extends eventually
         {
             try
             {
-                // Upload Statements
-                upload_Data_Batch_Internally(connection, method_Name, upload_Queries_And_Params);  // Upload Batch
+                upload_Data_Batch_Internally(connection, method_Name, upload_Queries_And_Params); // Upload Statements
                 
-                // Execute Fetch Statements
-                for (Pair<String, Object[]> fetch_Obj : get_Queries_And_Params)  // Execute Get Statements
-                {
-                    String query = fetch_Obj.getValue0();
-                    Object[] params = fetch_Obj.getValue1();
-                    
-                    // Add Fetch Results To Object made for storing multiple queries
-                    fetched_Results.add_2D_Result(get_2D_Object_AL_Internally(connection, method_Name, query, params, false));
-                }
-                
-                // Commit Changes beyond current driver
-                connection.commit();
-                
-                // Return Output
-                return fetched_Results;
+                return get_Fetched_Results_Internally(connection, get_Queries_And_Params);  // Fetch Queries
             }
             catch (Exception e)
             {
                 rollBack_Connection(connection, method_Name, null); // Rollback, in case it's not automatically done
-                throw e;
+                handleException_MYSQL(e, method_Name, null, error_msg);
+                throw new Exception();
             }
         }
-        //##########################################################
-        // Error Handling
-        //##########################################################
         catch (Exception e)
         {
-            handleException_MYSQL(e, method_Name, null, errorMSG);
-            return null; // Return Output
+            return null;
         }
     }
     
@@ -628,6 +623,40 @@ public class MyJDBC_Sqlite  // remove extends eventually
         }
     }
     
+    private Fetched_Results get_Fetched_Results_Internally(Connection connection, LinkedHashSet<Pair<String, Object[]>> fetch_query_and_params) throws Exception
+    {
+        //###############################################################
+        // Variables
+        //###############################################################
+        Fetched_Results fetched_Results = new Fetched_Results();
+        String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+        
+        String query = null;
+        Object[] params = null;
+        
+        //##############################################################
+        // Execute Upload Params
+        //##############################################################
+        try
+        {
+            for (Pair<String, Object[]> entry : fetch_query_and_params)  // Execute Get Statements
+            {
+                query = entry.getValue0();
+                params = entry.getValue1();
+                
+                // Add Fetch Results To Object made for storing multiple queries
+                fetched_Results.add_2D_Result(get_2D_Object_AL_Internally(connection, method_Name, query, params, false));
+            }
+            
+            return fetched_Results;  // Return Output
+        }
+        catch (Exception e)
+        {
+            print_Internal_Method_Err_MSG(method_Name, query, params, e);
+            throw e;
+        }
+    }
+    
     //#######################################
     // 2D Objects
     //#######################################
@@ -653,6 +682,27 @@ public class MyJDBC_Sqlite  // remove extends eventually
         {
             handleException_MYSQL(e, method_Name, query, errorMSG);
             throw new Exception(""); // Exception Already been handled but, notify external method calling this method
+        }
+    }
+    
+    //#######################################
+    // Fetched Results
+    //#######################################
+    public Fetched_Results get_Fetched_Results(LinkedHashSet<Pair<String, Object[]>> fetch_query_and_params, String error_msg)
+    {
+        String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+        
+        //##############################################################
+        // Execute Upload Params
+        //##############################################################
+        try (Connection connection = dataSource.getConnection())
+        {
+            return get_Fetched_Results_Internally(connection, fetch_query_and_params);
+        }
+        catch (Exception e)
+        {
+            handleException_MYSQL(e, method_Name, null, error_msg);
+            return null;
         }
     }
     
