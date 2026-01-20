@@ -1,6 +1,7 @@
 package App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Children;
 
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
+import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Parent.MyJTable_Display_Data;
 
 import java.awt.*;
@@ -9,26 +10,22 @@ import java.util.ArrayList;
 public class MacrosLeft_Table extends MyJTable_Display_Data
 {
     //##################################################################################################################
-    // Variables
-    //##################################################################################################################
-    protected int plan_ID;
-    
-    //##################################################################################################################
     // Constructor
     //##################################################################################################################
     public MacrosLeft_Table
     (
             MyJDBC_Sqlite db,
+            Shared_Data_Registry shared_data_registry,
             Container parentContainer,
             ArrayList<ArrayList<Object>> data,
             ArrayList<String> columnNames,
-            int plan_ID,
             ArrayList<String> colAvoidCentering,
             ArrayList<String> columnsToHide
     )
     {
         super(
                 db,
+                shared_data_registry,
                 parentContainer,
                 data,
                 columnNames,
@@ -36,15 +33,18 @@ public class MacrosLeft_Table extends MyJTable_Display_Data
                 "Macros Left Table",
                 null,
                 "draft_gui_plan_macros_left",
-                new Object[]{ plan_ID },
                 columnNames,
                 colAvoidCentering,
                 columnsToHide
         );
-        
-        //##########################################
-        // Variables
-        //###########################################
-        this.plan_ID = plan_ID;
+    }
+    
+    //##################################################################################################################
+    // Methods
+    //##################################################################################################################
+    @Override
+    protected Object[] get_Params()
+    {
+        return new Object[]{ shared_data_registry.get_Selected_Plan_ID() };
     }
 }

@@ -1,12 +1,13 @@
 package App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Parent;
 
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
+import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Table_Objects.Tables.Parent.JDBC_JTable;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public abstract class MyJTable_Display_Data extends JDBC_JTable
 {
@@ -14,7 +15,6 @@ public abstract class MyJTable_Display_Data extends JDBC_JTable
     // Variables
     //##################################################################################################################
     protected int update_Row = 0;
-    protected Object[] params;
     
     //##################################################################################################################
     // Constructor
@@ -22,6 +22,7 @@ public abstract class MyJTable_Display_Data extends JDBC_JTable
     public MyJTable_Display_Data
     (
             MyJDBC_Sqlite db,
+            Shared_Data_Registry shared_data_registry,
             Container parent_Container,
             ArrayList<ArrayList<Object>> data,
             ArrayList<String> column_Names,
@@ -29,7 +30,6 @@ public abstract class MyJTable_Display_Data extends JDBC_JTable
             String table_Name,
             String db_write_table_name,
             String db_read_view_name,
-            Object[] params,
             ArrayList<String> un_Editable_Columns,
             ArrayList<String> col_Avoid_Centering,
             ArrayList<String> columns_To_Hide
@@ -40,6 +40,7 @@ public abstract class MyJTable_Display_Data extends JDBC_JTable
         // #################################################
         super(
                 db,
+                shared_data_registry,
                 parent_Container,
                 false,
                 db_row_id_column_name,
@@ -52,8 +53,6 @@ public abstract class MyJTable_Display_Data extends JDBC_JTable
                 col_Avoid_Centering,
                 columns_To_Hide
         );
-        
-        this.params = params;
         
         // #################################################
         // Stop Rows From Being Highlighted From Selection
@@ -82,7 +81,7 @@ public abstract class MyJTable_Display_Data extends JDBC_JTable
     }
     
     //##################################################################################################################
-    // Variables
+    // Methods
     //##################################################################################################################
     @Override
     protected void set_Cell_Renderer()
@@ -137,10 +136,7 @@ public abstract class MyJTable_Display_Data extends JDBC_JTable
         throw new Exception(String.format("%s -> doesn't need a has_Cell_Data_Changed() Method to called, logic Error!", table_name));
     }
     
-    private String get_Query()
-    {
-        return String.format("SELECT * FROM %s WHERE %s = ?;", db_read_view_name, db_row_id_column_name);
-    }
+    protected abstract Object[] get_Params();
     
     protected ArrayList<Object> get_Update_Data() throws Exception
     {
@@ -148,10 +144,11 @@ public abstract class MyJTable_Display_Data extends JDBC_JTable
         //   Updating MacrosLeft_Table
         //##########################################################################
         String errorMSG = String.format("Error, Updating Table '%s'!", table_name);
+        String query = String.format("SELECT * FROM %s WHERE %s = ?;", db_read_view_name, db_row_id_column_name);
         
         try
         {
-            ArrayList<ArrayList<Object>> tableDataObject = db.get_2D_Query_AL_Object(get_Query(), params, errorMSG, false);
+            ArrayList<ArrayList<Object>> tableDataObject = db.get_2D_Query_AL_Object(query, get_Params(), errorMSG, false);
             return tableDataObject.getFirst();
         }
         catch (Exception _) // Error is already handled by DB class

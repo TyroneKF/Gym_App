@@ -1,6 +1,7 @@
 package App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Children.Total_Meal_Table;
 
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
+import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Parent.MyJTable_Display_Data;
 import App_Code.Objects.Table_Objects.MealManager;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ public class TotalMeal_Table extends MyJTable_Display_Data
     (
             MyJDBC_Sqlite db,
             MealManager mealManager,
+            Shared_Data_Registry shared_data_registry,
             int meal_In_Plan_ID,
             ArrayList<Object> data
     )
@@ -29,6 +31,7 @@ public class TotalMeal_Table extends MyJTable_Display_Data
         //##########################################
         super(
                 db,
+                shared_data_registry,
                 mealManager.get_Collapsible_JP_Obj().get_South_JPanel(),
                 new ArrayList<>(Collections.singletonList(data)),
                 mealManager.get_Total_Meal_Table_Column_Names(),
@@ -36,7 +39,6 @@ public class TotalMeal_Table extends MyJTable_Display_Data
                 "Total Meal Table",
                 "draft_meals_in_plan",
                 "draft_gui_total_meal_view",
-                new Object[]{ meal_In_Plan_ID },
                 mealManager.get_Total_Meal_Table_Column_Names(),
                 null,
                 mealManager.get_TotalMeal_Table_Cols_To_Hide()
@@ -63,6 +65,12 @@ public class TotalMeal_Table extends MyJTable_Display_Data
         super.update_Table_Row(data, update_Row);
         
         return data;
+    }
+    
+    @Override
+    protected Object[] get_Params()
+    {
+        return new Object[]{ meal_In_Plan_ID };
     }
 }
 
