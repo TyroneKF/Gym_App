@@ -21,8 +21,11 @@ public class Shared_Data_Registry
     // Integers
     //###############################################
     
-    private Integer selected_Plan_ID;
-    private Integer selected_Plan_Version_ID;
+    private Integer selected_plan_id;
+    private Integer selected_plan_version_id;
+    private Integer user_id;
+    private int na_ingredient_id;
+    private int na_pdid;
     
     //######################################################################
     // Collections
@@ -89,17 +92,13 @@ public class Shared_Data_Registry
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Shared_Data_Registry(Meal_Plan_Screen meal_plan_screen, String plan_Name, int selected_Plan_ID, int selected_Plan_Version_ID)
+    public Shared_Data_Registry(Meal_Plan_Screen meal_plan_screen)
     {
         //##################################
         // Variables
         //##################################
         total_meal_macro_pos = meal_plan_screen.get_Total_Meal_Macro_Col_Pos();
         total_meal_macro_symbol = meal_plan_screen.get_Total_Meal_Macro_Symbols();
-        
-        this.plan_Name = plan_Name;
-        this.selected_Plan_ID = selected_Plan_ID;
-        this.selected_Plan_Version_ID = selected_Plan_Version_ID;
     }
     
     //##################################################################################################################
@@ -707,6 +706,39 @@ public class Shared_Data_Registry
     }
     
     //##################################################################################################################
+    // Mutator Methods
+    //##################################################################################################################
+    public void set_Plan_Name(String plan_name)
+    {
+        this.plan_Name = plan_name;
+    }
+    
+    public void set_Selected_Plan_ID(int selected_plan_id)
+    {
+        this.selected_plan_id = selected_plan_id;
+    }
+    
+    public void set_Selected_Plan_Version_ID(Integer selected_plan_version_id)
+    {
+        this.selected_plan_version_id = selected_plan_version_id;
+    }
+    
+    public void set_User_ID(Integer user_id)
+    {
+        this.user_id = user_id;
+    }
+    
+    public void set_NA_Ingredient_ID(int ingredient_id)
+    {
+        na_ingredient_id = ingredient_id;
+    }
+    
+    public void set_NA_Ingredient_PDID(int pdid)
+    {
+        na_pdid = pdid;
+    }
+    
+    //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
     public int get_Active_MealCount()
@@ -716,12 +748,12 @@ public class Shared_Data_Registry
     
     public Integer get_Selected_Plan_ID()
     {
-        return selected_Plan_ID;
+        return selected_plan_id;
     }
     
     public Integer get_Selected_Plan_Version_ID()
     {
-        return selected_Plan_Version_ID;
+        return selected_plan_version_id;
     }
     
     public String get_Plan_Name()
@@ -729,15 +761,33 @@ public class Shared_Data_Registry
         return plan_Name;
     }
     
-    public LinkedHashMap<Total_Meal_Macro_Columns, String> get_Total_Meal_Macro_Symbols()
+    public Integer get_User_ID()
     {
-        return total_meal_macro_symbol;
+        return user_id;
+    }
+    
+    public int get_Na_Ingredient_ID()
+    {
+        return na_ingredient_id;
+    }
+    
+    public int get_NA_PDID()
+    {
+        return na_pdid;
     }
     
     public BigDecimal get_Meal_Macro_Value(MealManager mealManager, Total_Meal_Macro_Columns macro_name)
     {
         EnumMap<Total_Meal_Macro_Columns, BigDecimal> outer = totals_by_meal.get(mealManager);
         return outer != null ? outer.get(macro_name) : null;
+    }
+    
+    //###########################################################
+    // Collections
+    //###########################################################
+    public LinkedHashMap<Total_Meal_Macro_Columns, String> get_Total_Meal_Macro_Symbols()
+    {
+        return total_meal_macro_symbol;
     }
     
     //############################
