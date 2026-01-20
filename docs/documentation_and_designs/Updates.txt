@@ -25,6 +25,9 @@ Work On:
 move all changeable info like plan_id / plan_version id into shared_registry when these values change its easier to locate it in one area to update vs every object
 Use an enum for table column names
 
+remove column_Names_And_Positions in JDBC table
+Swap un_Editable_Column_Positions for edittable column positions
+
 PiePlot3D is depreciated
 
 Hard coded variables replace with commonly fetched variable id's in MPS

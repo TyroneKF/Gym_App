@@ -1,49 +1,42 @@
-package App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Children.Total_Meal_Table;
+package App_Code.Objects.Table_Objects.Tables.Children.Ingredients_Table;
 
 import App_Code.Objects.Table_Objects.Tables.Parent.Table_Enum;
+
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public enum Total_Meal_Macro_Columns implements Table_Enum
+public enum Ingredients_Table_Columns implements Table_Enum
 {
     //##################################################################################################################
     // Enums
     //##################################################################################################################
-    
-    // Macros
-    TOTAL_PROTEIN("total_protein"),
-    TOTAL_CARBOHYDRATES("total_carbohydrates"),
-    TOTAL_SUGARS_OF_CARBS("total_sugars_of_carbs"),
-    TOTAL_FATS("total_fats"),
-    TOTAL_SATURATED_FAT("total_saturated_fat"),
-    TOTAL_SALT("total_salt"),
-    TOTAL_FIBRE("total_fibre"),
-    TOTAL_WATER("total_water"),
-    TOTAL_CALORIES("total_calories");
+    DRAFT_INGREDIENTS_INDEX("draft_ingredients_index"),
+    INGREDIENT_TYPE_NAME("ingredient_type_name"),
+    INGREDIENT_NAME("ingredient_name"),
+    QUANTITY("quantity"),
+    DELETE_BTN("delete_button");
     
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    private static final String SOURCE_NAME = "draft_gui_total_meal_view";
+    private static final String SOURCE_NAME = "draft_gui_ingredients_in_sections_of_meal_calculation";
     
     private final String source_name;
-    
-    
     private final String key;
     
-    private static final Map<String, Total_Meal_Macro_Columns> BY_KEY =
+    private static final Map<String, Ingredients_Table_Columns> BY_KEY =
             Arrays.stream(values())
                     .collect(Collectors.toMap(
-                            Total_Meal_Macro_Columns :: key,
+                            Ingredients_Table_Columns :: key,
                             Function.identity()
                     ));
     
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    Total_Meal_Macro_Columns(String key)
+    Ingredients_Table_Columns(String key)
     {
         this.key = key;
         this.source_name = SOURCE_NAME;
@@ -58,6 +51,7 @@ public enum Total_Meal_Macro_Columns implements Table_Enum
     {
         return key;
     }
+    
     
     @Override
     public String source_Name()

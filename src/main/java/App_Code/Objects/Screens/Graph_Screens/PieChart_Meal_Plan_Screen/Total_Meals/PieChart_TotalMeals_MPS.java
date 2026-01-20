@@ -142,7 +142,7 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
-    public PieChart_TotalMeals_MPS(Meal_Plan_Screen meal_plan_screen)
+    public PieChart_TotalMeals_MPS(Shared_Data_Registry shared_data_registry, Meal_Plan_Screen meal_plan_screen)
     {
         // ################################################################
         // Super
@@ -154,7 +154,7 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
         // Variables
         // ################################################################
         this.meal_plan_screen = meal_plan_screen;
-        this.shared_Data_Registry = meal_plan_screen.get_MealManagerRegistry();
+        this.shared_Data_Registry = shared_data_registry;
         
         // #####################################
         // Collections

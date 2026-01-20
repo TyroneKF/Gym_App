@@ -1,4 +1,4 @@
-package App_Code.Objects.Table_Objects.Tables.Parent;
+package App_Code.Objects.Enums;
 
 import java.util.Optional;
 

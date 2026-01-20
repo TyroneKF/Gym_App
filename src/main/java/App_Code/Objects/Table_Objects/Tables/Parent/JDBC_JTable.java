@@ -90,7 +90,6 @@ public abstract class JDBC_JTable extends JPanel
         //##############################################################
         this.db = db;
         this.shared_data_registry = shared_data_registry;
-        this.saved_Data = saved_Data != null ? saved_Data : new ArrayList<>();
         
         this.parent_Container = parent_Container;
         this.add_JTable_Action = add_JTable_Action;
@@ -101,6 +100,13 @@ public abstract class JDBC_JTable extends JPanel
         this.db_write_table_name = db_write_table_name;
         
         this.class_Name = this.getClass().getSimpleName();
+        
+        //######################
+        // Format Data
+        //######################
+        this.saved_Data = saved_Data != null ? saved_Data : new ArrayList<>();
+        
+        if (! format_Table_Data(saved_Data)) { return; } ;
         
         //##############################################################
         // Column Configurations
@@ -144,7 +150,19 @@ public abstract class JDBC_JTable extends JPanel
         //##############################################################
         tableSetup(saved_Data, gui_Column_Names); // Table Setup With Table Data
         SetUp_Hidden_Table_Columns(columns_To_Hide); // Hide Columns | Must be the last step in configuration of the table
+        setOpaque(true); //content panes must be opaque
+        
+        //##############################################################
+        // Table Configurations
+        //##############################################################
+        table_Column_Configurations();
     }
+    
+    protected abstract void table_Column_Configurations();
+    
+    protected abstract boolean format_Table_Data(ArrayList<ArrayList<Object>> table_data);
+    
+    protected abstract void format_Table_Row_Data(ArrayList<Object> table_data) throws Exception;
     
     //##################################################################################################################
     // Table Setup Methods
@@ -182,7 +200,7 @@ public abstract class JDBC_JTable extends JPanel
         //#################################################################################
         resize_Object();
     }
-
+    
     protected abstract void extra_Table_Setup();
     
     protected void tableModel_Setup(ArrayList<ArrayList<Object>> data, ArrayList<String> column_Names)

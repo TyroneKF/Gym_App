@@ -2,6 +2,7 @@ package App_Code.Objects.Database_Objects;
 
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.*;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
+import App_Code.Objects.Table_Objects.Tables.Children.Ingredients_Table.Ingredients_Table_Columns;
 import App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Children.Total_Meal_Table.Total_Meal_Macro_Columns;
 import App_Code.Objects.Table_Objects.MealManager;
 import org.jfree.data.general.DefaultPieDataset;
@@ -31,8 +32,9 @@ public class Shared_Data_Registry
     // Collections
     //######################################################################
     // Meta Data
-    private LinkedHashMap<Total_Meal_Macro_Columns, Integer> total_meal_macro_pos;
-    private LinkedHashMap<Total_Meal_Macro_Columns, String> total_meal_macro_symbol;
+    private final LinkedHashMap<Total_Meal_Macro_Columns, Integer> total_meal_macro_pos;
+    private final LinkedHashMap<Total_Meal_Macro_Columns, String> total_meal_macro_symbol;
+    private final HashMap<Ingredients_Table_Columns, Integer> ingredients_table_cols_positions;
     
     private ArrayList<MealManager> mealManager_ArrayList = new ArrayList<>();
     private final HashMap<MealManager, DefaultPieDataset<Total_Meal_Macro_Columns>> pieChart_Dataset_Map = new HashMap<>();
@@ -99,6 +101,8 @@ public class Shared_Data_Registry
         //##################################
         total_meal_macro_pos = meal_plan_screen.get_Total_Meal_Macro_Col_Pos();
         total_meal_macro_symbol = meal_plan_screen.get_Total_Meal_Macro_Symbols();
+        
+        ingredients_table_cols_positions = meal_plan_screen.get_Ingredients_Table_Col_Pos();
     }
     
     //##################################################################################################################
@@ -106,7 +110,7 @@ public class Shared_Data_Registry
     //##################################################################################################################
     /*
      
-     */
+    */
     
     //###############################################################################
     // Sort Methods
@@ -741,6 +745,16 @@ public class Shared_Data_Registry
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
+    
+    // String
+    public String get_Plan_Name()
+    {
+        return plan_Name;
+    }
+    
+    //########################
+    // Integers
+    //########################
     public int get_Active_MealCount()
     {
         return (int) mealManager_ArrayList.stream().filter(mealManager -> ! mealManager.is_Meal_Deleted()).count();
@@ -754,11 +768,6 @@ public class Shared_Data_Registry
     public Integer get_Selected_Plan_Version_ID()
     {
         return selected_plan_version_id;
-    }
-    
-    public String get_Plan_Name()
-    {
-        return plan_Name;
     }
     
     public Integer get_User_ID()
@@ -776,6 +785,9 @@ public class Shared_Data_Registry
         return na_pdid;
     }
     
+    //########################
+    // BigDecimal
+    //########################
     public BigDecimal get_Meal_Macro_Value(MealManager mealManager, Total_Meal_Macro_Columns macro_name)
     {
         EnumMap<Total_Meal_Macro_Columns, BigDecimal> outer = totals_by_meal.get(mealManager);
@@ -788,6 +800,11 @@ public class Shared_Data_Registry
     public LinkedHashMap<Total_Meal_Macro_Columns, String> get_Total_Meal_Macro_Symbols()
     {
         return total_meal_macro_symbol;
+    }
+    
+    public HashMap<Ingredients_Table_Columns, Integer> get_Ingredients_Table_Cols_Positions()
+    {
+        return ingredients_table_cols_positions;
     }
     
     //############################

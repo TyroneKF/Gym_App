@@ -26,7 +26,7 @@ public class IngredientsTable extends JDBC_JTable
     //#################################################################################################################
     // Variables
     //#################################################################################################################
-   
+    
     // Objects
     private final MealManager mealManager;
     private final MacrosLeft_Table macrosLeft_table;
@@ -53,8 +53,10 @@ public class IngredientsTable extends JDBC_JTable
             model_Ingredient_Name_Col,
             model_DeleteBTN_Col;
     
-    private final int none_Of_The_Above_ID = 1;
-    private final int none_Of_The_Above_PDID = 1;
+    private int na_ingredient_id;
+    private int na_pdid;
+    
+   // private final HashMap<Ingredients_Table_Columns, Integer> ingredients_table_cols_positions;
     
     //##################################################################################################################
     // Constructor
@@ -107,25 +109,66 @@ public class IngredientsTable extends JDBC_JTable
         parent_Container = mealManager.getCollapsibleCenterJPanel();
         frame = mealManager.getFrame();
         
-        //##############################################################
-        // Setting Up Columns
-        //##############################################################
+        na_ingredient_id = shared_data_registry.get_Na_Ingredient_ID();
+        na_pdid = shared_data_registry.get_NA_PDID();
+    }
+    
+    //##################################################################################################################
+    // Data Formatting
+    //##################################################################################################################
+    @Override
+    protected boolean format_Table_Data(ArrayList<ArrayList<Object>> table_data)
+    {
+        try
+        {
+            for(ArrayList<Object> data : table_data)
+            {
+                format_Table_Row_Data(data);
+            }
+            return true;
+        }
+        catch (Exception e)
+        {
+            System.err.printf("\n\n%s Error -> formatting table data \n%s", get_Class_And_Method_Name(), e);
+            JOptionPane.showMessageDialog(null, String.format("Failed Formatting %s DATA!", table_name));
+            return false;
+        }
+    }
+    
+    @Override
+    protected void format_Table_Row_Data(ArrayList<Object> table_data) throws Exception
+    {
+        HashMap<Ingredients_Table_Columns, Integer> ingredients_table_cols_positions = shared_data_registry.get_Ingredients_Table_Cols_Positions();
         
-        // Table : draft_ingredients_in_sections_of_meal_calculation
-        set_Model_IngredientIndex_Col(column_Names_And_Positions.get(db_row_id_column_name)[0]);
-        set_Model_Quantity_Col(column_Names_And_Positions.get("quantity")[0]);
-        set_Model_IngredientType_Col(column_Names_And_Positions.get("ingredient_type_name")[0]);
-        set_Model_IngredientName_Col(column_Names_And_Positions.get("ingredient_name")[0]);
-        set_Model_DeleteBTN_Col(column_Names_And_Positions.get("delete_button")[0]);
+        //##########################
+        // Ingredients Name
+        //##########################
+        int ingredient_Name_Pos = ingredients_table_cols_positions.get(Ingredients_Table_Columns.INGREDIENT_NAME);
+        int ingredient_Name_ID = (Integer) table_data.get(ingredient_Name_Pos);
         
-        // Setting Up JComboBox  / Delete BTN Column Fields on Table
-        setup_Special_Columns();
+        Ingredient_Name_ID_OBJ ingredient_Name_ID_OBJ = shared_data_registry.get_Ingredient_Name_ID_OBJ_By_ID(ingredient_Name_ID);
         
-        //##############################################################
-        // Table Customization
-        //##############################################################
-        setOpaque(true); //content panes must be opaque
-        set_Table_Header_Font(new Font("Dialog", Font.BOLD, 12)); // Ingredients_In_Meal_Calculation Customisation
+        if (ingredient_Name_ID_OBJ == null)
+        {
+            throw new Exception(String.format("%s Error, Ingredient_Name_ID_OBJ returned null %s", get_Class_And_Method_Name(), ingredient_Name_ID));
+        }
+        
+        table_data.set(ingredient_Name_Pos, ingredient_Name_ID_OBJ);
+        
+        //##########################
+        // Ingredients Type
+        //##########################
+        int ingredient_Type_Pos = ingredients_table_cols_positions.get(Ingredients_Table_Columns.INGREDIENT_TYPE_NAME);;
+        int ingredient_Type_ID = (Integer) table_data.get(ingredient_Type_Pos);
+        
+        Ingredient_Type_ID_OBJ ingredient_Type_ID_OBJ = shared_data_registry.get_Type_ID_Obj_By_ID(ingredient_Type_ID);
+        
+        if (ingredient_Type_ID_OBJ == null)
+        {
+            throw new Exception(String.format("%s Error, Ingredient_Type_ID_OBJ returned null %s", get_Class_And_Method_Name(), ingredient_Type_ID));
+        }
+        
+        table_data.set(ingredient_Type_Pos, ingredient_Type_ID_OBJ);
     }
     
     //##################################################################################################################
@@ -254,7 +297,30 @@ public class IngredientsTable extends JDBC_JTable
         
         iconPanel_Insert.add(delete_btn);
     }
-   
+    
+    @Override
+    protected void table_Column_Configurations()
+    {
+        //##############################################################
+        // Setting Up Columns
+        //##############################################################
+        
+        // Table : draft_ingredients_in_sections_of_meal_calculation
+        set_Model_IngredientIndex_Col(column_Names_And_Positions.get(db_row_id_column_name)[0]);
+        set_Model_Quantity_Col(column_Names_And_Positions.get("quantity")[0]);
+        set_Model_IngredientType_Col(column_Names_And_Positions.get("ingredient_type_name")[0]);
+        set_Model_IngredientName_Col(column_Names_And_Positions.get("ingredient_name")[0]);
+        set_Model_DeleteBTN_Col(column_Names_And_Positions.get("delete_button")[0]);
+        
+        // Setting Up JComboBox  / Delete BTN Column Fields on Table
+        setup_Special_Columns();
+        
+        //##############################################################
+        // Table Customization
+        //##############################################################
+        set_Table_Header_Font(new Font("Dialog", Font.BOLD, 12)); // Ingredients_In_Meal_Calculation Customisation
+    }
+    
     private void setup_Special_Columns()
     {
         //################################
@@ -321,7 +387,7 @@ public class IngredientsTable extends JDBC_JTable
         //#################################################
         // Delete Ingredient From Temp Meal
         //#################################################
-        String query = String.format("DELETE FROM %s WHERE %s = ? ;",  db_write_table_name,db_row_id_column_name);
+        String query = String.format("DELETE FROM %s WHERE %s = ? ;", db_write_table_name, db_row_id_column_name);
         String error_msg = String.format("Error, unable to delete from '%s' !", table_name);
         
         if (! db.upload_Data(query, new Object[]{ ingredient_Index }, error_msg)) { return; }
@@ -405,7 +471,7 @@ public class IngredientsTable extends JDBC_JTable
             //##########################
             // Check IF N/A is selected
             //##########################
-            if (selected_Ingredient_Name_OBJ.get_ID().equals(none_Of_The_Above_ID))
+            if (selected_Ingredient_Name_OBJ.get_ID().equals(na_ingredient_id))
             {
                 // Can't have multiple 'None Of The Above' ingredients in a meal
                 if (is_There_An_Empty_Ingredients("change a current Ingredient in this meal to 'None Of The Above'"))
@@ -450,7 +516,7 @@ public class IngredientsTable extends JDBC_JTable
                 UPDATE %s
                 SET ingredient_id = ?,
                 pdid = ?
-                WHERE %s = ?;""",  db_write_table_name, db_row_id_column_name);
+                WHERE %s = ?;""", db_write_table_name, db_row_id_column_name);
         
         Object[] params_Upload = new Object[]{
                 selected_Ingredient_Name_ID,
@@ -481,9 +547,9 @@ public class IngredientsTable extends JDBC_JTable
         String upload_Query = String.format("""
                 UPDATE  %s
                 SET quantity = ?
-                WHERE %s = ?;""",  db_write_table_name, db_row_id_column_name);
+                WHERE %s = ?;""", db_write_table_name, db_row_id_column_name);
         
-        upload_Queries_And_Params.add(new Pair<>(upload_Query, new Object[]{ quantity, ingredient_Index}));
+        upload_Queries_And_Params.add(new Pair<>(upload_Query, new Object[]{ quantity, ingredient_Index }));
         
         //##############################################
         // Execute
@@ -498,7 +564,7 @@ public class IngredientsTable extends JDBC_JTable
         //###################################
         LinkedHashSet<Pair<String, Object[]>> fetch_Queries_And_Params = new LinkedHashSet<>();
         
-        String fetch_Query = String.format("SELECT * FROM %s WHERE %s = ?;",  db_read_view_name, db_row_id_column_name);
+        String fetch_Query = String.format("SELECT * FROM %s WHERE %s = ?;", db_read_view_name, db_row_id_column_name);
         fetch_Queries_And_Params.add(new Pair<>(fetch_Query, new Object[]{ ingredient_Index }));
         
         //##############################################
@@ -514,9 +580,10 @@ public class IngredientsTable extends JDBC_JTable
         try
         {
             // Get First Row Results & Format Data to include Storable_ID_Objects
-            ArrayList<Object> formatted_Data = format_Table_Row_Data(fetched_Results.get_Result_1D_AL(0));
+            ArrayList<Object> data = fetched_Results.get_Result_1D_AL(0);
+            format_Table_Row_Data(data); // format data
             
-            super.update_Table_Row(formatted_Data, row_In_Model); // Update This Table
+            super.update_Table_Row(data, row_In_Model); // Update This Table
             
             update_All_Tables_Data();// Update ALl Other Tables
             return true;
@@ -527,46 +594,6 @@ public class IngredientsTable extends JDBC_JTable
             JOptionPane.showMessageDialog(null, String.format("Unable to Update - '%s'!", table_name));
             return false;
         }
-    }
-    
-  
-    private ArrayList<Object> format_Table_Row_Data(ArrayList<Object> table_data) throws Exception
-    {
-        
-        //##########################
-        // Ingredients Name
-        //##########################
-        int ingredient_Name_Pos = get_Ingredient_Name_Col(true);
-        int ingredient_Name_ID = (Integer) table_data.get(ingredient_Name_Pos);
-        
-        Ingredient_Name_ID_OBJ ingredient_Name_ID_OBJ = shared_data_registry.get_Ingredient_Name_ID_OBJ_By_ID(ingredient_Name_ID);
-        
-        if (ingredient_Name_ID_OBJ == null)
-        {
-            throw new Exception(String.format("%s Error, Ingredient_Name_ID_OBJ returned null %s", get_Class_And_Method_Name(), ingredient_Name_ID));
-        }
-        
-        table_data.set(ingredient_Name_Pos, ingredient_Name_ID_OBJ);
-        
-        //##########################
-        // Ingredients Type
-        //##########################
-        int ingredient_Type_Pos = get_IngredientType_Col(true);
-        int ingredient_Type_ID = (Integer) table_data.get(ingredient_Type_Pos);
-        
-        Ingredient_Type_ID_OBJ ingredient_Type_ID_OBJ = shared_data_registry.get_Type_ID_Obj_By_ID(ingredient_Type_ID);
-        
-        if (ingredient_Type_ID_OBJ == null)
-        {
-            throw new Exception(String.format("%s Error, Ingredient_Type_ID_OBJ returned null %s", get_Class_And_Method_Name(), ingredient_Type_ID));
-        }
-        
-        table_data.set(ingredient_Type_Pos, ingredient_Type_ID_OBJ);
-        
-        //##########################
-        // Output
-        //##########################
-        return table_data;
     }
     
     //##################################################################################################################
@@ -599,7 +626,7 @@ public class IngredientsTable extends JDBC_JTable
         //###############################################
         
         // 1.) Insert Ingredient to Ingredients Table
-        String upload_Q1 = String.format( """
+        String upload_Q1 = String.format("""
                 INSERT INTO %s
                 (
                     draft_div_meal_sections_id,
@@ -611,8 +638,8 @@ public class IngredientsTable extends JDBC_JTable
                 (?, ?, ?, ?);""", db_write_table_name);
         
         upload_Queries_And_Params.add(new Pair<>(upload_Q1,
-                new Object[]{ sub_Meal_ID, none_Of_The_Above_ID, none_Of_The_Above_PDID, 0 }));
-    
+                new Object[]{ sub_Meal_ID, na_ingredient_id, na_pdid, 0 }));
+        
         //#######################################################
         // Fetch Queries
         //#######################################################
@@ -636,13 +663,14 @@ public class IngredientsTable extends JDBC_JTable
         //#######################################################
         try
         {
-            ingredient_DATA = format_Table_Row_Data(fetched_Results_OBJ.get_Result_1D_AL(0));
+            ingredient_DATA = fetched_Results_OBJ.get_Result_1D_AL(0);
+            format_Table_Row_Data(ingredient_DATA); // format Ingredients Data
             
             System.out.printf("\n\nIngredients Results: \n%s%n", ingredient_DATA);
         }
         catch (Exception e)
         {
-            JOptionPane.showMessageDialog(null,String.format("Unable to add Ingredient to %s", table_name));
+            JOptionPane.showMessageDialog(null, String.format("Unable to add Ingredient to %s", table_name));
             System.err.printf("\n\n%s \n%s", get_Class_And_Method_Name(), e);
             return;
         }
@@ -783,7 +811,7 @@ public class IngredientsTable extends JDBC_JTable
     public boolean save_Btn_Action(boolean show_Message)
     {
         save_Data(); // Update Table Model
-     
+        
         if (show_Message) // Success Message
         {
             JOptionPane.showMessageDialog(frame, "Table Successfully Updated!");
@@ -930,7 +958,7 @@ public class IngredientsTable extends JDBC_JTable
             Integer ingredient_OBJ_ID = ingredient_name_id_obj.get_ID(); // Get ID of Ingredient Name
             
             // if None Of  the above is found in the table return true
-            if (ingredient_OBJ_ID.equals(none_Of_The_Above_ID))
+            if (ingredient_OBJ_ID.equals(na_ingredient_id))
             {
                 String message = String.format("""
                         

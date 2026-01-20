@@ -5,11 +5,12 @@ import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.*;
 import App_Code.Objects.Database_Objects.Fetched_Results;
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
+import App_Code.Objects.Table_Objects.Tables.Children.Ingredients_Table.Ingredients_Table_Columns;
 import App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Children.MacrosLeft_Table;
 import App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Children.MacrosTargets_Table;
 import App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Children.Total_Meal_Table.Total_Meal_Macro_Columns;
 import App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Children.Total_Meal_Table.Total_Meal_Other_Columns;
-import App_Code.Objects.Table_Objects.Tables.Parent.My_Enum;
+import App_Code.Objects.Enums.My_Enum;
 import App_Code.Objects.Table_Objects.MealManager;
 import App_Code.Objects.Gui_Objects.*;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
@@ -103,6 +104,15 @@ public class Meal_Plan_Screen extends Screen_JFrame
     private final ArrayList<String> ingredients_In_Meal_Table_Col_To_Hide = new ArrayList<>(Arrays.asList(
             "draft_ingredients_index", "water_content"
     ));
+    
+    private final HashMap<Ingredients_Table_Columns, Integer> ingredients_table_cols_positions = new HashMap<>() // These 2 columns are needed for external charts
+    {{
+        put(Ingredients_Table_Columns.DRAFT_INGREDIENTS_INDEX, null);
+        put(Ingredients_Table_Columns.INGREDIENT_TYPE_NAME, null);
+        put(Ingredients_Table_Columns.INGREDIENT_NAME, null);
+        put(Ingredients_Table_Columns.QUANTITY, null);
+        put(Ingredients_Table_Columns.DELETE_BTN, null);
+    }};
     
     //#######################################
     // Macro_Targets
@@ -223,6 +233,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
         
         // 2.) Getting Table Column Names
         if (! setup_Get_Column_Names()) { failed_Start_UP(loading_Screen); return; }
+        
+        // 2.) Getting Table Column Names
+        setup_Configure_Table_Col_Positions();
         
         // 3.) Getting Number Of Meals & Sub meals Count
         if (! setup_Get_Meal_Counts()) { failed_Start_UP(loading_Screen); return; }
@@ -564,6 +577,29 @@ public class Meal_Plan_Screen extends Screen_JFrame
         }
         
         //########################################
+        // Output
+        //########################################
+        return true;
+    }
+    
+    private void setup_Configure_Table_Col_Positions()
+    {
+        //########################################
+        // Column Names : Ingredients Table
+        //########################################
+        for (int pos = 0; pos < ingredients_table_cols_positions.size(); pos++)
+        {
+            String column_name = ingredients_Column_Names.get(pos);
+            
+            // See if the column Name is an Other Columns Enum
+            Optional<Ingredients_Table_Columns> column_enum = My_Enum.get_Enum_From_Key(Ingredients_Table_Columns.class, column_name);
+            
+            if (column_enum.isEmpty()) { continue; }
+            
+            ingredients_table_cols_positions.put(column_enum.get(), pos);
+        }
+        
+        //########################################
         // Column Names : Total_Meal_View
         //########################################
         for (int pos = 0; pos < meal_total_column_Names.size(); pos++)
@@ -586,11 +622,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 total_meal_other_cols_positions.put(other_column_enum.get(), pos);
             }
         }
-        
-        //########################################
-        // Output
-        //########################################
-        return true;
     }
     
     private boolean setup_Get_Meal_Counts()
@@ -1221,7 +1252,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         
         // N/A Ingredient ID
         String query_01 = "SELECT ingredient_id FROM  ingredients_info WHERE ingredient_name = ?;";
-        fetch_queries_and_params.add(new Pair<>(query_01, new Object[]{"None Of The Above"}));
+        fetch_queries_and_params.add(new Pair<>(query_01, new Object[]{ "None Of The Above" }));
         
         // N/A Shop
         String query_02 = """
@@ -1232,7 +1263,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     ingredient_id = (SELECT ingredient_id FROM ingredients_info WHERE ingredient_name = ?)
                     AND product_name = ?;""";
         
-        fetch_queries_and_params.add(new Pair<>(query_02, new Object[]{"None Of The Above", "N/A"}));
+        fetch_queries_and_params.add(new Pair<>(query_02, new Object[]{ "None Of The Above", "N/A" }));
         
         try
         {
@@ -1247,8 +1278,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
             // Set Variables
             //###########################
             // Retrieve Variables From Fetched Results
-            int na_ingredient_id  = (Integer) fetched_results.get_1D_Result_Into_Object(0);
-            int na_pdid  = (Integer) fetched_results.get_1D_Result_Into_Object(1);
+            int na_ingredient_id = (Integer) fetched_results.get_1D_Result_Into_Object(0);
+            int na_pdid = (Integer) fetched_results.get_1D_Result_Into_Object(1);
             
             // Set Variables in Shared Data Registry
             shared_Data_Registry.set_NA_Ingredient_ID(na_ingredient_id);
@@ -1398,17 +1429,10 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     // Get Ingredients DATA
                     //###########################
                     int div_id = ingredient_node.get("div_id").asInt();
-                    //ingredients_values.add(div_id);
-                    
                     ingredients_values.add(ingredient_node.get("index").asInt());
                     
-                    // Ingredient Name OBJ
-                    int ingredient_Type_ID = ingredient_node.get("type_id").asInt();
-                    ingredients_values.add(shared_Data_Registry.get_Type_ID_Obj_By_ID(ingredient_Type_ID));
-                    
-                    // Ingredient Name Object
-                    int ingredient_Name_ID = ingredient_node.get("id").asInt();
-                    ingredients_values.add(shared_Data_Registry.get_Ingredient_Name_ID_OBJ_By_ID(ingredient_Name_ID));
+                    ingredients_values.add(ingredient_node.get("type_id").asInt());// Ingredient Name OBJ
+                    ingredients_values.add(ingredient_node.get("id").asInt()); // Ingredient Name Object
                     
                     // Quantity
                     ingredients_values.add(new BigDecimal(ingredient_node.get("quantity").asText()));
@@ -2537,11 +2561,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //###########################################
     // Objects
     //###########################################
-    public Shared_Data_Registry get_MealManagerRegistry()
-    {
-        return shared_Data_Registry;
-    }
-    
     public JPanel getScroll_JPanel_Center()
     {
         return scroll_JPanel_Center;
@@ -2575,6 +2594,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
     public LinkedHashMap<Total_Meal_Macro_Columns, String> get_Total_Meal_Macro_Symbols()
     {
         return total_meal_macro_symbol;
+    }
+    
+    public HashMap<Ingredients_Table_Columns, Integer> get_Ingredients_Table_Col_Pos()
+    {
+        return ingredients_table_cols_positions;
     }
     
     //###########################################

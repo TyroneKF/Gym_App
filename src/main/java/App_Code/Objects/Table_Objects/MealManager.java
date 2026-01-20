@@ -44,7 +44,9 @@ public class MealManager
     private int
             source_meal_id,
             draft_meal_ID,
-            yPoInternally = 0;
+            yPoInternally = 0,
+            na_ingredient_id,
+            na_pdid;
     
     private final UUID internalId = UUID.randomUUID();
     
@@ -114,6 +116,9 @@ public class MealManager
         draft_meal_ID = meal_ID_Obj.get_Draft_Meal_ID();
         source_meal_id = meal_ID_Obj.get_Source_Meal_ID();
         
+        na_pdid = shared_Data_Registry.get_NA_PDID();
+        na_ingredient_id = shared_Data_Registry.get_Na_Ingredient_ID();
+        
         // Set Meal Time Variables
         LocalTime meal_time = meal_ID_Obj.get_Meal_Time();
         set_Time_Variables(false, meal_time, meal_time); // Set MealTime Variables
@@ -149,6 +154,9 @@ public class MealManager
         this.macrosLeft_JTable = macrosLeft_JTable;
         this.db = db;
         
+        na_pdid = shared_Data_Registry.get_NA_PDID();
+        na_ingredient_id = shared_Data_Registry.get_Na_Ingredient_ID();
+        
         //############################################################################
         // Getting user input for Meal Name & Time
         //############################################################################
@@ -175,8 +183,8 @@ public class MealManager
         // Upload Queries
         //#######################################################
         /*
-        
-        
+         
+         
          */
         //###############################
         // Insert Into Meals
@@ -223,7 +231,7 @@ public class MealManager
                 );""";
         
         
-        Object[] q3_params = new Object[]{ shared_Data_Registry.get_Na_Ingredient_ID(), shared_Data_Registry.get_NA_PDID(), 0 };
+        Object[] q3_params = new Object[]{ na_ingredient_id, na_pdid, 0 };
         upload_Queries_And_Params.add(new Pair<>(upload_Q3, q3_params)); // Upload Q3
         
         //#######################################################
@@ -249,7 +257,7 @@ public class MealManager
                 
                 INNER JOIN draft_gui_ingredients_in_sections_of_meal_calculation I2
                     ON I1.draft_ingredients_index = I2.draft_ingredients_index
-              
+                
                 WHERE
                     M.plan_id = ? AND M.meal_name = ?
                 

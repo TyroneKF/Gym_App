@@ -7,7 +7,6 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public abstract class MyJTable_Display_Data extends JDBC_JTable
 {
@@ -70,9 +69,6 @@ public abstract class MyJTable_Display_Data extends JDBC_JTable
         // Remove the focus outline from cells
         jTable.setFocusable(false);
         
-        //content panes must be opaque
-        setOpaque(true);
-        
         // Set Header Font
         set_Table_Header_Font(new Font("Dialog", Font.BOLD, 14));
         
@@ -83,6 +79,15 @@ public abstract class MyJTable_Display_Data extends JDBC_JTable
     //##################################################################################################################
     // Methods
     //##################################################################################################################
+    @Override
+    protected void table_Column_Configurations() { }
+    
+    @Override
+    protected boolean format_Table_Data(ArrayList<ArrayList<Object>> table_data) { return true; }
+    
+    @Override
+    protected void format_Table_Row_Data(ArrayList<Object> table_data) throws Exception { }
+    
     @Override
     protected void set_Cell_Renderer()
     {
