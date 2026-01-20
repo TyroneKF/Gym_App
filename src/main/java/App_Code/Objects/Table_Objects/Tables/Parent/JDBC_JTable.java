@@ -5,6 +5,7 @@ package App_Code.Objects.Table_Objects.Tables.Parent;
 //http://tips4java.wordpress.com/2009/07/12/table-button-column/
 
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
+import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
@@ -18,6 +19,7 @@ public abstract class JDBC_JTable extends JPanel
     // Objects
     //##############################################
     protected MyJDBC_Sqlite db;
+    protected Shared_Data_Registry shared_data_registry;
     protected Container parent_Container;
     protected JScrollPane scrollPane = new JScrollPane();
     protected static GridBagConstraints gbc = new GridBagConstraints(); //HELLO DELETE
@@ -67,6 +69,7 @@ public abstract class JDBC_JTable extends JPanel
     public JDBC_JTable
     (
             MyJDBC_Sqlite db,
+            Shared_Data_Registry shared_data_registry,
             Container parent_Container,
             boolean add_JTable_Action,
             String db_row_id_column_name,
@@ -86,6 +89,7 @@ public abstract class JDBC_JTable extends JPanel
         // Variables
         //##############################################################
         this.db = db;
+        this.shared_data_registry = shared_data_registry;
         this.saved_Data = saved_Data != null ? saved_Data : new ArrayList<>();
         
         this.parent_Container = parent_Container;
@@ -178,7 +182,7 @@ public abstract class JDBC_JTable extends JPanel
         //#################################################################################
         resize_Object();
     }
-    
+
     protected abstract void extra_Table_Setup();
     
     protected void tableModel_Setup(ArrayList<ArrayList<Object>> data, ArrayList<String> column_Names)
@@ -517,8 +521,10 @@ public abstract class JDBC_JTable extends JPanel
                     Column Names (%s):
                     %s%n
                     
-                    Expected %s
-                    Received  %s""", get_Class_Name(), method_name, column_name_size, column_Names, column_name_size, source_data_size));
+                    Expected: %s
+                    Received:  %s
+                    
+                    %s%n""", get_Class_Name(), method_name, column_name_size, column_Names, column_name_size, source_data_size, source_Data));
         }
     }
     
