@@ -29,7 +29,6 @@ public class IngredientsTable extends JDBC_JTable
    
     // Objects
     private final MealManager mealManager;
-    private final Shared_Data_Registry shared_Data_Registry;
     private final MacrosLeft_Table macrosLeft_table;
     
     // Screen Objects
@@ -65,7 +64,7 @@ public class IngredientsTable extends JDBC_JTable
     (
             MyJDBC_Sqlite db,
             MealManager mealManager,
-            Shared_Data_Registry shared_Data_Registry,
+            Shared_Data_Registry shared_data_registry,
             MacrosLeft_Table macrosLeft_table,
             int sub_Meal_ID,
             ArrayList<ArrayList<Object>> data,
@@ -75,6 +74,7 @@ public class IngredientsTable extends JDBC_JTable
     {
         super(
                 db,
+                shared_data_registry,
                 mealManager.getCollapsibleCenterJPanel(),
                 true,
                 "draft_ingredients_index",
@@ -92,7 +92,6 @@ public class IngredientsTable extends JDBC_JTable
         // Other Variables
         //##############################################################
         this.mealManager = mealManager;
-        this.shared_Data_Registry = shared_Data_Registry;
         this.macrosLeft_table = macrosLeft_table;
         
         this.sub_Meal_ID = sub_Meal_ID;
@@ -255,7 +254,7 @@ public class IngredientsTable extends JDBC_JTable
         
         iconPanel_Insert.add(delete_btn);
     }
-    
+   
     private void setup_Special_Columns()
     {
         //################################
@@ -267,7 +266,7 @@ public class IngredientsTable extends JDBC_JTable
                 get_JTable(),
                 ingredient_Type_Column,
                 "Select Ingredient Type to Change Ingredient Names!",
-                shared_Data_Registry.get_Mapped_Ingredient_Types()
+                shared_data_registry.get_Mapped_Ingredient_Types()
         );
         
         //################################
@@ -275,7 +274,7 @@ public class IngredientsTable extends JDBC_JTable
         //################################
         new Ingredient_Name_JComboBox_Column(
                 get_JTable(),
-                shared_Data_Registry,
+                shared_data_registry,
                 get_Ingredient_Name_Col(false),
                 ingredient_Type_Column,
                 "Select Ingredient Name!"
@@ -398,7 +397,7 @@ public class IngredientsTable extends JDBC_JTable
         //##########################################
         else if (column_In_Model == get_Ingredient_Name_Col(true))
         {
-            System.out.printf("\n\n@tableDataChange_Action() Ingredient Name Changed - %s", table_name);
+            System.out.printf("\n\n@tableDataChange_Action() Ingredient Name Changed - %s \nIndex: %s", table_name, ingredient_Index);
             
             Ingredient_Name_ID_OBJ selected_Ingredient_Name_OBJ = (Ingredient_Name_ID_OBJ) new_Value;
             int selected_Ingredient_Name_ID = selected_Ingredient_Name_OBJ.get_ID();
@@ -426,7 +425,7 @@ public class IngredientsTable extends JDBC_JTable
         // ###############################
         else if (column_In_Model == get_Quantity_Col(true))
         {
-            System.out.printf("\ntableDataChange_Action() Quantity Being Changed - %s", table_name);
+            System.out.printf("\ntableDataChange_Action() Quantity Being Changed - %s \nIndex: %s", table_name, ingredient_Index);
             return update_Table_Values_By_Quantity(row_In_Model, ingredient_Index, (BigDecimal) new_Value);
         }
         else
@@ -515,7 +514,7 @@ public class IngredientsTable extends JDBC_JTable
         try
         {
             // Get First Row Results & Format Data to include Storable_ID_Objects
-            ArrayList<Object> formatted_Data = format_DB_Results_For_ID_Objects(fetched_Results.get_Result_1D_AL(0));
+            ArrayList<Object> formatted_Data = format_Table_Row_Data(fetched_Results.get_Result_1D_AL(0));
             
             super.update_Table_Row(formatted_Data, row_In_Model); // Update This Table
             
@@ -530,42 +529,44 @@ public class IngredientsTable extends JDBC_JTable
         }
     }
     
-    private ArrayList<Object> format_DB_Results_For_ID_Objects(ArrayList<Object> new_Data) throws Exception
+  
+    private ArrayList<Object> format_Table_Row_Data(ArrayList<Object> table_data) throws Exception
     {
+        
         //##########################
         // Ingredients Name
         //##########################
         int ingredient_Name_Pos = get_Ingredient_Name_Col(true);
-        int ingredient_Name_ID = (Integer) new_Data.get(ingredient_Name_Pos);
+        int ingredient_Name_ID = (Integer) table_data.get(ingredient_Name_Pos);
         
-        Ingredient_Name_ID_OBJ ingredient_Name_ID_OBJ = shared_Data_Registry.get_Ingredient_Name_ID_OBJ_By_ID(ingredient_Name_ID);
+        Ingredient_Name_ID_OBJ ingredient_Name_ID_OBJ = shared_data_registry.get_Ingredient_Name_ID_OBJ_By_ID(ingredient_Name_ID);
         
         if (ingredient_Name_ID_OBJ == null)
         {
             throw new Exception(String.format("%s Error, Ingredient_Name_ID_OBJ returned null %s", get_Class_And_Method_Name(), ingredient_Name_ID));
         }
         
-        new_Data.set(ingredient_Name_Pos, ingredient_Name_ID_OBJ);
+        table_data.set(ingredient_Name_Pos, ingredient_Name_ID_OBJ);
         
         //##########################
         // Ingredients Type
         //##########################
         int ingredient_Type_Pos = get_IngredientType_Col(true);
-        int ingredient_Type_ID = (Integer) new_Data.get(ingredient_Type_Pos);
+        int ingredient_Type_ID = (Integer) table_data.get(ingredient_Type_Pos);
         
-        Ingredient_Type_ID_OBJ ingredient_Type_ID_OBJ = shared_Data_Registry.get_Type_ID_Obj_By_ID(ingredient_Type_ID);
+        Ingredient_Type_ID_OBJ ingredient_Type_ID_OBJ = shared_data_registry.get_Type_ID_Obj_By_ID(ingredient_Type_ID);
         
         if (ingredient_Type_ID_OBJ == null)
         {
             throw new Exception(String.format("%s Error, Ingredient_Type_ID_OBJ returned null %s", get_Class_And_Method_Name(), ingredient_Type_ID));
         }
         
-        new_Data.set(ingredient_Type_Pos, ingredient_Type_ID_OBJ);
+        table_data.set(ingredient_Type_Pos, ingredient_Type_ID_OBJ);
         
         //##########################
         // Output
         //##########################
-        return new_Data;
+        return table_data;
     }
     
     //##################################################################################################################
@@ -635,7 +636,7 @@ public class IngredientsTable extends JDBC_JTable
         //#######################################################
         try
         {
-            ingredient_DATA = format_DB_Results_For_ID_Objects(fetched_Results_OBJ.get_Result_1D_AL(0));
+            ingredient_DATA = format_Table_Row_Data(fetched_Results_OBJ.get_Result_1D_AL(0));
             
             System.out.printf("\n\nIngredients Results: \n%s%n", ingredient_DATA);
         }

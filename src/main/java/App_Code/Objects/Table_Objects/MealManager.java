@@ -171,84 +171,107 @@ public class MealManager
         LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params = new LinkedHashSet<>();
         LinkedHashSet<Pair<String, Object[]>> fetch_Queries_And_Params = new LinkedHashSet<>();
         
-        int sub_Meal_ID;
-        ArrayList<ArrayList<Object>> sub_Meal_DATA;
-        ArrayList<Object> total_Meal_Data = null;
+        //#######################################################
+        // Upload Queries
+        //#######################################################
+        /*
         
-        //################################################
-        // Uploads
-        //###############################################
         
-        // 1.) Create Meal Upload
-        String upload_Q1 = "INSERT INTO meals_in_plan (plan_id, meal_name, meal_time) VALUES (?,?,?);";
-        upload_Queries_And_Params.add(new Pair<>(upload_Q1, new Object[]{ null, new_Meal_Name, new_Meal_Time }));
+         */
+        //###############################
+        // Insert Into Meals
+        //###############################
+        String upload_Q1 = """
+                INSERT INTO draft_meals_in_plan
+                (plan_id, meal_name, meal_time)
+                VALUES
+                (?,?,?);""";
         
-        //######################################
-        // 2.) Set Meal ID
-        //######################################
-        String var_Meal_ID = "@mealID";
-        String upload_Q2 = String.format("Set %s = LAST_INSERT_ID();", var_Meal_ID);
-        upload_Queries_And_Params.add(new Pair<>(upload_Q2, null));
+        upload_Queries_And_Params.add(new Pair<>(upload_Q1, new Object[]{ get_Plan_ID(), new_Meal_Name, new_Meal_Time }));
         
-        //######################################
-        // 3.) Create Sub-Meal
-        //######################################
-        String upload_Q3 = String.format("""
-                INSERT INTO divided_meal_sections (meal_in_plan_id, plan_id) VALUES
-                (%s, ?);""", var_Meal_ID);
-        upload_Queries_And_Params.add(new Pair<>(upload_Q3, new Object[]{ null }));
+        //###############################
+        // Insert Into Sub-Meals
+        //###############################
+        String upload_Q2 = """
+                INSERT INTO draft_divided_meal_sections
+                (draft_meal_in_plan_id, plan_id)
+                VALUES
+                (
+                    (SELECT last_insert_rowid()),
+                    ?
+                );""";
         
-        //######################################
-        // 4.) Set Sub-Meal ID
-        //######################################
-        String var_Sub_Meal_ID = "@subMealID";
-        String upload_Q4 = String.format("Set %s = LAST_INSERT_ID();", var_Sub_Meal_ID);
+        upload_Queries_And_Params.add(new Pair<>(upload_Q2, new Object[]{ get_Plan_ID() })); // Upload Q1
         
-        upload_Queries_And_Params.add(new Pair<>(upload_Q4, null));
+        //###############################
+        // Insert Ingredients Into Sub-Meal
+        //###############################
+        String upload_Q3 = """
+                INSERT INTO draft_ingredients_in_sections_of_meal
+                (
+                    draft_div_meal_sections_id,
+                    ingredient_id,
+                    pdid,
+                    quantity
+                )
+                VALUES
+                (
+                    (SELECT last_insert_rowid()),
+                     ?,
+                     ?,
+                     ?
+                );""";
         
-        //########################################
-        // 5.) Insert None of the Above into Sub-Meal
-        //########################################
         
-        String upload_Q5 = String.format("""
-                INSERT INTO ingredients_in_sections_of_meal
-                (plan_id, pdid, div_meal_sections_id, ingredient_id, quantity) VALUES
-                (?, ?, %s, ?, ?);""", var_Sub_Meal_ID);
-        
-        upload_Queries_And_Params.add(new Pair<>(upload_Q5,
-                new Object[]{ null, new Null_MYSQL_Field(Types.INTEGER), 1, 0 }));
+        Object[] q3_params = new Object[]{ shared_Data_Registry.get_Na_Ingredient_ID(), shared_Data_Registry.get_NA_PDID(), 0 };
+        upload_Queries_And_Params.add(new Pair<>(upload_Q3, q3_params)); // Upload Q3
         
         //#######################################################
-        // Fetch Queries
+        // Fetch Query
         //#######################################################
         
-        // 1.) Get Meal_ID_OBJ
-        String get_Q1 = String.format("SELECT %s;", var_Meal_ID);
-        fetch_Queries_And_Params.add(new Pair<>(get_Q1, null));
+        // Get IDs / Ingredients Row DATA
+        String fetch_query_01 = """
+                
+                SELECT
+                
+                    M.draft_meal_in_plan_id,
+                    S.draft_div_meal_sections_id,
+                    I2.*
+                
+                FROM draft_meals_in_plan M
+                
+                INNER JOIN draft_divided_meal_sections S
+                    ON M.draft_meal_in_plan_id = S.draft_meal_in_plan_id
+                
+                INNER JOIN draft_ingredients_in_sections_of_meal I1
+                    ON S.draft_div_meal_sections_id = I1.draft_div_meal_sections_id
+                
+                INNER JOIN draft_gui_ingredients_in_sections_of_meal_calculation I2
+                    ON I1.draft_ingredients_index = I2.draft_ingredients_index
+              
+                WHERE
+                    M.plan_id = ? AND M.meal_name = ?
+                
+                LIMIT 1;""";
         
-        //#############################
-        // 2.) Get Sub-Meal ID
-        //#############################
-        String get_Q2 = String.format("SELECT %s;", var_Sub_Meal_ID);
-        fetch_Queries_And_Params.add(new Pair<>(get_Q2, null));
+        fetch_Queries_And_Params.add(new Pair<>(fetch_query_01, new Object[]{ get_Plan_ID(), new_Meal_Name })); // Upload Params
         
-        //#############################
-        // 3.) Get Ingredients Table DATA
-        //#############################
-        String get_Q3 = String.format("""
+        // Get TotalMeal Data
+        String fetch_query_02 = """
+                WITH
+                    Meal_ID AS (
+                
+                        SELECT draft_meal_in_plan_id
+                        FROM draft_meals_in_plan
+                        WHERE plan_id = ? AND meal_name = ?
+                    )
+                
                 SELECT *
-                FROM ingredients_in_sections_of_meal_calculation
-                WHERE plan_id = ? AND div_meal_sections_id = %s;""", var_Sub_Meal_ID);
-        fetch_Queries_And_Params.add(new Pair<>(get_Q3, new Object[]{ null }));
+                FROM  draft_gui_total_meal_view
+                WHERE draft_meal_in_plan_id = (SELECT draft_meal_in_plan_id FROM Meal_ID);""";
         
-        //#############################
-        // 4.) Get Total Meal DATA
-        //#############################
-        String get_Q4 = String.format("""
-                SELECT *
-                FROM total_meal_view
-                WHERE plan_id = ? AND meal_in_plan_id = %s;""", var_Meal_ID);
-        fetch_Queries_And_Params.add(new Pair<>(get_Q4, new Object[]{ null }));
+        fetch_Queries_And_Params.add(new Pair<>(fetch_query_02, new Object[]{ get_Plan_ID(), new_Meal_Name })); // Upload Params
         
         //#######################################################
         // Execute Query
@@ -260,13 +283,29 @@ public class MealManager
         //#######################################################
         // Set Variables from Results
         //#######################################################
+        int sub_Meal_ID;
+        ArrayList<ArrayList<Object>> sub_Meal_DATA;
+        ArrayList<Object> total_Meal_Data = null;
+        
         try
+        
         {
-            draft_meal_ID = ((Number) fetched_Results_OBJ.get_1D_Result_Into_Object(0)).intValue();
-            sub_Meal_ID = ((Number) fetched_Results_OBJ.get_1D_Result_Into_Object(1)).intValue();
+            ArrayList<ArrayList<Object>> results = fetched_Results_OBJ.get_Fetched_Result_2D_AL(0);
+            ArrayList<Object> combined_results = results.getFirst();
             
-            sub_Meal_DATA = fetched_Results_OBJ.get_Fetched_Result_2D_AL(2);
-            total_Meal_Data = fetched_Results_OBJ.get_Result_1D_AL(3);
+            // Get Draft Meal ID & Remove IT
+            draft_meal_ID = (Integer) combined_results.getFirst();
+            combined_results.removeFirst();
+            
+            // Get Draft Sub ID & Remove IT
+            sub_Meal_ID = (Integer) combined_results.getFirst();
+            combined_results.removeFirst();
+            
+            // Get Sub Ingredients & Remove IT
+            sub_Meal_DATA = results;
+            
+            // Get Total Meal Data
+            total_Meal_Data = fetched_Results_OBJ.get_Result_1D_AL(1);
         }
         catch (Exception e)
         {
@@ -486,7 +525,7 @@ public class MealManager
         //################################################################
         // Create TotalMeal Objects
         //################################################################
-        totalMealTable = new TotalMeal_Table(db, this, draft_meal_ID, total_Meal_Data);
+        totalMealTable = new TotalMeal_Table(db, this, shared_Data_Registry, draft_meal_ID, total_Meal_Data);
         
         JPanel southPanel = collapsibleJpObj.get_South_JPanel();   // TotalMeal_Table to Collapsible Object
         
@@ -681,7 +720,7 @@ public class MealManager
         // ######################################################
         String query = " SELECT 1 FROM draft_meals_in_plan WHERE plan_id = ? AND meal_time = ?";
         String errorMSG = "Error, Validating Meal Time!";
-        Object[] params = new Object[]{ shared_Data_Registry.get_Selected_Plan_ID(), new_input_time_local_time };
+        Object[] params = new Object[]{ get_Plan_ID(), new_input_time_local_time };
         
         // Execute Query
         try
@@ -828,7 +867,7 @@ public class MealManager
         // ######################################################
         String query = "SELECT 1 FROM draft_meals_in_plan WHERE plan_id = ? AND meal_name = ?";
         String errorMSG = "Error, Validating Meal Name!";
-        Object[] params = new Object[]{ shared_Data_Registry.get_Selected_Plan_ID(), new_meal_name };
+        Object[] params = new Object[]{ get_Plan_ID(), new_meal_name };
         
         // Execute Query
         try
@@ -1649,6 +1688,11 @@ public class MealManager
     public int get_Source_Meal_ID()
     {
         return source_meal_id;
+    }
+    
+    public int get_Plan_ID()
+    {
+        return shared_Data_Registry.get_Selected_Plan_ID();
     }
     
     //##################################################################################################################
