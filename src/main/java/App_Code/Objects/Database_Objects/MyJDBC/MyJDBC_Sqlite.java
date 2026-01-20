@@ -336,12 +336,16 @@ public class MyJDBC_Sqlite  // remove extends eventually
             {
                 upload_Data_Batch_Internally(connection, method_Name, upload_Queries_And_Params); // Upload Statements
                 
-                return get_Fetched_Results_Internally(connection, get_Queries_And_Params);  // Fetch Queries
+                Fetched_Results results = get_Fetched_Results_Internally(connection, get_Queries_And_Params);  // Fetch Queries
+                
+                connection.commit(); // Commit Updates
+                
+                return results; // return results
             }
             catch (Exception e)
             {
-                rollBack_Connection(connection, method_Name, null); // Rollback, in case it's not automatically done
                 handleException_MYSQL(e, method_Name, null, error_msg);
+                rollBack_Connection(connection, method_Name, null); // Rollback, in case it's not automatically done
                 throw new Exception();
             }
         }
