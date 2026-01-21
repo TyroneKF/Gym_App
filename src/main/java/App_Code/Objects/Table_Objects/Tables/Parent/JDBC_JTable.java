@@ -39,6 +39,7 @@ public abstract class JDBC_JTable extends JPanel
     protected ArrayList<String> column_Names, gui_Column_Names;
     
     // Collection : Customisation Options
+    protected ArrayList<String> un_Editable_Column_Names;
     protected ArrayList<String> col_To_Avoid_Centering;
     protected ArrayList<Integer> un_Editable_Column_Positions = new ArrayList<>();
     protected ArrayList<String> columns_To_Hide;
@@ -101,20 +102,49 @@ public abstract class JDBC_JTable extends JPanel
         
         this.class_Name = this.getClass().getSimpleName();
         
-        //######################
-        // Format Data
-        //######################
         this.saved_Data = saved_Data != null ? saved_Data : new ArrayList<>();
         
-        if (! format_Table_Data(saved_Data)) { return; } ;
-        
-        //##############################################################
-        // Column Configurations
-        //##############################################################
         this.col_To_Avoid_Centering = col_To_Avoid_Centering;
         this.columns_To_Hide = columns_To_Hide;
         this.column_Names = column_Names;
+        this.un_Editable_Column_Names = un_Editable_Column_Names;
         
+        //##############################################################
+        // Setup
+        //##############################################################
+        initialize();
+    }
+    
+    protected final void initialize()
+    {
+        // Variable / column configuration
+        parent_Variable_Configurations();
+        child_Variable_Configurations();
+        
+        //  Data formatting (child-controlled)
+        if (! format_Table_Data(saved_Data)) { return; }
+       
+        // Table Configurations
+        parent_Table_Configuration();  // Table setup (parent creates table)
+        
+        child_Table_Configurations(); // Child UI adjustments (safe now)
+    }
+    
+    //########################################
+    // Format Table Data
+    //########################################
+    protected abstract boolean format_Table_Data(ArrayList<ArrayList<Object>> table_data);
+    
+    protected abstract void format_Table_Row_Data(ArrayList<Object> table_data) throws Exception;
+    
+    //########################################
+    // Variable Configurations
+    //########################################
+    private void parent_Variable_Configurations()
+    {
+        //##############################################################
+        // Column Configurations
+        //##############################################################
         // Adding column names and their original positions to the hashmap
         for (int pos = 0; pos < column_Names.size(); pos++)
         {
@@ -145,32 +175,32 @@ public abstract class JDBC_JTable extends JPanel
                     .collect(Collectors.joining("_")));
         }
         
-        //##############################################################
-        // Configure Table
-        //##############################################################
+        //############################################
+        // Variable Reset
+        //############################################
+        un_Editable_Column_Names = null; // No longer needed
+    }
+    
+    protected abstract void child_Variable_Configurations();
+    
+    //########################################
+    // Table Configurations
+    //########################################
+    private void parent_Table_Configuration()
+    {
+        extra_Table_Setup();
         tableSetup(saved_Data, gui_Column_Names); // Table Setup With Table Data
         SetUp_Hidden_Table_Columns(columns_To_Hide); // Hide Columns | Must be the last step in configuration of the table
         setOpaque(true); //content panes must be opaque
-        
-        //##############################################################
-        // Table Configurations
-        //##############################################################
-        table_Column_Configurations();
     }
     
-    protected abstract void table_Column_Configurations();
-    
-    protected abstract boolean format_Table_Data(ArrayList<ArrayList<Object>> table_data);
-    
-    protected abstract void format_Table_Row_Data(ArrayList<Object> table_data) throws Exception;
+    protected abstract void child_Table_Configurations();
     
     //##################################################################################################################
     // Table Setup Methods
     //##################################################################################################################
     protected void tableSetup(ArrayList<ArrayList<Object>> data, ArrayList<String> column_Names)
     {
-        extra_Table_Setup();
-        
         //###################################################################################
         // Table Setup
         //###################################################################################

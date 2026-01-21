@@ -56,7 +56,7 @@ public class IngredientsTable extends JDBC_JTable
     private int na_ingredient_id;
     private int na_pdid;
     
-   // private final HashMap<Ingredients_Table_Columns, Integer> ingredients_table_cols_positions;
+    private HashMap<Ingredients_Table_Columns, Integer> ingredients_table_cols_positions;
     
     //##################################################################################################################
     // Constructor
@@ -117,11 +117,24 @@ public class IngredientsTable extends JDBC_JTable
     // Data Formatting
     //##################################################################################################################
     @Override
+    protected void child_Variable_Configurations()
+    {
+        ingredients_table_cols_positions = shared_data_registry.get_Ingredients_Table_Cols_Positions();
+        
+        // Table : draft_ingredients_in_sections_of_meal_calculation
+        set_Model_IngredientIndex_Col(ingredients_table_cols_positions.get(Ingredients_Table_Columns.DRAFT_INGREDIENTS_INDEX));
+        set_Model_Quantity_Col(ingredients_table_cols_positions.get(Ingredients_Table_Columns.QUANTITY));
+        set_Model_IngredientType_Col(ingredients_table_cols_positions.get(Ingredients_Table_Columns.INGREDIENT_TYPE_NAME));
+        set_Model_IngredientName_Col(ingredients_table_cols_positions.get(Ingredients_Table_Columns.INGREDIENT_NAME));
+        set_Model_DeleteBTN_Col(ingredients_table_cols_positions.get(Ingredients_Table_Columns.DELETE_BTN));
+    }
+    
+    @Override
     protected boolean format_Table_Data(ArrayList<ArrayList<Object>> table_data)
     {
         try
         {
-            for(ArrayList<Object> data : table_data)
+            for (ArrayList<Object> data : table_data)
             {
                 format_Table_Row_Data(data);
             }
@@ -138,8 +151,6 @@ public class IngredientsTable extends JDBC_JTable
     @Override
     protected void format_Table_Row_Data(ArrayList<Object> table_data) throws Exception
     {
-        HashMap<Ingredients_Table_Columns, Integer> ingredients_table_cols_positions = shared_data_registry.get_Ingredients_Table_Cols_Positions();
-        
         //##########################
         // Ingredients Name
         //##########################
@@ -158,7 +169,8 @@ public class IngredientsTable extends JDBC_JTable
         //##########################
         // Ingredients Type
         //##########################
-        int ingredient_Type_Pos = ingredients_table_cols_positions.get(Ingredients_Table_Columns.INGREDIENT_TYPE_NAME);;
+        int ingredient_Type_Pos = ingredients_table_cols_positions.get(Ingredients_Table_Columns.INGREDIENT_TYPE_NAME);
+        
         int ingredient_Type_ID = (Integer) table_data.get(ingredient_Type_Pos);
         
         Ingredient_Type_ID_OBJ ingredient_Type_ID_OBJ = shared_data_registry.get_Type_ID_Obj_By_ID(ingredient_Type_ID);
@@ -299,26 +311,11 @@ public class IngredientsTable extends JDBC_JTable
     }
     
     @Override
-    protected void table_Column_Configurations()
+    protected void child_Table_Configurations()
     {
-        //##############################################################
-        // Setting Up Columns
-        //##############################################################
+        setup_Special_Columns();  // Setting Up JComboBox  / Delete BTN Column Fields on Table
         
-        // Table : draft_ingredients_in_sections_of_meal_calculation
-        set_Model_IngredientIndex_Col(column_Names_And_Positions.get(db_row_id_column_name)[0]);
-        set_Model_Quantity_Col(column_Names_And_Positions.get("quantity")[0]);
-        set_Model_IngredientType_Col(column_Names_And_Positions.get("ingredient_type_name")[0]);
-        set_Model_IngredientName_Col(column_Names_And_Positions.get("ingredient_name")[0]);
-        set_Model_DeleteBTN_Col(column_Names_And_Positions.get("delete_button")[0]);
-        
-        // Setting Up JComboBox  / Delete BTN Column Fields on Table
-        setup_Special_Columns();
-        
-        //##############################################################
-        // Table Customization
-        //##############################################################
-        set_Table_Header_Font(new Font("Dialog", Font.BOLD, 12)); // Ingredients_In_Meal_Calculation Customisation
+        set_Table_Header_Font(new Font("Dialog", Font.BOLD, 12)); // Table Customization / Ingredients_In_Meal_Calculation Customisation
     }
     
     private void setup_Special_Columns()

@@ -587,7 +587,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //########################################
         // Column Names : Ingredients Table
         //########################################
-        for (int pos = 0; pos < ingredients_table_cols_positions.size(); pos++)
+        for (int pos = 0; pos < ingredients_Column_Names.size(); pos++)
         {
             String column_name = ingredients_Column_Names.get(pos);
             

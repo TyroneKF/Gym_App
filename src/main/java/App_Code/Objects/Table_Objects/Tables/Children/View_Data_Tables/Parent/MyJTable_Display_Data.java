@@ -80,7 +80,10 @@ public abstract class MyJTable_Display_Data extends JDBC_JTable
     // Methods
     //##################################################################################################################
     @Override
-    protected void table_Column_Configurations() { }
+    protected void child_Variable_Configurations(){}
+    
+    @Override
+    protected void child_Table_Configurations() { }
     
     @Override
     protected boolean format_Table_Data(ArrayList<ArrayList<Object>> table_data) { return true; }
