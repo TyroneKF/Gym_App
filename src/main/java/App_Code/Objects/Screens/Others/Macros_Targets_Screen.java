@@ -186,7 +186,7 @@ public class Macros_Targets_Screen extends Screen_JFrame
     @Override
     public void window_Closed_Event()
     {
-        meal_plan_screen.remove_macrosTargets_Screen();
+        meal_plan_screen.remove_Macros_Target_Screen();
         closeJFrame(); // Destroy Window
     }
     
@@ -240,8 +240,8 @@ public class Macros_Targets_Screen extends Screen_JFrame
         
         if (! updateForm()) { return; } // Error
         
-        meal_plan_screen.update_Targets_And_MacrosLeftTables();
-        meal_plan_screen.macrosTargetsChanged(true);
+        meal_plan_screen.update_Targets_And_Macros_Left_Table();
+        meal_plan_screen.set_Has_Macros_Targets_Changed(true);
         
         window_Closed_Event(); // Trigger Events to call on exit
     }
@@ -405,7 +405,7 @@ public class Macros_Targets_Screen extends Screen_JFrame
         // Output MSG & Update Screens
         // ##############################################
         JOptionPane.showMessageDialog(meal_plan_screen.getFrame(), "Macro Targets Successfully Updated In DB");
-        meal_plan_screen.update_Targets_And_MacrosLeftTables();
+        meal_plan_screen.update_Targets_And_Macros_Left_Table();
         
         // ##############################################
         // Return Result

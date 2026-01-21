@@ -83,7 +83,7 @@ public class Ingredients_Info_Screen extends Screen_JFrame
     public void window_Closed_Event()
     {
         meal_Plan_Screen.remove_Ingredients_Info_Screen();
-        meal_Plan_Screen.updateIngredientsNameAndTypesInJTables(updateIngredientInfo);
+        meal_Plan_Screen.update_Ingredients_Name_And_Types_In_JTables(updateIngredientInfo);
         closeJFrame();
     }
     

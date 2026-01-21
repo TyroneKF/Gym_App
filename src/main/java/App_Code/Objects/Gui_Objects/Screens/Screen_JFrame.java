@@ -132,7 +132,7 @@ public class Screen_JFrame extends JFrame
         });
     }
     
-    protected void iconSetup(Container mainNorthPanel)
+    protected void icon_Setup(Container mainNorthPanel)
     {
     
     }

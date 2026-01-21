@@ -79,6 +79,11 @@ public abstract class MyJTable_Display_Data extends JDBC_JTable
     //##################################################################################################################
     // Methods
     //##################################################################################################################
+    
+    
+    //###########################################
+    // Setup Methods
+    //###########################################
     @Override
     protected void child_Variable_Configurations(){}
     
@@ -146,7 +151,7 @@ public abstract class MyJTable_Display_Data extends JDBC_JTable
     
     protected abstract Object[] get_Params();
     
-    protected ArrayList<Object> get_Update_Data() throws Exception
+    private ArrayList<Object> get_Table_Update_Data() throws Exception
     {
         //###########################################################################
         //   Updating MacrosLeft_Table
@@ -165,11 +170,14 @@ public abstract class MyJTable_Display_Data extends JDBC_JTable
         }
     }
     
+    //###########################################
+    // Update Methods
+    //###########################################
     public void update_Table()
     {
         try
         {
-            super.update_Table_Row(get_Update_Data(), update_Row);
+            super.update_Table_Row(get_Table_Update_Data(), update_Row);
         }
         catch (Exception e) // Error is already handled by DB class / get_Update_Data()
         {

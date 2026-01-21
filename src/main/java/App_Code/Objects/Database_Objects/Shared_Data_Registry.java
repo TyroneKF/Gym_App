@@ -234,7 +234,7 @@ public class Shared_Data_Registry
             //#################################################################
             // Remove MealManager (Not Saved)
             //#################################################################
-            if (! mealManager.isMealManagerInDB()) // IF MealManager isn't saved Remove it
+            if (! mealManager.is_MealManager_In_DB()) // IF MealManager isn't saved Remove it
             {
                 if (! mealManager.is_Meal_Deleted()) // if the meal hasn't beene deleted, delete its data & GUI
                 {

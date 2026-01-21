@@ -78,7 +78,7 @@ public class PieChart_Screen_MPS extends Screen_JFrame
         // ####################################
         // Remove Attachment to MealPlanScreen
         // ####################################
-        meal_plan_screen.removePieChartScreen();
+        meal_plan_screen.remove_Pie_Chart_Screen();
         
         // ####################################
         // Remove GUI DATA
