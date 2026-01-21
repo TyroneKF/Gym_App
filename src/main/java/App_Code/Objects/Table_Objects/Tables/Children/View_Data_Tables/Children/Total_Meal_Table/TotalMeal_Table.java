@@ -12,7 +12,7 @@ public class TotalMeal_Table extends MyJTable_Display_Data
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    private final int meal_In_Plan_ID;
+    private MealManager mealManager;
     
     //##################################################################################################################
     // Constructor
@@ -44,10 +44,10 @@ public class TotalMeal_Table extends MyJTable_Display_Data
                 mealManager.get_TotalMeal_Table_Cols_To_Hide()
         );
         
-        //##########################################
+        //###########################################
         // Variables
         //###########################################
-        this.meal_In_Plan_ID = meal_In_Plan_ID;
+        this.mealManager = mealManager;
     }
     
     //##################################################################################################################
@@ -70,7 +70,7 @@ public class TotalMeal_Table extends MyJTable_Display_Data
     @Override
     protected Object[] get_Params()
     {
-        return new Object[]{ meal_In_Plan_ID };
+        return new Object[]{ mealManager.get_Source_Meal_ID() };
     }
 }
 
