@@ -18,7 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.javatuples.Pair;
 import javax.swing.*;
 import java.awt.*;
-import java.sql.Types;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
@@ -301,19 +300,13 @@ public class MealManager
             ArrayList<ArrayList<Object>> results = fetched_Results_OBJ.get_Fetched_Result_2D_AL(0);
             ArrayList<Object> combined_results = results.getFirst();
             
-            // Get Draft Meal ID & Remove IT
-            draft_meal_ID = (Integer) combined_results.getFirst();
-            combined_results.removeFirst();
+            draft_meal_ID = (Integer) combined_results.removeFirst(); // Get Draft Meal ID & Remove IT
             
-            // Get Draft Sub ID & Remove IT
-            sub_Meal_ID = (Integer) combined_results.getFirst();
-            combined_results.removeFirst();
+            sub_Meal_ID = (Integer) combined_results.removeFirst();  // Get Draft Sub ID & Remove IT
             
-            // Get Sub Ingredients & Remove IT
-            sub_Meal_DATA = results;
+            sub_Meal_DATA = results; // Get Sub Ingredients & Remove IT
             
-            // Get Total Meal Data
-            total_Meal_Data = fetched_Results_OBJ.get_Result_1D_AL(1);
+            total_Meal_Data = fetched_Results_OBJ.get_Result_1D_AL(1); // Get Total Meal Data
         }
         catch (Exception e)
         {
@@ -937,52 +930,63 @@ public class MealManager
         int sub_Meal_ID;
         ArrayList<ArrayList<Object>> sub_Meal_DATA;
         
-        //################################################
-        // Uploads
-        //###############################################
-        
-        // 1.) Create Sub-Meal
+        //###############################
+        // Insert Into Sub-Meals
+        //###############################
         String upload_Q1 = """
-                INSERT INTO divided_meal_sections (meal_in_plan_id, plan_id) VALUES
-                (?, ?);""";
-        upload_Queries_And_Params.add(new Pair<>(upload_Q1, new Object[]{ draft_meal_ID, null }));
+                INSERT INTO draft_divided_meal_sections
+                (draft_meal_in_plan_id, plan_id)
+                VALUES (?,?);""";
         
-        //######################################
-        // 2.) Set Sub-Meal ID
-        //######################################
-        String var_Sub_Meal_ID = "@subMealID";
-        String upload_Q2 = String.format("Set %s = LAST_INSERT_ID();", var_Sub_Meal_ID);
+        upload_Queries_And_Params.add(new Pair<>(upload_Q1, new Object[]{ draft_meal_ID, get_Plan_ID() })); // Upload Q1
         
-        upload_Queries_And_Params.add(new Pair<>(upload_Q2, null));
+        //###############################
+        // Insert Ingredients Into Sub-Meal
+        //###############################
+        String upload_Q2 = """
+                INSERT INTO draft_ingredients_in_sections_of_meal
+                (
+                    draft_div_meal_sections_id,
+                    ingredient_id,
+                    pdid,
+                    quantity
+                )
+                VALUES
+                (
+                    (SELECT last_insert_rowid()),
+                     ?,
+                     ?,
+                     ?
+                );""";
         
-        //########################################
-        // 3.) Insert None of the Above into Sub-Meal
-        //########################################
         
-        String upload_Q3 = String.format("""
-                INSERT INTO ingredients_in_sections_of_meal
-                (plan_id, pdid, div_meal_sections_id, ingredient_id, quantity) VALUES
-                (?, ?, %s, ?, ?);""", var_Sub_Meal_ID);
-        
-        upload_Queries_And_Params.add(new Pair<>(upload_Q3,
-                new Object[]{ null, new Null_MYSQL_Field(Types.INTEGER), 1, 0 }));
+        Object[] q2_params = new Object[]{ na_ingredient_id, na_pdid, 0 };
+        upload_Queries_And_Params.add(new Pair<>(upload_Q2, q2_params)); // Upload Q3
         
         //#######################################################
-        // Fetch Queries
+        // Fetch Query
         //#######################################################
+        // Get IDs / Ingredients Row DATA
+        String fetch_query_01 = """
+                
+                SELECT
+                    D.draft_div_meal_sections_iD,
+                    I2.*
+                
+                FROM draft_ingredients_in_sections_of_meal I1
+                
+                INNER JOIN draft_gui_ingredients_in_sections_of_meal_calculation I2
+                    ON I1.draft_ingredients_index = I2.draft_ingredients_index
+               
+                INNER JOIN draft_divided_meal_sections D
+                    ON I1.draft_div_meal_sections_id = D.draft_div_meal_sections_id
+                
+                WHERE
+                    I1.draft_ingredients_index = (SELECT last_insert_rowid())
+                
+                LIMIT 1""";
         
-        // 1.) Get Sub-Meal ID
-        String get_Q1 = String.format("SELECT %s;", var_Sub_Meal_ID);
-        fetch_Queries_And_Params.add(new Pair<>(get_Q1, null));
-        
-        //#############################
-        // 2.) Get Ingredients Table DATA
-        //#############################
-        String get_Q2 = String.format("""
-                SELECT *
-                FROM ingredients_in_sections_of_meal_calculation
-                WHERE plan_id = ? AND div_meal_sections_id = %s;""", var_Sub_Meal_ID);
-        fetch_Queries_And_Params.add(new Pair<>(get_Q2, new Object[]{ null }));
+        fetch_Queries_And_Params.add(new Pair<>(fetch_query_01, null)); // Upload Params
         
         //#######################################################
         // Execute Query
@@ -996,8 +1000,12 @@ public class MealManager
         //#######################################################
         try
         {
-            sub_Meal_ID = ((Number) fetched_Results_OBJ.get_1D_Result_Into_Object(0)).intValue();
-            sub_Meal_DATA = fetched_Results_OBJ.get_Fetched_Result_2D_AL(1);
+            ArrayList<ArrayList<Object>> combined_data = fetched_Results_OBJ.get_Fetched_Result_2D_AL(0);
+            
+            // Get SubMeal ID then removed it
+            sub_Meal_ID = (int) combined_data.getFirst().removeFirst();
+            
+            sub_Meal_DATA = combined_data;
         }
         catch (Exception e)
         {
