@@ -53,6 +53,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     private Macros_Targets_Screen macros_Targets_Screen = null;
     private Ingredients_Info_Screen ingredients_Info_Screen = null;
     
+    // Chart Screen Objects
     private PieChart_Screen_MPS pie_Chart_Screen = null;
     private LineChart_MPS line_Chart = null;
     

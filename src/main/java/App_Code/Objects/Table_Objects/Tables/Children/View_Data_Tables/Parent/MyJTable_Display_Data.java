@@ -151,7 +151,7 @@ public abstract class MyJTable_Display_Data extends JDBC_JTable
     
     protected abstract Object[] get_Params();
     
-    private ArrayList<Object> get_Table_Update_Data() throws Exception
+    protected ArrayList<Object> get_Table_Update_Data() throws Exception
     {
         //###########################################################################
         //   Updating MacrosLeft_Table
