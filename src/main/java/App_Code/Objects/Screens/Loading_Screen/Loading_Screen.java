@@ -65,11 +65,11 @@ public class Loading_Screen extends Screen_JFrame
     //##################################################################################################################
     // Methods
     //##################################################################################################################
-    public void increaseBar(int increaseBy)
+    public void increaseBar(int increase_By_Percentage)
     {
         try
         {
-            currentCount += increaseBy;
+            currentCount += increase_By_Percentage;
 
             int percentage = (int) ((currentCount * 100.0f) / endCount);
 
@@ -77,7 +77,7 @@ public class Loading_Screen extends Screen_JFrame
 
             progressBar.setValue(percentage); //Setting value of Progress Bar
 
-            if (currentCount == endCount) { finished = true; window_Closed_Event(); }
+            if (currentCount >= endCount) { finished = true; window_Closed_Event(); }
         }
         catch (Exception e)
         {
