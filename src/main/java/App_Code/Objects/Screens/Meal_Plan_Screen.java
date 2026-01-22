@@ -206,8 +206,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
          *  7.) Get Ingredient Names & Types                                [4%]
          *  8.) Get Stores Data                                             [3%]
          *  9.) Get Measurement Material Type DATA                          [3%]
-         * 10.) Get Measurement DATA                                       [4%]
-         * 11.) System Variables DATA                                      [3%]
+         * 10.) Get Measurement DATA                                        [4%]
+         * 11.) System Variables DATA                                       [3%]
          *
          * 12.) Get Meals & Sub-Meals DATA                                  [6%]
          * 13.) Get Total Meals Data                                        [3%]
@@ -217,8 +217,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
          * 16.) North GUI Setup : Icons                                     [5%]
          * 17.) Bottom GUI Setup : Macro_Targets / Macro_Left Table         [5%]
          * 18.) Centre GUI Setup : Create Meals                             [40%]
+         *
          */
-        
         
         //####################################################
         // Get MetaData Methods
@@ -317,8 +317,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
         scroll_JPanel_Center = new JPanel(new GridBagLayout());
         addToContainer(getScrollPaneJPanel(), scroll_JPanel_Center, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, "center");
         
-        JPanel scrollJPanelBottom = new JPanel(new GridBagLayout());
-        addToContainer(getScrollPaneJPanel(), scrollJPanelBottom, 0, 1, 1, 1, 0.25, 0.25, "both", 0, 0, "end");
+        JPanel scroll_jpanel_bottom = new JPanel(new GridBagLayout());
+        addToContainer(getScrollPaneJPanel(), scroll_jpanel_bottom, 0, 1, 1, 1, 0.25, 0.25, "both", 0, 0, "end");
         
         //####################################################
         // North :  JPanel
@@ -329,79 +329,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //#####################################################
         // Bottom : JPanel
         //#####################################################
-        JPanel macrosInfoJPanel = new JPanel(new GridBagLayout());   // Add Bottom JPanel to GUI
-        addToContainer(scrollJPanelBottom, macrosInfoJPanel, 0, 0, 1, 1, 0.25, 0.25, "horizontal", 0, 0, "end");
-        
-        int macrosInfoJP_YPos = 0;
-
-        /*//###################################
-        // Setting up Horizontal Image Divider
-        //#####################################
-        int height = 75, width = 0;
-        JPanel macrosDividerJPanel = new JPanel(new GridLayout(1, 1));
-        macrosDividerJPanel.setPreferredSize(new Dimension(width, height));
-
-        // Border Line Config
-        BevelBorder borderLine = new BevelBorder(BevelBorder.LOWERED);  // Create a red line border
-        LineBorder redLine = new LineBorder(Color.RED, 2); // 2px thick red border
-        CompoundBorder compoundBorder = new CompoundBorder(redLine, borderLine); // Combine them: outer = red line, inner = raised bevel
-        macrosDividerJPanel.setBorder(compoundBorder); // Set Border
-
-        // Add image
-        URL imageUrl = getClass().getResource("/images/border/border_divider/border_divider4.jpg");
-        ImageIcon originalIcon = new ImageIcon(imageUrl);
-        Image img = originalIcon.getImage();
-        Image scaledImg = img.getScaledInstance(450, 200, Image.SCALE_SMOOTH); // W: 1925
-        ImageIcon scaledIcon = new ImageIcon(scaledImg);
-        JLabel label = new JLabel(scaledIcon);
-
-        addToContainer(macrosDividerJPanel, label, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
-
-        addToContainer(macrosInfoJPanel, macrosDividerJPanel, 0, macrosInfoJP_YPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0, null);
-
-        //##########################################
-        // Add Space Divider
-        //##########################################
-
-        addToContainer(macrosInfoJPanel, createSpaceDivider(0, 20), 0, macrosInfoJP_YPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0, null);
-*/
-        
-        //############################
-        // MacroTargets Table
-        //############################
-        macros_Targets_Table = new MacrosTargets_Table(
-                db,
-                shared_Data_Registry,
-                macrosInfoJPanel,
-                macros_targets_plan_data_AL,
-                macroTargets_ColumnNames,
-                null,
-                macros_Targets_Table_Col_To_Hide
-        );
-        
-        addToContainer(macrosInfoJPanel, macros_Targets_Table, 0, macrosInfoJP_YPos += 1, + 1, 1, 0.25, 0.25, "both", 40, 0, null);
-        loading_Screen.increaseBar(10);
-        
-        //############################
-        // plan_Macros_Left Table
-        //############################
-        macros_Left_JTable = new MacrosLeft_Table(
-                db,
-                shared_Data_Registry,
-                macrosInfoJPanel,
-                macros_left_plan_data_AL,
-                macros_left_columnNames,
-                null,
-                macros_Left_Table_Col_To_Hide
-        );
-        
-        addToContainer(macrosInfoJPanel, macros_Left_JTable, 0, macrosInfoJP_YPos += 1, 1, 1, 0.25, 0.25, "both", 30, 0, null);
-        
-        //############################
-        // Increase Progress
-        //############################
-        loading_Screen.increaseBar(5);
-        
+        build_Bottom_GUI(scroll_jpanel_bottom, macros_targets_plan_data_AL, macros_left_plan_data_AL);
+        loading_Screen.increaseBar(5); // Increase Progress
         
         //####################################################
         // Centre : JPanel (Meals)
@@ -419,12 +348,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###############################################################################
         // Initialization Finished
         //###############################################################################
-        if (! loading_Screen.isFinished())
-        {
-            JOptionPane.showMessageDialog(getFrame(), "Error, in configuration! All Tasks Are Not Completed!");
-            failed_Start_UP(loading_Screen);
-            return;
-        }
+        if (! loading_Screen.isFinished()) { loading_Screen.increase_By_Remainder_Left(); }  // Finish off % Bar
         
         screen_Created = true;
         
@@ -1539,14 +1463,90 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //#################################################
     // Build GUI Methods
     //#################################################
-    private void create_Meal_Objects_In_GUI
+    private void build_Bottom_GUI
     (
-            ArrayList<Meals_And_Sub_Meals_OBJ> meals_and_sub_meals_AL,
-            LinkedHashMap<Integer, ArrayList<Object>> total_Meals_Data_Map,
-            Loading_Screen loading_Screen,
-            double allocated_task_percentage
+            JPanel scroll_jpanel_bottom,
+            ArrayList<ArrayList<Object>> macros_targets_plan_data_AL,
+            ArrayList<ArrayList<Object>> macros_left_plan_data_AL
+    )
+    {
+        JPanel macrosInfoJPanel = new JPanel(new GridBagLayout());   // Add Bottom JPanel to GUI
+        addToContainer(scroll_jpanel_bottom, macrosInfoJPanel, 0, 0, 1, 1, 0.25, 0.25, "horizontal", 0, 0, "end");
+        
+        int macrosInfoJP_YPos = 0;
+
+        /*//###################################
+        // Setting up Horizontal Image Divider
+        //#####################################
+        int height = 75, width = 0;
+        JPanel macrosDividerJPanel = new JPanel(new GridLayout(1, 1));
+        macrosDividerJPanel.setPreferredSize(new Dimension(width, height));
+
+        // Border Line Config
+        BevelBorder borderLine = new BevelBorder(BevelBorder.LOWERED);  // Create a red line border
+        LineBorder redLine = new LineBorder(Color.RED, 2); // 2px thick red border
+        CompoundBorder compoundBorder = new CompoundBorder(redLine, borderLine); // Combine them: outer = red line, inner = raised bevel
+        macrosDividerJPanel.setBorder(compoundBorder); // Set Border
+
+        // Add image
+        URL imageUrl = getClass().getResource("/images/border/border_divider/border_divider4.jpg");
+        ImageIcon originalIcon = new ImageIcon(imageUrl);
+        Image img = originalIcon.getImage();
+        Image scaledImg = img.getScaledInstance(450, 200, Image.SCALE_SMOOTH); // W: 1925
+        ImageIcon scaledIcon = new ImageIcon(scaledImg);
+        JLabel label = new JLabel(scaledIcon);
+
+        addToContainer(macrosDividerJPanel, label, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+
+        addToContainer(macrosInfoJPanel, macrosDividerJPanel, 0, macrosInfoJP_YPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+
+        //##########################################
+        // Add Space Divider
+        //##########################################
+
+        addToContainer(macrosInfoJPanel, createSpaceDivider(0, 20), 0, macrosInfoJP_YPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+*/
+        
+        //############################
+        // MacroTargets Table
+        //############################
+        macros_Targets_Table = new MacrosTargets_Table(
+                db,
+                shared_Data_Registry,
+                macrosInfoJPanel,
+                macros_targets_plan_data_AL,
+                macroTargets_ColumnNames,
+                null,
+                macros_Targets_Table_Col_To_Hide
+        );
+        
+        addToContainer(macrosInfoJPanel, macros_Targets_Table, 0, macrosInfoJP_YPos += 1, + 1, 1, 0.25, 0.25, "both", 40, 0, null);
+        
+        //############################
+        // plan_Macros_Left Table
+        //############################
+        macros_Left_JTable = new MacrosLeft_Table(
+                db,
+                shared_Data_Registry,
+                macrosInfoJPanel,
+                macros_left_plan_data_AL,
+                macros_left_columnNames,
+                null,
+                macros_Left_Table_Col_To_Hide
+        );
+        
+        addToContainer(macrosInfoJPanel, macros_Left_JTable, 0, macrosInfoJP_YPos += 1, 1, 1, 0.25, 0.25, "both", 30, 0, null);
+    }
     
-    ) throws Exception
+    
+    private void create_Meal_Objects_In_GUI
+            (
+                    ArrayList<Meals_And_Sub_Meals_OBJ> meals_and_sub_meals_AL,
+                    LinkedHashMap<Integer, ArrayList<Object>> total_Meals_Data_Map,
+                    Loading_Screen loading_Screen,
+                    double allocated_task_percentage
+            
+            ) throws Exception
     {
         try
         {

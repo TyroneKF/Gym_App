@@ -84,6 +84,21 @@ public class Loading_Screen extends Screen_JFrame
             e.printStackTrace();
         }
     }
+    
+    public int get_Current_Count()
+    {
+        return  currentCount;
+    }
+    
+    public int get_Remaining_Count_Left()
+    {
+        return currentCount == endCount ? 0 : endCount - currentCount;
+    }
+    
+    public void increase_By_Remainder_Left()
+    {
+        increaseBar(get_Remaining_Count_Left());
+    }
 
     @Override
     public void window_Closed_Event()
