@@ -15,7 +15,6 @@ import App_Code.Objects.Table_Objects.MealManager;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import org.javatuples.Pair;
-
 import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
@@ -42,9 +41,13 @@ public class IngredientsTable extends JDBC_JTable
     //################################################
     private final int sub_meal_id;
     
+    private Boolean sub_meal_data_changed = null;
+    
     private boolean
-            meal_In_DB,
+            
+            sub_meal_in_db,
             sub_meal_saved,
+    
             table_deleted = false;
     
     private int
@@ -71,7 +74,7 @@ public class IngredientsTable extends JDBC_JTable
             MacrosLeft_Table macros_left_table,
             int sub_meal_id,
             ArrayList<ArrayList<Object>> data,
-            boolean meal_in_db,
+            boolean sub_meal_in_db,
             JPanel space_divider
     )
     {
@@ -101,8 +104,8 @@ public class IngredientsTable extends JDBC_JTable
         
         this.space_divider = space_divider;
         
-        this.meal_In_DB = meal_in_db;
-        sub_meal_saved = meal_in_db;
+        this.sub_meal_in_db = sub_meal_in_db;
+        sub_meal_saved = sub_meal_in_db;
         
         //#################################
         // Values From MealManager
@@ -365,6 +368,7 @@ public class IngredientsTable extends JDBC_JTable
         //##################################################
         delete_Row(model_Row);
         resize_Object();
+        set_Sub_Meal_Data_Changed(true);
         
         //#################################################
         // Update Table Data
@@ -553,7 +557,9 @@ public class IngredientsTable extends JDBC_JTable
             
             super.update_Table_Row(data, row_In_Model); // Update This Table
             
-            update_All_Tables_Data();// Update ALl Other Tables
+            set_Sub_Meal_Data_Changed(true);
+            
+            update_All_Tables_Data(); // Update ALl Other Tables
             return true;
         }
         catch (Exception e)
@@ -643,6 +649,7 @@ public class IngredientsTable extends JDBC_JTable
         //   Updating Ingredients With New Ingredients DATA
         //#######################################################
         add_Row(ingredient_DATA); // Adding Row Data to Table Model
+        set_Sub_Meal_Data_Changed(true);
         
         //#######################################################
         // Update Table Data
@@ -658,7 +665,7 @@ public class IngredientsTable extends JDBC_JTable
         // Exit : Edge Cases
         if (! are_You_Sure("Refresh Data")) { return; } // Ask For Permission
         
-        if (! get_Sub_Meal_Saved()) // If Meal Is not in DB, then refresh does nothing
+        if (! is_Sub_Meal_Saved()) // If Meal Is not in DB, then refresh does nothing
         {
             JOptionPane.showMessageDialog(null, "\n\nThere's nothing to refresh! \nThis meal was never saved!");
             return;
@@ -752,6 +759,8 @@ public class IngredientsTable extends JDBC_JTable
     public void refresh_Action()
     {
         refresh_Data(); // Reset Table Model data
+        
+        set_Sub_Meal_Data_Changed(false);
     }
     
     //###################################################
@@ -771,6 +780,8 @@ public class IngredientsTable extends JDBC_JTable
         save_Data(); // Update Table Model
         
         set_Sub_Meal_Saved(true);
+        
+        set_Sub_Meal_Data_Changed(false);
     }
     
     //####################################################
@@ -889,12 +900,17 @@ public class IngredientsTable extends JDBC_JTable
     //########################
     public void set_Meal_In_DB(boolean meal_In_DB)
     {
-        this.meal_In_DB = meal_In_DB;
+        this.sub_meal_in_db = meal_In_DB;
     }
     
     public void set_Sub_Meal_Saved(boolean state)
     {
         sub_meal_saved = state;
+    }
+    
+    public void set_Sub_Meal_Data_Changed(boolean state)
+    {
+        sub_meal_data_changed = state;
     }
     
     //##################################################################################################################
@@ -908,17 +924,22 @@ public class IngredientsTable extends JDBC_JTable
     //###############################
     // Boolean
     //###############################
-    public boolean get_Meal_In_DB()
+    public boolean is_Sub_Meal_In_DB()
     {
-        return meal_In_DB;
+        return sub_meal_in_db;
     }
     
-    public boolean get_Sub_Meal_Saved()
+    public Boolean has_Sub_Meal_Data_Changed()
+    {
+        return sub_meal_data_changed;
+    }
+    
+    public boolean is_Sub_Meal_Saved()
     {
         return sub_meal_saved;
     }
     
-    public boolean is_Table_Deleted()
+    public boolean is_Sub_Meal_Deleted()
     {
         return table_deleted;
     }

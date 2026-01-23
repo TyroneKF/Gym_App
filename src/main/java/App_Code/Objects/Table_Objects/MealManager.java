@@ -1103,7 +1103,7 @@ public class MealManager
         boolean active_Table =
                 ingredient_tables_AL  // returns true if there is a meal that hasn't been deleted
                         .stream()
-                        .anyMatch(t -> ! t.is_Table_Deleted()); // noneMatch returns true if predicate isn't met
+                        .anyMatch(t -> ! t.is_Sub_Meal_Deleted()); // noneMatch returns true if predicate isn't met
         
         if (active_Table) { return; } // If there are meals still in this plan exit
         
@@ -1329,7 +1329,7 @@ public class MealManager
         {
             IngredientsTable ingredientsTable = it.next();
             
-            if (ingredientsTable.get_Sub_Meal_Saved()) // If ingredients Table is Saved Then refresh
+            if (ingredientsTable.is_Sub_Meal_Saved()) // If ingredients Table is Saved Then refresh
             {
                 ingredientsTable.refresh_Action();
                 continue;
@@ -1376,7 +1376,7 @@ public class MealManager
             // #####################################
             // Remove Deleted Ingredients Table
             // #####################################
-            if (table.is_Table_Deleted())   // If objected is deleted, completely delete it then skip to next JTable
+            if (table.is_Sub_Meal_Deleted())   // If objected is deleted, completely delete it then skip to next JTable
             {
                 table.completely_Delete();
                 it.remove();
