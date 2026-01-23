@@ -5,7 +5,6 @@ import App_Code.Objects.Table_Objects.MealManager;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Graph_Objects.Pie_Chart;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
-import App_Code.Objects.Screens.Meal_Plan_Screen;
 import java.util.Random;
 import org.jfree.data.general.DefaultPieDataset;
 import javax.swing.*;
@@ -38,8 +37,9 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
     //##############################################
     // Objects
     //##############################################
-    private Meal_Plan_Screen meal_plan_screen;
     private Shared_Data_Registry shared_Data_Registry;
+    
+    private JPanel screen = get_ScrollPane_JPanel();
     
     //##############################################
     // Collections
@@ -142,7 +142,7 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
-    public PieChart_TotalMeals_MPS(Shared_Data_Registry shared_data_registry, Meal_Plan_Screen meal_plan_screen)
+    public PieChart_TotalMeals_MPS(Shared_Data_Registry shared_data_registry)
     {
         // ################################################################
         // Super
@@ -153,7 +153,6 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
         // ################################################################
         // Variables
         // ################################################################
-        this.meal_plan_screen = meal_plan_screen;
         this.shared_Data_Registry = shared_data_registry;
         
         // #####################################
@@ -180,6 +179,7 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
         // ################################################################
         // Set GridLayout
         // ################################################################
+        screen.removeAll();
         set_GridLayout();
         
         // ################################################################
@@ -194,8 +194,6 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
         // ################################################################
         for (MealManager mealManager : mealManager_ArrayList)
         {
-            if (mealManager.is_Meal_Deleted()) { continue; } // IF Meal is Deleted: Continue
-     
             // Get / Create PieChart Data
             DefaultPieDataset<Total_Meal_Macro_Columns> pieDataset = shared_Data_Registry.get_OR_Create_Updated_PieChart_Dataset(mealManager);
             
@@ -218,7 +216,7 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
             // Add PieChart to GUI
             //##############################
             JPanel x = new JPanel(new GridBagLayout());
-            get_ScrollPane_JPanel().add(x);
+            screen.add(x);
             
             add_To_Container(x, pieChart, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 10, 10, null);
             
@@ -241,6 +239,7 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
         // ####################################################
         // Reset GridLayout
         // ####################################################
+        screen.removeAll();
         set_GridLayout();
         
         // ####################################################
@@ -251,13 +250,12 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
         // ####################################################
         // Paint GUI
         // ####################################################
-        Iterator<PieChart_Totals_Entry_MPS> it = pieChart_MPS_Entries.iterator();
-        while (it.hasNext())
+        for (PieChart_Totals_Entry_MPS pieChartMpsEntry : pieChart_MPS_Entries)
         {
             //##############################
             // GET Pie_Entry Object
             //##############################
-            Pie_Chart pieChart = it.next().get_PieChart();
+            Pie_Chart pieChart = pieChartMpsEntry.get_PieChart();
             
             //##############################
             // Add PieChart to GUI
@@ -265,8 +263,8 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
             JPanel x = new JPanel(new GridBagLayout());
             add_To_Container(x, pieChart, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 10, 10, null);
             
-            add_To_Container(x, create_Space_Divider(20, 50, java.awt.Color.WHITE), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
-            get_ScrollPane_JPanel().add(x);
+            add_To_Container(x, create_Space_Divider(20, 50, Color.WHITE), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
+            screen.add(x);
         }
         
         //##############################
@@ -285,18 +283,17 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
         // ####################################################
         // Reset GUI
         // ####################################################
-        get_ScrollPane_JPanel().removeAll();
         reset_YPos();
         
         // ####################################################
         // Set GridLayout
         // ####################################################
-        mealCount = shared_Data_Registry.get_Active_MealCount();
+        mealCount = mealManager_ArrayList.size();
         
         int calc = (int) Math.ceil((double) mealCount / col);
         int rows = Math.max(calc, 2); // returns the larger out of the 2
         
-        get_ScrollPane_JPanel().setLayout(new GridLayout(rows, col));
+        screen.setLayout(new GridLayout(rows, col));
         
         System.out.printf("\n\nRows: %s | Col : %s \nMeals in GUI: %s", rows, col, mealCount);
     }
@@ -321,7 +318,7 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
             {
                 JPanel blankJP = new JPanel();
                 blankJP.setBackground(Color.WHITE);
-                get_ScrollPane_JPanel().add(blankJP);
+                screen.add(blankJP);
             }
         }
     }
@@ -336,7 +333,7 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
         //#####################################
         // Clear GUI
         //#####################################
-        get_ScrollPane_JPanel().removeAll();
+        screen.removeAll();
         
         //#####################################
         // Reset GUI Graphics

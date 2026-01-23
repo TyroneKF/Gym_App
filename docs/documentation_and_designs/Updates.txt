@@ -18,6 +18,9 @@ Ingredients Table
     .) Data gathering table field
 
 Error handling method name call in all classes
+replace all column names with enums
+
+
 
 ######################################################################################
 Work On:

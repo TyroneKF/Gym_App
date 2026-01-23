@@ -4,7 +4,6 @@ import App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Children.
 import App_Code.Objects.Table_Objects.MealManager;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
-import App_Code.Objects.Screens.Meal_Plan_Screen;
 import org.jfree.data.general.DefaultPieDataset;
 import javax.swing.*;
 import java.awt.*;
@@ -16,7 +15,6 @@ public class PieChart_Macros_MPS extends Screen_JPanel
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    private Meal_Plan_Screen meal_plan_screen;
     private Shared_Data_Registry shared_Data_Registry;
     
     // Graph Preferences
@@ -97,7 +95,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
      * <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
      * Etc;  <Key: Salt | Value: HashMap<MealManager, Quantity: 300g >>
      */
-    private LinkedHashMap<Total_Meal_Macro_Columns, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues;
+    private final LinkedHashMap<Total_Meal_Macro_Columns, HashMap<MealManager, BigDecimal>> totals_by_macro;
     
     private LinkedHashMap<Total_Meal_Macro_Columns, DefaultPieDataset<PieChart_MacroKey>> macroValue_Dataset_Map = new LinkedHashMap<>();
     
@@ -106,21 +104,19 @@ public class PieChart_Macros_MPS extends Screen_JPanel
     //##################################################################################################################
     // Constructors
     //##################################################################################################################
-    public PieChart_Macros_MPS(Shared_Data_Registry shared_Data_Registry, Meal_Plan_Screen meal_plan_screen)
+    public PieChart_Macros_MPS(Shared_Data_Registry shared_Data_Registry)
     {
         super(null, true);
         
         // ################################################################
         // Variables
         // ################################################################
-        
         this.shared_Data_Registry = shared_Data_Registry;
-        this.meal_plan_screen = meal_plan_screen;
         
         // #####################################
         // Collections
         // ######################################
-        mealManagers_TotalMeal_MacroValues = shared_Data_Registry.get_MealManagers_MacroValues();
+        totals_by_macro = shared_Data_Registry.get_MealManagers_MacroValues();
         total_meal_macro_symbol = shared_Data_Registry.get_Total_Meal_Macro_Symbols();
         
         // #####################################
@@ -159,7 +155,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
          * LinkedHashMap<String, Pair<Integer, String>> totalMeal_macroColNamePos
          * LinkedHashMap<TotalMeal_MacroName, Pair< Position, Measurement>> totalMeal_macroColNamePos
          */
-        for (Total_Meal_Macro_Columns macro_enum :  mealManagers_TotalMeal_MacroValues.keySet())
+        for (Total_Meal_Macro_Columns macro_enum :  totals_by_macro.keySet())
         {
             //##################################
             // Macro Info
@@ -216,7 +212,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
         /**
          *   <Key: MealManager, Value: Quantity >>
          */
-        Map<MealManager, BigDecimal> macroValues = mealManagers_TotalMeal_MacroValues.get(macro_name);
+        Map<MealManager, BigDecimal> macroValues = totals_by_macro.get(macro_name);
         
         /**
          * LinkedHashMap<String, Pair<Integer, String>> totalMeal_macroColNamePos
@@ -293,7 +289,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
     // #################################################################################################################
     //  Methods
     // #################################################################################################################
-    public Color[] generate_Random_Palette_Order()
+    private Color[] generate_Random_Palette_Order()
     {
         // ################################################################
         // Generate Color Palette
@@ -321,6 +317,6 @@ public class PieChart_Macros_MPS extends Screen_JPanel
     
     private int get_RowsCount()
     {
-        return (int) Math.ceil((double) mealManagers_TotalMeal_MacroValues.size() / col);
+        return (int) Math.ceil((double) totals_by_macro.size() / col);
     }
 }

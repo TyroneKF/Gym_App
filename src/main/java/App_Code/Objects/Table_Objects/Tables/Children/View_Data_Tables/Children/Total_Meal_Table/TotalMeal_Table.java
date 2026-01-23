@@ -22,7 +22,6 @@ public class TotalMeal_Table extends MyJTable_Display_Data
             MyJDBC_Sqlite db,
             MealManager mealManager,
             Shared_Data_Registry shared_data_registry,
-            int meal_In_Plan_ID,
             ArrayList<Object> data
     )
     {
@@ -34,14 +33,14 @@ public class TotalMeal_Table extends MyJTable_Display_Data
                 shared_data_registry,
                 mealManager.get_Collapsible_JP_Obj().get_South_JPanel(),
                 new ArrayList<>(Collections.singletonList(data)),
-                mealManager.get_Total_Meal_Table_Column_Names(),
+                shared_data_registry.get_Total_Meal_Table_Column_Names(),
                 "draft_meal_in_plan_id",
                 "Total Meal Table",
                 "draft_meals_in_plan",
                 "draft_gui_total_meal_view",
-                mealManager.get_Total_Meal_Table_Column_Names(),
+                shared_data_registry.get_Total_Meal_Table_Column_Names(),
                 null,
-                mealManager.get_TotalMeal_Table_Cols_To_Hide()
+                shared_data_registry.get_Total_Meal_Table_Cols_To_Hide()
         );
         
         //###########################################
