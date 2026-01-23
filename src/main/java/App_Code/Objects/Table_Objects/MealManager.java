@@ -3,7 +3,6 @@ package App_Code.Objects.Table_Objects;
 import App_Code.Objects.Data_Objects.ID_Objects.MetaData_ID_Object.Meal_ID_OBJ;
 import App_Code.Objects.Database_Objects.Fetched_Results;
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
-import App_Code.Objects.Database_Objects.Null_MYSQL_Field;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Table_Objects.Tables.Children.Ingredients_Table.IngredientsTable;
 import App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Children.MacrosLeft_Table;
@@ -31,50 +30,54 @@ public class MealManager
     // Variables
     //##################################################################################################################
     
-    // boolean Variables
+    //############################################
+    // Boolean
+    //############################################
     private boolean
-            isObjectCreated = false,
-            mealManagerInDB = false,
-            hasMealBeenDeleted = false,
-            hasMealNameBeenChanged = false,
-            hasMealTimeBeenChanged = false;
+            is_Meal_Saved = false,
+            is_Object_Created = false,
+            is_MealManager_In_DB = false,
+            has_Meal_Name_Been_Changed = false,
+            has_Meal_Time_Been_Changed = false;
     
-    // Integer Variables
+    //############################################
+    // Integers
+    //############################################
     private int
             source_meal_id,
             draft_meal_ID,
             yPoInternally = 0,
             na_ingredient_id,
-            na_pdid;
+            na_pdid,
+            total_meal_time_col_pos,
+            total_meal_name_col_pos;
     
     private final UUID internalId = UUID.randomUUID();
     
-    // String Variables
+    //############################################
+    // String
+    //############################################
     private String class_Name = new Object() { }.getClass().getEnclosingClass().getName();
     private String lineSeparator = "###############################################################################";
     private String saved_meal_name = "", currentMealName = "";
     
-    // Time Variables
+    //############################################
+    // Time
+    //############################################
     private LocalTime saved_meal_time = null, current_meal_time = null;
     private DateTimeFormatter time_Formatter = DateTimeFormatter.ofPattern("HH:mm").withResolverStyle(ResolverStyle.STRICT);
     
+    //############################################
     // Collections
-    private ArrayList<String> mealTotalTable_ColumnNames, ingredientsTable_ColumnNames;
-    
-    private ArrayList<String>
-            totalMeal_Table_ColToHide,
-            ingredientsTableUnEditableCells,
-            ingredients_Table_Col_Avoid_Centering,
-            ingredientsInMeal_Table_ColToHide;
-    
-    private final ArrayList<IngredientsTable> ingredientTables_In_MealManager = new ArrayList<>();
-    private HashMap<Total_Meal_Other_Columns, Integer> totalMeal_Other_Cols_Pos;
+    //############################################
+    private final ArrayList<IngredientsTable> ingredient_tables_AL = new ArrayList<>();
     
     //################################################################################
     // Objects
     //################################################################################
     
     // Other Objects
+    //############################################
     private JPanel collapsibleCenterJPanel, spaceDividerForMealManager = new JPanel();
     private final MyJDBC_Sqlite db;
     private GridBagConstraints gbc;
@@ -82,12 +85,16 @@ public class MealManager
     private CollapsibleJPanel collapsibleJpObj;
     private Shared_Data_Registry shared_Data_Registry;
     
+    //############################################
     // Screens
+    //############################################
     private Pie_Chart_Meal_Manager_Screen pie_chart_screen;
     
+    //############################################
     // Table Objects
-    private MacrosLeft_Table macrosLeft_JTable;
-    private Meal_Plan_Screen meal_plan_screen;
+    //############################################
+    private final MacrosLeft_Table macrosLeft_JTable;
+    private final Meal_Plan_Screen meal_plan_screen;
     private TotalMeal_Table totalMealTable;
     
     //##################################################################################################################
@@ -126,7 +133,7 @@ public class MealManager
         String mealName = meal_ID_Obj.get_Name();
         set_Meal_Name_Variables(false, mealName, mealName); // Set MealName Variables
         
-        setMealManagerInDB(true);  // Set Variable which identifies in this meal associated with this object is in the database
+        set_MealManager_In_DB(true);  // Set Variable which identifies in this meal associated with this object is in the database
         
         //################################################
         // Setup Methods
@@ -321,7 +328,7 @@ public class MealManager
         
         set_Time_Variables(false, new_Meal_Time, new_Meal_Time);     // Set MealTime Variables
         
-        setMealManagerInDB(false);
+        set_MealManager_In_DB(false);
         
         //#######################################################
         // Add Meals To GUI
@@ -333,7 +340,7 @@ public class MealManager
         //#######################################################
         // Return Variables
         //#######################################################
-        isObjectCreated = true;
+        is_Object_Created = true;
     }
     
     //##################################################################################################################
@@ -402,7 +409,7 @@ public class MealManager
         iconPanelInsert.add(editTime_Icon_Btn);
         
         //##########################
-        //Add BTN
+        // Add BTN
         //##########################
         IconButton add_Icon_Btn = new IconButton("/images/add/add.png", iconSize, iconSize, iconSize, iconSize, "centre", "right");
         // add_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -412,7 +419,7 @@ public class MealManager
         add_Icon_Btn.makeBTntransparent();
         
         add_Btn.addActionListener(ae -> {
-            addButtonAction();
+            add_Btn_Action();
         });
         
         iconPanelInsert.add(add_Icon_Btn);
@@ -476,11 +483,7 @@ public class MealManager
         delete_btn.setToolTipText("Delete Meal"); //Hover message over icon
         
         delete_btn.addActionListener(ae -> {
-            
-            if (areYouSure("Delete"))
-            {
-                deleteMealManagerAction();
-            }
+            delete_Btn_Action();
         });
         
         iconPanelInsert.add(delete_btn);
@@ -493,22 +496,15 @@ public class MealManager
         // Variables
         //################################################################
         gbc = new GridBagConstraints();
-        container = meal_plan_screen.getScroll_JPanel_Center();
+        container = meal_plan_screen.get_Scroll_JPanel_Center();
         
-        //############################
-        // Lists & Arraylists & Maps
-        //############################
+        total_meal_time_col_pos =
+                shared_Data_Registry
+                        .get_Other_Total_Meal_Table_Column_Pos(Total_Meal_Other_Columns.MEAL_TIME);
         
-        // Total Meal
-        mealTotalTable_ColumnNames = meal_plan_screen.getMeal_total_column_Names();
-        totalMeal_Table_ColToHide = meal_plan_screen.getTotal_Meal_Table_Col_To_Hide();
-        totalMeal_Other_Cols_Pos = meal_plan_screen.get_TotalMeal_Other_Cols_Pos();
-        
-        // Ingredients Table
-        ingredientsTableUnEditableCells = meal_plan_screen.getIngredients_Table_Un_Editable_Cells();
-        ingredients_Table_Col_Avoid_Centering = meal_plan_screen.getIngredients_Table_Col_Avoid_Centering();
-        ingredientsInMeal_Table_ColToHide = meal_plan_screen.getIngredients_In_Meal_Table_Col_To_Hide();
-        ingredientsTable_ColumnNames = meal_plan_screen.getIngredients_Column_Names();
+        total_meal_name_col_pos =
+                shared_Data_Registry
+                        .get_Other_Total_Meal_Table_Column_Pos(Total_Meal_Other_Columns.MEAL_NAME);
         
         //################################################################
         // Create Collapsible Object
@@ -526,7 +522,7 @@ public class MealManager
         //################################################################
         // Create TotalMeal Objects
         //################################################################
-        totalMealTable = new TotalMeal_Table(db, this, shared_Data_Registry, draft_meal_ID, total_Meal_Data);
+        totalMealTable = new TotalMeal_Table(db, this, shared_Data_Registry, total_Meal_Data);
         
         JPanel southPanel = collapsibleJpObj.get_South_JPanel();   // TotalMeal_Table to Collapsible Object
         
@@ -539,12 +535,12 @@ public class MealManager
         // Add Initial Space Between For the First Divided Meal
         add_To_Container(collapsibleCenterJPanel, new JPanel(), 0, yPoInternally++, 1, 1, 0.25, 0.25, "both", 10, 0, null);
         
-        isObjectCreated = true;  // Set Object Created
+        is_Object_Created = true;  // Set Object Created
         
         //################################################################
         // Add To Shared Data
         //################################################################
-        shared_Data_Registry.addMealManager(this, total_Meal_Data);
+        shared_Data_Registry.add_Meal_Manager(this, total_Meal_Data);
     }
     
     //#################################
@@ -586,7 +582,7 @@ public class MealManager
         //################################################
         // Add Ingredient Table To Collection
         //################################################
-        ingredientTables_In_MealManager.add(ingredients_Table);
+        ingredient_tables_AL.add(ingredients_Table);
     }
     
     //##################################################################################################################
@@ -650,7 +646,7 @@ public class MealManager
         //###############################
         // Update total Meal Table Time
         //###############################
-        totalMealTable.set_Value_On_Table(new_meal_time, 0, totalMeal_Other_Cols_Pos.get(Total_Meal_Other_Columns.MEAL_TIME));
+        totalMealTable.set_Value_On_Table(new_meal_time, 0, total_meal_time_col_pos);
         
         //###############################
         // Update Time Variables
@@ -757,12 +753,14 @@ public class MealManager
     
     private void set_Time_Variables(boolean hasMealTimeBeenChanged, LocalTime savedMealTime, LocalTime currentMealTime)
     {
-        this.hasMealTimeBeenChanged = hasMealTimeBeenChanged;
+        this.has_Meal_Time_Been_Changed = hasMealTimeBeenChanged;
         this.saved_meal_time = savedMealTime;
         this.current_meal_time = currentMealTime;
     }
     
+    //########################
     // Accessor Methods
+    //########################
     public LocalTime get_Current_Meal_Time()
     {
         return current_meal_time;
@@ -807,7 +805,7 @@ public class MealManager
         //#########################################################################################################
         // Update total Meal View Time Col
         //#########################################################################################################
-        totalMealTable.set_Value_On_Table(new_input_meal_name, 0, totalMeal_Other_Cols_Pos.get(Total_Meal_Other_Columns.MEAL_NAME));
+        totalMealTable.set_Value_On_Table(new_input_meal_name, 0, total_meal_name_col_pos);
         
         //#########################################################################################################
         // Internal / External Graphs
@@ -903,7 +901,7 @@ public class MealManager
     
     private void set_Meal_Name_Variables(boolean hasMealNameBeenChanged, String savedMealName, String currentMealName)
     {
-        this.hasMealNameBeenChanged = hasMealNameBeenChanged;
+        this.has_Meal_Name_Been_Changed = hasMealNameBeenChanged;
         this.saved_meal_name = savedMealName;
         this.currentMealName = currentMealName;
     }
@@ -917,7 +915,7 @@ public class MealManager
     // Add BTN
     //#################################################################################
     // HELLO, Needs to scroll down to the bottom of the MealManager
-    private void addButtonAction()
+    private void add_Btn_Action()
     {
         //###########################################################
         // Upload & Fetch Variables
@@ -977,7 +975,7 @@ public class MealManager
                 
                 INNER JOIN draft_gui_ingredients_in_sections_of_meal_calculation I2
                     ON I1.draft_ingredients_index = I2.draft_ingredients_index
-               
+                
                 INNER JOIN draft_divided_meal_sections D
                     ON I1.draft_div_meal_sections_id = D.draft_div_meal_sections_id
                 
@@ -1032,13 +1030,24 @@ public class MealManager
     //#################################################################################
     // Delete BTN Methods
     //#################################################################################
-    private void deleteMealManagerAction()
+    private void delete_Btn_Action()
+    {
+        if (! areYouSure("Delete")) { return; }
+        
+        delete_Meal_Manager_Action();
+        
+        update_MacrosLeft_Table(); // Update MacrosLeft_Table
+        
+        JOptionPane.showMessageDialog(null, "Table Successfully Deleted!"); // Show MSG
+    }
+    
+    private void delete_Meal_Manager_Action()
     {
         //##########################################
         // Delete MealManager Queries
         //##########################################
-        String query = "DELETE FROM meals_in_plan WHERE meal_in_plan_id = ? AND plan_id = ?";
-        Object[] params = new Object[]{ draft_meal_ID, null };
+        String query = "DELETE FROM draft_meals_in_plan WHERE draft_meal_in_plan_id = ?";
+        Object[] params = new Object[]{ draft_meal_ID };
         
         //##########################################
         // Execute Update
@@ -1046,46 +1055,27 @@ public class MealManager
         if (! db.upload_Data(query, params, "Table Un-Successfully Deleted!")) { return; }
         
         //##########################################
-        // Delete MealManager Actions
+        // Update GUI
         //##########################################
-        delete_MealManager();
+        delete_MealManager(); // Delete MealManager Actions
         
-        //##########################################
-        // Update MacrosLeft_Table
-        //##########################################
-        update_MacrosLeft_Table();// update macrosLeft table, due to number deductions from this meal
-        
-        //##########################################
         // Delete in External Charts
-        //##########################################
         meal_plan_screen.update_External_Charts(false, "delete", this, get_Current_Meal_Time(), get_Current_Meal_Time());
-        
-        //##########################################
-        // Show MSG
-        //##########################################
-        JOptionPane.showMessageDialog(null, "Table Successfully Deleted!");
     }
     
-    public void delete_MealManager()
+    private void delete_MealManager()
     {
-        //##########################################
-        // Update Registry Data
-        //##########################################
-        shared_Data_Registry.delete_MealManager(this);
+        shared_Data_Registry.delete_MealManager(this); // Update Registry Data
         
-        //##########################################
-        // Hide JTable object & Collapsible OBJ
-        //##########################################
-        hideMealManager();
+        hide_MealManager(); // Hide JTable object & Collapsible OBJ
     }
     
-    private void hideMealManager()
+    private void hide_MealManager()
     {
         //##########################################
         // Set Variables
         //##########################################
-        setVisibility(false); // hide collapsible Object
-        set_Has_Meal_Been_Deleted(true); // set this object as deleted
+        set_Visibility(false); // hide collapsible Object
         
         //##########################################
         // Remove From GUI
@@ -1099,182 +1089,38 @@ public class MealManager
         close_Pie_Chart_Screen();
     }
     
-    private void unHideMealManager()
-    {
-        setVisibility(true); // hide collapsible Object
-        set_Has_Meal_Been_Deleted(false); // set this object as deleted
-    }
-    
-    private void setVisibility(boolean condition)
+    private void set_Visibility(boolean condition)
     {
         collapsibleJpObj.setVisible(condition);
         spaceDividerForMealManager.setVisible(condition);
     }
     
-    private void set_Has_Meal_Been_Deleted(boolean x)
-    {
-        hasMealBeenDeleted = x;
-    }
-    
-    public boolean is_Meal_Deleted()
-    {
-        return hasMealBeenDeleted;
-    }
-    
     //################################################
-    // Delete IngredientsTable Methods
+    // Delete Ingredients_Table Methods
     //################################################
-    public void ingredientsTableHasBeenDeleted()
+    public void ingredients_Table_Has_Been_Deleted()
     {
-        //##########################################
-        // If there are no meals, delete table
-        //##########################################
-        if (! (areAllTableBeenDeleted()))
-        {
-            return;
-        }
+        boolean active_Table =
+                ingredient_tables_AL  // returns true if there is a meal that hasn't been deleted
+                        .stream()
+                        .anyMatch(t -> ! t.is_Table_Deleted()); // noneMatch returns true if predicate isn't met
         
-        //##########################################
-        // Delete Meal From DB
-        //##########################################
-        String query1 = "DELETE FROM meals_in_plan WHERE meal_in_plan_id = ? AND plan_id = ?;";
+        if (active_Table) { return; } // If there are meals still in this plan exit
         
-        Object[] params = new Object[]{ draft_meal_ID, null };
-        
-        if (! (db.upload_Data(query1, params, "Error, Unable to DELETE IngredientsTable!!"))) { return; }
-        
-        delete_MealManager();
+        delete_Meal_Manager_Action(); // delete table
     }
     
-    public boolean areAllTableBeenDeleted()
+    public void remove_Ingredients_Table(IngredientsTable ingredientsTable)
     {
-        //##########################################
-        // IF there are no meals, delete table
-        //##########################################
-        for (IngredientsTable ingredientsTable : ingredientTables_In_MealManager)
-        {
-            if (! (ingredientsTable.is_Table_Deleted())) // if a meal hasn't been deleted, exit method
-            {
-                return false;
-            }
-        }
-        
-        //##########################################
-        return true;
-    }
-    
-    public void removeIngredientsTable(IngredientsTable ingredientsTable)
-    {
-        ingredientTables_In_MealManager.remove(ingredientsTable);
+        ingredient_tables_AL.remove(ingredientsTable);
     }
     
     //#################################################################################
-    // Save & Refresh Methods
+    // Refresh Methods
     //#################################################################################
-    private boolean transferMealDataToPlan(String process, Integer fromPlanID, Integer toPlanID)
-    {
-        System.out.printf("\n\n%s transferMealDataToPlan()  %s %s %s", lineSeparator, process, fromPlanID, toPlanID);
-        //########################################################
-        // Drop Temp Tables
-        //########################################################
-        
-        // Delete tables if they already exist
-        String query0 = "DROP TABLE IF EXISTS temp_ingredients_in_meal;";
-        
-        String query1 = "DROP TABLE IF EXISTS temp_divided_meal_sections;";
-        
-        //########################################################
-        // Clear Old Data from toPlan and & Temp Tables
-        //########################################################
-        // Delete sub-meals from this meal in toPlan
-        String query2 = "DELETE FROM divided_meal_sections WHERE meal_in_plan_id = ? AND plan_id = ? ;";
-        
-        //####################################################
-        // Transferring this plans Ingredients to Temp-Plan
-        //####################################################
-        
-        // Create Table to transfer ingredients from original plan to temp
-        String query3 = """
-                CREATE TABLE temp_divided_meal_sections  AS
-                SELECT i.*
-                FROM divided_meal_sections i
-                WHERE i.meal_in_plan_id = ? AND i.plan_id = ?;""";
-        
-        String query4 = "UPDATE temp_divided_meal_sections SET plan_id = ?;";
-        
-        String query5 = "INSERT INTO divided_meal_sections SELECT * FROM temp_divided_meal_sections;";
-        //####################################################
-        // Transferring ingredients from this meal in toPlan
-        //####################################################
-        
-        // Create Table to transfer ingredients from original plan to temp
-        String query6 = """
-                CREATE table temp_ingredients_in_meal  AS
-                SELECT i.*
-                FROM ingredients_in_sections_of_meal i
-                WHERE div_meal_sections_id IN (SELECT div_meal_sections_id FROM divided_meal_sections WHERE meal_in_plan_id = ? AND plan_id = ?)
-                AND plan_id = ?;""";
-        
-        String query7 = "UPDATE temp_ingredients_in_meal SET plan_id = ?;";
-        
-        String query8 = "INSERT INTO ingredients_in_sections_of_meal SELECT * FROM temp_ingredients_in_meal;";
-        
-        String query9 = "DROP TABLE IF EXISTS temp_ingredients_in_meal;";
-        
-        String query10 = "DROP TABLE IF EXISTS temp_divided_meal_sections;";
-        
-        //#####################################################
-        // Meal Name & Time Updates If Changed
-        //#####################################################
-        String updateMealName = process.equals("refresh") ? saved_meal_name : currentMealName; // set mealName to refresh
-        LocalTime updateMealTime = process.equals("refresh") ? get_Saved_Meal_Time() : get_Current_Meal_Time(); // set mealTime to time
-        
-        //#####################################################
-        // Create Query Formatted Data for Method
-        //#####################################################
-        String errorMSG = "Error, Unable to Transfer Plan Data!";
-        
-        LinkedHashSet<Pair<String, Object[]>> queries_And_Params = new LinkedHashSet<>()
-        {{
-            
-            add(new Pair<>(query0, null));
-            add(new Pair<>(query1, null));
-            
-            if (hasMealNameBeenChanged || hasMealTimeBeenChanged)
-            {
-                String uploadQuery = """
-                        UPDATE meals_in_plan
-                        SET meal_name = ?, meal_time = ?
-                        WHERE plan_id = ? AND meal_in_plan_id = ?;""";
-                
-                add(new Pair<>(uploadQuery, new Object[]{ updateMealName, updateMealTime, toPlanID, draft_meal_ID }));
-            }
-            
-            add(new Pair<>(query2, new Object[]{ draft_meal_ID, toPlanID })); // Already in correct dataType
-            add(new Pair<>(query3, new Object[]{ draft_meal_ID, fromPlanID })); //
-            add(new Pair<>(query4, new Object[]{ toPlanID }));
-            add(new Pair<>(query5, null));
-            add(new Pair<>(query6, new Object[]{ draft_meal_ID, fromPlanID, fromPlanID }));
-            add(new Pair<>(query7, new Object[]{ toPlanID }));
-            add(new Pair<>(query8, null));
-            add(new Pair<>(query9, null));
-            add(new Pair<>(query10, null));
-        }};
-        
-        //####################################################
-        // Return Update /Output
-        //####################################################
-        return db.upload_Data_Batch(queries_And_Params, errorMSG);
-    }
-    
-    //######################################
-    // Refresh BTN Methods
-    //######################################
     private void refresh_Btn_Action()
     {
-        //#############################################################################################
         // Check IF OLD Table Name & Meal Time Are Available To Assign Back To This Meal
-        //##############################################################################################
         String errorMSG = "Error, Unable to Refresh Meal!";
         String query = """
                 SELECT IFNULL(M.pos, "N/A") AS pos
@@ -1360,7 +1206,7 @@ public class MealManager
         //##############################################################################################
         // RELOAD IngredientsTable & TotalMeal Table & Update  Chart DATA
         //##############################################################################################
-        reload_Table_And_Charts_Data(true, true);
+        reload_Table_And_Charts_Data();
         
         //##############################################################################################
         // Remove & Re-add to GUI
@@ -1368,7 +1214,103 @@ public class MealManager
         meal_plan_screen.add_And_Replace_MealManger_POS_GUI(this, true, true);
     }
     
-    public void reload_Table_And_Charts_Data(boolean updateMacrosLeft, boolean updateExternalCharts)
+    private boolean transferMealDataToPlan(String process, Integer fromPlanID, Integer toPlanID)
+    {
+        System.out.printf("\n\n%s transferMealDataToPlan()  %s %s %s", lineSeparator, process, fromPlanID, toPlanID);
+        //########################################################
+        // Drop Temp Tables
+        //########################################################
+        
+        // Delete tables if they already exist
+        String query0 = "DROP TABLE IF EXISTS temp_ingredients_in_meal;";
+        
+        String query1 = "DROP TABLE IF EXISTS temp_divided_meal_sections;";
+        
+        //########################################################
+        // Clear Old Data from toPlan and & Temp Tables
+        //########################################################
+        // Delete sub-meals from this meal in toPlan
+        String query2 = "DELETE FROM divided_meal_sections WHERE meal_in_plan_id = ? AND plan_id = ? ;";
+        
+        //####################################################
+        // Transferring this plans Ingredients to Temp-Plan
+        //####################################################
+        
+        // Create Table to transfer ingredients from original plan to temp
+        String query3 = """
+                CREATE TABLE temp_divided_meal_sections  AS
+                SELECT i.*
+                FROM divided_meal_sections i
+                WHERE i.meal_in_plan_id = ? AND i.plan_id = ?;""";
+        
+        String query4 = "UPDATE temp_divided_meal_sections SET plan_id = ?;";
+        
+        String query5 = "INSERT INTO divided_meal_sections SELECT * FROM temp_divided_meal_sections;";
+        //####################################################
+        // Transferring ingredients from this meal in toPlan
+        //####################################################
+        
+        // Create Table to transfer ingredients from original plan to temp
+        String query6 = """
+                CREATE table temp_ingredients_in_meal  AS
+                SELECT i.*
+                FROM ingredients_in_sections_of_meal i
+                WHERE div_meal_sections_id IN (SELECT div_meal_sections_id FROM divided_meal_sections WHERE meal_in_plan_id = ? AND plan_id = ?)
+                AND plan_id = ?;""";
+        
+        String query7 = "UPDATE temp_ingredients_in_meal SET plan_id = ?;";
+        
+        String query8 = "INSERT INTO ingredients_in_sections_of_meal SELECT * FROM temp_ingredients_in_meal;";
+        
+        String query9 = "DROP TABLE IF EXISTS temp_ingredients_in_meal;";
+        
+        String query10 = "DROP TABLE IF EXISTS temp_divided_meal_sections;";
+        
+        //#####################################################
+        // Meal Name & Time Updates If Changed
+        //#####################################################
+        String updateMealName = process.equals("refresh") ? saved_meal_name : currentMealName; // set mealName to refresh
+        LocalTime updateMealTime = process.equals("refresh") ? get_Saved_Meal_Time() : get_Current_Meal_Time(); // set mealTime to time
+        
+        //#####################################################
+        // Create Query Formatted Data for Method
+        //#####################################################
+        String errorMSG = "Error, Unable to Transfer Plan Data!";
+        
+        LinkedHashSet<Pair<String, Object[]>> queries_And_Params = new LinkedHashSet<>()
+        {{
+            
+            add(new Pair<>(query0, null));
+            add(new Pair<>(query1, null));
+            
+            if (has_Meal_Name_Been_Changed || has_Meal_Time_Been_Changed)
+            {
+                String uploadQuery = """
+                        UPDATE meals_in_plan
+                        SET meal_name = ?, meal_time = ?
+                        WHERE plan_id = ? AND meal_in_plan_id = ?;""";
+                
+                add(new Pair<>(uploadQuery, new Object[]{ updateMealName, updateMealTime, toPlanID, draft_meal_ID }));
+            }
+            
+            add(new Pair<>(query2, new Object[]{ draft_meal_ID, toPlanID })); // Already in correct dataType
+            add(new Pair<>(query3, new Object[]{ draft_meal_ID, fromPlanID })); //
+            add(new Pair<>(query4, new Object[]{ toPlanID }));
+            add(new Pair<>(query5, null));
+            add(new Pair<>(query6, new Object[]{ draft_meal_ID, fromPlanID, fromPlanID }));
+            add(new Pair<>(query7, new Object[]{ toPlanID }));
+            add(new Pair<>(query8, null));
+            add(new Pair<>(query9, null));
+            add(new Pair<>(query10, null));
+        }};
+        
+        //####################################################
+        // Return Update /Output
+        //####################################################
+        return db.upload_Data_Batch(queries_And_Params, errorMSG);
+    }
+    
+    private void reload_Table_And_Charts_Data()
     {
         //#############################################################################################
         // Reset GUI  & Variables
@@ -1382,7 +1324,7 @@ public class MealManager
         //##############################################################################################
         // Refresh IngredientTables
         //##############################################################################################
-        Iterator<IngredientsTable> it = ingredientTables_In_MealManager.iterator();
+        Iterator<IngredientsTable> it = ingredient_tables_AL.iterator();
         while (it.hasNext())
         {
             IngredientsTable ingredientsTable = it.next();
@@ -1404,53 +1346,32 @@ public class MealManager
         //##############################################################################################
         // Refresh TotalMeal_Table DATA & Charts
         //##############################################################################################
-        update_MealManager_DATA(updateExternalCharts);
+        update_MealManager_DATA();
         
         pie_Chart_Update_Title(); // Update Internal PieChart Title
         
-        //##############################################################################################
-        // Refresh MacrosLeft
-        //##############################################################################################
-        if (updateMacrosLeft) { update_MacrosLeft_Table(); }// this is optional
-        
-        //##############################################################################################
-        // Make This MealManager Visible
-        //##############################################################################################
-        unHideMealManager();
+        update_MacrosLeft_Table();
     }
     
-    //######################################
+    //##############################################################################################
     // Save BTN Methods
-    //######################################
+    //##############################################################################################
     public void save_Btn_Action()
     {
-        // ###############################################################################
-        // Transferring Meals & Ingredients from FromPlan to toPlan
-        // ###############################################################################
-        if (! (transferMealDataToPlan("saving", null, null))) // transfer meals and ingredients from temp plan to original plan
-        {
-            System.out.println("\n\n#################################### \nError MealManager saveMealData()");
-            
-            JOptionPane.showMessageDialog(getFrame(), "\n\n1.)  Error \nUnable to save this Meal and its sub-meals");
-            return;
-        }
+        save_Data_MM(true);
         
-        saveData(true);
-    }
-    
-    public void saveData(boolean showUpdateMessage)
-    {
+        
         // ###############################################################################
         // Set Variables
         // ###############################################################################
         set_Time_Variables(false, current_meal_time, current_meal_time);
         set_Meal_Name_Variables(false, currentMealName, currentMealName);
-        setMealManagerInDB(true);
+        
         
         // ###############################################################################
         // Removing Sub-Meals that have been deleted & Saving The Other Tables
         // ##############################################################################
-        Iterator<IngredientsTable> it = ingredientTables_In_MealManager.iterator();
+        Iterator<IngredientsTable> it = ingredient_tables_AL.iterator();
         while (it.hasNext())
         {
             IngredientsTable table = it.next();
@@ -1465,31 +1386,33 @@ public class MealManager
                 continue;
             }
             
-            // #####################################
-            // Saved Data & Reset Variables
-            // #####################################
-            table.set_Meal_In_DB(true);
             table.save_Data();
         }
         
         // ##############################################################################
         // Successful Message
         // ##############################################################################
-        if (showUpdateMessage)
-        {
-            JOptionPane.showMessageDialog(getFrame(), "\n\nAll SubMeals Within Meal Have Successfully Saved!");
-        }
+        
+        JOptionPane.showMessageDialog(getFrame(), "\n\nAll SubMeals Within Meal Have Successfully Saved!");
+        
     }
     
-    private void setMealManagerInDB(boolean mealManagerInDB)
+    private void save_Data_MM(boolean show_Update_Message)
     {
-        this.mealManagerInDB = mealManagerInDB;
+    
     }
     
-    public boolean isMealManagerInDB()
+    //######################################
+    //
+    //######################################
+    public void save_Requested_By_Plan(int new_draft_meal_ID, ArrayList<Integer> new_sub_meal_ids)
     {
-        return mealManagerInDB;
+        draft_meal_ID = new_draft_meal_ID;
+        
+        set_MealManager_In_DB(true);
+        
     }
+    
     
     //######################################
     // Others
@@ -1563,7 +1486,7 @@ public class MealManager
     //##################################################################################################################
     // Updating Other Tables
     //##################################################################################################################
-    public void update_MealManager_DATA(boolean update_External_Charts)
+    public void update_MealManager_DATA()
     {
         try
         {
@@ -1571,7 +1494,7 @@ public class MealManager
             
             shared_Data_Registry.add_OR_Replace_MealManager_Macros_DATA(this, total_meal_data);  // Update Registry Data (Second)
             
-            update_Charts(update_External_Charts); // Update Charts
+            update_Charts(); // Update Charts
         }
         catch (Exception e)
         {
@@ -1579,27 +1502,19 @@ public class MealManager
         }
     }
     
-    private void update_Charts(boolean updateExternalCharts)
+    private void update_Charts()
     {
-        //#########################
-        // Update Internal Charts
-        //#########################
         /**
          * Update data behind pieCharts which will effectively update all pieCharts actively using this data
          * etc the MPS totals pie chart screen
          */
-        if (! shared_Data_Registry.update_PieChart_Values(this))
+        if (! shared_Data_Registry.update_PieChart_Values(this)) // Update Internal Charts
         {
             System.err.printf("\n\nMPS : update_Pie_Chart_DATA() \nPieChart not Open %s", get_Draft_Meal_In_Plan_ID());
         }
         
-        //#########################
         // Update External Charts
-        //#########################
-        if (updateExternalCharts)
-        {
-            meal_plan_screen.update_External_Charts(false, "update", this, get_Current_Meal_Time(), get_Current_Meal_Time());
-        }
+        meal_plan_screen.update_External_Charts(false, "update", this, get_Current_Meal_Time(), get_Current_Meal_Time());
     }
     
     private ArrayList<Object> update_TotalMeal_Table_And_Get_Data() throws Exception
@@ -1618,9 +1533,45 @@ public class MealManager
     }
     
     //##################################################################################################################
+    // Mutator Methods
+    //##################################################################################################################
+    public void set_Draft_meal_ID(int draft_meal_ID)
+    {
+        this.draft_meal_ID = draft_meal_ID;
+    }
+    
+    private void set_MealManager_In_DB(boolean state)
+    {
+        this.is_MealManager_In_DB = state;
+    }
+    
+    private void set_Is_Meal_Saved(boolean state)
+    {
+        is_Meal_Saved = state;
+    }
+    
+    //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
     
+    
+    // ############################################
+    // Booleans
+    // ############################################
+    public boolean is_Object_Created()
+    {
+        return is_Object_Created;
+    }
+    
+    public boolean is_MealManager_In_DB()
+    {
+        return is_MealManager_In_DB;
+    }
+    
+    public boolean is_Meal_Saved()
+    {
+        return is_Meal_Saved;
+    }
     
     // ############################################
     // Other Objects
@@ -1635,14 +1586,6 @@ public class MealManager
         return spaceDividerForMealManager;
     }
     
-    // ############################################
-    // Booleans
-    // ############################################
-    public boolean isObjectCreated()
-    {
-        return isObjectCreated;
-    }
-    
     // ###########################
     // JPanel
     // ###########################
@@ -1651,46 +1594,9 @@ public class MealManager
         return collapsibleJpObj;
     }
     
-    public JPanel getCollapsibleCenterJPanel()
+    public JPanel get_Collapsible_Center_JPanel()
     {
         return collapsibleCenterJPanel;
-    }
-    
-    // ############################################
-    // Collections
-    // ############################################
-    // Total Meal Table
-    public ArrayList<String> get_Total_Meal_Table_Column_Names()
-    {
-        return mealTotalTable_ColumnNames;
-    }
-    
-    public ArrayList<String> get_TotalMeal_Table_Cols_To_Hide()
-    {
-        return totalMeal_Table_ColToHide;
-    }
-    
-    // ############################
-    // Ingredients Table
-    // ############################
-    public ArrayList<String> get_Ingredients_Table_Col_Avoid_Centering()
-    {
-        return ingredients_Table_Col_Avoid_Centering;
-    }
-    
-    public ArrayList<String> get_Ingredients_Table_UnEditable_Cells()
-    {
-        return ingredientsTableUnEditableCells;
-    }
-    
-    public ArrayList<String> get_Ingredients_Table_Col_To_Hide()
-    {
-        return ingredientsInMeal_Table_ColToHide;
-    }
-    
-    public ArrayList<String> get_Ingredients_Table_Column_Names()
-    {
-        return ingredientsTable_ColumnNames;
     }
     
     // ############################################
@@ -1765,25 +1671,7 @@ public class MealManager
     }
     
     //##################################################################################################################
-    // Debugging Print Statements
-    //##################################################################################################################
-    protected String get_Class_Name()
-    {
-        return class_Name;
-    }
-    
-    protected String get_Method_Name()
-    {
-        return String.format("%s()", Thread.currentThread().getStackTrace()[2].getMethodName());
-    }
-    
-    protected String get_Class_And_Method_Name()
-    {
-        return String.format("%s -> @%s", get_Class_Name(), get_Method_Name());
-    }
-    
-    //##################################################################################################################
-    //
+    // Object Equality Methods
     //##################################################################################################################
     @Override
     public boolean equals(Object o)
@@ -1799,5 +1687,23 @@ public class MealManager
     public int hashCode()
     {
         return internalId.hashCode();
+    }
+    
+    //##################################################################################################################
+    // Debugging Print Statements
+    //##################################################################################################################
+    protected String get_Class_Name()
+    {
+        return class_Name;
+    }
+    
+    protected String get_Method_Name()
+    {
+        return String.format("%s()", Thread.currentThread().getStackTrace()[2].getMethodName());
+    }
+    
+    protected String get_Class_And_Method_Name()
+    {
+        return String.format("%s -> @%s", get_Class_Name(), get_Method_Name());
     }
 }
