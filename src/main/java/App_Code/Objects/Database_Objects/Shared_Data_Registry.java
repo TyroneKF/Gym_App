@@ -15,12 +15,13 @@ public class Shared_Data_Registry
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    
-    
-    //###############################################
-    // Strings
-    //###############################################
     private String plan_Name;
+    
+    
+    //###############################################
+    //  Objects
+    //###############################################
+    Ingredient_Name_ID_OBJ na_ingredient_id_obj;
     
     //###############################################
     // Integers
@@ -752,6 +753,7 @@ public class Shared_Data_Registry
     public void set_NA_Ingredient_ID(int ingredient_id)
     {
         na_ingredient_id = ingredient_id;
+        na_ingredient_id_obj = ingredient_Names_Obj_Map.get(ingredient_id);
     }
     
     public void set_NA_Ingredient_PDID(int pdid)
@@ -767,6 +769,14 @@ public class Shared_Data_Registry
     public String get_Plan_Name()
     {
         return plan_Name;
+    }
+    
+    //########################
+    // Objects
+    //########################
+    public Ingredient_Name_ID_OBJ get_Na_Ingredient_ID_OBJ()
+    {
+        return na_ingredient_id_obj;
     }
     
     //########################

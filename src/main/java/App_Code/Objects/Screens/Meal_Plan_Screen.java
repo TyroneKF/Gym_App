@@ -1635,7 +1635,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 System.out.printf("\n   %s", meal_Manager.get_Current_Meal_Name());
             }
             
-            System.out.println("\n\nSuccessfully Added All Meals!! ");
+            System.out.printf("\n\nSuccessfully Added All Meals!! \n%s", lineSeparator);
         }
         catch (Exception e)
         {
