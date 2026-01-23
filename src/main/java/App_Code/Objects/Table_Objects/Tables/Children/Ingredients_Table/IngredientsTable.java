@@ -15,6 +15,7 @@ import App_Code.Objects.Table_Objects.MealManager;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import org.javatuples.Pair;
+
 import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
@@ -30,6 +31,7 @@ public class IngredientsTable extends JDBC_JTable
     // Objects
     private final MealManager mealManager;
     private final MacrosLeft_Table macrosLeft_table;
+    private final Ingredient_Name_ID_OBJ na_ingredient_id_obj;
     
     // Screen Objects
     private final JPanel space_Divider;
@@ -77,17 +79,17 @@ public class IngredientsTable extends JDBC_JTable
         super(
                 db,
                 shared_data_registry,
-                mealManager.getCollapsibleCenterJPanel(),
+                mealManager.get_Collapsible_Center_JPanel(),
                 true,
                 "draft_ingredients_index",
                 "Ingredients Table",
                 "draft_ingredients_in_sections_of_meal",
                 "draft_gui_ingredients_in_sections_of_meal_calculation",
                 data,
-                mealManager.get_Ingredients_Table_Column_Names(),
-                mealManager.get_Ingredients_Table_UnEditable_Cells(),
-                mealManager.get_Ingredients_Table_Col_Avoid_Centering(),
-                mealManager.get_Ingredients_Table_Col_To_Hide()
+                shared_data_registry.get_Ingredients_Table_Column_Names(),
+                shared_data_registry.get_Ingredients_Table_Un_Editable_Cols(),
+                shared_data_registry.get_Ingredients_Table_Avoid_Centering_Cols(),
+                shared_data_registry.get_Ingredients_Table_Cols_To_Hide()
         );
         
         //##############################################################
@@ -106,9 +108,10 @@ public class IngredientsTable extends JDBC_JTable
         //#################################
         draft_meal_id = mealManager.get_Draft_Meal_In_Plan_ID();
         
-        parent_Container = mealManager.getCollapsibleCenterJPanel();
+        parent_Container = mealManager.get_Collapsible_Center_JPanel();
         frame = mealManager.getFrame();
         
+        na_ingredient_id_obj = shared_data_registry.get_Na_Ingredient_ID_OBJ();
         na_ingredient_id = shared_data_registry.get_Na_Ingredient_ID();
         na_pdid = shared_data_registry.get_NA_PDID();
     }
@@ -215,7 +218,6 @@ public class IngredientsTable extends JDBC_JTable
         add_Icon_Btn.makeBTntransparent();
         
         add_Btn.addActionListener(ae -> {
-            
             add_btn_Action();
         });
         
@@ -235,32 +237,6 @@ public class IngredientsTable extends JDBC_JTable
         refresh_Icon_Btn.makeBTntransparent();
         
         refresh_Btn.addActionListener(ae -> {
-            
-            //#######################################################
-            // Ask For Permission
-            //#######################################################
-            if (! (are_You_Sure("Refresh Data")))
-            {
-                return;
-            }
-            
-            //#######################################################
-            //  Delete meal if not in DB
-            //#######################################################
-            if (! (get_Meal_In_DB())) // Delete Meal if not in DB
-            {
-                if (are_You_Sure(" ' Refresh Data' this meal isn't saved and will result in this meal being deleted "))
-                {
-                    delete_Table_Action();
-                    completely_Delete_Ingredients_Table();
-                    mealManager.removeIngredientsTable(this); // Remove Ingredients Table from memory
-                }
-                return;
-            }
-            
-            //#######################################################
-            //  Refresh Meal
-            //#######################################################
             refresh_Btn_Action();
         });
         
@@ -279,10 +255,7 @@ public class IngredientsTable extends JDBC_JTable
         save_btn.setToolTipText("Save Sub-Meal"); //Hover message over icon
         
         save_btn.addActionListener(ae -> {
-            if (are_You_Sure("Save Data"))
-            {
-                save_Btn_Action(true);
-            }
+            save_Btn_Action();
         });
         
         iconPanel_Insert.add(save_btn);
@@ -299,12 +272,8 @@ public class IngredientsTable extends JDBC_JTable
         JButton delete_btn = delete_Icon_Btn.returnJButton();
         delete_btn.setToolTipText("Delete Sub-Meal"); //Hover message over icon
         
-        
         delete_btn.addActionListener(ae -> {
-            if (are_You_Sure("Delete"))
-            {
-                delete_Table_Action();
-            }
+            delete_Table_BTN_Action();
         });
         
         iconPanel_Insert.add(delete_btn);
@@ -365,7 +334,7 @@ public class IngredientsTable extends JDBC_JTable
         if (get_Rows_In_Table() == 1)
         {
             String question = """
-                    \n\nThere is only 1  ingredient in this subMeal!
+                    There is only 1 ingredient in this Sub-Meal Table!
                     
                     If you delete this ingredient, this table will also be deleted.
                     
@@ -373,7 +342,7 @@ public class IngredientsTable extends JDBC_JTable
             
             int reply = JOptionPane.showConfirmDialog(null, question, "Delete Ingredients", JOptionPane.YES_NO_OPTION); //HELLO Edit
             
-            if (reply == JOptionPane.YES_OPTION)
+            if (reply == JOptionPane.YES_OPTION) // IF user requests to delete the table
             {
                 delete_Table_Action();
             }
@@ -404,6 +373,63 @@ public class IngredientsTable extends JDBC_JTable
     //##################################################################################################################
     // Data Changing In Cells Actions
     //##################################################################################################################
+    @Override
+    protected boolean table_Data_Changed_Action(int row_In_Model, int column_In_Model, Object new_Value) throws Exception
+    {
+        //##################################################################
+        // Variables
+        //##################################################################
+        int ingredient_Index = (Integer) get_Value_On_Model_Data(row_In_Model, get_IngredientIndex_Col(true));
+        
+        //##################################################################
+        // Identify Trigger Column
+        //##################################################################
+        
+        // Ingredients Type Column
+        if (column_In_Model == get_IngredientType_Col(true)) { return true; } // Nothing to process inside db lvl
+        
+        //##########################################
+        // Ingredients Name Column
+        //##########################################
+        else if (column_In_Model == get_Ingredient_Name_Col(true))
+        {
+            System.out.printf("\n\n@tableDataChange_Action() Ingredient Name Changed - %s \nIndex: %s", table_name, ingredient_Index);
+            
+            Ingredient_Name_ID_OBJ selected_Ingredient_Name_OBJ = (Ingredient_Name_ID_OBJ) new_Value;
+            int selected_Ingredient_Name_ID = selected_Ingredient_Name_OBJ.get_ID();
+            
+            //##########################
+            // Check IF N/A is selected
+            //##########################
+            if (selected_Ingredient_Name_OBJ.equals(na_ingredient_id_obj))
+            {
+                // Can't have multiple 'None Of The Above' ingredients in a meal
+                if (found_NA_Ingredient_In_Table("change a current Ingredient in this meal to 'None Of The Above'"))
+                {
+                    return false;
+                }
+            }
+            
+            //##########################
+            // Update Table
+            //##########################
+            return update_Table_By_Ingredient_Name(row_In_Model, selected_Ingredient_Name_ID, ingredient_Index);
+        }
+        
+        //################################
+        // Ingredients Quantity Column
+        // ###############################
+        else if (column_In_Model == get_Quantity_Col(true))
+        {
+            System.out.printf("\ntableDataChange_Action() Quantity Being Changed - %s \nIndex: %s", table_name, ingredient_Index);
+            return update_Table_Values_By_Quantity(row_In_Model, ingredient_Index, (BigDecimal) new_Value);
+        }
+        else
+        {
+            throw new Exception(String.format("\n\n%s Un-handled Column Event Trigger - %s", get_Method_Name(2), table_name));
+        }
+    }
+    
     @Override
     protected boolean has_Cell_Data_Changed(Class<?> type, Object old_Value, Object new_Value, int col) throws Exception
     {
@@ -438,63 +464,6 @@ public class IngredientsTable extends JDBC_JTable
         //  Edge Cases : Error (Unexpected Type)
         //########################################
         throw new Exception(String.format("\n\n%s Error \nUnexpected Class Type: %s - %s", get_Class_And_Method_Name(), new_Value.getClass(), table_name));
-    }
-    
-    @Override
-    protected boolean table_Data_Changed_Action(int row_In_Model, int column_In_Model, Object new_Value) throws Exception
-    {
-        //##################################################################
-        // Variables
-        //##################################################################
-        int ingredient_Index = (Integer) get_Value_On_Model_Data(row_In_Model, get_IngredientIndex_Col(true));
-        
-        //##################################################################
-        // Identify Trigger Column
-        //##################################################################
-        
-        // Ingredients Type Column
-        if (column_In_Model == get_IngredientType_Col(true)) { return true; } // Nothing to process inside db lvl
-        
-        //##########################################
-        // Ingredients Name Column
-        //##########################################
-        else if (column_In_Model == get_Ingredient_Name_Col(true))
-        {
-            System.out.printf("\n\n@tableDataChange_Action() Ingredient Name Changed - %s \nIndex: %s", table_name, ingredient_Index);
-            
-            Ingredient_Name_ID_OBJ selected_Ingredient_Name_OBJ = (Ingredient_Name_ID_OBJ) new_Value;
-            int selected_Ingredient_Name_ID = selected_Ingredient_Name_OBJ.get_ID();
-            
-            //##########################
-            // Check IF N/A is selected
-            //##########################
-            if (selected_Ingredient_Name_OBJ.get_ID().equals(na_ingredient_id))
-            {
-                // Can't have multiple 'None Of The Above' ingredients in a meal
-                if (is_There_An_Empty_Ingredients("change a current Ingredient in this meal to 'None Of The Above'"))
-                {
-                    return false;
-                }
-            }
-            
-            //##########################
-            // Update Table
-            //##########################
-            return update_Table_By_Ingredient_Name(row_In_Model, selected_Ingredient_Name_ID, ingredient_Index);
-        }
-        
-        //################################
-        // Ingredients Quantity Column
-        // ###############################
-        else if (column_In_Model == get_Quantity_Col(true))
-        {
-            System.out.printf("\ntableDataChange_Action() Quantity Being Changed - %s \nIndex: %s", table_name, ingredient_Index);
-            return update_Table_Values_By_Quantity(row_In_Model, ingredient_Index, (BigDecimal) new_Value);
-        }
-        else
-        {
-            throw new Exception(String.format("\n\n%s Un-handled Column Event Trigger - %s", get_Method_Name(2), table_name));
-        }
     }
     
     private boolean update_Table_By_Ingredient_Name(int row_In_Model, int selected_Ingredient_Name_ID, int ingredient_Index)
@@ -602,10 +571,7 @@ public class IngredientsTable extends JDBC_JTable
         //################################################################
         // Check If There Is Already An Empty Row
         //################################################################
-        if (is_There_An_Empty_Ingredients("add a new row!"))
-        {
-            return;
-        }
+        if (found_NA_Ingredient_In_Table("add a new row!")) { return; }
         
         //################################################################
         // Upload & Fetch Variables
@@ -688,6 +654,17 @@ public class IngredientsTable extends JDBC_JTable
     //###################################################
     public void refresh_Btn_Action()
     {
+        //#############################
+        // Reset DB Data
+        //#############################
+        if (! (are_You_Sure("Refresh Data"))) { return; } // Ask For Permission
+        
+        if (! get_Meal_In_DB()) // If Meal Is not in DB, then refresh does nothing
+        {
+            JOptionPane.showMessageDialog(null, "");
+            return;
+        }
+        
         //#############################
         // Reset DB Data
         //#############################
@@ -793,7 +770,7 @@ public class IngredientsTable extends JDBC_JTable
         
         if (update_TotalMeal_Table) // Reset Meal Total  Table Data
         {
-            mealManager.update_MealManager_DATA(true);
+            mealManager.update_MealManager_DATA();
         }
         
         if (update_MacrosLeft_Table) // Update Other Tables Data
@@ -805,22 +782,31 @@ public class IngredientsTable extends JDBC_JTable
     //###################################################
     // Save Button
     //###################################################
-    public boolean save_Btn_Action(boolean show_Message)
+    private void save_Btn_Action()
     {
+        if (! are_You_Sure("Save Data")) { return; }
+        
         save_Data(); // Update Table Model
         
-        if (show_Message) // Success Message
-        {
-            JOptionPane.showMessageDialog(frame, "Table Successfully Updated!");
-        }
-        
-        return true; // Output
+        JOptionPane.showMessageDialog(frame, "Table Successfully Updated!");
+    }
+    
+    public void set_Meal_In_DB(boolean meal_In_DB)
+    {
+        this.meal_In_DB = meal_In_DB;
     }
     
     //####################################################
-    // Delete Button Methods
+    // Delete Table Methods
     //####################################################
-    public void delete_Table_Action()
+    private void delete_Table_BTN_Action()
+    {
+        if (! are_You_Sure("Delete")) { return; }
+        
+        delete_Table_Action();
+    }
+    
+    private void delete_Table_Action()
     {
         //################################################
         // Delete table from database
@@ -843,14 +829,14 @@ public class IngredientsTable extends JDBC_JTable
         hide_Ingredients_Table();
         
         //################################################
-        // Update MacrosLeft Table & TotalMeal Table
-        //################################################
-        update_All_Tables_Data();
-        
-        //################################################
         // Tell MealManager This Table Has Been Deleted
         //################################################
-        mealManager.ingredientsTableHasBeenDeleted();
+        mealManager.ingredients_Table_Has_Been_Deleted(); // deletes meal if this is the last sub-meal
+        
+        //################################################
+        // Update MacrosLeft Table & TotalMeal Table
+        //################################################
+        update_Macros_Left_Table();
         
         //################################################
         // Progress Message
@@ -858,22 +844,10 @@ public class IngredientsTable extends JDBC_JTable
         JOptionPane.showMessageDialog(frame, "Table Successfully Deleted!");
     }
     
-    public void completely_Delete_Ingredients_Table()
-    {
-        // Hide Ingredients Table
-        hide_Ingredients_Table();
-        
-        // remove JTable from GUI
-        parent_Container.remove(this);
-        
-        // remove Space Divider
-        parent_Container.remove(space_Divider);
-        
-        // Tell Parent container to resize
-        parent_Container.revalidate();
-    }
-    
-    public void set_Visibility(boolean condition)
+    //#######################
+    //
+    //#######################
+    private void set_Visibility(boolean condition)
     {
         this.setVisible(condition);
         space_Divider.setVisible(condition);
@@ -891,36 +865,43 @@ public class IngredientsTable extends JDBC_JTable
         set_Object_Deleted(false); // set this object as deleted
     }
     
-    //##################################################################################################################
-    // Update Other Table Methods
-    //##################################################################################################################
-    private void update_All_Tables_Data()
-    {
-        mealManager.update_MealManager_DATA(true);
-        macrosLeft_table.update_Table();
-    }
-    
-    //##################################################################################################################
-    // Mutator Methods
-    //##################################################################################################################
     private void set_Object_Deleted(boolean deleted)
     {
         object_Deleted = deleted;
     }
     
-    public void set_Meal_In_DB(boolean meal_In_DB)
+    public void completely_Delete_Ingredients_Table()
     {
-        this.meal_In_DB = meal_In_DB;
+        // Hide Ingredients Table
+        hide_Ingredients_Table();
+        
+        // remove JTable from GUI
+        parent_Container.remove(this);
+        
+        // remove Space Divider
+        parent_Container.remove(space_Divider);
+        
+        // Tell Parent container to resize
+        parent_Container.revalidate();
+    }
+    
+    //##################################################################################################################
+    // Update Other Table Methods
+    //##################################################################################################################
+    private void update_All_Tables_Data()
+    {
+        mealManager.update_MealManager_DATA();
+        update_Macros_Left_Table();
+    }
+    
+    private void update_Macros_Left_Table()
+    {
+        macrosLeft_table.update_Table();
     }
     
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
-    public String get_Meal_Name()
-    {
-        return mealManager.get_Current_Meal_Name();
-    }
-    
     public boolean get_Meal_In_DB()
     {
         return meal_In_DB;
@@ -931,37 +912,31 @@ public class IngredientsTable extends JDBC_JTable
         return sub_Meal_ID;
     }
     
-    public Integer get_Draft_Meal_ID()
-    {
-        return draft_meal_id;
-    }
-    
     public boolean is_Table_Deleted()
     {
         return object_Deleted;
     }
     
-    private boolean is_There_An_Empty_Ingredients(String attempting_To)
+    private boolean found_NA_Ingredient_In_Table(String attempting_To)
     {
         if (get_Rows_In_Table() == 0) { return false; }
         
-        //Checking if the ingredient None Of the Above is already in the table
-        for (int row = 0; row < get_Rows_In_Table(); row++)
+        int ingredient_name_model_pos = get_Ingredient_Name_Col(true);
+        
+        for (int row = 0; row < get_Rows_In_Table(); row++) // Checking if N/A ingredient is in table
         {
             // Get Ingredient Name OBJ
             Ingredient_Name_ID_OBJ ingredient_name_id_obj =
-                    (Ingredient_Name_ID_OBJ) get_Value_On_Model_Data(row, get_Ingredient_Name_Col(true));
+                    (Ingredient_Name_ID_OBJ) get_Value_On_Model_Data(row, ingredient_name_model_pos);
             
-            Integer ingredient_OBJ_ID = ingredient_name_id_obj.get_ID(); // Get ID of Ingredient Name
-            
-            // if None Of  the above is found in the table return true
-            if (ingredient_OBJ_ID.equals(na_ingredient_id))
+            if (ingredient_name_id_obj.equals(na_ingredient_id_obj))
             {
                 String message = String.format("""
                         
                         Please change the Ingredient at:
                         Row: %s
                         Column: %s
+                        
                         From the ingredient 'None Of The Above' to another ingredient!
                         
                         Before attempting to %s!
@@ -975,7 +950,7 @@ public class IngredientsTable extends JDBC_JTable
     }
     
     //##################################################################################################################
-    // Table Columns
+    // Mutator Methods: Table Columns
     //##################################################################################################################
     
     // Mutator (Set) For Table Column Positions 
@@ -1005,7 +980,7 @@ public class IngredientsTable extends JDBC_JTable
     }
     
     //#############################################################
-    // Accessor For Table Column Positions
+    // Accessor Methods : Table Columns
     //#############################################################
     private int get_IngredientIndex_Col(boolean model_Index)
     {
