@@ -1329,17 +1329,14 @@ public class MealManager
         {
             IngredientsTable ingredientsTable = it.next();
             
-            // If ingredientsTable is in DB  then refresh
-            if (ingredientsTable.get_Meal_In_DB())
+            if (ingredientsTable.get_Sub_Meal_Saved()) // If ingredients Table is Saved Then refresh
             {
-                ingredientsTable.refresh_Data(false, false);
+                ingredientsTable.refresh_Action();
                 continue;
             }
             
-            // Because mealManager has been deleted remove it
-            ingredientsTable.completely_Delete_Ingredients_Table(); // delete table from db
-            
-            // Because mealManager has been deleted remove it
+            ingredientsTable.completely_Delete();
+           
             it.remove(); // remove from list
         }
         
@@ -1381,12 +1378,12 @@ public class MealManager
             // #####################################
             if (table.is_Table_Deleted())   // If objected is deleted, completely delete it then skip to next JTable
             {
-                table.completely_Delete_Ingredients_Table();
+                table.completely_Delete();
                 it.remove();
                 continue;
             }
             
-            table.save_Data();
+            table.save_Data_Action();
         }
         
         // ##############################################################################
@@ -1553,7 +1550,10 @@ public class MealManager
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
-    
+    public ArrayList<IngredientsTable> get_Ingredient_tables_AL()
+    {
+        return ingredient_tables_AL;
+    }
     
     // ############################################
     // Booleans

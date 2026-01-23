@@ -123,7 +123,7 @@ public abstract class JDBC_JTable extends JPanel
         
         //  Data formatting (child-controlled)
         if (! format_Table_Data(saved_Data)) { return; }
-       
+        
         // Table Configurations
         parent_Table_Configuration();  // Table setup (parent creates table)
         
@@ -247,7 +247,7 @@ public abstract class JDBC_JTable extends JPanel
         
         if (table_Initialised)  //first time this method is called, special columns aren't defined
         {
-            if (get_Columns_To_Hide() != null)
+            if (columns_To_Hide != null)
             {
                 SetUp_Hidden_Table_Columns(columns_To_Hide);
             }
@@ -579,22 +579,22 @@ public abstract class JDBC_JTable extends JPanel
     //###########################
     //
     //###########################
-    public void add_Row(ArrayList<Object> data)
+    protected void add_Row(ArrayList<Object> data)
     {
         tableModel.add_Row(data);
     }
     
-    public void delete_Row(int model_Row)
+    protected void delete_Row(int model_Row)
     {
         tableModel.remove_Row(model_Row);
     }
     
-    public void refresh_Data()
+    protected void refresh_Data()
     {
         tableModel.refresh_Data();
     }
     
-    public void save_Data() { tableModel.save_Data(); }
+    protected void save_Data() { tableModel.save_Data(); }
     
     //###########################
     // Update Methods
@@ -676,11 +676,6 @@ public abstract class JDBC_JTable extends JPanel
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
-    protected ArrayList<String> get_Columns_To_Hide()
-    {
-        return columns_To_Hide;
-    }
-    
     protected int get_Rows_In_Table()
     {
         return tableModel.getRowCount();
@@ -758,7 +753,7 @@ public abstract class JDBC_JTable extends JPanel
     //##################################################################################################################
     // Debugging
     //##################################################################################################################
-    public String get_Class_Name()
+    protected String get_Class_Name()
     {
         return class_Name;
     }

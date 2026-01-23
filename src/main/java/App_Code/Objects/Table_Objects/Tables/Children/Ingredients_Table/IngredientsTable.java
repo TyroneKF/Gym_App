@@ -29,34 +29,33 @@ public class IngredientsTable extends JDBC_JTable
     //#################################################################################################################
     
     // Objects
-    private final MealManager mealManager;
+    private final MealManager meal_manager;
     private final MacrosLeft_Table macrosLeft_table;
     private final Ingredient_Name_ID_OBJ na_ingredient_id_obj;
     
     // Screen Objects
-    private final JPanel space_Divider;
+    private final JPanel space_divider;
     private final Frame frame;
     
     //################################################
     // Other Variables
     //################################################
-    private final int
-            draft_meal_id,
-            sub_Meal_ID;
+    private final int sub_meal_id;
     
     private boolean
             meal_In_DB,
-            object_Deleted = false;
+            sub_meal_saved,
+            table_deleted = false;
     
     private int
-            model_Ingredient_Index_Col,
-            model_Quantity_Col,
-            model_Ingredient_Type_Col,
-            model_Ingredient_Name_Col,
-            model_DeleteBTN_Col;
+            model_ingredient_index_col,
+            model_quantity_col,
+            model_ingredient_type_col,
+            model_ingredient_name_col,
+            model_delete_btn_col;
     
-    private int na_ingredient_id;
-    private int na_pdid;
+    private final int na_ingredient_id;
+    private final int na_pdid;
     
     private HashMap<Ingredients_Table_Columns, Integer> ingredients_table_cols_positions;
     
@@ -67,19 +66,19 @@ public class IngredientsTable extends JDBC_JTable
     public IngredientsTable
     (
             MyJDBC_Sqlite db,
-            MealManager mealManager,
+            MealManager meal_manager,
             Shared_Data_Registry shared_data_registry,
-            MacrosLeft_Table macrosLeft_table,
-            int sub_Meal_ID,
+            MacrosLeft_Table macros_left_table,
+            int sub_meal_id,
             ArrayList<ArrayList<Object>> data,
-            boolean meal_In_DB,
-            JPanel space_Divider
+            boolean meal_in_db,
+            JPanel space_divider
     )
     {
         super(
                 db,
                 shared_data_registry,
-                mealManager.get_Collapsible_Center_JPanel(),
+                meal_manager.get_Collapsible_Center_JPanel(),
                 true,
                 "draft_ingredients_index",
                 "Ingredients Table",
@@ -95,22 +94,25 @@ public class IngredientsTable extends JDBC_JTable
         //##############################################################
         // Other Variables
         //##############################################################
-        this.mealManager = mealManager;
-        this.macrosLeft_table = macrosLeft_table;
+        this.meal_manager = meal_manager;
+        this.macrosLeft_table = macros_left_table;
         
-        this.sub_Meal_ID = sub_Meal_ID;
+        this.sub_meal_id = sub_meal_id;
         
-        this.space_Divider = space_Divider;
-        this.meal_In_DB = meal_In_DB;
+        this.space_divider = space_divider;
+        
+        this.meal_In_DB = meal_in_db;
+        sub_meal_saved = meal_in_db;
         
         //#################################
         // Values From MealManager
         //#################################
-        draft_meal_id = mealManager.get_Draft_Meal_In_Plan_ID();
+        parent_Container = meal_manager.get_Collapsible_Center_JPanel();
+        frame = meal_manager.getFrame();
         
-        parent_Container = mealManager.get_Collapsible_Center_JPanel();
-        frame = mealManager.getFrame();
-        
+        //#################################
+        // Values From Shared_Data_Registry
+        //#################################
         na_ingredient_id_obj = shared_data_registry.get_Na_Ingredient_ID_OBJ();
         na_ingredient_id = shared_data_registry.get_Na_Ingredient_ID();
         na_pdid = shared_data_registry.get_NA_PDID();
@@ -125,11 +127,11 @@ public class IngredientsTable extends JDBC_JTable
         ingredients_table_cols_positions = shared_data_registry.get_Ingredients_Table_Cols_Positions();
         
         // Table : draft_ingredients_in_sections_of_meal_calculation
-        set_Model_IngredientIndex_Col(ingredients_table_cols_positions.get(Ingredients_Table_Columns.DRAFT_INGREDIENTS_INDEX));
+        set_Model_Ingredient_Index_Col(ingredients_table_cols_positions.get(Ingredients_Table_Columns.DRAFT_INGREDIENTS_INDEX));
         set_Model_Quantity_Col(ingredients_table_cols_positions.get(Ingredients_Table_Columns.QUANTITY));
-        set_Model_IngredientType_Col(ingredients_table_cols_positions.get(Ingredients_Table_Columns.INGREDIENT_TYPE_NAME));
-        set_Model_IngredientName_Col(ingredients_table_cols_positions.get(Ingredients_Table_Columns.INGREDIENT_NAME));
-        set_Model_DeleteBTN_Col(ingredients_table_cols_positions.get(Ingredients_Table_Columns.DELETE_BTN));
+        set_Model_Ingredient_Type_Col(ingredients_table_cols_positions.get(Ingredients_Table_Columns.INGREDIENT_TYPE_NAME));
+        set_Model_Ingredient_Name_Col(ingredients_table_cols_positions.get(Ingredients_Table_Columns.INGREDIENT_NAME));
+        set_Model_Delete_BTN_Col(ingredients_table_cols_positions.get(Ingredients_Table_Columns.DELETE_BTN));
     }
     
     @Override
@@ -292,7 +294,7 @@ public class IngredientsTable extends JDBC_JTable
         //################################
         // Ingredients Type JC Setup
         //################################
-        int ingredient_Type_Column = get_IngredientType_Col(false);
+        int ingredient_Type_Column = get_Ingredient_Type_Col(false);
         
         new Ingredient_Type_JComboBox_Column(
                 get_JTable(),
@@ -315,7 +317,7 @@ public class IngredientsTable extends JDBC_JTable
         //################################
         // Delete BTn Column
         //################################
-        setup_Delete_Btn_Column(get_DeleteBTN_Col(false));
+        setup_Delete_Btn_Column(get_Delete_BTN_Col(false));
     }
     
     //###################################
@@ -323,7 +325,7 @@ public class IngredientsTable extends JDBC_JTable
     //###################################
     private void setup_Delete_Btn_Column(int delete_Btn_Column)
     {
-        new Button_Column(this, delete_Btn_Column, get_IngredientIndex_Col(true));
+        new Button_Column(this, delete_Btn_Column, get_Ingredient_Index_Col(true));
     }
     
     public void delete_Row_Action(int ingredient_Index, int model_Row)
@@ -379,14 +381,14 @@ public class IngredientsTable extends JDBC_JTable
         //##################################################################
         // Variables
         //##################################################################
-        int ingredient_Index = (Integer) get_Value_On_Model_Data(row_In_Model, get_IngredientIndex_Col(true));
+        int ingredient_Index = (Integer) get_Value_On_Model_Data(row_In_Model, get_Ingredient_Index_Col(true));
         
         //##################################################################
         // Identify Trigger Column
         //##################################################################
         
         // Ingredients Type Column
-        if (column_In_Model == get_IngredientType_Col(true)) { return true; } // Nothing to process inside db lvl
+        if (column_In_Model == get_Ingredient_Type_Col(true)) { return true; } // Nothing to process inside db lvl
         
         //##########################################
         // Ingredients Name Column
@@ -577,7 +579,7 @@ public class IngredientsTable extends JDBC_JTable
         // Upload & Fetch Variables
         //################################################################
         String error_MSG = String.format("\n\nError Adding Additional Ingredient to Meal: \n\nMeal Name: '%s' \nMeal Time: %s!",
-                mealManager.get_Current_Meal_Name(), mealManager.get_Current_Meal_Time());
+                meal_manager.get_Current_Meal_Name(), meal_manager.get_Current_Meal_Time());
         
         LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params = new LinkedHashSet<>();
         LinkedHashSet<Pair<String, Object[]>> fetch_Queries_And_Params = new LinkedHashSet<>();
@@ -600,8 +602,7 @@ public class IngredientsTable extends JDBC_JTable
                 VALUES
                 (?, ?, ?, ?);""", db_write_table_name);
         
-        upload_Queries_And_Params.add(new Pair<>(upload_Q1,
-                new Object[]{ sub_Meal_ID, na_ingredient_id, na_pdid, 0 }));
+        upload_Queries_And_Params.add(new Pair<>(upload_Q1, new Object[]{ sub_meal_id, na_ingredient_id, na_pdid, 0 }));
         
         //#######################################################
         // Fetch Queries
@@ -646,7 +647,7 @@ public class IngredientsTable extends JDBC_JTable
         //#######################################################
         // Update Table Data
         //#######################################################
-        mealManager.update_Total_Meal();
+        meal_manager.update_Total_Meal();
     }
     
     //###################################################
@@ -654,129 +655,103 @@ public class IngredientsTable extends JDBC_JTable
     //###################################################
     public void refresh_Btn_Action()
     {
-        //#############################
-        // Reset DB Data
-        //#############################
-        if (! (are_You_Sure("Refresh Data"))) { return; } // Ask For Permission
+        // Exit : Edge Cases
+        if (! are_You_Sure("Refresh Data")) { return; } // Ask For Permission
         
-        if (! get_Meal_In_DB()) // If Meal Is not in DB, then refresh does nothing
+        if (! get_Sub_Meal_Saved()) // If Meal Is not in DB, then refresh does nothing
         {
-            JOptionPane.showMessageDialog(null, "");
+            JOptionPane.showMessageDialog(null, "\n\nThere's nothing to refresh! \nThis meal was never saved!");
             return;
         }
         
-        //#############################
-        // Reset DB Data
-        //#############################
-        if (! (transfer_Meal_Data_From_Plans(null, null)))
+        // Refresh DB Data
+        if (! refresh_DB_Data())
         {
             JOptionPane.showMessageDialog(frame, "\n\nUnable to transfer ingredients data from  original plan to temp plan!!");
             return;
         }
         
-        //#############################
         // Reset Table Info & Data
+        refresh_Action();
+        
+        // Update Tables
+        meal_manager.update_MealManager_DATA();
+        macrosLeft_table.update_Table();
+       
+        // Success MSG
+        JOptionPane.showMessageDialog(frame, "\n\nSub-Meal Successfully Refreshed!!");
+    }
+    
+    private boolean refresh_DB_Data()
+    {
+        //###################################################
+        // Upload
+        //###################################################
+        /*
+         
+        */
+        
+        LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params = new LinkedHashSet<>();
+        Object[] params = new Object[4 * saved_Data.size()];
+        String error_msg = String.format("Unable to Refresh Sub-Meal !");
+        
+        //###################################################
+        // Delete From Sub-Meal
+        //###################################################
+        String upload_query_01 = "DELETE FROM draft_ingredients_in_sections_of_meal WHERE draft_div_meal_sections_id = ?";
+        upload_Queries_And_Params.add(new Pair<>(upload_query_01, new Object[]{ sub_meal_id }));
+        
+        //###################################################
+        // Create Insert String
+        //###################################################
+        
+        // Re-insert Saved Ingredients In Sub-Meal
+        String upload_query_02_tmp = """
+                INSERT INTO draft_ingredients_in_sections_of_meal
+                (
+                    draft_ingredients_index,
+                    draft_div_meal_sections_id,
+                    ingredient_id,
+                    quantity
+                )
+                VALUES
+                
+                """;
         //#############################
-        refresh_Data(true, true);
-    }
-    
-    public boolean transfer_Meal_Data_From_Plans(Integer from_Plan_ID, Integer to_Plan_ID)
-    {
-       /* //########################################################
-        // Clear Old Data from toPlan and & Temp Tables
-        //########################################################
-        // Delete tables if they already exist
-        String query0 = "DROP TABLE IF EXISTS temp_ingredients_in_meal;";
+        // Create Values String
+        //#############################
+        String values = "(?, ?, ?, ?),".repeat(saved_Data.size()); // repeat values section for as many rows as there are
+        values = values.substring(0, values.length() - 1) + ";";   // Close off upload string with ';' instead of ','
         
-        // Delete ingredients in meal Data from original plan with this mealID
-        String query1 = """
-                DELETE FROM draft_ingredients_in_sections_of_meal
-                WHERE div_meal_sections_id = ? ;""";
+        String upload_query_02 = upload_query_02_tmp + values;
         
-        //########################################################
-        // Insert Meal & dividedMealSections If Not in DB In toPlan
-        //########################################################
+        //#############################
+        // Create Params
+        //#############################
+        int pos = - 1;
         
-        // insert meal if it does not exist inside to_Plan_ID
-        String query2 = """
-                INSERT IGNORE INTO meals_in_plan
-                (meal_in_plan_id, plan_id, meal_name)
-                VALUES
-                (?, ?, ?);""";
-        
-        String query3 = """
-                INSERT IGNORE INTO draft_divided_meal_sections
-                (div_meal_sections_id, meal_in_plan_id, plan_id)
-                VALUES
-                (?,?,?);""";
-        
-        //####################################################
-        // Transferring this plans Ingredients to Temp-Plan
-        //####################################################
-        
-        // Create Table to transfer ingredients from original plan to temp
-        String query4 = """
-                CREATE table temp_ingredients_in_meal  AS
-                SELECT i.*
-                FROM draft_ingredients_in_sections_of_meal i
-                WHERE i.div_meal_sections_id = ? AND i.plan_id = ?;""";
-        
-        String query5 = "UPDATE temp_ingredients_in_meal  SET plan_id = ?;";
-        
-        String query6 = "INSERT INTO draft_ingredients_in_sections_of_meal SELECT * FROM temp_ingredients_in_meal;";
-        
-        String query7 = "DROP TABLE IF EXISTS temp_ingredients_in_meal;";
-        
-        //####################################################
-        // Update
-        //####################################################
-        String error_MSG = "Error, Unable to transfer Meal Data";
-        
-        LinkedHashSet<Pair<String, Object[]>> queries_And_Params = new LinkedHashSet<>()
-        {{
-            add(new Pair<>(query0, null));
-            add(new Pair<>(query1, new Object[]{ sub_Meal_ID, to_Plan_ID }));
-            add(new Pair<>(query2, new Object[]{ meal_In_Plan_ID, to_Plan_ID, get_Meal_Name() }));
-            add(new Pair<>(query3, new Object[]{ sub_Meal_ID, meal_In_Plan_ID, to_Plan_ID }));
-            add(new Pair<>(query4, new Object[]{ sub_Meal_ID, from_Plan_ID }));
-            add(new Pair<>(query5, new Object[]{ to_Plan_ID }));
-            add(new Pair<>(query6, null));
-            add(new Pair<>(query7, null));
-        }};
-        
-        if (! (sqlite_db.upload_Data_Batch(queries_And_Params, error_MSG))) { return false; }
-        
-        //####################################################
-        // Output
-        //####################################################
-        System.out.printf("\nMealIngredients Successfully Transferred! \n\n%s", line_Separator);
-        return true;*/
-        
-        return false;
-    }
-    
-    public void refresh_Data(boolean update_MacrosLeft_Table, boolean update_TotalMeal_Table)
-    {
-        //#############################################################################################
-        // Reset Variable
-        //#############################################################################################
-        // If Meal was Previously Deleted Reset Variables & State
-        if (is_Table_Deleted())
+        for (ArrayList<Object> row : saved_Data)
         {
-            unHide_Ingredients_Table();
+            params[pos += 1] = row.get(model_ingredient_index_col);                                    // Get Ingredient Index
+            params[pos += 1] = sub_meal_id;                                                            // Get Sub-Meal ID
+            params[pos += 1] = ((Ingredient_Name_ID_OBJ) row.get(model_ingredient_name_col)).get_ID(); // Get Ingredient ID
+            params[pos += 1] = row.get(model_quantity_col);                                            // Get Quantity
         }
         
+        //#############################
+        // Create Upload Statements
+        //#############################
+        upload_Queries_And_Params.add(new Pair<>(upload_query_02, params));
+        
+        //###################################################
+        // Execute
+        //###################################################
+        return db.upload_Data_Batch(upload_Queries_And_Params, error_msg);
+    }
+    
+    public void refresh_Action()
+    {
         refresh_Data(); // Reset Table Model data
-        
-        if (update_TotalMeal_Table) // Reset Meal Total  Table Data
-        {
-            mealManager.update_MealManager_DATA();
-        }
-        
-        if (update_MacrosLeft_Table) // Update Other Tables Data
-        {
-            macrosLeft_table.update_Table();
-        }
     }
     
     //###################################################
@@ -786,14 +761,16 @@ public class IngredientsTable extends JDBC_JTable
     {
         if (! are_You_Sure("Save Data")) { return; }
         
-        save_Data(); // Update Table Model
+        save_Data_Action();
         
         JOptionPane.showMessageDialog(frame, "Table Successfully Updated!");
     }
     
-    public void set_Meal_In_DB(boolean meal_In_DB)
+    public void save_Data_Action()
     {
-        this.meal_In_DB = meal_In_DB;
+        save_Data(); // Update Table Model
+        
+        set_Sub_Meal_Saved(true);
     }
     
     //####################################################
@@ -819,7 +796,7 @@ public class IngredientsTable extends JDBC_JTable
         String query = "DELETE FROM draft_divided_meal_sections WHERE draft_div_meal_sections_id = ? ;";
         String error_msg = String.format("Unable to delete from '%s' !", table_name);
         
-        Object[] params = new Object[]{ sub_Meal_ID };
+        Object[] params = new Object[]{ sub_meal_id };
         
         if (! db.upload_Data(query, params, error_msg)) { return; }
         
@@ -831,7 +808,7 @@ public class IngredientsTable extends JDBC_JTable
         //################################################
         // Tell MealManager This Table Has Been Deleted
         //################################################
-        mealManager.ingredients_Table_Has_Been_Deleted(); // deletes meal if this is the last sub-meal
+        meal_manager.ingredients_Table_Has_Been_Deleted(); // deletes meal if this is the last sub-meal
         
         //################################################
         // Update MacrosLeft Table & TotalMeal Table
@@ -847,30 +824,19 @@ public class IngredientsTable extends JDBC_JTable
     //#######################
     //
     //#######################
-    private void set_Visibility(boolean condition)
-    {
-        this.setVisible(condition);
-        space_Divider.setVisible(condition);
-    }
-    
     private void hide_Ingredients_Table()
     {
         set_Visibility(false); // hide collapsible Object
-        set_Object_Deleted(true);
+        set_Table_Deleted(true);
     }
     
     private void unHide_Ingredients_Table()
     {
         set_Visibility(true); // hide collapsible Object
-        set_Object_Deleted(false); // set this object as deleted
+        set_Table_Deleted(false); // set this object as deleted
     }
     
-    private void set_Object_Deleted(boolean deleted)
-    {
-        object_Deleted = deleted;
-    }
-    
-    public void completely_Delete_Ingredients_Table()
+    public void completely_Delete()
     {
         // Hide Ingredients Table
         hide_Ingredients_Table();
@@ -879,7 +845,7 @@ public class IngredientsTable extends JDBC_JTable
         parent_Container.remove(this);
         
         // remove Space Divider
-        parent_Container.remove(space_Divider);
+        parent_Container.remove(space_divider);
         
         // Tell Parent container to resize
         parent_Container.revalidate();
@@ -890,7 +856,7 @@ public class IngredientsTable extends JDBC_JTable
     //##################################################################################################################
     private void update_All_Tables_Data()
     {
-        mealManager.update_MealManager_DATA();
+        meal_manager.update_MealManager_DATA();
         update_Macros_Left_Table();
     }
     
@@ -900,21 +866,61 @@ public class IngredientsTable extends JDBC_JTable
     }
     
     //##################################################################################################################
+    // Mutator Methods
+    //##################################################################################################################
+    
+    
+    //########################
+    // Delete
+    //########################
+    private void set_Table_Deleted(boolean deleted)
+    {
+        table_deleted = deleted;
+    }
+    
+    private void set_Visibility(boolean condition)
+    {
+        this.setVisible(condition);
+        space_divider.setVisible(condition);
+    }
+    
+    //########################
+    // Save
+    //########################
+    public void set_Meal_In_DB(boolean meal_In_DB)
+    {
+        this.meal_In_DB = meal_In_DB;
+    }
+    
+    public void set_Sub_Meal_Saved(boolean state)
+    {
+        sub_meal_saved = state;
+    }
+    
+    //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
+    public int get_Sub_Meal_ID()
+    {
+        return sub_meal_id;
+    }
+    
+    //###############################
+    // Boolean
+    //###############################
     public boolean get_Meal_In_DB()
     {
         return meal_In_DB;
     }
     
-    public Integer get_Sub_Meal_ID()
+    public boolean get_Sub_Meal_Saved()
     {
-        return sub_Meal_ID;
+        return sub_meal_saved;
     }
     
     public boolean is_Table_Deleted()
     {
-        return object_Deleted;
+        return table_deleted;
     }
     
     private boolean found_NA_Ingredient_In_Table(String attempting_To)
@@ -950,70 +956,75 @@ public class IngredientsTable extends JDBC_JTable
     }
     
     //##################################################################################################################
-    // Mutator Methods: Table Columns
+    // Table Column Methods
     //##################################################################################################################
+    /*
+     
+     */
     
-    // Mutator (Set) For Table Column Positions 
-    private void set_Model_IngredientIndex_Col(int index)
+    //##############################################################
+    // Mutator Methods: Table Columns
+    //##############################################################
+    private void set_Model_Ingredient_Index_Col(int index)
     {
-        model_Ingredient_Index_Col = index;
+        model_ingredient_index_col = index;
     }
     
     private void set_Model_Quantity_Col(int index)
     {
-        model_Quantity_Col = index;
+        model_quantity_col = index;
     }
     
-    private void set_Model_IngredientType_Col(int index)
+    private void set_Model_Ingredient_Type_Col(int index)
     {
-        model_Ingredient_Type_Col = index;
+        model_ingredient_type_col = index;
     }
     
-    private void set_Model_IngredientName_Col(int index)
+    private void set_Model_Ingredient_Name_Col(int index)
     {
-        model_Ingredient_Name_Col = index;
+        model_ingredient_name_col = index;
     }
     
-    protected void set_Model_DeleteBTN_Col(int index)
+    protected void set_Model_Delete_BTN_Col(int index)
     {
-        model_DeleteBTN_Col = index;
+        model_delete_btn_col = index;
     }
     
     //#############################################################
     // Accessor Methods : Table Columns
     //#############################################################
-    private int get_IngredientIndex_Col(boolean model_Index)
+    private int get_Ingredient_Index_Col(boolean model_Index)
     {
-        if (model_Index) { return model_Ingredient_Index_Col; }
+        if (model_Index) { return model_ingredient_index_col; }
         
-        return jTable.convertColumnIndexToView(model_Ingredient_Index_Col);
+        return jTable.convertColumnIndexToView(model_ingredient_index_col);
     }
     
     private int get_Quantity_Col(boolean model_Index)
     {
-        if (model_Index) { return model_Quantity_Col; }
+        if (model_Index) { return model_quantity_col; }
         
-        return jTable.convertColumnIndexToView(model_Quantity_Col);
+        return jTable.convertColumnIndexToView(model_quantity_col);
     }
     
-    private int get_IngredientType_Col(boolean model_Index)
+    private int get_Ingredient_Type_Col(boolean model_Index)
     {
-        if (model_Index) { return model_Ingredient_Type_Col; }
+        if (model_Index) { return model_ingredient_type_col; }
         
-        return jTable.convertColumnIndexToView(model_Ingredient_Type_Col);
+        return jTable.convertColumnIndexToView(model_ingredient_type_col);
     }
     
     private int get_Ingredient_Name_Col(boolean model_Index)
     {
-        if (model_Index) { return model_Ingredient_Name_Col; }
+        if (model_Index) { return model_ingredient_name_col; }
         
-        return jTable.convertColumnIndexToView(model_Ingredient_Name_Col);
+        return jTable.convertColumnIndexToView(model_ingredient_name_col);
     }
     
-    private Integer get_DeleteBTN_Col(boolean model_Index)
+    private Integer get_Delete_BTN_Col(boolean model_Index)
     {
-        if (model_Index) { return model_DeleteBTN_Col; }
+        if (model_Index) { return model_delete_btn_col; }
         
-        return jTable.convertColumnIndexToView(model_DeleteBTN_Col);
+        return jTable.convertColumnIndexToView(model_delete_btn_col);
     }
 }
