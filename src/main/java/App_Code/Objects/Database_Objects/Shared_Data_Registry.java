@@ -745,7 +745,7 @@ public class Shared_Data_Registry
         this.selected_plan_version_id = selected_plan_version_id;
     }
     
-    public void set_User_ID(Integer user_id)
+    public void set_User_ID(int user_id)
     {
         this.user_id = user_id;
     }

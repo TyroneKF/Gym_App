@@ -41,11 +41,10 @@ public class IngredientsTable extends JDBC_JTable
     //################################################
     private final int sub_meal_id;
     
-    private Boolean sub_meal_data_changed = null;
-    
     private boolean
-            
             sub_meal_in_db,
+    
+            sub_meal_data_changed = false,
             sub_meal_saved,
     
             table_deleted = false;
@@ -689,18 +688,9 @@ public class IngredientsTable extends JDBC_JTable
         JOptionPane.showMessageDialog(frame, "\n\nSub-Meal Successfully Refreshed!!");
     }
     
-    private boolean refresh_DB_Data()
+    public void add_Refresh_Statements(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
     {
-        //###################################################
-        // Upload
-        //###################################################
-        /*
-         
-        */
-        
-        LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params = new LinkedHashSet<>();
         Object[] params = new Object[4 * saved_Data.size()];
-        String error_msg = String.format("Unable to Refresh Sub-Meal !");
         
         //###################################################
         // Delete From Sub-Meal
@@ -750,9 +740,27 @@ public class IngredientsTable extends JDBC_JTable
         //#############################
         upload_Queries_And_Params.add(new Pair<>(upload_query_02, params));
         
+        //#############################
+        // Create Upload Statements
+        //#############################
+    }
+    
+    private boolean refresh_DB_Data()
+    {
+        //###################################################
+        // Upload
+        //###################################################
+        /*
+         
+        */
+        
+        String error_msg = String.format("Unable to Refresh Sub-Meal !");
+        LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params = new LinkedHashSet<>();
+        
         //###################################################
         // Execute
         //###################################################
+        add_Refresh_Statements(upload_Queries_And_Params);
         return db.upload_Data_Batch(upload_Queries_And_Params, error_msg);
     }
     
@@ -929,7 +937,7 @@ public class IngredientsTable extends JDBC_JTable
         return sub_meal_in_db;
     }
     
-    public Boolean has_Sub_Meal_Data_Changed()
+    public boolean has_Sub_Meal_Data_Changed()
     {
         return sub_meal_data_changed;
     }

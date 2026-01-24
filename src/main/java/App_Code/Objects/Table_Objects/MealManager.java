@@ -15,6 +15,7 @@ import App_Code.Objects.Screens.Meal_Plan_Screen;
 import App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Children.Total_Meal_Table.Total_Meal_Other_Columns;
 import org.apache.commons.lang3.StringUtils;
 import org.javatuples.Pair;
+
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalTime;
@@ -33,33 +34,39 @@ public class MealManager
     //############################################
     // Boolean
     //############################################
+    private boolean is_Object_Created = false;
+    
     private boolean
-            is_Meal_Saved = false,
-            is_Object_Created = false,
             is_MealManager_In_DB = false,
+            is_Meal_Saved = false,
+            has_MealManager_Data_Changed = false;
+    
+    private boolean
             has_Meal_Name_Been_Changed = false,
             has_Meal_Time_Been_Changed = false;
     
     //############################################
     // Integers
     //############################################
+    private final UUID internalId = UUID.randomUUID();
+    
+    private final int
+            na_ingredient_id,
+            na_pdid;
+    
     private int
             source_meal_id,
             draft_meal_ID,
             yPoInternally = 0,
-            na_ingredient_id,
-            na_pdid,
             total_meal_time_col_pos,
             total_meal_name_col_pos;
-    
-    private final UUID internalId = UUID.randomUUID();
     
     //############################################
     // String
     //############################################
     private String class_Name = new Object() { }.getClass().getEnclosingClass().getName();
     private String lineSeparator = "###############################################################################";
-    private String saved_meal_name = "", currentMealName = "";
+    private String saved_meal_name = "", current_meal_name = "";
     
     //############################################
     // Time
@@ -77,8 +84,10 @@ public class MealManager
     //################################################################################
     
     // Other Objects
-    //############################################
-    private JPanel collapsibleCenterJPanel, spaceDividerForMealManager = new JPanel();
+    private JPanel
+            collapsibleCenterJPanel,
+            spaceDividerForMealManager = new JPanel();
+    
     private final MyJDBC_Sqlite db;
     private GridBagConstraints gbc;
     private Container container;
@@ -122,6 +131,9 @@ public class MealManager
         draft_meal_ID = meal_ID_Obj.get_Draft_Meal_ID();
         source_meal_id = meal_ID_Obj.get_Source_Meal_ID();
         
+        set_MealManager_In_DB(true);
+        set_Is_Meal_Saved(true);  // Set Variable which identifies in this meal associated with this object is in the database
+        
         na_pdid = shared_Data_Registry.get_NA_PDID();
         na_ingredient_id = shared_Data_Registry.get_Na_Ingredient_ID();
         
@@ -132,8 +144,6 @@ public class MealManager
         // Set Meal Name Variables
         String mealName = meal_ID_Obj.get_Name();
         set_Meal_Name_Variables(false, mealName, mealName); // Set MealName Variables
-        
-        set_MealManager_In_DB(true);  // Set Variable which identifies in this meal associated with this object is in the database
         
         //################################################
         // Setup Methods
@@ -328,19 +338,12 @@ public class MealManager
         
         set_Time_Variables(false, new_Meal_Time, new_Meal_Time);     // Set MealTime Variables
         
-        set_MealManager_In_DB(false);
-        
         //#######################################################
         // Add Meals To GUI
         //#######################################################
         setup_GUI(total_Meal_Data); // GUI
         
         add_Sub_Meal(false, sub_Meal_ID, sub_Meal_DATA); // Add Sub-Meal to GUI
-        
-        //#######################################################
-        // Return Variables
-        //#######################################################
-        is_Object_Created = true;
     }
     
     //##################################################################################################################
@@ -751,26 +754,6 @@ public class MealManager
         return new_input_time_local_time;
     }
     
-    private void set_Time_Variables(boolean hasMealTimeBeenChanged, LocalTime savedMealTime, LocalTime currentMealTime)
-    {
-        this.has_Meal_Time_Been_Changed = hasMealTimeBeenChanged;
-        this.saved_meal_time = savedMealTime;
-        this.current_meal_time = currentMealTime;
-    }
-    
-    //########################
-    // Accessor Methods
-    //########################
-    public LocalTime get_Current_Meal_Time()
-    {
-        return current_meal_time;
-    }
-    
-    public LocalTime get_Saved_Meal_Time()
-    {
-        return saved_meal_time;
-    }
-    
     //####################################
     // Meal Name Functions
     //####################################
@@ -819,7 +802,7 @@ public class MealManager
         // Change Button Text & Related Variables
         //#########################################################################################################
         // Success MSG
-        JOptionPane.showMessageDialog(getFrame(), String.format("Successfully, changed meal name from ' %s ' to ' %s ' ", currentMealName, new_input_meal_name));
+        JOptionPane.showMessageDialog(getFrame(), String.format("Successfully, changed meal name from ' %s ' to ' %s ' ", current_meal_name, new_input_meal_name));
     }
     
     private String prompt_User_For_Meal_Name(boolean skip_confirmation, boolean comparison)
@@ -897,18 +880,6 @@ public class MealManager
         // Return Value
         //##############################################################################################################
         return new_meal_name;
-    }
-    
-    private void set_Meal_Name_Variables(boolean hasMealNameBeenChanged, String savedMealName, String currentMealName)
-    {
-        this.has_Meal_Name_Been_Changed = hasMealNameBeenChanged;
-        this.saved_meal_name = savedMealName;
-        this.currentMealName = currentMealName;
-    }
-    
-    public String get_Current_Meal_Name()
-    {
-        return currentMealName;
     }
     
     //#################################################################################
@@ -1020,7 +991,7 @@ public class MealManager
         // Success MSG & Expand Meal View
         //#######################################################
         JOptionPane.showMessageDialog(null, String.format("Successfully Created Sub-Meal in %s at [%s]",
-                currentMealName, get_Current_Meal_Time())); // Show Success MSG
+                current_meal_name, get_Current_Meal_Time())); // Show Success MSG
         
         expand_JPanel(); // Expand Meal View
         
@@ -1089,12 +1060,6 @@ public class MealManager
         close_Pie_Chart_Screen();
     }
     
-    private void set_Visibility(boolean condition)
-    {
-        collapsibleJpObj.setVisible(condition);
-        spaceDividerForMealManager.setVisible(condition);
-    }
-    
     //################################################
     // Delete Ingredients_Table Methods
     //################################################
@@ -1110,51 +1075,69 @@ public class MealManager
         delete_Meal_Manager_Action(); // delete table
     }
     
-    public void remove_Ingredients_Table(IngredientsTable ingredientsTable)
-    {
-        ingredient_tables_AL.remove(ingredientsTable);
-    }
-    
     //#################################################################################
     // Refresh Methods
     //#################################################################################
     private void refresh_Btn_Action()
     {
-        // Check IF OLD Table Name & Meal Time Are Available To Assign Back To This Meal
-        String errorMSG = "Error, Unable to Refresh Meal!";
-        String query = """
-                SELECT IFNULL(M.pos, "N/A") AS pos
-                FROM
-                (
-                  -- This being the anchor had to restricted to make sure there's always a true value
-                  -- to attach to for IFNULL to work
-                
-                  SELECT plan_id FROM plans WHERE plan_id = ?
-                
-                ) AS P
-                LEFT JOIN
-                (
-                	-- Has to be restricted on plan_id then count as
-                
-                	SELECT
-                	ROW_NUMBER() OVER (ORDER BY meal_time ASC) AS pos,
-                	meal_in_plan_id, plan_id, meal_name, meal_time
-                	FROM meals_in_plan
-                	WHERE plan_id = ?
-                
-                ) AS M
-                
-                ON P.plan_id = M.plan_id
-                AND (M.meal_name = ? OR M.meal_time = ?)
-                AND M.meal_in_plan_id != ?;""";
+        //###########################################
+        // Edge Cases : Exit
+        //###########################################
+        if (! is_Meal_Saved()) // IF meal isn't saved
+        {
+            JOptionPane.showMessageDialog(null, "This Meal Hasn't Been Saved To Refresh!");
+            return;
+        }
         
-        Object[] params_refresh = new Object[]{ null, null, saved_meal_name, get_Saved_Meal_Time(), draft_meal_ID };
+        if (! has_MealManager_Data_Changed())
+        {
+            JOptionPane.showMessageDialog(null, "No Data in this Meal Has Changed To Refresh!");
+            return;
+        }
+        
+        //###########################################
+        // Check IF OLD Meal Time & Name Available
+        //###########################################
+        String errorMSG = "Error, Unable to Refresh Meal!";
+        
+        String query = // Check IF OLD Table Name & Meal Time Are Available To Assign Back To This Meal
+                """
+                        WITH M AS (
+                            -- Has to be restricted on plan_id then count as
+                        
+                            SELECT
+                        
+                                ROW_NUMBER() OVER (ORDER BY meal_time ASC) AS pos,
+                                draft_meal_in_plan_id,
+                                plan_id,
+                                meal_name,
+                                meal_time
+                        
+                            FROM draft_meals_in_plan
+                            WHERE plan_id = ?
+                        )
+                        
+                        SELECT
+                        
+                            M.pos
+                        
+                        FROM M
+                        WHERE
+                        
+                            (meal_name = ? OR meal_time = ?)
+                        
+                            AND draft_meal_in_plan_id != ?;""";
+        
+        Object[] params_refresh = new Object[]{ get_Plan_ID(), saved_meal_name, saved_meal_time, draft_meal_ID };
         
         ArrayList<ArrayList<Object>> results;
         
+        //#############################
+        // Execute
+        //#############################
         try
         {
-            results = db.get_2D_Query_AL_Object(query, params_refresh, errorMSG, false);
+            results = db.get_2D_Query_AL_Object(query, params_refresh, errorMSG, true);
         }
         catch (Exception e)
         {
@@ -1162,168 +1145,122 @@ public class MealManager
         }
         
         //###########################################
-        // IF TRUE Notify Meal Name/Time Taken
+        // IF TRUE Notify Meal Name / Time Taken
         //###########################################
-        ArrayList<Object> positions = new ArrayList<>();
+        /*
+            There can be 2 possible matches from 2 possible different meals being
+            if a meal has taken the Meal_Time or, Meal_Name
+        */
         
-        if ((results.get(0).getFirst().toString()).equals("N/A"))
+        if (! results.isEmpty())
         {
-            positions.add(results.get(0).getFirst());
-        }
-        
-        if (results.size() >= 2 && ! (results.get(1).getFirst().toString()).equals("N/A"))
-        {
-            positions.add(results.get(1).getFirst());
-        }
-        
-        if (! positions.isEmpty())
-        {
-            JOptionPane.showMessageDialog(getFrame(), String.format("""
-                            \n\nA meal in this plan already has this meals saved info:
+            ArrayList<Integer> positions = new ArrayList<>();
+            results.forEach(e -> positions.add((int) e.getFirst()));
+            
+            String msg = String.format("""
+                            A meal in this plan already has this meals saved info:
                             
                             'Meal Name' of : '%s' or 'Meal Time' of : '%s'
                             
-                            at positions : %s  which is stopping this meal from refreshing !
+                            at positions : %s%n  which is stopping this meal from refreshing !
                             
-                            Change those values first at positions : %s in this plan
+                            Change those values first at positions : %s%n in this plan
                             to be able to refresh this meal!
                             
-                            Or, refresh the whole plan if the other meals won't be affected !""", saved_meal_name,
-                    saved_meal_time, positions, positions));
+                            Or, refresh the whole plan if the other meals won't be affected !""",
+                    
+                    saved_meal_name, saved_meal_time, positions, positions);
+            
+            JOptionPane.showMessageDialog(getFrame(), msg);
             
             return;
         }
         
-        //##############################################################################################
+        //###########################################
         // Reset DB Data
-        //##############################################################################################
-        if (! (transferMealDataToPlan("refresh", null, null)))
+        //###########################################
+        if (! refresh_DB_Data())
         {
-            JOptionPane.showMessageDialog(null, "\n\nUnable to transfer mealData toS!!");
+            JOptionPane.showMessageDialog(null, "\n\nUnable to Transfer Meal Data to DB!!");
             return;
         }
         
-        //##############################################################################################
-        // RELOAD IngredientsTable & TotalMeal Table & Update  Chart DATA
-        //##############################################################################################
-        reload_Table_And_Charts_Data();
+        //###########################################
+        //
+        //###########################################
+        refresh_Action();
         
-        //##############################################################################################
-        // Remove & Re-add to GUI
-        //##############################################################################################
         meal_plan_screen.add_And_Replace_MealManger_POS_GUI(this, true, true);
+        
+        update_MacrosLeft_Table();
+        
+        JOptionPane.showMessageDialog(getFrame(), String.format("\n\n[%s] %s has been successfully refreshed! ", current_meal_time, current_meal_name));
     }
     
-    private boolean transferMealDataToPlan(String process, Integer fromPlanID, Integer toPlanID)
+    private boolean refresh_DB_Data()
     {
-        System.out.printf("\n\n%s transferMealDataToPlan()  %s %s %s", lineSeparator, process, fromPlanID, toPlanID);
-        //########################################################
-        // Drop Temp Tables
-        //########################################################
-        
-        // Delete tables if they already exist
-        String query0 = "DROP TABLE IF EXISTS temp_ingredients_in_meal;";
-        
-        String query1 = "DROP TABLE IF EXISTS temp_divided_meal_sections;";
-        
-        //########################################################
-        // Clear Old Data from toPlan and & Temp Tables
-        //########################################################
-        // Delete sub-meals from this meal in toPlan
-        String query2 = "DELETE FROM divided_meal_sections WHERE meal_in_plan_id = ? AND plan_id = ? ;";
-        
-        //####################################################
-        // Transferring this plans Ingredients to Temp-Plan
-        //####################################################
-        
-        // Create Table to transfer ingredients from original plan to temp
-        String query3 = """
-                CREATE TABLE temp_divided_meal_sections  AS
-                SELECT i.*
-                FROM divided_meal_sections i
-                WHERE i.meal_in_plan_id = ? AND i.plan_id = ?;""";
-        
-        String query4 = "UPDATE temp_divided_meal_sections SET plan_id = ?;";
-        
-        String query5 = "INSERT INTO divided_meal_sections SELECT * FROM temp_divided_meal_sections;";
-        //####################################################
-        // Transferring ingredients from this meal in toPlan
-        //####################################################
-        
-        // Create Table to transfer ingredients from original plan to temp
-        String query6 = """
-                CREATE table temp_ingredients_in_meal  AS
-                SELECT i.*
-                FROM ingredients_in_sections_of_meal i
-                WHERE div_meal_sections_id IN (SELECT div_meal_sections_id FROM divided_meal_sections WHERE meal_in_plan_id = ? AND plan_id = ?)
-                AND plan_id = ?;""";
-        
-        String query7 = "UPDATE temp_ingredients_in_meal SET plan_id = ?;";
-        
-        String query8 = "INSERT INTO ingredients_in_sections_of_meal SELECT * FROM temp_ingredients_in_meal;";
-        
-        String query9 = "DROP TABLE IF EXISTS temp_ingredients_in_meal;";
-        
-        String query10 = "DROP TABLE IF EXISTS temp_divided_meal_sections;";
+        System.out.printf("\n\n%s refresh_DB_Data()  %s %s %s", lineSeparator, "refresh", null, null);
         
         //#####################################################
-        // Meal Name & Time Updates If Changed
-        //#####################################################
-        String updateMealName = process.equals("refresh") ? saved_meal_name : currentMealName; // set mealName to refresh
-        LocalTime updateMealTime = process.equals("refresh") ? get_Saved_Meal_Time() : get_Current_Meal_Time(); // set mealTime to time
-        
-        //#####################################################
-        // Create Query Formatted Data for Method
+        //
         //#####################################################
         String errorMSG = "Error, Unable to Transfer Plan Data!";
+        LinkedHashSet<Pair<String, Object[]>> upload_queries_and_params = new LinkedHashSet<>();
         
-        LinkedHashSet<Pair<String, Object[]>> queries_And_Params = new LinkedHashSet<>()
-        {{
+        //#####################################################
+        // Add Sub-Meal Refresh Updates
+        //#####################################################
+        ingredient_tables_AL
+                .stream()
+                .filter(IngredientsTable :: has_Sub_Meal_Data_Changed)
+                .forEach(e -> {
+                    e.add_Refresh_Statements(upload_queries_and_params); // Add Sub-Meals Update Statements
+                });
+        
+        //#####################################################
+        // Revert Meal Time / Name IF Changed
+        //#####################################################
+        if (has_Meal_Time_Been_Changed)
+        {
+            String upload_meal_name = """
+                    UPDATE draft_meals_in_plan
+                    SET meal_name = ?
+                    WHERE draft_meal_in_plan_id = ?""";
             
-            add(new Pair<>(query0, null));
-            add(new Pair<>(query1, null));
+            upload_queries_and_params.add(new Pair<>(upload_meal_name, new Object[]{ saved_meal_name, draft_meal_ID }));
+        }
+        if (has_Meal_Name_Been_Changed)
+        {
+            String upload_meal_name = """
+                    UPDATE draft_meals_in_plan
+                    SET meal_time = ?
+                    WHERE draft_meal_in_plan_id = ?""";
             
-            if (has_Meal_Name_Been_Changed || has_Meal_Time_Been_Changed)
-            {
-                String uploadQuery = """
-                        UPDATE meals_in_plan
-                        SET meal_name = ?, meal_time = ?
-                        WHERE plan_id = ? AND meal_in_plan_id = ?;""";
-                
-                add(new Pair<>(uploadQuery, new Object[]{ updateMealName, updateMealTime, toPlanID, draft_meal_ID }));
-            }
-            
-            add(new Pair<>(query2, new Object[]{ draft_meal_ID, toPlanID })); // Already in correct dataType
-            add(new Pair<>(query3, new Object[]{ draft_meal_ID, fromPlanID })); //
-            add(new Pair<>(query4, new Object[]{ toPlanID }));
-            add(new Pair<>(query5, null));
-            add(new Pair<>(query6, new Object[]{ draft_meal_ID, fromPlanID, fromPlanID }));
-            add(new Pair<>(query7, new Object[]{ toPlanID }));
-            add(new Pair<>(query8, null));
-            add(new Pair<>(query9, null));
-            add(new Pair<>(query10, null));
-        }};
+            upload_queries_and_params.add(new Pair<>(upload_meal_name, new Object[]{ saved_meal_time, draft_meal_ID }));
+        }
         
         //####################################################
         // Return Update /Output
         //####################################################
-        return db.upload_Data_Batch(queries_And_Params, errorMSG);
+        return db.upload_Data_Batch(upload_queries_and_params, errorMSG);
     }
     
-    private void reload_Table_And_Charts_Data()
+    private void refresh_Action()
     {
-        //#############################################################################################
+        //##########################################
         // Reset GUI  & Variables
-        //##############################################################################################
+        //##########################################
         // Reset Time & MealName Variables
         set_Time_Variables(false, saved_meal_time, saved_meal_time);
         set_Meal_Name_Variables(false, saved_meal_name, saved_meal_name);
         
+        set_Has_Meal_Data_Changed(false);
+        
         collapsibleJpObj.set_Icon_Btn_Text(saved_meal_name); // Reset Meal Name in GUI to Old Txt
         
-        //##############################################################################################
-        // Refresh IngredientTables
-        //##############################################################################################
+        //##########################################
+        // Refresh Ingredient Tables
+        //##########################################
         Iterator<IngredientsTable> it = ingredient_tables_AL.iterator();
         while (it.hasNext())
         {
@@ -1336,46 +1273,30 @@ public class MealManager
             }
             
             ingredientsTable.completely_Delete();
-           
+            
             it.remove(); // remove from list
         }
         
-        //##############################################################################################
-        // Refresh TotalMeal_Table DATA & Charts
-        //##############################################################################################
-        update_MealManager_DATA();
-        
+        //##########################################
+        //
+        //##########################################
+        update_MealManager_DATA(); // Update DATA
         pie_Chart_Update_Title(); // Update Internal PieChart Title
-        
-        update_MacrosLeft_Table();
     }
     
     //##############################################################################################
     // Save BTN Methods
     //##############################################################################################
-    public void save_Btn_Action()
+    private void save_Btn_Action()
     {
-        save_Data_MM(true);
-        
-        
-        // ###############################################################################
-        // Set Variables
-        // ###############################################################################
-        set_Time_Variables(false, current_meal_time, current_meal_time);
-        set_Meal_Name_Variables(false, currentMealName, currentMealName);
-        
-        
-        // ###############################################################################
-        // Removing Sub-Meals that have been deleted & Saving The Other Tables
-        // ##############################################################################
+        // ########################################
+        //
+        // ########################################
         Iterator<IngredientsTable> it = ingredient_tables_AL.iterator();
         while (it.hasNext())
         {
             IngredientsTable table = it.next();
             
-            // #####################################
-            // Remove Deleted Ingredients Table
-            // #####################################
             if (table.is_Sub_Meal_Deleted())   // If objected is deleted, completely delete it then skip to next JTable
             {
                 table.completely_Delete();
@@ -1386,30 +1307,25 @@ public class MealManager
             table.save_Data_Action();
         }
         
-        // ##############################################################################
+        save_Data_Action();
+        
+        // ########################################
         // Successful Message
-        // ##############################################################################
-        
-        JOptionPane.showMessageDialog(getFrame(), "\n\nAll SubMeals Within Meal Have Successfully Saved!");
-        
+        // ########################################
+        JOptionPane.showMessageDialog(getFrame(), "\n\nAll Sub-Meals Within Meal Have Successfully Saved!");
     }
     
-    private void save_Data_MM(boolean show_Update_Message)
+    public void save_Data_Action()
     {
-    
-    }
-    
-    //######################################
-    //
-    //######################################
-    public void save_Requested_By_Plan(int new_draft_meal_ID, ArrayList<Integer> new_sub_meal_ids)
-    {
-        draft_meal_ID = new_draft_meal_ID;
+        // #####################################
+        // Set Variables
+        // #####################################
+        set_Time_Variables(false, current_meal_time, current_meal_time);
+        set_Meal_Name_Variables(false, current_meal_name, current_meal_name);
         
-        set_MealManager_In_DB(true);
-        
+        set_Is_Meal_Saved(true);
+        set_Has_Meal_Data_Changed(false);
     }
-    
     
     //######################################
     // Others
@@ -1481,7 +1397,7 @@ public class MealManager
     }
     
     //##################################################################################################################
-    // Updating Other Tables
+    // Update Methods
     //##################################################################################################################
     public void update_MealManager_DATA()
     {
@@ -1537,6 +1453,14 @@ public class MealManager
         this.draft_meal_ID = draft_meal_ID;
     }
     
+    public void set_Source_Meal_ID(int source_meal_id)
+    {
+        this.source_meal_id = source_meal_id;
+    }
+    
+    //#################################
+    // Boolean
+    //#################################
     private void set_MealManager_In_DB(boolean state)
     {
         this.is_MealManager_In_DB = state;
@@ -1547,10 +1471,35 @@ public class MealManager
         is_Meal_Saved = state;
     }
     
+    public void set_Has_Meal_Data_Changed(boolean state)
+    {
+        has_MealManager_Data_Changed = state;
+    }
+    
+    private void set_Visibility(boolean condition)
+    {
+        collapsibleJpObj.setVisible(condition);
+        spaceDividerForMealManager.setVisible(condition);
+    }
+    
+    private void set_Time_Variables(boolean hasMealTimeBeenChanged, LocalTime savedMealTime, LocalTime currentMealTime)
+    {
+        this.has_Meal_Time_Been_Changed = hasMealTimeBeenChanged;
+        this.saved_meal_time = savedMealTime;
+        this.current_meal_time = currentMealTime;
+    }
+    
+    private void set_Meal_Name_Variables(boolean hasMealNameBeenChanged, String savedMealName, String currentMealName)
+    {
+        this.has_Meal_Name_Been_Changed = hasMealNameBeenChanged;
+        this.saved_meal_name = savedMealName;
+        this.current_meal_name = currentMealName;
+    }
+    
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
-    public ArrayList<IngredientsTable> get_Ingredient_tables_AL()
+    public ArrayList<IngredientsTable> get_Ingredient_Tables_AL()
     {
         return ingredient_tables_AL;
     }
@@ -1571,6 +1520,31 @@ public class MealManager
     public boolean is_Meal_Saved()
     {
         return is_Meal_Saved;
+    }
+    
+    public boolean has_MealManager_Data_Changed()
+    {
+        return has_MealManager_Data_Changed || // IF Meal Data has specifically changed return it
+                
+                ingredient_tables_AL          // Else compute if Sub-Meals data changed
+                        .stream()
+                        .anyMatch(IngredientsTable :: has_Sub_Meal_Data_Changed); // If any Sub-Meal data has changed return true
+    }
+    
+    // ############################################
+    // Meal Times
+    // ############################################
+    public LocalTime get_Current_Meal_Time()
+    {
+        return current_meal_time;
+    }
+    
+    // ############################################
+    // Strings
+    // ############################################
+    public String get_Current_Meal_Name()
+    {
+        return current_meal_name;
     }
     
     // ############################################
