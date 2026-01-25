@@ -3,7 +3,6 @@ package App_Code.Objects.Table_Objects.Tables.Children.Ingredients_Table;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
-import App_Code.Objects.Database_Objects.Null_MYSQL_Field;
 import App_Code.Objects.Database_Objects.Fetched_Results;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Table_Objects.Tables.Children.Ingredients_Table.Buttons.Button_Column;
@@ -18,7 +17,7 @@ import org.javatuples.Pair;
 import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
-import java.sql.Types;
+import java.time.LocalTime;
 import java.util.*;
 
 public class IngredientsTable extends JDBC_JTable
@@ -27,27 +26,38 @@ public class IngredientsTable extends JDBC_JTable
     // Variables
     //#################################################################################################################
     
+    
+    //################################################
     // Objects
+    //################################################
     private final MealManager meal_manager;
     private final MacrosLeft_Table macrosLeft_table;
     private final Ingredient_Name_ID_OBJ na_ingredient_id_obj;
     
+    //######################
     // Screen Objects
+    //######################
     private final JPanel space_divider;
     private final Frame frame;
     
     //################################################
-    // Other Variables
+    // Booleans
     //################################################
-    private final int sub_meal_id;
-    
     private boolean
             sub_meal_in_db,
-    
+            sub_meal_meta_data_changed = false,
             sub_meal_data_changed = false,
             sub_meal_saved,
-    
             table_deleted = false;
+    
+    //################################################
+    // Integers
+    //################################################
+    private Integer source_sub_meal_id;
+    
+    private final int
+            draft_meal_id,
+            draft_sub_meal_id;
     
     private int
             model_ingredient_index_col,
@@ -59,6 +69,20 @@ public class IngredientsTable extends JDBC_JTable
     private final int na_ingredient_id;
     private final int na_pdid;
     
+    //################################################
+    // Others
+    //################################################
+    private String
+            saved_sub_meal_name = null,
+            current_sub_meal_name = null;
+    
+    private LocalTime
+            saved_sub_meal_time = null,
+            curent_sub_meal_time = null;
+    
+    //################################################
+    // Collections
+    //################################################
     private HashMap<Ingredients_Table_Columns, Integer> ingredients_table_cols_positions;
     
     //##################################################################################################################
@@ -71,7 +95,9 @@ public class IngredientsTable extends JDBC_JTable
             MealManager meal_manager,
             Shared_Data_Registry shared_data_registry,
             MacrosLeft_Table macros_left_table,
-            int sub_meal_id,
+            int draft_meal_id,
+            Integer source_sub_meal_id,
+            int draft_sub_meal_id,
             ArrayList<ArrayList<Object>> data,
             boolean sub_meal_in_db,
             JPanel space_divider
@@ -99,7 +125,9 @@ public class IngredientsTable extends JDBC_JTable
         this.meal_manager = meal_manager;
         this.macrosLeft_table = macros_left_table;
         
-        this.sub_meal_id = sub_meal_id;
+        this.draft_meal_id = draft_meal_id;
+        this.source_sub_meal_id = source_sub_meal_id;
+        this.draft_sub_meal_id = draft_sub_meal_id;
         
         this.space_divider = space_divider;
         
@@ -121,7 +149,7 @@ public class IngredientsTable extends JDBC_JTable
     }
     
     //##################################################################################################################
-    // Data Formatting
+    // Data Formatting Methods
     //##################################################################################################################
     @Override
     protected void child_Variable_Configurations()
@@ -491,7 +519,7 @@ public class IngredientsTable extends JDBC_JTable
         
         Object[] params_Upload = new Object[]{
                 selected_Ingredient_Name_ID,
-                new Null_MYSQL_Field(Types.INTEGER),
+                null,
                 ingredient_Index
         };
         
@@ -607,7 +635,7 @@ public class IngredientsTable extends JDBC_JTable
                 VALUES
                 (?, ?, ?, ?);""", db_write_table_name);
         
-        upload_Queries_And_Params.add(new Pair<>(upload_Q1, new Object[]{ sub_meal_id, na_ingredient_id, na_pdid, 0 }));
+        upload_Queries_And_Params.add(new Pair<>(upload_Q1, new Object[]{ draft_sub_meal_id, na_ingredient_id, na_pdid, 0 }));
         
         //#######################################################
         // Fetch Queries
@@ -683,27 +711,99 @@ public class IngredientsTable extends JDBC_JTable
         // Update Tables
         meal_manager.update_MealManager_DATA();
         macrosLeft_table.update_Table();
-       
+        
         // Success MSG
         JOptionPane.showMessageDialog(frame, "\n\nSub-Meal Successfully Refreshed!!");
     }
     
-    public void add_Refresh_Statements(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
+    private boolean refresh_DB_Data()
     {
-        Object[] params = new Object[4 * saved_Data.size()];
+        //###################################################
+        // Upload
+        //###################################################
+        /*
+         
+         */
+        
+        String error_msg = String.format("Unable to Refresh Sub-Meal !");
+        LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params = new LinkedHashSet<>();
         
         //###################################################
-        // Delete From Sub-Meal
+        // Execute
         //###################################################
-        String upload_query_01 = "DELETE FROM draft_ingredients_in_sections_of_meal WHERE draft_div_meal_sections_id = ?";
-        upload_Queries_And_Params.add(new Pair<>(upload_query_01, new Object[]{ sub_meal_id }));
+        add_Refresh_Statements(upload_Queries_And_Params);
+        return db.upload_Data_Batch(upload_Queries_And_Params, error_msg);
+    }
+    
+    public void add_Refresh_Statements(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
+    {
+        //###################################################
+        // Re-Insert Sub-Meal Incase Deleted
+        //###################################################
+        if (is_Sub_Meal_Deleted() || has_Sub_Meal_Meta_Data_Changed())
+        {
+            // DELETE OLD Sub-Meal
+            String upload_query00 = "DELETE FROM draft_divided_meal_sections WHERE draft_div_meal_sections_id = ?";
+            upload_Queries_And_Params.add(new Pair<>(upload_query00, new Object[]{ draft_sub_meal_id }));
+            
+            // Re-Insert With Old Sub-Meal Values
+            Pair<String, Object[]> upload_query_pair_01;
+            
+            String upload_query_01;
+            Object[] params_01;
+            if (is_Sub_Meal_In_DB()) // If Meal is in DB
+            {
+                upload_query_01 = """
+                        INSERT INTO draft_divided_meal_sections
+                        (
+                            draft_div_meal_sections_id,
+                            div_meal_sections_id,
+                            draft_meal_in_plan_id,
+                            plan_id,
+                            sub_meal_name,
+                            sub_meal_time
+                        )
+                        VALUES
+                        (?,?,?,?,?,?);""";
+                
+                params_01 = new Object[]{
+                        draft_sub_meal_id, source_sub_meal_id, draft_meal_id,
+                        get_Plan_ID(), saved_sub_meal_name, saved_sub_meal_time
+                };
+                
+            }
+            else // Sub-Meal isn't in DB and doesn't have a source ID
+            {
+                upload_query_01 = """
+                        INSERT INTO draft_divided_meal_sections
+                        (
+                            draft_div_meal_sections_id,
+                            draft_meal_in_plan_id,
+                            plan_id,
+                            sub_meal_name,
+                            sub_meal_time
+                        )
+                        VALUES
+                        (?,?,?,?,?);""";
+                
+                params_01 = new Object[]{ draft_sub_meal_id, draft_meal_id, get_Plan_ID(), saved_sub_meal_name, saved_sub_meal_time };
+            }
+            
+            upload_Queries_And_Params.add(new Pair<>(upload_query_01, params_01));
+        }
+        
+        //###################################################
+        // Delete Sub-Meal Ingredients
+        //###################################################
+        String upload_query_02 = "DELETE FROM draft_ingredients_in_sections_of_meal WHERE draft_div_meal_sections_id = ?";
+        upload_Queries_And_Params.add(new Pair<>(upload_query_02, new Object[]{ draft_sub_meal_id }));
         
         //###################################################
         // Create Insert String
         //###################################################
         
         // Re-insert Saved Ingredients In Sub-Meal
-        String upload_query_02_tmp = """
+        String upload_query_03_tmp = """
                 INSERT INTO draft_ingredients_in_sections_of_meal
                 (
                     draft_ingredients_index,
@@ -720,48 +820,30 @@ public class IngredientsTable extends JDBC_JTable
         String values = "(?, ?, ?, ?),".repeat(saved_Data.size()); // repeat values section for as many rows as there are
         values = values.substring(0, values.length() - 1) + ";";   // Close off upload string with ';' instead of ','
         
-        String upload_query_02 = upload_query_02_tmp + values;
+        String upload_query_03 = upload_query_03_tmp + values;
         
         //#############################
         // Create Params
         //#############################
         int pos = - 1;
+        Object[] params_03 = new Object[4 * saved_Data.size()];
         
         for (ArrayList<Object> row : saved_Data)
         {
-            params[pos += 1] = row.get(model_ingredient_index_col);                                    // Get Ingredient Index
-            params[pos += 1] = sub_meal_id;                                                            // Get Sub-Meal ID
-            params[pos += 1] = ((Ingredient_Name_ID_OBJ) row.get(model_ingredient_name_col)).get_ID(); // Get Ingredient ID
-            params[pos += 1] = row.get(model_quantity_col);                                            // Get Quantity
+            params_03[pos += 1] = row.get(model_ingredient_index_col);                                    // Get Ingredient Index
+            params_03[pos += 1] = draft_sub_meal_id;                                                            // Get Sub-Meal ID
+            params_03[pos += 1] = ((Ingredient_Name_ID_OBJ) row.get(model_ingredient_name_col)).get_ID(); // Get Ingredient ID
+            params_03[pos += 1] = row.get(model_quantity_col);                                            // Get Quantity
         }
         
         //#############################
         // Create Upload Statements
         //#############################
-        upload_Queries_And_Params.add(new Pair<>(upload_query_02, params));
+        upload_Queries_And_Params.add(new Pair<>(upload_query_03, params_03));
         
         //#############################
         // Create Upload Statements
         //#############################
-    }
-    
-    private boolean refresh_DB_Data()
-    {
-        //###################################################
-        // Upload
-        //###################################################
-        /*
-         
-        */
-        
-        String error_msg = String.format("Unable to Refresh Sub-Meal !");
-        LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params = new LinkedHashSet<>();
-        
-        //###################################################
-        // Execute
-        //###################################################
-        add_Refresh_Statements(upload_Queries_And_Params);
-        return db.upload_Data_Batch(upload_Queries_And_Params, error_msg);
     }
     
     public void refresh_Action()
@@ -769,6 +851,9 @@ public class IngredientsTable extends JDBC_JTable
         refresh_Data(); // Reset Table Model data
         
         set_Sub_Meal_Data_Changed(false);
+        set_Sub_Meal_Meta_Data_Changed(false);
+        
+        un_Hide_Ingredients_Table();
     }
     
     //###################################################
@@ -790,6 +875,7 @@ public class IngredientsTable extends JDBC_JTable
         set_Sub_Meal_Saved(true);
         
         set_Sub_Meal_Data_Changed(false);
+        set_Sub_Meal_Meta_Data_Changed(false);
     }
     
     //####################################################
@@ -815,7 +901,7 @@ public class IngredientsTable extends JDBC_JTable
         String query = "DELETE FROM draft_divided_meal_sections WHERE draft_div_meal_sections_id = ? ;";
         String error_msg = String.format("Unable to delete from '%s' !", table_name);
         
-        Object[] params = new Object[]{ sub_meal_id };
+        Object[] params = new Object[]{ draft_sub_meal_id };
         
         if (! db.upload_Data(query, params, error_msg)) { return; }
         
@@ -849,7 +935,7 @@ public class IngredientsTable extends JDBC_JTable
         set_Table_Deleted(true);
     }
     
-    private void unHide_Ingredients_Table()
+    private void un_Hide_Ingredients_Table()
     {
         set_Visibility(true); // hide collapsible Object
         set_Table_Deleted(false); // set this object as deleted
@@ -857,9 +943,6 @@ public class IngredientsTable extends JDBC_JTable
     
     public void completely_Delete()
     {
-        // Hide Ingredients Table
-        hide_Ingredients_Table();
-        
         // remove JTable from GUI
         parent_Container.remove(this);
         
@@ -868,6 +951,22 @@ public class IngredientsTable extends JDBC_JTable
         
         // Tell Parent container to resize
         parent_Container.revalidate();
+    }
+    
+    //####################################################
+    // Delete Table Methods
+    //####################################################
+    private void change_Sub_Meal_Name()
+    {
+        set_Sub_Meal_Data_Changed(true);
+    }
+    
+    //####################################################
+    // Delete Table Methods
+    //####################################################
+    private void change_Sub_Meal_Time()
+    {
+        set_Sub_Meal_Data_Changed(true);
     }
     
     //##################################################################################################################
@@ -911,22 +1010,34 @@ public class IngredientsTable extends JDBC_JTable
         this.sub_meal_in_db = meal_In_DB;
     }
     
-    public void set_Sub_Meal_Saved(boolean state)
+    private void set_Sub_Meal_Saved(boolean state)
     {
         sub_meal_saved = state;
     }
     
-    public void set_Sub_Meal_Data_Changed(boolean state)
+    private void set_Sub_Meal_Data_Changed(boolean state)
     {
         sub_meal_data_changed = state;
+    }
+    
+    private void set_Sub_Meal_Meta_Data_Changed(boolean state)
+    {
+        sub_meal_meta_data_changed = state;
     }
     
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
+    
+    
     public int get_Sub_Meal_ID()
     {
-        return sub_meal_id;
+        return draft_sub_meal_id;
+    }
+    
+    private int get_Plan_ID()
+    {
+        return shared_data_registry.get_Selected_Plan_ID();
     }
     
     //###############################
@@ -940,6 +1051,11 @@ public class IngredientsTable extends JDBC_JTable
     public boolean has_Sub_Meal_Data_Changed()
     {
         return sub_meal_data_changed;
+    }
+    
+    public boolean has_Sub_Meal_Meta_Data_Changed()
+    {
+        return sub_meal_meta_data_changed;
     }
     
     public boolean is_Sub_Meal_Saved()

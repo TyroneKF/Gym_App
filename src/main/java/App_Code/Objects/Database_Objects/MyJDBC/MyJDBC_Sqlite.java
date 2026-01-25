@@ -1,7 +1,6 @@
 package App_Code.Objects.Database_Objects.MyJDBC;
 
 import App_Code.Objects.Database_Objects.Fetched_Results;
-import App_Code.Objects.Database_Objects.Null_MYSQL_Field;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import java.math.RoundingMode;
@@ -727,16 +726,7 @@ public class MyJDBC_Sqlite  // remove extends eventually
         // Switches based on Object type
         switch (object)
         {
-            // NULL
-            case null -> throw new Exception(String.format(
-                    "Received untyped NULL at position %d.%n" +
-                            "Convert nulls explicitly using Null_MYSQL_Field, e.g.%n" +
-                            "add(new Pair<>(query, new Object[]{ new Null_MYSQL_Field(Types.INTEGER), PDID }));",
-                    pos
-            ));
-            
-            // Expect Self Created  NULL Type
-            case Null_MYSQL_Field nullMysqlField -> statement.setNull(pos, nullMysqlField.getSqlType());
+            case null -> statement.setObject(pos, null);
             
             case String s -> statement.setString(pos, s); // String
             case Integer i -> statement.setInt(pos, i); // Integer

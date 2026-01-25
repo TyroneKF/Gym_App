@@ -147,7 +147,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################################
         // Variable Initialization
         //####################################################
-        ArrayList<Meals_And_Sub_Meals_OBJ> meals_and_sub_meals_AL;
+        ArrayList<Meal_And_Sub_Meals_OBJ> meals_and_sub_meals_AL;
         LinkedHashMap<Integer, ArrayList<Object>> total_Meals_Data_Map;
         ArrayList<ArrayList<Object>> macros_targets_plan_data_AL;
         ArrayList<ArrayList<Object>> macros_left_plan_data_AL;
@@ -1215,15 +1215,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //###########################
     // Meals Data
     //###########################
-    private ArrayList<Meals_And_Sub_Meals_OBJ> setup_Get_Meal_Data() throws Exception
+    private ArrayList<Meal_And_Sub_Meals_OBJ> setup_Get_Meal_Data() throws Exception
     {
-        //########################################################################
-        // Variables
-        //########################################################################
-        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        
-        ArrayList<Meals_And_Sub_Meals_OBJ> meals_and_sub_meals_AL = new ArrayList<>();
-        
         //########################################################################
         // Create Get Query Results
         //########################################################################
@@ -1241,7 +1234,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 
                     json_group_array(
                         JSON_OBJECT(
-                            'div_id',      I.draft_div_meal_sections_id,
+                            's_div_id',    D.div_meal_sections_id,
+                            'd_div_id',    I.draft_div_meal_sections_id,
+                
                             'index',       I.draft_ingredients_index,
                 
                             'type_id',     I.ingredient_type_id,
@@ -1297,7 +1292,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //#########################################################################
         /*
          *
-         */
+        */
+        
+        ArrayList<Meal_And_Sub_Meals_OBJ> meals_and_sub_meals_AL = new ArrayList<>();
         
         try
         {
@@ -1322,10 +1319,17 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 //######################################################
                 // Create Meal & Sub-Meal Collections Per Meal & Add
                 //######################################################
-                Meal_ID_OBJ meal_ID_Obj = new Meal_ID_OBJ(draft_meal_id, source_meal_id, meal_name, meal_Time); //
+               
+                // Create Meal ID OBJ
+                Meal_ID_OBJ meal_ID_Obj = new Meal_ID_OBJ(draft_meal_id, source_meal_id, meal_name, meal_Time);
+                
+                // Create Map for Sub-Meals & Ingredients
                 LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> sub_meals_and_ingredients_Map = new LinkedHashMap<>();
                 
-                meals_and_sub_meals_AL.add(new Meals_And_Sub_Meals_OBJ(meal_ID_Obj, sub_meals_and_ingredients_Map));
+                HashMap<Integer, Integer> sub_meal_id_map = new HashMap<>(); // Create Map for Draft Sub-Meal ID to Source
+                
+                // Create Meal_And_Sub_Meals_OBJ Which Holds Meal ID Info & its Sub-Meals / Ingredients
+                meals_and_sub_meals_AL.add(new Meal_And_Sub_Meals_OBJ(meal_ID_Obj, sub_meals_and_ingredients_Map, sub_meal_id_map));
                 
                 //######################################################
                 // Parsing JSON DATA - Sub-Meals -> Ingredients
@@ -1339,18 +1343,23 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 for (JsonNode ingredient_node : ingredients_json_array) // For loop through each Ingredient belonging to a  Sub-DIV
                 {
                     //###########################
-                    // Store Ingredients Data
+                    // Create  Sub-Meal ID OBJ
+                    //###########################
+                    
+                    // Get Sub-Meal ID Draft & Source ID
+                    int source_div_id = ingredient_node.get("s_div_id").asInt();  // Div_ID
+                    int draft_div_id = ingredient_node.get("d_div_id").asInt();   //  Draft Div ID
+                    
+                    //###########################
+                    // Get Ingredient Values
                     //###########################
                     ArrayList<Object> ingredients_values = new ArrayList<>();
                     
-                    //###########################
-                    // Get Ingredients DATA
-                    //###########################
-                    int div_id = ingredient_node.get("div_id").asInt();
-                    ingredients_values.add(ingredient_node.get("index").asInt());
+                    // Ingredient ID's
+                    ingredients_values.add(ingredient_node.get("index").asInt());       // Add Ingredient Index ID per Ingredient
                     
-                    ingredients_values.add(ingredient_node.get("type_id").asInt());// Ingredient Name OBJ
-                    ingredients_values.add(ingredient_node.get("id").asInt()); // Ingredient Name Object
+                    ingredients_values.add(ingredient_node.get("type_id").asInt());     // Ingredient Name OBJ
+                    ingredients_values.add(ingredient_node.get("id").asInt());          // Ingredient Name Object
                     
                     // Quantity
                     ingredients_values.add(new BigDecimal(ingredient_node.get("quantity").asText()));
@@ -1370,10 +1379,12 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     ingredients_values.add("Delete Row"); // For Delete BTN
                     
                     //###########################
-                    // Store DATA in DIV
+                    // Store Div Data into Maps
                     //###########################
+                    sub_meal_id_map.computeIfAbsent(draft_div_id,k ->  source_div_id); // Add ID's to Map if it doesn't exist already
+                    
                     sub_meals_and_ingredients_Map // For Meals and Sub-Meals Map
-                            .computeIfAbsent(div_id, k -> new ArrayList<>()) // Get or, Section for Div with ingredients
+                            .computeIfAbsent(draft_div_id, k -> new ArrayList<>()) // Get or, Section for Div with ingredients
                             .add(ingredients_values); // Add Ingredients Values to list
                 }
             }
@@ -1560,7 +1571,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     
     private void create_Meal_Objects_In_GUI
             (
-                    ArrayList<Meals_And_Sub_Meals_OBJ> meals_and_sub_meals_AL,
+                    ArrayList<Meal_And_Sub_Meals_OBJ> meals_and_sub_meals_AL,
                     LinkedHashMap<Integer, ArrayList<Object>> total_Meals_Data_Map,
                     Loading_Screen loading_Screen,
                     double allocated_task_percentage
@@ -1593,17 +1604,10 @@ public class Meal_Plan_Screen extends Screen_JFrame
             //##############################
             // Add Meals To GUI
             //##############################
-            for (Meals_And_Sub_Meals_OBJ meal_and_sub_meals : meals_and_sub_meals_AL)
+            for (Meal_And_Sub_Meals_OBJ meal_and_sub_meals_obj : meals_and_sub_meals_AL)
             {
-                // Get Details
-                Meal_ID_OBJ meal_id_obj = meal_and_sub_meals.get_Meal_ID_OBJ();
-                int draft_meal_id = meal_id_obj.get_Draft_Meal_ID();
-                
-                // Get Associated Sub-Meals
-                LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> sub_Meal_DATA = meal_and_sub_meals.get_Sub_Meals_Data_Map();
-                
                 // Total Meals DATA
-                ArrayList<Object> total_Meal_DATA = total_Meals_Data_Map.get(draft_meal_id);
+                ArrayList<Object> total_Meal_DATA = total_Meals_Data_Map.get(meal_and_sub_meals_obj.get_Draft_Meal_ID());
                 
                 // Create MealManager
                 MealManager meal_Manager = new MealManager(
@@ -1611,8 +1615,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                         shared_data_registry,
                         db,
                         macros_left_table,
-                        meal_id_obj,
-                        sub_Meal_DATA,
+                        meal_and_sub_meals_obj,
                         total_Meal_DATA
                 );
                 
@@ -1622,7 +1625,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 
                 if (loading_Screen != null) // Update Progress
                 {
-                    int sub_meals_in_meal_count = sub_Meal_DATA.size();                         // sub-meals in this meal
+                    int sub_meals_in_meal_count = meal_and_sub_meals_obj.get_No_Of_Sub_Meals_In_Meal();  // sub-meals in this meal
                     double mealProgress = progress_per_unit * (1 + sub_meals_in_meal_count);    // meal + sub-meals
                     
                     carry += mealProgress;        // accumulate
@@ -2300,7 +2303,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // Successful Message
         // ########################################
         if (show_msg) { JOptionPane.showMessageDialog(this, "\n\nAll Meals Are Successfully Saved!"); }*/
-       
+        
     }
     
     // ###############################################################

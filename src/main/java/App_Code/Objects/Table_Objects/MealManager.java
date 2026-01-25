@@ -4,6 +4,7 @@ import App_Code.Objects.Data_Objects.ID_Objects.MetaData_ID_Object.Meal_ID_OBJ;
 import App_Code.Objects.Database_Objects.Fetched_Results;
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
+import App_Code.Objects.Screens.Meal_And_Sub_Meals_OBJ;
 import App_Code.Objects.Table_Objects.Tables.Children.Ingredients_Table.IngredientsTable;
 import App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Children.MacrosLeft_Table;
 import App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Children.Total_Meal_Table.TotalMeal_Table;
@@ -15,7 +16,6 @@ import App_Code.Objects.Screens.Meal_Plan_Screen;
 import App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Children.Total_Meal_Table.Total_Meal_Other_Columns;
 import org.apache.commons.lang3.StringUtils;
 import org.javatuples.Pair;
-
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalTime;
@@ -115,21 +115,22 @@ public class MealManager
             Shared_Data_Registry shared_Data_Registry,
             MyJDBC_Sqlite db,
             MacrosLeft_Table macrosLeft_JTable,
-            Meal_ID_OBJ meal_ID_Obj,
-            LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> sub_Meal_DATA,
+            Meal_And_Sub_Meals_OBJ meal_and_sub_meals_obj,
             ArrayList<Object> total_Meal_Data
     )
     {
         //################################################
         // Global Variables
         //################################################
+        Meal_ID_OBJ meal_id_obj = meal_and_sub_meals_obj.get_Meal_ID_OBJ();
+        
         this.meal_plan_screen = meal_plan_screen;
         this.shared_Data_Registry = shared_Data_Registry;
         this.db = db;
         this.macrosLeft_JTable = macrosLeft_JTable;
         
-        draft_meal_ID = meal_ID_Obj.get_Draft_Meal_ID();
-        source_meal_id = meal_ID_Obj.get_Source_Meal_ID();
+        draft_meal_ID = meal_id_obj.get_Draft_Meal_ID();
+        source_meal_id = meal_id_obj.get_Source_Meal_ID();
         
         set_MealManager_In_DB(true);
         set_Is_Meal_Saved(true);  // Set Variable which identifies in this meal associated with this object is in the database
@@ -138,11 +139,11 @@ public class MealManager
         na_ingredient_id = shared_Data_Registry.get_Na_Ingredient_ID();
         
         // Set Meal Time Variables
-        LocalTime meal_time = meal_ID_Obj.get_Meal_Time();
+        LocalTime meal_time = meal_id_obj.get_Meal_Time();
         set_Time_Variables(false, meal_time, meal_time); // Set MealTime Variables
         
         // Set Meal Name Variables
-        String mealName = meal_ID_Obj.get_Name();
+        String mealName = meal_id_obj.get_Name();
         set_Meal_Name_Variables(false, mealName, mealName); // Set MealName Variables
         
         //################################################
@@ -150,7 +151,7 @@ public class MealManager
         //################################################
         setup_GUI(total_Meal_Data); // GUI
         
-        add_Multiple_Sub_Meals(sub_Meal_DATA); // Add Sub-Meal to GUI
+        add_Multiple_Sub_Meals(meal_and_sub_meals_obj); // Add Sub-Meal to GUI
     }
     
     //
@@ -343,7 +344,7 @@ public class MealManager
         //#######################################################
         setup_GUI(total_Meal_Data); // GUI
         
-        add_Sub_Meal(false, sub_Meal_ID, sub_Meal_DATA); // Add Sub-Meal to GUI
+        add_Sub_Meal(false, null, sub_Meal_ID, sub_Meal_DATA); // Add Sub-Meal to GUI
     }
     
     //##################################################################################################################
@@ -549,15 +550,21 @@ public class MealManager
     //#################################
     // Meal Setup Methods
     //#################################
-    private void add_Multiple_Sub_Meals(LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> sub_Meal_DATA)
+    private void add_Multiple_Sub_Meals(Meal_And_Sub_Meals_OBJ meal_and_sub_meals_obj)
     {
+        LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> sub_Meal_DATA = meal_and_sub_meals_obj.get_Sub_Meals_Data_Map();
+   
+        // Iterate Through each Sub-Meal Data & Add to GUI
         for (Map.Entry<Integer, ArrayList<ArrayList<Object>>> div_data : sub_Meal_DATA.entrySet())
         {
-            add_Sub_Meal(true, div_data.getKey(), div_data.getValue());
+            int draft_id = div_data.getKey();
+            int source_div_id = meal_and_sub_meals_obj.get_Source_Sub_Meal_ID(draft_id);
+            
+            add_Sub_Meal(true, source_div_id, draft_id, div_data.getValue());
         }
     }
     
-    private void add_Sub_Meal(boolean is_Sub_Meal_In_DB, int div_id, ArrayList<ArrayList<Object>> sub_Meal_Data)
+    private void add_Sub_Meal(boolean is_Sub_Meal_In_DB, Integer source_sub_meal_id, int draft_div_id, ArrayList<ArrayList<Object>> sub_Meal_Data)
     {
         //##############################################
         // Create Ingredient Table Object
@@ -570,7 +577,9 @@ public class MealManager
                         this,
                         shared_Data_Registry,
                         macrosLeft_JTable,
-                        div_id,
+                        draft_meal_ID,
+                        source_sub_meal_id,
+                        draft_div_id,
                         sub_Meal_Data,
                         is_Sub_Meal_In_DB,
                         spaceDivider
@@ -634,42 +643,30 @@ public class MealManager
         
         Object[] params = new Object[]{ new_meal_time, draft_meal_ID };
         
-        //###############################
         // Upload Into Database Table
-        //###############################
         if (! db.upload_Data(uploadQuery, params, "Error, unable to change Meal Time!")) { return; }
         
         //###############################
-        // Update GUI & Variables
+        // Update Variables & DATA
         //###############################
+        set_Time_Variables(true, saved_meal_time, new_meal_time); // Set Meal Time Variables
+        set_Has_Meal_Data_Changed(true);
         
+        //
+        meal_plan_screen.add_And_Replace_MealManger_POS_GUI(this, true, true);
+        
+        // Update External Charts
+        meal_plan_screen.update_External_Charts(false, "mealTime", this, old_current_time, new_meal_time);
+        
+        //###############################
+        // Update GUI
+        //###############################
         JOptionPane.showMessageDialog(getFrame(), String.format("Successfully, changed meal time from '%s' to '%s'",
                 old_current_time, new_meal_time)); // Success MSG
         
-        //###############################
-        // Update total Meal Table Time
-        //###############################
-        totalMealTable.set_Value_On_Table(new_meal_time, 0, total_meal_time_col_pos);
+        totalMealTable.set_Value_On_Table(new_meal_time, 0, total_meal_time_col_pos); // Update total Meal Table Time Value
         
-        //###############################
-        // Update Time Variables
-        //###############################
-        set_Time_Variables(true, saved_meal_time, new_meal_time); // Set Meal Time Variables
-        
-        //###############################
-        // Update Internal PieChart Name
-        //###############################
-        pie_Chart_Update_Title();
-        
-        //###############################
-        //  Update GUI
-        //###############################
-        meal_plan_screen.add_And_Replace_MealManger_POS_GUI(this, true, true);
-        
-        //###############################
-        // Update External Charts
-        //###############################
-        meal_plan_screen.update_External_Charts(false, "mealTime", this, old_current_time, new_meal_time);
+        pie_Chart_Update_Title(); // Update PieChart Title
     }
     
     private LocalTime prompt_User_For_Meal_Time(boolean skip_confirmation, boolean comparison)
@@ -759,17 +756,17 @@ public class MealManager
     //####################################
     private void edit_Name_BTN_Action()
     {
-        //#########################################################################################################
+        //##########################################
         // Validation Checks
-        //#########################################################################################################
+        //##########################################
         // Get User Input
         String new_input_meal_name = prompt_User_For_Meal_Name(false, true);
         
         if (new_input_meal_name == null) { return; } // Error occurred in validation checks above
         
-        //#########################################################################################################
+        //##########################################
         // Update DB
-        //#########################################################################################################
+        //##########################################
         String upload_query = """
                 UPDATE draft_meals_in_plan
                 SET meal_name = ?
@@ -779,30 +776,29 @@ public class MealManager
         
         if (! db.upload_Data(upload_query, params, "Error, unable to change Meal Name!")) { return; }
         
-        //#########################################################################################################
-        // Change Variable DATA & Object
-        //#########################################################################################################
-        collapsibleJpObj.set_Icon_Btn_Text(new_input_meal_name);
+        //##########################################
+        // Update Variables & DATA / Objects
+        //##########################################
         set_Meal_Name_Variables(true, saved_meal_name, new_input_meal_name);  // Set Meal Name Variables
+        set_Has_Meal_Data_Changed(true);
         
-        //#########################################################################################################
-        // Update total Meal View Time Col
-        //#########################################################################################################
-        totalMealTable.set_Value_On_Table(new_input_meal_name, 0, total_meal_name_col_pos);
+        collapsibleJpObj.set_Icon_Btn_Text(new_input_meal_name); // Update Meal Manager Name
         
-        //#########################################################################################################
+        //##########################################
         // Internal / External Graphs
-        //#########################################################################################################
+        //##########################################
         pie_Chart_Update_Title(); // Change Internal Graph Title if exists
         
         // Update External
         meal_plan_screen.update_External_Charts(false, "mealName", this, null, null);
         
-        //#########################################################################################################
-        // Change Button Text & Related Variables
-        //#########################################################################################################
+        totalMealTable.set_Value_On_Table(new_input_meal_name, 0, total_meal_name_col_pos);    // Update Total Meal Table Name Col
+        
+        //##########################################
         // Success MSG
-        JOptionPane.showMessageDialog(getFrame(), String.format("Successfully, changed meal name from ' %s ' to ' %s ' ", current_meal_name, new_input_meal_name));
+        //##########################################
+        String msg = String.format("Successfully, changed meal name from ' %s ' to ' %s ' ", current_meal_name, new_input_meal_name);
+        JOptionPane.showMessageDialog(getFrame(), msg);
     }
     
     private String prompt_User_For_Meal_Name(boolean skip_confirmation, boolean comparison)
@@ -939,6 +935,7 @@ public class MealManager
         String fetch_query_01 = """
                 
                 SELECT
+                
                     D.draft_div_meal_sections_iD,
                     I2.*
                 
@@ -985,7 +982,7 @@ public class MealManager
         //#######################################################
         // Add Meal To GUI
         //#######################################################
-        add_Sub_Meal(false, sub_Meal_ID, sub_Meal_DATA); // Add Sub-Meal to GUI
+        add_Sub_Meal(false, null, sub_Meal_ID, sub_Meal_DATA); // Add Sub-Meal to GUI
         
         //#######################################################
         // Success MSG & Expand Meal View
@@ -1158,14 +1155,17 @@ public class MealManager
             results.forEach(e -> positions.add((int) e.getFirst()));
             
             String msg = String.format("""
-                            A meal in this plan already has this meals saved info:
+                            There is a meal / meals  in this plan that already have
+                            this Meals old saved info (Meal Time / Name) being :
                             
-                            'Meal Name' of : '%s' or 'Meal Time' of : '%s'
+                            'Meal Name' of : '%s'
                             
-                            at positions : %s%n  which is stopping this meal from refreshing !
+                            'Meal Time' of : '%s'
                             
-                            Change those values first at positions : %s%n in this plan
-                            to be able to refresh this meal!
+                            at positions : %s  which is stopping this meal from refreshing !
+                            
+                            Change these values first at positions : %s
+                            in this plan to be able to refresh this meal!
                             
                             Or, refresh the whole plan if the other meals won't be affected !""",
                     
