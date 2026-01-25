@@ -5,6 +5,7 @@ import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.*;
 import App_Code.Objects.Database_Objects.Fetched_Results;
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
+import App_Code.Objects.Table_Objects.Tables.Children.Ingredients_Table.IngredientsTable;
 import App_Code.Objects.Table_Objects.Tables.Children.Ingredients_Table.Ingredients_Table_Columns;
 import App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Children.MacrosLeft_Table;
 import App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Children.MacrosTargets_Table;
@@ -62,6 +63,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //#########################################################################################
     // Collections
     //#########################################################################################
+    private ArrayList<MealManager> mealManager_ArrayList;
+    
     
     //#######################################
     // Macro_Targets
@@ -110,6 +113,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         super(db, true, "Gym App", 1925, 1082, 1300, 0);
         
         shared_data_registry = new Shared_Data_Registry();
+        mealManager_ArrayList = shared_data_registry.get_MealManager_ArrayList();
         
         Loading_Screen loading_Screen = new Loading_Screen(100);
         
@@ -1292,7 +1296,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //#########################################################################
         /*
          *
-        */
+         */
         
         ArrayList<Meal_And_Sub_Meals_OBJ> meals_and_sub_meals_AL = new ArrayList<>();
         
@@ -1319,7 +1323,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 //######################################################
                 // Create Meal & Sub-Meal Collections Per Meal & Add
                 //######################################################
-               
+                
                 // Create Meal ID OBJ
                 Meal_ID_OBJ meal_ID_Obj = new Meal_ID_OBJ(draft_meal_id, source_meal_id, meal_name, meal_Time);
                 
@@ -1381,7 +1385,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     //###########################
                     // Store Div Data into Maps
                     //###########################
-                    sub_meal_id_map.computeIfAbsent(draft_div_id,k ->  source_div_id); // Add ID's to Map if it doesn't exist already
+                    sub_meal_id_map.computeIfAbsent(draft_div_id, k -> source_div_id); // Add ID's to Map if it doesn't exist already
                     
                     sub_meals_and_ingredients_Map // For Meals and Sub-Meals Map
                             .computeIfAbsent(draft_div_id, k -> new ArrayList<>()) // Get or, Section for Div with ingredients
@@ -2235,7 +2239,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         for (MealManager mm : mealManager_ArrayList)
         {
             System.out.printf("\n\nMealManagerID: %s \nMealName : %s \nMealTime : %s",
-                    mm.get_Draft_Meal_In_Plan_ID(), mm.get_Current_Meal_Name(), mm.get_Current_Meal_Time());
+                    mm.get_Draft_Meal_ID(), mm.get_Current_Meal_Name(), mm.get_Current_Meal_Time());
             
             mm.collapse_MealManager(); // Collapse all meals
             
@@ -2251,59 +2255,246 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // Save Plan BTN
     // ###############################################################
     private void save_Plan_Data(boolean show_msg)
-    {/*
+    {
         // ########################################
-        // Exit Clauses
+        // Edge Cases
         // ########################################
-        *//*
-            If there is no selected plan, exit
-            If there is no meals in the plan aka there's nothing to save, exit
-            If the user  rejects saving the plan, exit
-         *//*
+        if (! save_Edge_Cases()) { return; }
         
-        String txt = "Are you want to save all the data in this meal plan?";
-        ArrayList<MealManager> mealManager_ArrayList = shared_data_registry.get_MealManager_ArrayList();
-        
-        if (mealManager_ArrayList.isEmpty() || ! is_Plan_Selected() || ! areYouSure("Save Meal Plan Data", txt))
-        {
-            return;
-        }
         
         // ########################################
-        // Remove Every Deleted Meal
+        // Save Plan DB Side
         // ########################################
-        if (mealManager_ArrayList.isEmpty()) //  If there are no meals left after removing all the deleted meals, exit
-        {
-            JOptionPane.showMessageDialog(null, "There are no Meals left in this Plan! \nAdd a Meal to Save!");
-            return;
-        }
+        Fetched_Results results = saved_DB_Data();
+        if (results == null) { return; }
+        
         
         // ########################################
-        // Save & Create New Plan Version / ID's
+        // Get Meal / Sub-Meal IDs
         // ########################################
-        // Get All the ID's of New Versioned Meals / Sub-Meals
-        
-         *//*   if ((! (transfer_Meal_Ingredients(get_Selected_Plan_ID(), get_Selected_Plan_Version_ID())))) // transfer meals and ingredients from temp plan to original plan
-        {
-            System.out.println("\n\n#################################### \n2.) save_Plan_Data() Meals Transferred to Original Plan");
-            
-            JOptionPane.showMessageDialog(this, "\n\n2.)  Error \nUnable to save meals in plan!");
-            return;
-        }*//*
+        HashMap<Integer, Integer> meal_id_map = new HashMap<>();
+        HashMap<Integer, Integer> sub_meal_id_map = new HashMap<>();
         
         // ########################################
         // Save Each Meal
         // ########################################
         for (MealManager mealManager : mealManager_ArrayList)
         {
-            // mealManager.save_Requested_By_Plan();
+            // Set MealManager Source ID
+            int draft_meal_id = mealManager.get_Draft_Meal_ID();
+            int source_meal_id = meal_id_map.get(draft_meal_id);
+            mealManager.set_Source_Meal_ID(source_meal_id);
+            
+            // Save MealManager
+            mealManager.save_Data_Action();
+            mealManager.set_MealManager_In_DB(true);
+            
+            // Get All Sub-Meals Per Meal
+            ArrayList<IngredientsTable> sub_meals = mealManager.get_Ingredient_Tables_AL();
+            Iterator<IngredientsTable> it = sub_meals.iterator();
+            
+            while (it.hasNext()) // Remove Deleted Sub-Meals & Save Saved Meals
+            {
+                IngredientsTable table = it.next();
+                
+                if (table.is_Sub_Meal_Deleted())   // If objected is deleted, completely delete it then skip to next JTable
+                {
+                    table.completely_Delete();
+                    it.remove();
+                    continue;
+                }
+                
+                // Save Sub-Meal
+                table.save_Data_Action();
+                table.set_Meal_In_DB(true);
+                
+                // Set Sub-Meal Source ID
+                int draft_sub_meal_id = table.get_Draft_Sub_Meal_ID();
+                int source_sub_meal_id = sub_meal_id_map.get(draft_sub_meal_id);
+                table.set_Source_Sub_Meal_ID(source_sub_meal_id);
+            }
         }
         
         // ########################################
         // Successful Message
         // ########################################
-        if (show_msg) { JOptionPane.showMessageDialog(this, "\n\nAll Meals Are Successfully Saved!"); }*/
+        JOptionPane.showMessageDialog(this, "\n\nAll Meals Are Successfully Saved!");
+    }
+    
+    private boolean save_Edge_Cases()
+    {
+        // ########################################
+        // Exit Clauses
+        // ########################################
+        /*
+            If there is no selected plan, exit
+            If there is no meals in the plan aka there's nothing to save, exit
+            If the user  rejects saving the plan, exit
+        */
         
+        if (! is_Plan_Selected())
+        {
+            JOptionPane.showMessageDialog(null, "A plan must be selected to Save!");
+            return false;
+        }
+        
+        if (mealManager_ArrayList.isEmpty()) //  If there are no meals left after removing all the deleted meals, exit
+        {
+            String msg = """
+                    "There are no Meals left in this Plan !
+                    
+                    Add a Meal to Save !
+                    
+                    If saving an empty plan was Intentional delete the plan instead !""";
+            
+            JOptionPane.showMessageDialog(null, msg);
+            return false;
+        }
+        
+        // Confirm Choice
+        String txt = "\n\nAre you want to save all the data in this meal plan? \n\nAny deleted meals will be lost!";
+        
+        return areYouSure("Save Meal Plan Data", txt);
+    }
+    
+    private Fetched_Results saved_DB_Data()
+    {
+        //###################################################
+        // Variables
+        //###################################################
+        String error_msg = "Unable to Save Meals in Plan !";
+        LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params = new LinkedHashSet<>();
+        LinkedHashSet<Pair<String, Object[]>> fetch_Queries_And_Params = new LinkedHashSet<>();
+        
+        //###################################################
+        // Upload
+        //###################################################
+        /*
+         
+         */
+        //#############################
+        // Create Key Table
+        //#############################
+        String upload_query_00 = """
+                CREATE TEMPORARY TABLE saved_keys
+                (
+                    seed_key TEXT PRIMARY KEY
+                        CHECK (length(seed_key) <= 100),
+                
+                    entity_id_value INT NOT NULL
+                
+                );""";
+        
+        upload_Queries_And_Params.add(new Pair<>(upload_query_00, null));
+        
+        //#############################
+        // Plan Transfer
+        //#############################
+        
+        // Upload to Plan_Versions from Draft Plans
+        String upload_query_01 = """
+                WITH
+                    v_no AS ( -- Version_Number
+                
+                        SELECT COALESCE(MAX(version_number), 0) + 1 AS version_number
+                        FROM plan_versions
+                        WHERE plan_id = ? AND user_id = ?
+                    )
+                
+                INSERT INTO plan_versions (plan_id, user_id, version_number)
+                VALUES
+                (?, ?, (SELECT version_number FROM v_no) );""";
+        
+        Object[] params_01 = new Object[]{ get_Selected_Plan_ID(), get_User_ID(), get_Selected_Plan_ID(), get_User_ID() };
+        
+        upload_Queries_And_Params.add(new Pair<>(upload_query_01, params_01));
+        
+        // Upload to Plan_Version_ID
+        String upload_query_02 = """
+                INSERT INTO saved_keys (seed_key, entity_id_value)
+                VALUES
+                ("plan_version_id", last_insert_rowid());""";
+        
+        upload_Queries_And_Params.add(new Pair<>(upload_query_02, null));
+        
+        //#############################
+        // Macros
+        //#############################
+        
+        // Upload to Macros from Draft
+        String upload_query_03 = """
+                INSERT INTO macros_per_pound_and_limits
+                (
+                    user_id, plan_version_id, current_weight_kg, current_weight_in_pounds, body_fat_percentage,
+                    protein_per_pound, carbohydrates_per_pound, fibre, fats_per_pound, saturated_fat_limit, salt_limit,
+                    water_target, additional_calories
+                )
+                SELECT
+                
+                    user_id,
+               
+                    (SELECT entity_id_value FROM saved_keys WHERE seed_key = "plan_version_id"),
+                
+                    current_weight_kg, current_weight_in_pounds, body_fat_percentage,
+                    protein_per_pound, carbohydrates_per_pound, fibre, fats_per_pound, saturated_fat_limit, salt_limit,
+                    water_target, additional_calories
+                
+                FROM draft_macros_per_pound_and_limits
+                WHERE plan_id = ?""";
+   
+        upload_Queries_And_Params.add(new Pair<>(upload_query_03, new Object[]{ get_Selected_Plan_ID()}));
+        
+        //#############################
+        // Meals
+        //#############################
+        
+        // Upload to Meal from Draft Meals
+        String upload_query_04 = """
+                INSERT INTO meals_in_plan
+                (
+                    user_id, plan_version_id, current_weight_kg, current_weight_in_pounds, body_fat_percentage,
+                    protein_per_pound, carbohydrates_per_pound, fibre, fats_per_pound, saturated_fat_limit, salt_limit,
+                    water_target, additional_calories
+                )
+                SELECT
+                
+                    user_id, plan_version_id, current_weight_kg, current_weight_in_pounds, body_fat_percentage,
+                    protein_per_pound, carbohydrates_per_pound, fibre, fats_per_pound, saturated_fat_limit, salt_limit,
+                    water_target, additional_calories
+                
+                FROM draft_macros_per_pound_and_limits
+                WHERE plan_id = ?""";
+        
+        upload_Queries_And_Params.add(new Pair<>(upload_query_04, new Object[]{ get_Selected_Plan_ID()}));
+        
+        
+        
+        //###################################################
+        // Fetch
+        //###################################################
+        // Upload to Meal from Draft Meals
+        String upload_query_16 = """
+                INSERT INTO meals_in_plan
+                (
+                    user_id, plan_version_id, current_weight_kg, current_weight_in_pounds, body_fat_percentage,
+                    protessssin_per_pound, carbohydrates_per_pound, fibre, fats_per_pound, saturated_fat_limit, salt_limit,
+                    water_target, additional_calories
+                )
+                SELECT
+                
+                    user_id, plan_version_id, current_weight_kg, current_weight_in_pounds, body_fat_percentage,
+                    protein_per_pound, carbohydrates_per_pound, fibre, fats_per_pound, saturated_fat_limit, salt_limit,
+                    water_target, additional_calories
+                
+                FROM draft_macros_per_pound_and_limits
+                WHERE plan_id = ?""";
+        
+        upload_Queries_And_Params.add(new Pair<>(upload_query_16, new Object[]{ get_Selected_Plan_ID()}));
+        
+        //###################################################
+        // Execute
+        //###################################################
+        return db.upload_And_Get_Batch(upload_Queries_And_Params, fetch_Queries_And_Params, error_msg);
     }
     
     // ###############################################################

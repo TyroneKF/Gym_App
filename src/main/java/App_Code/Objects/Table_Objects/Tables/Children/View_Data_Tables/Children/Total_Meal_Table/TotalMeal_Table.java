@@ -69,7 +69,7 @@ public class TotalMeal_Table extends MyJTable_Display_Data
     @Override
     protected Object[] get_Params()
     {
-        return new Object[]{ mealManager.get_Draft_Meal_In_Plan_ID() };
+        return new Object[]{ mealManager.get_Draft_Meal_ID() };
     }
 }
 

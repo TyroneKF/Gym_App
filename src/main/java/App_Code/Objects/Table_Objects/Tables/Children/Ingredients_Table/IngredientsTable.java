@@ -986,7 +986,10 @@ public class IngredientsTable extends JDBC_JTable
     //##################################################################################################################
     // Mutator Methods
     //##################################################################################################################
-    
+    public void set_Source_Sub_Meal_ID(int source_sub_meal_id)
+    {
+        this.source_sub_meal_id = source_sub_meal_id;
+    }
     
     //########################
     // Delete
@@ -1030,7 +1033,10 @@ public class IngredientsTable extends JDBC_JTable
     //##################################################################################################################
     
     
-    public int get_Sub_Meal_ID()
+    //###############################
+    // Integer
+    //###############################
+    public int get_Draft_Sub_Meal_ID()
     {
         return draft_sub_meal_id;
     }

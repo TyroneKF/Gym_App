@@ -66,12 +66,17 @@ public class MealManager
     //############################################
     private String class_Name = new Object() { }.getClass().getEnclosingClass().getName();
     private String lineSeparator = "###############################################################################";
-    private String saved_meal_name = "", current_meal_name = "";
+    private String
+            saved_meal_name = null,
+            current_meal_name = null;
     
     //############################################
     // Time
     //############################################
-    private LocalTime saved_meal_time = null, current_meal_time = null;
+    private LocalTime
+            saved_meal_time = null,
+            current_meal_time = null;
+    
     private DateTimeFormatter time_Formatter = DateTimeFormatter.ofPattern("HH:mm").withResolverStyle(ResolverStyle.STRICT);
     
     //############################################
@@ -553,7 +558,7 @@ public class MealManager
     private void add_Multiple_Sub_Meals(Meal_And_Sub_Meals_OBJ meal_and_sub_meals_obj)
     {
         LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> sub_Meal_DATA = meal_and_sub_meals_obj.get_Sub_Meals_Data_Map();
-   
+        
         // Iterate Through each Sub-Meal Data & Add to GUI
         for (Map.Entry<Integer, ArrayList<ArrayList<Object>>> div_data : sub_Meal_DATA.entrySet())
         {
@@ -1423,7 +1428,7 @@ public class MealManager
          */
         if (! shared_Data_Registry.update_PieChart_Values(this)) // Update Internal Charts
         {
-            System.err.printf("\n\nMPS : update_Pie_Chart_DATA() \nPieChart not Open %s", get_Draft_Meal_In_Plan_ID());
+            System.err.printf("\n\nMPS : update_Pie_Chart_DATA() \nPieChart not Open %s", get_Draft_Meal_ID());
         }
         
         // Update External Charts
@@ -1448,11 +1453,6 @@ public class MealManager
     //##################################################################################################################
     // Mutator Methods
     //##################################################################################################################
-    public void set_Draft_meal_ID(int draft_meal_ID)
-    {
-        this.draft_meal_ID = draft_meal_ID;
-    }
-    
     public void set_Source_Meal_ID(int source_meal_id)
     {
         this.source_meal_id = source_meal_id;
@@ -1461,7 +1461,7 @@ public class MealManager
     //#################################
     // Boolean
     //#################################
-    private void set_MealManager_In_DB(boolean state)
+    public void set_MealManager_In_DB(boolean state)
     {
         this.is_MealManager_In_DB = state;
     }
@@ -1576,7 +1576,7 @@ public class MealManager
     // ############################################
     // Integers
     // ############################################
-    public int get_Draft_Meal_In_Plan_ID()
+    public int get_Draft_Meal_ID()
     {
         return draft_meal_ID;
     }

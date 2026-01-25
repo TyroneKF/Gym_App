@@ -29,7 +29,7 @@ public class PieChart_MacroKey implements Comparable<PieChart_MacroKey>
         //############################################
         this.mealManager = mealManager;
         
-        this.mealInPlanID = mealManager.get_Draft_Meal_In_Plan_ID();
+        this.mealInPlanID = mealManager.get_Draft_Meal_ID();
         this.macro_name = macro_name;
         this.macroSymbol = macroSymbol;
     }
