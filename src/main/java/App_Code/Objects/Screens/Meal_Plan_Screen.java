@@ -1856,7 +1856,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         
         save_btn.addActionListener(ae -> {
             
-            save_Plan_Data(true);
+            save_Plan_Data();
         });
         
         iconPanelInsert.add(save_btn);
@@ -2254,13 +2254,18 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // ###############################################################
     // Save Plan BTN
     // ###############################################################
-    private void save_Plan_Data(boolean show_msg)
+    private void save_Plan_Data()
     {
         // ########################################
-        // Edge Cases
+        // Edge Cases / Variables
         // ########################################
         if (! save_Edge_Cases()) { return; }
         
+        boolean any_session_created_meals = any_Session_Created_Meals();
+        boolean any_session_created_sub_meals = any_Session_Created_Sub_Meals();
+        
+        System.out.printf("\n\nSession Created Meals : %s \n\nAny session Created Sub-Meals : %s",
+                any_session_created_meals, any_session_created_sub_meals);
         
         // ########################################
         // Save Plan DB Side
@@ -2268,12 +2273,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
         Fetched_Results results = saved_DB_Data();
         if (results == null) { return; }
         
-        
         // ########################################
         // Get Meal / Sub-Meal IDs
         // ########################################
-        HashMap<Integer, Integer> meal_id_map = new HashMap<>();
-        HashMap<Integer, Integer> sub_meal_id_map = new HashMap<>();
+        HashMap<Integer, Integer> meal_id_map = new HashMap<>();        // Draft_Meal_ID -> Meal_Versions
+        HashMap<Integer, Integer> sub_meal_id_map = new HashMap<>();    // Draft_Sub_Meal_ID -> Sub_Meal_Versions
         
         // ########################################
         // Save Each Meal
@@ -2281,6 +2285,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         for (MealManager mealManager : mealManager_ArrayList)
         {
             // Set MealManager Source ID
+            
             int draft_meal_id = mealManager.get_Draft_Meal_ID();
             int source_meal_id = meal_id_map.get(draft_meal_id);
             mealManager.set_Source_Meal_ID(source_meal_id);
@@ -2314,7 +2319,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 table.set_Source_Sub_Meal_ID(source_sub_meal_id);
             }
         }
-        
+      
         // ########################################
         // Successful Message
         // ########################################
@@ -2357,6 +2362,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
         return areYouSure("Save Meal Plan Data", txt);
     }
     
+    // ########################################
+    // Saved DB Methods
+    // ########################################
     private Fetched_Results saved_DB_Data()
     {
         //###################################################
@@ -2378,8 +2386,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
         String upload_query_00 = """
                 CREATE TEMPORARY TABLE saved_keys
                 (
-                    seed_key TEXT PRIMARY KEY
-                        CHECK (length(seed_key) <= 100),
+                    key TEXT PRIMARY KEY
+                        CHECK (length(key) <= 100),
                 
                     entity_id_value INT NOT NULL
                 
@@ -2388,9 +2396,48 @@ public class Meal_Plan_Screen extends Screen_JFrame
         upload_Queries_And_Params.add(new Pair<>(upload_query_00, null));
         
         //#############################
-        // Plan Transfer
+        //
         //#############################
+        saved_DB_Data_Plans(upload_Queries_And_Params);             // Plan   Transfer
+        saved_DB_Data_Macros(upload_Queries_And_Params);            // Macros Transfer
+        saved_DB_Data_For_New_Meals(upload_Queries_And_Params);     // Meal   Transfer
+        saved_DB_Data_Sub_Meals(upload_Queries_And_Params);         // Sub-Meals Transfer
+        saved_DB_Data_Ingredients(upload_Queries_And_Params);       // Ingredients Transfer
         
+        //###################################################
+        // Fetch
+        //###################################################
+        
+        // All the Meals that didn't have a source Meal ID originally get them
+        String fetch_query00 = "SELECT draft_meal_in_plan_id, meal_in_plan_id FROM meals_to_draft_meals_anchor;";
+        fetch_Queries_And_Params.add(new Pair<>(fetch_query00, null));
+        
+        // All the Sub-Meals that didn't have a source Meal ID originally get them
+        String fetch_query01 = "SELECT draft_div_meal_sections_id, div_meal_sections_idF FROM sub_meals_to_draft_sub_meals_anchor;";
+        fetch_Queries_And_Params.add(new Pair<>(fetch_query01, null));
+        
+        //###################################################
+        // Execute
+        //###################################################
+        return db.upload_And_Get_Batch(upload_Queries_And_Params, fetch_Queries_And_Params, error_msg);
+    }
+    
+    private boolean any_Session_Created_Meals()
+    {
+        return mealManager_ArrayList
+                .stream()
+                .anyMatch(e -> ! e.is_MealManager_In_DB());
+    }
+    
+    private boolean any_Session_Created_Sub_Meals()
+    {
+        return mealManager_ArrayList
+                .stream()
+                .anyMatch(MealManager::any_Session_Created_Sub_Meals);
+    }
+    
+    private void saved_DB_Data_Plans(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
+    {
         // Upload to Plan_Versions from Draft Plans
         String upload_query_01 = """
                 WITH
@@ -2411,18 +2458,17 @@ public class Meal_Plan_Screen extends Screen_JFrame
         
         // Upload to Plan_Version_ID
         String upload_query_02 = """
-                INSERT INTO saved_keys (seed_key, entity_id_value)
+                INSERT INTO saved_keys (key, entity_id_value)
                 VALUES
-                ("plan_version_id", last_insert_rowid());""";
+                (?, last_insert_rowid());""";
         
-        upload_Queries_And_Params.add(new Pair<>(upload_query_02, null));
-        
-        //#############################
-        // Macros
-        //#############################
-        
+        upload_Queries_And_Params.add(new Pair<>(upload_query_02, new Object[]{ "plan_version_id" }));
+    }
+    
+    private void saved_DB_Data_Macros(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
+    {
         // Upload to Macros from Draft
-        String upload_query_03 = """
+        String upload_query_01 = """
                 INSERT INTO macros_per_pound_and_limits
                 (
                     user_id, plan_version_id, current_weight_kg, current_weight_in_pounds, body_fat_percentage,
@@ -2432,8 +2478,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 SELECT
                 
                     user_id,
-               
-                    (SELECT entity_id_value FROM saved_keys WHERE seed_key = "plan_version_id"),
+                
+                    (SELECT entity_id_value FROM saved_keys WHERE key = ?),
                 
                     current_weight_kg, current_weight_in_pounds, body_fat_percentage,
                     protein_per_pound, carbohydrates_per_pound, fibre, fats_per_pound, saturated_fat_limit, salt_limit,
@@ -2441,60 +2487,465 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 
                 FROM draft_macros_per_pound_and_limits
                 WHERE plan_id = ?""";
-   
-        upload_Queries_And_Params.add(new Pair<>(upload_query_03, new Object[]{ get_Selected_Plan_ID()}));
         
-        //#############################
-        // Meals
-        //#############################
+        upload_Queries_And_Params.add(new Pair<>(upload_query_01, new Object[]{ "plan_version_id", get_Selected_Plan_ID() }));
+    }
+    
+    //############################
+    // Save For App Created Meals
+    //############################
+    private void saved_DB_Data_For_New_Meals(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
+    {
+        //######################################
+        // Count : Get App Created Meals Count
+        //######################################
+        // Save Count For App Created Meals
+        String upload_query_01 = """
+                WITH
+                    end_count AS (
+                        SELECT
+                
+                            COUNT(d.draft_meal_in_plan_id) AS count
+                
+                        FROM draft_meals_in_plan d
+                        WHERE
+                            d.plan_id = ?
+                            AND NOT EXISTS (
+                                SELECT 1
+                                FROM meals_in_plan m
+                                WHERE d.meal_in_plan_id = m.meal_in_plan_id
+                            )
+                    )
+                
+                INSERT INTO saved_keys (key, entity_id_value)
+                SELECT
+                    ?,
+                    e.count
+                FROM end_count e;""";
         
-        // Upload to Meal from Draft Meals
+        String x_mc_variable = "x_meal_count";
+        
+        upload_Queries_And_Params.add(new Pair<>(upload_query_01, new Object[]{ get_Selected_Plan_ID(), x_mc_variable, }));
+        
+        //########################################
+        // Insert into meals_in_plan x Meals
+        //########################################
+        
+        // Insert into meals_in_plan X amount meals for each App created meal
+        String upload_query_02 = """
+                WITH
+                    RECURSIVE seq(n) AS (
+                       SELECT 1
+                       UNION ALL
+                       SELECT n + 1
+                       FROM seq
+                       WHERE n < (SELECT entity_id_value FROM saved_keys WHERE key = ?)
+                    )
+                
+                INSERT INTO meals_in_plan
+                (
+                    date_time_of_creation
+                )
+                SELECT
+                    strftime('%Y-%m-%dT%H:%M:%f', 'now')
+                FROM seq;""";
+        
+        upload_Queries_And_Params.add(new Pair<>(upload_query_02, new Object[]{ x_mc_variable }));
+        
+        //#######################################
+        // Create Table For Meals Anchor
+        //#######################################
+        String upload_query_03 = """
+                CREATE TEMPORARY TABLE meals_to_draft_meals_anchor
+                (
+                    rn INT PRIMARY KEY,
+                    meal_in_plan_id INT NOT NULL,
+                    draft_meal_in_plan_id INT NOT NULL
+                );""";
+        
+        upload_Queries_And_Params.add(new Pair<>(upload_query_03, null));
+        
+        // Add Constraints
+        
+        
+        //#######################################
+        // Insert Last Created Meals into Anchor
+        //#######################################
+        /*
+            Gets the last inserted meals in meals_in_plan by reversing the Order =  the most recent inserts
+            that represent ID's for our app created meals.
+            
+            Then gets draft meals that
+            
+            
+            Get Last Inserted Meals
+            Then order by ID's so its in the order they were inserted in
+        */
+        String upload_query_05 = """
+                WITH
+                	RECURSIVE seq(n) AS (
+                	   SELECT 1
+                	   UNION ALL
+                	   SELECT n + 1
+                	   FROM seq
+                	   WHERE n < (SELECT entity_id_value FROM saved_keys WHERE key = ?)
+                	),
+                	meals_by_last_inserted AS (
+                		SELECT
+                			ROW_NUMBER() OVER (ORDER BY meal_in_plan_id DESC) rn,
+                			meal_in_plan_id
+                		FROM meals_in_plan
+                	),
+                	draft_meals_by_last_inserted AS (
+                        SELECT
+                
+                			ROW_NUMBER() OVER (ORDER BY D.draft_meal_in_plan_id DESC) rn,
+                			D.draft_meal_in_plan_id
+                
+                		FROM draft_meals_in_plan D
+                
+                        WHERE D.plan_id = ?
+                            AND NOT EXISTS (
+                                SELECT 1
+                                FROM meals_in_plan M
+                                WHERE D.meal_in_plan_id = M.meal_in_plan_id
+                            )
+                	)
+                
+                INSERT INTO meals_to_draft_meals_anchor
+                (
+                    rn,
+                    meal_in_plan_id,
+                    draft_meal_in_plan_id
+                )
+                SELECT
+                
+                	ROW_NUMBER() OVER (ORDER BY N.rn DESC) rn,
+                    N.meal_in_plan_id,
+                    D.draft_meal_in_plan_id
+                
+                FROM meals_by_last_inserted N
+                
+                INNER JOIN draft_meals_by_last_inserted D
+                   ON N.rn = D.rn
+                
+                WHERE N.rn IN (SELECT n FROM seq);""";
+        
+        upload_Queries_And_Params.add(new Pair<>(upload_query_05, new Object[]{ x_mc_variable, get_Selected_Plan_ID() }));
+        
+        //#######################################
+        // Update Draft OF Source Info
+        //#######################################
+        /*
+         
+         */
+        String upload_query_06 = """
+                UPDATE draft_meals_in_plan AS D
+                
+                SET meal_in_plan_id = (
+                    SELECT meal_in_plan_id
+                    FROM meals_to_draft_meals_anchor A
+                    WHERE D.draft_meal_in_plan_id = A.draft_meal_in_plan_id
+                )
+                WHERE EXISTS (
+                    SELECT 1
+                    FROM meals_to_draft_meals_anchor A
+                    WHERE D.draft_meal_in_plan_id = A.draft_meal_in_plan_id
+                );
+                """;
+        
+        upload_Queries_And_Params.add(new Pair<>(upload_query_06, null));
+        
+        //#######################################
+        // Insert Into Meal Versions
+        //#######################################
+        /*
+            Insert Meals with Meal Versions
+        */
+        String upload_query_07 = """
+                INSERT INTO meals_in_plan_versions
+                (
+                    meal_in_plan_id,
+                    plan_version_id,
+                    date_time_last_edited,
+                    meal_name,
+                    meal_time
+                )
+                SELECT
+                
+                    D.meal_in_plan_id, /* Updated from query above */
+                
+                    (SELECT entity_id_value FROM saved_keys WHERE key = ?),
+                
+                    D.date_time_last_edited,
+                    D.meal_name,
+                    D.meal_time
+                
+                FROM meals_to_draft_meals_anchor M
+                
+                INNER JOIN draft_meals_in_plan D
+                    ON M.draft_meal_in_plan_id = D.draft_meal_in_plan_id;""";
+        
+        upload_Queries_And_Params.add(new Pair<>(upload_query_07, new Object[]{ "plan_version_id" }));
+        
+        //#######################################
+        // Create Anchor for Draft to Versions
+        //#######################################
+        /*
+            Update meals_in_plan_versions on Anchor Table
+        */
+        String upload_query_08 = """
+                CREATE TEMPORARY TABLE draft_meals_to_meal_versions_anchor AS
+                SELECT
+                
+                    V.meal_in_plan_version_id,
+                    M.draft_meal_in_plan_id
+                
+                FROM meals_to_draft_meals_anchor M
+                
+                INNER JOIN meals_in_plan_versions V
+                    ON M.meal_in_plan_id = V.meal_in_plan_id;""";
+        
+        upload_Queries_And_Params.add(new Pair<>(upload_query_08, null));
+    }
+    
+    private void saved_DB_Data_Sub_Meals(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
+    {
+        //######################################
+        // Get Count For App Created Sub-Meals
+        //######################################
+        // Save Count For App Created Meals
+        String upload_query_01 = """
+                WITH
+                    end_count AS (
+                        SELECT
+                
+                            COUNT(S.draft_div_meal_sections_id) AS count
+                
+                        FROM meals_to_draft_meals_anchor D
+                        INNER JOIN draft_divided_meal_sections S
+                            ON D.draft_meal_in_plan_id = S.draft_meal_in_plan_id
+                    )
+                
+                INSERT INTO saved_keys (key, entity_id_value)
+                SELECT
+                    ?,
+                    e.count
+                FROM end_count e;""";
+        
+        String x_sc_variable = "x_sub_meal_count";
+        
+        upload_Queries_And_Params.add(new Pair<>(upload_query_01, new Object[]{ x_sc_variable }));
+        
+        //######################################
+        // Create Sub-Meals
+        //######################################
+        //
+        String upload_query_02 = """
+                WITH
+                    RECURSIVE seq(n) AS (
+                       SELECT 1
+                       UNION ALL
+                       SELECT n + 1
+                       FROM seq
+                       WHERE n < (SELECT entity_id_value FROM saved_keys WHERE key = ?)
+                    )
+                
+                INSERT INTO divided_meal_sections
+                (
+                    date_time_of_creation
+                )
+                SELECT
+                    strftime('%Y-%m-%dT%H:%M:%f', 'now')
+                FROM seq;""";
+        
+        upload_Queries_And_Params.add(new Pair<>(upload_query_02, new Object[]{ x_sc_variable }));
+        
+        //#######################################
+        // Create Table For Meals Anchor
+        //#######################################
+        String upload_query_03 = """
+                CREATE TEMPORARY TABLE sub_meals_to_draft_sub_meals_anchor
+                (
+                    rn INT PRIMARY KEY,
+                    div_meal_sections_id INT NOT NULL,
+                    draft_div_meal_sections_id INT NOT NULL
+                );""";
+        
+        upload_Queries_And_Params.add(new Pair<>(upload_query_03, null));
+        
+        //#######################################
+        // Insert Last Created Meals into Anchor
+        //#######################################
+        /*
+            Gets the last inserted meals in meals_in_plan by reversing the Order =  the most recent inserts
+            that represent ID's for our app created meals.
+            
+            Then gets draft meals that
+            
+            
+            Get Last Inserted Meals
+            Then order by ID's so its in the order they were inserted in
+        */
         String upload_query_04 = """
-                INSERT INTO meals_in_plan
+                WITH
+                	RECURSIVE seq(n) AS (
+                	   SELECT 1
+                	   UNION ALL
+                	   SELECT n + 1
+                	   FROM seq
+                	    WHERE n < (SELECT entity_id_value FROM saved_keys WHERE key = ?)
+                	),
+                	sub_meals_by_last_inserted AS (
+                		SELECT
+                			ROW_NUMBER() OVER (ORDER BY div_meal_sections_id DESC) rn, /* Get The Top Last Insert Meals Flip Ordering to DESC*/
+                			div_meal_sections_id
+                		FROM divided_meal_sections
+                	),
+                	draft_sub_meals_by_last_inserted AS (
+                        SELECT
+                
+                			ROW_NUMBER() OVER (ORDER BY S.draft_div_meal_sections_id DESC) rn,  /* Match the order of strcture above */
+                			S.draft_div_meal_sections_id
+                
+                		FROM draft_meals_to_meal_versions_anchor D
+                
+                        INNER JOIN draft_divided_meal_sections S
+                            ON D.draft_meal_in_plan_id = S.draft_meal_in_plan_id
+                	)
+                
+                INSERT INTO sub_meals_to_draft_sub_meals_anchor
                 (
-                    user_id, plan_version_id, current_weight_kg, current_weight_in_pounds, body_fat_percentage,
-                    protein_per_pound, carbohydrates_per_pound, fibre, fats_per_pound, saturated_fat_limit, salt_limit,
-                    water_target, additional_calories
+                    rn,
+                    div_meal_sections_id,
+                    draft_div_meal_sections_id
                 )
                 SELECT
                 
-                    user_id, plan_version_id, current_weight_kg, current_weight_in_pounds, body_fat_percentage,
-                    protein_per_pound, carbohydrates_per_pound, fibre, fats_per_pound, saturated_fat_limit, salt_limit,
-                    water_target, additional_calories
+                	ROW_NUMBER() OVER (ORDER BY N.rn ASC) rn, /* Reverse the order to get ordered by IDs now) */
+                    N.div_meal_sections_id,
+                    D.draft_div_meal_sections_id
                 
-                FROM draft_macros_per_pound_and_limits
-                WHERE plan_id = ?""";
+                FROM sub_meals_by_last_inserted N
+                
+                INNER JOIN draft_sub_meals_by_last_inserted D
+                   ON N.rn = D.rn
+                
+                WHERE N.rn IN (SELECT n FROM seq);""";
         
-        upload_Queries_And_Params.add(new Pair<>(upload_query_04, new Object[]{ get_Selected_Plan_ID()}));
+        upload_Queries_And_Params.add(new Pair<>(upload_query_04, new Object[]{ x_sc_variable }));
         
+        //#######################################
+        // Update Draft
+        //#######################################
+        /*
+         
+         */
+        String upload_query_05 = """
+                UPDATE draft_divided_meal_sections AS D
+                
+                SET div_meal_sections_id = (
+                    SELECT div_meal_sections_id
+                    FROM sub_meals_to_draft_sub_meals_anchor A
+                    WHERE D.draft_div_meal_sections_id = A.draft_div_meal_sections_id
+                )
+                WHERE EXISTS (
+                    SELECT 1
+                    FROM sub_meals_to_draft_sub_meals_anchor A
+                    WHERE D.draft_div_meal_sections_id = A.draft_div_meal_sections_id
+                );""";
         
+        upload_Queries_And_Params.add(new Pair<>(upload_query_05, null));
         
-        //###################################################
-        // Fetch
-        //###################################################
-        // Upload to Meal from Draft Meals
-        String upload_query_16 = """
-                INSERT INTO meals_in_plan
+        //#######################################
+        // Insert Into Sub-Meal Versions
+        //#######################################
+        /*
+         
+         */
+        String upload_query_06 = """
+                INSERT INTO divided_meal_sections_versions
                 (
-                    user_id, plan_version_id, current_weight_kg, current_weight_in_pounds, body_fat_percentage,
-                    protessssin_per_pound, carbohydrates_per_pound, fibre, fats_per_pound, saturated_fat_limit, salt_limit,
-                    water_target, additional_calories
+                    div_meal_sections_id,
+                    meal_in_plan_version_id,
+                
+                    plan_version_id,
+                    date_time_last_edited,
+                
+                    sub_meal_name,
+                    sub_meal_time
                 )
                 SELECT
                 
-                    user_id, plan_version_id, current_weight_kg, current_weight_in_pounds, body_fat_percentage,
-                    protein_per_pound, carbohydrates_per_pound, fibre, fats_per_pound, saturated_fat_limit, salt_limit,
-                    water_target, additional_calories
+                    D.div_meal_sections_id,
+                    V.meal_in_plan_version_id,
                 
-                FROM draft_macros_per_pound_and_limits
-                WHERE plan_id = ?""";
+                    (SELECT entity_id_value FROM saved_keys WHERE key = ?),
+                
+                    D.date_time_last_edited,
+                    D.sub_meal_name,
+                    D.sub_meal_time
+                
+                FROM sub_meals_to_draft_sub_meals_anchor S
+                
+                INNER JOIN draft_divided_meal_sections D
+                    ON S.draft_div_meal_sections_id = D.draft_div_meal_sections_id
+                
+                INNER JOIN draft_meals_in_plan M
+                    ON M.draft_meal_in_plan_id = D.draft_meal_in_plan_id
+                
+                INNER JOIN draft_meals_to_meal_versions_anchor V
+                    ON M.draft_meal_in_plan_id = V.draft_meal_in_plan_id;""";
         
-        upload_Queries_And_Params.add(new Pair<>(upload_query_16, new Object[]{ get_Selected_Plan_ID()}));
+        upload_Queries_And_Params.add(new Pair<>(upload_query_06, new Object[]{ "plan_version_id" }));
         
-        //###################################################
-        // Execute
-        //###################################################
-        return db.upload_And_Get_Batch(upload_Queries_And_Params, fetch_Queries_And_Params, error_msg);
+        //#######################################
+        // Map Versions
+        //#######################################
+        /*
+         
+         */
+        String upload_query_07 = """
+                CREATE TEMPORARY TABLE draft_sub_meals_to_sub_meal_versions_anchor AS
+                SELECT
+                
+                    V.div_meal_sections_version_id,
+                    M.draft_div_meal_sections_id
+                
+                FROM sub_meals_to_draft_sub_meals_anchor M
+                
+                INNER JOIN divided_meal_sections_versions V
+                    ON M.div_meal_sections_id = V.div_meal_sections_id;""";
+        
+        upload_Queries_And_Params.add(new Pair<>(upload_query_07, null));
+    }
+    
+    private void saved_DB_Data_Ingredients(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
+    {
+        //######################################
+        //
+        //######################################
+        
+        String upload_query_01 = """
+                INSERT INTO ingredients_in_sections_of_meal
+                (
+                    div_meal_sections_version_id,
+                    ingredient_id,
+                    pdid,
+                    quantity
+                )
+                SELECT
+                    S.div_meal_sections_version_id,
+                    I.ingredient_id,
+                    I.pdid,
+                    I.quantity
+                
+                FROM draft_sub_meals_to_sub_meal_versions_anchor S
+                
+                INNER JOIN draft_ingredients_in_sections_of_meal I
+                    ON S.draft_div_meal_sections_id = I.draft_div_meal_sections_id;""";
+        
+        upload_Queries_And_Params.add(new Pair<>(upload_query_01, null));
     }
     
     // ###############################################################
@@ -2579,7 +3030,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // ##########################################
         if (screen_created)
         {
-            save_Plan_Data(false);  //Meal Data
+            save_Plan_Data();  //Meal Data
         }
         
         // ##########################################

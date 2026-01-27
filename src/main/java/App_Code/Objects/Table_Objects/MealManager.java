@@ -137,7 +137,7 @@ public class MealManager
         draft_meal_ID = meal_id_obj.get_Draft_Meal_ID();
         source_meal_id = meal_id_obj.get_Source_Meal_ID();
         
-        set_MealManager_In_DB(true);
+        is_MealManager_In_DB = true;
         set_Is_Meal_Saved(true);  // Set Variable which identifies in this meal associated with this object is in the database
         
         na_pdid = shared_Data_Registry.get_NA_PDID();
@@ -1529,6 +1529,13 @@ public class MealManager
                 ingredient_tables_AL          // Else compute if Sub-Meals data changed
                         .stream()
                         .anyMatch(IngredientsTable :: has_Sub_Meal_Data_Changed); // If any Sub-Meal data has changed return true
+    }
+    
+    public boolean any_Session_Created_Sub_Meals()
+    {
+        return ingredient_tables_AL
+                .stream()
+                .anyMatch(e -> ! e.is_Sub_Meal_In_DB());
     }
     
     // ############################################

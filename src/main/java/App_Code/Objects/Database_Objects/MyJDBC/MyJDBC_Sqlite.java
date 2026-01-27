@@ -193,10 +193,6 @@ public class MyJDBC_Sqlite  // remove extends eventually
                 rollBack_Connection(connection, method_Name, query); // Rollback, in case it's not automatically done
                 throw new Exception();
             }
-            finally
-            {
-                connection.setAutoCommit(false); // Reset Commit, in case it's not automatically done
-            }
         }
         //##########################################################
         // Error Handling
@@ -223,9 +219,6 @@ public class MyJDBC_Sqlite  // remove extends eventually
         
         Object[] insertParameters;
         
-        connection.setAutoCommit(false); // Prevents each query from being singularly uploaded & is only made not temp when committed
-        
-        int query_Pos = 1;
         //###############################################
         // For Loop For Queries & Params
         //###############################################
@@ -261,11 +254,6 @@ public class MyJDBC_Sqlite  // remove extends eventually
                 print_Internal_Method_Err_MSG(method_Name, query, insertParameters, e);
                 throw e;
             }
-            
-            //#########################
-            // Increase
-            //#########################
-            query_Pos++;
         }
     }
     
@@ -286,17 +274,27 @@ public class MyJDBC_Sqlite  // remove extends eventually
         //############################################################
         try (Connection connection = dataSource.getConnection())
         {
-            upload_Data_Batch_Internally(connection, method_Name, queries_And_Params);  // Upload Batch
-            
-            connection.commit(); // Commit Changes beyond current driver
-            return true; // Return Output
+            try
+            {
+                connection.setAutoCommit(false); // Prevents each query from being singularly uploaded & is only made not temp when committed
+                
+                upload_Data_Batch_Internally(connection, method_Name, queries_And_Params);  // Upload Batch
+                
+                connection.commit(); // Commit Changes beyond current driver
+                return true; // Return Output
+            }
+            //##########################################################
+            // Error Handling
+            //##########################################################
+            catch (Exception e)
+            {
+                handleException_MYSQL(e, method_Name, query, errorMSG);
+                rollBack_Connection(connection, method_Name, null); // Rollback, in case it's not automatically done
+                return false;
+            }
         }
-        //##########################################################
-        // Error Handling
-        //##########################################################
         catch (Exception e)
         {
-            handleException_MYSQL(e, method_Name, query, errorMSG);
             return false;
         }
     }
@@ -333,6 +331,8 @@ public class MyJDBC_Sqlite  // remove extends eventually
         {
             try
             {
+                connection.setAutoCommit(false);
+                
                 upload_Data_Batch_Internally(connection, method_Name, upload_Queries_And_Params); // Upload Statements
                 
                 Fetched_Results results = get_Fetched_Results_Internally(connection, get_Queries_And_Params);  // Fetch Queries
@@ -343,8 +343,8 @@ public class MyJDBC_Sqlite  // remove extends eventually
             }
             catch (Exception e)
             {
-                handleException_MYSQL(e, method_Name, null, error_msg);
                 rollBack_Connection(connection, method_Name, null); // Rollback, in case it's not automatically done
+                handleException_MYSQL(e, method_Name, null, error_msg);
                 throw new Exception();
             }
         }
@@ -813,29 +813,27 @@ public class MyJDBC_Sqlite  // remove extends eventually
         //#############################
         // Rollback
         //#############################
-        try
-        {
-            if (connection.getAutoCommit()) { return; } // IF Rollback wasn't executed return
-            
-            connection.rollback(); // Execute Rollback
-            System.err.printf("\n\n%s \nRollback successful for method: %s \n%s\n\n\n", middle_line_Separator, method_Name, middle_line_Separator);
-        }
-        catch (SQLException x)
-        {
-            System.err.printf("\n\n%s \nRollback failed for method: %s \n\n\n", middle_line_Separator, method_Name, middle_line_Separator);
-            
-            // Change Method Name to this method & Display Error
-            method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-            handleException_MYSQL(x, method_Name, queries, null);
-        }
-        finally
+        try (connection)
         {
             try
             {
-                connection.close(); // tells Hikari to evict this bad connection
+                if (connection.getAutoCommit()) { return; } // IF Rollback wasn't executed return
+                
+                connection.rollback(); // Execute Rollback
+                System.err.printf("\n\n%s \nRollback successful for method: %s \n%s\n\n\n", middle_line_Separator, method_Name, middle_line_Separator);
             }
-            catch (SQLException ignore) { }
+            catch (SQLException x)
+            {
+                System.err.printf("\n\n%s \nRollback failed for method: %s \n\n\n%s", middle_line_Separator, method_Name, middle_line_Separator);
+                
+                // Change Method Name to this method & Display Error
+                method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+                handleException_MYSQL(x, method_Name, queries, null);
+                
+                connection.close();  // tells Hikari to evict this bad connection
+            }
         }
+        catch (SQLException ignore) {    }
     }
     
     //###########################################
@@ -856,7 +854,7 @@ public class MyJDBC_Sqlite  // remove extends eventually
         }
         
         //#########################
-        // Display MSGS
+        // Display MSG'S
         //#########################
         if (errorMSG == null) { return; }
         
