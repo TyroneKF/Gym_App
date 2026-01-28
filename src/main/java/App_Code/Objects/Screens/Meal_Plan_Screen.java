@@ -23,7 +23,6 @@ import App_Code.Objects.Screens.Others.Macros_Targets_Screen;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.javatuples.Pair;
-
 import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
@@ -2437,11 +2436,17 @@ public class Meal_Plan_Screen extends Screen_JFrame
         saved_DB_Data_Plans(upload_Queries_And_Params);             // Plan   Transfer
         saved_DB_Data_Macros(upload_Queries_And_Params);            // Macros Transfer
         
-        save_DB_Data_Session_Created_Meals(upload_Queries_And_Params);
-        save_DB_Data_Session_Created_Sub_Meals(upload_Queries_And_Params);
+        //##################
+        save_DB_Data_Pre_Requisites_Tables(upload_Queries_And_Params);
         
+        //##################
+        save_DB_Data_Session_Created_Meals(upload_Queries_And_Params);
         save_DB_Data_Existing_Meals(upload_Queries_And_Params);
+        
+        //##################
+        save_DB_Data_Session_Created_Sub_Meals(upload_Queries_And_Params);
         save_DB_Data_Existing_Sub_Meals(upload_Queries_And_Params);
+        //##################
         
         save_DB_Data_Ingredients(upload_Queries_And_Params);
         
@@ -2519,7 +2524,61 @@ public class Meal_Plan_Screen extends Screen_JFrame
     }
     
     //######################################
-    // Save New Meals / Sub-Meals
+    //
+    //######################################
+    private void save_DB_Data_Pre_Requisites_Tables(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
+    {
+        //######################################
+        //
+        //######################################
+        String upload_query_09 = """
+                CREATE TEMPORARY TABLE meals_all_source_ids_map
+                (
+                    draft_meal_in_plan_id INTEGER PRIMARY KEY,
+                    meal_in_plan_id INTEGER NOT NULL,
+                
+                    correlation_uuid BLOB(16) NOT NULL
+                            DEFAULT (randomblob(16)),
+               
+                    meal_in_plan_version_id INTEGER DEFAULT NULL
+                );
+                
+                CREATE UNIQUE INDEX unique_meal_id_xc          ON   meals_all_source_ids_map  (meal_in_plan_id);
+                CREATE UNIQUE INDEX unique_meal_version_id_xc  ON   meals_all_source_ids_map  (meal_in_plan_version_id);
+                CREATE UNIQUE INDEX one_uuid_per_meal_xc       ON   meals_all_source_ids_map  (correlation_uuid);
+                """;
+        
+        upload_Queries_And_Params.add(new Pair<>(upload_query_09, null));
+        
+        //######################################
+        //
+        //######################################
+        String upload_query_10 = """
+                CREATE TEMPORARY TABLE sub_meals_all_source_ids_map
+                (
+                    draft_div_meal_sections_id  INTEGER PRIMARY KEY,
+                
+                    draft_meal_in_plan_id       INTEGER NOT NULL,
+                    meal_in_plan_version_id     INTEGER NOT NULL,
+                
+                    correlation_uuid BLOB(16) NOT NULL
+                        DEFAULT (randomblob(16)),
+                
+                    div_meal_sections_id INTEGER NOT NULL,
+                
+                    div_meal_sections_version_id INTEGER NULL DEFAULT NULL
+                );
+                
+                CREATE UNIQUE INDEX unique_sub_meal_id_xc           ON  sub_meals_all_source_ids_map  (div_meal_sections_id);
+                CREATE UNIQUE INDEX unique_sub_meal_version_id_xc   ON  sub_meals_all_source_ids_map  (divided_meal_sections_versions);
+                CREATE UNIQUE INDEX one_uuid_per_sub_meal_xc        ON  sub_meals_all_source_ids_map  (correlation_uuid);
+                """;
+        
+        upload_Queries_And_Params.add(new Pair<>(upload_query_10, null));
+    }
+    
+    //######################################
+    // Save No ID's Meals / Sub-Meals
     //######################################
     private void save_DB_Data_Session_Created_Meals(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
     {
@@ -2677,6 +2736,17 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 """;
         
         upload_Queries_And_Params.add(new Pair<>(upload_query_08, null));
+        
+        //######################################
+        //
+        //######################################
+        // Save Count For App Created Meals
+        String upload_query_10 = """
+                INSERT INTO meals_all_source_ids_map
+                SELECT *
+                FROM meals_no_source_ids_map;""";
+        
+        upload_Queries_And_Params.add(new Pair<>(upload_query_10, new Object[]{ get_Selected_Plan_ID() }));
     }
     
     private void save_DB_Data_Session_Created_Sub_Meals(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
@@ -2688,7 +2758,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 CREATE TEMPORARY TABLE sub_meals_no_source_ids_map
                 (
                     draft_div_meal_sections_id INTEGER PRIMARY KEY,
-              
+                
                     draft_meal_in_plan_id   INTEGER NOT NULL,
                     meal_in_plan_version_id INTEGER NOT NULL,
                 
@@ -2749,8 +2819,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // Insert Last Created Meals into Anchor
         //#######################################
         /*
-        
-        */
+         
+         */
         String upload_query_04 = """
                 UPDATE sub_meals_no_source_ids_map AS D
                 
@@ -2765,7 +2835,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                         FROM divided_meal_sections A
                         WHERE D.correlation_uuid = A.correlation_uuid
                     );
-            
+                
                 UPDATE draft_divided_meal_sections AS D
                 
                     SET div_meal_sections_id = (
@@ -2793,7 +2863,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 INSERT INTO divided_meal_sections_versions
                 (
                     correlation_uuid,
-              
+                
                     div_meal_sections_id,
                     meal_in_plan_version_id,
                 
@@ -2846,6 +2916,19 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 """;
         
         upload_Queries_And_Params.add(new Pair<>(upload_query_06, null));
+        
+        //#######################################
+        // Map Versions
+        //#######################################
+        /*
+         
+         */
+        String upload_query_07 = """
+                INSERT INTO sub_meals_all_source_ids_map
+                SELECT *
+                FROM sub_meals_no_source_ids_map;""";
+        
+        upload_Queries_And_Params.add(new Pair<>(upload_query_07, null));
     }
     
     //######################################
@@ -2856,30 +2939,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //######################################
         //
         //######################################
-        String upload_query_01 = """
-                CREATE TEMPORARY TABLE meals_with_source_ids_map
-                (
-                    draft_meal_in_plan_id INTEGER PRIMARY KEY,
-                    meal_in_plan_id INTEGER NOT NULL DEFAULT NULL,
-                    meal_in_plan_version_id NULL DEFAULT NULL,
-                
-                    correlation_uuid BLOB(16) NOT NULL
-                            DEFAULT (randomblob(16))
-                );
-                
-                CREATE UNIQUE INDEX unique_meal_id_s            ON   meals_with_source_ids_map  (meal_in_plan_id);
-                CREATE UNIQUE INDEX unique_meal_version_id_s    ON   meals_with_source_ids_map  (meal_in_plan_version_id);
-                CREATE UNIQUE INDEX one_uuid_per_meal_s         ON   meals_with_source_ids_map  (correlation_uuid);
-                """;
-        
-        upload_Queries_And_Params.add(new Pair<>(upload_query_01, null));
-        
-        //######################################
-        //
-        //######################################
         // Save Count For App Created Meals
         String upload_query_02 = """
-                INSERT INTO meals_with_source_ids_map
+                INSERT INTO meals_all_source_ids_map
                 (
                     draft_meal_in_plan_id,
                     meal_in_plan_id
@@ -2924,7 +2986,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     D.meal_name,
                     D.meal_time
                 
-                FROM meals_with_source_ids_map M
+                FROM meals_all_source_ids_map M
                 
                 INNER JOIN draft_meals_in_plan D
                     ON M.draft_meal_in_plan_id = D.draft_meal_in_plan_id;""";
@@ -2938,7 +3000,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             Update meals_in_plan_versions on Anchor Table
         */
         String upload_query_04 = """
-                UPDATE meals_with_source_ids_map AS D
+                UPDATE meals_all_source_ids_map AS D
                 
                     SET meal_in_plan_version_id = (
                         SELECT
@@ -2960,44 +3022,31 @@ public class Meal_Plan_Screen extends Screen_JFrame
     
     private void save_DB_Data_Existing_Sub_Meals(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
     {
-        String upload_query_01 = """
-                CREATE TEMPORARY TABLE sub_meals_with_source_ids_map
+        //######################################
+        //
+        //######################################
+        // Save Count For App Created Meals
+        String upload_query_02 = """
+                INSERT INTO sub_meals_with_source_ids_map
                 (
-                    draft_div_meal_sections_id INTEGER PRIMARY KEY,
-              
-                    draft_meal_in_plan_id   INTEGER NOT NULL,
-                    meal_in_plan_version_id INTEGER NOT NULL,
+                    draft_div_meal_sections_id,
                 
-                    correlation_uuid BLOB(16) NOT NULL
-                        DEFAULT (randomblob(16)),
+                    draft_meal_in_plan_id,
+                    meal_in_plan_version_id,
                 
-                    div_meal_sections_id INTEGER NOT NULL,
+                    correlation_uuid,
                 
-                    div_meal_sections_version_id INTEGER NULL
-                );
+                    div_meal_sections_id
+                )
+                SELECT
+                    d.draft_meal_in_plan_id
                 
-                CREATE UNIQUE INDEX unique_sub_meal_id_s           ON  sub_meals_with_source_ids_map  (div_meal_sections_id);
-                CREATE UNIQUE INDEX unique_sub_meal_version_id_s   ON  sub_meals_with_source_ids_map  (divided_meal_sections_versions);
-                CREATE UNIQUE INDEX one_uuid_per_sub_meal_s        ON  sub_meals_with_source_ids_map  (correlation_uuid);
-                """;
+                FROM meals_no_source_ids_map M
+                
+                INNER JOIN draft_divided_meal_sections D
+                    ON M.draft_meal_in_plan_id = D.draft_meal_in_plan_id;""";
         
-        upload_Queries_And_Params.add(new Pair<>(upload_query_01, null));
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+        upload_Queries_And_Params.add(new Pair<>(upload_query_02, null));
         
         
         //#######################################
