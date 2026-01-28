@@ -294,6 +294,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
         setFrameVisibility(true);      // Make GUI Visible
         resizeGUI();                   // Resize GUi
         scroll_To_Top_of_ScrollPane(); // Scroll to the top of the gui
+        
+        save_Data();
     }
     
     //##################################################################################################################
@@ -923,7 +925,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     
     //############################
     //  Transfer Meta Data
-    //###########################
+    //############################
     private void setup_Get_Ingredient_Types_And_Ingredient_Names() throws Exception
     {
         String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
@@ -1855,8 +1857,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         save_btn.setToolTipText("Save All Meals"); //Hover message over icon
         
         save_btn.addActionListener(ae -> {
-            
-            save_Plan_Data();
+            save_Btn_Action();
         });
         
         iconPanelInsert.add(save_btn);
@@ -2254,23 +2255,61 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // ###############################################################
     // Save Plan BTN
     // ###############################################################
-    private void save_Plan_Data()
+    private void save_Btn_Action()
+    {
+        if (! save_Edge_Cases()) { return; } // Edge Cases
+        
+        save_Data();
+        
+        // Successful Message
+        JOptionPane.showMessageDialog(this, "\n\nAll Meals Are Successfully Saved!");
+    }
+    
+    private boolean save_Edge_Cases()
     {
         // ########################################
-        // Edge Cases / Variables
+        // Exit Clauses
         // ########################################
-        if (! save_Edge_Cases()) { return; }
+        /*
+            If there is no selected plan, exit
+            If the user  rejects saving the plan, exit
+        */
         
-        boolean any_session_created_meals = any_Session_Created_Meals();
-        boolean any_session_created_sub_meals = any_Session_Created_Sub_Meals();
+        if (! is_Plan_Selected()) // If there is no selected plan, exit
+        {
+            JOptionPane.showMessageDialog(null, "A plan must be selected to Save!");
+            return false;
+        }
         
-        System.out.printf("\n\nSession Created Meals : %s \n\nAny session Created Sub-Meals : %s",
-                any_session_created_meals, any_session_created_sub_meals);
+        // If there is no meals in the plan aka there's nothing to save, exit
+        if (mealManager_ArrayList.isEmpty()) //  If there are no meals left after removing all the deleted meals, exit
+        {
+            String msg = """
+                    "There are no Meals left in this Plan !
+                    
+                    Add a Meal to Save !
+                    
+                    If saving an empty plan was Intentional delete the plan instead !""";
+            
+            JOptionPane.showMessageDialog(null, msg);
+            return false;
+        }
         
+        // If the user  rejects saving the plan, exit
+        String txt = "\n\nAre you want to save all the data in this meal plan? \n\nAny deleted meals will be lost!";
+        
+        return areYouSure("Save Meal Plan Data", txt);
+    }
+    
+    private void save_Data()
+    {
         // ########################################
         // Save Plan DB Side
         // ########################################
-        Fetched_Results results = saved_DB_Data();
+        boolean any_session_created = any_Session_Created();
+        boolean any_session_created_sub_meals = any_Session_Created_Sub_Meals();
+        
+        Fetched_Results results = saved_DB_Data(any_session_created, any_session_created_sub_meals);
         if (results == null) { return; }
         
         // ########################################
@@ -2280,7 +2319,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         HashMap<Integer, Integer> sub_meal_id_map = new HashMap<>();    // Draft_Sub_Meal_ID -> Sub_Meal_Versions
         
         // ########################################
-        // Save Each Meal
+        // Save Each Meal & Sub-Meal Object
         // ########################################
         for (MealManager mealManager : mealManager_ArrayList)
         {
@@ -2319,53 +2358,26 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 table.set_Source_Sub_Meal_ID(source_sub_meal_id);
             }
         }
-      
-        // ########################################
-        // Successful Message
-        // ########################################
-        JOptionPane.showMessageDialog(this, "\n\nAll Meals Are Successfully Saved!");
     }
     
-    private boolean save_Edge_Cases()
+    private boolean any_Session_Created()
     {
-        // ########################################
-        // Exit Clauses
-        // ########################################
-        /*
-            If there is no selected plan, exit
-            If there is no meals in the plan aka there's nothing to save, exit
-            If the user  rejects saving the plan, exit
-        */
-        
-        if (! is_Plan_Selected())
-        {
-            JOptionPane.showMessageDialog(null, "A plan must be selected to Save!");
-            return false;
-        }
-        
-        if (mealManager_ArrayList.isEmpty()) //  If there are no meals left after removing all the deleted meals, exit
-        {
-            String msg = """
-                    "There are no Meals left in this Plan !
-                    
-                    Add a Meal to Save !
-                    
-                    If saving an empty plan was Intentional delete the plan instead !""";
-            
-            JOptionPane.showMessageDialog(null, msg);
-            return false;
-        }
-        
-        // Confirm Choice
-        String txt = "\n\nAre you want to save all the data in this meal plan? \n\nAny deleted meals will be lost!";
-        
-        return areYouSure("Save Meal Plan Data", txt);
+        return mealManager_ArrayList
+                .stream()
+                .anyMatch(e -> ! e.is_MealManager_In_DB());
     }
     
-    // ########################################
+    private boolean any_Session_Created_Sub_Meals()
+    {
+        return mealManager_ArrayList
+                .stream()
+                .anyMatch(e -> e.is_MealManager_In_DB() && e.any_Session_Created_Sub_Meals());
+    }
+    
+    // #################################################
     // Saved DB Methods
-    // ########################################
-    private Fetched_Results saved_DB_Data()
+    // ##################################################
+    private Fetched_Results saved_DB_Data(boolean any_session_created, boolean any_session_created_sub_meals)
     {
         //###################################################
         // Variables
@@ -2380,6 +2392,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         /*
          
          */
+        
         //#############################
         // Create Key Table
         //#############################
@@ -2400,9 +2413,25 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //#############################
         saved_DB_Data_Plans(upload_Queries_And_Params);             // Plan   Transfer
         saved_DB_Data_Macros(upload_Queries_And_Params);            // Macros Transfer
-        saved_DB_Data_For_New_Meals(upload_Queries_And_Params);     // Meal   Transfer
-        saved_DB_Data_Sub_Meals(upload_Queries_And_Params);         // Sub-Meals Transfer
-        saved_DB_Data_Ingredients(upload_Queries_And_Params);       // Ingredients Transfer
+        
+        // New Meals & Sub-Meals
+        if (any_session_created)
+        {
+            save_DB_Data_Session_Created_Meals(upload_Queries_And_Params);
+            save_DB_Data_Session_Created_Sub_Meals(upload_Queries_And_Params);
+        }
+        
+        // Existing Meals & Sub-Meals
+        save_DB_Data_Existing_Meals(upload_Queries_And_Params);
+        save_DB_Data_Existing_Sub_Meals(upload_Queries_And_Params);
+        
+        // Save Ingredients
+        save_DB_Data_Ingredients(upload_Queries_And_Params);
+        
+        if (any_session_created)
+        {
+            save_DB_Data_Source_In_Session_Created_Object(upload_Queries_And_Params);
+        }
         
         //###################################################
         // Fetch
@@ -2420,20 +2449,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // Execute
         //###################################################
         return db.upload_And_Get_Batch(upload_Queries_And_Params, fetch_Queries_And_Params, error_msg);
-    }
-    
-    private boolean any_Session_Created_Meals()
-    {
-        return mealManager_ArrayList
-                .stream()
-                .anyMatch(e -> ! e.is_MealManager_In_DB());
-    }
-    
-    private boolean any_Session_Created_Sub_Meals()
-    {
-        return mealManager_ArrayList
-                .stream()
-                .anyMatch(MealManager::any_Session_Created_Sub_Meals);
     }
     
     private void saved_DB_Data_Plans(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
@@ -2491,10 +2506,10 @@ public class Meal_Plan_Screen extends Screen_JFrame
         upload_Queries_And_Params.add(new Pair<>(upload_query_01, new Object[]{ "plan_version_id", get_Selected_Plan_ID() }));
     }
     
-    //############################
-    // Save For App Created Meals
-    //############################
-    private void saved_DB_Data_For_New_Meals(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
+    //######################################
+    // Save New Meals / Sub-Meals
+    //######################################
+    private void save_DB_Data_Session_Created_Meals(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
     {
         //######################################
         // Count : Get App Created Meals Count
@@ -2523,14 +2538,13 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     e.count
                 FROM end_count e;""";
         
-        String x_mc_variable = "x_meal_count";
+        String x_mc_variable = "x_new_meal_count";
         
         upload_Queries_And_Params.add(new Pair<>(upload_query_01, new Object[]{ get_Selected_Plan_ID(), x_mc_variable, }));
         
         //########################################
         // Insert into meals_in_plan x Meals
         //########################################
-        
         // Insert into meals_in_plan X amount meals for each App created meal
         String upload_query_02 = """
                 WITH
@@ -2634,34 +2648,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
         upload_Queries_And_Params.add(new Pair<>(upload_query_05, new Object[]{ x_mc_variable, get_Selected_Plan_ID() }));
         
         //#######################################
-        // Update Draft OF Source Info
-        //#######################################
-        /*
-         
-         */
-        String upload_query_06 = """
-                UPDATE draft_meals_in_plan AS D
-                
-                SET meal_in_plan_id = (
-                    SELECT meal_in_plan_id
-                    FROM meals_to_draft_meals_anchor A
-                    WHERE D.draft_meal_in_plan_id = A.draft_meal_in_plan_id
-                )
-                WHERE EXISTS (
-                    SELECT 1
-                    FROM meals_to_draft_meals_anchor A
-                    WHERE D.draft_meal_in_plan_id = A.draft_meal_in_plan_id
-                );
-                """;
-        
-        upload_Queries_And_Params.add(new Pair<>(upload_query_06, null));
-        
-        //#######################################
         // Insert Into Meal Versions
         //#######################################
-        /*
-            Insert Meals with Meal Versions
-        */
+            /*
+                Insert Meals with Meal Versions
+            */
         String upload_query_07 = """
                 INSERT INTO meals_in_plan_versions
                 (
@@ -2673,7 +2664,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 )
                 SELECT
                 
-                    D.meal_in_plan_id, /* Updated from query above */
+                    M.meal_in_plan_id, /* Updated from query above */
                 
                     (SELECT entity_id_value FROM saved_keys WHERE key = ?),
                 
@@ -2691,9 +2682,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //#######################################
         // Create Anchor for Draft to Versions
         //#######################################
-        /*
-            Update meals_in_plan_versions on Anchor Table
-        */
+            /*
+                Update meals_in_plan_versions on Anchor Table
+            */
         String upload_query_08 = """
                 CREATE TEMPORARY TABLE draft_meals_to_meal_versions_anchor AS
                 SELECT
@@ -2709,7 +2700,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         upload_Queries_And_Params.add(new Pair<>(upload_query_08, null));
     }
     
-    private void saved_DB_Data_Sub_Meals(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
+    private void save_DB_Data_Session_Created_Sub_Meals(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
     {
         //######################################
         // Get Count For App Created Sub-Meals
@@ -2835,27 +2826,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
         
         upload_Queries_And_Params.add(new Pair<>(upload_query_04, new Object[]{ x_sc_variable }));
         
-        //#######################################
-        // Update Draft
-        //#######################################
-        /*
-         
-         */
-        String upload_query_05 = """
-                UPDATE draft_divided_meal_sections AS D
-                
-                SET div_meal_sections_id = (
-                    SELECT div_meal_sections_id
-                    FROM sub_meals_to_draft_sub_meals_anchor A
-                    WHERE D.draft_div_meal_sections_id = A.draft_div_meal_sections_id
-                )
-                WHERE EXISTS (
-                    SELECT 1
-                    FROM sub_meals_to_draft_sub_meals_anchor A
-                    WHERE D.draft_div_meal_sections_id = A.draft_div_meal_sections_id
-                );""";
-        
-        upload_Queries_And_Params.add(new Pair<>(upload_query_05, null));
         
         //#######################################
         // Insert Into Sub-Meal Versions
@@ -2920,13 +2890,144 @@ public class Meal_Plan_Screen extends Screen_JFrame
         upload_Queries_And_Params.add(new Pair<>(upload_query_07, null));
     }
     
-    private void saved_DB_Data_Ingredients(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
+    //######################################
+    // Save Existing Meals / Sub-Meals
+    //######################################
+    private void save_DB_Data_Existing_Meals(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
+    {
+        //######################################
+        // Count : Get App Created Meals Count
+        //######################################
+        // Save Count For App Created Meals
+        String upload_query_01 = """
+                CREATE TEMPORARY TABLE meals AS
+                SELECT
+                
+                    d.draft_meal_in_plan_id,
+                    d.meal_in_plan_id
+                
+                FROM draft_meals_in_plan d
+                WHERE
+                    d.plan_id = ?
+                    AND EXISTS (
+                        SELECT 1
+                        FROM meals_in_plan m
+                        WHERE d.meal_in_plan_id = m.meal_in_plan_id
+                    );""";
+        
+        upload_Queries_And_Params.add(new Pair<>(upload_query_01, new Object[]{ get_Selected_Plan_ID() }));
+        
+        //#######################################
+        // Insert Into Meal Versions
+        //#######################################
+        /*
+            Insert Meals with Meal Versions
+        */
+        String upload_query_02 = """
+                INSERT INTO meals_in_plan_versions
+                (
+                    meal_in_plan_id,
+                    plan_version_id,
+                    date_time_last_edited,
+                    meal_name,
+                    meal_time
+                )
+                SELECT
+                
+                    meal_in_plan_id,
+                    (SELECT entity_id_value FROM saved_keys WHERE key = ?),
+                
+                    date_time_last_edited,
+                    meal_name,
+                    meal_time
+                
+                FROM draft_meals_in_plan
+                WHERE draft_meal_in_plan_id IN (
+                    SELECT draft_meal_in_plan_id FROM meals
+                );""";
+        
+        upload_Queries_And_Params.add(new Pair<>(upload_query_02, new Object[]{ "plan_version_id" }));
+    }
+    
+    private void save_DB_Data_Existing_Sub_Meals(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
+    {
+        //#######################################
+        // Insert Into Meal Versions
+        //#######################################
+        /*
+            Insert Meals with Meal Versions
+        */
+        
+        String upload_query_06 = """
+                WITH
+                    meal_versions AS (
+                
+                        SELECT
+                
+                            M.draft_meal_in_plan_id,
+                            MAX(V.meal_in_plan_version_id) AS meal_in_plan_version_id
+                
+                        FROM meals M
+                        INNER JOIN meals_in_plan_versions V
+                            ON M.meal_in_plan_id = V.meal_in_plan_id
+                    )
+                
+                INSERT INTO divided_meal_sections_versions
+                (
+                    div_meal_sections_id,
+                    meal_in_plan_version_id,
+                
+                    plan_version_id,
+                    date_time_last_edited,
+                
+                    sub_meal_name,
+                    sub_meal_time
+                )
+                SELECT
+                
+                    D.div_meal_sections_id,
+                    V.meal_in_plan_version_id,
+                
+                    (SELECT entity_id_value FROM saved_keys WHERE key = ?),
+                
+                    D.date_time_last_edited,
+                    D.sub_meal_name,
+                    D.sub_meal_time
+                
+                FROM meals M
+                
+                INNER JOIN draft_divided_meal_sections D
+                    ON M.draft_meal_in_plan_id = D.draft_meal_in_plan_id
+                
+                INNER JOIN meal_versions V
+                    ON D.draft_meal_in_plan_id = M.draft_meal_in_plan_id;""";
+        
+        upload_Queries_And_Params.add(new Pair<>(upload_query_06, new Object[]{ "plan_version_id" }));
+    }
+    
+    //######################################
+    // Save Ingredients
+    //######################################
+    private void save_DB_Data_Ingredients(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
     {
         //######################################
         //
         //######################################
-        
         String upload_query_01 = """
+                WITH
+                    sub_meal_version_ids AS (
+               
+                         SELECT
+               
+                            S.draft_div_meal_sections_id,
+                            MAX(D.div_meal_sections_version_id) AS div_meal_sections_version_id
+                
+                         FROM draft_divided_meal_sections S
+             
+                         INNER JOIN divided_meal_sections_versions D
+                            S.div_meal_sections_id = D.div_meal_sections_id
+                    )
+                
                 INSERT INTO ingredients_in_sections_of_meal
                 (
                     div_meal_sections_version_id,
@@ -2940,12 +3041,63 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     I.pdid,
                     I.quantity
                 
-                FROM draft_sub_meals_to_sub_meal_versions_anchor S
+                FROM draft_ingredients_in_sections_of_meal I
                 
-                INNER JOIN draft_ingredients_in_sections_of_meal I
+                INNER JOIN sub_meal_version_ids S
                     ON S.draft_div_meal_sections_id = I.draft_div_meal_sections_id;""";
         
         upload_Queries_And_Params.add(new Pair<>(upload_query_01, null));
+    }
+    
+    //######################################
+    // Update
+    //######################################
+    private void save_DB_Data_Source_In_Session_Created_Object(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
+    {
+        //#######################################
+        // Update Draft OF Source Info
+        //#######################################
+        /*
+         
+         */
+        String upload_query_06 = """
+                UPDATE draft_meals_in_plan AS D
+                
+                SET meal_in_plan_id = (
+                    SELECT meal_in_plan_id
+                    FROM meals_to_draft_meals_anchor A
+                    WHERE D.draft_meal_in_plan_id = A.draft_meal_in_plan_id
+                )
+                WHERE EXISTS (
+                    SELECT 1
+                    FROM meals_to_draft_meals_anchor A
+                    WHERE D.draft_meal_in_plan_id = A.draft_meal_in_plan_id
+                );
+                """;
+        
+        upload_Queries_And_Params.add(new Pair<>(upload_query_06, null));
+        
+        //#######################################
+        // Update Draft
+        //#######################################
+        /*
+         
+         */
+        String upload_query_05 = """
+                UPDATE draft_divided_meal_sections AS D
+                
+                SET div_meal_sections_id = (
+                    SELECT div_meal_sections_id
+                    FROM sub_meals_to_draft_sub_meals_anchor A
+                    WHERE D.draft_div_meal_sections_id = A.draft_div_meal_sections_id
+                )
+                WHERE EXISTS (
+                    SELECT 1
+                    FROM sub_meals_to_draft_sub_meals_anchor A
+                    WHERE D.draft_div_meal_sections_id = A.draft_div_meal_sections_id
+                );""";
+        
+        upload_Queries_And_Params.add(new Pair<>(upload_query_05, null));
     }
     
     // ###############################################################
@@ -3030,7 +3182,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // ##########################################
         if (screen_created)
         {
-            save_Plan_Data();  //Meal Data
+            save_Data();  //Meal Data
         }
         
         // ##########################################
