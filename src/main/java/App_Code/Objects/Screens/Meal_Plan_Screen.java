@@ -2860,7 +2860,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 CREATE TEMPORARY TABLE meals_with_source_ids_map
                 (
                     draft_meal_in_plan_id INTEGER PRIMARY KEY,
-                    meal_in_plan_id INTEGER NULL DEFAULT NULL,
+                    meal_in_plan_id INTEGER NOT NULL DEFAULT NULL,
                     meal_in_plan_version_id NULL DEFAULT NULL,
                 
                     correlation_uuid BLOB(16) NOT NULL
@@ -2971,7 +2971,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     correlation_uuid BLOB(16) NOT NULL
                         DEFAULT (randomblob(16)),
                 
-                    div_meal_sections_id INTEGER NULL,
+                    div_meal_sections_id INTEGER NOT NULL,
                 
                     div_meal_sections_version_id INTEGER NULL
                 );
