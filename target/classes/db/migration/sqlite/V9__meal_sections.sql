@@ -14,9 +14,18 @@
     CREATE TABLE divided_meal_sections
     (
         div_meal_sections_id INTEGER PRIMARY KEY AUTOINCREMENT,
+
         date_time_of_creation TEXT NOT NULL -- Defined on Insertion
-            DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now'))
+            DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now')),
+
+        correlation_uuid BLOB(16) NULL
     );
+
+    -- ####################################################
+    -- Constraints (Unique Keys)
+    -- ####################################################
+        CREATE UNIQUE INDEX sub_meals_unique_uuid
+            ON divided_meal_sections(correlation_uuid);
 
 -- ##############################################################################################################
 -- Document Versions
@@ -25,6 +34,7 @@
     CREATE TABLE divided_meal_sections_versions
     (
         div_meal_sections_version_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        correlation_uuid BLOB(16) NULL,
 
         div_meal_sections_id INTEGER NOT NULL,    -- FK has to be defined at the bottom
         meal_in_plan_version_id INTEGER NOT NULL, -- FK has to be defined at the bottom
@@ -56,6 +66,9 @@
     -- ####################################################
     -- Constraints (Unique Keys)
     -- ####################################################
+        CREATE UNIQUE INDEX sub_meal_versions_unique_uuid
+            ON divided_meal_sections_versions(correlation_uuid);
+
         CREATE UNIQUE INDEX no_repeated_meal_sections_per_plan
             ON divided_meal_sections_versions
                (div_meal_sections_id, plan_version_id); -- 1 sub-meal per plan

@@ -12,7 +12,7 @@
     CREATE TABLE draft_plans -- Equivalent of plan_versions for drafts
     (
         -- Enforces one draft per plan as this is the FK / Unique
-        plan_id INTEGER PRIMARY KEY, -- FK has to be defined at the bottom
+        plan_id INTEGER PRIMARY KEY AUTOINCREMENT, -- FK has to be defined at the bottom
 
         user_id INTEGER NOT NULL, -- FK has to be defined at the bottom
 

@@ -15,8 +15,17 @@
         meal_in_plan_id INTEGER PRIMARY KEY AUTOINCREMENT,
 
         date_time_of_creation TEXT NOT NULL -- Defined on Insertion
-            DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now'))
+            DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now')),
+
+        correlation_uuid BLOB(16) NULL
     );
+
+    -- ####################################################
+    -- Constraints (Unique Keys)
+    -- ####################################################
+        CREATE UNIQUE INDEX meals_unique_uuid
+            ON meals_in_plan(correlation_uuid);
+
 
 -- ##############################################################################################################
 -- Document Versions
@@ -25,6 +34,7 @@
     CREATE TABLE meals_in_plan_versions
     (
         meal_in_plan_version_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        correlation_uuid BLOB(16) NULL,
 
         meal_in_plan_id INTEGER NOT NULL, -- FK has to be defined at the bottom
         plan_version_id INTEGER NOT NULL, -- FK has to be defined at the bottom
@@ -52,6 +62,10 @@
     -- ####################################################
     -- Constraints (Unique Keys)
     -- ####################################################
+
+        CREATE UNIQUE INDEX meals_versions_unique_uuid
+            ON meals_in_plan_versions(correlation_uuid);
+
         -- One meal can only be reference once per plan version / maybe later can be used in other plans
         CREATE UNIQUE INDEX unique_versions_per_plan
             ON meals_in_plan_versions (meal_in_plan_id, plan_version_id);

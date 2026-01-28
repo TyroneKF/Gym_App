@@ -10,7 +10,7 @@
 -- ##############################################################################################################
     CREATE TABLE draft_ingredients_in_sections_of_meal
     (
-        draft_ingredients_index INTEGER PRIMARY KEY AUTOINCREMENT,
+        draft_ingredients_index INTEGER PRIMARY KEY,
 
         draft_div_meal_sections_id INTEGER NOT NULL, -- FK has to be defined at the bottom
 

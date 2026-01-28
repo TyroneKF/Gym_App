@@ -13,7 +13,7 @@
     CREATE TABLE draft_macros_per_pound_and_limits
     (
         -- Enforces one draft macro per draft plan as this is the FK / Unique
-        plan_id INTEGER PRIMARY KEY, -- FK has to be defined at the bottom
+        plan_id INTEGER PRIMARY KEY AUTOINCREMENT, -- FK has to be defined at the bottom
 
         user_id INTEGER NOT NULL,    -- FK has to be defined at the bottom
 
