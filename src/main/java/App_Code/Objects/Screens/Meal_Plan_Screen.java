@@ -2867,9 +2867,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
                             DEFAULT (randomblob(16))
                 );
                 
-                CREATE UNIQUE INDEX unique_meal_id          ON   meals_no_source_ids_map  (meal_in_plan_id);
-                CREATE UNIQUE INDEX unique_meal_version_id  ON   meals_no_source_ids_map  (meal_in_plan_version_id);
-                CREATE UNIQUE INDEX one_uuid_per_meal       ON   meals_no_source_ids_map  (correlation_uuid);
+                CREATE UNIQUE INDEX unique_meal_id_s            ON   meals_with_source_ids_map  (meal_in_plan_id);
+                CREATE UNIQUE INDEX unique_meal_version_id_s    ON   meals_with_source_ids_map  (meal_in_plan_version_id);
+                CREATE UNIQUE INDEX one_uuid_per_meal_s         ON   meals_with_source_ids_map  (correlation_uuid);
                 """;
         
         upload_Queries_And_Params.add(new Pair<>(upload_query_01, null));
@@ -2960,6 +2960,46 @@ public class Meal_Plan_Screen extends Screen_JFrame
     
     private void save_DB_Data_Existing_Sub_Meals(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
     {
+        String upload_query_01 = """
+                CREATE TEMPORARY TABLE sub_meals_with_source_ids_map
+                (
+                    draft_div_meal_sections_id INTEGER PRIMARY KEY,
+              
+                    draft_meal_in_plan_id   INTEGER NOT NULL,
+                    meal_in_plan_version_id INTEGER NOT NULL,
+                
+                    correlation_uuid BLOB(16) NOT NULL
+                        DEFAULT (randomblob(16)),
+                
+                    div_meal_sections_id INTEGER NULL,
+                
+                    div_meal_sections_version_id INTEGER NULL
+                );
+                
+                CREATE UNIQUE INDEX unique_sub_meal_id_s           ON  sub_meals_with_source_ids_map  (div_meal_sections_id);
+                CREATE UNIQUE INDEX unique_sub_meal_version_id_s   ON  sub_meals_with_source_ids_map  (divided_meal_sections_versions);
+                CREATE UNIQUE INDEX one_uuid_per_sub_meal_s        ON  sub_meals_with_source_ids_map  (correlation_uuid);
+                """;
+        
+        upload_Queries_And_Params.add(new Pair<>(upload_query_01, null));
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         //#######################################
         // Insert Into Meal Versions
         //#######################################
