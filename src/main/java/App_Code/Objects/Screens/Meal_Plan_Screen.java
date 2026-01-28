@@ -2309,7 +2309,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         boolean any_session_created = any_Session_Created();
         boolean any_session_created_sub_meals = any_Session_Created_Sub_Meals();
         
-        Fetched_Results results = saved_DB_Data(any_session_created, any_session_created_sub_meals);
+        Fetched_Results results = saved_DB_Data(any_session_created);
         if (results == null) { return; }
         
         // ########################################
@@ -2377,7 +2377,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // #################################################
     // Saved DB Methods
     // ##################################################
-    private Fetched_Results saved_DB_Data(boolean any_session_created, boolean any_session_created_sub_meals)
+    private Fetched_Results saved_DB_Data(boolean any_session_created)
     {
         //###################################################
         // Variables
@@ -2407,47 +2407,27 @@ public class Meal_Plan_Screen extends Screen_JFrame
         
         upload_Queries_And_Params.add(new Pair<>(upload_query_00, null));
         
-        /*//#############################
+        //############################
         //
-        //#############################
+        //############################
         saved_DB_Data_Plans(upload_Queries_And_Params);             // Plan   Transfer
         saved_DB_Data_Macros(upload_Queries_And_Params);            // Macros Transfer
         
-        // New Meals & Sub-Meals
-        if (any_session_created)
-        {
-            save_DB_Data_Session_Created_Meals(upload_Queries_And_Params);
-            save_DB_Data_Session_Created_Sub_Meals(upload_Queries_And_Params);
-        }
+        //############################
+        //
+        //############################
+        // Pre-Requisites Table
+        save_DB_Data_Meal_Pre_Requisites_Tables(upload_Queries_And_Params);
         
-        // Existing Meals & Sub-Meals
-        save_DB_Data_Existing_Meals(upload_Queries_And_Params);
-        save_DB_Data_Existing_Sub_Meals(upload_Queries_And_Params);
-        
-        // Save Ingredients
-        save_DB_Data_Ingredients(upload_Queries_And_Params);
-        
-        // Update Draft Tables With Sources
-        if (any_session_created)
-        {
-            save_DB_Data_Source_In_Session_Created_Object(upload_Queries_And_Params);
-        }*/
-        
-        saved_DB_Data_Plans(upload_Queries_And_Params);             // Plan   Transfer
-        saved_DB_Data_Macros(upload_Queries_And_Params);            // Macros Transfer
-        
-        //##################
-        save_DB_Data_Pre_Requisites_Tables(upload_Queries_And_Params);
-        
-        //##################
-        save_DB_Data_Session_Created_Meals(upload_Queries_And_Params);
+        // Map All Meals With / Without Source
+        if(any_session_created) save_DB_Data_Session_Created_Meals(upload_Queries_And_Params);
         save_DB_Data_Existing_Meals(upload_Queries_And_Params);
         
-        //##################
-        save_DB_Data_Session_Created_Sub_Meals(upload_Queries_And_Params);
+        // Using Global Meal Source Table Map Sub-Meals Into Groups With / Without Source & Map
+        if(any_session_created) save_DB_Data_Session_Created_Sub_Meals(upload_Queries_And_Params);
         save_DB_Data_Existing_Sub_Meals(upload_Queries_And_Params);
-        //##################
         
+        // All Table Above should be mapped correctly ingredients left to map
         save_DB_Data_Ingredients(upload_Queries_And_Params);
         
         //###################################################
@@ -2526,7 +2506,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //######################################
     //
     //######################################
-    private void save_DB_Data_Pre_Requisites_Tables(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
+    private void save_DB_Data_Meal_Pre_Requisites_Tables(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
     {
         //######################################
         //
@@ -2746,7 +2726,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 SELECT *
                 FROM meals_no_source_ids_map;""";
         
-        upload_Queries_And_Params.add(new Pair<>(upload_query_10, new Object[]{ get_Selected_Plan_ID() }));
+        upload_Queries_And_Params.add(new Pair<>(upload_query_10, null));
     }
     
     private void save_DB_Data_Session_Created_Sub_Meals(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
