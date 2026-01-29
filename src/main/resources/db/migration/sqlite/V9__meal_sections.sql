@@ -43,10 +43,10 @@
         date_time_last_edited TEXT NOT NULL -- Defined on Insertion
             DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now')),
 
-        sub_meal_name TEXT
+        sub_meal_name TEXT NULL
             CHECK (length(sub_meal_name) <= 100),
 
-        sub_meal_time TEXT NOT NULL
+        sub_meal_time TEXT NULL
             CHECK (sub_meal_time GLOB '[0-2][0-9]:[0-5][0-9]*'),
 
         -- Foreign Keys (SQLite requires table-level declaration)

@@ -12,3 +12,4 @@ data/root;
 /data/*.db-shm
 /data/*.db-wal
 /data/gym_app00001;
+/data/gym_app00001;-journal

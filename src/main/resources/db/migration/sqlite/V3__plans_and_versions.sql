@@ -52,6 +52,7 @@
     CREATE TABLE plan_versions
     (
         plan_version_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        correlation_uuid BLOB(16) NULL,
 
         plan_id INTEGER NOT NULL, -- FK has to be defined at the bottom
         user_id INTEGER NOT NULL, -- FK has to be defined at the bottom

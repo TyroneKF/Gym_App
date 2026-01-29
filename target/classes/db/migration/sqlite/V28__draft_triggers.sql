@@ -58,7 +58,7 @@
     -- Prevent Certain Rows From Being Updated
     -- ##########################################
         CREATE TRIGGER trg_draft_meals_in_plan_allow_only_safe_updates
-        BEFORE UPDATE OF meal_in_plan_id, plan_id
+        BEFORE UPDATE OF plan_id
         ON draft_meals_in_plan
         FOR EACH ROW
             BEGIN
@@ -66,10 +66,10 @@
             END;
 
          -- Immutable Columns (Not Allowed)
-            -- meal_in_plan_id
             -- plan_id
 
         -- Mutable Columns (Implicitly Allowed):
+            -- meal_in_plan_id
             -- meal_name
             -- meal_time
             -- date_time_last_edited
@@ -130,7 +130,7 @@
     -- On Update: Prevents Certain Rows Updating
     -- ##########################################
         CREATE TRIGGER trg_draft_divided_meal_sections_allow_only_safe_updates
-        BEFORE UPDATE OF div_meal_sections_id, draft_meal_in_plan_id, plan_id
+        BEFORE UPDATE OF draft_meal_in_plan_id, plan_id
         ON draft_divided_meal_sections
         FOR EACH ROW
             BEGIN
@@ -138,11 +138,11 @@
             END;
 
          -- Immutable Columns (Not Allowed)
-            -- div_meal_sections_id
             -- draft_meal_in_plan_id
             -- plan_id
 
         -- Mutable Columns (Implicitly Allowed):
+            -- div_meal_sections_id
             -- sub_meal_name
             -- sub_meal_time
             -- date_time_last_edited
