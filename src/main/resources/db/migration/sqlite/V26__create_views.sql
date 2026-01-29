@@ -599,7 +599,7 @@
                            P1.plan_id,
                            P.plan_name
                        FROM P1
-                       LEFT JOIN plans P
+                       INNER JOIN plans P
                             ON P1.plan_id = P.plan_id
                 )
 
