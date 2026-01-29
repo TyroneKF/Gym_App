@@ -1,3 +1,4 @@
+
 # Project exclude paths
 /out/
 /scripts/production_setup_scripts/Gym_App.jar
@@ -13,3 +14,23 @@ data/root;
 /data/*.db-wal
 /data/gym_app00001;
 /data/gym_app00001;-journal
+
+# =========================
+# IntelliJ IDEA (REQUIRED)
+# =========================
+.idea/
+*.iml
+
+# =========================
+# Build output (REQUIRED)
+# =========================
+target/
+out/
+*.class
+
+# =========================
+# OS / Sync noise
+# =========================
+.DS_Store
+Thumbs.db
+*conflicted copy*
