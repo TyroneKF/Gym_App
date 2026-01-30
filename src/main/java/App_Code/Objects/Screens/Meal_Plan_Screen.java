@@ -373,7 +373,10 @@ public class Meal_Plan_Screen extends Screen_JFrame
             } // plan name
             
             System.out.printf("\n\nUser_ID : %s \nPlan_ID : %s \nPlan_Version_ID : %s \nPlan_Name : %s",
-                    get_User_ID(), get_Selected_Plan_Version_ID(), get_Selected_Plan_ID(), get_Plan_Name());
+                    get_User_ID(),
+                    get_Selected_Plan_ID(),
+                    get_Selected_Plan_Version_ID(),
+                    get_Plan_Name());
         }
         catch (Exception e)
         {
@@ -636,8 +639,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
         upload_queries_and_params.add(new Pair<>(query1, new Object[]{ get_User_ID() }));
         
         // Create New Draft Plan Based On Active Plan
-        String query2 = "INSERT INTO draft_plans (plan_id, user_id) VALUES (?,?);";
-        upload_queries_and_params.add(new Pair<>(query2, new Object[]{ get_Selected_Plan_ID(), get_User_ID() }));
+        String query2 = "INSERT INTO draft_plans (plan_id, plan_version_id, user_id) VALUES (?,?,?);";
+        upload_queries_and_params.add(new Pair<>(query2, new Object[]{ get_Selected_Plan_ID(), get_Selected_Plan_Version_ID(), get_User_ID() }));
         
         //####################################
         // Execute Upload Statements
@@ -740,27 +743,35 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //################################################################
         
         // Copy Versioned Meals From Plan_Version Into Temp Table ORDERED by meal_in_plan_version_id
-        String query_00 = "DROP TABLE IF EXISTS temp.temp_versioned_meals;";
+        String query_00 = "DROP TABLE IF EXISTS temp.draft_meals_anchor;";
         upload_queries_and_params.add(new Pair<>(query_00, null));
         
         String query_01 = """
-                CREATE TEMPORARY TABLE temp_versioned_meals AS
+                CREATE TEMPORARY TABLE draft_meals_anchor AS
                 
                     SELECT
-                
                         ROW_NUMBER() OVER (ORDER BY meal_in_plan_version_id ASC) AS rn,
                 
-                        meal_in_plan_version_id,
-                        meal_in_plan_id,
+                        NULL AS draft_meal_in_plan_id,
                 
-                        plan_version_id,
-                        date_time_last_edited,
-                        meal_name,
-                        meal_time
+                        M.meal_in_plan_version_id,
+                        M.meal_in_plan_id,
                 
-                    FROM meals_in_plan_versions
-                    WHERE plan_version_id = ?
-                    ORDER BY meal_in_plan_version_id ASC;""";
+                        P.plan_id,
+                        M.plan_version_id,
+                
+                        M.date_time_last_edited,
+                        M.meal_name,
+                        M.meal_time
+                
+                    FROM meals_in_plan_versions M
+                
+                    INNER JOIN plan_versions P
+                        ON M.plan_version_id = P.plan_version_id
+                
+                    WHERE M.plan_version_id = ?
+                
+                    ORDER BY M.meal_in_plan_version_id ASC;""";
         
         upload_queries_and_params.add(new Pair<>(query_01, new Object[]{ get_Selected_Plan_Version_ID() }));
         
@@ -777,63 +788,65 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 SELECT
                 
                     meal_in_plan_id,
-                    ?,
+                    plan_id,
                     date_time_last_edited,
                     meal_name,
                     meal_time
                 
-                FROM temp_versioned_meals
+                FROM draft_meals_anchor
                 ORDER BY rn;""";
         
-        upload_queries_and_params.add(new Pair<>(query_02, new Object[]{ get_Selected_Plan_ID() }));
+        upload_queries_and_params.add(new Pair<>(query_02, null));
         
-        // Insert Created Meals Into Anchor Table & Order Draft Meals By Creation Order (ID)
-        String query_03 = "DROP TABLE IF EXISTS temp.temp_draft_meals_anchor;";
-        upload_queries_and_params.add(new Pair<>(query_03, null));
-        
+        // Update Anchor table with
         String query_04 = """
-                CREATE TEMPORARY TABLE temp_draft_meals_anchor AS
-                SELECT
-                
-                    ROW_NUMBER() OVER (ORDER BY draft_meal_in_plan_id ASC) AS rn,
-                    draft_meal_in_plan_id,
-                    meal_in_plan_id
-                
-                
-                FROM draft_meals_in_plan
-                WHERE plan_id = ?
-                ORDER BY draft_meal_in_plan_id ASC;""";
+                UPDATE draft_meals_anchor AS D
+                    SET draft_meal_in_plan_id =
+                    (
+                        SELECT
+                            draft_meal_in_plan_id
+                        FROM draft_meals_in_plan A
+                        WHERE
+                            D.meal_in_plan_id = A.meal_in_plan_id
+                    );""";
         
-        upload_queries_and_params.add(new Pair<>(query_04, new Object[]{ get_Selected_Plan_ID() }));
+        upload_queries_and_params.add(new Pair<>(query_04, null));
         
         //################################################################
         // Transferring Versioned Sub-Meals To Draft
         //################################################################
         
         // Insert All Sub-Meals From Versioned Into Temp
-        String query_05 = "DROP TABLE IF EXISTS temp.temp_versioned_sub_meals;";
+        String query_05 = "DROP TABLE IF EXISTS temp.draft_sub_meals_anchor;";
         upload_queries_and_params.add(new Pair<>(query_05, null));
         
         String query_06 = """
-                CREATE TEMPORARY TABLE temp_versioned_sub_meals AS
+                CREATE TEMPORARY TABLE draft_sub_meals_anchor AS
                 
                     SELECT
                 
-                        ROW_NUMBER() OVER (ORDER BY div_meal_sections_version_id ASC) AS rn,
+                        ROW_NUMBER() OVER (ORDER BY D.div_meal_sections_version_id ASC) AS rn,
                 
-                        div_meal_sections_version_id,
-                        div_meal_sections_id,
+                        NULL AS draft_div_meal_sections_id,
+                        D.div_meal_sections_id,
+                        D.div_meal_sections_version_id,
                 
-                        meal_in_plan_version_id,
-                        date_time_last_edited,
-                        sub_meal_name,
-                        sub_meal_time
+                        M.draft_meal_in_plan_id,
+                        D.meal_in_plan_version_id,
                 
-                    FROM divided_meal_sections_versions
-                    WHERE plan_version_id = ?
-                    ORDER BY div_meal_sections_version_id ASC;""";
+                        M.plan_id,
+                
+                        D.date_time_last_edited,
+                
+                        D.sub_meal_name,
+                        D.sub_meal_time
+                
+                    FROM draft_meals_anchor M
+                
+                    INNER JOIN divided_meal_sections_versions D
+                        ON M.meal_in_plan_version_id = D.meal_in_plan_version_id;""";
         
-        upload_queries_and_params.add(new Pair<>(query_06, new Object[]{ get_Selected_Plan_ID() }));
+        upload_queries_and_params.add(new Pair<>(query_06, null));
         
         // Insert Versioned Sub-Meals Into Draft Sub-Meals In Order
         String query_07 = """
@@ -847,43 +860,31 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     sub_meal_time
                 )
                 SELECT
+                    div_meal_sections_id,
+                    draft_meal_in_plan_id,
+                    plan_id,
+                    date_time_last_edited,
+                    sub_meal_name,
+                    sub_meal_time
                 
-                    S.div_meal_sections_id,
-                    T.draft_meal_in_plan_id,
-                    ?,
-                    S.date_time_last_edited,
-                    S.sub_meal_name,
-                    S.sub_meal_time
-                
-                FROM temp_versioned_sub_meals S
-                
-                INNER JOIN temp_versioned_meals M
-                    ON S.meal_in_plan_version_id = M.meal_in_plan_version_id
-                
-                INNER JOIN temp_draft_meals_anchor T
-                    ON M.meal_in_plan_id = T.meal_in_plan_id
-                
-                ORDER BY S.rn;""";
+                FROM draft_sub_meals_anchor S
+                ORDER BY rn;""";
         
-        upload_queries_and_params.add(new Pair<>(query_07, new Object[]{ get_Selected_Plan_ID() }));
+        upload_queries_and_params.add(new Pair<>(query_07, null));
         
-        // Insert Created Sub-Meals Into Anchor Table & Order Draft Sub-Meals By Creation Order (ID)
-        String query_08 = "DROP TABLE IF EXISTS temp.tmp_draft_sub_meal_anchors;";
-        upload_queries_and_params.add(new Pair<>(query_08, null));
-        
+        //
         String query_09 = """
-                CREATE TEMPORARY TABLE tmp_draft_sub_meal_anchors AS
-                SELECT
-                
-                    ROW_NUMBER() OVER (ORDER BY draft_div_meal_sections_id ASC) AS rn,
-                    draft_div_meal_sections_id,
-                    div_meal_sections_id
-                
-                FROM draft_divided_meal_sections
-                WHERE plan_id = ?
-                ORDER BY draft_div_meal_sections_id ASC;""";
+                UPDATE draft_sub_meals_anchor AS D
+                    SET draft_div_meal_sections_id =
+                    (
+                        SELECT
+                            draft_div_meal_sections_id
+                        FROM draft_divided_meal_sections A
+                        WHERE
+                            D.div_meal_sections_id = A.div_meal_sections_id
+                    );""";
         
-        upload_queries_and_params.add(new Pair<>(query_09, new Object[]{ get_Selected_Plan_ID() }));
+        upload_queries_and_params.add(new Pair<>(query_09, null));
         
         //################################################################
         // Transferring Ingredients From Versioned Sub-Meals To Draft
@@ -900,23 +901,27 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 )
                 SELECT
                 
-                      A.draft_div_meal_sections_id,
+                      T.draft_div_meal_sections_id,
                       I.ingredient_id,
                       I.pdid,
                       I.quantity
                 
                 FROM ingredients_in_sections_of_meal I
                 
-                INNER JOIN temp_versioned_sub_meals T
-                    ON I.div_meal_sections_version_id = T.div_meal_sections_version_id
-                
-                INNER JOIN tmp_draft_sub_meal_anchors A
-                   ON T.div_meal_sections_id = A.div_meal_sections_id
-                
-                ORDER BY -- Order by sub_meals div order in temp table & then Ingredient index Order
-                    T.rn ASC, I.ingredients_index ASC;""";
+                INNER JOIN draft_sub_meals_anchor T
+                    ON I.div_meal_sections_version_id = T.div_meal_sections_version_id;""";
         
         upload_queries_and_params.add(new Pair<>(query_10, null));
+        
+        
+        //################################################################
+        // Remove Temp Tables
+        //################################################################
+        String query_11 = """
+              DROP TABLE IF EXISTS temp.draft_sub_meals_anchor;
+              DROP TABLE IF EXISTS temp.draft_meals_anchor;""";
+        
+        upload_queries_and_params.add(new Pair<>(query_11, null));
         
         //################################################################
         // Execute
@@ -2271,7 +2276,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     {
         if (! save_Edge_Cases()) { return; } // Edge Cases
         
-        if(!save_Data())
+        if (! save_Data())
         {
             JOptionPane.showMessageDialog(this, "\n\n Failed Save");
             return;
@@ -2279,6 +2284,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
         
         // Successful Message
         JOptionPane.showMessageDialog(this, "\n\nAll Meals Are Successfully Saved!");
+        
+        System.out.printf("\n\n New Plan VS : %s", get_Selected_Plan_Version_ID());
     }
     
     private boolean save_Edge_Cases()
@@ -2611,15 +2618,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
     {
         // Upload to Plan_Versions from Draft Plans
         String upload_query_01 = """
-                WITH
-                    v_no AS ( -- Version_Number
-                
-                		SELECT
-                			COALESCE(MAX(version_number), 0) + 1 AS version_number
-                		FROM plan_versions
-                		WHERE plan_id = ?
-                	)
-                
                 INSERT INTO plan_versions
                 (
                     plan_id,
@@ -2627,14 +2625,22 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     version_number
                 )
                 SELECT
-                    ?,
-                    ?,
-                    V.version_number
-                FROM v_no V;""";
+                    P.plan_id,
+                    A.user_id,
+                    COALESCE(MAX(V.version_number), 0) + 1 AS version_number
+                
+                FROM active_user A
+                
+                INNER JOIN active_plans AV
+                    ON A.user_id = AV.user_id
+                
+                INNER JOIN plan_versions V
+                    ON AV.plan_version_id = V.plan_version_id
+                
+                INNER JOIN plans P
+                    ON V.plan_id = P.plan_id;""";
         
-        Object[] params_01 = new Object[]{ get_Selected_Plan_ID(), get_Selected_Plan_ID(), get_User_ID() };
-        
-        upload_Queries_And_Params.add(new Pair<>(upload_query_01, params_01));
+        upload_Queries_And_Params.add(new Pair<>(upload_query_01, null));
         
         // Upload to Plan_Version_ID
         String upload_query_02 = """
@@ -2655,6 +2661,14 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 WHERE user_id = ?;""";
         
         upload_Queries_And_Params.add(new Pair<>(upload_query_03, new Object[]{ "plan_version_id", get_User_ID() }));
+        
+        // Upload to Plan_Version_ID
+        String upload_query_04 = """
+                UPDATE draft_plans
+                SET plan_version_id = (SELECT entity_id_value FROM saved_keys WHERE key = ?)
+                WHERE plan_id = ?;""";
+        
+        upload_Queries_And_Params.add(new Pair<>(upload_query_04, new Object[]{ "plan_version_id", get_Selected_Plan_ID() }));
     }
     
     private void saved_DB_Data_Macros(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
@@ -3310,7 +3324,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     {
         String upload_query_01 = """
                 UPDATE draft_meals_in_plan AS D
-                    
+                
                     SET meal_in_plan_id = (
                         SELECT meal_in_plan_id
                         FROM meals_no_source_ids_map A
@@ -3321,7 +3335,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                         FROM meals_no_source_ids_map A
                         WHERE D.draft_meal_in_plan_id = A.draft_meal_in_plan_id
                     );
-              
+                
                 UPDATE draft_divided_meal_sections AS D
                 
                     SET div_meal_sections_id = (
@@ -3448,7 +3462,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // ##########################################
         if (screen_created)
         {
-            save_Data();  //Meal Data
+            save_Btn_Action();  //Meal Data
         }
         
         // ##########################################

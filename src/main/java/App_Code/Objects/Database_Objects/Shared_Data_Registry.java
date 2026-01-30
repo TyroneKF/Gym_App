@@ -879,9 +879,4 @@ public class Shared_Data_Registry
     {
         return totals_by_macro;
     }
-    
-    public HashMap<Total_Meal_Other_Columns, Integer> get_Total_Meal_Other_Cols_Positions()
-    {
-        return total_meal_other_cols_positions;
-    }
 }

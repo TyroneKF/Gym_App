@@ -2,7 +2,7 @@
 -- draft_plans | Prevent Certain Rows from being updated
 -- ###########################################################################
     CREATE TRIGGER trg_draft_plans_allow_only_safe_updates
-    BEFORE UPDATE OF user_id, plan_version_id ON draft_plans
+    BEFORE UPDATE OF user_id ON draft_plans
     FOR EACH ROW
         BEGIN
             SELECT RAISE(ABORT, 'UPDATE Trigger - draft_plans only mutable columns can change!');
@@ -10,10 +10,10 @@
 
     -- Immutable Columns (Not Allowed)
         -- user_id
-        -- plan_version_id
 
     -- Mutable Columns (Implicitly Allowed):
         -- date_time_last_edited
+        -- plan_version_id - can change when the plan is saved
 
 -- ###########################################################################
 -- draft_macros_per_pound_and_limits |

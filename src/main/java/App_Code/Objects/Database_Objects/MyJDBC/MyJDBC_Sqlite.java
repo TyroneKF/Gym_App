@@ -3,10 +3,13 @@ package App_Code.Objects.Database_Objects.MyJDBC;
 import App_Code.Objects.Database_Objects.Fetched_Results;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+
 import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.SQLException;
+
 import org.javatuples.Pair;
+
 import javax.swing.*;
 import java.math.BigDecimal;
 import java.sql.*;
@@ -16,6 +19,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.time.LocalDateTime;
 import java.util.function.Supplier;
+
 import org.flywaydb.core.Flyway;
 import org.sqlite.SQLiteConfig;
 
@@ -85,6 +89,24 @@ public class MyJDBC_Sqlite  // remove extends eventually
         //#############################################
         reconnect_Hikari_DB_Connection(db_Connection_Address);
         
+        
+        //#############################################
+        // Configure Hikari
+        //#############################################
+        try (Connection c = dataSource.getConnection();
+             Statement s = c.createStatement();
+             ResultSet rs = s.executeQuery("PRAGMA foreign_keys"))
+        {
+            
+            if (rs.next() && rs.getInt(1) != 1)
+            {
+                throw new Exception("SQLite foreign keys are NOT enabled");
+            }
+        }
+        
+        //#############################################
+        // Configure Hikari
+        //#############################################
         db_Connection_Status = true;
     }
     
@@ -833,7 +855,7 @@ public class MyJDBC_Sqlite  // remove extends eventually
                 connection.close();  // tells Hikari to evict this bad connection
             }
         }
-        catch (SQLException ignore) {    }
+        catch (SQLException ignore) { }
     }
     
     //###########################################
