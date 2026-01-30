@@ -9,8 +9,8 @@ public class Fetched_Results
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    private HashMap<Integer, ArrayList<Object>> results_1D_Map = new HashMap<>();
-    private HashMap<Integer, ArrayList<ArrayList<Object>>> results_2D_Map = new HashMap<>();
+    private final HashMap<Integer, ArrayList<Object>> results_1D_Map = new HashMap<>();
+    private final HashMap<Integer, ArrayList<ArrayList<Object>>> results_2D_Map = new HashMap<>();
     
     private int size = 0;
     private String class_Name = "Fetched_Results ->";

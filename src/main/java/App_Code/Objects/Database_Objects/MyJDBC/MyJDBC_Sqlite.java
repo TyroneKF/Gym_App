@@ -203,8 +203,12 @@ public class MyJDBC_Sqlite  // remove extends eventually
                 
                 //###############################################
                 // Execute Statement & Commit Connection
-                //###############################################
-                statement.executeUpdate();
+                //###############################################                   /
+                if(statement.executeUpdate() == 0) // 0 rows updated = fails (doesn't include dropping / creating tables)
+                {
+                    throw new RuntimeException(String.format("\n\n%s \n\nUpdated 0 Rows \n%s", query, Arrays.toString(insertParameters)));
+                }
+                
                 connection.commit(); // Commit Changes beyond current driver
                 return true; // Return Output
                 
@@ -253,7 +257,7 @@ public class MyJDBC_Sqlite  // remove extends eventually
             insertParameters = entry.getValue1();
             
             //#########################
-            // Execute Queries
+            // Prepare Params
             //#########################
             try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS))
             {
@@ -267,9 +271,13 @@ public class MyJDBC_Sqlite  // remove extends eventually
                         set_Statement_Params(statement, pos, object); // Set Statement Params etc; statement.setString(x , y)
                     }
                 }
-                
+                //#########################
                 //Executing the Statement
-                statement.executeUpdate();
+                //#########################
+                if(statement.executeUpdate() == 0) // 0 rows updated = fails (doesn't include dropping / creating tables)
+                {
+                    throw new RuntimeException(String.format("\n\n%s \n\nUpdated 0 Rows \n%s", query, Arrays.toString(insertParameters)));
+                }
             }
             catch (Exception e)
             {
@@ -367,7 +375,7 @@ public class MyJDBC_Sqlite  // remove extends eventually
             {
                 rollBack_Connection(connection, method_Name, null); // Rollback, in case it's not automatically done
                 handleException_MYSQL(e, method_Name, null, error_msg);
-                throw new Exception();
+                return null;
             }
         }
         catch (Exception e)
