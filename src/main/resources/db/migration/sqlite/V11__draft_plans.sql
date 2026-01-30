@@ -12,7 +12,9 @@
     CREATE TABLE draft_plans -- Equivalent of plan_versions for drafts
     (
         -- Enforces one draft per plan as this is the FK / Unique
-        plan_id INTEGER PRIMARY KEY AUTOINCREMENT, -- FK has to be defined at the bottom
+        plan_id INTEGER PRIMARY KEY, -- FK has to be defined at the bottom
+
+        plan_version_id INTEGER NOT NULL,
 
         user_id INTEGER NOT NULL, -- FK has to be defined at the bottom
 
@@ -23,6 +25,10 @@
         FOREIGN KEY (plan_id)
             REFERENCES plans(plan_id)
                 ON DELETE CASCADE,
+
+         FOREIGN KEY (plan_version_id)
+            REFERENCES plan_versions(plan_version_id)
+                ON DELETE CASCADE
 
         FOREIGN KEY (user_id)
             REFERENCES users(user_id)
