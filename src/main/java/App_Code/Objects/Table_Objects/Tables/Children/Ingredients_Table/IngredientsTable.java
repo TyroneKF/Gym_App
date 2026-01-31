@@ -45,9 +45,11 @@ public class IngredientsTable extends JDBC_JTable
     //################################################
     private boolean
             sub_meal_in_db,
-            sub_meal_meta_data_changed = false,
+    
+    sub_meal_meta_data_changed = false,
             sub_meal_data_changed = false,
-            sub_meal_saved,
+    
+    sub_meal_saved,
             table_deleted = false;
     
     //################################################
@@ -954,19 +956,19 @@ public class IngredientsTable extends JDBC_JTable
     }
     
     //####################################################
-    // Delete Table Methods
+    // Sub-Meal Name Methods
     //####################################################
     private void change_Sub_Meal_Name()
     {
-        set_Sub_Meal_Data_Changed(true);
+        set_Sub_Meal_Meta_Data_Changed(true);
     }
     
     //####################################################
-    // Delete Table Methods
+    // Sub-Meal Time Methods
     //####################################################
     private void change_Sub_Meal_Time()
     {
-        set_Sub_Meal_Data_Changed(true);
+        set_Sub_Meal_Meta_Data_Changed(true);
     }
     
     //##################################################################################################################
@@ -981,6 +983,11 @@ public class IngredientsTable extends JDBC_JTable
     private void update_Macros_Left_Table()
     {
         macrosLeft_table.update_Table();
+    }
+    
+    private void update_Meal_Manager_True_State_Change()
+    {
+        meal_manager.set_Has_Meal_Data_Changed(true);
     }
     
     //##################################################################################################################
@@ -1021,11 +1028,15 @@ public class IngredientsTable extends JDBC_JTable
     private void set_Sub_Meal_Data_Changed(boolean state)
     {
         sub_meal_data_changed = state;
+        
+        if (state) { update_Meal_Manager_True_State_Change(); }
     }
     
     private void set_Sub_Meal_Meta_Data_Changed(boolean state)
     {
         sub_meal_meta_data_changed = state;
+        
+        if (state) { update_Meal_Manager_True_State_Change(); }
     }
     
     //##################################################################################################################

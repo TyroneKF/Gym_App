@@ -20,7 +20,8 @@ Ingredients Table
 Error handling method name call in all classes
 replace all column names with enums
 
-
+upload methods can results be 0 / affect 0 rows add a true to add if needed
+mps check if mm source ids change for new meals / sub-meals
 
 ######################################################################################
 Work On:

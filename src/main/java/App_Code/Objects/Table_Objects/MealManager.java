@@ -1474,6 +1474,9 @@ public class MealManager
     public void set_Has_Meal_Data_Changed(boolean state)
     {
         has_MealManager_Data_Changed = state;
+        
+        // IF data changed is true update MPS to update its state
+        if (state) { meal_plan_screen.set_has_Data_Changed(true); }
     }
     
     private void set_Visibility(boolean condition)

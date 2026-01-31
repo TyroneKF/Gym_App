@@ -59,6 +59,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //###############################################
     private boolean macro_targets_changed = false;
     private boolean screen_created = false;
+    private boolean has_data_changed = false;
     
     //#########################################################################################
     // Collections
@@ -2144,6 +2145,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // ###############################################################
     private void refresh_Btn_Action()
     {
+        set_has_Data_Changed(false);
         /*
         //####################################################################
         // Confirm Refresh / Edge Cases
@@ -2156,6 +2158,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             return;
         }
         
+        set_has_Data_Changed(false);
         //####################################################################
         // Refresh DB Data
         //####################################################################
@@ -2332,9 +2335,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
         boolean any_session_created = any_Session_Created();
         boolean any_session_created_sub_meals = any_session_created || any_Session_Created_Sub_Meals();
         
-        System.out.printf("\n\n New Meals : %s \n New Sub-Meals : %s",
-                any_session_created, any_session_created_sub_meals);
+        System.out.printf("\n\n New Meals : %s \n New Sub-Meals : %s", any_session_created, any_session_created_sub_meals);
         
+        // ########################################
+        // DB
+        // ########################################
         Fetched_Results results = saved_DB_Data(any_session_created, any_session_created_sub_meals);
         if (results == null) { return false; }
         
@@ -2343,6 +2348,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // ########################################
         HashMap<Integer, Integer> meal_id_map = new HashMap<>();
         HashMap<Integer, Integer> sub_meal_id_map = new HashMap<>();
+        
+        int new_plan_vs_id;
         
         try
         {
@@ -2365,14 +2372,19 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 });
             }
             
-            int new_plan_vs_id = (Integer) results.get_1D_Result_Into_Object(pos += 1);
-            shared_data_registry.set_Selected_Plan_Version_ID(new_plan_vs_id);
+            new_plan_vs_id = (Integer) results.get_1D_Result_Into_Object(pos += 1);
         }
         catch (Exception e)
         {
             System.err.printf("%s \n%s", get_Class_And_Method_Name(), e);
             return false;
         }
+        
+        // ########################################
+        // Set MPS Variables
+        // ########################################
+        shared_data_registry.set_Selected_Plan_Version_ID(new_plan_vs_id);
+        set_has_Data_Changed(false);
         
         // ########################################
         // Save Each Meal & Sub-Meal Object
@@ -2386,7 +2398,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 
                 if (meal_id_map.containsKey(draft_meal_id))
                 {
-                    int source_meal_id = meal_id_map.get(draft_meal_id);
+                    int source_meal_id = meal_id_map.remove(draft_meal_id);
                     mealManager.set_Source_Meal_ID(source_meal_id);
                 }
             }
@@ -2421,13 +2433,34 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     
                     if (sub_meal_id_map.containsKey(draft_sub_meal_id))
                     {
-                        int source_sub_meal_id = sub_meal_id_map.get(draft_sub_meal_id);
+                        int source_sub_meal_id = sub_meal_id_map.remove(draft_sub_meal_id);
                         table.set_Source_Sub_Meal_ID(source_sub_meal_id);
                     }
                 }
             }
         }
-        return true;
+        
+        // ########################################
+        // Save Each Meal & Sub-Meal Object
+        // ########################################
+        boolean no_error = true;
+        
+        if (any_session_created && ! sub_meal_id_map.isEmpty())
+        {
+            JOptionPane.showMessageDialog(null, "Failed - Saving a Meal Source ID");
+            no_error = false;
+        }
+        
+        if (any_session_created_sub_meals && ! meal_id_map.isEmpty())
+        {
+            JOptionPane.showMessageDialog(null, "Failed - Saving a Sub-Meal Source ID");
+            no_error = false;
+        }
+        
+        // ########################################
+        //
+        // ########################################
+        return no_error;
     }
     
     private boolean any_Session_Created()
@@ -2487,7 +2520,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         
         // Update DB Tables For Draft With No Source ID's With their Source ID's
         if (any_session_created) { save_DB_Data_End_Meal_Updates(upload_Queries_And_Params); }
-        if (any_session_created_sub_meals) {save_DB_Data_End_Sub_Meal_Updates(upload_Queries_And_Params); }
+        if (any_session_created_sub_meals) { save_DB_Data_End_Sub_Meal_Updates(upload_Queries_And_Params); }
         
         //###################################################
         // Fetch
@@ -3461,7 +3494,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // ##########################################
         // Close Other Windows If Open
         // ##########################################
-        if (screen_created)
+        if (screen_created && has_Data_changed())
         {
             save_Btn_Action();  //Meal Data
         }
@@ -3636,6 +3669,10 @@ public class Meal_Plan_Screen extends Screen_JFrame
         macro_targets_changed = bool;
     }
     
+    public void set_has_Data_Changed(boolean state)
+    {
+        has_data_changed = state;
+    }
     
     //##################################################################################################################
     //  Accessor Methods
@@ -3653,6 +3690,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
     private boolean has_Macro_Targets_Changed()
     {
         return macro_targets_changed;
+    }
+    
+    private boolean has_Data_changed()
+    {
+        return has_data_changed;
     }
     
     //###########################################

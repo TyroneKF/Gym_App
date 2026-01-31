@@ -24,21 +24,30 @@ public abstract class JDBC_JTable extends JPanel
     protected JScrollPane scrollPane = new JScrollPane();
     protected static GridBagConstraints gbc = new GridBagConstraints(); //HELLO DELETE
     
-    //##############################################
+    //#####################################################################
     // Table Customization Variables
-    //##############################################
+    //#####################################################################
     protected JTable jTable = new JTable();
     private CustomTableModel tableModel;
-    protected ArrayList<ArrayList<Object>> saved_Data;
     
+    
+    //#######################
+    // Strings
+    //#######################
     protected String db_row_id_column_name;
     protected String table_name;
     protected String db_read_view_name;
     protected String db_write_table_name;
     
+    //##############################################
+    // Collections
+    //##############################################
     protected ArrayList<String> column_Names, gui_Column_Names;
+    protected ArrayList<ArrayList<Object>> saved_Data;
     
-    // Collection : Customisation Options
+    //########################
+    // Customisation Options
+    //########################
     protected ArrayList<String> un_Editable_Column_Names;
     protected ArrayList<String> col_To_Avoid_Centering;
     protected ArrayList<Integer> un_Editable_Column_Positions = new ArrayList<>();
@@ -50,19 +59,21 @@ public abstract class JDBC_JTable extends JPanel
         Array Pos 2 = Position after columns hidden
     */
     
-    //##############################################
+    //#####################################################################
     // Other Variables
-    //##############################################
+    //#####################################################################
     // String
     private final String class_Name;
     protected String lineSeparator = "###############################################################################";
     
+    //#############################
     // Booleans
+    //#############################
     protected boolean
             table_Initialised = false,
             add_JTable_Action,
-            is_row_Being_Edited = false,
-            has_data_changed_in_table = false;
+            is_row_Being_Edited = false;
+            
     
     //##################################################################################################################
     // Constructor
@@ -422,8 +433,6 @@ public abstract class JDBC_JTable extends JPanel
                 //###########################################
                 current_Table_Data.get(row).set(col, newValue);
                 fireTableCellUpdated(row, col); // Notifies TableModelListeners, JTable that the value has changed = repaint
-                
-                has_data_changed_in_table = true;
             }
             catch (Exception e)
             {
