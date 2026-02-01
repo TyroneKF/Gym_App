@@ -13,6 +13,7 @@ import App_Code.Objects.Table_Objects.Tables.Parent.JDBC_JTable;
 import App_Code.Objects.Table_Objects.MealManager;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
+import net.bytebuddy.asm.Advice;
 import org.javatuples.Pair;
 import javax.swing.*;
 import java.awt.*;
@@ -85,7 +86,7 @@ public class IngredientsTable extends JDBC_JTable
     //################################################
     private LocalTime
             saved_sub_meal_time = null,
-            curent_sub_meal_time = null;
+            current_sub_meal_time = null;
     
     //################################################
     // Collections
@@ -153,6 +154,73 @@ public class IngredientsTable extends JDBC_JTable
         na_ingredient_id_obj = shared_data_registry.get_Na_Ingredient_ID_OBJ();
         na_ingredient_id = shared_data_registry.get_Na_Ingredient_ID();
         na_pdid = shared_data_registry.get_NA_PDID();
+    }
+    
+    public IngredientsTable
+            (
+                    MyJDBC_Sqlite db,
+                    MealManager meal_manager,
+                    Shared_Data_Registry shared_data_registry,
+                    MacrosLeft_Table macros_left_table,
+                    int draft_meal_id,
+                    Integer source_sub_meal_id,
+                    int draft_sub_meal_id,
+                    String sub_meal_name,
+                    LocalTime sub_meal_time,
+                    ArrayList<ArrayList<Object>> data,
+                    boolean sub_meal_in_db,
+                    JPanel space_divider
+            )
+    {
+        super(
+                db,
+                shared_data_registry,
+                meal_manager.get_Collapsible_Center_JPanel(),
+                true,
+                "draft_ingredients_index",
+                "Ingredients Table",
+                "draft_ingredients_in_sections_of_meal",
+                "draft_gui_ingredients_in_sections_of_meal_calculation",
+                data,
+                shared_data_registry.get_Ingredients_Table_Column_Names(),
+                shared_data_registry.get_Ingredients_Table_Un_Editable_Cols(),
+                shared_data_registry.get_Ingredients_Table_Avoid_Centering_Cols(),
+                shared_data_registry.get_Ingredients_Table_Cols_To_Hide()
+             );
+        
+        //##############################################################
+        // Other Variables
+        //##############################################################
+        this.meal_manager = meal_manager;
+        this.macrosLeft_table = macros_left_table;
+        
+        this.draft_meal_id = draft_meal_id;
+        this.source_sub_meal_id = source_sub_meal_id;
+        this.draft_sub_meal_id = draft_sub_meal_id;
+        
+        this.space_divider = space_divider;
+        
+        this.sub_meal_in_db = sub_meal_in_db;
+        sub_meal_saved = sub_meal_in_db;
+        
+        //#################################
+        // Values From MealManager
+        //#################################
+        parent_Container = meal_manager.get_Collapsible_Center_JPanel();
+        frame = meal_manager.getFrame();
+        
+        //#################################
+        // Values From Shared_Data_Registry
+        //#################################
+        na_ingredient_id_obj = shared_data_registry.get_Na_Ingredient_ID_OBJ();
+        na_ingredient_id = shared_data_registry.get_Na_Ingredient_ID();
+        na_pdid = shared_data_registry.get_NA_PDID();
+        
+        //#################################
+        //
+        //#################################
+        set_Sub_Meal_Time_Variable(false, sub_meal_time, sub_meal_time);
+        set_Sub_Meal_Name_Variable(false, sub_meal_name, sub_meal_name);
     }
     
     //##################################################################################################################
@@ -969,12 +1037,17 @@ public class IngredientsTable extends JDBC_JTable
         // set_Sub_Meal_Name_Variable
     }
     
-    private void set_Sub_Meal_Name_Variable(boolean has_Sub_Meal_Name_Been_Changed, LocalTime saved_sub_meal_time, LocalTime current_sub_meal_time)
+    private void set_Sub_Meal_Name_Variable(boolean has_Sub_Meal_Name_Been_Changed, String saved_sub_meal_name, String current_sub_meal_name)
     {
         this.has_Sub_Meal_Name_Been_Changed = has_Sub_Meal_Name_Been_Changed;
         
-        this.saved_sub_meal_time = saved_sub_meal_time;
-        this.curent_sub_meal_time = current_sub_meal_time;
+        this.saved_sub_meal_name = saved_sub_meal_name;
+        this.current_sub_meal_name = current_sub_meal_name;
+    }
+    
+    public String get_Current_Sub_Meal_Name()
+    {
+        return current_sub_meal_name;
     }
     
     //####################################################
@@ -986,12 +1059,17 @@ public class IngredientsTable extends JDBC_JTable
         // set_Sub_Meal_Time_Variable(
     }
     
-    private void set_Sub_Meal_Time_Variable(boolean has_Sub_Meal_Time_Been_Changed, String saved_sub_meal_name, String current_sub_meal_name)
+    private void set_Sub_Meal_Time_Variable(boolean has_Sub_Meal_Time_Been_Changed, LocalTime saved_sub_meal_time, LocalTime current_sub_meal_time)
     {
         this.has_Sub_Meal_Time_Been_Changed = has_Sub_Meal_Time_Been_Changed;
         
-        this.saved_sub_meal_name = saved_sub_meal_name;
-        this.current_sub_meal_name = current_sub_meal_name;
+        this.saved_sub_meal_time = saved_sub_meal_time;
+        this.current_sub_meal_time = current_sub_meal_time;
+    }
+    
+    public LocalTime get_Current_Sub_Meal_Time()
+    {
+        return current_sub_meal_time;
     }
     
     //##################################################################################################################
