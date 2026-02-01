@@ -1059,7 +1059,7 @@ public class MealManager
         //##########################################
         // Delete PieChart (Meal is Gone)
         //##########################################
-        close_Pie_Chart_Screen();
+        close_MealManager_Related_Screens();
     }
     
     //################################################
@@ -1332,19 +1332,6 @@ public class MealManager
         set_Has_Meal_Data_Changed(false);
     }
     
-    //######################################
-    // Others
-    //######################################
-    public void expand_JPanel()
-    {
-        get_Collapsible_JP_Obj().expand_JPanel();
-    }
-    
-    public void collapse_MealManager()
-    {
-        get_Collapsible_JP_Obj().collapse_JPanel();
-    }
-    
     //#################################################################################
     // Pie Charts
     //#################################################################################
@@ -1389,7 +1376,7 @@ public class MealManager
     }
     
     // External Call Usage
-    public void close_Pie_Chart_Screen()
+    private void close_Pie_Chart_Screen()
     {
         if (! is_Pie_Chart_Open()) { return; }
         
@@ -1448,6 +1435,24 @@ public class MealManager
     private void update_MacrosLeft_Table()
     {
         macrosLeft_JTable.update_Table();
+    }
+    
+    //##################################################################################################################
+    // Others
+    //##################################################################################################################
+    public void expand_JPanel()
+    {
+        get_Collapsible_JP_Obj().expand_JPanel();
+    }
+    
+    public void collapse_MealManager()
+    {
+        get_Collapsible_JP_Obj().collapse_JPanel();
+    }
+    
+    public void close_MealManager_Related_Screens()
+    {
+        close_Pie_Chart_Screen();
     }
     
     //##################################################################################################################
