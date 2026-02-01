@@ -45,12 +45,14 @@ public class IngredientsTable extends JDBC_JTable
     //################################################
     private boolean
             sub_meal_in_db,
+            sub_meal_saved,
+            table_deleted = false,
+            sub_meal_meta_data_changed = false,
+            sub_meal_data_changed = false;
     
-    sub_meal_meta_data_changed = false,
-            sub_meal_data_changed = false,
-    
-    sub_meal_saved,
-            table_deleted = false;
+    private boolean
+            has_Sub_Meal_Name_Been_Changed = false,
+            has_Sub_Meal_Time_Been_Changed = false;
     
     //################################################
     // Integers
@@ -72,12 +74,15 @@ public class IngredientsTable extends JDBC_JTable
     private final int na_pdid;
     
     //################################################
-    // Others
+    // String
     //################################################
     private String
             saved_sub_meal_name = null,
             current_sub_meal_name = null;
     
+    //################################################
+    // LocalTime
+    //################################################
     private LocalTime
             saved_sub_meal_time = null,
             curent_sub_meal_time = null;
@@ -961,6 +966,15 @@ public class IngredientsTable extends JDBC_JTable
     private void change_Sub_Meal_Name()
     {
         set_Sub_Meal_Meta_Data_Changed(true);
+        // set_Sub_Meal_Name_Variable
+    }
+    
+    private void set_Sub_Meal_Name_Variable(boolean has_Sub_Meal_Name_Been_Changed, LocalTime saved_sub_meal_time, LocalTime current_sub_meal_time)
+    {
+        this.has_Sub_Meal_Name_Been_Changed = has_Sub_Meal_Name_Been_Changed;
+        
+        this.saved_sub_meal_time = saved_sub_meal_time;
+        this.curent_sub_meal_time = current_sub_meal_time;
     }
     
     //####################################################
@@ -969,6 +983,15 @@ public class IngredientsTable extends JDBC_JTable
     private void change_Sub_Meal_Time()
     {
         set_Sub_Meal_Meta_Data_Changed(true);
+        // set_Sub_Meal_Time_Variable(
+    }
+    
+    private void set_Sub_Meal_Time_Variable(boolean has_Sub_Meal_Time_Been_Changed, String saved_sub_meal_name, String current_sub_meal_name)
+    {
+        this.has_Sub_Meal_Time_Been_Changed = has_Sub_Meal_Time_Been_Changed;
+        
+        this.saved_sub_meal_name = saved_sub_meal_name;
+        this.current_sub_meal_name = current_sub_meal_name;
     }
     
     //##################################################################################################################
@@ -1011,6 +1034,14 @@ public class IngredientsTable extends JDBC_JTable
         this.setVisible(condition);
         space_divider.setVisible(condition);
     }
+    
+    //########################
+    // Sub-Meal Time / Name
+    //########################
+    
+    
+    
+    
     
     //########################
     // Save
