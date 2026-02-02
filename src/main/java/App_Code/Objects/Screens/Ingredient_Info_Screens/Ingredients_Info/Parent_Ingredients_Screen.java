@@ -6,11 +6,9 @@ import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredients_Form;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.Shop_Form;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info.Ingredients_Info_Screen;
-import org.javatuples.Pair;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.LinkedHashSet;
 
 public abstract class Parent_Ingredients_Screen extends Screen_JPanel
 {
@@ -30,7 +28,9 @@ public abstract class Parent_Ingredients_Screen extends Screen_JPanel
     protected Search_For_Food_Info search_For_Ingredient_Info;
     protected Ingredients_Info_Screen ingredients_info_screen;
     protected Shared_Data_Registry shared_Data_Registry;
-    
+
+    protected String error_msg;
+
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
@@ -206,27 +206,6 @@ public abstract class Parent_Ingredients_Screen extends Screen_JPanel
     //###########################
     // Update Methods
     //###########################
-    protected final LinkedHashSet<Pair<String, Object[]>> get_Update_Query_And_Params()
-    {
-        LinkedHashSet<Pair<String, Object[]>> queries_And_Params = new LinkedHashSet<>();
-        
-        //###########################
-        // Get Each Forms Update
-        //###########################
-        try
-        {
-            ingredients_Form.add_Update_Queries(queries_And_Params);
-            shop_Form.add_Update_Queries(queries_And_Params);
-            
-            return queries_And_Params;
-        }
-        catch (Exception e)
-        {
-            System.out.printf("\n\n%s", e);
-            return null;
-        }
-    }
-    
     protected abstract boolean update_Both_Forms();
     
     protected abstract boolean update_Shared_Data();

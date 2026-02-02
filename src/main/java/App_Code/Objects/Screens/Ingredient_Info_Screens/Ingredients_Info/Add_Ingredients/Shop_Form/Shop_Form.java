@@ -1,12 +1,13 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form;
 
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
+import App_Code.Objects.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_Statements;
+import App_Code.Objects.Database_Objects.MyJDBC.Statements.Upload_Statement;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Parent_Forms_OBJ;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Parent_Ingredients_Screen;
-import org.javatuples.Pair;
 
 import javax.swing.*;
 import java.awt.*;
@@ -421,12 +422,12 @@ public class Shop_Form extends Parent_Forms_OBJ
         return String.format("Set %s = LAST_INSERT_ID();", var_Ingredient_ID);
     }
     
-    public void add_Update_Queries_Extra(LinkedHashSet<Pair<String, Object[]>> queries_And_Params) throws Exception
+    public void add_Update_Queries_Extra(Batch_Upload_Statements queries_And_Params) throws Exception
     {
     
     }
     
-    public void add_Update_Queries(LinkedHashSet<Pair<String, Object[]>> queries_And_Params) throws Exception
+    public void add_Update_Queries(Batch_Upload_Statements queries_And_Params) throws Exception
     {
         //###########################################
         // Extra Queries
@@ -445,7 +446,7 @@ public class Shop_Form extends Parent_Forms_OBJ
         //###########################################
         // Get Insert Statement
         String upload_Q1 = get_Ingredient_ID_SQL_Statement();
-        queries_And_Params.add(new Pair<>(upload_Q1, null));
+        queries_And_Params.add_Uploads(new Upload_Statement(upload_Q1, null, true));
         
         //###########################################
         // Create Query for Upload Products
@@ -490,7 +491,7 @@ public class Shop_Form extends Parent_Forms_OBJ
         // Add To Results
         //##########################
         StringBuilder update_Query = insert_Header.append(values);
-        queries_And_Params.add(new Pair<>(update_Query.toString(), params));
+        queries_And_Params.add_Uploads(new Upload_Statement(update_Query.toString(), params, true));
     }
     
     //################################################################

@@ -307,7 +307,7 @@
             salt,
             water_content,
             calories,
-            'delete button' AS delete_button
+            'Delete Row' AS delete_button
 
         FROM draft_ingredients_in_sections_of_meal_calculation D;
 

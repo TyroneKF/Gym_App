@@ -4,17 +4,18 @@ import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredie
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
 import App_Code.Objects.Database_Objects.Fetched_Results;
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
+import App_Code.Objects.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_And_Fetch_Statements;
+import App_Code.Objects.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_Statements;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.Combo_Boxes.Field_JCombo_Storable_ID;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Search_For_Food_Info;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients.Shop_Form.Edit_Shop_Form;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info.Ingredients_Info_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Parent_Ingredients_Screen;
-import org.javatuples.Pair;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 
 public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
 {
@@ -34,7 +35,11 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Edit_Ingredients_Screen(Ingredients_Info_Screen ingredients_info_screen, MyJDBC_Sqlite db, Shared_Data_Registry shared_Data_Registry)
+    public Edit_Ingredients_Screen
+    (
+            Ingredients_Info_Screen ingredients_info_screen,
+            MyJDBC_Sqlite db, Shared_Data_Registry shared_Data_Registry
+    )
     {
         super(ingredients_info_screen, db, shared_Data_Registry);  // Super Constructor
         
@@ -171,19 +176,26 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
     @Override
     protected boolean update_Both_Forms()
     {
+        Batch_Upload_Statements upload_statements = new Batch_Upload_And_Fetch_Statements(error_msg);
+
         //###########################
-        // Create Variables
+        // Get Each Forms Update
         //###########################
-        String errorMSG = "Error, Unable to Edit Ingredient Info!"; // Error MSG
-        
-        LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params = get_Update_Query_And_Params(); // Upload Query & Params
-        
-        if (upload_Queries_And_Params == null) { return false; } // IF getting elements failed, return false
-        
+        try
+        {
+            ingredients_Form.add_Update_Queries(upload_statements);
+            shop_Form.add_Update_Queries(upload_statements);
+        }
+        catch (Exception e)
+        {
+            System.out.printf("\n\n%s", e);
+            return false;
+        }
+
         //###########################
         // Upload
         //###########################
-        return db.upload_Data_Batch(upload_Queries_And_Params, errorMSG);
+        return db.upload_Data_Batch(upload_statements);
     }
     
     @Override
@@ -195,7 +207,6 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
         // Update Ingredients Name Related Things
         if (has_Ingredient_Name_Changed) { }
     }
-    
     
     //############################################
     // Shared Data Updates

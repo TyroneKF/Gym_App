@@ -4,14 +4,14 @@ import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredie
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
 import App_Code.Objects.Database_Objects.Fetched_Results;
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
+import App_Code.Objects.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_And_Fetch_Statements;
+import App_Code.Objects.Database_Objects.MyJDBC.Statements.Fetch_Statement;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.Shop_Form;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info.Ingredients_Info_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Parent_Ingredients_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Search_For_Food_Info;
-import org.javatuples.Pair;
 import java.math.BigInteger;
-import java.util.*;
 
 
 public class Ingredients_Screen extends Parent_Ingredients_Screen
@@ -26,8 +26,8 @@ public class Ingredients_Screen extends Parent_Ingredients_Screen
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Ingredients_Screen(
-            
+    public Ingredients_Screen
+    (
             Ingredients_Info_Screen ingredients_info_screen,
             MyJDBC_Sqlite db,
             Shared_Data_Registry shared_Data_Registry
@@ -51,10 +51,7 @@ public class Ingredients_Screen extends Parent_Ingredients_Screen
     }
     
     @Override
-    protected void prior_GUI_Setup()
-    {
-    
-    }
+    protected void prior_GUI_Setup(){}
     
     //##################################################################
     // Submission Button Actions
@@ -74,22 +71,31 @@ public class Ingredients_Screen extends Parent_Ingredients_Screen
         // Create Variables
         //######################
         String errorMSG = "Error, Unable to add new Ingredient !"; // Error MSG
-        
-        // Get Upload Queries & Params
-        LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params = get_Update_Query_And_Params();
-        
-        if (upload_Queries_And_Params == null) { return false; } // IF getting elements failed, return false
+        Batch_Upload_And_Fetch_Statements upload_statements = new Batch_Upload_And_Fetch_Statements(errorMSG);
+
+        //###########################
+        // Get Each Forms Update
+        //###########################
+        try
+        {
+            ingredients_Form.add_Update_Queries(upload_statements);
+            shop_Form.add_Update_Queries(upload_statements);
+        }
+        catch (Exception e)
+        {
+            System.out.printf("\n\n%s", e);
+            return false;
+        }
         
         //######################
         // Create Fetch Query
         //######################
-        LinkedHashSet<Pair<String, Object[]>> fetch_Queries_And_Params = new LinkedHashSet<>();
-        fetch_Queries_And_Params.add(new Pair<>("SELECT LAST_INSERT_ID();", null));
+        upload_statements.add_Fetches(new Fetch_Statement("SELECT LAST_INSERT_ID();", null));
         
         //######################
         // Return Fetched Results
         //######################
-        fetched_Results = db.upload_And_Get_Batch(upload_Queries_And_Params, fetch_Queries_And_Params, errorMSG);
+        fetched_Results = db.upload_And_Get_Batch(upload_statements);
         
         return fetched_Results != null;
     }

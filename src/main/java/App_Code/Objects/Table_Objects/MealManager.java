@@ -3,6 +3,11 @@ package App_Code.Objects.Table_Objects;
 import App_Code.Objects.Data_Objects.ID_Objects.MetaData_ID_Object.Meal_ID_OBJ;
 import App_Code.Objects.Database_Objects.Fetched_Results;
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
+import App_Code.Objects.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_And_Fetch_Statements;
+import App_Code.Objects.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_Statements;
+import App_Code.Objects.Database_Objects.MyJDBC.Statements.Fetch_Statement;
+import App_Code.Objects.Database_Objects.MyJDBC.Statements.Upload_Statement;
+import App_Code.Objects.Database_Objects.MyJDBC.Statements.Upload_Statement_Full;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Screens.Meal_And_Sub_Meals_OBJ;
 import App_Code.Objects.Table_Objects.Tables.Children.Ingredients_Table.IngredientsTable;
@@ -198,8 +203,7 @@ public class MealManager
         //############################################################################
         String errorMSG = String.format("\n\nError Creating Meal with credentials: \n\nMeal Name: '%s' \nMeal Time: %s!", new_Meal_Name, new_Meal_Time);
 
-        LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params = new LinkedHashSet<>();
-        LinkedHashSet<Pair<String, Object[]>> fetch_Queries_And_Params = new LinkedHashSet<>();
+        Batch_Upload_And_Fetch_Statements batch_Statements = new Batch_Upload_And_Fetch_Statements(errorMSG);
 
         //#######################################################
         // Upload Queries
@@ -217,7 +221,7 @@ public class MealManager
                 VALUES
                 (?,?,?);""";
 
-        upload_Queries_And_Params.add(new Pair<>(upload_Q1, new Object[]{ get_Plan_ID(), new_Meal_Name, new_Meal_Time }));
+        batch_Statements.add_Uploads(new Upload_Statement(upload_Q1, new Object[]{ get_Plan_ID(), new_Meal_Name, new_Meal_Time }, true));
 
         //###############################
         // Insert Into Sub-Meals
@@ -231,7 +235,7 @@ public class MealManager
                     ?
                 );""";
 
-        upload_Queries_And_Params.add(new Pair<>(upload_Q2, new Object[]{ get_Plan_ID() })); // Upload Q1
+        batch_Statements.add_Uploads(new Upload_Statement(upload_Q2, new Object[]{ get_Plan_ID() }, true)); // Upload Q1
 
         //###############################
         // Insert Ingredients Into Sub-Meal
@@ -252,9 +256,8 @@ public class MealManager
                      ?
                 );""";
 
-
         Object[] q3_params = new Object[]{ na_ingredient_id, na_pdid, 0 };
-        upload_Queries_And_Params.add(new Pair<>(upload_Q3, q3_params)); // Upload Q3
+        batch_Statements.add_Uploads(new Upload_Statement(upload_Q3, q3_params, true)); // Upload Q3
 
         //#######################################################
         // Fetch Query
@@ -285,7 +288,8 @@ public class MealManager
                 
                 LIMIT 1;""";
 
-        fetch_Queries_And_Params.add(new Pair<>(fetch_query_01, new Object[]{ get_Plan_ID(), new_Meal_Name })); // Upload Params
+        // Upload Params
+        batch_Statements.add_Fetches(new Fetch_Statement(fetch_query_01,new Object[]{ get_Plan_ID(),new_Meal_Name }));
 
         // Get TotalMeal Data
         String fetch_query_02 = """
@@ -301,12 +305,12 @@ public class MealManager
                 FROM  draft_gui_total_meal_view
                 WHERE draft_meal_in_plan_id = (SELECT draft_meal_in_plan_id FROM Meal_ID);""";
 
-        fetch_Queries_And_Params.add(new Pair<>(fetch_query_02, new Object[]{ get_Plan_ID(), new_Meal_Name })); // Upload Params
+        batch_Statements.add_Fetches(new Fetch_Statement(fetch_query_02, new Object[]{ get_Plan_ID(), new_Meal_Name })); // Upload Params
 
         //#######################################################
         // Execute Query
         //#######################################################
-        Fetched_Results fetched_Results_OBJ = db.upload_And_Get_Batch(upload_Queries_And_Params, fetch_Queries_And_Params, errorMSG);
+        Fetched_Results fetched_Results_OBJ = db.upload_And_Get_Batch(batch_Statements);
 
         if (fetched_Results_OBJ == null) { System.err.println("\n\n\nFailed Creating Meal"); return; }
 
@@ -646,10 +650,12 @@ public class MealManager
                 SET meal_time = ?
                 WHERE draft_meal_in_plan_id = ?;""";
 
+        String error_msg = "Error, unable to change Meal Time!";
         Object[] params = new Object[]{ new_meal_time, draft_meal_ID };
 
         // Upload Into Database Table
-        if (! db.upload_Data(uploadQuery, params, "Error, unable to change Meal Time!")) { return; }
+        Upload_Statement_Full sql_statement = new Upload_Statement_Full(uploadQuery, params, error_msg, true);
+        if (! db.upload_Data(sql_statement)) { return; }
 
         //###############################
         // Update Variables & DATA
@@ -778,8 +784,10 @@ public class MealManager
                 WHERE draft_meal_in_plan_id = ?;""";
 
         Object[] params = new Object[]{ new_input_meal_name, draft_meal_ID };
+        String error_msg = "Error, unable to change Meal Name!";
+        Upload_Statement_Full sql_statement = new Upload_Statement_Full(upload_query, params, error_msg, true);
 
-        if (! db.upload_Data(upload_query, params, "Error, unable to change Meal Name!")) { return; }
+        if (! db.upload_Data(sql_statement)) { return; }
 
         //##########################################
         // Update Variables & DATA / Objects
@@ -893,9 +901,7 @@ public class MealManager
         // Upload & Fetch Variables
         //############################################################
         String errorMSG = "Error, unable to add SubMeal to Meal!";
-
-        LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params = new LinkedHashSet<>();
-        LinkedHashSet<Pair<String, Object[]>> fetch_Queries_And_Params = new LinkedHashSet<>();
+        Batch_Upload_And_Fetch_Statements batch_statements = new Batch_Upload_And_Fetch_Statements(errorMSG);
 
         int sub_Meal_ID;
         ArrayList<ArrayList<Object>> sub_Meal_DATA;
@@ -908,7 +914,8 @@ public class MealManager
                 (draft_meal_in_plan_id, plan_id)
                 VALUES (?,?);""";
 
-        upload_Queries_And_Params.add(new Pair<>(upload_Q1, new Object[]{ draft_meal_ID, get_Plan_ID() })); // Upload Q1
+        // Upload Q1
+        batch_statements.add_Uploads(new Upload_Statement( upload_Q1,new Object[]{ draft_meal_ID, get_Plan_ID() },true));
 
         //###############################
         // Insert Ingredients Into Sub-Meal
@@ -929,9 +936,8 @@ public class MealManager
                      ?
                 );""";
 
-
         Object[] q2_params = new Object[]{ na_ingredient_id, na_pdid, 0 };
-        upload_Queries_And_Params.add(new Pair<>(upload_Q2, q2_params)); // Upload Q3
+        batch_statements.add_Uploads(new Upload_Statement(upload_Q2, q2_params, true)); // Upload Q3
 
         //#######################################################
         // Fetch Query
@@ -957,12 +963,12 @@ public class MealManager
                 
                 LIMIT 1""";
 
-        fetch_Queries_And_Params.add(new Pair<>(fetch_query_01, null)); // Upload Params
+        batch_statements.add_Fetches(new Fetch_Statement(fetch_query_01, null)); // Upload Params
 
         //#######################################################
         // Execute Query
         //#######################################################
-        Fetched_Results fetched_Results_OBJ = db.upload_And_Get_Batch(upload_Queries_And_Params, fetch_Queries_And_Params, errorMSG);
+        Fetched_Results fetched_Results_OBJ = db.upload_And_Get_Batch(batch_statements);
 
         if (fetched_Results_OBJ == null) { System.err.println("\n\n\nFailed Creating Meal"); return; }
 
@@ -1021,11 +1027,13 @@ public class MealManager
         //##########################################
         String query = "DELETE FROM draft_meals_in_plan WHERE draft_meal_in_plan_id = ?";
         Object[] params = new Object[]{ draft_meal_ID };
+        String error_msg = "Table Un-Successfully Deleted!";
+        Upload_Statement_Full sql_statement = new Upload_Statement_Full(query,params, error_msg, true);
 
         //##########################################
         // Execute Update
         //##########################################
-        if (! db.upload_Data(query, params, "Table Un-Successfully Deleted!")) { return; }
+        if (! db.upload_Data(sql_statement)) { return; }
 
         //##########################################
         // Update GUI
@@ -1210,7 +1218,7 @@ public class MealManager
         //
         //#####################################################
         String errorMSG = "Error, Unable to Transfer Plan Data!";
-        LinkedHashSet<Pair<String, Object[]>> upload_queries_and_params = new LinkedHashSet<>();
+        Batch_Upload_Statements upload_statements = new Batch_Upload_Statements(errorMSG);
 
         //#####################################################
         // Add Sub-Meal Refresh Updates
@@ -1219,7 +1227,7 @@ public class MealManager
                 .stream()
                 .filter(IngredientsTable :: has_Sub_Meal_Data_Changed)
                 .forEach(e -> {
-                    e.add_Refresh_Statements(upload_queries_and_params); // Add Sub-Meals Update Statements
+                    e.add_Refresh_Statements(upload_statements); // Add Sub-Meals Update Statements
                 });
 
         //#####################################################
@@ -1232,7 +1240,9 @@ public class MealManager
                     SET meal_name = ?
                     WHERE draft_meal_in_plan_id = ?""";
 
-            upload_queries_and_params.add(new Pair<>(upload_meal_name, new Object[]{ saved_meal_name, draft_meal_ID }));
+            Object[] params = new Object[]{ saved_meal_name, draft_meal_ID };
+
+            upload_statements.add_Uploads(new Upload_Statement(upload_meal_name, params, true ));
         }
         if (has_Meal_Name_Been_Changed)
         {
@@ -1241,13 +1251,14 @@ public class MealManager
                     SET meal_time = ?
                     WHERE draft_meal_in_plan_id = ?""";
 
-            upload_queries_and_params.add(new Pair<>(upload_meal_name, new Object[]{ saved_meal_time, draft_meal_ID }));
+            Object[] params = new Object[]{ saved_meal_time, draft_meal_ID };
+            upload_statements.add_Uploads(new Upload_Statement(upload_meal_name, params, true));
         }
 
         //####################################################
         // Return Update /Output
         //####################################################
-        return db.upload_Data_Batch(upload_queries_and_params, errorMSG);
+        return db.upload_Data_Batch(upload_statements);
     }
 
     private void refresh_Action()

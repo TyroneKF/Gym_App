@@ -3,7 +3,9 @@ package App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_T
 import App_Code.Objects.Data_Objects.ID_Objects.ID_Object;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Storable_IDS_Parent;
+import App_Code.Objects.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_Statements;
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
+import App_Code.Objects.Database_Objects.MyJDBC.Statements.Upload_Statement;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info.Ingredients_Info_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Edit_Screen;
@@ -42,19 +44,16 @@ public class Edit_Ingredient_Type extends Edit_Screen
         super.fk_Table = "ingredients_info";
         super.remove_JComboBox_Items = new ArrayList<>(Arrays.asList(1, 2));
     }
-    
-    
+
     @Override
-    protected LinkedHashSet<Pair<String, Object[]>> delete_Prior_Queries(ID_Object item_ID_Obj, LinkedHashSet<Pair<String, Object[]>> query_And_Params)
+    protected void delete_Prior_Queries(ID_Object id_object, Batch_Upload_Statements upload_statements)
     {
         String upload_Q1 = """
                 UPDATE ingredients_info
                 SET ingredient_type_id = ?
                 WHERE ingredient_type_id = ?""";
         
-        query_And_Params.add(new Pair<>(upload_Q1, new Object[]{ 2, item_ID_Obj.get_ID() }));
-        
-        return query_And_Params;
+        upload_statements.add_Uploads(new Upload_Statement(upload_Q1, new Object[]{ 2, id_object.get_ID() }, true));
     }
     
     @Override

@@ -4,6 +4,12 @@ import App_Code.Objects.Data_Objects.ID_Objects.MetaData_ID_Object.Meal_ID_OBJ;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.*;
 import App_Code.Objects.Database_Objects.Fetched_Results;
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
+import App_Code.Objects.Database_Objects.MyJDBC.Batch_Objects.Batch_Fetch_Statements;
+import App_Code.Objects.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_And_Fetch_Statements;
+import App_Code.Objects.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_Statements;
+import App_Code.Objects.Database_Objects.MyJDBC.Statements.Fetch_Statement;
+import App_Code.Objects.Database_Objects.MyJDBC.Statements.Upload_Statement;
+import App_Code.Objects.Database_Objects.MyJDBC.Statements.Upload_Statement_Full;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Table_Objects.Tables.Children.Ingredients_Table.IngredientsTable;
 import App_Code.Objects.Table_Objects.Tables.Children.Ingredients_Table.Ingredients_Table_Columns;
@@ -643,8 +649,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###############################################
         // Variables
         //###############################################
-        LinkedHashSet<Pair<String, Object[]>> upload_queries_and_params = new LinkedHashSet<>();
-        String errorMSG = "Unable to Transfer Plan Data!";
+        Batch_Upload_Statements batch_Upload = new Batch_Upload_Statements("Unable to Transfer Plan Data!");
+
 
         //###############################################
         // Upload Queries
@@ -652,20 +658,22 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
         // Delete Users Old Active Plan and Replace
         String query1 = "DELETE FROM draft_plans WHERE user_id = ?;";
-        upload_queries_and_params.add(new Pair<>(query1, new Object[]{ get_User_ID() }));
+        batch_Upload.add_Uploads(new Upload_Statement(query1, new Object[]{ get_User_ID() }, false));
 
         // Create New Draft Plan Based On Active Plan
         String query2 = "INSERT INTO draft_plans (plan_id, plan_version_id, user_id) VALUES (?,?,?);";
-        upload_queries_and_params.add(new Pair<>(query2, new Object[]{ get_Selected_Plan_ID(), get_Selected_Plan_Version_ID(), get_User_ID() }));
+        Object[] params2 = new Object[]{ get_Selected_Plan_ID(), get_Selected_Plan_Version_ID(), get_User_ID() };
+
+        batch_Upload.add_Uploads(new Upload_Statement(query2, params2, true));
 
         //####################################
         // Execute Upload Statements
         //####################################
-        if (! (db.upload_Data_Batch(upload_queries_and_params, errorMSG)))
+        if (! (db.upload_Data_Batch(batch_Upload)))
         {
             System.err.printf("\n\n%s \n%s Error \n%s \nFailed Transferring Plan_Data",
                     lineSeparator, get_Class_And_Method_Name(), lineSeparator);
-
+            
             throw new Exception();
         }
 
@@ -677,19 +685,14 @@ public class Meal_Plan_Screen extends Screen_JFrame
     }
 
     private void setup_Transfer_Macro_Targets_Data() throws Exception
-
     {
         //###############################################
         // Variables
         //###############################################
-        LinkedHashSet<Pair<String, Object[]>> upload_queries_and_params = new LinkedHashSet<>();
-        String errorMSG = "Unable to Transfer Plan Macro Targets!";
+        String error_MSG = "Unable to Transfer Plan Macro Targets!";
+        Object[] params = new Object[]{ get_Selected_Plan_ID(), get_Selected_Plan_Version_ID() };
 
-        //###############################################
-        // Upload Queries
-        //###############################################
-        // Insert Plan_Version Macros
-        String query_03 = """
+        String query = """
                 
                 INSERT INTO draft_macros_per_pound_and_limits
                 (
@@ -726,12 +729,12 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 FROM macros_per_pound_and_limits
                 WHERE plan_version_id = ?;""";
 
-        upload_queries_and_params.add(new Pair<>(query_03, new Object[]{ get_Selected_Plan_ID(), get_Selected_Plan_Version_ID() }));
+        Upload_Statement_Full sql_statement = new Upload_Statement_Full(query, params, error_MSG, true);
 
         //###############################################
         // Execute Upload Statements
         //###############################################
-        if (! (db.upload_Data_Batch(upload_queries_and_params, errorMSG)))
+        if (! db.upload_Data(sql_statement))
         {
             System.err.printf("\n\n%s \n%s Error \n%s \nFailed Transferring Macro Plan Targets!",
                     lineSeparator, get_Class_And_Method_Name(), lineSeparator);
@@ -750,8 +753,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //################################################################
         // Variables
         //################################################################
-        LinkedHashSet<Pair<String, Object[]>> upload_queries_and_params = new LinkedHashSet<>();
-        String errorMSG = "Unable to Transfer Meals Data Into Plan!";
+        Batch_Upload_Statements batch_Upload = new Batch_Upload_Statements("Unable to Transfer Meals Data Into Plan!");
 
 
         //################################################################
@@ -760,7 +762,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
         // Copy Versioned Meals From Plan_Version Into Temp Table ORDERED by meal_in_plan_version_id
         String query_00 = "DROP TABLE IF EXISTS temp.draft_meals_anchor;";
-        upload_queries_and_params.add(new Pair<>(query_00, null));
+        batch_Upload.add_Uploads(new Upload_Statement(query_00, null, true));
 
         String query_01 = """
                 CREATE TEMPORARY TABLE draft_meals_anchor AS
@@ -789,7 +791,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 
                     ORDER BY M.meal_in_plan_version_id ASC;""";
 
-        upload_queries_and_params.add(new Pair<>(query_01, new Object[]{ get_Selected_Plan_Version_ID() }));
+        batch_Upload.add_Uploads(new Upload_Statement(query_01, new Object[]{ get_Selected_Plan_Version_ID() }, true));
 
         // Insert Into Draft Meals Using Meal Versions MetaData
         String query_02 = """
@@ -812,7 +814,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 FROM draft_meals_anchor
                 ORDER BY rn;""";
 
-        upload_queries_and_params.add(new Pair<>(query_02, null));
+         batch_Upload.add_Uploads(new Upload_Statement(query_02, null, true));
 
         // Update Anchor table with
         String query_04 = """
@@ -826,7 +828,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                             D.meal_in_plan_id = A.meal_in_plan_id
                     );""";
 
-        upload_queries_and_params.add(new Pair<>(query_04, null));
+         batch_Upload.add_Uploads(new Upload_Statement(query_04, null, true));
 
         //################################################################
         // Transferring Versioned Sub-Meals To Draft
@@ -834,7 +836,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
         // Insert All Sub-Meals From Versioned Into Temp
         String query_05 = "DROP TABLE IF EXISTS temp.draft_sub_meals_anchor;";
-        upload_queries_and_params.add(new Pair<>(query_05, null));
+         batch_Upload.add_Uploads(new Upload_Statement(query_05, null, false));
 
         String query_06 = """
                 CREATE TEMPORARY TABLE draft_sub_meals_anchor AS
@@ -862,7 +864,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     INNER JOIN divided_meal_sections_versions D
                         ON M.meal_in_plan_version_id = D.meal_in_plan_version_id;""";
 
-        upload_queries_and_params.add(new Pair<>(query_06, null));
+         batch_Upload.add_Uploads(new Upload_Statement(query_06, null, true));
 
         // Insert Versioned Sub-Meals Into Draft Sub-Meals In Order
         String query_07 = """
@@ -886,7 +888,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 FROM draft_sub_meals_anchor S
                 ORDER BY rn;""";
 
-        upload_queries_and_params.add(new Pair<>(query_07, null));
+         batch_Upload.add_Uploads(new Upload_Statement(query_07, null, true));
 
         //
         String query_09 = """
@@ -900,7 +902,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                             D.div_meal_sections_id = A.div_meal_sections_id
                     );""";
 
-        upload_queries_and_params.add(new Pair<>(query_09, null));
+         batch_Upload.add_Uploads(new Upload_Statement(query_09, null, true));
 
         //################################################################
         // Transferring Ingredients From Versioned Sub-Meals To Draft
@@ -927,8 +929,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 INNER JOIN draft_sub_meals_anchor T
                     ON I.div_meal_sections_version_id = T.div_meal_sections_version_id;""";
 
-        upload_queries_and_params.add(new Pair<>(query_10, null));
-
+         batch_Upload.add_Uploads(new Upload_Statement(query_10, null, true));
 
         //################################################################
         // Remove Temp Tables
@@ -937,12 +938,12 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 DROP TABLE IF EXISTS temp.draft_sub_meals_anchor;
                 DROP TABLE IF EXISTS temp.draft_meals_anchor;""";
 
-        upload_queries_and_params.add(new Pair<>(query_11, null));
+         batch_Upload.add_Uploads(new Upload_Statement(query_11, null, false));
 
         //################################################################
         // Execute
         //################################################################
-        if (! (db.upload_Data_Batch(upload_queries_and_params, errorMSG)))
+        if (! (db.upload_Data_Batch(batch_Upload)))
         {
             System.err.printf("\n\n%s \n%s Error \n%s \nFailed Transferring Plan Meals Data!",
                     lineSeparator, get_Class_And_Method_Name(), lineSeparator);
@@ -1197,8 +1198,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###########################
         // Set Variables
         //###########################
-        String error_MSG = "Unable, to get System Variables!";
-        LinkedHashSet<Pair<String, Object[]>> fetch_queries_and_params = new LinkedHashSet<>();
+        Batch_Fetch_Statements fetch_statements = new Batch_Fetch_Statements("Unable, to get System Variables!");
 
         //###########################
         // Fetch Queries
@@ -1206,7 +1206,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
         // N/A Ingredient ID
         String query_01 = "SELECT ingredient_id FROM  ingredients_info WHERE ingredient_name = ?;";
-        fetch_queries_and_params.add(new Pair<>(query_01, new Object[]{ "None Of The Above" }));
+        fetch_statements.add_Fetches(new Fetch_Statement(query_01, new Object[]{ "None Of The Above" }));
 
         // N/A Shop
         String query_02 = """
@@ -1217,14 +1217,14 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     ingredient_id = (SELECT ingredient_id FROM ingredients_info WHERE ingredient_name = ?)
                     AND product_name = ?;""";
 
-        fetch_queries_and_params.add(new Pair<>(query_02, new Object[]{ "None Of The Above", "N/A" }));
+        fetch_statements.add_Fetches(new Fetch_Statement(query_02, new Object[]{ "None Of The Above", "N/A" }));
 
         try
         {
             //###########################
             // Execute
             //###########################
-            Fetched_Results fetched_results = db.get_Fetched_Results(fetch_queries_and_params, error_MSG);
+            Fetched_Results fetched_results = db.get_Fetched_Results(fetch_statements);
 
             if (fetched_results == null) { throw new Exception("Failed Getting Data"); }
 
@@ -1976,11 +1976,13 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###########################################################
         // Delete all the meals in the plans in SQL
         //###########################################################
-        String queryDelete = "DELETE FROM table_draft_meals  WHERE plan_id = ?";
-
+        String query_Delete = "DELETE FROM table_draft_meals  WHERE plan_id = ?";
         Object[] params = new Object[]{ get_Selected_Plan_ID() };
 
-        if (! db.upload_Data(queryDelete, params, "Error, unable to DELETE meals in plan!")) { return; }
+        String error_msg = "Error, unable to DELETE meals in plan!";
+        Upload_Statement_Full sql_statement = new Upload_Statement_Full(query_Delete, params, error_msg, true);
+
+        if (! db.upload_Data(sql_statement)) { return; }
 
         JOptionPane.showMessageDialog(this, "\n\nSuccessfully, DELETED all meals in plan!");
 
@@ -2501,8 +2503,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // Variables
         //###################################################
         String error_msg = "Unable to Save Meals in Plan !";
-        LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params = new LinkedHashSet<>();
-        LinkedHashSet<Pair<String, Object[]>> fetch_Queries_And_Params = new LinkedHashSet<>();
+        Batch_Upload_And_Fetch_Statements batch_Statements = new Batch_Upload_And_Fetch_Statements(error_msg);
 
         //###################################################
         // Upload
@@ -2514,28 +2515,28 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //############################
         //
         //############################
-        save_DB_Data_Meal_Pre_Requisites_Tables(upload_Queries_And_Params); // Pre-Requisites Table
+        save_DB_Data_Meal_Pre_Requisites_Tables(batch_Statements); // Pre-Requisites Table
 
-        saved_DB_Data_Plans(upload_Queries_And_Params);             // Plan   Transfer
-        saved_DB_Data_Macros(upload_Queries_And_Params);            // Macros Transfer
+        saved_DB_Data_Plans(batch_Statements);             // Plan   Transfer
+        saved_DB_Data_Macros(batch_Statements);            // Macros Transfer
 
         //############################
         //
         //############################
         // Map All Meals With / Without Source
-        if (any_session_created) { save_DB_Data_Session_Created_Meals(upload_Queries_And_Params); }
-        save_DB_Data_Existing_Meals(upload_Queries_And_Params);
+        if (any_session_created) { save_DB_Data_Session_Created_Meals(batch_Statements); }
+        save_DB_Data_Existing_Meals(batch_Statements);
 
         // Save Sub-Meals
-        if (any_session_created_sub_meals) { save_DB_Data_Session_Created_Sub_Meals(upload_Queries_And_Params); }
-        save_DB_Data_Existing_Sub_Meals(upload_Queries_And_Params);
+        if (any_session_created_sub_meals) { save_DB_Data_Session_Created_Sub_Meals(batch_Statements); }
+        save_DB_Data_Existing_Sub_Meals(batch_Statements);
 
         // Ingredients Update
-        save_DB_Data_Ingredients(upload_Queries_And_Params);
+        save_DB_Data_Ingredients(batch_Statements);
 
         // Update DB Tables For Draft With No Source ID's With their Source ID's
-        if (any_session_created) { save_DB_Data_End_Meal_Updates(upload_Queries_And_Params); }
-        if (any_session_created_sub_meals) { save_DB_Data_End_Sub_Meal_Updates(upload_Queries_And_Params); }
+        if (any_session_created) { save_DB_Data_End_Meal_Updates(batch_Statements); }
+        if (any_session_created_sub_meals) { save_DB_Data_End_Sub_Meal_Updates(batch_Statements); }
 
         //###################################################
         // Fetch
@@ -2549,7 +2550,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                         meal_in_plan_id
                     FROM meals_no_source_ids_map;""";
 
-            fetch_Queries_And_Params.add(new Pair<>(fetch_query00, null));
+            batch_Statements.add_Fetches(new Fetch_Statement(fetch_query00, null));
         }
         if (any_session_created_sub_meals)
         {
@@ -2558,9 +2559,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     SELECT
                         draft_div_meal_sections_id,
                         div_meal_sections_id
-                    FROM sub_meals_no_source_ids_map
-                    """;
-            fetch_Queries_And_Params.add(new Pair<>(fetch_query01, null));
+                    FROM sub_meals_no_source_ids_map""";
+
+            batch_Statements.add_Fetches(new Fetch_Statement(fetch_query01, null));
         }
 
         // Get Updated Plan Version
@@ -2569,21 +2570,21 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 FROM active_plans
                 WHERE user_id = ?""";
 
-        fetch_Queries_And_Params.add(new Pair<>(fetch_query03, new Object[]{ get_User_ID() }));
+        batch_Statements.add_Fetches(new Fetch_Statement(fetch_query03, new Object[]{ get_User_ID() }));
 
         //###################################################
         // Execute
         //###################################################
-        return db.upload_And_Get_Batch(upload_Queries_And_Params, fetch_Queries_And_Params, error_msg);
+        return db.upload_And_Get_Batch(batch_Statements);
     }
 
     //######################################
     //
     //######################################
-    private void save_DB_Data_Meal_Pre_Requisites_Tables(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
+    private void save_DB_Data_Meal_Pre_Requisites_Tables(Batch_Upload_And_Fetch_Statements batch_statements)
     {
         String upload_query_00 = "DROP TABLE IF EXISTS temp.saved_keys;";
-        upload_Queries_And_Params.add(new Pair<>(upload_query_00, null));
+        batch_statements.add_Uploads(new Upload_Statement(upload_query_00, null, false));
 
         //######################################
         // Create Key Table
@@ -2597,13 +2598,13 @@ public class Meal_Plan_Screen extends Screen_JFrame
                      entity_id_value INT NOT NULL
                 );""";
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_01, null));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_01, null, false));
 
         //######################################
         //
         //######################################
         String upload_query_03 = "DROP TABLE IF EXISTS temp.meals_all_source_ids_map;";
-        upload_Queries_And_Params.add(new Pair<>(upload_query_03, null));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_03, null, false));
 
         String upload_query_04 = """
                 CREATE TEMPORARY TABLE meals_all_source_ids_map
@@ -2622,13 +2623,13 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 CREATE UNIQUE INDEX one_uuid_per_meal_xc       ON   meals_all_source_ids_map  (correlation_uuid);
                 """;
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_04, null));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_04, null, false));
 
         //######################################
         //
         //######################################
         String upload_query_05 = "DROP TABLE IF EXISTS temp.sub_meals_all_source_ids_map;";
-        upload_Queries_And_Params.add(new Pair<>(upload_query_05, null));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_05, null, false));
 
         String upload_query_06 = """
                 CREATE TEMPORARY TABLE sub_meals_all_source_ids_map
@@ -2651,10 +2652,10 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 CREATE UNIQUE INDEX one_uuid_per_sub_meal_xc        ON  sub_meals_all_source_ids_map  (correlation_uuid);
                 """;
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_06, null));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_06, null, false));
     }
 
-    private void saved_DB_Data_Plans(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
+    private void saved_DB_Data_Plans(Batch_Upload_And_Fetch_Statements batch_statements)
     {
         // Upload to Plan_Versions from Draft Plans
         String upload_query_01 = """
@@ -2680,7 +2681,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 INNER JOIN plans P
                     ON V.plan_id = P.plan_id;""";
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_01, null));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_01, null, true));
 
         // Upload to Plan_Version_ID
         String upload_query_02 = """
@@ -2692,7 +2693,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 VALUES
                 (?, last_insert_rowid());""";
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_02, new Object[]{ "plan_version_id" }));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_02, new Object[]{ "plan_version_id" }, true));
 
         // Upload to Plan_Version_ID
         String upload_query_03 = """
@@ -2700,7 +2701,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 SET plan_version_id = (SELECT entity_id_value FROM saved_keys WHERE key = ?)
                 WHERE user_id = ?;""";
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_03, new Object[]{ "plan_version_id", get_User_ID() }));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_03, new Object[]{ "plan_version_id", get_User_ID() }, true));
 
         // Upload to Plan_Version_ID
         String upload_query_04 = """
@@ -2708,10 +2709,10 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 SET plan_version_id = (SELECT entity_id_value FROM saved_keys WHERE key = ?)
                 WHERE plan_id = ?;""";
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_04, new Object[]{ "plan_version_id", get_Selected_Plan_ID() }));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_04, new Object[]{ "plan_version_id", get_Selected_Plan_ID() }, true));
     }
 
-    private void saved_DB_Data_Macros(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
+    private void saved_DB_Data_Macros(Batch_Upload_And_Fetch_Statements batch_statements)
     {
         // Upload to Macros from Draft
         String upload_query_01 = """
@@ -2734,19 +2735,19 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 FROM draft_macros_per_pound_and_limits
                 WHERE plan_id = ?""";
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_01, new Object[]{ "plan_version_id", get_Selected_Plan_ID() }));
+        batch_statements.add_Uploads(new Upload_Statement(upload_query_01, new Object[]{ "plan_version_id", get_Selected_Plan_ID() }, true));
     }
 
     //######################################
     // Save No ID's Meals / Sub-Meals
     //######################################
-    private void save_DB_Data_Session_Created_Meals(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
+    private void save_DB_Data_Session_Created_Meals(Batch_Upload_And_Fetch_Statements batch_statements)
     {
         //######################################
         //
         //######################################
         String upload_query_00 = "DROP TABLE IF EXISTS temp.meals_no_source_ids_map;";
-        upload_Queries_And_Params.add(new Pair<>(upload_query_00, null));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_00, null, false));
 
         String upload_query_01 = """
                 CREATE TEMPORARY TABLE meals_no_source_ids_map
@@ -2765,7 +2766,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 CREATE UNIQUE INDEX one_uuid_per_meal       ON   meals_no_source_ids_map  (correlation_uuid);
                 """;
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_01, null));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_01, null, false));
 
         //######################################
         //
@@ -2788,7 +2789,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                         WHERE d.meal_in_plan_id = m.meal_in_plan_id
                     );""";
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_02, new Object[]{ get_Selected_Plan_ID() }));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_02, new Object[]{ get_Selected_Plan_ID() }, true));
 
         //########################################
         // Insert into meals_in_plan x Meals
@@ -2803,7 +2804,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     correlation_uuid
                 FROM meals_no_source_ids_map;"""; // Doesn't require a join repeats X amount of times for the number of rows in the table
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_03, null));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_03, null, true));
 
         //#######################################
         // Insert Last Created Meals into Anchor
@@ -2827,7 +2828,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     );
                 """;
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_04, null));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_04, null, true));
 
         //#######################################
         // Insert Into Meal Versions
@@ -2860,7 +2861,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 INNER JOIN draft_meals_in_plan D
                     ON M.draft_meal_in_plan_id = D.draft_meal_in_plan_id;""";
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_07, new Object[]{ "plan_version_id" }));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_07, new Object[]{ "plan_version_id" }, true));
 
         //#######################################
         //
@@ -2886,7 +2887,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     );
                 """;
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_08, null));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_08, null, true));
 
         //######################################
         //
@@ -2897,13 +2898,13 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 SELECT *
                 FROM meals_no_source_ids_map;""";
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_10, null));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_10, null, true));
     }
 
-    private void save_DB_Data_Existing_Meals(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
+    private void save_DB_Data_Existing_Meals(Batch_Upload_And_Fetch_Statements batch_statements)
     {
         String upload_query_00 = "DROP TABLE IF EXISTS temp.meals_with_source_ids_map;";
-        upload_Queries_And_Params.add(new Pair<>(upload_query_00, null));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_00, null, false));
 
         //
         String upload_query_01 = """
@@ -2923,7 +2924,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 CREATE UNIQUE INDEX one_uuid_per_meal_xcx       ON   meals_with_source_ids_map  (correlation_uuid);
                 """;
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_01, null));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_01, null, false));
 
 
         //######################################
@@ -2949,7 +2950,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                         WHERE d.meal_in_plan_id = m.meal_in_plan_id
                     );""";
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_02, new Object[]{ get_Selected_Plan_ID() }));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_02, new Object[]{ get_Selected_Plan_ID() }, true));
 
         //#######################################
         // Insert Into Meal Versions
@@ -2981,7 +2982,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 INNER JOIN draft_meals_in_plan D
                     ON M.draft_meal_in_plan_id = D.draft_meal_in_plan_id;""";
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_03, new Object[]{ "plan_version_id" }));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_03, new Object[]{ "plan_version_id" }, true));
 
         //#######################################
         //
@@ -3007,7 +3008,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     );
                 """;
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_04, null));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_04, null, true));
 
         //######################################
         //
@@ -3018,26 +3019,26 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 SELECT *
                 FROM meals_with_source_ids_map;""";
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_05, null));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_05, null, true));
 
         //######################################
         //
         //######################################
         // Save Count For App Created Meals
         String upload_query_06 = "DROP TABLE meals_with_source_ids_map;";
-        upload_Queries_And_Params.add(new Pair<>(upload_query_06, null));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_06, null, false));
     }
 
     //######################################
     // Save Existing Meals / Sub-Meals
     //######################################
-    private void save_DB_Data_Session_Created_Sub_Meals(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
+    private void save_DB_Data_Session_Created_Sub_Meals(Batch_Upload_And_Fetch_Statements batch_statements)
     {
         //######################################
         //
         //######################################
         String upload_query_00 = "DROP TABLE IF EXISTS temp.sub_meals_no_source_ids_map;";
-        upload_Queries_And_Params.add(new Pair<>(upload_query_00, null));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_00, null, false));
 
         //
         String upload_query_01 = """
@@ -3061,7 +3062,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 CREATE UNIQUE INDEX one_uuid_per_sub_meal       ON  sub_meals_no_source_ids_map  (correlation_uuid);
                 """;
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_01, null));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_01, null, false));
 
         //######################################
         //
@@ -3092,7 +3093,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                         WHERE D.div_meal_sections_id = X.div_meal_sections_id
                     );""";
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_02, new Object[]{ get_Selected_Plan_ID() }));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_02, new Object[]{ get_Selected_Plan_ID() }, true));
 
         //######################################
         // Create Sub-Meals
@@ -3107,7 +3108,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     correlation_uuid
                 FROM sub_meals_no_source_ids_map;""";
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_03, null));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_03, null, true));
 
         //#######################################
         // Insert Last Created Meals into Anchor
@@ -3131,7 +3132,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     );
                 """;
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_04, null));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_04, null, true));
 
         //#######################################
         // Insert Into Sub-Meal Versions
@@ -3170,7 +3171,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 INNER JOIN draft_divided_meal_sections D
                     ON S.draft_div_meal_sections_id = D.draft_div_meal_sections_id;""";
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_05, new Object[]{ "plan_version_id" }));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_05, new Object[]{ "plan_version_id" }, true));
 
         //#######################################
         // Map Versions
@@ -3196,7 +3197,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     );
                 """;
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_06, null));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_06, null, true));
 
         //#######################################
         // Map Versions
@@ -3209,13 +3210,13 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 SELECT *
                 FROM sub_meals_no_source_ids_map;""";
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_07, null));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_07, null, true));
     }
 
-    private void save_DB_Data_Existing_Sub_Meals(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
+    private void save_DB_Data_Existing_Sub_Meals(Batch_Upload_And_Fetch_Statements batch_statements)
     {
         String upload_query_00 = "DROP TABLE IF EXISTS temp.sub_meals_with_source_ids_map;";
-        upload_Queries_And_Params.add(new Pair<>(upload_query_00, null));
+        batch_statements.add_Uploads(new Upload_Statement(upload_query_00, null, false));
 
         String upload_query_01 = """
                 CREATE TEMPORARY TABLE sub_meals_with_source_ids_map
@@ -3238,7 +3239,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 CREATE UNIQUE INDEX one_uuid_per_sub_meal_xcv        ON  sub_meals_with_source_ids_map  (correlation_uuid);
                 """;
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_01, null));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_01, null, false));
 
         //######################################
         //
@@ -3272,7 +3273,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                         WHERE D.div_meal_sections_id = X.div_meal_sections_id
                     );""";
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_02, new Object[]{ get_Selected_Plan_ID() }));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_02, new Object[]{ get_Selected_Plan_ID() }, true));
 
         //#######################################
         // Insert Into Sub-Meal Versions
@@ -3311,7 +3312,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 INNER JOIN draft_divided_meal_sections D
                     ON S.draft_div_meal_sections_id = D.draft_div_meal_sections_id;""";
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_05, new Object[]{ "plan_version_id" }));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_05, new Object[]{ "plan_version_id" }, true));
 
         //#######################################
         // Map Versions
@@ -3336,7 +3337,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                             D.correlation_uuid = A.correlation_uuid
                     );""";
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_06, null));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_06, null, true));
 
         //#######################################
         // Map Versions
@@ -3348,19 +3349,19 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 INSERT INTO sub_meals_all_source_ids_map
                 SELECT * FROM sub_meals_with_source_ids_map;""";
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_07, null));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_07, null, true));
 
         //#######################################
         // Map Versions
         //#######################################
         String upload_query_08 = "DROP TABLE sub_meals_with_source_ids_map;";
-        upload_Queries_And_Params.add(new Pair<>(upload_query_08, null));
+         batch_statements.add_Uploads(new Upload_Statement(upload_query_08, null, false));
     }
 
     //######################################
     // Updates
     //######################################
-    private void save_DB_Data_End_Meal_Updates(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
+    private void save_DB_Data_End_Meal_Updates(Batch_Upload_And_Fetch_Statements batch_statements)
     {
         String upload_query_01 = """
                 UPDATE draft_meals_in_plan AS D
@@ -3376,10 +3377,10 @@ public class Meal_Plan_Screen extends Screen_JFrame
                         WHERE D.draft_meal_in_plan_id = A.draft_meal_in_plan_id
                     );""";
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_01, null));
+        batch_statements.add_Uploads(new Upload_Statement(upload_query_01, null, true));
     }
 
-    private void save_DB_Data_End_Sub_Meal_Updates(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
+    private void save_DB_Data_End_Sub_Meal_Updates(Batch_Upload_And_Fetch_Statements batch_statements)
     {
         String upload_query_01 = """
                 UPDATE draft_divided_meal_sections AS D
@@ -3396,13 +3397,13 @@ public class Meal_Plan_Screen extends Screen_JFrame
                         WHERE D.draft_div_meal_sections_id = A.draft_div_meal_sections_id
                     );""";
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_01, null));
+        batch_statements.add_Uploads(new Upload_Statement(upload_query_01, null, true));
     }
 
     //######################################
     // Save Ingredients
     //######################################
-    private void save_DB_Data_Ingredients(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
+    private void save_DB_Data_Ingredients(Batch_Upload_And_Fetch_Statements batch_statements)
     {
         //######################################
         //
@@ -3426,7 +3427,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 INNER JOIN sub_meals_all_source_ids_map S
                     ON S.draft_div_meal_sections_id = I.draft_div_meal_sections_id;""";
 
-        upload_Queries_And_Params.add(new Pair<>(upload_query_01, null));
+        batch_statements.add_Uploads(new Upload_Statement(upload_query_01, null, true));
     }
 
     // ###############################################################

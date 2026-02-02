@@ -2,7 +2,10 @@ package App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_T
 
 import App_Code.Objects.Data_Objects.ID_Objects.ID_Object;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Storable_IDS_Parent;
+import App_Code.Objects.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_Statements;
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
+import App_Code.Objects.Database_Objects.MyJDBC.Statements.Upload_Statement;
+import App_Code.Objects.Database_Objects.MyJDBC.Statements.Upload_Statement_Full;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info.Ingredients_Info_Screen;
 import org.javatuples.Pair;
@@ -180,17 +183,19 @@ public abstract class Edit_Screen extends Add_Screen
         //################################
         Integer object_ID = get_Selected_Item_ID();
         
-        String upload_Q1 = String.format("""
+        String upload_Q2 = String.format("""
                 UPDATE %s
                 SET %s = ?
                 WHERE %s = ?;""", db_TableName, db_ColumnName_Field, id_ColumnName);
-        
+
+        String errorMSG_Upload = String.format("Unable to Update Ingredient %s to '%s'!", data_Gathering_Name, jTextField_TXT);
+        Object[] params_2 = new Object[]{ jTextField_TXT, object_ID };
+        Upload_Statement_Full sql_statement = new Upload_Statement_Full(upload_Q2, params_2, errorMSG_Upload, true);
+
         //################################
         // Return Query Result
         //################################
-        String errorMSG_Upload = String.format("Unable to Update Ingredient %s to '%s'!", data_Gathering_Name, jTextField_TXT);
-        
-        return db.upload_Data(upload_Q1, new Object[]{ jTextField_TXT, object_ID }, errorMSG_Upload);
+        return db.upload_Data(sql_statement);
     }
     
     @Override
@@ -290,28 +295,30 @@ public abstract class Edit_Screen extends Add_Screen
         // Variables
         //##################################
         Storable_IDS_Parent item_ID_Obj = get_Selected_Item();
-        LinkedHashSet<Pair<String, Object[]>> upload_Query_And_Params = new LinkedHashSet<>();
+
+        String errorMSG = String.format("Failed To Delete ' %s ' FROM %s !!", selected_JComboBox_Item_Txt, data_Gathering_Name);
+        Batch_Upload_Statements upload_statements = new Batch_Upload_Statements(errorMSG);
         
         //##################################
         // SQL
         //##################################
         
         // Get Child Class Queries
-        upload_Query_And_Params = delete_Prior_Queries(item_ID_Obj, upload_Query_And_Params);
+        delete_Prior_Queries(item_ID_Obj, upload_statements);
         
         // Define Query Variables
-        String errorMSG = String.format("Failed To Delete ' %s ' FROM %s !!", selected_JComboBox_Item_Txt, data_Gathering_Name);
+
         String upload_Q1 = String.format("DELETE FROM %s WHERE %s = ?", db_TableName, id_ColumnName);
         
-        upload_Query_And_Params.add(new Pair<>(upload_Q1, new Object[]{ item_ID_Obj.get_ID() }));
+        upload_statements.add_Uploads(new Upload_Statement(upload_Q1, new Object[]{ item_ID_Obj.get_ID() }, true));
         
         //##################
         // Execute Query
         //##################
-        return db.upload_Data_Batch(upload_Query_And_Params, errorMSG);
+        return db.upload_Data_Batch(upload_statements);
     }
     
-    protected abstract LinkedHashSet<Pair<String, Object[]>> delete_Prior_Queries(ID_Object id_object, LinkedHashSet<Pair<String, Object[]>> query_And_Params);
+    protected abstract void delete_Prior_Queries(ID_Object id_object, Batch_Upload_Statements upload_statements);
     
     protected abstract boolean delete_Shared_Data_Action();
 }

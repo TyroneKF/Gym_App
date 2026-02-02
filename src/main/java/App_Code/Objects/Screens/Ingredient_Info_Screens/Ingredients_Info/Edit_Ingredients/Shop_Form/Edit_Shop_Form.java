@@ -1,11 +1,11 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients.Shop_Form;
 
+import App_Code.Objects.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_Statements;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
-import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredients_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.ShopForm_Object;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.Shop_Form;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients.Edit_Ingredients_Screen;
-import org.javatuples.Pair;
+
 import java.awt.*;
 import java.util.*;
 
@@ -64,7 +64,7 @@ public class Edit_Shop_Form extends Shop_Form
     }
     
     @Override
-    public void add_Update_Queries_Extra(LinkedHashSet<Pair<String, Object[]>> queries_And_Params) throws Exception
+    public void add_Update_Queries_Extra(Batch_Upload_Statements queries_And_Params) throws Exception
     {
         //###########################################
         // Exit Clause

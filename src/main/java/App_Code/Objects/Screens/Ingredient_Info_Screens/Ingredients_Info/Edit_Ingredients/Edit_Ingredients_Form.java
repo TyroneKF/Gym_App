@@ -2,18 +2,19 @@ package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_I
 
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Storable_IDS_Parent;
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
+import App_Code.Objects.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_Statements;
+import App_Code.Objects.Database_Objects.MyJDBC.Statements.Upload_Statement;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.Combo_Boxes.Field_JCombo_Storable_ID;
 import App_Code.Objects.Gui_Objects.Text_Fields.Parent.Field_JTxtField_Parent;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredients_Form;
 import App_Code.Objects.Data_Objects.Field_Bindings.Ingredients_Form_Binding;
-import org.javatuples.Pair;
+
 import java.awt.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
 import java.util.Objects;
 
 public class Edit_Ingredients_Form extends Ingredients_Form
@@ -171,7 +172,7 @@ public class Edit_Ingredients_Form extends Ingredients_Form
     }
     
     @Override
-    public void add_Update_Queries(LinkedHashSet<Pair<String, Object[]>> queries_And_Params) throws Exception
+    public void add_Update_Queries(Batch_Upload_Statements upload_statement) throws Exception
     {
         //##########################
         // Variables
@@ -251,6 +252,6 @@ public class Edit_Ingredients_Form extends Ingredients_Form
         // Add To Results
         //##########################
         StringBuilder update_Query = insert_Header.append(values);
-        queries_And_Params.add(new Pair<>(update_Query.toString(), params));
+        upload_statement.add_Uploads(new Upload_Statement(update_Query.toString(), params, true));
     }
 }

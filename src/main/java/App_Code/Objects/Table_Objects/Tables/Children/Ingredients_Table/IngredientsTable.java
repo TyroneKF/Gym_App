@@ -4,6 +4,11 @@ import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredie
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
 import App_Code.Objects.Database_Objects.Fetched_Results;
+import App_Code.Objects.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_And_Fetch_Statements;
+import App_Code.Objects.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_Statements;
+import App_Code.Objects.Database_Objects.MyJDBC.Statements.Fetch_Statement;
+import App_Code.Objects.Database_Objects.MyJDBC.Statements.Upload_Statement;
+import App_Code.Objects.Database_Objects.MyJDBC.Statements.Upload_Statement_Full;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Table_Objects.Tables.Children.Ingredients_Table.Buttons.Button_Column;
 import App_Code.Objects.Table_Objects.Tables.Children.Ingredients_Table.JCombo_Boxes.Child.Ingredient_Name_JComboBox_Column;
@@ -499,8 +504,11 @@ public class IngredientsTable extends JDBC_JTable
         //#################################################
         String query = String.format("DELETE FROM %s WHERE %s = ? ;", db_write_table_name, db_row_id_column_name);
         String error_msg = String.format("Error, unable to delete from '%s' !", table_name);
+        Object[] params = new Object[]{ ingredient_Index };
 
-        if (! db.upload_Data(query, new Object[]{ ingredient_Index }, error_msg)) { return; }
+        Upload_Statement_Full sql_statement = new Upload_Statement_Full(query, params, error_msg, true);
+
+        if (! db.upload_Data(sql_statement)) { return; }
 
         //#################################################
         // Remove From Table
@@ -618,7 +626,7 @@ public class IngredientsTable extends JDBC_JTable
         //##################################################################
 
         String error_MSG = String.format("Error, Updating Ingredient Name on '%s'!", table_name);
-        LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params = new LinkedHashSet<>();
+        Batch_Upload_And_Fetch_Statements batch_statements = new Batch_Upload_And_Fetch_Statements(error_MSG);
 
         //###########################
         // Update
@@ -629,18 +637,14 @@ public class IngredientsTable extends JDBC_JTable
                 pdid = ?
                 WHERE %s = ?;""", db_write_table_name, db_row_id_column_name);
 
-        Object[] params_Upload = new Object[]{
-                selected_Ingredient_Name_ID,
-                null,
-                ingredient_Index
-        };
+        Object[] params_Upload = new Object[]{selected_Ingredient_Name_ID, null,ingredient_Index};
 
-        upload_Queries_And_Params.add(new Pair<>(upload_Query, params_Upload));
+        batch_statements.add_Uploads(new Upload_Statement(upload_Query, params_Upload, true));
 
         //##############################################
         // Execute
         //##############################################
-        return upload_And_Update_Table(row_In_Model, ingredient_Index, upload_Queries_And_Params, error_MSG);
+        return upload_And_Update_Table(row_In_Model, ingredient_Index, batch_statements);
     }
 
     private boolean update_Table_Values_By_Quantity(int row_In_Model, int ingredient_Index, BigDecimal quantity)
@@ -650,7 +654,7 @@ public class IngredientsTable extends JDBC_JTable
         //##################################################################
 
         String error_MSG = "Error, Updating Ingredient Table by Quantity!";
-        LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params = new LinkedHashSet<>();
+        Batch_Upload_And_Fetch_Statements batch_statements = new Batch_Upload_And_Fetch_Statements(error_MSG);
 
         //###########################
         // Update
@@ -660,28 +664,28 @@ public class IngredientsTable extends JDBC_JTable
                 SET quantity = ?
                 WHERE %s = ?;""", db_write_table_name, db_row_id_column_name);
 
-        upload_Queries_And_Params.add(new Pair<>(upload_Query, new Object[]{ quantity, ingredient_Index }));
+        Object[] params = new Object[]{ quantity, ingredient_Index };
+
+        batch_statements.add_Uploads(new Upload_Statement(upload_Query, params, true));
 
         //##############################################
         // Execute
         //##############################################
-        return upload_And_Update_Table(row_In_Model, ingredient_Index, upload_Queries_And_Params, error_MSG);
+        return upload_And_Update_Table(row_In_Model, ingredient_Index, batch_statements);
     }
 
-    private boolean upload_And_Update_Table(int row_In_Model, int ingredient_Index, LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params, String error_MSG)
+    private boolean upload_And_Update_Table(int row_In_Model, int ingredient_Index, Batch_Upload_And_Fetch_Statements batch_statements)
     {
         //###################################
         // Fetch
         //###################################
-        LinkedHashSet<Pair<String, Object[]>> fetch_Queries_And_Params = new LinkedHashSet<>();
-
         String fetch_Query = String.format("SELECT * FROM %s WHERE %s = ?;", db_read_view_name, db_row_id_column_name);
-        fetch_Queries_And_Params.add(new Pair<>(fetch_Query, new Object[]{ ingredient_Index }));
+        batch_statements.add_Fetches(new Fetch_Statement(fetch_Query, new Object[]{ ingredient_Index }));
 
         //##############################################
         // Execute
         //##############################################
-        Fetched_Results fetched_Results = db.upload_And_Get_Batch(upload_Queries_And_Params, fetch_Queries_And_Params, error_MSG);
+        Fetched_Results fetched_Results = db.upload_And_Get_Batch(batch_statements);
 
         if (fetched_Results == null) { return false; } // Upload & Fetch Failed
 
@@ -726,8 +730,7 @@ public class IngredientsTable extends JDBC_JTable
         String error_MSG = String.format("\n\nError Adding Additional Ingredient to Meal: \n\nMeal Name: '%s' \nMeal Time: %s!",
                 meal_manager.get_Current_Meal_Name(), meal_manager.get_Current_Meal_Time());
 
-        LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params = new LinkedHashSet<>();
-        LinkedHashSet<Pair<String, Object[]>> fetch_Queries_And_Params = new LinkedHashSet<>();
+        Batch_Upload_And_Fetch_Statements batch_statements = new Batch_Upload_And_Fetch_Statements(error_MSG);
 
         ArrayList<Object> ingredient_DATA;
 
@@ -747,23 +750,26 @@ public class IngredientsTable extends JDBC_JTable
                 VALUES
                 (?, ?, ?, ?);""", db_write_table_name);
 
-        upload_Queries_And_Params.add(new Pair<>(upload_Q1, new Object[]{ draft_sub_meal_id, na_ingredient_id, na_pdid, 0 }));
+        Object[] params_1 = new Object[]{ draft_sub_meal_id, na_ingredient_id, na_pdid, 0 };
+
+        batch_statements.add_Uploads(new Upload_Statement(upload_Q1, params_1, true));
 
         //#######################################################
         // Fetch Queries
         //#######################################################
 
         // 1.) Get Ingredient ID
-        String get_Q1 = String.format("""
+        String fetch_Q1 = String.format("""
                 SELECT *
                 FROM %s
                 WHERE %s = (SELECT last_insert_rowid());""", db_read_view_name, db_row_id_column_name);
-        fetch_Queries_And_Params.add(new Pair<>(get_Q1, null));
+
+        batch_statements.add_Fetches(new Fetch_Statement(fetch_Q1, null));
 
         //#######################################################
         // Execute Query
         //#######################################################
-        Fetched_Results fetched_Results_OBJ = db.upload_And_Get_Batch(upload_Queries_And_Params, fetch_Queries_And_Params, error_MSG);
+        Fetched_Results fetched_Results_OBJ = db.upload_And_Get_Batch(batch_statements);
 
         if (fetched_Results_OBJ == null) { System.err.println("\n\n\nFailed Adding Ingredient"); return; }
 
@@ -838,16 +844,16 @@ public class IngredientsTable extends JDBC_JTable
          */
 
         String error_msg = String.format("Unable to Refresh Sub-Meal !");
-        LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params = new LinkedHashSet<>();
+        Batch_Upload_Statements batch_upload_statements = new Batch_Upload_Statements(error_msg);
 
         //###################################################
         // Execute
         //###################################################
-        add_Refresh_Statements(upload_Queries_And_Params);
-        return db.upload_Data_Batch(upload_Queries_And_Params, error_msg);
+        add_Refresh_Statements(batch_upload_statements);
+        return db.upload_Data_Batch(batch_upload_statements);
     }
 
-    public void add_Refresh_Statements(LinkedHashSet<Pair<String, Object[]>> upload_Queries_And_Params)
+    public void add_Refresh_Statements(Batch_Upload_Statements batch_upload_statements)
     {
         //###################################################
         // Re-Insert Sub-Meal Incase Deleted
@@ -856,7 +862,8 @@ public class IngredientsTable extends JDBC_JTable
         {
             // DELETE OLD Sub-Meal
             String upload_query00 = "DELETE FROM draft_divided_meal_sections WHERE draft_div_meal_sections_id = ?";
-            upload_Queries_And_Params.add(new Pair<>(upload_query00, new Object[]{ draft_sub_meal_id }));
+            Object[] upload_params_00 = new Object[]{ draft_sub_meal_id };
+            batch_upload_statements.add_Uploads(new Upload_Statement(upload_query00, upload_params_00, true));
 
             // Re-Insert With Old Sub-Meal Values
             Pair<String, Object[]> upload_query_pair_01;
@@ -901,14 +908,16 @@ public class IngredientsTable extends JDBC_JTable
                 params_01 = new Object[]{ draft_sub_meal_id, draft_meal_id, get_Plan_ID(), saved_sub_meal_name, saved_sub_meal_time };
             }
 
-            upload_Queries_And_Params.add(new Pair<>(upload_query_01, params_01));
+            batch_upload_statements.add_Uploads(new Upload_Statement(upload_query_01, params_01, true));
         }
 
         //###################################################
         // Delete Sub-Meal Ingredients
         //###################################################
         String upload_query_02 = "DELETE FROM draft_ingredients_in_sections_of_meal WHERE draft_div_meal_sections_id = ?";
-        upload_Queries_And_Params.add(new Pair<>(upload_query_02, new Object[]{ draft_sub_meal_id }));
+        Object[] upload_params_02 = new Object[]{ draft_sub_meal_id };
+
+        batch_upload_statements.add_Uploads(new Upload_Statement(upload_query_02, upload_params_02, true));
 
         //###################################################
         // Create Insert String
@@ -926,6 +935,7 @@ public class IngredientsTable extends JDBC_JTable
                 VALUES
                 
                 """;
+
         //#############################
         // Create Values String
         //#############################
@@ -951,7 +961,7 @@ public class IngredientsTable extends JDBC_JTable
         //#############################
         // Create Upload Statements
         //#############################
-        upload_Queries_And_Params.add(new Pair<>(upload_query_03, params_03));
+        batch_upload_statements.add_Uploads(new Upload_Statement(upload_query_03, params_03, true));
 
         //#############################
         // Create Upload Statements
@@ -1018,10 +1028,11 @@ public class IngredientsTable extends JDBC_JTable
 
         String query = "DELETE FROM draft_divided_meal_sections WHERE draft_div_meal_sections_id = ? ;";
         String error_msg = String.format("Unable to delete from '%s' !", table_name);
-
         Object[] params = new Object[]{ draft_sub_meal_id };
 
-        if (! db.upload_Data(query, params, error_msg)) { return; }
+        Upload_Statement_Full sql_statement = new Upload_Statement_Full(query, params, error_msg, true);
+
+        if (! db.upload_Data(sql_statement)) { return; }
 
         //################################################
         // Hide JTable object & Collapsible OBJ
@@ -1036,7 +1047,7 @@ public class IngredientsTable extends JDBC_JTable
         //################################################
         // Update MacrosLeft Table & TotalMeal Table
         //################################################
-        update_Macros_Left_Table();
+        update_All_Tables_Data();
 
         //################################################
         // Progress Message
@@ -1110,15 +1121,17 @@ public class IngredientsTable extends JDBC_JTable
         //###############################
         // Update DB
         //###############################
-        String uploadQuery = """
+        String upload_Query = """
                 UPDATE draft_divided_meal_sections
                 SET sub_meal_time = ?
                 WHERE draft_div_meal_sections_id = ?;""";
 
         Object[] params = new Object[]{ new_meal_time, draft_sub_meal_id };
+        String error_msg = "Error, unable to change Sub-Meal Time!";
+        Upload_Statement_Full sql_statement = new Upload_Statement_Full(upload_Query, params, error_msg, true);
 
         // Upload Into Database Table
-        if (! db.upload_Data(uploadQuery, params, "Error, unable to change Sub-Meal Time!")) { return; }
+        if (! db.upload_Data(sql_statement)) { return; }
 
         //###############################
         // Update Variables

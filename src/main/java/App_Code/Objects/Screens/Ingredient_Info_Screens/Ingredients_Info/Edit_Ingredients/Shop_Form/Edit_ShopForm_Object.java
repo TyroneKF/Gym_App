@@ -1,15 +1,16 @@
 package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients.Shop_Form;
 
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
+import App_Code.Objects.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_Statements;
+import App_Code.Objects.Database_Objects.MyJDBC.Statements.Upload_Statement;
 import App_Code.Objects.Gui_Objects.Combo_Boxes.Field_JCombo_Storable_ID;
 import App_Code.Objects.Gui_Objects.Text_Fields.Parent.Field_JTxtField_Parent;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.ShopForm_Object;
 import App_Code.Objects.Data_Objects.Field_Bindings.Shop_Form_Binding;
-import org.javatuples.Pair;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
 import java.util.Objects;
 
 public class Edit_ShopForm_Object extends ShopForm_Object
@@ -58,7 +59,7 @@ public class Edit_ShopForm_Object extends ShopForm_Object
         resize_GUI();
     }
     
-    public void add_Updates(LinkedHashSet<Pair<String, Object[]>> queries_And_Params) throws Exception
+    public void add_Updates(Batch_Upload_Statements upload_statements) throws Exception
     {
         //##########################
         // Variables
@@ -138,6 +139,6 @@ public class Edit_ShopForm_Object extends ShopForm_Object
         // Add To Results
         //##########################
         StringBuilder update_Query = insert_Header.append(values);
-        queries_And_Params.add(new Pair<>(update_Query.toString(), params));
+        upload_statements.add_Uploads(new Upload_Statement(update_Query.toString(), params, true));
     }
 }
