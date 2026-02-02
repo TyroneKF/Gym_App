@@ -28,6 +28,7 @@ import java.awt.*;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.ResolverStyle;
 import java.util.*;
 import java.util.List;
 
@@ -36,34 +37,48 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    // DATA Object
-    private final Shared_Data_Registry shared_data_registry;
-
     // JPanels
     private JPanel scroll_JP_center;
 
+    //######################################################
+    // Objects
+    //######################################################
+    // DATA Object
+    private final Shared_Data_Registry shared_data_registry;
+
+    //###########################
     // Table Objects
+    //###########################
     private MacrosLeft_Table macros_left_table;
     private MacrosTargets_Table macros_targets_table;
 
-    // Screen Objects
+    //############################
+    // Other Screen Objects
+    //############################
     private Macros_Targets_Screen macros_targets_screen = null;
     private Ingredients_Info_Screen ingredients_info_screen = null;
 
+    //############################
     // Chart Screen Objects
+    //############################
     private PieChart_Screen_MPS pie_chart_screen = null;
     private LineChart_MPS line_Chart = null;
 
-    //###############################################
+    //######################################################
     // Booleans
-    //###############################################
+    //######################################################
     private boolean macro_targets_changed = false;
     private boolean screen_created = false;
     private boolean has_data_changed = false;
 
-    //#########################################################################################
+    //######################################################
+    // LocalTime
+    //######################################################
+    private DateTimeFormatter time_Formatter = DateTimeFormatter.ofPattern("HH:mm").withResolverStyle(ResolverStyle.STRICT);
+
+    //######################################################
     // Collections
-    //#########################################################################################
+    //######################################################
     private ArrayList<MealManager> mealManager_ArrayList;
 
 
@@ -3705,21 +3720,21 @@ public class Meal_Plan_Screen extends Screen_JFrame
         return shared_data_registry.get_Plan_Name();
     }
 
-    private String get_Meal_Sub_Meal_Optional_Time_Ranges(MealManager this_meal) throws Exception
+    public Pair<LocalTime, LocalTime> get_Available_Sub_Meal_Time_Ranges_For_Meal(MealManager this_meal) throws Exception
     {
         //######################
         // Variables
         //######################
-        String start_time_frame = this_meal.get_Current_Meal_Time().toString(); // this meals current time
-        String end_time_frame = "23:59";
+        LocalTime start_time_frame = this_meal.get_Current_Meal_Time(); // this meals current time
+        LocalTime end_time_frame = LocalTime.parse("23:59", time_Formatter);
 
-        String default_time_range = String.format("%s - %s", start_time_frame, end_time_frame);
+        Pair<LocalTime, LocalTime> default_time_range = new Pair<>(start_time_frame, end_time_frame);
 
         //######################
         // Edge Cases
         //######################
         // No Meals In This Plan?
-        if(mealManager_ArrayList.isEmpty()){ return default_time_range; }
+        if (mealManager_ArrayList.isEmpty()) { return default_time_range; }
 
         // Is this the only meal in this plan?
         boolean is_there_another_distinct_meal_in_this_plan =
@@ -3727,7 +3742,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                         .stream()
                         .anyMatch(m -> ! m.equals(this_meal));
 
-        if (is_there_another_distinct_meal_in_this_plan) { return default_time_range; }
+        if (! is_there_another_distinct_meal_in_this_plan) { return default_time_range; }
 
         //#####################
         //
@@ -3745,7 +3760,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
                 // return meal range between this meal and its next meal
                 LocalTime next_meals_time = it.next().get_Current_Meal_Time();
-                return String.format("%s - %s", start_time_frame, next_meals_time);
+                return new Pair<>(start_time_frame, next_meals_time);
             }
         }
 

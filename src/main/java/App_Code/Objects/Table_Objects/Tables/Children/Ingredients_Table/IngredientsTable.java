@@ -1078,7 +1078,6 @@ public class IngredientsTable extends JDBC_JTable
     {
         set_Sub_Meal_Meta_Data_Changed(true);
         set_Sub_Meal_Name_Variable(true, saved_sub_meal_name, null);
-
     }
 
     private void set_Sub_Meal_Name_Variable(boolean has_Sub_Meal_Name_Been_Changed, String saved_sub_meal_name, String current_sub_meal_name)
@@ -1130,23 +1129,54 @@ public class IngredientsTable extends JDBC_JTable
 
     private LocalTime prompt_User_For_Meal_Time(boolean skip_confirmation, boolean comparison)
     {
-        // User info prompt
-        String input_meal_time = JOptionPane.showInputDialog("Input Meal Time etc \"09:00\"?");
+        try
+        {
+            //###############################
+            // Get Sub-Meal Time Ranges
+            //###############################
+            Pair<LocalTime, LocalTime> sub_meal_time_range = meal_manager.get_Available_Sub_Meal_Time_Ranges();
 
-        if (input_meal_time == null || input_meal_time.isEmpty()) { return null; }
+            //###############################
+            // Get User Input
+            //###############################
+            String txt = String.format("Input Sub-Meal Time in the ranges \" %s - %s \"?",
+                    sub_meal_time_range.getValue0(), sub_meal_time_range.getValue1());
 
-        return input_Meal_Time_Validation(input_meal_time, skip_confirmation, comparison);
+            String input_meal_time = JOptionPane.showInputDialog(txt);
+
+            if (input_meal_time == null || input_meal_time.isEmpty()) { return null; }
+
+            //###############################
+            // Return Validation Results
+            //###############################
+            return input_Meal_Time_Validation(sub_meal_time_range, input_meal_time, skip_confirmation, comparison);
+        }
+        catch (Exception e)
+        {
+            System.err.printf("\n\n%s \n%s", get_Class_And_Method_Name(), e);
+            JOptionPane.showMessageDialog(null, "Error changing Sub-Meal Time!");
+            return null;
+        }
     }
 
-    private LocalTime input_Meal_Time_Validation(String input_meal_time_string, boolean skip_confirmation, boolean comparison)
+    private LocalTime input_Meal_Time_Validation
+            (
+                    Pair<LocalTime, LocalTime> sub_meal_time_Ranges,
+                    String input_meal_time_string,
+                    boolean skip_confirmation,
+                    boolean comparison
+            )
     {
         //#######################################################
         // Validation Checks
         //#######################################################
 
         // Prior to this method being called the users input_meal_time_string is checked if its null or "" and rejected
-        LocalTime new_input_time_local_time = null;
+        LocalTime new_input_time_local_time;
         LocalTime old_current_meal_time = get_Current_Sub_Meal_Time();
+
+        LocalTime start_sub_meal_time_range = sub_meal_time_Ranges.getValue0();
+        LocalTime end_sub_meal_time_range = sub_meal_time_Ranges.getValue1();
 
         try
         {
@@ -1154,8 +1184,20 @@ public class IngredientsTable extends JDBC_JTable
         }
         catch (Exception e)
         {
-            System.err.printf("\n\nMealManager.java: input_Meal_Time_Validation() | Error, converting input_meal_time_string to time string! \n%s", e);
+            System.err.printf("\n\n%s | Error, converting input_meal_time_string to time string! \n%s", get_Class_And_Method_Name(), e);
             JOptionPane.showMessageDialog(null, "Error, converting input_meal_time_string to Time!!");
+            return null;
+        }
+
+        // ####################################################
+        // Is Sub-Meal Time In Acceptable Range
+        // ####################################################
+        if (! new_input_time_local_time.isAfter(start_sub_meal_time_range) && new_input_time_local_time.isBefore(end_sub_meal_time_range))
+        {
+            String err_msg = String.format("Error, New Sub-Meal Time For %s isn't in the Time Ranges of [%s - %s]!",
+                    get_Current_Sub_Meal_Name(), start_sub_meal_time_range, end_sub_meal_time_range);
+
+            JOptionPane.showMessageDialog(null, err_msg);
             return null;
         }
 
@@ -1174,7 +1216,7 @@ public class IngredientsTable extends JDBC_JTable
         // ######################################################
         // Check Database if Value Already Exists
         // ######################################################
-        String query = " SELECT 1 FROM draft_meals_in_plan WHERE plan_id = ? AND meal_time = ?";
+        String query = " SELECT 1 FROM draft_divided_meal_sections WHERE plan_id = ? AND sub_meal_time = ?";
         String errorMSG = "Error, Validating Meal Time!";
         Object[] params = new Object[]{ get_Plan_ID(), new_input_time_local_time };
 

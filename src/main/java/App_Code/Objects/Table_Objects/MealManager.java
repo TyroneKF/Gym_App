@@ -1554,6 +1554,11 @@ public class MealManager
         return current_meal_time;
     }
 
+    public Pair<LocalTime, LocalTime> get_Available_Sub_Meal_Time_Ranges() throws Exception
+    {
+        return meal_plan_screen.get_Available_Sub_Meal_Time_Ranges_For_Meal(this);
+    }
+
     // ############################################
     // Strings
     // ############################################
