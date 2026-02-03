@@ -3,13 +3,13 @@ package App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_I
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Storable_IDS_Parent;
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
 import App_Code.Objects.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_Statements;
+import App_Code.Objects.Database_Objects.MyJDBC.Statements.Fetch_Statement_Full;
 import App_Code.Objects.Database_Objects.MyJDBC.Statements.Upload_Statement;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.Combo_Boxes.Field_JCombo_Storable_ID;
 import App_Code.Objects.Gui_Objects.Text_Fields.Parent.Field_JTxtField_Parent;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredients_Form;
 import App_Code.Objects.Data_Objects.Field_Bindings.Ingredients_Form_Binding;
-
 import java.awt.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -61,15 +61,16 @@ public class Edit_Ingredients_Form extends Ingredients_Form
         //##################################
         // Create Query
         //####################################
-        String errorMSG = "Error, Failed Validating Ingredient Name in DB!";
+        String error_msg = "Error, Failed Validating Ingredient Name in DB!";
         String query = "SELECT ingredient_id FROM ingredients_info WHERE Ingredient_Name = ? AND ingredient_id <> ?;";
-        
         Object[] params = new Object[]{ ingredient_Name, ingredient_ID };
-        
+
+        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, params, error_msg);
+
         //##################################
         // Execute
         //####################################
-        return ! db.get_Single_Col_Query_Int(query, params, errorMSG, true).isEmpty();
+        return ! db.get_Single_Col_Query_Int(fetch_statement, true).isEmpty();
     }
     
     private boolean has_Field_Value_Changed_From_DB_Data(String key) throws Exception

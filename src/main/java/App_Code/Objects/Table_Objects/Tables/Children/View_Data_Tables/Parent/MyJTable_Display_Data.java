@@ -1,6 +1,7 @@
 package App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Parent;
 
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
+import App_Code.Objects.Database_Objects.MyJDBC.Statements.Fetch_Statement_Full;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Table_Objects.Tables.Parent.JDBC_JTable;
 import javax.swing.*;
@@ -156,12 +157,13 @@ public abstract class MyJTable_Display_Data extends JDBC_JTable
         //###########################################################################
         //   Updating MacrosLeft_Table
         //##########################################################################
-        String errorMSG = String.format("Error, Updating Table '%s'!", table_name);
+        String error_msg = String.format("Error, Updating Table '%s'!", table_name);
         String query = String.format("SELECT * FROM %s WHERE %s = ?;", db_read_view_name, db_row_id_column_name);
-        
+        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, get_Params(), error_msg);
+
         try
         {
-            ArrayList<ArrayList<Object>> tableDataObject = db.get_2D_Query_AL_Object(query, get_Params(), errorMSG, false);
+            ArrayList<ArrayList<Object>> tableDataObject = db.get_2D_Query_AL_Object(fetch_statement, false);
             return tableDataObject.getFirst();
         }
         catch (Exception _) // Error is already handled by DB class

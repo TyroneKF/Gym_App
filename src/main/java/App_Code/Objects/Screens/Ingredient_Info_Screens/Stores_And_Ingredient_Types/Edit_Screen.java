@@ -4,11 +4,11 @@ import App_Code.Objects.Data_Objects.ID_Objects.ID_Object;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Storable_IDS_Parent;
 import App_Code.Objects.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_Statements;
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
+import App_Code.Objects.Database_Objects.MyJDBC.Statements.Fetch_Statement_Full;
 import App_Code.Objects.Database_Objects.MyJDBC.Statements.Upload_Statement;
 import App_Code.Objects.Database_Objects.MyJDBC.Statements.Upload_Statement_Full;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info.Ingredients_Info_Screen;
-import org.javatuples.Pair;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
@@ -168,11 +168,13 @@ public abstract class Edit_Screen extends Add_Screen
         //################################
         
         // Variables
-        String errorMSG = "Error, unable to access DB to process request!";
+        String error_msg = "Error, unable to access DB to process request!";
         String query = String.format("SELECT %s FROM %s WHERE %s = ?;", db_ColumnName_Field, db_TableName, db_ColumnName_Field);
         Object[] params = new Object[]{ jTextField_TXT };
+
+        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, params, error_msg);
         
-        if (! db.get_Single_Col_Query_Obj(query, params, errorMSG, true).isEmpty())
+        if (! db.get_Single_Col_Query_Obj(fetch_statement, true).isEmpty())
         {
             JOptionPane.showMessageDialog(null, String.format("\n\n%s '' %s '' Already Exists!", data_Gathering_Name, jTextField_TXT));
             return false;

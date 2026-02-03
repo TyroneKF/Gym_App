@@ -1,10 +1,12 @@
 package App_Code.Objects.Screens.Others;
 
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
+import App_Code.Objects.Database_Objects.MyJDBC.Statements.Fetch_Statement_Full;
 import App_Code.Objects.Database_Objects.MyJDBC.Statements.Upload_Statement_Full;
 import App_Code.Objects.Gui_Objects.Text_Fields.Parent.JTextFieldLimit;
 import App_Code.Objects.Gui_Objects.Screens.Screen_JFrame;
 import App_Code.Objects.Screens.Meal_Plan_Screen;
+
 import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
@@ -67,21 +69,19 @@ public class Macros_Targets_Screen extends Screen_JFrame
         //##############################################################################################################
         // Get DB Target Info for this Plan
         //##############################################################################################################
-        String
-                query_Target = """
+        String query = """
                 SELECT * FROM macros_per_pound_and_limits
                 WHERE plan_id = ?
-                AND date_time_of_creation = (Select Max(date_time_of_creation) FROM macros_per_pound_and_limits WHERE plan_id = ?);""",
+                AND date_time_of_creation = (Select Max(date_time_of_creation) FROM macros_per_pound_and_limits WHERE plan_id = ?);""";
 
-                errorMSG_Target = "Unable to retrieve this plans Macro Targets";
+        String error_msg = "Unable to retrieve this plans Macro Targets";
 
-        Object[] params_Target = new Object[]{ temp_PlanID, temp_PlanID };
-
-        ArrayList<ArrayList<Object>> data;
+        Object[] params = new Object[]{ temp_PlanID, temp_PlanID };
 
         try
         {
-            macrosData = db.get_2D_Query_AL_Object(query_Target, params_Target, errorMSG_Target, false).getFirst();
+            Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, params, error_msg);
+            macrosData = db.get_2D_Query_AL_Object(fetch_statement, false).getFirst();
         }
         catch (Exception _)
         {
@@ -399,7 +399,7 @@ public class Macros_Targets_Screen extends Screen_JFrame
         // ##############################################
         // Execute Query
         // ##############################################
-        Upload_Statement_Full sql_statement = new Upload_Statement_Full(update_Query, params, "Error, changing Macro Targets!",  true);
+        Upload_Statement_Full sql_statement = new Upload_Statement_Full(update_Query, params, "Error, changing Macro Targets!", true);
 
         if (! (db.upload_Data(sql_statement))) { return false; }
 

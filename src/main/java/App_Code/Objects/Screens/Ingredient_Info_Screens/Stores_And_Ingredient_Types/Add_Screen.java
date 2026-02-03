@@ -6,6 +6,7 @@ import App_Code.Objects.Database_Objects.Fetched_Results;
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
 import App_Code.Objects.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_And_Fetch_Statements;
 import App_Code.Objects.Database_Objects.MyJDBC.Statements.Fetch_Statement;
+import App_Code.Objects.Database_Objects.MyJDBC.Statements.Fetch_Statement_Full;
 import App_Code.Objects.Database_Objects.MyJDBC.Statements.Upload_Statement;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
 import App_Code.Objects.Gui_Objects.Text_Fields.Parent.JTextFieldLimit;
@@ -13,7 +14,6 @@ import App_Code.Objects.Gui_Objects.Screens.Screen_JPanel;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info.Ingredients_Info_Screen;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Ingredient_Types.Add_Ingredient_Type;
 import App_Code.Objects.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Stores.Add_Stores;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.regex.Matcher;
@@ -281,19 +281,15 @@ public abstract class Add_Screen extends Screen_JPanel
     protected boolean upload_DATA() throws Exception
     {
         //########################
-        // Variables
-        //########################
-        String errorMSG = String.format("Error, checking if %s already exists!", db_ColumnName_Field);
-        Batch_Upload_And_Fetch_Statements batch_statements = new Batch_Upload_And_Fetch_Statements(errorMSG);
-        
-        //########################
         // Validation Check
         //########################
-        // Check if Value Already Exists
+        String error_msg = String.format("Error, checking if %s already exists!", db_ColumnName_Field);
         String query = String.format("SELECT %s FROM %s WHERE %s = ?;", db_ColumnName_Field, db_TableName, db_ColumnName_Field);
         Object[] params = new Object[]{ jTextField_TXT };
+
+        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, params, error_msg);
         
-        if (! db.get_Single_Col_Query_Obj(query, params, errorMSG, true).isEmpty())
+        if (! (db.get_Single_Col_Query_Obj(fetch_statement ,true)).isEmpty()) // Check if Value Already Exists
         {
             JOptionPane.showMessageDialog(null, String.format("\n\n%s '' %s '' Already Exists!", data_Gathering_Name, jTextField_TXT));
             return false;
@@ -302,9 +298,11 @@ public abstract class Add_Screen extends Screen_JPanel
         //########################
         // Create Queries
         //########################
+        String error_msg_01 = String.format("Error adding %s!", data_Gathering_Name);
+        Batch_Upload_And_Fetch_Statements batch_statements = new Batch_Upload_And_Fetch_Statements(error_msg_01);
+
         // Create Upload Queries
         String upload_Q1 = String.format("INSERT INTO %s (%s) VALUES (?);", db_TableName, db_ColumnName_Field);
-        
         batch_statements.add_Uploads(new Upload_Statement(upload_Q1, new Object[]{ jTextField_TXT }, true));
         
         // Create Fetch Queries

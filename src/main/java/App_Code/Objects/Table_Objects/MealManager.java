@@ -6,6 +6,7 @@ import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
 import App_Code.Objects.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_And_Fetch_Statements;
 import App_Code.Objects.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_Statements;
 import App_Code.Objects.Database_Objects.MyJDBC.Statements.Fetch_Statement;
+import App_Code.Objects.Database_Objects.MyJDBC.Statements.Fetch_Statement_Full;
 import App_Code.Objects.Database_Objects.MyJDBC.Statements.Upload_Statement;
 import App_Code.Objects.Database_Objects.MyJDBC.Statements.Upload_Statement_Full;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
@@ -21,6 +22,7 @@ import App_Code.Objects.Screens.Meal_Plan_Screen;
 import App_Code.Objects.Table_Objects.Tables.Children.View_Data_Tables.Children.Total_Meal_Table.Total_Meal_Other_Columns;
 import org.apache.commons.lang3.StringUtils;
 import org.javatuples.Pair;
+
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalTime;
@@ -289,7 +291,7 @@ public class MealManager
                 LIMIT 1;""";
 
         // Upload Params
-        batch_Statements.add_Fetches(new Fetch_Statement(fetch_query_01,new Object[]{ get_Plan_ID(),new_Meal_Name }));
+        batch_Statements.add_Fetches(new Fetch_Statement(fetch_query_01, new Object[]{ get_Plan_ID(), new_Meal_Name }));
 
         // Get TotalMeal Data
         String fetch_query_02 = """
@@ -730,10 +732,12 @@ public class MealManager
         String errorMSG = "Error, Validating Meal Time!";
         Object[] params = new Object[]{ get_Plan_ID(), new_input_time_local_time };
 
+        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, params, errorMSG);
+
         // Execute Query
         try
         {
-            if (! db.get_Single_Col_Query_Obj(query, params, errorMSG, true).isEmpty()) // Means value already exists, returns N/A if the value doesn't
+            if (! db.get_Single_Col_Query_Obj(fetch_statement, true).isEmpty()) // Means value already exists, returns N/A if the value doesn't
             {
                 JOptionPane.showMessageDialog(getFrame(), String.format("A meal in this plan already has a meal time of '%s' !!", new_input_time_local_time));
                 throw new Exception(); // Return null
@@ -857,13 +861,15 @@ public class MealManager
         // Check Database if Value Already Exists
         // ######################################################
         String query = "SELECT 1 FROM draft_meals_in_plan WHERE plan_id = ? AND meal_name = ?";
-        String errorMSG = "Error, Validating Meal Name!";
+        String error_msg = "Error, Validating Meal Name!";
         Object[] params = new Object[]{ get_Plan_ID(), new_meal_name };
+
+        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, params, error_msg);
 
         // Execute Query
         try
         {
-            if (! db.get_Single_Col_Query_Obj(query, params, errorMSG, true).isEmpty()) // Means value already exists, returns N/A if the value doesn't
+            if (! db.get_Single_Col_Query_Obj(fetch_statement, true).isEmpty()) // Means value already exists, returns N/A if the value doesn't
             {
                 JOptionPane.showMessageDialog(getFrame(), String.format("A meal in this plan already has a meal Meal Name of '%s' !!", new_meal_name));
                 throw new Exception(); // Return null
@@ -915,7 +921,7 @@ public class MealManager
                 VALUES (?,?);""";
 
         // Upload Q1
-        batch_statements.add_Uploads(new Upload_Statement( upload_Q1,new Object[]{ draft_meal_ID, get_Plan_ID() },true));
+        batch_statements.add_Uploads(new Upload_Statement(upload_Q1, new Object[]{ draft_meal_ID, get_Plan_ID() }, true));
 
         //###############################
         // Insert Ingredients Into Sub-Meal
@@ -1028,7 +1034,8 @@ public class MealManager
         String query = "DELETE FROM draft_meals_in_plan WHERE draft_meal_in_plan_id = ?";
         Object[] params = new Object[]{ draft_meal_ID };
         String error_msg = "Table Un-Successfully Deleted!";
-        Upload_Statement_Full sql_statement = new Upload_Statement_Full(query,params, error_msg, true);
+
+        Upload_Statement_Full sql_statement = new Upload_Statement_Full(query, params, error_msg, true);
 
         //##########################################
         // Execute Update
@@ -1108,7 +1115,7 @@ public class MealManager
         //###########################################
         // Check IF OLD Meal Time & Name Available
         //###########################################
-        String errorMSG = "Error, Unable to Refresh Meal!";
+        String error_msg = "Error, Unable to Refresh Meal!";
 
         String query = // Check IF OLD Table Name & Meal Time Are Available To Assign Back To This Meal
                 """
@@ -1138,7 +1145,7 @@ public class MealManager
                         
                             AND draft_meal_in_plan_id != ?;""";
 
-        Object[] params_refresh = new Object[]{ get_Plan_ID(), saved_meal_name, saved_meal_time, draft_meal_ID };
+        Object[] params = new Object[]{ get_Plan_ID(), saved_meal_name, saved_meal_time, draft_meal_ID };
 
         ArrayList<ArrayList<Object>> results;
 
@@ -1147,7 +1154,7 @@ public class MealManager
         //#############################
         try
         {
-            results = db.get_2D_Query_AL_Object(query, params_refresh, errorMSG, true);
+            results = db.get_2D_Query_AL_Object(new Fetch_Statement_Full(query, params, error_msg), true);
         }
         catch (Exception e)
         {
@@ -1185,7 +1192,6 @@ public class MealManager
                     saved_meal_name, saved_meal_time, positions, positions);
 
             JOptionPane.showMessageDialog(getFrame(), msg);
-
             return;
         }
 
@@ -1242,7 +1248,7 @@ public class MealManager
 
             Object[] params = new Object[]{ saved_meal_name, draft_meal_ID };
 
-            upload_statements.add_Uploads(new Upload_Statement(upload_meal_name, params, true ));
+            upload_statements.add_Uploads(new Upload_Statement(upload_meal_name, params, true));
         }
         if (has_Meal_Name_Been_Changed)
         {

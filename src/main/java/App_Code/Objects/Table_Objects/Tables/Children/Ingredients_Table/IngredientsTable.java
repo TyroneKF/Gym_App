@@ -7,6 +7,7 @@ import App_Code.Objects.Database_Objects.Fetched_Results;
 import App_Code.Objects.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_And_Fetch_Statements;
 import App_Code.Objects.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_Statements;
 import App_Code.Objects.Database_Objects.MyJDBC.Statements.Fetch_Statement;
+import App_Code.Objects.Database_Objects.MyJDBC.Statements.Fetch_Statement_Full;
 import App_Code.Objects.Database_Objects.MyJDBC.Statements.Upload_Statement;
 import App_Code.Objects.Database_Objects.MyJDBC.Statements.Upload_Statement_Full;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
@@ -19,7 +20,6 @@ import App_Code.Objects.Table_Objects.MealManager;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import org.javatuples.Pair;
-
 import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
@@ -1233,10 +1233,11 @@ public class IngredientsTable extends JDBC_JTable
         String errorMSG = "Error, Validating Meal Time!";
         Object[] params = new Object[]{ get_Plan_ID(), new_input_time_local_time };
 
-        // Execute Query
-        try
+        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, params, errorMSG);
+
+        try // Execute Query
         {
-            if (! db.get_Single_Col_Query_Obj(query, params, errorMSG, true).isEmpty()) // Means value already exists, returns N/A if the value doesn't
+            if (! db.get_Single_Col_Query_Obj(fetch_statement, true).isEmpty()) // Means value already exists, returns N/A if the value doesn't
             {
                 JOptionPane.showMessageDialog(null, String.format("A meal in this plan already has a meal time of '%s' !!", new_input_time_local_time));
                 throw new Exception(); // Return null

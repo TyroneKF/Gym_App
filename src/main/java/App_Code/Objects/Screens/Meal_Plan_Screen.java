@@ -8,6 +8,7 @@ import App_Code.Objects.Database_Objects.MyJDBC.Batch_Objects.Batch_Fetch_Statem
 import App_Code.Objects.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_And_Fetch_Statements;
 import App_Code.Objects.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_Statements;
 import App_Code.Objects.Database_Objects.MyJDBC.Statements.Fetch_Statement;
+import App_Code.Objects.Database_Objects.MyJDBC.Statements.Fetch_Statement_Full;
 import App_Code.Objects.Database_Objects.MyJDBC.Statements.Upload_Statement;
 import App_Code.Objects.Database_Objects.MyJDBC.Statements.Upload_Statement_Full;
 import App_Code.Objects.Database_Objects.Shared_Data_Registry;
@@ -346,9 +347,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
     private void setup_Get_User_And_Plan_Info(boolean user_id, boolean plan_id, boolean plan_version_id, boolean plan_name) throws Exception
     {
         // Variables
-        String errorMSG = "Error, Gathering Plan & Personal User Information!";
+        String error_msg = "Error, Gathering Plan & Personal User Information!";
 
-        String queryX = """
+        String query = """
                 SELECT
                 
                 	U.user_id,
@@ -374,13 +375,14 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // Execute
         try
         {
-            ArrayList<ArrayList<Object>> db_results = db.get_2D_Query_AL_Object(queryX, null, errorMSG, false);
+            Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, null, error_msg);
+            ArrayList<ArrayList<Object>> db_results = db.get_2D_Query_AL_Object(fetch_statement, false);
 
             // App Must assume by default there is a selected user and 1 plan active otherwise this causes an error
-            if (user_id)
+            if (user_id) // user_id
             {
                 shared_data_registry.set_User_ID(((Integer) db_results.getFirst().getFirst()));
-            } // user_id
+            }
 
             if (plan_id) { shared_data_registry.set_Selected_Plan_ID((Integer) db_results.getFirst().get(1)); }
 
@@ -389,10 +391,10 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 shared_data_registry.set_Selected_Plan_Version_ID((Integer) db_results.getFirst().get(2));
             }
 
-            if (plan_name)
+            if (plan_name) // plan name
             {
                 shared_data_registry.set_Plan_Name((String) db_results.getFirst().get(3));
-            } // plan name
+            }
 
             System.out.printf("\n\nUser_ID : %s \nPlan_ID : %s \nPlan_Version_ID : %s \nPlan_Name : %s",
                     get_User_ID(),
@@ -579,8 +581,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
     private Pair<Integer, Integer> setup_Get_Meal_Counts() throws Exception
     {
-        String plan_Counts_ErrorMSG = "Unable to get Meals & Sub-Meals Count!";
-        String plan_Counts_Query = """
+        String error_msg = "Unable to get Meals & Sub-Meals Count!";
+        Object[] params = new Object[]{ get_User_ID() };
+        String upload_query = """
                 WITH
                 
                     active_plan_id AS (
@@ -613,16 +616,14 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 
                 FROM count_cte C;""";
 
-        Object[] counts_Params = new Object[]{ get_User_ID() };
-
-        ArrayList<ArrayList<Object>> meal_Count_Results;
+        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(upload_query, params, error_msg);
 
         //#################################
         // Execute Query
         //#################################
         try
         {
-            meal_Count_Results = db.get_2D_Query_AL_Object(plan_Counts_Query, counts_Params, plan_Counts_ErrorMSG, false);
+            ArrayList<ArrayList<Object>> meal_Count_Results = db.get_2D_Query_AL_Object(fetch_statement, false);
 
             // Format Results
             int no_of_meals = (Integer) meal_Count_Results.getFirst().get(0);
@@ -993,7 +994,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 GROUP BY T.ingredient_type_id, T.ingredient_type_name
                 ORDER BY T.ingredient_type_name ASC;""";
 
-        String errorMSG = "Unable to get Ingredient Types & Ingredient Names";
+        String error_msg = "Unable to get Ingredient Types & Ingredient Names";
+
+        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, null, error_msg);
 
         //#######################################
         // Execute Query
@@ -1002,7 +1005,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
         try
         {
-            results = db.get_2D_Query_AL_Object(query, null, errorMSG, false);
+            results = db.get_2D_Query_AL_Object(fetch_statement, false);
         }
         catch (Exception e)
         {
@@ -1074,9 +1077,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //#######################################
         // Create Get Query Results
         //#######################################
-        String
-                errorMSG = "Error, Unable to get Ingredient Stores in Plan!",
-                query = "SELECT * FROM stores ORDER BY store_name ASC;";
+        String error_msg = "Error, Unable to get Ingredient Stores in Plan!";
+        String query = "SELECT * FROM stores ORDER BY store_name ASC;";
+        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, null, error_msg);
 
         //#######################################
         // Execute Query
@@ -1084,7 +1087,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         ArrayList<ArrayList<Object>> results;
         try
         {
-            results = db.get_2D_Query_AL_Object(query, null, errorMSG, false);
+            results = db.get_2D_Query_AL_Object(fetch_statement, false);
         }
         catch (Exception e)
         {
@@ -1102,7 +1105,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     new Store_ID_OBJ(
                             (int) row.get(0),
                             (int) row.get(1) == 1, // IF True = 1
-                            (String) row.get(2)),
+                            (String) row.get(2)
+                    ),
                     false
             );
         }
@@ -1116,16 +1120,16 @@ public class Meal_Plan_Screen extends Screen_JFrame
     private void setup_Get_Measurement_Material_Type_Data() throws Exception
     {
         // Set Variables
-        String
-                query = "SELECT * FROM measurement_material_type ORDER BY measurement_material_type_name;",
-                errorMSG = "Unable, to get Measurements Material Type Data";
+        String query = "SELECT * FROM measurement_material_type ORDER BY measurement_material_type_name;";
+        String error_msg = "Unable, to get Measurements Material Type Data";
+        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, null, error_msg);
 
         // Execute Query
         ArrayList<ArrayList<Object>> data;
 
         try
         {
-            data = db.get_2D_Query_AL_Object(query, null, errorMSG, false);
+            data = db.get_2D_Query_AL_Object(fetch_statement, false);
         }
         catch (Exception e)
         {
@@ -1153,14 +1157,16 @@ public class Meal_Plan_Screen extends Screen_JFrame
     {
         // Set Variables
         String query = "SELECT * FROM measurements ORDER BY unit_name;";
-        String errorMSG = "Unable, to get Measurements Data";
+        String error_msg = "Unable, to get Measurements Data";
+
+        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, null, error_msg);
 
         // Execute Query
         ArrayList<ArrayList<Object>> data;
 
         try
         {
-            data = db.get_2D_Query_AL_Object(query, null, errorMSG, false);
+            data = db.get_2D_Query_AL_Object(fetch_statement, false);
         }
         catch (Exception e)
         {
@@ -1307,9 +1313,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 GROUP BY M.draft_meal_in_plan_id  /*, M.div_meal_sections_id*/
                 ORDER BY M.meal_time ASC;""";
 
-        String errorMSG = "Unable to get Meal Data!";
+        String error_msg = "Unable to get Meal Data!";
 
         Object[] params = new Object[]{ get_Selected_Plan_ID() };
+
+        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, params, error_msg);
 
         //########################################################################
         // Execute Query
@@ -1318,7 +1326,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
         try
         {
-            results = db.get_2D_Query_AL_Object(query, params, errorMSG, false);
+            results = db.get_2D_Query_AL_Object(fetch_statement, false);
         }
         catch (Exception e)
         {
@@ -1451,9 +1459,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 WHERE draft_meal_in_plan_id IN (SELECT draft_meal_in_plan_id FROM draft_meals_in_plan WHERE plan_id = ?)
                 ORDER BY draft_meal_in_plan_id;""";
 
-        String errorMSG = "Unable to get Total Meals Data for Plan!!";
+        String error_msg = "Unable to get Total Meals Data for Plan!!";
 
         Object[] params = new Object[]{ get_Selected_Plan_ID() };
+
+        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, params, error_msg);
 
         //#################################
         // Execute Query
@@ -1462,7 +1472,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
         try
         {
-            meals_Data = db.get_2D_Query_AL_Object(query, params, errorMSG, false);
+            meals_Data = db.get_2D_Query_AL_Object(fetch_statement, false);
         }
         catch (Exception e)
         {
@@ -1491,15 +1501,15 @@ public class Meal_Plan_Screen extends Screen_JFrame
     {
 
         ;
-        String query_PlanCalc = "SELECT * from draft_gui_plan_macro_target_calculations WHERE plan_id = ?";
-        String errorMSG = "Error, Gathering Macros Targets Data!";
+        String query = "SELECT * from draft_gui_plan_macro_target_calculations WHERE plan_id = ?";
+        String error_msg = "Error, Gathering Macros Targets Data!";
+        Object[] params = new Object[]{ get_Selected_Plan_ID() };
 
-        Object[] params_planCalc = new Object[]{ get_Selected_Plan_ID() };
+        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, params, error_msg);
 
-        // Execute
-        try
+        try // Execute
         {
-            ArrayList<ArrayList<Object>> macros_targets_plan_data_AL = db.get_2D_Query_AL_Object(query_PlanCalc, params_planCalc, errorMSG, false);
+            ArrayList<ArrayList<Object>> macros_targets_plan_data_AL = db.get_2D_Query_AL_Object( fetch_statement, false);
             System.out.printf("\n\n%s \nPlan Targets Data Successfully Retrieved \n%s ", lineSeparator, lineSeparator);
             return macros_targets_plan_data_AL;
         }
@@ -1512,14 +1522,17 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
     private ArrayList<ArrayList<Object>> setup_Get_Macros_Left_Data() throws Exception
     {
-        String query_Macros = "SELECT * from draft_gui_plan_macros_left WHERE plan_id = ?;";
-        String errorMSG_ML = "Error, Unable to get Plan Macros Left!";
-        Object[] params_macros = new Object[]{ get_Selected_Plan_ID() };
+        String query = "SELECT * from draft_gui_plan_macros_left WHERE plan_id = ?;";
+        String error_msg = "Error, Unable to get Plan Macros Left!";
+        Object[] params = new Object[]{ get_Selected_Plan_ID() };
+
+        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, params, error_msg);
 
         try
         {
-            ArrayList<ArrayList<Object>> macros_left_plan_data_AL = db.get_2D_Query_AL_Object(query_Macros, params_macros, errorMSG_ML, false);
+            ArrayList<ArrayList<Object>> macros_left_plan_data_AL = db.get_2D_Query_AL_Object(fetch_statement, false);
             System.out.printf("\n\n%s \nPlan Macros Left Data Successfully Retrieved \n%s ", lineSeparator, lineSeparator);
+
             return macros_left_plan_data_AL;
         }
         catch (Exception e)

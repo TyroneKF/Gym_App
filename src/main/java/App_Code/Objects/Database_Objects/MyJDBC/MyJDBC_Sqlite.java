@@ -5,19 +5,17 @@ import App_Code.Objects.Database_Objects.MyJDBC.Batch_Objects.Batch_Fetch_Statem
 import App_Code.Objects.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_And_Fetch_Statements;
 import App_Code.Objects.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_Statements;
 import App_Code.Objects.Database_Objects.MyJDBC.Statements.Fetch_Statement;
+import App_Code.Objects.Database_Objects.MyJDBC.Statements.Fetch_Statement_Full;
 import App_Code.Objects.Database_Objects.MyJDBC.Statements.Upload_Statement;
 import App_Code.Objects.Database_Objects.MyJDBC.Statements.Upload_Statement_Full;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-
 import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.SQLException;
-
 import javax.swing.*;
 import java.math.BigDecimal;
 import java.sql.*;
-import java.text.Collator;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -243,7 +241,12 @@ public class MyJDBC_Sqlite  // remove extends eventually
     // #######################################################
     // Internal Method
     private void upload_Data_Batch_Internally
-    (Connection connection, String origin_Method_Name, LinkedHashSet<Upload_Statement> upload_statements) throws Exception
+    (
+            Connection connection,
+            String origin_Method_Name,
+            LinkedHashSet<Upload_Statement> upload_statements
+
+    ) throws Exception
     {
         //###############################################
         // Set Settings For Connection & Variables
@@ -397,7 +400,7 @@ public class MyJDBC_Sqlite  // remove extends eventually
     }
 
     //##################################################################################################################
-    // DB Get Methods
+    // 1D Arraylist DB Get Methods
     //##################################################################################################################
 
     /**
@@ -415,12 +418,22 @@ public class MyJDBC_Sqlite  // remove extends eventually
      */
 
     private <T, C extends Collection<T>> C get_Single_Column_Internally
-    (String query, Object[] params, String method_Name, String errorMSG, boolean allow_No_Results, Class<T> type, Supplier<C> collectionType) throws Exception
+    (
+            Fetch_Statement_Full full_fetch_statement,
+            String method_Name,
+            boolean allow_No_Results,
+            Class<T> type, Supplier<C> collectionType
+
+    ) throws Exception
     {
         //##########################################################
         // Check DB Status
         //##########################################################
         method_Name = String.format("%s -> %s()", method_Name, new Object() { }.getClass().getEnclosingMethod().getName());
+
+        String query = full_fetch_statement.get_Query();
+        String errorMSG = full_fetch_statement.get_Error_MSG();
+        Object[] params = full_fetch_statement.get_Params();
 
         // Create List Object from Scratch inside method
         C collection = collectionType.get();
@@ -497,43 +510,22 @@ public class MyJDBC_Sqlite  // remove extends eventually
     //######################################################
     // Different Types Of Single Column Collections
     //######################################################
-    public ArrayList<String> get_Single_Col_Query_String(String query, Object[] params, String errorMSG, boolean allow_No_Results) throws Exception
+    public ArrayList<String> get_Single_Col_Query_String(Fetch_Statement_Full full_fetch_statement, boolean allow_No_Results) throws Exception
     {
         String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        return get_Single_Column_Internally(query, params, method_Name, errorMSG, allow_No_Results, String.class, ArrayList :: new);
+        return get_Single_Column_Internally(full_fetch_statement, method_Name, allow_No_Results, String.class, ArrayList :: new);
     }
 
-    public ArrayList<Object> get_Single_Col_Query_Obj(String query, Object[] params, String errorMSG, boolean allow_No_Results) throws Exception
+    public ArrayList<Object> get_Single_Col_Query_Obj(Fetch_Statement_Full full_fetch_statement, boolean allow_No_Results) throws Exception
     {
         String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        return get_Single_Column_Internally(query, params, method_Name, errorMSG, allow_No_Results, Object.class, ArrayList :: new);
+        return get_Single_Column_Internally(full_fetch_statement, method_Name, allow_No_Results, Object.class, ArrayList :: new);
     }
 
-    public ArrayList<Integer> get_Single_Col_Query_Int(String query, Object[] params, String errorMSG, boolean allow_No_Results) throws Exception
+    public ArrayList<Integer> get_Single_Col_Query_Int(Fetch_Statement_Full full_fetch_statement, boolean allow_No_Results) throws Exception
     {
         String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        return get_Single_Column_Internally(query, params, method_Name, errorMSG, allow_No_Results, Integer.class, ArrayList :: new);
-    }
-
-    public TreeSet<String> get_Single_Col_Query_Ordered_TS(String query, Object[] params, String errorMSG)
-    {
-        try
-        {
-            String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-            return get_Single_Column_Internally(
-                    query,
-                    params,
-                    method_Name,
-                    errorMSG,
-                    false,
-                    String.class,
-                    () -> new TreeSet<>(Collator.getInstance())
-            );
-        }
-        catch (Exception e)
-        {
-            return null;
-        }
+        return get_Single_Column_Internally(full_fetch_statement, method_Name, allow_No_Results, Integer.class, ArrayList :: new);
     }
 
     //######################################################
@@ -589,10 +581,17 @@ public class MyJDBC_Sqlite  // remove extends eventually
     }
 
     //##################################################################################################################
-    // Multi Methods
+    // 2D Arraylist DB Get Methods
     //##################################################################################################################
     private <T> ArrayList<ArrayList<T>> get_2D_ArrayList_Internally
-    (Connection connection, String method_Name, String query, Object[] params, Class<T> typeCast, boolean allow_No_Results) throws Exception
+    (
+            Connection connection,
+            String method_Name,
+            Fetch_Statement fetch_statement,
+            Class<T> typeCast,
+            boolean allow_No_Results
+
+    ) throws Exception
     {
         //#########################################################################
         // Variables
@@ -600,6 +599,9 @@ public class MyJDBC_Sqlite  // remove extends eventually
         ArrayList<ArrayList<T>> collection = new ArrayList<>();
 
         method_Name = String.format("%s ---> %s()", method_Name, new Object() { }.getClass().getEnclosingMethod().getName());
+
+        String query = fetch_statement.get_Query();
+        Object[] params = fetch_statement.get_Params();
 
         //#########################################################################
         // Query Setup
@@ -668,7 +670,57 @@ public class MyJDBC_Sqlite  // remove extends eventually
         }
     }
 
-    private Fetched_Results get_Fetched_Results_Internally(Connection connection, LinkedHashSet<Fetch_Statement> fetch_Queries_And_Params) throws Exception
+    //#######################################
+    // 2D Objects
+    //#######################################
+    private ArrayList<ArrayList<Object>> get_2D_Object_AL_Internally
+    (
+            Connection connection,
+            String method_Name,
+            Fetch_Statement fetch_statement,
+            boolean allow_No_Results
+
+    ) throws Exception
+    {
+        return get_2D_ArrayList_Internally(connection, method_Name, fetch_statement, Object.class, allow_No_Results);
+    }
+
+    public ArrayList<ArrayList<Object>> get_2D_Query_AL_Object(Fetch_Statement_Full full_fetch_statement, boolean allow_No_Results) throws Exception
+    {
+        //#############################
+        // Variables
+        //#############################
+        String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+
+        String query = full_fetch_statement.get_Query();
+        String errorMSG = full_fetch_statement.get_Error_MSG();
+
+        //#############################
+        // Execute
+        //#############################
+        try (Connection connection = dataSource.getConnection()) // Get a Connection from pool
+        {
+            return get_2D_Object_AL_Internally(connection, method_Name, full_fetch_statement, allow_No_Results);
+        }
+        //#############################
+        // Error Handling
+        //#############################
+        catch (Exception e) // Exception needs to be handled here the methods above just pass on Exception & Half print error msg
+        {
+            handleException_MYSQL(e, method_Name, query, errorMSG);
+            throw new Exception(""); // Exception Already been handled but, notify external method calling this method
+        }
+    }
+
+    //##################################################################################################################
+    // Fetched Results : Methods
+    //##################################################################################################################
+    private Fetched_Results get_Fetched_Results_Internally
+    (
+            Connection connection,
+            LinkedHashSet<Fetch_Statement> fetch_Queries_And_Params
+
+    ) throws Exception
     {
         //###############################################################
         // Variables
@@ -689,8 +741,7 @@ public class MyJDBC_Sqlite  // remove extends eventually
                 query = fetch_statements.get_Query();
                 params = fetch_statements.get_Params();
 
-                // Add Fetch Results To Object made for storing multiple queries
-                fetched_Results.add_2D_Result(get_2D_Object_AL_Internally(connection, method_Name, query, params, false));
+                fetched_Results.add_2D_Result(get_2D_Object_AL_Internally(connection, method_Name, fetch_statements, false));  // Add Fetch Results To Object made for storing multiple queries
             }
 
             return fetched_Results;  // Return Output
@@ -702,37 +753,6 @@ public class MyJDBC_Sqlite  // remove extends eventually
         }
     }
 
-    //#######################################
-    // 2D Objects
-    //#######################################
-    private ArrayList<ArrayList<Object>> get_2D_Object_AL_Internally(Connection connection, String method_Name, String query, Object[] params, boolean allow_No_Results) throws Exception
-    {
-        return get_2D_ArrayList_Internally(connection, method_Name, query, params, Object.class, allow_No_Results);
-    }
-
-    public ArrayList<ArrayList<Object>> get_2D_Query_AL_Object(String query, Object[] params, String errorMSG, boolean allow_No_Results) throws Exception
-    {
-        //#############################
-        // Query Setup
-        //#############################
-        String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        try (Connection connection = dataSource.getConnection()) // Get a Connection from pool
-        {
-            return get_2D_Object_AL_Internally(connection, method_Name, query, params, allow_No_Results);
-        }
-        //#############################
-        // Error Handling
-        //#############################
-        catch (Exception e) // Exception needs to be handled here the methods above just pass on Exception & Half print error msg
-        {
-            handleException_MYSQL(e, method_Name, query, errorMSG);
-            throw new Exception(""); // Exception Already been handled but, notify external method calling this method
-        }
-    }
-
-    //#######################################
-    // Fetched Results
-    //#######################################
     public Fetched_Results get_Fetched_Results(Batch_Fetch_Statements batch_fetch_statements)
     {
         String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
