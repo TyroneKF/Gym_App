@@ -1,6 +1,7 @@
 package App_Code.Objects.Table_Objects;
 
 import App_Code.Objects.Data_Objects.ID_Objects.MetaData_ID_Object.Meal_ID_OBJ;
+import App_Code.Objects.Data_Objects.ID_Objects.MetaData_ID_Object.Sub_Meal_ID_OBJ;
 import App_Code.Objects.Database_Objects.Fetched_Results;
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
 import App_Code.Objects.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_And_Fetch_Statements;
@@ -175,9 +176,9 @@ public class MealManager
             MacrosLeft_Table macrosLeft_JTable
     )
     {
-        //############################################################################
+        //#######################################################
         // Setting Variables
-        //############################################################################
+        //#######################################################
         this.meal_plan_screen = meal_plan_screen;
         this.shared_Data_Registry = shared_Data_Registry;
         this.macrosLeft_JTable = macrosLeft_JTable;
@@ -186,26 +187,34 @@ public class MealManager
         na_pdid = shared_Data_Registry.get_NA_PDID();
         na_ingredient_id = shared_Data_Registry.get_Na_Ingredient_ID();
 
-        //############################################################################
-        // Getting user input for Meal Name & Time
-        //############################################################################
-        String new_Meal_Name = prompt_User_For_Meal_Name(true, false);
+        //#######################################################
+        // Get & Validate Meal Name Input
+        //#######################################################
+        String input_meal_name = prompt_User_For_Meal_Name("Input Meal Name?");
+        if (input_meal_name == null) { return; } // Error occurred in validation checks above
 
+        String new_Meal_Name = input_Meal_Name_Validation(input_meal_name, "Meal");
         if (new_Meal_Name == null) { return; } // Error occurred in validation checks above
 
-        //############################################################################
-        // Validating User Input
-        //############################################################################
-        LocalTime new_Meal_Time = prompt_User_For_Meal_Time(true, false);
+        if (! is_Meal_Name_Available(new_Meal_Name)) { return; }
 
-        if (new_Meal_Time == null) { return; } // Error occurred in validation checks above
+        //#######################################################
+        // Get & Validate Meal Time Input
+        //#######################################################
+        String time_input = prompt_User_For_Time_Input("Enter New Meal Time");
 
-        //############################################################################
+        LocalTime new_meal_time = convert_To_Local_Time(time_input);
+
+        if (new_meal_time == null) { return; } // Error occurred in validation checks above
+
+        if (! is_Meal_Time_Available(new_meal_time)) { return; }
+
+        //#######################################################
         // Upload & Fetch Variables
-        //############################################################################
-        String errorMSG = String.format("\n\nError Creating Meal with credentials: \n\nMeal Name: '%s' \nMeal Time: %s!", new_Meal_Name, new_Meal_Time);
+        //#######################################################
+        String error_msg = String.format("\n\nError Creating Meal with credentials: \n\nMeal Name: '%s' \nMeal Time: %s!", new_Meal_Name, new_meal_time);
 
-        Batch_Upload_And_Fetch_Statements batch_Statements = new Batch_Upload_And_Fetch_Statements(errorMSG);
+        Batch_Upload_And_Fetch_Statements batch_Statements = new Batch_Upload_And_Fetch_Statements(error_msg);
 
         //#######################################################
         // Upload Queries
@@ -223,21 +232,33 @@ public class MealManager
                 VALUES
                 (?,?,?);""";
 
-        batch_Statements.add_Uploads(new Upload_Statement(upload_Q1, new Object[]{ get_Plan_ID(), new_Meal_Name, new_Meal_Time }, true));
+        batch_Statements.add_Uploads(new Upload_Statement(upload_Q1, new Object[]{ get_Plan_ID(), new_Meal_Name, new_meal_time }, true));
 
         //###############################
         // Insert Into Sub-Meals
         //###############################
         String upload_Q2 = """
                 INSERT INTO draft_divided_meal_sections
-                (draft_meal_in_plan_id, plan_id)
+                (
+                    draft_meal_in_plan_id,
+                    plan_id,
+                    sub_meal_name,
+                    sub_meal_time
+                )
                 VALUES
                 (
                     (SELECT last_insert_rowid()),
+                    ?,
+                    ?,
                     ?
                 );""";
 
-        batch_Statements.add_Uploads(new Upload_Statement(upload_Q2, new Object[]{ get_Plan_ID() }, true)); // Upload Q1
+        String sub_meal_name = "New Sub-Meal";
+        LocalTime sub_meal_time = new_meal_time.plusMinutes(5);
+
+        Object[] upload_params_02 = new Object[]{ get_Plan_ID(), sub_meal_name, sub_meal_time };
+
+        batch_Statements.add_Uploads(new Upload_Statement(upload_Q2, upload_params_02, true)); // Upload Q1
 
         //###############################
         // Insert Ingredients Into Sub-Meal
@@ -319,21 +340,27 @@ public class MealManager
         //#######################################################
         // Set Variables from Results
         //#######################################################
-        int sub_Meal_ID;
-        ArrayList<ArrayList<Object>> sub_Meal_DATA;
         ArrayList<Object> total_Meal_Data = null;
+        Sub_Meal_ID_OBJ sub_meal_id_obj = null;
 
         try
 
         {
-            ArrayList<ArrayList<Object>> results = fetched_Results_OBJ.get_Fetched_Result_2D_AL(0);
-            ArrayList<Object> combined_results = results.getFirst();
+            ArrayList<ArrayList<Object>> sub_Meal_DATA = fetched_Results_OBJ.get_Fetched_Result_2D_AL(0);
+            ArrayList<Object> combined_results = sub_Meal_DATA.getFirst();
 
             draft_meal_ID = (Integer) combined_results.removeFirst(); // Get Draft Meal ID & Remove IT
 
-            sub_Meal_ID = (Integer) combined_results.removeFirst();  // Get Draft Sub ID & Remove IT
+            int draft_sub_Meal_ID = (Integer) combined_results.removeFirst();  // Get Draft Sub ID & Remove IT
 
-            sub_Meal_DATA = results; // Get Sub Ingredients & Remove IT
+            // Get Sub Ingredients & Remove IT
+            sub_meal_id_obj = new Sub_Meal_ID_OBJ(
+                    draft_sub_Meal_ID,
+                    sub_meal_name,
+                    sub_meal_time,
+                    sub_Meal_DATA,
+                    draft_meal_ID
+            );
 
             total_Meal_Data = fetched_Results_OBJ.get_Result_1D_AL(1); // Get Total Meal Data
         }
@@ -348,14 +375,13 @@ public class MealManager
         //#############################
         set_Meal_Name_Variables(false, new_Meal_Name, new_Meal_Name); // Set MealName Variables
 
-        set_Time_Variables(false, new_Meal_Time, new_Meal_Time);     // Set MealTime Variables
+        set_Time_Variables(false, new_meal_time, new_meal_time);     // Set MealTime Variables
 
         //#######################################################
         // Add Meals To GUI
         //#######################################################
         setup_GUI(total_Meal_Data); // GUI
-
-        add_Sub_Meal(false, null, sub_Meal_ID, sub_Meal_DATA); // Add Sub-Meal to GUI
+        add_Sub_Meal(sub_meal_id_obj); // Add Sub-Meal to GUI
     }
 
     //##################################################################################################################
@@ -563,19 +589,16 @@ public class MealManager
     //#################################
     private void add_Multiple_Sub_Meals(Meal_And_Sub_Meals_OBJ meal_and_sub_meals_obj)
     {
-        LinkedHashMap<Integer, ArrayList<ArrayList<Object>>> sub_Meal_DATA = meal_and_sub_meals_obj.get_Sub_Meals_Data_Map();
+        HashMap<Integer, Sub_Meal_ID_OBJ> sub_meal_id_map = meal_and_sub_meals_obj.get_Sub_Meal_ID_Map();
 
         // Iterate Through each Sub-Meal Data & Add to GUI
-        for (Map.Entry<Integer, ArrayList<ArrayList<Object>>> div_data : sub_Meal_DATA.entrySet())
+        for (Sub_Meal_ID_OBJ sub_meal_id_obj : sub_meal_id_map.values())
         {
-            int draft_id = div_data.getKey();
-            int source_div_id = meal_and_sub_meals_obj.get_Source_Sub_Meal_ID(draft_id);
-
-            add_Sub_Meal(true, source_div_id, draft_id, div_data.getValue());
+            add_Sub_Meal(sub_meal_id_obj);
         }
     }
 
-    private void add_Sub_Meal(boolean is_Sub_Meal_In_DB, Integer source_sub_meal_id, int draft_div_id, ArrayList<ArrayList<Object>> sub_Meal_Data)
+    private void add_Sub_Meal(Sub_Meal_ID_OBJ sub_meal_id_obj)
     {
         //##############################################
         // Create Ingredient Table Object
@@ -588,12 +611,8 @@ public class MealManager
                         this,
                         shared_Data_Registry,
                         macrosLeft_JTable,
-                        draft_meal_ID,
-                        source_sub_meal_id,
-                        draft_div_id,
-                        sub_Meal_Data,
-                        is_Sub_Meal_In_DB,
-                        spaceDivider
+                        spaceDivider,
+                        sub_meal_id_obj
                 );
 
         //################################################
@@ -619,30 +638,41 @@ public class MealManager
         return reply != JOptionPane.NO_OPTION && reply != JOptionPane.CLOSED_OPTION;
     }
 
-    //#################################################################################
-    // Meal Name & Meal Time Functions
-    //#################################################################################
-    private boolean contains_Symbols(String string_To_Check)
-    {
-        Pattern pattern = Pattern.compile("^[a-zA-Z0-9 '\\-&]+$");
-        Matcher matcher = pattern.matcher(string_To_Check);
-
-        return ! matcher.matches();
-    }
-
     //########################################################
     // Meal Time Functions
     //########################################################
     private void edit_Time_Btn_Action()
     {
         //###############################
-        // Prompt User for time Input
+        // Get & Validate Time Input
         //###############################
 
-        LocalTime new_meal_time = prompt_User_For_Meal_Time(false, true);
+        // Prompt User for Time Input
+        String time_input = prompt_User_For_Time_Input("Input Meal Time etc \"09:00\"?");
+
+        // Convert To LocalTime / Syntax Validate
+        LocalTime new_meal_time = convert_To_Local_Time(time_input);
+        if (new_meal_time == null) { return; }
+
+        // Compare current time with new time input
+        if (get_Current_Meal_Time().equals(new_meal_time)) // Time : User enters same meal time
+        {
+            JOptionPane.showMessageDialog(getFrame(), String.format("This meal 'time' already has the value '%s' !!", new_meal_time));
+            return;
+        }
+
+        // DB Validation
+        if (! is_Meal_Time_Available(new_meal_time)) { return; }
+
+        //###############################
+        // User Confirmation
+        //###############################
         LocalTime old_current_time = get_Current_Meal_Time();
 
-        if (new_meal_time == null) { return; } // Error occurred in validation checks above
+        if (! areYouSure(String.format("change meal time from '%s' to '%s'", old_current_time, new_meal_time)))
+        {
+            return;
+        }
 
         //###############################
         // Update
@@ -665,105 +695,85 @@ public class MealManager
         set_Time_Variables(true, saved_meal_time, new_meal_time); // Set Meal Time Variables
         set_Has_Meal_Data_Changed(true);
 
-        //
+        // Re-Draw GUI for time positioning
         meal_plan_screen.add_And_Replace_MealManger_POS_GUI(this, true, true);
 
         // Update External Charts
         meal_plan_screen.update_External_Charts(false, "mealTime", this, old_current_time, new_meal_time);
 
-        //###############################
-        // Update GUI
-        //###############################
-        JOptionPane.showMessageDialog(getFrame(), String.format("Successfully, changed meal time from '%s' to '%s'",
-                old_current_time, new_meal_time)); // Success MSG
-
+        // Update TotalMeal Time Slot
         totalMealTable.set_Value_On_Table(new_meal_time, 0, total_meal_time_col_pos); // Update total Meal Table Time Value
 
         pie_Chart_Update_Title(); // Update PieChart Title
+
+        //###############################
+        // Success Msg
+        //###############################
+        JOptionPane.showMessageDialog(getFrame(), String.format("Successfully, changed meal time from '%s' to '%s'",
+                old_current_time, new_meal_time)); // Success MSG
     }
 
-    private LocalTime prompt_User_For_Meal_Time(boolean skip_confirmation, boolean comparison)
+    //###########################
+    // Time Validation
+    //###########################
+    private String prompt_User_For_Time_Input(String msg)
     {
         // User info prompt
-        String input_meal_time = JOptionPane.showInputDialog("Input Meal Time etc \"09:00\"?");
+        String input_meal_time = JOptionPane.showInputDialog(msg);
 
-        if (input_meal_time == null || input_meal_time.isEmpty()) { return null; }
-
-        return input_Meal_Time_Validation(input_meal_time, skip_confirmation, comparison);
+        return input_meal_time == null || input_meal_time.isEmpty() ? null : input_meal_time;
     }
 
-    private LocalTime input_Meal_Time_Validation(String input_meal_time_string, boolean skip_confirmation, boolean comparison)
+    private LocalTime convert_To_Local_Time(String input_meal_time_string)
     {
         //#######################################################
         // Validation Checks
         //#######################################################
-
         // Prior to this method being called the users input_meal_time_string is checked if its null or "" and rejected
-        LocalTime new_input_time_local_time = null;
-        LocalTime old_current_meal_time = get_Current_Meal_Time();
+        LocalTime converted_time = null;
 
         try
         {
-            new_input_time_local_time = LocalTime.parse(input_meal_time_string, time_Formatter);
+            converted_time = LocalTime.parse(input_meal_time_string, time_Formatter);
         }
         catch (Exception e)
         {
-            System.err.printf("\n\nMealManager.java: input_Meal_Time_Validation() | Error, converting input_meal_time_string to time string! \n%s", e);
-            JOptionPane.showMessageDialog(getFrame(), "Error, converting input_meal_time_string to Time!!");
+            System.err.printf("\n\nMealManager.java: input_Meal_Time_Syntax_Validation() | Error, converting input_meal_time_string to time string! \n%s", e);
+            JOptionPane.showMessageDialog(getFrame(), "Error, converting input to LocalTime!");
             return null;
-        }
-
-        // ####################################################
-        // Compare with saved correlating values
-        // ####################################################
-        if (comparison)
-        {
-            if (old_current_meal_time.equals(new_input_time_local_time)) // Time : User enters same meal time
-            {
-                JOptionPane.showMessageDialog(getFrame(), String.format("This meal 'time' already has the value '%s' !!", old_current_meal_time));
-                return null;
-            }
-        }
-
-        // ######################################################
-        // Check Database if Value Already Exists
-        // ######################################################
-        String query = " SELECT 1 FROM draft_meals_in_plan WHERE plan_id = ? AND meal_time = ?";
-        String errorMSG = "Error, Validating Meal Time!";
-        Object[] params = new Object[]{ get_Plan_ID(), new_input_time_local_time };
-
-        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, params, errorMSG);
-
-        // Execute Query
-        try
-        {
-            if (! db.get_Single_Col_Query_Obj(fetch_statement, true).isEmpty()) // Means value already exists, returns N/A if the value doesn't
-            {
-                JOptionPane.showMessageDialog(getFrame(), String.format("A meal in this plan already has a meal time of '%s' !!", new_input_time_local_time));
-                throw new Exception(); // Return null
-            }
-        }
-        catch (Exception e)
-        {
-            System.err.printf("\n\n%s", e);
-            return null;
-        }
-
-        //#############################################################################
-        // User Confirmation
-        //#############################################################################
-        if (! skip_confirmation) // If requested not to skip a confirmation msg prompt confirmation
-        {
-            if (! areYouSure(String.format("change meal time from '%s' to '%s'", get_Current_Meal_Time().toString(), input_meal_time_string)))
-            {
-                return null;
-            }
         }
 
         //################################################################
         // Return Value
         //#################################################################
-        return new_input_time_local_time;
+        return converted_time;
+    }
+
+    private boolean is_Meal_Time_Available(LocalTime new_meal_time)
+    {
+        // ######################################################
+        // Check Database if Value Already Exists
+        // ######################################################
+        String query = " SELECT 1 FROM draft_meals_in_plan WHERE plan_id = ? AND meal_time = ?";
+        String errorMSG = "Error, Validating Meal Time!";
+        Object[] params = new Object[]{ get_Plan_ID(), new_meal_time };
+
+        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, params, errorMSG);
+
+        try // Execute Query
+        {
+            if (db.get_Single_Col_Query_Obj(fetch_statement, true).isEmpty()) { return true; }
+
+            // Means value already exists, returns N/A if the value doesn't
+            JOptionPane.showMessageDialog(getFrame(), String.format("A meal in this plan already has a meal time of '%s' !!", new_meal_time));
+
+            throw new Exception();
+        }
+        catch (Exception e)
+        {
+            System.err.printf("\n\n%s", e);
+            return false;
+        }
     }
 
     //####################################
@@ -772,12 +782,29 @@ public class MealManager
     private void edit_Name_BTN_Action()
     {
         //##########################################
-        // Validation Checks
+        // Get & Validate Meal Name Input
         //##########################################
-        // Get User Input
-        String new_input_meal_name = prompt_User_For_Meal_Name(false, true);
+        String input_meal_name = prompt_User_For_Meal_Name("Input Meal Name?");
+        if (input_meal_name == null) { return; } // Error occurred in validation checks above
 
-        if (new_input_meal_name == null) { return; } // Error occurred in validation checks above
+        String new_meal_name = input_Meal_Name_Validation(input_meal_name, "Meal");
+        if (new_meal_name == null) { return; } // Error occurred in validation checks above
+
+        if (! is_Meal_Name_Available(new_meal_name)) { return; }
+
+        if (new_meal_name.equals(get_Current_Meal_Name()))   // User enters same meal name
+        {
+            JOptionPane.showMessageDialog(getFrame(), String.format("This meal 'Meal Name' already has the value '%s' !!", get_Current_Meal_Name()));
+            return;
+        }
+
+        //##########################################
+        // User Confirmation
+        //##########################################
+        if (! areYouSure(String.format("change meal Meal Name from '%s' to '%s'", get_Current_Meal_Name(), new_meal_name)))
+        {
+            return;
+        }
 
         //##########################################
         // Update DB
@@ -787,7 +814,7 @@ public class MealManager
                 SET meal_name = ?
                 WHERE draft_meal_in_plan_id = ?;""";
 
-        Object[] params = new Object[]{ new_input_meal_name, draft_meal_ID };
+        Object[] params = new Object[]{ new_meal_name, draft_meal_ID };
         String error_msg = "Error, unable to change Meal Name!";
         Upload_Statement_Full sql_statement = new Upload_Statement_Full(upload_query, params, error_msg, true);
 
@@ -796,120 +823,128 @@ public class MealManager
         //##########################################
         // Update Variables & DATA / Objects
         //##########################################
-        set_Meal_Name_Variables(true, saved_meal_name, new_input_meal_name);  // Set Meal Name Variables
+        set_Meal_Name_Variables(true, saved_meal_name, new_meal_name);  // Set Meal Name Variables
         set_Has_Meal_Data_Changed(true);
 
-        collapsibleJpObj.set_Icon_Btn_Text(new_input_meal_name); // Update Meal Manager Name
+        collapsibleJpObj.set_Icon_Btn_Text(new_meal_name); // Update Meal Manager Name
 
-        //##########################################
-        // Internal / External Graphs
-        //##########################################
         pie_Chart_Update_Title(); // Change Internal Graph Title if exists
 
-        // Update External
+        // Update External Graphs
         meal_plan_screen.update_External_Charts(false, "mealName", this, null, null);
 
-        totalMealTable.set_Value_On_Table(new_input_meal_name, 0, total_meal_name_col_pos);    // Update Total Meal Table Name Col
+        // Update Total Meal Table Name Col
+        totalMealTable.set_Value_On_Table(new_meal_name, 0, total_meal_name_col_pos);
 
         //##########################################
         // Success MSG
         //##########################################
-        String msg = String.format("Successfully, changed meal name from ' %s ' to ' %s ' ", current_meal_name, new_input_meal_name);
+        String msg = String.format("Successfully, changed meal name from ' %s ' to ' %s ' ", current_meal_name, new_meal_name);
         JOptionPane.showMessageDialog(getFrame(), msg);
     }
 
-    private String prompt_User_For_Meal_Name(boolean skip_confirmation, boolean comparison)
+    private String prompt_User_For_Meal_Name(String title)
     {
         // Get User Input For Meal Name
-        String new_meal_name = JOptionPane.showInputDialog(getFrame(), "Input Meal Name?");
+        String new_meal_name = JOptionPane.showInputDialog(getFrame(), title);
 
         // User Cancelled or entered nothing
-        if (new_meal_name == null || new_meal_name.isEmpty()) { return null; }
-
-        // validate user input
-        return input_Meal_Name_Validation(new_meal_name, comparison, skip_confirmation);
+        return new_meal_name == null || new_meal_name.isEmpty() ? null : new_meal_name;
     }
 
-    private String input_Meal_Name_Validation(String new_meal_name, boolean comparison, boolean skipConfirmation)
+    //#####################
+    // Name Validation
+    //#####################
+    private String input_Meal_Name_Validation(String new_meal_name, String type)
     {
+        //##########################################
+        // Validation Checks
+        //##########################################
         // Remove whitespace at the end of variable
         new_meal_name = StringUtils.capitalize(new_meal_name.trim());
 
-        //#######################################################
-        // Validation Checks
-        //#######################################################
         if (contains_Symbols(new_meal_name)) // Name: check if any symbols are inside
         {
-            JOptionPane.showMessageDialog(getFrame(), "\n\nError, 'Meal Name' cannot contain symbols!");
+            JOptionPane.showMessageDialog(getFrame(), String.format("\n\nError, '%s Name' cannot contain symbols!", type));
             return null;
         }
 
-        // ####################################################
-        // Compare with saved correlating values
-        // ####################################################
-        if (comparison)
-        {
-            // User enters same meal name
-            if (new_meal_name.equals(get_Current_Meal_Name()))
-            {
-                JOptionPane.showMessageDialog(getFrame(), String.format("This meal 'Meal Name' already has the value '%s' !!", get_Current_Meal_Name()));
-                return null;
-            }
-        }
+        //#########################################
+        // Return Value
+        //#########################################
+        return new_meal_name;
+    }
 
-        // ######################################################
+    private boolean contains_Symbols(String string_To_Check)
+    {
+        Pattern pattern = Pattern.compile("^[a-zA-Z0-9 '\\-&]+$");
+        Matcher matcher = pattern.matcher(string_To_Check);
+
+        return ! matcher.matches();
+    }
+
+    private boolean is_Meal_Name_Available(String new_meal_name)
+    {
+        //##########################################
         // Check Database if Value Already Exists
-        // ######################################################
+        //##########################################
         String query = "SELECT 1 FROM draft_meals_in_plan WHERE plan_id = ? AND meal_name = ?";
         String error_msg = "Error, Validating Meal Name!";
         Object[] params = new Object[]{ get_Plan_ID(), new_meal_name };
 
         Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, params, error_msg);
 
-        // Execute Query
-        try
+        try // Execute Query
         {
-            if (! db.get_Single_Col_Query_Obj(fetch_statement, true).isEmpty()) // Means value already exists, returns N/A if the value doesn't
-            {
-                JOptionPane.showMessageDialog(getFrame(), String.format("A meal in this plan already has a meal Meal Name of '%s' !!", new_meal_name));
-                throw new Exception(); // Return null
-            }
-        }
-        catch (Exception e)
-        {
-            return null;
-        }
+            if (db.get_Single_Col_Query_Obj(fetch_statement, true).isEmpty()) { return true; }
 
-        //##############################################################################################################
-        // User Confirmation
-        //##############################################################################################################
-        if (! skipConfirmation) // If requested not to skip a confirmation msg prompt confirmation
-        {
-            if (! areYouSure(String.format("change meal Meal Name from '%s' to '%s'", get_Current_Meal_Name(), new_meal_name)))
-            {
-                return null;
-            }
-        }
+            // Means value already exists, returns N/A if the value doesn't
+            JOptionPane.showMessageDialog(getFrame(), String.format("A meal in this plan already has a meal Meal Name of '%s' !!", new_meal_name));
 
-        //##############################################################################################################
-        // Return Value
-        //##############################################################################################################
-        return new_meal_name;
+            throw new Exception();
+        }
+        catch (Exception _)
+        {
+            return false;
+        }
     }
 
     //#################################################################################
     // Add BTN
     //#################################################################################
-    // HELLO, Needs to scroll down to the bottom of the MealManager
-    private void add_Btn_Action()
+    private void add_Btn_Action() // HELLO, Needs to scroll down to the bottom of the MealManager
     {
-        //###########################################################
+        //#######################################################
+        // Get & Validate Meal Name Input
+        //#######################################################
+        String input_meal_name = prompt_User_For_Meal_Name("Input Sub-Meal Name?");
+        if (input_meal_name == null) { return; } // Error occurred in validation checks above
+
+        String sub_meal_name = input_Meal_Name_Validation(input_meal_name, "Sub-Meal");
+        if (sub_meal_name == null) { return; } // Error occurred in validation checks above
+
+        if (! is_Sub_Meal_Name_Available(sub_meal_name)) { return; }
+
+        //#######################################################
+        // Get & Validate Meal Time Input
+        //#######################################################
+        String time_input = prompt_User_For_Time_Input("Enter New Meal Time");
+
+        LocalTime sub_meal_time = convert_To_Local_Time(time_input);
+
+        if (sub_meal_time == null) { return; } // Error occurred in validation checks above
+
+        if (! is_Sub_Meal_Time_Available(sub_meal_time)) { return; }
+
+        if (! is_Sub_Meal_Time_In_Valid_Range(sub_meal_time)) { return; }
+
+        //#######################################################
         // Upload & Fetch Variables
-        //############################################################
-        String errorMSG = "Error, unable to add SubMeal to Meal!";
+        //#######################################################
+        String errorMSG = "Error, unable to add Sub-Meal to Meal!";
         Batch_Upload_And_Fetch_Statements batch_statements = new Batch_Upload_And_Fetch_Statements(errorMSG);
 
-        int sub_Meal_ID;
+        int draft_sub_meal_id;
         ArrayList<ArrayList<Object>> sub_Meal_DATA;
 
         //###############################
@@ -917,11 +952,18 @@ public class MealManager
         //###############################
         String upload_Q1 = """
                 INSERT INTO draft_divided_meal_sections
-                (draft_meal_in_plan_id, plan_id)
-                VALUES (?,?);""";
+                (
+                    draft_meal_in_plan_id,
+                    plan_id,
+                    sub_meal_name,
+                    sub_meal_time
+                )
+                VALUES (?,?,?,?);""";
+
+        Object[] params_1 = new Object[]{ draft_meal_ID, get_Plan_ID(), sub_meal_name, sub_meal_time };
 
         // Upload Q1
-        batch_statements.add_Uploads(new Upload_Statement(upload_Q1, new Object[]{ draft_meal_ID, get_Plan_ID() }, true));
+        batch_statements.add_Uploads(new Upload_Statement(upload_Q1, params_1, true));
 
         //###############################
         // Insert Ingredients Into Sub-Meal
@@ -985,8 +1027,7 @@ public class MealManager
         {
             ArrayList<ArrayList<Object>> combined_data = fetched_Results_OBJ.get_Fetched_Result_2D_AL(0);
 
-            // Get SubMeal ID then removed it
-            sub_Meal_ID = (int) combined_data.getFirst().removeFirst();
+            draft_sub_meal_id = (int) combined_data.getFirst().removeFirst(); // Get SubMeal ID then remove it
 
             sub_Meal_DATA = combined_data;
         }
@@ -996,20 +1037,115 @@ public class MealManager
             return;
         }
 
+        Sub_Meal_ID_OBJ sub_meal_id_obj = new Sub_Meal_ID_OBJ(
+                draft_sub_meal_id,
+                sub_meal_name,
+                sub_meal_time,
+                sub_Meal_DATA,
+                draft_meal_ID
+        );
+
         //#######################################################
         // Add Meal To GUI
         //#######################################################
-        add_Sub_Meal(false, null, sub_Meal_ID, sub_Meal_DATA); // Add Sub-Meal to GUI
+        add_Sub_Meal(sub_meal_id_obj); // Add Sub-Meal to GUI
+
+        expand_JPanel(); // Expand Meal View
+
+        meal_plan_screen.scrollToJPanelOnScreen(get_Collapsible_JP_Obj()); // Scroll GUI to MealManager*/
 
         //#######################################################
         // Success MSG & Expand Meal View
         //#######################################################
         JOptionPane.showMessageDialog(null, String.format("Successfully Created Sub-Meal in %s at [%s]",
                 current_meal_name, get_Current_Meal_Time())); // Show Success MSG
+    }
 
-        expand_JPanel(); // Expand Meal View
+    //############################
+    // Sub-Meal Name Methods
+    //############################
+    private boolean is_Sub_Meal_Name_Available(String sub_meal_name)
+    {
+        //##########################################
+        // Check Database if Value Already Exists
+        //##########################################
+        String query = "SELECT 1 FROM draft_divided_meal_sections WHERE plan_id = ? AND sub_meal_name = ?";
+        String error_msg = "Error, Validating Sub-Meal Name!";
+        Object[] params = new Object[]{ get_Plan_ID(), sub_meal_name };
 
-        meal_plan_screen.scrollToJPanelOnScreen(get_Collapsible_JP_Obj()); // Scroll GUI to MealManager
+        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, params, error_msg);
+
+        try // Execute Query
+        {
+            if (db.get_Single_Col_Query_Obj(fetch_statement, true).isEmpty()) { return true; }
+
+            // Means value already exists, returns N/A if the value doesn't
+            JOptionPane.showMessageDialog(getFrame(), String.format("A sub-meal in this plan already has a Sub-Meal of '%s' !!", sub_meal_name));
+
+            throw new Exception();
+        }
+        catch (Exception _)
+        {
+            return false;
+        }
+    }
+
+    //############################
+    // Sub-Meal Time Methods
+    //############################
+    private boolean is_Sub_Meal_Time_Available(LocalTime sub_meal_time)
+    {
+        //##########################################
+        // Check Database if Value Already Exists
+        //##########################################
+        String query = "SELECT 1 FROM draft_divided_meal_sections WHERE plan_id = ? AND sub_meal_time = ?";
+        String error_msg = "Error, Validating Sub-Meal Name!";
+        Object[] params = new Object[]{ get_Plan_ID(), sub_meal_time };
+
+        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, params, error_msg);
+
+        try // Execute Query
+        {
+            if (db.get_Single_Col_Query_Obj(fetch_statement, true).isEmpty()) { return true; }
+
+            // Means value already exists, returns N/A if the value doesn't
+            JOptionPane.showMessageDialog(getFrame(), String.format("A sub-meal in this plan already has a Sub-Meal of '%s' !!", sub_meal_time));
+
+            throw new Exception();
+        }
+        catch (Exception _)
+        {
+            return false;
+        }
+    }
+
+    private boolean is_Sub_Meal_Time_In_Valid_Range(LocalTime sub_meal_time)
+    {
+        try
+        {
+            Pair<LocalTime, LocalTime> time_range = get_Available_Sub_Meal_Time_Ranges();
+
+            LocalTime upper_bound = time_range.getValue0();
+            LocalTime lower_bound = time_range.getValue1();
+
+            if (sub_meal_time.isBefore(upper_bound) || sub_meal_time.isAfter(lower_bound))
+            {
+                String msg = String.format("Sub-Meal Time isn't in the available range [%s - %s ]!", upper_bound, lower_bound);
+
+                JOptionPane.showMessageDialog(null, msg);
+
+                return false;
+            }
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            System.err.printf("\n\n%s \n\n%s", get_Class_And_Method_Name(), e);
+            JOptionPane.showMessageDialog(null, "Error, validating if input time is valid in time range!");
+
+            return false;
+        }
     }
 
     //#################################################################################

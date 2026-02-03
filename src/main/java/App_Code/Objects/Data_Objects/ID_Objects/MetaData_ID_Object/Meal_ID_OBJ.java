@@ -9,7 +9,7 @@ public final class Meal_ID_OBJ extends Meta_Data_ID_Parent
     // #################################################################################################################
     private final LocalTime meal_Time;
     private final int source_meal_id;
-    
+
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
@@ -19,20 +19,25 @@ public final class Meal_ID_OBJ extends Meta_Data_ID_Parent
         this.meal_Time = meal_Time;
         this.source_meal_id = source_meal_id;
     }
-    
+
     // #################################################################################################################
     // Accessor Methods
     // #################################################################################################################
+    public String get_Meal_Name()
+    {
+        return super.get_Name();
+    }
+
     public LocalTime get_Meal_Time()
     {
         return meal_Time;
     }
-    
+
     public int get_Draft_Meal_ID()
     {
         return get_ID();
     }
-    
+
     public int get_Source_Meal_ID()
     {
         return source_meal_id;

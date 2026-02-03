@@ -1,5 +1,6 @@
 package App_Code.Objects.Table_Objects.Tables.Children.Ingredients_Table;
 
+import App_Code.Objects.Data_Objects.ID_Objects.MetaData_ID_Object.Sub_Meal_ID_OBJ;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
 import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
 import App_Code.Objects.Database_Objects.MyJDBC.MyJDBC_Sqlite;
@@ -20,6 +21,7 @@ import App_Code.Objects.Table_Objects.MealManager;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
 import org.javatuples.Pair;
+
 import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
@@ -106,19 +108,14 @@ public class IngredientsTable extends JDBC_JTable
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    // Ingredients Table
     public IngredientsTable
     (
             MyJDBC_Sqlite db,
             MealManager meal_manager,
             Shared_Data_Registry shared_data_registry,
             MacrosLeft_Table macros_left_table,
-            int draft_meal_id,
-            Integer source_sub_meal_id,
-            int draft_sub_meal_id,
-            ArrayList<ArrayList<Object>> data,
-            boolean sub_meal_in_db,
-            JPanel space_divider
+            JPanel space_divider,
+            Sub_Meal_ID_OBJ sub_meal_id_obj
     )
     {
         super(
@@ -130,7 +127,7 @@ public class IngredientsTable extends JDBC_JTable
                 "Ingredients Table",
                 "draft_ingredients_in_sections_of_meal",
                 "draft_gui_ingredients_in_sections_of_meal_calculation",
-                data,
+                sub_meal_id_obj.get_Sub_Meal_Ingredients(),
                 shared_data_registry.get_Ingredients_Table_Column_Names(),
                 shared_data_registry.get_Ingredients_Table_Un_Editable_Cols(),
                 shared_data_registry.get_Ingredients_Table_Avoid_Centering_Cols(),
@@ -142,15 +139,22 @@ public class IngredientsTable extends JDBC_JTable
         //##############################################################
         this.meal_manager = meal_manager;
         this.macrosLeft_table = macros_left_table;
-
-        this.draft_meal_id = draft_meal_id;
-        this.source_sub_meal_id = source_sub_meal_id;
-        this.draft_sub_meal_id = draft_sub_meal_id;
-
         this.space_divider = space_divider;
 
-        this.sub_meal_in_db = sub_meal_in_db;
+        draft_meal_id = sub_meal_id_obj.get_Draft_Meal_ID();
+        source_sub_meal_id = sub_meal_id_obj.get_Source_Sub_Meal_ID();
+        draft_sub_meal_id = sub_meal_id_obj.get_Draft_Sub_Meal_ID();
+
+        sub_meal_in_db = sub_meal_id_obj.is_Sub_Meal_In_DB();
         sub_meal_saved = sub_meal_in_db;
+
+        // Set Sub-Meal Name
+        String sub_meal_name = sub_meal_id_obj.get_Sub_Meal_Name();
+        set_Sub_Meal_Name_Variable(false, sub_meal_name, sub_meal_name);
+
+        // Set Sub-Meal Time
+        LocalTime sub_meal_time = sub_meal_id_obj.get_Sub_Meal_Time();
+        set_Sub_Meal_Time_Variable(false, sub_meal_time, sub_meal_time);
 
         //#################################
         // Values From MealManager
@@ -166,72 +170,43 @@ public class IngredientsTable extends JDBC_JTable
         na_pdid = shared_data_registry.get_NA_PDID();
     }
 
-    public IngredientsTable
-            (
-                    MyJDBC_Sqlite db,
-                    MealManager meal_manager,
-                    Shared_Data_Registry shared_data_registry,
-                    MacrosLeft_Table macros_left_table,
-                    int draft_meal_id,
-                    Integer source_sub_meal_id,
-                    int draft_sub_meal_id,
-                    String sub_meal_name,
-                    LocalTime sub_meal_time,
-                    ArrayList<ArrayList<Object>> data,
-                    boolean sub_meal_in_db,
-                    JPanel space_divider
-            )
-    {
-        super(
-                db,
-                shared_data_registry,
-                meal_manager.get_Collapsible_Center_JPanel(),
-                true,
-                "draft_ingredients_index",
-                "Ingredients Table",
-                "draft_ingredients_in_sections_of_meal",
-                "draft_gui_ingredients_in_sections_of_meal_calculation",
-                data,
-                shared_data_registry.get_Ingredients_Table_Column_Names(),
-                shared_data_registry.get_Ingredients_Table_Un_Editable_Cols(),
-                shared_data_registry.get_Ingredients_Table_Avoid_Centering_Cols(),
-                shared_data_registry.get_Ingredients_Table_Cols_To_Hide()
-        );
+    /*
+    //###############################
+        // Prompt User for time Input
+        //###############################
+        LocalTime new_meal_time = prompt_User_For_Meal_Time(false, true); ;
+        if (new_meal_time == null) { return; } // Error occurred in validation checks above
 
-        //##############################################################
-        // Other Variables
-        //##############################################################
-        this.meal_manager = meal_manager;
-        this.macrosLeft_table = macros_left_table;
+        LocalTime old_current_time = get_Current_Sub_Meal_Time();
 
-        this.draft_meal_id = draft_meal_id;
-        this.source_sub_meal_id = source_sub_meal_id;
-        this.draft_sub_meal_id = draft_sub_meal_id;
+        //###############################
+        // Update DB
+        //###############################
+        String upload_Query = """
+                UPDATE draft_divided_meal_sections
+                SET sub_meal_time = ?
+                WHERE draft_div_meal_sections_id = ?;""";
 
-        this.space_divider = space_divider;
+        Object[] params = new Object[]{ new_meal_time, draft_sub_meal_id };
+        String error_msg = "Error, unable to change Sub-Meal Time!";
+        Upload_Statement_Full sql_statement = new Upload_Statement_Full(upload_Query, params, error_msg, true);
 
-        this.sub_meal_in_db = sub_meal_in_db;
-        sub_meal_saved = sub_meal_in_db;
+        // Upload Into Database Table
+        if (! db.upload_Data(sql_statement)) { return; }
 
-        //#################################
-        // Values From MealManager
-        //#################################
-        parent_Container = meal_manager.get_Collapsible_Center_JPanel();
-        frame = meal_manager.getFrame();
+        //###############################
+        // Update Variables
+        //###############################
+        set_Sub_Meal_Meta_Data_Changed(true);
+        set_Sub_Meal_Time_Variable(true, saved_sub_meal_time, new_meal_time);
 
-        //#################################
-        // Values From Shared_Data_Registry
-        //#################################
-        na_ingredient_id_obj = shared_data_registry.get_Na_Ingredient_ID_OBJ();
-        na_ingredient_id = shared_data_registry.get_Na_Ingredient_ID();
-        na_pdid = shared_data_registry.get_NA_PDID();
 
         //#################################
         //
         //#################################
         set_Sub_Meal_Time_Variable(false, sub_meal_time, sub_meal_time);
         set_Sub_Meal_Name_Variable(false, sub_meal_name, sub_meal_name);
-    }
+     */
 
     //##################################################################################################################
     // Data Formatting Methods
@@ -637,7 +612,7 @@ public class IngredientsTable extends JDBC_JTable
                 pdid = ?
                 WHERE %s = ?;""", db_write_table_name, db_row_id_column_name);
 
-        Object[] params_Upload = new Object[]{selected_Ingredient_Name_ID, null,ingredient_Index};
+        Object[] params_Upload = new Object[]{ selected_Ingredient_Name_ID, null, ingredient_Index };
 
         batch_statements.add_Uploads(new Upload_Statement(upload_Query, params_Upload, true));
 
@@ -1099,11 +1074,6 @@ public class IngredientsTable extends JDBC_JTable
         this.current_sub_meal_name = current_sub_meal_name;
     }
 
-    public String get_Current_Sub_Meal_Name()
-    {
-        return current_sub_meal_name;
-    }
-
     //####################################################
     // Sub-Meal Time Methods
     //####################################################
@@ -1112,11 +1082,10 @@ public class IngredientsTable extends JDBC_JTable
         //###############################
         // Prompt User for time Input
         //###############################
-
-        LocalTime new_meal_time = prompt_User_For_Meal_Time(false, true);
-        LocalTime old_current_time = get_Current_Sub_Meal_Time();
-
+        LocalTime new_meal_time = prompt_User_For_Meal_Time(false, true); ;
         if (new_meal_time == null) { return; } // Error occurred in validation checks above
+
+      //  LocalTime old_current_time = get_Current_Sub_Meal_Time();
 
         //###############################
         // Update DB
@@ -1137,7 +1106,7 @@ public class IngredientsTable extends JDBC_JTable
         // Update Variables
         //###############################
         set_Sub_Meal_Meta_Data_Changed(true);
-        set_Sub_Meal_Time_Variable(true, saved_sub_meal_time, null);
+        set_Sub_Meal_Time_Variable(true, saved_sub_meal_time, new_meal_time);
     }
 
     private LocalTime prompt_User_For_Meal_Time(boolean skip_confirmation, boolean comparison)
@@ -1274,11 +1243,6 @@ public class IngredientsTable extends JDBC_JTable
         this.current_sub_meal_time = current_sub_meal_time;
     }
 
-    public LocalTime get_Current_Sub_Meal_Time()
-    {
-        return current_sub_meal_time;
-    }
-
     //##################################################################################################################
     // Update Other Table Methods
     //##################################################################################################################
@@ -1321,11 +1285,6 @@ public class IngredientsTable extends JDBC_JTable
     }
 
     //########################
-    // Sub-Meal Time / Name
-    //########################
-
-
-    //########################
     // Save
     //########################
     public void set_Meal_In_DB(boolean meal_In_DB)
@@ -1355,6 +1314,19 @@ public class IngredientsTable extends JDBC_JTable
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
+    public String get_Current_Sub_Meal_Name()
+    {
+        return current_sub_meal_name;
+    }
+
+
+    //###############################
+    // LocalTime
+    //###############################
+    public LocalTime get_Current_Sub_Meal_Time()
+    {
+        return current_sub_meal_time;
+    }
 
 
     //###############################
