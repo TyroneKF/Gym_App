@@ -167,7 +167,9 @@ public class MealManager
         add_Multiple_Sub_Meals(meal_and_sub_meals_obj); // Add Sub-Meal to GUI
     }
 
+    //#####################################
     //
+    //#####################################
     public MealManager
     (
             Meal_Plan_Screen meal_plan_screen,
@@ -209,6 +211,65 @@ public class MealManager
 
         if (! is_Meal_Time_Available(new_meal_time)) { return; }
 
+
+        //#######################################################
+        // Upload & Get Results
+        //#######################################################
+        String sub_meal_name = "New Sub-Meal";
+
+        Fetched_Results fetched_Results_OBJ = create_New_Meal(new_Meal_Name, new_meal_time, sub_meal_name);
+
+        if (fetched_Results_OBJ == null) { System.err.println("\n\n\nFailed Creating Meal"); return; }
+
+        //###############################
+        // Set Variables from Results
+        //###############################
+        ArrayList<Object> total_Meal_Data = null;
+        Sub_Meal_ID_OBJ sub_meal_id_obj = null;
+
+        try
+
+        {
+            ArrayList<ArrayList<Object>> sub_Meal_DATA = fetched_Results_OBJ.get_Fetched_Result_2D_AL(0);
+            ArrayList<Object> combined_results = sub_Meal_DATA.getFirst();
+
+            draft_meal_ID = (Integer) combined_results.removeFirst(); // Get Draft Meal ID & Remove IT
+
+            int draft_sub_Meal_ID = (Integer) combined_results.removeFirst();  // Get Draft Sub ID & Remove IT
+
+            // Get Sub Ingredients & Remove IT
+            sub_meal_id_obj = new Sub_Meal_ID_OBJ(
+                    draft_sub_Meal_ID,
+                    sub_meal_name,
+                    new_meal_time,
+                    sub_Meal_DATA,
+                    draft_meal_ID
+            );
+
+            total_Meal_Data = fetched_Results_OBJ.get_Result_1D_AL(1); // Get Total Meal Data
+        }
+        catch (Exception e)
+        {
+            System.err.printf("\n\n%s", e);
+            return;
+        }
+
+        //#############################
+        // Set Name & Time Variables
+        //#############################
+        set_Meal_Name_Variables(false, new_Meal_Name, new_Meal_Name); // Set MealName Variables
+
+        set_Time_Variables(false, new_meal_time, new_meal_time);     // Set MealTime Variables
+
+        //#######################################################
+        // Add Meals To GUI
+        //#######################################################
+        setup_GUI(total_Meal_Data); // GUI
+        add_Sub_Meal(sub_meal_id_obj); // Add Sub-Meal to GUI
+    }
+
+    private Fetched_Results create_New_Meal(String new_Meal_Name, LocalTime new_meal_time, String sub_meal_name)
+    {
         //#######################################################
         // Upload & Fetch Variables
         //#######################################################
@@ -252,8 +313,6 @@ public class MealManager
                     ?,
                     ?
                 );""";
-
-        String sub_meal_name = "New Sub-Meal";
 
         Object[] upload_params_02 = new Object[]{ get_Plan_ID(), sub_meal_name, new_meal_time };
 
@@ -332,55 +391,7 @@ public class MealManager
         //#######################################################
         // Execute Query
         //#######################################################
-        Fetched_Results fetched_Results_OBJ = db.upload_And_Get_Batch(batch_Statements);
-
-        if (fetched_Results_OBJ == null) { System.err.println("\n\n\nFailed Creating Meal"); return; }
-
-        //#######################################################
-        // Set Variables from Results
-        //#######################################################
-        ArrayList<Object> total_Meal_Data = null;
-        Sub_Meal_ID_OBJ sub_meal_id_obj = null;
-
-        try
-
-        {
-            ArrayList<ArrayList<Object>> sub_Meal_DATA = fetched_Results_OBJ.get_Fetched_Result_2D_AL(0);
-            ArrayList<Object> combined_results = sub_Meal_DATA.getFirst();
-
-            draft_meal_ID = (Integer) combined_results.removeFirst(); // Get Draft Meal ID & Remove IT
-
-            int draft_sub_Meal_ID = (Integer) combined_results.removeFirst();  // Get Draft Sub ID & Remove IT
-
-            // Get Sub Ingredients & Remove IT
-            sub_meal_id_obj = new Sub_Meal_ID_OBJ(
-                    draft_sub_Meal_ID,
-                    sub_meal_name,
-                    new_meal_time,
-                    sub_Meal_DATA,
-                    draft_meal_ID
-            );
-
-            total_Meal_Data = fetched_Results_OBJ.get_Result_1D_AL(1); // Get Total Meal Data
-        }
-        catch (Exception e)
-        {
-            System.err.printf("\n\n%s", e);
-            return;
-        }
-
-        //#############################
-        // Set Name & Time Variables
-        //#############################
-        set_Meal_Name_Variables(false, new_Meal_Name, new_Meal_Name); // Set MealName Variables
-
-        set_Time_Variables(false, new_meal_time, new_meal_time);     // Set MealTime Variables
-
-        //#######################################################
-        // Add Meals To GUI
-        //#######################################################
-        setup_GUI(total_Meal_Data); // GUI
-        add_Sub_Meal(sub_meal_id_obj); // Add Sub-Meal to GUI
+        return db.upload_And_Get_Batch(batch_Statements);
     }
 
     //##################################################################################################################
