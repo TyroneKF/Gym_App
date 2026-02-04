@@ -254,9 +254,8 @@ public class MealManager
                 );""";
 
         String sub_meal_name = "New Sub-Meal";
-        LocalTime sub_meal_time = new_meal_time.plusMinutes(5);
 
-        Object[] upload_params_02 = new Object[]{ get_Plan_ID(), sub_meal_name, sub_meal_time };
+        Object[] upload_params_02 = new Object[]{ get_Plan_ID(), sub_meal_name, new_meal_time };
 
         batch_Statements.add_Uploads(new Upload_Statement(upload_Q2, upload_params_02, true)); // Upload Q1
 
@@ -357,7 +356,7 @@ public class MealManager
             sub_meal_id_obj = new Sub_Meal_ID_OBJ(
                     draft_sub_Meal_ID,
                     sub_meal_name,
-                    sub_meal_time,
+                    new_meal_time,
                     sub_Meal_DATA,
                     draft_meal_ID
             );
@@ -603,28 +602,33 @@ public class MealManager
         //##############################################
         // Create Ingredient Table Object
         //##############################################
-        JPanel spaceDivider = new JPanel();
-
         IngredientsTable ingredients_Table =
                 new IngredientsTable(
                         db,
                         this,
                         shared_Data_Registry,
                         macrosLeft_JTable,
-                        spaceDivider,
                         sub_meal_id_obj
                 );
 
         //################################################
         // Add Ingredients Table To GUI
         //################################################
-        add_To_Container(collapsibleCenterJPanel, ingredients_Table, 0, yPoInternally++, 1, 1, 0.25, 0.25, "both", 0, 0, null);
-        add_To_Container(collapsibleCenterJPanel, spaceDivider, 0, yPoInternally++, 1, 1, 0.25, 0.25, "both", 50, 0, null);
+        add_Sub_Meal_To_GUI(ingredients_Table);
+
 
         //################################################
         // Add Ingredient Table To Collection
         //################################################
         ingredient_tables_AL.add(ingredients_Table);
+    }
+
+    private void add_Sub_Meal_To_GUI(IngredientsTable ingredients_table)
+    {
+        JPanel spaceDivider = ingredients_table.get_Space_Divider();
+
+        add_To_Container(collapsibleCenterJPanel, ingredients_table, 0, yPoInternally++, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        add_To_Container(collapsibleCenterJPanel, spaceDivider, 0, yPoInternally++, 1, 1, 0.25, 0.25, "both", 50, 0, null);
     }
 
     //##################################################################################################################
@@ -636,6 +640,26 @@ public class MealManager
                 "Notification", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
         return reply != JOptionPane.NO_OPTION && reply != JOptionPane.CLOSED_OPTION;
+    }
+
+
+    //########################################################
+    // Sub-Meal Ordering & Positioning
+    //########################################################
+    public void sort_And_Re_Draw_Sub_Meals()
+    {
+        yPoInternally = 0; // Reset Positioning
+
+        sort_Sub_Meals(); // Sort Sub-Meals
+
+        collapsibleCenterJPanel.removeAll();  // Clear MealManager
+
+        ingredient_tables_AL.forEach(this :: add_Sub_Meal_To_GUI); // Add Each Meal to GUI
+    }
+
+    private void sort_Sub_Meals()
+    {
+        ingredient_tables_AL.sort((a, b) -> a.get_Current_Sub_Meal_Time().compareTo(b.get_Current_Sub_Meal_Time()));
     }
 
     //########################################################
@@ -1251,6 +1275,31 @@ public class MealManager
             return;
         }
 
+        if (! refresh_IS_Old_Meal_Time_Available()) { return; }
+
+        //###########################################
+        // Reset DB Data
+        //###########################################
+        if (! refresh_DB_Data())
+        {
+            JOptionPane.showMessageDialog(null, "\n\nUnable to Transfer Meal Data to DB!!");
+            return;
+        }
+
+        //###########################################
+        //
+        //###########################################
+        refresh_Action();
+
+        meal_plan_screen.add_And_Replace_MealManger_POS_GUI(this, true, true);
+
+        update_MacrosLeft_Table();
+
+        JOptionPane.showMessageDialog(getFrame(), String.format("\n\n[%s] %s has been successfully refreshed! ", current_meal_time, current_meal_name));
+    }
+
+    private boolean refresh_IS_Old_Meal_Time_Available()
+    {
         //###########################################
         // Check IF OLD Meal Time & Name Available
         //###########################################
@@ -1297,7 +1346,7 @@ public class MealManager
         }
         catch (Exception e)
         {
-            return;
+            return false;
         }
 
         //###########################################
@@ -1331,28 +1380,13 @@ public class MealManager
                     saved_meal_name, saved_meal_time, positions, positions);
 
             JOptionPane.showMessageDialog(getFrame(), msg);
-            return;
+            return false;
         }
 
         //###########################################
-        // Reset DB Data
+        // Output
         //###########################################
-        if (! refresh_DB_Data())
-        {
-            JOptionPane.showMessageDialog(null, "\n\nUnable to Transfer Meal Data to DB!!");
-            return;
-        }
-
-        //###########################################
-        //
-        //###########################################
-        refresh_Action();
-
-        meal_plan_screen.add_And_Replace_MealManger_POS_GUI(this, true, true);
-
-        update_MacrosLeft_Table();
-
-        JOptionPane.showMessageDialog(getFrame(), String.format("\n\n[%s] %s has been successfully refreshed! ", current_meal_time, current_meal_name));
+        return true;
     }
 
     private boolean refresh_DB_Data()
@@ -1443,11 +1477,13 @@ public class MealManager
         //##########################################
         update_MealManager_DATA(); // Update DATA
         pie_Chart_Update_Title(); // Update Internal PieChart Title
+
+        sort_And_Re_Draw_Sub_Meals(); // Sort & Redraw GUI
     }
 
-    //##############################################################################################
+    //###################################################################################
     // Save BTN Methods
-    //##############################################################################################
+    //###################################################################################
     private void save_Btn_Action()
     {
         // ########################################

@@ -113,7 +113,7 @@
     FROM tmp_meal_anchors a
     JOIN
     (
-        SELECT 1 AS rn,  'Breakfast'    AS meal_name, '08:20' AS meal_time UNION ALL
+        SELECT 1 AS rn,  'Breakfast'    AS meal_name, '06:20' AS meal_time UNION ALL
         SELECT 2,        'Mid Morning',               '10:10' UNION ALL
         SELECT 3,        'Lunch',                     '13:20' UNION ALL
         SELECT 4,        'Pre Workout',               '16:40' UNION ALL

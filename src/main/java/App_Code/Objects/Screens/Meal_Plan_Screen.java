@@ -3646,6 +3646,59 @@ public class Meal_Plan_Screen extends Screen_JFrame
         }
     }
 
+    public Pair<LocalTime, LocalTime> get_Available_Sub_Meal_Time_Ranges_For_Meal(MealManager this_meal) throws Exception
+    {
+        //######################
+        // Variables
+        //######################
+        LocalTime start_time_frame = this_meal.get_Current_Meal_Time(); // this meals current time
+        LocalTime end_time_frame = LocalTime.parse("23:59", time_Formatter);
+
+        Pair<LocalTime, LocalTime> default_time_range = new Pair<>(start_time_frame, end_time_frame);
+
+        //######################
+        // Edge Cases
+        //######################
+        // No Meals In This Plan?
+        if (mealManager_ArrayList.isEmpty()) { return default_time_range; }
+
+        // Is this the only meal in this plan?
+        boolean is_there_another_distinct_meal_in_this_plan =
+                mealManager_ArrayList
+                        .stream()
+                        .anyMatch(m -> ! m.equals(this_meal));
+
+        if (! is_there_another_distinct_meal_in_this_plan) { return default_time_range; }
+
+        //#####################
+        //
+        //#####################
+        Iterator<MealManager> it = mealManager_ArrayList.iterator();
+
+        while (it.hasNext())
+        {
+            MealManager meal_in_iteration = it.next();
+
+            if (meal_in_iteration.equals(this_meal))
+            {
+                // If this meal is the last meal in the list, it has a possible sub-meal range of its time to the end (23:59)
+                if (! it.hasNext()) { return default_time_range; }
+
+                // return meal range between this meal and its next meal
+                LocalTime next_meals_time = it.next().get_Current_Meal_Time();
+                return new Pair<>(start_time_frame, next_meals_time);
+            }
+        }
+
+        //#####################
+        // Error
+        //#####################
+        throw new Exception(
+                String.format("Meal %s couldn't be found in MPS to generate available Sub-Meal time ranges!",
+                        this_meal.get_Current_Meal_Name())
+        );
+    }
+
     //##################################################################################################################
     //  Macro Targets/Left Table Methods
     //##################################################################################################################
@@ -3738,58 +3791,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
         return shared_data_registry.get_Plan_Name();
     }
 
-    public Pair<LocalTime, LocalTime> get_Available_Sub_Meal_Time_Ranges_For_Meal(MealManager this_meal) throws Exception
-    {
-        //######################
-        // Variables
-        //######################
-        LocalTime start_time_frame = this_meal.get_Current_Meal_Time(); // this meals current time
-        LocalTime end_time_frame = LocalTime.parse("23:59", time_Formatter);
-
-        Pair<LocalTime, LocalTime> default_time_range = new Pair<>(start_time_frame, end_time_frame);
-
-        //######################
-        // Edge Cases
-        //######################
-        // No Meals In This Plan?
-        if (mealManager_ArrayList.isEmpty()) { return default_time_range; }
-
-        // Is this the only meal in this plan?
-        boolean is_there_another_distinct_meal_in_this_plan =
-                mealManager_ArrayList
-                        .stream()
-                        .anyMatch(m -> ! m.equals(this_meal));
-
-        if (! is_there_another_distinct_meal_in_this_plan) { return default_time_range; }
-
-        //#####################
-        //
-        //#####################
-        Iterator<MealManager> it = mealManager_ArrayList.iterator();
-
-        while (it.hasNext())
-        {
-            MealManager meal_in_iteration = it.next();
-
-            if (meal_in_iteration.equals(this_meal))
-            {
-                // If this meal is the last meal in the list, it has a possible sub-meal range of its time to the end (23:59)
-                if (! it.hasNext()) { return default_time_range; }
-
-                // return meal range between this meal and its next meal
-                LocalTime next_meals_time = it.next().get_Current_Meal_Time();
-                return new Pair<>(start_time_frame, next_meals_time);
-            }
-        }
-
-        //#####################
-        // Error
-        //#####################
-        throw new Exception(
-                String.format("Meal %s couldn't be found in MPS to generate available Sub-Meal time ranges!",
-                        this_meal.get_Current_Meal_Name())
-        );
-    }
 
     //###########################################
     // Integer

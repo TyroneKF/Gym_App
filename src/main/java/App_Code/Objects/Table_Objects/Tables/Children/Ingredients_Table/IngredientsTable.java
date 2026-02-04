@@ -48,7 +48,7 @@ public class IngredientsTable extends JDBC_JTable
     //######################
     // Screen Objects
     //######################
-    private final JPanel space_divider;
+    private final JPanel space_divider = new JPanel();
     private final Frame frame;
 
     private JLabel sub_meal_title_label;
@@ -114,7 +114,6 @@ public class IngredientsTable extends JDBC_JTable
             MealManager meal_manager,
             Shared_Data_Registry shared_data_registry,
             MacrosLeft_Table macros_left_table,
-            JPanel space_divider,
             Sub_Meal_ID_OBJ sub_meal_id_obj
     )
     {
@@ -139,7 +138,6 @@ public class IngredientsTable extends JDBC_JTable
         //##############################################################
         this.meal_manager = meal_manager;
         this.macrosLeft_table = macros_left_table;
-        this.space_divider = space_divider;
 
         draft_meal_id = sub_meal_id_obj.get_Draft_Meal_ID();
         source_sub_meal_id = sub_meal_id_obj.get_Source_Sub_Meal_ID();
@@ -1157,12 +1155,14 @@ public class IngredientsTable extends JDBC_JTable
         if (! db.upload_Data(sql_statement)) { return; }
 
         //###############################
-        // Update Variables
+        // Update Variables & GUI
         //###############################
         set_Sub_Meal_Meta_Data_Changed(true);
         set_Sub_Meal_Time_Variable(saved_sub_meal_time, new_meal_time);
 
         update_Title_Label(); // Update Sub-Meal title
+
+        meal_manager.sort_And_Re_Draw_Sub_Meals();  // Re-Draw Sub-Meals
     }
 
     private LocalTime prompt_User_For_Meal_Time()
@@ -1362,6 +1362,14 @@ public class IngredientsTable extends JDBC_JTable
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
+    public JPanel get_Space_Divider()
+    {
+        return space_divider;
+    }
+
+    //###############################
+    // Strings
+    //###############################
     public String get_Current_Sub_Meal_Name()
     {
         return current_sub_meal_name;
