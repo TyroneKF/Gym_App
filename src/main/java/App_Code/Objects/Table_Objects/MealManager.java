@@ -105,7 +105,7 @@ public class MealManager
     private GridBagConstraints gbc;
     private Container container;
     private CollapsibleJPanel collapsibleJpObj;
-    private Shared_Data_Registry shared_Data_Registry;
+    private final Shared_Data_Registry shared_Data_Registry;
 
     //############################################
     // Screens
@@ -412,7 +412,7 @@ public class MealManager
         graph_Icon_Btn.makeBTntransparent();
 
         graph_Btn.addActionListener(ae -> {
-            pieChart_Action();
+            pie_Chart_Action();
         });
 
         iconPanelInsert.add(graph_Icon_Btn);
@@ -482,7 +482,7 @@ public class MealManager
             // Ask For Permission
             //#######################################################
 
-            if (areYouSure("Refresh Data"))
+            if (are_You_Sure("Refresh Data"))
             {
                 refresh_Btn_Action();
             }
@@ -503,7 +503,7 @@ public class MealManager
         save_btn.setToolTipText("Save All Sub-Meals Data"); //Hover message over icon
 
         save_btn.addActionListener(ae -> {
-            if (areYouSure("Save Data"))
+            if (are_You_Sure("Save Data"))
             {
                 save_Btn_Action();
             }
@@ -630,7 +630,7 @@ public class MealManager
     //##################################################################################################################
     // Actions
     //##################################################################################################################
-    private boolean areYouSure(String process)
+    private boolean are_You_Sure(String process)
     {
         int reply = JOptionPane.showConfirmDialog(getFrame(), String.format("You are requesting to %s ! \n\nAre you sure you want to %s?", process, process),
                 "Notification", JOptionPane.YES_NO_OPTION); //HELLO Edit
@@ -669,7 +669,7 @@ public class MealManager
         //###############################
         LocalTime old_current_time = get_Current_Meal_Time();
 
-        if (! areYouSure(String.format("change meal time from '%s' to '%s'", old_current_time, new_meal_time)))
+        if (! are_You_Sure(String.format("change meal time from '%s' to '%s'", old_current_time, new_meal_time)))
         {
             return;
         }
@@ -732,13 +732,16 @@ public class MealManager
         // Prior to this method being called the users input_meal_time_string is checked if its null or "" and rejected
         LocalTime converted_time = null;
 
+        // Switch ';' for ':' removes un-intentional errors
+        input_meal_time_string = input_meal_time_string.replaceAll(";", ":");
+
         try
         {
             converted_time = LocalTime.parse(input_meal_time_string, time_Formatter);
         }
         catch (Exception e)
         {
-            System.err.printf("\n\nMealManager.java: input_Meal_Time_Syntax_Validation() | Error, converting input_meal_time_string to time string! \n%s", e);
+            System.err.printf("\n\n%s | Error, converting input_meal_time_string to time string! \n%s", get_Class_And_Method_Name(), e);
             JOptionPane.showMessageDialog(getFrame(), "Error, converting input to LocalTime!");
             return null;
         }
@@ -794,14 +797,14 @@ public class MealManager
 
         if (new_meal_name.equals(get_Current_Meal_Name()))   // User enters same meal name
         {
-            JOptionPane.showMessageDialog(getFrame(), String.format("This meal 'Meal Name' already has the value '%s' !!", get_Current_Meal_Name()));
+            JOptionPane.showMessageDialog(getFrame(), String.format("This meal already has the name '%s' !!", get_Current_Meal_Name()));
             return;
         }
 
         //##########################################
         // User Confirmation
         //##########################################
-        if (! areYouSure(String.format("change meal Meal Name from '%s' to '%s'", get_Current_Meal_Name(), new_meal_name)))
+        if (! are_You_Sure(String.format("change meal Meal Name from '%s' to '%s'", get_Current_Meal_Name(), new_meal_name)))
         {
             return;
         }
@@ -1153,7 +1156,7 @@ public class MealManager
     //#################################################################################
     private void delete_Btn_Action()
     {
-        if (! areYouSure("Delete")) { return; }
+        if (! are_You_Sure("Delete")) { return; }
 
         delete_Meal_Manager_Action();
 
@@ -1488,13 +1491,11 @@ public class MealManager
     //#################################################################################
     // Pie Charts
     //#################################################################################
-    private void pieChart_Action()
+    private void pie_Chart_Action()
     {
         // If pieChart is already created bring up to the surface and make it visible
         if (is_Pie_Chart_Open())
         {
-            System.out.println("\n\nB : pieChart_Action() 1 !!!!");
-
             pie_chart_screen.makeJFrameVisible();
             return;
         }

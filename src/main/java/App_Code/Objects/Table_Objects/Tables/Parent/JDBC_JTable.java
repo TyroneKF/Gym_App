@@ -717,8 +717,19 @@ public abstract class JDBC_JTable extends JPanel
         }
     }
     
-    protected static void add_To_Container(Container container, Component add_To_Container, int grid_X, int grid_Y, int grid_Width,
-                                           int grid_Height, double weight_X, double weight_Y, String fill, String anchor)
+    protected static void add_To_Container
+    (
+            Container container,
+            Component add_To_Container,
+            int grid_X,
+            int grid_Y,
+            int grid_Width,
+            int grid_Height,
+            double weight_X,
+            double weight_Y,
+            String fill,
+            String anchor
+    )
     {
         gbc.gridx = grid_X;
         gbc.gridy = grid_Y;

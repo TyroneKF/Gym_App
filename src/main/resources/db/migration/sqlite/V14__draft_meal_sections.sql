@@ -48,10 +48,6 @@
             ON draft_divided_meal_sections
                 (plan_id, div_meal_sections_id);
 
-        CREATE UNIQUE INDEX no_repeated_draft_sub_meal_names_per_meal
-            ON draft_divided_meal_sections
-                (draft_meal_in_plan_id, sub_meal_name);
-
         CREATE UNIQUE INDEX no_repeated_draft_sub_meal_times_per_plan
             ON draft_divided_meal_sections
                 (plan_id, sub_meal_time);

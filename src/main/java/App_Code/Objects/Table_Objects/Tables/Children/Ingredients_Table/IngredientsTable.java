@@ -20,8 +20,8 @@ import App_Code.Objects.Table_Objects.Tables.Parent.JDBC_JTable;
 import App_Code.Objects.Table_Objects.MealManager;
 import App_Code.Objects.Gui_Objects.IconButton;
 import App_Code.Objects.Gui_Objects.IconPanel;
+import org.apache.commons.lang3.StringUtils;
 import org.javatuples.Pair;
-
 import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
@@ -29,6 +29,8 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class IngredientsTable extends JDBC_JTable
 {
@@ -49,6 +51,8 @@ public class IngredientsTable extends JDBC_JTable
     private final JPanel space_divider;
     private final Frame frame;
 
+    private JLabel sub_meal_title_label;
+
     //################################################
     // Booleans
     //################################################
@@ -58,10 +62,6 @@ public class IngredientsTable extends JDBC_JTable
             table_deleted = false,
             sub_meal_meta_data_changed = false,
             sub_meal_data_changed = false;
-
-    private boolean
-            has_Sub_Meal_Name_Been_Changed = false,
-            has_Sub_Meal_Time_Been_Changed = false;
 
     //################################################
     // Integers
@@ -150,11 +150,11 @@ public class IngredientsTable extends JDBC_JTable
 
         // Set Sub-Meal Name
         String sub_meal_name = sub_meal_id_obj.get_Sub_Meal_Name();
-        set_Sub_Meal_Name_Variable(false, sub_meal_name, sub_meal_name);
+        set_Sub_Meal_Name_Variable(sub_meal_name, sub_meal_name);
 
         // Set Sub-Meal Time
         LocalTime sub_meal_time = sub_meal_id_obj.get_Sub_Meal_Time();
-        set_Sub_Meal_Time_Variable(false, sub_meal_time, sub_meal_time);
+        set_Sub_Meal_Time_Variable(sub_meal_time, sub_meal_time);
 
         //#################################
         // Values From MealManager
@@ -168,45 +168,9 @@ public class IngredientsTable extends JDBC_JTable
         na_ingredient_id_obj = shared_data_registry.get_Na_Ingredient_ID_OBJ();
         na_ingredient_id = shared_data_registry.get_Na_Ingredient_ID();
         na_pdid = shared_data_registry.get_NA_PDID();
+
+        update_Title_Label();
     }
-
-    /*
-    //###############################
-        // Prompt User for time Input
-        //###############################
-        LocalTime new_meal_time = prompt_User_For_Meal_Time(false, true); ;
-        if (new_meal_time == null) { return; } // Error occurred in validation checks above
-
-        LocalTime old_current_time = get_Current_Sub_Meal_Time();
-
-        //###############################
-        // Update DB
-        //###############################
-        String upload_Query = """
-                UPDATE draft_divided_meal_sections
-                SET sub_meal_time = ?
-                WHERE draft_div_meal_sections_id = ?;""";
-
-        Object[] params = new Object[]{ new_meal_time, draft_sub_meal_id };
-        String error_msg = "Error, unable to change Sub-Meal Time!";
-        Upload_Statement_Full sql_statement = new Upload_Statement_Full(upload_Query, params, error_msg, true);
-
-        // Upload Into Database Table
-        if (! db.upload_Data(sql_statement)) { return; }
-
-        //###############################
-        // Update Variables
-        //###############################
-        set_Sub_Meal_Meta_Data_Changed(true);
-        set_Sub_Meal_Time_Variable(true, saved_sub_meal_time, new_meal_time);
-
-
-        //#################################
-        //
-        //#################################
-        set_Sub_Meal_Time_Variable(false, sub_meal_time, sub_meal_time);
-        set_Sub_Meal_Name_Variable(false, sub_meal_name, sub_meal_name);
-     */
 
     //##################################################################################################################
     // Data Formatting Methods
@@ -222,6 +186,9 @@ public class IngredientsTable extends JDBC_JTable
         set_Model_Ingredient_Type_Col(ingredients_table_cols_positions.get(Ingredients_Table_Columns.INGREDIENT_TYPE_NAME));
         set_Model_Ingredient_Name_Col(ingredients_table_cols_positions.get(Ingredients_Table_Columns.INGREDIENT_NAME));
         set_Model_Delete_BTN_Col(ingredients_table_cols_positions.get(Ingredients_Table_Columns.DELETE_BTN));
+
+        // JLabel Used for Sub-Meal Title
+        sub_meal_title_label = new JLabel();
     }
 
     @Override
@@ -284,16 +251,41 @@ public class IngredientsTable extends JDBC_JTable
     @Override
     protected void extra_Table_Setup()
     {
+        gui_Sub_Meal_Label_Setup();
         icon_Setup();
     }
 
-    protected void icon_Setup()
+    private void gui_Sub_Meal_Label_Setup()
     {
-        //###################################################################################
-        // Table Icon Setup
-        //###################################################################################
+        //#################################
+        // Title Label Setup
+        //#################################
+        sub_meal_title_label.setFont(new Font("Verdana", Font.PLAIN, 20));
+        sub_meal_title_label.setHorizontalAlignment(JLabel.LEFT);
+
+        JPanel title_panel = new JPanel();
+        title_panel.setPreferredSize(new Dimension(450, 50));
+        title_panel.setBorder(BorderFactory.createLineBorder(Color.red));
+
+        title_panel.add(sub_meal_title_label);
+
+        add_To_Container(this, title_panel, 0, 0, 1, 1, 0.25, 0.25, "vertical", "west");
+    }
+
+    private void update_Title_Label()
+    {
+        sub_meal_title_label.setText(String.format("%s    -      [%s] ", get_Current_Sub_Meal_Name(), get_Current_Sub_Meal_Time()));
+        //sub_meal_title_label.setText(String.format("[%s]    -      %s ", get_Current_Sub_Meal_Time(), get_Current_Sub_Meal_Name()));
+    }
+
+    private void icon_Setup()
+    {
+
         int icon_Size = 20;
 
+        //##########################
+        //Add BTN
+        //##########################
         IconPanel icon_Panel = new IconPanel(3, 10, "East");
         JPanel iconPanel_Insert = icon_Panel.getIconJpanel();
 
@@ -303,7 +295,6 @@ public class IngredientsTable extends JDBC_JTable
         //Add BTN
         //##########################
         IconButton add_Icon_Btn = new IconButton("/images/add/add.png", icon_Size, icon_Size, icon_Size, icon_Size, "centre", "right");
-        // add_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
 
         JButton add_Btn = add_Icon_Btn.returnJButton();
         add_Icon_Btn.setToolTipText("Add Ingredients"); //Hover message over icon
@@ -319,7 +310,6 @@ public class IngredientsTable extends JDBC_JTable
         // Edit Name BTN
         //##########################
         IconButton edit_Icon_Btn = new IconButton("/images/edit/edit.png", icon_Size, icon_Size, icon_Size, icon_Size, "centre", "right");
-        // add_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
 
         JButton edit_Btn = edit_Icon_Btn.returnJButton();
         edit_Btn.setToolTipText("Edit Meal Name"); //Hover message over icon
@@ -335,7 +325,6 @@ public class IngredientsTable extends JDBC_JTable
         // Edit Time BTN
         //##########################
         IconButton editTime_Icon_Btn = new IconButton("/images/edit_Time/edit_Time.png", icon_Size, icon_Size, icon_Size, icon_Size, "centre", "right");
-        // add_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
 
         JButton editTime_Btn = editTime_Icon_Btn.returnJButton();
         editTime_Btn.setToolTipText("Edit Meal Time"); //Hover message over icon
@@ -350,11 +339,8 @@ public class IngredientsTable extends JDBC_JTable
         //##########################
         // Refresh Icon
         //##########################
-
         IconButton refresh_Icon_Btn = new IconButton("/images/refresh/+refresh.png", icon_Size, icon_Size, icon_Size, icon_Size,
                 "centre", "right"); // btn text is useless here , refactor
-        //refresh_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
-
 
         JButton refresh_Btn = refresh_Icon_Btn.returnJButton();
         refresh_Btn.setToolTipText("Restore Sub-Meal"); //Hover message over icon
@@ -369,10 +355,8 @@ public class IngredientsTable extends JDBC_JTable
         //##########################
         // Update Icon
         //##########################
-
         IconButton save_Icon_Btn = new IconButton("/images/save/save.png", icon_Size, icon_Size, icon_Size, icon_Size,
                 "centre", "right"); // btn text is useless here , refactor
-        //save_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
         save_Icon_Btn.makeBTntransparent();
 
         JButton save_btn = save_Icon_Btn.returnJButton();
@@ -387,10 +371,8 @@ public class IngredientsTable extends JDBC_JTable
         //##########################
         // Delete Icon
         //##########################
-
         IconButton delete_Icon_Btn = new IconButton("/images/delete/+delete.png", icon_Size, icon_Size, icon_Size + 10, icon_Size,
                 "centre", "right"); // btn text is useless here , refactor
-        //delete_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
         delete_Icon_Btn.makeBTntransparent();
 
         JButton delete_btn = delete_Icon_Btn.returnJButton();
@@ -818,7 +800,7 @@ public class IngredientsTable extends JDBC_JTable
 
          */
 
-        String error_msg = String.format("Unable to Refresh Sub-Meal !");
+        String error_msg = String.format("Unable to Refresh Sub-Meal %s!", get_Current_Sub_Meal_Name());
         Batch_Upload_Statements batch_upload_statements = new Batch_Upload_Statements(error_msg);
 
         //###################################################
@@ -841,10 +823,9 @@ public class IngredientsTable extends JDBC_JTable
             batch_upload_statements.add_Uploads(new Upload_Statement(upload_query00, upload_params_00, true));
 
             // Re-Insert With Old Sub-Meal Values
-            Pair<String, Object[]> upload_query_pair_01;
-
             String upload_query_01;
             Object[] params_01;
+
             if (is_Sub_Meal_In_DB()) // If Meal is in DB
             {
                 upload_query_01 = """
@@ -887,14 +868,6 @@ public class IngredientsTable extends JDBC_JTable
         }
 
         //###################################################
-        // Delete Sub-Meal Ingredients
-        //###################################################
-        String upload_query_02 = "DELETE FROM draft_ingredients_in_sections_of_meal WHERE draft_div_meal_sections_id = ?";
-        Object[] upload_params_02 = new Object[]{ draft_sub_meal_id };
-
-        batch_upload_statements.add_Uploads(new Upload_Statement(upload_query_02, upload_params_02, true));
-
-        //###################################################
         // Create Insert String
         //###################################################
 
@@ -934,13 +907,9 @@ public class IngredientsTable extends JDBC_JTable
         }
 
         //#############################
-        // Create Upload Statements
+        // Add to Upload Statements
         //#############################
         batch_upload_statements.add_Uploads(new Upload_Statement(upload_query_03, params_03, true));
-
-        //#############################
-        // Create Upload Statements
-        //#############################
     }
 
     public void refresh_Action()
@@ -952,8 +921,10 @@ public class IngredientsTable extends JDBC_JTable
 
         un_Hide_Ingredients_Table();
 
-        set_Sub_Meal_Time_Variable(false, saved_sub_meal_time, saved_sub_meal_time);
-        set_Sub_Meal_Name_Variable(false, saved_sub_meal_name, saved_sub_meal_name);
+        set_Sub_Meal_Time_Variable(saved_sub_meal_time, saved_sub_meal_time);
+        set_Sub_Meal_Name_Variable(saved_sub_meal_name, saved_sub_meal_name);
+
+        update_Title_Label();
     }
 
     //###################################################
@@ -977,8 +948,8 @@ public class IngredientsTable extends JDBC_JTable
         set_Sub_Meal_Data_Changed(false);
         set_Sub_Meal_Meta_Data_Changed(false);
 
-        set_Sub_Meal_Time_Variable(false, current_sub_meal_time, current_sub_meal_time);
-        set_Sub_Meal_Name_Variable(false, current_sub_meal_name, current_sub_meal_name);
+        set_Sub_Meal_Time_Variable(current_sub_meal_time, current_sub_meal_time);
+        set_Sub_Meal_Name_Variable(current_sub_meal_name, current_sub_meal_name);
     }
 
     //####################################################
@@ -1062,14 +1033,97 @@ public class IngredientsTable extends JDBC_JTable
     //####################################################
     private void edit_Sub_Meal_Name_BTN()
     {
+        //##########################################
+        // Get & Validate Meal Name Input
+        //##########################################
+        String input_sub_meal_name = prompt_User_For_Meal_Name();
+        if (input_sub_meal_name == null) { return; } // Error occurred in validation checks above
+
+        String new_sub_meal_name = input_Meal_Name_Validation(input_sub_meal_name);
+        if (new_sub_meal_name == null) { return; } // Error occurred in validation checks above
+
+        if (new_sub_meal_name.equals(get_Current_Sub_Meal_Name()))   // User enters same meal name
+        {
+            JOptionPane.showMessageDialog(null, String.format("This Sub-Meal has the name '%s' already !!", get_Current_Sub_Meal_Name()));
+            return;
+        }
+
+        //##########################################
+        // User Confirmation
+        //##########################################
+        if (! are_You_Sure(String.format("change Sub-Meal name from '%s' to '%s'", get_Current_Sub_Meal_Name(), new_sub_meal_name)))
+        {
+            return;
+        }
+
+        //##########################################
+        // Update DB
+        //##########################################
+        String upload_query = """
+                UPDATE draft_divided_meal_sections
+                SET sub_meal_name = ?
+                WHERE draft_div_meal_sections_id = ?;""";
+
+        Object[] params = new Object[]{ new_sub_meal_name, draft_sub_meal_id };
+        String error_msg = "Error, unable to change Sub-Meal name!";
+        Upload_Statement_Full sql_statement = new Upload_Statement_Full(upload_query, params, error_msg, true);
+
+        if (! db.upload_Data(sql_statement)) { return; }
+
+        //##########################################
+        // Update Variables & DATA / Objects
+        //##########################################
         set_Sub_Meal_Meta_Data_Changed(true);
-        set_Sub_Meal_Name_Variable(true, saved_sub_meal_name, null);
+        set_Sub_Meal_Name_Variable(saved_sub_meal_name, new_sub_meal_name);
+
+        update_Title_Label(); // Update Label
     }
 
-    private void set_Sub_Meal_Name_Variable(boolean has_Sub_Meal_Name_Been_Changed, String saved_sub_meal_name, String current_sub_meal_name)
+    private String prompt_User_For_Meal_Name()
     {
-        this.has_Sub_Meal_Name_Been_Changed = has_Sub_Meal_Name_Been_Changed;
+        // Get User Input For Meal Name
+        String new_meal_name = JOptionPane.showInputDialog(null, "Input Sub-Meal Name?");
 
+        // User Cancelled or entered nothing
+        return new_meal_name == null || new_meal_name.isEmpty() ? null : new_meal_name;
+    }
+
+    private String input_Meal_Name_Validation(String new_sub_meal_name)
+    {
+        //##########################################
+        // Validation Checks
+        //##########################################
+        // Remove whitespace at the end of variable
+        new_sub_meal_name = StringUtils.capitalize(new_sub_meal_name.trim());
+
+        if (contains_Symbols(new_sub_meal_name)) // Name: check if any symbols are inside
+        {
+            JOptionPane.showMessageDialog(null, "\n\nError, 'Sub-Meal Name' cannot contain symbols!");
+            return null;
+        }
+
+        if (new_sub_meal_name.length() > 50)
+        {
+            JOptionPane.showMessageDialog(null, "\n\nError, 'Sub-Meal Name' cannot exceed 50 character!");
+            return null;
+        }
+
+        //#########################################
+        // Return Value
+        //#########################################
+        return new_sub_meal_name;
+    }
+
+    private boolean contains_Symbols(String string_To_Check)
+    {
+        Pattern pattern = Pattern.compile("^[a-zA-Z0-9 '\\-&]+$");
+        Matcher matcher = pattern.matcher(string_To_Check);
+
+        return ! matcher.matches();
+    }
+
+    private void set_Sub_Meal_Name_Variable(String saved_sub_meal_name, String current_sub_meal_name)
+    {
         this.saved_sub_meal_name = saved_sub_meal_name;
         this.current_sub_meal_name = current_sub_meal_name;
     }
@@ -1082,10 +1136,10 @@ public class IngredientsTable extends JDBC_JTable
         //###############################
         // Prompt User for time Input
         //###############################
-        LocalTime new_meal_time = prompt_User_For_Meal_Time(false, true); ;
+        LocalTime new_meal_time = prompt_User_For_Meal_Time(); ;
         if (new_meal_time == null) { return; } // Error occurred in validation checks above
 
-      //  LocalTime old_current_time = get_Current_Sub_Meal_Time();
+        //  LocalTime old_current_time = get_Current_Sub_Meal_Time();
 
         //###############################
         // Update DB
@@ -1106,10 +1160,12 @@ public class IngredientsTable extends JDBC_JTable
         // Update Variables
         //###############################
         set_Sub_Meal_Meta_Data_Changed(true);
-        set_Sub_Meal_Time_Variable(true, saved_sub_meal_time, new_meal_time);
+        set_Sub_Meal_Time_Variable(saved_sub_meal_time, new_meal_time);
+
+        update_Title_Label(); // Update Sub-Meal title
     }
 
-    private LocalTime prompt_User_For_Meal_Time(boolean skip_confirmation, boolean comparison)
+    private LocalTime prompt_User_For_Meal_Time()
     {
         try
         {
@@ -1131,7 +1187,7 @@ public class IngredientsTable extends JDBC_JTable
             //###############################
             // Return Validation Results
             //###############################
-            return input_Meal_Time_Validation(sub_meal_time_range, input_meal_time, skip_confirmation, comparison);
+            return input_Meal_Time_Validation(sub_meal_time_range, input_meal_time);
         }
         catch (Exception e)
         {
@@ -1143,22 +1199,22 @@ public class IngredientsTable extends JDBC_JTable
 
     private LocalTime input_Meal_Time_Validation
             (
-                    Pair<LocalTime, LocalTime> sub_meal_time_Ranges,
-                    String input_meal_time_string,
-                    boolean skip_confirmation,
-                    boolean comparison
+                    Pair<LocalTime, LocalTime> sub_meal_time_ranges,
+                    String input_meal_time_string
             )
     {
         //#######################################################
         // Validation Checks
         //#######################################################
+        // Switch ';' for ':' removes un-intentional errors
+        input_meal_time_string = input_meal_time_string.replaceAll(";", ":");
 
         // Prior to this method being called the users input_meal_time_string is checked if its null or "" and rejected
         LocalTime new_input_time_local_time;
         LocalTime old_current_meal_time = get_Current_Sub_Meal_Time();
 
-        LocalTime start_sub_meal_time_range = sub_meal_time_Ranges.getValue0();
-        LocalTime end_sub_meal_time_range = sub_meal_time_Ranges.getValue1();
+        LocalTime start_sub_meal_time_range = sub_meal_time_ranges.getValue0();
+        LocalTime end_sub_meal_time_range = sub_meal_time_ranges.getValue1();
 
         try
         {
@@ -1167,7 +1223,7 @@ public class IngredientsTable extends JDBC_JTable
         catch (Exception e)
         {
             System.err.printf("\n\n%s | Error, converting input_meal_time_string to time string! \n%s", get_Class_And_Method_Name(), e);
-            JOptionPane.showMessageDialog(null, "Error, converting input_meal_time_string to Time!!");
+            JOptionPane.showMessageDialog(null, String.format("Error, converting input '%s' to Time value!!", input_meal_time_string));
             return null;
         }
 
@@ -1186,13 +1242,10 @@ public class IngredientsTable extends JDBC_JTable
         // ####################################################
         // Compare with saved correlating values
         // ####################################################
-        if (comparison)
+        if (old_current_meal_time.equals(new_input_time_local_time)) // Time : User enters same meal time
         {
-            if (old_current_meal_time.equals(new_input_time_local_time)) // Time : User enters same meal time
-            {
-                JOptionPane.showMessageDialog(null, String.format("This meal 'time' already has the value '%s' !!", old_current_meal_time));
-                return null;
-            }
+            JOptionPane.showMessageDialog(null, String.format("This meal 'time' already has the value '%s' !!", old_current_meal_time));
+            return null;
         }
 
         // ######################################################
@@ -1221,12 +1274,9 @@ public class IngredientsTable extends JDBC_JTable
         //#############################################################################
         // User Confirmation
         //#############################################################################
-        if (! skip_confirmation) // If requested not to skip a confirmation msg prompt confirmation
+        if (! are_You_Sure(String.format("change meal time from '%s' to '%s'", get_Current_Sub_Meal_Time().toString(), input_meal_time_string)))
         {
-            if (! are_You_Sure(String.format("change meal time from '%s' to '%s'", get_Current_Sub_Meal_Time().toString(), input_meal_time_string)))
-            {
-                return null;
-            }
+            return null;
         }
 
         //################################################################
@@ -1235,10 +1285,8 @@ public class IngredientsTable extends JDBC_JTable
         return new_input_time_local_time;
     }
 
-    private void set_Sub_Meal_Time_Variable(boolean has_Sub_Meal_Time_Been_Changed, LocalTime saved_sub_meal_time, LocalTime current_sub_meal_time)
+    private void set_Sub_Meal_Time_Variable(LocalTime saved_sub_meal_time, LocalTime current_sub_meal_time)
     {
-        this.has_Sub_Meal_Time_Been_Changed = has_Sub_Meal_Time_Been_Changed;
-
         this.saved_sub_meal_time = saved_sub_meal_time;
         this.current_sub_meal_time = current_sub_meal_time;
     }

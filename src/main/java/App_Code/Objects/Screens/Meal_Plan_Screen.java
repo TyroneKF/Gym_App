@@ -1419,7 +1419,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     {
                         // Create  Sub-Meal ID OBJ
                         int source_div_id = ingredient_node.get("s_div_id").asInt();       // Div_ID
-                        String sub_meal_name = ingredient_node.get("s_name").toString();   // sub_meal name
+                        String sub_meal_name = ingredient_node.get("s_name").asText();   // sub_meal name
 
                         // Time Conversion
                         LocalTime sub_meal_Time = LocalTime.parse(ingredient_node.get("s_time").asText(), time_formatter);
