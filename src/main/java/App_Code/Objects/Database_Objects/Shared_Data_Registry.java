@@ -224,7 +224,7 @@ public class Shared_Data_Registry
         totals_by_meal.remove(mealManager);
     }
     
-    public void delete_MealManagers_MPS() //
+    public void clear_Plan_Meta_Data_MPS() //
     {
         mealManager_ArrayList.clear();
         
@@ -368,7 +368,6 @@ public class Shared_Data_Registry
         
         return true; // Output
     }
-    
     
     //###############################################################
     // HashMap Ingredient Types To Ingredient Names
@@ -765,23 +764,23 @@ public class Shared_Data_Registry
     // Accessor Methods
     //##################################################################################################################
     
-    // String
+    // Strings
     public String get_Plan_Name()
     {
         return plan_Name;
     }
-    
-    //########################
+
+    //###########################################################
     // Objects
-    //########################
+    //###########################################################
     public Ingredient_Name_ID_OBJ get_Na_Ingredient_ID_OBJ()
     {
         return na_ingredient_id_obj;
     }
-    
-    //########################
+
+    //###########################################################
     // Integers
-    //########################
+    //###########################################################
     public Integer get_Selected_Plan_ID()
     {
         return selected_plan_id;
@@ -811,10 +810,10 @@ public class Shared_Data_Registry
     {
         return total_meal_other_cols_positions.get(column_name);
     }
-    
-    //########################
+
+    //###########################################################
     // BigDecimal
-    //########################
+    //###########################################################
     public BigDecimal get_Meal_Macro_Value(MealManager mealManager, Total_Meal_Macro_Columns macro_name)
     {
         EnumMap<Total_Meal_Macro_Columns, BigDecimal> outer = totals_by_meal.get(mealManager);

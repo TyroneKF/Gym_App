@@ -114,17 +114,15 @@ class LineChart_Macros_MPS extends Screen_JPanel
              */
             
             HashMap<MealManager, BigDecimal> macroValues = mealManagers_TotalMeal_MacroValues.get(macro_name);
-            Iterator<Map.Entry<MealManager, BigDecimal>> it = macroValues.entrySet().iterator();
-            
-            while (it.hasNext()) // Iterate through the recorded MealManager Values for this macro
+
+            // Iterate through the recorded MealManager Values for this macro
+            for (Map.Entry<MealManager, BigDecimal> mealManagers_Info : macroValues.entrySet())
             {
-                Map.Entry<MealManager, BigDecimal> mealManagers_Info = it.next();
-                
                 // Add time and Value for MealManager
                 MealManager mealManager = mealManagers_Info.getKey();
                 BigDecimal macroValue = mealManagers_Info.getValue();
                 Second meal_time_in_seconds = local_Time_ToSecond(mealManager.get_Current_Meal_Time());
-                
+
                 macroTimeSeries.add(meal_time_in_seconds, macroValue);
             }
         }
