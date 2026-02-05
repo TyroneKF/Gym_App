@@ -87,8 +87,15 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //######################################################
     // Collections
     //######################################################
-    private ArrayList<MealManager> mealManager_ArrayList;
+    private final ArrayList<MealManager> mealManager_ArrayList;
 
+    //#######################################
+    // Variable Initialization
+    //#######################################
+    private ArrayList<Meal_And_Sub_Meals_OBJ> meals_and_sub_meals_AL;
+    private LinkedHashMap<Integer, ArrayList<Object>> total_Meals_Data_Map;
+    private ArrayList<ArrayList<Object>> macros_targets_plan_data_AL;
+    private ArrayList<ArrayList<Object>> macros_left_plan_data_AL;
 
     //#######################################
     // Macro_Targets
@@ -147,45 +154,51 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //
         //###############################################################################
         /**
+         *  #############################
+         *   Context & Table Meta-Data:
+         *  #############################
          *  1.) Getting Selected User Info & Their Active Plan Info         [2%]
          *  2.) Getting Table Column Names                                  [2%]
          *  3.) Getting Table Column Positions                              [2%]
-         *  4.) Setup Table Configurations Data                             [2%]
+         *  4.) Setup Table Configurations Data                             [5%]
          *
-         *  5.) Transferring Plan Data To DRAFT Plan_Data                   [3%]
-         *  6.) Transfer Plan Targets                                       [3%]
-         *  7.) Transferring Meals Data                                     [4%]
+         *  #############################
+         *   Reference DATA:
+         *  #############################
+         *  5.) Get Ingredient Names & Types                                [4%]
+         *  6.) Get Stores Data                                             [3%]
+         *  7.) Get Measurement Material Type DATA                          [3%]
+         *  8.) Get Measurement DATA                                        [4%]
+         *  9.) System Variables DATA                                       [4%]
          *
-         *  8.) Get Ingredient Names & Types                                [4%]
-         *  9.) Get Stores Data                                             [3%]
-         * 10.) Get Measurement Material Type DATA                          [3%]
-         * 11.) Get Measurement DATA                                        [4%]
-         * 12.) System Variables DATA                                       [3%]
+         *  #############################
+         *   Draft Plan Construction
+         *  #############################
+         *  10.) Transferring Plan Data To DRAFT Plan_Data                  [3%]
+         *  11.) Transfer Plan Targets                                      [3%]
+         *  12.) Transferring Meals Data                                    [3%]
          *
-         * 13.) Get Meals & Sub-Meals DATA                                  [6%]
+         * #############################
+         *  GET Computed Plan Data
+         * #############################
+         * 13.) Get Meals & Sub-Meals DATA                                  [3%]
          * 14.) Get Total Meals Data                                        [3%]
          * 15.) Get Macros Targets DATA                                     [3%]
          * 16.) Get Macros Left DATA                                        [3%]
          *
-         * 17.) North GUI Setup : Icons                                     [5%]
+         * #############################
+         *   Build GUI
+         * #############################
+         * 17.) North GUI Setup  : Icons                                    [5%]
          * 18.) Bottom GUI Setup : Macro_Targets / Macro_Left Table         [5%]
-         * 19.) Centre GUI Setup : Create Meals                             [40%]         *
+         * 19.) Centre GUI Setup : Create Meals                             [40%]    
          */
 
-        //####################################################
-        // Variable Initialization
-        //####################################################
-        ArrayList<Meal_And_Sub_Meals_OBJ> meals_and_sub_meals_AL;
-        LinkedHashMap<Integer, ArrayList<Object>> total_Meals_Data_Map;
-        ArrayList<ArrayList<Object>> macros_targets_plan_data_AL;
-        ArrayList<ArrayList<Object>> macros_left_plan_data_AL;
-
-
-        //####################################################
-        // Get MetaData Methods
-        //####################################################
-        try
+        try // Get MetaData Methods
         {
+            //####################################################
+            // Context & Table Meta-Data:
+            //####################################################
             //  1.) Getting Selected User & Plan Info
             setup_Get_User_And_Plan_Info(true, true, true, true);
             loading_Screen.increaseBar(2);
@@ -200,130 +213,83 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
             // 4.) Setup Table Configurations Data
             setup_Table_Configuration_Data();
-            loading_Screen.increaseBar(2);
-
-            //####################################################
-            // Transfer Plan / Meal Data
-            //####################################################
-
-            // 5.) Transferring Plan Data To Draft Plan
-            setup_Transfer_Plan_Data();
-            loading_Screen.increaseBar(3);
-
-            // 6.) Transferring Targets To Draft Plan
-            setup_Transfer_Macro_Targets_Data();
-            loading_Screen.increaseBar(3);
-
-            // 7.) Transferring Plan Meals To Draft Meals
-            setup_Transfer_Meals_Data();
-            loading_Screen.increaseBar(4);
+            loading_Screen.increaseBar(5);
 
             //####################################################
             // Get Reference DATA Methods
             //####################################################
             System.out.printf("\n\n%s \nGetting Meta Data Objects \n%s ", lineSeparator, lineSeparator);
 
-            // 8.) Get Ingredient Types Mapped to Ingredient Names
+            // 5.) Get Ingredient Types Mapped to Ingredient Names
             setup_Get_Ingredient_Types_And_Ingredient_Names();
             loading_Screen.increaseBar(4);
 
-            // 9.) Get Stores DATA
+            // 6.) Get Stores DATA
             setup_Get_Stores_Data();
             loading_Screen.increaseBar(3);
 
-            // 10.) Get Measurement Material Type DATA
+            // 7.) Get Measurement Material Type DATA
             setup_Get_Measurement_Material_Type_Data();
             loading_Screen.increaseBar(3);
 
-            // 11.) Get Measurement DATA
+            // 8.) Get Measurement DATA
             setup_Get_Measurement_Data();
             loading_Screen.increaseBar(4);
 
-            // 12.) System Variables DATA
+            // 9.) System Variables DATA
             setup_Get_System_Variables();
-            loading_Screen.increaseBar(3);
+            loading_Screen.increaseBar(4);
 
             //####################################################
-            // Get Meals DATA Methods
+            // Draft Plan Construction
             //####################################################
-            // 13.)  Get Meals Data
-            meals_and_sub_meals_AL = setup_Get_Meal_Data();
-            loading_Screen.increaseBar(6);
+            /*
+                10.) Transferring Plan Data To Draft Plan       [3%]
+                11.) Transferring Targets To Draft Plan         [3%]
+                12.) Transferring Plan Meals To Draft Meals     [3%]
+            */
 
-            // 14.) Get TotalMeals Data
-            total_Meals_Data_Map = setup_Get_Total_Meals_Data();
-            loading_Screen.increaseBar(3);
+            build_Draft_Plan_Data(loading_Screen, 3);
 
-            // 15.)  Get MacroTargets DATA
-            macros_targets_plan_data_AL = setup_Get_Macros_Targets_Data();
-            loading_Screen.increaseBar(3);
+            //####################################################
+            // GET Computed Plan Data
+            //####################################################
+            /*
+                13.)  Get Meals Data        [3%]
+                14.)  Get TotalMeals Data   [3%]
+                15.)  Get MacroTargets DATA [3%]
+                16.)  Get MacrosLeft DATA   [3%]
+            */
 
-            // 16.)  Get MacrosLeft DATA
-            macros_left_plan_data_AL = setup_Get_Macros_Left_Data();
-            loading_Screen.increaseBar(3);
+            load_Computed_Plan_Data(loading_Screen, 3);
+
+            //####################################################
+            // Build GUI
+            //####################################################
+            /* 17.) North GUI Setup  : Icons                                [5%]
+             * 18.) Bottom GUI Setup : Macro_Targets / Macro_Left Table     [5%]
+             * 19.) Centre GUI Setup : Create Meals                         [40%]
+             */
+
+            build_GUI(loading_Screen, 5, 5, 40);
+
+            //####################################################
+            // Build Complete
+            //####################################################
+            build_Complete(loading_Screen);
+
+            screen_created = true;
+            setFrameVisibility(true);      // Make GUI Visible
         }
         catch (Exception e)
         {
             failed_Start_UP(loading_Screen);
-            return;
         }
-
-        //###############################################################################
-        // Build GUI
-        //###############################################################################
-        System.out.printf("\n\n%s \n%s : Creating GUI Screen \n%s ", lineSeparator, get_Class_And_Method_Name(), lineSeparator); // Update
-
-        // Splitting Scroll JPanel
-        scroll_JP_center = new JPanel(new GridBagLayout());
-        addToContainer(getScrollPaneJPanel(), scroll_JP_center, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, "center");
-
-        JPanel scroll_jpanel_bottom = new JPanel(new GridBagLayout());
-        addToContainer(getScrollPaneJPanel(), scroll_jpanel_bottom, 0, 1, 1, 1, 0.25, 0.25, "both", 0, 0, "end");
-
-        //####################################################
-        // North :  JPanel
-        //####################################################
-        // 17.) North GUI Setup : Icons
-        icon_Setup(getMainNorthPanel()); // Icon Setup
-        loading_Screen.increaseBar(5);
-
-        //#####################################################
-        // Bottom : JPanel
-        //#####################################################
-        // 18.) Bottom GUI Setup : Macro_Targets / Macro_Left Table
-        build_Bottom_GUI(scroll_jpanel_bottom, macros_targets_plan_data_AL, macros_left_plan_data_AL);
-        loading_Screen.increaseBar(5); // Increase Progress
-
-        //####################################################
-        // Centre : JPanel (Meals)
-        //####################################################
-        try
-        {
-            // 19.) Centre GUI Setup : Create Meals
-            create_Meal_Objects_In_GUI(meals_and_sub_meals_AL, total_Meals_Data_Map, loading_Screen, 40);     // Add Meals to GUI
-        }
-        catch (Exception e)
-        {
-            failed_Start_UP(loading_Screen);
-            return;
-        }
-
-        //###############################################################################
-        // Initialization Finished
-        //###############################################################################
-        if (! loading_Screen.isFinished()) { loading_Screen.increase_By_Remainder_Left(); }  // Finish off % Bar
-
-        screen_created = true;
-
-        setFrameVisibility(true);      // Make GUI Visible
-        resizeGUI();                   // Resize GUi
-        scroll_To_Top_of_ScrollPane(); // Scroll to the top of the gui
     }
 
     //##################################################################################################################
     // App Configuration Methods
     //##################################################################################################################
-
     // Failed Startup
     private void failed_Start_UP(Loading_Screen loadingScreen)
     {
@@ -342,8 +308,102 @@ public class Meal_Plan_Screen extends Screen_JFrame
         window_Closed_Event();
     }
 
+    private void build_Draft_Plan_Data(Loading_Screen loading_screen, int increase_each_task_by) throws Exception
+    {
+        // Transferring Plan Data To Draft Plan
+        setup_Transfer_Plan_Data();
+        loading_screen.increaseBar(increase_each_task_by);
+
+        // Transferring Targets To Draft Plan
+        setup_Transfer_Macro_Targets_Data();
+        loading_screen.increaseBar(increase_each_task_by);
+
+        // Transferring Plan Meals To Draft Meals
+        setup_Transfer_Meals_Data();
+        loading_screen.increaseBar(increase_each_task_by);
+    }
+
+    private void load_Computed_Plan_Data(Loading_Screen loading_screen, int increase_each_task_by) throws Exception
+    {
+        // Get Meals Data
+        meals_and_sub_meals_AL = setup_Get_Meal_Data();
+        loading_screen.increaseBar(increase_each_task_by);
+
+        // Get TotalMeals Data
+        total_Meals_Data_Map = setup_Get_Total_Meals_Data();
+        loading_screen.increaseBar(increase_each_task_by);
+
+        // Get MacroTargets DATA
+        macros_targets_plan_data_AL = setup_Get_Macros_Targets_Data();
+        loading_screen.increaseBar(increase_each_task_by);
+
+        // Get MacrosLeft DATA
+        macros_left_plan_data_AL = setup_Get_Macros_Left_Data();
+        loading_screen.increaseBar(increase_each_task_by);
+    }
+
+    private void build_GUI
+            (
+                    Loading_Screen loading_screen,
+                    int north_percent,
+                    int bottom_percent,
+                    int centre_percent
+
+            ) throws Exception
+    {
+        //#############################
+        //
+        //#############################
+        System.out.printf("\n\n%s \n%s : Creating GUI Screen \n%s ", lineSeparator, get_Class_And_Method_Name(), lineSeparator); // Update
+
+        // Splitting Scroll JPanel
+        scroll_JP_center = new JPanel(new GridBagLayout());
+        addToContainer(getScrollPaneJPanel(), scroll_JP_center, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, "center");
+
+        JPanel scroll_jpanel_bottom = new JPanel(new GridBagLayout());
+        addToContainer(getScrollPaneJPanel(), scroll_jpanel_bottom, 0, 1, 1, 1, 0.25, 0.25, "both", 0, 0, "end");
+
+        //#############################
+        // North :  JPanel
+        //#############################
+        // 17.) North GUI Setup : Icons
+        icon_Setup(getMainNorthPanel()); // Icon Setup
+        loading_screen.increaseBar(north_percent);
+
+        //#############################
+        // Bottom : JPanel
+        //#############################
+        // 18.) Bottom GUI Setup : Macro_Targets / Macro_Left Table
+        build_Bottom_GUI(scroll_jpanel_bottom, macros_targets_plan_data_AL, macros_left_plan_data_AL);
+        loading_screen.increaseBar(bottom_percent); // Increase Progress
+
+        //#############################
+        // Centre : JPanel (Meals)
+        //#############################
+        // 19.) Centre GUI Setup : Create Meals
+        create_Meal_Objects_In_GUI(meals_and_sub_meals_AL, total_Meals_Data_Map, loading_screen, centre_percent);     // Add Meals to GUI
+    }
+
+    private void build_Complete(Loading_Screen loading_screen)
+    {
+        if (! loading_screen.isFinished()) { loading_screen.increase_By_Remainder_Left(); }  // Finish off % Bar
+
+        resizeGUI();                   // Resize GUi
+        scroll_To_Top_of_ScrollPane(); // Scroll to the top of the gui
+
+        reset_Initialization_Variables_State(); // Remove Build variables not needed
+    }
+
+    private void reset_Initialization_Variables_State()
+    {
+        meals_and_sub_meals_AL = null;
+        total_Meals_Data_Map = null;
+        macros_targets_plan_data_AL = null;
+        macros_left_plan_data_AL = null;
+    }
+
     //#################################################
-    // Get DATA Methods
+    // Context & Table Meta-Data:
     //#################################################
     private void setup_Get_User_And_Plan_Info(boolean user_id, boolean plan_id, boolean plan_version_id, boolean plan_name) throws Exception
     {
@@ -644,7 +704,306 @@ public class Meal_Plan_Screen extends Screen_JFrame
     }
 
     //#################################################
-    // Transfer Data Methods
+    //  Reference DATA:
+    //#################################################
+    private void setup_Get_Ingredient_Types_And_Ingredient_Names() throws Exception
+    {
+        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
+
+        //#######################################
+        // Create Get Query Results
+        //#######################################
+        /*
+            This query needs to be a left join as this call gets all ingredient types & joins their associated ingredients if any
+            if the join has 0 ingredients its null and the ingredient type is recorded by itself with no ingredients
+            if the ingredients do exist its joined into a map and processed
+         */
+
+        String query = """
+                SELECT
+                
+                    T.ingredient_type_id AS type_id,
+                	T.ingredient_type_name AS type_name,
+                	T.is_system,
+                
+                	json_group_array(
+                        JSON_OBJECT('id', I.ingredient_id,
+                            'is_System', I.is_System,
+                            'name', I.ingredient_name
+                        )
+                    ) AS matched_ingredients
+                
+                FROM  ingredient_types T
+                LEFT JOIN  ingredients_info I ON T.ingredient_type_id = I.ingredient_type_id
+                
+                GROUP BY T.ingredient_type_id, T.ingredient_type_name
+                ORDER BY T.ingredient_type_name ASC;""";
+
+        String error_msg = "Unable to get Ingredient Types & Ingredient Names";
+
+        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, null, error_msg);
+
+        //#######################################
+        // Execute Query
+        //#######################################
+        ArrayList<ArrayList<Object>> results;
+
+        try
+        {
+            results = db.get_2D_Query_AL_Object(fetch_statement, false);
+        }
+        catch (Exception e)
+        {
+            System.err.printf("\n\n%s \n%s Error \n%s  \n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
+            throw new Exception();
+        }
+
+        //#######################################
+        // Go through Results
+        //#######################################
+        ObjectMapper mapper = new ObjectMapper();
+        HashMap<Ingredient_Type_ID_OBJ, ArrayList<Ingredient_Name_ID_OBJ>> mapped_Data = new HashMap<>();
+
+        try
+        {
+            for (ArrayList<Object> row : results)
+            {
+                //#########################
+                // Get Info
+                //#########################
+                int type_ID = (int) row.get(0);
+                String type_name = (String) row.get(1);
+                boolean is_System = ((int) row.get(2)) == 1; // 1 is true
+
+                Ingredient_Type_ID_OBJ type_OBJ = new Ingredient_Type_ID_OBJ(type_ID, is_System, type_name);
+
+                // Add to DATA
+                shared_data_registry.add_Ingredient_Type(type_OBJ, false); // Add ingredient Type
+
+                //#########################
+                // Parsing JSON DATA
+                //#########################
+                JsonNode json_array = mapper.readTree((String) row.get(3));
+
+                for (JsonNode node : json_array) // For loop through each node of Ingredients
+                {
+                    JsonNode id = node.get("id"); // Per Object Ingredient Object get ID
+
+                    if (id.isNull()) { continue; }  // If values are empty skip
+
+                    // Convert Ingredient Values
+                    int id_Value = id.asInt();
+                    String name = node.get("name").asText();
+                    boolean is_System_Ingredient = (node.get("is_System").asInt()) == 1;
+
+                    // Add Ingredient_Name to DATA IF not NULL
+                    Ingredient_Name_ID_OBJ ingredient_Name_ID = new Ingredient_Name_ID_OBJ(
+                            id_Value,
+                            is_System_Ingredient,
+                            name,
+                            type_OBJ
+                    );
+
+                    shared_data_registry.add_Ingredient_Name(ingredient_Name_ID, true);
+                }
+            }
+
+            System.out.println("    \n.) Ingredient Types / Names Objects Successfully Transferred! ");
+        }
+        catch (Exception e)
+        {
+            System.err.printf("\n\n%s \n%s Error \n%s  \n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
+            throw new Exception();
+        }
+    }
+
+    private void setup_Get_Stores_Data() throws Exception
+    {
+        //#######################################
+        // Create Get Query Results
+        //#######################################
+        String error_msg = "Error, Unable to get Ingredient Stores in Plan!";
+        String query = "SELECT * FROM stores ORDER BY store_name ASC;";
+        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, null, error_msg);
+
+        //#######################################
+        // Execute Query
+        //#######################################
+        ArrayList<ArrayList<Object>> results;
+        try
+        {
+            results = db.get_2D_Query_AL_Object(fetch_statement, false);
+        }
+        catch (Exception e)
+        {
+            System.err.printf("\n\n%s \n%s Error \n%s  \n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
+            throw new Exception();
+        }
+
+        //#######################################
+        // Process Data
+        //#######################################
+        for (ArrayList<Object> row : results)
+        {
+            // Add to DATA
+            shared_data_registry.add_Store(
+                    new Store_ID_OBJ(
+                            (int) row.get(0),
+                            (int) row.get(1) == 1, // IF True = 1
+                            (String) row.get(2)
+                    ),
+                    false
+            );
+        }
+
+        //#######################################
+        // Output
+        //#######################################
+        System.out.println("    \n.) Store Objects Successfully Transferred!");
+    }
+
+    private void setup_Get_Measurement_Material_Type_Data() throws Exception
+    {
+        // Set Variables
+        String query = "SELECT * FROM measurement_material_type ORDER BY measurement_material_type_name;";
+        String error_msg = "Unable, to get Measurements Material Type Data";
+        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, null, error_msg);
+
+        // Execute Query
+        ArrayList<ArrayList<Object>> data;
+
+        try
+        {
+            data = db.get_2D_Query_AL_Object(fetch_statement, false);
+        }
+        catch (Exception e)
+        {
+            System.err.printf("\n\n%s \n%s Error \n%s  \n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
+            throw new Exception();
+        }
+
+        // Add Measurement OBJ
+        for (ArrayList<Object> row : data)
+        {
+            int id = (int) row.get(0);
+            String measurement_material_type_name = (String) row.get(1);
+
+            shared_data_registry.add_Measurement_Material_Type(
+                    new Measurement_Material_Type_ID_OBJ(id, true, measurement_material_type_name),
+                    false
+            );
+        }
+
+        // Return Output
+        System.out.println("    \n.) Measurement Material Type Objects Successfully Transferred!");
+    }
+
+    private void setup_Get_Measurement_Data() throws Exception
+    {
+        // Set Variables
+        String query = "SELECT * FROM measurements ORDER BY unit_name;";
+        String error_msg = "Unable, to get Measurements Data";
+
+        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, null, error_msg);
+
+        // Execute Query
+        ArrayList<ArrayList<Object>> data;
+
+        try
+        {
+            data = db.get_2D_Query_AL_Object(fetch_statement, false);
+        }
+        catch (Exception e)
+        {
+            System.err.printf("\n\n%s \n%s Error \n%s  \n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
+            throw new Exception();
+        }
+
+        // Add Measurement OBJ
+        for (ArrayList<Object> row : data)
+        {
+            int id = (int) row.get(0);
+            boolean is_system = ((int) row.get(1)) == 1; // 1 = true
+            String unit_Name = (String) row.get(2);
+            String unit_Symbol = (String) row.get(3);
+            int measurement_Material_Type_ID = (int) row.get(4);
+
+            shared_data_registry.add_Measurement(
+                    new Measurement_ID_OBJ(
+                            id,
+                            is_system,
+                            unit_Name,
+                            unit_Symbol,
+                            shared_data_registry.get_Measurement_Material_Type_ID_OBJ(measurement_Material_Type_ID)
+                    ),
+                    false
+            );
+        }
+
+        // Return Output
+        System.out.println("\nMeasurement Objects Successfully Transferred!");
+    }
+
+    private void setup_Get_System_Variables() throws Exception
+    {
+        //###########################
+        // Set Variables
+        //###########################
+        Batch_Fetch_Statements fetch_statements = new Batch_Fetch_Statements("Unable, to get System Variables!");
+
+        //###########################
+        // Fetch Queries
+        //###########################
+
+        // N/A Ingredient ID
+        String query_01 = "SELECT ingredient_id FROM  ingredients_info WHERE ingredient_name = ?;";
+        fetch_statements.add_Fetches(new Fetch_Statement(query_01, new Object[]{ "None Of The Above" }));
+
+        // N/A Shop
+        String query_02 = """
+                SELECT
+                    pdid
+                FROM ingredient_in_shops
+                WHERE
+                    ingredient_id = (SELECT ingredient_id FROM ingredients_info WHERE ingredient_name = ?)
+                    AND product_name = ?;""";
+
+        fetch_statements.add_Fetches(new Fetch_Statement(query_02, new Object[]{ "None Of The Above", "N/A" }));
+
+        try
+        {
+            //###########################
+            // Execute
+            //###########################
+            Fetched_Results fetched_results = db.get_Fetched_Results(fetch_statements);
+
+            if (fetched_results == null) { throw new Exception("Failed Getting Data"); }
+
+            //###########################
+            // Set Variables
+            //###########################
+            // Retrieve Variables From Fetched Results
+            int na_ingredient_id = (Integer) fetched_results.get_1D_Result_Into_Object(0);
+            int na_pdid = (Integer) fetched_results.get_1D_Result_Into_Object(1);
+
+            // Set Variables in Shared Data Registry
+            shared_data_registry.set_NA_Ingredient_ID(na_ingredient_id);
+            shared_data_registry.set_NA_Ingredient_PDID(na_pdid);
+
+            //###########################
+            // Success Msg
+            //###########################
+            System.out.printf("\n\n%s \nSystem Variables Successfully Transferred! \n%s", lineSeparator, lineSeparator);
+        }
+        catch (Exception e)
+        {
+            System.err.printf("\n\n%s \n%s Error \n%s  \n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
+            throw new Exception();
+        }
+    }
+
+    //#################################################
+    // Draft Plan Construction
     //#################################################
     private void setup_Transfer_Plan_Data() throws Exception
     {
@@ -959,308 +1318,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
         System.out.printf("\n\n%s \nMeal Ingredients Successfully Transferred! \n%s", lineSeparator, lineSeparator);
     }
 
-    //############################
-    //  Transfer Meta Data
-    //############################
-    private void setup_Get_Ingredient_Types_And_Ingredient_Names() throws Exception
-    {
-        String methodName = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-
-        //#######################################
-        // Create Get Query Results
-        //#######################################
-        /*
-            This query needs to be a left join as this call gets all ingredient types & joins their associated ingredients if any
-            if the join has 0 ingredients its null and the ingredient type is recorded by itself with no ingredients
-            if the ingredients do exist its joined into a map and processed
-         */
-
-        String query = """
-                SELECT
-                
-                    T.ingredient_type_id AS type_id,
-                	T.ingredient_type_name AS type_name,
-                	T.is_system,
-                
-                	json_group_array(
-                        JSON_OBJECT('id', I.ingredient_id,
-                            'is_System', I.is_System,
-                            'name', I.ingredient_name
-                        )
-                    ) AS matched_ingredients
-                
-                FROM  ingredient_types T
-                LEFT JOIN  ingredients_info I ON T.ingredient_type_id = I.ingredient_type_id
-                
-                GROUP BY T.ingredient_type_id, T.ingredient_type_name
-                ORDER BY T.ingredient_type_name ASC;""";
-
-        String error_msg = "Unable to get Ingredient Types & Ingredient Names";
-
-        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, null, error_msg);
-
-        //#######################################
-        // Execute Query
-        //#######################################
-        ArrayList<ArrayList<Object>> results;
-
-        try
-        {
-            results = db.get_2D_Query_AL_Object(fetch_statement, false);
-        }
-        catch (Exception e)
-        {
-            System.err.printf("\n\n%s \n%s Error \n%s  \n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
-            throw new Exception();
-        }
-
-        //#######################################
-        // Go through Results
-        //#######################################
-        ObjectMapper mapper = new ObjectMapper();
-        HashMap<Ingredient_Type_ID_OBJ, ArrayList<Ingredient_Name_ID_OBJ>> mapped_Data = new HashMap<>();
-
-        try
-        {
-            for (ArrayList<Object> row : results)
-            {
-                //#########################
-                // Get Info
-                //#########################
-                int type_ID = (int) row.get(0);
-                String type_name = (String) row.get(1);
-                boolean is_System = ((int) row.get(2)) == 1; // 1 is true
-
-                Ingredient_Type_ID_OBJ type_OBJ = new Ingredient_Type_ID_OBJ(type_ID, is_System, type_name);
-
-                // Add to DATA
-                shared_data_registry.add_Ingredient_Type(type_OBJ, false); // Add ingredient Type
-
-                //#########################
-                // Parsing JSON DATA
-                //#########################
-                JsonNode json_array = mapper.readTree((String) row.get(3));
-
-                for (JsonNode node : json_array) // For loop through each node of Ingredients
-                {
-                    JsonNode id = node.get("id"); // Per Object Ingredient Object get ID
-
-                    if (id.isNull()) { continue; }  // If values are empty skip
-
-                    // Convert Ingredient Values
-                    int id_Value = id.asInt();
-                    String name = node.get("name").asText();
-                    boolean is_System_Ingredient = (node.get("is_System").asInt()) == 1;
-
-                    // Add Ingredient_Name to DATA IF not NULL
-                    Ingredient_Name_ID_OBJ ingredient_Name_ID = new Ingredient_Name_ID_OBJ(
-                            id_Value,
-                            is_System_Ingredient,
-                            name,
-                            type_OBJ
-                    );
-
-                    shared_data_registry.add_Ingredient_Name(ingredient_Name_ID, true);
-                }
-            }
-
-            System.out.println("    \n.) Ingredient Types / Names Objects Successfully Transferred! ");
-        }
-        catch (Exception e)
-        {
-            System.err.printf("\n\n%s \n%s Error \n%s  \n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
-            throw new Exception();
-        }
-    }
-
-    private void setup_Get_Stores_Data() throws Exception
-    {
-        //#######################################
-        // Create Get Query Results
-        //#######################################
-        String error_msg = "Error, Unable to get Ingredient Stores in Plan!";
-        String query = "SELECT * FROM stores ORDER BY store_name ASC;";
-        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, null, error_msg);
-
-        //#######################################
-        // Execute Query
-        //#######################################
-        ArrayList<ArrayList<Object>> results;
-        try
-        {
-            results = db.get_2D_Query_AL_Object(fetch_statement, false);
-        }
-        catch (Exception e)
-        {
-            System.err.printf("\n\n%s \n%s Error \n%s  \n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
-            throw new Exception();
-        }
-
-        //#######################################
-        // Process Data
-        //#######################################
-        for (ArrayList<Object> row : results)
-        {
-            // Add to DATA
-            shared_data_registry.add_Store(
-                    new Store_ID_OBJ(
-                            (int) row.get(0),
-                            (int) row.get(1) == 1, // IF True = 1
-                            (String) row.get(2)
-                    ),
-                    false
-            );
-        }
-
-        //#######################################
-        // Output
-        //#######################################
-        System.out.println("    \n.) Store Objects Successfully Transferred!");
-    }
-
-    private void setup_Get_Measurement_Material_Type_Data() throws Exception
-    {
-        // Set Variables
-        String query = "SELECT * FROM measurement_material_type ORDER BY measurement_material_type_name;";
-        String error_msg = "Unable, to get Measurements Material Type Data";
-        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, null, error_msg);
-
-        // Execute Query
-        ArrayList<ArrayList<Object>> data;
-
-        try
-        {
-            data = db.get_2D_Query_AL_Object(fetch_statement, false);
-        }
-        catch (Exception e)
-        {
-            System.err.printf("\n\n%s \n%s Error \n%s  \n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
-            throw new Exception();
-        }
-
-        // Add Measurement OBJ
-        for (ArrayList<Object> row : data)
-        {
-            int id = (int) row.get(0);
-            String measurement_material_type_name = (String) row.get(1);
-
-            shared_data_registry.add_Measurement_Material_Type(
-                    new Measurement_Material_Type_ID_OBJ(id, true, measurement_material_type_name),
-                    false
-            );
-        }
-
-        // Return Output
-        System.out.println("    \n.) Measurement Material Type Objects Successfully Transferred!");
-    }
-
-    private void setup_Get_Measurement_Data() throws Exception
-    {
-        // Set Variables
-        String query = "SELECT * FROM measurements ORDER BY unit_name;";
-        String error_msg = "Unable, to get Measurements Data";
-
-        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, null, error_msg);
-
-        // Execute Query
-        ArrayList<ArrayList<Object>> data;
-
-        try
-        {
-            data = db.get_2D_Query_AL_Object(fetch_statement, false);
-        }
-        catch (Exception e)
-        {
-            System.err.printf("\n\n%s \n%s Error \n%s  \n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
-            throw new Exception();
-        }
-
-        // Add Measurement OBJ
-        for (ArrayList<Object> row : data)
-        {
-            int id = (int) row.get(0);
-            boolean is_system = ((int) row.get(1)) == 1; // 1 = true
-            String unit_Name = (String) row.get(2);
-            String unit_Symbol = (String) row.get(3);
-            int measurement_Material_Type_ID = (int) row.get(4);
-
-            shared_data_registry.add_Measurement(
-                    new Measurement_ID_OBJ(
-                            id,
-                            is_system,
-                            unit_Name,
-                            unit_Symbol,
-                            shared_data_registry.get_Measurement_Material_Type_ID_OBJ(measurement_Material_Type_ID)
-                    ),
-                    false
-            );
-        }
-
-        // Return Output
-        System.out.println("\nMeasurement Objects Successfully Transferred!");
-    }
-
-    private void setup_Get_System_Variables() throws Exception
-    {
-        //###########################
-        // Set Variables
-        //###########################
-        Batch_Fetch_Statements fetch_statements = new Batch_Fetch_Statements("Unable, to get System Variables!");
-
-        //###########################
-        // Fetch Queries
-        //###########################
-
-        // N/A Ingredient ID
-        String query_01 = "SELECT ingredient_id FROM  ingredients_info WHERE ingredient_name = ?;";
-        fetch_statements.add_Fetches(new Fetch_Statement(query_01, new Object[]{ "None Of The Above" }));
-
-        // N/A Shop
-        String query_02 = """
-                SELECT
-                    pdid
-                FROM ingredient_in_shops
-                WHERE
-                    ingredient_id = (SELECT ingredient_id FROM ingredients_info WHERE ingredient_name = ?)
-                    AND product_name = ?;""";
-
-        fetch_statements.add_Fetches(new Fetch_Statement(query_02, new Object[]{ "None Of The Above", "N/A" }));
-
-        try
-        {
-            //###########################
-            // Execute
-            //###########################
-            Fetched_Results fetched_results = db.get_Fetched_Results(fetch_statements);
-
-            if (fetched_results == null) { throw new Exception("Failed Getting Data"); }
-
-            //###########################
-            // Set Variables
-            //###########################
-            // Retrieve Variables From Fetched Results
-            int na_ingredient_id = (Integer) fetched_results.get_1D_Result_Into_Object(0);
-            int na_pdid = (Integer) fetched_results.get_1D_Result_Into_Object(1);
-
-            // Set Variables in Shared Data Registry
-            shared_data_registry.set_NA_Ingredient_ID(na_ingredient_id);
-            shared_data_registry.set_NA_Ingredient_PDID(na_pdid);
-
-            //###########################
-            // Success Msg
-            //###########################
-            System.out.printf("\n\n%s \nSystem Variables Successfully Transferred! \n%s", lineSeparator, lineSeparator);
-        }
-        catch (Exception e)
-        {
-            System.err.printf("\n\n%s \n%s Error \n%s  \n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
-            throw new Exception();
-        }
-    }
-
-    //###########################
-    // Meals Data
-    //###########################
+    //#################################################
+    // GET Computed Plan Data
+    //#################################################
     private ArrayList<Meal_And_Sub_Meals_OBJ> setup_Get_Meal_Data() throws Exception
     {
         //########################################################################
@@ -1549,6 +1609,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //#################################################
     // Build GUI Methods
     //#################################################
+    // Bottom
     private void build_Bottom_GUI
     (
             JPanel scroll_jpanel_bottom,
@@ -1624,15 +1685,15 @@ public class Meal_Plan_Screen extends Screen_JFrame
         addToContainer(macrosInfoJPanel, macros_left_table, 0, macrosInfoJP_YPos += 1, 1, 1, 0.25, 0.25, "both", 30, 0, null);
     }
 
-
+    // Centre
     private void create_Meal_Objects_In_GUI
-            (
-                    ArrayList<Meal_And_Sub_Meals_OBJ> meals_and_sub_meals_AL,
-                    LinkedHashMap<Integer, ArrayList<Object>> total_Meals_Data_Map,
-                    Loading_Screen loading_Screen,
-                    double allocated_task_percentage
+    (
+            ArrayList<Meal_And_Sub_Meals_OBJ> meals_and_sub_meals_AL,
+            LinkedHashMap<Integer, ArrayList<Object>> total_Meals_Data_Map,
+            Loading_Screen loading_Screen,
+            double allocated_task_percentage
 
-            ) throws Exception
+    ) throws Exception
     {
         try
         {
@@ -2179,70 +2240,43 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // ###############################################################
     private void refresh_Btn_Action()
     {
-        set_has_Data_Changed(false);
-        /*
-        //####################################################################
+        //##############################
         // Confirm Refresh / Edge Cases
-        //####################################################################
+        //##############################
         String txt = "Are you sure you want to refresh all the meals in this plan?";
-        
+
         // IF there is no plan selected or, user rejects refresh then exit
         if ((! (is_Plan_Selected())) || ! (areYouSure("Refresh Meal Plan Data", txt)))
         {
             return;
         }
-        
-        set_has_Data_Changed(false);
-        //####################################################################
-        // Refresh DB Data
-        //####################################################################
-       
-        setup_Get_User_And_Plan_Info(false, false, false, true); // Get Plan Name
-        
-       setup_Transfer_Plan_Data(); // Transfer Plan Data
-        
-        if (has_Macro_Targets_Changed()) // Refresh Macro Targets if they have changed
-        {
-            setup_Transfer_Macro_Targets_Data();    // Transfer Macro Data
-            set_Has_Macros_Targets_Changed(false); // reset variable
-        }
-        
-        setup_Transfer_Meals_Data();                            // Transfer Meals Data
-        
-        if (! setup_Get_Meal_Data()) { return; }               // Get Meals Data
-        if (! setup_Get_Total_Meals_Data()) { return; }        // Get Total_Meals Data
-        *//*
-        if (! setup_Get_Macros_Targets_Data()) { return; }     // Get MacroTargets DATA
-        if (! setup_Get_Macros_Left_Data()) { return; }        // Get MacrosLeft DATA
-        
-   
-        macros_Left_JTable.refresh_Data();                     // ID is the same / Same Data = Refresh
-        macros_Targets_Table.refresh_Data();                   // ID is the same / Same Data = Refresh
-        
-        //####################################################################
-        // Refresh MealManagers Collections
-        //####################################################################
-        // shared_Data_Registry.refresh_MealManagers_MPS();
-        
-        //####################################################################
-        // Re-draw GUI Screen
-        //####################################################################
-        
-        scroll_Up_Btn_Action(); // Reposition GUI
-        
-        //####################################################################
-        // Refresh Macro-Targets Table
-        //####################################################################
-        refresh_Macro_Targets(); // if macroTargets changed ask the user if they would like to refresh this data
-        
-        update_Macros_Left_Table(); // Update macrosLeft, refresh methods do not work here, needs to be computed
-        
-        //####################################################################
-        // Update External Charts
-        //####################################################################
-        update_External_Charts(true, "refresh", null, null, null);
-    */
 
+        //##############################
+        // Refresh Macros DATA
+        //##############################
+        refresh_Macro_Targets();
+
+        //##############################
+        // Refresh GUI
+        //##############################
+        set_has_Data_Changed(false);
+    }
+
+    private boolean refresh_GUI()
+    {
+        Loading_Screen loading_Screen = new Loading_Screen(100);
+
+        try
+        {
+
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            failed_Start_UP(loading_Screen);
+            return false;
+        }
     }
 
     // ###############################################################
