@@ -23,6 +23,7 @@ import com.donty.gymapp.ui.screens.mealPlanScreen.Meal_Plan_Screen;
 import com.donty.gymapp.ui.tables.View_Data_Tables.Total_Meal_Table.Total_Meal_Other_Columns;
 import org.apache.commons.lang3.StringUtils;
 import org.javatuples.Pair;
+
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalTime;
@@ -1191,14 +1192,26 @@ public class MealManager
     {
         if (! are_You_Sure("Delete")) { return; }
 
-        delete_Meal_Manager_Action();
+        delete_Meal_Action(); // Delete MealManager Actions
+    }
 
-        update_MacrosLeft_Table(); // Update MacrosLeft_Table
+    public void delete_Meal_Action()
+    {
+        if (! delete_Meal_DB()) { return; } // Failed Update = Exit
+
+        hide_MealManager(); // Delete MealManager
+
+        shared_Data_Registry.delete_MealManager(this); // Update Registry Data
+
+        // Delete in External Charts
+        meal_plan_screen.update_External_Charts(false, "delete", this, get_Current_Meal_Time(), get_Current_Meal_Time());
+
+        update_Externals(); // Macros Left & MPS Indicators
 
         JOptionPane.showMessageDialog(null, "Table Successfully Deleted!"); // Show MSG
     }
 
-    private void delete_Meal_Manager_Action()
+    private boolean delete_Meal_DB()
     {
         //##########################################
         // Delete MealManager Queries
@@ -1212,22 +1225,7 @@ public class MealManager
         //##########################################
         // Execute Update
         //##########################################
-        if (! db.upload_Data(sql_statement)) { return; }
-
-        //##########################################
-        // Update GUI
-        //##########################################
-        delete_MealManager(); // Delete MealManager Actions
-
-        // Delete in External Charts
-        meal_plan_screen.update_External_Charts(false, "delete", this, get_Current_Meal_Time(), get_Current_Meal_Time());
-    }
-
-    private void delete_MealManager()
-    {
-        shared_Data_Registry.delete_MealManager(this); // Update Registry Data
-
-        hide_MealManager(); // Hide JTable object & Collapsible OBJ
+        return db.upload_Data(sql_statement); // IF it fails upload has its own error prompt msg
     }
 
     private void hide_MealManager()
@@ -1252,16 +1250,12 @@ public class MealManager
     //################################################
     // Delete Ingredients_Table Methods
     //################################################
-    public void ingredients_Table_Has_Been_Deleted()
+    public boolean are_There_Any_Active_Sub_Meals()
     {
-        boolean active_Table =
+        return
                 ingredient_tables_AL  // returns true if there is a meal that hasn't been deleted
                         .stream()
                         .anyMatch(t -> ! t.is_Sub_Meal_Deleted()); // noneMatch returns true if predicate isn't met
-
-        if (active_Table) { return; } // If there are meals still in this plan exit
-
-        delete_Meal_Manager_Action(); // delete table
     }
 
     //#################################################################################
@@ -1593,9 +1587,7 @@ public class MealManager
 
         update_Charts(); // Update Charts Internal & External
 
-        update_MacrosLeft_Table(); // Update Macros Left
-
-        meal_plan_screen.update_Macro_Indicators(); // Update Macro Indicators
+        update_Externals();
     }
 
     private void update_MealManager_DATA()
@@ -1627,6 +1619,13 @@ public class MealManager
 
         // Update External Charts
         meal_plan_screen.update_External_Charts(false, "update", this, get_Current_Meal_Time(), get_Current_Meal_Time());
+    }
+
+    public void update_Externals()
+    {
+        update_MacrosLeft_Table(); // Update Macros Left
+
+        meal_plan_screen.update_Macro_Indicators(); // Update Macro Indicators
     }
 
     //############################

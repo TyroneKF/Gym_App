@@ -958,7 +958,7 @@ public class IngredientsTable extends JDBC_JTable
     private void delete_Table_Action()
     {
         //################################################
-        // Delete table from database
+        // DB: Delete Table
         //################################################
          /*
             Delete all ingredients from this meal (using mealID) from table "ingredients_in_meal"
@@ -974,24 +974,13 @@ public class IngredientsTable extends JDBC_JTable
         if (! db.upload_Data(sql_statement)) { return; }
 
         //################################################
-        // Hide JTable object & Collapsible OBJ
-        //################################################
-        hide_Ingredients_Table();
 
         //################################################
-        // Tell MealManager This Table Has Been Deleted
-        //################################################
-        meal_manager.ingredients_Table_Has_Been_Deleted(); // deletes meal if this is the last sub-meal
+        hide_Ingredients_Table(); // Hide JTable object & Collapsible OBJ
 
-        //################################################
-        // Update MacrosLeft Table & TotalMeal Table
-        //################################################
-        mealManager_Update_DATA();
+        if (meal_manager.are_There_Any_Active_Sub_Meals()) { return; }  // still active meals = nothing to do
 
-        //################################################
-        // Progress Message
-        //################################################
-        JOptionPane.showMessageDialog(frame, "Table Successfully Deleted!");
+        meal_manager.delete_Meal_Action(); // No active meals = Delete Table
     }
 
     //#######################
