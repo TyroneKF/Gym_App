@@ -159,7 +159,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
          *  6.) Get Stores Data                                             [3%]
          *  7.) Get Measurement Material Type DATA                          [3%]
          *  8.) Get Measurement DATA                                        [4%]
-         *  9.) System Variables DATA                                       [4%]
+         *  9.) System Variables DATA                                       [2%]
          *
          *  #############################
          *   Draft Plan Construction
@@ -180,8 +180,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
          *   Build GUI
          * #############################
          * 17.) North GUI Setup  : Icons                                    [5%]
-         * 18.) Bottom GUI Setup : Macro_Targets / Macro_Left Table         [5%]
-         * 19.) Centre GUI Setup : Create Meals                             [40%]    
+         * 18.) Update Macro Indicators                                     [2%]
+         * 19.) Bottom GUI Setup : Macro_Targets / Macro_Left Table         [5%]
+         * 20.) Centre GUI Setup : Create Meals                             [40%]
          */
 
         try // Get MetaData Methods
@@ -253,6 +254,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         }
         catch (Exception e)
         {
+            System.err.printf("\n\n%s \n\n%s", get_Class_And_Method_Name(), e);
             failed_Start_UP(loading_screen);
         }
     }
@@ -301,7 +303,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
         // 9.) System Variables DATA
         setup_Get_System_Variables();
-        loading_screen.increaseBar(4);
+        loading_screen.increaseBar(2);
     }
 
     private void build_Draft_Plan_Data(Loading_Screen loading_screen) throws Exception
@@ -359,17 +361,21 @@ public class Meal_Plan_Screen extends Screen_JFrame
         build_North_GUI();
         loading_screen.increaseBar(5);
 
+        // 18.) Update Macro Indicators
+        update_Macro_Indicators();
+        loading_screen.increaseBar(2);
+
         //#############################
         // Bottom : JPanel
         //#############################
-        // 18.) Bottom GUI Setup : Macro_Targets / Macro_Left Table
+        // 19.) Bottom GUI Setup : Macro_Targets / Macro_Left Table
         build_Bottom_GUI(scroll_jpanel_bottom, macros_targets_plan_data_AL, macros_left_plan_data_AL);
         loading_screen.increaseBar(5); // Increase Progress
 
         //#############################
         // Centre : JPanel (Meals)
         //#############################
-        // 19.) Centre GUI Setup : Create Meals
+        // 20.) Centre GUI Setup : Create Meals
         create_Meal_Objects_In_GUI(meals_and_sub_meals_AL, total_Meals_Data_Map, loading_screen, 40);     // Add Meals to GUI
     }
 
@@ -1527,8 +1533,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
     private ArrayList<ArrayList<Object>> setup_Get_Macros_Targets_Data() throws Exception
     {
-
-        ;
         String query = "SELECT * from draft_gui_plan_macro_target_calculations WHERE plan_id = ?";
         String error_msg = "Error, Gathering Macros Targets Data!";
         Object[] params = new Object[]{ get_Selected_Plan_ID() };
@@ -1622,7 +1626,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // Protein Macro Indicator
         //#################################
         ProgressWheelKey protein_wheel_key = new ProgressWheelKey(
-                35,
+                0,
                 new Color(200, 0, 0),
                 new Color(230, 230, 230),
                 100,
@@ -1642,7 +1646,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // Carb Macro Indicator
         //#################################
         ProgressWheelKey carb_wheel_key = new ProgressWheelKey(
-                35,
+                0,
                 new Color(210, 180, 140),
                 new Color(230, 230, 230),
                 100,
@@ -1662,7 +1666,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // Protein Macro Indicator
         //#################################
         ProgressWheelKey fats_wheel_key = new ProgressWheelKey(
-                35,
+                0,
                 new Color(76, 175, 80),
                 new Color(230, 230, 230),
                 100,
@@ -1682,7 +1686,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // Calories  Indicator
         //#################################
         ProgressWheelKey calories_wheel_key = new ProgressWheelKey(
-                35,
+                0,
                 new Color(255, 140, 0),
                 new Color(230, 230, 230),
                 100,
@@ -3837,14 +3841,18 @@ public class Meal_Plan_Screen extends Screen_JFrame
         mealManager_ArrayList.forEach(MealManager :: close_MealManager_Related_Screens);
     }
 
+
+    //##################################################################################################################
+    //  Update Methods
+    //##################################################################################################################
     public void update_External_Charts
-            (
-                    boolean mealPlanScreen_Action,
-                    String action,
-                    MealManager mealManager,
-                    LocalTime previousMealTime,
-                    LocalTime currentMealTime
-            )
+    (
+            boolean mealPlanScreen_Action,
+            String action,
+            MealManager mealManager,
+            LocalTime previousMealTime,
+            LocalTime currentMealTime
+    )
     {
         //####################################################################
         // MealPlanScreen
@@ -3921,6 +3929,93 @@ public class Meal_Plan_Screen extends Screen_JFrame
         }
     }
 
+    //######################################
+    // Update Indicators
+    //######################################
+    public void update_Macro_Indicators()
+    {
+        try
+        {
+            update_Macro_Indicators_Exc();
+        }
+        catch (Exception e)
+        {
+            JOptionPane.showMessageDialog(null, "Failed to Update Macro Indicators!");
+            System.err.printf("\n\n%s \n\n%s", get_Class_And_Method_Name(), e);
+        }
+    }
+
+    private void update_Macro_Indicators_Exc() throws Exception
+    {
+        // DB Get Query
+        String get_update = """
+                SELECT
+                    protein_progress,
+                    carbs_progress,
+                    fats_progress,
+                    cal_progress
+                
+                FROM draft_plan_macros_progress
+                WHERE plan_id = ?;""";
+
+        String error_msg = "Failed Updating Macro Indicators";
+
+        Fetch_Statement_Full fetch_statement_full = new Fetch_Statement_Full(
+                get_update,
+                new Object[]{ get_Selected_Plan_ID() },
+                error_msg
+        );
+
+        // Execute
+        ArrayList<ArrayList<Object>> results = db.get_2D_Query_AL_Object(fetch_statement_full, false);
+
+        // Update Indicators
+        ArrayList<Object> macros = results.getFirst();
+
+        // Convert Values
+        protein_indicator.update_Macro_Wheel((BigDecimal) macros.get(0));
+        carbs_indicator.update_Macro_Wheel((BigDecimal) macros.get(1));
+        fats_indicator.update_Macro_Wheel((BigDecimal) macros.get(2));
+        calories_indicator.update_Macro_Wheel((BigDecimal) macros.get(3));
+    }
+
+    //######################################
+    // Tables
+    //######################################
+    public void update_Targets_And_Macros_Left_Table()
+    {
+        update_Macros_Target_Table();
+        update_Macros_Left_Table();
+    }
+
+    // MacrosLeft Targets
+    private void update_Macros_Target_Table()
+    {
+        macros_targets_table.update_Table();
+    }
+
+    // MacrosLeft Table
+    private void update_Macros_Left_Table()
+    {
+        macros_left_table.update_Table();
+    }
+
+    //##################################################################################################################
+    //  Mutator Methods
+    //##################################################################################################################
+    public void set_Has_Macros_Targets_Changed(boolean bool)
+    {
+        macro_targets_changed = bool;
+    }
+
+    public void set_has_Data_Changed(boolean state)
+    {
+        has_data_changed = state;
+    }
+
+    //##################################################################################################################
+    //  Accessor Methods
+    //##################################################################################################################
     public Pair<LocalTime, LocalTime> get_Available_Sub_Meal_Time_Ranges_For_Meal(MealManager this_meal) throws Exception
     {
         //######################
@@ -3974,47 +4069,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
         );
     }
 
-    //##################################################################################################################
-    //  Macro Targets/Left Table Methods
-    //##################################################################################################################
-    public void update_Targets_And_Macros_Left_Table()
-    {
-        update_Macros_Target_Table();
-        update_Macros_Left_Table();
-    }
-
-    //##########################################
-    // MacrosLeft Targets
-    //#########################################
-    private void update_Macros_Target_Table()
-    {
-        macros_targets_table.update_Table();
-    }
-
-    //##########################################
-    // MacrosLeft Table
-    //#########################################
-    private void update_Macros_Left_Table()
-    {
-        macros_left_table.update_Table();
-    }
-
-    //##################################################################################################################
-    //  Mutator Methods
-    //##################################################################################################################
-    public void set_Has_Macros_Targets_Changed(boolean bool)
-    {
-        macro_targets_changed = bool;
-    }
-
-    public void set_has_Data_Changed(boolean state)
-    {
-        has_data_changed = state;
-    }
-
-    //##################################################################################################################
-    //  Accessor Methods
-    //##################################################################################################################
+    //###########################################
+    // Boolean
+    //###########################################
     private boolean is_Plan_Selected()
     {
         if (get_Selected_Plan_Version_ID() == null)

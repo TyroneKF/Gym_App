@@ -5,6 +5,8 @@ import com.donty.gymapp.ui.charts.progressWheel.ProgressWheel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class MacroIndicators extends JPanel
 {
@@ -67,5 +69,14 @@ public class MacroIndicators extends JPanel
     public void update_Macro_Wheel(int new_percent)
     {
         progress_wheel.update(new_percent);
+    }
+
+    public void update_Macro_Wheel(BigDecimal new_percent)
+    {
+        int value = new_percent
+                .setScale(0, RoundingMode.HALF_UP)
+                .intValue();
+
+        progress_wheel.update(value);
     }
 }

@@ -616,7 +616,7 @@
                                                  -- COUNT(DISTINCT T.meal_id) was recommended, I don't like it / hides errors as there shouldn't be identical duplicates
 
                 IFNULL(ROUND(SUM(T.total_protein),2),0) AS protein_in_plan,
-                IFNULL(ROUND(SUM(T.total_carbohydrates),2),0) AS carbohydrates_in_Plan,
+                IFNULL(ROUND(SUM(T.total_carbohydrates),2),0) AS carbohydrates_in_plan,
                 IFNULL(ROUND(SUM(T.total_sugars_of_carbs),2),0) AS sugars_of_carbs_in_plan,
                 IFNULL(ROUND(SUM(T.total_fibre),2),0) AS fibre_in_plan,
                 IFNULL(ROUND(SUM(T.total_fats),2),0) AS fats_in_plan,
@@ -649,7 +649,7 @@
                 date_time_last_edited,
                 no_of_meals,
                 protein_in_plan,
-                carbohydrates_in_Plan,
+                carbohydrates_in_plan,
                 sugars_of_carbs_in_plan,
                 fibre_in_plan,
                 fats_in_plan,
@@ -672,7 +672,7 @@
                 date_time_last_edited,
                 no_of_meals,
                 protein_in_plan,
-                carbohydrates_in_Plan,
+                carbohydrates_in_plan,
                 sugars_of_carbs_in_plan,
                 fibre_in_plan,
                 fats_in_plan,
@@ -706,7 +706,7 @@
                 P.version_number,
 
                 IFNULL(ROUND(C.expected_protein_grams - P.protein_in_plan ,2),0) AS protein_grams_left,
-                IFNULL(ROUND(C.expected_carbs_grams  - P.carbohydrates_in_Plan ,2),0) AS carb_grams_left,
+                IFNULL(ROUND(C.expected_carbs_grams  - P.carbohydrates_in_plan ,2),0) AS carb_grams_left,
                 IFNULL(ROUND(C.expected_fibre_grams  - P.fibre_in_plan ,2),0) AS fibre_grams_left,
                 IFNULL(ROUND(C.expected_fats_grams - P.fats_in_plan ,2),0) AS fat_grams_left,
                 IFNULL(ROUND(C.saturated_fat_limit - P.saturated_fat_in_plan ,2),0) AS potential_sat_fat_grams_left,
@@ -789,3 +789,22 @@
 
             FROM all_plan_macros_left P
             WHERE record_state = 'draft';
+
+-- ################################################################################
+-- Draft Plan Progress
+-- ################################################################################
+    CREATE VIEW draft_plan_macros_progress AS
+
+        SELECT
+
+          C.plan_id,
+          IFNULL(ROUND((T.protein_in_plan / C.expected_protein_grams) * 100, 0), 0)                 AS protein_progress,
+          IFNULL(ROUND((T.carbohydrates_in_plan / C.expected_carbs_grams) * 100, 0), 0)             AS carbs_progress,
+          IFNULL(ROUND((T.fats_in_plan / C.expected_fats_grams) * 100, 0), 0)                       AS fats_progress,
+          IFNULL(ROUND((T.total_calories_in_plan / C.additional_calories_target) * 100, 0), 0)      AS cal_progress
+
+        FROM draft_plan_macro_target_calculations C
+
+        INNER JOIN draft_total_plan_view T
+            ON C.plan_id = T.plan_id;
+

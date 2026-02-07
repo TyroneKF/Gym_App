@@ -15,7 +15,6 @@ import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.ui.tables.Ingredients_Table.buttons.Button_Column;
 import com.donty.gymapp.ui.tables.Ingredients_Table.combobox.Ingredient_Name_JComboBox_Column;
 import com.donty.gymapp.ui.tables.Ingredients_Table.combobox.Ingredient_Type_JComboBox_Column;
-import com.donty.gymapp.ui.tables.View_Data_Tables.MacrosLeft_Table;
 import com.donty.gymapp.ui.tables.base.JDBC_JTable;
 import com.donty.gymapp.ui.components.meal.MealManager;
 import com.donty.gymapp.gui.controls.IconButton;
@@ -42,7 +41,6 @@ public class IngredientsTable extends JDBC_JTable
     // Objects
     //################################################
     private final MealManager meal_manager;
-    private final MacrosLeft_Table macrosLeft_table;
     private final Ingredient_Name_ID_OBJ na_ingredient_id_obj;
 
     //######################
@@ -113,7 +111,6 @@ public class IngredientsTable extends JDBC_JTable
             MyJDBC_Sqlite db,
             MealManager meal_manager,
             Shared_Data_Registry shared_data_registry,
-            MacrosLeft_Table macros_left_table,
             Sub_Meal_ID_OBJ sub_meal_id_obj
     )
     {
@@ -137,7 +134,6 @@ public class IngredientsTable extends JDBC_JTable
         // Other Variables
         //##############################################################
         this.meal_manager = meal_manager;
-        this.macrosLeft_table = macros_left_table;
 
         draft_meal_id = sub_meal_id_obj.get_Draft_Meal_ID();
         source_sub_meal_id = sub_meal_id_obj.get_Source_Sub_Meal_ID();
@@ -475,7 +471,7 @@ public class IngredientsTable extends JDBC_JTable
         //#################################################
         // Update Table Data
         //##################################################
-        update_All_Tables_Data();
+        mealManager_Update_DATA();
     }
 
     //##################################################################################################################
@@ -657,7 +653,7 @@ public class IngredientsTable extends JDBC_JTable
 
             set_Sub_Meal_Data_Changed(true);
 
-            update_All_Tables_Data(); // Update ALl Other Tables
+            mealManager_Update_DATA(); // Update ALl Other Tables
             return true;
         }
         catch (Exception e)
@@ -782,8 +778,7 @@ public class IngredientsTable extends JDBC_JTable
         refresh_Action();
 
         // Update Tables
-        meal_manager.update_MealManager_DATA();
-        macrosLeft_table.update_Table();
+        mealManager_Update_DATA();
 
         // Success MSG
         JOptionPane.showMessageDialog(frame, "\n\nSub-Meal Successfully Refreshed!!");
@@ -991,7 +986,7 @@ public class IngredientsTable extends JDBC_JTable
         //################################################
         // Update MacrosLeft Table & TotalMeal Table
         //################################################
-        update_All_Tables_Data();
+        mealManager_Update_DATA();
 
         //################################################
         // Progress Message
@@ -1294,15 +1289,9 @@ public class IngredientsTable extends JDBC_JTable
     //##################################################################################################################
     // Update Other Table Methods
     //##################################################################################################################
-    private void update_All_Tables_Data()
+    private void mealManager_Update_DATA()
     {
-        meal_manager.update_MealManager_DATA();
-        update_Macros_Left_Table();
-    }
-
-    private void update_Macros_Left_Table()
-    {
-        macrosLeft_table.update_Table();
+        meal_manager.update_Everything();
     }
 
     private void update_Meal_Manager_True_State_Change()

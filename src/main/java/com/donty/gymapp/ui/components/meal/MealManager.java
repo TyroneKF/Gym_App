@@ -23,7 +23,6 @@ import com.donty.gymapp.ui.screens.mealPlanScreen.Meal_Plan_Screen;
 import com.donty.gymapp.ui.tables.View_Data_Tables.Total_Meal_Table.Total_Meal_Other_Columns;
 import org.apache.commons.lang3.StringUtils;
 import org.javatuples.Pair;
-
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalTime;
@@ -618,7 +617,6 @@ public class MealManager
                         db,
                         this,
                         shared_Data_Registry,
-                        macrosLeft_JTable,
                         sub_meal_id_obj
                 );
 
@@ -1298,14 +1296,17 @@ public class MealManager
         }
 
         //###########################################
-        //
+        // Update App
         //###########################################
-        refresh_Action();
+        refresh_Action(); // Refresh Interview Variables
 
-        meal_plan_screen.add_And_Replace_MealManger_POS_GUI(this, true, true);
+        update_Everything(); // Update Macros_Left, Total_Meal, Shared_Data, Charts
 
-        update_MacrosLeft_Table();
+        meal_plan_screen.add_And_Replace_MealManger_POS_GUI(this, true, true);   // Reposition this Meal in GUI
 
+        //###########################################
+        // Success MSG
+        //###########################################
         JOptionPane.showMessageDialog(getFrame(), String.format("\n\n[%s] %s has been successfully refreshed! ", current_meal_time, current_meal_name));
     }
 
@@ -1483,12 +1484,6 @@ public class MealManager
             it.remove(); // remove from list
         }
 
-        //##########################################
-        //
-        //##########################################
-        update_MealManager_DATA(); // Update DATA
-        pie_Chart_Update_Title(); // Update Internal PieChart Title
-
         sort_And_Re_Draw_Sub_Meals(); // Sort & Redraw GUI
     }
 
@@ -1592,15 +1587,24 @@ public class MealManager
     //##################################################################################################################
     // Update Methods
     //##################################################################################################################
-    public void update_MealManager_DATA()
+    public void update_Everything()
+    {
+        update_MealManager_DATA(); // Update TotalMeal Data & Shared Data
+
+        update_Charts(); // Update Charts Internal & External
+
+        update_MacrosLeft_Table(); // Update Macros Left
+
+        meal_plan_screen.update_Macro_Indicators(); // Update Macro Indicators
+    }
+
+    private void update_MealManager_DATA()
     {
         try
         {
-            ArrayList<Object> total_meal_data = update_TotalMeal_Table_And_Get_Data(); // Update TotalMealView (Has to be first)
+            ArrayList<Object> total_meal_data = totalMealTable.update_Table_And_Get_Data(); // Update TotalMealView (Has to be first)
 
             shared_Data_Registry.add_OR_Replace_MealManager_Macros_DATA(this, total_meal_data);  // Update Registry Data (Second)
-
-            update_Charts(); // Update Charts
         }
         catch (Exception e)
         {
@@ -1619,15 +1623,15 @@ public class MealManager
             System.err.printf("\n\nMPS : update_Pie_Chart_DATA() \nPieChart not Open %s", get_Draft_Meal_ID());
         }
 
+        pie_Chart_Update_Title(); // Update Internal PieChart Title
+
         // Update External Charts
         meal_plan_screen.update_External_Charts(false, "update", this, get_Current_Meal_Time(), get_Current_Meal_Time());
     }
 
-    private ArrayList<Object> update_TotalMeal_Table_And_Get_Data() throws Exception
-    {
-        return totalMealTable.update_Table_And_Get_Data();
-    }
-
+    //############################
+    // Update Tables
+    //############################
     public void update_Total_Meal()
     {
         totalMealTable.update_Table();
