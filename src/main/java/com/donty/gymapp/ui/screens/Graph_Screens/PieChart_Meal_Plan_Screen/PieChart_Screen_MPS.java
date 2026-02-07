@@ -7,7 +7,7 @@ import com.donty.gymapp.gui.base.Screen_JFrame;
 import com.donty.gymapp.ui.screens.Graph_Screens.PieChart_Meal_Plan_Screen.Macro_Values.PieChart_Macros_MPS;
 import com.donty.gymapp.ui.screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Meals.PieChart_Totals_Entry_MPS;
 import com.donty.gymapp.ui.screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Meals.PieChart_TotalMeals_MPS;
-import com.donty.gymapp.ui.screens.Meal_Plan_Screen;
+import com.donty.gymapp.ui.screens.mealPlanScreen.Meal_Plan_Screen;
 
 import javax.swing.*;
 import java.awt.*;

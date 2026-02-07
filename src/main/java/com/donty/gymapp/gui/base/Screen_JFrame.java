@@ -132,9 +132,9 @@ public class Screen_JFrame extends JFrame
         });
     }
     
-    protected void icon_Setup(Container mainNorthPanel)
+    protected void icon_Setup(Container jpanel)
     {
-    
+
     }
     
     //##################################################################################################################
@@ -143,12 +143,8 @@ public class Screen_JFrame extends JFrame
     protected Boolean areYouSure(String title, String msg)
     {
         int reply = JOptionPane.showConfirmDialog(this, msg, title, JOptionPane.YES_NO_OPTION); //HELLO Edit
-        
-        if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
-        {
-            return false;
-        }
-        return true;
+
+        return reply == JOptionPane.YES_NO_OPTION;
     }
     
     public void window_Closed_Event()

@@ -5,7 +5,7 @@ import com.donty.gymapp.ui.tables.View_Data_Tables.Total_Meal_Table.Total_Meal_M
 import com.donty.gymapp.ui.components.meal.MealManager;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.gui.base.Screen_JFrame;
-import com.donty.gymapp.ui.screens.Meal_Plan_Screen;
+import com.donty.gymapp.ui.screens.mealPlanScreen.Meal_Plan_Screen;
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalTime;

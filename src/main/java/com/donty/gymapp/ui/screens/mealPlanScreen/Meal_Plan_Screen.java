@@ -1,4 +1,4 @@
-package com.donty.gymapp.ui.screens;
+package com.donty.gymapp.ui.screens.mealPlanScreen;
 
 import com.donty.gymapp.ui.meta.ids.MetaData_ID_Object.Sub_Meal_ID_OBJ;
 import com.donty.gymapp.persistence.database.Fetched_Results;
@@ -13,6 +13,8 @@ import com.donty.gymapp.persistence.database.Statements.Upload_Statement_Full;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.gui.controls.IconButton;
 import com.donty.gymapp.gui.panels.IconPanel;
+import com.donty.gymapp.ui.screens.mealPlanScreen.macroIndicator.MacroIndicators;
+import com.donty.gymapp.ui.screens.mealPlanScreen.macroIndicator.ProgressWheelKey;
 import com.donty.gymapp.ui.tables.Ingredients_Table.IngredientsTable;
 import com.donty.gymapp.ui.tables.Ingredients_Table.Ingredients_Table_Columns;
 import com.donty.gymapp.ui.tables.View_Data_Tables.MacrosLeft_Table;
@@ -28,12 +30,9 @@ import com.donty.gymapp.ui.screens.Graph_Screens.PieChart_Meal_Plan_Screen.PieCh
 import com.donty.gymapp.ui.screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info.Ingredients_Info_Screen;
 import com.donty.gymapp.ui.screens.Loading_Screen.Loading_Screen;
 import com.donty.gymapp.ui.screens.Others.Macros_Targets_Screen;
-import com.donty.gymapp.A_Tests.DonutPercentChart;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.javatuples.Pair;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
 
 import javax.swing.*;
 import java.awt.*;
@@ -57,6 +56,15 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //######################################################
     // DATA Object
     private final Shared_Data_Registry shared_data_registry;
+
+    //###########################
+    // Indicators
+    //###########################
+    private MacroIndicators
+            protein_indicator,
+            carbs_indicator,
+            fats_indicator,
+            calories_indicator;
 
     //###########################
     // Table Objects
@@ -1566,145 +1574,133 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // Build GUI Methods
     //#################################################
 
-    // Bottom
-    private void build_Bottom_GUI
-    (
-            JPanel scroll_jpanel_bottom,
-            ArrayList<ArrayList<Object>> macros_targets_plan_data_AL,
-            ArrayList<ArrayList<Object>> macros_left_plan_data_AL
-    )
-    {
-        JPanel macrosInfoJPanel = new JPanel(new GridBagLayout());   // Add Bottom JPanel to GUI
-        addToContainer(scroll_jpanel_bottom, macrosInfoJPanel, 0, 0, 1, 1, 0.25, 0.25, "horizontal", 0, 0, "end");
-
-        int macrosInfoJP_YPos = 0;
-
-        /*//###################################
-        // Setting up Horizontal Image Divider
-        //#####################################
-        int height = 75, width = 0;
-        JPanel macrosDividerJPanel = new JPanel(new GridLayout(1, 1));
-        macrosDividerJPanel.setPreferredSize(new Dimension(width, height));
-
-        // Border Line Config
-        BevelBorder borderLine = new BevelBorder(BevelBorder.LOWERED);  // Create a red line border
-        LineBorder redLine = new LineBorder(Color.RED, 2); // 2px thick red border
-        CompoundBorder compoundBorder = new CompoundBorder(redLine, borderLine); // Combine them: outer = red line, inner = raised bevel
-        macrosDividerJPanel.setBorder(compoundBorder); // Set Border
-
-        // Add image
-        URL imageUrl = getClass().getResource("/images/border/border_divider/border_divider4.jpg");
-        ImageIcon originalIcon = new ImageIcon(imageUrl);
-        Image img = originalIcon.getImage();
-        Image scaledImg = img.getScaledInstance(450, 200, Image.SCALE_SMOOTH); // W: 1925
-        ImageIcon scaledIcon = new ImageIcon(scaledImg);
-        JLabel label = new JLabel(scaledIcon);
-
-        addToContainer(macrosDividerJPanel, label, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
-
-        addToContainer(macrosInfoJPanel, macrosDividerJPanel, 0, macrosInfoJP_YPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0, null);
-
-        //##########################################
-        // Add Space Divider
-        //##########################################
-
-        addToContainer(macrosInfoJPanel, createSpaceDivider(0, 20), 0, macrosInfoJP_YPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0, null);
-*/
-
-        //############################
-        // MacroTargets Table
-        //############################
-        macros_targets_table = new MacrosTargets_Table(
-                db,
-                shared_data_registry,
-                macrosInfoJPanel,
-                macros_targets_plan_data_AL,
-                macro_targets_column_names,
-                null,
-                macros_targets_table_col_to_hide
-        );
-
-        addToContainer(macrosInfoJPanel, macros_targets_table, 0, macrosInfoJP_YPos += 1, + 1, 1, 0.25, 0.25, "both", 40, 0, null);
-
-        //############################
-        // plan_Macros_Left Table
-        //############################
-        macros_left_table = new MacrosLeft_Table(
-                db,
-                shared_data_registry,
-                macrosInfoJPanel,
-                macros_left_plan_data_AL,
-                macros_left_column_names,
-                null,
-                macros_left_table_col_to_hide
-        );
-
-        addToContainer(macrosInfoJPanel, macros_left_table, 0, macrosInfoJP_YPos += 1, 1, 1, 0.25, 0.25, "both", 30, 0, null);
-    }
-
-    //#####################
     // North
-    //#####################
     private void build_North_GUI()
     {
-        JPanel xp = new JPanel(new GridLayout(1, 3));
-        xp.setPreferredSize(new Dimension(300, 60));
-        xp.setBorder(BorderFactory.createLineBorder(Color.red));
-        xp.setOpaque(false);
+        int height = 100;
+        int width = getFrameWidth();
 
-        // Create chart
-        JFreeChart chart1 = DonutPercentChart.create(35);
+        //#######################
+        // Configure North Panel
+        //#######################
+        mainNorthPanel.setLayout(new BorderLayout());
+        mainNorthPanel.setBorder(BorderFactory.createLineBorder(Color.red, 6));
+        mainNorthPanel.setPreferredSize(new Dimension(width, height));
 
-        // Wrap in ChartPanel
-        ChartPanel chartPanel1 = new ChartPanel(chart1);
-        chartPanel1.setPreferredSize(new Dimension(100, 50));
-        chartPanel1.setOpaque(false);
-        chartPanel1.setBackground(null);
-        chartPanel1.setDomainZoomable(false);
-        chartPanel1.setRangeZoomable(false);
+        //#######################
+        // West Side
+        //#######################
+        JPanel west_jp = new JPanel(new GridBagLayout());
 
-        // Add to Swing panel
-        xp.add(chartPanel1);
+        west_jp.setPreferredSize(new Dimension(700, height - 10));
+        west_jp.setBorder(BorderFactory.createLineBorder(Color.BLUE, 3));
 
+        mainNorthPanel.add(west_jp, BorderLayout.WEST);
 
-        // Create chart
-        JFreeChart chart2 = DonutPercentChart.create(35);
+        // Create Macro Indicators
+        create_GUI_Indicators(west_jp);
 
-        // Wrap in ChartPanel
-        ChartPanel chartPanel2 = new ChartPanel(chart2);
-        chartPanel2.setPreferredSize(new Dimension(100, 80));
-        chartPanel2.setOpaque(false);
-        chartPanel2.setBackground(null);
-        chartPanel2.setDomainZoomable(false);
-        chartPanel2.setRangeZoomable(false);
+        //#######################
+        // East Side
+        //#######################
+        JPanel east_jp = new JPanel();
 
-        // Add to Swing panel
-        xp.add(chartPanel2);
+        east_jp.setPreferredSize(new Dimension(800, height - 10));
+        east_jp.setBorder(BorderFactory.createLineBorder(Color.GREEN, 3));
 
+        mainNorthPanel.add(east_jp, BorderLayout.EAST);
 
-        // Create chart
-        JFreeChart chart3 = DonutPercentChart.create(35);
+        // Icon Setup
+        icon_Setup(east_jp);
+    }
 
-        // Wrap in ChartPanel
-        ChartPanel chartPanel3 = new ChartPanel(chart3);
-        chartPanel3.setPreferredSize(new Dimension(100, 80));
-        chartPanel3.setOpaque(false);
-        chartPanel3.setBackground(null);
-        chartPanel3.setDomainZoomable(false);
-        chartPanel3.setRangeZoomable(false);
-
-        // Add to Swing panel
-        xp.add(chartPanel3);
-
-        addToContainer(mainNorthPanel, xp, 0, 0, 1, 1, 0.25, 0.25, "vertical", 10, 0, null);
-
+    private void create_GUI_Indicators(JPanel jpanel)
+    {
+        int x_pos = - 1;
 
         //#################################
-        icon_Setup(getMainNorthPanel()); // Icon Setup
+        // Protein Macro Indicator
+        //#################################
+        ProgressWheelKey protein_wheel_key = new ProgressWheelKey(
+                35,
+                new Color(200, 0, 0),
+                new Color(230, 230, 230),
+                100,
+                60);
+
+        protein_indicator = new MacroIndicators(
+                60,
+                protein_wheel_key,
+                "/images/macros/protein/protein_2.png",
+                45,
+                25
+        );
+
+        addToContainer(jpanel, protein_indicator, x_pos += 1, 0, 1, 1, 0.25, 0.25, "vertical", 10, 0, null);
+
+        //#################################
+        // Carb Macro Indicator
+        //#################################
+        ProgressWheelKey carb_wheel_key = new ProgressWheelKey(
+                35,
+                new Color(210, 180, 140),
+                new Color(230, 230, 230),
+                100,
+                60);
+
+        carbs_indicator = new MacroIndicators(
+                60,
+                carb_wheel_key,
+                "/images/macros/carbs/carbs_01.png",
+                55,
+                25
+        );
+
+        addToContainer(jpanel, carbs_indicator, x_pos += 1, 0, 1, 1, 0.25, 0.25, "vertical", 10, 0, null);
+
+        //#################################
+        // Protein Macro Indicator
+        //#################################
+        ProgressWheelKey fats_wheel_key = new ProgressWheelKey(
+                35,
+                new Color(76, 175, 80),
+                new Color(230, 230, 230),
+                100,
+                60);
+
+        fats_indicator = new MacroIndicators(
+                60,
+                fats_wheel_key,
+                "/images/macros/fats/fats_01.png",
+                65,
+                25
+        );
+
+        addToContainer(jpanel, fats_indicator, x_pos += 1, 0, 1, 1, 0.25, 0.25, "vertical", 10, 0, null);
+
+        //#################################
+        // Calories  Indicator
+        //#################################
+        ProgressWheelKey calories_wheel_key = new ProgressWheelKey(
+                35,
+                new Color(76, 175, 80),
+                new Color(230, 230, 230),
+                100,
+                60);
+
+        calories_indicator = new MacroIndicators(
+                60,
+                calories_wheel_key,
+                "/images/macros/calories/calories_02.png",
+                65,
+                15
+        );
+
+        addToContainer(jpanel, calories_indicator, x_pos += 1, 0, 1, 1, 0.25, 0.25, "vertical", 10, 0, null);
     }
 
     @Override
-    protected void icon_Setup(Container mainNorthPanel)
+    protected void icon_Setup(Container jpanel)
     {
         int width, height;
 
@@ -1716,7 +1712,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         IconPanel iconPanel = new IconPanel(6, 10, "East");
         JPanel iconPanelInsert = iconPanel.getIconJpanel();
 
-        addToContainer(mainNorthPanel, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0, null);
+        addToContainer(jpanel, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0, null);
 
         //##########################
         // Clear
@@ -1945,6 +1941,84 @@ public class Meal_Plan_Screen extends Screen_JFrame
         });
 
         iconPanelInsert.add(down_ScrollBar_Btn);
+    }
+
+    //#####################
+    // Bottom
+    //#####################
+    private void build_Bottom_GUI
+    (
+            JPanel scroll_jpanel_bottom,
+            ArrayList<ArrayList<Object>> macros_targets_plan_data_AL,
+            ArrayList<ArrayList<Object>> macros_left_plan_data_AL
+    )
+    {
+        JPanel macrosInfoJPanel = new JPanel(new GridBagLayout());   // Add Bottom JPanel to GUI
+        addToContainer(scroll_jpanel_bottom, macrosInfoJPanel, 0, 0, 1, 1, 0.25, 0.25, "horizontal", 0, 0, "end");
+
+        int macrosInfoJP_YPos = 0;
+
+        /*//###################################
+        // Setting up Horizontal Image Divider
+        //#####################################
+        int height = 75, width = 0;
+        JPanel macrosDividerJPanel = new JPanel(new GridLayout(1, 1));
+        macrosDividerJPanel.setPreferredSize(new Dimension(width, height));
+
+        // Border Line Config
+        BevelBorder borderLine = new BevelBorder(BevelBorder.LOWERED);  // Create a red line border
+        LineBorder redLine = new LineBorder(Color.RED, 2); // 2px thick red border
+        CompoundBorder compoundBorder = new CompoundBorder(redLine, borderLine); // Combine them: outer = red line, inner = raised bevel
+        macrosDividerJPanel.setBorder(compoundBorder); // Set Border
+
+        // Add image
+        URL imageUrl = getClass().getResource("/images/border/border_divider/border_divider4.jpg");
+        ImageIcon originalIcon = new ImageIcon(imageUrl);
+        Image img = originalIcon.getImage();
+        Image scaledImg = img.getScaledInstance(450, 200, Image.SCALE_SMOOTH); // W: 1925
+        ImageIcon scaledIcon = new ImageIcon(scaledImg);
+        JLabel label = new JLabel(scaledIcon);
+
+        addToContainer(macrosDividerJPanel, label, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+
+        addToContainer(macrosInfoJPanel, macrosDividerJPanel, 0, macrosInfoJP_YPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+
+        //##########################################
+        // Add Space Divider
+        //##########################################
+
+        addToContainer(macrosInfoJPanel, createSpaceDivider(0, 20), 0, macrosInfoJP_YPos += 1, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+*/
+
+        //############################
+        // MacroTargets Table
+        //############################
+        macros_targets_table = new MacrosTargets_Table(
+                db,
+                shared_data_registry,
+                macrosInfoJPanel,
+                macros_targets_plan_data_AL,
+                macro_targets_column_names,
+                null,
+                macros_targets_table_col_to_hide
+        );
+
+        addToContainer(macrosInfoJPanel, macros_targets_table, 0, macrosInfoJP_YPos += 1, + 1, 1, 0.25, 0.25, "both", 40, 0, null);
+
+        //############################
+        // plan_Macros_Left Table
+        //############################
+        macros_left_table = new MacrosLeft_Table(
+                db,
+                shared_data_registry,
+                macrosInfoJPanel,
+                macros_left_plan_data_AL,
+                macros_left_column_names,
+                null,
+                macros_left_table_col_to_hide
+        );
+
+        addToContainer(macrosInfoJPanel, macros_left_table, 0, macrosInfoJP_YPos += 1, 1, 1, 0.25, 0.25, "both", 30, 0, null);
     }
 
     //#####################

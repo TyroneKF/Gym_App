@@ -5,7 +5,7 @@ import com.donty.gymapp.persistence.database.Statements.Fetch_Statement_Full;
 import com.donty.gymapp.persistence.database.Statements.Upload_Statement_Full;
 import com.donty.gymapp.gui.controls.textfields.base.JTextFieldLimit;
 import com.donty.gymapp.gui.base.Screen_JFrame;
-import com.donty.gymapp.ui.screens.Meal_Plan_Screen;
+import com.donty.gymapp.ui.screens.mealPlanScreen.Meal_Plan_Screen;
 
 import javax.swing.*;
 import java.awt.*;
