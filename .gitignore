@@ -14,7 +14,10 @@ data/root;
 /data/*.db-wal
 /data/gym_app00001;
 /data/gym_app00001;-journal
-/src/main/java/com/donty/gymapp/Tests/
+/src/main/java/com/donty/gymapp/A_Tests/
+/data/gym_app00001;-wal
+/data/gym_app00001;-shm
+/data/
 
 # =========================
 # IntelliJ IDEA (REQUIRED)
@@ -37,3 +40,5 @@ dependency-reduced-pom.xml
 Thumbs.db
 *conflicted copy*
 
+
+/src/main/java/com/donty/gymapp/A_Tests/
