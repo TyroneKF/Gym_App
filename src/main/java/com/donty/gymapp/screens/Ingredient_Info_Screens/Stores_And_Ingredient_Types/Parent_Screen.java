@@ -1,13 +1,13 @@
-package com.donty.gymapp.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types;
+package com.donty.gymapp.screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types;
 
-import com.donty.gymapp.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Storable_IDS_Parent;
-import com.donty.gymapp.Database_Objects.MyJDBC.MyJDBC_Sqlite;
-import com.donty.gymapp.Database_Objects.Shared_Data_Registry;
-import com.donty.gymapp.Gui_Objects.IconButton;
-import com.donty.gymapp.Gui_Objects.IconPanel;
-import com.donty.gymapp.Gui_Objects.Image_JPanel;
-import com.donty.gymapp.Gui_Objects.Screens.Screen_JPanel;
-import com.donty.gymapp.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info.Ingredients_Info_Screen;
+import com.donty.gymapp.data_objects.ID_Objects.Storable_Ingredient_IDS.Storable_IDS_Parent;
+import com.donty.gymapp.database.MyJDBC.MyJDBC_Sqlite;
+import com.donty.gymapp.database.Shared_Data_Registry;
+import com.donty.gymapp.gui.IconButton;
+import com.donty.gymapp.gui.IconPanel;
+import com.donty.gymapp.gui.Image_JPanel;
+import com.donty.gymapp.gui.Screens.Screen_JPanel;
+import com.donty.gymapp.screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info.Ingredients_Info_Screen;
 
 import javax.swing.*;
 import java.awt.*;

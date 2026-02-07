@@ -1,6 +1,6 @@
-package com.donty.gymapp.Gui_Objects.Text_Fields;
+package com.donty.gymapp.gui.Text_Fields;
 
-import com.donty.gymapp.Gui_Objects.Text_Fields.Parent.Field_JTxtField_Parent;
+import com.donty.gymapp.gui.Text_Fields.Parent.Field_JTxtField_Parent;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

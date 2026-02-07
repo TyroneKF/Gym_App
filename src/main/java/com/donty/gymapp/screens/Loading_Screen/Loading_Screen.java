@@ -1,6 +1,6 @@
-package com.donty.gymapp.Screens.Loading_Screen;
+package com.donty.gymapp.screens.Loading_Screen;
 
-import com.donty.gymapp.Gui_Objects.Screens.Screen_JFrame;
+import com.donty.gymapp.gui.Screens.Screen_JFrame;
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;

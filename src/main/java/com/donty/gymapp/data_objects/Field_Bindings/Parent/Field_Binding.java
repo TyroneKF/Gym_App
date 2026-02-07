@@ -1,7 +1,7 @@
-package com.donty.gymapp.Data_Objects.Field_Bindings.Parent;
+package com.donty.gymapp.data_objects.Field_Bindings.Parent;
 
-import com.donty.gymapp.Gui_Objects.Combo_Boxes.Field_JComboBox;
-import com.donty.gymapp.Gui_Objects.Text_Fields.Parent.Field_JTxtField_Parent;
+import com.donty.gymapp.gui.Combo_Boxes.Field_JComboBox;
+import com.donty.gymapp.gui.Text_Fields.Parent.Field_JTxtField_Parent;
 
 import java.awt.*;
 

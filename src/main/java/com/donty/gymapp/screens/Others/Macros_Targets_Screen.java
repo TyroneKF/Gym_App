@@ -1,11 +1,11 @@
-package com.donty.gymapp.Screens.Others;
+package com.donty.gymapp.screens.Others;
 
-import com.donty.gymapp.Database_Objects.MyJDBC.MyJDBC_Sqlite;
-import com.donty.gymapp.Database_Objects.MyJDBC.Statements.Fetch_Statement_Full;
-import com.donty.gymapp.Database_Objects.MyJDBC.Statements.Upload_Statement_Full;
-import com.donty.gymapp.Gui_Objects.Text_Fields.Parent.JTextFieldLimit;
-import com.donty.gymapp.Gui_Objects.Screens.Screen_JFrame;
-import com.donty.gymapp.Screens.Meal_Plan_Screen;
+import com.donty.gymapp.database.MyJDBC.MyJDBC_Sqlite;
+import com.donty.gymapp.database.MyJDBC.Statements.Fetch_Statement_Full;
+import com.donty.gymapp.database.MyJDBC.Statements.Upload_Statement_Full;
+import com.donty.gymapp.gui.Text_Fields.Parent.JTextFieldLimit;
+import com.donty.gymapp.gui.Screens.Screen_JFrame;
+import com.donty.gymapp.screens.Meal_Plan_Screen;
 
 import javax.swing.*;
 import java.awt.*;

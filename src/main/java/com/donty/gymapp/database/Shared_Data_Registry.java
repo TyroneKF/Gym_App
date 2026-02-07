@@ -1,7 +1,6 @@
-package com.donty.gymapp.Database_Objects;
+package com.donty.gymapp.database;
 
-import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.*;
-import com.donty.gymapp.Data_Objects.ID_Objects.Storable_Ingredient_IDS.*;
+import com.donty.gymapp.data_objects.ID_Objects.Storable_Ingredient_IDS.*;
 import com.donty.gymapp.tables.Tables.Children.Ingredients_Table.Ingredients_Table_Columns;
 import com.donty.gymapp.tables.Tables.Children.View_Data_Tables.Children.Total_Meal_Table.Total_Meal_Macro_Columns;
 import com.donty.gymapp.tables.MealManager;

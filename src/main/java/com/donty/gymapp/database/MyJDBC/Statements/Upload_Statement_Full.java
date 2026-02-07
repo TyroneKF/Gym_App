@@ -1,4 +1,4 @@
-package com.donty.gymapp.Database_Objects.MyJDBC.Statements;
+package com.donty.gymapp.database.MyJDBC.Statements;
 
 public class Upload_Statement_Full extends Upload_Statement
 {

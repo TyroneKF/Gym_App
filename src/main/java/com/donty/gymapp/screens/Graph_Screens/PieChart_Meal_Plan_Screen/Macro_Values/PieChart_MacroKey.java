@@ -1,7 +1,7 @@
-package com.donty.gymapp.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Macro_Values;
+package com.donty.gymapp.screens.Graph_Screens.PieChart_Meal_Plan_Screen.Macro_Values;
 
-import com.donty.gymapp.Table_Objects.Tables.Children.View_Data_Tables.Children.Total_Meal_Table.Total_Meal_Macro_Columns;
-import com.donty.gymapp.Table_Objects.MealManager;
+import com.donty.gymapp.tables.Tables.Children.View_Data_Tables.Children.Total_Meal_Table.Total_Meal_Macro_Columns;
+import com.donty.gymapp.tables.MealManager;
 import java.time.LocalTime;
 import java.util.Objects;
 

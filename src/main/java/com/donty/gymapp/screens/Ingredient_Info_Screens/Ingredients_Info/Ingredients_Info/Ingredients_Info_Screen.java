@@ -1,14 +1,14 @@
 
-package com.donty.gymapp.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info;
+package com.donty.gymapp.screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info;
 
-import com.donty.gymapp.Database_Objects.MyJDBC.MyJDBC_Sqlite;
-import com.donty.gymapp.Database_Objects.Shared_Data_Registry;
-import com.donty.gymapp.Gui_Objects.Screens.Screen_JFrame;
-import com.donty.gymapp.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredients_Screen;
-import com.donty.gymapp.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients.Edit_Ingredients_Screen;
-import com.donty.gymapp.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Ingredient_Types.Ingredients_Types_Screen;
-import com.donty.gymapp.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Stores.Ingredient_Stores_Screen;
-import com.donty.gymapp.Screens.Meal_Plan_Screen;
+import com.donty.gymapp.database.MyJDBC.MyJDBC_Sqlite;
+import com.donty.gymapp.database.Shared_Data_Registry;
+import com.donty.gymapp.gui.Screens.Screen_JFrame;
+import com.donty.gymapp.screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredients_Screen;
+import com.donty.gymapp.screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients.Edit_Ingredients_Screen;
+import com.donty.gymapp.screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Ingredient_Types.Ingredients_Types_Screen;
+import com.donty.gymapp.screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Stores.Ingredient_Stores_Screen;
+import com.donty.gymapp.screens.Meal_Plan_Screen;
 import javax.swing.*;
 import java.awt.*;
 

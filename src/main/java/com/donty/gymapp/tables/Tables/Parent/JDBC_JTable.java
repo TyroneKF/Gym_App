@@ -1,11 +1,11 @@
-package com.donty.gymapp.Table_Objects.Tables.Parent;
+package com.donty.gymapp.tables.Tables.Parent;
 
 // Packages to import
 // https://stackoverflow.com/questions/10347983/making-a-jbutton-clickable-inside-a-jtable
 //http://tips4java.wordpress.com/2009/07/12/table-button-column/
 
-import com.donty.gymapp.Database_Objects.MyJDBC.MyJDBC_Sqlite;
-import com.donty.gymapp.Database_Objects.Shared_Data_Registry;
+import com.donty.gymapp.database.MyJDBC.MyJDBC_Sqlite;
+import com.donty.gymapp.database.Shared_Data_Registry;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;

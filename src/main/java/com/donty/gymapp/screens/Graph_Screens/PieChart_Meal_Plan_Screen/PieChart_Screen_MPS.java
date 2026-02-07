@@ -1,13 +1,13 @@
-package com.donty.gymapp.Screens.Graph_Screens.PieChart_Meal_Plan_Screen;
+package com.donty.gymapp.screens.Graph_Screens.PieChart_Meal_Plan_Screen;
 
-import com.donty.gymapp.Database_Objects.MyJDBC.MyJDBC_Sqlite;
-import com.donty.gymapp.Table_Objects.MealManager;
-import com.donty.gymapp.Database_Objects.Shared_Data_Registry;
-import com.donty.gymapp.Gui_Objects.Screens.Screen_JFrame;
-import com.donty.gymapp.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Macro_Values.PieChart_Macros_MPS;
-import com.donty.gymapp.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Meals.PieChart_Totals_Entry_MPS;
-import com.donty.gymapp.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Meals.PieChart_TotalMeals_MPS;
-import com.donty.gymapp.Screens.Meal_Plan_Screen;
+import com.donty.gymapp.database.MyJDBC.MyJDBC_Sqlite;
+import com.donty.gymapp.tables.MealManager;
+import com.donty.gymapp.database.Shared_Data_Registry;
+import com.donty.gymapp.gui.Screens.Screen_JFrame;
+import com.donty.gymapp.screens.Graph_Screens.PieChart_Meal_Plan_Screen.Macro_Values.PieChart_Macros_MPS;
+import com.donty.gymapp.screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Meals.PieChart_Totals_Entry_MPS;
+import com.donty.gymapp.screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Meals.PieChart_TotalMeals_MPS;
+import com.donty.gymapp.screens.Meal_Plan_Screen;
 
 import javax.swing.*;
 import java.awt.*;

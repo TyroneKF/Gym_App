@@ -1,40 +1,37 @@
-package com.donty.gymapp.Screens;
+package com.donty.gymapp.screens;
 
-import com.donty.gymapp.Data_Objects.ID_Objects.MetaData_ID_Object.Sub_Meal_ID_OBJ;
-import App_Code.Objects.Data_Objects.ID_Objects.Storable_Ingredient_IDS.*;
-import com.donty.gymapp.Data_Objects.ID_Objects.Storable_Ingredient_IDS.*;
-import com.donty.gymapp.Database_Objects.Fetched_Results;
-import com.donty.gymapp.Database_Objects.MyJDBC.MyJDBC_Sqlite;
-import com.donty.gymapp.Database_Objects.MyJDBC.Batch_Objects.Batch_Fetch_Statements;
-import com.donty.gymapp.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_And_Fetch_Statements;
-import com.donty.gymapp.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_Statements;
-import com.donty.gymapp.Database_Objects.MyJDBC.Statements.Fetch_Statement;
-import com.donty.gymapp.Database_Objects.MyJDBC.Statements.Fetch_Statement_Full;
-import com.donty.gymapp.Database_Objects.MyJDBC.Statements.Upload_Statement;
-import com.donty.gymapp.Database_Objects.MyJDBC.Statements.Upload_Statement_Full;
-import com.donty.gymapp.Database_Objects.Shared_Data_Registry;
-import com.donty.gymapp.Gui_Objects.IconButton;
-import com.donty.gymapp.Gui_Objects.IconPanel;
-import com.donty.gymapp.Table_Objects.Tables.Children.Ingredients_Table.IngredientsTable;
-import com.donty.gymapp.Table_Objects.Tables.Children.Ingredients_Table.Ingredients_Table_Columns;
-import com.donty.gymapp.Table_Objects.Tables.Children.View_Data_Tables.Children.MacrosLeft_Table;
-import com.donty.gymapp.Table_Objects.Tables.Children.View_Data_Tables.Children.MacrosTargets_Table;
-import com.donty.gymapp.Table_Objects.Tables.Children.View_Data_Tables.Children.Total_Meal_Table.Total_Meal_Macro_Columns;
-import com.donty.gymapp.Table_Objects.Tables.Children.View_Data_Tables.Children.Total_Meal_Table.Total_Meal_Other_Columns;
+import com.donty.gymapp.data_objects.ID_Objects.MetaData_ID_Object.Sub_Meal_ID_OBJ;
+import com.donty.gymapp.data_objects.ID_Objects.Storable_Ingredient_IDS.*;
+import com.donty.gymapp.database.Fetched_Results;
+import com.donty.gymapp.database.MyJDBC.MyJDBC_Sqlite;
+import com.donty.gymapp.database.MyJDBC.Batch_Objects.Batch_Fetch_Statements;
+import com.donty.gymapp.database.MyJDBC.Batch_Objects.Batch_Upload_And_Fetch_Statements;
+import com.donty.gymapp.database.MyJDBC.Batch_Objects.Batch_Upload_Statements;
+import com.donty.gymapp.database.MyJDBC.Statements.Fetch_Statement;
+import com.donty.gymapp.database.MyJDBC.Statements.Fetch_Statement_Full;
+import com.donty.gymapp.database.MyJDBC.Statements.Upload_Statement;
+import com.donty.gymapp.database.MyJDBC.Statements.Upload_Statement_Full;
+import com.donty.gymapp.database.Shared_Data_Registry;
+import com.donty.gymapp.gui.IconButton;
+import com.donty.gymapp.gui.IconPanel;
+import com.donty.gymapp.tables.Tables.Children.Ingredients_Table.IngredientsTable;
+import com.donty.gymapp.tables.Tables.Children.Ingredients_Table.Ingredients_Table_Columns;
+import com.donty.gymapp.tables.Tables.Children.View_Data_Tables.Children.MacrosLeft_Table;
+import com.donty.gymapp.tables.Tables.Children.View_Data_Tables.Children.MacrosTargets_Table;
+import com.donty.gymapp.tables.Tables.Children.View_Data_Tables.Children.Total_Meal_Table.Total_Meal_Macro_Columns;
+import com.donty.gymapp.tables.Tables.Children.View_Data_Tables.Children.Total_Meal_Table.Total_Meal_Other_Columns;
 import com.donty.gymapp.Enums.My_Enum;
-import com.donty.gymapp.Table_Objects.MealManager;
-import App_Code.Objects.Gui_Objects.*;
-import com.donty.gymapp.Gui_Objects.Screens.Screen_JFrame;
-import com.donty.gymapp.Screens.Graph_Screens.LineChart_Meal_Plan_Screen.LineChart_MPS;
-import com.donty.gymapp.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.PieChart_Screen_MPS;
-import com.donty.gymapp.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info.Ingredients_Info_Screen;
-import com.donty.gymapp.Screens.Loading_Screen.Loading_Screen;
-import com.donty.gymapp.Screens.Others.Macros_Targets_Screen;
+import com.donty.gymapp.tables.MealManager;
+import com.donty.gymapp.gui.Screens.Screen_JFrame;
+import com.donty.gymapp.screens.Graph_Screens.LineChart_Meal_Plan_Screen.LineChart_MPS;
+import com.donty.gymapp.screens.Graph_Screens.PieChart_Meal_Plan_Screen.PieChart_Screen_MPS;
+import com.donty.gymapp.screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info.Ingredients_Info_Screen;
+import com.donty.gymapp.screens.Loading_Screen.Loading_Screen;
+import com.donty.gymapp.screens.Others.Macros_Targets_Screen;
 import com.donty.gymapp.Tests.DonutPercentChart;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.javatuples.Pair;
-
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 
@@ -121,28 +118,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //##################################################################################################################
     // Constructor & Main
     //##################################################################################################################
-    public static void main()
-    {
-        //###################################################
-        // Create DB Object & run SQL Script
-        //####################################################
-        MyJDBC_Sqlite db = new MyJDBC_Sqlite();
-
-        try
-        {
-            db.begin_migration();
-            if (! db.get_DB_Connection_Status()) { throw new Exception("Failed Initialization!"); }
-        }
-        catch (Exception e)
-        {
-            System.err.printf("\n\n %s", e);
-            JOptionPane.showMessageDialog(null, "ERROR, Cannot Connect To Database!");
-            return;
-        }
-
-        new Meal_Plan_Screen(db);
-    }
-
     public Meal_Plan_Screen(MyJDBC_Sqlite db)
     {
         //###############################################################################
@@ -1672,7 +1647,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //#####################
     private void build_North_GUI()
     {
-        JPanel xp = new JPanel(new GridLayout(1,3));
+        JPanel xp = new JPanel(new GridLayout(1, 3));
         xp.setPreferredSize(new Dimension(300, 60));
         xp.setBorder(BorderFactory.createLineBorder(Color.red));
         xp.setOpaque(false);
@@ -1692,7 +1667,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
         xp.add(chartPanel1);
 
 
-
         // Create chart
         JFreeChart chart2 = DonutPercentChart.create(35);
 
@@ -1706,7 +1680,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
         // Add to Swing panel
         xp.add(chartPanel2);
-
 
 
         // Create chart
@@ -1724,10 +1697,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
         xp.add(chartPanel3);
 
         addToContainer(mainNorthPanel, xp, 0, 0, 1, 1, 0.25, 0.25, "vertical", 10, 0, null);
-
-
-
-
 
 
         //#################################

@@ -1,4 +1,4 @@
-package com.donty.gymapp.Gui_Objects.Screens;
+package com.donty.gymapp.gui.Screens;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,6 +1,6 @@
-package com.donty.gymapp.Table_Objects.Tables.Children.View_Data_Tables.Children.Total_Meal_Table;
+package com.donty.gymapp.tables.Tables.Children.View_Data_Tables.Children.Total_Meal_Table;
 
-import com.donty.gymapp.Table_Objects.Tables.Parent.Table_Enum;
+import com.donty.gymapp.tables.Tables.Parent.Table_Enum;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;

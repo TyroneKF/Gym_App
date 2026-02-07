@@ -1,4 +1,4 @@
-package com.donty.gymapp.Gui_Objects.Combo_Boxes;
+package com.donty.gymapp.gui.Combo_Boxes;
 
 import javax.swing.*;
 import java.util.ArrayList;

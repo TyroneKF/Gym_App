@@ -1,6 +1,6 @@
-package com.donty.gymapp.Table_Objects.Tables.Children.Ingredients_Table;
+package com.donty.gymapp.tables.Tables.Children.Ingredients_Table;
 
-import com.donty.gymapp.Table_Objects.Tables.Parent.Table_Enum;
+import com.donty.gymapp.tables.Tables.Parent.Table_Enum;
 
 import java.util.Arrays;
 import java.util.Map;

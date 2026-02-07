@@ -1,7 +1,7 @@
-package com.donty.gymapp.Screens.Ingredient_Info_Screens.Ingredients_Info;
+package com.donty.gymapp.screens.Ingredient_Info_Screens.Ingredients_Info;
 
-import com.donty.gymapp.Gui_Objects.CollapsibleJPanel;
-import com.donty.gymapp.Gui_Objects.Screens.Screen_JPanel;
+import com.donty.gymapp.gui.CollapsibleJPanel;
+import com.donty.gymapp.gui.Screens.Screen_JPanel;
 
 import java.awt.*;
 

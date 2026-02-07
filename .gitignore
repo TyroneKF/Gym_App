@@ -14,7 +14,7 @@ data/root;
 /data/*.db-wal
 /data/gym_app00001;
 /data/gym_app00001;-journal
-/src/main/java/Tests/
+/src/main/java/com/donty/gymapp/Tests/
 
 # =========================
 # IntelliJ IDEA (REQUIRED)
@@ -28,6 +28,7 @@ data/root;
 target/
 out/
 *.class
+dependency-reduced-pom.xml
 
 # =========================
 # OS / Sync noise

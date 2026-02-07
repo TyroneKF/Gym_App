@@ -1,4 +1,4 @@
-package com.donty.gymapp.Gui_Objects.Text_Fields.Parent;
+package com.donty.gymapp.gui.Text_Fields.Parent;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;

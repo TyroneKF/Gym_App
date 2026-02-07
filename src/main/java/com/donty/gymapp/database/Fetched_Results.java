@@ -1,4 +1,4 @@
-package com.donty.gymapp.Database_Objects;
+package com.donty.gymapp.database;
 
 import java.util.ArrayList;
 import java.util.Collection;

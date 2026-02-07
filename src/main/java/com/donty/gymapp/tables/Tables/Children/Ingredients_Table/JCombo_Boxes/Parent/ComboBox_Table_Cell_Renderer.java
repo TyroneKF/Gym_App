@@ -1,6 +1,6 @@
-package com.donty.gymapp.Table_Objects.Tables.Children.Ingredients_Table.JCombo_Boxes.Parent;
+package com.donty.gymapp.tables.Tables.Children.Ingredients_Table.JCombo_Boxes.Parent;
 
-import com.donty.gymapp.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Storable_IDS_Parent;
+import com.donty.gymapp.data_objects.ID_Objects.Storable_Ingredient_IDS.Storable_IDS_Parent;
 
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;

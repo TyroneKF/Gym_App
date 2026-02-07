@@ -1,11 +1,11 @@
-package com.donty.gymapp.Screens.Graph_Screens.PieChart_MealManager_Screen;
+package com.donty.gymapp.screens.Graph_Screens.PieChart_MealManager_Screen;
 
-import com.donty.gymapp.Database_Objects.MyJDBC.MyJDBC_Sqlite;
-import com.donty.gymapp.Table_Objects.Tables.Children.View_Data_Tables.Children.Total_Meal_Table.Total_Meal_Macro_Columns;
-import com.donty.gymapp.Table_Objects.MealManager;
-import com.donty.gymapp.Database_Objects.Shared_Data_Registry;
-import com.donty.gymapp.Gui_Objects.Screens.Screen_JFrame;
-import com.donty.gymapp.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Meals.Pie_Chart_Totals;
+import com.donty.gymapp.database.MyJDBC.MyJDBC_Sqlite;
+import com.donty.gymapp.tables.Tables.Children.View_Data_Tables.Children.Total_Meal_Table.Total_Meal_Macro_Columns;
+import com.donty.gymapp.tables.MealManager;
+import com.donty.gymapp.database.Shared_Data_Registry;
+import com.donty.gymapp.gui.Screens.Screen_JFrame;
+import com.donty.gymapp.screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Meals.Pie_Chart_Totals;
 import org.jfree.chart.title.LegendTitle;
 import org.jfree.chart.ui.HorizontalAlignment;
 import org.jfree.data.general.DefaultPieDataset;

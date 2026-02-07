@@ -1,4 +1,4 @@
-package com.donty.gymapp.Data_Objects.ID_Objects;
+package com.donty.gymapp.data_objects.ID_Objects;
 
 import java.util.Objects;
 

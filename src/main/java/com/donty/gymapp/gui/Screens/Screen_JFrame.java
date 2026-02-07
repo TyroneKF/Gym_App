@@ -1,6 +1,6 @@
-package com.donty.gymapp.Gui_Objects.Screens;
+package com.donty.gymapp.gui.Screens;
 
-import com.donty.gymapp.Database_Objects.MyJDBC.MyJDBC_Sqlite;
+import com.donty.gymapp.database.MyJDBC.MyJDBC_Sqlite;
 
 import javax.swing.*;
 import java.awt.*;

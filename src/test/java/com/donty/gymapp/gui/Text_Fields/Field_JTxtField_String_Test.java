@@ -1,4 +1,4 @@
-package com.donty.gymapp.Gui_Objects.Text_Fields;
+package com.donty.gymapp.gui.Text_Fields;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

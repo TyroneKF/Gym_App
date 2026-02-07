@@ -1,6 +1,6 @@
-package com.donty.gymapp.Table_Objects.Tables.Children.Ingredients_Table.Buttons;
+package com.donty.gymapp.tables.Tables.Children.Ingredients_Table.Buttons;
 
-import com.donty.gymapp.Table_Objects.Tables.Children.Ingredients_Table.IngredientsTable;
+import com.donty.gymapp.tables.Tables.Children.Ingredients_Table.IngredientsTable;
 
 import javax.swing.*;
 import javax.swing.border.Border;

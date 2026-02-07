@@ -1,10 +1,10 @@
-package com.donty.gymapp.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients.Shop_Form;
+package com.donty.gymapp.screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients.Shop_Form;
 
-import com.donty.gymapp.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_Statements;
-import com.donty.gymapp.Database_Objects.Shared_Data_Registry;
-import com.donty.gymapp.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.ShopForm_Object;
-import com.donty.gymapp.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.Shop_Form;
-import com.donty.gymapp.Screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients.Edit_Ingredients_Screen;
+import com.donty.gymapp.database.MyJDBC.Batch_Objects.Batch_Upload_Statements;
+import com.donty.gymapp.database.Shared_Data_Registry;
+import com.donty.gymapp.screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.ShopForm_Object;
+import com.donty.gymapp.screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.Shop_Form;
+import com.donty.gymapp.screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients.Edit_Ingredients_Screen;
 
 import java.awt.*;
 import java.util.*;

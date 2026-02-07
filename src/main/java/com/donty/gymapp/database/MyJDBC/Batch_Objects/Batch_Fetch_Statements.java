@@ -1,6 +1,6 @@
-package com.donty.gymapp.Database_Objects.MyJDBC.Batch_Objects;
+package com.donty.gymapp.database.MyJDBC.Batch_Objects;
 
-import com.donty.gymapp.Database_Objects.MyJDBC.Statements.Fetch_Statement;
+import com.donty.gymapp.database.MyJDBC.Statements.Fetch_Statement;
 
 import java.util.LinkedHashSet;
 

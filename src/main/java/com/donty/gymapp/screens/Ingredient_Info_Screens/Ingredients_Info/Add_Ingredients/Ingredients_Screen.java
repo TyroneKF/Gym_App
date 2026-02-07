@@ -1,16 +1,16 @@
-package com.donty.gymapp.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients;
+package com.donty.gymapp.screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients;
 
-import com.donty.gymapp.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
-import com.donty.gymapp.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
-import com.donty.gymapp.Database_Objects.Fetched_Results;
-import com.donty.gymapp.Database_Objects.MyJDBC.MyJDBC_Sqlite;
-import com.donty.gymapp.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_And_Fetch_Statements;
-import com.donty.gymapp.Database_Objects.MyJDBC.Statements.Fetch_Statement;
-import com.donty.gymapp.Database_Objects.Shared_Data_Registry;
-import com.donty.gymapp.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.Shop_Form;
-import com.donty.gymapp.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info.Ingredients_Info_Screen;
-import com.donty.gymapp.Screens.Ingredient_Info_Screens.Ingredients_Info.Parent_Ingredients_Screen;
-import com.donty.gymapp.Screens.Ingredient_Info_Screens.Ingredients_Info.Search_For_Food_Info;
+import com.donty.gymapp.data_objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
+import com.donty.gymapp.data_objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
+import com.donty.gymapp.database.Fetched_Results;
+import com.donty.gymapp.database.MyJDBC.MyJDBC_Sqlite;
+import com.donty.gymapp.database.MyJDBC.Batch_Objects.Batch_Upload_And_Fetch_Statements;
+import com.donty.gymapp.database.MyJDBC.Statements.Fetch_Statement;
+import com.donty.gymapp.database.Shared_Data_Registry;
+import com.donty.gymapp.screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.Shop_Form;
+import com.donty.gymapp.screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info.Ingredients_Info_Screen;
+import com.donty.gymapp.screens.Ingredient_Info_Screens.Ingredients_Info.Parent_Ingredients_Screen;
+import com.donty.gymapp.screens.Ingredient_Info_Screens.Ingredients_Info.Search_For_Food_Info;
 import java.math.BigInteger;
 
 

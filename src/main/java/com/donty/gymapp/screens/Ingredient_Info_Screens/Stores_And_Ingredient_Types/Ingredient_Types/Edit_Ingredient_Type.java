@@ -1,15 +1,15 @@
-package com.donty.gymapp.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Ingredient_Types;
+package com.donty.gymapp.screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Ingredient_Types;
 
-import com.donty.gymapp.Data_Objects.ID_Objects.ID_Object;
-import com.donty.gymapp.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
-import com.donty.gymapp.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Storable_IDS_Parent;
-import com.donty.gymapp.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_Statements;
-import com.donty.gymapp.Database_Objects.MyJDBC.MyJDBC_Sqlite;
-import com.donty.gymapp.Database_Objects.MyJDBC.Statements.Upload_Statement;
-import com.donty.gymapp.Database_Objects.Shared_Data_Registry;
-import com.donty.gymapp.Screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info.Ingredients_Info_Screen;
-import com.donty.gymapp.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Edit_Screen;
-import com.donty.gymapp.Screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Parent_Screen;
+import com.donty.gymapp.data_objects.ID_Objects.ID_Object;
+import com.donty.gymapp.data_objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
+import com.donty.gymapp.data_objects.ID_Objects.Storable_Ingredient_IDS.Storable_IDS_Parent;
+import com.donty.gymapp.database.MyJDBC.Batch_Objects.Batch_Upload_Statements;
+import com.donty.gymapp.database.MyJDBC.MyJDBC_Sqlite;
+import com.donty.gymapp.database.MyJDBC.Statements.Upload_Statement;
+import com.donty.gymapp.database.Shared_Data_Registry;
+import com.donty.gymapp.screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info.Ingredients_Info_Screen;
+import com.donty.gymapp.screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Edit_Screen;
+import com.donty.gymapp.screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Parent_Screen;
 
 import java.util.ArrayList;
 import java.util.Arrays;

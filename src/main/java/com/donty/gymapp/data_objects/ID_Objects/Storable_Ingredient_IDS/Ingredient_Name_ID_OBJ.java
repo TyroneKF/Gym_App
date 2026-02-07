@@ -1,4 +1,4 @@
-package com.donty.gymapp.Data_Objects.ID_Objects.Storable_Ingredient_IDS;
+package com.donty.gymapp.data_objects.ID_Objects.Storable_Ingredient_IDS;
 
 import java.util.Objects;
 

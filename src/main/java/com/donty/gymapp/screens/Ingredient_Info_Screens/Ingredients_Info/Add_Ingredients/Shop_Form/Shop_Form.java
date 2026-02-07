@@ -1,13 +1,13 @@
-package com.donty.gymapp.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form;
+package com.donty.gymapp.screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form;
 
-import com.donty.gymapp.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
-import com.donty.gymapp.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_Statements;
-import com.donty.gymapp.Database_Objects.MyJDBC.Statements.Upload_Statement;
-import com.donty.gymapp.Database_Objects.Shared_Data_Registry;
-import com.donty.gymapp.Gui_Objects.IconButton;
-import com.donty.gymapp.Gui_Objects.IconPanel;
-import com.donty.gymapp.Screens.Ingredient_Info_Screens.Ingredients_Info.Parent_Forms_OBJ;
-import com.donty.gymapp.Screens.Ingredient_Info_Screens.Ingredients_Info.Parent_Ingredients_Screen;
+import com.donty.gymapp.data_objects.ID_Objects.Storable_Ingredient_IDS.Store_ID_OBJ;
+import com.donty.gymapp.database.MyJDBC.Batch_Objects.Batch_Upload_Statements;
+import com.donty.gymapp.database.MyJDBC.Statements.Upload_Statement;
+import com.donty.gymapp.database.Shared_Data_Registry;
+import com.donty.gymapp.gui.IconButton;
+import com.donty.gymapp.gui.IconPanel;
+import com.donty.gymapp.screens.Ingredient_Info_Screens.Ingredients_Info.Parent_Forms_OBJ;
+import com.donty.gymapp.screens.Ingredient_Info_Screens.Ingredients_Info.Parent_Ingredients_Screen;
 
 import javax.swing.*;
 import java.awt.*;

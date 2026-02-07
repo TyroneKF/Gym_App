@@ -1,6 +1,6 @@
-package com.donty.gymapp.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Meals;
+package com.donty.gymapp.screens.Graph_Screens.PieChart_Meal_Plan_Screen.Total_Meals;
 
-import com.donty.gymapp.Table_Objects.MealManager;
+import com.donty.gymapp.tables.MealManager;
 import com.donty.gymapp.Graph_Objects.Pie_Chart;
 import java.time.LocalTime;
 

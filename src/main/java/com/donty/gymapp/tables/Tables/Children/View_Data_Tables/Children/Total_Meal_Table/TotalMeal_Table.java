@@ -1,9 +1,9 @@
-package com.donty.gymapp.Table_Objects.Tables.Children.View_Data_Tables.Children.Total_Meal_Table;
+package com.donty.gymapp.tables.Tables.Children.View_Data_Tables.Children.Total_Meal_Table;
 
-import com.donty.gymapp.Database_Objects.MyJDBC.MyJDBC_Sqlite;
-import com.donty.gymapp.Database_Objects.Shared_Data_Registry;
-import com.donty.gymapp.Table_Objects.Tables.Children.View_Data_Tables.Parent.MyJTable_Display_Data;
-import com.donty.gymapp.Table_Objects.MealManager;
+import com.donty.gymapp.database.MyJDBC.MyJDBC_Sqlite;
+import com.donty.gymapp.database.Shared_Data_Registry;
+import com.donty.gymapp.tables.Tables.Children.View_Data_Tables.Parent.MyJTable_Display_Data;
+import com.donty.gymapp.tables.MealManager;
 import java.util.ArrayList;
 import java.util.Collections;
 

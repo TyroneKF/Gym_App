@@ -1,6 +1,6 @@
-package com.donty.gymapp.Gui_Objects.Combo_Boxes;
+package com.donty.gymapp.gui.Combo_Boxes;
 
-import com.donty.gymapp.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Storable_IDS_Parent;
+import com.donty.gymapp.data_objects.ID_Objects.Storable_Ingredient_IDS.Storable_IDS_Parent;
 
 import java.awt.event.ItemEvent;
 import java.util.ArrayList;

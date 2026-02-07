@@ -1,9 +1,9 @@
-package com.donty.gymapp.Table_Objects.Tables.Children.View_Data_Tables.Parent;
+package com.donty.gymapp.tables.Tables.Children.View_Data_Tables.Parent;
 
-import com.donty.gymapp.Database_Objects.MyJDBC.MyJDBC_Sqlite;
-import com.donty.gymapp.Database_Objects.MyJDBC.Statements.Fetch_Statement_Full;
-import com.donty.gymapp.Database_Objects.Shared_Data_Registry;
-import com.donty.gymapp.Table_Objects.Tables.Parent.JDBC_JTable;
+import com.donty.gymapp.database.MyJDBC.MyJDBC_Sqlite;
+import com.donty.gymapp.database.MyJDBC.Statements.Fetch_Statement_Full;
+import com.donty.gymapp.database.Shared_Data_Registry;
+import com.donty.gymapp.tables.Tables.Parent.JDBC_JTable;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;

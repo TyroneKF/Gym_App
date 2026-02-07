@@ -1,4 +1,4 @@
-package com.donty.gymapp.Data_Objects.ID_Objects.MetaData_ID_Object;
+package com.donty.gymapp.data_objects.ID_Objects.MetaData_ID_Object;
 
 import java.time.LocalTime;
 import java.util.ArrayList;

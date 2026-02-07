@@ -1,4 +1,4 @@
-package com.donty.gymapp.Table_Objects.Tables.Parent;
+package com.donty.gymapp.tables.Tables.Parent;
 
 import com.donty.gymapp.Enums.My_Enum;
 

@@ -1,4 +1,4 @@
-package com.donty.gymapp.Screens.Graph_Screens.PieChart_Meal_Plan_Screen.Macro_Values;
+package com.donty.gymapp.screens.Graph_Screens.PieChart_Meal_Plan_Screen.Macro_Values;
 
 import com.donty.gymapp.Graph_Objects.Pie_Chart;
 import org.jfree.chart.labels.PieSectionLabelGenerator;

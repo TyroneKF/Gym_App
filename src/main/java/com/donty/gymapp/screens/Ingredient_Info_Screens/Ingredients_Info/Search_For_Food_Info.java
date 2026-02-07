@@ -1,19 +1,19 @@
-package com.donty.gymapp.Screens.Ingredient_Info_Screens.Ingredients_Info;
+package com.donty.gymapp.screens.Ingredient_Info_Screens.Ingredients_Info;
 
 //#################################################################################################################
 //
 //##################################################################################################################
 
-import com.donty.gymapp.Gui_Objects.CollapsibleJPanel;
+import com.donty.gymapp.gui.CollapsibleJPanel;
 
 import javax.swing.*;
 import java.awt.*;
 
 import com.donty.gymapp.API.Nutritionix.NutritionIx_API;
-import com.donty.gymapp.Gui_Objects.IconButton;
-import com.donty.gymapp.Gui_Objects.Text_Fields.Parent.JTextFieldLimit;
-import com.donty.gymapp.Gui_Objects.Screens.ScrollPaneCreator;
-import com.donty.gymapp.Screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredients_Form;
+import com.donty.gymapp.gui.IconButton;
+import com.donty.gymapp.gui.Text_Fields.Parent.JTextFieldLimit;
+import com.donty.gymapp.gui.Screens.ScrollPaneCreator;
+import com.donty.gymapp.screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredients_Form;
 
 import javax.imageio.ImageIO;
 

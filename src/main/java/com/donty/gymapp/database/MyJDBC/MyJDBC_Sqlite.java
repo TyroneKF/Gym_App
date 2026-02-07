@@ -1,13 +1,13 @@
-package com.donty.gymapp.Database_Objects.MyJDBC;
+package com.donty.gymapp.database.MyJDBC;
 
-import com.donty.gymapp.Database_Objects.Fetched_Results;
-import com.donty.gymapp.Database_Objects.MyJDBC.Batch_Objects.Batch_Fetch_Statements;
-import com.donty.gymapp.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_And_Fetch_Statements;
-import com.donty.gymapp.Database_Objects.MyJDBC.Batch_Objects.Batch_Upload_Statements;
-import com.donty.gymapp.Database_Objects.MyJDBC.Statements.Fetch_Statement;
-import com.donty.gymapp.Database_Objects.MyJDBC.Statements.Fetch_Statement_Full;
-import com.donty.gymapp.Database_Objects.MyJDBC.Statements.Upload_Statement;
-import com.donty.gymapp.Database_Objects.MyJDBC.Statements.Upload_Statement_Full;
+import com.donty.gymapp.database.Fetched_Results;
+import com.donty.gymapp.database.MyJDBC.Batch_Objects.Batch_Fetch_Statements;
+import com.donty.gymapp.database.MyJDBC.Batch_Objects.Batch_Upload_And_Fetch_Statements;
+import com.donty.gymapp.database.MyJDBC.Batch_Objects.Batch_Upload_Statements;
+import com.donty.gymapp.database.MyJDBC.Statements.Fetch_Statement;
+import com.donty.gymapp.database.MyJDBC.Statements.Fetch_Statement_Full;
+import com.donty.gymapp.database.MyJDBC.Statements.Upload_Statement;
+import com.donty.gymapp.database.MyJDBC.Statements.Upload_Statement_Full;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import java.math.RoundingMode;

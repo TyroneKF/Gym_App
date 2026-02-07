@@ -1,9 +1,9 @@
-package com.donty.gymapp.Table_Objects.Tables.Children.Ingredients_Table.JCombo_Boxes.Child;
+package com.donty.gymapp.tables.Tables.Children.Ingredients_Table.JCombo_Boxes.Child;
 
-import com.donty.gymapp.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
-import com.donty.gymapp.Data_Objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
-import com.donty.gymapp.Database_Objects.Shared_Data_Registry;
-import com.donty.gymapp.Table_Objects.Tables.Children.Ingredients_Table.JCombo_Boxes.Parent.Parent_JComboBox_Column;
+import com.donty.gymapp.data_objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
+import com.donty.gymapp.data_objects.ID_Objects.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
+import com.donty.gymapp.database.Shared_Data_Registry;
+import com.donty.gymapp.tables.Tables.Children.Ingredients_Table.JCombo_Boxes.Parent.Parent_JComboBox_Column;
 
 import javax.swing.*;
 import java.util.ArrayList;
