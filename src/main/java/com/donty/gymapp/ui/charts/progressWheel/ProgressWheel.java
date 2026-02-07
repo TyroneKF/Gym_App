@@ -23,7 +23,8 @@ public class ProgressWheel extends JPanel
             Color used_color,
             Color remaining_color,
             int width_indicator,
-            int height_indicator
+            int height_indicator,
+            boolean clamp
     )
     {
         //#######################################
@@ -40,7 +41,8 @@ public class ProgressWheel extends JPanel
         donut = new DonutPercentChart(
                 start_percent,
                 used_color,
-                remaining_color
+                remaining_color,
+                clamp
         );
 
         ChartPanel chartPanel = new ChartPanel(donut.getChart());

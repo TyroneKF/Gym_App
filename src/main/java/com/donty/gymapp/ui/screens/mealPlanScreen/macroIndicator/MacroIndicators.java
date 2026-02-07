@@ -57,7 +57,8 @@ public class MacroIndicators extends JPanel
                 progress_wheel_key.get_Used_Color(),
                 progress_wheel_key.get_Remaining_Color(),
                 progress_wheel_key.get_Width(),
-                progress_wheel_key.get_Height()
+                progress_wheel_key.get_Height(),
+                false
         );
 
         add(BorderLayout.EAST, progress_wheel);

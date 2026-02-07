@@ -14,13 +14,16 @@ public class DonutPercentChart
     private final CenterTextRingPlot plot;
     private final JFreeChart chart;
 
+    private final boolean clamp;
+
     //##################################################################################################################
     //  Class
     //##################################################################################################################
-    protected DonutPercentChart(double percent, Color used_color, Color remaining_color)
+    protected DonutPercentChart(double percent, Color used_color, Color remaining_color, boolean clamp)
     {
+        this.clamp = clamp;
 
-        percent = clamp(percent);
+       if(clamp) { percent = clamp(percent); }
 
         dataset = new DefaultPieDataset<>();
 
@@ -55,7 +58,7 @@ public class DonutPercentChart
      * */
     public void update(double percent)
     {
-        percent = clamp(percent);
+        if(clamp) { percent = clamp(percent); }
 
         dataset.setValue("Used", percent);
         dataset.setValue("Remaining", 100 - percent);

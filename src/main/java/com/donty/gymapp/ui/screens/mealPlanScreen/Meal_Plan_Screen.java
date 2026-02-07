@@ -2242,6 +2242,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
         // Update External Graphs
         update_External_Charts(true, "clear", null, null, null);
+
+        update_Macro_Indicators(); // Update Indicators
     }
 
     private void clear_GUI_And_Meal_DATA()
@@ -2488,6 +2490,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
          *  5.) Build Centre Of GUI                   [40%]
          *
          *  6.) Build Complete                        [3%]
+         *  7.) Refresh Indicators
          */
 
         try
@@ -2508,6 +2511,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
             create_Meal_Objects_In_GUI(meals_and_sub_meals_AL, total_Meals_Data_Map, null, 40);
 
             build_Complete(null);   // 6.) Build Complete
+
+            update_Macro_Indicators(); // 7.) Refresh Macro Indicator
 
             //############################
             // Output
