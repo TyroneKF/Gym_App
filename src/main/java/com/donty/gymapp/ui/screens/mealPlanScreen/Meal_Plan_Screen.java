@@ -1577,14 +1577,14 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // North
     private void build_North_GUI()
     {
-        int height = 100;
+        int height = 85;
         int width = getFrameWidth();
 
         //#######################
         // Configure North Panel
         //#######################
         mainNorthPanel.setLayout(new BorderLayout());
-        mainNorthPanel.setBorder(BorderFactory.createLineBorder(Color.red, 6));
+        mainNorthPanel.setBorder(BorderFactory.createLineBorder(Color.WHITE, 6));
         mainNorthPanel.setPreferredSize(new Dimension(width, height));
 
         //#######################
@@ -1593,7 +1593,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         JPanel west_jp = new JPanel(new GridBagLayout());
 
         west_jp.setPreferredSize(new Dimension(700, height - 10));
-        west_jp.setBorder(BorderFactory.createLineBorder(Color.BLUE, 3));
+        west_jp.setBorder(BorderFactory.createLineBorder(Color.WHITE, 3));
 
         mainNorthPanel.add(west_jp, BorderLayout.WEST);
 
@@ -1606,7 +1606,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         JPanel east_jp = new JPanel();
 
         east_jp.setPreferredSize(new Dimension(800, height - 10));
-        east_jp.setBorder(BorderFactory.createLineBorder(Color.GREEN, 3));
+        east_jp.setBorder(BorderFactory.createLineBorder(Color.WHITE, 3));
 
         mainNorthPanel.add(east_jp, BorderLayout.EAST);
 
@@ -1626,10 +1626,10 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 new Color(200, 0, 0),
                 new Color(230, 230, 230),
                 100,
-                60);
+                40);
 
         protein_indicator = new MacroIndicators(
-                60,
+                40,
                 protein_wheel_key,
                 "/images/macros/protein/protein_2.png",
                 45,
@@ -1649,7 +1649,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 60);
 
         carbs_indicator = new MacroIndicators(
-                60,
+                40,
                 carb_wheel_key,
                 "/images/macros/carbs/carbs_01.png",
                 55,
@@ -1669,7 +1669,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 60);
 
         fats_indicator = new MacroIndicators(
-                60,
+                40,
                 fats_wheel_key,
                 "/images/macros/fats/fats_01.png",
                 65,
@@ -1683,17 +1683,17 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //#################################
         ProgressWheelKey calories_wheel_key = new ProgressWheelKey(
                 35,
-                new Color(76, 175, 80),
+                new Color(255, 140, 0),
                 new Color(230, 230, 230),
                 100,
                 60);
 
         calories_indicator = new MacroIndicators(
-                60,
+                40,
                 calories_wheel_key,
                 "/images/macros/calories/calories_02.png",
                 65,
-                15
+                45
         );
 
         addToContainer(jpanel, calories_indicator, x_pos += 1, 0, 1, 1, 0.25, 0.25, "vertical", 10, 0, null);

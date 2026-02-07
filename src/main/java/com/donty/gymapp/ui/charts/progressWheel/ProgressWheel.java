@@ -31,7 +31,7 @@ public class ProgressWheel extends JPanel
         //#######################################
         setLayout(new GridLayout(1, 1));
         setPreferredSize(new Dimension(width_indicator, height_indicator ));
-        setBorder(BorderFactory.createLineBorder(Color.red));
+        //setBorder(BorderFactory.createLineBorder(Color.red));
 
 
         //#######################################
