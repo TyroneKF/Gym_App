@@ -2729,7 +2729,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             {
                 IngredientsTable table = it.next();
 
-                if (table.is_Sub_Meal_Deleted())   // If objected is deleted, completely delete it then skip to next JTable
+                if (table.has_Sub_Meal_Been_Deleted())   // If objected is deleted, completely delete it then skip to next JTable
                 {
                     table.completely_Delete();
                     it.remove();

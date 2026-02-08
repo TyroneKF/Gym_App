@@ -21,6 +21,7 @@ import com.donty.gymapp.gui.controls.IconButton;
 import com.donty.gymapp.gui.panels.IconPanel;
 import org.apache.commons.lang3.StringUtils;
 import org.javatuples.Pair;
+
 import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
@@ -57,6 +58,7 @@ public class IngredientsTable extends JDBC_JTable
     private boolean
             sub_meal_in_db,
             sub_meal_saved,
+
             table_deleted = false,
             sub_meal_meta_data_changed = false,
             sub_meal_data_changed = false;
@@ -259,7 +261,7 @@ public class IngredientsTable extends JDBC_JTable
 
         JPanel title_panel = new JPanel();
         title_panel.setPreferredSize(new Dimension(450, 50));
-        title_panel.setBorder(BorderFactory.createLineBorder(Color.red));
+        //title_panel.setBorder(BorderFactory.createLineBorder(Color.black));
 
         title_panel.add(sub_meal_title_label);
 
@@ -758,7 +760,9 @@ public class IngredientsTable extends JDBC_JTable
     //###################################################
     public void refresh_Btn_Action()
     {
+        //###########################
         // Exit : Edge Cases
+        //###########################
         if (! are_You_Sure("Refresh Data")) { return; } // Ask For Permission
 
         if (! is_Sub_Meal_Saved()) // If Meal Is not in DB, then refresh does nothing
@@ -767,7 +771,15 @@ public class IngredientsTable extends JDBC_JTable
             return;
         }
 
+        if(! has_Sub_Meal_Data_Changed() && !has_Sub_Meal_Meta_Data_Changed())
+        {
+            JOptionPane.showMessageDialog(null, "\n\nThere's nothing to refresh, data hasn't changed! ");
+            return;
+        }
+
+        //###########################
         // Refresh DB Data
+        //###########################
         if (! refresh_DB_Data())
         {
             JOptionPane.showMessageDialog(frame, "\n\nUnable to transfer ingredients data from  original plan to temp plan!!");
@@ -808,62 +820,42 @@ public class IngredientsTable extends JDBC_JTable
         //###################################################
         // Re-Insert Sub-Meal Incase Deleted
         //###################################################
-        if (is_Sub_Meal_Deleted() || has_Sub_Meal_Meta_Data_Changed())
+        if(! has_Sub_Meal_Been_Deleted())
         {
             // DELETE OLD Sub-Meal
             String upload_query00 = "DELETE FROM draft_divided_meal_sections WHERE draft_div_meal_sections_id = ?";
             Object[] upload_params_00 = new Object[]{ draft_sub_meal_id };
             batch_upload_statements.add_Uploads(new Upload_Statement(upload_query00, upload_params_00, true));
-
-            // Re-Insert With Old Sub-Meal Values
-            String upload_query_01;
-            Object[] params_01;
-
-            if (is_Sub_Meal_In_DB()) // If Meal is in DB
-            {
-                upload_query_01 = """
-                        INSERT INTO draft_divided_meal_sections
-                        (
-                            draft_div_meal_sections_id,
-                            div_meal_sections_id,
-                            draft_meal_in_plan_id,
-                            plan_id,
-                            sub_meal_name,
-                            sub_meal_time
-                        )
-                        VALUES
-                        (?,?,?,?,?,?);""";
-
-                params_01 = new Object[]{
-                        draft_sub_meal_id, source_sub_meal_id, draft_meal_id,
-                        get_Plan_ID(), saved_sub_meal_name, saved_sub_meal_time
-                };
-
-            }
-            else // Sub-Meal isn't in DB and doesn't have a source ID
-            {
-                upload_query_01 = """
-                        INSERT INTO draft_divided_meal_sections
-                        (
-                            draft_div_meal_sections_id,
-                            draft_meal_in_plan_id,
-                            plan_id,
-                            sub_meal_name,
-                            sub_meal_time
-                        )
-                        VALUES
-                        (?,?,?,?,?);""";
-
-                params_01 = new Object[]{ draft_sub_meal_id, draft_meal_id, get_Plan_ID(), saved_sub_meal_name, saved_sub_meal_time };
-            }
-
-            batch_upload_statements.add_Uploads(new Upload_Statement(upload_query_01, params_01, true));
         }
+
+        // Re-Insert With Old Sub-Meal Values
+        String upload_query_01 = """
+                INSERT INTO draft_divided_meal_sections
+                (
+                    draft_div_meal_sections_id,
+                    div_meal_sections_id,
+                    draft_meal_in_plan_id,
+                    plan_id,
+                    sub_meal_name,
+                    sub_meal_time
+                )
+                VALUES
+                (?,?,?,?,?,?);""";
+
+        Object[] params_01 = new Object[]{
+                draft_sub_meal_id,
+                source_sub_meal_id,
+                draft_meal_id,
+                get_Plan_ID(),
+                saved_sub_meal_name,
+                saved_sub_meal_time
+        };
+
+        batch_upload_statements.add_Uploads(new Upload_Statement(upload_query_01, params_01, true));
 
         //###################################################
         // Create Insert String
         //###################################################
-
         // Re-insert Saved Ingredients In Sub-Meal
         String upload_query_03_tmp = """
                 INSERT INTO draft_ingredients_in_sections_of_meal
@@ -894,7 +886,7 @@ public class IngredientsTable extends JDBC_JTable
         for (ArrayList<Object> row : saved_Data)
         {
             params_03[pos += 1] = row.get(model_ingredient_index_col);                                    // Get Ingredient Index
-            params_03[pos += 1] = draft_sub_meal_id;                                                            // Get Sub-Meal ID
+            params_03[pos += 1] = draft_sub_meal_id;                                                      // Get Sub-Meal ID
             params_03[pos += 1] = ((Ingredient_Name_ID_OBJ) row.get(model_ingredient_name_col)).get_ID(); // Get Ingredient ID
             params_03[pos += 1] = row.get(model_quantity_col);                                            // Get Quantity
         }
@@ -911,6 +903,7 @@ public class IngredientsTable extends JDBC_JTable
 
         set_Sub_Meal_Data_Changed(false);
         set_Sub_Meal_Meta_Data_Changed(false);
+        set_Table_Deleted(false);
 
         un_Hide_Ingredients_Table();
 
@@ -1399,7 +1392,7 @@ public class IngredientsTable extends JDBC_JTable
         return sub_meal_saved;
     }
 
-    public boolean is_Sub_Meal_Deleted()
+    public boolean has_Sub_Meal_Been_Deleted()
     {
         return table_deleted;
     }

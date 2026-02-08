@@ -1255,7 +1255,7 @@ public class MealManager
         return
                 ingredient_tables_AL  // returns true if there is a meal that hasn't been deleted
                         .stream()
-                        .anyMatch(t -> ! t.is_Sub_Meal_Deleted()); // noneMatch returns true if predicate isn't met
+                        .anyMatch(t -> ! t.has_Sub_Meal_Been_Deleted()); // noneMatch returns true if predicate isn't met
     }
 
     //#################################################################################
@@ -1494,7 +1494,7 @@ public class MealManager
         {
             IngredientsTable table = it.next();
 
-            if (table.is_Sub_Meal_Deleted())   // If objected is deleted, completely delete it then skip to next JTable
+            if (table.has_Sub_Meal_Been_Deleted())   // If objected is deleted, completely delete it then skip to next JTable
             {
                 table.completely_Delete();
                 it.remove();
