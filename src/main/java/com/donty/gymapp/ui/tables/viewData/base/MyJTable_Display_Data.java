@@ -1,8 +1,9 @@
-package com.donty.gymapp.ui.tables.base;
+package com.donty.gymapp.ui.tables.viewData.base;
 
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
 import com.donty.gymapp.persistence.database.statements.Fetch_Statement_Full;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
+import com.donty.gymapp.ui.tables.base.MyJTable;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;

@@ -2,7 +2,7 @@ package com.donty.gymapp.ui.tables.viewData;
 
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
-import com.donty.gymapp.ui.tables.base.MyJTable_Display_Data;
+import com.donty.gymapp.ui.tables.viewData.base.MyJTable_Display_Data;
 
 import java.awt.*;
 import java.util.ArrayList;
