@@ -651,19 +651,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // Column UI Rules
         //#####################
         // Ingredients Table Un-editable Columns
-        ArrayList<Draft_Gui_Ingredients_Calc_Columns> ingredients_Table_Un_Editable_Cells = new ArrayList<>(Arrays.asList(
-
-                Draft_Gui_Ingredients_Calc_Columns.DRAFT_INGREDIENTS_INDEX,
-                Draft_Gui_Ingredients_Calc_Columns.PROTEIN,
-                Draft_Gui_Ingredients_Calc_Columns.GI,
-                Draft_Gui_Ingredients_Calc_Columns.CARBOHYDRATES,
-                Draft_Gui_Ingredients_Calc_Columns.SUGARS_OF_CARBS,
-                Draft_Gui_Ingredients_Calc_Columns.FIBRE,
-                Draft_Gui_Ingredients_Calc_Columns.FAT,
-                Draft_Gui_Ingredients_Calc_Columns.SATURATED_FAT,
-                Draft_Gui_Ingredients_Calc_Columns.SALT,
-                Draft_Gui_Ingredients_Calc_Columns.WATER_CONTENT,
-                Draft_Gui_Ingredients_Calc_Columns.CALORIES
+        ArrayList<Draft_Gui_Ingredients_Calc_Columns> ingredients_Table_Editable_Cells = new ArrayList<>(Arrays.asList(
+                Draft_Gui_Ingredients_Calc_Columns.INGREDIENT_TYPE_NAME,
+                Draft_Gui_Ingredients_Calc_Columns.INGREDIENT_NAME,
+                Draft_Gui_Ingredients_Calc_Columns. QUANTITY,
+                Draft_Gui_Ingredients_Calc_Columns.DELETE_BTN
         ));
 
         // Ingredients Table Columns to Avoid Centering |
@@ -685,7 +677,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         ColumnUiRules<Draft_Gui_Ingredients_Calc_Columns> ingredients_table_ui_column_rules = new ColumnUiRules<>(
 
                 shared_data_registry.get_Ingredients_Table_Column_Names(),
-                ingredients_Table_Un_Editable_Cells,
+                ingredients_Table_Editable_Cells,
                 ingredients_Table_Col_Avoid_Centering,
                 ingredients_In_Meal_Table_Col_To_Hide
         );
@@ -715,24 +707,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // Column UI Rules
         //#########################
         // Total Meal Table Columns To Hide
-        ArrayList<Draft_Gui_Total_Meal_Columns> total_meal_un_editable_columns = new ArrayList<>(Arrays.asList(
-
-                Draft_Gui_Total_Meal_Columns.DRAFT_MEAL_IN_PLAN_ID,
-                Draft_Gui_Total_Meal_Columns.MEAL_TIME,
-                Draft_Gui_Total_Meal_Columns.MEAL_NAME,
-                Draft_Gui_Total_Meal_Columns.NO_OF_INGREDIENTS,
-                Draft_Gui_Total_Meal_Columns.TOTAL_PROTEIN,
-                Draft_Gui_Total_Meal_Columns.TOTAL_CARBOHYDRATES,
-                Draft_Gui_Total_Meal_Columns.TOTAL_SUGARS_OF_CARBS,
-                Draft_Gui_Total_Meal_Columns.TOTAL_FIBRE,
-                Draft_Gui_Total_Meal_Columns.TOTAL_FATS,
-                Draft_Gui_Total_Meal_Columns.TOTAL_SATURATED_FAT,
-                Draft_Gui_Total_Meal_Columns.TOTAL_SALT,
-                Draft_Gui_Total_Meal_Columns.TOTAL_WATER,
-                Draft_Gui_Total_Meal_Columns.TOTAL_CALORIES
-        ));
-
-        // Total Meal Table Columns To Hide
         ArrayList<Draft_Gui_Total_Meal_Columns> total_Meal_Table_Col_To_Hide = new ArrayList<>(Arrays.asList(
                 Draft_Gui_Total_Meal_Columns.DRAFT_MEAL_IN_PLAN_ID,
                 Draft_Gui_Total_Meal_Columns.MEAL_NAME
@@ -742,7 +716,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // Total Meal Column UI Rules
         ColumnUiRules<Draft_Gui_Total_Meal_Columns> total_meal_columns_ui_rules = new ColumnUiRules<>(
                 shared_data_registry.get_Total_Meal_Table_Column_Names(),
-                total_meal_un_editable_columns,
+                null,
                 null,
                 total_Meal_Table_Col_To_Hide
         );
@@ -2090,20 +2064,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //############################
         // MacroTargets Table
         //############################
-        ArrayList<Draft_Gui_Plan_Macro_Targets_Calc_Columns> plan_macro_targets_un_editable_cells = new ArrayList<>(Arrays.asList(
-                Draft_Gui_Plan_Macro_Targets_Calc_Columns.PLAN_ID,
-                Draft_Gui_Plan_Macro_Targets_Calc_Columns.EXPECTED_PROTEIN_GRAMS,
-                Draft_Gui_Plan_Macro_Targets_Calc_Columns.EXPECTED_CARBS_GRAMS,
-                Draft_Gui_Plan_Macro_Targets_Calc_Columns.EXPECTED_FATS_GRAMS,
-                Draft_Gui_Plan_Macro_Targets_Calc_Columns.SATURATED_FAT_LIMIT,
-                Draft_Gui_Plan_Macro_Targets_Calc_Columns.EXPECTED_FIBRE_GRAMS,
-                Draft_Gui_Plan_Macro_Targets_Calc_Columns.SALT_LIMIT_GRAMS,
-                Draft_Gui_Plan_Macro_Targets_Calc_Columns.WATER_CONTENT_TARGET,
-                Draft_Gui_Plan_Macro_Targets_Calc_Columns.CALORIES_TARGET,
-                Draft_Gui_Plan_Macro_Targets_Calc_Columns.ADDITIONAL_CALORIES_TARGET
-
-        ));
-
         ArrayList<Draft_Gui_Plan_Macro_Targets_Calc_Columns> macro_targets_columns_to_hide = new ArrayList<>(Arrays.asList(
                 Draft_Gui_Plan_Macro_Targets_Calc_Columns.PLAN_ID
         ));
@@ -2112,7 +2072,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         ColumnUiRules<Draft_Gui_Plan_Macro_Targets_Calc_Columns> macros_targets_column_ui_rules =
                 new ColumnUiRules<>(
                         macro_targets_column_names,
-                        plan_macro_targets_un_editable_cells,
+                        null,
                         null,
                         macro_targets_columns_to_hide
                 );
@@ -2130,27 +2090,13 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //############################
         // plan_Macros_Left Table
         //############################
-
-        ArrayList<Draft_Gui_Plan_Macros_Left_Columns> plan_macros_left_un_editable_cells = new ArrayList<>(Arrays.asList(
-                Draft_Gui_Plan_Macros_Left_Columns.PLAN_ID,
-                Draft_Gui_Plan_Macros_Left_Columns.PROTEIN_GRAMS_LEFT,
-                Draft_Gui_Plan_Macros_Left_Columns.CARB_GRAMS_LEFT,
-                Draft_Gui_Plan_Macros_Left_Columns.FIBRE_GRAMS_LEFT,
-                Draft_Gui_Plan_Macros_Left_Columns.FAT_GRAMS_LEFT,
-                Draft_Gui_Plan_Macros_Left_Columns.POTENTIAL_SAT_FAT_GRAMS_LEFT,
-                Draft_Gui_Plan_Macros_Left_Columns.POTENTIAL_SALT_GRAMS_LEFT,
-                Draft_Gui_Plan_Macros_Left_Columns.WATER_LEFT_TO_DRINK,
-                Draft_Gui_Plan_Macros_Left_Columns.CALORIES_LEFT,
-                Draft_Gui_Plan_Macros_Left_Columns.ADDED_CALORIES_LEFT
-        ));
-
         ArrayList<Draft_Gui_Plan_Macros_Left_Columns> plan_macros_left_columns_to_hide = new ArrayList<>(Arrays.asList(
                 Draft_Gui_Plan_Macros_Left_Columns.PLAN_ID
         ));
 
         ColumnUiRules<Draft_Gui_Plan_Macros_Left_Columns> macros_left_column_ui_rules = new ColumnUiRules<>(
                 macros_left_column_names,
-                plan_macros_left_un_editable_cells,
+                null,
                 null,
                 plan_macros_left_columns_to_hide
         );

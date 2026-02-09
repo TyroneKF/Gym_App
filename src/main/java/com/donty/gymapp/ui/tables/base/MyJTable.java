@@ -52,7 +52,7 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
 
     protected ArrayList<ArrayList<Object>> saved_Data;
 
-    protected ArrayList<Integer> un_editable_column_model_positions = new ArrayList<>();
+    protected ArrayList<Integer> editable_column_model_positions = new ArrayList<>();
 
     //#####################################################################
     // Other Variables
@@ -154,10 +154,12 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
         );
 
         // Un-Editable Table Columns
-        ArrayList<T> un_editable_column_names_source = column_ui_rules.get_Un_Editable_Column_Names();
+        ArrayList<T> editable_column_names_source = column_ui_rules.get_Editable_Column_Names();
 
-        Set<String> un_editable_column_names =
-                un_editable_column_names_source
+        if (editable_column_names_source == null) { return; }
+
+        Set<String> editable_column_names =
+                editable_column_names_source
                         .stream()
                         .map(Table_Enum :: key)
                         .collect(Collectors.toSet());
@@ -166,9 +168,9 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
         {
             String column_name = column_Names.get(pos);
 
-            if (un_editable_column_names.contains(column_name))
+            if (editable_column_names.contains(column_name))
             {
-                un_editable_column_model_positions.add(pos);
+                editable_column_model_positions.add(pos);
             }
         }
     }
@@ -420,7 +422,9 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
         @Override
         public boolean isCellEditable(int row, int col)
         {
-            return ! un_editable_column_model_positions.contains(col);
+            if (editable_column_model_positions == null) { return false; }
+
+            return editable_column_model_positions.contains(col);
         }
 
         @Override
