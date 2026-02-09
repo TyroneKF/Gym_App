@@ -1,65 +1,71 @@
-package com.donty.gymapp.domain.enums.table_enums;
+package com.donty.gymapp.domain.enums.db_enums.views;
 
-import com.donty.gymapp.domain.enums.table_enums.base.Table_Enum;
+import com.donty.gymapp.domain.enums.db_enums.base.Table_Enum;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public enum MacroTargetsColumns implements Table_Enum
+public enum Draft_Gui_Ingredients_Calc_Columns implements Table_Enum
 {
     //##################################################################################################################
     // Enums
     //##################################################################################################################
-    CURRENT_WEIGHT_KG("current_weight_kg"),
-    CURRENT_WEIGHT_IN_POUNDS("current_weight_in_pounds"),
-    BODY_FAT_PERCENTAGE("body_fat_percentage"),
-    PROTEIN_PER_POUND("protein_per_pound"),
-    CARBOHYDRATES_PER_POUND("carbohydrates_per_pound"),
+    DRAFT_INGREDIENTS_INDEX("draft_ingredients_index"),
+    INGREDIENT_TYPE_NAME("ingredient_type_name"),
+    INGREDIENT_NAME("ingredient_name"),
+    QUANTITY("quantity"),
+    GI("gi"),
+    PROTEIN("protein"),
+    CARBOHYDRATES("carbohydrates"),
+    SUGARS_OF_CARBS("sugars_of_carbs"),
     FIBRE("fibre"),
-    FATS_PER_POUND("fats_per_pound"),
-    SATURATED_FAT_LIMIT("saturated_fat_limit"),
-    SALT_LIMIT("salt_limit"),
-    WATER_TARGET("water_target"),
-    ADDITIONAL_CALORIES("additional_calories");
-
+    FAT("fat"),
+    SATURATED_FAT("saturated_fat"),
+    SALT("salt"),
+    WATER_CONTENT("water_content"),
+    CALORIES("calories"),
+    DELETE_BTN("delete_button");
+    
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    private static final String SOURCE_NAME = "draft_macros_per_pound_and_limits";
-
+    private static final String SOURCE_NAME = "draft_gui_ingredients_in_sections_of_meal_calculation";
+    
     private final String source_name;
     private final String key;
-
-    private static final Map<String, MacroTargetsColumns> BY_KEY =
+    
+    private static final Map<String, Draft_Gui_Ingredients_Calc_Columns> BY_KEY =
             Arrays.stream(values())
                     .collect(Collectors.toMap(
-                            MacroTargetsColumns :: key,
+                            Draft_Gui_Ingredients_Calc_Columns :: key,
                             Function.identity()
                     ));
-
+    
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    MacroTargetsColumns(String key)
+    Draft_Gui_Ingredients_Calc_Columns(String key)
     {
         this.key = key;
         this.source_name = SOURCE_NAME;
     }
-
+    
     //##################################################################################################################
     // Methods
     //##################################################################################################################
-    @Override
-    public String source_Name()
-    {
-        return source_name;
-    }
-
+    
     @Override
     public String key()
     {
         return key;
+    }
+    
+    
+    @Override
+    public String source_Name()
+    {
+        return source_name;
     }
 }

@@ -1,5 +1,6 @@
 package com.donty.gymapp.ui.tables.viewData;
 
+import com.donty.gymapp.domain.enums.db_enums.views.Draft_Gui_Plan_Macro_Targets_Calc_Columns;
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.ui.tables.base.ColumnUiRules;
@@ -9,7 +10,7 @@ import com.donty.gymapp.ui.tables.viewData.base.MyJTable_Display_Data;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class MacrosTargets_Table extends MyJTable_Display_Data
+public class MacrosTargets_Table extends MyJTable_Display_Data<Draft_Gui_Plan_Macro_Targets_Calc_Columns>
 {
     //##################################################################################################################
     // Constructor
@@ -20,7 +21,7 @@ public class MacrosTargets_Table extends MyJTable_Display_Data
             Shared_Data_Registry shared_data_registry,
             Container parentContainer,
             ArrayList<ArrayList<Object>> saved_Data,
-            ColumnUiRules columnUiRules
+            ColumnUiRules<Draft_Gui_Plan_Macro_Targets_Calc_Columns> columnUiRules
     )
     {
         super(
@@ -29,8 +30,8 @@ public class MacrosTargets_Table extends MyJTable_Display_Data
                 parentContainer,
                 saved_Data,
 
-                new TableMeta(
-                        "plan_id",
+                new TableMeta<>(
+                        Draft_Gui_Plan_Macro_Targets_Calc_Columns.PLAN_ID,
                         "Macro Targets Table",
                         "macros_per_pound_and_limits",
                         "draft_gui_plan_macro_target_calculations"

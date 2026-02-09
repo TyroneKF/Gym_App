@@ -1,11 +1,14 @@
 package com.donty.gymapp.ui.tables.base;
 
-public class TableMeta
+import com.donty.gymapp.domain.enums.db_enums.base.Table_Enum;
+
+public class TableMeta<T extends Enum<T> & Table_Enum>
 {
     //##################################################################################################################
     // Variable
     //##################################################################################################################
-    private final String primary_Key_Column;
+    private final T primary_Key_Column;
+
     private final String tableName;
     private final String write_Table_Name;
     private final String read_View_Name;
@@ -15,7 +18,8 @@ public class TableMeta
     //##################################################################################################################
     public TableMeta
     (
-            String primary_Key_Column,
+            T primary_Key_Column,
+
             String tableName,
             String write_Table_Name,
             String read_View_Name
@@ -32,7 +36,7 @@ public class TableMeta
     //##################################################################################################################
     public String get_Primary_Key_Column()
     {
-        return primary_Key_Column;
+        return primary_Key_Column.key();
     }
 
     public String get_Read_View_Name()

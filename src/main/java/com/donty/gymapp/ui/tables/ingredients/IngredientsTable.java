@@ -1,6 +1,6 @@
 package com.donty.gymapp.ui.tables.ingredients;
 
-import com.donty.gymapp.domain.enums.table_enums.IngredientsTableColumns;
+import com.donty.gymapp.domain.enums.db_enums.views.Draft_Gui_Ingredients_Calc_Columns;
 import com.donty.gymapp.ui.meta.ids.MetaData_ID_Object.Sub_Meal_ID_OBJ;
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
@@ -22,7 +22,6 @@ import com.donty.gymapp.gui.controls.IconButton;
 import com.donty.gymapp.gui.panels.IconPanel;
 import org.apache.commons.lang3.StringUtils;
 import org.javatuples.Pair;
-
 import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
@@ -33,7 +32,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class IngredientsTable extends MyJTable
+public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Columns>
 {
     //#################################################################################################################
     // Variables
@@ -104,7 +103,7 @@ public class IngredientsTable extends MyJTable
     //################################################
     // Collections
     //################################################
-    private HashMap<IngredientsTableColumns, Integer> ingredients_table_cols_positions;
+    private HashMap<Draft_Gui_Ingredients_Calc_Columns, Integer> ingredients_table_cols_positions;
 
     //##################################################################################################################
     // Constructor
@@ -174,11 +173,11 @@ public class IngredientsTable extends MyJTable
         ingredients_table_cols_positions = shared_data_registry.get_Ingredients_Table_Cols_Positions();
 
         // Table : draft_ingredients_in_sections_of_meal_calculation
-        set_Model_Ingredient_Index_Col(ingredients_table_cols_positions.get(IngredientsTableColumns.DRAFT_INGREDIENTS_INDEX));
-        set_Model_Quantity_Col(ingredients_table_cols_positions.get(IngredientsTableColumns.QUANTITY));
-        set_Model_Ingredient_Type_Col(ingredients_table_cols_positions.get(IngredientsTableColumns.INGREDIENT_TYPE_NAME));
-        set_Model_Ingredient_Name_Col(ingredients_table_cols_positions.get(IngredientsTableColumns.INGREDIENT_NAME));
-        set_Model_Delete_BTN_Col(ingredients_table_cols_positions.get(IngredientsTableColumns.DELETE_BTN));
+        set_Model_Ingredient_Index_Col(ingredients_table_cols_positions.get(Draft_Gui_Ingredients_Calc_Columns.DRAFT_INGREDIENTS_INDEX));
+        set_Model_Quantity_Col(ingredients_table_cols_positions.get(Draft_Gui_Ingredients_Calc_Columns.QUANTITY));
+        set_Model_Ingredient_Type_Col(ingredients_table_cols_positions.get(Draft_Gui_Ingredients_Calc_Columns.INGREDIENT_TYPE_NAME));
+        set_Model_Ingredient_Name_Col(ingredients_table_cols_positions.get(Draft_Gui_Ingredients_Calc_Columns.INGREDIENT_NAME));
+        set_Model_Delete_BTN_Col(ingredients_table_cols_positions.get(Draft_Gui_Ingredients_Calc_Columns.DELETE_BTN));
 
         // JLabel Used for Sub-Meal Title
         sub_meal_title_label = new JLabel();
@@ -209,7 +208,7 @@ public class IngredientsTable extends MyJTable
         //##########################
         // Ingredients Name
         //##########################
-        int ingredient_Name_Pos = ingredients_table_cols_positions.get(IngredientsTableColumns.INGREDIENT_NAME);
+        int ingredient_Name_Pos = ingredients_table_cols_positions.get(Draft_Gui_Ingredients_Calc_Columns.INGREDIENT_NAME);
         int ingredient_Name_ID = (Integer) table_data.get(ingredient_Name_Pos);
 
         Ingredient_Name_ID_OBJ ingredient_Name_ID_OBJ = shared_data_registry.get_Ingredient_Name_ID_OBJ_By_ID(ingredient_Name_ID);
@@ -224,7 +223,7 @@ public class IngredientsTable extends MyJTable
         //##########################
         // Ingredients Type
         //##########################
-        int ingredient_Type_Pos = ingredients_table_cols_positions.get(IngredientsTableColumns.INGREDIENT_TYPE_NAME);
+        int ingredient_Type_Pos = ingredients_table_cols_positions.get(Draft_Gui_Ingredients_Calc_Columns.INGREDIENT_TYPE_NAME);
 
         int ingredient_Type_ID = (Integer) table_data.get(ingredient_Type_Pos);
 

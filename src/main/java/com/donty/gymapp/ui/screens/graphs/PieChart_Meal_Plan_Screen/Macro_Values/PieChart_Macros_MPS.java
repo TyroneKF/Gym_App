@@ -1,6 +1,6 @@
 package com.donty.gymapp.ui.screens.graphs.PieChart_Meal_Plan_Screen.Macro_Values;
 
-import com.donty.gymapp.domain.enums.table_enums.totalmeal.Total_Meal_Macro_Columns;
+import com.donty.gymapp.domain.enums.db_enums.views.totalmeal.Draft_Gui_Total_Meal_Macro_Columns;
 import com.donty.gymapp.ui.components.meal.MealManager;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.gui.base.Screen_JPanel;
@@ -95,11 +95,11 @@ public class PieChart_Macros_MPS extends Screen_JPanel
      * <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
      * Etc;  <Key: Salt | Value: HashMap<MealManager, Quantity: 300g >>
      */
-    private final LinkedHashMap<Total_Meal_Macro_Columns, HashMap<MealManager, BigDecimal>> totals_by_macro;
+    private final LinkedHashMap<Draft_Gui_Total_Meal_Macro_Columns, HashMap<MealManager, BigDecimal>> totals_by_macro;
     
-    private LinkedHashMap<Total_Meal_Macro_Columns, DefaultPieDataset<PieChart_MacroKey>> macroValue_Dataset_Map = new LinkedHashMap<>();
+    private LinkedHashMap<Draft_Gui_Total_Meal_Macro_Columns, DefaultPieDataset<PieChart_MacroKey>> macroValue_Dataset_Map = new LinkedHashMap<>();
     
-    private LinkedHashMap<Total_Meal_Macro_Columns, String> total_meal_macro_symbol;
+    private LinkedHashMap<Draft_Gui_Total_Meal_Macro_Columns, String> total_meal_macro_symbol;
     
     //##################################################################################################################
     // Constructors
@@ -155,7 +155,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
          * LinkedHashMap<String, Pair<Integer, String>> totalMeal_macroColNamePos
          * LinkedHashMap<TotalMeal_MacroName, Pair< Position, Measurement>> totalMeal_macroColNamePos
          */
-        for (Total_Meal_Macro_Columns macro_enum :  totals_by_macro.keySet())
+        for (Draft_Gui_Total_Meal_Macro_Columns macro_enum :  totals_by_macro.keySet())
         {
             //##################################
             // Macro Info
@@ -204,7 +204,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
         resize_GUI();
     }
     
-    private DefaultPieDataset<PieChart_MacroKey> create_Macro_PieChart_Dataset(Total_Meal_Macro_Columns macro_name)
+    private DefaultPieDataset<PieChart_MacroKey> create_Macro_PieChart_Dataset(Draft_Gui_Total_Meal_Macro_Columns macro_name)
     {
         //##############################################
         // Macro Info
@@ -252,12 +252,12 @@ public class PieChart_Macros_MPS extends Screen_JPanel
         // ############################################################################
         // Paint GUI
         // ############################################################################
-        for (Map.Entry<Total_Meal_Macro_Columns, DefaultPieDataset<PieChart_MacroKey>> pie_entry : macroValue_Dataset_Map.entrySet())
+        for (Map.Entry<Draft_Gui_Total_Meal_Macro_Columns, DefaultPieDataset<PieChart_MacroKey>> pie_entry : macroValue_Dataset_Map.entrySet())
         {
             // #########################################
             // Get Info
             // #########################################
-            Total_Meal_Macro_Columns macro_Name = pie_entry.getKey();
+            Draft_Gui_Total_Meal_Macro_Columns macro_Name = pie_entry.getKey();
             DefaultPieDataset<PieChart_MacroKey> pieDataset = pie_entry.getValue();
             
             // #########################################

@@ -1,5 +1,6 @@
 package com.donty.gymapp.ui.tables.viewData;
 
+import com.donty.gymapp.domain.enums.db_enums.views.Draft_Gui_Plan_Macros_Left_Columns;
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.ui.tables.base.ColumnUiRules;
@@ -9,7 +10,7 @@ import com.donty.gymapp.ui.tables.viewData.base.MyJTable_Display_Data;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class MacrosLeft_Table extends MyJTable_Display_Data
+public class MacrosLeft_Table extends MyJTable_Display_Data<Draft_Gui_Plan_Macros_Left_Columns>
 {
     //##################################################################################################################
     // Constructor
@@ -20,7 +21,7 @@ public class MacrosLeft_Table extends MyJTable_Display_Data
             Shared_Data_Registry shared_data_registry,
             Container parentContainer,
             ArrayList<ArrayList<Object>> data,
-            ColumnUiRules columnUiRules
+            ColumnUiRules<Draft_Gui_Plan_Macros_Left_Columns> columnUiRules
     )
     {
         super(
@@ -29,8 +30,8 @@ public class MacrosLeft_Table extends MyJTable_Display_Data
                 parentContainer,
                 data,
 
-                new TableMeta(
-                        "plan_id",
+                new TableMeta<>(
+                        Draft_Gui_Plan_Macros_Left_Columns.PLAN_ID,
                         "Macros Left Table",
                         null,
                         "draft_gui_plan_macros_left"

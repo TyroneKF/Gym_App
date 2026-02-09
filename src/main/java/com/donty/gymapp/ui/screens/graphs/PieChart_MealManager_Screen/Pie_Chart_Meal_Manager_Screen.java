@@ -1,7 +1,7 @@
 package com.donty.gymapp.ui.screens.graphs.PieChart_MealManager_Screen;
 
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
-import com.donty.gymapp.domain.enums.table_enums.totalmeal.Total_Meal_Macro_Columns;
+import com.donty.gymapp.domain.enums.db_enums.views.totalmeal.Draft_Gui_Total_Meal_Macro_Columns;
 import com.donty.gymapp.ui.components.meal.MealManager;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.gui.base.Screen_JFrame;
@@ -148,7 +148,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen_JFrame
         //############################################
         // Creating Macros / Dataset
         //############################################
-        DefaultPieDataset<Total_Meal_Macro_Columns> dataset = shared_Data_Registry.get_OR_Create_Updated_PieChart_Dataset(mealManager);
+        DefaultPieDataset<Draft_Gui_Total_Meal_Macro_Columns> dataset = shared_Data_Registry.get_OR_Create_Updated_PieChart_Dataset(mealManager);
         
         //#####################################
         // Graph Preferences

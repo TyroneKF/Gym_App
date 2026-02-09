@@ -1,7 +1,7 @@
 package com.donty.gymapp.ui.screens.macroTargets;
 
 
-import com.donty.gymapp.domain.enums.table_enums.MacroTargetsColumns;
+import com.donty.gymapp.domain.enums.db_enums.tables.MacroTargetsColumns;
 import com.donty.gymapp.gui.controls.textfields.base.Field_JTxtField_Parent;
 import com.donty.gymapp.ui.meta.bindings.Field_Binding;
 

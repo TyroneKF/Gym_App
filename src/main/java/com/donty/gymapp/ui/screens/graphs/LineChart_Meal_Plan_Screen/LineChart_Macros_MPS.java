@@ -1,7 +1,7 @@
 package com.donty.gymapp.ui.screens.graphs.LineChart_Meal_Plan_Screen;
 
 import com.donty.gymapp.persistence.Shared_Data_Registry;
-import com.donty.gymapp.domain.enums.table_enums.totalmeal.Total_Meal_Macro_Columns;
+import com.donty.gymapp.domain.enums.db_enums.views.totalmeal.Draft_Gui_Total_Meal_Macro_Columns;
 import com.donty.gymapp.ui.components.meal.MealManager;
 import com.donty.gymapp.ui.charts.Line_Chart;
 import com.donty.gymapp.gui.base.Screen_JPanel;
@@ -31,7 +31,7 @@ class LineChart_Macros_MPS extends Screen_JPanel
     //##############################################
     // Collections
     //##############################################
-    private ArrayList<Total_Meal_Macro_Columns> macros_To_Check;
+    private ArrayList<Draft_Gui_Total_Meal_Macro_Columns> macros_To_Check;
     
     /**
      * HashMap<String, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues = new HashMap<>();
@@ -40,7 +40,7 @@ class LineChart_Macros_MPS extends Screen_JPanel
      * <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
      * Etc;  <Key: Salt | Value: HashMap<MealManager, Quantity: 300g >>
      */
-    private LinkedHashMap<Total_Meal_Macro_Columns, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues;
+    private LinkedHashMap<Draft_Gui_Total_Meal_Macro_Columns, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues;
     
     //##############################################
     // Datasets Objects
@@ -56,7 +56,7 @@ class LineChart_Macros_MPS extends Screen_JPanel
     (
             Shared_Data_Registry shared_Data_Registry,
             String title,
-            ArrayList<Total_Meal_Macro_Columns> macros_To_Check,
+            ArrayList<Draft_Gui_Total_Meal_Macro_Columns> macros_To_Check,
             int frameWidth,
             int frameHeight
     )
@@ -99,7 +99,7 @@ class LineChart_Macros_MPS extends Screen_JPanel
     {
         dataset = new TimeSeriesCollection();
         
-        for (Total_Meal_Macro_Columns macro_name : macros_To_Check)
+        for (Draft_Gui_Total_Meal_Macro_Columns macro_name : macros_To_Check)
         {
             // Create a series for each macroName
             TimeSeries macroTimeSeries = new TimeSeries(convert_MacroName_To_GUI_Version(macro_name.key()));
@@ -196,7 +196,7 @@ class LineChart_Macros_MPS extends Screen_JPanel
         /**
          *  <Key: MacroName | Value: HashMap<Key: MealManagerID, Value: < MealManager, Quantity>>
          */
-        for (Total_Meal_Macro_Columns macro_name : macros_To_Check)
+        for (Draft_Gui_Total_Meal_Macro_Columns macro_name : macros_To_Check)
         {
             // ############################################
             // Macro Info

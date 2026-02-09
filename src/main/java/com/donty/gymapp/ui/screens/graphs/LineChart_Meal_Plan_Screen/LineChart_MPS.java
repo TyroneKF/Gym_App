@@ -1,7 +1,7 @@
 package com.donty.gymapp.ui.screens.graphs.LineChart_Meal_Plan_Screen;
 
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
-import com.donty.gymapp.domain.enums.table_enums.totalmeal.Total_Meal_Macro_Columns;
+import com.donty.gymapp.domain.enums.db_enums.views.totalmeal.Draft_Gui_Total_Meal_Macro_Columns;
 import com.donty.gymapp.ui.components.meal.MealManager;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.gui.base.Screen_JFrame;
@@ -54,14 +54,14 @@ public class LineChart_MPS extends Screen_JFrame
         //#################################################
         // Creating Macros LineChart Screen
         //#################################################
-        ArrayList<Total_Meal_Macro_Columns> macros_To_Check = new ArrayList<>(Arrays.asList(
-               Total_Meal_Macro_Columns.TOTAL_PROTEIN,
-                Total_Meal_Macro_Columns.TOTAL_CARBOHYDRATES,
-                Total_Meal_Macro_Columns.TOTAL_SUGARS_OF_CARBS,
-                Total_Meal_Macro_Columns.TOTAL_FATS,
-                Total_Meal_Macro_Columns.TOTAL_SATURATED_FAT,
-                Total_Meal_Macro_Columns.TOTAL_SALT,
-                Total_Meal_Macro_Columns.TOTAL_FIBRE
+        ArrayList<Draft_Gui_Total_Meal_Macro_Columns> macros_To_Check = new ArrayList<>(Arrays.asList(
+               Draft_Gui_Total_Meal_Macro_Columns.TOTAL_PROTEIN,
+                Draft_Gui_Total_Meal_Macro_Columns.TOTAL_CARBOHYDRATES,
+                Draft_Gui_Total_Meal_Macro_Columns.TOTAL_SUGARS_OF_CARBS,
+                Draft_Gui_Total_Meal_Macro_Columns.TOTAL_FATS,
+                Draft_Gui_Total_Meal_Macro_Columns.TOTAL_SATURATED_FAT,
+                Draft_Gui_Total_Meal_Macro_Columns.TOTAL_SALT,
+                Draft_Gui_Total_Meal_Macro_Columns.TOTAL_FIBRE
         ));
         
         lineChart_Main_Macros_MPS = new LineChart_Macros_MPS(
@@ -81,9 +81,9 @@ public class LineChart_MPS extends Screen_JFrame
          *  Create and override methods that display data as we're just interested in calories and water in this chart
          */
         
-        ArrayList<Total_Meal_Macro_Columns> macros_To_Check2 = new ArrayList<>(Arrays.asList(
-                Total_Meal_Macro_Columns.TOTAL_WATER,
-                Total_Meal_Macro_Columns.TOTAL_CALORIES
+        ArrayList<Draft_Gui_Total_Meal_Macro_Columns> macros_To_Check2 = new ArrayList<>(Arrays.asList(
+                Draft_Gui_Total_Meal_Macro_Columns.TOTAL_WATER,
+                Draft_Gui_Total_Meal_Macro_Columns.TOTAL_CALORIES
         ));
         
         lineChart_Bigger_Macros_MPS = new LineChart_Macros_MPS(

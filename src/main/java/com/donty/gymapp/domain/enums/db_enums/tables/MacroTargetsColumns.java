@@ -1,4 +1,4 @@
-package com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.base.ingredients;
+package com.donty.gymapp.domain.enums.db_enums.tables;
 
 import com.donty.gymapp.domain.enums.db_enums.base.Table_Enum;
 
@@ -7,48 +7,42 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public enum Ingredient_Enum implements Table_Enum
+public enum MacroTargetsColumns implements Table_Enum
 {
     //##################################################################################################################
     // Enums
     //##################################################################################################################
-    INGREDIENT_ID("ingredient_id"),
-    IS_SYSTEM("is_system"),
-    MEASUREMENT_ID("measurement_id"),
-    INGREDIENT_TYPE_ID("ingredient_type_id"),
-    INGREDIENT_NAME("ingredient_name"),
-    BASED_ON_QUANTITY("based_on_quantity"),
-    GLYCEMIC_INDEX("glycemic_index"),
-    PROTEIN("protein"),
-    CARBOHYDRATES("carbohydrates"),
-    SUGARS_OF_CARBS("sugars_of_carbs"),
+    CURRENT_WEIGHT_KG("current_weight_kg"),
+    CURRENT_WEIGHT_IN_POUNDS("current_weight_in_pounds"),
+    BODY_FAT_PERCENTAGE("body_fat_percentage"),
+    PROTEIN_PER_POUND("protein_per_pound"),
+    CARBOHYDRATES_PER_POUND("carbohydrates_per_pound"),
     FIBRE("fibre"),
-    FAT("fat"),
-    SATURATED_FAT("saturated_fat"),
-    SALT("salt"),
-    WATER_CONTENT("water_content"),
-    LIQUID_CONTENT("liquid_content"),
-    CALORIES("calories");
+    FATS_PER_POUND("fats_per_pound"),
+    SATURATED_FAT_LIMIT("saturated_fat_limit"),
+    SALT_LIMIT("salt_limit"),
+    WATER_TARGET("water_target"),
+    ADDITIONAL_CALORIES("additional_calories");
 
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    private static final String SOURCE_NAME = "ingredients_info";
+    private static final String SOURCE_NAME = "draft_macros_per_pound_and_limits";
 
     private final String source_name;
     private final String key;
 
-    private static final Map<String, Ingredient_Enum> BY_KEY =
+    private static final Map<String, MacroTargetsColumns> BY_KEY =
             Arrays.stream(values())
                     .collect(Collectors.toMap(
-                            Ingredient_Enum :: key,
+                            MacroTargetsColumns :: key,
                             Function.identity()
                     ));
 
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    Ingredient_Enum(String key)
+    MacroTargetsColumns(String key)
     {
         this.key = key;
         this.source_name = SOURCE_NAME;

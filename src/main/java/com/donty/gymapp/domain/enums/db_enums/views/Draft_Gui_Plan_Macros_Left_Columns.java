@@ -1,54 +1,50 @@
-package com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.base.ingredients;
+package com.donty.gymapp.domain.enums.db_enums.views;
 
 import com.donty.gymapp.domain.enums.db_enums.base.Table_Enum;
-
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public enum Ingredient_Enum implements Table_Enum
+public enum Draft_Gui_Plan_Macros_Left_Columns implements Table_Enum
 {
     //##################################################################################################################
     // Enums
     //##################################################################################################################
-    INGREDIENT_ID("ingredient_id"),
-    IS_SYSTEM("is_system"),
-    MEASUREMENT_ID("measurement_id"),
-    INGREDIENT_TYPE_ID("ingredient_type_id"),
-    INGREDIENT_NAME("ingredient_name"),
-    BASED_ON_QUANTITY("based_on_quantity"),
-    GLYCEMIC_INDEX("glycemic_index"),
-    PROTEIN("protein"),
-    CARBOHYDRATES("carbohydrates"),
-    SUGARS_OF_CARBS("sugars_of_carbs"),
-    FIBRE("fibre"),
-    FAT("fat"),
-    SATURATED_FAT("saturated_fat"),
-    SALT("salt"),
-    WATER_CONTENT("water_content"),
-    LIQUID_CONTENT("liquid_content"),
-    CALORIES("calories");
+
+    // Macros
+    PLAN_ID("plan_id"),
+    PROTEIN_GRAMS_LEFT("protein_grams_left"),
+    CARB_GRAMS_LEFT("carb_grams_left"),
+    FIBRE_GRAMS_LEFT("fibre_grams_left"),
+    FAT_GRAMS_LEFT("fat_grams_left"),
+    POTENTIAL_SAT_FAT_GRAMS_LEFT("potential_sat_fat_grams_left"),
+    POTENTIAL_SALT_GRAMS_LEFT("potential_salt_grams_left"),
+    WATER_LEFT_TO_DRINK("water_left_to_drink"),
+    CALORIES_LEFT("calories_left"),
+    ADDED_CALORIES_LEFT("added_calories_left");
 
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    private static final String SOURCE_NAME = "ingredients_info";
+    private static final String SOURCE_NAME = "draft_gui_plan_macros_left";
 
     private final String source_name;
+
+
     private final String key;
 
-    private static final Map<String, Ingredient_Enum> BY_KEY =
+    private static final Map<String, Draft_Gui_Plan_Macros_Left_Columns> BY_KEY =
             Arrays.stream(values())
                     .collect(Collectors.toMap(
-                            Ingredient_Enum :: key,
+                            Draft_Gui_Plan_Macros_Left_Columns :: key,
                             Function.identity()
                     ));
 
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    Ingredient_Enum(String key)
+    Draft_Gui_Plan_Macros_Left_Columns(String key)
     {
         this.key = key;
         this.source_name = SOURCE_NAME;
@@ -57,15 +53,16 @@ public enum Ingredient_Enum implements Table_Enum
     //##################################################################################################################
     // Methods
     //##################################################################################################################
-    @Override
-    public String source_Name()
-    {
-        return source_name;
-    }
 
     @Override
     public String key()
     {
         return key;
+    }
+
+    @Override
+    public String source_Name()
+    {
+        return source_name;
     }
 }

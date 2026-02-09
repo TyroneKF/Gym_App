@@ -1,6 +1,6 @@
 package com.donty.gymapp.ui.meta.bindings;
 
-import com.donty.gymapp.domain.enums.table_enums.base.Table_Enum;
+import com.donty.gymapp.domain.enums.db_enums.base.Table_Enum;
 import com.donty.gymapp.gui.controls.combobox.Field_JComboBox;
 import com.donty.gymapp.gui.controls.textfields.base.Field_JTxtField_Parent;
 

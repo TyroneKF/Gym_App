@@ -1,5 +1,8 @@
 package com.donty.gymapp.ui.screens.mealPlan;
 
+import com.donty.gymapp.domain.enums.db_enums.views.Draft_Gui_Plan_Macro_Targets_Calc_Columns;
+import com.donty.gymapp.domain.enums.db_enums.views.Draft_Gui_Plan_Macros_Left_Columns;
+import com.donty.gymapp.domain.enums.db_enums.views.totalmeal.Draft_Gui_Total_Meal_Columns;
 import com.donty.gymapp.ui.meta.ids.MetaData_ID_Object.Sub_Meal_ID_OBJ;
 import com.donty.gymapp.persistence.database.Fetched_Results;
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
@@ -18,11 +21,11 @@ import com.donty.gymapp.ui.screens.mealPlan.macroIndicator.ProgressWheelKey;
 import com.donty.gymapp.ui.tables.base.ColumnUiRules;
 import com.donty.gymapp.ui.tables.base.TableMeta;
 import com.donty.gymapp.ui.tables.ingredients.IngredientsTable;
-import com.donty.gymapp.domain.enums.table_enums.IngredientsTableColumns;
+import com.donty.gymapp.domain.enums.db_enums.views.Draft_Gui_Ingredients_Calc_Columns;
 import com.donty.gymapp.ui.tables.viewData.MacrosLeft_Table;
 import com.donty.gymapp.ui.tables.viewData.MacrosTargets_Table;
-import com.donty.gymapp.domain.enums.table_enums.totalmeal.Total_Meal_Macro_Columns;
-import com.donty.gymapp.domain.enums.table_enums.totalmeal.TotalMealOtherColumns;
+import com.donty.gymapp.domain.enums.db_enums.views.totalmeal.Draft_Gui_Total_Meal_Macro_Columns;
+import com.donty.gymapp.domain.enums.db_enums.views.totalmeal.Draft_Gui_Total_Meal_Other_Columns;
 import com.donty.gymapp.domain.enums.base.My_Enum;
 import com.donty.gymapp.ui.components.meal.MealManager;
 import com.donty.gymapp.gui.base.Screen_JFrame;
@@ -522,48 +525,48 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //########################################
         // TotalMeal Table
         //########################################
-        LinkedHashMap<Total_Meal_Macro_Columns, Integer> total_meal_macro_col_positions = new LinkedHashMap<>()
+        LinkedHashMap<Draft_Gui_Total_Meal_Macro_Columns, Integer> total_meal_macro_col_positions = new LinkedHashMap<>()
         {{
-            put(Total_Meal_Macro_Columns.TOTAL_PROTEIN, null);
-            put(Total_Meal_Macro_Columns.TOTAL_CARBOHYDRATES, null);
-            put(Total_Meal_Macro_Columns.TOTAL_SUGARS_OF_CARBS, null);
-            put(Total_Meal_Macro_Columns.TOTAL_FATS, null);
-            put(Total_Meal_Macro_Columns.TOTAL_SATURATED_FAT, null);
-            put(Total_Meal_Macro_Columns.TOTAL_SALT, null);
-            put(Total_Meal_Macro_Columns.TOTAL_FIBRE, null);
-            put(Total_Meal_Macro_Columns.TOTAL_WATER, null);
-            put(Total_Meal_Macro_Columns.TOTAL_CALORIES, null);
+            put(Draft_Gui_Total_Meal_Macro_Columns.TOTAL_PROTEIN, null);
+            put(Draft_Gui_Total_Meal_Macro_Columns.TOTAL_CARBOHYDRATES, null);
+            put(Draft_Gui_Total_Meal_Macro_Columns.TOTAL_SUGARS_OF_CARBS, null);
+            put(Draft_Gui_Total_Meal_Macro_Columns.TOTAL_FATS, null);
+            put(Draft_Gui_Total_Meal_Macro_Columns.TOTAL_SATURATED_FAT, null);
+            put(Draft_Gui_Total_Meal_Macro_Columns.TOTAL_SALT, null);
+            put(Draft_Gui_Total_Meal_Macro_Columns.TOTAL_FIBRE, null);
+            put(Draft_Gui_Total_Meal_Macro_Columns.TOTAL_WATER, null);
+            put(Draft_Gui_Total_Meal_Macro_Columns.TOTAL_CALORIES, null);
         }};
 
-        HashMap<TotalMealOtherColumns, Integer> total_meal_other_cols_positions = new HashMap<>() // These 2 columns are needed for external charts
+        HashMap<Draft_Gui_Total_Meal_Other_Columns, Integer> total_meal_other_cols_positions = new HashMap<>() // These 2 columns are needed for external charts
         {{
-            put(TotalMealOtherColumns.MEAL_TIME, null);
-            put(TotalMealOtherColumns.MEAL_NAME, null);
+            put(Draft_Gui_Total_Meal_Other_Columns.MEAL_TIME, null);
+            put(Draft_Gui_Total_Meal_Other_Columns.MEAL_NAME, null);
         }};
 
-        LinkedHashMap<Total_Meal_Macro_Columns, String> total_meal_macro_symbol = new LinkedHashMap<>()
+        LinkedHashMap<Draft_Gui_Total_Meal_Macro_Columns, String> total_meal_macro_symbol = new LinkedHashMap<>()
         {{
-            put(Total_Meal_Macro_Columns.TOTAL_PROTEIN, "g");
-            put(Total_Meal_Macro_Columns.TOTAL_CARBOHYDRATES, "g");
-            put(Total_Meal_Macro_Columns.TOTAL_SUGARS_OF_CARBS, "g");
-            put(Total_Meal_Macro_Columns.TOTAL_FATS, "g");
-            put(Total_Meal_Macro_Columns.TOTAL_SATURATED_FAT, "g");
-            put(Total_Meal_Macro_Columns.TOTAL_SALT, "g");
-            put(Total_Meal_Macro_Columns.TOTAL_FIBRE, "g");
-            put(Total_Meal_Macro_Columns.TOTAL_WATER, "ml");
-            put(Total_Meal_Macro_Columns.TOTAL_CALORIES, "kcal");
+            put(Draft_Gui_Total_Meal_Macro_Columns.TOTAL_PROTEIN, "g");
+            put(Draft_Gui_Total_Meal_Macro_Columns.TOTAL_CARBOHYDRATES, "g");
+            put(Draft_Gui_Total_Meal_Macro_Columns.TOTAL_SUGARS_OF_CARBS, "g");
+            put(Draft_Gui_Total_Meal_Macro_Columns.TOTAL_FATS, "g");
+            put(Draft_Gui_Total_Meal_Macro_Columns.TOTAL_SATURATED_FAT, "g");
+            put(Draft_Gui_Total_Meal_Macro_Columns.TOTAL_SALT, "g");
+            put(Draft_Gui_Total_Meal_Macro_Columns.TOTAL_FIBRE, "g");
+            put(Draft_Gui_Total_Meal_Macro_Columns.TOTAL_WATER, "ml");
+            put(Draft_Gui_Total_Meal_Macro_Columns.TOTAL_CALORIES, "kcal");
         }};
 
         //########################################
         // Ingredients Table
         //########################################
-        HashMap<IngredientsTableColumns, Integer> ingredients_table_cols_positions = new HashMap<>() // These 2 columns are needed for external charts
+        HashMap<Draft_Gui_Ingredients_Calc_Columns, Integer> ingredients_table_cols_positions = new HashMap<>() // These 2 columns are needed for external charts
         {{
-            put(IngredientsTableColumns.DRAFT_INGREDIENTS_INDEX, null);
-            put(IngredientsTableColumns.INGREDIENT_TYPE_NAME, null);
-            put(IngredientsTableColumns.INGREDIENT_NAME, null);
-            put(IngredientsTableColumns.QUANTITY, null);
-            put(IngredientsTableColumns.DELETE_BTN, null);
+            put(Draft_Gui_Ingredients_Calc_Columns.DRAFT_INGREDIENTS_INDEX, null);
+            put(Draft_Gui_Ingredients_Calc_Columns.INGREDIENT_TYPE_NAME, null);
+            put(Draft_Gui_Ingredients_Calc_Columns.INGREDIENT_NAME, null);
+            put(Draft_Gui_Ingredients_Calc_Columns.QUANTITY, null);
+            put(Draft_Gui_Ingredients_Calc_Columns.DELETE_BTN, null);
         }};
 
         //########################################
@@ -575,7 +578,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             String column_name = ingredients_Column_Names.get(pos);
 
             // See if the column Name is an Other Columns Enum
-            Optional<IngredientsTableColumns> column_enum = My_Enum.get_Enum_From_Key(IngredientsTableColumns.class, column_name);
+            Optional<Draft_Gui_Ingredients_Calc_Columns> column_enum = My_Enum.get_Enum_From_Key(Draft_Gui_Ingredients_Calc_Columns.class, column_name);
 
             if (column_enum.isEmpty()) { continue; }
 
@@ -592,7 +595,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             String column_name = meal_total_column_Names.get(pos);
 
             // See if the column Name is an Other Columns Enum
-            Optional<Total_Meal_Macro_Columns> column_enum = My_Enum.get_Enum_From_Key(Total_Meal_Macro_Columns.class, column_name);
+            Optional<Draft_Gui_Total_Meal_Macro_Columns> column_enum = My_Enum.get_Enum_From_Key(Draft_Gui_Total_Meal_Macro_Columns.class, column_name);
             if (column_enum.isPresent())
             {
                 total_meal_macro_col_positions.put(column_enum.get(), pos);
@@ -600,7 +603,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             }
 
             // See if the column Name is an Other Columns Enum
-            Optional<TotalMealOtherColumns> other_column_enum = My_Enum.get_Enum_From_Key(TotalMealOtherColumns.class, column_name);
+            Optional<Draft_Gui_Total_Meal_Other_Columns> other_column_enum = My_Enum.get_Enum_From_Key(Draft_Gui_Total_Meal_Other_Columns.class, column_name);
             if (other_column_enum.isPresent())
             {
                 total_meal_other_cols_positions.put(other_column_enum.get(), pos);
@@ -627,14 +630,14 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //####################################################
         /*
 
-        */
+         */
 
         //#####################
         // Table Meta Data
         //#####################
         // Ingredients Table Column Meta
-        TableMeta ingredients_table_meta_Data = new TableMeta(
-                "draft_ingredients_index",
+        TableMeta<Draft_Gui_Ingredients_Calc_Columns> ingredients_table_meta_Data = new TableMeta<>(
+                Draft_Gui_Ingredients_Calc_Columns.DRAFT_INGREDIENTS_INDEX,
                 "Ingredients Table",
                 "draft_ingredients_in_sections_of_meal",
                 "draft_gui_ingredients_in_sections_of_meal_calculation"
@@ -646,24 +649,39 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // Column UI Rules
         //#####################
         // Ingredients Table Un-editable Columns
-        ArrayList<String> ingredients_Table_Un_Editable_Cells = new ArrayList<>(Arrays.asList(
-                "draft_ingredients_index", "protein", "gi", "carbohydrates", "sugars_of_carbs",
-                "fibre", "fat", "saturated_fat", "salt", "water_content", "calories"
+        ArrayList<Draft_Gui_Ingredients_Calc_Columns> ingredients_Table_Un_Editable_Cells = new ArrayList<>(Arrays.asList(
+
+                Draft_Gui_Ingredients_Calc_Columns.DRAFT_INGREDIENTS_INDEX,
+                Draft_Gui_Ingredients_Calc_Columns.PROTEIN,
+                Draft_Gui_Ingredients_Calc_Columns.GI,
+                Draft_Gui_Ingredients_Calc_Columns.CARBOHYDRATES,
+                Draft_Gui_Ingredients_Calc_Columns.SUGARS_OF_CARBS,
+                Draft_Gui_Ingredients_Calc_Columns.FIBRE,
+                Draft_Gui_Ingredients_Calc_Columns.FAT,
+                Draft_Gui_Ingredients_Calc_Columns.SATURATED_FAT,
+                Draft_Gui_Ingredients_Calc_Columns.SALT,
+                Draft_Gui_Ingredients_Calc_Columns.WATER_CONTENT,
+                Draft_Gui_Ingredients_Calc_Columns.CALORIES
         ));
 
         // Ingredients Table Columns to Avoid Centering |
-        ArrayList<String> ingredients_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList(
-                "ingredient_type", "ingredient_name"
+        ArrayList<Draft_Gui_Ingredients_Calc_Columns> ingredients_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList(
+
+                Draft_Gui_Ingredients_Calc_Columns.INGREDIENT_TYPE_NAME,
+                Draft_Gui_Ingredients_Calc_Columns.INGREDIENT_NAME
         ));
 
         // Ingredients Table Columns To Hide
-        ArrayList<String> ingredients_In_Meal_Table_Col_To_Hide = new ArrayList<>(Arrays.asList(
-                "draft_ingredients_index", "water_content"
+        ArrayList<Draft_Gui_Ingredients_Calc_Columns> ingredients_In_Meal_Table_Col_To_Hide = new ArrayList<>(Arrays.asList(
+
+                Draft_Gui_Ingredients_Calc_Columns.DRAFT_INGREDIENTS_INDEX,
+                Draft_Gui_Ingredients_Calc_Columns.WATER_CONTENT
         ));
 
 
         // Set Column UI Rules
-        ColumnUiRules ingredients_table_ui_column_rules = new ColumnUiRules(
+        ColumnUiRules<Draft_Gui_Ingredients_Calc_Columns> ingredients_table_ui_column_rules = new ColumnUiRules<>(
+
                 shared_data_registry.get_Ingredients_Table_Column_Names(),
                 ingredients_Table_Un_Editable_Cells,
                 ingredients_Table_Col_Avoid_Centering,
@@ -683,8 +701,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //#########################
         // Meta Data
         //#########################
-        TableMeta total_meal_meta_data = new TableMeta(
-                "draft_meal_in_plan_id",
+        TableMeta<Draft_Gui_Total_Meal_Columns> total_meal_meta_data = new TableMeta<>(
+                Draft_Gui_Total_Meal_Columns.DRAFT_MEAL_IN_PLAN_ID,
                 "Total Meal Table",
                 "draft_meals_in_plan",
                 "draft_gui_total_meal_view");
@@ -694,22 +712,40 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //#########################
         // Column UI Rules
         //#########################
-
         // Total Meal Table Columns To Hide
-        ArrayList<String> total_Meal_Table_Col_To_Hide = new ArrayList<>(Arrays.asList(
-                "draft_meal_in_plan_id", "meal_name"
+        ArrayList<Draft_Gui_Total_Meal_Columns> total_meal_un_editable_columns = new ArrayList<>(Arrays.asList(
+
+                Draft_Gui_Total_Meal_Columns.DRAFT_MEAL_IN_PLAN_ID,
+                Draft_Gui_Total_Meal_Columns.MEAL_TIME,
+                Draft_Gui_Total_Meal_Columns.MEAL_NAME,
+                Draft_Gui_Total_Meal_Columns.NO_OF_INGREDIENTS,
+                Draft_Gui_Total_Meal_Columns.TOTAL_PROTEIN,
+                Draft_Gui_Total_Meal_Columns.TOTAL_CARBOHYDRATES,
+                Draft_Gui_Total_Meal_Columns.TOTAL_SUGARS_OF_CARBS,
+                Draft_Gui_Total_Meal_Columns.TOTAL_FIBRE,
+                Draft_Gui_Total_Meal_Columns.TOTAL_FATS,
+                Draft_Gui_Total_Meal_Columns.TOTAL_SATURATED_FAT,
+                Draft_Gui_Total_Meal_Columns.TOTAL_SALT,
+                Draft_Gui_Total_Meal_Columns.TOTAL_WATER,
+                Draft_Gui_Total_Meal_Columns.TOTAL_CALORIES
         ));
 
-        // Total Meal Column UI Rules
-        shared_data_registry.set_Total_Meal_Table_Column_Ui_Rules(
+        // Total Meal Table Columns To Hide
+        ArrayList<Draft_Gui_Total_Meal_Columns> total_Meal_Table_Col_To_Hide = new ArrayList<>(Arrays.asList(
+                Draft_Gui_Total_Meal_Columns.DRAFT_MEAL_IN_PLAN_ID,
+                Draft_Gui_Total_Meal_Columns.MEAL_NAME
+        ));
 
-                new ColumnUiRules(
-                        shared_data_registry.get_Total_Meal_Table_Column_Names(),
-                        shared_data_registry.get_Total_Meal_Table_Column_Names(),
-                        null,
-                        total_Meal_Table_Col_To_Hide
-                )
+
+        // Total Meal Column UI Rules
+        ColumnUiRules<Draft_Gui_Total_Meal_Columns> total_meal_columns_ui_rules = new ColumnUiRules<>(
+                shared_data_registry.get_Total_Meal_Table_Column_Names(),
+                total_meal_un_editable_columns,
+                null,
+                total_Meal_Table_Col_To_Hide
         );
+
+        shared_data_registry.set_Total_Meal_Table_Column_Ui_Rules(total_meal_columns_ui_rules);
     }
 
     //#################################################
@@ -2052,12 +2088,31 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //############################
         // MacroTargets Table
         //############################
-        ColumnUiRules macros_targets_column_ui_rules =
-                new ColumnUiRules(
+        ArrayList<Draft_Gui_Plan_Macro_Targets_Calc_Columns> plan_macro_targets_un_editable_cells = new ArrayList<>(Arrays.asList(
+                Draft_Gui_Plan_Macro_Targets_Calc_Columns.PLAN_ID,
+                Draft_Gui_Plan_Macro_Targets_Calc_Columns.EXPECTED_PROTEIN_GRAMS,
+                Draft_Gui_Plan_Macro_Targets_Calc_Columns.EXPECTED_CARBS_GRAMS,
+                Draft_Gui_Plan_Macro_Targets_Calc_Columns.EXPECTED_FATS_GRAMS,
+                Draft_Gui_Plan_Macro_Targets_Calc_Columns.SATURATED_FAT_LIMIT,
+                Draft_Gui_Plan_Macro_Targets_Calc_Columns.EXPECTED_FIBRE_GRAMS,
+                Draft_Gui_Plan_Macro_Targets_Calc_Columns.SALT_LIMIT_GRAMS,
+                Draft_Gui_Plan_Macro_Targets_Calc_Columns.WATER_CONTENT_TARGET,
+                Draft_Gui_Plan_Macro_Targets_Calc_Columns.CALORIES_TARGET,
+                Draft_Gui_Plan_Macro_Targets_Calc_Columns.ADDITIONAL_CALORIES_TARGET
+
+        ));
+
+        ArrayList<Draft_Gui_Plan_Macro_Targets_Calc_Columns> macro_targets_columns_to_hide = new ArrayList<>(Arrays.asList(
+                Draft_Gui_Plan_Macro_Targets_Calc_Columns.PLAN_ID
+        ));
+
+
+        ColumnUiRules<Draft_Gui_Plan_Macro_Targets_Calc_Columns> macros_targets_column_ui_rules =
+                new ColumnUiRules<>(
                         macro_targets_column_names,
-                        macro_targets_column_names,
+                        plan_macro_targets_un_editable_cells,
                         null,
-                        macros_targets_table_col_to_hide
+                        macro_targets_columns_to_hide
                 );
 
         macros_targets_table = new MacrosTargets_Table(
@@ -2073,11 +2128,29 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //############################
         // plan_Macros_Left Table
         //############################
-        ColumnUiRules macros_left_column_ui_rules = new ColumnUiRules(
+
+        ArrayList<Draft_Gui_Plan_Macros_Left_Columns> plan_macros_left_un_editable_cells = new ArrayList<>(Arrays.asList(
+                Draft_Gui_Plan_Macros_Left_Columns.PLAN_ID,
+                Draft_Gui_Plan_Macros_Left_Columns.PROTEIN_GRAMS_LEFT,
+                Draft_Gui_Plan_Macros_Left_Columns.CARB_GRAMS_LEFT,
+                Draft_Gui_Plan_Macros_Left_Columns.FIBRE_GRAMS_LEFT,
+                Draft_Gui_Plan_Macros_Left_Columns.FAT_GRAMS_LEFT,
+                Draft_Gui_Plan_Macros_Left_Columns.POTENTIAL_SAT_FAT_GRAMS_LEFT,
+                Draft_Gui_Plan_Macros_Left_Columns.POTENTIAL_SALT_GRAMS_LEFT,
+                Draft_Gui_Plan_Macros_Left_Columns.WATER_LEFT_TO_DRINK,
+                Draft_Gui_Plan_Macros_Left_Columns.CALORIES_LEFT,
+                Draft_Gui_Plan_Macros_Left_Columns.ADDED_CALORIES_LEFT
+        ));
+
+        ArrayList<Draft_Gui_Plan_Macros_Left_Columns> plan_macros_left_columns_to_hide = new ArrayList<>(Arrays.asList(
+                Draft_Gui_Plan_Macros_Left_Columns.PLAN_ID
+        ));
+
+        ColumnUiRules<Draft_Gui_Plan_Macros_Left_Columns> macros_left_column_ui_rules = new ColumnUiRules<>(
                 macros_left_column_names,
-                macros_left_column_names,
+                plan_macros_left_un_editable_cells,
                 null,
-                macros_left_table_col_to_hide
+                plan_macros_left_columns_to_hide
         );
 
         macros_left_table = new MacrosLeft_Table(

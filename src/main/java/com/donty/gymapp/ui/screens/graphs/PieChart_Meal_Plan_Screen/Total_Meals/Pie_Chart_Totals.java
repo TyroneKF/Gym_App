@@ -2,7 +2,7 @@ package com.donty.gymapp.ui.screens.graphs.PieChart_Meal_Plan_Screen.Total_Meals
 
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.ui.charts.Pie_Chart;
-import com.donty.gymapp.domain.enums.table_enums.totalmeal.Total_Meal_Macro_Columns;
+import com.donty.gymapp.domain.enums.db_enums.views.totalmeal.Draft_Gui_Total_Meal_Macro_Columns;
 import com.donty.gymapp.ui.components.meal.MealManager;
 import org.jfree.chart.labels.PieSectionLabelGenerator;
 import org.jfree.data.general.DefaultPieDataset;
@@ -34,7 +34,7 @@ public class Pie_Chart_Totals extends Pie_Chart
             Font titleFont,
             Font labelFont,
             Font legendFont,
-            DefaultPieDataset<Total_Meal_Macro_Columns> datasetInput
+            DefaultPieDataset<Draft_Gui_Total_Meal_Macro_Columns> datasetInput
     )
     {
         //#################################################################
@@ -57,7 +57,7 @@ public class Pie_Chart_Totals extends Pie_Chart
                 // Macro Info
                 //###############################
                 String space = getSpace();
-                Total_Meal_Macro_Columns macro_name = (Total_Meal_Macro_Columns) macroKey;
+                Draft_Gui_Total_Meal_Macro_Columns macro_name = (Draft_Gui_Total_Meal_Macro_Columns) macroKey;
                 
                 BigDecimal macroValue = (BigDecimal) dataset.getValue(macro_name);
                 BigDecimal macrosTotal = get_DatasetTotal();
@@ -71,7 +71,7 @@ public class Pie_Chart_Totals extends Pie_Chart
                     }
                     case TOTAL_CARBOHYDRATES ->
                     {
-                        BigDecimal sugarsMacroValue = (BigDecimal) dataset.getValue(Total_Meal_Macro_Columns.TOTAL_SUGARS_OF_CARBS);
+                        BigDecimal sugarsMacroValue = (BigDecimal) dataset.getValue(Draft_Gui_Total_Meal_Macro_Columns.TOTAL_SUGARS_OF_CARBS);
                         BigDecimal total_Carbs = macroValue.add(sugarsMacroValue);
                         int percent = percent_Calculator(total_Carbs, macrosTotal);
                         
@@ -79,7 +79,7 @@ public class Pie_Chart_Totals extends Pie_Chart
                     }
                     case TOTAL_FATS ->
                     {
-                        BigDecimal satFatMacroValue = (BigDecimal) dataset.getValue(Total_Meal_Macro_Columns.TOTAL_SATURATED_FAT);
+                        BigDecimal satFatMacroValue = (BigDecimal) dataset.getValue(Draft_Gui_Total_Meal_Macro_Columns.TOTAL_SATURATED_FAT);
                         BigDecimal totalFats = macroValue.add(satFatMacroValue);
                         int percent = percent_Calculator(totalFats, macrosTotal);
                         
@@ -128,7 +128,7 @@ public class Pie_Chart_Totals extends Pie_Chart
         String title = String.format("[%s]      %s Macros       [ %s   kcal]",
                 mealManager.get_Current_Meal_Time(),
                 mealManager.get_Current_Meal_Name(),
-                shared_data_registry.get_Meal_Macro_Value(mealManager, Total_Meal_Macro_Columns.TOTAL_CALORIES));
+                shared_data_registry.get_Meal_Macro_Value(mealManager, Draft_Gui_Total_Meal_Macro_Columns.TOTAL_CALORIES));
         
         setTitle(title);
     }

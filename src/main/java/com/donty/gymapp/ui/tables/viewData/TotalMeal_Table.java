@@ -1,5 +1,6 @@
 package com.donty.gymapp.ui.tables.viewData;
 
+import com.donty.gymapp.domain.enums.db_enums.views.totalmeal.Draft_Gui_Total_Meal_Columns;
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.ui.tables.viewData.base.MyJTable_Display_Data;
@@ -7,7 +8,7 @@ import com.donty.gymapp.ui.components.meal.MealManager;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class TotalMeal_Table extends MyJTable_Display_Data
+public class TotalMeal_Table extends MyJTable_Display_Data<Draft_Gui_Total_Meal_Columns>
 {
     //##################################################################################################################
     // Variables

@@ -1,6 +1,6 @@
 package com.donty.gymapp.ui.screens.graphs.PieChart_Meal_Plan_Screen.Macro_Values;
 
-import com.donty.gymapp.domain.enums.table_enums.totalmeal.Total_Meal_Macro_Columns;
+import com.donty.gymapp.domain.enums.db_enums.views.totalmeal.Draft_Gui_Total_Meal_Macro_Columns;
 import com.donty.gymapp.ui.components.meal.MealManager;
 import java.time.LocalTime;
 import java.util.Objects;
@@ -17,12 +17,12 @@ public class PieChart_MacroKey implements Comparable<PieChart_MacroKey>
     // Integers
     private int mealInPlanID;
     private String macroSymbol;
-    private Total_Meal_Macro_Columns macro_name;
+    private Draft_Gui_Total_Meal_Macro_Columns macro_name;
     
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
-    public PieChart_MacroKey(MealManager mealManager, Total_Meal_Macro_Columns macro_name, String macroSymbol)
+    public PieChart_MacroKey(MealManager mealManager, Draft_Gui_Total_Meal_Macro_Columns macro_name, String macroSymbol)
     {
         //############################################
         // Variables

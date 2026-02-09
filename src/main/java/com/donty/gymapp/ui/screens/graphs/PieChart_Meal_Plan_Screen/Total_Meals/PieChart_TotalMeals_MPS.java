@@ -1,6 +1,6 @@
 package com.donty.gymapp.ui.screens.graphs.PieChart_Meal_Plan_Screen.Total_Meals;
 
-import com.donty.gymapp.domain.enums.table_enums.totalmeal.Total_Meal_Macro_Columns;
+import com.donty.gymapp.domain.enums.db_enums.views.totalmeal.Draft_Gui_Total_Meal_Macro_Columns;
 import com.donty.gymapp.ui.components.meal.MealManager;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.ui.charts.Pie_Chart;
@@ -195,7 +195,7 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
         for (MealManager mealManager : mealManager_ArrayList)
         {
             // Get / Create PieChart Data
-            DefaultPieDataset<Total_Meal_Macro_Columns> pieDataset = shared_Data_Registry.get_OR_Create_Updated_PieChart_Dataset(mealManager);
+            DefaultPieDataset<Draft_Gui_Total_Meal_Macro_Columns> pieDataset = shared_Data_Registry.get_OR_Create_Updated_PieChart_Dataset(mealManager);
             
             Pie_Chart_Totals pieChart = new Pie_Chart_Totals( // Create PieChart
                     mealManager,
@@ -356,7 +356,7 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
     public void add_MealManager_To_GUI(MealManager mealManager)
     {
         // Get / Create PieChart Data
-        DefaultPieDataset<Total_Meal_Macro_Columns> pieDataset = shared_Data_Registry.get_OR_Create_Updated_PieChart_Dataset(mealManager);
+        DefaultPieDataset<Draft_Gui_Total_Meal_Macro_Columns> pieDataset = shared_Data_Registry.get_OR_Create_Updated_PieChart_Dataset(mealManager);
         
         // Create PieChart & Add to List
         Pie_Chart_Totals pieChart = new Pie_Chart_Totals(

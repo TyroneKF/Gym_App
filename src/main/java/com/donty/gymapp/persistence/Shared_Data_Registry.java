@@ -1,9 +1,10 @@
 package com.donty.gymapp.persistence;
 
-import com.donty.gymapp.domain.enums.table_enums.IngredientsTableColumns;
-import com.donty.gymapp.domain.enums.table_enums.totalmeal.Total_Meal_Macro_Columns;
+import com.donty.gymapp.domain.enums.db_enums.views.Draft_Gui_Ingredients_Calc_Columns;
+import com.donty.gymapp.domain.enums.db_enums.views.totalmeal.Draft_Gui_Total_Meal_Columns;
+import com.donty.gymapp.domain.enums.db_enums.views.totalmeal.Draft_Gui_Total_Meal_Macro_Columns;
 import com.donty.gymapp.ui.components.meal.MealManager;
-import com.donty.gymapp.domain.enums.table_enums.totalmeal.TotalMealOtherColumns;
+import com.donty.gymapp.domain.enums.db_enums.views.totalmeal.Draft_Gui_Total_Meal_Other_Columns;
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.*;
 import com.donty.gymapp.ui.tables.base.ColumnUiRules;
 import com.donty.gymapp.ui.tables.base.TableMeta;
@@ -34,33 +35,33 @@ public class Shared_Data_Registry
 
     private Ingredient_Name_ID_OBJ na_ingredient_id_obj;
 
-    private ColumnUiRules ingredients_column_ui_rules;
-    private TableMeta ingredients_table_meta;
+    private ColumnUiRules<Draft_Gui_Ingredients_Calc_Columns> ingredients_column_ui_rules;
+    private TableMeta<Draft_Gui_Ingredients_Calc_Columns> ingredients_table_meta;
 
-    private HashMap<IngredientsTableColumns, Integer> ingredients_table_cols_positions;
+    private HashMap<Draft_Gui_Ingredients_Calc_Columns, Integer> ingredients_table_cols_positions;
     private ArrayList<String> ingredients_table_column_names;
 
     //#################################
     // Total_Meal Table
     //#################################
-    private ColumnUiRules total_meal_column_ui_rules;
-    private TableMeta total_meal_table_meta;
+    private ColumnUiRules<Draft_Gui_Total_Meal_Columns> total_meal_column_ui_rules;
+    private TableMeta<Draft_Gui_Total_Meal_Columns> total_meal_table_meta;
 
     private ArrayList<String> total_meal_table_column_names;
 
-    private HashMap<TotalMealOtherColumns, Integer> total_meal_other_cols_positions;
+    private HashMap<Draft_Gui_Total_Meal_Other_Columns, Integer> total_meal_other_cols_positions;
 
     //######################################################################
     // Collections
     //######################################################################
     // Meta Data
-    private LinkedHashMap<Total_Meal_Macro_Columns, Integer> total_meal_macro_pos;
-    private LinkedHashMap<Total_Meal_Macro_Columns, String> total_meal_macro_symbol;
+    private LinkedHashMap<Draft_Gui_Total_Meal_Macro_Columns, Integer> total_meal_macro_pos;
+    private LinkedHashMap<Draft_Gui_Total_Meal_Macro_Columns, String> total_meal_macro_symbol;
 
     //###########################################
     //
     //###########################################
-    private ArrayList<MealManager> mealManager_ArrayList = new ArrayList<>();
+    private final ArrayList<MealManager> mealManager_ArrayList = new ArrayList<>();
     
     /*
      * HashMap<String, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues = new HashMap<>();
@@ -69,11 +70,11 @@ public class Shared_Data_Registry
      * <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
      * Etc;  <Key: Salt | Value: HashMap<MealManager, Quantity: 300g >>
      */
-    private final LinkedHashMap<Total_Meal_Macro_Columns, HashMap<MealManager, BigDecimal>> totals_by_macro = new LinkedHashMap<>();
+    private final LinkedHashMap<Draft_Gui_Total_Meal_Macro_Columns, HashMap<MealManager, BigDecimal>> totals_by_macro = new LinkedHashMap<>();
     
-    private final Map<MealManager, EnumMap<Total_Meal_Macro_Columns, BigDecimal>> totals_by_meal = new HashMap<>();
+    private final Map<MealManager, EnumMap<Draft_Gui_Total_Meal_Macro_Columns, BigDecimal>> totals_by_meal = new HashMap<>();
     
-    private final HashMap<MealManager, DefaultPieDataset<Total_Meal_Macro_Columns>> pieChart_Dataset_Map = new HashMap<>();
+    private final HashMap<MealManager, DefaultPieDataset<Draft_Gui_Total_Meal_Macro_Columns>> pieChart_Dataset_Map = new HashMap<>();
     
     //######################################################################
     // Meta Data Objects
@@ -166,9 +167,9 @@ public class Shared_Data_Registry
          *  <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
          *   Put, Replace have the same effect
          */
-        for (Map.Entry<Total_Meal_Macro_Columns, Integer> macro : total_meal_macro_pos.entrySet())
+        for (Map.Entry<Draft_Gui_Total_Meal_Macro_Columns, Integer> macro : total_meal_macro_pos.entrySet())
         {
-            Total_Meal_Macro_Columns macro_name = macro.getKey();
+            Draft_Gui_Total_Meal_Macro_Columns macro_name = macro.getKey();
             int macroPos = macro.getValue();
             
             BigDecimal macro_value = (BigDecimal) total_meal_data.get(macroPos);
@@ -182,7 +183,7 @@ public class Shared_Data_Registry
                     .put(mealManager, macro_value);
             
             totals_by_meal
-                    .computeIfAbsent(mealManager, k -> new EnumMap<>(Total_Meal_Macro_Columns.class))
+                    .computeIfAbsent(mealManager, k -> new EnumMap<>(Draft_Gui_Total_Meal_Macro_Columns.class))
                     .put(macro_name, macro_value);
         }
     }
@@ -209,7 +210,7 @@ public class Shared_Data_Registry
          * Etc;  <Key: Salt | Value: HashMap<MealManager, Quantity: 300g >>
          */
         
-        for (Total_Meal_Macro_Columns macro_key : total_meal_macro_pos.keySet())
+        for (Draft_Gui_Total_Meal_Macro_Columns macro_key : total_meal_macro_pos.keySet())
         {
             // <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
             totals_by_macro.get(macro_key).remove(mealManager);
@@ -238,7 +239,7 @@ public class Shared_Data_Registry
      * This method is used to retrieve pieChart Data based on MealInPlanID
      * if it exists it is returned. Otherwise, it's created and added to DATA (Collection) and then it's returned.
      */
-    public DefaultPieDataset<Total_Meal_Macro_Columns> get_OR_Create_Updated_PieChart_Dataset(MealManager mealManager)
+    public DefaultPieDataset<Draft_Gui_Total_Meal_Macro_Columns> get_OR_Create_Updated_PieChart_Dataset(MealManager mealManager)
     {
         return pieChart_Dataset_Map
                 .computeIfAbsent(mealManager, k -> create_Updated_PieChart_Dataset(mealManager));
@@ -257,8 +258,8 @@ public class Shared_Data_Registry
         //#########################################
         // Updated Saved Dataset With New Values
         //#########################################
-        DefaultPieDataset<Total_Meal_Macro_Columns> newGenerated = create_Updated_PieChart_Dataset(mealManager);
-        DefaultPieDataset<Total_Meal_Macro_Columns> mm_PieData = pieChart_Dataset_Map.get(mealManager);
+        DefaultPieDataset<Draft_Gui_Total_Meal_Macro_Columns> newGenerated = create_Updated_PieChart_Dataset(mealManager);
+        DefaultPieDataset<Draft_Gui_Total_Meal_Macro_Columns> mm_PieData = pieChart_Dataset_Map.get(mealManager);
         
         // Stop PieDataset event listener from being triggered on each key update and instead on batch (avoids key races)
         mm_PieData.setNotify(false);
@@ -280,41 +281,41 @@ public class Shared_Data_Registry
         return true;
     }
     
-    private DefaultPieDataset<Total_Meal_Macro_Columns> create_Updated_PieChart_Dataset(MealManager mealManager)
+    private DefaultPieDataset<Draft_Gui_Total_Meal_Macro_Columns> create_Updated_PieChart_Dataset(MealManager mealManager)
     {
         //###################################################
         // Get Macros
         //###################################################
-        LinkedHashMap<Total_Meal_Macro_Columns, BigDecimal> data = new LinkedHashMap<>()
+        LinkedHashMap<Draft_Gui_Total_Meal_Macro_Columns, BigDecimal> data = new LinkedHashMap<>()
         {{
             // ###########################
             // Protein
             // ###########################
-            put(Total_Meal_Macro_Columns.TOTAL_PROTEIN, totals_by_macro.get(Total_Meal_Macro_Columns.TOTAL_PROTEIN).get(mealManager));
+            put(Draft_Gui_Total_Meal_Macro_Columns.TOTAL_PROTEIN, totals_by_macro.get(Draft_Gui_Total_Meal_Macro_Columns.TOTAL_PROTEIN).get(mealManager));
             
             // ###########################
             // Carbs
             // ###########################
-            BigDecimal sugarCarbsValue = totals_by_macro.get(Total_Meal_Macro_Columns.TOTAL_SUGARS_OF_CARBS).get(mealManager);
-            BigDecimal carbsValue = totals_by_macro.get(Total_Meal_Macro_Columns.TOTAL_CARBOHYDRATES).get(mealManager);
+            BigDecimal sugarCarbsValue = totals_by_macro.get(Draft_Gui_Total_Meal_Macro_Columns.TOTAL_SUGARS_OF_CARBS).get(mealManager);
+            BigDecimal carbsValue = totals_by_macro.get(Draft_Gui_Total_Meal_Macro_Columns.TOTAL_CARBOHYDRATES).get(mealManager);
             
-            put(Total_Meal_Macro_Columns.TOTAL_CARBOHYDRATES, carbsValue.subtract(sugarCarbsValue));
-            put(Total_Meal_Macro_Columns.TOTAL_SUGARS_OF_CARBS, sugarCarbsValue);
+            put(Draft_Gui_Total_Meal_Macro_Columns.TOTAL_CARBOHYDRATES, carbsValue.subtract(sugarCarbsValue));
+            put(Draft_Gui_Total_Meal_Macro_Columns.TOTAL_SUGARS_OF_CARBS, sugarCarbsValue);
             
             // ###########################
             // Fats
             // ###########################
-            BigDecimal satFatsValue = totals_by_macro.get(Total_Meal_Macro_Columns.TOTAL_SATURATED_FAT).get(mealManager);
-            BigDecimal fatsValue = totals_by_macro.get(Total_Meal_Macro_Columns.TOTAL_FATS).get(mealManager);
+            BigDecimal satFatsValue = totals_by_macro.get(Draft_Gui_Total_Meal_Macro_Columns.TOTAL_SATURATED_FAT).get(mealManager);
+            BigDecimal fatsValue = totals_by_macro.get(Draft_Gui_Total_Meal_Macro_Columns.TOTAL_FATS).get(mealManager);
             
-            put(Total_Meal_Macro_Columns.TOTAL_FATS, fatsValue.subtract(satFatsValue));
-            put(Total_Meal_Macro_Columns.TOTAL_SATURATED_FAT, satFatsValue);
+            put(Draft_Gui_Total_Meal_Macro_Columns.TOTAL_FATS, fatsValue.subtract(satFatsValue));
+            put(Draft_Gui_Total_Meal_Macro_Columns.TOTAL_SATURATED_FAT, satFatsValue);
         }};
         
         //#############################################
         // Add Data to Dataset to represent
         //#############################################
-        DefaultPieDataset<Total_Meal_Macro_Columns> dataset = new DefaultPieDataset<>();
+        DefaultPieDataset<Draft_Gui_Total_Meal_Macro_Columns> dataset = new DefaultPieDataset<>();
         data.forEach(dataset :: setValue); // Transfer data, preserves order too
         
         //#############################################
@@ -672,18 +673,18 @@ public class Shared_Data_Registry
     // Ingredients Table
     //###############################################
     // Meta
-    public void set_Ingredients_Table_Meta(TableMeta ingredients_table_meta)
+    public void set_Ingredients_Table_Meta(TableMeta<Draft_Gui_Ingredients_Calc_Columns> ingredients_table_meta)
     {
         this.ingredients_table_meta = ingredients_table_meta;
     }
 
     // Column UI
-    public void set_Ingredients_Table_Column_Ui_Rules(ColumnUiRules ingredients_ColumnUiRules)
+    public void set_Ingredients_Table_Column_Ui_Rules(ColumnUiRules<Draft_Gui_Ingredients_Calc_Columns> ingredients_column_ui_rules)
     {
-        this.ingredients_column_ui_rules = ingredients_ColumnUiRules;
+        this.ingredients_column_ui_rules = ingredients_column_ui_rules;
     }
 
-    public void set_Ingredients_Table_Cols_Positions(HashMap<IngredientsTableColumns, Integer> ingredients_table_cols_positions)
+    public void set_Ingredients_Table_Cols_Positions(HashMap<Draft_Gui_Ingredients_Calc_Columns, Integer> ingredients_table_cols_positions)
     {
         this.ingredients_table_cols_positions = ingredients_table_cols_positions;
     }
@@ -692,33 +693,36 @@ public class Shared_Data_Registry
     // Total Meal Table
     //###############################################
     // Meta
-    public void set_Total_Meal_Table_Meta(TableMeta total_meal_table_meta)
+    public void set_Total_Meal_Table_Meta(TableMeta<Draft_Gui_Total_Meal_Columns> total_meal_table_meta)
     {
         this.total_meal_table_meta = total_meal_table_meta;
     }
 
     // Column UI
-    public void set_Total_Meal_Table_Column_Ui_Rules(ColumnUiRules total_meal_column_ui_rules)
+    public void set_Total_Meal_Table_Column_Ui_Rules(ColumnUiRules<Draft_Gui_Total_Meal_Columns> total_meal_column_ui_rules)
     {
         this.total_meal_column_ui_rules = total_meal_column_ui_rules;
     }
 
+    //######################
+    //
+    //######################
     public void set_Total_Meal_Column_Names(ArrayList<String> total_meal_column_names)
     {
         this.total_meal_table_column_names = total_meal_column_names;
     }
     
-    public void set_Total_Meal_Macros_Pos(LinkedHashMap<Total_Meal_Macro_Columns, Integer> total_meal_macro_pos)
+    public void set_Total_Meal_Macros_Pos(LinkedHashMap<Draft_Gui_Total_Meal_Macro_Columns, Integer> total_meal_macro_pos)
     {
         this.total_meal_macro_pos = total_meal_macro_pos;
     }
     
-    public void set_Total_Meal_Macro_Symbol(LinkedHashMap<Total_Meal_Macro_Columns, String> total_meal_macro_symbol)
+    public void set_Total_Meal_Macro_Symbol(LinkedHashMap<Draft_Gui_Total_Meal_Macro_Columns, String> total_meal_macro_symbol)
     {
         this.total_meal_macro_symbol = total_meal_macro_symbol;
     }
     
-    public void set_Total_Meal_Other_Col_Positions(HashMap<TotalMealOtherColumns, Integer> total_meal_other_cols_positions)
+    public void set_Total_Meal_Other_Col_Positions(HashMap<Draft_Gui_Total_Meal_Other_Columns, Integer> total_meal_other_cols_positions)
     {
         this.total_meal_other_cols_positions = total_meal_other_cols_positions;
     }
@@ -773,25 +777,25 @@ public class Shared_Data_Registry
     //###########################
     // Ingredients Table
     //###########################
-    public ColumnUiRules get_Ingredients_Column_UI_Rules()
-    {
-        return ingredients_column_ui_rules;
-    }
-
-    public TableMeta get_Ingredients_Table_Meta()
+    public TableMeta<Draft_Gui_Ingredients_Calc_Columns> get_Ingredients_Table_Meta()
     {
         return ingredients_table_meta;
+    }
+
+    public ColumnUiRules<Draft_Gui_Ingredients_Calc_Columns> get_Ingredients_Column_UI_Rules()
+    {
+        return ingredients_column_ui_rules;
     }
 
     //###########################
     // Total Meal  Table
     //###########################
-    public TableMeta get_Total_Meal_Table_Meta()
+    public TableMeta<Draft_Gui_Total_Meal_Columns> get_Total_Meal_Table_Meta()
     {
         return total_meal_table_meta;
     }
 
-    public ColumnUiRules get_Total_Meal_Column_UI_Rules()
+    public ColumnUiRules<Draft_Gui_Total_Meal_Columns> get_Total_Meal_Column_UI_Rules()
     {
         return total_meal_column_ui_rules;
     }
@@ -824,7 +828,7 @@ public class Shared_Data_Registry
         return na_pdid;
     }
     
-    public int get_Other_Total_Meal_Table_Column_Pos(TotalMealOtherColumns column_name)
+    public int get_Other_Total_Meal_Table_Column_Pos(Draft_Gui_Total_Meal_Other_Columns column_name)
     {
         return total_meal_other_cols_positions.get(column_name);
     }
@@ -832,9 +836,9 @@ public class Shared_Data_Registry
     //###########################################################
     // BigDecimal
     //###########################################################
-    public BigDecimal get_Meal_Macro_Value(MealManager mealManager, Total_Meal_Macro_Columns macro_name)
+    public BigDecimal get_Meal_Macro_Value(MealManager mealManager, Draft_Gui_Total_Meal_Macro_Columns macro_name)
     {
-        EnumMap<Total_Meal_Macro_Columns, BigDecimal> outer = totals_by_meal.get(mealManager);
+        EnumMap<Draft_Gui_Total_Meal_Macro_Columns, BigDecimal> outer = totals_by_meal.get(mealManager);
         return outer != null ? outer.get(macro_name) : null;
     }
     
@@ -849,7 +853,7 @@ public class Shared_Data_Registry
     //############################
     // Ingredients Table
     //#############################
-    public HashMap<IngredientsTableColumns, Integer> get_Ingredients_Table_Cols_Positions()
+    public HashMap<Draft_Gui_Ingredients_Calc_Columns, Integer> get_Ingredients_Table_Cols_Positions()
     {
         return ingredients_table_cols_positions;
     }
@@ -872,12 +876,12 @@ public class Shared_Data_Registry
         return total_meal_table_column_names;
     }
 
-    public LinkedHashMap<Total_Meal_Macro_Columns, String> get_Total_Meal_Macro_Symbols()
+    public LinkedHashMap<Draft_Gui_Total_Meal_Macro_Columns, String> get_Total_Meal_Macro_Symbols()
     {
         return total_meal_macro_symbol;
     }
     
-    public LinkedHashMap<Total_Meal_Macro_Columns, HashMap<MealManager, BigDecimal>> get_Meal_Managers_Macro_Values()
+    public LinkedHashMap<Draft_Gui_Total_Meal_Macro_Columns, HashMap<MealManager, BigDecimal>> get_Meal_Managers_Macro_Values()
     {
         return totals_by_macro;
     }

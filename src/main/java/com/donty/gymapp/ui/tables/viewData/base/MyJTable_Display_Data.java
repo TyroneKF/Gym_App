@@ -1,5 +1,6 @@
 package com.donty.gymapp.ui.tables.viewData.base;
 
+import com.donty.gymapp.domain.enums.db_enums.base.Table_Enum;
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
 import com.donty.gymapp.persistence.database.statements.Fetch_Statement_Full;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
@@ -11,7 +12,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.util.ArrayList;
 
-public abstract class MyJTable_Display_Data extends MyJTable
+public abstract class MyJTable_Display_Data <T extends Enum<T> & Table_Enum> extends MyJTable<T>
 {
     //##################################################################################################################
     // Variables
@@ -29,8 +30,8 @@ public abstract class MyJTable_Display_Data extends MyJTable
 
             ArrayList<ArrayList<Object>> saved_Data,
 
-            TableMeta tableMeta,
-            ColumnUiRules columnUiRules
+            TableMeta<T> tableMeta,
+            ColumnUiRules<T> columnUiRules
     )
     {
         // #################################################
