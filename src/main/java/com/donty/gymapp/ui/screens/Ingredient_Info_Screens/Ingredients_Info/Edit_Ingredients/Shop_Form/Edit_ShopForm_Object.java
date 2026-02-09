@@ -6,7 +6,7 @@ import com.donty.gymapp.persistence.database.Statements.Upload_Statement;
 import com.donty.gymapp.gui.controls.combobox.Field_JCombo_Storable_ID;
 import com.donty.gymapp.gui.controls.textfields.base.Field_JTxtField_Parent;
 import com.donty.gymapp.ui.screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.ShopForm_Object;
-import com.donty.gymapp.ui.meta.bindings.Shop_Form_Binding;
+import com.donty.gymapp.ui.screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.Shop_Form_Binding;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -96,8 +96,7 @@ public class Edit_ShopForm_Object extends ShopForm_Object
                     if (jc.does_Selected_Item_ID_Equal((int) stored_Data)) { continue; }
                 }
                 case Field_JTxtField_Parent<?> jt -> { if (jt.is_Field_Data_Equal_To(stored_Data)) { continue; } }
-                default ->
-                        throw new Exception(String.format("\n\nUnexpected value:  %s", shop_form_binding.get_Gui_Component()));
+                default -> throw new Exception(String.format("\n\nUnexpected value:  %s", shop_form_binding.get_Gui_Component()));
             }
             
             //######################################

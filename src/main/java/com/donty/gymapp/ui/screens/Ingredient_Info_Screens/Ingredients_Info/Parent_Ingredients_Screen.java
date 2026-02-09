@@ -3,7 +3,7 @@ package com.donty.gymapp.ui.screens.Ingredient_Info_Screens.Ingredients_Info;
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.gui.base.Screen_JPanel;
-import com.donty.gymapp.ui.screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredients_Form;
+import com.donty.gymapp.ui.screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredients_Form.Ingredients_Form;
 import com.donty.gymapp.ui.screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form.Shop_Form;
 import com.donty.gymapp.ui.screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info.Ingredients_Info_Screen;
 

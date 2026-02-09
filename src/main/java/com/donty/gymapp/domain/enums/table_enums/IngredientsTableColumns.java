@@ -1,13 +1,13 @@
-package com.donty.gymapp.ui.tables.Ingredients_Table;
+package com.donty.gymapp.domain.enums.table_enums;
 
-import com.donty.gymapp.domain.enums.Table_Enum;
+import com.donty.gymapp.domain.enums.base.Table_Enum;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public enum Ingredients_Table_Columns implements Table_Enum
+public enum IngredientsTableColumns implements Table_Enum
 {
     //##################################################################################################################
     // Enums
@@ -26,17 +26,17 @@ public enum Ingredients_Table_Columns implements Table_Enum
     private final String source_name;
     private final String key;
     
-    private static final Map<String, Ingredients_Table_Columns> BY_KEY =
+    private static final Map<String, IngredientsTableColumns> BY_KEY =
             Arrays.stream(values())
                     .collect(Collectors.toMap(
-                            Ingredients_Table_Columns :: key,
+                            IngredientsTableColumns :: key,
                             Function.identity()
                     ));
     
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    Ingredients_Table_Columns(String key)
+    IngredientsTableColumns(String key)
     {
         this.key = key;
         this.source_name = SOURCE_NAME;

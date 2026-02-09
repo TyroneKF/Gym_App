@@ -1,4 +1,4 @@
-package com.donty.gymapp.ui.screens.mealPlanScreen;
+package com.donty.gymapp.ui.screens.MealPlanScreen;
 
 import com.donty.gymapp.ui.meta.ids.MetaData_ID_Object.Meal_ID_OBJ;
 import com.donty.gymapp.ui.meta.ids.MetaData_ID_Object.Sub_Meal_ID_OBJ;

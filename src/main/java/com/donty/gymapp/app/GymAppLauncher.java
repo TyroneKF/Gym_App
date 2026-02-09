@@ -1,7 +1,7 @@
 package com.donty.gymapp.app;
 
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
-import com.donty.gymapp.ui.screens.mealPlanScreen.Meal_Plan_Screen;
+import com.donty.gymapp.ui.screens.MealPlanScreen.Meal_Plan_Screen;
 
 import javax.swing.JOptionPane;
 

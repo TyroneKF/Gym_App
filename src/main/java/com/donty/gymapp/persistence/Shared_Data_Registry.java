@@ -1,9 +1,9 @@
 package com.donty.gymapp.persistence;
 
-import com.donty.gymapp.ui.tables.Ingredients_Table.Ingredients_Table_Columns;
-import com.donty.gymapp.ui.tables.View_Data_Tables.Total_Meal_Table.Total_Meal_Macro_Columns;
+import com.donty.gymapp.domain.enums.table_enums.IngredientsTableColumns;
+import com.donty.gymapp.domain.enums.table_enums.totalMeal.Total_Meal_Macro_Columns;
 import com.donty.gymapp.ui.components.meal.MealManager;
-import com.donty.gymapp.ui.tables.View_Data_Tables.Total_Meal_Table.Total_Meal_Other_Columns;
+import com.donty.gymapp.domain.enums.table_enums.totalMeal.TotalMealOtherColumns;
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.*;
 import org.jfree.data.general.DefaultPieDataset;
 
@@ -49,7 +49,7 @@ public class Shared_Data_Registry
     // Ingredients Configuration Lists
     //#################################
     private ArrayList<String> ingredients_table_column_names;
-    private HashMap<Ingredients_Table_Columns, Integer> ingredients_table_cols_positions;
+    private HashMap<IngredientsTableColumns, Integer> ingredients_table_cols_positions;
     
     private ArrayList<String> ingredients_table_cols_avoid_centering;
     private ArrayList<String> ingredients_table_un_editable_cells;
@@ -61,7 +61,7 @@ public class Shared_Data_Registry
     // Meta Data
     private LinkedHashMap<Total_Meal_Macro_Columns, Integer> total_meal_macro_pos;
     private LinkedHashMap<Total_Meal_Macro_Columns, String> total_meal_macro_symbol;
-    private HashMap<Total_Meal_Other_Columns, Integer> total_meal_other_cols_positions;
+    private HashMap<TotalMealOtherColumns, Integer> total_meal_other_cols_positions;
     
     //###########################################
     //
@@ -678,7 +678,7 @@ public class Shared_Data_Registry
     // Collections
     //###############################################
     // Ingredients Table
-    public void set_Ingredients_Table_Cols_Positions(HashMap<Ingredients_Table_Columns, Integer> ingredients_table_cols_positions)
+    public void set_Ingredients_Table_Cols_Positions(HashMap<IngredientsTableColumns, Integer> ingredients_table_cols_positions)
     {
         this.ingredients_table_cols_positions = ingredients_table_cols_positions;
     }
@@ -726,7 +726,7 @@ public class Shared_Data_Registry
         this.total_meal_macro_symbol = total_meal_macro_symbol;
     }
     
-    public void set_Total_Meal_Other_Col_Positions(HashMap<Total_Meal_Other_Columns, Integer> total_meal_other_cols_positions)
+    public void set_Total_Meal_Other_Col_Positions(HashMap<TotalMealOtherColumns, Integer> total_meal_other_cols_positions)
     {
         this.total_meal_other_cols_positions = total_meal_other_cols_positions;
     }
@@ -806,7 +806,7 @@ public class Shared_Data_Registry
         return na_pdid;
     }
     
-    public int get_Other_Total_Meal_Table_Column_Pos(Total_Meal_Other_Columns column_name)
+    public int get_Other_Total_Meal_Table_Column_Pos(TotalMealOtherColumns column_name)
     {
         return total_meal_other_cols_positions.get(column_name);
     }
@@ -831,7 +831,7 @@ public class Shared_Data_Registry
     //############################
     // Ingredients Table
     //#############################
-    public HashMap<Ingredients_Table_Columns, Integer> get_Ingredients_Table_Cols_Positions()
+    public HashMap<IngredientsTableColumns, Integer> get_Ingredients_Table_Cols_Positions()
     {
         return ingredients_table_cols_positions;
     }

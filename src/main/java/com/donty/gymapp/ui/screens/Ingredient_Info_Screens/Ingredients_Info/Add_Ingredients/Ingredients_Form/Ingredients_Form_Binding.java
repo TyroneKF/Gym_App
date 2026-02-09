@@ -1,5 +1,6 @@
-package com.donty.gymapp.ui.meta.bindings;
+package com.donty.gymapp.ui.screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredients_Form;
 
+import com.donty.gymapp.ui.meta.bindings.Field_Binding;
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Storable_IDS_Parent;
 import com.donty.gymapp.gui.controls.combobox.Field_JCombo_Storable_ID;
 import com.donty.gymapp.gui.controls.textfields.base.Field_JTxtField_Parent;

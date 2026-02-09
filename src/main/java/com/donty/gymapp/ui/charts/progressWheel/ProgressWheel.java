@@ -1,8 +1,6 @@
 package com.donty.gymapp.ui.charts.progressWheel;
 
-import com.donty.gymapp.gui.panels.Image_JPanel;
 import org.jfree.chart.ChartPanel;
-
 import javax.swing.*;
 import java.awt.*;
 

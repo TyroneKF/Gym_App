@@ -1,4 +1,4 @@
-package com.donty.gymapp.ui.screens.mealPlanScreen;
+package com.donty.gymapp.ui.screens.MealPlanScreen;
 
 import com.donty.gymapp.ui.meta.ids.MetaData_ID_Object.Sub_Meal_ID_OBJ;
 import com.donty.gymapp.persistence.database.Fetched_Results;
@@ -13,15 +13,15 @@ import com.donty.gymapp.persistence.database.Statements.Upload_Statement_Full;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.gui.controls.IconButton;
 import com.donty.gymapp.gui.panels.IconPanel;
-import com.donty.gymapp.ui.screens.mealPlanScreen.macroIndicator.MacroIndicators;
-import com.donty.gymapp.ui.screens.mealPlanScreen.macroIndicator.ProgressWheelKey;
+import com.donty.gymapp.ui.screens.MealPlanScreen.macroIndicator.MacroIndicators;
+import com.donty.gymapp.ui.screens.MealPlanScreen.macroIndicator.ProgressWheelKey;
 import com.donty.gymapp.ui.tables.Ingredients_Table.IngredientsTable;
-import com.donty.gymapp.ui.tables.Ingredients_Table.Ingredients_Table_Columns;
+import com.donty.gymapp.domain.enums.table_enums.IngredientsTableColumns;
 import com.donty.gymapp.ui.tables.View_Data_Tables.MacrosLeft_Table;
 import com.donty.gymapp.ui.tables.View_Data_Tables.MacrosTargets_Table;
-import com.donty.gymapp.ui.tables.View_Data_Tables.Total_Meal_Table.Total_Meal_Macro_Columns;
-import com.donty.gymapp.ui.tables.View_Data_Tables.Total_Meal_Table.Total_Meal_Other_Columns;
-import com.donty.gymapp.domain.enums.My_Enum;
+import com.donty.gymapp.domain.enums.table_enums.totalMeal.Total_Meal_Macro_Columns;
+import com.donty.gymapp.domain.enums.table_enums.totalMeal.TotalMealOtherColumns;
+import com.donty.gymapp.domain.enums.base.My_Enum;
 import com.donty.gymapp.ui.components.meal.MealManager;
 import com.donty.gymapp.gui.base.Screen_JFrame;
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.*;
@@ -29,7 +29,7 @@ import com.donty.gymapp.ui.screens.Graph_Screens.LineChart_Meal_Plan_Screen.Line
 import com.donty.gymapp.ui.screens.Graph_Screens.PieChart_Meal_Plan_Screen.PieChart_Screen_MPS;
 import com.donty.gymapp.ui.screens.Ingredient_Info_Screens.Ingredients_Info.Ingredients_Info.Ingredients_Info_Screen;
 import com.donty.gymapp.ui.screens.Loading_Screen.Loading_Screen;
-import com.donty.gymapp.ui.screens.Others.Macros_Targets_Screen;
+import com.donty.gymapp.ui.screens.MacroTargets.Macros_Targets_Screen;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.javatuples.Pair;
@@ -533,10 +533,10 @@ public class Meal_Plan_Screen extends Screen_JFrame
             put(Total_Meal_Macro_Columns.TOTAL_CALORIES, null);
         }};
 
-        HashMap<Total_Meal_Other_Columns, Integer> total_meal_other_cols_positions = new HashMap<>() // These 2 columns are needed for external charts
+        HashMap<TotalMealOtherColumns, Integer> total_meal_other_cols_positions = new HashMap<>() // These 2 columns are needed for external charts
         {{
-            put(Total_Meal_Other_Columns.MEAL_TIME, null);
-            put(Total_Meal_Other_Columns.MEAL_NAME, null);
+            put(TotalMealOtherColumns.MEAL_TIME, null);
+            put(TotalMealOtherColumns.MEAL_NAME, null);
         }};
 
         LinkedHashMap<Total_Meal_Macro_Columns, String> total_meal_macro_symbol = new LinkedHashMap<>()
@@ -555,13 +555,13 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //########################################
         // Ingredients Table
         //########################################
-        HashMap<Ingredients_Table_Columns, Integer> ingredients_table_cols_positions = new HashMap<>() // These 2 columns are needed for external charts
+        HashMap<IngredientsTableColumns, Integer> ingredients_table_cols_positions = new HashMap<>() // These 2 columns are needed for external charts
         {{
-            put(Ingredients_Table_Columns.DRAFT_INGREDIENTS_INDEX, null);
-            put(Ingredients_Table_Columns.INGREDIENT_TYPE_NAME, null);
-            put(Ingredients_Table_Columns.INGREDIENT_NAME, null);
-            put(Ingredients_Table_Columns.QUANTITY, null);
-            put(Ingredients_Table_Columns.DELETE_BTN, null);
+            put(IngredientsTableColumns.DRAFT_INGREDIENTS_INDEX, null);
+            put(IngredientsTableColumns.INGREDIENT_TYPE_NAME, null);
+            put(IngredientsTableColumns.INGREDIENT_NAME, null);
+            put(IngredientsTableColumns.QUANTITY, null);
+            put(IngredientsTableColumns.DELETE_BTN, null);
         }};
 
         //########################################
@@ -573,7 +573,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             String column_name = ingredients_Column_Names.get(pos);
 
             // See if the column Name is an Other Columns Enum
-            Optional<Ingredients_Table_Columns> column_enum = My_Enum.get_Enum_From_Key(Ingredients_Table_Columns.class, column_name);
+            Optional<IngredientsTableColumns> column_enum = My_Enum.get_Enum_From_Key(IngredientsTableColumns.class, column_name);
 
             if (column_enum.isEmpty()) { continue; }
 
@@ -598,7 +598,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             }
 
             // See if the column Name is an Other Columns Enum
-            Optional<Total_Meal_Other_Columns> other_column_enum = My_Enum.get_Enum_From_Key(Total_Meal_Other_Columns.class, column_name);
+            Optional<TotalMealOtherColumns> other_column_enum = My_Enum.get_Enum_From_Key(TotalMealOtherColumns.class, column_name);
             if (other_column_enum.isPresent())
             {
                 total_meal_other_cols_positions.put(other_column_enum.get(), pos);
@@ -3767,7 +3767,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // ###############################################################
     private void open_Macros_Targets_Screen()
     {
-        if (! (is_Plan_Selected()))
+        if (! is_Plan_Selected())
         {
             return;
         }
@@ -3777,7 +3777,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
             macros_targets_screen.makeJFrameVisible();
             return;
         }
-        macros_targets_screen = new Macros_Targets_Screen(db, this, get_Selected_Plan_ID(), get_Plan_Name());
+
+        macros_targets_screen = new Macros_Targets_Screen(db, this, shared_data_registry);
     }
 
     public void remove_Macros_Target_Screen()

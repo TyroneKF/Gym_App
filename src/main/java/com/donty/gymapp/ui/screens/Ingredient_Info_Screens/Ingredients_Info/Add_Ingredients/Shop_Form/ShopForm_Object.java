@@ -1,11 +1,9 @@
 package com.donty.gymapp.ui.screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Shop_Form;
 
-import com.donty.gymapp.ui.meta.bindings.Shop_Form_Binding;
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Store_ID_OBJ;
 import com.donty.gymapp.gui.controls.combobox.Field_JCombo_Storable_ID;
 import com.donty.gymapp.gui.controls.textfields.Field_JTxtField_BD;
 import com.donty.gymapp.gui.controls.textfields.Field_JTxtField_String;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;

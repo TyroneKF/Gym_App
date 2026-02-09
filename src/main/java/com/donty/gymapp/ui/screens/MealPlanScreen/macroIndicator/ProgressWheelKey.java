@@ -1,4 +1,4 @@
-package com.donty.gymapp.ui.screens.mealPlanScreen.macroIndicator;
+package com.donty.gymapp.ui.screens.MealPlanScreen.macroIndicator;
 
 import java.awt.*;
 

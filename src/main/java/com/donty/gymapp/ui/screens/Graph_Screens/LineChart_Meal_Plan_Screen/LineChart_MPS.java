@@ -1,11 +1,11 @@
 package com.donty.gymapp.ui.screens.Graph_Screens.LineChart_Meal_Plan_Screen;
 
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
-import com.donty.gymapp.ui.tables.View_Data_Tables.Total_Meal_Table.Total_Meal_Macro_Columns;
+import com.donty.gymapp.domain.enums.table_enums.totalMeal.Total_Meal_Macro_Columns;
 import com.donty.gymapp.ui.components.meal.MealManager;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.gui.base.Screen_JFrame;
-import com.donty.gymapp.ui.screens.mealPlanScreen.Meal_Plan_Screen;
+import com.donty.gymapp.ui.screens.MealPlanScreen.Meal_Plan_Screen;
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalTime;

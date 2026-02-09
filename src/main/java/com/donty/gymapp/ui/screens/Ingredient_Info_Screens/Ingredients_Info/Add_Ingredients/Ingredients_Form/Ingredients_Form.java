@@ -1,6 +1,5 @@
-package com.donty.gymapp.ui.screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients;
+package com.donty.gymapp.ui.screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredients_Form;
 
-import com.donty.gymapp.ui.meta.bindings.Ingredients_Form_Binding;
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Measurement_ID_OBJ;
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;

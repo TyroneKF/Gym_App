@@ -8,7 +8,7 @@ import com.donty.gymapp.ui.screens.Ingredient_Info_Screens.Ingredients_Info.Add_
 import com.donty.gymapp.ui.screens.Ingredient_Info_Screens.Ingredients_Info.Edit_Ingredients.Edit_Ingredients_Screen;
 import com.donty.gymapp.ui.screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Ingredient_Types.Ingredients_Types_Screen;
 import com.donty.gymapp.ui.screens.Ingredient_Info_Screens.Stores_And_Ingredient_Types.Stores.Ingredient_Stores_Screen;
-import com.donty.gymapp.ui.screens.mealPlanScreen.Meal_Plan_Screen;
+import com.donty.gymapp.ui.screens.MealPlanScreen.Meal_Plan_Screen;
 import javax.swing.*;
 import java.awt.*;
 

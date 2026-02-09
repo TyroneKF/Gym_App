@@ -13,7 +13,7 @@ import com.donty.gymapp.persistence.api.nutritionix.NutritionIx_API;
 import com.donty.gymapp.gui.controls.IconButton;
 import com.donty.gymapp.gui.controls.textfields.base.JTextFieldLimit;
 import com.donty.gymapp.gui.base.ScrollPaneCreator;
-import com.donty.gymapp.ui.screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredients_Form;
+import com.donty.gymapp.ui.screens.Ingredient_Info_Screens.Ingredients_Info.Add_Ingredients.Ingredients_Form.Ingredients_Form;
 
 import javax.imageio.ImageIO;
 

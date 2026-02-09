@@ -2,6 +2,7 @@ package com.donty.gymapp.gui.controls.textfields;
 
 import com.donty.gymapp.gui.controls.textfields.base.Field_JTxtField_Parent;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -32,5 +33,10 @@ public class Field_JTxtField_String extends Field_JTxtField_Parent<String>
         }
         
         return true;
+    }
+
+    public String get_Text_Casted_To_Type() throws Exception
+    {
+        return super.get_Text_Casted_To_Type();
     }
 }

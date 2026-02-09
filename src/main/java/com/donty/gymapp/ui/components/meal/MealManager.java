@@ -11,16 +11,16 @@ import com.donty.gymapp.persistence.database.Statements.Fetch_Statement_Full;
 import com.donty.gymapp.persistence.database.Statements.Upload_Statement;
 import com.donty.gymapp.persistence.database.Statements.Upload_Statement_Full;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
-import com.donty.gymapp.ui.screens.mealPlanScreen.Meal_And_Sub_Meals_OBJ;
+import com.donty.gymapp.ui.screens.MealPlanScreen.Meal_And_Sub_Meals_OBJ;
 import com.donty.gymapp.ui.tables.Ingredients_Table.IngredientsTable;
 import com.donty.gymapp.ui.tables.View_Data_Tables.MacrosLeft_Table;
-import com.donty.gymapp.ui.tables.View_Data_Tables.Total_Meal_Table.TotalMeal_Table;
+import com.donty.gymapp.ui.tables.View_Data_Tables.TotalMeal_Table;
 import com.donty.gymapp.gui.panels.CollapsibleJPanel;
 import com.donty.gymapp.gui.controls.IconButton;
 import com.donty.gymapp.gui.panels.IconPanel;
 import com.donty.gymapp.ui.screens.Graph_Screens.PieChart_MealManager_Screen.Pie_Chart_Meal_Manager_Screen;
-import com.donty.gymapp.ui.screens.mealPlanScreen.Meal_Plan_Screen;
-import com.donty.gymapp.ui.tables.View_Data_Tables.Total_Meal_Table.Total_Meal_Other_Columns;
+import com.donty.gymapp.ui.screens.MealPlanScreen.Meal_Plan_Screen;
+import com.donty.gymapp.domain.enums.table_enums.totalMeal.TotalMealOtherColumns;
 import org.apache.commons.lang3.StringUtils;
 import org.javatuples.Pair;
 
@@ -551,11 +551,11 @@ public class MealManager
 
         total_meal_time_col_pos =
                 shared_Data_Registry
-                        .get_Other_Total_Meal_Table_Column_Pos(Total_Meal_Other_Columns.MEAL_TIME);
+                        .get_Other_Total_Meal_Table_Column_Pos(TotalMealOtherColumns.MEAL_TIME);
 
         total_meal_name_col_pos =
                 shared_Data_Registry
-                        .get_Other_Total_Meal_Table_Column_Pos(Total_Meal_Other_Columns.MEAL_NAME);
+                        .get_Other_Total_Meal_Table_Column_Pos(TotalMealOtherColumns.MEAL_NAME);
 
         //################################################################
         // Create Collapsible Object

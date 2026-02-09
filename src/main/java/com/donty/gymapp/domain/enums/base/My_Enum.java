@@ -1,4 +1,4 @@
-package com.donty.gymapp.domain.enums;
+package com.donty.gymapp.domain.enums.base;
 
 import java.util.Optional;
 

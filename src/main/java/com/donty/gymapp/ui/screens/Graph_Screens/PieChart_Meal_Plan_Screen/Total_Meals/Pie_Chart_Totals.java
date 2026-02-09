@@ -2,7 +2,7 @@ package com.donty.gymapp.ui.screens.Graph_Screens.PieChart_Meal_Plan_Screen.Tota
 
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.ui.charts.Pie_Chart;
-import com.donty.gymapp.ui.tables.View_Data_Tables.Total_Meal_Table.Total_Meal_Macro_Columns;
+import com.donty.gymapp.domain.enums.table_enums.totalMeal.Total_Meal_Macro_Columns;
 import com.donty.gymapp.ui.components.meal.MealManager;
 import org.jfree.chart.labels.PieSectionLabelGenerator;
 import org.jfree.data.general.DefaultPieDataset;

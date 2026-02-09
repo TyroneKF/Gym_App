@@ -1,5 +1,6 @@
 package com.donty.gymapp.ui.tables.Ingredients_Table;
 
+import com.donty.gymapp.domain.enums.table_enums.IngredientsTableColumns;
 import com.donty.gymapp.ui.meta.ids.MetaData_ID_Object.Sub_Meal_ID_OBJ;
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
@@ -103,7 +104,7 @@ public class IngredientsTable extends JDBC_JTable
     //################################################
     // Collections
     //################################################
-    private HashMap<Ingredients_Table_Columns, Integer> ingredients_table_cols_positions;
+    private HashMap<IngredientsTableColumns, Integer> ingredients_table_cols_positions;
 
     //##################################################################################################################
     // Constructor
@@ -177,11 +178,11 @@ public class IngredientsTable extends JDBC_JTable
         ingredients_table_cols_positions = shared_data_registry.get_Ingredients_Table_Cols_Positions();
 
         // Table : draft_ingredients_in_sections_of_meal_calculation
-        set_Model_Ingredient_Index_Col(ingredients_table_cols_positions.get(Ingredients_Table_Columns.DRAFT_INGREDIENTS_INDEX));
-        set_Model_Quantity_Col(ingredients_table_cols_positions.get(Ingredients_Table_Columns.QUANTITY));
-        set_Model_Ingredient_Type_Col(ingredients_table_cols_positions.get(Ingredients_Table_Columns.INGREDIENT_TYPE_NAME));
-        set_Model_Ingredient_Name_Col(ingredients_table_cols_positions.get(Ingredients_Table_Columns.INGREDIENT_NAME));
-        set_Model_Delete_BTN_Col(ingredients_table_cols_positions.get(Ingredients_Table_Columns.DELETE_BTN));
+        set_Model_Ingredient_Index_Col(ingredients_table_cols_positions.get(IngredientsTableColumns.DRAFT_INGREDIENTS_INDEX));
+        set_Model_Quantity_Col(ingredients_table_cols_positions.get(IngredientsTableColumns.QUANTITY));
+        set_Model_Ingredient_Type_Col(ingredients_table_cols_positions.get(IngredientsTableColumns.INGREDIENT_TYPE_NAME));
+        set_Model_Ingredient_Name_Col(ingredients_table_cols_positions.get(IngredientsTableColumns.INGREDIENT_NAME));
+        set_Model_Delete_BTN_Col(ingredients_table_cols_positions.get(IngredientsTableColumns.DELETE_BTN));
 
         // JLabel Used for Sub-Meal Title
         sub_meal_title_label = new JLabel();
@@ -212,7 +213,7 @@ public class IngredientsTable extends JDBC_JTable
         //##########################
         // Ingredients Name
         //##########################
-        int ingredient_Name_Pos = ingredients_table_cols_positions.get(Ingredients_Table_Columns.INGREDIENT_NAME);
+        int ingredient_Name_Pos = ingredients_table_cols_positions.get(IngredientsTableColumns.INGREDIENT_NAME);
         int ingredient_Name_ID = (Integer) table_data.get(ingredient_Name_Pos);
 
         Ingredient_Name_ID_OBJ ingredient_Name_ID_OBJ = shared_data_registry.get_Ingredient_Name_ID_OBJ_By_ID(ingredient_Name_ID);
@@ -227,7 +228,7 @@ public class IngredientsTable extends JDBC_JTable
         //##########################
         // Ingredients Type
         //##########################
-        int ingredient_Type_Pos = ingredients_table_cols_positions.get(Ingredients_Table_Columns.INGREDIENT_TYPE_NAME);
+        int ingredient_Type_Pos = ingredients_table_cols_positions.get(IngredientsTableColumns.INGREDIENT_TYPE_NAME);
 
         int ingredient_Type_ID = (Integer) table_data.get(ingredient_Type_Pos);
 
