@@ -12,7 +12,6 @@ import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.add.
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.Ingredients_Info.Ingredients_Info_Screen;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.base.screen.Parent_Ingredients_Screen;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.Search_For_Food_Info;
-import java.math.BigInteger;
 
 
 public class Ingredients_Screen extends Parent_Ingredients_Screen
@@ -22,8 +21,8 @@ public class Ingredients_Screen extends Parent_Ingredients_Screen
     //##################################################################################################################
     // Objects
     private Fetched_Results fetched_Results;
-    
-    
+
+
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
@@ -36,7 +35,7 @@ public class Ingredients_Screen extends Parent_Ingredients_Screen
     {
         super(ingredients_info_screen, db, shared_Data_Registry); // Super Constructor
     }
-    
+
     //##################################################################################################################
     // Methods
     //##################################################################################################################
@@ -45,23 +44,23 @@ public class Ingredients_Screen extends Parent_Ingredients_Screen
     protected void create_GUI_Objects()
     {
         ingredients_Form = new Ingredients_Form(scroll_JPanel, db, shared_Data_Registry, "Add Ingredients Info");
-        
+
         shop_Form = new Shop_Form(scroll_JPanel, "Add Suppliers", this, shared_Data_Registry);
-        
+
         search_For_Ingredient_Info = new Search_For_Food_Info(scroll_JPanel, ingredients_Form, "Search For Food Info");
     }
-    
+
     @Override
-    protected void prior_GUI_Setup(){}
-    
+    protected void prior_GUI_Setup() { }
+
     //##################################################################
     // Submission Button Actions
     //##################################################################
-    
+
     // Validation Methods
     @Override
     protected boolean prior_Form_Validations() { return true; }
-    
+
     //###########################
     // Update Methods
     //###########################
@@ -72,49 +71,60 @@ public class Ingredients_Screen extends Parent_Ingredients_Screen
         // Create Variables
         //######################
         String errorMSG = "Error, Unable to add new Ingredient !"; // Error MSG
-        Batch_Upload_And_Fetch_Statements upload_statements = new Batch_Upload_And_Fetch_Statements(errorMSG);
+        Batch_Upload_And_Fetch_Statements batch_statements = new Batch_Upload_And_Fetch_Statements(errorMSG);
 
         //###########################
         // Get Each Forms Update
         //###########################
+        String ingredient_name;
+
         try
         {
-            ingredients_Form.add_Update_Queries(upload_statements);
-            shop_Form.add_Update_Queries(upload_statements);
+            ingredients_Form.add_Update_Queries(batch_statements);
+            shop_Form.add_Update_Queries(batch_statements);
+
+            ingredient_name = (String) ingredients_Form.get_Component_Field_Value("name");
         }
         catch (Exception e)
         {
             System.out.printf("\n\n%s", e);
             return false;
         }
-        
+
         //######################
         // Create Fetch Query
         //######################
-        upload_statements.add_Fetches(new Fetch_Statement("SELECT LAST_INSERT_ID();", null));
-        
+        String get_ingredient_id = """
+                SELECT
+                    ingredient_id
+                
+                FROM ingredients_info
+                WHERE ingredient_name = ?;""";
+
+        batch_statements.add_Fetches(new Fetch_Statement(get_ingredient_id, new Object[]{ ingredient_name }));
+
         //######################
         // Return Fetched Results
         //######################
-        fetched_Results = db.upload_And_Get_Batch(upload_statements);
-        
+        fetched_Results = db.upload_And_Get_Batch(batch_statements);
+
         return fetched_Results != null;
     }
-    
+
     @Override
     protected boolean update_Shared_Data()
     {
         try
         {
             // Get Ingredient Name Variables
-            int ingredient_ID = ((BigInteger) fetched_Results.get_1D_Result_Into_Object(0)).intValueExact();
+            int ingredient_ID = (Integer) fetched_Results.get_1D_Result_Into_Object(0);
             String ingredient_Name = (String) ingredients_Form.get_Component_Field_Value("name");
-            
+
             // Get Ingredient Type ID OBJ
             Ingredient_Type_ID_OBJ ingredient_Type_ID_Obj = (Ingredient_Type_ID_OBJ) ingredients_Form.get_Component_Field_Value("type");
-            
+
             // Safety Check
-            if ( ingredient_Type_ID_Obj == null)
+            if (ingredient_Type_ID_Obj == null)
             {
                 throw new Exception(String.format("""
                                 Failed Getting Either Ingredient ID, Ingredient Name, Ingredient_Type_ID
@@ -124,7 +134,7 @@ public class Ingredients_Screen extends Parent_Ingredients_Screen
                                 Ingredient_Type_ID : %s""",
                         ingredient_ID, ingredient_Name, null));
             }
-            
+
             // Create & Add Ingredient Name OBJ
             shared_Data_Registry.add_Ingredient_Name(
                     new Ingredient_Name_ID_OBJ(
@@ -135,7 +145,7 @@ public class Ingredients_Screen extends Parent_Ingredients_Screen
                     ),
                     true
             );
-            
+
             return true;
         }
         catch (Exception e)
@@ -144,13 +154,13 @@ public class Ingredients_Screen extends Parent_Ingredients_Screen
             return false;
         }
     }
-    
+
     @Override
     protected void update_Other_Screens()
     {
-       ingredients_info_screen.update_Edit_Types();
+        ingredients_info_screen.update_Edit_Types();
     }
-    
+
     //##################################################################
     // Clearing GUI Methods
     //##################################################################
@@ -161,7 +171,7 @@ public class Ingredients_Screen extends Parent_Ingredients_Screen
         fetched_Results = null;
         resize_GUI();
     }
-    
+
     //##################################################################
     // Update Methods
     //##################################################################

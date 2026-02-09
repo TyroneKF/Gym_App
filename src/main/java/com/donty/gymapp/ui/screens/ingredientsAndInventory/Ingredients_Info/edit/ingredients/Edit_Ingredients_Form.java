@@ -173,7 +173,7 @@ public class Edit_Ingredients_Form extends Ingredients_Form
     }
     
     @Override
-    public void add_Update_Queries(Batch_Upload_Statements upload_statement) throws Exception
+    public void add_Update_Queries(Batch_Upload_Statements upload_statements) throws Exception
     {
         //##########################
         // Variables
@@ -253,6 +253,6 @@ public class Edit_Ingredients_Form extends Ingredients_Form
         // Add To Results
         //##########################
         StringBuilder update_Query = insert_Header.append(values);
-        upload_statement.add_Uploads(new Upload_Statement(update_Query.toString(), params, true));
+        upload_statements.add_Uploads(new Upload_Statement(update_Query.toString(), params, true));
     }
 }

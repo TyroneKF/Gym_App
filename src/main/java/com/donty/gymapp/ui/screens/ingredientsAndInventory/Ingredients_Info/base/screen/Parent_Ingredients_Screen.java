@@ -176,8 +176,7 @@ public abstract class Parent_Ingredients_Screen extends Screen_JPanel
         }
         
         // Generate Update MSG depending on what was updated
-        StringBuilder update_MSG = new StringBuilder("\n\nUpdated Ingredient Info & Product Info ! ");
-        JOptionPane.showMessageDialog(get_Frame(), update_MSG);
+        JOptionPane.showMessageDialog(get_Frame(), "\n\nUpdated Ingredient Info & Product Info ! ");
         
         //##################################
         // Update Shared Data

@@ -123,7 +123,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     "measurement",
                     new Ingredient_Binding<>(
                             "Ingredient Measurement In",
-                            new Field_JCombo_Storable_ID<>("Ingredient Measurement In", Measurement_ID_OBJ.class, ingredient_Measurement_Obj_AL),
+                            new Field_JCombo_Storable_ID<>("Ingredient Measurement In", Measurement_ID_OBJ.class, false, ingredient_Measurement_Obj_AL),
                             Ingredient_Enum.MEASUREMENT_ID,
                             pos += 1,
                             "serving_unit"
@@ -145,7 +145,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     "type",
                     new Ingredient_Binding<>(
                             "Ingredient Type",
-                            new Field_JCombo_Storable_ID<>("Ingredient Type", Ingredient_Type_ID_OBJ.class, ingredient_Types_Obj_AL),
+                            new Field_JCombo_Storable_ID<>("Ingredient Type", Ingredient_Type_ID_OBJ.class, true, ingredient_Types_Obj_AL),
                             Ingredient_Enum.INGREDIENT_TYPE_ID,
                             pos += 1
                     )

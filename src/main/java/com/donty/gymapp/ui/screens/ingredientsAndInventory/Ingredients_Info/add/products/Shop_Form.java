@@ -427,12 +427,12 @@ public class Shop_Form extends Parent_Forms_OBJ
     
     }
     
-    public void add_Update_Queries(Batch_Upload_Statements queries_And_Params) throws Exception
+    public void add_Update_Queries(Batch_Upload_Statements upload_statements) throws Exception
     {
         //###########################################
         // Extra Queries
         //###########################################
-        add_Update_Queries_Extra(queries_And_Params);
+        add_Update_Queries_Extra(upload_statements);
         
         
         //###########################################
@@ -446,7 +446,7 @@ public class Shop_Form extends Parent_Forms_OBJ
         //###########################################
         // Get Insert Statement
         String upload_Q1 = get_Ingredient_ID_SQL_Statement();
-        queries_And_Params.add_Uploads(new Upload_Statement(upload_Q1, null, true));
+        upload_statements.add_Uploads(new Upload_Statement(upload_Q1, null, true));
         
         //###########################################
         // Create Query for Upload Products
@@ -491,7 +491,7 @@ public class Shop_Form extends Parent_Forms_OBJ
         // Add To Results
         //##########################
         StringBuilder update_Query = insert_Header.append(values);
-        queries_And_Params.add_Uploads(new Upload_Statement(update_Query.toString(), params, true));
+        upload_statements.add_Uploads(new Upload_Statement(update_Query.toString(), params, true));
     }
     
     //################################################################

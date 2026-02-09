@@ -8,13 +8,15 @@ import java.util.stream.Collectors;
 
 public class Field_JCombo_Storable_ID<T extends Storable_IDS_Parent> extends Field_JComboBox<T>
 {
-    public Field_JCombo_Storable_ID(String label, Class<T> typeCast, ArrayList<T> data_AL)
+    public Field_JCombo_Storable_ID(String label, Class<T> typeCast, boolean hide_Is_System, ArrayList<T> data_AL)
     {
         super(
                 label,
                 typeCast,
-                // Remove is_System Variables
-                data_AL.stream().filter(e -> ! e.get_is_System()).collect(Collectors.toCollection(ArrayList :: new))
+                // Remove is_System Variables if required
+                ! hide_Is_System ?
+                        data_AL :
+                        data_AL.stream().filter(e -> ! e.get_is_System()).collect(Collectors.toCollection(ArrayList :: new))
         );
 
         addItemListener(ie -> {

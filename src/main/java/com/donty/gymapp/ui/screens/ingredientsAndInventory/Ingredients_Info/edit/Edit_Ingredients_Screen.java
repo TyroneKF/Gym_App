@@ -82,7 +82,7 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
         add_To_Container(mainCentre_JPanel, ingredientType_JC_JP, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "horizontal", 10, 0, null);
 
         // Create JCombBox
-        ingredient_Main_Type_JC = new Field_JCombo_Storable_ID<>("Ingredient Type", Ingredient_Type_ID_OBJ.class, shared_Data_Registry.get_Mapped_Ingredient_Types())
+        ingredient_Main_Type_JC = new Field_JCombo_Storable_ID<>("Ingredient Type", Ingredient_Type_ID_OBJ.class, true, shared_Data_Registry.get_Mapped_Ingredient_Types())
         {
             @Override
             protected void actionListener()
@@ -113,7 +113,7 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
         add_To_Container(mainCentre_JPanel, ingredient_Name_JC_JP, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "horizontal", 10, 0, null);
 
         // Create JComboBox
-        ingredient_Main_Name_JC = new Field_JCombo_Storable_ID<>("Ingredient Name", Ingredient_Name_ID_OBJ.class, new ArrayList<>())
+        ingredient_Main_Name_JC = new Field_JCombo_Storable_ID<>("Ingredient Name", Ingredient_Name_ID_OBJ.class, true, new ArrayList<>())
         {
             @Override
             protected void actionListener()
