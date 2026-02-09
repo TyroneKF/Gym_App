@@ -20,7 +20,7 @@ import com.donty.gymapp.gui.controls.IconButton;
 import com.donty.gymapp.gui.panels.IconPanel;
 import com.donty.gymapp.ui.screens.graphs.PieChart_MealManager_Screen.Pie_Chart_Meal_Manager_Screen;
 import com.donty.gymapp.ui.screens.mealPlan.Meal_Plan_Screen;
-import com.donty.gymapp.domain.enums.db_enums.views.totalmeal.Draft_Gui_Total_Meal_Other_Columns;
+import com.donty.gymapp.domain.enums.db_enums.columnNames.views.totalmeal.Draft_Gui_Total_Meal_Other_Columns;
 import org.apache.commons.lang3.StringUtils;
 import org.javatuples.Pair;
 

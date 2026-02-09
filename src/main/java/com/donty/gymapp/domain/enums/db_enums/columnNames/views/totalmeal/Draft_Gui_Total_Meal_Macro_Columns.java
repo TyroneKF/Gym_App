@@ -1,44 +1,49 @@
-package com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.base.products;
+package com.donty.gymapp.domain.enums.db_enums.columnNames.views.totalmeal;
 
 import com.donty.gymapp.domain.enums.db_enums.columnNames.base.Table_Enum;
-
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public enum productEnum implements Table_Enum
+public enum Draft_Gui_Total_Meal_Macro_Columns implements Table_Enum
 {
     //##################################################################################################################
     // Enums
     //##################################################################################################################
-    PDID("pdid"),
-    IS_SYSTEM("is_system"),
-    INGREDIENT_ID("ingredient_id"),
-    STORE_ID("store_id"),
-    PRODUCT_NAME("product_name"),
-    VOLUME_PER_UNIT("volume_per_unit"),
-    COST_PER_UNIT("cost_per_unit");
+
+    // Macros
+    TOTAL_PROTEIN("total_protein"),
+    TOTAL_CARBOHYDRATES("total_carbohydrates"),
+    TOTAL_SUGARS_OF_CARBS("total_sugars_of_carbs"),
+    TOTAL_FATS("total_fats"),
+    TOTAL_SATURATED_FAT("total_saturated_fat"),
+    TOTAL_SALT("total_salt"),
+    TOTAL_FIBRE("total_fibre"),
+    TOTAL_WATER("total_water"),
+    TOTAL_CALORIES("total_calories");
 
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    private static final String SOURCE_NAME = "ingredients_info";
+    private static final String SOURCE_NAME = "draft_gui_total_meal_view";
 
     private final String source_name;
+
+
     private final String key;
 
-    private static final Map<String, productEnum> BY_KEY =
+    private static final Map<String, Draft_Gui_Total_Meal_Macro_Columns> BY_KEY =
             Arrays.stream(values())
                     .collect(Collectors.toMap(
-                            productEnum :: key,
+                            Draft_Gui_Total_Meal_Macro_Columns :: key,
                             Function.identity()
                     ));
 
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    productEnum(String key)
+    Draft_Gui_Total_Meal_Macro_Columns(String key)
     {
         this.key = key;
         this.source_name = SOURCE_NAME;
@@ -47,15 +52,16 @@ public enum productEnum implements Table_Enum
     //##################################################################################################################
     // Methods
     //##################################################################################################################
-    @Override
-    public String source_Name()
-    {
-        return source_name;
-    }
 
     @Override
     public String key()
     {
         return key;
+    }
+
+    @Override
+    public String source_Name()
+    {
+        return source_name;
     }
 }

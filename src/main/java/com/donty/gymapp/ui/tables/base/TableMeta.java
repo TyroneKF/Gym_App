@@ -1,6 +1,8 @@
 package com.donty.gymapp.ui.tables.base;
 
-import com.donty.gymapp.domain.enums.db_enums.base.Table_Enum;
+import com.donty.gymapp.domain.enums.db_enums.TableNames;
+import com.donty.gymapp.domain.enums.db_enums.ViewNames;
+import com.donty.gymapp.domain.enums.db_enums.columnNames.base.Table_Enum;
 
 public class TableMeta<T extends Enum<T> & Table_Enum>
 {
@@ -9,9 +11,9 @@ public class TableMeta<T extends Enum<T> & Table_Enum>
     //##################################################################################################################
     private final T primary_Key_Column;
 
-    private final String tableName;
-    private final String write_Table_Name;
-    private final String read_View_Name;
+    private final String descriptive_table_name;
+    private final ViewNames read_View_Name;
+    private final TableNames write_Table_Name;
 
     //##################################################################################################################
     // Constructor
@@ -20,13 +22,13 @@ public class TableMeta<T extends Enum<T> & Table_Enum>
     (
             T primary_Key_Column,
 
-            String tableName,
-            String write_Table_Name,
-            String read_View_Name
+            String descriptive_table_name,
+            TableNames write_Table_Name,
+            ViewNames read_View_Name
     )
     {
         this.primary_Key_Column = primary_Key_Column;
-        this.tableName = tableName;
+        this.descriptive_table_name = descriptive_table_name;
         this.write_Table_Name = write_Table_Name;
         this.read_View_Name = read_View_Name;
     }
@@ -41,16 +43,16 @@ public class TableMeta<T extends Enum<T> & Table_Enum>
 
     public String get_Read_View_Name()
     {
-        return read_View_Name;
+        return read_View_Name.key();
     }
 
-    public String get_Table_Name()
+    public String get_Descriptive_Table_Name()
     {
-        return tableName;
+        return descriptive_table_name;
     }
 
     public String get_Write_Table_Name()
     {
-        return write_Table_Name;
+        return write_Table_Name != null ? write_Table_Name.key() : null;
     }
 }

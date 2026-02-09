@@ -1,6 +1,6 @@
 package com.donty.gymapp.ui.tables.base;
 
-import com.donty.gymapp.domain.enums.db_enums.base.Table_Enum;
+import com.donty.gymapp.domain.enums.db_enums.columnNames.base.Table_Enum;
 
 import java.util.ArrayList;
 

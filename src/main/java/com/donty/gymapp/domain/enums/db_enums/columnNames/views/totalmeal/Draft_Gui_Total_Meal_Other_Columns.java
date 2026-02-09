@@ -1,52 +1,41 @@
-package com.donty.gymapp.domain.enums.db_enums.views;
+package com.donty.gymapp.domain.enums.db_enums.columnNames.views.totalmeal;
 
-import com.donty.gymapp.domain.enums.db_enums.base.Table_Enum;
-
+import com.donty.gymapp.domain.enums.db_enums.columnNames.base.Table_Enum;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public enum Draft_Gui_Ingredients_Calc_Columns implements Table_Enum
+public enum Draft_Gui_Total_Meal_Other_Columns implements Table_Enum
 {
     //##################################################################################################################
     // Enums
     //##################################################################################################################
-    DRAFT_INGREDIENTS_INDEX("draft_ingredients_index"),
-    INGREDIENT_TYPE_NAME("ingredient_type_name"),
-    INGREDIENT_NAME("ingredient_name"),
-    QUANTITY("quantity"),
-    GI("gi"),
-    PROTEIN("protein"),
-    CARBOHYDRATES("carbohydrates"),
-    SUGARS_OF_CARBS("sugars_of_carbs"),
-    FIBRE("fibre"),
-    FAT("fat"),
-    SATURATED_FAT("saturated_fat"),
-    SALT("salt"),
-    WATER_CONTENT("water_content"),
-    CALORIES("calories"),
-    DELETE_BTN("delete_button");
+
+    // Other Columns
+    MEAL_TIME("meal_time"),
+    MEAL_NAME("meal_name");
     
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    private static final String SOURCE_NAME = "draft_gui_ingredients_in_sections_of_meal_calculation";
+    private static final String SOURCE_NAME = "draft_gui_total_meal_view";
     
     private final String source_name;
+    
     private final String key;
     
-    private static final Map<String, Draft_Gui_Ingredients_Calc_Columns> BY_KEY =
+    private static final Map<String, Draft_Gui_Total_Meal_Other_Columns> BY_KEY =
             Arrays.stream(values())
                     .collect(Collectors.toMap(
-                            Draft_Gui_Ingredients_Calc_Columns :: key,
+                            Draft_Gui_Total_Meal_Other_Columns :: key,
                             Function.identity()
                     ));
     
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    Draft_Gui_Ingredients_Calc_Columns(String key)
+    Draft_Gui_Total_Meal_Other_Columns(String key)
     {
         this.key = key;
         this.source_name = SOURCE_NAME;
@@ -61,7 +50,6 @@ public enum Draft_Gui_Ingredients_Calc_Columns implements Table_Enum
     {
         return key;
     }
-    
     
     @Override
     public String source_Name()

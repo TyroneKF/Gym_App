@@ -1,6 +1,6 @@
 package com.donty.gymapp.ui.tables.ingredients;
 
-import com.donty.gymapp.domain.enums.db_enums.views.Draft_Gui_Ingredients_Calc_Columns;
+import com.donty.gymapp.domain.enums.db_enums.columnNames.views.Draft_Gui_Ingredients_Calc_Columns;
 import com.donty.gymapp.ui.meta.ids.MetaData_ID_Object.Sub_Meal_ID_OBJ;
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;

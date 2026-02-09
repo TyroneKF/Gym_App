@@ -1,6 +1,8 @@
 package com.donty.gymapp.ui.tables.viewData;
 
-import com.donty.gymapp.domain.enums.db_enums.views.Draft_Gui_Plan_Macro_Targets_Calc_Columns;
+import com.donty.gymapp.domain.enums.db_enums.TableNames;
+import com.donty.gymapp.domain.enums.db_enums.ViewNames;
+import com.donty.gymapp.domain.enums.db_enums.columnNames.views.Draft_Gui_Plan_Macro_Targets_Calc_Columns;
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.ui.tables.base.ColumnUiRules;
@@ -33,8 +35,8 @@ public class MacrosTargets_Table extends MyJTable_Display_Data<Draft_Gui_Plan_Ma
                 new TableMeta<>(
                         Draft_Gui_Plan_Macro_Targets_Calc_Columns.PLAN_ID,
                         "Macro Targets Table",
-                        "macros_per_pound_and_limits",
-                        "draft_gui_plan_macro_target_calculations"
+                        TableNames.MACROS_PER_POUND_AND_LIMITS,
+                       ViewNames.DRAFT_GUI_PLAN_MACRO_TARGET_CALCULATIONS
                 ),
 
                 columnUiRules

@@ -1,8 +1,10 @@
 package com.donty.gymapp.ui.screens.mealPlan;
 
-import com.donty.gymapp.domain.enums.db_enums.views.Draft_Gui_Plan_Macro_Targets_Calc_Columns;
-import com.donty.gymapp.domain.enums.db_enums.views.Draft_Gui_Plan_Macros_Left_Columns;
-import com.donty.gymapp.domain.enums.db_enums.views.totalmeal.Draft_Gui_Total_Meal_Columns;
+import com.donty.gymapp.domain.enums.db_enums.TableNames;
+import com.donty.gymapp.domain.enums.db_enums.ViewNames;
+import com.donty.gymapp.domain.enums.db_enums.columnNames.views.Draft_Gui_Plan_Macro_Targets_Calc_Columns;
+import com.donty.gymapp.domain.enums.db_enums.columnNames.views.Draft_Gui_Plan_Macros_Left_Columns;
+import com.donty.gymapp.domain.enums.db_enums.columnNames.views.totalmeal.Draft_Gui_Total_Meal_Columns;
 import com.donty.gymapp.ui.meta.ids.MetaData_ID_Object.Sub_Meal_ID_OBJ;
 import com.donty.gymapp.persistence.database.Fetched_Results;
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
@@ -21,11 +23,11 @@ import com.donty.gymapp.ui.screens.mealPlan.macroIndicator.ProgressWheelKey;
 import com.donty.gymapp.ui.tables.base.ColumnUiRules;
 import com.donty.gymapp.ui.tables.base.TableMeta;
 import com.donty.gymapp.ui.tables.ingredients.IngredientsTable;
-import com.donty.gymapp.domain.enums.db_enums.views.Draft_Gui_Ingredients_Calc_Columns;
+import com.donty.gymapp.domain.enums.db_enums.columnNames.views.Draft_Gui_Ingredients_Calc_Columns;
 import com.donty.gymapp.ui.tables.viewData.MacrosLeft_Table;
 import com.donty.gymapp.ui.tables.viewData.MacrosTargets_Table;
-import com.donty.gymapp.domain.enums.db_enums.views.totalmeal.Draft_Gui_Total_Meal_Macro_Columns;
-import com.donty.gymapp.domain.enums.db_enums.views.totalmeal.Draft_Gui_Total_Meal_Other_Columns;
+import com.donty.gymapp.domain.enums.db_enums.columnNames.views.totalmeal.Draft_Gui_Total_Meal_Macro_Columns;
+import com.donty.gymapp.domain.enums.db_enums.columnNames.views.totalmeal.Draft_Gui_Total_Meal_Other_Columns;
 import com.donty.gymapp.domain.enums.base.My_Enum;
 import com.donty.gymapp.ui.components.meal.MealManager;
 import com.donty.gymapp.gui.base.Screen_JFrame;
@@ -99,7 +101,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //######################################################
     // LocalTime
     //######################################################
-    private DateTimeFormatter time_Formatter = DateTimeFormatter.ofPattern("HH:mm").withResolverStyle(ResolverStyle.STRICT);
+    private final DateTimeFormatter time_Formatter = DateTimeFormatter.ofPattern("HH:mm").withResolverStyle(ResolverStyle.STRICT);
 
     //######################################################
     // Collections
@@ -119,14 +121,14 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //#######################################
     // Table : draft_gui_plan_macro_target_calculations
     private ArrayList<String> macro_targets_column_names;
-    private final ArrayList<String> macros_targets_table_col_to_hide = new ArrayList<>(List.of("plan_id"));
+
 
     //#######################################
     //Macro_Left
     //#######################################
     // Table : draft_gui_plan_macros_left
     private ArrayList<String> macros_left_column_names;
-    private final ArrayList<String> macros_left_table_col_to_hide = new ArrayList<>(List.of("plan_id"));
+
 
     //##################################################################################################################
     // Constructor & Main
@@ -639,8 +641,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
         TableMeta<Draft_Gui_Ingredients_Calc_Columns> ingredients_table_meta_Data = new TableMeta<>(
                 Draft_Gui_Ingredients_Calc_Columns.DRAFT_INGREDIENTS_INDEX,
                 "Ingredients Table",
-                "draft_ingredients_in_sections_of_meal",
-                "draft_gui_ingredients_in_sections_of_meal_calculation"
+                TableNames.DRAFT_INGREDIENTS_IN_SECTIONS_OF_MEAL,
+                ViewNames.DRAFT_GUI_INGREDIENTS_IN_SECTIONS_OF_MEAL_CALCULATION
         );
 
         shared_data_registry.set_Ingredients_Table_Meta(ingredients_table_meta_Data);
@@ -704,8 +706,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
         TableMeta<Draft_Gui_Total_Meal_Columns> total_meal_meta_data = new TableMeta<>(
                 Draft_Gui_Total_Meal_Columns.DRAFT_MEAL_IN_PLAN_ID,
                 "Total Meal Table",
-                "draft_meals_in_plan",
-                "draft_gui_total_meal_view");
+                TableNames.DRAFT_MEALS_IN_PLAN,
+                ViewNames.DRAFT_GUI_TOTAL_MEAL_VIEW);
 
         shared_data_registry.set_Total_Meal_Table_Meta(total_meal_meta_data);
 

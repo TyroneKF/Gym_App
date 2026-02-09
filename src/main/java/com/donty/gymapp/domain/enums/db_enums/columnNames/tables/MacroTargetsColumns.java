@@ -1,51 +1,48 @@
-package com.donty.gymapp.domain.enums.db_enums.views;
+package com.donty.gymapp.domain.enums.db_enums.columnNames.tables;
 
-import com.donty.gymapp.domain.enums.db_enums.base.Table_Enum;
+import com.donty.gymapp.domain.enums.db_enums.columnNames.base.Table_Enum;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public enum Draft_Gui_Plan_Macro_Targets_Calc_Columns implements Table_Enum
+public enum MacroTargetsColumns implements Table_Enum
 {
     //##################################################################################################################
     // Enums
     //##################################################################################################################
-
-    // Macros
-    PLAN_ID("plan_id"),
-    EXPECTED_PROTEIN_GRAMS("expected_protein_grams"),
-    EXPECTED_CARBS_GRAMS("expected_carbs_grams"),
-    EXPECTED_FATS_GRAMS("expected_fats_grams"),
+    CURRENT_WEIGHT_KG("current_weight_kg"),
+    CURRENT_WEIGHT_IN_POUNDS("current_weight_in_pounds"),
+    BODY_FAT_PERCENTAGE("body_fat_percentage"),
+    PROTEIN_PER_POUND("protein_per_pound"),
+    CARBOHYDRATES_PER_POUND("carbohydrates_per_pound"),
+    FIBRE("fibre"),
+    FATS_PER_POUND("fats_per_pound"),
     SATURATED_FAT_LIMIT("saturated_fat_limit"),
-    EXPECTED_FIBRE_GRAMS("expected_fibre_grams"),
-    SALT_LIMIT_GRAMS("salt_limit_grams"),
-    WATER_CONTENT_TARGET("water_content_target"),
-    CALORIES_TARGET("calories_target"),
-    ADDITIONAL_CALORIES_TARGET("additional_calories_target");
+    SALT_LIMIT("salt_limit"),
+    WATER_TARGET("water_target"),
+    ADDITIONAL_CALORIES("additional_calories");
 
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    private static final String SOURCE_NAME = "draft_gui_plan_macro_target_calculations";
+    private static final String SOURCE_NAME = "draft_macros_per_pound_and_limits";
 
     private final String source_name;
-
-
     private final String key;
 
-    private static final Map<String, Draft_Gui_Plan_Macro_Targets_Calc_Columns> BY_KEY =
+    private static final Map<String, MacroTargetsColumns> BY_KEY =
             Arrays.stream(values())
                     .collect(Collectors.toMap(
-                            Draft_Gui_Plan_Macro_Targets_Calc_Columns :: key,
+                            MacroTargetsColumns :: key,
                             Function.identity()
                     ));
 
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    Draft_Gui_Plan_Macro_Targets_Calc_Columns(String key)
+    MacroTargetsColumns(String key)
     {
         this.key = key;
         this.source_name = SOURCE_NAME;
@@ -54,16 +51,15 @@ public enum Draft_Gui_Plan_Macro_Targets_Calc_Columns implements Table_Enum
     //##################################################################################################################
     // Methods
     //##################################################################################################################
+    @Override
+    public String source_Name()
+    {
+        return source_name;
+    }
 
     @Override
     public String key()
     {
         return key;
-    }
-
-    @Override
-    public String source_Name()
-    {
-        return source_name;
     }
 }

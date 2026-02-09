@@ -1,10 +1,10 @@
 package com.donty.gymapp.persistence;
 
-import com.donty.gymapp.domain.enums.db_enums.views.Draft_Gui_Ingredients_Calc_Columns;
-import com.donty.gymapp.domain.enums.db_enums.views.totalmeal.Draft_Gui_Total_Meal_Columns;
-import com.donty.gymapp.domain.enums.db_enums.views.totalmeal.Draft_Gui_Total_Meal_Macro_Columns;
+import com.donty.gymapp.domain.enums.db_enums.columnNames.views.Draft_Gui_Ingredients_Calc_Columns;
+import com.donty.gymapp.domain.enums.db_enums.columnNames.views.totalmeal.Draft_Gui_Total_Meal_Columns;
+import com.donty.gymapp.domain.enums.db_enums.columnNames.views.totalmeal.Draft_Gui_Total_Meal_Macro_Columns;
 import com.donty.gymapp.ui.components.meal.MealManager;
-import com.donty.gymapp.domain.enums.db_enums.views.totalmeal.Draft_Gui_Total_Meal_Other_Columns;
+import com.donty.gymapp.domain.enums.db_enums.columnNames.views.totalmeal.Draft_Gui_Total_Meal_Other_Columns;
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.*;
 import com.donty.gymapp.ui.tables.base.ColumnUiRules;
 import com.donty.gymapp.ui.tables.base.TableMeta;

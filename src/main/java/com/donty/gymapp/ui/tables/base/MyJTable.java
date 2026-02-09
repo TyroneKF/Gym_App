@@ -4,7 +4,7 @@ package com.donty.gymapp.ui.tables.base;
 // https://stackoverflow.com/questions/10347983/making-a-jbutton-clickable-inside-a-jtable
 //http://tips4java.wordpress.com/2009/07/12/table-button-column/
 
-import com.donty.gymapp.domain.enums.db_enums.base.Table_Enum;
+import com.donty.gymapp.domain.enums.db_enums.columnNames.base.Table_Enum;
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 
@@ -105,7 +105,7 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
 
         // Table Meta Data
         this.primary_Key_Column = table_meta.get_Primary_Key_Column();
-        this.table_name = table_meta.get_Table_Name();
+        this.table_name = table_meta.get_Descriptive_Table_Name();
         this.db_read_view_name = table_meta.get_Read_View_Name();
         this.db_write_table_name = table_meta.get_Write_Table_Name();
 
