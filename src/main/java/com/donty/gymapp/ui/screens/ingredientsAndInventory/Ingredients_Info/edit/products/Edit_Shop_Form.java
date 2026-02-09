@@ -1,6 +1,6 @@
 package com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.edit.products;
 
-import com.donty.gymapp.persistence.database.Batch.Batch_Upload_Statements;
+import com.donty.gymapp.persistence.database.batch.Batch_Upload_Statements;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.add.products.ShopForm_Object;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.add.products.Shop_Form;

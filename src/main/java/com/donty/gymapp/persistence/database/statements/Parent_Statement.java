@@ -1,28 +1,33 @@
-package com.donty.gymapp.persistence.database.Statements;
+package com.donty.gymapp.persistence.database.statements;
 
-public class Fetch_Statement_Full extends Fetch_Statement
+
+public class Parent_Statement
 {
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    private String error_msg;
+    protected final String query;
+    protected final Object[] params;
 
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Fetch_Statement_Full(String query, Object[] params, String error_msg)
+    public Parent_Statement(String query, Object[] params)
     {
-        super(query, params);
-        this.error_msg = error_msg;
+        this.query = query;
+        this.params = params;
     }
 
     //##################################################################################################################
     // Methods
     //##################################################################################################################
-    public String get_Error_MSG()
+    public String get_Query()
     {
-        return error_msg;
+        return query;
     }
 
-
+    public Object[] get_Params()
+    {
+        return params;
+    }
 }

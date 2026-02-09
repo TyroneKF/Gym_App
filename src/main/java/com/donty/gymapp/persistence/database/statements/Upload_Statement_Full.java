@@ -1,4 +1,4 @@
-package com.donty.gymapp.persistence.database.Statements;
+package com.donty.gymapp.persistence.database.statements;
 
 public class Upload_Statement_Full extends Upload_Statement
 {

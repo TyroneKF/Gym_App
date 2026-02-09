@@ -1,6 +1,6 @@
 package com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.base.ingredients;
 
-import com.donty.gymapp.domain.enums.base.Table_Enum;
+import com.donty.gymapp.domain.enums.table_enums.base.Table_Enum;
 
 import java.util.Arrays;
 import java.util.Map;

@@ -1,26 +1,28 @@
-package com.donty.gymapp.persistence.database.Statements;
+package com.donty.gymapp.persistence.database.statements;
 
-public class Upload_Statement extends Parent_Statement
+public class Fetch_Statement_Full extends Fetch_Statement
 {
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    private final boolean must_Affect_Rows ;
+    private String error_msg;
 
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Upload_Statement(String query, Object[] params, boolean must_Affect_Rows)
+    public Fetch_Statement_Full(String query, Object[] params, String error_msg)
     {
         super(query, params);
-        this.must_Affect_Rows = must_Affect_Rows;
+        this.error_msg = error_msg;
     }
 
     //##################################################################################################################
     // Methods
     //##################################################################################################################
-    public boolean get_Must_Affect_Rows()
+    public String get_Error_MSG()
     {
-        return must_Affect_Rows;
+        return error_msg;
     }
+
+
 }

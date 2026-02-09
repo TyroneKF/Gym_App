@@ -1,9 +1,9 @@
 package com.donty.gymapp.persistence;
 
 import com.donty.gymapp.domain.enums.table_enums.IngredientsTableColumns;
-import com.donty.gymapp.domain.enums.table_enums.totalMeal.Total_Meal_Macro_Columns;
+import com.donty.gymapp.domain.enums.table_enums.totalmeal.Total_Meal_Macro_Columns;
 import com.donty.gymapp.ui.components.meal.MealManager;
-import com.donty.gymapp.domain.enums.table_enums.totalMeal.TotalMealOtherColumns;
+import com.donty.gymapp.domain.enums.table_enums.totalmeal.TotalMealOtherColumns;
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.*;
 import org.jfree.data.general.DefaultPieDataset;
 

@@ -1,7 +1,7 @@
 package com.donty.gymapp.ui.tables.base;
 
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
-import com.donty.gymapp.persistence.database.Statements.Fetch_Statement_Full;
+import com.donty.gymapp.persistence.database.statements.Fetch_Statement_Full;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 
 import javax.swing.*;
@@ -9,7 +9,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.util.ArrayList;
 
-public abstract class MyJTable_Display_Data extends JDBC_JTable
+public abstract class MyJTable_Display_Data extends MyJTable
 {
     //##################################################################################################################
     // Variables

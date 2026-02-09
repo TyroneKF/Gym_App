@@ -3,9 +3,9 @@ package com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.add
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Measurement_ID_OBJ;
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
-import com.donty.gymapp.persistence.database.Batch.Batch_Upload_Statements;
-import com.donty.gymapp.persistence.database.Statements.Fetch_Statement_Full;
-import com.donty.gymapp.persistence.database.Statements.Upload_Statement;
+import com.donty.gymapp.persistence.database.batch.Batch_Upload_Statements;
+import com.donty.gymapp.persistence.database.statements.Fetch_Statement_Full;
+import com.donty.gymapp.persistence.database.statements.Upload_Statement;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.gui.controls.combobox.Field_JCombo_Storable_ID;
 import com.donty.gymapp.gui.controls.combobox.Field_JComboBox;

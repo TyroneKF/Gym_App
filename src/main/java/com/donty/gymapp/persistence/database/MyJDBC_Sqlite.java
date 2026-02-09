@@ -1,12 +1,12 @@
 package com.donty.gymapp.persistence.database;
 
-import com.donty.gymapp.persistence.database.Batch.Batch_Fetch_Statements;
-import com.donty.gymapp.persistence.database.Batch.Batch_Upload_And_Fetch_Statements;
-import com.donty.gymapp.persistence.database.Batch.Batch_Upload_Statements;
-import com.donty.gymapp.persistence.database.Statements.Fetch_Statement;
-import com.donty.gymapp.persistence.database.Statements.Fetch_Statement_Full;
-import com.donty.gymapp.persistence.database.Statements.Upload_Statement;
-import com.donty.gymapp.persistence.database.Statements.Upload_Statement_Full;
+import com.donty.gymapp.persistence.database.batch.Batch_Fetch_Statements;
+import com.donty.gymapp.persistence.database.batch.Batch_Upload_And_Fetch_Statements;
+import com.donty.gymapp.persistence.database.batch.Batch_Upload_Statements;
+import com.donty.gymapp.persistence.database.statements.Fetch_Statement;
+import com.donty.gymapp.persistence.database.statements.Fetch_Statement_Full;
+import com.donty.gymapp.persistence.database.statements.Upload_Statement;
+import com.donty.gymapp.persistence.database.statements.Upload_Statement_Full;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import java.math.RoundingMode;

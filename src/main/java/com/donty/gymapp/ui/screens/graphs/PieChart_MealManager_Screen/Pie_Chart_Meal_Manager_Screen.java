@@ -1,7 +1,7 @@
 package com.donty.gymapp.ui.screens.graphs.PieChart_MealManager_Screen;
 
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
-import com.donty.gymapp.domain.enums.table_enums.totalMeal.Total_Meal_Macro_Columns;
+import com.donty.gymapp.domain.enums.table_enums.totalmeal.Total_Meal_Macro_Columns;
 import com.donty.gymapp.ui.components.meal.MealManager;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.gui.base.Screen_JFrame;

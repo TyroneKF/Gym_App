@@ -1,4 +1,4 @@
-package com.donty.gymapp.ui.tables.Ingredients_Table;
+package com.donty.gymapp.ui.tables.ingredients;
 
 import com.donty.gymapp.domain.enums.table_enums.IngredientsTableColumns;
 import com.donty.gymapp.ui.meta.ids.MetaData_ID_Object.Sub_Meal_ID_OBJ;
@@ -6,17 +6,17 @@ import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Ingredient_Name_ID_O
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
 import com.donty.gymapp.persistence.database.Fetched_Results;
-import com.donty.gymapp.persistence.database.Batch.Batch_Upload_And_Fetch_Statements;
-import com.donty.gymapp.persistence.database.Batch.Batch_Upload_Statements;
-import com.donty.gymapp.persistence.database.Statements.Fetch_Statement;
-import com.donty.gymapp.persistence.database.Statements.Fetch_Statement_Full;
-import com.donty.gymapp.persistence.database.Statements.Upload_Statement;
-import com.donty.gymapp.persistence.database.Statements.Upload_Statement_Full;
+import com.donty.gymapp.persistence.database.batch.Batch_Upload_And_Fetch_Statements;
+import com.donty.gymapp.persistence.database.batch.Batch_Upload_Statements;
+import com.donty.gymapp.persistence.database.statements.Fetch_Statement;
+import com.donty.gymapp.persistence.database.statements.Fetch_Statement_Full;
+import com.donty.gymapp.persistence.database.statements.Upload_Statement;
+import com.donty.gymapp.persistence.database.statements.Upload_Statement_Full;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
-import com.donty.gymapp.ui.tables.Ingredients_Table.buttons.Button_Column;
-import com.donty.gymapp.ui.tables.Ingredients_Table.combobox.Ingredient_Name_JComboBox_Column;
-import com.donty.gymapp.ui.tables.Ingredients_Table.combobox.Ingredient_Type_JComboBox_Column;
-import com.donty.gymapp.ui.tables.base.JDBC_JTable;
+import com.donty.gymapp.ui.tables.ingredients.buttons.Button_Column;
+import com.donty.gymapp.ui.tables.ingredients.combobox.Ingredient_Name_JComboBox_Column;
+import com.donty.gymapp.ui.tables.ingredients.combobox.Ingredient_Type_JComboBox_Column;
+import com.donty.gymapp.ui.tables.base.MyJTable;
 import com.donty.gymapp.ui.components.meal.MealManager;
 import com.donty.gymapp.gui.controls.IconButton;
 import com.donty.gymapp.gui.panels.IconPanel;
@@ -33,7 +33,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class IngredientsTable extends JDBC_JTable
+public class IngredientsTable extends MyJTable
 {
     //#################################################################################################################
     // Variables

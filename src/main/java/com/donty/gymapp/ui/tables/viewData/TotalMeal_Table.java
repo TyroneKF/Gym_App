@@ -1,4 +1,4 @@
-package com.donty.gymapp.ui.tables.View_Data_Tables;
+package com.donty.gymapp.ui.tables.viewData;
 
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
 import com.donty.gymapp.persistence.Shared_Data_Registry;

@@ -1,8 +1,8 @@
 package com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.edit.products;
 
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Store_ID_OBJ;
-import com.donty.gymapp.persistence.database.Batch.Batch_Upload_Statements;
-import com.donty.gymapp.persistence.database.Statements.Upload_Statement;
+import com.donty.gymapp.persistence.database.batch.Batch_Upload_Statements;
+import com.donty.gymapp.persistence.database.statements.Upload_Statement;
 import com.donty.gymapp.gui.controls.combobox.Field_JCombo_Storable_ID;
 import com.donty.gymapp.gui.controls.textfields.base.Field_JTxtField_Parent;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.add.products.ShopForm_Object;

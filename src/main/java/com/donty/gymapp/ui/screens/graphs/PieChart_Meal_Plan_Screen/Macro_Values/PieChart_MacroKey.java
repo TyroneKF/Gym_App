@@ -1,6 +1,6 @@
 package com.donty.gymapp.ui.screens.graphs.PieChart_Meal_Plan_Screen.Macro_Values;
 
-import com.donty.gymapp.domain.enums.table_enums.totalMeal.Total_Meal_Macro_Columns;
+import com.donty.gymapp.domain.enums.table_enums.totalmeal.Total_Meal_Macro_Columns;
 import com.donty.gymapp.ui.components.meal.MealManager;
 import java.time.LocalTime;
 import java.util.Objects;

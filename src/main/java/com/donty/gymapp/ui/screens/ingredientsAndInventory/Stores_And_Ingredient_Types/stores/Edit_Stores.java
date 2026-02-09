@@ -3,7 +3,7 @@ package com.donty.gymapp.ui.screens.ingredientsAndInventory.Stores_And_Ingredien
 import com.donty.gymapp.ui.meta.ids.ID_Object;
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Storable_IDS_Parent;
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Store_ID_OBJ;
-import com.donty.gymapp.persistence.database.Batch.Batch_Upload_Statements;
+import com.donty.gymapp.persistence.database.batch.Batch_Upload_Statements;
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.Ingredients_Info.Ingredients_Info_Screen;

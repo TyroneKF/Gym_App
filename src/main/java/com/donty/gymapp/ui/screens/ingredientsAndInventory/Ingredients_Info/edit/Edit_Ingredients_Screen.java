@@ -4,9 +4,9 @@ import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Ingredient_Name_ID_O
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
 import com.donty.gymapp.persistence.database.Fetched_Results;
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
-import com.donty.gymapp.persistence.database.Batch.Batch_Upload_And_Fetch_Statements;
-import com.donty.gymapp.persistence.database.Batch.Batch_Upload_Statements;
-import com.donty.gymapp.persistence.database.Statements.Fetch_Statement_Full;
+import com.donty.gymapp.persistence.database.batch.Batch_Upload_And_Fetch_Statements;
+import com.donty.gymapp.persistence.database.batch.Batch_Upload_Statements;
+import com.donty.gymapp.persistence.database.statements.Fetch_Statement_Full;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.gui.controls.combobox.Field_JCombo_Storable_ID;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.Search_For_Food_Info;
@@ -39,7 +39,8 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
     public Edit_Ingredients_Screen
     (
             Ingredients_Info_Screen ingredients_info_screen,
-            MyJDBC_Sqlite db, Shared_Data_Registry shared_Data_Registry
+            MyJDBC_Sqlite db,
+            Shared_Data_Registry shared_Data_Registry
     )
     {
         super(ingredients_info_screen, db, shared_Data_Registry);  // Super Constructor

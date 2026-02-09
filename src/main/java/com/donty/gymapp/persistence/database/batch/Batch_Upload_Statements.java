@@ -1,38 +1,43 @@
-package com.donty.gymapp.persistence.database.Batch;
+package com.donty.gymapp.persistence.database.batch;
 
-import com.donty.gymapp.persistence.database.Statements.Fetch_Statement;
+import com.donty.gymapp.persistence.database.statements.Upload_Statement;
 
 import java.util.LinkedHashSet;
 
-public class Batch_Upload_And_Fetch_Statements extends Batch_Upload_Statements
+public class Batch_Upload_Statements
 {
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    protected final LinkedHashSet<Fetch_Statement> fetch_Queries_And_Params = new LinkedHashSet<>();
-
+    protected final LinkedHashSet<Upload_Statement> upload_Queries_And_Params = new LinkedHashSet<>();
+    private final String error_msg;
 
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Batch_Upload_And_Fetch_Statements(String error_msg)
+    public Batch_Upload_Statements(String error_msg)
     {
-        super(error_msg);
+        this.error_msg = error_msg;
     }
 
     //##################################################################################################################
     // Methods
     //##################################################################################################################
-    public void add_Fetches(Fetch_Statement fetch_statement)
+    public void add_Uploads(Upload_Statement upload_statement)
     {
-        fetch_Queries_And_Params.add(fetch_statement);
+        upload_Queries_And_Params.add(upload_statement);
     }
 
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
-    public LinkedHashSet<Fetch_Statement> get_Fetch_Queries_And_Params()
+    public String get_Error_MSG()
     {
-        return fetch_Queries_And_Params;
+        return error_msg;
+    }
+
+    public LinkedHashSet<Upload_Statement> get_Upload_Queries_And_Params()
+    {
+        return upload_Queries_And_Params;
     }
 }

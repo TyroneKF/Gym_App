@@ -13,7 +13,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-public abstract class JDBC_JTable extends JPanel
+public abstract class MyJTable extends JPanel
 {
     //##############################################
     // Objects
@@ -78,7 +78,7 @@ public abstract class JDBC_JTable extends JPanel
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public JDBC_JTable
+    public MyJTable
     (
             MyJDBC_Sqlite db,
             Shared_Data_Registry shared_data_registry,
