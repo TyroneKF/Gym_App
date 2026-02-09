@@ -2,6 +2,8 @@ package com.donty.gymapp.ui.tables.viewData;
 
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
+import com.donty.gymapp.ui.tables.base.ColumnUiRules;
+import com.donty.gymapp.ui.tables.base.TableMeta;
 import com.donty.gymapp.ui.tables.viewData.base.MyJTable_Display_Data;
 
 import java.awt.*;
@@ -18,9 +20,7 @@ public class MacrosLeft_Table extends MyJTable_Display_Data
             Shared_Data_Registry shared_data_registry,
             Container parentContainer,
             ArrayList<ArrayList<Object>> data,
-            ArrayList<String> columnNames,
-            ArrayList<String> colAvoidCentering,
-            ArrayList<String> columnsToHide
+            ColumnUiRules columnUiRules
     )
     {
         super(
@@ -28,17 +28,18 @@ public class MacrosLeft_Table extends MyJTable_Display_Data
                 shared_data_registry,
                 parentContainer,
                 data,
-                columnNames,
-                "plan_id",
-                "Macros Left Table",
-                null,
-                "draft_gui_plan_macros_left",
-                columnNames,
-                colAvoidCentering,
-                columnsToHide
+
+                new TableMeta(
+                        "plan_id",
+                        "Macros Left Table",
+                        null,
+                        "draft_gui_plan_macros_left"
+                ),
+
+                columnUiRules
         );
     }
-    
+
     //##################################################################################################################
     // Methods
     //##################################################################################################################

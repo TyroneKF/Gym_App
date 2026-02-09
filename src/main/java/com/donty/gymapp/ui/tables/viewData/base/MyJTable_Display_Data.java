@@ -3,8 +3,9 @@ package com.donty.gymapp.ui.tables.viewData.base;
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
 import com.donty.gymapp.persistence.database.statements.Fetch_Statement_Full;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
+import com.donty.gymapp.ui.tables.base.ColumnUiRules;
 import com.donty.gymapp.ui.tables.base.MyJTable;
-
+import com.donty.gymapp.ui.tables.base.TableMeta;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
@@ -25,15 +26,11 @@ public abstract class MyJTable_Display_Data extends MyJTable
             MyJDBC_Sqlite db,
             Shared_Data_Registry shared_data_registry,
             Container parent_Container,
-            ArrayList<ArrayList<Object>> data,
-            ArrayList<String> column_Names,
-            String db_row_id_column_name,
-            String table_Name,
-            String db_write_table_name,
-            String db_read_view_name,
-            ArrayList<String> un_Editable_Columns,
-            ArrayList<String> col_Avoid_Centering,
-            ArrayList<String> columns_To_Hide
+
+            ArrayList<ArrayList<Object>> saved_Data,
+
+            TableMeta tableMeta,
+            ColumnUiRules columnUiRules
     )
     {
         // #################################################
@@ -44,15 +41,9 @@ public abstract class MyJTable_Display_Data extends MyJTable
                 shared_data_registry,
                 parent_Container,
                 false,
-                db_row_id_column_name,
-                table_Name,
-                db_write_table_name,
-                db_read_view_name,
-                data,
-                column_Names,
-                un_Editable_Columns,
-                col_Avoid_Centering,
-                columns_To_Hide
+                saved_Data,
+                tableMeta,
+                columnUiRules
         );
         
         // #################################################
@@ -159,7 +150,7 @@ public abstract class MyJTable_Display_Data extends MyJTable
         //   Updating MacrosLeft_Table
         //##########################################################################
         String error_msg = String.format("Error, Updating Table '%s'!", table_name);
-        String query = String.format("SELECT * FROM %s WHERE %s = ?;", db_read_view_name, db_row_id_column_name);
+        String query = String.format("SELECT * FROM %s WHERE %s = ?;", db_read_view_name, primary_Key_Column);
         Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, get_Params(), error_msg);
 
         try

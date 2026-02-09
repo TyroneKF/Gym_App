@@ -15,6 +15,8 @@ import com.donty.gymapp.gui.controls.IconButton;
 import com.donty.gymapp.gui.panels.IconPanel;
 import com.donty.gymapp.ui.screens.mealPlan.macroIndicator.MacroIndicators;
 import com.donty.gymapp.ui.screens.mealPlan.macroIndicator.ProgressWheelKey;
+import com.donty.gymapp.ui.tables.base.ColumnUiRules;
+import com.donty.gymapp.ui.tables.base.TableMeta;
 import com.donty.gymapp.ui.tables.ingredients.IngredientsTable;
 import com.donty.gymapp.domain.enums.table_enums.IngredientsTableColumns;
 import com.donty.gymapp.ui.tables.viewData.MacrosLeft_Table;
@@ -620,41 +622,94 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
     private void setup_Table_Configuration_Data()
     {
-        //#######################################
-        // Ingredients Table Columns
-        //#######################################
+        //####################################################
+        // Ingredients Table
+        //####################################################
+        /*
 
-        // Ingredients Table Columns to Avoid Centering
-        ArrayList<String> ingredients_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList(
-                "ingredient_type", "ingredient_name"));
+        */
 
-        shared_data_registry.set_Ingredients_Table_Avoid_Centering_Cols(ingredients_Table_Col_Avoid_Centering);
+        //#####################
+        // Table Meta Data
+        //#####################
+        // Ingredients Table Column Meta
+        TableMeta ingredients_table_meta_Data = new TableMeta(
+                "draft_ingredients_index",
+                "Ingredients Table",
+                "draft_ingredients_in_sections_of_meal",
+                "draft_gui_ingredients_in_sections_of_meal_calculation"
+        );
 
+        shared_data_registry.set_Ingredients_Table_Meta(ingredients_table_meta_Data);
 
+        //#####################
+        // Column UI Rules
+        //#####################
         // Ingredients Table Un-editable Columns
         ArrayList<String> ingredients_Table_Un_Editable_Cells = new ArrayList<>(Arrays.asList(
                 "draft_ingredients_index", "protein", "gi", "carbohydrates", "sugars_of_carbs",
                 "fibre", "fat", "saturated_fat", "salt", "water_content", "calories"
         ));
 
-        shared_data_registry.set_Ingredients_Table_Un_Editable_Cols(ingredients_Table_Un_Editable_Cells);
+        // Ingredients Table Columns to Avoid Centering |
+        ArrayList<String> ingredients_Table_Col_Avoid_Centering = new ArrayList<>(Arrays.asList(
+                "ingredient_type", "ingredient_name"
+        ));
 
         // Ingredients Table Columns To Hide
         ArrayList<String> ingredients_In_Meal_Table_Col_To_Hide = new ArrayList<>(Arrays.asList(
                 "draft_ingredients_index", "water_content"
         ));
 
-        shared_data_registry.set_Ingredients_Table_Cols_To_Hide(ingredients_In_Meal_Table_Col_To_Hide);
 
-        //#######################################
-        // Total_Meal_View Table
-        //#######################################
+        // Set Column UI Rules
+        ColumnUiRules ingredients_table_ui_column_rules = new ColumnUiRules(
+                shared_data_registry.get_Ingredients_Table_Column_Names(),
+                ingredients_Table_Un_Editable_Cells,
+                ingredients_Table_Col_Avoid_Centering,
+                ingredients_In_Meal_Table_Col_To_Hide
+        );
+
+        shared_data_registry.set_Ingredients_Table_Column_Ui_Rules(ingredients_table_ui_column_rules);
+
+        //#################################################
+        // Total_Meal_Table
+        //#################################################
+        /*
+
+
+         */
+
+        //#########################
+        // Meta Data
+        //#########################
+        TableMeta total_meal_meta_data = new TableMeta(
+                "draft_meal_in_plan_id",
+                "Total Meal Table",
+                "draft_meals_in_plan",
+                "draft_gui_total_meal_view");
+
+        shared_data_registry.set_Total_Meal_Table_Meta(total_meal_meta_data);
+
+        //#########################
+        // Column UI Rules
+        //#########################
+
         // Total Meal Table Columns To Hide
         ArrayList<String> total_Meal_Table_Col_To_Hide = new ArrayList<>(Arrays.asList(
                 "draft_meal_in_plan_id", "meal_name"
         ));
 
-        shared_data_registry.set_Total_Meal_Cols_To_Hide(total_Meal_Table_Col_To_Hide);
+        // Total Meal Column UI Rules
+        shared_data_registry.set_Total_Meal_Table_Column_Ui_Rules(
+
+                new ColumnUiRules(
+                        shared_data_registry.get_Total_Meal_Table_Column_Names(),
+                        shared_data_registry.get_Total_Meal_Table_Column_Names(),
+                        null,
+                        total_Meal_Table_Col_To_Hide
+                )
+        );
     }
 
     //#################################################
@@ -1997,14 +2052,20 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //############################
         // MacroTargets Table
         //############################
+        ColumnUiRules macros_targets_column_ui_rules =
+                new ColumnUiRules(
+                        macro_targets_column_names,
+                        macro_targets_column_names,
+                        null,
+                        macros_targets_table_col_to_hide
+                );
+
         macros_targets_table = new MacrosTargets_Table(
                 db,
                 shared_data_registry,
                 macrosInfoJPanel,
                 macros_targets_plan_data_AL,
-                macro_targets_column_names,
-                null,
-                macros_targets_table_col_to_hide
+                macros_targets_column_ui_rules
         );
 
         addToContainer(macrosInfoJPanel, macros_targets_table, 0, macrosInfoJP_YPos += 1, + 1, 1, 0.25, 0.25, "both", 40, 0, null);
@@ -2012,14 +2073,19 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //############################
         // plan_Macros_Left Table
         //############################
+        ColumnUiRules macros_left_column_ui_rules = new ColumnUiRules(
+                macros_left_column_names,
+                macros_left_column_names,
+                null,
+                macros_left_table_col_to_hide
+        );
+
         macros_left_table = new MacrosLeft_Table(
                 db,
                 shared_data_registry,
                 macrosInfoJPanel,
                 macros_left_plan_data_AL,
-                macros_left_column_names,
-                null,
-                macros_left_table_col_to_hide
+                macros_left_column_ui_rules
         );
 
         addToContainer(macrosInfoJPanel, macros_left_table, 0, macrosInfoJP_YPos += 1, 1, 1, 0.25, 0.25, "both", 30, 0, null);

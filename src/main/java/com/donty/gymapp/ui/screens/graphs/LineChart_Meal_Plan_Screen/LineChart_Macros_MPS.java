@@ -78,7 +78,7 @@ class LineChart_Macros_MPS extends Screen_JPanel
         
         // Collections
         this.macros_To_Check = macros_To_Check;
-        this.mealManagers_TotalMeal_MacroValues = shared_Data_Registry.get_MealManagers_MacroValues();
+        this.mealManagers_TotalMeal_MacroValues = shared_Data_Registry.get_Meal_Managers_Macro_Values();
         
         //############################################
         // Creating Macros / Dataset

@@ -2,6 +2,8 @@ package com.donty.gymapp.ui.tables.viewData;
 
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
+import com.donty.gymapp.ui.tables.base.ColumnUiRules;
+import com.donty.gymapp.ui.tables.base.TableMeta;
 import com.donty.gymapp.ui.tables.viewData.base.MyJTable_Display_Data;
 
 import java.awt.*;
@@ -17,28 +19,27 @@ public class MacrosTargets_Table extends MyJTable_Display_Data
             MyJDBC_Sqlite db,
             Shared_Data_Registry shared_data_registry,
             Container parentContainer,
-            ArrayList<ArrayList<Object>> data,
-            ArrayList<String> columnNames,
-            ArrayList<String> colAvoidCentering,
-            ArrayList<String> columnsToHide
+            ArrayList<ArrayList<Object>> saved_Data,
+            ColumnUiRules columnUiRules
     )
     {
         super(
                 db,
                 shared_data_registry,
                 parentContainer,
-                data,
-                columnNames,
-                "plan_id",
-                "Macro Targets Table",
-                "macros_per_pound_and_limits",
-                "draft_gui_plan_macro_target_calculations",
-                columnNames,
-                colAvoidCentering,
-                columnsToHide
+                saved_Data,
+
+                new TableMeta(
+                        "plan_id",
+                        "Macro Targets Table",
+                        "macros_per_pound_and_limits",
+                        "draft_gui_plan_macro_target_calculations"
+                ),
+
+                columnUiRules
         );
     }
-    
+
     //##################################################################################################################
     // Methods
     //##################################################################################################################

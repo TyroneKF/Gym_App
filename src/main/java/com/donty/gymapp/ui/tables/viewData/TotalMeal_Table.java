@@ -12,8 +12,8 @@ public class TotalMeal_Table extends MyJTable_Display_Data
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    private MealManager mealManager;
-    
+    private final MealManager mealManager;
+
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
@@ -32,23 +32,19 @@ public class TotalMeal_Table extends MyJTable_Display_Data
                 db,
                 shared_data_registry,
                 mealManager.get_Collapsible_JP_Obj().get_South_JPanel(),
+
                 new ArrayList<>(Collections.singletonList(data)),
-                shared_data_registry.get_Total_Meal_Table_Column_Names(),
-                "draft_meal_in_plan_id",
-                "Total Meal Table",
-                "draft_meals_in_plan",
-                "draft_gui_total_meal_view",
-                shared_data_registry.get_Total_Meal_Table_Column_Names(),
-                null,
-                shared_data_registry.get_Total_Meal_Table_Cols_To_Hide()
+
+                shared_data_registry.get_Total_Meal_Table_Meta(),
+                shared_data_registry.get_Total_Meal_Column_UI_Rules()
         );
-        
+
         //###########################################
         // Variables
         //###########################################
         this.mealManager = mealManager;
     }
-    
+
     //##################################################################################################################
     // Methods
     //##################################################################################################################
@@ -56,16 +52,16 @@ public class TotalMeal_Table extends MyJTable_Display_Data
     {
         super.update_Table_Cell_Value(data, row, col);
     }
-    
+
     public ArrayList<Object> update_Table_And_Get_Data() throws Exception
     {
         ArrayList<Object> data = get_Table_Update_Data();
-        
+
         super.update_Table_Row(data, update_Row);
-        
+
         return data;
     }
-    
+
     @Override
     protected Object[] get_Params()
     {

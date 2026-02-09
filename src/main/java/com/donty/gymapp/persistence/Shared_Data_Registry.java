@@ -5,6 +5,8 @@ import com.donty.gymapp.domain.enums.table_enums.totalmeal.Total_Meal_Macro_Colu
 import com.donty.gymapp.ui.components.meal.MealManager;
 import com.donty.gymapp.domain.enums.table_enums.totalmeal.TotalMealOtherColumns;
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.*;
+import com.donty.gymapp.ui.tables.base.ColumnUiRules;
+import com.donty.gymapp.ui.tables.base.TableMeta;
 import org.jfree.data.general.DefaultPieDataset;
 
 import java.math.BigDecimal;
@@ -16,53 +18,45 @@ public class Shared_Data_Registry
     // Variables
     //##################################################################################################################
     private String plan_Name;
-    
-    
-    //###############################################
-    //  Objects
-    //###############################################
-    Ingredient_Name_ID_OBJ na_ingredient_id_obj;
-    
+
     //###############################################
     // Integers
     //###############################################
     private Integer selected_plan_id;
     private Integer selected_plan_version_id;
     private Integer user_id;
+
+    //#################################
+    // Ingredients Table
+    //#################################
     private int na_ingredient_id;
     private int na_pdid;
-    
-    //######################################################################
-    // Table Configuration Collections
-    //######################################################################
-    /*
-     
-     */
-    
-    //#################################
-    // Total_Meal Configuration Lists
-    //#################################
-    private ArrayList<String> total_meal_table_column_names;
-    private ArrayList<String> total_meal_table_cols_to_hide;
-    
-    //#################################
-    // Ingredients Configuration Lists
-    //#################################
-    private ArrayList<String> ingredients_table_column_names;
+
+    private Ingredient_Name_ID_OBJ na_ingredient_id_obj;
+
+    private ColumnUiRules ingredients_column_ui_rules;
+    private TableMeta ingredients_table_meta;
+
     private HashMap<IngredientsTableColumns, Integer> ingredients_table_cols_positions;
-    
-    private ArrayList<String> ingredients_table_cols_avoid_centering;
-    private ArrayList<String> ingredients_table_un_editable_cells;
-    private ArrayList<String> ingredients_table_cols_to_hide;
-    
+    private ArrayList<String> ingredients_table_column_names;
+
+    //#################################
+    // Total_Meal Table
+    //#################################
+    private ColumnUiRules total_meal_column_ui_rules;
+    private TableMeta total_meal_table_meta;
+
+    private ArrayList<String> total_meal_table_column_names;
+
+    private HashMap<TotalMealOtherColumns, Integer> total_meal_other_cols_positions;
+
     //######################################################################
     // Collections
     //######################################################################
     // Meta Data
     private LinkedHashMap<Total_Meal_Macro_Columns, Integer> total_meal_macro_pos;
     private LinkedHashMap<Total_Meal_Macro_Columns, String> total_meal_macro_symbol;
-    private HashMap<TotalMealOtherColumns, Integer> total_meal_other_cols_positions;
-    
+
     //###########################################
     //
     //###########################################
@@ -675,45 +669,43 @@ public class Shared_Data_Registry
     }
     
     //##############################################
-    // Collections
-    //###############################################
     // Ingredients Table
+    //###############################################
+    // Meta
+    public void set_Ingredients_Table_Meta(TableMeta ingredients_table_meta)
+    {
+        this.ingredients_table_meta = ingredients_table_meta;
+    }
+
+    // Column UI
+    public void set_Ingredients_Table_Column_Ui_Rules(ColumnUiRules ingredients_ColumnUiRules)
+    {
+        this.ingredients_column_ui_rules = ingredients_ColumnUiRules;
+    }
+
     public void set_Ingredients_Table_Cols_Positions(HashMap<IngredientsTableColumns, Integer> ingredients_table_cols_positions)
     {
         this.ingredients_table_cols_positions = ingredients_table_cols_positions;
     }
-    
-    public void set_Ingredients_Column_Name(ArrayList<String> ingredients_column_names)
+
+    //###############################################
+    // Total Meal Table
+    //###############################################
+    // Meta
+    public void set_Total_Meal_Table_Meta(TableMeta total_meal_table_meta)
     {
-        this.ingredients_table_column_names = ingredients_column_names;
+        this.total_meal_table_meta = total_meal_table_meta;
     }
-    
-    public void set_Ingredients_Table_Avoid_Centering_Cols(ArrayList<String> ingredients_table_cols_avoid_centering)
+
+    // Column UI
+    public void set_Total_Meal_Table_Column_Ui_Rules(ColumnUiRules total_meal_column_ui_rules)
     {
-        this.ingredients_table_cols_avoid_centering = ingredients_table_cols_avoid_centering;
+        this.total_meal_column_ui_rules = total_meal_column_ui_rules;
     }
-    
-    public void set_Ingredients_Table_Un_Editable_Cols(ArrayList<String> ingredients_table_un_editable_cells)
-    {
-        this.ingredients_table_un_editable_cells = ingredients_table_un_editable_cells;
-    }
-    
-    public void set_Ingredients_Table_Cols_To_Hide(ArrayList<String> ingredients_table_cols_to_hide)
-    {
-        this.ingredients_table_cols_to_hide = ingredients_table_cols_to_hide;
-    }
-    
-    //#############################
-    // Total Meal
-    //#############################
+
     public void set_Total_Meal_Column_Names(ArrayList<String> total_meal_column_names)
     {
         this.total_meal_table_column_names = total_meal_column_names;
-    }
-    
-    public void set_Total_Meal_Cols_To_Hide(ArrayList<String> total_meal_table_cols_to_hide)
-    {
-        this.total_meal_table_cols_to_hide = total_meal_table_cols_to_hide;
     }
     
     public void set_Total_Meal_Macros_Pos(LinkedHashMap<Total_Meal_Macro_Columns, Integer> total_meal_macro_pos)
@@ -778,6 +770,32 @@ public class Shared_Data_Registry
         return na_ingredient_id_obj;
     }
 
+    //###########################
+    // Ingredients Table
+    //###########################
+    public ColumnUiRules get_Ingredients_Column_UI_Rules()
+    {
+        return ingredients_column_ui_rules;
+    }
+
+    public TableMeta get_Ingredients_Table_Meta()
+    {
+        return ingredients_table_meta;
+    }
+
+    //###########################
+    // Total Meal  Table
+    //###########################
+    public TableMeta get_Total_Meal_Table_Meta()
+    {
+        return total_meal_table_meta;
+    }
+
+    public ColumnUiRules get_Total_Meal_Column_UI_Rules()
+    {
+        return total_meal_column_ui_rules;
+    }
+
     //###########################################################
     // Integers
     //###########################################################
@@ -835,27 +853,17 @@ public class Shared_Data_Registry
     {
         return ingredients_table_cols_positions;
     }
-    
+
+    public void set_Ingredients_Column_Name(ArrayList<String> ingredients_column_names)
+    {
+        this.ingredients_table_column_names = ingredients_column_names;
+    }
+
     public ArrayList<String> get_Ingredients_Table_Column_Names()
     {
         return ingredients_table_column_names;
     }
-    
-    public ArrayList<String> get_Ingredients_Table_Avoid_Centering_Cols()
-    {
-        return ingredients_table_cols_avoid_centering;
-    }
-    
-    public ArrayList<String> get_Ingredients_Table_Un_Editable_Cols()
-    {
-        return ingredients_table_un_editable_cells;
-    }
-    
-    public ArrayList<String> get_Ingredients_Table_Cols_To_Hide()
-    {
-        return ingredients_table_cols_to_hide;
-    }
-    
+
     //############################
     // Total_Meal Table
     //#############################
@@ -863,18 +871,13 @@ public class Shared_Data_Registry
     {
         return total_meal_table_column_names;
     }
-    
-    public ArrayList<String> get_Total_Meal_Table_Cols_To_Hide()
-    {
-        return total_meal_table_cols_to_hide;
-    }
-    
+
     public LinkedHashMap<Total_Meal_Macro_Columns, String> get_Total_Meal_Macro_Symbols()
     {
         return total_meal_macro_symbol;
     }
     
-    public LinkedHashMap<Total_Meal_Macro_Columns, HashMap<MealManager, BigDecimal>> get_MealManagers_MacroValues()
+    public LinkedHashMap<Total_Meal_Macro_Columns, HashMap<MealManager, BigDecimal>> get_Meal_Managers_Macro_Values()
     {
         return totals_by_macro;
     }

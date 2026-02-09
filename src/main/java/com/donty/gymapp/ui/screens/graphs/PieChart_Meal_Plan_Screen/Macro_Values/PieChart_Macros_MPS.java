@@ -116,7 +116,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
         // #####################################
         // Collections
         // ######################################
-        totals_by_macro = shared_Data_Registry.get_MealManagers_MacroValues();
+        totals_by_macro = shared_Data_Registry.get_Meal_Managers_Macro_Values();
         total_meal_macro_symbol = shared_Data_Registry.get_Total_Meal_Macro_Symbols();
         
         // #####################################

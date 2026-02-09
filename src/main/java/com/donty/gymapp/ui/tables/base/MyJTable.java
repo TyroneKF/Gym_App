@@ -34,7 +34,7 @@ public abstract class MyJTable extends JPanel
     //#######################
     // Strings
     //#######################
-    protected String db_row_id_column_name;
+    protected String primary_Key_Column;
     protected String table_name;
     protected String db_read_view_name;
     protected String db_write_table_name;
@@ -50,9 +50,10 @@ public abstract class MyJTable extends JPanel
     //########################
     protected ArrayList<String> un_Editable_Column_Names;
     protected ArrayList<String> col_To_Avoid_Centering;
-    protected ArrayList<Integer> un_Editable_Column_Positions = new ArrayList<>();
     protected ArrayList<String> columns_To_Hide;
-    
+
+    protected ArrayList<Integer> un_Editable_Column_Positions = new ArrayList<>();
+
     protected LinkedHashMap<String, Integer[]> column_Names_And_Positions = new LinkedHashMap<>(); // Hello Can be removed
     /*
         Array Pos 1 = Original Position in JTable Data
@@ -84,15 +85,11 @@ public abstract class MyJTable extends JPanel
             Shared_Data_Registry shared_data_registry,
             Container parent_Container,
             boolean add_JTable_Action,
-            String db_row_id_column_name,
-            String table_name,
-            String db_write_table_name,
-            String db_read_view_name,
+
             ArrayList<ArrayList<Object>> saved_Data,
-            ArrayList<String> column_Names,
-            ArrayList<String> un_Editable_Column_Names,
-            ArrayList<String> col_To_Avoid_Centering,
-            ArrayList<String> columns_To_Hide
+
+            TableMeta tableMeta,
+            ColumnUiRules columnUiRules
     )
     {
         setLayout(new GridBagLayout());
@@ -100,25 +97,29 @@ public abstract class MyJTable extends JPanel
         //##############################################################
         // Variables
         //##############################################################
+        // Objects
         this.db = db;
         this.shared_data_registry = shared_data_registry;
-        
+
+        // Variables
+        this.class_Name = this.getClass().getSimpleName();
         this.parent_Container = parent_Container;
         this.add_JTable_Action = add_JTable_Action;
-        
-        this.db_row_id_column_name = db_row_id_column_name;
-        this.table_name = table_name;
-        this.db_read_view_name = db_read_view_name;
-        this.db_write_table_name = db_write_table_name;
-        
-        this.class_Name = this.getClass().getSimpleName();
-        
+
+        // Table Data
         this.saved_Data = saved_Data != null ? saved_Data : new ArrayList<>();
-        
-        this.col_To_Avoid_Centering = col_To_Avoid_Centering;
-        this.columns_To_Hide = columns_To_Hide;
-        this.column_Names = column_Names;
-        this.un_Editable_Column_Names = un_Editable_Column_Names;
+
+        // Table Meta Data
+        this.primary_Key_Column = tableMeta.get_Primary_Key_Column();
+        this.table_name = tableMeta.get_Table_Name();
+        this.db_read_view_name = tableMeta.get_Read_View_Name();
+        this.db_write_table_name = tableMeta.get_Write_Table_Name();
+
+        // Table UI Column Rules
+        this.column_Names = columnUiRules.get_Column_Names();
+        this.col_To_Avoid_Centering = columnUiRules.get_Col_To_Avoid_Centering();
+        this.columns_To_Hide = columnUiRules.get_Columns_To_Hide();
+        this.un_Editable_Column_Names = columnUiRules.get_Un_Editable_Column_Names();
         
         //##############################################################
         // Setup

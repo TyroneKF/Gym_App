@@ -122,15 +122,11 @@ public class IngredientsTable extends MyJTable
                 shared_data_registry,
                 meal_manager.get_Collapsible_Center_JPanel(),
                 true,
-                "draft_ingredients_index",
-                "Ingredients Table",
-                "draft_ingredients_in_sections_of_meal",
-                "draft_gui_ingredients_in_sections_of_meal_calculation",
+
                 sub_meal_id_obj.get_Sub_Meal_Ingredients(),
-                shared_data_registry.get_Ingredients_Table_Column_Names(),
-                shared_data_registry.get_Ingredients_Table_Un_Editable_Cols(),
-                shared_data_registry.get_Ingredients_Table_Avoid_Centering_Cols(),
-                shared_data_registry.get_Ingredients_Table_Cols_To_Hide()
+
+                shared_data_registry.get_Ingredients_Table_Meta(),
+                shared_data_registry.get_Ingredients_Column_UI_Rules()
         );
 
         //##############################################################
@@ -456,7 +452,7 @@ public class IngredientsTable extends MyJTable
         //#################################################
         // Delete Ingredient From Temp Meal
         //#################################################
-        String query = String.format("DELETE FROM %s WHERE %s = ? ;", db_write_table_name, db_row_id_column_name);
+        String query = String.format("DELETE FROM %s WHERE %s = ? ;", db_write_table_name, primary_Key_Column);
         String error_msg = String.format("Error, unable to delete from '%s' !", table_name);
         Object[] params = new Object[]{ ingredient_Index };
 
@@ -589,7 +585,7 @@ public class IngredientsTable extends MyJTable
                 UPDATE %s
                 SET ingredient_id = ?,
                 pdid = ?
-                WHERE %s = ?;""", db_write_table_name, db_row_id_column_name);
+                WHERE %s = ?;""", db_write_table_name, primary_Key_Column);
 
         Object[] params_Upload = new Object[]{ selected_Ingredient_Name_ID, null, ingredient_Index };
 
@@ -616,7 +612,7 @@ public class IngredientsTable extends MyJTable
         String upload_Query = String.format("""
                 UPDATE  %s
                 SET quantity = ?
-                WHERE %s = ?;""", db_write_table_name, db_row_id_column_name);
+                WHERE %s = ?;""", db_write_table_name, primary_Key_Column);
 
         Object[] params = new Object[]{ quantity, ingredient_Index };
 
@@ -633,7 +629,7 @@ public class IngredientsTable extends MyJTable
         //###################################
         // Fetch
         //###################################
-        String fetch_Query = String.format("SELECT * FROM %s WHERE %s = ?;", db_read_view_name, db_row_id_column_name);
+        String fetch_Query = String.format("SELECT * FROM %s WHERE %s = ?;", db_read_view_name, primary_Key_Column);
         batch_statements.add_Fetches(new Fetch_Statement(fetch_Query, new Object[]{ ingredient_Index }));
 
         //##############################################
@@ -716,7 +712,7 @@ public class IngredientsTable extends MyJTable
         String fetch_Q1 = String.format("""
                 SELECT *
                 FROM %s
-                WHERE %s = (SELECT last_insert_rowid());""", db_read_view_name, db_row_id_column_name);
+                WHERE %s = (SELECT last_insert_rowid());""", db_read_view_name, primary_Key_Column);
 
         batch_statements.add_Fetches(new Fetch_Statement(fetch_Q1, null));
 
