@@ -21,7 +21,7 @@ public class Ingredient_Binding<T extends Storable_IDS_Parent> extends Field_Bin
     (
             String gui_Label,
             Field_JCombo_Storable_ID<T> component,
-            Ingredient_Enum ingredient_Field,
+            Ingredient_Info_Columns ingredient_Field,
             int query_Field_Pos
     )
     {
@@ -32,7 +32,7 @@ public class Ingredient_Binding<T extends Storable_IDS_Parent> extends Field_Bin
     (
             String gui_Label,
             Field_JCombo_Storable_ID<T> component,
-            Ingredient_Enum ingredient_Field,
+            Ingredient_Info_Columns ingredient_Field,
             int query_Field_Pos,
             String api_Field
     )
@@ -48,7 +48,7 @@ public class Ingredient_Binding<T extends Storable_IDS_Parent> extends Field_Bin
     (
             String gui_Label,
             Field_JTxtField_Parent<?> component,
-            Ingredient_Enum ingredient_Field,
+            Ingredient_Info_Columns ingredient_Field,
             int query_Field_Pos
     )
     {
@@ -59,7 +59,7 @@ public class Ingredient_Binding<T extends Storable_IDS_Parent> extends Field_Bin
     (
             String gui_Label,
             Field_JTxtField_Parent<?> component,
-            Ingredient_Enum ingredient_Field,
+            Ingredient_Info_Columns ingredient_Field,
             int query_Field_Pos,
             String api_Field
     )

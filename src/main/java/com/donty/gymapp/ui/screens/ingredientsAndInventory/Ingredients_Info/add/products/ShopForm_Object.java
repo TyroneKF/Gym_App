@@ -55,7 +55,7 @@ public class ShopForm_Object extends JPanel
         this.stores = stores;  // Collections
 
         product_Name_JT = new Field_JTxtField_String("Product Nme", string_Char_Limit);
-        stores_JC = new Field_JCombo_Storable_ID<>("Store Name", Store_ID_OBJ.class,true, stores);  // Component
+        stores_JC = new Field_JCombo_Storable_ID<>("Store Name", Store_ID_OBJ.class, stores);  // Component
         product_Price_JT = new Field_JTxtField_BD("Price", decimal_Char_Limit);
         quantity_JT = new Field_JTxtField_BD("Quantity", decimal_Char_Limit, false);
 

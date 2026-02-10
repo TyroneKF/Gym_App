@@ -17,13 +17,13 @@ import com.donty.gymapp.gui.controls.textfields.Field_JTxtField_String;
 import com.donty.gymapp.gui.controls.textfields.base.Field_JTxtField_Parent;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.base.screen.Parent_Forms_OBJ;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.base.ingredients.Ingredient_Binding;
-import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.base.ingredients.Ingredient_Enum;
-
+import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.base.ingredients.Ingredient_Info_Columns;
 import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
+
 
 public class Ingredients_Form extends Parent_Forms_OBJ
 {
@@ -124,7 +124,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     new Ingredient_Binding<>(
                             "Ingredient Measurement In",
                             new Field_JCombo_Storable_ID<>("Ingredient Measurement In", Measurement_ID_OBJ.class, false, ingredient_Measurement_Obj_AL),
-                            Ingredient_Enum.MEASUREMENT_ID,
+                            Ingredient_Info_Columns.MEASUREMENT_ID,
                             pos += 1,
                             "serving_unit"
                     )
@@ -135,7 +135,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     new Ingredient_Binding<>(
                             "Ingredient Name",
                             new Field_JTxtField_String("Ingredient Name", text_Char_Limit),
-                            Ingredient_Enum.INGREDIENT_NAME,
+                            Ingredient_Info_Columns.INGREDIENT_NAME,
                             pos += 1,
                             "food_name"
                     )
@@ -145,8 +145,8 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     "type",
                     new Ingredient_Binding<>(
                             "Ingredient Type",
-                            new Field_JCombo_Storable_ID<>("Ingredient Type", Ingredient_Type_ID_OBJ.class, true, ingredient_Types_Obj_AL),
-                            Ingredient_Enum.INGREDIENT_TYPE_ID,
+                            new Field_JCombo_Storable_ID<>("Ingredient Type", Ingredient_Type_ID_OBJ.class, ingredient_Types_Obj_AL),
+                            Ingredient_Info_Columns.INGREDIENT_TYPE_ID,
                             pos += 1
                     )
             );
@@ -156,7 +156,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     new Ingredient_Binding<>(
                             "Based On Quantity",
                             new Field_JTxtField_BD("Based On Quantity", digit_Char_Limit, false),
-                            Ingredient_Enum.BASED_ON_QUANTITY,
+                            Ingredient_Info_Columns.BASED_ON_QUANTITY,
                             pos += 1,
                             "serving_weight_grams"
                     )
@@ -167,7 +167,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     new Ingredient_Binding<>(
                             "Glycemic Index",
                             new Field_JTxtField_INT("Glycemic Index", digit_Char_Limit, true, 0, 100),
-                            Ingredient_Enum.GLYCEMIC_INDEX,
+                            Ingredient_Info_Columns.GLYCEMIC_INDEX,
                             pos += 1
                     )
             );
@@ -177,7 +177,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     new Ingredient_Binding<>(
                             "Protein",
                             new Field_JTxtField_BD("Protein", digit_Char_Limit),
-                            Ingredient_Enum.PROTEIN,
+                            Ingredient_Info_Columns.PROTEIN,
                             pos += 1,
                             "nf_protein"
                     )
@@ -188,7 +188,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     new Ingredient_Binding<>(
                             "Carbohydrates",
                             new Field_JTxtField_BD("Carbohydrates", digit_Char_Limit),
-                            Ingredient_Enum.CARBOHYDRATES,
+                            Ingredient_Info_Columns.CARBOHYDRATES,
                             pos += 1,
                             "nf_total_carbohydrate"
                     )
@@ -199,7 +199,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     new Ingredient_Binding<>(
                             "Sugars Of Carbs",
                             new Field_JTxtField_BD("Sugars Of Carbs", digit_Char_Limit),
-                            Ingredient_Enum.SUGARS_OF_CARBS,
+                            Ingredient_Info_Columns.SUGARS_OF_CARBS,
                             pos += 1,
                             "nf_sugars"
                     )
@@ -210,7 +210,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     new Ingredient_Binding<>(
                             "Fibre",
                             new Field_JTxtField_BD("Fibre", digit_Char_Limit),
-                            Ingredient_Enum.FIBRE,
+                            Ingredient_Info_Columns.FIBRE,
                             pos += 1,
                             "nf_dietary_fiber"
                     )
@@ -221,7 +221,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     new Ingredient_Binding<>(
                             "Fat",
                             new Field_JTxtField_BD("Fat", digit_Char_Limit),
-                            Ingredient_Enum.FAT,
+                            Ingredient_Info_Columns.FAT,
                             pos += 1,
                             "nf_total_fat"
                     )
@@ -232,7 +232,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     new Ingredient_Binding<>(
                             "Saturated Fat",
                             new Field_JTxtField_BD("Saturated Fat", digit_Char_Limit),
-                            Ingredient_Enum.SATURATED_FAT,
+                            Ingredient_Info_Columns.SATURATED_FAT,
                             pos += 1,
                             "nf_saturated_fat"
                     )
@@ -243,7 +243,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     new Ingredient_Binding<>(
                             "Salt",
                             new Field_JTxtField_BD("Salt", digit_Char_Limit),
-                            Ingredient_Enum.SALT,
+                            Ingredient_Info_Columns.SALT,
                             pos += 1,
                             "nf_sodium"
                     )
@@ -254,7 +254,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     new Ingredient_Binding<>(
                             "Water Content",
                             new Field_JTxtField_BD("Water Content", digit_Char_Limit),
-                            Ingredient_Enum.WATER_CONTENT,
+                            Ingredient_Info_Columns.WATER_CONTENT,
                             pos += 1
                     )
             );
@@ -264,7 +264,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     new Ingredient_Binding<>(
                             "Liquid Content",
                             new Field_JTxtField_BD("Liquid Content", digit_Char_Limit),
-                            Ingredient_Enum.LIQUID_CONTENT,
+                            Ingredient_Info_Columns.LIQUID_CONTENT,
                             pos += 1
                     )
             );
@@ -274,7 +274,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     new Ingredient_Binding<>(
                             "Calories",
                             new Field_JTxtField_BD("Calories", digit_Char_Limit),
-                            Ingredient_Enum.CALORIES,
+                            Ingredient_Info_Columns.CALORIES,
                             pos += 1,
                             "nf_calories"
                     )

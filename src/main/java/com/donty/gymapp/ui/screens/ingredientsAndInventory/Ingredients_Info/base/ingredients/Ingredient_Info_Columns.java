@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public enum Ingredient_Enum implements Table_Enum
+public enum Ingredient_Info_Columns implements Table_Enum
 {
     //##################################################################################################################
     // Enums
@@ -38,17 +38,17 @@ public enum Ingredient_Enum implements Table_Enum
     private final String source_name;
     private final String key;
 
-    private static final Map<String, Ingredient_Enum> BY_KEY =
+    private static final Map<String, Ingredient_Info_Columns> BY_KEY =
             Arrays.stream(values())
                     .collect(Collectors.toMap(
-                            Ingredient_Enum :: key,
+                            Ingredient_Info_Columns :: key,
                             Function.identity()
                     ));
 
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    Ingredient_Enum(String key)
+    Ingredient_Info_Columns(String key)
     {
         this.key = key;
         this.source_name = SOURCE_NAME;
