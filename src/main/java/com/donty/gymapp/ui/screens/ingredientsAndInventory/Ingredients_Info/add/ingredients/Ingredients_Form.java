@@ -25,7 +25,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 
-
 public class Ingredients_Form extends Parent_Forms_OBJ
 {
     //##################################################################################################################
@@ -35,7 +34,10 @@ public class Ingredients_Form extends Parent_Forms_OBJ
     protected String class_Name = new Object() { }.getClass().getEnclosingClass().getName();
 
     // Integers
-    protected int digit_Char_Limit = 8, text_Char_Limit = 255;
+    protected int
+            digit_Char_Limit = 8,
+            text_Char_Limit = 255,
+            na_measurement_id;
 
     //#############################
     // Objects
@@ -76,17 +78,17 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         this.db = db;
         this.sharedDataRegistry = sharedDataRegistry;
 
+        // Integers
+        na_measurement_id = sharedDataRegistry.get_NA_Measurement_ID();
+
         // Collections
         ingredient_Types_Obj_AL = sharedDataRegistry.get_All_Ingredient_Types_AL();
-
         ingredient_Measurement_Obj_AL = sharedDataRegistry.get_Ingredient_Measurement_Obj_AL();
-        ingredient_Measurement_Obj_AL.removeIf(e -> e.get_ID() == 3); // Remove N/A Measurement
-
-        create_Field_Items_Map(); // Create Map, as values were needed from above ^^
 
         //############################################
         // Create GUI
         //############################################
+        create_Field_Items_Map(); // Create Map, as values were needed from above ^^
         create_Ingredients_Form();
         collapsibleJPanel.expand_JPanel();
     }
@@ -105,11 +107,28 @@ public class Ingredients_Form extends Parent_Forms_OBJ
     //###########################################################
     private void create_Field_Items_Map()
     {
+        // Separately Create Ingredients Meassurment JC to Remove N/A Meassurment
+        Field_JCombo_Storable_ID<Measurement_ID_OBJ> meassurment_jc =
+
+                new Field_JCombo_Storable_ID<>(
+                        "Ingredient Measurement In",
+                        Measurement_ID_OBJ.class,
+                        false,
+                        ingredient_Measurement_Obj_AL
+                )
+                {
+                    @Override
+                    protected boolean remove_Item_From_JC_Model_Check(Measurement_ID_OBJ item)
+                    {
+                        return item.get_ID().equals(na_measurement_id);
+                    }
+                };
+
+
         field_Items_Map = new LinkedHashMap<>()
         {{
             // ingredients_info -> Skips ingredient_id
             int pos = 0;
-
             
             /*
                  General Structure:
@@ -124,7 +143,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     "measurement",
                     new Ingredient_Binding<>(
                             "Ingredient Measurement In",
-                            new Field_JCombo_Storable_ID<>("Ingredient Measurement In", Measurement_ID_OBJ.class, false, ingredient_Measurement_Obj_AL),
+                            meassurment_jc,
                             Ingredient_Info_Columns.MEASUREMENT_ID,
                             pos += 1,
                             "serving_unit"

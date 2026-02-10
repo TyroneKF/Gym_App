@@ -989,6 +989,16 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
         fetch_statements.add_Fetches(new Fetch_Statement(query_02, new Object[]{ "None Of The Above", "N/A" }));
 
+        // N/A Meassurment
+        String query_03 = """
+                SELECT
+                    measurement_id
+                FROM measurements
+                WHERE
+                    unit_name = ?;""";
+
+        fetch_statements.add_Fetches(new Fetch_Statement(query_03, new Object[]{ "N/A" }));
+
         try
         {
             //###########################
@@ -1004,10 +1014,12 @@ public class Meal_Plan_Screen extends Screen_JFrame
             // Retrieve Variables From Fetched Results
             int na_ingredient_id = (Integer) fetched_results.get_1D_Result_Into_Object(0);
             int na_pdid = (Integer) fetched_results.get_1D_Result_Into_Object(1);
+            int na_measurement_id = (Integer) fetched_results.get_1D_Result_Into_Object(2);
 
             // Set Variables in Shared Data Registry
             shared_data_registry.set_NA_Ingredient_ID(na_ingredient_id);
             shared_data_registry.set_NA_Ingredient_PDID(na_pdid);
+            shared_data_registry.set_NA_Measurement_ID(na_measurement_id);
 
             //###########################
             // Success Msg

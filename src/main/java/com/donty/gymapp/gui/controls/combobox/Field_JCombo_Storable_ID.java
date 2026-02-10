@@ -75,9 +75,7 @@ public class Field_JCombo_Storable_ID<T extends Storable_IDS_Parent> extends Fie
                 selected_item_in_list = true;
             }
 
-            System.out.printf("\n\n%s -> %s ", item.toString(), item.get_is_System());
-
-            if (hide_system_var && item.get_is_System()) { continue; } // IF items is_System & Skip system = continue
+            if (remove_Item_From_JC_Model_Check(item)) { continue; } // IF items is_System & Skip system = continue
 
             model.addElement(item);
         }
@@ -93,6 +91,11 @@ public class Field_JCombo_Storable_ID<T extends Storable_IDS_Parent> extends Fie
         {
             reset_JC(); // Set Selected Item to Nothing
         }
+    }
+
+    protected boolean remove_Item_From_JC_Model_Check(T item)
+    {
+       return hide_system_var && item.get_is_System();
     }
 
     protected void actionListener() { }

@@ -32,6 +32,7 @@ public class Shared_Data_Registry
     //#################################
     private int na_ingredient_id;
     private int na_pdid;
+    private int na_measurement_id;
 
     private Ingredient_Name_ID_OBJ na_ingredient_id_obj;
 
@@ -755,6 +756,11 @@ public class Shared_Data_Registry
     {
         na_pdid = pdid;
     }
+
+    public void set_NA_Measurement_ID(int na_measurement_id)
+    {
+        this.na_measurement_id = na_measurement_id;
+    }
     
     //##################################################################################################################
     // Accessor Methods
@@ -826,6 +832,11 @@ public class Shared_Data_Registry
     public int get_NA_PDID()
     {
         return na_pdid;
+    }
+
+    public int get_NA_Measurement_ID()
+    {
+        return na_measurement_id;
     }
     
     public int get_Other_Total_Meal_Table_Column_Pos(Draft_Gui_Total_Meal_Other_Columns column_name)
