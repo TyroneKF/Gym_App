@@ -35,11 +35,11 @@ public class Edit_Ingredient_Type extends Edit_Screen
         super.label1 = "Select Ingredient Type Name To Edit";
         super.label2 = "Change Ingredient Type Name To";
         
-        super.data_Gathering_Name = "Ingredient Type Name";
-        super.db_ColumnName_Field = "ingredient_type_name";
-        super.db_TableName = "ingredient_types";
+        super.data_gathering_name = "Ingredient Type Name";
+        super.db_column_name_field = "ingredient_type_name";
+        super.db_table_name = "ingredient_types";
         
-        super.id_ColumnName = "ingredient_type_id";
+        super.id_column_name = "ingredient_type_id";
         super.fk_Table = "ingredients_info";
         super.remove_JComboBox_Items = new ArrayList<>(Arrays.asList(1, 2));
     }

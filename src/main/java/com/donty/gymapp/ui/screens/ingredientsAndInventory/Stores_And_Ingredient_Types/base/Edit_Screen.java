@@ -28,8 +28,8 @@ public abstract class Edit_Screen extends Add_Screen
     
     // String
     protected String
-            label1, label2,
-            id_ColumnName,
+            label1,
+            label2,
             selected_JComboBox_Item_Txt = "",
             fk_Table;
     
@@ -100,7 +100,7 @@ public abstract class Edit_Screen extends Add_Screen
         
         add_To_Container(centre_JPanel, create_Label_Panel(label2), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
         add_To_Container(centre_JPanel, jTextField_JP, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
-        add_To_Container(centre_JPanel, submitButton, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
+        add_To_Container(centre_JPanel, submit_button, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
         
         resize_GUI();
     }
@@ -153,7 +153,7 @@ public abstract class Edit_Screen extends Add_Screen
     {
         if (jCombo_Box.getSelectedIndex() == - 1)
         {
-            JOptionPane.showMessageDialog(null, String.format("\n\nSelect An %s To Edit!", data_Gathering_Name));
+            JOptionPane.showMessageDialog(null, String.format("\n\nSelect An %s To Edit!", data_gathering_name));
             return false;
         }
         return true;
@@ -168,14 +168,14 @@ public abstract class Edit_Screen extends Add_Screen
         
         // Variables
         String error_msg = "Error, unable to access DB to process request!";
-        String query = String.format("SELECT %s FROM %s WHERE %s = ?;", db_ColumnName_Field, db_TableName, db_ColumnName_Field);
-        Object[] params = new Object[]{ jTextField_TXT };
+        String query = String.format("SELECT %s FROM %s WHERE %s = ?;", db_column_name_field, db_table_name, db_column_name_field);
+        Object[] params = new Object[]{ get_JTextField_TXT() };
 
         Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, params, error_msg);
         
         if (! db.get_Single_Col_Query_Obj(fetch_statement, true).isEmpty())
         {
-            JOptionPane.showMessageDialog(null, String.format("\n\n%s '' %s '' Already Exists!", data_Gathering_Name, jTextField_TXT));
+            JOptionPane.showMessageDialog(null, String.format("\n\n%s '' %s '' Already Exists!", data_gathering_name, get_JTextField_TXT()));
             return false;
         }
         
@@ -187,10 +187,10 @@ public abstract class Edit_Screen extends Add_Screen
         String upload_Q2 = String.format("""
                 UPDATE %s
                 SET %s = ?
-                WHERE %s = ?;""", db_TableName, db_ColumnName_Field, id_ColumnName);
+                WHERE %s = ?;""", db_table_name, db_column_name_field, id_column_name);
 
-        String errorMSG_Upload = String.format("Unable to Update Ingredient %s to '%s'!", data_Gathering_Name, jTextField_TXT);
-        Object[] params_2 = new Object[]{ jTextField_TXT, object_ID };
+        String errorMSG_Upload = String.format("Unable to Update Ingredient %s to '%s'!", data_gathering_name, get_JTextField_TXT());
+        Object[] params_2 = new Object[]{ get_JTextField_TXT(), object_ID };
         Upload_Statement_Full sql_statement = new Upload_Statement_Full(upload_Q2, params_2, errorMSG_Upload, true);
 
         //################################
@@ -219,14 +219,14 @@ public abstract class Edit_Screen extends Add_Screen
     @Override
     protected void success_Upload_Message()
     {
-        String text = String.format("\n\nSuccessfully Changed Ingredient %s From : '%s' To '%s' in DB!", process, selected_JComboBox_Item_Txt, jTextField_TXT);
+        String text = String.format("\n\nSuccessfully Changed Ingredient %s From : '%s' To '%s' in DB!", process, selected_JComboBox_Item_Txt, get_JTextField_TXT());
         JOptionPane.showMessageDialog(null, text);
     }
     
     @Override
     protected void failure_Upload_Message()
     {
-        String text = String.format("\n\nFailed Changing Ingredient %s From : '%s' To '%s' in DB!", process, selected_JComboBox_Item_Txt, jTextField_TXT);
+        String text = String.format("\n\nFailed Changing Ingredient %s From : '%s' To '%s' in DB!", process, selected_JComboBox_Item_Txt, get_JTextField_TXT());
         JOptionPane.showMessageDialog(null, text);
     }
     
@@ -244,7 +244,7 @@ public abstract class Edit_Screen extends Add_Screen
     @Override
     protected void clear_Btn_Action()
     {
-        jTextField.setText("");
+        field_jt_field.reset_Txt_Field();
         jCombo_Box.setSelectedIndex(- 1);
         selected_JComboBox_Item_Txt = "";
     }
@@ -259,7 +259,7 @@ public abstract class Edit_Screen extends Add_Screen
         //##################################
         if (jCombo_Box.getSelectedIndex() == - 1)
         {
-            JOptionPane.showMessageDialog(null, String.format("Select An ' %s 'To Delete It !!!", data_Gathering_Name));
+            JOptionPane.showMessageDialog(null, String.format("Select An ' %s 'To Delete It !!!", data_gathering_name));
             return;
         }
         
@@ -297,7 +297,7 @@ public abstract class Edit_Screen extends Add_Screen
         //##################################
         Storable_IDS_Parent item_ID_Obj = get_Selected_Item();
 
-        String errorMSG = String.format("Failed To Delete ' %s ' FROM %s !!", selected_JComboBox_Item_Txt, data_Gathering_Name);
+        String errorMSG = String.format("Failed To Delete ' %s ' FROM %s !!", selected_JComboBox_Item_Txt, data_gathering_name);
         Batch_Upload_Statements upload_statements = new Batch_Upload_Statements(errorMSG);
         
         //##################################
@@ -309,7 +309,7 @@ public abstract class Edit_Screen extends Add_Screen
         
         // Define Query Variables
 
-        String upload_Q1 = String.format("DELETE FROM %s WHERE %s = ?", db_TableName, id_ColumnName);
+        String upload_Q1 = String.format("DELETE FROM %s WHERE %s = ?", db_table_name, id_column_name);
         
         upload_statements.add_Uploads(new Upload_Statement(upload_Q1, new Object[]{ item_ID_Obj.get_ID() }, true));
         

@@ -33,11 +33,11 @@ public class Edit_Stores extends Edit_Screen
         super.label1 = "Select Supplier Name To Edit";
         super.label2 = "Change Supplier Name To";
 
-        super.data_Gathering_Name = "Supplier Name";
-        super.db_ColumnName_Field = "store_name";
-        super.db_TableName = "stores";
+        super.data_gathering_name = "Supplier Name";
+        super.db_column_name_field = "store_name";
+        super.db_table_name = "stores";
 
-        super.id_ColumnName = "store_id";
+        super.id_column_name = "store_id";
         super.fk_Table = "ingredients_in_sections_of_meal";
         super.remove_JComboBox_Items = new ArrayList<>(Arrays.asList(1));
     }
