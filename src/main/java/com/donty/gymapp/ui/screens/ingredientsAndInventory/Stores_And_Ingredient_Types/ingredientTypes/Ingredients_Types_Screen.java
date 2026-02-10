@@ -9,13 +9,13 @@ import com.donty.gymapp.ui.screens.ingredientsAndInventory.Stores_And_Ingredient
 
 import java.util.ArrayList;
 
-public class Ingredients_Types_Screen extends Parent_Screen
+public class Ingredients_Types_Screen extends Parent_Screen<Ingredient_Type_ID_OBJ>
 {
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Ingredients_Types_Screen(
-            
+    public Ingredients_Types_Screen
+    (
             MyJDBC_Sqlite db,
             Shared_Data_Registry shared_Data_Registry,
             Ingredients_Info_Screen ingredient_Info_Screen,
@@ -38,7 +38,15 @@ public class Ingredients_Types_Screen extends Parent_Screen
     protected void initialize_Screens()
     {
         this.add_Screen = new Add_Ingredient_Type(db, shared_Data_Registry, ingredient_Info_Screen, this);
-        this.edit_Screen = new Edit_Ingredient_Type(db, shared_Data_Registry, ingredient_Info_Screen, this, jComboBox_List);
+
+        this.edit_Screen = new Edit_Ingredient_Type(
+                db,
+                shared_Data_Registry,
+                ingredient_Info_Screen,
+                this,
+                jComboBox_List
+        );
+
         this.screenImage = new Image_JPanel("/images/ingredient_Type/ingredientType0.png", 500, 500);
     }
     

@@ -226,7 +226,7 @@ public abstract class Parent_Ingredients_Screen extends Screen_JPanel
     
     protected final void clear_Search_For_Ingredient_Info_Form()
     {
-        search_For_Ingredient_Info.resetFullDisplay();
+       // search_For_Ingredient_Info.resetFullDisplay();
     }
     
     protected final void clear_Ingredients_Form()

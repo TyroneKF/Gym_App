@@ -12,23 +12,36 @@ import com.donty.gymapp.ui.screens.ingredientsAndInventory.Stores_And_Ingredient
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Stores_And_Ingredient_Types.base.Parent_Screen;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
-public class Edit_Ingredient_Type extends Edit_Screen
+public class Edit_Ingredient_Type extends Edit_Screen<Ingredient_Type_ID_OBJ>
 {
-    
+
+    //##################################################################################################################
+    // Constructor
+    //##################################################################################################################
     public Edit_Ingredient_Type(
             
             MyJDBC_Sqlite db,
             Shared_Data_Registry shared_Data_Registry,
             Ingredients_Info_Screen ingredient_Info_Screen,
-            Parent_Screen parent_Screen,
-            ArrayList<? extends Storable_IDS_Parent> jComboBox_List
+            Parent_Screen<Ingredient_Type_ID_OBJ> parent_Screen,
+
+            ArrayList<Ingredient_Type_ID_OBJ> jComboBox_List
     )
     {
-        super(db, shared_Data_Registry, ingredient_Info_Screen, parent_Screen, jComboBox_List);
+        super(
+                db,
+                shared_Data_Registry,
+                ingredient_Info_Screen,
+                parent_Screen,
+                Ingredient_Type_ID_OBJ.class,
+                jComboBox_List
+        );
     }
-    
+
+    //##################################################################################################################
+    // Methods
+    //##################################################################################################################
     @Override
     protected void set_Screen_Variables()
     {
@@ -41,7 +54,6 @@ public class Edit_Ingredient_Type extends Edit_Screen
         
         super.id_column_name = "ingredient_type_id";
         super.fk_Table = "ingredients_info";
-        super.remove_JComboBox_Items = new ArrayList<>(Arrays.asList(1, 2));
     }
 
     @Override
@@ -58,7 +70,7 @@ public class Edit_Ingredient_Type extends Edit_Screen
     @Override
     protected boolean delete_Shared_Data_Action()
     {
-        Storable_IDS_Parent item_ID_Obj = (Storable_IDS_Parent) jCombo_Box.getSelectedItem();
+        Storable_IDS_Parent item_ID_Obj = (Storable_IDS_Parent) field_jc_box.getSelectedItem();
         return sharedDataRegistry.remove_Ingredient_Type((Ingredient_Type_ID_OBJ) item_ID_Obj);
     }
     

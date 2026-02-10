@@ -9,7 +9,7 @@ import com.donty.gymapp.ui.screens.ingredientsAndInventory.Stores_And_Ingredient
 import java.util.ArrayList;
 
 
-public class Ingredient_Stores_Screen extends Parent_Screen
+public class Ingredient_Stores_Screen extends Parent_Screen<Store_ID_OBJ>
 {
     
     //##################################################################################################################
@@ -34,7 +34,10 @@ public class Ingredient_Stores_Screen extends Parent_Screen
                 jComboBox_List
         );
     }
-    
+
+    //##################################################################################################################
+    // Methods
+    //##################################################################################################################
     @Override
     protected void initialize_Screens()
     {

@@ -2,8 +2,8 @@ package com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS;
 
 public final class Measurement_ID_OBJ extends Storable_IDS_Parent
 {
-    private String unit_Symbol;
-    private Measurement_Material_Type_ID_OBJ measurement_material_type_id_obj;
+    private final String unit_Symbol;
+    private final Measurement_Material_Type_ID_OBJ measurement_material_type_id_obj;
     
     public Measurement_ID_OBJ(
             int id,

@@ -2,23 +2,30 @@ package com.donty.gymapp.ui.screens.ingredientsAndInventory.Stores_And_Ingredien
 
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
+import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.Ingredients_Info.Ingredients_Info_Screen;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Stores_And_Ingredient_Types.base.Add_Screen;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Stores_And_Ingredient_Types.base.Parent_Screen;
 
-public class Add_Ingredient_Type extends Add_Screen
+public class Add_Ingredient_Type extends Add_Screen<Ingredient_Type_ID_OBJ>
 {
+    //##################################################################################################################
+    // Constructor
+    //##################################################################################################################
     public Add_Ingredient_Type
     (
             MyJDBC_Sqlite db,
             Shared_Data_Registry shared_Data_Registry,
             Ingredients_Info_Screen ingredient_Info_Screen,
-            Parent_Screen parent_Screen
+            Parent_Screen<Ingredient_Type_ID_OBJ> parent_Screen
     )
     {
         super(db, shared_Data_Registry, ingredient_Info_Screen, parent_Screen);
     }
 
+    //##################################################################################################################
+    // Methods
+    //##################################################################################################################
     @Override
     protected void set_Screen_Variables()
     {

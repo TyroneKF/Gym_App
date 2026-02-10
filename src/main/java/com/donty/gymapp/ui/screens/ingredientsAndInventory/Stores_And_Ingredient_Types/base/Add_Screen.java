@@ -2,6 +2,7 @@ package com.donty.gymapp.ui.screens.ingredientsAndInventory.Stores_And_Ingredien
 
 import com.donty.gymapp.gui.controls.textfields.Field_JTxtField_String;
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
+import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Storable_IDS_Parent;
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Store_ID_OBJ;
 import com.donty.gymapp.persistence.database.Fetched_Results;
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
@@ -22,7 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class Add_Screen extends Screen_JPanel
+public abstract class Add_Screen<T extends Storable_IDS_Parent> extends Screen_JPanel
 {
     //##################################################################################################################
     // Variable
@@ -30,13 +31,12 @@ public abstract class Add_Screen extends Screen_JPanel
 
     // Objects
     protected MyJDBC_Sqlite db;
-    protected Parent_Screen parent_Screen;
+    protected Parent_Screen<T> parent_Screen;
     protected Ingredients_Info_Screen ingredient_Info_Screen;
     protected Shared_Data_Registry sharedDataRegistry;
     protected Fetched_Results fetched_Results_OBJ;
 
     // GUI Objects
-    protected GridBagConstraints gbc = new GridBagConstraints();
     protected Field_JTxtField_String field_jt_field;
     protected JButton submit_button;
     protected JPanel centre_JPanel, jTextField_JP;
@@ -59,7 +59,13 @@ public abstract class Add_Screen extends Screen_JPanel
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Add_Screen(MyJDBC_Sqlite db, Shared_Data_Registry shared_Data_Registry, Ingredients_Info_Screen ingredient_Info_Screen, Parent_Screen parent_Screen)
+    public Add_Screen
+    (
+            MyJDBC_Sqlite db,
+            Shared_Data_Registry shared_Data_Registry,
+            Ingredients_Info_Screen ingredient_Info_Screen,
+            Parent_Screen<T> parent_Screen
+    )
     {
         //########################################
         //
@@ -234,12 +240,12 @@ public abstract class Add_Screen extends Screen_JPanel
 
         field_jt_field.validation_Check(error_Map);
 
-        additional_Validate_Form(error_Map);
-
         if (! additional_Validate_Form())
         {
             return false;
         }
+
+        db_Validation_Check(error_Map);
 
         // IF no errors returns True
         if (error_Map.isEmpty()) { return true; }
@@ -252,7 +258,7 @@ public abstract class Add_Screen extends Screen_JPanel
     /**
      * This is Override by child class
      */
-    protected void additional_Validate_Form(LinkedHashMap<String, ArrayList<String>> error_Map)
+    protected void db_Validation_Check(LinkedHashMap<String, ArrayList<String>> error_Map)
     {
         String error_msg = String.format("Error, checking if %s already exists!", data_gathering_name);
 
@@ -265,15 +271,11 @@ public abstract class Add_Screen extends Screen_JPanel
                         WHERE %s = ?
                     ) AS exists_flag;""", db_table_name, db_column_name_field);
 
-            System.out.printf("\n\nQuery: %s", db_fetch_check);
-
             Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(db_fetch_check, new Object[]{ get_JTextField_TXT() }, error_msg);
 
             int result = (Integer) (db.get_Single_Col_Query_Obj(fetch_statement, false)).getFirst();
 
             boolean does_Type_exist = result == 1;
-
-            System.out.printf("\n\nValiue Exists : %s", does_Type_exist);
 
             if (! does_Type_exist) { return; } // if value doesn't exist exit
 

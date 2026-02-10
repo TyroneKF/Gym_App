@@ -6,8 +6,7 @@ import com.donty.gymapp.ui.meta.ids.ID_Object;
  * Permits restricts the classes that can extend this object enforces type restriction in case its accidentally extended
  */
 
-public sealed class Storable_IDS_Parent extends ID_Object
-        permits
+public sealed class Storable_IDS_Parent extends ID_Object permits
         Ingredient_Name_ID_OBJ,
         Ingredient_Type_ID_OBJ,
         Measurement_ID_OBJ,

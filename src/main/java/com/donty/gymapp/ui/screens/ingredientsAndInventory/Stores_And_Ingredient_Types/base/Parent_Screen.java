@@ -25,7 +25,7 @@ import javafx.animation.TranslateTransition;
 import javafx.util.Duration;
 
 
-public abstract class Parent_Screen extends Screen_JPanel
+public abstract class Parent_Screen<T extends Storable_IDS_Parent> extends Screen_JPanel
 {
     //##################################################################################################################
     // Variables
@@ -49,12 +49,12 @@ public abstract class Parent_Screen extends Screen_JPanel
     
     // Screen Objects
     protected Ingredients_Info_Screen ingredient_Info_Screen;
-    protected Edit_Screen edit_Screen;
-    protected Add_Screen add_Screen;
+    protected Edit_Screen<T> edit_Screen;
+    protected Add_Screen<T> add_Screen;
     protected Frame frame;
     
     // JComboBox
-    protected ArrayList<? extends Storable_IDS_Parent> jComboBox_List;
+    protected ArrayList<T> jComboBox_List;
     
     // JButton
     protected IconButton delete_Icon_Btn;
@@ -66,8 +66,14 @@ public abstract class Parent_Screen extends Screen_JPanel
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Parent_Screen(MyJDBC_Sqlite db, Shared_Data_Registry shared_Data_Registry, Ingredients_Info_Screen ingredients_Info_Screen,
-                         String process, ArrayList<? extends Storable_IDS_Parent> jComboBox_List)
+    public Parent_Screen
+    (
+            MyJDBC_Sqlite db,
+            Shared_Data_Registry shared_Data_Registry,
+            Ingredients_Info_Screen ingredients_Info_Screen,
+            String process,
+            ArrayList<T> jComboBox_List
+    )
     {
         //####################################
         // Super
