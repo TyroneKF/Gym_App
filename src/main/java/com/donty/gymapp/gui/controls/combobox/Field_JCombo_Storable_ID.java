@@ -1,23 +1,46 @@
 package com.donty.gymapp.gui.controls.combobox;
 
+import com.donty.gymapp.gui.controls.combobox.base.Field_JComboBox;
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Storable_IDS_Parent;
+import javax.swing.*;
 import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class Field_JCombo_Storable_ID<T extends Storable_IDS_Parent> extends Field_JComboBox<T>
 {
-    public Field_JCombo_Storable_ID(String label, Class<T> typeCast, boolean hide_Is_System, ArrayList<T> data_AL)
+    //##################################################################################################################
+    // Variables
+    //##################################################################################################################
+    boolean hide_system_var = true;
+
+
+    //##################################################################################################################
+    // Constructor
+    //##################################################################################################################
+    public Field_JCombo_Storable_ID(String label, Class<T> typeCast,  ArrayList<T> data_AL)
     {
-        super(
-                label,
-                typeCast,
-                // Remove is_System Variables if required
-                ! hide_Is_System ?
-                        data_AL :
-                        data_AL.stream().filter(e -> ! e.get_is_System()).collect(Collectors.toCollection(ArrayList :: new))
-        );
+        super(label, typeCast, data_AL);
+
+        init();
+    }
+
+    public Field_JCombo_Storable_ID(String label, Class<T> typeCast, boolean hide_system_var, ArrayList<T> data_AL)
+    {
+        super(label, typeCast, data_AL);
+
+        this.hide_system_var = hide_system_var;
+
+        init();
+    }
+
+    //##################################################################################################################
+    // Methods
+    //##################################################################################################################
+    @Override
+    protected void init()
+    {
+        load_Items();
 
         addItemListener(ie -> {
             if (ie.getStateChange() == ItemEvent.SELECTED)
@@ -27,8 +50,55 @@ public class Field_JCombo_Storable_ID<T extends Storable_IDS_Parent> extends Fie
         });
     }
 
+    public void load_Items()
+    {
+        //############################
+        // Get Previous Item
+        //############################
+        T selected_item = typeCast.cast(getSelectedItem());
+
+        boolean
+                was_a_selected_item_chosen = selected_item != null,
+                selected_item_in_list = false;
+
+        //############################
+        // Load List
+        //############################
+        DefaultComboBoxModel<T> model = (DefaultComboBoxModel<T>) getModel();
+
+        model.removeAllElements(); // Remove all Elements
+
+        for (T item : data_AL) // Populate Model From AL that's updated
+        {
+            if (was_a_selected_item_chosen && item.equals(selected_item)) // Check if selected item is in list
+            {
+                selected_item_in_list = true;
+            }
+
+            System.out.printf("\n\n%s -> %s ", item.toString(), item.get_is_System());
+
+            if (hide_system_var && item.get_is_System()) { continue; } // IF items is_System & Skip system = continue
+
+            model.addElement(item);
+        }
+
+        //############################
+        // Set Selected Item
+        //############################
+        if (was_a_selected_item_chosen && selected_item_in_list)  // Set Item back to original Item
+        {
+            setSelectedItem(selected_item);
+        }
+        else
+        {
+            reset_JC(); // Set Selected Item to Nothing
+        }
+    }
+
+    protected void actionListener() { }
+
     //##################################################################################################################
-    // Accessor Methods
+    // Mutator Methods
     //##################################################################################################################
     public void set_Item_By_ID(int id) throws Exception
     {
@@ -39,8 +109,6 @@ public class Field_JCombo_Storable_ID<T extends Storable_IDS_Parent> extends Fie
 
         setSelectedItem(x.get()); // Set Item to selected item and get by ID
     }
-
-    protected void actionListener() { }
 
     //##################################################################################################################
     // Accessor Methods

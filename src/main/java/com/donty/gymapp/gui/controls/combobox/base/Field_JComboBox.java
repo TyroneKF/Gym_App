@@ -1,4 +1,4 @@
-package com.donty.gymapp.gui.controls.combobox;
+package com.donty.gymapp.gui.controls.combobox.base;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
 
-public class Field_JComboBox<T> extends JComboBox<T>
+public abstract class Field_JComboBox<T> extends JComboBox<T>
 {
     //##################################################################################################################
     // Variables
@@ -14,11 +14,11 @@ public class Field_JComboBox<T> extends JComboBox<T>
     protected ArrayList<T> data_AL;
     protected Class<T> typeCast;
     protected String label;
-    
+
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Field_JComboBox(String label, Class<T> typeCast, ArrayList<T> data_AL)
+    protected Field_JComboBox(String label, Class<T> typeCast, ArrayList<T> data_AL)
     {
         //############################
         // Variables
@@ -26,7 +26,7 @@ public class Field_JComboBox<T> extends JComboBox<T>
         this.label = Objects.requireNonNull(label, "Label cannot be null");
         this.data_AL = Objects.requireNonNull(data_AL, "Data cannot be null");
         this.typeCast = Objects.requireNonNull(typeCast, "Type Cast cannot be null");
-        
+
         //############################
         // JComboBox Setup
         //############################
@@ -34,50 +34,47 @@ public class Field_JComboBox<T> extends JComboBox<T>
         DefaultListCellRenderer listRenderer = new DefaultListCellRenderer();
         listRenderer.setHorizontalAlignment(DefaultListCellRenderer.CENTER); // center-aligned items
         setRenderer(listRenderer);
-        
+
         //############################
         // Set Model
         //############################
         DefaultComboBoxModel<T> model = new DefaultComboBoxModel<>();
         setModel(model);
-        
-        //############################
-        // Load List
-        //############################
-        reload_Items();
     }
-    
+
+    protected abstract void init();
+
     //##################################################################################################################
     // Methods
     //##################################################################################################################
-    public void reload_Items()
+    public void load_Items()
     {
         //############################
         // Get Previous Item
         //############################
         T selected_Item = typeCast.cast(getSelectedItem());
-        
+
         boolean
                 item_Not_Null = selected_Item != null,
                 item_in_List = false;
-        
+
         //############################
         // Load List
         //############################
         DefaultComboBoxModel<T> model = (DefaultComboBoxModel<T>) getModel();
-        
+
         model.removeAllElements(); // Remove all Elements
-        
+
         for (T item : data_AL) // Populate Model From AL that's updated
         {
             if (item_Not_Null && ! item_in_List && item.equals(selected_Item))
             {
                 item_in_List = true;
             } // Check if selected item is in list
-            
+
             model.addElement(item);
         }
-        
+
         //############################
         // Set Selected Item
         //############################
@@ -90,12 +87,12 @@ public class Field_JComboBox<T> extends JComboBox<T>
             reset_JC(); // Set Selected Item to Nothing
         }
     }
-    
+
     public void reset_JC()
     {
         setSelectedItem(null);
     }
-    
+
     public void validation_Check(LinkedHashMap<String, ArrayList<String>> error_Map)
     {
         if (! is_Item_Selected())
@@ -103,12 +100,12 @@ public class Field_JComboBox<T> extends JComboBox<T>
             error_Map.put(label, new ArrayList<>(List.of("Select an item !")));
         }
     }
-    
+
     public boolean is_Item_Selected()
     {
         return getSelectedIndex() != - 1;
     }
-    
+
     //##################################################################################################################
     // Mutator Methods
     //##################################################################################################################
@@ -116,32 +113,32 @@ public class Field_JComboBox<T> extends JComboBox<T>
     {
         this.data_AL = Objects.requireNonNull(data_AL, "set_Data_AL() Data cannot be null");
     }
-    
+
     public void set_And_Load_Data(ArrayList<T> data_AL)
     {
         set_Data_AL(data_AL);
-        reload_Items();
+        load_Items();
     }
-    
+
     public void set_Item(T obj)
     {
         if (! (data_AL.contains(obj))) { return; }
-        
+
         setSelectedItem(obj);
     }
-    
+
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
     public T get_Selected_Item()
     {
         Object item = getSelectedItem();
-        
+
         if (item == null) { return null; }
-        
+
         return typeCast.cast(item);
     }
-    
+
     public String get_Selected_Item_TXT()
     {
         T obj = get_Selected_Item();

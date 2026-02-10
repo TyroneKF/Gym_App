@@ -1,5 +1,6 @@
 package com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.add.ingredients;
 
+import com.donty.gymapp.gui.controls.combobox.Field_JCombo_Default;
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Measurement_ID_OBJ;
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
@@ -8,7 +9,7 @@ import com.donty.gymapp.persistence.database.statements.Fetch_Statement_Full;
 import com.donty.gymapp.persistence.database.statements.Upload_Statement;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.gui.controls.combobox.Field_JCombo_Storable_ID;
-import com.donty.gymapp.gui.controls.combobox.Field_JComboBox;
+import com.donty.gymapp.gui.controls.combobox.base.Field_JComboBox;
 import com.donty.gymapp.gui.controls.IconButton;
 import com.donty.gymapp.gui.panels.IconPanel;
 import com.donty.gymapp.gui.controls.textfields.Field_JTxtField_BD;
@@ -46,7 +47,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
 
     // Salt JC Object
     protected ArrayList<String> salt_Values_AL = new ArrayList<>(Arrays.asList("mg", "g"));
-    protected Field_JComboBox<String> salt_JC = new Field_JComboBox<>("Salt", String.class, salt_Values_AL);
+    protected Field_JCombo_Default<String> salt_JC = new Field_JCombo_Default<>("Salt", String.class, salt_Values_AL);
 
     //#############################
     // Collections
@@ -401,7 +402,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
 
         if (! (object instanceof Field_JComboBox<?> jComboBox)) { return; }
 
-        jComboBox.reload_Items();
+        jComboBox.load_Items();
     }
 
     public void reload_Measurements_JComboBox()

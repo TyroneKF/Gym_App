@@ -1,9 +1,8 @@
 package com.donty.gymapp.ui.meta.bindings;
 
 import com.donty.gymapp.domain.enums.db_enums.columnNames.base.Table_Enum;
-import com.donty.gymapp.gui.controls.combobox.Field_JComboBox;
+import com.donty.gymapp.gui.controls.combobox.base.Field_JComboBox;
 import com.donty.gymapp.gui.controls.textfields.base.Field_JTxtField_Parent;
-
 import java.awt.*;
 
 public class Field_Binding<T>

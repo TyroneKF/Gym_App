@@ -204,7 +204,7 @@ public class ShopForm_Object extends JPanel
     // Action Methods
     protected void reload_Stores_JC()
     {
-        stores_JC.reload_Items(); // Reload JC
+        stores_JC.load_Items(); // Reload JC
     }
 
 

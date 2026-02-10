@@ -172,7 +172,7 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
 
     private void reload_Main_Ingredient_Type_JC()
     {
-        ingredient_Main_Type_JC.reload_Items(); // Reload Main Ingredients Type JC on Page
+        ingredient_Main_Type_JC.load_Items(); // Reload Main Ingredients Type JC on Page
     }
 
     @Override

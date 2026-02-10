@@ -1,7 +1,7 @@
 package com.donty.gymapp.ui.screens.macroTargets;
 
 import com.donty.gymapp.domain.enums.db_enums.columnNames.tables.MacroTargetsColumns;
-import com.donty.gymapp.gui.controls.combobox.Field_JComboBox;
+import com.donty.gymapp.gui.controls.combobox.base.Field_JComboBox;
 import com.donty.gymapp.gui.controls.textfields.Field_JTxtField_BD;
 import com.donty.gymapp.gui.controls.textfields.base.Field_JTxtField_Parent;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
