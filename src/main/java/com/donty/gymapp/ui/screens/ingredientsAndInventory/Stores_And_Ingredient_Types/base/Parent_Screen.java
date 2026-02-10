@@ -413,10 +413,4 @@ public abstract class Parent_Screen extends Screen_JPanel
     {
         return this;
     }
-    
-    // Collections
-    public ArrayList<? extends Storable_IDS_Parent> get_JComboBox_List()
-    {
-        return jComboBox_List;
-    }
 }

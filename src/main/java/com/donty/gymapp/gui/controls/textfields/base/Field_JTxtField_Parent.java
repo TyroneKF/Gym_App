@@ -20,7 +20,7 @@ public abstract class Field_JTxtField_Parent<T> extends JTextField
     // Constructor
     //##################################################################################################################
     // Text Field
-    public Field_JTxtField_Parent(String label, int char_Limit, Class<T> type_Cast)
+    protected Field_JTxtField_Parent(String label, int char_Limit, Class<T> type_Cast)
     {
         // Field All Constructors use
         this.label = label;
@@ -88,7 +88,7 @@ public abstract class Field_JTxtField_Parent<T> extends JTextField
     //##############################################
     // Validation Methods
     //##############################################
-    public boolean validation_Check(LinkedHashMap<String, ArrayList<String>> error_Map)
+   public boolean validation_Check(LinkedHashMap<String, ArrayList<String>> error_Map)
     {
         ArrayList<String> error_MSGs = new ArrayList<>();
         

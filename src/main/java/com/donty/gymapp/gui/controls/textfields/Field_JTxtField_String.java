@@ -2,9 +2,10 @@ package com.donty.gymapp.gui.controls.textfields;
 
 import com.donty.gymapp.gui.controls.textfields.base.Field_JTxtField_Parent;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.stream.Collectors;
 
 public class Field_JTxtField_String extends Field_JTxtField_Parent<String>
 {
@@ -31,8 +32,17 @@ public class Field_JTxtField_String extends Field_JTxtField_Parent<String>
             
             return false;
         }
+
+        setText(capitalise_String(get_Text())); // Capitalise input
         
         return true;
+    }
+
+    protected String capitalise_String(String input)
+    {
+        return Arrays.stream(input.split("\\s+"))
+                .map(w -> w.substring(0, 1).toUpperCase() + w.substring(1).toLowerCase())
+                .collect(Collectors.joining(" "));
     }
 
     public String get_Text_Casted_To_Type() throws Exception

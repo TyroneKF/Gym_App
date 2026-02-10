@@ -95,9 +95,7 @@ public class Ingredients_Screen extends Parent_Ingredients_Screen
         // Create Fetch Query
         //######################
         String get_ingredient_id = """
-                SELECT
-                    ingredient_id
-                
+                SELECT ingredient_id
                 FROM ingredients_info
                 WHERE ingredient_name = ?;""";
 

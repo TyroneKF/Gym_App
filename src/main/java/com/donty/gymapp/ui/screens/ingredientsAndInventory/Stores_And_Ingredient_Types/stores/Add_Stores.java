@@ -24,17 +24,15 @@ public  class Add_Stores extends Add_Screen
     {
         super.main_Label = "Add Supplier Name";
         
-        super.data_Gathering_Name = "Supplier Name";
-        super.db_ColumnName_Field = "store_name";
-        super.db_TableName = "stores";
+        super.data_gathering_name = "Supplier Name";
+        super.db_column_name_field = "store_name";
+        super.db_table_name = "stores";
+        super.id_column_name = "store_id";
     }
     
     @Override
-    protected void additional_Add_Screen_Objects()
-    {
-    
-    }
-    
+    protected void additional_Add_Screen_Objects() {}
+
     @Override
     protected boolean additional_Validate_Form()
     {
