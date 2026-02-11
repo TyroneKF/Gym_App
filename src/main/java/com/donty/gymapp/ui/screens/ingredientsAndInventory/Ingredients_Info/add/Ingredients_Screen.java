@@ -11,7 +11,6 @@ import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.add.
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.add.products.Shop_Form;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.Ingredients_Info.Ingredients_Info_Screen;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.base.screen.Parent_Ingredients_Screen;
-import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.Search_For_Food_Info;
 
 
 public class Ingredients_Screen extends Parent_Ingredients_Screen
@@ -83,7 +82,7 @@ public class Ingredients_Screen extends Parent_Ingredients_Screen
             ingredients_Form.add_Update_Queries(batch_statements);
             shop_Form.add_Update_Queries(batch_statements);
 
-            ingredient_name = (String) ingredients_Form.get_Component_Field_Value("name");
+            ingredient_name = get_Ingredients_Name();
         }
         catch (Exception e)
         {

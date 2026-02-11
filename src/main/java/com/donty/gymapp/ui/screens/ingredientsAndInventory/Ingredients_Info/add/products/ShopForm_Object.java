@@ -45,7 +45,12 @@ public class ShopForm_Object extends JPanel
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public ShopForm_Object(Container parent_Container, Shop_Form shop_form, ArrayList<Store_ID_OBJ> stores)// Remove
+    public ShopForm_Object
+    (
+            Container parent_Container,
+            Shop_Form shop_form,
+            ArrayList<Store_ID_OBJ> stores
+    )
     {
         //###############################
         // Variables
@@ -223,12 +228,13 @@ public class ShopForm_Object extends JPanel
         return error_Map.isEmpty();
     }
 
-    public void add_Params(Object[] params, int base)
+    public void add_Params(Object[] params, int base) throws Exception
     {
-        params[base] = product_Name_JT.getText();
-        params[base + 1] = quantity_JT.getText();
-        params[base + 2] = product_Price_JT.getText();
-        params[base + 3] = stores_JC.get_Selected_Item_ID();
+        params[base] = shop_form.get_Ingredients_Name();
+        params[base + 1] = product_Name_JT.getText();
+        params[base + 2] = quantity_JT.getText();
+        params[base + 3] = product_Price_JT.getText();
+        params[base + 4] = stores_JC.get_Selected_Item_ID();
     }
 
     //#########################################################

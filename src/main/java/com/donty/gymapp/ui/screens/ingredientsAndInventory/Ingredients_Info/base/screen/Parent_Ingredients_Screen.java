@@ -7,7 +7,6 @@ import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.Sear
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.add.ingredients.Ingredients_Form;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.add.products.Shop_Form;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.Ingredients_Info.Ingredients_Info_Screen;
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -248,12 +247,17 @@ public abstract class Parent_Ingredients_Screen extends Screen_JPanel
     {
         shop_Form.reload_Stores_JC();
     }
-    
-    //##################################################################
-    // Accessor Methods
-    //##################################################################
+
+    //##################################################################################################################
+    // Accessor Methods Methods
+    //##################################################################################################################
     public final Frame get_Frame()
     {
         return frame;
+    }
+
+    public String get_Ingredients_Name() throws Exception
+    {
+        return (String) ingredients_Form.get_Component_Field_Value("name");
     }
 }
