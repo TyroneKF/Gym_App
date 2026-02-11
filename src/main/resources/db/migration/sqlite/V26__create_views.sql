@@ -135,9 +135,9 @@
 
             expected_protein_grams,
             expected_carbs_grams,
+            expected_fibre_grams,
             expected_fats_grams,
             saturated_fat_limit,
-            expected_fibre_grams,
             salt_limit_grams,
             water_content_target,
             calories_target,

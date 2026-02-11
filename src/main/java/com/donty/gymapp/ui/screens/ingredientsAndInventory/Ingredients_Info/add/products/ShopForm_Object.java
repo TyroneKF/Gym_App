@@ -75,10 +75,12 @@ public class ShopForm_Object extends JPanel
         {{
             /*
                  General Structure:
-                    * GUI Label            
-                    * Component
-                    * MySQL Field
-                    * Pos in MYSQL Table Query
+                    * Key
+                    * Form Binding:
+                        1.) GUI Label
+                        2.) Component
+                        3.) MySQL Field
+                        4.) Pos in MYSQL Table Query
             */
 
             // ingredient_in_shops -> Skips pdid, ingredient_id (Position starts at 2)

@@ -127,16 +127,15 @@ public class Ingredients_Form extends Parent_Forms_OBJ
 
         field_Items_Map = new LinkedHashMap<>()
         {{
-            // ingredients_info -> Skips ingredient_id
-            int pos = 0;
-            
             /*
                  General Structure:
-                    * GUI Label
-                    * Component
-                    * MySQL Field
-                    * Pos in MYSQL Table Query
-                    * NutritionIX Field
+                    * Key
+                    * Form Binding:
+                        1.) GUI Label
+                        2.) Component
+                        3.) MySQL Field
+                        4.) Pos in MYSQL Table Query
+                        5.) NutritionIX Field
             */
 
             put(
@@ -145,7 +144,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                             "Ingredient Measurement In",
                             meassurment_jc,
                             Ingredient_Info_Columns.MEASUREMENT_ID,
-                            pos += 1,
+                            2,
                             "serving_unit"
                     )
             );
@@ -156,146 +155,133 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                             "Ingredient Name",
                             new Field_JTxtField_String("Ingredient Name", text_Char_Limit),
                             Ingredient_Info_Columns.INGREDIENT_NAME,
-                            pos += 1,
+                            4,
                             "food_name"
                     )
             );
-
             put(
                     "type",
                     new Ingredient_Binding<>(
                             "Ingredient Type",
                             new Field_JCombo_Storable_ID<>("Ingredient Type", Ingredient_Type_ID_OBJ.class, ingredient_Types_Obj_AL),
                             Ingredient_Info_Columns.INGREDIENT_TYPE_ID,
-                            pos += 1
+                            3
                     )
             );
-
             put(
                     "quantity",
                     new Ingredient_Binding<>(
                             "Based On Quantity",
                             new Field_JTxtField_BD("Based On Quantity", digit_Char_Limit, false),
                             Ingredient_Info_Columns.BASED_ON_QUANTITY,
-                            pos += 1,
+                            5,
                             "serving_weight_grams"
                     )
             );
-
             put(
                     "gi",
                     new Ingredient_Binding<>(
                             "Glycemic Index",
                             new Field_JTxtField_INT("Glycemic Index", digit_Char_Limit, true, 0, 100),
                             Ingredient_Info_Columns.GLYCEMIC_INDEX,
-                            pos += 1
+                            6
                     )
             );
-
             put(
                     "protein",
                     new Ingredient_Binding<>(
                             "Protein",
                             new Field_JTxtField_BD("Protein", digit_Char_Limit),
                             Ingredient_Info_Columns.PROTEIN,
-                            pos += 1,
+                            7,
                             "nf_protein"
                     )
             );
-
             put(
                     "carbs",
                     new Ingredient_Binding<>(
                             "Carbohydrates",
                             new Field_JTxtField_BD("Carbohydrates", digit_Char_Limit),
                             Ingredient_Info_Columns.CARBOHYDRATES,
-                            pos += 1,
+                            8,
                             "nf_total_carbohydrate"
                     )
             );
-
             put(
                     "sugars",
                     new Ingredient_Binding<>(
                             "Sugars Of Carbs",
                             new Field_JTxtField_BD("Sugars Of Carbs", digit_Char_Limit),
                             Ingredient_Info_Columns.SUGARS_OF_CARBS,
-                            pos += 1,
+                            9,
                             "nf_sugars"
                     )
             );
-
             put(
                     "fibre",
                     new Ingredient_Binding<>(
                             "Fibre",
                             new Field_JTxtField_BD("Fibre", digit_Char_Limit),
                             Ingredient_Info_Columns.FIBRE,
-                            pos += 1,
+                            10,
                             "nf_dietary_fiber"
                     )
             );
-
             put(
                     "fat",
                     new Ingredient_Binding<>(
                             "Fat",
                             new Field_JTxtField_BD("Fat", digit_Char_Limit),
                             Ingredient_Info_Columns.FAT,
-                            pos += 1,
+                            11,
                             "nf_total_fat"
                     )
             );
-
             put(
                     "sat_fat",
                     new Ingredient_Binding<>(
                             "Saturated Fat",
                             new Field_JTxtField_BD("Saturated Fat", digit_Char_Limit),
                             Ingredient_Info_Columns.SATURATED_FAT,
-                            pos += 1,
+                            12,
                             "nf_saturated_fat"
                     )
             );
-
             put(
                     "salt",
                     new Ingredient_Binding<>(
                             "Salt",
                             new Field_JTxtField_BD("Salt", digit_Char_Limit),
                             Ingredient_Info_Columns.SALT,
-                            pos += 1,
+                            13,
                             "nf_sodium"
                     )
             );
-
             put(
                     "water",
                     new Ingredient_Binding<>(
                             "Water Content",
                             new Field_JTxtField_BD("Water Content", digit_Char_Limit),
                             Ingredient_Info_Columns.WATER_CONTENT,
-                            pos += 1
+                            14
                     )
             );
-
             put(
                     "liquid",
                     new Ingredient_Binding<>(
                             "Liquid Content",
                             new Field_JTxtField_BD("Liquid Content", digit_Char_Limit),
                             Ingredient_Info_Columns.LIQUID_CONTENT,
-                            pos += 1
+                            15
                     )
             );
-
             put(
                     "cal",
                     new Ingredient_Binding<>(
                             "Calories",
                             new Field_JTxtField_BD("Calories", digit_Char_Limit),
                             Ingredient_Info_Columns.CALORIES,
-                            pos += 1,
+                            16,
                             "nf_calories"
                     )
             );

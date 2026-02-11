@@ -25,7 +25,7 @@ public class Field_JTxtField_String extends Field_JTxtField_Parent<String>
     {
         // Does string contain given symbols or, numbers or a defined pattern by the user
         // Matches any character that is NOT a letter, space, period, apostrophe, or hyphen
-        if (does_String_Contain_Given_Characters("[^\\p{L} .'\\-]"))
+        if (does_String_Contain_Given_Characters("[^\\p{L}\\p{N} .,'&+\\-/()\\[\\]]"))
         {
             error_MSGs.add("Can only contain; letters, spaces, period, apostrophe, or hyphens!");
             error_Map.put(label, error_MSGs);

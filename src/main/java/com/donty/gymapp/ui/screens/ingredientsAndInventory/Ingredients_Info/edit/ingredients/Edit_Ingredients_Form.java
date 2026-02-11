@@ -43,8 +43,7 @@ public class Edit_Ingredients_Form extends Ingredients_Form
         ingredient_ID = null;
         data_AL = null;
     }
-    
-    
+
     //##########################################
     // Validation methods
     //##########################################
