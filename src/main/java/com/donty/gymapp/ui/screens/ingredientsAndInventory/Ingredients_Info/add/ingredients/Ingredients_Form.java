@@ -1,8 +1,6 @@
 package com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.add.ingredients;
 
 import com.donty.gymapp.gui.controls.combobox.Field_JCombo_Default;
-import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
-import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Measurement_ID_OBJ;
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
 import com.donty.gymapp.persistence.database.batch.Batch_Upload_Statements;
 import com.donty.gymapp.persistence.database.statements.Fetch_Statement_Full;
@@ -52,6 +50,8 @@ public class Ingredients_Form extends Parent_Forms_OBJ
     protected ArrayList<String> salt_Values_AL = new ArrayList<>(Arrays.asList("mg", "g"));
     protected Field_JCombo_Default<String> salt_JC = new Field_JCombo_Default<>("Salt", String.class, salt_Values_AL);
 
+    protected Field_JC_Ingredient_Type field_jc_ingredient_type;
+
     //############
     // Maps
     //############
@@ -78,6 +78,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         //############################################
         this.db = db;
         this.shared_data_registry = shared_data_registry;
+        this.field_jc_ingredient_type = new Field_JC_Ingredient_Type(shared_data_registry, false);
 
         //############################################
         // Create GUI
@@ -139,7 +140,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     "type",
                     new Ingredient_Binding<>(
                             "Ingredient Type",
-                            new Field_JC_Ingredient_Type(shared_data_registry, false),
+                           field_jc_ingredient_type,
                             Ingredient_Info_Columns.INGREDIENT_TYPE_ID,
                             3
                     )

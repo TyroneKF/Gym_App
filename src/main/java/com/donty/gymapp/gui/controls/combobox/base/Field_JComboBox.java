@@ -84,7 +84,7 @@ public abstract class Field_JComboBox<T> extends JComboBox<T>
         }
         else
         {
-            reset_JC(); // Set Selected Item to Nothing
+            setSelectedItem(null); // Set Selected Item to Nothing
         }
     }
 

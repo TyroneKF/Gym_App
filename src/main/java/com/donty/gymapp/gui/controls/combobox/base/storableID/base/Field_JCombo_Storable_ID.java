@@ -96,7 +96,7 @@ public class Field_JCombo_Storable_ID<T extends Storable_IDS_Parent> extends Fie
         }
         else
         {
-            reset_JC(); // Set Selected Item to Nothing
+            setSelectedItem(null); // Set Selected Item to Nothing
         }
     }
 

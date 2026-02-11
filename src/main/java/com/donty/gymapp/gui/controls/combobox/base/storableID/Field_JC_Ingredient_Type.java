@@ -50,4 +50,25 @@ public class Field_JC_Ingredient_Type extends Field_JCombo_Storable_ID<Ingredien
 
         return false;
     }
+
+    @Override
+    public void reset_JC()
+    {
+        setSelectedItem(null);
+        change_Allow_Un_Assigned_State_And_Reload(false);
+    }
+
+    public void change_Allow_Un_Assigned_State_And_Reload(boolean allow_un_assigned)
+    {
+        set_Allow_Un_Assigned(allow_un_assigned);
+        load_Items();
+    }
+
+    //##################################################################################################################
+    // Mutator Methods
+    //##################################################################################################################
+    public void set_Allow_Un_Assigned(boolean allow_un_assigned)
+    {
+        this.allow_un_assigned = allow_un_assigned;
+    }
 }

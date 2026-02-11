@@ -24,15 +24,23 @@ public class Edit_Ingredients_Form extends Ingredients_Form
     //##################################################################################################################
     protected Integer ingredient_ID = null;
     protected ArrayList<Object> data_AL;
-    
+
+    protected int
+            un_assigned_ingredient_type_id,
+            ingredient_type_query_pos;
+
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
     public Edit_Ingredients_Form(Container parentContainer, MyJDBC_Sqlite db, Shared_Data_Registry sharedDataRegistry, String btn_Txt)
     {
         super(parentContainer, db, sharedDataRegistry, btn_Txt);
+
+        un_assigned_ingredient_type_id = sharedDataRegistry.get_Un_assigned_Ingredient_Type_ID();
+
+        ingredient_type_query_pos = field_Items_Map.get("type").get_Field_Query_Pos();
     }
-    
+
     //##################################################################################################################
     // Methods
     //##################################################################################################################
@@ -54,9 +62,9 @@ public class Edit_Ingredients_Form extends Ingredients_Form
         // IS Ingredient Name Null or Empty
         //####################################
         String ingredient_Name = ((Field_JTxtField_Parent<?>) field_Items_Map.get("name").get_Gui_Component()).get_Text();
-        
+
         if (ingredient_Name == null || ingredient_Name.isEmpty()) { throw new Exception("No ingredient Created!"); }
-        
+
         //##################################
         // Create Query
         //####################################
@@ -71,21 +79,21 @@ public class Edit_Ingredients_Form extends Ingredients_Form
         //####################################
         return ! db.get_Single_Col_Query_Int(fetch_statement, true).isEmpty();
     }
-    
+
     private boolean has_Field_Value_Changed_From_DB_Data(String key) throws Exception
     {
         // Get Desired Keys Object on the Form Value
         Object field_Value_On_Form = get_Component_Field_Value(key);
-        
+
         // Get Desired Keys Equivalent Value in DATA
         int query_Pos = field_Items_Map.get(key).get_Field_Query_Pos(); // Query Position for field Value
         Object field_Value_In_DB_Data = data_AL.get(query_Pos);
-        
+
         //########################
         // Exit Clauses
         //########################
         if (field_Value_In_DB_Data == null) { return false; } // Form Value cant be null due to validation but, db can
-        
+
         if (field_Value_On_Form instanceof Storable_IDS_Parent storable_ID_Obj)
         {
             // case BigInteger x -> { return ! (storable_ID_Obj.get_ID()).equals(x.intValueExact()); }
@@ -96,7 +104,7 @@ public class Edit_Ingredients_Form extends Ingredients_Form
             throw new Exception(String.format("\n\n%s Error ID Object for Key '%s' \nUnexpected value: %s \nClass Type : %s", get_Class_And_Method_Name(), key,
                     field_Value_In_DB_Data, field_Value_In_DB_Data.getClass()));
         }
-        
+
         if (field_Value_On_Form.getClass() != field_Value_In_DB_Data.getClass()) // Type MisMatch
         {
             throw new Exception(String.format("""
@@ -114,7 +122,7 @@ public class Edit_Ingredients_Form extends Ingredients_Form
                     field_Value_In_DB_Data.getClass(), field_Value_In_DB_Data.toString()
             ));
         }
-        
+
         //########################
         // Compare
         //########################
@@ -128,17 +136,17 @@ public class Edit_Ingredients_Form extends Ingredients_Form
                     get_Class_And_Method_Name(), field_Value_On_Form));
         }
     }
-    
+
     public boolean has_Ingredient_Type_Changed() throws Exception
     {
         return has_Field_Value_Changed_From_DB_Data("type");
     }
-    
+
     public boolean has_Ingredient_Name_Changed() throws Exception
     {
         return has_Field_Value_Changed_From_DB_Data("name");
     }
-    
+
     //##########################################
     // Update methods
     //##########################################
@@ -146,18 +154,28 @@ public class Edit_Ingredients_Form extends Ingredients_Form
     {
         // Clear Data
         clear_Ingredients_Form();
-        
+
         // Set Ingredient ID & remove from Arraylist
         ingredient_ID = (Integer) data_AL.getFirst();
         this.data_AL = data_AL;
-        
+
+        // Check if this ingredient has un-assigned type
+        boolean has_un_assigned_type =
+                ((Integer) data_AL.get(ingredient_type_query_pos))
+                        .equals(un_assigned_ingredient_type_id);
+
+        if (has_un_assigned_type) // Change ingredient Type JC to show / allow un-assigned Type if this ingredient has it
+        {
+            field_jc_ingredient_type.change_Allow_Un_Assigned_State_And_Reload(true);
+        }
+
         // Set Data for each component
         for (Ingredient_Binding<?> field_Binding : field_Items_Map.values())
         {
             int pos_In_Query = field_Binding.get_Field_Query_Pos(); // Position of data associated with binding in query
             Object data = data_AL.get(pos_In_Query); // Get data from source
             Component component = field_Binding.get_Gui_Component(); // Get Component from binding
-            
+
             // Set Data depending on component
             switch (component)
             {
@@ -167,10 +185,10 @@ public class Edit_Ingredients_Form extends Ingredients_Form
                         throw new Exception(String.format("\n\n%s Unexpected value: %s ", get_Class_And_Method_Name(), component));
             }
         }
-        
-        set_Salt_JC_To_Grams(); // Set Salt to Grams
+
+        set_Salt_JC_To_Grams();
     }
-    
+
     @Override
     public void add_Update_Queries(Batch_Upload_Statements upload_statements) throws Exception
     {
@@ -178,13 +196,13 @@ public class Edit_Ingredients_Form extends Ingredients_Form
         // Variables
         //##########################
         int size = field_Items_Map.size();
-        
+
         StringBuilder
                 insert_Header = new StringBuilder("UPDATE ingredients_info SET "),
                 values = new StringBuilder();
-        
+
         Object[] params = new Object[size + 1]; // Include where condition param
-        
+
         //##########################
         // Create Update Query
         //##########################
@@ -195,13 +213,13 @@ public class Edit_Ingredients_Form extends Ingredients_Form
             // Variables
             //######################################
             Component component = field_Binding.get_Gui_Component(); // Get Component from binding
-            
+
             //######################################
             // Compare Data - Skip if They're Equal
             //######################################
             int pos_In_Query = field_Binding.get_Field_Query_Pos(); // Position of data associated with binding in query
             Object stored_Data = data_AL.get(pos_In_Query); // Get data from source
-            
+
             switch (component)
             {
                 case Field_JCombo_Storable_ID<?> jc ->
@@ -212,13 +230,13 @@ public class Edit_Ingredients_Form extends Ingredients_Form
                 default ->
                         throw new Exception(String.format("\n\n%s Unexpected value:  %s", get_Class_And_Method_Name(), field_Binding.get_Gui_Component()));
             }
-            
+
             //######################################
             // Create Update Data
             //#####################################
             // Add to Values
             values.append(String.format("\n%s = ?,", field_Binding.get_Mysql_Field_Name()));
-            
+
             // Add to Params
             switch (field_Binding.get_Gui_Component())
             {
@@ -227,27 +245,27 @@ public class Edit_Ingredients_Form extends Ingredients_Form
                 default ->
                         throw new Exception(String.format("\n\n%s Unexpected value:  %s", get_Class_And_Method_Name(), field_Binding.get_Gui_Component()));
             }
-            
+
             pos++; // Increase pos
         }
-        
+
         //##########################
         // Format Update Data
         //##########################
         if (values.isEmpty()) { return; } // If Nothing Changed Exit
-        
+
         // Edit Ending of Query
         values.deleteCharAt(values.length() - 1); // delete last char ','
         values.append("\nWHERE ingredient_id = ?;");
         params[pos] = ingredient_ID;
-        
+
         // Remove null values from values not changed
         params = Arrays.stream(params)
                 .filter(Objects :: nonNull)
                 .toArray(Object[] :: new);
-        
+
         System.out.printf("\n\nInsert Headers: \n%s \n\nValues: \n%s  \n\nParams: \n%s%n", insert_Header, values, Arrays.toString(params));
-        
+
         //##########################
         // Add To Results
         //##########################
