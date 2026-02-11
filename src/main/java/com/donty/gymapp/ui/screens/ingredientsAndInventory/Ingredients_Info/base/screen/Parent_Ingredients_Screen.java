@@ -27,14 +27,19 @@ public abstract class Parent_Ingredients_Screen extends Screen_JPanel
     protected Shop_Form shop_Form;
     protected Search_For_Food_Info search_For_Ingredient_Info;
     protected Ingredients_Info_Screen ingredients_info_screen;
-    protected Shared_Data_Registry shared_Data_Registry;
+    protected Shared_Data_Registry shared_data_registry;
 
     protected String error_msg;
 
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Parent_Ingredients_Screen(Ingredients_Info_Screen ingredients_info_screen, MyJDBC_Sqlite db, Shared_Data_Registry shared_Data_Registry)
+    public Parent_Ingredients_Screen
+    (
+            Ingredients_Info_Screen ingredients_info_screen,
+            MyJDBC_Sqlite db,
+            Shared_Data_Registry shared_data_registry
+    )
     {
         //##########################################################
         // Super Constructor
@@ -47,7 +52,7 @@ public abstract class Parent_Ingredients_Screen extends Screen_JPanel
         // Objects
         this.ingredients_info_screen = ingredients_info_screen;
         this.db = db;
-        this.shared_Data_Registry = shared_Data_Registry;
+        this.shared_data_registry = shared_data_registry;
         
         frame = ingredients_info_screen.getFrame();
         

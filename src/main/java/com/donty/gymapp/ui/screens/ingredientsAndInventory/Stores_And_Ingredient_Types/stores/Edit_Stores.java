@@ -61,7 +61,7 @@ public class Edit_Stores extends Edit_Screen<Store_ID_OBJ>
     @Override
     protected boolean delete_Shared_Data_Action()
     {
-        Storable_IDS_Parent item_ID_Obj = (Storable_IDS_Parent) field_jc_box.getSelectedItem();
+        Storable_IDS_Parent item_ID_Obj = (Storable_IDS_Parent) field_jc.getSelectedItem();
 
         return sharedDataRegistry.remove_Store((Store_ID_OBJ) item_ID_Obj);
     }

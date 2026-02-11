@@ -198,7 +198,7 @@ public class Shop_Form extends Parent_Forms_OBJ
     protected void add_Btn_Action()
     {
         // Create ShopForm Object & Add
-        ShopForm_Object add_shop_form_object = new ShopForm_Object(input_Area_JP, this, stores);
+        ShopForm_Object add_shop_form_object = new ShopForm_Object(input_Area_JP, this, shared_Data_Registry);
         shop_Form_Objects.add(add_shop_form_object);
 
         // Adding Object To GUI

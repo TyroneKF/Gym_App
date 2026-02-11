@@ -1,5 +1,6 @@
 package com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.edit;
 
+import com.donty.gymapp.gui.controls.combobox.base.storableID.Field_JCombo_Storable_ID_Main;
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
 import com.donty.gymapp.persistence.database.Fetched_Results;
@@ -8,8 +9,8 @@ import com.donty.gymapp.persistence.database.batch.Batch_Upload_And_Fetch_Statem
 import com.donty.gymapp.persistence.database.batch.Batch_Upload_Statements;
 import com.donty.gymapp.persistence.database.statements.Fetch_Statement_Full;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
-import com.donty.gymapp.gui.controls.combobox.Field_JCombo_Storable_ID;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.Search_For_Food_Info;
+import com.donty.gymapp.gui.controls.combobox.base.storableID.Field_JC_Ingredient_Type;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.edit.ingredients.Edit_Ingredients_Form;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.edit.products.Edit_Shop_Form;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.Ingredients_Info.Ingredients_Info_Screen;
@@ -25,8 +26,8 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
     //##################################################################################################################
 
     // JComboBox Objects
-    protected Field_JCombo_Storable_ID<Ingredient_Type_ID_OBJ> ingredient_Main_Type_JC;
-    protected Field_JCombo_Storable_ID<Ingredient_Name_ID_OBJ> ingredient_Main_Name_JC;
+    protected Field_JC_Ingredient_Type ingredient_Main_Type_JC;
+    protected Field_JCombo_Storable_ID_Main<Ingredient_Name_ID_OBJ> ingredient_Main_Name_JC;
 
     protected boolean
             allow_Name_Action_Listener = true,
@@ -56,9 +57,9 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
     @Override
     protected void create_GUI_Objects()
     {
-        ingredients_Form = new Edit_Ingredients_Form(scroll_JPanel, db, shared_Data_Registry, "Edit Ingredients Info");
+        ingredients_Form = new Edit_Ingredients_Form(scroll_JPanel, db, shared_data_registry, "Edit Ingredients Info");
 
-        shop_Form = new Edit_Shop_Form(scroll_JPanel, "Add Suppliers", this, shared_Data_Registry);
+        shop_Form = new Edit_Shop_Form(scroll_JPanel, " Edit / Add Suppliers", this, shared_data_registry);
 
         search_For_Ingredient_Info = new Search_For_Food_Info(scroll_JPanel, ingredients_Form, "Search For Food Info");
     }
@@ -82,7 +83,7 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
         add_To_Container(mainCentre_JPanel, ingredientType_JC_JP, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "horizontal", 10, 0, null);
 
         // Create JCombBox
-        ingredient_Main_Type_JC = new Field_JCombo_Storable_ID<>("Ingredient Type", Ingredient_Type_ID_OBJ.class, shared_Data_Registry.get_Mapped_Ingredient_Types())
+        ingredient_Main_Type_JC = new Field_JC_Ingredient_Type(shared_data_registry, true)
         {
             @Override
             protected void actionListener()
@@ -113,7 +114,7 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
         add_To_Container(mainCentre_JPanel, ingredient_Name_JC_JP, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "horizontal", 10, 0, null);
 
         // Create JComboBox
-        ingredient_Main_Name_JC = new Field_JCombo_Storable_ID<>("Ingredient Name", Ingredient_Name_ID_OBJ.class, new ArrayList<>())
+        ingredient_Main_Name_JC = new Field_JCombo_Storable_ID_Main<>("Ingredient Name", Ingredient_Name_ID_OBJ.class, new ArrayList<>())
         {
             @Override
             protected void actionListener()
@@ -262,7 +263,7 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
         Ingredient_Type_ID_OBJ ingredient_type_id_obj = (Ingredient_Type_ID_OBJ) edit_ingredients_form.get_Component_Field_Value("type");
 
         // Change Ingredient Type on Ingredient Name
-        return shared_Data_Registry.change_Ingredient_Type(ingredient_type_id_obj, ingredient_name_id_obj);
+        return shared_data_registry.change_Ingredient_Type(ingredient_type_id_obj, ingredient_name_id_obj);
     }
 
     //######################################################################
@@ -311,7 +312,7 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
             Integer selected_Type = ingredient_Main_Type_JC.get_Selected_Item_ID(); // Get Selected Type ID
 
             // Get List of Ingredient Names Associated with Type
-            ArrayList<Ingredient_Name_ID_OBJ> new_Ingredients = shared_Data_Registry.get_Ingredient_Names_From_Type_AL(selected_Type);
+            ArrayList<Ingredient_Name_ID_OBJ> new_Ingredients = shared_data_registry.get_Ingredient_Names_From_Type_AL(selected_Type);
 
             ingredient_Main_Name_JC.set_And_Load_Data(new_Ingredients);   // Set Data & Reload associated with JL
 

@@ -8,7 +8,7 @@ import com.donty.gymapp.persistence.database.batch.Batch_Upload_Statements;
 import com.donty.gymapp.persistence.database.statements.Fetch_Statement_Full;
 import com.donty.gymapp.persistence.database.statements.Upload_Statement;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
-import com.donty.gymapp.gui.controls.combobox.Field_JCombo_Storable_ID;
+import com.donty.gymapp.gui.controls.combobox.base.storableID.base.Field_JCombo_Storable_ID;
 import com.donty.gymapp.gui.controls.combobox.base.Field_JComboBox;
 import com.donty.gymapp.gui.controls.IconButton;
 import com.donty.gymapp.gui.panels.IconPanel;
@@ -16,6 +16,8 @@ import com.donty.gymapp.gui.controls.textfields.Field_JTxtField_BD;
 import com.donty.gymapp.gui.controls.textfields.Field_JTxtField_INT;
 import com.donty.gymapp.gui.controls.textfields.Field_JTxtField_String;
 import com.donty.gymapp.gui.controls.textfields.base.Field_JTxtField_Parent;
+import com.donty.gymapp.gui.controls.combobox.base.storableID.Field_JC_Ingredient_Type;
+import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.base.ingredients.Field_JC_Measurements;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.base.screen.Parent_Forms_OBJ;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.base.ingredients.Ingredient_Binding;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.base.ingredients.Ingredient_Info_Columns;
@@ -36,13 +38,12 @@ public class Ingredients_Form extends Parent_Forms_OBJ
     // Integers
     protected int
             digit_Char_Limit = 8,
-            text_Char_Limit = 255,
-            na_measurement_id;
+            text_Char_Limit = 255;
 
     //#############################
     // Objects
     //#############################
-    protected Shared_Data_Registry sharedDataRegistry;
+    protected Shared_Data_Registry shared_data_registry;
     protected MyJDBC_Sqlite db;
 
     protected JPanel northPanel = new JPanel(new GridBagLayout());
@@ -50,12 +51,6 @@ public class Ingredients_Form extends Parent_Forms_OBJ
     // Salt JC Object
     protected ArrayList<String> salt_Values_AL = new ArrayList<>(Arrays.asList("mg", "g"));
     protected Field_JCombo_Default<String> salt_JC = new Field_JCombo_Default<>("Salt", String.class, salt_Values_AL);
-
-    //#############################
-    // Collections
-    //#############################
-    protected ArrayList<Ingredient_Type_ID_OBJ> ingredient_Types_Obj_AL;
-    protected ArrayList<Measurement_ID_OBJ> ingredient_Measurement_Obj_AL;
 
     //############
     // Maps
@@ -65,7 +60,13 @@ public class Ingredients_Form extends Parent_Forms_OBJ
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Ingredients_Form(Container parentContainer, MyJDBC_Sqlite db, Shared_Data_Registry sharedDataRegistry, String btn_Txt)
+    public Ingredients_Form
+    (
+            Container parentContainer,
+            MyJDBC_Sqlite db,
+            Shared_Data_Registry shared_data_registry,
+            String btn_Txt
+    )
     {
         //############################################
         // Super Constructor
@@ -76,14 +77,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         // Variables
         //############################################
         this.db = db;
-        this.sharedDataRegistry = sharedDataRegistry;
-
-        // Integers
-        na_measurement_id = sharedDataRegistry.get_NA_Measurement_ID();
-
-        // Collections
-        ingredient_Types_Obj_AL = sharedDataRegistry.get_All_Ingredient_Types_AL();
-        ingredient_Measurement_Obj_AL = sharedDataRegistry.get_Ingredient_Measurement_Obj_AL();
+        this.shared_data_registry = shared_data_registry;
 
         //############################################
         // Create GUI
@@ -107,24 +101,6 @@ public class Ingredients_Form extends Parent_Forms_OBJ
     //###########################################################
     private void create_Field_Items_Map()
     {
-        // Separately Create Ingredients Meassurment JC to Remove N/A Meassurment
-        Field_JCombo_Storable_ID<Measurement_ID_OBJ> meassurment_jc =
-
-                new Field_JCombo_Storable_ID<>(
-                        "Ingredient Measurement In",
-                        Measurement_ID_OBJ.class,
-                        false,
-                        ingredient_Measurement_Obj_AL
-                )
-                {
-                    @Override
-                    protected boolean remove_Item_From_JC_Model_Check(Measurement_ID_OBJ item)
-                    {
-                        return item.get_ID().equals(na_measurement_id);
-                    }
-                };
-
-
         field_Items_Map = new LinkedHashMap<>()
         {{
             /*
@@ -142,7 +118,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     "measurement",
                     new Ingredient_Binding<>(
                             "Ingredient Measurement In",
-                            meassurment_jc,
+                            new Field_JC_Measurements(shared_data_registry),
                             Ingredient_Info_Columns.MEASUREMENT_ID,
                             2,
                             "serving_unit"
@@ -163,7 +139,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     "type",
                     new Ingredient_Binding<>(
                             "Ingredient Type",
-                            new Field_JCombo_Storable_ID<>("Ingredient Type", Ingredient_Type_ID_OBJ.class, ingredient_Types_Obj_AL),
+                            new Field_JC_Ingredient_Type(shared_data_registry, false),
                             Ingredient_Info_Columns.INGREDIENT_TYPE_ID,
                             3
                     )

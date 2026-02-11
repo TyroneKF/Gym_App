@@ -1,9 +1,9 @@
 package com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.edit.products;
 
-import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Store_ID_OBJ;
+import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.persistence.database.batch.Batch_Upload_Statements;
 import com.donty.gymapp.persistence.database.statements.Upload_Statement;
-import com.donty.gymapp.gui.controls.combobox.Field_JCombo_Storable_ID;
+import com.donty.gymapp.gui.controls.combobox.base.storableID.base.Field_JCombo_Storable_ID;
 import com.donty.gymapp.gui.controls.textfields.base.Field_JTxtField_Parent;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.add.products.ShopForm_Object;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.base.products.Shop_Form_Binding;
@@ -24,9 +24,16 @@ public class Edit_ShopForm_Object extends ShopForm_Object
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Edit_ShopForm_Object(Container parent_Container, Edit_Shop_Form shop_form, ArrayList<Store_ID_OBJ> stores, ArrayList<Object> data) throws Exception
+    public Edit_ShopForm_Object
+    (
+            Container parent_Container,
+            Edit_Shop_Form shop_form,
+            Shared_Data_Registry shared_data_registry,
+            ArrayList<Object> data
+
+    ) throws Exception
     {
-        super(parent_Container, shop_form, stores);
+        super(parent_Container, shop_form, shared_data_registry);
         set_Data(data);
     }
     

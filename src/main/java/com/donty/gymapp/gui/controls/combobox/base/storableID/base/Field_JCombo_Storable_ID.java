@@ -1,4 +1,4 @@
-package com.donty.gymapp.gui.controls.combobox;
+package com.donty.gymapp.gui.controls.combobox.base.storableID.base;
 
 import com.donty.gymapp.gui.controls.combobox.base.Field_JComboBox;
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Storable_IDS_Parent;
@@ -12,26 +12,33 @@ public class Field_JCombo_Storable_ID<T extends Storable_IDS_Parent> extends Fie
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    boolean hide_system_var = true;
+    protected boolean hide_system_var = true;
 
 
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Field_JCombo_Storable_ID(String label, Class<T> typeCast,  ArrayList<T> data_AL)
+    protected Field_JCombo_Storable_ID
+    (
+            String label,
+            Class<T> typeCast,
+            ArrayList<T> data_AL
+    )
     {
         super(label, typeCast, data_AL);
-
-        init();
     }
 
-    public Field_JCombo_Storable_ID(String label, Class<T> typeCast, boolean hide_system_var, ArrayList<T> data_AL)
+    public Field_JCombo_Storable_ID
+    (
+            String label,
+            Class<T> typeCast,
+            boolean hide_system_var,
+            ArrayList<T> data_AL
+    )
     {
         super(label, typeCast, data_AL);
 
         this.hide_system_var = hide_system_var;
-
-        init();
     }
 
     //##################################################################################################################
@@ -75,7 +82,7 @@ public class Field_JCombo_Storable_ID<T extends Storable_IDS_Parent> extends Fie
                 selected_item_in_list = true;
             }
 
-            if (remove_Item_From_JC_Model_Check(item)) { continue; } // IF items is_System & Skip system = continue
+            if (remove_Item_From_JC_Model(item)) { continue; } // IF items is_System & Skip system = continue
 
             model.addElement(item);
         }
@@ -93,9 +100,9 @@ public class Field_JCombo_Storable_ID<T extends Storable_IDS_Parent> extends Fie
         }
     }
 
-    protected boolean remove_Item_From_JC_Model_Check(T item)
+    protected boolean remove_Item_From_JC_Model(T iteration_item)
     {
-       return hide_system_var && item.get_is_System();
+       return hide_system_var && iteration_item.get_is_System();
     }
 
     protected void actionListener() { }

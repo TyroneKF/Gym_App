@@ -1,12 +1,11 @@
 package com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.add.products;
 
-import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Store_ID_OBJ;
-import com.donty.gymapp.gui.controls.combobox.Field_JCombo_Storable_ID;
+import com.donty.gymapp.gui.controls.combobox.base.storableID.Field_JC_Stores;
+import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.gui.controls.textfields.Field_JTxtField_BD;
 import com.donty.gymapp.gui.controls.textfields.Field_JTxtField_String;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.base.products.productEnum;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.base.products.Shop_Form_Binding;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -26,16 +25,14 @@ public class ShopForm_Object extends JPanel
 
     // GUI Objects
     protected Container parent_Container;
-    protected Field_JCombo_Storable_ID<Store_ID_OBJ> stores_JC;
+    protected Field_JC_Stores stores_JC;
 
     protected Field_JTxtField_String product_Name_JT;
     protected Field_JTxtField_BD product_Price_JT, quantity_JT;
 
     // Objects
     protected Shop_Form shop_form;
-
-    // Collections
-    protected ArrayList<Store_ID_OBJ> stores;
+    protected Shared_Data_Registry shared_data_registry;
 
     //############
     // Maps
@@ -49,7 +46,7 @@ public class ShopForm_Object extends JPanel
     (
             Container parent_Container,
             Shop_Form shop_form,
-            ArrayList<Store_ID_OBJ> stores
+            Shared_Data_Registry shared_data_registry
     )
     {
         //###############################
@@ -57,10 +54,9 @@ public class ShopForm_Object extends JPanel
         //###############################
         this.parent_Container = parent_Container;
         this.shop_form = shop_form;
-        this.stores = stores;  // Collections
 
         product_Name_JT = new Field_JTxtField_String("Product Nme", string_Char_Limit);
-        stores_JC = new Field_JCombo_Storable_ID<>("Store Name", Store_ID_OBJ.class, stores);  // Component
+        stores_JC = new Field_JC_Stores(shared_data_registry);  // Component
         product_Price_JT = new Field_JTxtField_BD("Price", decimal_Char_Limit);
         quantity_JT = new Field_JTxtField_BD("Quantity", decimal_Char_Limit, false);
 

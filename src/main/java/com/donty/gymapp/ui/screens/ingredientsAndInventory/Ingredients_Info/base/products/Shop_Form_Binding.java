@@ -2,7 +2,7 @@ package com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.bas
 
 import com.donty.gymapp.ui.meta.bindings.Field_Binding;
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Storable_IDS_Parent;
-import com.donty.gymapp.gui.controls.combobox.Field_JCombo_Storable_ID;
+import com.donty.gymapp.gui.controls.combobox.base.storableID.base.Field_JCombo_Storable_ID;
 import com.donty.gymapp.gui.controls.textfields.base.Field_JTxtField_Parent;
 
 public class Shop_Form_Binding<T extends Storable_IDS_Parent>  extends Field_Binding<T>

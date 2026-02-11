@@ -2,7 +2,9 @@
 mvn javafx:run "-DmainClass=Tests.ToggleSwitchDemo"
 
 
-
+.) Delete btn Ingredients on edit screen
+.) Edit Measurement Field to show un-assigned field in ingredients types
+.) Make ShopsForm use binding
 
 
 CREATE TEMPORARY TABLE
@@ -219,7 +221,7 @@ OVERALL:
 SQL :
 ######################################################################################
 .) MAX is apparently not needed although it flagged an error on linux:
-   MAX(m.Meal_Time) AS Meal_Time, -- HELLO 
+   MAX(m.Meal_Time) AS Meal_Time, -- HELLO
    MAX(m.Meal_Name) AS Meal_Name,
 
 .) Using mysql exception handling for queries vs regular
@@ -236,7 +238,7 @@ Unknown:
 ######################################################################################
 MYJDBC:
 ######################################################################################
-.) Refactor script setup 
+.) Refactor script setup
 .) Create a user log in page
 
 ######################################################################################

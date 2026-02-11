@@ -38,7 +38,13 @@ public class Edit_Shop_Form extends Shop_Form
             for (ArrayList<Object> data : data_AL)  // Add Shop Form Objects to Form
             {
                 // Create ShopForm Object & Add
-                Edit_ShopForm_Object edit_shop_form_object = new Edit_ShopForm_Object(input_Area_JP, this, stores, data);
+                Edit_ShopForm_Object edit_shop_form_object = new Edit_ShopForm_Object(
+                        input_Area_JP,
+                        this,
+                        shared_Data_Registry,
+                        data
+                );
+
                 edit_Shop_Form_Objects_AL.add(edit_shop_form_object);
                 
                 // Adding Object To GUI

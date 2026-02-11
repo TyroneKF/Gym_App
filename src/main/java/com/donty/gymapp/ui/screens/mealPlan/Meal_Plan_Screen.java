@@ -980,8 +980,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
         // N/A Shop
         String query_02 = """
-                SELECT
-                    pdid
+                SELECT pdid
                 FROM ingredient_in_shops
                 WHERE
                     ingredient_id = (SELECT ingredient_id FROM ingredients_info WHERE ingredient_name = ?)
@@ -991,13 +990,20 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
         // N/A Meassurment
         String query_03 = """
-                SELECT
-                    measurement_id
+                SELECT measurement_id
                 FROM measurements
                 WHERE
                     unit_name = ?;""";
 
         fetch_statements.add_Fetches(new Fetch_Statement(query_03, new Object[]{ "N/A" }));
+
+        // Un-Assigned Ingredient Type
+        String query_04 = """
+                SELECT ingredient_type_id
+                FROM ingredient_types
+                WHERE ingredient_type_name = ?;""";
+
+        fetch_statements.add_Fetches(new Fetch_Statement(query_04, new Object[]{ "Un-Assigned" }));
 
         try
         {
@@ -1015,11 +1021,13 @@ public class Meal_Plan_Screen extends Screen_JFrame
             int na_ingredient_id = (Integer) fetched_results.get_1D_Result_Into_Object(0);
             int na_pdid = (Integer) fetched_results.get_1D_Result_Into_Object(1);
             int na_measurement_id = (Integer) fetched_results.get_1D_Result_Into_Object(2);
+            int un_assigned_ingredient_type_id = (Integer) fetched_results.get_1D_Result_Into_Object(3);
 
             // Set Variables in Shared Data Registry
             shared_data_registry.set_NA_Ingredient_ID(na_ingredient_id);
             shared_data_registry.set_NA_Ingredient_PDID(na_pdid);
             shared_data_registry.set_NA_Measurement_ID(na_measurement_id);
+            shared_data_registry.set_Un_Assigned_Ingredient_Type_ID(un_assigned_ingredient_type_id);
 
             //###########################
             // Success Msg

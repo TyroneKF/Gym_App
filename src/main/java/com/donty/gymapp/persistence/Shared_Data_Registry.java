@@ -34,6 +34,7 @@ public class Shared_Data_Registry
     private int na_ingredient_id;
     private int na_pdid;
     private int na_measurement_id;
+    private int un_assigned_ingredient_type_id;
 
     private Ingredient_Name_ID_OBJ na_ingredient_id_obj;
 
@@ -762,7 +763,12 @@ public class Shared_Data_Registry
     {
         this.na_measurement_id = na_measurement_id;
     }
-    
+
+    public void set_Un_Assigned_Ingredient_Type_ID(int un_assigned_ingredient_type_id)
+    {
+        this.un_assigned_ingredient_type_id = un_assigned_ingredient_type_id;
+    }
+
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
@@ -839,7 +845,12 @@ public class Shared_Data_Registry
     {
         return na_measurement_id;
     }
-    
+
+    public int get_Un_assigned_Ingredient_Type_ID()
+    {
+        return un_assigned_ingredient_type_id;
+    }
+
     public int get_Other_Total_Meal_Table_Column_Pos(Draft_Gui_Total_Meal_Other_Columns column_name)
     {
         return total_meal_other_cols_positions.get(column_name);

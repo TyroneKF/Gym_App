@@ -1,6 +1,7 @@
 package com.donty.gymapp.ui.screens.ingredientsAndInventory.Stores_And_Ingredient_Types.base;
 
-import com.donty.gymapp.gui.controls.combobox.Field_JCombo_Storable_ID;
+import com.donty.gymapp.gui.controls.combobox.base.storableID.Field_JCombo_Storable_ID_Main;
+import com.donty.gymapp.gui.controls.combobox.base.storableID.base.Field_JCombo_Storable_ID;
 import com.donty.gymapp.ui.meta.ids.ID_Object;
 import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Storable_IDS_Parent;
 import com.donty.gymapp.persistence.database.batch.Batch_Upload_Statements;
@@ -22,7 +23,7 @@ public abstract class Edit_Screen<T extends Storable_IDS_Parent> extends Add_Scr
     //##################################################################################################################
 
     // GUI Objects
-    protected Field_JCombo_Storable_ID<T> field_jc_box;
+    protected Field_JCombo_Storable_ID<T> field_jc;
     protected JPanel jCombo_box_jp;
 
     // String
@@ -94,24 +95,24 @@ public abstract class Edit_Screen<T extends Storable_IDS_Parent> extends Add_Scr
 
     protected void create_JC_Box()
     {
-        field_jc_box = new Field_JCombo_Storable_ID<>("", class_type, true, jComboBox_List)
+        field_jc = new Field_JCombo_Storable_ID_Main<T>("", class_type, true, jComboBox_List)
         {
             @Override
             protected void actionListener()
             {
-                selected_JComboBox_Item_Txt = ((Storable_IDS_Parent) Objects.requireNonNull(field_jc_box.getSelectedItem())).get_Name();
+                selected_JComboBox_Item_Txt = ((Storable_IDS_Parent) Objects.requireNonNull(field_jc.getSelectedItem())).get_Name();
             }
         };
 
-        field_jc_box.setFont(new Font("Arial", Font.PLAIN, 17)); // setting font
-        ((JLabel) field_jc_box.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER); // centre text
+        field_jc.setFont(new Font("Arial", Font.PLAIN, 17)); // setting font
+        ((JLabel) field_jc.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER); // centre text
 
-        jCombo_box_jp.add(field_jc_box);
+        jCombo_box_jp.add(field_jc);
     }
 
     protected void load_JCombo_Box()
     {
-        field_jc_box.load_Items();
+        field_jc.load_Items();
     }
 
     //##################################################################################################################
@@ -119,19 +120,19 @@ public abstract class Edit_Screen<T extends Storable_IDS_Parent> extends Add_Scr
     //##################################################################################################################
     protected Integer get_Selected_Item_ID()
     {
-        return field_jc_box.get_Selected_Item_ID();
+        return field_jc.get_Selected_Item_ID();
     }
 
     protected T get_Selected_Item()
     {
-        return field_jc_box.get_Selected_Item();
+        return field_jc.get_Selected_Item();
     }
 
     // Form Methods
     @Override
     protected boolean additional_Validate_Form()
     {
-        if (! field_jc_box.is_Item_Selected())
+        if (! field_jc.is_Item_Selected())
         {
             JOptionPane.showMessageDialog(null, String.format("\n\nSelect An %s To Edit!", data_gathering_name));
             return false;
@@ -232,7 +233,7 @@ public abstract class Edit_Screen<T extends Storable_IDS_Parent> extends Add_Scr
     protected void clear_Btn_Action()
     {
         field_jt_field.reset_Txt_Field();
-        field_jc_box.reset_JC();
+        field_jc.reset_JC();
         selected_JComboBox_Item_Txt = "";
     }
 
@@ -244,7 +245,7 @@ public abstract class Edit_Screen<T extends Storable_IDS_Parent> extends Add_Scr
         //##################################
         // IS Item Selected
         //##################################
-        if (! field_jc_box.is_Item_Selected())
+        if (! field_jc.is_Item_Selected())
         {
             JOptionPane.showMessageDialog(null, String.format("Select An ' %s 'To Delete It !!!", data_gathering_name));
             return;

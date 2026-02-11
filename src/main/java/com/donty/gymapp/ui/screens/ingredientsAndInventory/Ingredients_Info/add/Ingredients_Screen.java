@@ -42,9 +42,9 @@ public class Ingredients_Screen extends Parent_Ingredients_Screen
     @Override
     protected void create_GUI_Objects()
     {
-        ingredients_Form = new Ingredients_Form(scroll_JPanel, db, shared_Data_Registry, "Add Ingredients Info");
+        ingredients_Form = new Ingredients_Form(scroll_JPanel, db, shared_data_registry, "Add Ingredients Info");
 
-        shop_Form = new Shop_Form(scroll_JPanel, "Add Suppliers", this, shared_Data_Registry);
+        shop_Form = new Shop_Form(scroll_JPanel, "Add Suppliers", this, shared_data_registry);
 
    /*     search_For_Ingredient_Info = new Search_For_Food_Info(scroll_JPanel, ingredients_Form, "Search For Food Info");*/
     }
@@ -133,7 +133,7 @@ public class Ingredients_Screen extends Parent_Ingredients_Screen
             }
 
             // Create & Add Ingredient Name OBJ
-            shared_Data_Registry.add_Ingredient_Name(
+            shared_data_registry.add_Ingredient_Name(
                     new Ingredient_Name_ID_OBJ(
                             ingredient_ID,
                             false,

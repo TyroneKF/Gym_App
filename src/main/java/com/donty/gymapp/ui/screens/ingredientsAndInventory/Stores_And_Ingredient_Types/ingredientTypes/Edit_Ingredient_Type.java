@@ -70,7 +70,7 @@ public class Edit_Ingredient_Type extends Edit_Screen<Ingredient_Type_ID_OBJ>
     @Override
     protected boolean delete_Shared_Data_Action()
     {
-        Storable_IDS_Parent item_ID_Obj = (Storable_IDS_Parent) field_jc_box.getSelectedItem();
+        Storable_IDS_Parent item_ID_Obj = (Storable_IDS_Parent) field_jc.getSelectedItem();
         return sharedDataRegistry.remove_Ingredient_Type((Ingredient_Type_ID_OBJ) item_ID_Obj);
     }
     
