@@ -58,12 +58,6 @@ public class Edit_Shop_Form extends Shop_Form
     }
     
     @Override
-    protected String get_Ingredient_ID_SQL_Statement()
-    {
-        return String.format("Set %s = %s;", var_Ingredient_ID, ingredient_ID);
-    }
-    
-    @Override
     public void add_Update_Queries_Extra(Batch_Upload_Statements queries_And_Params) throws Exception
     {
         //###########################################

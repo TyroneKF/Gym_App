@@ -88,7 +88,7 @@ public class ShopForm_Object extends JPanel
                         4.) Pos in MYSQL Table Query
             */
 
-            // ingredient_in_shops -> Skips pdid, ingredient_id (Position starts at 2)
+            // ingredient_in_shops -> Skips pdid, is_System, ingredient_id (Position starts at 2)
 
             put(
                     "store",
@@ -96,7 +96,7 @@ public class ShopForm_Object extends JPanel
                             "Select A Store",    
                             stores_JC,                    
                             productEnum.INGREDIENT_ID,
-                            5
+                            3
                     )
             );
             put(
@@ -105,7 +105,7 @@ public class ShopForm_Object extends JPanel
                             "Product Name",       
                             product_Name_JT,
                             productEnum.PRODUCT_NAME,
-                            2
+                            4
                     )
             );
             put(
@@ -114,7 +114,7 @@ public class ShopForm_Object extends JPanel
                             "Product Price",         
                             product_Price_JT,
                             productEnum.COST_PER_UNIT,
-                            4
+                            6
                     )
             );
             put(
@@ -123,7 +123,7 @@ public class ShopForm_Object extends JPanel
                             "Quantity Per Pack",         
                             quantity_JT,
                             productEnum.VOLUME_PER_UNIT,
-                            3
+                            5
                     )
             );
         }};
