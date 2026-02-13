@@ -48,7 +48,6 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
 import java.util.*;
-import java.util.List;
 
 public class Meal_Plan_Screen extends Screen_JFrame
 {
@@ -654,7 +653,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         ArrayList<Draft_Gui_Ingredients_Calc_Columns> ingredients_Table_Editable_Cells = new ArrayList<>(Arrays.asList(
                 Draft_Gui_Ingredients_Calc_Columns.INGREDIENT_TYPE_NAME,
                 Draft_Gui_Ingredients_Calc_Columns.INGREDIENT_NAME,
-                Draft_Gui_Ingredients_Calc_Columns. QUANTITY,
+                Draft_Gui_Ingredients_Calc_Columns.QUANTITY,
                 Draft_Gui_Ingredients_Calc_Columns.DELETE_BTN
         ));
 
@@ -1172,7 +1171,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //################################################################
         // Transferring Meals From Versioned to Draft Meals
         //################################################################
-        if (is_this_refresh)
+        if (is_this_refresh && is_There_Any_Meals_In_Plan()) // prevents error expecting rows to be changed if there are no meals to delete
         {
             String query_00 = "DELETE FROM draft_meals_in_plan WHERE plan_id = ?;";
             batch_Upload.add_Uploads(new Upload_Statement(query_00, new Object[]{ get_Selected_Plan_ID() }, true));
@@ -2320,9 +2319,16 @@ public class Meal_Plan_Screen extends Screen_JFrame
     private void clear_Btn_Action()
     {
         //######################################
-        // Ask for Confirmation
+        // Edge  Cases
         //######################################
+        // Ask for Confirmation
         if (! areYouSure("Delete All Meals", "Are you want to 'DELETE' all the meals in this plan?")) { return; }
+
+        if (! is_There_Any_Meals_In_Plan()) // No Meals in Plan
+        {
+            JOptionPane.showMessageDialog(getFrame(), "There are no meals to clear!");
+            return;
+        }
 
         //#######################################
         // Upload
@@ -2343,8 +2349,10 @@ public class Meal_Plan_Screen extends Screen_JFrame
         clear_GUI_And_Meal_DATA();
 
         //###################################
-        // Update GUI
+        // Update GUI & Variable
         //###################################
+        set_has_Data_Changed(true);  // plan data has changed
+
         update_Macros_Left_Table();  // Update MacrosLeft
 
         // Update External Graphs
@@ -2370,7 +2378,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // ###############################################################
     // Pie Chart BTN Actions
     // ###############################################################
-    public boolean is_PieChart_Screen_Open()
+    public boolean is_Pie_Chart_Screen_Open()
     {
         return pie_chart_screen != null;
     }
@@ -2382,7 +2390,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
     private void pie_Chart_Btn_Action_Open_Screen()
     {
-        if (is_PieChart_Screen_Open())
+        if (is_Pie_Chart_Screen_Open())
         {
             pie_chart_screen.makeJFrameVisible();
             return;
@@ -2396,49 +2404,49 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // #############################
     private void clear_Pie_Chart_Dataset()
     {
-        if (! is_PieChart_Screen_Open()) { return; }
+        if (! is_Pie_Chart_Screen_Open()) { return; }
 
         pie_chart_screen.clear();
     }
 
     private void refresh_Pie_Chart_Data()
     {
-        if (! is_PieChart_Screen_Open()) { return; }
+        if (! is_Pie_Chart_Screen_Open()) { return; }
 
         pie_chart_screen.refresh();
     }
 
     private void update_Pie_Chart_Meal_Name(MealManager mealManager)
     {
-        if (! is_PieChart_Screen_Open()) { return; }
+        if (! is_Pie_Chart_Screen_Open()) { return; }
 
         pie_chart_screen.update_PieChart_MealName(mealManager);
     }
 
     private void update_Pie_Chart_Meal_Time(MealManager mealManager)
     {
-        if (! is_PieChart_Screen_Open()) { return; }
+        if (! is_Pie_Chart_Screen_Open()) { return; }
 
         pie_chart_screen.update_PieChart_MealTime(mealManager);
     }
 
     private void update_Pie_Chart_DATA(MealManager mealManager)
     {
-        if (! is_PieChart_Screen_Open()) { return; }
+        if (! is_Pie_Chart_Screen_Open()) { return; }
 
         pie_chart_screen.updateData(mealManager);
     }
 
     private void add_Meal_To_Pie_Chart_Screen(MealManager mealManager)
     {
-        if (! is_PieChart_Screen_Open()) { return; }
+        if (! is_Pie_Chart_Screen_Open()) { return; }
 
         pie_chart_screen.add_MealManager_To_GUI(mealManager);
     }
 
     private void delete_Meal_From_Pie_Chart_Screen(MealManager mealManager)
     {
-        if (! is_PieChart_Screen_Open()) { return; }
+        if (! is_Pie_Chart_Screen_Open()) { return; }
 
         // Data Handling already been processed, screen just needs to be re-drawn
         pie_chart_screen.deleted_MealManager_PieChart(mealManager);
@@ -2520,28 +2528,17 @@ public class Meal_Plan_Screen extends Screen_JFrame
     private void refresh_Btn_Action()
     {
         //##############################
-        // Confirm Refresh / Edge Cases
+        // Edge Cases
         //##############################
-        String txt = "Are you sure you want to refresh all the meals in this plan?";
+        if (! refresh_Edge_Cases()) { return; }
 
-        // IF there is no plan selected or, user rejects refresh then exit
-        if ((! (is_Plan_Selected())) || ! (areYouSure("Refresh Meal Plan Data", txt)))
-        {
-            return;
-        }
-
-        //##############################
-        // Clear GUI
-        //##############################
-        close_Meal_Pie_Charts_Screens(); // Remove External Screens
-        clear_GUI_And_Meal_DATA();
 
         //##############################
         // Refresh Data & GUI
         //##############################
-        boolean refresh_macros = has_Macro_Targets_Changed() && prompt_Refresh_Macro_Targets();
-
         screen_created = false;
+
+        boolean refresh_macros = has_Macro_Targets_Changed() && prompt_Refresh_Macro_Targets();
 
         if (! refresh_Data_And_Build_GUI(refresh_macros))
         {
@@ -2573,31 +2570,41 @@ public class Meal_Plan_Screen extends Screen_JFrame
         JOptionPane.showMessageDialog(null, "Successfully refreshed Meal Plan!");
     }
 
-    private boolean prompt_Refresh_Macro_Targets()
+    private boolean refresh_Edge_Cases()
     {
-        // ##############################################
-        // If targets have changed prompt to Refresh
-        // ##############################################
-        if (! has_Macro_Targets_Changed()) { return false; }
+        String txt = "Are you sure you want to refresh all the meals in this plan?";
 
-        int reply = JOptionPane.showConfirmDialog(this, String.format("Would you like to refresh your MacroTargets Too?"),
-                "Refresh Macro Targets", JOptionPane.YES_NO_OPTION); //HELLO Edit
+        // IF there is no plan selected or, user rejects refresh then exit
+        if (! is_Plan_Selected() || ! areYouSure("Refresh Meal Plan Data", txt))
+        {
+            return false;
+        }
 
-        return reply == JOptionPane.YES_OPTION;
+        // No Meals Data has changed
+        if(! has_Data_changed())
+        {
+            JOptionPane.showMessageDialog(getFrame(), "No Data in this Plan has changed to refresh!");
+            return false;
+        }
+
+        return true;
     }
 
     private boolean refresh_Data_And_Build_GUI(boolean refresh_Macros)
     {
         /**
-         *  1.) Transfer Plan Targets                 [3%]
-         *  2.) Transferring Meals Data               [3%]
+         *  1.) Transfer Plan Targets
+         *  2.) Transferring Meals Data
          *
-         *  3.) Get Meals & Sub-Meals DATA            [3%]
-         *  4.) Get TotalMeals Data                   [3%]
-         *  5.) Build Centre Of GUI                   [40%]
+         *  3.) Get Meals & Sub-Meals DATA
+         *  4.) Get TotalMeals Data
          *
-         *  6.) Build Complete                        [3%]
-         *  7.) Refresh Indicators
+         *  5.) Clear GUI & Old  Data
+         *
+         *  6.) Build Centre Of GUI
+         *
+         *  7.) Build Complete
+         *  8.) Refresh Indicators
          */
 
         try
@@ -2614,12 +2621,16 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
             total_Meals_Data_Map = setup_Get_Total_Meals_Data();   // 4.)  Get TotalMeals Data
 
-            // 5.) Build Centre Of GUI
+            // 5.)  Clear GUI & Old  Data
+            close_Meal_Pie_Charts_Screens(); // Remove External Screens
+            clear_GUI_And_Meal_DATA();
+
+            // 6.) Build Centre Of GUI
             create_Meal_Objects_In_GUI(meals_and_sub_meals_AL, total_Meals_Data_Map, null, 40);
 
-            build_Complete(null);   // 6.) Build Complete
+            build_Complete(null);   // 7.) Build Complete
 
-            update_Macro_Indicators(); // 7.) Refresh Macro Indicator
+            update_Macro_Indicators(); // 8.) Refresh Macro Indicator
 
             //############################
             // Output
@@ -2630,6 +2641,19 @@ public class Meal_Plan_Screen extends Screen_JFrame
         {
             return false;
         }
+    }
+
+    private boolean prompt_Refresh_Macro_Targets()
+    {
+        // ##############################################
+        // If targets have changed prompt to Refresh
+        // ##############################################
+        if (! has_Macro_Targets_Changed()) { return false; }
+
+        int reply = JOptionPane.showConfirmDialog(this, String.format("Would you like to refresh your MacroTargets Too?"),
+                "Refresh Macro Targets", JOptionPane.YES_NO_OPTION); //HELLO Edit
+
+        return reply == JOptionPane.YES_OPTION;
     }
 
     // ###############################################################
@@ -2729,7 +2753,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         }
 
         // If there is no meals in the plan aka there's nothing to save, exit
-        if (mealManager_ArrayList.isEmpty()) //  If there are no meals left after removing all the deleted meals, exit
+        if (! is_There_Any_Meals_In_Plan()) //  If there are no meals left after removing all the deleted meals, exit
         {
             String msg = """
                     "There are no Meals left in this Plan !
@@ -2739,6 +2763,12 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     If saving an empty plan was Intentional delete the plan instead !""";
 
             JOptionPane.showMessageDialog(null, msg);
+            return false;
+        }
+
+        if (! has_Data_changed()) // No Meals data has changed
+        {
+            JOptionPane.showMessageDialog(null, "Nothing has changed since the last save!");
             return false;
         }
 
@@ -2753,15 +2783,15 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // ########################################
         // Save Plan DB Side
         // ########################################
-        boolean any_session_created = any_Session_Created();
-        boolean any_session_created_sub_meals = any_session_created || any_Session_Created_Sub_Meals();
+        boolean any_session_created_meals = any_Session_Created_Meals();
+        boolean any_session_created_sub_meals = any_session_created_meals || any_Session_Created_Sub_Meals();
 
-        System.out.printf("\n\n New Meals : %s \n New Sub-Meals : %s", any_session_created, any_session_created_sub_meals);
+        System.out.printf("\n\n New Meals : %s \n New Sub-Meals : %s", any_session_created_meals, any_session_created_sub_meals);
 
         // ########################################
         // DB
         // ########################################
-        Fetched_Results results = saved_DB_Data(any_session_created, any_session_created_sub_meals);
+        Fetched_Results results = saved_DB_Data(any_session_created_meals, any_session_created_sub_meals);
         if (results == null) { return false; }
 
         // ########################################
@@ -2776,7 +2806,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         {
             int pos = - 1;
 
-            if (any_session_created)
+            if (any_session_created_meals)
             {
                 ArrayList<ArrayList<Object>> new_meals = results.get_Fetched_Result_2D_AL(pos += 1);
 
@@ -2813,7 +2843,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         for (MealManager mealManager : mealManager_ArrayList)
         {
             // Set MealManager Source ID
-            if (any_session_created)
+            if (any_session_created_meals)
             {
                 int draft_meal_id = mealManager.get_Draft_Meal_ID();
 
@@ -2866,7 +2896,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // ########################################
         boolean no_error = true;
 
-        if (any_session_created && ! sub_meal_id_map.isEmpty())
+        if (any_session_created_meals && ! sub_meal_id_map.isEmpty())
         {
             JOptionPane.showMessageDialog(null, "Failed - Saving a Meal Source ID");
             no_error = false;
@@ -2884,7 +2914,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         return no_error;
     }
 
-    private boolean any_Session_Created()
+    private boolean any_Session_Created_Meals()
     {
         return mealManager_ArrayList
                 .stream()
@@ -3931,7 +3961,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         {
             ingredients_info_screen.window_Closed_Event();
         }
-        if (is_PieChart_Screen_Open())
+        if (is_Pie_Chart_Screen_Open())
         {
             pie_chart_screen.window_Closed_Event();
         }
@@ -4203,6 +4233,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
     private boolean has_Data_changed()
     {
         return has_data_changed;
+    }
+
+    private boolean is_There_Any_Meals_In_Plan()
+    {
+        return ! mealManager_ArrayList.isEmpty();
     }
 
     //###########################################

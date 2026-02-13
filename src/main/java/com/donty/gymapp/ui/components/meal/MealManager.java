@@ -1560,7 +1560,7 @@ public class MealManager
         //############################################
         // External DATA if not USED
         //############################################
-        if (meal_plan_screen.is_PieChart_Screen_Open()) { return; }
+        if (meal_plan_screen.is_Pie_Chart_Screen_Open()) { return; }
 
         shared_Data_Registry.remove_PieChart_DatasetValues(this);
     }
