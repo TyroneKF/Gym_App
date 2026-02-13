@@ -3,7 +3,6 @@ package com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.bas
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.gui.base.Screen_JPanel;
-import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.Search_For_Food_Info;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.add.ingredients.Ingredients_Form;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.add.products.Shop_Form;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.Ingredients_Info.Ingredients_Info_Screen;
@@ -25,7 +24,6 @@ public abstract class Parent_Ingredients_Screen extends Screen_JPanel
     // Screen Objects
     protected Ingredients_Form ingredients_Form;
     protected Shop_Form shop_Form;
-    protected Search_For_Food_Info search_For_Ingredient_Info;
     protected Ingredients_Info_Screen ingredients_info_screen;
     protected Shared_Data_Registry shared_data_registry;
 
@@ -91,9 +89,6 @@ public abstract class Parent_Ingredients_Screen extends Screen_JPanel
         //#############################
         // Add Objects to GUI
         //#############################
-        //Search For Ingredients Form
-       // add_To_Container(mainCentre_JPanel, search_For_Ingredient_Info, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
-        
         add_To_Container(mainCentre_JPanel, new JPanel(), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 10, 0, null);
         
         add_To_Container(mainCentre_JPanel, ingredients_Form, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);

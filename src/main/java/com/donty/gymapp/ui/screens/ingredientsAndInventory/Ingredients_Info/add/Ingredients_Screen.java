@@ -45,8 +45,6 @@ public class Ingredients_Screen extends Parent_Ingredients_Screen
         ingredients_Form = new Ingredients_Form(scroll_JPanel, db, shared_data_registry, "Add Ingredients Info");
 
         shop_Form = new Shop_Form(scroll_JPanel, "Add Suppliers", this, shared_data_registry);
-
-   /*     search_For_Ingredient_Info = new Search_For_Food_Info(scroll_JPanel, ingredients_Form, "Search For Food Info");*/
     }
 
     @Override

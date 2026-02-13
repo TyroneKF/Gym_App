@@ -9,7 +9,6 @@ import com.donty.gymapp.persistence.database.batch.Batch_Upload_And_Fetch_Statem
 import com.donty.gymapp.persistence.database.batch.Batch_Upload_Statements;
 import com.donty.gymapp.persistence.database.statements.Fetch_Statement_Full;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
-import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.Search_For_Food_Info;
 import com.donty.gymapp.gui.controls.combobox.base.storableID.Field_JC_Ingredient_Type;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.edit.ingredients.Edit_Ingredients_Form;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.edit.products.Edit_Shop_Form;
@@ -45,9 +44,6 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
     )
     {
         super(ingredients_info_screen, db, shared_Data_Registry);  // Super Constructor
-
-        // GUI Editing
-        search_For_Ingredient_Info.collapse_JPanel();
     }
 
     //##################################################################################################################
@@ -60,8 +56,6 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
         ingredients_Form = new Edit_Ingredients_Form(scroll_JPanel, db, shared_data_registry, "Edit Ingredients Info");
 
         shop_Form = new Edit_Shop_Form(scroll_JPanel, " Edit / Add Suppliers", this, shared_data_registry);
-
-        search_For_Ingredient_Info = new Search_For_Food_Info(scroll_JPanel, ingredients_Form, "Search For Food Info");
     }
 
     @Override
