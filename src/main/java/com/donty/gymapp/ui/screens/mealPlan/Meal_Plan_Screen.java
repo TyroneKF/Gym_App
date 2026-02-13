@@ -2542,7 +2542,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
         if (! refresh_Data_And_Build_GUI(refresh_macros))
         {
-            JOptionPane.showInputDialog("Failed Refresh, please restart the application!");
+            JOptionPane.showMessageDialog(getFrame(), ("Failed Refresh, please restart the application!"));
             return;
         }
 
