@@ -255,19 +255,18 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
         sub_meal_title_label.setFont(new Font("Verdana", Font.PLAIN, 20));
         sub_meal_title_label.setHorizontalAlignment(JLabel.LEFT);
 
-        JPanel title_panel = new JPanel();
+        JPanel title_panel = new JPanel(new BorderLayout());
         title_panel.setPreferredSize(new Dimension(450, 50));
         //title_panel.setBorder(BorderFactory.createLineBorder(Color.black));
 
-        title_panel.add(sub_meal_title_label);
+        title_panel.add(sub_meal_title_label, BorderLayout.WEST);
 
         add_To_Container(this, title_panel, 0, 0, 1, 1, 0.25, 0.25, "vertical", "west");
     }
 
     private void update_Title_Label()
     {
-        sub_meal_title_label.setText(String.format("%s    -      [%s] ", get_Current_Sub_Meal_Name(), get_Current_Sub_Meal_Time()));
-        //sub_meal_title_label.setText(String.format("[%s]    -      %s ", get_Current_Sub_Meal_Time(), get_Current_Sub_Meal_Name()));
+        sub_meal_title_label.setText(String.format("    %s  -  %s ", get_Current_Sub_Meal_Time(), get_Current_Sub_Meal_Name()));
     }
 
     private void icon_Setup()

@@ -23,6 +23,17 @@ Error handling method name call in all classes
 replace all column names with enums
 
 
+When doing insert don't do 
+	insert select * from table it willl silently fail
+	always mention the column names
+
+
+Check if all temp tables are dropped at the end of the transaction
+
+First Sub-Meal can only have the time of the meal
+
+Use ControlsFX / Medusa Gauges for progress indicators
+
 ######################################################################################
 Work On:
 ######################################################################################
