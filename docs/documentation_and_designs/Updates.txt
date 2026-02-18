@@ -3,8 +3,6 @@ mvn javafx:run "-DmainClass=Tests.ToggleSwitchDemo"
 
 
 .) Delete btn Ingredients on edit screen
-.) Edit Measurement Field to show un-assigned field in ingredients types
-.) Make ShopsForm use binding
 
 
 CREATE TEMPORARY TABLE
@@ -18,6 +16,7 @@ Edit Views to match on plan_id as well as meal_id
 Ingredients Table
     .) Update Table field
     .) Data gathering table field
+    .) Are you sure msg, unsaved data error isn't accurate
 
 Error handling method name call in all classes
 replace all column names with enums
@@ -37,15 +36,10 @@ Use ControlsFX / Medusa Gauges for progress indicators
 ######################################################################################
 Work On:
 ######################################################################################
-move all changeable info like plan_id / plan_version id into shared_registry when these values change its easier to locate it in one area to update vs every object
 Use an enum for table column names
-
-remove column_Names_And_Positions in JDBC table
-Swap un_Editable_Column_Positions for edittable column positions
 
 PiePlot3D is depreciated
 
-Hard coded variables replace with commonly fetched variable id's in MPS
 
 USE get_Class_name_method for error handling
 CHECK Edit_Ingredients_Form.java -> has_Field_Value_Changed_From_DB_Data equivalence
@@ -57,32 +51,22 @@ Icon_BTN
 Meal_Plan_Screen
 .) Queries based on User_ID, refactor select statements using pointless CTE / column reductions
 
-.) Move all the personal table customisations into the table classes etc IngredientTable Hidden Cols ....
-.) Use arrayJson methods on refresh for everything totalMeals table etc : get_Meal_Data(), get_Total_Meals_Data()
-
-
 Screen JPanel / JFrame
 .) Condense JFrames and JPanel screen
 .) Screen Objects need to be condensed into 1 class
 .) Make screens use Jframe / Panel classes
 
 Shop_Form
-.)   Errror Msg etc on row ... isn't accurate it only counts from where the errors are vs actual positiuon
+.)   Errror Msg etc on row ... isn't accurate it only counts from where the errors are vs actual position
+     Error between new and existing objects being in different arraylists use instance of instead of seperate lists
 
 Add Registery
 .) Replace arraylists with Hashets for uniquenes because hashnet .add does contains and adds and return false it failed
 
 
-
-Shared_Data_Registry
-.) Data Objects make ID BigInt instead of int
-
-
-
 Add / Edit Ingredients Screen
 .) Delete btn for products and ingredients
 .) Update Other Screens
-.) Deleting stores / type ask if we want to delete children or assign them to a new parent
 .) Deleting ingredient / type should refresh meal plan
 .) Transfer in Bulk
 .) Can error msgs be refactored in shop and ingredients screen into parent screen
