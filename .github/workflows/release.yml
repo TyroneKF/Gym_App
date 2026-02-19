@@ -10,6 +10,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+
+  # ===============================================================
+  # WINDOWS BUILD
+  # ===============================================================
   build-windows:
     runs-on: windows-latest
 
@@ -82,7 +86,7 @@ jobs:
       # -----------------------------------------------------------
       # Create Windows installer with jpackage
       # -----------------------------------------------------------
-      - name: Create app image with jpackage
+      - name: Create Windows installer
         run: >
           jpackage
           --type exe
@@ -97,20 +101,97 @@ jobs:
       # -----------------------------------------------------------
       # Upload installer artifact (temporary)
       # -----------------------------------------------------------
-      - name: Upload installer artifact
+      - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
-          name: GymApp-Installer
+          name: GymApp-Windows
           path: dist/*.exe
           retention-days: 30
 
       # -----------------------------------------------------------
-      # Create GitHub Release (permanent)
+      # Create GitHub Release (permanent | only once from Windows job)
       # -----------------------------------------------------------
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/*.exe
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+  # ===============================================================
+  # MACOS BUILD
+  # ===============================================================
+  build-macos:
+    runs-on: macos-latest
+    needs: build-windows
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '25'
+          cache: 'maven'
+
+      - name: Build with Maven
+        run: mvn -B clean package -DskipTests
+
+      - name: Create macOS installer
+        run: >
+          jpackage
+          --type dmg
+          --name GymApp
+          --input target
+          --main-jar GymApp.jar
+          --main-class com.donty.gymapp.app.GymAppLauncher
+          --dest dist
+
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: GymApp-macOS
+          path: dist/*.dmg
+          retention-days: 30
+
+
+  # ===============================================================
+  # LINUX BUILD
+  # ===============================================================
+  build-linux:
+    runs-on: ubuntu-latest
+    needs: build-windows
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '25'
+          cache: 'maven'
+
+      - name: Build with Maven
+        run: mvn -B clean package -DskipTests
+
+      - name: Create Linux installer
+        run: >
+          jpackage
+          --type deb
+          --name GymApp
+          --input target
+          --main-jar GymApp.jar
+          --main-class com.donty.gymapp.app.GymAppLauncher
+          --dest dist
+
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: GymApp-Linux
+          path: dist/*.deb
+          retention-days: 30
