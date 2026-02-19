@@ -9,7 +9,7 @@ import java.util.LinkedHashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FieldJTxtFieldStringTestFieldJxtField extends Test_Field_JxtField_Parent<String>
+class FieldJTxtFieldStringTest extends Test_Field_JxtField_Parent<String>
 {
     //##################################################################################################################
     // Setup
