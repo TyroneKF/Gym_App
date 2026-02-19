@@ -33,7 +33,7 @@ class FieldJTxtFieldIntTest extends Test_Field_JxtField_Parent<Integer>
     // A. VALID PURE INTEGER INPUTS
     //##################################################################    
     @Test
-    void valid_integer_single_digit()
+    void valid_Integer_Single_Digit()
     {
         LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
         String input_txt = "5";
@@ -50,7 +50,7 @@ class FieldJTxtFieldIntTest extends Test_Field_JxtField_Parent<Integer>
     }
 
     @Test
-    void valid_integer_multiple_digits()
+    void valid_Integer_Multiple_Digits()
     {
         LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
         String input_txt = "1234567"; // length 7 <= 8
@@ -67,7 +67,7 @@ class FieldJTxtFieldIntTest extends Test_Field_JxtField_Parent<Integer>
     }
 
     @Test
-    void valid_integer_with_leading_zeros()
+    void valid_Integer_With_Leading_Zeros()
     {
         LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
         String input_txt = "0001234"; // valid integer, leading zeros present
@@ -91,7 +91,7 @@ class FieldJTxtFieldIntTest extends Test_Field_JxtField_Parent<Integer>
     //##################################################################
 
     @Test
-    void invalid_contains_letter()
+    void invalid_Contains_Letter()
     {
         LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
         String input_txt = "12A4";
@@ -108,7 +108,7 @@ class FieldJTxtFieldIntTest extends Test_Field_JxtField_Parent<Integer>
     }
 
     @Test
-    void invalid_contains_symbol()
+    void invalid_Contains_Symbol()
     {
         LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
         String input_txt = "12-3";
@@ -125,7 +125,7 @@ class FieldJTxtFieldIntTest extends Test_Field_JxtField_Parent<Integer>
     }
 
     @Test
-    void invalid_negative_number()
+    void invalid_Negative_Number()
     {
         LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
         String input_txt = "-15";
@@ -142,7 +142,7 @@ class FieldJTxtFieldIntTest extends Test_Field_JxtField_Parent<Integer>
     }
 
     @Test
-    void invalid_mixed_digits_and_dot_and_letters()
+    void invalid_Mixed_Digits_And_Dot_And_Letters()
     {
         LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
         String input_txt = "10.0A";
@@ -163,7 +163,7 @@ class FieldJTxtFieldIntTest extends Test_Field_JxtField_Parent<Integer>
     //##################################################################
 
     @Test
-    void decimal_convert_trailing_dot()
+    void decimal_Convert_Trailing_Dot()
     {
         LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
         String input_txt = "9.";
@@ -185,7 +185,7 @@ class FieldJTxtFieldIntTest extends Test_Field_JxtField_Parent<Integer>
     }
 
     @Test
-    void decimal_convert_fraction()
+    void decimal_Convert_Fraction()
     {
         LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
         String input_txt = "12.99";
@@ -203,7 +203,7 @@ class FieldJTxtFieldIntTest extends Test_Field_JxtField_Parent<Integer>
     }
 
     @Test
-    void decimal_with_leading_and_trailing_zeros_invalid_but_converted()
+    void decimal_With_Leading_And_Trailing_Zeros_Invalid_But_Converted()
     {
         LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
         String input_txt = "0005.000";
@@ -222,7 +222,7 @@ class FieldJTxtFieldIntTest extends Test_Field_JxtField_Parent<Integer>
     }
 
     @Test
-    void decimal_only_dot_invalid()
+    void decimal_Only_Dot_Invalid()
     {
         LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
         String input_txt = ".";
@@ -243,7 +243,7 @@ class FieldJTxtFieldIntTest extends Test_Field_JxtField_Parent<Integer>
     //##################################################################
 
     @Test
-    void range_valid_middle()
+    void range_Valid_Middle()
     {
         LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
         String input_txt = "15";
@@ -261,7 +261,7 @@ class FieldJTxtFieldIntTest extends Test_Field_JxtField_Parent<Integer>
     }
 
     @Test
-    void range_valid_min_boundary()
+    void range_Valid_Min_Boundary()
     {
         LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
         String input_txt = "10";
@@ -279,7 +279,7 @@ class FieldJTxtFieldIntTest extends Test_Field_JxtField_Parent<Integer>
     }
 
     @Test
-    void range_valid_max_boundary()
+    void range_Valid_Max_Boundary()
     {
         LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
         String input_txt = "20";
@@ -297,7 +297,7 @@ class FieldJTxtFieldIntTest extends Test_Field_JxtField_Parent<Integer>
     }
 
     @Test
-    void range_invalid_below()
+    void range_Invalid_Below()
     {
         LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
         String input_txt = "5";
@@ -315,7 +315,7 @@ class FieldJTxtFieldIntTest extends Test_Field_JxtField_Parent<Integer>
     }
 
     @Test
-    void range_invalid_above()
+    void range_Invalid_Above()
     {
         LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
         String input_txt = "25";
@@ -333,7 +333,7 @@ class FieldJTxtFieldIntTest extends Test_Field_JxtField_Parent<Integer>
     }
 
     @Test
-    void range_valid_with_leading_zeros()
+    void range_Valid_With_Leading_Zeros()
     {
         LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
         String input_txt = "0005";
@@ -357,7 +357,7 @@ class FieldJTxtFieldIntTest extends Test_Field_JxtField_Parent<Integer>
     //##################################################################
 
     @Test
-    void zero_allowed_valid()
+    void zero_Allowed_Valid()
     {
         LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
         String input_txt = "0";
@@ -376,7 +376,7 @@ class FieldJTxtFieldIntTest extends Test_Field_JxtField_Parent<Integer>
     }
 
     @Test
-    void zero_not_allowed_invalid()
+    void zero_Not_Allowed_Invalid()
     {
         LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
         String input_txt = "0";
@@ -394,7 +394,7 @@ class FieldJTxtFieldIntTest extends Test_Field_JxtField_Parent<Integer>
     }
 
     @Test
-    void all_zeros_zero_allowed_valid_and_normalized()
+    void all_Zeros_Zero_Allowed_Valid_And_Normalized()
     {
         LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
         String input_txt = "0000";
@@ -415,7 +415,7 @@ class FieldJTxtFieldIntTest extends Test_Field_JxtField_Parent<Integer>
     }
 
     @Test
-    void all_zeros_zero_not_allowed_invalid()
+    void all_Zeros_Zero_Not_Allowed_Invalid()
     {
         LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
         String input_txt = "0000";
@@ -438,7 +438,7 @@ class FieldJTxtFieldIntTest extends Test_Field_JxtField_Parent<Integer>
     //##################################################################
 
     @Test
-    void whitespace_only_invalid()
+    void white_Space_Only_Invalid()
     {
         LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
         String input_txt = "    "; // length 4 (<=8) but not a number
@@ -511,7 +511,7 @@ class FieldJTxtFieldIntTest extends Test_Field_JxtField_Parent<Integer>
     //##################################################################
 
     @Test
-    void max_length_valid_exact_limit()
+    void max_Length_Valid_Exact_Limit()
     {
         LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
         String input_txt = "12345678"; // length = 8
@@ -527,7 +527,7 @@ class FieldJTxtFieldIntTest extends Test_Field_JxtField_Parent<Integer>
     }
 
     @Test
-    void max_length_invalid_exceeds_limit()
+    void max_Length_Invalid_Exceeds_Limit()
     {
         LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
         String input_txt = "123456789"; // length = 9 > 8
@@ -543,7 +543,7 @@ class FieldJTxtFieldIntTest extends Test_Field_JxtField_Parent<Integer>
     }
 
     @Test
-    void max_length_invalid_leading_spaces()
+    void max_Length_Invalid_Leading_Spaces()
     {
         LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
         String input_txt = "     12"; // length = 7 -> valid
@@ -578,7 +578,7 @@ class FieldJTxtFieldIntTest extends Test_Field_JxtField_Parent<Integer>
     }
 
     @Test
-    void max_length_invalid_trailing_spaces()
+    void max_Length_Invalid_Trailing_Spaces()
     {
         LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
         String input_txt = "12      "; // length = 8 -> valid
@@ -602,7 +602,7 @@ class FieldJTxtFieldIntTest extends Test_Field_JxtField_Parent<Integer>
     }
 
     @Test
-    void max_length_invalid_spaces_only()
+    void max_Length_Invalid_Spaces_Only()
     {
         LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
         String input_txt = "        "; // 8 spaces -> valid by length (though invalid as number, tested elsewhere)
@@ -616,7 +616,7 @@ class FieldJTxtFieldIntTest extends Test_Field_JxtField_Parent<Integer>
         assertFalse(result1);
 
         // This will actually be invalid as a number; the earlier test covers semantic invalidity.
-        // Here we focus on length behavior, so we just assert the call executed; semantic assertion is in whitespace_only_invalid.
+        // Here we focus on length behavior, so we just assert the call executed; semantic assertion is in white_Space_Only_Invalid.
 
         error_map.clear();
         field.setText("         "); // 9 spaces -> should fail char limit
@@ -633,7 +633,7 @@ class FieldJTxtFieldIntTest extends Test_Field_JxtField_Parent<Integer>
     //##################################################################
 
     @Test
-    void integer_overflow_invalid()
+    void integer_Overflow_Invalid()
     {
         LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
         String input_txt = "2147483648";  // Integer.MAX_VALUE = 2147483647, so this is one above
@@ -651,7 +651,7 @@ class FieldJTxtFieldIntTest extends Test_Field_JxtField_Parent<Integer>
     }
 
     @Test
-    void very_large_leading_zero_integer_overflow_invalid()
+    void very_Large_Leading_Zero_Integer_Overflow_Invalid()
     {
         LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
         String input_txt = "00000000002147483648"; // clearly > Integer.MAX_VALUE
