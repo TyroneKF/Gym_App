@@ -113,7 +113,7 @@ public class Macros_Targets_Screen extends Screen_JFrame
             macros_data = db.get_2D_Query_AL_Object(fetch_statement, false).getFirst();
             return true;
         }
-        catch (Exception _)
+        catch (Exception e)
         {
             JOptionPane.showMessageDialog(null, "Failed Getting Macro Data");
             return false;

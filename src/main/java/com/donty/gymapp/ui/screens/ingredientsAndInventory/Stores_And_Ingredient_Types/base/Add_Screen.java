@@ -143,7 +143,7 @@ public abstract class Add_Screen<T extends Storable_IDS_Parent> extends Screen_J
         submit_button.setPreferredSize(new Dimension(50, 35)); // width, height
 
         // creating commands for submit button to execute on
-        submit_button.addActionListener(_ -> {
+        submit_button.addActionListener(e -> {
             submission_Btn_Action();
         });
     }

@@ -10,7 +10,7 @@
     <version>1.0.2-SNAPSHOT</version>
 
     <properties>
-        <maven.compiler.release>25</maven.compiler.release>
+        <maven.compiler.release>21</maven.compiler.release>
         <mainClass>com.donty.gymapp.app.GymAppLauncher</mainClass>
     </properties>
 
@@ -155,7 +155,38 @@
     <build>
         <plugins>
 
-            <!-- ✅ Compiler Plugin: ensures Maven uses Java 25 -->
+            <!-- 📊 JaCoCo: Code coverage reporting -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.12</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- 🧠 Force compiler to emit Java 21 bytecode -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <release>21</release>
+                </configuration>
+            </plugin>
+
+            <!-- ✅ Compiler Plugin: ensures Maven uses Java 25
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -163,7 +194,7 @@
                 <configuration>
                     <release>25</release>
                 </configuration>
-            </plugin>
+            </plugin> -->
 
             <!-- 🧩 JavaFX Maven Plugin: simplifies running and packaging JavaFX apps -->
             <plugin>

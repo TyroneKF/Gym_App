@@ -940,7 +940,7 @@ public class MealManager
 
             throw new Exception();
         }
-        catch (Exception _)
+        catch (Exception e)
         {
             return false;
         }
@@ -1121,7 +1121,7 @@ public class MealManager
 
             throw new Exception();
         }
-        catch (Exception _)
+        catch (Exception e)
         {
             return false;
         }
@@ -1150,7 +1150,7 @@ public class MealManager
 
             throw new Exception();
         }
-        catch (Exception _)
+        catch (Exception e)
         {
             return false;
         }

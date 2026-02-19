@@ -159,7 +159,7 @@ public abstract class MyJTable_Display_Data <T extends Enum<T> & Table_Enum> ext
             ArrayList<ArrayList<Object>> tableDataObject = db.get_2D_Query_AL_Object(fetch_statement, false);
             return tableDataObject.getFirst();
         }
-        catch (Exception _) // Error is already handled by DB class
+        catch (Exception e) // Error is already handled by DB class
         {
             throw new Exception(String.format("%s - Failed Getting Updated Data", table_name));
         }

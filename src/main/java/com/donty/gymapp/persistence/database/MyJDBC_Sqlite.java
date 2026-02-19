@@ -227,7 +227,7 @@ public class MyJDBC_Sqlite  // remove extends eventually
         //##########################################################
         // Error Handling
         //##########################################################
-        catch (Exception _)
+        catch (Exception e)
         {
             return false;
         }
