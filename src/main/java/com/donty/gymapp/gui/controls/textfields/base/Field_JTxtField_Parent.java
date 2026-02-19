@@ -41,29 +41,7 @@ public abstract class Field_JTxtField_Parent<T> extends JTextField
         // remove all whitespace & hidden characters like \n
         return txt_To_Edit != null && ! txt_To_Edit.isEmpty() ? txt_To_Edit.trim().replaceAll("\\p{C}", "") : "";
     }
-    
-    //##############################################
-    // Mutator Methods
-    //##############################################
-    @Override
-    public void setText(String txt)
-    {
-        super.setText(remove_Space_And_Hidden_Chars(txt));
-    }
-    
-    //##############################################
-    // Accessor Methods
-    //##############################################
-    public String get_Text()
-    {
-        return remove_Space_And_Hidden_Chars(getText());
-    }
-    
-    public boolean is_Txt_Field_Empty()
-    {
-        return get_Text().isEmpty();
-    }
-    
+
     //##############################################
     // Casting Types Methods
     //##############################################
@@ -150,5 +128,33 @@ public abstract class Field_JTxtField_Parent<T> extends JTextField
         {
             return false;
         }
+    }
+
+
+    //##################################################################################################################
+    // Mutator Methods
+    //##################################################################################################################
+    @Override
+    public void setText(String txt)
+    {
+        super.setText(remove_Space_And_Hidden_Chars(txt));
+    }
+
+    //##################################################################################################################
+    // Accessor Methods
+    //##################################################################################################################
+    public String get_Text()
+    {
+        return remove_Space_And_Hidden_Chars(getText());
+    }
+
+    public boolean is_Txt_Field_Empty()
+    {
+        return get_Text().isEmpty();
+    }
+
+    public String get_Label()
+    {
+        return label;
     }
 }

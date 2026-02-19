@@ -23,9 +23,15 @@ public class Field_JTxtField_String extends Field_JTxtField_Parent<String>
     @Override
     protected boolean validate_Txt_Field(LinkedHashMap<String, ArrayList<String>> error_Map, ArrayList<String> error_MSGs)
     {
-        // Does string contain given symbols or, numbers or a defined pattern by the user
-        // Matches any character that is NOT a letter, space, period, apostrophe, or hyphen
-        if (does_String_Contain_Given_Characters("[^\\p{L}\\p{N} .,'&+\\-/()\\[\\]]"))
+        /*
+            Any characters not in this set is allowed :  [^\p{L}\p{N} .,'&+\-/()\[\]]
+                p{L}  = A, z, É, ü, Ж, あ
+                \p{N} = 0–9 or, ١٢٣ (Arabic numerals)
+
+            Allowed Characters = [ . , ' & + - / ( ) ]
+        */
+
+        if (does_String_Contain_Given_Characters("[^\\p{L}\\p{N} .,'&+\\-/()\\[\\]]")) // Returns true if invalid characters are found
         {
             error_MSGs.add("Can only contain; letters, spaces, period, apostrophe, or hyphens!");
             error_Map.put(label, error_MSGs);
