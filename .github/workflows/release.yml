@@ -20,6 +20,29 @@ jobs:
           java-version: '25'
           cache: 'maven'
 
+      - name: Ensure tag commit is on master
+        shell: bash
+        run: |
+          git fetch origin master
+          if ! git branch -r --contains $GITHUB_SHA | grep origin/master; then
+          echo "❌ Tag is not on master branch"
+          exit 1
+          fi
+
+      - name: Verify tag matches pom version
+        shell: bash
+        run: |
+          TAG_VERSION=${GITHUB_REF#refs/tags/v}
+          POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+
+          echo "Tag version: $TAG_VERSION"
+          echo "POM version: $POM_VERSION"
+
+          if [ "$TAG_VERSION" != "$POM_VERSION" ]; then
+            echo "❌ Tag version does not match pom.xml version"
+            exit 1
+          fi
+
       - name: Build with Maven
         run: mvn clean package -DskipTests
 
