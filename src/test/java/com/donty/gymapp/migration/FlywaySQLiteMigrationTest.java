@@ -1,4 +1,4 @@
-package com.example.gymapp.migration;
+package com.donty.gymapp.migration;
 
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.*;
