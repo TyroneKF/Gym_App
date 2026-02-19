@@ -44,6 +44,10 @@ public abstract class Test_Field_JxtField_Parent<T>
 
     protected String get_Method_Name()
     {
-        return Thread.currentThread().getStackTrace()[2].getMethodName();
+        return StackWalker.getInstance()
+                .walk(s -> s.skip(1)
+                        .findFirst()
+                        .map(StackWalker.StackFrame :: getMethodName)
+                        .orElse("Unknown"));
     }
 }
