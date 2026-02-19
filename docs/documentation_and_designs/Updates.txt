@@ -33,6 +33,14 @@ First Sub-Meal can only have the time of the meal
 
 Use ControlsFX / Medusa Gauges for progress indicators
 
+
+Get Method Name replace with this:
+return StackWalker.getInstance()
+        .walk(s -> s.skip(1)
+                    .findFirst()
+                    .map(StackWalker.StackFrame::getMethodName)
+                    .orElse("Unknown"));
+
 ######################################################################################
 Work On:
 ######################################################################################
