@@ -81,7 +81,7 @@ jobs:
       # Build (switch to verify once tests exist)
       # -----------------------------------------------------------
       - name: Build with Maven
-        run: mvn -B clean package -DskipTests
+        run: mvn -B clean verify
 
       # -----------------------------------------------------------
       # Create Windows installer with jpackage
