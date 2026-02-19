@@ -1,10 +1,10 @@
 name: CI Validation
 
 on:
+  pull_request:
   push:
     branches:
       - master
-  pull_request:
 
 concurrency:
   group: ci-validation
