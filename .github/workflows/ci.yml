@@ -6,6 +6,10 @@ on:
       - master
   pull_request:
 
+concurrency:
+  group: ci-validation
+  cancel-in-progress: true
+
 jobs:
   validate:
     runs-on: windows-latest
@@ -21,5 +25,5 @@ jobs:
           java-version: '25'
           cache: 'maven'
 
-      - name: Build and verify
+      - name: Build and run tests
         run: mvn -B clean verify
