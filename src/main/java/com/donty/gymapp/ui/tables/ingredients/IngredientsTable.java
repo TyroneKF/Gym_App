@@ -1,9 +1,9 @@
 package com.donty.gymapp.ui.tables.ingredients;
 
 import com.donty.gymapp.domain.enums.db_enums.columnNames.views.Draft_Gui_Ingredients_Calc_Columns;
-import com.donty.gymapp.ui.meta.ids.MetaData_ID_Object.Sub_Meal_ID_OBJ;
-import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
-import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
+import com.donty.gymapp.ui.meta.ids.meta.Sub_Meal_ID_OBJ;
+import com.donty.gymapp.ui.meta.ids.storableIDs.Ingredient_Name_ID_OBJ;
+import com.donty.gymapp.ui.meta.ids.storableIDs.Ingredient_Type_ID_OBJ;
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
 import com.donty.gymapp.persistence.database.Fetched_Results;
 import com.donty.gymapp.persistence.database.batch.Batch_Upload_And_Fetch_Statements;
@@ -315,7 +315,7 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
         //##########################
         // Edit Time BTN
         //##########################
-        IconButton editTime_Icon_Btn = new IconButton("/images/edit_Time/edit_Time.png", icon_Size, icon_Size, icon_Size, icon_Size, "centre", "right");
+        IconButton editTime_Icon_Btn = new IconButton("/images/editTime/edit_Time.png", icon_Size, icon_Size, icon_Size, icon_Size, "centre", "right");
 
         JButton editTime_Btn = editTime_Icon_Btn.returnJButton();
         editTime_Btn.setToolTipText("Edit Meal Time"); //Hover message over icon

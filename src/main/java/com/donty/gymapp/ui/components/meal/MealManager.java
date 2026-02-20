@@ -1,7 +1,7 @@
 package com.donty.gymapp.ui.components.meal;
 
-import com.donty.gymapp.ui.meta.ids.MetaData_ID_Object.Meal_ID_OBJ;
-import com.donty.gymapp.ui.meta.ids.MetaData_ID_Object.Sub_Meal_ID_OBJ;
+import com.donty.gymapp.ui.meta.ids.meta.Meal_ID_OBJ;
+import com.donty.gymapp.ui.meta.ids.meta.Sub_Meal_ID_OBJ;
 import com.donty.gymapp.persistence.database.Fetched_Results;
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
 import com.donty.gymapp.persistence.database.batch.Batch_Upload_And_Fetch_Statements;
@@ -18,7 +18,7 @@ import com.donty.gymapp.ui.tables.viewData.TotalMeal_Table;
 import com.donty.gymapp.gui.panels.CollapsibleJPanel;
 import com.donty.gymapp.gui.controls.IconButton;
 import com.donty.gymapp.gui.panels.IconPanel;
-import com.donty.gymapp.ui.screens.graphs.PieChart_MealManager_Screen.Pie_Chart_Meal_Manager_Screen;
+import com.donty.gymapp.ui.screens.graphs.mealManager.Pie_Chart_Meal_Manager_Screen;
 import com.donty.gymapp.ui.screens.mealPlan.Meal_Plan_Screen;
 import com.donty.gymapp.domain.enums.db_enums.columnNames.views.totalmeal.Draft_Gui_Total_Meal_Other_Columns;
 import org.apache.commons.lang3.StringUtils;
@@ -446,7 +446,7 @@ public class MealManager
         //##########################
         // Edit Time BTN
         //##########################
-        IconButton editTime_Icon_Btn = new IconButton("/images/edit_Time/edit_Time.png", 45, 45, 45, 45, "centre", "right");
+        IconButton editTime_Icon_Btn = new IconButton("/images/editTime/edit_Time.png", 45, 45, 45, 45, "centre", "right");
         // add_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
 
         JButton editTime_Btn = editTime_Icon_Btn.returnJButton();
@@ -940,7 +940,7 @@ public class MealManager
 
             throw new Exception();
         }
-        catch (Exception _)
+        catch (Exception e)
         {
             return false;
         }
@@ -1121,7 +1121,7 @@ public class MealManager
 
             throw new Exception();
         }
-        catch (Exception _)
+        catch (Exception e)
         {
             return false;
         }
@@ -1150,7 +1150,7 @@ public class MealManager
 
             throw new Exception();
         }
-        catch (Exception _)
+        catch (Exception e)
         {
             return false;
         }

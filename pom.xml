@@ -10,7 +10,7 @@
     <version>1.0.2-SNAPSHOT</version>
 
     <properties>
-        <maven.compiler.release>25</maven.compiler.release>
+        <maven.compiler.release>21</maven.compiler.release>
         <mainClass>com.donty.gymapp.app.GymAppLauncher</mainClass>
     </properties>
 
@@ -155,7 +155,76 @@
     <build>
         <plugins>
 
-            <!-- ✅ Compiler Plugin: ensures Maven uses Java 25 -->
+
+            <!-- 📊 JaCoCo: Code coverage reporting -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.12</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+
+                    <!-- ✅ JaCoCo: Enforce minimum code coverage threshold during verify phase -->
+                    <execution>
+                        <!-- Unique execution ID for coverage check -->
+                        <id>check</id>
+
+                        <!-- Goal that performs coverage rule validation -->
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+
+                        <!-- Bind coverage validation to Maven verify lifecycle phase -->
+                        <phase>verify</phase>
+
+                        <!-- Coverage rule configuration -->
+                        <configuration>
+                            <rules>
+                                <rule>
+                                    <!-- Apply rule at entire bundle (whole project) level -->
+                                    <element>BUNDLE</element>
+
+                                    <limits>
+                                        <limit>
+                                            <!-- Measure line coverage -->
+                                            <counter>LINE</counter>
+
+                                            <!-- Use covered ratio (percentage of covered lines) -->
+                                            <value>COVEREDRATIO</value>
+
+                                            <!-- Require minimum 60% line coverage or build fails -->
+                                            <minimum>0.05</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- 🧠 Force compiler to emit Java 21 bytecode -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <release>21</release>
+                </configuration>
+            </plugin>
+
+            <!-- ✅ Compiler Plugin: ensures Maven uses Java 25
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -163,7 +232,7 @@
                 <configuration>
                     <release>25</release>
                 </configuration>
-            </plugin>
+            </plugin> -->
 
             <!-- 🧩 JavaFX Maven Plugin: simplifies running and packaging JavaFX apps -->
             <plugin>

@@ -5,8 +5,7 @@ import com.donty.gymapp.domain.enums.db_enums.columnNames.views.totalmeal.Draft_
 import com.donty.gymapp.domain.enums.db_enums.columnNames.views.totalmeal.Draft_Gui_Total_Meal_Macro_Columns;
 import com.donty.gymapp.ui.components.meal.MealManager;
 import com.donty.gymapp.domain.enums.db_enums.columnNames.views.totalmeal.Draft_Gui_Total_Meal_Other_Columns;
-import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.*;
-import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Storable_IDS_Parent;
+import com.donty.gymapp.ui.meta.ids.storableIDs.*;
 import com.donty.gymapp.ui.tables.base.ColumnUiRules;
 import com.donty.gymapp.ui.tables.base.TableMeta;
 import org.jfree.data.general.DefaultPieDataset;

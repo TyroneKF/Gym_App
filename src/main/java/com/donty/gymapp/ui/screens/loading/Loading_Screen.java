@@ -124,7 +124,7 @@ public class Loading_Screen extends Screen_JFrame
         public ImagePanel2()
         {
             // Load GIF from resources using classpath
-            URL gifUrl = getClass().getResource("/images/0.) Intro Screen/Eating.gif");
+            URL gifUrl = getClass().getResource("/images/intro/Eating.gif");
             if (gifUrl != null)
             {
                 imageGif = Toolkit.getDefaultToolkit().createImage(gifUrl);

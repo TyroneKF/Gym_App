@@ -1,7 +1,7 @@
 package com.donty.gymapp.ui.screens.mealPlan;
 
-import com.donty.gymapp.ui.meta.ids.MetaData_ID_Object.Meal_ID_OBJ;
-import com.donty.gymapp.ui.meta.ids.MetaData_ID_Object.Sub_Meal_ID_OBJ;
+import com.donty.gymapp.ui.meta.ids.meta.Meal_ID_OBJ;
+import com.donty.gymapp.ui.meta.ids.meta.Sub_Meal_ID_OBJ;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;

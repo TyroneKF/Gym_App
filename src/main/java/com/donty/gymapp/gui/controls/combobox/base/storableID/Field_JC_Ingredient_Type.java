@@ -2,7 +2,7 @@ package com.donty.gymapp.gui.controls.combobox.base.storableID;
 
 import com.donty.gymapp.gui.controls.combobox.base.storableID.base.Field_JCombo_Storable_ID;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
-import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
+import com.donty.gymapp.ui.meta.ids.storableIDs.Ingredient_Type_ID_OBJ;
 
 public class Field_JC_Ingredient_Type extends Field_JCombo_Storable_ID<Ingredient_Type_ID_OBJ>
 {

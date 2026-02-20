@@ -5,7 +5,7 @@ import com.donty.gymapp.domain.enums.db_enums.ViewNames;
 import com.donty.gymapp.domain.enums.db_enums.columnNames.views.Draft_Gui_Plan_Macro_Targets_Calc_Columns;
 import com.donty.gymapp.domain.enums.db_enums.columnNames.views.Draft_Gui_Plan_Macros_Left_Columns;
 import com.donty.gymapp.domain.enums.db_enums.columnNames.views.totalmeal.Draft_Gui_Total_Meal_Columns;
-import com.donty.gymapp.ui.meta.ids.MetaData_ID_Object.Sub_Meal_ID_OBJ;
+import com.donty.gymapp.ui.meta.ids.meta.Sub_Meal_ID_OBJ;
 import com.donty.gymapp.persistence.database.Fetched_Results;
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
 import com.donty.gymapp.persistence.database.batch.Batch_Fetch_Statements;
@@ -18,6 +18,7 @@ import com.donty.gymapp.persistence.database.statements.Upload_Statement_Full;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.gui.controls.IconButton;
 import com.donty.gymapp.gui.panels.IconPanel;
+import com.donty.gymapp.ui.meta.ids.storableIDs.*;
 import com.donty.gymapp.ui.screens.mealPlan.macroIndicator.MacroIndicators;
 import com.donty.gymapp.ui.screens.mealPlan.macroIndicator.ProgressWheelKey;
 import com.donty.gymapp.ui.tables.base.ColumnUiRules;
@@ -31,10 +32,9 @@ import com.donty.gymapp.domain.enums.db_enums.columnNames.views.totalmeal.Draft_
 import com.donty.gymapp.domain.enums.base.My_Enum;
 import com.donty.gymapp.ui.components.meal.MealManager;
 import com.donty.gymapp.gui.base.Screen_JFrame;
-import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.*;
-import com.donty.gymapp.ui.screens.graphs.LineChart_Meal_Plan_Screen.LineChart_MPS;
-import com.donty.gymapp.ui.screens.graphs.PieChart_Meal_Plan_Screen.PieChart_Screen_MPS;
-import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.Ingredients_Info.Ingredients_Info_Screen;
+import com.donty.gymapp.ui.screens.graphs.mealPlanScreen.lineChart.LineChart_MPS;
+import com.donty.gymapp.ui.screens.graphs.mealPlanScreen.pieChart.PieChart_Screen_MPS;
+import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.IngredientsInfo.Ingredients_Info_Screen;
 import com.donty.gymapp.ui.screens.loading.Loading_Screen;
 import com.donty.gymapp.ui.screens.macroTargets.Macros_Targets_Screen;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -1810,7 +1810,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         width = 53;
         height = 50;
 
-        IconButton clear_Icon_Btn = new IconButton("/images/close_btn/delete.png", width, height, width, height,
+        IconButton clear_Icon_Btn = new IconButton("/images/closeBtn/delete.png", width, height, width, height,
                 "centre", "right"); // btn text is useless here , refactor
 
         clear_Icon_Btn.makeBTntransparent();
@@ -1890,7 +1890,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         width = 51;
         height = 53;
 
-        IconButton up_ScrollBar_Icon_Btn = new IconButton("/images/scrollBar_Up/scrollBar_Up.png", width, height, width, height,
+        IconButton up_ScrollBar_Icon_Btn = new IconButton("/images/scrollUp/scrollBar_Up.png", width, height, width, height,
                 "centre", "right"); // btn text is useless here , refactor
 
         up_ScrollBar_Icon_Btn.makeBTntransparent();
@@ -1972,7 +1972,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         width = 54;
         height = 57;
 
-        IconButton add_Ingredients_Icon_Btn = new IconButton("/images/add_Ingredients/add_Ingredients.png", width, height, width, height,
+        IconButton add_Ingredients_Icon_Btn = new IconButton("/images/addIngredients/add_Ingredients.png", width, height, width, height,
                 "centre", "right"); // btn text is useless here , refactor
         //saveIcon_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
         add_Ingredients_Icon_Btn.makeBTntransparent();
@@ -2017,7 +2017,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         width = 51;
         height = 51;
 
-        IconButton down_ScrollBar_Icon_Btn = new IconButton("/images/scrollBar_Down/scrollBar_Down5.png", width, height, width, height,
+        IconButton down_ScrollBar_Icon_Btn = new IconButton("/images/scrollDown/scrollBar_Down5.png", width, height, width, height,
                 "centre", "right"); // btn text is useless here , refactor
 
         down_ScrollBar_Icon_Btn.makeBTntransparent();
