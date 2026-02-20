@@ -1,6 +1,6 @@
 package com.donty.gymapp.ui.tables.ingredients.combobox;
 
-import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
+import com.donty.gymapp.ui.meta.ids.storableIDs.Ingredient_Type_ID_OBJ;
 import com.donty.gymapp.ui.tables.ingredients.combobox.base.Parent_JComboBox_Column;
 
 import javax.swing.*;
