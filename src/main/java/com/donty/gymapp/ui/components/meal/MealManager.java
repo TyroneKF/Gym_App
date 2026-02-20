@@ -1399,15 +1399,11 @@ public class MealManager
     {
         System.out.printf("\n\n%s refresh_DB_Data()  %s %s %s", lineSeparator, "refresh", null, null);
 
-        //#####################################################
         //
-        //#####################################################
         String errorMSG = "Error, Unable to Transfer Plan Data!";
         Batch_Upload_Statements upload_statements = new Batch_Upload_Statements(errorMSG);
 
-        //#####################################################
         // Add Sub-Meal Refresh Updates
-        //#####################################################
         ingredient_tables_AL
                 .stream()
                 .filter(IngredientsTable :: has_Sub_Meal_Data_Changed)
@@ -1415,9 +1411,7 @@ public class MealManager
                     e.add_Refresh_Statements(upload_statements); // Add Sub-Meals Update Statements
                 });
 
-        //#####################################################
         // Revert Meal Time / Name IF Changed
-        //#####################################################
         if (has_Meal_Time_Been_Changed)
         {
             String upload_meal_name = """
@@ -1440,9 +1434,7 @@ public class MealManager
             upload_statements.add_Uploads(new Upload_Statement(upload_meal_name, params, true));
         }
 
-        //####################################################
         // Return Update /Output
-        //####################################################
         return db.upload_Data_Batch(upload_statements);
     }
 
@@ -1451,7 +1443,6 @@ public class MealManager
         //##########################################
         // Reset GUI  & Variables
         //##########################################
-        // Reset Time & MealName Variables
         set_Time_Variables(false, saved_meal_time, saved_meal_time);
         set_Meal_Name_Variables(false, saved_meal_name, saved_meal_name);
 
@@ -1478,7 +1469,8 @@ public class MealManager
             it.remove(); // remove from list
         }
 
-        sort_And_Re_Draw_Sub_Meals(); // Sort & Redraw GUI
+        // Sort & Redraw GUI
+        sort_And_Re_Draw_Sub_Meals();
     }
 
     //###################################################################################
