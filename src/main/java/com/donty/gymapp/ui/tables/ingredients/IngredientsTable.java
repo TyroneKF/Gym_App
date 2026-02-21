@@ -400,7 +400,7 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
         //################################
         // Delete BTn Column
         //################################
-        setup_Delete_Btn_Column(get_Delete_BTN_Col(false));
+        setup_Delete_Btn_Column(get_Delete_BTN_Model_Col());
     }
 
     //###################################
@@ -408,7 +408,7 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
     //###################################
     private void setup_Delete_Btn_Column(int delete_Btn_Column)
     {
-        new Button_Column(this, delete_Btn_Column, get_Ingredient_Index_Col(true));
+        new Button_Column(this, delete_Btn_Column, get_Ingredient_Index_Model_Col());
     }
 
     public void delete_Row_Action(int ingredient_Index, int model_Row)
@@ -468,7 +468,7 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
         //##################################################################
         // Variables
         //##################################################################
-        int ingredient_Index = (Integer) get_Value_On_Model_Data(row_In_Model, get_Ingredient_Index_Col(true));
+        int ingredient_Index = (Integer) get_Value_On_Model_Data(row_In_Model, get_Ingredient_Index_Model_Col());
 
         //##################################################################
         // Identify Trigger Column
@@ -508,7 +508,7 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
         //################################
         // Ingredients Quantity Column
         // ###############################
-        else if (column_In_Model == get_Quantity_Col(true))
+        else if (column_In_Model == get_Quantity_Model_Col())
         {
             System.out.printf("\ntableDataChange_Action() Quantity Being Changed - %s \nIndex: %s", table_name, ingredient_Index);
             return update_Table_Values_By_Quantity(row_In_Model, ingredient_Index, (BigDecimal) new_Value);
@@ -1445,18 +1445,14 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
     //#############################################################
     // Accessor Methods : Table Columns
     //#############################################################
-    private int get_Ingredient_Index_Col(boolean model_Index)
+    private int get_Ingredient_Index_Model_Col()
     {
-        if (model_Index) { return model_ingredient_index_col; }
-
-        return jTable.convertColumnIndexToView(model_ingredient_index_col);
+        return model_ingredient_index_col;
     }
 
-    private int get_Quantity_Col(boolean model_Index)
+    private int get_Quantity_Model_Col()
     {
-        if (model_Index) { return model_quantity_col; }
-
-        return jTable.convertColumnIndexToView(model_quantity_col);
+         return model_quantity_col;
     }
 
     private int get_Ingredient_Type_Col(boolean model_Index)
@@ -1473,11 +1469,9 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
         return jTable.convertColumnIndexToView(model_ingredient_name_col);
     }
 
-    private Integer get_Delete_BTN_Col(boolean model_Index)
+    private Integer get_Delete_BTN_Model_Col()
     {
-        if (model_Index) { return model_delete_btn_col; }
-
-        return jTable.convertColumnIndexToView(model_delete_btn_col);
+       return model_delete_btn_col;
     }
 
     //##################################################################################################################
