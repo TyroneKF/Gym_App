@@ -40,6 +40,7 @@ import com.donty.gymapp.ui.screens.macroTargets.Macros_Targets_Screen;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.javatuples.Pair;
+
 import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
@@ -1790,8 +1791,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
     @Override
     protected void icon_Setup(Container jpanel)
     {
-        int width, height;
-
         //##############################################################################################################
         // Top Bar Icon AREA
         //##############################################################################################################
@@ -1805,11 +1804,15 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //##########################
         // Clear
         //##########################
-        width = 53;
-        height = 50;
-
-        IconButton clear_Icon_Btn = new IconButton("/images/closeBtn/delete.png", width, height, width, height,
-                "centre", "right"); // btn text is useless here , refactor
+        IconButton clear_Icon_Btn = new IconButton(
+                "/images/closeBtn/delete.png",
+                53,
+                50,
+                53,
+                50,
+                "centre",
+                "right"
+        ); // btn text is useless here , refactor
 
         clear_Icon_Btn.makeBTntransparent();
 
@@ -1823,11 +1826,16 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //##########################
         // Recipe List
         //##########################
-        width = 53;
-        height = 50;
 
-        IconButton RecipeList_Icon_Btn = new IconButton("/images/RecipeList/recipeList1.png", width, height, width, height,
-                "centre", "right"); // btn text is useless here , refactor
+        IconButton RecipeList_Icon_Btn = new IconButton(
+                "/images/RecipeList/recipeList1.png",
+                53,
+                50,
+                53,
+                50,
+                "centre",
+                "right"
+        ); // btn text is useless here , refactor
 
         RecipeList_Icon_Btn.makeBTntransparent();
 
@@ -1841,11 +1849,15 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //##########################
         //  PieChart
         //##########################
-        width = 55;
-        height = 55;
-
-        IconButton pieChart_Icon_Btn = new IconButton("/images/graph/pie7.png", width, height, width, height,
-                "centre", "right"); // btn text is useless here , refactor
+        IconButton pieChart_Icon_Btn = new IconButton(
+                "/images/graph/pie7.png",
+                55,
+                55,
+                55,
+                55,
+                "centre",
+                "right"
+        );
 
         pieChart_Icon_Btn.makeBTntransparent();
 
@@ -1859,11 +1871,15 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //##########################
         //  LineChart
         //##########################
-        width = 51;
-        height = 53;
-
-        IconButton lineChart_Icon_Btn = new IconButton("/images/graph/bar1.png", width, height, width, height,
-                "centre", "right"); // btn text is useless here , refactor
+        IconButton lineChart_Icon_Btn = new IconButton(
+                "/images/graph/bar1.png",
+                51,
+                53,
+                51,
+                53,
+                "centre",
+                "right"
+        );
 
         lineChart_Icon_Btn.makeBTntransparent();
 
@@ -1877,11 +1893,15 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //##########################
         //  ScrollBar Up
         //##########################
-        width = 51;
-        height = 53;
-
-        IconButton up_ScrollBar_Icon_Btn = new IconButton("/images/scrollUp/scrollBar_Up.png", width, height, width, height,
-                "centre", "right"); // btn text is useless here , refactor
+        IconButton up_ScrollBar_Icon_Btn = new IconButton(
+                "/images/scrollUp/scrollBar_Up.png",
+                51,
+                53,
+                51,
+                53,
+                "centre",
+                "right"
+        );
 
         up_ScrollBar_Icon_Btn.makeBTntransparent();
 
@@ -1895,11 +1915,15 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //##########################
         // Refresh Icon
         //##########################
-        width = 50;
-        height = 50;
-
-        IconButton refresh_Icon_Btn = new IconButton("/images/refresh/++refresh.png", width, height, width, height,
-                "centre", "right"); // btn text is useless here , refactor
+        IconButton refresh_Icon_Btn = new IconButton(
+                "/images/refresh/++refresh.png",
+                50,
+                50,
+                50,
+                50,
+                "centre",
+                "right"
+        ); // btn text is useless here , refactor
 
         JButton refresh_Btn = refresh_Icon_Btn.returnJButton();
         refresh_Btn.setToolTipText("Restore All Meals Data"); //Hover message over icon
@@ -1912,11 +1936,15 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //##########################
         //Add BTN
         //##########################
-        width = 50;
-        height = 52;
-
-        IconButton add_Icon_Btn = new IconButton("/images/add/++add.png", width, height, width, height,
-                "centre", "right");
+        IconButton add_Icon_Btn = new IconButton(
+                "/images/add/++add.png",
+                50,
+                52,
+                50,
+                52,
+                "centre",
+                "right"
+        );
 
         JButton add_Btn = add_Icon_Btn.returnJButton();
         add_Btn.setToolTipText("Add Meal"); //Hover message over icon
@@ -1929,13 +1957,16 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //##########################
         // Save BTN
         //##########################
+        IconButton saveIcon_Icon_Btn = new IconButton(
+                "/images/save/+++save.png",
+                54,
+                57,
+                54,
+                57,
+                "centre",
+                "right"
+        );
 
-        width = 54;
-        height = 57;
-
-        IconButton saveIcon_Icon_Btn = new IconButton("/images/save/+++save.png", width, height, width, height,
-                "centre", "right"); // btn text is useless here , refactor
-        //saveIcon_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
         saveIcon_Icon_Btn.makeBTntransparent();
 
         JButton save_btn = saveIcon_Icon_Btn.returnJButton();
@@ -1948,13 +1979,16 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //##########################
         //  Add_Ingredients Icon
         //##########################
+        IconButton add_Ingredients_Icon_Btn = new IconButton(
+                "/images/addIngredients/add_Ingredients.png",
+                54,
+                57,
+                54,
+                57,
+                "centre",
+                "right"
+        );
 
-        width = 54;
-        height = 57;
-
-        IconButton add_Ingredients_Icon_Btn = new IconButton("/images/addIngredients/add_Ingredients.png", width, height, width, height,
-                "centre", "right"); // btn text is useless here , refactor
-        //saveIcon_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
         add_Ingredients_Icon_Btn.makeBTntransparent();
 
         JButton add_Ingredients_Btn = add_Ingredients_Icon_Btn.returnJButton();
@@ -1968,44 +2002,44 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //##########################
         //  Macro_Targets Icon
         //##########################
+        IconButton macro_Targets_Icon_Btn = new IconButton(
+                "/images/targets/target.png",
+                54,
+                50,
+                54,
+                50,
+                "centre",
+                "right"
+        );
 
-        width = 54;
-        height = 50;
-
-        IconButton macro_Targets_Icon_Btn = new IconButton("/images/targets/target.png", width, height, width, height,
-                "centre", "right"); // btn text is useless here , refactor
-        //saveIcon_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
         macro_Targets_Icon_Btn.makeBTntransparent();
 
         JButton macro_Tagets_Btn = macro_Targets_Icon_Btn.returnJButton();
         macro_Tagets_Btn.setToolTipText("Set Macro Targets"); //Hover message over icon
 
-
-        macro_Tagets_Btn.addActionListener(ae -> {
-
-            open_Macros_Targets_Screen();
-        });
+        macro_Tagets_Btn.addActionListener(ae -> open_Macros_Targets_Screen());
 
         iconPanelInsert.add(macro_Tagets_Btn);
 
         //##########################
         //  Scroll Bottom
         //##########################
-        width = 51;
-        height = 51;
-
-        IconButton down_ScrollBar_Icon_Btn = new IconButton("/images/scrollDown/scrollBar_Down5.png", width, height, width, height,
-                "centre", "right"); // btn text is useless here , refactor
+        IconButton down_ScrollBar_Icon_Btn = new IconButton(
+                "/images/scrollDown/scrollBar_Down5.png",
+                51,
+                51,
+                51,
+                51,
+                "centre",
+                "right"
+        );
 
         down_ScrollBar_Icon_Btn.makeBTntransparent();
 
         JButton down_ScrollBar_Btn = down_ScrollBar_Icon_Btn.returnJButton();
         down_ScrollBar_Btn.setToolTipText("Scroll to Bottom Of Meal Plan"); //Hover message over icon
 
-        down_ScrollBar_Btn.addActionListener(ae -> {
-
-            scroll_Down_Btn_Action();
-        });
+        down_ScrollBar_Btn.addActionListener(ae -> scroll_Down_Btn_Action());
 
         iconPanelInsert.add(down_ScrollBar_Btn);
     }
@@ -2557,7 +2591,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         }
 
         // No Meals Data has changed
-        if(! has_Data_changed())
+        if (! has_Data_changed())
         {
             JOptionPane.showMessageDialog(getFrame(), "No Data in this Plan has changed to refresh!");
             return false;
