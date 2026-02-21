@@ -9,7 +9,7 @@ import com.donty.gymapp.persistence.database.statements.Fetch_Statement;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.add.ingredients.Ingredients_Form;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.add.products.Shop_Form;
-import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.IngredientsInfo.Ingredients_Info_Screen;
+import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.Ingredients_Info_Screen;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.base.screen.Parent_Ingredients_Screen;
 
 

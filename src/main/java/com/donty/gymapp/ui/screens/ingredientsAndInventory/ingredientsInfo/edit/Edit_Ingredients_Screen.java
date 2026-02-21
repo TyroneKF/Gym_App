@@ -12,7 +12,7 @@ import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.gui.controls.combobox.base.storableID.Field_JC_Ingredient_Type;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.edit.ingredients.Edit_Ingredients_Form;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.edit.products.Edit_Shop_Form;
-import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.IngredientsInfo.Ingredients_Info_Screen;
+import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.Ingredients_Info_Screen;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.base.screen.Parent_Ingredients_Screen;
 import javax.swing.*;
 import java.awt.*;

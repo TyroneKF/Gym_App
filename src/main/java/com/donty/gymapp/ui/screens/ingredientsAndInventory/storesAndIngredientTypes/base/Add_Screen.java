@@ -13,7 +13,7 @@ import com.donty.gymapp.persistence.database.statements.Upload_Statement;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.gui.controls.textfields.base.JTextFieldLimit;
 import com.donty.gymapp.gui.base.Screen_JPanel;
-import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.IngredientsInfo.Ingredients_Info_Screen;
+import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.Ingredients_Info_Screen;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.storesAndIngredientTypes.ingredientTypes.Add_Ingredient_Type;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.storesAndIngredientTypes.stores.Add_Stores;
 import javax.swing.*;

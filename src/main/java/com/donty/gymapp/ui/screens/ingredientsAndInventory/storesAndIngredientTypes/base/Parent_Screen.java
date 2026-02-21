@@ -7,12 +7,10 @@ import com.donty.gymapp.gui.controls.IconButton;
 import com.donty.gymapp.gui.panels.IconPanel;
 import com.donty.gymapp.gui.panels.Image_JPanel;
 import com.donty.gymapp.gui.base.Screen_JPanel;
-import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.IngredientsInfo.Ingredients_Info_Screen;
-
+import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.Ingredients_Info_Screen;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
@@ -23,7 +21,6 @@ import javafx.scene.control.Label;
 import javafx.scene.shape.Circle;
 import javafx.animation.TranslateTransition;
 import javafx.util.Duration;
-
 
 public abstract class Parent_Screen<T extends Storable_IDS_Parent> extends Screen_JPanel
 {

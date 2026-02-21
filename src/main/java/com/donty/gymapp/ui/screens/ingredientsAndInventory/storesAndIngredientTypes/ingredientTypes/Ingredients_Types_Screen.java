@@ -4,9 +4,8 @@ import com.donty.gymapp.ui.meta.ids.storableIDs.Ingredient_Type_ID_OBJ;
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.gui.panels.Image_JPanel;
-import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.IngredientsInfo.Ingredients_Info_Screen;
+import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.Ingredients_Info_Screen;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.storesAndIngredientTypes.base.Parent_Screen;
-
 import java.util.ArrayList;
 
 public class Ingredients_Types_Screen extends Parent_Screen<Ingredient_Type_ID_OBJ>

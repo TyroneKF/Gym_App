@@ -7,7 +7,7 @@ import com.donty.gymapp.persistence.database.batch.Batch_Upload_Statements;
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
 import com.donty.gymapp.persistence.database.statements.Upload_Statement;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
-import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.IngredientsInfo.Ingredients_Info_Screen;
+import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.Ingredients_Info_Screen;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.storesAndIngredientTypes.base.Edit_Screen;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.storesAndIngredientTypes.base.Parent_Screen;
 

@@ -5,7 +5,7 @@ import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.gui.base.Screen_JPanel;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.add.ingredients.Ingredients_Form;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.add.products.Shop_Form;
-import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.IngredientsInfo.Ingredients_Info_Screen;
+import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.Ingredients_Info_Screen;
 import javax.swing.*;
 import java.awt.*;
 

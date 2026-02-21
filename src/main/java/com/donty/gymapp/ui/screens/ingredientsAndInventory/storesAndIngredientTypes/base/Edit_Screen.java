@@ -10,7 +10,7 @@ import com.donty.gymapp.persistence.database.statements.Fetch_Statement_Full;
 import com.donty.gymapp.persistence.database.statements.Upload_Statement;
 import com.donty.gymapp.persistence.database.statements.Upload_Statement_Full;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
-import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.IngredientsInfo.Ingredients_Info_Screen;
+import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.Ingredients_Info_Screen;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;

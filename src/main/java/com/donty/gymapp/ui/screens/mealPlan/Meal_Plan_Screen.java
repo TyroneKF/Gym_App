@@ -34,13 +34,12 @@ import com.donty.gymapp.ui.components.meal.MealManager;
 import com.donty.gymapp.gui.base.Screen_JFrame;
 import com.donty.gymapp.ui.screens.graphs.mealPlanScreen.lineChart.LineChart_MPS;
 import com.donty.gymapp.ui.screens.graphs.mealPlanScreen.pieChart.PieChart_Screen_MPS;
-import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.IngredientsInfo.Ingredients_Info_Screen;
+import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.Ingredients_Info_Screen;
 import com.donty.gymapp.ui.screens.loading.Loading_Screen;
 import com.donty.gymapp.ui.screens.macroTargets.Macros_Targets_Screen;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.javatuples.Pair;
-
 import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;

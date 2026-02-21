@@ -1,5 +1,5 @@
 
-package com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.IngredientsInfo;
+package com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo;
 
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
