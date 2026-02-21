@@ -1,4 +1,4 @@
-package com.donty.gymapp.ui.charts;
+package com.donty.gymapp.ui.charts.pieCharts;
 
 
 import javax.swing.*;
@@ -289,32 +289,5 @@ public class Pie_Chart<K extends Comparable<K>> extends JPanel
     public void setTitle(String txt)
     {
         chart.setTitle(txt);
-    }
-    
-    //############################################################################################
-    // Rotator Class
-    //############################################################################################
-    protected class Rotator extends Timer implements ActionListener
-    {
-        private final PiePlot plot;
-        private int angle = 270; // starting angle
-        
-        public Rotator(PiePlot plot, int delay)
-        {
-            super(delay, null);
-            this.plot = plot;
-            addActionListener(this);
-        }
-        
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            angle = angle + 1;          // rotate 1 degree per tick
-            if (angle == 360)
-            {
-                angle = 0;
-            }
-            plot.setStartAngle(angle);  // update the plot
-        }
     }
 }

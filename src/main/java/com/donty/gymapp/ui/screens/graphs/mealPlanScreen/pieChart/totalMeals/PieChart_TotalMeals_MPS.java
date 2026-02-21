@@ -3,7 +3,7 @@ package com.donty.gymapp.ui.screens.graphs.mealPlanScreen.pieChart.totalMeals;
 import com.donty.gymapp.domain.enums.db_enums.columnNames.views.totalmeal.Draft_Gui_Total_Meal_Macro_Columns;
 import com.donty.gymapp.ui.components.meal.MealManager;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
-import com.donty.gymapp.ui.charts.Pie_Chart;
+import com.donty.gymapp.ui.charts.pieCharts.Pie_Chart;
 import com.donty.gymapp.gui.base.Screen_JPanel;
 
 import java.util.Random;

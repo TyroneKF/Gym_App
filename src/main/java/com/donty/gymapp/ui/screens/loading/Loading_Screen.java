@@ -110,42 +110,4 @@ public class Loading_Screen extends Screen_JFrame
     {
         return finished;
     }
-    
-    //##################################################################################################################
-    // ImagePanel Class
-    //##################################################################################################################
-    public class ImagePanel2 extends JPanel
-    {
-        private Image imageGif;
-
-        // #########################################
-        // Load Image to JPanel
-        // #########################################
-        public ImagePanel2()
-        {
-            // Load GIF from resources using classpath
-            URL gifUrl = getClass().getResource("/images/intro/Eating.gif");
-            if (gifUrl != null)
-            {
-                imageGif = Toolkit.getDefaultToolkit().createImage(gifUrl);
-            }
-            else
-            {
-                System.err.println("GIF not found at images/0.) Intro Screen");
-            }
-        }
-
-        // #########################################
-        // Draw image on JPanel
-        // #########################################
-        @Override
-        protected void paintComponent(Graphics g)
-        {
-            super.paintComponent(g);
-            if (imageGif != null)
-            {
-                g.drawImage(imageGif, 0, 0, this);
-            }
-        }
-    }
 }

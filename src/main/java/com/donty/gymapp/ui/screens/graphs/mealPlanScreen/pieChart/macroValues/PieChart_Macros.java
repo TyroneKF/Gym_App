@@ -1,6 +1,6 @@
 package com.donty.gymapp.ui.screens.graphs.mealPlanScreen.pieChart.macroValues;
 
-import com.donty.gymapp.ui.charts.Pie_Chart;
+import com.donty.gymapp.ui.charts.pieCharts.Pie_Chart;
 import org.jfree.chart.labels.PieSectionLabelGenerator;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.general.PieDataset;

@@ -1,7 +1,7 @@
 package com.donty.gymapp.ui.screens.graphs.mealPlanScreen.pieChart.totalMeals;
 
 import com.donty.gymapp.ui.components.meal.MealManager;
-import com.donty.gymapp.ui.charts.Pie_Chart;
+import com.donty.gymapp.ui.charts.pieCharts.Pie_Chart;
 import java.time.LocalTime;
 
 public class PieChart_Totals_Entry_MPS
