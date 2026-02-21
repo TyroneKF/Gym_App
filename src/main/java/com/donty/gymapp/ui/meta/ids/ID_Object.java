@@ -8,7 +8,7 @@ public class ID_Object implements Comparable<ID_Object>
     // Variables
     // #################################################################################################################
     private String  name;
-    private Integer id;
+    private final Integer id;
     private boolean is_System;
     
     // #################################################################################################################

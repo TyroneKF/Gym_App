@@ -21,17 +21,17 @@ class LineChart_Macros_MPS extends Screen_JPanel
     //#################################################################################################################
     // Variables
     //#################################################################################################################
-    private String title;
+    private final String title;
     
     //##############################################
     // Objects
     //##############################################
-    private Shared_Data_Registry shared_Data_Registry;
+    private final Shared_Data_Registry shared_Data_Registry;
     
     //##############################################
     // Collections
     //##############################################
-    private ArrayList<Draft_Gui_Total_Meal_Macro_Columns> macros_To_Check;
+    private final ArrayList<Draft_Gui_Total_Meal_Macro_Columns> macros_To_Check;
     
     /**
      * HashMap<String, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues = new HashMap<>();
@@ -40,13 +40,13 @@ class LineChart_Macros_MPS extends Screen_JPanel
      * <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
      * Etc;  <Key: Salt | Value: HashMap<MealManager, Quantity: 300g >>
      */
-    private LinkedHashMap<Draft_Gui_Total_Meal_Macro_Columns, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues;
+    private final LinkedHashMap<Draft_Gui_Total_Meal_Macro_Columns, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues;
     
     //##############################################
     // Datasets Objects
     //##############################################
     private TimeSeriesCollection dataset = new TimeSeriesCollection(); // Clear Dataset;
-    private Line_Chart line_chart;
+    private final Line_Chart line_chart;
     
     
     // #################################################################################################################

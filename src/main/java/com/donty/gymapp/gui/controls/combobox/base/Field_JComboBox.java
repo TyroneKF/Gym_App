@@ -12,8 +12,8 @@ public abstract class Field_JComboBox<T> extends JComboBox<T>
     // Variables
     //##################################################################################################################
     protected ArrayList<T> data_AL;
-    protected Class<T> typeCast;
-    protected String label;
+    protected final Class<T> typeCast;
+    protected final String label;
 
     //##################################################################################################################
     // Constructor

@@ -9,8 +9,8 @@ public class Field_JC_Measurements extends Field_JCombo_Storable_ID<Measurement_
     //##################################################################################################################
     // Variable
     //##################################################################################################################
-    protected Shared_Data_Registry shared_data_registry;
-    protected int na_measurement_id;
+    protected final Shared_Data_Registry shared_data_registry;
+    protected final int na_measurement_id;
 
 
     //##################################################################################################################

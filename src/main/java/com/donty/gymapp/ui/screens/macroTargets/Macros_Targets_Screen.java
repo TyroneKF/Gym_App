@@ -23,15 +23,15 @@ public class Macros_Targets_Screen extends Screen_JFrame
     // ################################################################################################################
     // Variables
     // ################################################################################################################
-    private Integer draft_plan_id;
+    private final Integer draft_plan_id;
 
     private boolean is_form_editable = false;
 
     // #####################################
     // Objects
     // #####################################
-    private Shared_Data_Registry shared_data_registry;
-    private Meal_Plan_Screen meal_plan_screen;
+    private final Shared_Data_Registry shared_data_registry;
+    private final Meal_Plan_Screen meal_plan_screen;
 
     private JButton submission_button;
 

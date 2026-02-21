@@ -21,12 +21,12 @@ public class PieChart_Screen_MPS extends Screen_JFrame
     // #################################################################################################################
     
     // Objects
-    private Meal_Plan_Screen meal_plan_screen;
-    private Shared_Data_Registry shared_Data_Registry;
+    private final Meal_Plan_Screen meal_plan_screen;
+    private final Shared_Data_Registry shared_Data_Registry;
     
     // Screens
-    private PieChart_TotalMeals_MPS pieChart_TotalMeals_MPS;
-    private PieChart_Macros_MPS pieChart_Macros_MPS;
+    private final PieChart_TotalMeals_MPS pieChart_TotalMeals_MPS;
+    private final PieChart_Macros_MPS pieChart_Macros_MPS;
     
     // #################################################################################################################
     // Constructor

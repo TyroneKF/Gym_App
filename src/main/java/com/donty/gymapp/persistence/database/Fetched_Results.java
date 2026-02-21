@@ -13,7 +13,7 @@ public class Fetched_Results
     private final HashMap<Integer, ArrayList<ArrayList<Object>>> results_2D_Map = new HashMap<>();
     
     private int size = 0;
-    private String class_Name = "Fetched_Results ->";
+    private final String class_Name = this.getClass().getSimpleName();
     
     //##################################################################################################################
     // Constructor

@@ -12,12 +12,12 @@ public class PieChart_MacroKey implements Comparable<PieChart_MacroKey>
     // #################################################################################################################
     
     // Objects
-    private MealManager mealManager;
+    private final MealManager mealManager;
     
     // Integers
-    private int mealInPlanID;
-    private String macroSymbol;
-    private Draft_Gui_Total_Meal_Macro_Columns macro_name;
+    private final int mealInPlanID;
+    private final String macroSymbol;
+    private final Draft_Gui_Total_Meal_Macro_Columns macro_name;
     
     // #################################################################################################################
     // Constructor

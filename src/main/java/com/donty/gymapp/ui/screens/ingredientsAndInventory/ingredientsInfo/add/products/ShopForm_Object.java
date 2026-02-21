@@ -19,19 +19,19 @@ public class ShopForm_Object extends JPanel
     //##################################################################################################################
 
     // Int
-    protected int
+    protected final int
             string_Char_Limit = 100,
             decimal_Char_Limit = 8;
 
     // GUI Objects
-    protected Container parent_Container;
-    protected Field_JC_Stores stores_JC;
+    protected final Container parent_Container;
+    protected final Field_JC_Stores stores_JC;
 
-    protected Field_JTxtField_String product_Name_JT;
-    protected Field_JTxtField_BD product_Price_JT, quantity_JT;
+    protected final Field_JTxtField_String product_Name_JT;
+    protected final Field_JTxtField_BD product_Price_JT, quantity_JT;
 
     // Objects
-    protected Shop_Form shop_form;
+    protected final Shop_Form shop_form;
     protected Shared_Data_Registry shared_data_registry;
 
     //############

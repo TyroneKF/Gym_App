@@ -18,7 +18,7 @@ public class Screen_JFrame extends JFrame
     protected int containerYPos = 0, frameWidth, frameHeight, xPos, yPos;
     
     // String
-    protected String lineSeparator = "###############################################################################";
+    protected final String lineSeparator = "###############################################################################";
     protected String title;
     private String class_Name;
     
@@ -26,9 +26,9 @@ public class Screen_JFrame extends JFrame
     // Objects
     //##############################################
     protected MyJDBC_Sqlite db;
-    protected GridBagConstraints gbc = new GridBagConstraints();
+    protected final GridBagConstraints gbc = new GridBagConstraints();
     protected Container contentPane;
-    protected ScrollPaneCreator scrollPane = new ScrollPaneCreator();
+    protected final ScrollPaneCreator scrollPane = new ScrollPaneCreator();
     
     //##############################################
     // JPanels

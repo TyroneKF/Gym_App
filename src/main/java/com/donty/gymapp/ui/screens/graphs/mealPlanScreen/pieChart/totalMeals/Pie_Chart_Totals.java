@@ -17,8 +17,8 @@ public class Pie_Chart_Totals extends Pie_Chart<Draft_Gui_Total_Meal_Macro_Colum
     // #################################################################################################################
     // Variables
     // #################################################################################################################
-    protected MealManager mealManager;
-    protected Shared_Data_Registry shared_data_registry;
+    protected final MealManager mealManager;
+    protected final Shared_Data_Registry shared_data_registry;
     
     // #################################################################################################################
     // Constructor

@@ -9,7 +9,7 @@ public class Field_JC_Stores extends Field_JCombo_Storable_ID<Store_ID_OBJ>
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    protected Shared_Data_Registry shared_data_registry;
+    protected final Shared_Data_Registry shared_data_registry;
 
     //##################################################################################################################
     // Constructor

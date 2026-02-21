@@ -26,8 +26,8 @@ public class Screen_JPanel extends JPanel
     //##############################################
     // Objects
     //##############################################
-    protected GridBagConstraints gbc = new GridBagConstraints();
-    protected ScrollPaneCreator scrollPane = new ScrollPaneCreator();
+    protected final GridBagConstraints gbc = new GridBagConstraints();
+    protected final ScrollPaneCreator scrollPane = new ScrollPaneCreator();
     
     //##############################################
     // JPanels

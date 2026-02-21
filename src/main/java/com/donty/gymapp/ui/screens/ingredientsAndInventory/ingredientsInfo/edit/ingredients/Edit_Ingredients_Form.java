@@ -25,7 +25,7 @@ public class Edit_Ingredients_Form extends Ingredients_Form
     protected Integer ingredient_ID = null;
     protected ArrayList<Object> data_AL;
 
-    protected int
+    protected final int
             un_assigned_ingredient_type_id,
             ingredient_type_query_pos;
 

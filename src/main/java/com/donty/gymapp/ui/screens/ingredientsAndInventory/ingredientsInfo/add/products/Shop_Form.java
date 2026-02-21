@@ -20,18 +20,18 @@ public class Shop_Form extends Parent_Forms_OBJ
     //##################################################################################################################
 
     // Objects
-    protected Parent_Ingredients_Screen ingredient_Screen;
-    protected Shared_Data_Registry shared_Data_Registry;
+    protected final Parent_Ingredients_Screen ingredient_Screen;
+    protected final Shared_Data_Registry shared_Data_Registry;
 
     // Screen Objects
-    protected Container parentContainer;
+    protected final Container parentContainer;
     protected JPanel input_Area_JP, northPanel;
 
     //#############################
     // Collections
     //#############################
-    protected ArrayList<Store_ID_OBJ> stores;
-    protected ArrayList<ShopForm_Object> shop_Form_Objects = new ArrayList<>();
+    protected final ArrayList<Store_ID_OBJ> stores;
+    protected final ArrayList<ShopForm_Object> shop_Form_Objects = new ArrayList<>();
 
     //##################################################################################################################
     // Constructor

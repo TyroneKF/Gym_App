@@ -34,23 +34,23 @@ public class Ingredients_Form extends Parent_Forms_OBJ
     protected String class_Name = new Object() { }.getClass().getEnclosingClass().getName();
 
     // Integers
-    protected int
+    protected final int
             digit_Char_Limit = 8,
             text_Char_Limit = 255;
 
     //#############################
     // Objects
     //#############################
-    protected Shared_Data_Registry shared_data_registry;
-    protected MyJDBC_Sqlite db;
+    protected final Shared_Data_Registry shared_data_registry;
+    protected final MyJDBC_Sqlite db;
 
-    protected JPanel northPanel = new JPanel(new GridBagLayout());
+    protected final JPanel northPanel = new JPanel(new GridBagLayout());
 
     // Salt JC Object
-    protected ArrayList<String> salt_Values_AL = new ArrayList<>(Arrays.asList("mg", "g"));
-    protected Field_JCombo_Default<String> salt_JC = new Field_JCombo_Default<>("Salt", String.class, salt_Values_AL);
+    protected final ArrayList<String> salt_Values_AL = new ArrayList<>(Arrays.asList("mg", "g"));
+    protected final Field_JCombo_Default<String> salt_JC = new Field_JCombo_Default<>("Salt", String.class, salt_Values_AL);
 
-    protected Field_JC_Ingredient_Type field_jc_ingredient_type;
+    protected final Field_JC_Ingredient_Type field_jc_ingredient_type;
 
     //############
     // Maps

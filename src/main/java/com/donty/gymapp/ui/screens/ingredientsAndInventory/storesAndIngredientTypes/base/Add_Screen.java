@@ -30,10 +30,10 @@ public abstract class Add_Screen<T extends Storable_IDS_Parent> extends Screen_J
     //##################################################################################################################
 
     // Objects
-    protected MyJDBC_Sqlite db;
-    protected Parent_Screen<T> parent_Screen;
-    protected Ingredients_Info_Screen ingredient_Info_Screen;
-    protected Shared_Data_Registry sharedDataRegistry;
+    protected final MyJDBC_Sqlite db;
+    protected final Parent_Screen<T> parent_Screen;
+    protected final Ingredients_Info_Screen ingredient_Info_Screen;
+    protected final Shared_Data_Registry sharedDataRegistry;
     protected Fetched_Results fetched_Results_OBJ;
 
     // GUI Objects
@@ -43,18 +43,19 @@ public abstract class Add_Screen<T extends Storable_IDS_Parent> extends Screen_J
     protected Frame frame;
 
     // Integer
-    protected int charLimit = 55;
+    protected final int charLimit = 55;
 
     // String
+    protected final String process;
+
     protected String
-            process,
             main_Label,
             data_gathering_name,
             db_column_name_field,
             db_table_name,
             id_column_name;
 
-    protected String class_Name = new Object() { }.getClass().getEnclosingClass().getName();
+    protected final String class_Name = new Object() { }.getClass().getEnclosingClass().getName();
 
     //##################################################################################################################
     // Constructor

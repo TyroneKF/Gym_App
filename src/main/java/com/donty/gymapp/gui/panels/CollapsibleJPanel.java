@@ -7,13 +7,19 @@ import java.awt.*;
 
 public class CollapsibleJPanel extends JPanel
 {
-    boolean isCollapsed = false;
-    String btnText;
-    JPanel collapsibleJPanel, southPanel, eastJPanel;
-    JButton iconBtn;
-    IconButton collapse_And_Expand_Btn;
-    Container parentContainer;
+    //##################################################################################################################
+    // Variables
+    //##################################################################################################################
+    protected boolean isCollapsed = false;
+    protected String btnText;
+    protected final JPanel collapsibleJPanel, southPanel, eastJPanel;
+    protected final JButton iconBtn;
+    protected final IconButton collapse_And_Expand_Btn;
+    protected final Container parentContainer;
 
+    //##################################################################################################################
+    // Constructor
+    //##################################################################################################################
     public CollapsibleJPanel(Container parentContainer, String btnText, int btnWidth, int btnHeight)
     {
         this.btnText = btnText;
@@ -74,6 +80,9 @@ public class CollapsibleJPanel extends JPanel
         collapse_JPanel(); //HELLO Remove
     }
 
+    //##################################################################################################################
+    // Methods
+    //##################################################################################################################
     public JPanel get_East_JPanel()
     {
         return eastJPanel;

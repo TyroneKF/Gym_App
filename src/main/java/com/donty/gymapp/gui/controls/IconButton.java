@@ -7,12 +7,25 @@ import java.util.Locale;
 
 public class IconButton extends JPanel
 {
-    private JButton button = new JButton();
+    private final JButton button = new JButton();
     private Font font = null;
     
-    private String iconPath, verticalTextPos, horizontalTextPos, btnText = null;
-    private int iconWidth, iconHeight, btnWidth, btnHeight;
-    
+    private final String
+            iconPath,
+            verticalTextPos,
+            horizontalTextPos;
+
+    private String btnText = null;
+
+    private final int
+            iconWidth,
+            iconHeight,
+            btnWidth,
+            btnHeight;
+
+    //##################################################################################################################
+    // Constructor
+    //##################################################################################################################
     public IconButton(String iconPath, int iconWidth, int iconHeight, int btnWidth, int btnHeight, String verticalTextPos,
                       String horizontalTextPos)
     {

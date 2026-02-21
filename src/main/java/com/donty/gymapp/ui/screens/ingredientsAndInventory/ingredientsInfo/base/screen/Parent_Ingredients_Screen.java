@@ -15,17 +15,18 @@ public abstract class Parent_Ingredients_Screen extends Screen_JPanel
     // Variables
     //##################################################################################################################
     // JPanel
-    protected JPanel scroll_JPanel, mainCentre_JPanel;
+    protected final JPanel scroll_JPanel;
+    protected final JPanel mainCentre_JPanel;
     
     // Objects
-    protected MyJDBC_Sqlite db;
-    protected Frame frame;
+    protected final MyJDBC_Sqlite db;
+    protected final Frame frame;
     
     // Screen Objects
     protected Ingredients_Form ingredients_Form;
     protected Shop_Form shop_Form;
-    protected Ingredients_Info_Screen ingredients_info_screen;
-    protected Shared_Data_Registry shared_data_registry;
+    protected final Ingredients_Info_Screen ingredients_info_screen;
+    protected final Shared_Data_Registry shared_data_registry;
 
     protected String error_msg;
 

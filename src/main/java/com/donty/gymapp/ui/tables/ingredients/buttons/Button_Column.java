@@ -31,7 +31,7 @@ public class Button_Column extends AbstractCellEditor implements TableCellRender
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    private JTable table;
+    private final JTable table;
     
     private final Action action;
     private int mnemonic;

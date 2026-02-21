@@ -10,7 +10,7 @@ public class Parent_Forms_OBJ extends Screen_JPanel // Shop Form and Ingredients
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    protected CollapsibleJPanel collapsibleJPanel;
+    protected final CollapsibleJPanel collapsibleJPanel;
     
     //##################################################################################################################
     // Constructor

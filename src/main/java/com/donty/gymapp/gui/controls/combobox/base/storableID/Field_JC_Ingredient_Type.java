@@ -9,8 +9,8 @@ public class Field_JC_Ingredient_Type extends Field_JCombo_Storable_ID<Ingredien
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    protected Shared_Data_Registry shared_data_registry;
-    protected int un_assigned_type_id;
+    protected final Shared_Data_Registry shared_data_registry;
+    protected final int un_assigned_type_id;
 
     protected boolean allow_un_assigned;
 

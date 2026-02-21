@@ -20,14 +20,14 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
     //##############################################
     // Objects
     //##############################################
-    protected MyJDBC_Sqlite db;
-    protected Shared_Data_Registry shared_data_registry;
+    protected final MyJDBC_Sqlite db;
+    protected final Shared_Data_Registry shared_data_registry;
 
     protected Container parent_Container;
-    protected JScrollPane scrollPane = new JScrollPane();
-    protected static GridBagConstraints gbc = new GridBagConstraints(); //HELLO DELETE
+    protected final JScrollPane scrollPane = new JScrollPane();
+    protected static final GridBagConstraints gbc = new GridBagConstraints(); //HELLO DELETE
 
-    protected ColumnUiRules<T> column_ui_rules;
+    protected final ColumnUiRules<T> column_ui_rules;
 
     //#####################################################################
     // Table Customization Variables
@@ -38,36 +38,37 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
     //#######################
     // Strings
     //#######################
-    protected String primary_Key_Column;
-    protected String table_name;
-    protected String db_read_view_name;
-    protected String db_write_table_name;
+    protected final String primary_Key_Column;
+    protected final String table_name;
+    protected final String db_read_view_name;
+    protected final String db_write_table_name;
 
     //##############################################
     // Collections
     //##############################################
-    protected ArrayList<String>
+    protected final ArrayList<String>
             column_Names,
             gui_Column_Names = new ArrayList<>();
 
     protected ArrayList<ArrayList<Object>> saved_Data;
 
-    protected ArrayList<Integer> editable_column_model_positions = new ArrayList<>();
+    protected final ArrayList<Integer> editable_column_model_positions = new ArrayList<>();
 
     //#####################################################################
     // Other Variables
     //#####################################################################
     // String
     private final String class_Name;
-    protected String lineSeparator = "###############################################################################";
+    protected final String lineSeparator = "###############################################################################";
 
     //#############################
     // Booleans
     //#############################
     protected boolean
             table_Initialised = false,
-            add_JTable_Action,
             is_row_Being_Edited = false;
+
+    protected boolean add_JTable_Action;
 
     //##################################################################################################################
     // Constructor

@@ -6,18 +6,18 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class Rotator extends Timer implements ActionListener
+public class Rotator<K extends Comparable<K>> extends Timer implements ActionListener
 {
     //############################################################################################
     // Variables
     //############################################################################################
-    private final PiePlot plot;
+    private final PiePlot<K> plot;
     private int angle = 270; // starting angle
 
     //############################################################################################
     // Constructor
     //############################################################################################
-    protected Rotator(PiePlot plot, int delay)
+    protected Rotator(PiePlot<K> plot, int delay)
     {
         super(delay, null);
         this.plot = plot;

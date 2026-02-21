@@ -5,9 +5,17 @@ import java.awt.*;
 
 public class IconPanel extends JPanel
 {
-    private GridBagConstraints gbc = new GridBagConstraints();
-    private JPanel iconPanel, iconAreaPanel;
+    //##################################################################################################################
+    // Variables
+    //##################################################################################################################
+    private final GridBagConstraints gbc = new GridBagConstraints();
+    private final JPanel iconPanel, iconAreaPanel;
 
+
+
+    //##################################################################################################################
+    // Constructor
+    //##################################################################################################################
     public IconPanel(int numberOfIcons, int hgap, String position)
     {
         //Creating JPanels for the area
@@ -37,6 +45,9 @@ public class IconPanel extends JPanel
         }
     }
 
+    //##################################################################################################################
+    // Methods
+    //##################################################################################################################
     public JPanel getIconJpanel()
     {
         return iconPanel;

@@ -27,23 +27,22 @@ public class Pie_Chart<K extends Comparable<K>> extends JPanel
     // ############################################################################################
     
     // Collections
-    protected DefaultPieDataset<K> dataset;
-    protected Color[] colors;
+    protected final DefaultPieDataset<K> dataset;
+    protected final Color[] colors;
     
     // Objects
-    protected JFreeChart chart;
-    protected PiePlot3D plot;
-    protected ChartPanel chartPanel;
-    
+    protected final JFreeChart chart;
+    protected final PiePlot3D plot;
     
     // Font
-    protected Font titleFont, labelFont, legendFont;
+    protected final Font titleFont, labelFont, legendFont;
     
     // String
     protected String title;
     
     // int
-    protected int rows, cols = 2;
+    protected int rows;
+    protected final int cols = 2;
     
     // BigDecimal
     protected BigDecimal datasetTotal = new BigDecimal(0);
@@ -146,7 +145,7 @@ public class Pie_Chart<K extends Comparable<K>> extends JPanel
         // Auto Rotate Features
         //#############################################
         // 🔹 auto-rotate : auto-rotate (50 ms delay ≈ 20 frames/sec)
-        Rotator rotator = new Rotator(plot, rotateDelay);
+        Rotator<K> rotator = new Rotator<K>(plot, rotateDelay);
         rotator.start();
         
         // #############################################

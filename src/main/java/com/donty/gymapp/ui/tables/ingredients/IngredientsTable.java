@@ -98,7 +98,7 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
             saved_sub_meal_time = null,
             current_sub_meal_time = null;
 
-    private DateTimeFormatter time_Formatter = DateTimeFormatter.ofPattern("HH:mm").withResolverStyle(ResolverStyle.STRICT);
+    private final DateTimeFormatter time_Formatter = DateTimeFormatter.ofPattern("HH:mm").withResolverStyle(ResolverStyle.STRICT);
 
     //################################################
     // Collections

@@ -14,7 +14,7 @@ public class Edit_Shop_Form extends Shop_Form
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    protected ArrayList<Edit_ShopForm_Object> edit_Shop_Form_Objects_AL = new ArrayList<>();
+    protected final ArrayList<Edit_ShopForm_Object> edit_Shop_Form_Objects_AL = new ArrayList<>();
     protected int ingredient_ID;
     
     //##################################################################################################################

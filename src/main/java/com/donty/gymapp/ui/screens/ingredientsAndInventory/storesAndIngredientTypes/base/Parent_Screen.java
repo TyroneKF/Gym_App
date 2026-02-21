@@ -28,11 +28,12 @@ public abstract class Parent_Screen<T extends Storable_IDS_Parent> extends Scree
     // Variables
     //##################################################################################################################
     // String
-    protected String process;
+    protected final String process;
     
     //############################
     // Integer
-    protected int frameHeight, frameWidth;
+    protected final int frameHeight;
+    protected final int frameWidth;
     
     // Boolean
     protected final boolean[] isEditMode = { false };
@@ -40,18 +41,18 @@ public abstract class Parent_Screen<T extends Storable_IDS_Parent> extends Scree
     //############################
     // Objects
     //############################
-    protected MyJDBC_Sqlite db;
-    protected Shared_Data_Registry shared_Data_Registry;
+    protected final MyJDBC_Sqlite db;
+    protected final Shared_Data_Registry shared_Data_Registry;
     protected GridBagConstraints gbc = new GridBagConstraints();
     
     // Screen Objects
-    protected Ingredients_Info_Screen ingredient_Info_Screen;
+    protected final Ingredients_Info_Screen ingredient_Info_Screen;
     protected Edit_Screen<T> edit_Screen;
     protected Add_Screen<T> add_Screen;
-    protected Frame frame;
+    protected final Frame frame;
     
     // JComboBox
-    protected ArrayList<T> jComboBox_List;
+    protected final ArrayList<T> jComboBox_List;
     
     // JButton
     protected IconButton delete_Icon_Btn;

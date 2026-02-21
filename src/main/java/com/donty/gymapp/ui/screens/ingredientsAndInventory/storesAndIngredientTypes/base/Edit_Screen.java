@@ -37,9 +37,9 @@ public abstract class Edit_Screen<T extends Storable_IDS_Parent> extends Add_Scr
     protected boolean item_Deleted = false;
 
     // Collections
-    protected ArrayList<T> jComboBox_List;
+    protected final ArrayList<T> jComboBox_List;
 
-    protected Class<T> class_type;
+    protected final Class<T> class_type;
 
     //##################################################################################################################
     // Constructor
