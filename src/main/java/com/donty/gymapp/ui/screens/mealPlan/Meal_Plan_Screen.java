@@ -2626,7 +2626,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // ##############################################
         if (! has_Macro_Targets_Changed()) { return false; }
 
-        int reply = JOptionPane.showConfirmDialog(this, String.format("Would you like to refresh your MacroTargets Too?"),
+        int reply = JOptionPane.showConfirmDialog(this, "Would you like to refresh your MacroTargets Too?",
                 "Refresh Macro Targets", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
         return reply == JOptionPane.YES_OPTION;
