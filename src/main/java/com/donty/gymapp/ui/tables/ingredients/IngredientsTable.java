@@ -400,7 +400,7 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
         //################################
         // Delete BTn Column
         //################################
-        setup_Delete_Btn_Column(get_Delete_BTN_Model_Col());
+        setup_Delete_Btn_Column(get_Delete_BTN_View_Col());
     }
 
     //###################################
@@ -1469,9 +1469,9 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
         return jTable.convertColumnIndexToView(model_ingredient_name_col);
     }
 
-    private Integer get_Delete_BTN_Model_Col()
+    private Integer get_Delete_BTN_View_Col()
     {
-       return model_delete_btn_col;
+        return jTable.convertColumnIndexToView(model_delete_btn_col);
     }
 
     //##################################################################################################################

@@ -35,7 +35,7 @@ import com.donty.gymapp.gui.base.Screen_JFrame;
 import com.donty.gymapp.ui.screens.graphs.mealPlanScreen.lineChart.LineChart_MPS;
 import com.donty.gymapp.ui.screens.graphs.mealPlanScreen.pieChart.PieChart_Screen_MPS;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.Ingredients_Info_Screen;
-import com.donty.gymapp.ui.screens.loading.Loading_Screen;
+import com.donty.gymapp.ui.screens.loading.LoadingScreen;
 import com.donty.gymapp.ui.screens.macroTargets.Macros_Targets_Screen;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -143,7 +143,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         shared_data_registry = new Shared_Data_Registry();
         mealManager_ArrayList = shared_data_registry.get_MealManager_ArrayList();
 
-        Loading_Screen loading_screen = new Loading_Screen(100);
+        LoadingScreen loading_screen = new LoadingScreen(100);
 
         UIManager.put("OptionPane.messageFont", new Font("Arial", Font.PLAIN, 16)); // Set up window msg font
 
@@ -269,7 +269,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //##################################################################################################################
     // App Configuration Methods
     //##################################################################################################################
-    private void initialize_Context_And_Table_Metadata(Loading_Screen loading_screen) throws Exception
+    private void initialize_Context_And_Table_Metadata(LoadingScreen loading_screen) throws Exception
     {
         //  1.) Getting Selected User & Plan Info
         setup_Get_User_And_Plan_Info(true, true, true, true);
@@ -288,7 +288,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         loading_screen.increaseBar(5);
     }
 
-    private void load_Reference_Data(Loading_Screen loading_screen) throws Exception
+    private void load_Reference_Data(LoadingScreen loading_screen) throws Exception
     {
         System.out.printf("\n\n%s \nGetting Meta Data Objects \n%s ", lineSeparator, lineSeparator);
 
@@ -313,7 +313,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         loading_screen.increaseBar(2);
     }
 
-    private void build_Draft_Plan_Data(Loading_Screen loading_screen) throws Exception
+    private void build_Draft_Plan_Data(LoadingScreen loading_screen) throws Exception
     {
         // Transferring Plan Data To Draft Plan
         setup_Transfer_Plan_Data();
@@ -328,7 +328,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         loading_screen.increaseBar(3);
     }
 
-    private void load_Computed_Plan_Data(Loading_Screen loading_screen) throws Exception
+    private void load_Computed_Plan_Data(LoadingScreen loading_screen) throws Exception
     {
         // Get Meals Data
         meals_and_sub_meals_AL = setup_Get_Meal_Data();
@@ -347,7 +347,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         loading_screen.increaseBar(3);
     }
 
-    private void build_GUI_Layout(Loading_Screen loading_screen) throws Exception
+    private void build_GUI_Layout(LoadingScreen loading_screen) throws Exception
     {
         //#############################
         //
@@ -386,7 +386,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         create_Meal_Objects_In_GUI(meals_and_sub_meals_AL, total_Meals_Data_Map, loading_screen);     // Add Meals to GUI
     }
 
-    private void build_Complete(Loading_Screen loading_screen)
+    private void build_Complete(LoadingScreen loading_screen)
     {
         if (loading_screen != null && ! loading_screen.isFinished())
         {
@@ -409,7 +409,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         macros_left_plan_data_AL = null;
     }
 
-    private void failed_Start_UP(Loading_Screen loadingScreen)
+    private void failed_Start_UP(LoadingScreen loadingScreen)
     {
         JOptionPane.showMessageDialog(getFrame(), "Failed to Initialize Application!");
 
@@ -2147,7 +2147,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     (
             ArrayList<Meal_And_Sub_Meals_OBJ> meals_and_sub_meals_AL,
             LinkedHashMap<Integer, ArrayList<Object>> total_Meals_Data_Map,
-            Loading_Screen loading_Screen
+            LoadingScreen loading_Screen
 
     ) throws Exception
     {
@@ -2193,7 +2193,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                         total_Meal_DATA
                 );
 
-                if (! meal_Manager.is_Object_Created()) { throw new Exception("Meal Creation Failed"); }
+                if ( meal_Manager.is_Object_Not_Created()) { throw new Exception("Meal Creation Failed"); }
 
                 add_And_Replace_MealManger_POS_GUI(meal_Manager, false, false); // Add to GUI
 
@@ -2688,7 +2688,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###############################################
         // If Object Creation Failed Exit
         //###############################################
-        if (! mealManager.is_Object_Created()) { return; }
+        if ( mealManager.is_Object_Not_Created()) { return; }
 
         JOptionPane.showMessageDialog(null, String.format("Successfully Created Meal in %s at [%s]",
                 mealManager.get_Current_Meal_Name(), mealManager.get_Current_Meal_Time()));

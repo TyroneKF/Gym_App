@@ -5,7 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 
 
-public class Loading_Screen extends Screen_JFrame
+public class LoadingScreen extends Screen_JFrame
 {
     //##################################################################################################################
     // Variables
@@ -21,7 +21,7 @@ public class Loading_Screen extends Screen_JFrame
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Loading_Screen(int endCount)
+    public LoadingScreen(int endCount)
     {
         //##############################################
         // Super Constructor & Variables
@@ -36,7 +36,7 @@ public class Loading_Screen extends Screen_JFrame
         //  Centre GUI : Image Setup
         //##############################################
         // Create Picture Panel
-        JPanel jp = new ImagePanel2();
+        JPanel jp = new ImagePanel();
         jp.setPreferredSize(new Dimension(600, 450));
         addToContainer(getScrollPaneJPanel(), jp, 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
 

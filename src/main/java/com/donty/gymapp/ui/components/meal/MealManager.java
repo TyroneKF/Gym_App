@@ -1692,6 +1692,11 @@ public class MealManager
     // ############################################
     // Booleans
     // ############################################
+    public boolean is_Object_Not_Created()
+    {
+        return ! is_Object_Created;
+    }
+
     public boolean is_MealManager_In_DB()
     {
         return is_MealManager_In_DB;

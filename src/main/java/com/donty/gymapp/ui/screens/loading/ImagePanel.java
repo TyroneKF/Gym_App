@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
 
-public class ImagePanel2 extends JPanel
+public class ImagePanel extends JPanel
 {
     //##################################################################################################################
     // Variables
@@ -15,7 +15,7 @@ public class ImagePanel2 extends JPanel
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public ImagePanel2()
+    public ImagePanel()
     {
         // Load GIF from resources using classpath
         URL gifUrl = getClass().getResource("/images/intro/Eating.gif");
