@@ -11,15 +11,12 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.block.GridArrangement;
 import org.jfree.chart.plot.DefaultDrawingSupplier;
-import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.PiePlot3D;
 import org.jfree.chart.title.LegendTitle;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.chart.ui.HorizontalAlignment;
 import org.jfree.chart.util.Rotation;
 import org.jfree.data.general.DefaultPieDataset;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import org.jfree.chart.labels.PieSectionLabelGenerator;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
 

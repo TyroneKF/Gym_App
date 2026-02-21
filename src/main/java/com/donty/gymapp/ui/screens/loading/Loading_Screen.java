@@ -3,21 +3,20 @@ package com.donty.gymapp.ui.screens.loading;
 import com.donty.gymapp.gui.base.Screen_JFrame;
 import javax.swing.*;
 import java.awt.*;
-import java.net.URL;
+
 
 public class Loading_Screen extends Screen_JFrame
 {
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    private int
-            endCount,
-            currentCount = 0;
+    private final int endCount;
+    private int currentCount = 0;
 
     private boolean finished = false;
     
     // Objects
-    private JProgressBar progressBar = new JProgressBar();
+    private final JProgressBar progressBar = new JProgressBar();
 
     //##################################################################################################################
     // Constructor

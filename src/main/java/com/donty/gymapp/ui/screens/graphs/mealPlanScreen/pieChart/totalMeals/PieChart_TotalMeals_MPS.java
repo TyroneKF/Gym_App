@@ -5,11 +5,7 @@ import com.donty.gymapp.ui.components.meal.MealManager;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.ui.charts.pieCharts.Pie_Chart;
 import com.donty.gymapp.gui.base.Screen_JPanel;
-
-import java.util.Random;
-
 import org.jfree.data.general.DefaultPieDataset;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;

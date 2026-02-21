@@ -10,8 +10,6 @@ import com.donty.gymapp.persistence.database.statements.Upload_Statement_Full;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import java.math.RoundingMode;
-import java.sql.Connection;
-import java.sql.SQLException;
 import javax.swing.*;
 import java.math.BigDecimal;
 import java.sql.*;

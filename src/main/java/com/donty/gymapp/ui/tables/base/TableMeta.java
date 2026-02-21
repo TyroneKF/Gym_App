@@ -4,35 +4,17 @@ import com.donty.gymapp.domain.enums.db_enums.TableNames;
 import com.donty.gymapp.domain.enums.db_enums.ViewNames;
 import com.donty.gymapp.domain.enums.db_enums.columnNames.base.Table_Enum;
 
-public class TableMeta<T extends Enum<T> & Table_Enum>
+/**
+ * @param primary_Key_Column ################################################################################################################## Variable##################################################################################################################
+ */
+public record TableMeta<T extends Enum<T> & Table_Enum>
+(
+        T primary_Key_Column,
+        String descriptive_table_name,
+        TableNames write_Table_Name,
+        ViewNames read_View_Name
+)
 {
-    //##################################################################################################################
-    // Variable
-    //##################################################################################################################
-    private final T primary_Key_Column;
-
-    private final String descriptive_table_name;
-    private final ViewNames read_View_Name;
-    private final TableNames write_Table_Name;
-
-    //##################################################################################################################
-    // Constructor
-    //##################################################################################################################
-    public TableMeta
-    (
-            T primary_Key_Column,
-
-            String descriptive_table_name,
-            TableNames write_Table_Name,
-            ViewNames read_View_Name
-    )
-    {
-        this.primary_Key_Column = primary_Key_Column;
-        this.descriptive_table_name = descriptive_table_name;
-        this.write_Table_Name = write_Table_Name;
-        this.read_View_Name = read_View_Name;
-    }
-
     //##################################################################################################################
     // Method
     //##################################################################################################################
