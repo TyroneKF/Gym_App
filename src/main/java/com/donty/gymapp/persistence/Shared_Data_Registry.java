@@ -136,7 +136,7 @@ public class Shared_Data_Registry
     //###############################################################################
     public void sort_MealManager_AL()
     {
-        mealManager_ArrayList.sort((a, b) -> a.get_Current_Meal_Time().compareTo(b.get_Current_Meal_Time()));
+        mealManager_ArrayList.sort(Comparator.comparing(MealManager :: get_Current_Meal_Time));
     }
     
     //###############################################################################

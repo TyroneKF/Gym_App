@@ -77,7 +77,7 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
     // #################################################################################################################
     private void sort_PieChartEntry_AL()
     {
-        pieChart_MPS_Entries.sort((a, b) -> a.get_MealTime().compareTo(b.get_MealTime()));
+        pieChart_MPS_Entries.sort(Comparator.comparing(PieChart_Totals_Entry_MPS :: get_MealTime));
     }
 
     public void create_And_Draw_GUI()

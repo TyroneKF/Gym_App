@@ -95,7 +95,7 @@ public abstract class Edit_Screen<T extends Storable_IDS_Parent> extends Add_Scr
 
     protected void create_JC_Box()
     {
-        field_jc = new Field_JCombo_Storable_ID_Main<T>("", class_type, true, jComboBox_List)
+        field_jc = new Field_JCombo_Storable_ID_Main<>("", class_type, true, jComboBox_List)
         {
             @Override
             protected void actionListener()

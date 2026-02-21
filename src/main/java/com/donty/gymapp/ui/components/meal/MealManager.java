@@ -667,7 +667,7 @@ public class MealManager
 
     private void sort_Sub_Meals()
     {
-        ingredient_tables_AL.sort((a, b) -> a.get_Current_Sub_Meal_Time().compareTo(b.get_Current_Sub_Meal_Time()));
+        ingredient_tables_AL.sort(Comparator.comparing(IngredientsTable :: get_Current_Sub_Meal_Time));
     }
 
     //########################################################
