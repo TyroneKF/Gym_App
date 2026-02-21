@@ -318,15 +318,8 @@ public abstract class Parent_Screen<T extends Storable_IDS_Parent> extends Scree
         delete_Btn.addActionListener(ae -> {
             delete_BTN_Action();
         });
-        
-        //#####################################################
-        // Additional Icon Setup
-        //#####################################################
-        additional_Icon_Setup();
     }
-    
-    protected abstract void additional_Icon_Setup();
-    
+
     //#######################################################################
     // Icon BTN Actions
     //#######################################################################

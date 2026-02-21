@@ -48,7 +48,5 @@ public class Ingredients_Types_Screen extends Parent_Screen<Ingredient_Type_ID_O
 
         this.screenImage = new Image_JPanel("/images/ingredientType/ingredientType0.png", 500, 500);
     }
-    
-    @Override
-    protected void additional_Icon_Setup() { }
+
 }

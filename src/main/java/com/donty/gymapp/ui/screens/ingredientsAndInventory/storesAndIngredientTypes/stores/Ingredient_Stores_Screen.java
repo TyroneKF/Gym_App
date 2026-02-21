@@ -44,7 +44,5 @@ public class Ingredient_Stores_Screen extends Parent_Screen<Store_ID_OBJ>
         this.edit_Screen = new Edit_Stores(db, shared_Data_Registry, ingredient_Info_Screen, this, jComboBox_List);
         this.screenImage = new Image_JPanel("/images/stores/store0.png", 500, 470);
     }
-    
-    @Override
-    protected void additional_Icon_Setup() { }
+
 }
