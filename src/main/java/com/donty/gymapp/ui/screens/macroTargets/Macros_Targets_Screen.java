@@ -38,14 +38,15 @@ public class Macros_Targets_Screen extends Screen_JFrame
     // #####################################
     // Collections
     // ####################################
-    private LinkedHashMap<String, Macro_Targets_Field_Binding<?>> macro_targets_field_bindings;
+    private final LinkedHashMap<String, Macro_Targets_Field_Binding<?>> macro_targets_field_bindings = new LinkedHashMap<>();
 
     private ArrayList<Object> macros_data;
 
     // ################################################################################################################
     // Constructor
     // ################################################################################################################
-    public Macros_Targets_Screen(
+    public Macros_Targets_Screen
+    (
             MyJDBC_Sqlite db,
             Meal_Plan_Screen meal_plan_screen,
             Shared_Data_Registry shared_data_registry
@@ -124,106 +125,104 @@ public class Macros_Targets_Screen extends Screen_JFrame
     {
         int digit_Char_Limit = 8;
 
-        macro_targets_field_bindings = new LinkedHashMap<>()
-        {{
-            put(
-                    "kg",
-                    new Macro_Targets_Field_Binding<>(
-                            "Current Weight (KG)",
-                            MacroTargetsColumns.CURRENT_WEIGHT_KG,
-                            new Field_JTxtField_BD("Current Weight (KG)", digit_Char_Limit, false),
-                            2
-                    )
-            );
+        macro_targets_field_bindings.put(
+                "kg",
+                new Macro_Targets_Field_Binding<>(
+                        "Current Weight (KG)",
+                        MacroTargetsColumns.CURRENT_WEIGHT_KG,
+                        new Field_JTxtField_BD("Current Weight (KG)", digit_Char_Limit, false),
+                        2
+                )
+        );
 
-            put(
-                    "body_fat",
-                    new Macro_Targets_Field_Binding<>(
-                            "Body Fat Percentage (%)",
-                            MacroTargetsColumns.BODY_FAT_PERCENTAGE,
-                            new Field_JTxtField_BD("Body Fat Percentage (%)", digit_Char_Limit, false),
-                            4
-                    )
-            );
+        macro_targets_field_bindings.put(
+                "body_fat",
+                new Macro_Targets_Field_Binding<>(
+                        "Body Fat Percentage (%)",
+                        MacroTargetsColumns.BODY_FAT_PERCENTAGE,
+                        new Field_JTxtField_BD("Body Fat Percentage (%)", digit_Char_Limit, false),
+                        4
+                )
+        );
 
-            put(
-                    "protein",
-                    new Macro_Targets_Field_Binding<>(
-                            "Protein Per Pound Target",
-                            MacroTargetsColumns.PROTEIN_PER_POUND,
-                            new Field_JTxtField_BD("Protein Per Pound Target", digit_Char_Limit, false),
-                            5
-                    )
-            );
-            put(
-                    "carbs",
-                    new Macro_Targets_Field_Binding<>(
-                            "Carbohydrates Per Pound Target",
-                            MacroTargetsColumns.CARBOHYDRATES_PER_POUND,
-                            new Field_JTxtField_BD("Carbohydrates Per Pound Target", digit_Char_Limit, false),
-                            6
-                    )
-            );
-            put(
-                    "fibre",
-                    new Macro_Targets_Field_Binding<>(
-                            "Fibre Target (G)",
-                            MacroTargetsColumns.FIBRE,
-                            new Field_JTxtField_BD("Fibre Target (G)", digit_Char_Limit),
-                            7
-                    )
-            );
+        macro_targets_field_bindings.put(
+                "protein",
+                new Macro_Targets_Field_Binding<>(
+                        "Protein Per Pound Target",
+                        MacroTargetsColumns.PROTEIN_PER_POUND,
+                        new Field_JTxtField_BD("Protein Per Pound Target", digit_Char_Limit, false),
+                        5
+                )
+        );
+        macro_targets_field_bindings.put(
+                "carbs",
+                new Macro_Targets_Field_Binding<>(
+                        "Carbohydrates Per Pound Target",
+                        MacroTargetsColumns.CARBOHYDRATES_PER_POUND,
+                        new Field_JTxtField_BD("Carbohydrates Per Pound Target", digit_Char_Limit, false),
+                        6
+                )
+        );
+        macro_targets_field_bindings.put(
+                "fibre",
+                new Macro_Targets_Field_Binding<>(
+                        "Fibre Target (G)",
+                        MacroTargetsColumns.FIBRE,
+                        new Field_JTxtField_BD("Fibre Target (G)", digit_Char_Limit),
+                        7
+                )
+        );
 
-            put(
-                    "fats",
-                    new Macro_Targets_Field_Binding<>(
-                            "Fats Per Pound Target",
-                            MacroTargetsColumns.FATS_PER_POUND,
-                            new Field_JTxtField_BD("Fats Per Pound Target", digit_Char_Limit, false),
-                            8
-                    )
-            );
+        macro_targets_field_bindings.put(
+                "fats",
+                new Macro_Targets_Field_Binding<>(
+                        "Fats Per Pound Target",
+                        MacroTargetsColumns.FATS_PER_POUND,
+                        new Field_JTxtField_BD("Fats Per Pound Target", digit_Char_Limit, false),
+                        8
+                )
+        );
 
-            put(
-                    "sat_fat",
-                    new Macro_Targets_Field_Binding<>(
-                            "Saturated Fat Limit",
-                            MacroTargetsColumns.SATURATED_FAT_LIMIT,
-                            new Field_JTxtField_BD("Saturated Fat Limit", digit_Char_Limit),
-                            9
-                    )
-            );
+        macro_targets_field_bindings.put(
+                "sat_fat",
+                new Macro_Targets_Field_Binding<>(
+                        "Saturated Fat Limit",
+                        MacroTargetsColumns.SATURATED_FAT_LIMIT,
+                        new Field_JTxtField_BD("Saturated Fat Limit", digit_Char_Limit),
+                        9
+                )
+        );
 
-            put(
-                    "salt",
-                    new Macro_Targets_Field_Binding<>(
-                            "Salt Limit (G)",
-                            MacroTargetsColumns.SALT_LIMIT,
-                            new Field_JTxtField_BD("Salt Limit (G)", digit_Char_Limit),
-                            10
-                    )
-            );
+        macro_targets_field_bindings.put(
+                "salt",
+                new Macro_Targets_Field_Binding<>(
+                        "Salt Limit (G)",
+                        MacroTargetsColumns.SALT_LIMIT,
+                        new Field_JTxtField_BD("Salt Limit (G)", digit_Char_Limit),
+                        10
+                )
+        );
 
-            put(
-                    "water",
-                    new Macro_Targets_Field_Binding<>(
-                            "Water Target (Ml)",
-                            MacroTargetsColumns.WATER_TARGET,
-                            new Field_JTxtField_BD("Water Target (Ml)", digit_Char_Limit),
-                            11
-                    )
-            );
+        macro_targets_field_bindings.put(
+                "water",
+                new Macro_Targets_Field_Binding<>(
+                        "Water Target (Ml)",
+                        MacroTargetsColumns.WATER_TARGET,
+                        new Field_JTxtField_BD("Water Target (Ml)", digit_Char_Limit),
+                        11
+                )
+        );
 
-            put(
-                    "a_cal",
-                    new Macro_Targets_Field_Binding<>(
-                            "Additional Calories",
-                            MacroTargetsColumns.SALT_LIMIT,
-                            new Field_JTxtField_BD("Liquid Target (Ml)", digit_Char_Limit),
-                            12
-                    )
-            );
-        }};
+        macro_targets_field_bindings.put(
+                "a_cal",
+                new Macro_Targets_Field_Binding<>(
+                        "Additional Calories",
+                        MacroTargetsColumns.SALT_LIMIT,
+                        new Field_JTxtField_BD("Liquid Target (Ml)", digit_Char_Limit),
+                        12
+                )
+        );
+
     }
 
     private void build_GUI()
@@ -442,22 +441,22 @@ public class Macros_Targets_Screen extends Screen_JFrame
             BigDecimal weight_in_pounds = weight_kg.multiply(new BigDecimal("2.2")).setScale(2, RoundingMode.HALF_UP);
 
             update_Query = """
-                UPDATE draft_macros_per_pound_and_limits
-                SET
-                    current_weight_kg = ?,
-                    current_weight_in_pounds = ?,
-            
-                    body_fat_percentage = ?,
-                    protein_per_pound = ?,
-                    carbohydrates_per_pound = ?,
-                    fibre = ?,
-                    fats_per_pound = ?,
-                    saturated_fat_limit = ?,
-                    salt_limit = ?,
-                    water_target = ?,
-                    additional_calories = ?
-                
-                WHERE plan_id = ? ;""";
+                    UPDATE draft_macros_per_pound_and_limits
+                    SET
+                        current_weight_kg = ?,
+                        current_weight_in_pounds = ?,
+                    
+                        body_fat_percentage = ?,
+                        protein_per_pound = ?,
+                        carbohydrates_per_pound = ?,
+                        fibre = ?,
+                        fats_per_pound = ?,
+                        saturated_fat_limit = ?,
+                        salt_limit = ?,
+                        water_target = ?,
+                        additional_calories = ?
+                    
+                    WHERE plan_id = ? ;""";
 
             params = new Object[]{
 
