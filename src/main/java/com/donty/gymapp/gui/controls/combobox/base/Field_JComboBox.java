@@ -95,15 +95,15 @@ public abstract class Field_JComboBox<T> extends JComboBox<T>
 
     public void validation_Check(LinkedHashMap<String, ArrayList<String>> error_Map)
     {
-        if (! is_Item_Selected())
+        if (is_Item_Not_Selected())
         {
             error_Map.put(label, new ArrayList<>(List.of("Select an item !")));
         }
     }
 
-    public boolean is_Item_Selected()
+    public boolean is_Item_Not_Selected()
     {
-        return getSelectedIndex() != - 1;
+        return getSelectedIndex() == - 1;
     }
 
     //##################################################################################################################

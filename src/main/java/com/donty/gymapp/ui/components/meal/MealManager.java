@@ -196,7 +196,7 @@ public class MealManager
         String new_Meal_Name = input_Meal_Name_Validation(input_meal_name, "Meal");
         if (new_Meal_Name == null) { return; } // Error occurred in validation checks above
 
-        if (! is_Meal_Name_Available(new_Meal_Name)) { return; }
+        if (is_Meal_Name_Not_Available(new_Meal_Name)) { return; }
 
         //#######################################################
         // Get & Validate Meal Time Input
@@ -207,7 +207,7 @@ public class MealManager
 
         if (new_meal_time == null) { return; } // Error occurred in validation checks above
 
-        if (! is_Meal_Time_Available(new_meal_time)) { return; }
+        if (is_Meal_Time_Not_Available(new_meal_time)) { return; }
 
 
         //#######################################################
@@ -684,7 +684,7 @@ public class MealManager
         }
 
         // DB Validation
-        if (! is_Meal_Time_Available(new_meal_time)) { return; }
+        if (is_Meal_Time_Not_Available(new_meal_time)) { return; }
 
         //###############################
         // User Confirmation
@@ -774,7 +774,7 @@ public class MealManager
         return converted_time;
     }
 
-    private boolean is_Meal_Time_Available(LocalTime new_meal_time)
+    private boolean is_Meal_Time_Not_Available(LocalTime new_meal_time)
     {
         // ######################################################
         // Check Database if Value Already Exists
@@ -787,17 +787,17 @@ public class MealManager
 
         try // Execute Query
         {
-            if (db.get_Single_Col_Query_Obj(fetch_statement, true).isEmpty()) { return true; }
+            if (db.get_Single_Col_Query_Obj(fetch_statement, true).isEmpty()) { return false; }
 
             // Means value already exists, returns N/A if the value doesn't
             JOptionPane.showMessageDialog(getFrame(), String.format("A meal in this plan already has a meal time of '%s' !!", new_meal_time));
 
-            throw new Exception();
+            throw new Exception("Meal Time Not Available");
         }
         catch (Exception e)
         {
-            System.err.printf("\n\n%s", e);
-            return false;
+            System.err.printf("\n\n%s \n\n%s", get_Class_And_Method_Name(), e);
+            return true;
         }
     }
 
@@ -815,7 +815,7 @@ public class MealManager
         String new_meal_name = input_Meal_Name_Validation(input_meal_name, "Meal");
         if (new_meal_name == null) { return; } // Error occurred in validation checks above
 
-        if (! is_Meal_Name_Available(new_meal_name)) { return; }
+        if (is_Meal_Name_Not_Available(new_meal_name)) { return; }
 
         if (new_meal_name.equals(get_Current_Meal_Name()))   // User enters same meal name
         {
@@ -908,7 +908,7 @@ public class MealManager
         return ! matcher.matches();
     }
 
-    private boolean is_Meal_Name_Available(String new_meal_name)
+    private boolean is_Meal_Name_Not_Available(String new_meal_name)
     {
         //##########################################
         // Check Database if Value Already Exists
@@ -921,7 +921,7 @@ public class MealManager
 
         try // Execute Query
         {
-            if (db.get_Single_Col_Query_Obj(fetch_statement, true).isEmpty()) { return true; }
+            if (db.get_Single_Col_Query_Obj(fetch_statement, true).isEmpty()) { return false; }
 
             // Means value already exists, returns N/A if the value doesn't
             JOptionPane.showMessageDialog(getFrame(), String.format("A meal in this plan already has a meal Meal Name of '%s' !!", new_meal_name));
@@ -930,7 +930,7 @@ public class MealManager
         }
         catch (Exception e)
         {
-            return false;
+            return true;
         }
     }
 
@@ -1697,11 +1697,6 @@ public class MealManager
     // ############################################
     // Booleans
     // ############################################
-    public boolean is_Object_Created()
-    {
-        return is_Object_Created;
-    }
-
     public boolean is_MealManager_In_DB()
     {
         return is_MealManager_In_DB;

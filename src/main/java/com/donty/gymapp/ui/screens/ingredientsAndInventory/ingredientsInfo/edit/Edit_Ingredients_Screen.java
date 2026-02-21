@@ -140,12 +140,12 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
     @Override
     protected boolean prior_Form_Validations()
     {
-        if (! ingredient_Main_Type_JC.is_Item_Selected())
+        if (ingredient_Main_Type_JC.is_Item_Not_Selected())
         {
             JOptionPane.showMessageDialog(null, "Select an Ingredient Type to Edit an Ingredient!");
             return false;
         }
-        else if (! ingredient_Main_Name_JC.is_Item_Selected())
+        else if (ingredient_Main_Name_JC.is_Item_Not_Selected())
         {
             JOptionPane.showMessageDialog(null, "Select an Ingredient Name to Edit !");
             return false;

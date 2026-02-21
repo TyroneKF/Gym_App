@@ -132,7 +132,7 @@ public abstract class Edit_Screen<T extends Storable_IDS_Parent> extends Add_Scr
     @Override
     protected boolean additional_Validate_Form()
     {
-        if (! field_jc.is_Item_Selected())
+        if (field_jc.is_Item_Not_Selected())
         {
             JOptionPane.showMessageDialog(null, String.format("\n\nSelect An %s To Edit!", data_gathering_name));
             return false;
@@ -245,7 +245,7 @@ public abstract class Edit_Screen<T extends Storable_IDS_Parent> extends Add_Scr
         //##################################
         // IS Item Selected
         //##################################
-        if (! field_jc.is_Item_Selected())
+        if (field_jc.is_Item_Not_Selected())
         {
             JOptionPane.showMessageDialog(null, String.format("Select An ' %s 'To Delete It !!!", data_gathering_name));
             return;
