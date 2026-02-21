@@ -146,11 +146,10 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
     private void parent_Variable_Configurations()
     {
         // GUI Table Names
-        column_Names.forEach(e -> {
+        column_Names.forEach(e ->
                     gui_Column_Names.add(Arrays.stream(e.split("[ _]+"))
                             .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
-                            .collect(Collectors.joining("_")));
-                }
+                            .collect(Collectors.joining("_")))
         );
 
         // Un-Editable Table Columns

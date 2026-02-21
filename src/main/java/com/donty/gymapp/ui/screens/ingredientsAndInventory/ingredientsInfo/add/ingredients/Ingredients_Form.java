@@ -367,10 +367,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         JButton refresh_Btn = refresh_Icon_Btn.returnJButton();
         refresh_Icon_Btn.makeBTntransparent();
 
-        refresh_Btn.addActionListener(ae -> {
-
-            clear_Ingredients_Form();
-        });
+        refresh_Btn.addActionListener(ae -> clear_Ingredients_Form());
 
         iconPanelInsert.add(refresh_Icon_Btn);
     }

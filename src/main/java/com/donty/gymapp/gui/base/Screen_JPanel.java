@@ -201,11 +201,9 @@ public class Screen_JPanel extends JPanel
     protected void scroll_To_JPanel_On_Screen(JPanel panel) // Only Works With JPanels
     {
         // Scroll to that panel AFTER layout has finished
-        SwingUtilities.invokeLater(() -> {
-            panel.scrollRectToVisible(
-                    new Rectangle(0, 0, panel.getWidth(), panel.getHeight())
-            );
-        });
+        SwingUtilities.invokeLater(() ->
+            panel.scrollRectToVisible(new Rectangle(0, 0, panel.getWidth(), panel.getHeight()))
+        );
     }
     
     protected void scroll_To_Top_Of_ScrollPane()

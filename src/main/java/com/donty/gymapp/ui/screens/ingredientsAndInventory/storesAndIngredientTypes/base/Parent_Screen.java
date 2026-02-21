@@ -299,9 +299,7 @@ public abstract class Parent_Screen<T extends Storable_IDS_Parent> extends Scree
         
         clear_Icon_Btn.makeBTntransparent();
         
-        clear_Btn.addActionListener(ae -> {
-            clear_BTN_Action();
-        });
+        clear_Btn.addActionListener(ae -> clear_BTN_Action());
         
         //##########################
         // Delete Icon
@@ -315,9 +313,7 @@ public abstract class Parent_Screen<T extends Storable_IDS_Parent> extends Scree
         delete_Icon_Btn.makeBTntransparent();
         delete_Icon_Btn.set_Btn_Visibility(false);
         
-        delete_Btn.addActionListener(ae -> {
-            delete_BTN_Action();
-        });
+        delete_Btn.addActionListener(ae -> delete_BTN_Action());
     }
 
     //#######################################################################

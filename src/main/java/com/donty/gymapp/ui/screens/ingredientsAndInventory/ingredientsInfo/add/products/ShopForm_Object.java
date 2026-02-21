@@ -194,9 +194,7 @@ public class ShopForm_Object extends JPanel
         delete_Row_Btn.setFont(new Font("Arial", Font.BOLD, 12)); // setting font
 
         // Creating Events For Delete BTN
-        delete_Row_Btn.addActionListener(ae -> {
-            delete_Row_Action();
-        });
+        delete_Row_Btn.addActionListener(ae -> delete_Row_Action());
 
         eastPanel.add(delete_Row_Btn); // Add Delete Btn GUI
     }

@@ -116,9 +116,7 @@ public abstract class Parent_Ingredients_Screen extends Screen_JPanel
         submitButton.setPreferredSize(new Dimension(50, 50)); // width, height
         
         // creating commands for submit button to execute on
-        submitButton.addActionListener(ae -> {
-            submission_Btn_Action();
-        });
+        submitButton.addActionListener(ae -> submission_Btn_Action());
         
         get_Main_South_JPanel().setLayout(new GridLayout(1, 1));
         get_Main_South_JPanel().add(submitButton, BorderLayout.SOUTH);

@@ -419,9 +419,7 @@ public class MealManager
         graph_Btn.setToolTipText("Get Pie Chart Data"); //Hover message over icon
         graph_Icon_Btn.makeBTntransparent();
 
-        graph_Btn.addActionListener(ae -> {
-            pie_Chart_Action();
-        });
+        graph_Btn.addActionListener(ae -> pie_Chart_Action());
 
         iconPanelInsert.add(graph_Icon_Btn);
 
@@ -435,9 +433,7 @@ public class MealManager
         edit_Btn.setToolTipText("Edit Meal Name"); //Hover message over icon
         edit_Icon_Btn.makeBTntransparent();
 
-        edit_Btn.addActionListener(ae -> {
-            edit_Name_BTN_Action();
-        });
+        edit_Btn.addActionListener(ae -> edit_Name_BTN_Action());
 
         iconPanelInsert.add(edit_Icon_Btn);
 
@@ -451,9 +447,7 @@ public class MealManager
         editTime_Btn.setToolTipText("Edit Meal Time"); //Hover message over icon
         editTime_Icon_Btn.makeBTntransparent();
 
-        editTime_Btn.addActionListener(ae -> {
-            edit_Time_Btn_Action();
-        });
+        editTime_Btn.addActionListener(ae -> edit_Time_Btn_Action());
 
         iconPanelInsert.add(editTime_Icon_Btn);
 
@@ -467,9 +461,7 @@ public class MealManager
         add_Icon_Btn.setToolTipText("Add Sub-Meal In Meal"); //Hover message over icon
         add_Icon_Btn.makeBTntransparent();
 
-        add_Btn.addActionListener(ae -> {
-            add_Btn_Action();
-        });
+        add_Btn.addActionListener(ae -> add_Btn_Action());
 
         iconPanelInsert.add(add_Icon_Btn);
 
@@ -531,9 +523,7 @@ public class MealManager
         JButton delete_btn = deleteIcon_Icon_Btn.returnJButton();
         delete_btn.setToolTipText("Delete Meal"); //Hover message over icon
 
-        delete_btn.addActionListener(ae -> {
-            delete_Btn_Action();
-        });
+        delete_btn.addActionListener(ae -> delete_Btn_Action());
 
         iconPanelInsert.add(delete_btn);
     }

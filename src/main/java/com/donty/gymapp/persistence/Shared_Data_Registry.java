@@ -270,9 +270,8 @@ public class Shared_Data_Registry
         mm_PieData.clear();
         
         // Transfer Data Over into this dataset
-        newGenerated.getKeys().forEach(key -> {
-            mm_PieData.setValue(key, newGenerated.getValue(key));
-        });
+        newGenerated.getKeys().forEach(key ->
+            mm_PieData.setValue(key, newGenerated.getValue(key)));
         
         // Turn Notifications back on
         mm_PieData.setNotify(true);

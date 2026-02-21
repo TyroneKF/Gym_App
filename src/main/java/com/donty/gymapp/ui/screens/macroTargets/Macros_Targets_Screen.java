@@ -289,9 +289,7 @@ public class Macros_Targets_Screen extends Screen_JFrame
         submission_button.setFont(new Font("Arial", Font.BOLD, 14)); // setting font
         submission_button.setPreferredSize(new Dimension(50, 50)); // width, height
 
-        submission_button.addActionListener(ae -> {
-            submission_BTN_Action();
-        });
+        submission_button.addActionListener(ae -> submission_BTN_Action());
 
         mainJPanel.add(submission_button, BorderLayout.SOUTH);
     }

@@ -165,9 +165,7 @@ public class Pie_Chart<K extends Comparable<K>> extends JPanel
          * To identify this we have to add an eventListener to the data as the dataset is new re-initialized once created
          */
         
-        dataset.addChangeListener(event -> {
-            dataset_Action_Events();
-        });
+        dataset.addChangeListener(event -> dataset_Action_Events());
         
         //############################################
         // Events Need to be triggered at runtime

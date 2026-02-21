@@ -196,9 +196,9 @@ public class PieChart_Macros_MPS extends Screen_JPanel
             pieDataset.setNotify(false); // Stop PieDataset event listener from being triggered on each key update and instead on batch (avoids key races)
 
             pieDataset.clear(); // Clear
-            updated_Dataset.getKeys().forEach(key -> {
-                pieDataset.setValue(key, updated_Dataset.getValue(key));
-            });
+            updated_Dataset.getKeys().forEach(key ->
+                    pieDataset.setValue(key, updated_Dataset.getValue(key))
+            );
 
             pieDataset.setNotify(true); // Turn Notifications back on
         }

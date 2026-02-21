@@ -168,11 +168,9 @@ public class Screen_JFrame extends JFrame
     public void scrollToJPanelOnScreen(JPanel panel) // Only Works With JPanels
     {
         // Scroll to that panel AFTER layout has finished
-        SwingUtilities.invokeLater(() -> {
-            panel.scrollRectToVisible(
-                    new Rectangle(0, 0, panel.getWidth(), panel.getHeight())
-            );
-        });
+        SwingUtilities.invokeLater(() ->
+            panel.scrollRectToVisible(new Rectangle(0, 0, panel.getWidth(), panel.getHeight()))
+        );
     }
     
     protected void scroll_To_Top_of_ScrollPane()

@@ -1815,9 +1815,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         JButton clear_Btn = clear_Icon_Btn.returnJButton();
         clear_Btn.setToolTipText("Clear Meal Plan"); //Hover message over icon
 
-        clear_Btn.addActionListener(ae -> {
-            clear_Btn_Action();
-        });
+        clear_Btn.addActionListener(ae -> clear_Btn_Action());
 
         iconPanelInsert.add(clear_Btn);
 
@@ -1835,9 +1833,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         JButton recipe_Btn = RecipeList_Icon_Btn.returnJButton();
         recipe_Btn.setToolTipText("Get Plan Recipe List"); //Hover message over icon
 
-        recipe_Btn.addActionListener(ae -> {
-            recipe_List_Btn_Action_Open_Screen();
-        });
+        recipe_Btn.addActionListener(ae -> recipe_List_Btn_Action_Open_Screen());
 
         iconPanelInsert.add(recipe_Btn);
 
@@ -1855,9 +1851,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         JButton pieChart_Btn = pieChart_Icon_Btn.returnJButton();
         pieChart_Btn.setToolTipText("Display Macronutrient Data in Pie"); //Hover message over icon
 
-        pieChart_Btn.addActionListener(ae -> {
-            pie_Chart_Btn_Action_Open_Screen();
-        });
+        pieChart_Btn.addActionListener(ae -> pie_Chart_Btn_Action_Open_Screen());
 
         iconPanelInsert.add(pieChart_Btn);
 
@@ -1875,9 +1869,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         JButton lineChart_Btn = lineChart_Icon_Btn.returnJButton();
         lineChart_Btn.setToolTipText("Display Macronutrient Data in LineChart"); //Hover message over icon
 
-        lineChart_Btn.addActionListener(ae -> {
-            line_Chart_Btn_Action_Open_Screen();
-        });
+        lineChart_Btn.addActionListener(ae -> line_Chart_Btn_Action_Open_Screen());
 
         iconPanelInsert.add(lineChart_Btn);
 
@@ -1895,10 +1887,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         JButton up_ScrollBar_Btn = up_ScrollBar_Icon_Btn.returnJButton();
         up_ScrollBar_Btn.setToolTipText("Scroll to the top of Meal Plan"); //Hover message over icon
 
-        up_ScrollBar_Btn.addActionListener(ae -> {
-
-            scroll_Up_Btn_Action();
-        });
+        up_ScrollBar_Btn.addActionListener(ae -> scroll_Up_Btn_Action());
 
         iconPanelInsert.add(up_ScrollBar_Btn);
 
@@ -1915,9 +1904,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         refresh_Btn.setToolTipText("Restore All Meals Data"); //Hover message over icon
         refresh_Icon_Btn.makeBTntransparent();
 
-        refresh_Btn.addActionListener(ae -> {
-            refresh_Btn_Action();
-        });
+        refresh_Btn.addActionListener(ae -> refresh_Btn_Action());
 
         iconPanelInsert.add(refresh_Icon_Btn);
 
@@ -1934,10 +1921,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         add_Btn.setToolTipText("Add Meal"); //Hover message over icon
         add_Icon_Btn.makeBTntransparent();
 
-        add_Btn.addActionListener(ae -> {
-
-            add_Meal_Btn_Action();
-        });
+        add_Btn.addActionListener(ae -> add_Meal_Btn_Action());
 
         iconPanelInsert.add(add_Icon_Btn);
 
@@ -1956,9 +1940,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         JButton save_btn = saveIcon_Icon_Btn.returnJButton();
         save_btn.setToolTipText("Save All Meals"); //Hover message over icon
 
-        save_btn.addActionListener(ae -> {
-            save_Btn_Action();
-        });
+        save_btn.addActionListener(ae -> save_Btn_Action());
 
         iconPanelInsert.add(save_btn);
 
@@ -1978,10 +1960,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         add_Ingredients_Btn.setToolTipText("Add Ingredients"); //Hover message over icon
 
 
-        add_Ingredients_Btn.addActionListener(ae -> {
-
-            open_Ingredients_Screen();
-        });
+        add_Ingredients_Btn.addActionListener(ae -> open_Ingredients_Screen());
 
         iconPanelInsert.add(add_Ingredients_Btn);
 

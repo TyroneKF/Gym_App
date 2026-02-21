@@ -291,9 +291,7 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
         add_Icon_Btn.setToolTipText("Add Ingredients"); //Hover message over icon
         add_Icon_Btn.makeBTntransparent();
 
-        add_Btn.addActionListener(ae -> {
-            add_btn_Action();
-        });
+        add_Btn.addActionListener(ae ->  add_btn_Action());
 
         iconPanel_Insert.add(add_Icon_Btn);
 
@@ -306,9 +304,7 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
         edit_Btn.setToolTipText("Edit Meal Name"); //Hover message over icon
         edit_Icon_Btn.makeBTntransparent();
 
-        edit_Btn.addActionListener(ae -> {
-            edit_Sub_Meal_Name_BTN();
-        });
+        edit_Btn.addActionListener(ae -> edit_Sub_Meal_Name_BTN());
 
         iconPanel_Insert.add(edit_Icon_Btn);
 
@@ -321,9 +317,7 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
         editTime_Btn.setToolTipText("Edit Meal Time"); //Hover message over icon
         editTime_Icon_Btn.makeBTntransparent();
 
-        editTime_Btn.addActionListener(ae -> {
-            edit_Sub_Meal_Time_BTN();
-        });
+        editTime_Btn.addActionListener(ae ->  edit_Sub_Meal_Time_BTN());
 
         iconPanel_Insert.add(editTime_Icon_Btn);
 
@@ -337,9 +331,7 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
         refresh_Btn.setToolTipText("Restore Sub-Meal"); //Hover message over icon
         refresh_Icon_Btn.makeBTntransparent();
 
-        refresh_Btn.addActionListener(ae -> {
-            refresh_Btn_Action();
-        });
+        refresh_Btn.addActionListener(ae -> refresh_Btn_Action());
 
         iconPanel_Insert.add(refresh_Icon_Btn);
 
@@ -353,9 +345,7 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
         JButton save_btn = save_Icon_Btn.returnJButton();
         save_btn.setToolTipText("Save Sub-Meal"); //Hover message over icon
 
-        save_btn.addActionListener(ae -> {
-            save_Btn_Action();
-        });
+        save_btn.addActionListener(ae ->  save_Btn_Action());
 
         iconPanel_Insert.add(save_btn);
 
@@ -369,9 +359,7 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
         JButton delete_btn = delete_Icon_Btn.returnJButton();
         delete_btn.setToolTipText("Delete Sub-Meal"); //Hover message over icon
 
-        delete_btn.addActionListener(ae -> {
-            delete_Table_BTN_Action();
-        });
+        delete_btn.addActionListener(ae -> delete_Table_BTN_Action());
 
         iconPanel_Insert.add(delete_btn);
     }
