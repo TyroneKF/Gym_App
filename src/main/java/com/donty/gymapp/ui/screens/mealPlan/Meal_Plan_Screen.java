@@ -383,7 +383,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // Centre : JPanel (Meals)
         //#############################
         // 20.) Centre GUI Setup : Create Meals
-        create_Meal_Objects_In_GUI(meals_and_sub_meals_AL, total_Meals_Data_Map, loading_screen, 40);     // Add Meals to GUI
+        create_Meal_Objects_In_GUI(meals_and_sub_meals_AL, total_Meals_Data_Map, loading_screen);     // Add Meals to GUI
     }
 
     private void build_Complete(Loading_Screen loading_screen)
@@ -2147,8 +2147,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     (
             ArrayList<Meal_And_Sub_Meals_OBJ> meals_and_sub_meals_AL,
             LinkedHashMap<Integer, ArrayList<Object>> total_Meals_Data_Map,
-            Loading_Screen loading_Screen,
-            double allocated_task_percentage
+            Loading_Screen loading_Screen
 
     ) throws Exception
     {
@@ -2162,6 +2161,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
              * - This method owns allocated_task_percentage of the bar
              * - Each meal and sub-meal is a unit of work
              * - Progress is increased incrementally per meal iteration
+             *   Has the progress of 40
              * -----------------------------------------------------------
              */
 
@@ -2169,7 +2169,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             int no_of_meals = counts.getValue0();
             int no_of_sub_meals = counts.getValue1();
 
-            double progress_per_unit = allocated_task_percentage / (no_of_meals + no_of_sub_meals); // % per unit
+            double progress_per_unit = (double) 40 / (no_of_meals + no_of_sub_meals); // % per unit
 
             double carry = 0.0; // handles fractional increments / fractional accumulator
 
@@ -2636,7 +2636,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             clear_GUI_And_Meal_DATA();
 
             // 6.) Build Centre Of GUI
-            create_Meal_Objects_In_GUI(meals_and_sub_meals_AL, total_Meals_Data_Map, null, 40);
+            create_Meal_Objects_In_GUI(meals_and_sub_meals_AL, total_Meals_Data_Map, null);
 
             build_Complete(null);   // 7.) Build Complete
 

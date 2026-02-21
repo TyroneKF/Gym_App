@@ -144,7 +144,7 @@ public class MealManager
         source_meal_id = meal_id_obj.get_Source_Meal_ID();
 
         is_MealManager_In_DB = true;
-        set_Is_Meal_Saved(true);  // Set Variable which identifies in this meal associated with this object is in the database
+        is_Meal_Saved = true;  // Set Variable which identifies in this meal associated with this object is in the database
 
         na_pdid = shared_Data_Registry.get_NA_PDID();
         na_ingredient_id = shared_Data_Registry.get_Na_Ingredient_ID();
@@ -1221,7 +1221,7 @@ public class MealManager
         //##########################################
         // Set Variables
         //##########################################
-        set_Visibility(false); // hide collapsible Object
+        hide_Visibility(); // hide collapsible Object
 
         //##########################################
         // Remove From GUI
@@ -1498,7 +1498,7 @@ public class MealManager
         set_Time_Variables(false, current_meal_time, current_meal_time);
         set_Meal_Name_Variables(false, current_meal_name, current_meal_name);
 
-        set_Is_Meal_Saved(true);
+        is_Meal_Saved = true;
         set_Has_Meal_Data_Changed(false);
     }
 
@@ -1667,11 +1667,6 @@ public class MealManager
         this.is_MealManager_In_DB = state;
     }
 
-    private void set_Is_Meal_Saved(boolean state)
-    {
-        is_Meal_Saved = state;
-    }
-
     public void set_Has_Meal_Data_Changed(boolean state)
     {
         has_MealManager_Data_Changed = state;
@@ -1680,10 +1675,10 @@ public class MealManager
         if (state) { meal_plan_screen.set_has_Data_Changed(true); }
     }
 
-    private void set_Visibility(boolean condition)
+    private void hide_Visibility()
     {
-        collapsibleJpObj.setVisible(condition);
-        spaceDividerForMealManager.setVisible(condition);
+        collapsibleJpObj.setVisible(false);
+        spaceDividerForMealManager.setVisible(false);
     }
 
     //##################################################################################################################
