@@ -47,6 +47,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
 import java.util.*;
+import java.util.List;
 
 public class Meal_Plan_Screen extends Screen_JFrame
 {
@@ -2057,7 +2058,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //############################
         // MacroTargets Table
         //############################
-        ArrayList<Draft_Gui_Plan_Macro_Targets_Calc_Columns> macro_targets_columns_to_hide = new ArrayList<>(Arrays.asList(
+        ArrayList<Draft_Gui_Plan_Macro_Targets_Calc_Columns> macro_targets_columns_to_hide = new ArrayList<>(List.of(
                 Draft_Gui_Plan_Macro_Targets_Calc_Columns.PLAN_ID
         ));
 
@@ -2083,7 +2084,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //############################
         // plan_Macros_Left Table
         //############################
-        ArrayList<Draft_Gui_Plan_Macros_Left_Columns> plan_macros_left_columns_to_hide = new ArrayList<>(Arrays.asList(
+        ArrayList<Draft_Gui_Plan_Macros_Left_Columns> plan_macros_left_columns_to_hide = new ArrayList<>(List.of(
                 Draft_Gui_Plan_Macros_Left_Columns.PLAN_ID
         ));
 

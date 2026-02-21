@@ -513,6 +513,7 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
 
                 for (Object obj : reading_Row)
                 {
+                    //noinspection UseBulkOperation - Arraylist.addAll() doesn't work for some values being LocalTime / BigDecimal still points reference to souce vs copying
                     new_Row.add(obj);
                 }
 
