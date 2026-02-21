@@ -1,12 +1,10 @@
 package com.donty.gymapp.ui.screens.graphs.mealPlanScreen.pieChart.totalMeals;
 
 import com.donty.gymapp.ui.components.meal.MealManager;
-import com.donty.gymapp.ui.charts.pieCharts.Pie_Chart;
 import java.time.LocalTime;
 
 public class PieChart_Totals_Entry_MPS
 {
-    
     //##################################################################################################################
     // Variables
     //##################################################################################################################
@@ -39,7 +37,7 @@ public class PieChart_Totals_Entry_MPS
         return mealManager.get_Current_Meal_Time();
     }
     
-    public Pie_Chart get_PieChart()
+    public Pie_Chart_Totals get_PieChart()
     {
         return pieChart;
     }

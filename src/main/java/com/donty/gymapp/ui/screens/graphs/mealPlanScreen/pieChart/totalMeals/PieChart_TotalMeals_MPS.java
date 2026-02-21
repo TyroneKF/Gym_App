@@ -3,7 +3,6 @@ package com.donty.gymapp.ui.screens.graphs.mealPlanScreen.pieChart.totalMeals;
 import com.donty.gymapp.domain.enums.db_enums.columnNames.views.totalmeal.Draft_Gui_Total_Meal_Macro_Columns;
 import com.donty.gymapp.ui.components.meal.MealManager;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
-import com.donty.gymapp.ui.charts.pieCharts.Pie_Chart;
 import com.donty.gymapp.gui.base.Screen_JPanel;
 import org.jfree.data.general.DefaultPieDataset;
 import javax.swing.*;
@@ -240,7 +239,7 @@ public class PieChart_TotalMeals_MPS extends Screen_JPanel
             //##############################
             // GET Pie_Entry Object
             //##############################
-            Pie_Chart pieChart = pieChartMpsEntry.get_PieChart();
+            Pie_Chart_Totals pieChart = pieChartMpsEntry.get_PieChart();
 
             //##############################
             // Add PieChart to GUI

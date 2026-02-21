@@ -8,12 +8,13 @@ import java.awt.*;
 import java.math.BigDecimal;
 import java.text.AttributedString;
 
-public class PieChart_Macros extends Pie_Chart
+public class PieChart_Macros extends Pie_Chart<PieChart_MacroKey>
 {
     // #################################################################################################################
     // Variable
     // #################################################################################################################
-    private String macroName, measurementSymbol;
+    private final String macroName;
+    private final String measurementSymbol;
     
     // #################################################################################################################
     // Constructor

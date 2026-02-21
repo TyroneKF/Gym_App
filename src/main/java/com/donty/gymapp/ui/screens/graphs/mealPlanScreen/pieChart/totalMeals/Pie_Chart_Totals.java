@@ -12,7 +12,7 @@ import java.awt.*;
 import java.math.BigDecimal;
 import java.text.AttributedString;
 
-public class Pie_Chart_Totals extends Pie_Chart
+public class Pie_Chart_Totals extends Pie_Chart<Draft_Gui_Total_Meal_Macro_Columns>
 {
     // #################################################################################################################
     // Variables
