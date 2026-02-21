@@ -68,7 +68,7 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
             table_Initialised = false,
             is_row_Being_Edited = false;
 
-    protected boolean add_JTable_Action;
+    protected final boolean add_JTable_Action;
 
     //##################################################################################################################
     // Constructor

@@ -38,7 +38,7 @@ public class Pie_Chart<K extends Comparable<K>> extends JPanel
     protected final Font titleFont, labelFont, legendFont;
     
     // String
-    protected String title;
+    protected final String title;
     
     // int
     protected int rows;
