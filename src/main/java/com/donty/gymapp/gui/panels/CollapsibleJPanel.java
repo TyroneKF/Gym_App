@@ -91,7 +91,7 @@ public class CollapsibleJPanel extends JPanel
 
     public void set_Icon_Btn_Text(String txt)
     {
-        if (txt!=null || txt.length() > 0)
+        if (txt!=null || ! txt.isEmpty())
         {
             btnText = txt;
             iconBtn.setText(btnText);

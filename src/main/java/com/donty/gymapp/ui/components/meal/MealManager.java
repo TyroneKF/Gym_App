@@ -1806,8 +1806,21 @@ public class MealManager
     //##################################################################################################################
     // Resizing GUI
     //##################################################################################################################
-    private void add_To_Container(Container container, Component addToContainer, Integer gridX, Integer gridy, Integer gridWidth,
-                                  Integer gridHeight, Double weightX, Double weightY, String fill, Integer ipadY, Integer ipadX, String anchor)
+    private void add_To_Container
+    (
+            Container container,
+            Component addToContainer,
+            Integer gridX,
+            Integer gridy,
+            Integer gridWidth,
+            Integer gridHeight,
+            Double weightX,
+            Double weightY,
+            String fill,
+            Integer ipadY,
+            Integer ipadX,
+            String anchor
+    )
     {
         if (gridX != null)
         {
@@ -1848,7 +1861,7 @@ public class MealManager
                     gbc.anchor = GridBagConstraints.PAGE_START;
                     break;
 
-                case "scroll_To_The_End":
+                case "scroll_to_the_end":
                     gbc.anchor = GridBagConstraints.PAGE_END;
                     break;
             }

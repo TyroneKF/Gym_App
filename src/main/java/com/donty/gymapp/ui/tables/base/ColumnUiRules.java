@@ -48,7 +48,7 @@ public class ColumnUiRules<T extends Enum<T> & Table_Enum>
 
     public boolean is_Columns_To_Hide_Null()
     {
-        return columns_To_Hide != null || ! columns_To_Hide.isEmpty();
+        return columns_To_Hide != null && ! columns_To_Hide.isEmpty();
     }
 
     public ArrayList<T> get_Editable_Column_Names()
