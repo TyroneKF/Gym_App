@@ -135,27 +135,6 @@ public class MyJDBC_Sqlite  // remove extends eventually
 
         // 🔑 THIS IS THE IMPORTANT LINE
         hikariConfig.setDataSourceProperties(sqliteConfig.toProperties());
-        
-        /*
-        
-               HikariConfig config = new HikariConfig();
-            
-            // SQLite connection PRAGMAs:
-            // Required SQLite connection initialization for correctness, concurrency, and stability
-            // - foreign_keys        : Enforces FK constraints (OFF by default in SQLite)
-            // - journal_mode = WAL  : Improves concurrency and reduces locking
-            // - synchronous = NORMAL: Balanced durability vs performance
-            // - busy_timeout        : Waits for locks instead of failing immediately
-            config.setJdbcUrl(connection_Address);
-            config.setMaximumPoolSize(1); // sqlite can only handle 1 connection / not good at concurrency
-            config.setConnectionTestQuery("SELECT 1");
-            config.setConnectionInitSql(
-                    "PRAGMA foreign_keys = ON;" +
-                            "PRAGMA journal_mode = WAL;" +
-                            "PRAGMA synchronous = NORMAL;" +
-                            "PRAGMA busy_timeout = 5000;"
-            );
-         */
 
         // ####################################################
         //  Create pool

@@ -80,15 +80,10 @@ public class Loading_Screen extends Screen_JFrame
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            System.err.printf("\n\n%s Error \n%s", get_Class_And_Method_Name(),e );
         }
     }
-    
-    public int get_Current_Count()
-    {
-        return  currentCount;
-    }
-    
+
     public int get_Remaining_Count_Left()
     {
         return currentCount == endCount ? 0 : endCount - currentCount;
