@@ -85,7 +85,7 @@ public class PieChart_Screen_MPS extends Screen_JFrame
         // ####################################
         ArrayList<PieChart_Totals_Entry_MPS> pieChartEntry_MPS_AL = pieChart_TotalMeals_MPS.get_PieChart_Entry_MPS();
         
-        /**
+        /*
          * This is requested by the Meal_Plan_Screen when the pieChart screen is closed!
          * Remove the pieChart data which doesn't have a MealManager pie chart actively using it.
          */

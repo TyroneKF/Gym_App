@@ -157,15 +157,15 @@ public class Shared_Data_Registry
         //##########################################
         // Remove MealManager Results to Collection
         //##########################################
-        /**
+        /*
          * HashMap<String, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues = new HashMap<>();
          * Stores all the mealManagers TotalMealValues in collections by the macroName
-         *
+
          * <Key:  MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
          * Etc;  <Key: Salt | Value: HashMap<MealManager, Quantity: 300g >>
          */
         
-        /**
+        /*
          *  <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
          *   Put, Replace have the same effect
          */
@@ -176,7 +176,7 @@ public class Shared_Data_Registry
             
             BigDecimal macro_value = (BigDecimal) total_meal_data.get(macroPos);
             
-            /**
+            /*
              *  <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
              *   Put, Replace have the same effect
              */
@@ -205,7 +205,7 @@ public class Shared_Data_Registry
     
     private void remove_MealManager_Macro_Values(MealManager mealManager)
     {
-        /**
+        /*
          * HashMap<String, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues = new HashMap<>();
          * Stores all the mealManagers TotalMealValues in collections by the macroName
          * <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>

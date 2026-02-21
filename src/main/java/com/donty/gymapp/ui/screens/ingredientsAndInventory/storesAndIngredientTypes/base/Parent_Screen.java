@@ -148,7 +148,7 @@ public abstract class Parent_Screen<T extends Storable_IDS_Parent> extends Scree
         
         icon_And_ToggleSwitch_JP.add(fxPanel, BorderLayout.CENTER);  // add to Swing layout
         
-        /**
+        /*
          *  JavaFX Application Thread
          *  JAVAFX components can only be handled in a javaFX thread because it uses its own UI properties
          */
@@ -183,7 +183,7 @@ public abstract class Parent_Screen<T extends Storable_IDS_Parent> extends Scree
             //###########################
             // Create Toggle
             //###########################
-            /**
+            /*
              *   Create toggle Set
              *   The toggle itself takes its size from its largest child, which is the background
              *   (since it has setPrefSize(110, 40)).

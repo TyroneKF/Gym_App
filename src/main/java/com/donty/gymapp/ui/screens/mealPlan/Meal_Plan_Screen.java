@@ -148,7 +148,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###############################################################################
         //
         //###############################################################################
-        /**
+        /*
          *  #############################
          *   Context & Table Meta-Data:
          *  #############################
@@ -156,7 +156,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
          *  2.) Getting Table Column Names                                  [2%]
          *  3.) Getting Table Column Positions                              [2%]
          *  4.) Setup Table Configurations Data                             [5%]
-         *
+
          *  #############################
          *   Reference DATA:
          *  #############################
@@ -165,14 +165,14 @@ public class Meal_Plan_Screen extends Screen_JFrame
          *  7.) Get Measurement Material Type DATA                          [3%]
          *  8.) Get Measurement DATA                                        [4%]
          *  9.) System Variables DATA                                       [2%]
-         *
+
          *  #############################
          *   Draft Plan Construction
          *  #############################
          *  10.) Transferring Plan Data To DRAFT Plan_Data                  [3%]
          *  11.) Transfer Plan Targets                                      [3%]
          *  12.) Transferring Meals Data                                    [3%]
-         *
+
          * #############################
          *  GET Computed Plan Data
          * #############################
@@ -180,7 +180,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
          * 14.) Get Total Meals Data                                        [3%]
          * 15.) Get Macros Targets DATA                                     [3%]
          * 16.) Get Macros Left DATA                                        [3%]
-         *
+
          * #############################
          *   Build GUI
          * #############################
@@ -2588,17 +2588,17 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
     private boolean refresh_Data_And_Build_GUI(boolean refresh_Macros)
     {
-        /**
+        /*
          *  1.) Transfer Plan Targets
          *  2.) Transferring Meals Data
-         *
+
          *  3.) Get Meals & Sub-Meals DATA
          *  4.) Get TotalMeals Data
-         *
+
          *  5.) Clear GUI & Old  Data
-         *
+
          *  6.) Build Centre Of GUI
-         *
+
          *  7.) Build Complete
          *  8.) Refresh Indicators
          */

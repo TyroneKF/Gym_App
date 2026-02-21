@@ -106,7 +106,7 @@ class LineChart_Macros_MPS extends Screen_JPanel
             dataset.addSeries(macroTimeSeries);
             
             // Add all the values from this macroName into the series
-            /**
+            /*
              * HashMap<String, Map<Integer, Pair<LocalTime, BigDecimal>>> mealManagersMacroValues = new HashMap<>();
              * Stores all the mealManagers TotalMealValues in collections by the macroName
              * <Key: MacroName | Value: Map <Key: MealManagerID, Value: < MealTime, Quantity>>
@@ -193,7 +193,7 @@ class LineChart_Macros_MPS extends Screen_JPanel
         // Get MealManager MacroInfo & Replace
         // ####################################################
         
-        /**
+        /*
          *  <Key: MacroName | Value: HashMap<Key: MealManagerID, Value: < MealManager, Quantity>>
          */
         for (Draft_Gui_Total_Meal_Macro_Columns macro_name : macros_To_Check)
@@ -204,7 +204,7 @@ class LineChart_Macros_MPS extends Screen_JPanel
             // ############################################
             // Create TimeSeries New Info For Macro
             // ############################################
-            /**
+            /*
              *  <Key: MacroName | Value: HashMap<Key: MealManagerID, Value: < MealManager, Quantity>>
              */
             

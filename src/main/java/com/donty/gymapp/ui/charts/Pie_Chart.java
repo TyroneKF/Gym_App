@@ -131,7 +131,7 @@ public class Pie_Chart<K extends Comparable<K>> extends JPanel
         //#############################################
         // Color Palette
         //##############################################
-        /**
+        /*
          * Lock this pieChart to using the same colours in the same sequence
          * Caused mismatch with other charts when the dataset was updated as the order of colours was randomised
          */
@@ -162,7 +162,7 @@ public class Pie_Chart<K extends Comparable<K>> extends JPanel
         //############################################
         // Create Plot with Data & Configurations
         //############################################
-        /**
+        /*
          * Event Listener cannot be added to the pieCharts themselves.
          * To detect where the data is empty etc; new meal or values equate to 0, the chart will go blank.
          * To identify this we have to add an eventListener to the data as the dataset is new re-initialized once created
@@ -175,7 +175,7 @@ public class Pie_Chart<K extends Comparable<K>> extends JPanel
         //############################################
         // Events Need to be triggered at runtime
         //############################################
-        /**
+        /*
          Event above is only triggered when values change & we need to do check on initialization too
          */
         first_RunTime_Events();

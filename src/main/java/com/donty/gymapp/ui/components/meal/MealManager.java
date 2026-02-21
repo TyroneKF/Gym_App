@@ -1594,7 +1594,7 @@ public class MealManager
 
     private void update_Charts()
     {
-        /**
+        /*
          * Update data behind pieCharts which will effectively update all pieCharts actively using this data
          * etc the MPS totals pie chart screen
          */
