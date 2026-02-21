@@ -108,13 +108,15 @@ public class Edit_Ingredients_Form extends Ingredients_Form
         if (field_Value_On_Form.getClass() != field_Value_In_DB_Data.getClass()) // Type MisMatch
         {
             throw new Exception(String.format("""
-                            \n\n %s Error Different Object Types
+                         
+                            %s Error Different Object Types
                             
-                            \nForm
+                            Form
                             Class : %s
                             Value : %s
                             
-                            \nDB
+                            
+                            DB
                             Class : %s
                             Value : %s""",
                     get_Class_And_Method_Name(),

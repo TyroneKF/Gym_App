@@ -941,12 +941,27 @@ public class MyJDBC_Sqlite  // remove extends eventually
     private void print_Internal_Method_Err_MSG(String method_Name, String query, Object[] params, Exception e)
     {
         System.err.printf("""
-                \n\n%s
+                
+                %s
                 MyJDBC_MySQL.java %s Error
                 %s
-                \nQuery : \n\n\"\"\" \n\n%s \n\n\"\"\"
-                \nParams: \n%s%n
-                \nError MSG:  \n\n\"\"\" \n%s \n\"\"\"""", line_Separator, method_Name, line_Separator, query, Arrays.toString(params), e);
+                
+                Query :
+                
+                \"""
+                
+                %s
+                
+                \"""
+                
+                Params:
+                %s%n
+                
+                Error MSG:
+                
+                \"""
+                %s
+                \""" """, line_Separator, method_Name, line_Separator, query, Arrays.toString(params), e);
     }
 
     //###############################################
