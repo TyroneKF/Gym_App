@@ -50,9 +50,4 @@ public class Field_JTxtField_String extends Field_JTxtField_Parent<String>
                 .map(w -> w.substring(0, 1).toUpperCase() + w.substring(1).toLowerCase())
                 .collect(Collectors.joining(" "));
     }
-
-    public String get_Text_Casted_To_Type() throws Exception
-    {
-        return super.get_Text_Casted_To_Type();
-    }
 }

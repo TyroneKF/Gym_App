@@ -111,10 +111,4 @@ public class Field_JTxtField_INT extends Field_JTxtField_Parent<Integer>
         }
         catch (Exception e) { return false; }
     }
-
-    public Integer get_Text_Casted_To_Type() throws Exception
-    {
-        return super.get_Text_Casted_To_Type();
-    }
-    
 }

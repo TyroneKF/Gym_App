@@ -2369,6 +2369,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // ###############################################################
     // Recipe BTN Actions
     // ###############################################################
+    @SuppressWarnings ("EmptyMethod")
     private void recipe_List_Btn_Action_Open_Screen()
     {
 

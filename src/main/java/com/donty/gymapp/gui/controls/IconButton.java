@@ -84,11 +84,6 @@ public class IconButton extends JPanel
         button.setBorderPainted(false);
     }
     
-    public void setButtonFont()
-    {
-    
-    }
-    
     public void set_Btn_Visibility(boolean visibility)
     {
         button.setVisible(visibility);

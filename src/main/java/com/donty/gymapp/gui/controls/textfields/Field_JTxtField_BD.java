@@ -153,9 +153,4 @@ public class Field_JTxtField_BD extends Field_JTxtField_Parent<BigDecimal>
             return false;
         }
     }
-
-    public BigDecimal get_Text_Casted_To_Type() throws Exception
-    {
-        return super.get_Text_Casted_To_Type();
-    }
 }

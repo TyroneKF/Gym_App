@@ -387,15 +387,6 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         jComboBox.load_Items();
     }
 
-    public void reload_Measurements_JComboBox()
-    {
-        Component object = field_Items_Map.get("measurement").get_Gui_Component();
-
-        if (! (object instanceof Field_JComboBox<?> jComboBox)) { return; }
-
-        jComboBox.reset_JC();
-    }
-
     //#########################################################
     // Clear GUI Methods
     //########################################################
@@ -416,108 +407,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
             }
         }
 
-        // Reset Salt JComboBox
-        salt_JC.reset_JC();
-    }
-
-    //#######################################################
-    // Get DATA From API Methods
-    //#######################################################
-    public void update_Form_With_Nutrition_IX_Search(LinkedHashMap<String, Object> foodInfo)
-    {
-        /*if (foodInfo != null)
-        {
-            clear_Ingredients_Form();
-            
-            //#######################################################################
-            // Set Form Values to 0 in case no value match below
-            //#######################################################################
-            
-            System.out.println("\n\nupdate_Form_WithNutritionIXSearch()");
-            for (Map.Entry<String, Object[]> info : ingredientsFormObjectAndValues.entrySet())
-            {
-                String key = info.getKey();
-                Object[] row = info.getValue();
-                Component comp = (Component) row[0];
-                
-                if (comp instanceof JTextField)
-                {
-                    JTextField obj = (JTextField) comp;
-                    
-                    if (obj.getText().equals(""))
-                    {
-                        obj.setText("0");
-                    }
-                }
-            }
-            
-            //#######################################################################
-            // Set values in form based on equivalent labels form to nutritionIx
-            //#######################################################################
-            int formLabelPos = - 1;
-            for (Map.Entry<String, Triplet<String, String, String>> info : ingredientsFormLabelsMapsToValues.entrySet())
-            {
-                // Get NutritionIx Label & its value
-                String formLabelName = info.getKey();
-                Triplet<String, String, String> keyObject = info.getValue();
-                
-                //############################
-                //
-                //############################
-                String foodInfoEquivalentLabel = keyObject.getValue0();
-                if (foodInfoEquivalentLabel == null)
-                {
-                    continue;
-                }
-                
-                //############################
-                //
-                //############################
-                Object foodInfoNutritionValue = foodInfo.get(foodInfoEquivalentLabel);
-                
-                System.out.printf("\n\n#############################\n\nNutritionIx Label: %s  = %s \nIngredient Form Label pos: %s | Ingredient Form Label: %s  ",
-                        foodInfoEquivalentLabel, foodInfoNutritionValue, formLabelName, formLabelPos);
-                
-                if (foodInfoNutritionValue == null || foodInfoNutritionValue.toString().equals("null"))
-                {
-                    continue;
-                }
-                
-                //############################
-                //
-                //############################
-                // HELLO MAY NEED TO CONSIDER ALL DATA TYPE CONVERSIONS
-                Component comp = (Component) ingredientsFormObjectAndValues.get(formLabelName)[0];
-                
-                if (comp instanceof JTextField)
-                {
-                    JTextField obj = (JTextField) comp;
-                    
-                    if (foodInfoNutritionValue instanceof BigDecimal)
-                    {
-                        BigDecimal bd1 = ((BigDecimal) foodInfoNutritionValue).setScale(2, RoundingMode.HALF_DOWN);
-                        
-                        System.out.printf("\nDouble Value %s", bd1);
-                        
-                        obj.setText(String.format("%s", bd1));
-                        
-                        continue;
-                    }
-                    
-                    obj.setText(String.format("%s", foodInfoNutritionValue));
-                }
-                else if (comp instanceof JComboBox)
-                {
-                    if (formLabelName.equals("Ingredient Measurement In"))
-                    {
-                        foodInfoNutritionValue = foodInfoNutritionValue.toString().equals("g") ? "Grams" : "Litres";
-                    }
-                    
-                    JComboBox obj = (JComboBox) comp;
-                    obj.setSelectedItem(foodInfoNutritionValue);
-                }
-            }
-        }*/
+        salt_JC.reset_JC(); // Reset Salt JComboBox
     }
 
     //#######################################################
