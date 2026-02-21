@@ -335,7 +335,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
             //#######################################
             // Add Component
             //#######################################
-            add_To_Container(inputArea, component, 2, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
+            add_To_Container(inputArea, component, 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
         }
 
         mainJPanel.add(inputArea, BorderLayout.CENTER);

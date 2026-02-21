@@ -7,7 +7,7 @@ mvn javafx:run "-DmainClass=Tests.ToggleSwitchDemo"
 
 CREATE TEMPORARY TABLE
 
-
+.) Changing ingredient value doesnt update on table if its already there
 
 Edit Views to match on plan_id as well as meal_id
 
