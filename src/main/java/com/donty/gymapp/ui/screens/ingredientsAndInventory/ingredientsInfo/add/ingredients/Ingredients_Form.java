@@ -311,7 +311,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
 
             Component component = IngredientBinding.get_Gui_Component();
 
-            int xPos = 0, yPos = get_And_Increase_YPos();
+            int yPos = get_And_Increase_YPos();
 
             //#######################################
             // Set Label
@@ -320,12 +320,12 @@ public class Ingredients_Form extends Parent_Forms_OBJ
             label.setHorizontalAlignment(JLabel.LEFT);
             label.setFont(new Font("Verdana", Font.BOLD, 14));
 
-            add_To_Container(inputArea, label, xPos, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
+            add_To_Container(inputArea, label, 0, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
 
             if (key.equals("salt"))
             {
                 JPanel salt_JPanel_Area = new JPanel(new GridLayout(2, 1));
-                add_To_Container(inputArea, salt_JPanel_Area, xPos += 1, yPos, 1, 1, 0.25, 0.25, "both", 0, 0, null); // Adding JPanel to GUI
+                add_To_Container(inputArea, salt_JPanel_Area, 1, yPos, 1, 1, 0.25, 0.25, "both", 0, 0, null); // Adding JPanel to GUI
 
                 salt_JPanel_Area.add(salt_JC); // Add Salt JComboBox
                 salt_JPanel_Area.add(component); // Add Salt JTextField
@@ -335,7 +335,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
             //#######################################
             // Add Component
             //#######################################
-            add_To_Container(inputArea, component, xPos += 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
+            add_To_Container(inputArea, component, 2, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
         }
 
         mainJPanel.add(inputArea, BorderLayout.CENTER);

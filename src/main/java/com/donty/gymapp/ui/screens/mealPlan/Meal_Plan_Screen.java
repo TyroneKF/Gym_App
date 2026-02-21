@@ -1705,8 +1705,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
     private void create_GUI_Indicators(JPanel jpanel)
     {
-        int x_pos = - 1;
-
         //#################################
         // Protein Macro Indicator
         //#################################
@@ -1725,7 +1723,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 25
         );
 
-        addToContainer(jpanel, protein_indicator, x_pos += 1, 0, 1, 1, 0.25, 0.25, "vertical", 10, 0, null);
+        addToContainer(jpanel, protein_indicator, 0, 0, 1, 1, 0.25, 0.25, "vertical", 10, 0, null);
 
         //#################################
         // Carb Macro Indicator
@@ -1745,7 +1743,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 25
         );
 
-        addToContainer(jpanel, carbs_indicator, x_pos += 1, 0, 1, 1, 0.25, 0.25, "vertical", 10, 0, null);
+        addToContainer(jpanel, carbs_indicator, 1, 0, 1, 1, 0.25, 0.25, "vertical", 10, 0, null);
 
         //#################################
         // Protein Macro Indicator
@@ -1765,7 +1763,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 25
         );
 
-        addToContainer(jpanel, fats_indicator, x_pos += 1, 0, 1, 1, 0.25, 0.25, "vertical", 10, 0, null);
+        addToContainer(jpanel, fats_indicator, 2, 0, 1, 1, 0.25, 0.25, "vertical", 10, 0, null);
 
         //#################################
         // Calories  Indicator
@@ -1785,7 +1783,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 45
         );
 
-        addToContainer(jpanel, calories_indicator, x_pos += 1, 0, 1, 1, 0.25, 0.25, "vertical", 10, 0, null);
+        addToContainer(jpanel, calories_indicator, 3, 0, 1, 1, 0.25, 0.25, "vertical", 10, 0, null);
     }
 
     @Override
@@ -2045,8 +2043,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
         JPanel macrosInfoJPanel = new JPanel(new GridBagLayout());   // Add Bottom JPanel to GUI
         addToContainer(scroll_jpanel_bottom, macrosInfoJPanel, 0, 0, 1, 1, 0.25, 0.25, "horizontal", 0, 0, "end");
 
-        int macrosInfoJP_YPos = 0;
-
         /*//###################################
         // Setting up Horizontal Image Divider
         //#####################################
@@ -2103,7 +2099,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 macros_targets_column_ui_rules
         );
 
-        addToContainer(macrosInfoJPanel, macros_targets_table, 0, macrosInfoJP_YPos += 1, + 1, 1, 0.25, 0.25, "both", 40, 0, null);
+        addToContainer(macrosInfoJPanel, macros_targets_table, 0, 0, + 1, 1, 0.25, 0.25, "both", 40, 0, null);
 
         //############################
         // plan_Macros_Left Table
@@ -2127,7 +2123,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 macros_left_column_ui_rules
         );
 
-        addToContainer(macrosInfoJPanel, macros_left_table, 0, macrosInfoJP_YPos += 1, 1, 1, 0.25, 0.25, "both", 30, 0, null);
+        addToContainer(macrosInfoJPanel, macros_left_table, 0, 1, 1, 1, 0.25, 0.25, "both", 30, 0, null);
     }
 
     //#####################
@@ -2804,11 +2800,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
         try
         {
-            int pos = - 1;
-
             if (any_session_created_meals)
             {
-                ArrayList<ArrayList<Object>> new_meals = results.get_Fetched_Result_2D_AL(pos += 1);
+                ArrayList<ArrayList<Object>> new_meals = results.get_Fetched_Result_2D_AL(0);
 
                 new_meals.forEach(e -> {
                     meal_id_map.put((Integer) e.get(0), (Integer) e.get(1)); // draft_meal_in_plan_id & meal_in_plan_id
@@ -2816,14 +2810,14 @@ public class Meal_Plan_Screen extends Screen_JFrame
             }
             if (any_session_created_sub_meals)
             {
-                ArrayList<ArrayList<Object>> new_sub_meals = results.get_Fetched_Result_2D_AL(pos += 1);
+                ArrayList<ArrayList<Object>> new_sub_meals = results.get_Fetched_Result_2D_AL(1);
 
                 new_sub_meals.forEach(e -> {
                     sub_meal_id_map.put((Integer) e.get(0), (Integer) e.get(1)); // draft_div_meal_sections_id & div_meal_sections_id
                 });
             }
 
-            new_plan_vs_id = (Integer) results.get_1D_Result_Into_Object(pos += 1);
+            new_plan_vs_id = (Integer) results.get_1D_Result_Into_Object(2);
         }
         catch (Exception e)
         {

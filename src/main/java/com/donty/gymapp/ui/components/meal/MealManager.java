@@ -222,8 +222,8 @@ public class MealManager
         //###############################
         // Set Variables from Results
         //###############################
-        ArrayList<Object> total_Meal_Data = null;
-        Sub_Meal_ID_OBJ sub_meal_id_obj = null;
+        ArrayList<Object> total_Meal_Data;
+        Sub_Meal_ID_OBJ sub_meal_id_obj;
 
         try
 
@@ -762,7 +762,7 @@ public class MealManager
         // Validation Checks
         //#######################################################
         // Prior to this method being called the users input_meal_time_string is checked if its null or "" and rejected
-        LocalTime converted_time = null;
+        LocalTime converted_time;
 
         // Switch ';' for ':' removes un-intentional errors
         input_meal_time_string = input_meal_time_string.replaceAll(";", ":");
