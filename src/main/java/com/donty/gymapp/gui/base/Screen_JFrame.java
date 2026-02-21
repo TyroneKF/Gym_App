@@ -201,7 +201,7 @@ public class Screen_JFrame extends JFrame
     
     public void set_Title(String title)
     {
-        if (title.length() > 0) { setTitle(title); }
+        if (! title.isEmpty()) { setTitle(title); }
     }
     
     public void set_Resizable(boolean x)

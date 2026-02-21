@@ -791,7 +791,7 @@ public class MyJDBC_Sqlite  // remove extends eventually
             case Integer i -> statement.setInt(pos, i); // Integer
             case Boolean b -> statement.setInt(pos, b ? 1 : 0); // Boolean are represented as Integers
             case BigDecimal bigDecimal -> // BigDecimal to Integer
-            {
+
                 /*long long_conversion = bigDecimal
                         .movePointRight(2)
                         .longValueExact();
@@ -799,7 +799,7 @@ public class MyJDBC_Sqlite  // remove extends eventually
                 statement.setLong(pos, long_conversion);  */
 
                 statement.setBigDecimal(pos, bigDecimal);
-            }
+
             case Timestamp timestamp -> statement.setTimestamp(pos, timestamp);  // TimeStamp / LocalDateTime
             case LocalDateTime localDateTime -> // Local Date Time
                     statement.setTimestamp(pos, Timestamp.valueOf(localDateTime));
@@ -810,7 +810,7 @@ public class MyJDBC_Sqlite  // remove extends eventually
 
             // Exception clause
             default -> throw new Exception(String.format("Unable to configure param dataType of object being '%s' - %s"
-                    , object.toString(), object.getClass().getSimpleName()));
+                    , object, object.getClass().getSimpleName()));
         }
     }
 
@@ -959,7 +959,8 @@ public class MyJDBC_Sqlite  // remove extends eventually
                 
                 \"""
                 %s
-                \""" """, line_Separator, method_Name, line_Separator, query, Arrays.toString(params), e);
+                \"""
+                """, line_Separator, method_Name, line_Separator, query, Arrays.toString(params), e);
     }
 
     //###############################################

@@ -422,7 +422,7 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
         @Override
         public boolean isCellEditable(int row, int col)
         {
-            if (editable_column_model_positions == null) { return false; }
+            if (editable_column_model_positions.isEmpty()) { return false; }
 
             return editable_column_model_positions.contains(col);
         }

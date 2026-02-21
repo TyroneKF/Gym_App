@@ -4064,11 +4064,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 update_Pie_Chart_Meal_Time(mealManager);
             }
             case "mealName" ->  // Meal Name on MealManager Changed
-            {
+
                 // LineChart = Nothing Changes
 
                 update_Pie_Chart_Meal_Name(mealManager);  // Change PieChart MealName
-            }
+
             case "refresh" ->   // Change Meal Managers Data
             {
                 // Refresh MealManager

@@ -2,15 +2,12 @@ package com.donty.gymapp.migration;
 
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.*;
-
 import javax.sql.DataSource;
-
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.SQLException;
+
 
 class FlywaySQLiteMigrationTest
 {
@@ -38,7 +35,7 @@ class FlywaySQLiteMigrationTest
     }
     
     @BeforeEach
-    void cleanAndMigrate() throws SQLException
+    void cleanAndMigrate()
     {
         Flyway flyway = Flyway.configure()
                 .dataSource(dataSource)

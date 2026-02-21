@@ -1094,7 +1094,7 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
         //###############################
         // Prompt User for time Input
         //###############################
-        LocalTime new_meal_time = prompt_User_For_Meal_Time(); ;
+        LocalTime new_meal_time = prompt_User_For_Meal_Time();
         if (new_meal_time == null) { return; } // Error occurred in validation checks above
 
         //  LocalTime old_current_time = get_Current_Sub_Meal_Time();

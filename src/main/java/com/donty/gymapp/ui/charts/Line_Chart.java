@@ -89,8 +89,8 @@ public class Line_Chart extends JPanel
         titleObject.setFont(new Font("Serif", Font.PLAIN, 27));
 
         // Label font size on diagram
-        plot.getRangeAxis().setLabelFont(new Font("SansSerif", Font.BOLD, 22));;
-        plot.getDomainAxis().setLabelFont(new Font("SansSerif", Font.BOLD, 22));;
+        plot.getRangeAxis().setLabelFont(new Font("SansSerif", Font.BOLD, 22));
+        plot.getDomainAxis().setLabelFont(new Font("SansSerif", Font.BOLD, 22));
 
         // Legend Font Size
         chart.getLegend().setItemFont(new Font("Serif", Font.PLAIN, 21));

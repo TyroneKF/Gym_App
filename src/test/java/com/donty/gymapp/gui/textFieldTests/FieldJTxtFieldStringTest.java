@@ -77,7 +77,7 @@ class FieldJTxtFieldStringTest extends Test_Field_JxtField_Parent<String>
         boolean result = field.validation_Check(error_map);
 
         System.err.printf("\n\n%s()", get_Method_Name());
-        print_Results(input_txt, error_map);;
+        print_Results(input_txt, error_map);
         
         assertTrue(result);
         assertTrue(error_map.isEmpty());
@@ -94,7 +94,7 @@ class FieldJTxtFieldStringTest extends Test_Field_JxtField_Parent<String>
         boolean result = field.validation_Check(error_map);
         
         System.err.printf("\n\n%s()", get_Method_Name());
-        print_Results(input_txt, error_map);;
+        print_Results(input_txt, error_map);
         
         assertTrue(result);
         assertTrue(error_map.isEmpty());
@@ -111,7 +111,7 @@ class FieldJTxtFieldStringTest extends Test_Field_JxtField_Parent<String>
         boolean result = field.validation_Check(error_map);
 
         System.err.printf("\n\n%s()", get_Method_Name());
-        print_Results(input_txt, error_map);;
+        print_Results(input_txt, error_map);
         
         assertTrue(result);
         assertTrue(error_map.isEmpty());
@@ -128,7 +128,7 @@ class FieldJTxtFieldStringTest extends Test_Field_JxtField_Parent<String>
         boolean result = field.validation_Check(error_map);
         
         System.err.printf("\n\n%s()", get_Method_Name());
-        print_Results(input_txt, error_map);;
+        print_Results(input_txt, error_map);
         
         assertTrue(result);
         assertTrue(error_map.isEmpty());
@@ -145,7 +145,7 @@ class FieldJTxtFieldStringTest extends Test_Field_JxtField_Parent<String>
         boolean result = field.validation_Check(error_map);
 
         System.err.printf("\n\n%s()", get_Method_Name());
-        print_Results(input_txt, error_map);;
+        print_Results(input_txt, error_map);
 
         assertTrue(result);
     }
@@ -161,7 +161,7 @@ class FieldJTxtFieldStringTest extends Test_Field_JxtField_Parent<String>
         boolean result = field.validation_Check(error_map);
 
         System.err.printf("\n\n%s()", get_Method_Name());
-        print_Results(input_txt, error_map);;
+        print_Results(input_txt, error_map);
 
         assertTrue(result);
         assertTrue(error_map.isEmpty());
@@ -178,7 +178,7 @@ class FieldJTxtFieldStringTest extends Test_Field_JxtField_Parent<String>
         boolean result = field.validation_Check(error_map);
 
         System.err.printf("\n\n%s()", get_Method_Name());
-        print_Results(input_txt, error_map);;
+        print_Results(input_txt, error_map);
 
         assertTrue(result);
         assertTrue(error_map.isEmpty());
@@ -195,7 +195,7 @@ class FieldJTxtFieldStringTest extends Test_Field_JxtField_Parent<String>
         boolean result = field.validation_Check(error_map);
 
         System.err.printf("\n\n%s()", get_Method_Name());
-        print_Results(input_txt, error_map);;
+        print_Results(input_txt, error_map);
 
         assertTrue(result);
         assertTrue(error_map.isEmpty());
@@ -212,7 +212,7 @@ class FieldJTxtFieldStringTest extends Test_Field_JxtField_Parent<String>
         boolean result = field.validation_Check(error_map);
 
         System.err.printf("\n\n%s()", get_Method_Name());
-        print_Results(input_txt, error_map);;
+        print_Results(input_txt, error_map);
 
         assertTrue(result);
         assertTrue(error_map.isEmpty());
@@ -232,7 +232,7 @@ class FieldJTxtFieldStringTest extends Test_Field_JxtField_Parent<String>
         boolean result = field.validation_Check(error_map);
         
         System.err.printf("\n\n%s()", get_Method_Name());
-        print_Results(input_txt, error_map);;
+        print_Results(input_txt, error_map);
         
         assertFalse(result);
         assertFalse(error_map.isEmpty());
@@ -249,7 +249,7 @@ class FieldJTxtFieldStringTest extends Test_Field_JxtField_Parent<String>
         boolean result = field.validation_Check(error_map);
 
         System.err.printf("\n\n%s()", get_Method_Name());
-        print_Results(input_txt, error_map);;
+        print_Results(input_txt, error_map);
         
         assertFalse(result);
         assertFalse(error_map.isEmpty());
@@ -266,7 +266,7 @@ class FieldJTxtFieldStringTest extends Test_Field_JxtField_Parent<String>
         boolean result = field.validation_Check(error_map);
         
         System.err.printf("\n\n%s()", get_Method_Name());
-        print_Results(input_txt, error_map);;
+        print_Results(input_txt, error_map);
         
         assertFalse(result);
         assertFalse(error_map.isEmpty());
@@ -283,7 +283,7 @@ class FieldJTxtFieldStringTest extends Test_Field_JxtField_Parent<String>
         boolean result = field.validation_Check(error_map);
         
         System.err.printf("\n\n%s()", get_Method_Name());
-        print_Results(input_txt, error_map);;
+        print_Results(input_txt, error_map);
         
         assertFalse(result);
         assertFalse(error_map.isEmpty());
@@ -300,7 +300,7 @@ class FieldJTxtFieldStringTest extends Test_Field_JxtField_Parent<String>
         boolean result = field.validation_Check(error_map);
         
         System.err.printf("\n\n%s()", get_Method_Name());
-        print_Results(input_txt, error_map);;
+        print_Results(input_txt, error_map);
         
         assertFalse(result);
         assertFalse(error_map.isEmpty());
@@ -317,7 +317,7 @@ class FieldJTxtFieldStringTest extends Test_Field_JxtField_Parent<String>
         boolean result = field.validation_Check(error_map);
         
         System.err.printf("\n\n%s()", get_Method_Name());
-        print_Results(input_txt, error_map);;
+        print_Results(input_txt, error_map);
         
         assertFalse(result);
         assertFalse(error_map.isEmpty());

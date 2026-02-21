@@ -120,8 +120,8 @@ public class Edit_Ingredients_Form extends Ingredients_Form
                             Class : %s
                             Value : %s""",
                     get_Class_And_Method_Name(),
-                    field_Value_On_Form.getClass(), field_Value_On_Form.toString(),
-                    field_Value_In_DB_Data.getClass(), field_Value_In_DB_Data.toString()
+                    field_Value_On_Form.getClass(), field_Value_On_Form,
+                    field_Value_In_DB_Data.getClass(), field_Value_In_DB_Data
             ));
         }
 
