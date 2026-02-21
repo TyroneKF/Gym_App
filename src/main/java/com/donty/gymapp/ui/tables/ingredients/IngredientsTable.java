@@ -912,7 +912,7 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
     {
         save_Data(); // Update Table Model
 
-        set_Sub_Meal_Saved(true);
+        sub_meal_saved = true;
 
         set_Sub_Meal_Data_Changed(false);
         set_Sub_Meal_Meta_Data_Changed(false);
@@ -1292,11 +1292,6 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
     public void set_Meal_In_DB(boolean meal_In_DB)
     {
         this.sub_meal_in_db = meal_In_DB;
-    }
-
-    private void set_Sub_Meal_Saved(boolean state)
-    {
-        sub_meal_saved = state;
     }
 
     private void set_Sub_Meal_Data_Changed(boolean state)
