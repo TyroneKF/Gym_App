@@ -72,8 +72,7 @@ public class MealManager
     //############################################
     // String
     //############################################
-    private String class_Name = new Object() { }.getClass().getEnclosingClass().getName();
-    private String lineSeparator = "###############################################################################";
+    private final String class_Name = new Object() { }.getClass().getEnclosingClass().getName();
     private String
             saved_meal_name = null,
             current_meal_name = null;
@@ -85,7 +84,7 @@ public class MealManager
             saved_meal_time = null,
             current_meal_time = null;
 
-    private DateTimeFormatter time_Formatter = DateTimeFormatter.ofPattern("HH:mm").withResolverStyle(ResolverStyle.STRICT);
+    private final DateTimeFormatter time_Formatter = DateTimeFormatter.ofPattern("HH:mm").withResolverStyle(ResolverStyle.STRICT);
 
     //############################################
     // Collections
@@ -97,9 +96,8 @@ public class MealManager
     //################################################################################
 
     // Other Objects
-    private JPanel
-            collapsibleCenterJPanel,
-            spaceDividerForMealManager = new JPanel();
+    private JPanel collapsibleCenterJPanel;
+    private final JPanel spaceDividerForMealManager = new JPanel();
 
     private final MyJDBC_Sqlite db;
     private GridBagConstraints gbc;
@@ -1397,8 +1395,6 @@ public class MealManager
 
     private boolean refresh_DB_Data()
     {
-        System.out.printf("\n\n%s refresh_DB_Data()  %s %s %s", lineSeparator, "refresh", null, null);
-
         //
         String errorMSG = "Error, Unable to Transfer Plan Data!";
         Batch_Upload_Statements upload_statements = new Batch_Upload_Statements(errorMSG);

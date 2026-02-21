@@ -33,8 +33,7 @@ public class MyJDBC_Sqlite  // remove extends eventually
     private final String db_Connection_Address;
 
     private final String
-            line_Separator = "############################################################################################################################",
-            middle_line_Separator = "###############################################################";
+            line_Separator = "############################################################################################################################";
 
     private boolean db_Connection_Status = false;
 
@@ -877,6 +876,7 @@ public class MyJDBC_Sqlite  // remove extends eventually
         //#############################
         try (connection)
         {
+            String middle_line_Separator = "###############################################################";
             try
             {
                 if (connection.getAutoCommit()) { return; } // IF Rollback wasn't executed return
