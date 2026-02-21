@@ -25,7 +25,7 @@ public final class GymAppLauncher
         try
         {
             db.begin_migration();
-            if (! db.get_DB_Connection_Status())
+            if (db.is_DB_Connection_Status_Not_Available())
             {
                 throw new IllegalStateException("Failed Initialization!");
             }

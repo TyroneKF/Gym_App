@@ -806,9 +806,9 @@ public class MyJDBC_Sqlite  // remove extends eventually
     //###############################################################################
     // Validation Methods
     //###############################################################################
-    public boolean get_DB_Connection_Status()
+    public boolean is_DB_Connection_Status_Not_Available()
     {
-        return db_Connection_Status;
+        return ! db_Connection_Status;
     }
 
     private boolean process_Params(Object[] params) throws Exception
