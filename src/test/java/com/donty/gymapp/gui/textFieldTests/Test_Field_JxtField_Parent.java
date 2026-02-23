@@ -1,8 +1,6 @@
 package com.donty.gymapp.gui.textFieldTests;
 
 import com.donty.gymapp.gui.controls.textfields.base.Field_JTxtField_Parent;
-import org.junit.jupiter.api.BeforeEach;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -13,13 +11,6 @@ public abstract class Test_Field_JxtField_Parent<T>
     //##################################################################################################################
     protected Field_JTxtField_Parent<T> field;
     protected final String seperator = "##################################################################";
-
-
-    //##################################################################################################################
-    // Setup Methods
-    //##################################################################################################################
-    @BeforeEach
-    abstract void setup();
 
 
     //##################################################################################################################
