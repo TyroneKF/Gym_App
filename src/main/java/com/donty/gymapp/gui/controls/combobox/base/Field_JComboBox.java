@@ -120,13 +120,6 @@ public abstract class Field_JComboBox<T> extends JComboBox<T>
         load_Items();
     }
 
-    public void set_Item(T obj)
-    {
-        if (! (data_AL.contains(obj))) { return; }
-
-        setSelectedItem(obj);
-    }
-
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################

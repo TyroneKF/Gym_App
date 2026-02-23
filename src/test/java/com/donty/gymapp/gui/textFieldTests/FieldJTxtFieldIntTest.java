@@ -381,7 +381,7 @@ class FieldJTxtFieldIntTest extends Test_Field_JxtField_Parent<Integer>
         LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
         String input_txt = "0";
 
-        field = new Field_JTxtField_INT("Quantity", 8, false);
+        field = new Field_JTxtField_INT("Quantity", 8); // can_be_0 is false
         field.setText(input_txt);
 
         boolean result = field.validation_Check(error_map);
@@ -420,7 +420,7 @@ class FieldJTxtFieldIntTest extends Test_Field_JxtField_Parent<Integer>
         LinkedHashMap<String, ArrayList<String>> error_map = new LinkedHashMap<>();
         String input_txt = "0000";
 
-        field = new Field_JTxtField_INT("Quantity", 8, false);
+        field = new Field_JTxtField_INT("Quantity", 8); // can_be_0 is false
         field.setText(input_txt);
 
         boolean result = field.validation_Check(error_map);
