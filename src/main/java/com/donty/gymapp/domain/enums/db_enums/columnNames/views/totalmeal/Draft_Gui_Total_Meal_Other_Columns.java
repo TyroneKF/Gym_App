@@ -1,10 +1,6 @@
 package com.donty.gymapp.domain.enums.db_enums.columnNames.views.totalmeal;
 
 import com.donty.gymapp.domain.enums.db_enums.columnNames.base.Table_Enum;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public enum Draft_Gui_Total_Meal_Other_Columns implements Table_Enum
 {
@@ -24,13 +20,7 @@ public enum Draft_Gui_Total_Meal_Other_Columns implements Table_Enum
     private final String source_name;
     
     private final String key;
-    
-    private static final Map<String, Draft_Gui_Total_Meal_Other_Columns> BY_KEY =
-            Arrays.stream(values())
-                    .collect(Collectors.toMap(
-                            Draft_Gui_Total_Meal_Other_Columns :: key,
-                            Function.identity()
-                    ));
+
     
     //##################################################################################################################
     // Constructor

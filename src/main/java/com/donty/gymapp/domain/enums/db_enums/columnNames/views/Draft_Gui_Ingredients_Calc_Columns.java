@@ -2,10 +2,6 @@ package com.donty.gymapp.domain.enums.db_enums.columnNames.views;
 
 import com.donty.gymapp.domain.enums.db_enums.columnNames.base.Table_Enum;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public enum Draft_Gui_Ingredients_Calc_Columns implements Table_Enum
 {
@@ -35,14 +31,7 @@ public enum Draft_Gui_Ingredients_Calc_Columns implements Table_Enum
     
     private final String source_name;
     private final String key;
-    
-    private static final Map<String, Draft_Gui_Ingredients_Calc_Columns> BY_KEY =
-            Arrays.stream(values())
-                    .collect(Collectors.toMap(
-                            Draft_Gui_Ingredients_Calc_Columns :: key,
-                            Function.identity()
-                    ));
-    
+
     //##################################################################################################################
     // Constructor
     //##################################################################################################################

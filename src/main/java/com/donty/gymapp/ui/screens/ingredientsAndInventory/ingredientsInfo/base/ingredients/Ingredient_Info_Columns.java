@@ -2,18 +2,11 @@ package com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.base
 
 import com.donty.gymapp.domain.enums.db_enums.columnNames.base.Table_Enum;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 public enum Ingredient_Info_Columns implements Table_Enum
 {
     //##################################################################################################################
     // Enums
     //##################################################################################################################
-    INGREDIENT_ID("ingredient_id"),
-    IS_SYSTEM("is_system"),
     MEASUREMENT_ID("measurement_id"),
     INGREDIENT_TYPE_ID("ingredient_type_id"),
     INGREDIENT_NAME("ingredient_name"),
@@ -37,13 +30,6 @@ public enum Ingredient_Info_Columns implements Table_Enum
 
     private final String source_name;
     private final String key;
-
-    private static final Map<String, Ingredient_Info_Columns> BY_KEY =
-            Arrays.stream(values())
-                    .collect(Collectors.toMap(
-                            Ingredient_Info_Columns :: key,
-                            Function.identity()
-                    ));
 
     //##################################################################################################################
     // Constructor
