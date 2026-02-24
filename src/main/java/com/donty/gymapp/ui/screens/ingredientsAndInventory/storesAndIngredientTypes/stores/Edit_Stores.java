@@ -55,12 +55,6 @@ public class Edit_Stores extends Edit_Screen<Store_ID_OBJ>
     }
 
     @Override
-    protected void delete_Prior_Queries(ID_Object id_object, Batch_Upload_Statements upload_statements)
-    {
-
-    }
-
-    @Override
     protected boolean delete_Shared_Data_Action()
     {
         Storable_IDS_Parent item_ID_Obj = (Storable_IDS_Parent) field_jc.getSelectedItem();

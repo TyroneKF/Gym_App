@@ -279,21 +279,18 @@ public abstract class Edit_Screen<T extends Storable_IDS_Parent> extends Add_Scr
 
     private boolean delete_Btn_DB_Action()
     {
-        //##################################
         // Variables
-        //##################################
-        Storable_IDS_Parent item_ID_Obj = get_Selected_Item();
-
         String errorMSG = String.format("Failed To Delete ' %s ' FROM %s !!", selected_JComboBox_Item_Txt, data_gathering_name);
         Batch_Upload_Statements upload_statements = new Batch_Upload_Statements(errorMSG);
 
-        //##################################
-        // SQL
-        //##################################
+        Storable_IDS_Parent item_ID_Obj = get_Selected_Item();
 
-        // Get Child Class Queries
-        delete_Prior_Queries(item_ID_Obj, upload_statements);
+        // SQL Upload
+        return delete_Action(item_ID_Obj, upload_statements);
+    }
 
+    protected boolean delete_Action(Storable_IDS_Parent item_ID_Obj, Batch_Upload_Statements upload_statements)
+    {
         // Define Query Variables
 
         String upload_Q1 = String.format("DELETE FROM %s WHERE %s = ?", db_table_name, id_column_name);
@@ -305,8 +302,6 @@ public abstract class Edit_Screen<T extends Storable_IDS_Parent> extends Add_Scr
         //##################
         return db.upload_Data_Batch(upload_statements);
     }
-
-    protected abstract void delete_Prior_Queries(ID_Object id_object, Batch_Upload_Statements upload_statements);
 
     protected abstract boolean delete_Shared_Data_Action();
 }

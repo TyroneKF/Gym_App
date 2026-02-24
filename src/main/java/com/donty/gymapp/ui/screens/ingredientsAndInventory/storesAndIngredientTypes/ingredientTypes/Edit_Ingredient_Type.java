@@ -62,16 +62,21 @@ public class Edit_Ingredient_Type extends Edit_Screen<Ingredient_Type_ID_OBJ>
     }
 
     @Override
-    protected void delete_Prior_Queries(ID_Object id_object, Batch_Upload_Statements upload_statements)
+    protected boolean delete_Action(Storable_IDS_Parent item_ID_Obj, Batch_Upload_Statements upload_statements)
     {
+        // Add Special Cases
         String upload_Q1 = """
                 UPDATE ingredients_info
                 SET ingredient_type_id = ?
                 WHERE ingredient_type_id = ?""";
 
-        Object[] params = new Object[]{ na_ingredient_type_id, id_object.get_ID() };
+        Object[] params = new Object[]{ na_ingredient_type_id, item_ID_Obj.get_ID() };
 
         upload_statements.add_Uploads(new Upload_Statement(upload_Q1, params , true));
+
+
+        // Return to Default delete
+        return  super.delete_Action(item_ID_Obj, upload_statements);
     }
     
     @Override
