@@ -131,9 +131,9 @@ public class Edit_Ingredients_Form extends Ingredients_Form
         switch (field_Value_On_Form)
         {
             case BigDecimal form_Value -> { return form_Value.compareTo(((BigDecimal) field_Value_In_DB_Data)) != 0; }
-            case BigInteger form_Value -> { return ! form_Value.equals(((BigInteger) field_Value_In_DB_Data)); }
-            case Integer form_Value -> { return ! form_Value.equals(((Integer) field_Value_In_DB_Data)); }
-            case String form_Value -> { return ! form_Value.equals(((String) field_Value_In_DB_Data)); }
+            case BigInteger form_Value -> { return ! form_Value.equals(field_Value_In_DB_Data); }
+            case Integer form_Value -> { return ! form_Value.equals(field_Value_In_DB_Data); }
+            case String form_Value -> { return ! form_Value.equals(field_Value_In_DB_Data); }
             default -> throw new IllegalStateException(String.format("\n\n%s Error \nUnexpected value: %s ",
                     get_Class_And_Method_Name(), field_Value_On_Form));
         }
@@ -163,7 +163,7 @@ public class Edit_Ingredients_Form extends Ingredients_Form
 
         // Check if this ingredient has un-assigned type
         boolean has_un_assigned_type =
-                ((Integer) data_AL.get(ingredient_type_query_pos))
+                data_AL.get(ingredient_type_query_pos)
                         .equals(un_assigned_ingredient_type_id);
 
         if (has_un_assigned_type) // Change ingredient Type JC to show / allow un-assigned Type if this ingredient has it

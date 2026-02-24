@@ -261,7 +261,7 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
 
         title_panel.add(sub_meal_title_label, BorderLayout.WEST);
 
-        add_To_Container(this, title_panel, 0, 0, 1, 1, 0.25, 0.25, "vertical", "west");
+        add_To_Container(this, title_panel, 0, "vertical", "west");
     }
 
     private void update_Title_Label()
@@ -280,7 +280,7 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
         IconPanel icon_Panel = new IconPanel(3, 10, "East");
         JPanel iconPanel_Insert = icon_Panel.getIconJpanel();
 
-        add_To_Container(this, icon_Panel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", "east");
+        add_To_Container(this, icon_Panel.getIconAreaPanel(), 0, "horizontal", "east");
 
         //##########################
         //Add BTN
@@ -291,7 +291,7 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
         add_Icon_Btn.setToolTipText("Add Ingredients"); //Hover message over icon
         add_Icon_Btn.makeBTntransparent();
 
-        add_Btn.addActionListener(ae ->  add_btn_Action());
+        add_Btn.addActionListener(ae -> add_btn_Action());
 
         iconPanel_Insert.add(add_Icon_Btn);
 
@@ -317,7 +317,7 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
         editTime_Btn.setToolTipText("Edit Meal Time"); //Hover message over icon
         editTime_Icon_Btn.makeBTntransparent();
 
-        editTime_Btn.addActionListener(ae ->  edit_Sub_Meal_Time_BTN());
+        editTime_Btn.addActionListener(ae -> edit_Sub_Meal_Time_BTN());
 
         iconPanel_Insert.add(editTime_Icon_Btn);
 
@@ -345,7 +345,7 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
         JButton save_btn = save_Icon_Btn.returnJButton();
         save_btn.setToolTipText("Save Sub-Meal"); //Hover message over icon
 
-        save_btn.addActionListener(ae ->  save_Btn_Action());
+        save_btn.addActionListener(ae -> save_Btn_Action());
 
         iconPanel_Insert.add(save_btn);
 
@@ -532,21 +532,13 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
          *
          */
 
-        if (type == Ingredient_Type_ID_OBJ.class) // Ingredient Type
-        {
-            return ! ((Ingredient_Type_ID_OBJ) old_Value).equals(((Ingredient_Type_ID_OBJ) new_Value));
-        }
-        else if (type == Ingredient_Name_ID_OBJ.class) // Ingredient Name
-        {
-            return ! ((Ingredient_Name_ID_OBJ) old_Value).equals(((Ingredient_Name_ID_OBJ) new_Value));
-        }
-        else if (type == BigDecimal.class) // Quantity Field = Big Decimal
+        if (type == BigDecimal.class) // Quantity Field = Big Decimal
         {
             return ((BigDecimal) old_Value).compareTo(((BigDecimal) new_Value)) != 0;
         }
-        else if (type == String.class)
+        if (type == Ingredient_Type_ID_OBJ.class || type == Ingredient_Name_ID_OBJ.class || type == String.class )
         {
-            return ! ((String) old_Value).equals(((String) new_Value));
+            return ! old_Value.equals(new_Value);
         }
 
         //########################################
@@ -754,7 +746,7 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
             return;
         }
 
-        if(! has_Sub_Meal_Data_Changed() && !has_Sub_Meal_Meta_Data_Changed())
+        if (! has_Sub_Meal_Data_Changed() && ! has_Sub_Meal_Meta_Data_Changed())
         {
             JOptionPane.showMessageDialog(null, "\n\nThere's nothing to refresh, data hasn't changed! ");
             return;
@@ -803,7 +795,7 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
         //###################################################
         // Re-Insert Sub-Meal Incase Deleted
         //###################################################
-        if(! has_Sub_Meal_Been_Deleted())
+        if (! has_Sub_Meal_Been_Deleted())
         {
             // DELETE OLD Sub-Meal
             String upload_query00 = "DELETE FROM draft_divided_meal_sections WHERE draft_div_meal_sections_id = ?";
@@ -1452,7 +1444,7 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
 
     private int get_Quantity_Model_Col()
     {
-         return model_quantity_col;
+        return model_quantity_col;
     }
 
     private int get_Ingredient_Type_Col(boolean model_Index)

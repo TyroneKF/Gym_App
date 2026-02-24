@@ -17,16 +17,11 @@ public class Parent_Forms_OBJ extends Screen_JPanel // Shop Form and Ingredients
     //##################################################################################################################
     public Parent_Forms_OBJ(Container parentContainer, String btnText)
     {
-        //##################################################
-        // Super & Variables
-        //##################################################
-        super(parentContainer, false);
-        
-     
-        //##################################################
+        super(parentContainer, false);  // Super & Variables
+
+
         // Collapsible JPanel Creation
-        //##################################################
-        collapsibleJPanel = new CollapsibleJPanel(parentContainer, btnText, 250, 50);
+        collapsibleJPanel = new CollapsibleJPanel(btnText, 250, 50);
         collapsibleJPanel.expand_JPanel();
         
         get_ScrollPane_JPanel().setLayout(new GridLayout(1, 1));

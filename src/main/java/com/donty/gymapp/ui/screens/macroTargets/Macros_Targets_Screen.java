@@ -227,8 +227,7 @@ public class Macros_Targets_Screen extends Screen_JFrame
 
     private void build_GUI()
     {
-        JPanel mainJPanel = getScrollPaneJPanel();
-        mainJPanel.setLayout(new BorderLayout());
+        getScrollPaneJPanel().setLayout(new BorderLayout());
 
         //###########################################################
         // North Section Of GUI
@@ -241,7 +240,7 @@ public class Macros_Targets_Screen extends Screen_JFrame
         titlePanel.setBackground(Color.green);
         titlePanel.add(titleLabel);
 
-        mainJPanel.add(titlePanel, BorderLayout.NORTH);
+        getScrollPaneJPanel().add(titlePanel, BorderLayout.NORTH);
 
         //###########################################################
         // Centre Section Of GUI : FORM
@@ -279,7 +278,7 @@ public class Macros_Targets_Screen extends Screen_JFrame
             inputArea.add(txt_field);       // Add to GUI
         }
 
-        mainJPanel.add(inputArea, BorderLayout.CENTER);
+        getScrollPaneJPanel().add(inputArea, BorderLayout.CENTER);
 
         //###########################################################
         // South Section Of GUI : Submission BTN
@@ -290,7 +289,7 @@ public class Macros_Targets_Screen extends Screen_JFrame
 
         submission_button.addActionListener(ae -> submission_BTN_Action());
 
-        mainJPanel.add(submission_button, BorderLayout.SOUTH);
+        getScrollPaneJPanel().add(submission_button, BorderLayout.SOUTH);
     }
 
     // ###########################################################
@@ -304,7 +303,7 @@ public class Macros_Targets_Screen extends Screen_JFrame
             // Confirm Input
             //#######################################
             int reply = JOptionPane.showConfirmDialog(
-                    meal_plan_screen.getFrame(),
+                    meal_plan_screen,
                     "Would you To Edit Your Macros?",
                     "Edit Macro Targets",
                     JOptionPane.YES_NO_OPTION
@@ -494,7 +493,7 @@ public class Macros_Targets_Screen extends Screen_JFrame
         // Return Result
         // ##############################################
         // Output MSG & Update Screens
-        JOptionPane.showMessageDialog(meal_plan_screen.getFrame(), "Macro Targets Successfully Updated In DB");
+        JOptionPane.showMessageDialog(meal_plan_screen, "Macro Targets Successfully Updated In DB");
         meal_plan_screen.update_Targets_And_Macros_Left_Table();
 
         return true;

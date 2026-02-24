@@ -67,11 +67,6 @@ public class MacroIndicators extends JPanel
     //##################################################################################################################
     // Methods
     //##################################################################################################################
-    public void update_Macro_Wheel(int new_percent)
-    {
-        progress_wheel.update(new_percent);
-    }
-
     public void update_Macro_Wheel(BigDecimal new_percent)
     {
         int value = new_percent

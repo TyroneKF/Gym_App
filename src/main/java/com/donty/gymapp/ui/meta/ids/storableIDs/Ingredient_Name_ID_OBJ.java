@@ -40,9 +40,4 @@ public final class Ingredient_Name_ID_OBJ extends Storable_IDS_Parent
     {
         return ingredient_Type_ID_Obj.get_ID();
     }
-    
-    public String get_Ingredient_Type_Name()
-    {
-        return ingredient_Type_ID_Obj.get_Name();
-    }
 }

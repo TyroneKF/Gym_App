@@ -289,7 +289,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         titlePanel.add(titleLabel);
 
         // Add title JPanel to North Panel Area
-        add_To_Container(northPanel, titlePanel, 0, 2, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        add_To_Container(northPanel, titlePanel, 0, 2, 0.25, "both", 0, 0);
 
         //#################################################################
         // Create Icon Bar
@@ -320,12 +320,12 @@ public class Ingredients_Form extends Parent_Forms_OBJ
             label.setHorizontalAlignment(JLabel.LEFT);
             label.setFont(new Font("Verdana", Font.BOLD, 14));
 
-            add_To_Container(inputArea, label, 0, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
+            add_To_Container(inputArea, label, 0, yPos, 0.25, "horizontal", 0, 0);
 
             if (key.equals("salt"))
             {
                 JPanel salt_JPanel_Area = new JPanel(new GridLayout(2, 1));
-                add_To_Container(inputArea, salt_JPanel_Area, 1, yPos, 1, 1, 0.25, 0.25, "both", 0, 0, null); // Adding JPanel to GUI
+                add_To_Container(inputArea, salt_JPanel_Area, 1, yPos, 0.25, "both", 0, 0); // Adding JPanel to GUI
 
                 salt_JPanel_Area.add(salt_JC); // Add Salt JComboBox
                 salt_JPanel_Area.add(component); // Add Salt JTextField
@@ -335,7 +335,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
             //#######################################
             // Add Component
             //#######################################
-            add_To_Container(inputArea, component, 1, yPos, 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
+            add_To_Container(inputArea, component, 1, yPos, 0.25, "horizontal", 0, 0);
         }
 
         mainJPanel.add(inputArea, BorderLayout.CENTER);
@@ -349,12 +349,12 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         //#####################################################
 
         JPanel iconArea = new JPanel(new GridBagLayout());
-        add_To_Container(northPanel, iconArea, 0, 1, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        add_To_Container(northPanel, iconArea, 0, 1, 0.25, "both", 0, 0);
 
         IconPanel iconPanel = new IconPanel(1, 10, "East");
         JPanel iconPanelInsert = iconPanel.getIconJpanel();
 
-        add_To_Container(iconArea, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0, null);
+        add_To_Container(iconArea, iconPanel.getIconAreaPanel(), 0, 0, 0.25, "horizontal", 10, 0);
 
         //##########################
         // Refresh Icon

@@ -20,8 +20,7 @@ public abstract class Parent_Ingredients_Screen extends Screen_JPanel
     
     // Objects
     protected final MyJDBC_Sqlite db;
-    protected final Frame frame;
-    
+
     // Screen Objects
     protected Ingredients_Form ingredients_Form;
     protected Shop_Form shop_Form;
@@ -40,24 +39,15 @@ public abstract class Parent_Ingredients_Screen extends Screen_JPanel
             Shared_Data_Registry shared_data_registry
     )
     {
-        //##########################################################
         // Super Constructor
-        //##########################################################
-        super(null, true, 800, 850);
-        
-        //##########################################################
+        super(null, true, 800);
+
         // Variables
-        //##########################################################
-        // Objects
         this.ingredients_info_screen = ingredients_info_screen;
         this.db = db;
         this.shared_data_registry = shared_data_registry;
-        
-        frame = ingredients_info_screen.getFrame();
-        
-        //#########################################################
-        //   Create Screen for Interface
-        //#########################################################
+
+        // Create Screen for Interface
         scroll_JPanel = get_ScrollPane_JPanel();
         scroll_JPanel.setLayout(new BorderLayout());
         
@@ -65,9 +55,7 @@ public abstract class Parent_Ingredients_Screen extends Screen_JPanel
         mainCentre_JPanel = new JPanel(new GridBagLayout());
         scroll_JPanel.add(mainCentre_JPanel, BorderLayout.CENTER);
         
-        //##########################################################
-        //   Create GUI Objects
-        //#########################################################
+        // Create GUI Objects
         create_GUI_Objects();
         create_GUI();
     }
@@ -90,22 +78,22 @@ public abstract class Parent_Ingredients_Screen extends Screen_JPanel
         //#############################
         // Add Objects to GUI
         //#############################
-        add_To_Container(mainCentre_JPanel, new JPanel(), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 10, 0, null);
+        add_To_Container(mainCentre_JPanel, new JPanel(), 0, get_And_Increase_YPos(), 0.25, "both", 10, 0);
         
-        add_To_Container(mainCentre_JPanel, ingredients_Form, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        add_To_Container(mainCentre_JPanel, ingredients_Form, 0, get_And_Increase_YPos(), 0.25, "both", 0, 0);
         
-        add_To_Container(mainCentre_JPanel, new JPanel(), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 10, 0, null);
+        add_To_Container(mainCentre_JPanel, new JPanel(), 0, get_And_Increase_YPos(), 0.25, "both", 10, 0);
         
         //#############################
         // Add shop
         //#############################
-        add_To_Container(mainCentre_JPanel, shop_Form, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        add_To_Container(mainCentre_JPanel, shop_Form, 0, get_And_Increase_YPos(), 0.25, "both", 0, 0);
         
         
         //##############################
         //Space Divider
         //##############################
-        add_To_Container(mainCentre_JPanel, new JPanel(), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 10, 0, null);
+        add_To_Container(mainCentre_JPanel, new JPanel(), 0, get_And_Increase_YPos(), 0.25, "both", 10, 0);
         
         
         //###############################
@@ -246,7 +234,7 @@ public abstract class Parent_Ingredients_Screen extends Screen_JPanel
     //##################################################################################################################
     public final Frame get_Frame()
     {
-        return frame;
+        return ingredients_info_screen;
     }
 
     public String get_Ingredients_Name() throws Exception

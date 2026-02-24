@@ -52,11 +52,13 @@ public class Edit_Stores extends Edit_Screen<Store_ID_OBJ>
         super.db_table_name = "stores";
 
         super.id_column_name = "store_id";
-        super.fk_Table = "ingredients_in_sections_of_meal";
     }
 
     @Override
-    protected void delete_Prior_Queries(ID_Object id_object, Batch_Upload_Statements upload_statements) { }
+    protected void delete_Prior_Queries(ID_Object id_object, Batch_Upload_Statements upload_statements)
+    {
+
+    }
 
     @Override
     protected boolean delete_Shared_Data_Action()

@@ -10,13 +10,12 @@ public class Ingredient_Binding<T extends Storable_IDS_Parent> extends Field_Bin
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    protected String nutrition_IX_Label;
+    protected String api_label;
     
     
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    // JComboBoxes
     public Ingredient_Binding
     (
             String gui_Label,
@@ -27,7 +26,8 @@ public class Ingredient_Binding<T extends Storable_IDS_Parent> extends Field_Bin
     {
         super(gui_Label, component, ingredient_Field, query_Field_Pos);
     }
-    
+
+    // JComboBoxes
     public Ingredient_Binding
     (
             String gui_Label,
@@ -38,7 +38,7 @@ public class Ingredient_Binding<T extends Storable_IDS_Parent> extends Field_Bin
     )
     {
         super(gui_Label, component, ingredient_Field, query_Field_Pos);
-        this.nutrition_IX_Label = api_Field;
+        this.api_label = api_Field;
     }
     
     //####################################
@@ -66,14 +66,14 @@ public class Ingredient_Binding<T extends Storable_IDS_Parent> extends Field_Bin
     {
         super(gui_Label, component, ingredient_Field, query_Field_Pos);
         
-        this.nutrition_IX_Label = api_Field;
+        this.api_label = api_Field;
     }
-    
+
     //##################################################################################################################
     // Methods
     //##################################################################################################################
-    public String get_Nutrition_IX_Label()
+    public String get_API_Label()
     {
-        return nutrition_IX_Label;
+        return api_label;
     }
 }

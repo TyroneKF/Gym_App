@@ -30,8 +30,7 @@ public abstract class Edit_Screen<T extends Storable_IDS_Parent> extends Add_Scr
     protected String
             label1,
             label2,
-            selected_JComboBox_Item_Txt = "",
-            fk_Table;
+            selected_JComboBox_Item_Txt = "";
 
     // Booleans
     protected boolean item_Deleted = false;
@@ -81,14 +80,14 @@ public abstract class Edit_Screen<T extends Storable_IDS_Parent> extends Add_Scr
     @Override
     protected void add_Screen_Objects()
     {
-        add_To_Container(centre_JPanel, create_Label_Panel(label1), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
-        add_To_Container(centre_JPanel, jCombo_box_jp, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
+        add_To_Container(centre_JPanel, create_Label_Panel(label1), 0, get_And_Increase_YPos(), 0.25, "horizontal", 0, 0);
+        add_To_Container(centre_JPanel, jCombo_box_jp, 0, get_And_Increase_YPos(), 0.25, "horizontal", 0, 0);
 
-        add_To_Container(centre_JPanel, new JPanel(), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "horizontal", 10, 0, null);
+        add_To_Container(centre_JPanel, new JPanel(), 0, get_And_Increase_YPos(), 0.25, "horizontal", 10, 0);
 
-        add_To_Container(centre_JPanel, create_Label_Panel(label2), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
-        add_To_Container(centre_JPanel, jTextField_JP, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
-        add_To_Container(centre_JPanel, submit_button, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
+        add_To_Container(centre_JPanel, create_Label_Panel(label2), 0, get_And_Increase_YPos(), 0.25, "horizontal", 0, 0);
+        add_To_Container(centre_JPanel, jTextField_JP, 0, get_And_Increase_YPos(), 0.25, "both", 0, 0);
+        add_To_Container(centre_JPanel, submit_button, 0, get_And_Increase_YPos(), 0.25, "horizontal", 0, 0);
 
         resize_GUI();
     }

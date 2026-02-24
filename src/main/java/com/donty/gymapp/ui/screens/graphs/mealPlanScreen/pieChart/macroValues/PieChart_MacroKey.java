@@ -22,7 +22,12 @@ public class PieChart_MacroKey implements Comparable<PieChart_MacroKey>
     // #################################################################################################################
     // Constructor
     // #################################################################################################################
-    public PieChart_MacroKey(MealManager mealManager, Draft_Gui_Total_Meal_Macro_Columns macro_name, String macroSymbol)
+    public PieChart_MacroKey
+    (
+            MealManager mealManager,
+            Draft_Gui_Total_Meal_Macro_Columns macro_name,
+            String macroSymbol
+    )
     {
         //############################################
         // Variables

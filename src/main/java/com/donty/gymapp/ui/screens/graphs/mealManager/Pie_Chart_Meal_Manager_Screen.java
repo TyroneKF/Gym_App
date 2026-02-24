@@ -97,7 +97,7 @@ public class Pie_Chart_Meal_Manager_Screen extends Screen_JFrame
             }
         };
 
-        addToContainer(getScrollPaneJPanel(), pieChart, 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
+        addToContainer(getScrollPaneJPanel(), pieChart, 0, getAndIncreaseContainerYPos(), "horizontal", 0, null);
 
         //#####################################
         // Frame

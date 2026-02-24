@@ -483,12 +483,6 @@ public class MyJDBC_Sqlite  // remove extends eventually
     //######################################################
     // Different Types Of Single Column Collections
     //######################################################
-    public ArrayList<String> get_Single_Col_Query_String(Fetch_Statement_Full full_fetch_statement, boolean allow_No_Results) throws Exception
-    {
-        String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        return get_Single_Column_Internally(full_fetch_statement, method_Name, allow_No_Results, String.class, ArrayList :: new);
-    }
-
     public ArrayList<Object> get_Single_Col_Query_Obj(Fetch_Statement_Full full_fetch_statement, boolean allow_No_Results) throws Exception
     {
         String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
@@ -902,14 +896,14 @@ public class MyJDBC_Sqlite  // remove extends eventually
 
     private void print_SQL_ERR_MSG(SQLException e, String method_Name, Object query)
     {
-        System.err.printf("\n\n%s\n%s ->  @%s SQL ERROR \n%s \n\nQuery: \n\"\"\"\n %s\n\"\"\" \n\nError Message: \n\n\"\"\" \n\n%s \n\n\"\"\" \n\nSQLState: %s \n\nErrorCode: %d\n\n",
-                line_Separator, get_Class_Name(), method_Name, line_Separator, query != null ? query.toString() : "", e.getMessage(), e.getSQLState(), e.getErrorCode());
+        System.err.printf("\n\n%s\n%s SQL ERROR \n%s \n\nQuery: \n\"\"\"\n %s\n\"\"\" \n\nError Message: \n\n\"\"\" \n\n%s \n\n\"\"\" \n\nSQLState: %s \n\nErrorCode: %d\n\n",
+                line_Separator, get_Class_And_Method_Name(), line_Separator, query != null ? query.toString() : "", e.getMessage(), e.getSQLState(), e.getErrorCode());
     }
 
     private void print_Exception_ERR_MSG(Exception e, String method_Name, Object query)
     {
-        System.err.printf("\n\n%s \n%s -> @%s ERROR \n%s \n\nQuery: \n\"\"\"\n%s\n\"\"\" \n\nError Message: \n\n\"\"\"\n  %s \n\"\"\" ",
-                line_Separator, get_Class_Name(), method_Name, line_Separator, query != null ? query.toString() : "", e);
+        System.err.printf("\n\n%s \n%s  ERROR \n%s \n\nQuery: \n\"\"\"\n%s\n\"\"\" \n\nError Message: \n\n\"\"\"\n  %s \n\"\"\" ",
+                line_Separator, get_Class_And_Method_Name(), line_Separator, query != null ? query.toString() : "", e);
     }
 
     //###########################################

@@ -38,7 +38,7 @@ public class LoadingScreen extends Screen_JFrame
         // Create Picture Panel
         JPanel jp = new ImagePanel();
         jp.setPreferredSize(new Dimension(600, 450));
-        addToContainer(getScrollPaneJPanel(), jp, 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        addToContainer(getScrollPaneJPanel(), jp, 0, getAndIncreaseContainerYPos(), "both", 0, null);
 
         //##############################################
         // South GUI : Progress Bar Setup

@@ -1,9 +1,9 @@
 
 mvn javafx:run "-DmainClass=Tests.ToggleSwitchDemo"
 
-
+.) Use enums on edit screens for tables and fields
 .) Delete btn Ingredients on edit screen
-
+.) delete btn fk in edit screens
 
 CREATE TEMPORARY TABLE
 

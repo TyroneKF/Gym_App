@@ -15,12 +15,16 @@ import java.util.ArrayList;
 
 public class Edit_Ingredient_Type extends Edit_Screen<Ingredient_Type_ID_OBJ>
 {
+    //##################################################################################################################
+    // Constructor
+    //##################################################################################################################
+    private final int na_ingredient_type_id;
 
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Edit_Ingredient_Type(
-            
+    public Edit_Ingredient_Type
+    (
             MyJDBC_Sqlite db,
             Shared_Data_Registry shared_Data_Registry,
             Ingredients_Info_Screen ingredient_Info_Screen,
@@ -37,6 +41,8 @@ public class Edit_Ingredient_Type extends Edit_Screen<Ingredient_Type_ID_OBJ>
                 Ingredient_Type_ID_OBJ.class,
                 jComboBox_List
         );
+
+        na_ingredient_type_id = shared_Data_Registry.get_Un_assigned_Ingredient_Type_ID();
     }
 
     //##################################################################################################################
@@ -53,7 +59,6 @@ public class Edit_Ingredient_Type extends Edit_Screen<Ingredient_Type_ID_OBJ>
         super.db_table_name = "ingredient_types";
         
         super.id_column_name = "ingredient_type_id";
-        super.fk_Table = "ingredients_info";
     }
 
     @Override
@@ -63,8 +68,10 @@ public class Edit_Ingredient_Type extends Edit_Screen<Ingredient_Type_ID_OBJ>
                 UPDATE ingredients_info
                 SET ingredient_type_id = ?
                 WHERE ingredient_type_id = ?""";
-        
-        upload_statements.add_Uploads(new Upload_Statement(upload_Q1, new Object[]{ 2, id_object.get_ID() }, true));
+
+        Object[] params = new Object[]{ na_ingredient_type_id, id_object.get_ID() };
+
+        upload_statements.add_Uploads(new Upload_Statement(upload_Q1, params , true));
     }
     
     @Override

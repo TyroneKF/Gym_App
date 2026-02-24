@@ -9,7 +9,6 @@ public class Field_JC_Ingredient_Type extends Field_JCombo_Storable_ID<Ingredien
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    protected final Shared_Data_Registry shared_data_registry;
     protected final int un_assigned_type_id;
 
     protected boolean allow_un_assigned;
@@ -25,7 +24,6 @@ public class Field_JC_Ingredient_Type extends Field_JCombo_Storable_ID<Ingredien
                 shared_data_registry.get_Mapped_Ingredient_Types()
         );
 
-        this.shared_data_registry = shared_data_registry;
         this.allow_un_assigned = allow_un_assigned;
 
         un_assigned_type_id = shared_data_registry.get_Un_assigned_Ingredient_Type_ID();

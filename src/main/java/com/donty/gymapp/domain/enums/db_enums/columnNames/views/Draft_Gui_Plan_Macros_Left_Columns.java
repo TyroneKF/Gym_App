@@ -10,7 +10,7 @@ public enum Draft_Gui_Plan_Macros_Left_Columns implements Table_Enum
     //##################################################################################################################
 
     // Macros
-    PLAN_ID("plan_id");
+    PLAN_ID();
 
     //##################################################################################################################
     // Variables
@@ -24,9 +24,9 @@ public enum Draft_Gui_Plan_Macros_Left_Columns implements Table_Enum
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    Draft_Gui_Plan_Macros_Left_Columns(String key)
+    Draft_Gui_Plan_Macros_Left_Columns()
     {
-        this.key = key;
+        this.key = "plan_id";
         this.source_name = SOURCE_NAME;
     }
 

@@ -40,7 +40,6 @@ public abstract class Add_Screen<T extends Storable_IDS_Parent> extends Screen_J
     protected Field_JTxtField_String field_jt_field;
     protected JButton submit_button;
     protected JPanel centre_JPanel, jTextField_JP;
-    protected Frame frame;
 
     // Integer
     protected final int charLimit = 55;
@@ -115,7 +114,7 @@ public abstract class Add_Screen<T extends Storable_IDS_Parent> extends Screen_J
 
         centre_JPanel = new JPanel(new GridBagLayout());
         centre_JPanel.setBackground(Color.black);
-        add_To_Container(get_ScrollPane_JPanel(), centre_JPanel, 0, 0, 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
+        add_To_Container(get_ScrollPane_JPanel(), centre_JPanel, 0, 0, 0.25, "horizontal", 0, 0);
 
         //#################################################################
         //  Centre & Create Form
@@ -151,10 +150,10 @@ public abstract class Add_Screen<T extends Storable_IDS_Parent> extends Screen_J
 
     protected void add_Screen_Objects()
     {
-        add_To_Container(centre_JPanel, create_Label_Panel(main_Label), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
-        add_To_Container(centre_JPanel, jTextField_JP, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        add_To_Container(centre_JPanel, create_Label_Panel(main_Label), 0, get_And_Increase_YPos(), 0.25, "horizontal", 0, 0);
+        add_To_Container(centre_JPanel, jTextField_JP, 0, get_And_Increase_YPos(), 0.25, "both", 0, 0);
 
-        add_To_Container(centre_JPanel, submit_button, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
+        add_To_Container(centre_JPanel, submit_button, 0, get_And_Increase_YPos(), 0.25, "horizontal", 0, 0);
 
         resize_GUI();
     }
@@ -176,7 +175,7 @@ public abstract class Add_Screen<T extends Storable_IDS_Parent> extends Screen_J
         jLabel.setHorizontalAlignment(JLabel.CENTER);
 
         // Add title JPanel to North Panel Area
-        add_To_Container(jpanel, jLabel, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        add_To_Container(jpanel, jLabel, 0, 0, 0.25, "both", 0, 0);
 
         //###########################
         // Return Label

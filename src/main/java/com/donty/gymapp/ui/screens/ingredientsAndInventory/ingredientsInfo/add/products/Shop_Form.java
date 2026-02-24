@@ -1,6 +1,5 @@
 package com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.add.products;
 
-import com.donty.gymapp.ui.meta.ids.storableIDs.Store_ID_OBJ;
 import com.donty.gymapp.persistence.database.batch.Batch_Upload_Statements;
 import com.donty.gymapp.persistence.database.statements.Upload_Statement;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
@@ -8,7 +7,6 @@ import com.donty.gymapp.gui.controls.IconButton;
 import com.donty.gymapp.gui.panels.IconPanel;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.base.screen.Parent_Forms_OBJ;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.base.screen.Parent_Ingredients_Screen;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
@@ -30,7 +28,6 @@ public class Shop_Form extends Parent_Forms_OBJ
     //#############################
     // Collections
     //#############################
-    protected final ArrayList<Store_ID_OBJ> stores;
     protected final ArrayList<ShopForm_Object> shop_Form_Objects = new ArrayList<>();
 
     //##################################################################################################################
@@ -44,24 +41,14 @@ public class Shop_Form extends Parent_Forms_OBJ
             Shared_Data_Registry shared_Data_Registry
     )
     {
-        //############################################
-        // Super
-        //############################################
-        super(parentContainer, btn_Text);
+        super(parentContainer, btn_Text);  // Super
 
-
-        //############################################
         // Variables
-        //############################################
         this.parentContainer = parentContainer;
         this.ingredient_Screen = ingredient_Screen;
         this.shared_Data_Registry = shared_Data_Registry;
 
-        stores = shared_Data_Registry.get_Stores_AL();
-        //############################################
-        // Create GUI
-        //############################################
-        create_Gui();
+        create_Gui(); // Create GUI
     }
 
     //##################################################################################################################
@@ -86,7 +73,7 @@ public class Shop_Form extends Parent_Forms_OBJ
 
         // North JPanel Part 1
         JPanel title_Label_Panel = create_Label_JP("Add Suppliers", new Font("Verdana", Font.PLAIN, 24), Color.GREEN);
-        add_To_Container(northPanel, title_Label_Panel, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        add_To_Container(northPanel, title_Label_Panel, 0, 0, 0.25, "both", 0, 0);
 
         // North JPanel Part 2
         create_Icon_Section();
@@ -98,12 +85,12 @@ public class Shop_Form extends Parent_Forms_OBJ
         screen_JP.add(form_Area, BorderLayout.CENTER);
 
         JPanel form_Labels_Section = new JPanel(new BorderLayout());
-        add_To_Container(form_Area, form_Labels_Section, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        add_To_Container(form_Area, form_Labels_Section, 0, get_And_Increase_YPos(), 0.25, "both", 0, 0);
 
         //##################
         // Store Section
         //##################
-        JPanel store_JP = create_Section_JP(Color.LIGHT_GRAY, 150, 25, 0, 0, 0, 10);
+        JPanel store_JP = create_Section_JP(Color.LIGHT_GRAY, 150, 25, 0, 10);
         form_Labels_Section.add(store_JP, BorderLayout.WEST);
 
         // Store Label
@@ -119,7 +106,7 @@ public class Shop_Form extends Parent_Forms_OBJ
         //########################
         // Centre Left
         //########################
-        JPanel centre_Left_JP = create_Section_JP(Color.LIGHT_GRAY, 330, 34, 0, 0, 0, 5);
+        JPanel centre_Left_JP = create_Section_JP(Color.LIGHT_GRAY, 330, 34, 0, 5);
         centre_JPanel.add(centre_Left_JP, BorderLayout.WEST);
 
         // Product Name Label
@@ -129,7 +116,7 @@ public class Shop_Form extends Parent_Forms_OBJ
         //########################
         // Centre Middle
         //########################
-        JPanel centre_Middle_JP = create_Section_JP(Color.LIGHT_GRAY, 5, 25, 0, 0, 0, 0);
+        JPanel centre_Middle_JP = create_Section_JP(Color.LIGHT_GRAY, 5, 25, 0, 0);
         centre_JPanel.add(centre_Middle_JP, BorderLayout.CENTER);
 
         // Price Label
@@ -139,7 +126,7 @@ public class Shop_Form extends Parent_Forms_OBJ
         //########################
         // Centre Right
         //########################
-        JPanel centre_Right_JP = create_Section_JP(Color.LIGHT_GRAY, 90, 34, 0, 5, 0, 0);
+        JPanel centre_Right_JP = create_Section_JP(Color.LIGHT_GRAY, 90, 34, 5, 0);
         centre_JPanel.add(centre_Right_JP, BorderLayout.EAST);
 
         // Quantity Label
@@ -149,7 +136,7 @@ public class Shop_Form extends Parent_Forms_OBJ
         //############################################
         // East
         //############################################
-        JPanel east_JPanel = create_Section_JP(Color.LIGHT_GRAY, 110, 34, 0, 5, 0, 0);
+        JPanel east_JPanel = create_Section_JP(Color.LIGHT_GRAY, 110, 34, 5, 0);
         form_Labels_Section.add(east_JPanel, BorderLayout.EAST);
 
         // Delete Btn Label
@@ -160,7 +147,7 @@ public class Shop_Form extends Parent_Forms_OBJ
         // Add Section For Shop Objects
         //############################################
         input_Area_JP = new JPanel(new GridBagLayout());
-        add_To_Container(form_Area, input_Area_JP, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        add_To_Container(form_Area, input_Area_JP, 0, get_And_Increase_YPos(), 0.25, "both", 0, 0);
 
         //############################################
         // Adding to GUI
@@ -174,7 +161,7 @@ public class Shop_Form extends Parent_Forms_OBJ
         // Icon Section
         //############################
         IconPanel iconPanel = new IconPanel(1, 10, "East");
-        add_To_Container(northPanel, iconPanel.getIconAreaPanel(), 0, 1, 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
+        add_To_Container(northPanel, iconPanel.getIconAreaPanel(), 0, 1, 0.25, "horizontal", 0, 0);
 
         JPanel iconPanelInsert = iconPanel.getIconJpanel();
 
@@ -202,7 +189,7 @@ public class Shop_Form extends Parent_Forms_OBJ
         shop_Form_Objects.add(add_shop_form_object);
 
         // Adding Object To GUI
-        add_To_Container(input_Area_JP, add_shop_form_object, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        add_To_Container(input_Area_JP, add_shop_form_object, 0, get_And_Increase_YPos(), 0.25, "both", 0, 0);
 
         // Resize GUI
         resize_GUI();
@@ -420,11 +407,6 @@ public class Shop_Form extends Parent_Forms_OBJ
     //################################
     // Updates
     //################################
-    protected String get_Ingredient_ID_SQL_Statement()
-    {
-        return "(SELECT ingredient_id  FROM ingredients_info WHERE ingredient_name = ?)";
-    }
-
     public void add_Update_Queries_Extra(Batch_Upload_Statements queries_And_Params) throws Exception
     {
 
@@ -471,6 +453,8 @@ public class Shop_Form extends Parent_Forms_OBJ
         //######################
         Object[] params = new Object[size * input_Params_Per_Item];
 
+        String ingredient_id_sql = "(SELECT ingredient_id  FROM ingredients_info WHERE ingredient_name = ?)";
+
         for (int pos = 0; pos < size; pos++)
         {
             ShopForm_Object shopForm_object = shop_Form_Objects.get(pos);
@@ -480,8 +464,8 @@ public class Shop_Form extends Parent_Forms_OBJ
             // Add to Values
             values.append(
                     pos == size - 1
-                            ? String.format("(%s, ?, ?, ?, ?);", get_Ingredient_ID_SQL_Statement())
-                            : String.format("(%s, ?, ?, ?, ?),", get_Ingredient_ID_SQL_Statement())
+                            ? String.format("(%s, ?, ?, ?, ?);", ingredient_id_sql)
+                            : String.format("(%s, ?, ?, ?, ?),", ingredient_id_sql)
             );
 
             shopForm_object.add_Params(params, base); // Each Item add its update statements

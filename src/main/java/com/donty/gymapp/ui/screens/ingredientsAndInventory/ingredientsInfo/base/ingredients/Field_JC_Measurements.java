@@ -9,7 +9,6 @@ public class Field_JC_Measurements extends Field_JCombo_Storable_ID<Measurement_
     //##################################################################################################################
     // Variable
     //##################################################################################################################
-    protected final Shared_Data_Registry shared_data_registry;
     protected final int na_measurement_id;
 
 
@@ -25,7 +24,6 @@ public class Field_JC_Measurements extends Field_JCombo_Storable_ID<Measurement_
                 shared_data_registry.get_Ingredient_Measurement_Obj_AL()
         );
 
-        this.shared_data_registry = shared_data_registry;
         na_measurement_id = shared_data_registry.get_NA_Measurement_ID();
 
         init();

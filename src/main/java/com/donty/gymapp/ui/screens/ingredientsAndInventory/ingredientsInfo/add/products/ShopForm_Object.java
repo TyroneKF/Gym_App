@@ -32,11 +32,8 @@ public class ShopForm_Object extends JPanel
 
     // Objects
     protected final Shop_Form shop_form;
-    protected Shared_Data_Registry shared_data_registry;
 
-    //############
     // Maps
-    //############
     protected LinkedHashMap<String, Shop_Form_Binding<?>> field_Items_Map;
 
     //##################################################################################################################
@@ -125,10 +122,10 @@ public class ShopForm_Object extends JPanel
         }};
     }
 
-    protected JPanel create_Section_JP(int width, int height, int top_padding, int left_padding, int bottom_padding, int right_padding)
+    protected JPanel create_Section_JP(int width, int height, int left_padding, int right_padding)
     {
         JPanel jp = new JPanel(new GridLayout(1, 1));
-        jp.setBorder(new EmptyBorder(top_padding, left_padding, bottom_padding, right_padding));
+        jp.setBorder(new EmptyBorder(0, left_padding, 5, right_padding));
         jp.setPreferredSize(new Dimension(width, height)); // width, height
 
         return jp;
@@ -142,14 +139,14 @@ public class ShopForm_Object extends JPanel
         setLayout(new BorderLayout()); // Define layout of Object
 
         // East Panel
-        JPanel eastPanel = create_Section_JP(110, 34, 0, 5, 5, 0);
+        JPanel eastPanel = create_Section_JP(110, 34, 5, 0);
         add(eastPanel, BorderLayout.EAST);
 
         //######################################################
         // West Side
         //######################################################
         // Create West Side Panel
-        JPanel westPanel = create_Section_JP(150, 25, 0, 0, 5, 10);
+        JPanel westPanel = create_Section_JP(150, 25, 0, 10);
         add(westPanel, BorderLayout.WEST);
 
         westPanel.add(stores_JC); // Add JComboBox to GUI
@@ -163,7 +160,7 @@ public class ShopForm_Object extends JPanel
         //############################
         // Product Name : JTextField
         //############################
-        JPanel product_Name_JP = create_Section_JP(330, 34, 0, 0, 5, 5);
+        JPanel product_Name_JP = create_Section_JP(330, 34, 0, 5);
         centrePanel.add(product_Name_JP, BorderLayout.WEST);
 
         product_Name_JP.add(product_Name_JT); // Add JComboBox to GUI
@@ -171,7 +168,7 @@ public class ShopForm_Object extends JPanel
         //############################
         // Product Price : JTextField
         //############################
-        JPanel product_Price_JP = create_Section_JP(5, 25, 0, 0, 5, 0);
+        JPanel product_Price_JP = create_Section_JP(5, 25, 0, 0);
         centrePanel.add(product_Price_JP, BorderLayout.CENTER);
 
         product_Price_JP.add(product_Price_JT); // Add JComboBox to GUI
@@ -179,7 +176,7 @@ public class ShopForm_Object extends JPanel
         //############################
         // Quantity : JTextField
         //############################
-        JPanel quantity_JP = create_Section_JP(90, 34, 0, 5, 5, 0);
+        JPanel quantity_JP = create_Section_JP(90, 34, 5, 0);
         centrePanel.add(quantity_JP, BorderLayout.EAST);
 
         quantity_JP.add(quantity_JT); // Add JComboBox to GUI

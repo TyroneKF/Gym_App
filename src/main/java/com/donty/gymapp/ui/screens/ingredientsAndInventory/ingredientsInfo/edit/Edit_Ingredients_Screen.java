@@ -67,14 +67,14 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
 
         // Title
         JPanel ingredient_Type_Title_JP = create_Label_JP("Select Ingredient Type", new Font("Verdana", Font.PLAIN, 24), Color.GREEN);
-        add_To_Container(mainCentre_JPanel, ingredient_Type_Title_JP, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
+        add_To_Container(mainCentre_JPanel, ingredient_Type_Title_JP, 0, get_And_Increase_YPos(), 0.25, "horizontal", 0, 0);
 
         //######################
         // JComboBox
         //######################
         // Create JPanel
         JPanel ingredientType_JC_JP = create_JComboBox_JP();
-        add_To_Container(mainCentre_JPanel, ingredientType_JC_JP, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "horizontal", 10, 0, null);
+        add_To_Container(mainCentre_JPanel, ingredientType_JC_JP, 0, get_And_Increase_YPos(), 0.25, "horizontal", 10, 0);
 
         // Create JCombBox
         ingredient_Main_Type_JC = new Field_JC_Ingredient_Type(shared_data_registry, true)
@@ -91,21 +91,21 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
         //######################
         //  Add Space Divider
         //######################
-        add_To_Container(mainCentre_JPanel, new JPanel(), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 10, 0, null);
+        add_To_Container(mainCentre_JPanel, new JPanel(), 0, get_And_Increase_YPos(), 0.25, "both", 10, 0);
 
         //#########################################
         // Ingredient Name Setup
         //#########################################
         // Title
         JPanel ingredient_Name_Title_JP = create_Label_JP("Select Ingredient Name", new Font("Verdana", Font.PLAIN, 24), Color.GREEN);
-        add_To_Container(mainCentre_JPanel, ingredient_Name_Title_JP, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
+        add_To_Container(mainCentre_JPanel, ingredient_Name_Title_JP, 0, get_And_Increase_YPos(), 0.25, "horizontal", 0, 0);
 
         //######################
         // JComboBox
         //######################
         // Create JPanel
         JPanel ingredient_Name_JC_JP = create_JComboBox_JP();
-        add_To_Container(mainCentre_JPanel, ingredient_Name_JC_JP, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "horizontal", 10, 0, null);
+        add_To_Container(mainCentre_JPanel, ingredient_Name_JC_JP, 0, get_And_Increase_YPos(), 0.25, "horizontal", 10, 0);
 
         // Create JComboBox
         ingredient_Main_Name_JC = new Field_JCombo_Storable_ID_Main<>("Ingredient Name", Ingredient_Name_ID_OBJ.class, new ArrayList<>())
@@ -122,7 +122,7 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
         //####################
         //  Add Space Divider
         //####################
-        add_To_Container(mainCentre_JPanel, new JPanel(), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 10, 0, null);
+        add_To_Container(mainCentre_JPanel, new JPanel(), 0, get_And_Increase_YPos(), 0.25, "both", 10, 0);
     }
 
     private JPanel create_JComboBox_JP()

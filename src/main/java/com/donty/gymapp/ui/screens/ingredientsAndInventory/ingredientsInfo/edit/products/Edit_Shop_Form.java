@@ -15,7 +15,7 @@ public class Edit_Shop_Form extends Shop_Form
     // Variables
     //##################################################################################################################
     protected final ArrayList<Edit_ShopForm_Object> edit_Shop_Form_Objects_AL = new ArrayList<>();
-    protected int ingredient_ID;
+
     
     //##################################################################################################################
     // Constructor
@@ -34,7 +34,6 @@ public class Edit_Shop_Form extends Shop_Form
         
         if (! data_AL.isEmpty())
         {
-            ingredient_ID = (int) data_AL.getFirst().get(1); // Set Ingredient ID
             for (ArrayList<Object> data : data_AL)  // Add Shop Form Objects to Form
             {
                 // Create ShopForm Object & Add
@@ -48,7 +47,7 @@ public class Edit_Shop_Form extends Shop_Form
                 edit_Shop_Form_Objects_AL.add(edit_shop_form_object);
                 
                 // Adding Object To GUI
-                add_To_Container(input_Area_JP, edit_shop_form_object, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
+                add_To_Container(input_Area_JP, edit_shop_form_object, 0, get_And_Increase_YPos(), 0.25, "both", 0, 0);
             }
         }
         

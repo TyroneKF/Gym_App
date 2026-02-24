@@ -37,9 +37,4 @@ public final class Meal_ID_OBJ extends Meta_Data_ID_Parent
     {
         return get_ID();
     }
-
-    public int get_Source_Meal_ID()
-    {
-        return source_meal_id;
-    }
 }

@@ -148,9 +148,9 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
     {
         // GUI Table Names
         column_Names.forEach(e ->
-                    gui_Column_Names.add(Arrays.stream(e.split("[ _]+"))
-                            .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
-                            .collect(Collectors.joining("_")))
+                gui_Column_Names.add(Arrays.stream(e.split("[ _]+"))
+                        .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
+                        .collect(Collectors.joining("_")))
         );
 
         // Un-Editable Table Columns
@@ -219,7 +219,7 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 
-        add_To_Container(this, scrollPane, 0, 1, 1, 1, 0.25, 0.25, "both", "");
+        add_To_Container(this, scrollPane, 1, "both", "");
 
         //#################################################################################
         // Sizing
@@ -697,25 +697,20 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
     }
 
     protected static void add_To_Container
-            (
-                    Container container,
-                    Component add_To_Container,
-                    int grid_X,
-                    int grid_Y,
-                    int grid_Width,
-                    int grid_Height,
-                    double weight_X,
-                    double weight_Y,
-                    String fill,
-                    String anchor
-            )
+    (
+            Container container,
+            Component add_To_Container,
+            int grid_Y,
+            String fill,
+            String anchor
+    )
     {
-        gbc.gridx = grid_X;
+        gbc.gridx = 0;
         gbc.gridy = grid_Y;
-        gbc.gridwidth = grid_Width;
-        gbc.gridheight = grid_Height;
-        gbc.weightx = weight_X;
-        gbc.weighty = weight_Y;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.weightx = 0.25;
+        gbc.weighty = 0.25;
 
         switch (fill.toLowerCase())
         {

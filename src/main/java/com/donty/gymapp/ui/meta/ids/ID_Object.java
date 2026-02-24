@@ -53,12 +53,7 @@ public class ID_Object implements Comparable<ID_Object>
     {
         return id;
     }
-    
-    public String get_String_Values()
-    {
-        return String.format("%s - %s", id, name);
-    }
-    
+
     public boolean get_is_System()
     {
         return is_System;

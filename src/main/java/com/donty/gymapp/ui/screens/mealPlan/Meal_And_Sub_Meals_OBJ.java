@@ -50,33 +50,38 @@ public class Meal_And_Sub_Meals_OBJ
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
-    // Objects
-    public Meal_ID_OBJ get_Meal_ID_OBJ()
-    {
-        return meal_id_obj;
-    }
-
     public boolean is_Sub_Meal_In_List(int draft_sub_meal_id)
     {
         return sub_meal_id_map.containsKey(draft_sub_meal_id);
     }
 
+
     // #######################################
-    // Integer
+    // Meal ID Object Values
+    // #######################################
+    public int get_Draft_Meal_ID()
+    {
+        return meal_id_obj.get_Draft_Meal_ID();
+    }
+
+    public String get_Meal_Name()
+    {
+       return meal_id_obj.get_Meal_Name();
+    }
+
+    public LocalTime get_Meal_Time()
+    {
+        return meal_id_obj.get_Meal_Time();
+    }
+
+    // #######################################
+    // Collections
     // #######################################
     public int get_No_Of_Sub_Meals_In_Meal()
     {
         return sub_meal_id_map.size();
     }
 
-    public int get_Draft_Meal_ID()
-    {
-        return meal_id_obj.get_Draft_Meal_ID();
-    }
-
-    // #######################################
-    // Collections
-    // #######################################
     public HashMap<Integer, Sub_Meal_ID_OBJ> get_Sub_Meal_ID_Map()
     {
         return sub_meal_id_map;

@@ -133,9 +133,9 @@ public class PieChart_Macros_MPS extends Screen_JPanel
             JPanel x = new JPanel(new GridBagLayout());
             get_ScrollPane_JPanel().add(x);
 
-            add_To_Container(x, pieChart, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 10, 10, null);
+            add_To_Container(x, pieChart, 0, get_And_Increase_YPos(), 0.25, "both", 10, 10);
 
-            add_To_Container(x, create_Space_Divider(20, 50, Color.WHITE), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
+            add_To_Container(x, create_Space_Divider(20, 50, Color.WHITE), 0, get_And_Increase_YPos(), 0.25, "both", 0, 0);
         }
 
         //##################################

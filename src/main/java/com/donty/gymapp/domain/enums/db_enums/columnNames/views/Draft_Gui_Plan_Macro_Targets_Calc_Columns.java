@@ -9,7 +9,7 @@ public enum Draft_Gui_Plan_Macro_Targets_Calc_Columns implements Table_Enum
     //##################################################################################################################
 
     // Macros
-    PLAN_ID("plan_id");
+    PLAN_ID();
 
 
 
@@ -26,9 +26,9 @@ public enum Draft_Gui_Plan_Macro_Targets_Calc_Columns implements Table_Enum
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    Draft_Gui_Plan_Macro_Targets_Calc_Columns(String key)
+    Draft_Gui_Plan_Macro_Targets_Calc_Columns()
     {
-        this.key = key;
+        this.key = "plan_id";
         this.source_name = SOURCE_NAME;
     }
 

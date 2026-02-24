@@ -15,15 +15,13 @@ public class CollapsibleJPanel extends JPanel
     protected final JPanel collapsibleJPanel, southPanel, eastJPanel;
     protected final JButton iconBtn;
     protected final IconButton collapse_And_Expand_Btn;
-    protected final Container parentContainer;
 
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public CollapsibleJPanel(Container parentContainer, String btnText, int btnWidth, int btnHeight)
+    public CollapsibleJPanel(String btnText, int btnWidth, int btnHeight)
     {
         this.btnText = btnText;
-        this.parentContainer = parentContainer;
 
         //####################################################
         // Defining JPanel Features
@@ -106,12 +104,6 @@ public class CollapsibleJPanel extends JPanel
             iconBtn.setText(btnText);
         }
     }
-
-    public String get_Btn_Text()
-    {
-        return btnText;
-    }
-
 
     public void expand_JPanel()
     {
