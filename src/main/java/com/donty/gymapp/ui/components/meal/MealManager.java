@@ -1,6 +1,5 @@
 package com.donty.gymapp.ui.components.meal;
 
-import com.donty.gymapp.ui.meta.ids.meta.Meal_ID_OBJ;
 import com.donty.gymapp.ui.meta.ids.meta.Sub_Meal_ID_OBJ;
 import com.donty.gymapp.persistence.database.Fetched_Results;
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
@@ -23,7 +22,6 @@ import com.donty.gymapp.ui.screens.mealPlan.Meal_Plan_Screen;
 import com.donty.gymapp.domain.enums.db_enums.columnNames.views.totalmeal.Draft_Gui_Total_Meal_Other_Columns;
 import org.apache.commons.lang3.StringUtils;
 import org.javatuples.Pair;
-
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalTime;
@@ -63,7 +61,6 @@ public class MealManager
             na_pdid;
 
     private int
-            source_meal_id,
             draft_meal_ID,
             yPoInternally = 0,
             total_meal_time_col_pos,
@@ -133,15 +130,12 @@ public class MealManager
         //################################################
         // Global Variables
         //################################################
-        Meal_ID_OBJ meal_id_obj = meal_and_sub_meals_obj.get_Meal_ID_OBJ();
-
         this.meal_plan_screen = meal_plan_screen;
         this.shared_Data_Registry = shared_Data_Registry;
         this.db = db;
         this.macrosLeft_JTable = macrosLeft_JTable;
 
-        draft_meal_ID = meal_id_obj.get_Draft_Meal_ID();
-        source_meal_id = meal_id_obj.get_Source_Meal_ID();
+        draft_meal_ID = meal_and_sub_meals_obj.get_Draft_Meal_ID();
 
         is_MealManager_In_DB = true;
         is_Meal_Saved = true;  // Set Variable which identifies in this meal associated with this object is in the database
@@ -150,11 +144,11 @@ public class MealManager
         na_ingredient_id = shared_Data_Registry.get_Na_Ingredient_ID();
 
         // Set Meal Time Variables
-        LocalTime meal_time = meal_id_obj.get_Meal_Time();
+        LocalTime meal_time = meal_and_sub_meals_obj.get_Meal_Time();
         set_Time_Variables(false, meal_time, meal_time); // Set MealTime Variables
 
         // Set Meal Name Variables
-        String mealName = meal_id_obj.get_Name();
+        String mealName = meal_and_sub_meals_obj.get_Meal_Name();
         set_Meal_Name_Variables(false, mealName, mealName); // Set MealName Variables
 
         //################################################
@@ -407,7 +401,7 @@ public class MealManager
         IconPanel iconPanel = new IconPanel(2, 10, "East");
         JPanel iconPanelInsert = iconPanel.getIconJpanel();
 
-        add_To_Container(eastJPanel, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0, null);
+        add_To_Container(eastJPanel, iconPanel.getIconAreaPanel(), 0, "horizontal", 10);
 
         //##########################
         // Pie Chart Graph BTN
@@ -549,7 +543,7 @@ public class MealManager
         // Create Collapsible Object
         //################################################################
         //collapsibleJpObj = new CollapsibleJPanel(container, remove_Seconds_On_Time_String(savedMealTime), 150, 50); // time as btn txt
-        collapsibleJpObj = new CollapsibleJPanel(container, saved_meal_name, 180, 50); // time as btn txt
+        collapsibleJpObj = new CollapsibleJPanel(saved_meal_name, 180, 50); // time as btn txt
         collapsibleCenterJPanel = collapsibleJpObj.get_Centre_JPanel();
         collapsibleCenterJPanel.setBackground(Color.YELLOW);
 
@@ -566,13 +560,13 @@ public class MealManager
         JPanel southPanel = collapsibleJpObj.get_South_JPanel();   // TotalMeal_Table to Collapsible Object
 
         // adds space between Ingredients_In_Meal_Calculation table and total_in_meal table
-        add_To_Container(southPanel, new JPanel(), 0, 1, 1, 1, 0.25, 0.25, "both", 50, 0, null);
+        add_To_Container(southPanel, new JPanel(), 1, "both", 50);
 
         // Adding total table to CollapsibleOBJ
-        add_To_Container(southPanel, totalMealTable, 0, 2, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        add_To_Container(southPanel, totalMealTable, 2, "both", 0);
 
         // Add Initial Space Between For the First Divided Meal
-        add_To_Container(collapsibleCenterJPanel, new JPanel(), 0, yPoInternally++, 1, 1, 0.25, 0.25, "both", 10, 0, null);
+        add_To_Container(collapsibleCenterJPanel, new JPanel(), yPoInternally++, "both", 10);
 
         is_Object_Created = true;  // Set Object Created
 
@@ -625,8 +619,8 @@ public class MealManager
     {
         JPanel spaceDivider = ingredients_table.get_Space_Divider();
 
-        add_To_Container(collapsibleCenterJPanel, ingredients_table, 0, yPoInternally++, 1, 1, 0.25, 0.25, "both", 0, 0, null);
-        add_To_Container(collapsibleCenterJPanel, spaceDivider, 0, yPoInternally++, 1, 1, 0.25, 0.25, "both", 50, 0, null);
+        add_To_Container(collapsibleCenterJPanel, ingredients_table, yPoInternally++, "both", 0);
+        add_To_Container(collapsibleCenterJPanel, spaceDivider, yPoInternally++, "both", 50);
     }
 
     //##################################################################################################################
@@ -1640,11 +1634,6 @@ public class MealManager
     //##################################################################################################################
     // Mutator Methods
     //##################################################################################################################
-    public void set_Source_Meal_ID(int source_meal_id)
-    {
-        this.source_meal_id = source_meal_id;
-    }
-
     private void set_Time_Variables(boolean hasMealTimeBeenChanged, LocalTime savedMealTime, LocalTime currentMealTime)
     {
         this.has_Meal_Time_Been_Changed = hasMealTimeBeenChanged;
@@ -1749,7 +1738,7 @@ public class MealManager
     // ############################################
     public Frame getFrame()
     {
-        return meal_plan_screen.getFrame();
+        return meal_plan_screen;
     }
 
     public JPanel getSpaceDividerForMealManager()
@@ -1778,11 +1767,6 @@ public class MealManager
         return draft_meal_ID;
     }
 
-    public int get_Source_Meal_ID()
-    {
-        return source_meal_id;
-    }
-
     public int get_Plan_ID()
     {
         return shared_Data_Registry.get_Selected_Plan_ID();
@@ -1794,35 +1778,26 @@ public class MealManager
     private void add_To_Container
     (
             Container container,
-            Component addToContainer,
-            Integer gridX,
-            Integer gridy,
-            Integer gridWidth,
-            Integer gridHeight,
-            Double weightX,
-            Double weightY,
+            Component add_to_container,
+            Integer grid_y,
             String fill,
-            Integer ipadY,
-            Integer ipadX,
-            String anchor
+            Integer ipad_y
     )
     {
-        if (gridX != null)
+        gbc.gridx = 0;
+
+        if (grid_y != null)
         {
-            gbc.gridx = gridX;
-        }
-        if (gridy != null)
-        {
-            gbc.gridy = gridy;
+            gbc.gridy = grid_y;
         }
 
-        gbc.gridwidth = gridWidth;
-        gbc.gridheight = gridHeight;
-        gbc.weightx = weightX;
-        gbc.weighty = weightY;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.weightx = 0.25;
+        gbc.weighty = 0.25;
 
-        gbc.ipady = ipadY;
-        gbc.ipadx = ipadX;
+        gbc.ipady = ipad_y;
+        gbc.ipadx = 0;
 
         switch (fill.toLowerCase())
         {
@@ -1838,20 +1813,7 @@ public class MealManager
                 break;
         }
 
-        if (anchor != null)
-        {
-            switch (anchor.toLowerCase())
-            {
-                case "start":
-                    gbc.anchor = GridBagConstraints.PAGE_START;
-                    break;
-
-                case "scroll_to_the_end":
-                    gbc.anchor = GridBagConstraints.PAGE_END;
-                    break;
-            }
-        }
-        container.add(addToContainer, gbc);
+        container.add(add_to_container, gbc);
     }
 
     //##################################################################################################################

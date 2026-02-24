@@ -272,7 +272,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     private void initialize_Context_And_Table_Metadata(LoadingScreen loading_screen) throws Exception
     {
         //  1.) Getting Selected User & Plan Info
-        setup_Get_User_And_Plan_Info(true, true, true, true);
+        setup_Get_User_And_Plan_Info();
         loading_screen.increaseBar(2);
 
         // 2.) Getting Table Column Names
@@ -356,10 +356,10 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
         // Splitting Scroll JPanel
         scroll_JP_center = new JPanel(new GridBagLayout());
-        addToContainer(getScrollPaneJPanel(), scroll_JP_center, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, "center");
+        addToContainer(getScrollPaneJPanel(), scroll_JP_center, 0, 0, "both", 0, "center");
 
         JPanel scroll_jpanel_bottom = new JPanel(new GridBagLayout());
-        addToContainer(getScrollPaneJPanel(), scroll_jpanel_bottom, 0, 1, 1, 1, 0.25, 0.25, "both", 0, 0, "end");
+        addToContainer(getScrollPaneJPanel(), scroll_jpanel_bottom, 0, 1, "both", 0, "end");
 
         //#############################
         // North :  JPanel
@@ -411,7 +411,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
     private void failed_Start_UP(LoadingScreen loadingScreen)
     {
-        JOptionPane.showMessageDialog(getFrame(), "Failed to Initialize Application!");
+        JOptionPane.showMessageDialog(this, "Failed to Initialize Application!");
 
         try
         {
@@ -429,7 +429,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //#################################################
     // Context & Table Meta-Data:
     //#################################################
-    private void setup_Get_User_And_Plan_Info(boolean user_id, boolean plan_id, boolean plan_version_id, boolean plan_name) throws Exception
+    private void setup_Get_User_And_Plan_Info() throws Exception
     {
         // Variables
         String error_msg = "Error, Gathering Plan & Personal User Information!";
@@ -464,22 +464,14 @@ public class Meal_Plan_Screen extends Screen_JFrame
             ArrayList<ArrayList<Object>> db_results = db.get_2D_Query_AL_Object(fetch_statement, false);
 
             // App Must assume by default there is a selected user and 1 plan active otherwise this causes an error
-            if (user_id) // user_id
-            {
-                shared_data_registry.set_User_ID(((Integer) db_results.getFirst().getFirst()));
-            }
 
-            if (plan_id) { shared_data_registry.set_Selected_Plan_ID((Integer) db_results.getFirst().get(1)); }
+            shared_data_registry.set_User_ID(((Integer) db_results.getFirst().getFirst())); // user_id
 
-            if (plan_version_id) // plan version id
-            {
-                shared_data_registry.set_Selected_Plan_Version_ID((Integer) db_results.getFirst().get(2));
-            }
+            shared_data_registry.set_Selected_Plan_ID((Integer) db_results.getFirst().get(1)); // plan_id
 
-            if (plan_name) // plan name
-            {
-                shared_data_registry.set_Plan_Name((String) db_results.getFirst().get(3));
-            }
+            shared_data_registry.set_Selected_Plan_Version_ID((Integer) db_results.getFirst().get(2)); // plan version id
+
+            shared_data_registry.set_Plan_Name((String) db_results.getFirst().get(3)); // plan name
 
             System.out.printf("\n\nUser_ID : %s \nPlan_ID : %s \nPlan_Version_ID : %s \nPlan_Name : %s",
                     get_User_ID(),
@@ -781,7 +773,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // Go through Results
         //#######################################
         ObjectMapper mapper = new ObjectMapper();
-        HashMap<Ingredient_Type_ID_OBJ, ArrayList<Ingredient_Name_ID_OBJ>> mapped_Data = new HashMap<>();
 
         try
         {
@@ -920,7 +911,16 @@ public class Meal_Plan_Screen extends Screen_JFrame
     private void setup_Get_Measurement_Data() throws Exception
     {
         // Set Variables
-        String query = "SELECT * FROM measurements ORDER BY unit_name;";
+        String query = """
+                SELECT
+                    measurement_id,
+                    is_system,
+                    unit_name,
+                    unit_symbol,
+                    measurement_material_type_id
+                FROM measurements ORDER BY unit_name;""";
+
+
         String error_msg = "Unable, to get Measurements Data";
 
         Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, null, error_msg);
@@ -943,16 +943,17 @@ public class Meal_Plan_Screen extends Screen_JFrame
         {
             int id = (int) row.get(0);
             boolean is_system = ((int) row.get(1)) == 1; // 1 = true
-            String unit_Name = (String) row.get(2);
-            String unit_Symbol = (String) row.get(3);
+            String unit_name = (String) row.get(2);
+            String unit_symbol = (String) row.get(3);
+
             int measurement_Material_Type_ID = (int) row.get(4);
 
             shared_data_registry.add_Measurement(
                     new Measurement_ID_OBJ(
                             id,
                             is_system,
-                            unit_Name,
-                            unit_Symbol,
+                            unit_name,
+                            unit_symbol,
                             shared_data_registry.get_Measurement_Material_Type_ID_OBJ(measurement_Material_Type_ID)
                     ),
                     false
@@ -1674,9 +1675,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //#######################
         // Configure North Panel
         //#######################
-        mainNorthPanel.setLayout(new BorderLayout());
-        mainNorthPanel.setBorder(BorderFactory.createLineBorder(Color.WHITE, 6));
-        mainNorthPanel.setPreferredSize(new Dimension(width, height));
+        getMainNorthPanel().setLayout(new BorderLayout());
+        getMainNorthPanel().setBorder(BorderFactory.createLineBorder(Color.WHITE, 6));
+        getMainNorthPanel().setPreferredSize(new Dimension(width, height));
 
         //#######################
         // West Side
@@ -1686,7 +1687,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         west_jp.setPreferredSize(new Dimension(700, height - 10));
         west_jp.setBorder(BorderFactory.createLineBorder(Color.WHITE, 3));
 
-        mainNorthPanel.add(west_jp, BorderLayout.WEST);
+        getMainNorthPanel().add(west_jp, BorderLayout.WEST);
 
         // Create Macro Indicators
         create_GUI_Indicators(west_jp);
@@ -1699,7 +1700,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         east_jp.setPreferredSize(new Dimension(800, height - 10));
         east_jp.setBorder(BorderFactory.createLineBorder(Color.WHITE, 3));
 
-        mainNorthPanel.add(east_jp, BorderLayout.EAST);
+        getMainNorthPanel().add(east_jp, BorderLayout.EAST);
 
         // Icon Setup
         icon_Setup(east_jp);
@@ -1725,7 +1726,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 25
         );
 
-        addToContainer(jpanel, protein_indicator, 0, 0, 1, 1, 0.25, 0.25, "vertical", 10, 0, null);
+        addToContainer(jpanel, protein_indicator, 0, 0, "vertical", 10, null);
 
         //#################################
         // Carb Macro Indicator
@@ -1745,7 +1746,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 25
         );
 
-        addToContainer(jpanel, carbs_indicator, 1, 0, 1, 1, 0.25, 0.25, "vertical", 10, 0, null);
+        addToContainer(jpanel, carbs_indicator, 1, 0, "vertical", 10, null);
 
         //#################################
         // Protein Macro Indicator
@@ -1765,7 +1766,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 25
         );
 
-        addToContainer(jpanel, fats_indicator, 2, 0, 1, 1, 0.25, 0.25, "vertical", 10, 0, null);
+        addToContainer(jpanel, fats_indicator, 2, 0, "vertical", 10, null);
 
         //#################################
         // Calories  Indicator
@@ -1785,10 +1786,10 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 45
         );
 
-        addToContainer(jpanel, calories_indicator, 3, 0, 1, 1, 0.25, 0.25, "vertical", 10, 0, null);
+        addToContainer(jpanel, calories_indicator, 3, 0, "vertical", 10, null);
     }
 
-    @Override
+
     protected void icon_Setup(Container jpanel)
     {
         //##############################################################################################################
@@ -1799,7 +1800,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         IconPanel iconPanel = new IconPanel(6, 10, "East");
         JPanel iconPanelInsert = iconPanel.getIconJpanel();
 
-        addToContainer(jpanel, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0, null);
+        addToContainer(jpanel, iconPanel.getIconAreaPanel(), 0, 0, "horizontal", 10, null);
 
         //##########################
         // Clear
@@ -2055,7 +2056,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     )
     {
         JPanel macrosInfoJPanel = new JPanel(new GridBagLayout());   // Add Bottom JPanel to GUI
-        addToContainer(scroll_jpanel_bottom, macrosInfoJPanel, 0, 0, 1, 1, 0.25, 0.25, "horizontal", 0, 0, "end");
+        addToContainer(scroll_jpanel_bottom, macrosInfoJPanel, 0, 0, "horizontal", 0, "end");
 
         /*//###################################
         // Setting up Horizontal Image Divider
@@ -2113,7 +2114,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 macros_targets_column_ui_rules
         );
 
-        addToContainer(macrosInfoJPanel, macros_targets_table, 0, 0, + 1, 1, 0.25, 0.25, "both", 40, 0, null);
+        addToContainer(macrosInfoJPanel, macros_targets_table, 0, 0, "both", 40, null);
 
         //############################
         // plan_Macros_Left Table
@@ -2137,7 +2138,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 macros_left_column_ui_rules
         );
 
-        addToContainer(macrosInfoJPanel, macros_left_table, 0, 1, 1, 1, 0.25, 0.25, "both", 30, 0, null);
+        addToContainer(macrosInfoJPanel, macros_left_table, 0, 1, "both", 30, null);
     }
 
     //#####################
@@ -2193,7 +2194,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                         total_Meal_DATA
                 );
 
-                if ( meal_Manager.is_Object_Not_Created()) { throw new Exception("Meal Creation Failed"); }
+                if (meal_Manager.is_Object_Not_Created()) { throw new Exception("Meal Creation Failed"); }
 
                 add_And_Replace_MealManger_POS_GUI(meal_Manager, false, false); // Add to GUI
 
@@ -2291,8 +2292,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###############################################
         if (! reOrder) // Just add to GUI / Add to GUI Meal Manager & Its Space Divider
         {
-            addToContainer(scroll_JP_center, mealManager.get_Collapsible_JP_Obj(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
-            addToContainer(scroll_JP_center, mealManager.getSpaceDividerForMealManager(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 50, 0, null);
+            addToContainer(scroll_JP_center, mealManager.get_Collapsible_JP_Obj(), 0, getAndIncreaseContainerYPos(), "horizontal", 0, null);
+            addToContainer(scroll_JP_center, mealManager.getSpaceDividerForMealManager(), 0, getAndIncreaseContainerYPos(), "both", 50, null);
         }
         else // Clear and Redraw
         {
@@ -2335,7 +2336,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
         if (! is_There_Any_Meals_In_Plan()) // No Meals in Plan
         {
-            JOptionPane.showMessageDialog(getFrame(), "There are no meals to clear!");
+            JOptionPane.showMessageDialog(this, "There are no meals to clear!");
             return;
         }
 
@@ -2440,11 +2441,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
         pie_chart_screen.update_PieChart_MealTime(mealManager);
     }
 
-    private void update_Pie_Chart_DATA(MealManager mealManager)
+    private void update_Pie_Chart_DATA()
     {
         if (! is_Pie_Chart_Screen_Open()) { return; }
 
-        pie_chart_screen.updateData(mealManager);
+        pie_chart_screen.updateData();
     }
 
     private void add_Meal_To_Pie_Chart_Screen(MealManager mealManager)
@@ -2552,7 +2553,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
         if (! refresh_Data_And_Build_GUI(refresh_macros))
         {
-            JOptionPane.showMessageDialog(getFrame(), ("Failed Refresh, please restart the application!"));
+            JOptionPane.showMessageDialog(this, ("Failed Refresh, please restart the application!"));
             return;
         }
 
@@ -2593,7 +2594,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // No Meals Data has changed
         if (! has_Data_changed())
         {
-            JOptionPane.showMessageDialog(getFrame(), "No Data in this Plan has changed to refresh!");
+            JOptionPane.showMessageDialog(this, "No Data in this Plan has changed to refresh!");
             return false;
         }
 
@@ -2688,7 +2689,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###############################################
         // If Object Creation Failed Exit
         //###############################################
-        if ( mealManager.is_Object_Not_Created()) { return; }
+        if (mealManager.is_Object_Not_Created()) { return; }
 
         JOptionPane.showMessageDialog(null, String.format("Successfully Created Meal in %s at [%s]",
                 mealManager.get_Current_Meal_Name(), mealManager.get_Current_Meal_Time()));
@@ -2720,8 +2721,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
             mm.collapse_MealManager(); // Collapse all meals
 
             // Add MealManager and its Space Separator to GUI
-            addToContainer(scroll_JP_center, mm.get_Collapsible_JP_Obj(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
-            addToContainer(scroll_JP_center, mm.getSpaceDividerForMealManager(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 50, 0, null);
+            addToContainer(scroll_JP_center, mm.get_Collapsible_JP_Obj(), 0, getAndIncreaseContainerYPos(), "horizontal", 0, null);
+            addToContainer(scroll_JP_center, mm.getSpaceDividerForMealManager(), 0, getAndIncreaseContainerYPos(), "both", 50, null);
         }
 
         scroll_JP_center.repaint();
@@ -2850,18 +2851,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // ########################################
         for (MealManager mealManager : mealManager_ArrayList)
         {
-            // Set MealManager Source ID
-            if (any_session_created_meals)
-            {
-                int draft_meal_id = mealManager.get_Draft_Meal_ID();
-
-                if (meal_id_map.containsKey(draft_meal_id))
-                {
-                    int source_meal_id = meal_id_map.remove(draft_meal_id);
-                    mealManager.set_Source_Meal_ID(source_meal_id);
-                }
-            }
-
             // Save MealManager
             mealManager.save_Data_Action();
             mealManager.set_MealManager_In_DB(true);
@@ -4047,7 +4036,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             {
                 update_Line_Chart_Data(mealManager, previousMealTime, currentMealTime);   // Update LineChart Data
 
-                update_Pie_Chart_DATA(mealManager);  // Update PieChart DATA
+                update_Pie_Chart_DATA();  // Update PieChart DATA
             }
             case "delete" -> // Deleted MealManager
             {
@@ -4067,7 +4056,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
                 // LineChart = Nothing Changes
 
-                update_Pie_Chart_Meal_Name(mealManager);  // Change PieChart MealName
+                    update_Pie_Chart_Meal_Name(mealManager);  // Change PieChart MealName
 
             case "refresh" ->   // Change Meal Managers Data
             {

@@ -29,12 +29,7 @@ public abstract class Parent_Screen<T extends Storable_IDS_Parent> extends Scree
     //##################################################################################################################
     // String
     protected final String process;
-    
-    //############################
-    // Integer
-    protected final int frameHeight;
-    protected final int frameWidth;
-    
+
     // Boolean
     protected final boolean[] isEditMode = { false };
     
@@ -43,14 +38,12 @@ public abstract class Parent_Screen<T extends Storable_IDS_Parent> extends Scree
     //############################
     protected final MyJDBC_Sqlite db;
     protected final Shared_Data_Registry shared_Data_Registry;
-    protected GridBagConstraints gbc = new GridBagConstraints();
     
     // Screen Objects
     protected final Ingredients_Info_Screen ingredient_Info_Screen;
     protected Edit_Screen<T> edit_Screen;
     protected Add_Screen<T> add_Screen;
-    protected final Frame frame;
-    
+
     // JComboBox
     protected final ArrayList<T> jComboBox_List;
     
@@ -73,31 +66,19 @@ public abstract class Parent_Screen<T extends Storable_IDS_Parent> extends Scree
             ArrayList<T> jComboBox_List
     )
     {
-        //####################################
-        // Super
-        //####################################
-        super(null, false);
-        
-        //####################################
+        super(null, false);  // Super
+
         // Variables
-        //####################################
         this.db = db;  // Object
         this.shared_Data_Registry = shared_Data_Registry;
         this.ingredient_Info_Screen = ingredients_Info_Screen;  // Screen Objects
-       
-        frame = ingredient_Info_Screen.getFrame();
-        
         this.jComboBox_List = jComboBox_List;   // Collections
-        
         this.process = process;  // String
         
         // Integer
         frameWidth = ingredients_Info_Screen.getWidth();
-        frameHeight = ingredients_Info_Screen.getHeight();
-        
-        //####################################
+
         // Create Interface
-        //####################################
         initialize_Screens();
         create_Interface();
     }
@@ -109,41 +90,31 @@ public abstract class Parent_Screen<T extends Storable_IDS_Parent> extends Scree
     //##################################################################################################################
     private void create_Interface() // 850
     {
-        //###################################################################################
         //   Create Screen for Interface
-        //###################################################################################
         get_ScrollPane_JPanel().setLayout(new BorderLayout());
         
         // Create Main Centre Screen for Interface
         JPanel mainCentreScreen = new JPanel(new GridBagLayout());
         get_ScrollPane_JPanel().add(mainCentreScreen, BorderLayout.CENTER);
-        
-        //##################################################################################
+
         // Icon & ToggleSwitch JPanel Setup
-        //##################################################################################
         int height = 55;
         
-        //###########################
+
         // JPanel Creation
-        //###########################
         JPanel icon_And_ToggleSwitch_JP = new JPanel(new BorderLayout());
         icon_And_ToggleSwitch_JP.setPreferredSize(new Dimension(500, height));
         
-        //###########################
+
         // West JPanel
-        //###########################
         icon_And_ToggleSwitch_JP.add(create_Space_Divider(325, height, new java.awt.Color(0, 0, 0, 0)), BorderLayout.WEST);  // West
-        
-        //###########################
+
         // East JPanel
-        //###########################
         JPanel east_JP = create_Space_Divider(325, height, java.awt.Color.WHITE);  // East
         icon_And_ToggleSwitch_JP.add(east_JP, BorderLayout.EAST);
         create_Icon_Panel(east_JP);
-        
-        //################################################
+
         // JavaFX Toggle Switch Creation
-        //#################################################
         JFXPanel fxPanel = new JFXPanel();  // <-- Swing wrapper for FX scene
         fxPanel.setSize(new Dimension(150, height));
         
@@ -154,36 +125,26 @@ public abstract class Parent_Screen<T extends Storable_IDS_Parent> extends Scree
          *  JAVAFX components can only be handled in a javaFX thread because it uses its own UI properties
          */
         Platform.runLater(() -> {
-            
-            //###########################
+
             // ADD Label & Size
-            //###########################
             Label add_Label = new Label("ADD");
             add_Label.setTextFill(Color.WHITE);
             add_Label.setStyle("-fx-font-weight: bold; -fx-font-size: 13px;");
             
-            //###########################
             // BG (Track) OF Toggle
-            //###########################
             StackPane background = new StackPane();
             background.setPrefSize(105, 40); // THIS defines the toggle's visible size
             background.setStyle("-fx-background-color: #ccc; -fx-background-radius: 30px;");
-            
-            //###########################
+
             // Circle Knob
-            //###########################
             Circle circle = new Circle(14, Color.WHITE); // Defines radius of  white circle, Circumference = x2
             circle.setTranslateX(- 35); // Positions Circle left within the track
-            
-            //###########################
+
             // Horizontal Padding
-            //###########################
             // Add padding for the label text, the padding isn't for the container itself
             StackPane.setMargin(add_Label, new Insets(0, 35, 0, 35));
             
-            //###########################
             // Create Toggle
-            //###########################
             /*
              *   Create toggle Set
              *   The toggle itself takes its size from its largest child, which is the background
@@ -191,41 +152,31 @@ public abstract class Parent_Screen<T extends Storable_IDS_Parent> extends Scree
              */
             
             StackPane toggle = get_Stacked_Pane(background, add_Label, circle);
-            
-            //###########################
+
             //
-            //###########################
             fxPanel.setScene(new Scene(new StackPane(toggle), Color.TRANSPARENT));
         });
-        
-        //##################################################################################
+
         // Adding Component To GUI
-        //##################################################################################
+
+
         // Screen Image
-        add_To_Container(mainCentreScreen, screenImage, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
-        
-        //############################
+        add_To_Container(mainCentreScreen, screenImage, 0, get_And_Increase_YPos(), 0.25, "both", 0, 0);
+
         // ToggleSwitch & Icons
-        //############################
-        add_To_Container(mainCentreScreen, icon_And_ToggleSwitch_JP, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
-        
-        //############################
+        add_To_Container(mainCentreScreen, icon_And_ToggleSwitch_JP, 0, get_And_Increase_YPos(), 0.25, "horizontal", 0, 0);
+
         // Add Screen
-        //############################
-        add_To_Container(mainCentreScreen, add_Screen, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.1, "horizontal", 0, 0, null);
+        add_To_Container(mainCentreScreen, add_Screen, 0, get_And_Increase_YPos(), 0.1, "horizontal", 0, 0);
         
         // Add Screen Divider to fill bottom of GUI Space
-        add_To_Container(mainCentreScreen, addScreen_Divider = create_Space_Divider(10, 50, java.awt.Color.WHITE), 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.1, "horizontal", 0, 0, null);
+        add_To_Container(mainCentreScreen, addScreen_Divider = create_Space_Divider(10, 50, java.awt.Color.WHITE), 0, get_And_Increase_YPos(), 0.1, "horizontal", 0, 0);
         
-        //############################
         // Edit Screen
-        //############################
         edit_Screen.setVisible(false);
-        add_To_Container(mainCentreScreen, edit_Screen, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.20, "both", 0, 0, null);
-        
-        //##################################################################################
+        add_To_Container(mainCentreScreen, edit_Screen, 0, get_And_Increase_YPos(), 0.20, "both", 0, 0);
+
         // resize
-        //##################################################################################
         resize_GUI();
     }
     
@@ -233,19 +184,15 @@ public abstract class Parent_Screen<T extends Storable_IDS_Parent> extends Scree
     {
         StackPane toggle = new StackPane(background, add_Label, circle);
         
-        //#####################################################
+
         // Define Toggle Movements
-        //#####################################################
         TranslateTransition moveRight = new TranslateTransition(Duration.seconds(0.25), circle);
         moveRight.setToX(35);
         
         TranslateTransition moveLeft = new TranslateTransition(Duration.seconds(0.25), circle);
         moveLeft.setToX(- 35);
-        
-        //#####################################################
+
         // Toggle ActionListener EVT
-        //#####################################################
-        
         toggle.setOnMouseClicked(e -> {
             if (isEditMode[0])
             {
@@ -259,10 +206,8 @@ public abstract class Parent_Screen<T extends Storable_IDS_Parent> extends Scree
                 add_Label.setText("EDIT");
                 moveRight.play();
             }
-            
-            //#####################################################
+
             //
-            //#####################################################
             isEditMode[0] = ! isEditMode[0];
             switch_Panel();
         });
@@ -270,25 +215,24 @@ public abstract class Parent_Screen<T extends Storable_IDS_Parent> extends Scree
         return toggle;
     }
     
-    //###############################
-    // Icon Setup Methods
-    //###############################
+    //################################################################
+    // Icon Methods
+    //################################################################
     private void create_Icon_Panel(JPanel add_To_Panel)
     {
         int width = 38;
         int height = 40;
-        
-        //#####################################################
+
+
         // Creating area for North JPanel (Refresh Icon)
-        //#####################################################
         JPanel iconArea = new JPanel(new GridBagLayout());
-        add_To_Container(add_To_Panel, iconArea, 0, get_And_Increase_YPos(), 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        add_To_Container(add_To_Panel, iconArea, 0, get_And_Increase_YPos(), 0.25, "both", 0, 0);
         
         IconPanel iconPanel = new IconPanel(1, 10, "East");
         iconPanelInsert = iconPanel.getIconJpanel();
         
-        add_To_Container(iconArea, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0, null);
-        
+        add_To_Container(iconArea, iconPanel.getIconAreaPanel(), 0, 0, 0.25, "horizontal", 10, 0);
+
         //##########################
         // Clear Icon
         //##########################
@@ -317,9 +261,6 @@ public abstract class Parent_Screen<T extends Storable_IDS_Parent> extends Scree
         delete_Btn.addActionListener(ae -> delete_BTN_Action());
     }
 
-    //#######################################################################
-    // Icon BTN Actions
-    //#######################################################################
     private void clear_BTN_Action()
     {
         if (is_Editable())
@@ -379,29 +320,14 @@ public abstract class Parent_Screen<T extends Storable_IDS_Parent> extends Scree
         resize_GUI();
     }
     
-    //####################################################
-    // Get Methods
-    //####################################################
-    // String
+    //##################################################################################################################
+    // Accessor Methods
+    //##################################################################################################################
     public String get_Process()
     {
         return process;
     }
-    
-    // Integers
-    public int get_Frame_Width()
-    {
-        return frameWidth;
-    }
-    
-    public int get_Frame_Height()
-    {
-        return frameHeight;
-    }
-    
-    //##########################
-    // Objects
-    //##########################
+
     public JPanel get_Container()
     {
         return this;

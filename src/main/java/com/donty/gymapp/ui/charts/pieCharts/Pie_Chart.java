@@ -28,18 +28,14 @@ public class Pie_Chart<K extends Comparable<K>> extends JPanel
     
     // Collections
     protected final DefaultPieDataset<K> dataset;
-    protected final Color[] colors;
-    
+
     // Objects
     protected final JFreeChart chart;
     protected final PiePlot3D plot;
     
     // Font
-    protected final Font titleFont, labelFont, legendFont;
-    
-    // String
-    protected final String title;
-    
+    protected final Font legendFont;
+
     // int
     protected int rows;
     protected final int cols = 2;
@@ -67,12 +63,6 @@ public class Pie_Chart<K extends Comparable<K>> extends JPanel
         // Set Layout Dimensions
         //############################################
         this.dataset = datasetInput;
-        this.colors = colors;
-        
-        this.title = title;
-        
-        this.titleFont = titleFont;
-        this.labelFont = labelFont;
         this.legendFont = legendFont;
         
         //############################################
