@@ -79,7 +79,7 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
         add_To_Container(mainCentre_JPanel, ingredientType_JC_JP, 0, get_And_Increase_YPos(), 0.25, "horizontal", 10, 0);
 
         // Create JCombBox
-        ingredient_Main_Type_JC = new Edit_Ingredients_Type_JC(shared_data_registry)
+        ingredient_Main_Type_JC = new Edit_Ingredients_Screen_Type_JC(shared_data_registry)
         {
             @Override
             protected void actionListener()
