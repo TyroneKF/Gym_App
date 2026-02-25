@@ -50,6 +50,16 @@ public class Ingredients_Screen extends Parent_Ingredients_Screen
     @Override
     protected void prior_GUI_Setup() { }
 
+    protected  String get_Question_Prompt_Title()
+    {
+        return "Add New Ingredient";
+    }
+
+    protected String get_Task_Question_Prompt()
+    {
+        return "Are you sure you want to add this new Ingredient?";
+    }
+
     //##################################################################
     // Submission Button Actions
     //##################################################################
@@ -67,8 +77,8 @@ public class Ingredients_Screen extends Parent_Ingredients_Screen
         //######################
         // Create Variables
         //######################
-        String errorMSG = "Error, Unable to add new Ingredient !"; // Error MSG
-        Batch_Upload_And_Fetch_Statements batch_statements = new Batch_Upload_And_Fetch_Statements(errorMSG);
+        String error_msg = "Error, Unable to add new Ingredient !"; // Error MSG
+        Batch_Upload_And_Fetch_Statements batch_statements = new Batch_Upload_And_Fetch_Statements(error_msg);
 
         //###########################
         // Get Each Forms Update

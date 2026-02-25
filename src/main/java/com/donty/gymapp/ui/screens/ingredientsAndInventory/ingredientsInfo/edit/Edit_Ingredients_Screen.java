@@ -134,6 +134,16 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
         return jPanel;
     }
 
+    protected  String get_Question_Prompt_Title()
+    {
+        return "Edit Ingreient";
+    }
+
+    protected String get_Task_Question_Prompt()
+    {
+        return "Are you sure you want to update this Ingredients info?";
+    }
+
     //######################################################################
     // Validation Methods
     //######################################################################
@@ -173,6 +183,7 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
     @Override
     protected boolean update_Both_Forms()
     {
+        String error_msg = "Error, Unable to Edit Ingredient Info!"; // Error MSG
         Batch_Upload_Statements upload_statements = new Batch_Upload_And_Fetch_Statements(error_msg);
 
         //###########################

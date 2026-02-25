@@ -100,7 +100,7 @@ public class PieChart_Macros_MPS extends Screen_JPanel
             //##################################
             // Macro Info
             //##################################
-            String macroName = String.format("%s", format_Strings(macro_enum.key(), true));
+            String macroName = String.format("%s", format_Strings(macro_enum.key()));
 
             /*
              * LinkedHashMap<String, Pair<Integer, String>> totalMeal_macroColNamePos
