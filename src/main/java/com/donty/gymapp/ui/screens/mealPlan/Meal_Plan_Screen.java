@@ -1399,7 +1399,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     json_group_array(
                         JSON_OBJECT(
                             'd_div_id',    D.draft_div_meal_sections_id,
-                            's_div_id',    D.div_meal_sections_id,
                             's_name',      D.sub_meal_name,
                             's_time',      D.sub_meal_time,
                 
@@ -1473,7 +1472,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 // Get Create Meal ID Object
                 //#####################################################
                 int draft_meal_id = (int) row.get(0);     // Draft  Meal ID
-                int source_meal_id = (int) row.get(1);    // Source Meal ID
                 String meal_name = (String) row.get(3);   // Meal Name
 
                 LocalTime meal_Time = LocalTime.parse((String) row.get(4), time_formatter);
@@ -1481,7 +1479,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 // Create Meal_And_Sub_Meals_OBJ Which Holds Meal ID Info & its Sub-Meals / Ingredients
                 Meal_And_Sub_Meals_OBJ meal_and_sub_meals_obj = new Meal_And_Sub_Meals_OBJ(
                         draft_meal_id,
-                        source_meal_id,
                         meal_name,
                         meal_Time
                 );

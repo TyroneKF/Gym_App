@@ -544,7 +544,6 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         }
     }
 
-
     protected boolean is_Ingredient_Name_In_DB() throws Exception
     {
         //##################################

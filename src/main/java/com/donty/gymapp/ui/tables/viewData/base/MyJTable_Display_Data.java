@@ -86,10 +86,7 @@ public abstract class MyJTable_Display_Data <T extends Enum<T> & Table_Enum> ext
     
     @Override
     protected boolean format_Table_Data(ArrayList<ArrayList<Object>> table_data) { return true; }
-    
-    @Override
-    protected void format_Table_Row_Data(ArrayList<Object> table_data) { }
-    
+
     @Override
     protected void set_Cell_Renderer()
     {

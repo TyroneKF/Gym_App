@@ -896,14 +896,14 @@ public class MyJDBC_Sqlite  // remove extends eventually
 
     private void print_SQL_ERR_MSG(SQLException e, String method_Name, Object query)
     {
-        System.err.printf("\n\n%s\n%s SQL ERROR \n%s \n\nQuery: \n\"\"\"\n %s\n\"\"\" \n\nError Message: \n\n\"\"\" \n\n%s \n\n\"\"\" \n\nSQLState: %s \n\nErrorCode: %d\n\n",
-                line_Separator, get_Class_And_Method_Name(), line_Separator, query != null ? query.toString() : "", e.getMessage(), e.getSQLState(), e.getErrorCode());
+        System.err.printf("\n\n%s\n%s ->  @%s SQL ERROR \n%s \n\nQuery: \n\"\"\"\n %s\n\"\"\" \n\nError Message: \n\n\"\"\" \n\n%s \n\n\"\"\" \n\nSQLState: %s \n\nErrorCode: %d\n\n",
+                line_Separator, get_Class_Name(), method_Name, line_Separator, query != null ? query.toString() : "", e.getMessage(), e.getSQLState(), e.getErrorCode());
     }
 
     private void print_Exception_ERR_MSG(Exception e, String method_Name, Object query)
     {
-        System.err.printf("\n\n%s \n%s  ERROR \n%s \n\nQuery: \n\"\"\"\n%s\n\"\"\" \n\nError Message: \n\n\"\"\"\n  %s \n\"\"\" ",
-                line_Separator, get_Class_And_Method_Name(), line_Separator, query != null ? query.toString() : "", e);
+        System.err.printf("\n\n%s \n%s -> @%s ERROR \n%s \n\nQuery: \n\"\"\"\n%s\n\"\"\" \n\nError Message: \n\n\"\"\"\n  %s \n\"\"\" ",
+                line_Separator, get_Class_Name(), method_Name, line_Separator, query != null ? query.toString() : "", e);
     }
 
     //###########################################

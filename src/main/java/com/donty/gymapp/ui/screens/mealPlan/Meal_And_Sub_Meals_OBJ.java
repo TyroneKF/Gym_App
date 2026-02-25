@@ -21,12 +21,11 @@ public class Meal_And_Sub_Meals_OBJ
     public Meal_And_Sub_Meals_OBJ
     (
             int draft_meal_id,
-            int source_meal_id,
             String meal_name,
             LocalTime meal_time
     )
     {
-         meal_id_obj = new Meal_ID_OBJ(draft_meal_id, source_meal_id, meal_name, meal_time);
+         meal_id_obj = new Meal_ID_OBJ(draft_meal_id, meal_name, meal_time);
     }
 
     //##################################################################################################################
