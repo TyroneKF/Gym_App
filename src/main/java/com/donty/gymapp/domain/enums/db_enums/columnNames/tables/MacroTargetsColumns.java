@@ -21,9 +21,6 @@ public enum MacroTargetsColumns implements Table_Enum
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    private static final String SOURCE_NAME = "draft_macros_per_pound_and_limits";
-
-    private final String source_name;
     private final String key;
 
     //##################################################################################################################
@@ -32,16 +29,6 @@ public enum MacroTargetsColumns implements Table_Enum
     MacroTargetsColumns(String key)
     {
         this.key = key;
-        this.source_name = SOURCE_NAME;
-    }
-
-    //##################################################################################################################
-    // Methods
-    //##################################################################################################################
-    @Override
-    public String source_Name()
-    {
-        return source_name;
     }
 
     @Override

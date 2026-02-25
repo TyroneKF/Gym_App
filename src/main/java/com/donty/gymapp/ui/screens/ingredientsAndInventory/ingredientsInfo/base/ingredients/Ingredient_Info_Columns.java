@@ -26,10 +26,9 @@ public enum Ingredient_Info_Columns implements Table_Enum
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    private static final String SOURCE_NAME = "ingredients_info";
-
-    private final String source_name;
     private final String key;
+
+
 
     //##################################################################################################################
     // Constructor
@@ -37,18 +36,11 @@ public enum Ingredient_Info_Columns implements Table_Enum
     Ingredient_Info_Columns(String key)
     {
         this.key = key;
-        this.source_name = SOURCE_NAME;
     }
 
     //##################################################################################################################
     // Methods
     //##################################################################################################################
-    @Override
-    public String source_Name()
-    {
-        return source_name;
-    }
-
     @Override
     public String key()
     {

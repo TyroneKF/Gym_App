@@ -12,14 +12,9 @@ public enum Draft_Gui_Plan_Macro_Targets_Calc_Columns implements Table_Enum
     PLAN_ID();
 
 
-
-
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    private static final String SOURCE_NAME = "draft_gui_plan_macro_target_calculations";
-
-    private final String source_name;
     private final String key;
 
 
@@ -29,7 +24,6 @@ public enum Draft_Gui_Plan_Macro_Targets_Calc_Columns implements Table_Enum
     Draft_Gui_Plan_Macro_Targets_Calc_Columns()
     {
         this.key = "plan_id";
-        this.source_name = SOURCE_NAME;
     }
 
     //##################################################################################################################
@@ -40,11 +34,5 @@ public enum Draft_Gui_Plan_Macro_Targets_Calc_Columns implements Table_Enum
     public String key()
     {
         return key;
-    }
-
-    @Override
-    public String source_Name()
-    {
-        return source_name;
     }
 }

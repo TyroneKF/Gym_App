@@ -27,10 +27,7 @@ public enum Draft_Gui_Ingredients_Calc_Columns implements Table_Enum
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    private static final String SOURCE_NAME = "draft_gui_ingredients_in_sections_of_meal_calculation";
-    
-    private final String source_name;
-    private final String key;
+     private final String key;
 
     //##################################################################################################################
     // Constructor
@@ -38,7 +35,6 @@ public enum Draft_Gui_Ingredients_Calc_Columns implements Table_Enum
     Draft_Gui_Ingredients_Calc_Columns(String key)
     {
         this.key = key;
-        this.source_name = SOURCE_NAME;
     }
     
     //##################################################################################################################
@@ -49,12 +45,5 @@ public enum Draft_Gui_Ingredients_Calc_Columns implements Table_Enum
     public String key()
     {
         return key;
-    }
-    
-    
-    @Override
-    public String source_Name()
-    {
-        return source_name;
     }
 }

@@ -22,11 +22,8 @@ public enum Draft_Gui_Total_Meal_Macro_Columns implements Table_Enum
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    private static final String SOURCE_NAME = "draft_gui_total_meal_view";
-
-    private final String source_name;
-
     private final String key;
+
 
 
 
@@ -36,8 +33,9 @@ public enum Draft_Gui_Total_Meal_Macro_Columns implements Table_Enum
     Draft_Gui_Total_Meal_Macro_Columns(String key)
     {
         this.key = key;
-        this.source_name = SOURCE_NAME;
     }
+
+
 
     //##################################################################################################################
     // Methods
@@ -47,11 +45,5 @@ public enum Draft_Gui_Total_Meal_Macro_Columns implements Table_Enum
     public String key()
     {
         return key;
-    }
-
-    @Override
-    public String source_Name()
-    {
-        return source_name;
     }
 }
