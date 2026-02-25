@@ -1389,7 +1389,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 
                 SELECT
                     M.draft_meal_in_plan_id,
-                    M.meal_in_plan_id,
                     M.plan_id,
                     M.Meal_Name,
                     M.meal_time,
@@ -1399,6 +1398,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     json_group_array(
                         JSON_OBJECT(
                             'd_div_id',    D.draft_div_meal_sections_id,
+                            's_div_id',    D.div_meal_sections_id,
                             's_name',      D.sub_meal_name,
                             's_time',      D.sub_meal_time,
                 
@@ -1472,9 +1472,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 // Get Create Meal ID Object
                 //#####################################################
                 int draft_meal_id = (int) row.get(0);     // Draft  Meal ID
-                String meal_name = (String) row.get(3);   // Meal Name
+                String meal_name = (String) row.get(2);   // Meal Name
 
-                LocalTime meal_Time = LocalTime.parse((String) row.get(4), time_formatter);
+                LocalTime meal_Time = LocalTime.parse((String) row.get(3), time_formatter);
 
                 // Create Meal_And_Sub_Meals_OBJ Which Holds Meal ID Info & its Sub-Meals / Ingredients
                 Meal_And_Sub_Meals_OBJ meal_and_sub_meals_obj = new Meal_And_Sub_Meals_OBJ(
@@ -1489,7 +1489,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 // Parsing JSON DATA - Sub-Meals -> Ingredients
                 //#####################################################
                 ObjectMapper mapper = new ObjectMapper();
-                JsonNode ingredients_json_array = mapper.readTree((String) row.get(5));
+                JsonNode ingredients_json_array = mapper.readTree((String) row.get(4));
 
                 //######################################
                 // For Each Ingredient In Sub-Meal
