@@ -376,11 +376,11 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
         //################################
         // Ingredients Type JC Setup
         //################################
-        int ingredient_Type_Column = get_Ingredient_Type_Col(false);
+        int ingredient_type_column_pos = get_Ingredient_Type_Col(false);
 
         new Ingredient_Type_JComboBox_Column(
                 get_JTable(),
-                ingredient_Type_Column,
+                ingredient_type_column_pos,
                 "Select Ingredient Type to Change Ingredient Names!",
                 shared_data_registry.get_Mapped_Ingredient_Types()
         );
@@ -392,7 +392,7 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
                 get_JTable(),
                 shared_data_registry,
                 get_Ingredient_Name_Col(false),
-                ingredient_Type_Column,
+                ingredient_type_column_pos,
                 "Select Ingredient Name!"
         );
 
