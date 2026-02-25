@@ -14,7 +14,7 @@ import com.donty.gymapp.gui.controls.textfields.Field_JTxtField_BD;
 import com.donty.gymapp.gui.controls.textfields.Field_JTxtField_INT;
 import com.donty.gymapp.gui.controls.textfields.Field_JTxtField_String;
 import com.donty.gymapp.gui.controls.textfields.base.Field_JTxtField_Parent;
-import com.donty.gymapp.gui.controls.combobox.base.storableID.Field_JC_Ingredient_Type;
+import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.base.ingredients.Field_JC_Ingredient_Form_Type;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.base.ingredients.Field_JC_Measurements;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.base.screen.Parent_Forms_OBJ;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.base.ingredients.Ingredient_Binding;
@@ -50,7 +50,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
     protected final ArrayList<String> salt_Values_AL = new ArrayList<>(Arrays.asList("mg", "g"));
     protected final Field_JCombo_Default<String> salt_JC = new Field_JCombo_Default<>("Salt", String.class, salt_Values_AL);
 
-    protected final Field_JC_Ingredient_Type field_jc_ingredient_type;
+    protected final Field_JC_Ingredient_Form_Type field_jc_ingredient_type;
 
     protected final Field_JTxtField_String ingredient_Name_JT = new Field_JTxtField_String("Ingredient Name", text_Char_Limit);
 
@@ -80,7 +80,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         //############################################
         this.db = db;
         this.shared_data_registry = shared_data_registry;
-        this.field_jc_ingredient_type = new Field_JC_Ingredient_Type(shared_data_registry, false);
+        this.field_jc_ingredient_type = new Field_JC_Ingredient_Form_Type(shared_data_registry);
 
         //############################################
         // Create GUI

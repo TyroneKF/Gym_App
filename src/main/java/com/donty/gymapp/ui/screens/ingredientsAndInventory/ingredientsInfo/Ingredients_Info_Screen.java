@@ -5,11 +5,10 @@ import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.gui.base.Screen_JFrame;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.add.Ingredients_Screen;
-import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.edit.Edit_Ingredients_Screen;
+import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.edit.screen.Edit_Ingredients_Screen;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.storesAndIngredientTypes.ingredientTypes.Ingredients_Types_Screen;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.storesAndIngredientTypes.stores.Ingredient_Stores_Screen;
 import com.donty.gymapp.ui.screens.mealPlan.Meal_Plan_Screen;
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -26,8 +25,6 @@ public class Ingredients_Info_Screen extends Screen_JFrame
     private final Ingredients_Screen ingredients_Screen;
     private final Edit_Ingredients_Screen edit_Ingredients_Screen;
 
-    // Booleans
-    private boolean updateIngredientInfo = false;
 
     //##################################################################################################################
     // Constructor
@@ -81,7 +78,6 @@ public class Ingredients_Info_Screen extends Screen_JFrame
     public void window_Closed_Event()
     {
         meal_Plan_Screen.remove_Ingredients_Info_Screen();
-        meal_Plan_Screen.update_Ingredients_Name_And_Types_In_JTables(updateIngredientInfo);
         closeJFrame();
     }
 
@@ -112,14 +108,6 @@ public class Ingredients_Info_Screen extends Screen_JFrame
     public void update_Edit_Types()
     {
         edit_Ingredients_Screen.reload_Ingredient_Type_JC();
-    }
-
-    //##################################################################################################################
-    // Mutator Methods
-    //##################################################################################################################
-    public void set_Update_IngredientInfo(boolean status)
-    {
-        updateIngredientInfo = status;
     }
 }
 

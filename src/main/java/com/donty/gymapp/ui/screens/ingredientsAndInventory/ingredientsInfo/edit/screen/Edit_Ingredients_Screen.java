@@ -1,4 +1,4 @@
-package com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.edit;
+package com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.edit.screen;
 
 import com.donty.gymapp.gui.controls.combobox.base.storableID.Field_JCombo_Storable_ID_Main;
 import com.donty.gymapp.ui.meta.ids.storableIDs.Ingredient_Name_ID_OBJ;
@@ -27,6 +27,8 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
     // JComboBox Objects
     protected Field_JC_Ingredient_Type ingredient_Main_Type_JC;
     protected Field_JCombo_Storable_ID_Main<Ingredient_Name_ID_OBJ> ingredient_Main_Name_JC;
+
+    protected Ingredient_Name_ID_OBJ selected_ingredients_name_obj;
 
     protected boolean
             allow_Name_Action_Listener = true,
@@ -77,7 +79,7 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
         add_To_Container(mainCentre_JPanel, ingredientType_JC_JP, 0, get_And_Increase_YPos(), 0.25, "horizontal", 10, 0);
 
         // Create JCombBox
-        ingredient_Main_Type_JC = new Field_JC_Ingredient_Type(shared_data_registry, true)
+        ingredient_Main_Type_JC = new Edit_Ingredients_Type_JC(shared_data_registry)
         {
             @Override
             protected void actionListener()
@@ -213,7 +215,10 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
         if (has_Ingredient_Type_Changed) { reload_Main_Ingredient_Type_JC(); }
 
         // Update Ingredients Name Related Things
-        if (has_Ingredient_Name_Changed) { }
+        if (has_Ingredient_Name_Changed)
+        {
+
+        }
     }
 
     //############################################
@@ -290,6 +295,7 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
     {
         has_Ingredient_Name_Changed = false;
         has_Ingredient_Type_Changed = false;
+        selected_ingredients_name_obj = null;
     }
 
     private void reset_JC()
@@ -351,7 +357,9 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
             //############################
             // Get Ingredient DATA
             //############################
-            Integer id = ingredient_Main_Name_JC.get_Selected_Item_ID();
+            selected_ingredients_name_obj = ingredient_Main_Name_JC.get_Selected_Item();
+
+            Integer id = selected_ingredients_name_obj.get_ID();
 
             if (id == null) { throw new Exception("Error, getting Ingredient ID!"); }
 
