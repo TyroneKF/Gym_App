@@ -202,7 +202,6 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
         }
     }
 
-    @Override
     protected void format_Table_Row_Data(ArrayList<Object> table_data) throws Exception
     {
         //##########################

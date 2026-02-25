@@ -1,6 +1,5 @@
 package com.donty.gymapp.ui.screens.ingredientsAndInventory.storesAndIngredientTypes.ingredientTypes;
 
-import com.donty.gymapp.ui.meta.ids.ID_Object;
 import com.donty.gymapp.ui.meta.ids.storableIDs.Ingredient_Type_ID_OBJ;
 import com.donty.gymapp.ui.meta.ids.storableIDs.Storable_IDS_Parent;
 import com.donty.gymapp.persistence.database.batch.Batch_Upload_Statements;

@@ -139,8 +139,6 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
     //########################################
     protected abstract boolean format_Table_Data(ArrayList<ArrayList<Object>> table_data);
 
-    protected abstract void format_Table_Row_Data(ArrayList<Object> table_data) throws Exception;
-
     //########################################
     // Variable Configurations
     //########################################
@@ -537,9 +535,9 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
 
     private void validate_source_data(String method_name, ArrayList<?> source_Data) throws Exception
     {
-        if (source_Data == null) // null data causes an error
+        if (source_Data == null || source_Data.isEmpty()) // null data causes an error
         {
-            throw new Exception(String.format("\n\n%s Error \nSource_Data cannot be null!", get_Class_And_Method_Name()));
+            throw new Exception(String.format("\n\n%s Error \nSource_Data cannot be null / empty!", get_Class_And_Method_Name()));
         }
 
         int column_name_size = column_Names.size();
