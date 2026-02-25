@@ -52,6 +52,8 @@ public class Ingredients_Form extends Parent_Forms_OBJ
 
     protected final Field_JC_Ingredient_Type field_jc_ingredient_type;
 
+    protected final Field_JTxtField_String ingredient_Name_JT = new Field_JTxtField_String("Ingredient Name", text_Char_Limit);
+
     //############
     // Maps
     //############
@@ -130,7 +132,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                     "name",
                     new Ingredient_Binding<>(
                             "Ingredient Name",
-                            new Field_JTxtField_String("Ingredient Name", text_Char_Limit),
+                            ingredient_Name_JT,
                             Ingredient_Info_Columns.INGREDIENT_NAME,
                             4,
                             "food_name"
@@ -431,15 +433,18 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         // Check Ingredient Name In DB
         //###############################
         // Check if Ingredients Name Field is not Empty
-        if (! ((Field_JTxtField_String) field_Items_Map.get("name").get_Gui_Component()).is_Txt_Field_Empty())
+
+        if (! ingredient_Name_JT.is_Txt_Field_Empty())
         {
             String error_Msg = "", label = "Ingredient Name";
 
             try
             {
-                if (is_Ingredient_Name_In_DB())  //IF ingredient Name already exists add error error_Msg
+                String ingredient_name = ingredient_Name_JT.get_Text();
+
+                if (is_Ingredient_Name_In_DB(ingredient_name))  //IF ingredient Name already exists add error error_Msg
                 {
-                    error_Msg = String.format("'%s' : Already Exists in DB!", label);
+                    error_Msg = String.format("'%s' : Already Exists in DB!", ingredient_name);
                 }
             }
             catch (Exception e)
@@ -471,6 +476,19 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         JOptionPane.showMessageDialog(null, build_Error_MSg(error_Map), "Ingredients Form Error Messages", JOptionPane.INFORMATION_MESSAGE);
 
         return false;
+    }
+
+    protected boolean is_Ingredient_Name_In_DB(String ingredient_Name) throws Exception
+    {
+        // Create Query
+        String error_msg = "Error, Failed Validating Ingredient Name in DB!";
+        String query = "SELECT ingredient_id FROM ingredients_info WHERE Ingredient_Name = ?;";
+        Object[] params = new Object[]{ ingredient_Name };
+
+        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, params, error_msg);
+
+        // Execute
+        return ! db.get_Single_Col_Query_Int(fetch_statement, true).isEmpty();
     }
 
     protected String build_Error_MSg(LinkedHashMap<String, ArrayList<String>> error_Map)
@@ -542,30 +560,6 @@ public class Ingredients_Form extends Parent_Forms_OBJ
             System.err.printf("%s", e);
             throw new RuntimeException(e);
         }
-    }
-
-    protected boolean is_Ingredient_Name_In_DB() throws Exception
-    {
-        //##################################
-        // IS Ingredient Name Null or Empty
-        //####################################
-        String ingredient_Name = ((Field_JTxtField_String) field_Items_Map.get("name").get_Gui_Component()).get_Text();
-
-        if (ingredient_Name == null || ingredient_Name.isEmpty()) { throw new Exception("No ingredient Created!"); }
-
-        //##################################
-        // Create Query
-        //####################################
-        String error_msg = "Error, Failed Validating Ingredient Name in DB!";
-        String query = "SELECT ingredient_id FROM ingredients_info WHERE Ingredient_Name = ?;";
-        Object[] params = new Object[]{ ingredient_Name };
-
-        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, params, error_msg);
-
-        //##################################
-        // Execute
-        //####################################
-        return ! db.get_Single_Col_Query_Int(fetch_statement, true).isEmpty();
     }
 
     //#######################################################

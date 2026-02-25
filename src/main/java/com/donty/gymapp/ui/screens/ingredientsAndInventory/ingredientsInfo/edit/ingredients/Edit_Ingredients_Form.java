@@ -56,27 +56,16 @@ public class Edit_Ingredients_Form extends Ingredients_Form
     // Validation methods
     //##########################################
     @Override
-    protected boolean is_Ingredient_Name_In_DB() throws Exception
+    protected boolean is_Ingredient_Name_In_DB(String ingredient_name) throws Exception
     {
-        //##################################
-        // IS Ingredient Name Null or Empty
-        //####################################
-        String ingredient_Name = ((Field_JTxtField_Parent<?>) field_Items_Map.get("name").get_Gui_Component()).get_Text();
-
-        if (ingredient_Name == null || ingredient_Name.isEmpty()) { throw new Exception("No ingredient Created!"); }
-
-        //##################################
         // Create Query
-        //####################################
         String error_msg = "Error, Failed Validating Ingredient Name in DB!";
         String query = "SELECT ingredient_id FROM ingredients_info WHERE Ingredient_Name = ? AND ingredient_id <> ?;";
-        Object[] params = new Object[]{ ingredient_Name, ingredient_ID };
+        Object[] params = new Object[]{ ingredient_name, ingredient_ID };
 
         Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, params, error_msg);
 
-        //##################################
         // Execute
-        //####################################
         return ! db.get_Single_Col_Query_Int(fetch_statement, true).isEmpty();
     }
 
