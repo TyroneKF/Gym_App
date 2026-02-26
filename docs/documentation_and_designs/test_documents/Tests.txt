@@ -10,7 +10,7 @@ Add Ingredient Screen
 
 
 Edit Screen -
- X   .) new ingredient should appear in drop down if same ingredient type is selected on scren
+ X   .) new ingredient should appear in drop down if same ingredient type is selected on screen
  X   .) change ingredident type -> new ingredient should appear in ingredient type -> ingredients if selected on table
 
 
