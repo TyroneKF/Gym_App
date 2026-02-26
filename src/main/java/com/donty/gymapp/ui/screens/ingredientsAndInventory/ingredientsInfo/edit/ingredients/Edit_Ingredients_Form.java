@@ -72,29 +72,29 @@ public class Edit_Ingredients_Form extends Ingredients_Form
     private boolean has_Field_Value_Changed_From_DB_Data(String key) throws Exception
     {
         // Get Desired Keys Object on the Form Value
-        Object field_Value_On_Form = get_Component_Field_Value(key);
+        Object form_value = get_Component_Field_Value(key);
 
         // Get Desired Keys Equivalent Value in DATA
         int query_Pos = field_Items_Map.get(key).get_Field_Query_Pos(); // Query Position for field Value
-        Object field_Value_In_DB_Data = data_AL.get(query_Pos);
+        Object db_value = data_AL.get(query_Pos);
 
         //########################
         // Exit Clauses
         //########################
-        if (field_Value_In_DB_Data == null) { return false; } // Form Value cant be null due to validation but, db can
+        if (db_value == null) { return false; } // Form Value cant be null due to validation but, db can
 
-        if (field_Value_On_Form instanceof Storable_IDS_Parent storable_ID_Obj)
+        if (form_value instanceof Storable_IDS_Parent storable_ID_Obj) // Could even format the data for equality
         {
             // case BigInteger x -> { return ! (storable_ID_Obj.get_ID()).equals(x.intValueExact()); }
-            if (field_Value_In_DB_Data instanceof Integer x)
+            if (db_value instanceof Integer x)
             {
                 return ! x.equals(storable_ID_Obj.get_ID());
             }
             throw new Exception(String.format("\n\n%s Error ID Object for Key '%s' \nUnexpected value: %s \nClass Type : %s", get_Class_And_Method_Name(), key,
-                    field_Value_In_DB_Data, field_Value_In_DB_Data.getClass()));
+                    db_value, db_value.getClass()));
         }
 
-        if (field_Value_On_Form.getClass() != field_Value_In_DB_Data.getClass()) // Type MisMatch
+        if (form_value.getClass() != db_value.getClass()) // Type MisMatch
         {
             throw new Exception(String.format("""
                          
@@ -109,22 +109,22 @@ public class Edit_Ingredients_Form extends Ingredients_Form
                             Class : %s
                             Value : %s""",
                     get_Class_And_Method_Name(),
-                    field_Value_On_Form.getClass(), field_Value_On_Form,
-                    field_Value_In_DB_Data.getClass(), field_Value_In_DB_Data
+                    form_value.getClass(), form_value,
+                    db_value.getClass(), db_value
             ));
         }
 
         //########################
         // Compare
         //########################
-        switch (field_Value_On_Form)
+        switch (form_value)
         {
-            case BigDecimal form_Value -> { return form_Value.compareTo(((BigDecimal) field_Value_In_DB_Data)) != 0; }
-            case BigInteger form_Value -> { return ! form_Value.equals(field_Value_In_DB_Data); }
-            case Integer form_Value -> { return ! form_Value.equals(field_Value_In_DB_Data); }
-            case String form_Value -> { return ! form_Value.equals(field_Value_In_DB_Data); }
+            case BigDecimal form_Value -> { return form_Value.compareTo(((BigDecimal) db_value)) != 0; }
+            case BigInteger form_Value -> { return ! form_Value.equals(db_value); }
+            case Integer form_Value -> { return ! form_Value.equals(db_value); }
+            case String form_Value -> { return ! form_Value.equals(db_value); }
             default -> throw new IllegalStateException(String.format("\n\n%s Error \nUnexpected value: %s ",
-                    get_Class_And_Method_Name(), field_Value_On_Form));
+                    get_Class_And_Method_Name(), form_value));
         }
     }
 

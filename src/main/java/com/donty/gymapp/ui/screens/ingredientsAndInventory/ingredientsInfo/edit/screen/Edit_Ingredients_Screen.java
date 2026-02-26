@@ -15,7 +15,7 @@ import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.edit.
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.edit.products.Edit_Shop_Form;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.Ingredients_Info_Screen;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.base.screen.Parent_Ingredients_Screen;
-import com.donty.gymapp.ui.screens.mealPlan.Meal_Plan_Screen;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -37,8 +37,6 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
             has_Ingredient_Name_Changed = false,
             has_Ingredient_Type_Changed = false;
 
-    protected  Meal_Plan_Screen meal_plan_screen;
-
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
@@ -46,12 +44,11 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
     (
             Ingredients_Info_Screen ingredients_info_screen,
             MyJDBC_Sqlite db,
-            Shared_Data_Registry shared_Data_Registry,
-            Meal_Plan_Screen meal_plan_screen
+            Shared_Data_Registry shared_Data_Registry
     )
     {
         super(ingredients_info_screen, db, shared_Data_Registry);  // Super Constructor
-        this.meal_plan_screen =  meal_plan_screen;
+
     }
 
     //##################################################################################################################
@@ -223,7 +220,7 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
         // Update Ingredients Name Related Things
         if (has_Ingredient_Name_Changed)
         {
-            meal_plan_screen.redraw_Ingredients_Tables_Obj_Name_Col(selected_ingredients_name_obj);
+          ingredients_info_screen.update_Ingredients_Table_Names_Col(selected_ingredients_name_obj);
         }
     }
 

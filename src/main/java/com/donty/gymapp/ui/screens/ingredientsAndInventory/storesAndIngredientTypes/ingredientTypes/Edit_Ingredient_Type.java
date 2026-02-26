@@ -28,7 +28,6 @@ public class Edit_Ingredient_Type extends Edit_Screen<Ingredient_Type_ID_OBJ>
             Shared_Data_Registry shared_Data_Registry,
             Ingredients_Info_Screen ingredient_Info_Screen,
             Parent_Screen<Ingredient_Type_ID_OBJ> parent_Screen,
-
             ArrayList<Ingredient_Type_ID_OBJ> jComboBox_List
     )
     {
