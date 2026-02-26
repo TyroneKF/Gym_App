@@ -98,13 +98,10 @@ public class Parent_JComboBox_Column<T extends Storable_IDS_Parent>
             tableColumn.setCellRenderer(renderer);
         }
         
-        @Override //First time the cell is created
+        @Override // called everytime the cell is editted
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column)
         {
-            //########################################
-            // Remove All and Fill List
-            //######################################
-            model.removeAllElements();
+            model.removeAllElements();  // Remove All and Fill List
             
             for (T id_Object : get_Data(row))
             {

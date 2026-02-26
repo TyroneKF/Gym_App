@@ -2377,7 +2377,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
     // ###############################################################
     // Recipe BTN Actions
     // ###############################################################
-    @SuppressWarnings ("EmptyMethod")
     private void recipe_List_Btn_Action_Open_Screen()
     {
 
@@ -3882,15 +3881,15 @@ public class Meal_Plan_Screen extends Screen_JFrame
         return ingredients_info_screen != null;
     }
 
-    public void update_Ingredients_Name_And_Types_In_JTables(boolean ingredientsAddedOrRemove)
+    // Ingredients Table
+    public void redraw_Ingredients_Tables_Obj_Name_Col(Ingredient_Name_ID_OBJ ingredient_name_id_obj)
     {
-        if (ingredientsAddedOrRemove)
-        {
-            //#####################################
-            // Save Plan & Refresh Plan
-            //#####################################
+        mealManager_ArrayList.forEach(e -> e.redraw_Ingredients_Table_Obj_Name_Col(ingredient_name_id_obj));
+    }
 
-        }
+    public void redraw_Ingredients_Table_Obj_Type_Col(Ingredient_Type_ID_OBJ ingredient_type_id_obj)
+    {
+        mealManager_ArrayList.forEach(e -> e.redraw_Ingredients_Table_Obj_Type_Col(ingredient_type_id_obj));
     }
 
     // ###############################################################

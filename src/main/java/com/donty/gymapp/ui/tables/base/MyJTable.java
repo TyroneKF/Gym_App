@@ -672,6 +672,11 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
         return jTable;
     }
 
+    protected CustomTableModel get_Table_Model()
+    {
+        return tableModel;
+    }
+
     //##################################################################################################################
     // Resizing GUi & Add Component Methods
     //##################################################################################################################

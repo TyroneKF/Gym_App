@@ -1,4 +1,33 @@
 #####################################################
+Add Ingredient Screen
+#####################################################
+
+ Ingredients Table
+ X   .) new ingredient should appear in drop down if same ingredient type is selected on table
+ X   .) change ingredidnet type -> new ingredient should appear in ingredient type -> ingredients if selected on table
+
+ X   .) if ingredient Type had no ingredients it should now appear on GUI
+
+
+Edit Screen -
+ X   .) new ingredient should appear in drop down if same ingredient type is selected on scren
+ X   .) change ingredidnet type -> new ingredient should appear in ingredient type -> ingredients if selected on table
+
+
+
+#####################################################
+Edit Ingredient Screen
+#####################################################
+
+Ingredients Table
+    .) Changing ingredients Name Should Appear on UI
+    .) Changing ingredient Type should adjust
+
+
+
+
+
+#####################################################
 LineChart Screen
 #####################################################
 

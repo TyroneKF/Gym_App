@@ -172,7 +172,6 @@ public abstract class Parent_Ingredients_Screen extends Screen_JPanel
         }
         else
         {
-            ingredients_info_screen.set_Update_IngredientInfo(true); // Update Status
             update_Other_Screens(); // Update Other Screens
         }
 

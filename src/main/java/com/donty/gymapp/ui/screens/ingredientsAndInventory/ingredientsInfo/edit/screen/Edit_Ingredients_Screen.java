@@ -1,6 +1,7 @@
 package com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.edit.screen;
 
 import com.donty.gymapp.gui.controls.combobox.base.storableID.Field_JCombo_Storable_ID_Main;
+import com.donty.gymapp.gui.controls.combobox.base.storableID.IngredientType.Mapped_Ingredient_Type_JC;
 import com.donty.gymapp.ui.meta.ids.storableIDs.Ingredient_Name_ID_OBJ;
 import com.donty.gymapp.ui.meta.ids.storableIDs.Ingredient_Type_ID_OBJ;
 import com.donty.gymapp.persistence.database.Fetched_Results;
@@ -9,11 +10,12 @@ import com.donty.gymapp.persistence.database.batch.Batch_Upload_And_Fetch_Statem
 import com.donty.gymapp.persistence.database.batch.Batch_Upload_Statements;
 import com.donty.gymapp.persistence.database.statements.Fetch_Statement_Full;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
-import com.donty.gymapp.gui.controls.combobox.base.storableID.Field_JC_Ingredient_Type;
+import com.donty.gymapp.gui.controls.combobox.base.storableID.IngredientType.Field_JC_Ingredient_Type;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.edit.ingredients.Edit_Ingredients_Form;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.edit.products.Edit_Shop_Form;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.Ingredients_Info_Screen;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.base.screen.Parent_Ingredients_Screen;
+import com.donty.gymapp.ui.screens.mealPlan.Meal_Plan_Screen;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -35,6 +37,8 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
             has_Ingredient_Name_Changed = false,
             has_Ingredient_Type_Changed = false;
 
+    protected  Meal_Plan_Screen meal_plan_screen;
+
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
@@ -42,10 +46,12 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
     (
             Ingredients_Info_Screen ingredients_info_screen,
             MyJDBC_Sqlite db,
-            Shared_Data_Registry shared_Data_Registry
+            Shared_Data_Registry shared_Data_Registry,
+            Meal_Plan_Screen meal_plan_screen
     )
     {
         super(ingredients_info_screen, db, shared_Data_Registry);  // Super Constructor
+        this.meal_plan_screen =  meal_plan_screen;
     }
 
     //##################################################################################################################
@@ -79,7 +85,7 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
         add_To_Container(mainCentre_JPanel, ingredientType_JC_JP, 0, get_And_Increase_YPos(), 0.25, "horizontal", 10, 0);
 
         // Create JCombBox
-        ingredient_Main_Type_JC = new Edit_Ingredients_Screen_Type_JC(shared_data_registry)
+        ingredient_Main_Type_JC = new Mapped_Ingredient_Type_JC(shared_data_registry)
         {
             @Override
             protected void actionListener()
@@ -217,7 +223,7 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
         // Update Ingredients Name Related Things
         if (has_Ingredient_Name_Changed)
         {
-
+            meal_plan_screen.redraw_Ingredients_Tables_Obj_Name_Col(selected_ingredients_name_obj);
         }
     }
 

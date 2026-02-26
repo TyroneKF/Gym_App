@@ -10,6 +10,8 @@ import com.donty.gymapp.persistence.database.statements.Fetch_Statement_Full;
 import com.donty.gymapp.persistence.database.statements.Upload_Statement;
 import com.donty.gymapp.persistence.database.statements.Upload_Statement_Full;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
+import com.donty.gymapp.ui.meta.ids.storableIDs.Ingredient_Name_ID_OBJ;
+import com.donty.gymapp.ui.meta.ids.storableIDs.Ingredient_Type_ID_OBJ;
 import com.donty.gymapp.ui.screens.mealPlan.Meal_And_Sub_Meals_OBJ;
 import com.donty.gymapp.ui.tables.ingredients.IngredientsTable;
 import com.donty.gymapp.ui.tables.viewData.MacrosLeft_Table;
@@ -1601,7 +1603,7 @@ public class MealManager
     }
 
     //############################
-    // Update Tables
+    // Update Other Tables
     //############################
     public void update_Total_Meal()
     {
@@ -1611,6 +1613,19 @@ public class MealManager
     private void update_MacrosLeft_Table()
     {
         macrosLeft_JTable.update_Table();
+    }
+
+    //############################
+    // Update Ingredients Table
+    //############################
+    public void redraw_Ingredients_Table_Obj_Name_Col(Ingredient_Name_ID_OBJ ingredient_name_id_obj)
+    {
+        ingredient_tables_AL.forEach(e -> e.redraw_Ingredient_Name_Col(ingredient_name_id_obj));
+    }
+
+    public void redraw_Ingredients_Table_Obj_Type_Col(Ingredient_Type_ID_OBJ ingredient_type_id_obj)
+    {
+        ingredient_tables_AL.forEach(e -> e.redraw_Ingredient_Type_Col(ingredient_type_id_obj));
     }
 
     //##################################################################################################################

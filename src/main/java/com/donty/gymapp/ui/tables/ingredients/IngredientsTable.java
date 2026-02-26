@@ -13,6 +13,7 @@ import com.donty.gymapp.persistence.database.statements.Fetch_Statement_Full;
 import com.donty.gymapp.persistence.database.statements.Upload_Statement;
 import com.donty.gymapp.persistence.database.statements.Upload_Statement_Full;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
+import com.donty.gymapp.ui.meta.ids.storableIDs.Storable_IDS_Parent;
 import com.donty.gymapp.ui.tables.ingredients.buttons.Button_Column;
 import com.donty.gymapp.ui.tables.ingredients.combobox.Ingredient_Name_JComboBox_Column;
 import com.donty.gymapp.ui.tables.ingredients.combobox.Ingredient_Type_JComboBox_Column;
@@ -58,7 +59,6 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
     private boolean
             sub_meal_in_db,
             sub_meal_saved,
-
             table_deleted = false,
             sub_meal_meta_data_changed = false,
             sub_meal_data_changed = false;
@@ -402,6 +402,37 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
         setup_Delete_Btn_Column(get_Delete_BTN_View_Col());
     }
 
+    public void redraw_Ingredient_Name_Col(Ingredient_Name_ID_OBJ ingredient_name_obj)
+    {
+        int column_pos = get_Ingredient_Name_Col(true);
+
+        update_Storable_Column(Ingredient_Name_ID_OBJ.class, ingredient_name_obj, column_pos);
+    }
+
+    public void redraw_Ingredient_Type_Col(Ingredient_Type_ID_OBJ ingredient_type_obj)
+    {
+        int column_pos = get_Ingredient_Type_Col(true);
+
+        update_Storable_Column(Ingredient_Type_ID_OBJ.class, ingredient_type_obj, column_pos);
+    }
+
+    private <T extends Storable_IDS_Parent> void update_Storable_Column(Class<T> class_type, T obj_1, int column_pos)
+    {
+        String name = get_Table_Model().getColumnName(column_pos);
+
+        System.out.printf("Columns name %s", name);
+
+        for (int row = 0; row < get_Rows_In_Table(); row++)
+        {
+            T obj_2 = class_type.cast(get_Value_On_Model_Data(row, column_pos));
+
+            if (obj_1.equals(obj_2))
+            {
+                get_Table_Model().fireTableCellUpdated(row, column_pos);
+            }
+        }
+    }
+
     //###################################
     // Delete Row Btn
     //###################################
@@ -535,7 +566,7 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
         {
             return ((BigDecimal) old_Value).compareTo(((BigDecimal) new_Value)) != 0;
         }
-        if (type == Ingredient_Type_ID_OBJ.class || type == Ingredient_Name_ID_OBJ.class || type == String.class )
+        if (type == Ingredient_Type_ID_OBJ.class || type == Ingredient_Name_ID_OBJ.class || type == String.class)
         {
             return ! old_Value.equals(new_Value);
         }
@@ -857,11 +888,13 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
         int pos = - 1;
         Object[] params_03 = new Object[4 * saved_Data.size()];
 
+        int ingredient_name_model_pos = get_Ingredient_Name_Col(true);
+
         for (ArrayList<Object> row : saved_Data)
         {
             params_03[pos += 1] = row.get(model_ingredient_index_col);                                    // Get Ingredient Index
             params_03[pos += 1] = draft_sub_meal_id;                                                      // Get Sub-Meal ID
-            params_03[pos += 1] = ((Ingredient_Name_ID_OBJ) row.get(model_ingredient_name_col)).get_ID(); // Get Ingredient ID
+            params_03[pos += 1] = ((Ingredient_Name_ID_OBJ) row.get(ingredient_name_model_pos)).get_ID(); // Get Ingredient ID
             params_03[pos += 1] = row.get(model_quantity_col);                                            // Get Quantity
         }
 
