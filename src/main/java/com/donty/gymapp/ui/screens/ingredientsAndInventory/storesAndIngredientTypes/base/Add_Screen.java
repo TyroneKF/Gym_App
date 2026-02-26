@@ -32,7 +32,7 @@ public abstract class Add_Screen<T extends Storable_IDS_Parent> extends Screen_J
     // Objects
     protected final MyJDBC_Sqlite db;
     protected final Parent_Screen<T> parent_Screen;
-    protected final Ingredients_Info_Screen ingredient_Info_Screen;
+    protected final Ingredients_Info_Screen ingredients_info_screen;
     protected final Shared_Data_Registry sharedDataRegistry;
     protected Fetched_Results fetched_Results_OBJ;
 
@@ -63,7 +63,7 @@ public abstract class Add_Screen<T extends Storable_IDS_Parent> extends Screen_J
     (
             MyJDBC_Sqlite db,
             Shared_Data_Registry shared_Data_Registry,
-            Ingredients_Info_Screen ingredient_Info_Screen,
+            Ingredients_Info_Screen ingredients_info_screen,
             Parent_Screen<T> parent_Screen
     )
     {
@@ -78,7 +78,7 @@ public abstract class Add_Screen<T extends Storable_IDS_Parent> extends Screen_J
         this.db = db;
         this.sharedDataRegistry = shared_Data_Registry;
         this.parent_Screen = parent_Screen;
-        this.ingredient_Info_Screen = ingredient_Info_Screen;
+        this.ingredients_info_screen = ingredients_info_screen;
         process = parent_Screen.get_Process();
 
         setPreferredSize(new Dimension(200, 125));

@@ -60,5 +60,5 @@ public class Edit_Stores extends Edit_Screen<Store_ID_OBJ>
     }
 
     @Override
-    protected void update_Other_Screens() { ingredient_Info_Screen.update_Stores_JC(); }
+    protected void update_Other_Screens() { ingredients_info_screen.update_Stores_JC(); }
 }

@@ -72,7 +72,6 @@ public class Edit_Ingredient_Type extends Edit_Screen<Ingredient_Type_ID_OBJ>
 
         upload_statements.add_Uploads(new Upload_Statement(upload_Q1, params , true));
 
-
         // Return to Default delete
         return  super.delete_Action(item_ID_Obj, upload_statements);
     }
@@ -87,6 +86,7 @@ public class Edit_Ingredient_Type extends Edit_Screen<Ingredient_Type_ID_OBJ>
     @Override
     protected void update_Other_Screens()
     {
-        ingredient_Info_Screen.update_All_Types_JC();
+        ingredients_info_screen.update_All_Types_JC();
+        ingredients_info_screen.update_Ingredients_Table_Type_Col(field_jc.get_Selected_Item());
     }
 }

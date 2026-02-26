@@ -418,10 +418,6 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
 
     private <T extends Storable_IDS_Parent> void update_Storable_Column(Class<T> class_type, T obj_1, int column_pos)
     {
-        String name = get_Table_Model().getColumnName(column_pos);
-
-        System.out.printf("Columns name %s", name);
-
         for (int row = 0; row < get_Rows_In_Table(); row++)
         {
             T obj_2 = class_type.cast(get_Value_On_Model_Data(row, column_pos));

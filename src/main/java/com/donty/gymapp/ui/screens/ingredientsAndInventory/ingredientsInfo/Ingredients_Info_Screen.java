@@ -5,6 +5,7 @@ import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.gui.base.Screen_JFrame;
 import com.donty.gymapp.ui.meta.ids.storableIDs.Ingredient_Name_ID_OBJ;
+import com.donty.gymapp.ui.meta.ids.storableIDs.Ingredient_Type_ID_OBJ;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.add.Ingredients_Screen;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.edit.screen.Edit_Ingredients_Screen;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.storesAndIngredientTypes.ingredientTypes.Ingredients_Types_Screen;
@@ -92,11 +93,15 @@ public class Ingredients_Info_Screen extends Screen_JFrame
         edit_Ingredients_Screen.reload_Stores_JC();
     }
 
-    public void update_Ingredients_Table_Names_Col(Ingredient_Name_ID_OBJ selected_ingredients_name_obj)
+    public void update_Ingredients_Table_Names_Col(Ingredient_Name_ID_OBJ selected_ingredient_name_obj)
     {
-        meal_plan_screen.redraw_Ingredients_Tables_Obj_Name_Col(selected_ingredients_name_obj);
+        meal_plan_screen.redraw_Ingredients_Tables_Obj_Name_Col(selected_ingredient_name_obj);
     }
 
+    public void update_Ingredients_Table_Type_Col(Ingredient_Type_ID_OBJ selected_ingredient_type_obj)
+    {
+        meal_plan_screen.redraw_Ingredients_Table_Obj_Type_Col(selected_ingredient_type_obj);
+    }
 
     //###############################################
     // Type JC

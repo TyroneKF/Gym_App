@@ -49,6 +49,6 @@ public  class Add_Stores extends Add_Screen<Store_ID_OBJ>
     @Override
     protected void update_Other_Screens()
     {
-        ingredient_Info_Screen.update_Stores_JC();
+        ingredients_info_screen.update_Stores_JC();
     }
 }
