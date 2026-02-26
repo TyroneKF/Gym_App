@@ -10,7 +10,7 @@ import com.donty.gymapp.persistence.database.batch.Batch_Upload_And_Fetch_Statem
 import com.donty.gymapp.persistence.database.batch.Batch_Upload_Statements;
 import com.donty.gymapp.persistence.database.statements.Fetch_Statement_Full;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
-import com.donty.gymapp.gui.controls.combobox.base.storableID.IngredientType.Field_JC_Ingredient_Type;
+import com.donty.gymapp.gui.controls.combobox.base.storableID.IngredientType.base.Field_JC_Ingredient_Type;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.edit.ingredients.Edit_Ingredients_Form;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.edit.products.Edit_Shop_Form;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.Ingredients_Info_Screen;

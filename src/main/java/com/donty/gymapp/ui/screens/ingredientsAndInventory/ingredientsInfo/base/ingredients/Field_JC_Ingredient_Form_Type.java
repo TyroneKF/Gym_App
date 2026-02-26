@@ -1,6 +1,6 @@
 package com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.base.ingredients;
 
-import com.donty.gymapp.gui.controls.combobox.base.storableID.Field_JC_Ingredient_Type;
+import com.donty.gymapp.gui.controls.combobox.base.storableID.IngredientType.base.Field_JC_Ingredient_Type;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 
 public class Field_JC_Ingredient_Form_Type extends Field_JC_Ingredient_Type

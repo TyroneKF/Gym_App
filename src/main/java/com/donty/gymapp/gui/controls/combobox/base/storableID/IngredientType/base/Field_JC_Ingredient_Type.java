@@ -1,4 +1,4 @@
-package com.donty.gymapp.gui.controls.combobox.base.storableID;
+package com.donty.gymapp.gui.controls.combobox.base.storableID.IngredientType.base;
 
 import com.donty.gymapp.gui.controls.combobox.base.storableID.base.Field_JCombo_Storable_ID;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
