@@ -197,4 +197,3 @@ jobs:
           name: GymApp-Linux
           path: dist/*.deb
           retention-days: 30
-
