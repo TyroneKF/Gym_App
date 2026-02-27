@@ -20,14 +20,14 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
     //##############################################
     // Objects
     //##############################################
-    protected MyJDBC_Sqlite db;
-    protected Shared_Data_Registry shared_data_registry;
+    protected final MyJDBC_Sqlite db;
+    protected final Shared_Data_Registry shared_data_registry;
 
     protected Container parent_Container;
-    protected JScrollPane scrollPane = new JScrollPane();
-    protected static GridBagConstraints gbc = new GridBagConstraints(); //HELLO DELETE
+    protected final JScrollPane scrollPane = new JScrollPane();
+    protected static final GridBagConstraints gbc = new GridBagConstraints(); //HELLO DELETE
 
-    protected ColumnUiRules<T> column_ui_rules;
+    protected final ColumnUiRules<T> column_ui_rules;
 
     //#####################################################################
     // Table Customization Variables
@@ -38,36 +38,37 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
     //#######################
     // Strings
     //#######################
-    protected String primary_Key_Column;
-    protected String table_name;
-    protected String db_read_view_name;
-    protected String db_write_table_name;
+    protected final String primary_Key_Column;
+    protected final String table_name;
+    protected final String db_read_view_name;
+    protected final String db_write_table_name;
 
     //##############################################
     // Collections
     //##############################################
-    protected ArrayList<String>
+    protected final ArrayList<String>
             column_Names,
             gui_Column_Names = new ArrayList<>();
 
     protected ArrayList<ArrayList<Object>> saved_Data;
 
-    protected ArrayList<Integer> editable_column_model_positions = new ArrayList<>();
+    protected final ArrayList<Integer> editable_column_model_positions = new ArrayList<>();
 
     //#####################################################################
     // Other Variables
     //#####################################################################
     // String
     private final String class_Name;
-    protected String lineSeparator = "###############################################################################";
+    protected final String lineSeparator = "###############################################################################";
 
     //#############################
     // Booleans
     //#############################
     protected boolean
             table_Initialised = false,
-            add_JTable_Action,
             is_row_Being_Edited = false;
+
+    protected final boolean add_JTable_Action;
 
     //##################################################################################################################
     // Constructor
@@ -138,19 +139,16 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
     //########################################
     protected abstract boolean format_Table_Data(ArrayList<ArrayList<Object>> table_data);
 
-    protected abstract void format_Table_Row_Data(ArrayList<Object> table_data) throws Exception;
-
     //########################################
     // Variable Configurations
     //########################################
     private void parent_Variable_Configurations()
     {
         // GUI Table Names
-        column_Names.forEach(e -> {
-                    gui_Column_Names.add(Arrays.stream(e.split("[ _]+"))
-                            .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
-                            .collect(Collectors.joining("_")));
-                }
+        column_Names.forEach(e ->
+                gui_Column_Names.add(Arrays.stream(e.split("[ _]+"))
+                        .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
+                        .collect(Collectors.joining(" ")))
         );
 
         // Un-Editable Table Columns
@@ -219,7 +217,7 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 
-        add_To_Container(this, scrollPane, 0, 1, 1, 1, 0.25, 0.25, "both", "");
+        add_To_Container(this, scrollPane, 1, "both", "");
 
         //#################################################################################
         // Sizing
@@ -395,7 +393,7 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
                 if (add_JTable_Action && ! is_row_Being_Edited)
                 {
                     // If Nothing Changed Exit
-                    if (! has_Cell_Data_Changed(getColumnClass(col), old_Value, newValue, col)) { return; }
+                    if (! has_Cell_Data_Changed(getColumnClass(col), old_Value, newValue)) { return; }
 
                     set_Row_Being_Edited(true);
                     boolean tabled_Action_Check = table_Data_Changed_Action(row, col, newValue);
@@ -422,7 +420,7 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
         @Override
         public boolean isCellEditable(int row, int col)
         {
-            if (editable_column_model_positions == null) { return false; }
+            if (editable_column_model_positions.isEmpty()) { return false; }
 
             return editable_column_model_positions.contains(col);
         }
@@ -494,7 +492,7 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
             // ######################################################
             // Validation Checks
             // ######################################################
-            validate_source_data(get_Method_Name(3), source_Data);
+            validate_Source_Data(get_Method_Name(3), source_Data);
 
             // ######################################################
             // Create DataSet by manually adding each Cell
@@ -514,6 +512,7 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
 
                 for (Object obj : reading_Row)
                 {
+                    //noinspection UseBulkOperation - Arraylist.addAll() doesn't work for some values being LocalTime / BigDecimal still points reference to souce vs copying
                     new_Row.add(obj);
                 }
 
@@ -523,7 +522,7 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
         }
     }
 
-    protected abstract boolean has_Cell_Data_Changed(Class<?> type, Object old_Value, Object new_Value, int col) throws Exception;
+    protected abstract boolean has_Cell_Data_Changed(Class<?> type, Object old_Value, Object new_Value) throws Exception;
 
     //##############################################
     // Table Model Methods
@@ -534,18 +533,26 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
         return tableModel.getValueAt(row, col);
     }
 
-    private void validate_source_data(String method_name, ArrayList<?> source_Data) throws Exception
+    private void validate_Source_Data(String method_name, ArrayList<ArrayList<Object>> source_Data) throws Exception
     {
-        if (source_Data == null) // null data causes an error
+        if (source_Data == null || source_Data.isEmpty()) // null data causes an error
         {
-            throw new Exception(String.format("\n\n%s Error \nSource_Data cannot be null!", get_Class_And_Method_Name()));
+            throw new Exception(String.format("\n\n%s Error \nSource_Data cannot be null / empty!", get_Class_And_Method_Name()));
+        }
+
+        validate_Source_Data_Row(method_name, source_Data.getFirst());
+    }
+
+    private void validate_Source_Data_Row(String method_name, ArrayList<Object> source_Data) throws Exception
+    {
+        if (source_Data == null || source_Data.isEmpty()) // null data causes an error
+        {
+            throw new Exception(String.format("\n\n%s Error \nSource_Data cannot be null / empty!", get_Class_And_Method_Name()));
         }
 
         int column_name_size = column_Names.size();
+        int source_data_size = source_Data.size();
 
-        boolean is_2D = source_Data.getFirst() instanceof ArrayList<?>;
-
-        int source_data_size = is_2D ? ((ArrayList<ArrayList<?>>) source_Data).getFirst().size() : source_Data.size();
 
         if (source_data_size != column_name_size) // Source Data has to provide data for each expected column
         {
@@ -601,7 +608,7 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
         //########################################################################
         try
         {
-            validate_source_data(get_Method_Name(3), update_Data);
+            validate_Source_Data_Row(get_Method_Name(3), update_Data);
         }
         catch (Exception e)
         {
@@ -637,14 +644,11 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
     //##################################################################################################################
     // Action Methods
     //##################################################################################################################
-    protected Boolean are_You_Sure(String process)
+    protected boolean are_You_Not_Sure(String msg)
     {
-        int reply = JOptionPane.showConfirmDialog(null, String.format("Are you sure you want to %s, \nany unsaved changes will be lost in this Table! \nDo you want to %s?", process, process),
-                "Notification", JOptionPane.YES_NO_OPTION); //HELLO Edit
+        int reply = JOptionPane.showConfirmDialog(null, msg, "Notification", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
-        if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION) { return false; }
-
-        return true;
+        return reply != JOptionPane.YES_NO_OPTION;
     }
 
     //##################################################################################################################
@@ -673,6 +677,11 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
         return jTable;
     }
 
+    protected CustomTableModel get_Table_Model()
+    {
+        return tableModel;
+    }
+
     //##################################################################################################################
     // Resizing GUi & Add Component Methods
     //##################################################################################################################
@@ -696,25 +705,20 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
     }
 
     protected static void add_To_Container
-            (
-                    Container container,
-                    Component add_To_Container,
-                    int grid_X,
-                    int grid_Y,
-                    int grid_Width,
-                    int grid_Height,
-                    double weight_X,
-                    double weight_Y,
-                    String fill,
-                    String anchor
-            )
+    (
+            Container container,
+            Component add_To_Container,
+            int grid_Y,
+            String fill,
+            String anchor
+    )
     {
-        gbc.gridx = grid_X;
+        gbc.gridx = 0;
         gbc.gridy = grid_Y;
-        gbc.gridwidth = grid_Width;
-        gbc.gridheight = grid_Height;
-        gbc.weightx = weight_X;
-        gbc.weighty = weight_Y;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.weightx = 0.25;
+        gbc.weighty = 0.25;
 
         switch (fill.toLowerCase())
         {

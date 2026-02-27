@@ -12,8 +12,8 @@ public abstract class Field_JComboBox<T> extends JComboBox<T>
     // Variables
     //##################################################################################################################
     protected ArrayList<T> data_AL;
-    protected Class<T> typeCast;
-    protected String label;
+    protected final Class<T> typeCast;
+    protected final String label;
 
     //##################################################################################################################
     // Constructor
@@ -95,15 +95,15 @@ public abstract class Field_JComboBox<T> extends JComboBox<T>
 
     public void validation_Check(LinkedHashMap<String, ArrayList<String>> error_Map)
     {
-        if (! is_Item_Selected())
+        if (is_Item_Not_Selected())
         {
             error_Map.put(label, new ArrayList<>(List.of("Select an item !")));
         }
     }
 
-    public boolean is_Item_Selected()
+    public boolean is_Item_Not_Selected()
     {
-        return getSelectedIndex() != - 1;
+        return getSelectedIndex() == - 1;
     }
 
     //##################################################################################################################
@@ -118,13 +118,6 @@ public abstract class Field_JComboBox<T> extends JComboBox<T>
     {
         set_Data_AL(data_AL);
         load_Items();
-    }
-
-    public void set_Item(T obj)
-    {
-        if (! (data_AL.contains(obj))) { return; }
-
-        setSelectedItem(obj);
     }
 
     //##################################################################################################################

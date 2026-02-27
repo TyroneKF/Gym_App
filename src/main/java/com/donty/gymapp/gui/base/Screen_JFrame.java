@@ -1,12 +1,9 @@
 package com.donty.gymapp.gui.base;
 
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
-
 import javax.swing.*;
 import java.awt.*;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.stream.Collectors;
+
 
 public class Screen_JFrame extends JFrame
 {
@@ -15,20 +12,21 @@ public class Screen_JFrame extends JFrame
     //##################################################################################################################
     
     // Integers
-    protected int containerYPos = 0, frameWidth, frameHeight, xPos, yPos;
+    protected int
+            containerYPos = 0,
+            frameWidth;
     
     // String
-    protected String lineSeparator = "###############################################################################";
-    protected String title;
+    protected final String lineSeparator = "###############################################################################";
     private String class_Name;
     
     //##############################################
     // Objects
     //##############################################
     protected MyJDBC_Sqlite db;
-    protected GridBagConstraints gbc = new GridBagConstraints();
+    protected final GridBagConstraints gbc = new GridBagConstraints();
     protected Container contentPane;
-    protected ScrollPaneCreator scrollPane = new ScrollPaneCreator();
+    protected final ScrollPaneCreator scrollPane = new ScrollPaneCreator();
     
     //##############################################
     // JPanels
@@ -63,12 +61,7 @@ public class Screen_JFrame extends JFrame
         //########################################################
         this.class_Name = this.getClass().getSimpleName();
         
-        // Booleans
-        this.title = title;
-        this.frameHeight = frameHeight;
         this.frameWidth = frameWidth;
-        this.xPos = xPos;
-        this.yPos = yPos;
         
         //########################################################
         // Configurations
@@ -89,7 +82,7 @@ public class Screen_JFrame extends JFrame
         //########################################################
         // Private: JPanels
         JPanel screenSectioned = new JPanel(new BorderLayout());
-        addToContainer(contentPane, screenSectioned, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+        addToContainer(contentPane, screenSectioned, 0, 0, "both", 0, null);
         
         // Top of GUI
         mainNorthPanel = new JPanel(new GridBagLayout());
@@ -109,7 +102,7 @@ public class Screen_JFrame extends JFrame
         if (addScrollPane)
         {
             // Attach ScrollPane to the centre of the screen
-            addToContainer(mainCenterPanel, scrollPane, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, null);
+            addToContainer(mainCenterPanel, scrollPane, 0, 0, "both", 0, null);
             scrollPaneJPanel = scrollPane.getJPanel();
             scrollPaneJPanel.setLayout(new GridBagLayout());
         }
@@ -131,12 +124,7 @@ public class Screen_JFrame extends JFrame
             }
         });
     }
-    
-    protected void icon_Setup(Container jpanel)
-    {
 
-    }
-    
     //##################################################################################################################
     // Actions
     //##################################################################################################################
@@ -156,23 +144,16 @@ public class Screen_JFrame extends JFrame
     {
         dispose();
     }
-    
-    protected boolean is_Results_Empty(Collection<?> c)
-    {
-        return c == null || c.isEmpty();
-    }
-    
+
     //##############################################
     // Screen_JFrame Positioning
     //##############################################
     public void scrollToJPanelOnScreen(JPanel panel) // Only Works With JPanels
     {
         // Scroll to that panel AFTER layout has finished
-        SwingUtilities.invokeLater(() -> {
-            panel.scrollRectToVisible(
-                    new Rectangle(0, 0, panel.getWidth(), panel.getHeight())
-            );
-        });
+        SwingUtilities.invokeLater(() ->
+            panel.scrollRectToVisible(new Rectangle(0, 0, panel.getWidth(), panel.getHeight()))
+        );
     }
     
     protected void scroll_To_Top_of_ScrollPane()
@@ -203,27 +184,14 @@ public class Screen_JFrame extends JFrame
     
     public void set_Title(String title)
     {
-        if (title.length() > 0) { setTitle(title); }
+        if (! title.isEmpty()) { setTitle(title); }
     }
     
     public void set_Resizable(boolean x)
     {
         setResizable(x);
     }
-    
-    protected String formatStrings(String txt, boolean separateWords)
-    {
-        // Re-assign Re-Capitalised Value into list
-        return separateWords ?
-                Arrays.stream(txt.split("[ _]+"))
-                        .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
-                        .collect(Collectors.joining(" "))
-                :
-                Arrays.stream(txt.split("[ _]+"))
-                        .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
-                        .collect(Collectors.joining("_"));
-    }
-    
+
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
@@ -232,20 +200,16 @@ public class Screen_JFrame extends JFrame
     {
         return class_Name;
     }
+
     
     protected String get_Method_Name()
     {
-        return String.format("%s()", Thread.currentThread().getStackTrace()[2].getMethodName());
-    }
-    
-    protected String get_Method_Name(int thread_Pos)
-    {
-        return String.format("%s()", Thread.currentThread().getStackTrace()[thread_Pos].getMethodName());
+        return String.format("%s()", Thread.currentThread().getStackTrace()[3].getMethodName());
     }
     
     protected String get_Class_And_Method_Name()
     {
-        return String.format("%s -> %s", get_Class_Name(), get_Method_Name(3));
+        return String.format("%s -> %s", get_Class_Name(), get_Method_Name());
     }
     // ##################################
     // Get Int Methods
@@ -254,30 +218,7 @@ public class Screen_JFrame extends JFrame
     {
         return frameWidth;
     }
-    
-    protected int getFrameHeight()
-    {
-        return frameHeight;
-    }
-    
-    // ##################################
-    // Other Objects
-    // ##################################
-    public MyJDBC_Sqlite getDb()
-    {
-        return db;
-    }
-    
-    public GridBagConstraints getGbc()
-    {
-        return gbc;
-    }
-    
-    public JFrame getFrame()
-    {
-        return this;
-    }
-    
+
     // ##################################
     // Get JPanels Methods
     // ##################################
@@ -285,23 +226,15 @@ public class Screen_JFrame extends JFrame
     {
         return mainNorthPanel;
     }
-    
+
     protected JPanel getScrollPaneJPanel()
     {
         return scrollPaneJPanel;
     }
-    
+
     protected JPanel getMainSouthPanel() { return mainSouthPanel; }
-    
-    protected JPanel createSpaceDivider(int width, int height)
-    {
-        JPanel spaceDivider = new JPanel(new GridBagLayout());
-        spaceDivider.setBackground(Color.WHITE);
-        spaceDivider.setPreferredSize(new Dimension(width, height));
-        
-        return spaceDivider;
-    }
-    
+
+
     //##################################################################################################################
     // Sizing & Adding to GUI Methods
     //##################################################################################################################
@@ -310,7 +243,7 @@ public class Screen_JFrame extends JFrame
         setFrameVisibility(true);
         setExtendedState(JFrame.NORMAL); // makes frames visible
         
-        getFrame().setLocation(0, 0);
+        setLocation(0, 0);
         setLocationRelativeTo(null);
     }
     
@@ -327,9 +260,15 @@ public class Screen_JFrame extends JFrame
         contentPane.revalidate();
     }
     
-    protected void addToContainer(Container container, Component addToContainer,
-                                  Integer gridx, Integer gridy, Integer gridwidth, Integer gridheight, Double weightx,
-                                  Double weighty, String fill, Integer ipady, Integer ipadx, String anchor)
+    protected void addToContainer(
+            Container container,
+            Component addToContainer,
+            Integer gridx,
+            Integer gridy,
+            String fill,
+            Integer ipady,
+            String anchor
+    )
     {
         if (gridx != null)
         {
@@ -340,13 +279,13 @@ public class Screen_JFrame extends JFrame
             gbc.gridy = gridy;
         }
         
-        gbc.gridwidth = gridwidth;
-        gbc.gridheight = gridheight;
-        gbc.weightx = weightx;
-        gbc.weighty = weighty;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.weightx = 0.25;
+        gbc.weighty = 0.25;
         
         gbc.ipady = ipady;
-        gbc.ipadx = ipadx;
+        gbc.ipadx = 0;
         
         switch (fill.toLowerCase())
         {

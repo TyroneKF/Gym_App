@@ -1,7 +1,7 @@
 package com.donty.gymapp.gui.controls.combobox.base.storableID.base;
 
 import com.donty.gymapp.gui.controls.combobox.base.Field_JComboBox;
-import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Storable_IDS_Parent;
+import com.donty.gymapp.ui.meta.ids.storableIDs.Storable_IDS_Parent;
 import javax.swing.*;
 import java.awt.event.ItemEvent;
 import java.util.ArrayList;

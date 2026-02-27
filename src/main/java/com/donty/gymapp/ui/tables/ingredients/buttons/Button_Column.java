@@ -11,14 +11,14 @@ import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.*;
 
-/**
+/*
  * http://www.camick.com/java/source/ButtonColumn.java
- * <p>
+
  * The Button_Column class provides a renderer and an editor that looks like a
  * JButton. The renderer and editor will then be used for a specified column
  * in the table. The TableModel will contain the String to be displayed on
  * the button.
- * <p>
+
  * The button can be invoked by a mouse click or by pressing the space bar
  * when the cell has focus. Optionally a mnemonic can be set to invoke the
  * button. When the button is invoked the provided Action is invoked. The
@@ -31,10 +31,9 @@ public class Button_Column extends AbstractCellEditor implements TableCellRender
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    private JTable table;
+    private final JTable table;
     
     private final Action action;
-    private int mnemonic;
     private final Border originalBorder;
     private Border focusBorder;
     
@@ -99,17 +98,7 @@ public class Button_Column extends AbstractCellEditor implements TableCellRender
     //##################################################################################################################
     // Methods
     //##################################################################################################################
-    
-    /**
-     * Get foreground color of the button when the cell has focus
-     *
-     * @return the foreground color
-     */
-    public Border getFocusBorder()
-    {
-        return focusBorder;
-    }
-    
+
     /**
      * The foreground color of the button when the cell has focus
      *
@@ -120,12 +109,7 @@ public class Button_Column extends AbstractCellEditor implements TableCellRender
         this.focusBorder = focusBorder;
         editButton.setBorder(focusBorder);
     }
-    
-    public int getMnemonic()
-    {
-        return mnemonic;
-    }
-    
+
     /**
      * The mnemonic to activate the button when the cell has focus
      *
@@ -133,7 +117,6 @@ public class Button_Column extends AbstractCellEditor implements TableCellRender
      */
     public void setMnemonic(int mnemonic)
     {
-        this.mnemonic = mnemonic;
         renderButton.setMnemonic(mnemonic);
         editButton.setMnemonic(mnemonic);
     }

@@ -5,8 +5,7 @@ import com.donty.gymapp.domain.enums.db_enums.columnNames.views.totalmeal.Draft_
 import com.donty.gymapp.domain.enums.db_enums.columnNames.views.totalmeal.Draft_Gui_Total_Meal_Macro_Columns;
 import com.donty.gymapp.ui.components.meal.MealManager;
 import com.donty.gymapp.domain.enums.db_enums.columnNames.views.totalmeal.Draft_Gui_Total_Meal_Other_Columns;
-import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.*;
-import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Storable_IDS_Parent;
+import com.donty.gymapp.ui.meta.ids.storableIDs.*;
 import com.donty.gymapp.ui.tables.base.ColumnUiRules;
 import com.donty.gymapp.ui.tables.base.TableMeta;
 import org.jfree.data.general.DefaultPieDataset;
@@ -89,36 +88,30 @@ public class Shared_Data_Registry
     //##################
     // Stores
     //##################
-    private HashMap<Integer, Store_ID_OBJ> stores_Obj_Map = new HashMap<>();
-    private ArrayList<Store_ID_OBJ> stores_Obj_AL = new ArrayList<>();
+    private final HashMap<Integer, Store_ID_OBJ> stores_Obj_Map = new HashMap<>();
+    private final ArrayList<Store_ID_OBJ> stores_Obj_AL = new ArrayList<>();
     
     //##################
     // Ingredient Types
     //##################
-    private HashMap<Integer, Ingredient_Type_ID_OBJ> ingredient_Types_Obj_Map = new HashMap<>();
-    private ArrayList<Ingredient_Type_ID_OBJ> all_Ingredient_Types_Obj_AL = new ArrayList<>();
+    private final HashMap<Integer, Ingredient_Type_ID_OBJ> ingredient_Types_Obj_Map = new HashMap<>();
+    private final ArrayList<Ingredient_Type_ID_OBJ> all_Ingredient_Types_Obj_AL = new ArrayList<>();
     
     // Ingredient Types To Names
-    private HashMap<Integer, ArrayList<Ingredient_Name_ID_OBJ>> ingredient_Types_To_Names_Map = new HashMap<>();
-    private ArrayList<Ingredient_Type_ID_OBJ> ingredient_Types_With_Ingredients_AL = new ArrayList<>();
+    private final HashMap<Integer, ArrayList<Ingredient_Name_ID_OBJ>> ingredient_Types_To_Names_Map = new HashMap<>();
+    private final ArrayList<Ingredient_Type_ID_OBJ> ingredient_Types_With_Ingredients_AL = new ArrayList<>();
     
     //##################
     // Ingredient Names
     //##################
-    private HashMap<Integer, Ingredient_Name_ID_OBJ> ingredient_Names_Obj_Map = new HashMap<>();
-    private ArrayList<Ingredient_Name_ID_OBJ> ingredient_Names_Obj_AL = new ArrayList<>();
-    
-    //##################
-    // Material Type
-    //##################
-    private HashMap<Integer, Measurement_Material_Type_ID_OBJ> measurement_Material_Type_Obj_Map = new HashMap<>();
-    private ArrayList<Measurement_Material_Type_ID_OBJ> measurement_Material_Type_Obj_AL = new ArrayList<>();
-    
+    private final HashMap<Integer, Ingredient_Name_ID_OBJ> ingredient_Names_Obj_Map = new HashMap<>();
+    private final ArrayList<Ingredient_Name_ID_OBJ> ingredient_Names_Obj_AL = new ArrayList<>();
+
     //##################
     // Measurements
     //##################
-    private HashMap<Integer, Measurement_ID_OBJ> ingredient_Measurement_Obj_Map = new HashMap<>();
-    private ArrayList<Measurement_ID_OBJ> ingredient_Measurement_Obj_AL = new ArrayList<>();
+    private final HashMap<Integer, Measurement_ID_OBJ> ingredient_Measurement_Obj_Map = new HashMap<>();
+    private final ArrayList<Measurement_ID_OBJ> ingredient_Measurement_Obj_AL = new ArrayList<>();
     
     //##################################################################################################################
     // Constructor
@@ -137,7 +130,7 @@ public class Shared_Data_Registry
     //###############################################################################
     public void sort_MealManager_AL()
     {
-        mealManager_ArrayList.sort((a, b) -> a.get_Current_Meal_Time().compareTo(b.get_Current_Meal_Time()));
+        mealManager_ArrayList.sort(Comparator.comparing(MealManager :: get_Current_Meal_Time));
     }
     
     //###############################################################################
@@ -158,15 +151,15 @@ public class Shared_Data_Registry
         //##########################################
         // Remove MealManager Results to Collection
         //##########################################
-        /**
+        /*
          * HashMap<String, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues = new HashMap<>();
          * Stores all the mealManagers TotalMealValues in collections by the macroName
-         *
+
          * <Key:  MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
          * Etc;  <Key: Salt | Value: HashMap<MealManager, Quantity: 300g >>
          */
         
-        /**
+        /*
          *  <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
          *   Put, Replace have the same effect
          */
@@ -177,7 +170,7 @@ public class Shared_Data_Registry
             
             BigDecimal macro_value = (BigDecimal) total_meal_data.get(macroPos);
             
-            /**
+            /*
              *  <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
              *   Put, Replace have the same effect
              */
@@ -206,7 +199,7 @@ public class Shared_Data_Registry
     
     private void remove_MealManager_Macro_Values(MealManager mealManager)
     {
-        /**
+        /*
          * HashMap<String, HashMap<MealManager, BigDecimal>> mealManagers_TotalMeal_MacroValues = new HashMap<>();
          * Stores all the mealManagers TotalMealValues in collections by the macroName
          * <Key: MacroName | Value: HashMap <Key: MealManager, Value:  Quantity>>
@@ -271,9 +264,8 @@ public class Shared_Data_Registry
         mm_PieData.clear();
         
         // Transfer Data Over into this dataset
-        newGenerated.getKeys().forEach(key -> {
-            mm_PieData.setValue(key, newGenerated.getValue(key));
-        });
+        newGenerated.getKeys().forEach(key ->
+            mm_PieData.setValue(key, newGenerated.getValue(key)));
         
         // Turn Notifications back on
         mm_PieData.setNotify(true);
@@ -391,8 +383,7 @@ public class Shared_Data_Registry
         // Get Object Info
         //####################################
         // Get ingredient_Type Obj & ID Associated with Ingredient_Name
-        Ingredient_Type_ID_OBJ from_Type_Obj = ingredient_Name_Obj.get_Ingredient_Type_Obj();
-        int from_Type_id = from_Type_Obj.get_ID();  // Get Ingredient Type Associated with current Ingredient Name
+        int from_Type_id = ingredient_Name_Obj.get_Ingredient_Type_ID();  // Get Ingredient Type Associated with current Ingredient Name
         
         int to_Type_ID = to_Type_Obj.get_ID();
         
@@ -411,7 +402,11 @@ public class Shared_Data_Registry
         if (from_Type_AL == null || ! from_Type_AL.remove(ingredient_Name_Obj)) { return false; }
         
         // Check if from_type is empty after ingredient removal, if yes now remove it
-        if (from_Type_AL.isEmpty()) { remove_Mapped_Ingredient_Type(from_Type_Obj); }
+        if (from_Type_AL.isEmpty())
+        {
+            Ingredient_Type_ID_OBJ from_Type_Obj = ingredient_Name_Obj.get_Ingredient_Type_Obj();
+            remove_Mapped_Ingredient_Type(from_Type_Obj);
+        }
         
         //#####################################
         // Set Ingredient_Name Type to to_Type
@@ -502,8 +497,7 @@ public class Shared_Data_Registry
         // Add Ingredient_Name to Type
         //##################################
         // Get Ingredient_Type OBJ & ID Associated with Ingredient_Name
-        Ingredient_Type_ID_OBJ ingredient_Type_ID_Obj = ingredient_Name_Id_Obj.get_Ingredient_Type_Obj();
-        int ingredient_Type_Id = ingredient_Type_ID_Obj.get_ID();
+        int ingredient_Type_Id = ingredient_Name_Id_Obj.get_Ingredient_Type_ID();
         
         // Get Ingredient_Names associated with Ingredient_Type Or Create it
         ArrayList<Ingredient_Name_ID_OBJ> ingredient_Names_Objs_AL = ingredient_Types_To_Names_Map.getOrDefault(ingredient_Type_Id, new ArrayList<>());
@@ -524,6 +518,7 @@ public class Shared_Data_Registry
         }
         else
         {
+            Ingredient_Type_ID_OBJ ingredient_Type_ID_Obj = ingredient_Name_Id_Obj.get_Ingredient_Type_Obj();
             add_Mapped_Ingredient_Type(ingredient_Type_ID_Obj, ingredient_Names_Objs_AL);
         }
     }
@@ -534,8 +529,7 @@ public class Shared_Data_Registry
         // Remove from Ingredients Type Map
         //###################################
         // Get Ingredients Type OBJ
-        Ingredient_Type_ID_OBJ ingredient_Type_ID_Obj = ingredient_Name_ID_Obj.get_Ingredient_Type_Obj();
-        int type_id = ingredient_Type_ID_Obj.get_ID();
+        int type_id = ingredient_Name_ID_Obj.get_Ingredient_Type_ID();
         
         // Check IF Map Contains this Ingredient Type
         if (! ingredient_Types_To_Names_Map.containsKey(type_id)) { return false; }
@@ -549,7 +543,7 @@ public class Shared_Data_Registry
         // If Ingredients Names is empty remove the whole list
         if (ingredient_Names.isEmpty())
         {
-            remove_Mapped_Ingredient_Type(ingredient_Type_ID_Obj);
+            remove_Mapped_Ingredient_Type(ingredient_Name_ID_Obj.get_Ingredient_Type_Obj()); // Remove Ingredient Type
         }
         
         //###################################
@@ -605,32 +599,13 @@ public class Shared_Data_Registry
     {
         return stores_Obj_Map.get(id);
     }
-    
-    
-    //#################################################################
-    // Measurement Material Type
-    //#################################################################
-    public void add_Measurement_Material_Type(Measurement_Material_Type_ID_OBJ measurement_material_id_obj, boolean sort)
-    {
-        add_ID_Object(measurement_material_id_obj, measurement_Material_Type_Obj_AL, sort, measurement_Material_Type_Obj_Map);
-    }
-    
-    public Measurement_Material_Type_ID_OBJ get_Measurement_Material_Type_ID_OBJ(int id)
-    {
-        return measurement_Material_Type_Obj_Map.get(id);
-    }
-    
+
     //#################################################################
     // Measurement
     //#################################################################
     public void add_Measurement(Measurement_ID_OBJ measurement_id_obj, boolean sort)
     {
         add_ID_Object(measurement_id_obj, ingredient_Measurement_Obj_AL, sort, ingredient_Measurement_Obj_Map);
-    }
-    
-    public Measurement_ID_OBJ get_Measurement_ID_Obj(int id)
-    {
-        return ingredient_Measurement_Obj_Map.get(id);
     }
     
     //###############################################################################################

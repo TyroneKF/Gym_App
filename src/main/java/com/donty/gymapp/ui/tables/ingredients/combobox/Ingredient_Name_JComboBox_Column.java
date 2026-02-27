@@ -1,7 +1,7 @@
 package com.donty.gymapp.ui.tables.ingredients.combobox;
 
-import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Ingredient_Name_ID_OBJ;
-import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.Ingredient_Type_ID_OBJ;
+import com.donty.gymapp.ui.meta.ids.storableIDs.Ingredient_Name_ID_OBJ;
+import com.donty.gymapp.ui.meta.ids.storableIDs.Ingredient_Type_ID_OBJ;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.ui.tables.ingredients.combobox.base.Parent_JComboBox_Column;
 
@@ -13,17 +13,24 @@ public class Ingredient_Name_JComboBox_Column extends Parent_JComboBox_Column<In
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    private final int ingredient_Type_Column;
+    private final int ingredient_type_column_pos;
     private final Shared_Data_Registry shared_Data_Registry;
     
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public Ingredient_Name_JComboBox_Column(JTable jTable, Shared_Data_Registry shared_Data_Registry, int col, int ingredient_Type_Column, String render_MSG)
+    public Ingredient_Name_JComboBox_Column
+    (
+            JTable jTable,
+            Shared_Data_Registry shared_Data_Registry,
+            int col,
+            int ingredient_type_column_pos,
+            String render_MSG
+    )
     {
         super(jTable, col, render_MSG);
         
-        this.ingredient_Type_Column = ingredient_Type_Column;
+        this.ingredient_type_column_pos = ingredient_type_column_pos;
         this.shared_Data_Registry = shared_Data_Registry;
     }
     
@@ -33,7 +40,8 @@ public class Ingredient_Name_JComboBox_Column extends Parent_JComboBox_Column<In
     @Override
     protected ArrayList<Ingredient_Name_ID_OBJ> get_Data(int row)
     {
-        Ingredient_Type_ID_OBJ selected_Ingredient_Type_ID_OBJ = (Ingredient_Type_ID_OBJ) jTable.getValueAt(row, ingredient_Type_Column);
+        Ingredient_Type_ID_OBJ selected_Ingredient_Type_ID_OBJ = (Ingredient_Type_ID_OBJ) jTable.getValueAt(row, ingredient_type_column_pos);
+
         int selected_Type_ID = selected_Ingredient_Type_ID_OBJ.get_ID();
         
         return shared_Data_Registry.get_Ingredient_Names_From_Type_AL(selected_Type_ID);

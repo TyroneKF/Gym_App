@@ -9,11 +9,10 @@ public class Fetched_Results
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    private final HashMap<Integer, ArrayList<Object>> results_1D_Map = new HashMap<>();
     private final HashMap<Integer, ArrayList<ArrayList<Object>>> results_2D_Map = new HashMap<>();
     
     private int size = 0;
-    private String class_Name = "Fetched_Results ->";
+    private final String class_Name = this.getClass().getSimpleName();
     
     //##################################################################################################################
     // Constructor
@@ -24,15 +23,7 @@ public class Fetched_Results
     //##################################################################################################################
     // Methods
     //##################################################################################################################
-    public void add_1D_Result(ArrayList<Object> results) throws Exception
-    {
-        check_Null(results);   // Check
-        
-        results_1D_Map.put(size, results);  // Add
-        size++;
-    }
-    
-    public void add_2D_Result(ArrayList<ArrayList<Object>> results) throws Exception
+   public void add_2D_Result(ArrayList<ArrayList<Object>> results) throws Exception
     {
         check_Null(results);   // Check
         
@@ -60,32 +51,11 @@ public class Fetched_Results
             throw new Exception(errorMSG);
         }
     }
-    
-    //##################################################################################################################
-    // Mutator Methods
-    //##################################################################################################################
-    public void clear_Results()
-    {
-        size = 0;
-        results_1D_Map.clear();
-        results_2D_Map.clear();
-    }
-    
+
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
-    
-    public int no_Of_Fetched_Results()
-    {
-        return size;
-    }
-    
-    public boolean is_Empty()
-    {
-        return no_Of_Fetched_Results() == 0;
-    }
-    
-    public ArrayList<ArrayList<Object>> get_Fetched_Result_2D_AL(int index) throws Exception
+  public ArrayList<ArrayList<Object>> get_Fetched_Result_2D_AL(int index) throws Exception
     {
         // Check 2D results
         String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
@@ -107,9 +77,7 @@ public class Fetched_Results
         
         // Check 1D & 2D results
         if (results_2D_Map.containsKey(index)) { return results_2D_Map.get(index).getFirst(); }
-        
-        else if (results_1D_Map.containsKey(index)) { return results_1D_Map.get(index); }
-        
+
         throw new Exception(String.format("\n\n%s : Error, retrieving Item with index  ; %s", method_Name, index));
     }
     

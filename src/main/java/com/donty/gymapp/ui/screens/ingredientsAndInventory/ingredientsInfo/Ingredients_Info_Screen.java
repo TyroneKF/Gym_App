@@ -1,0 +1,135 @@
+
+package com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo;
+
+import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
+import com.donty.gymapp.persistence.Shared_Data_Registry;
+import com.donty.gymapp.gui.base.Screen_JFrame;
+import com.donty.gymapp.ui.meta.ids.storableIDs.Ingredient_Name_ID_OBJ;
+import com.donty.gymapp.ui.meta.ids.storableIDs.Ingredient_Type_ID_OBJ;
+import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.add.Ingredients_Screen;
+import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.edit.screen.Edit_Ingredients_Screen;
+import com.donty.gymapp.ui.screens.ingredientsAndInventory.storesAndIngredientTypes.ingredientTypes.Ingredients_Types_Screen;
+import com.donty.gymapp.ui.screens.ingredientsAndInventory.storesAndIngredientTypes.stores.Ingredient_Stores_Screen;
+import com.donty.gymapp.ui.screens.mealPlan.Meal_Plan_Screen;
+import javax.swing.*;
+import java.awt.*;
+
+public class Ingredients_Info_Screen extends Screen_JFrame
+{
+    //##################################################################################################################
+    // Variables
+    //##################################################################################################################
+
+    // Objects
+    private final Meal_Plan_Screen meal_plan_screen;
+
+    // Screen Objects
+    private final Ingredients_Screen ingredients_Screen;
+    private final Edit_Ingredients_Screen edit_Ingredients_Screen;
+
+
+    //##################################################################################################################
+    // Constructor
+    //##################################################################################################################
+    public Ingredients_Info_Screen
+    (
+            MyJDBC_Sqlite db,
+            Meal_Plan_Screen meal_plan_screen,
+            Shared_Data_Registry shared_Data_Registry
+    )
+    {
+        // Super Constructor
+        super(db, false, "Add/Edit Ingredients Screen", 800, 880, 0, 0);
+
+        // Variables
+        this.meal_plan_screen = meal_plan_screen;
+
+
+        // Frame Set-Up
+        set_Resizable(false);
+        setFrameVisibility(true); // Make Frame Visible
+
+        // Create ContentPane
+        getScrollPaneJPanel().setLayout(new GridLayout(1, 1));
+
+        // Creating TabbedPane
+        JTabbedPane tp = new JTabbedPane();
+        getScrollPaneJPanel().add(tp);
+
+        // Creating Add Ingredients Screen
+        ingredients_Screen = new Ingredients_Screen(this, db, shared_Data_Registry);
+        tp.add("Add Ingredients", ingredients_Screen);
+
+        // Creating Edit Ingredients Screen
+        edit_Ingredients_Screen = new Edit_Ingredients_Screen(this, db, shared_Data_Registry);
+        tp.add("Edit Ingredients", edit_Ingredients_Screen);
+
+        // Creating Edit Ingredient Types Screen
+        Ingredients_Types_Screen ingredient_Types_Screen = new Ingredients_Types_Screen(db, shared_Data_Registry, this, shared_Data_Registry.get_All_Ingredient_Types_AL());
+        tp.add("Edit Ingredient Types", ingredient_Types_Screen);
+
+        // Creating Edit Ingredients Stores Screen
+        Ingredient_Stores_Screen stores_Screen = new Ingredient_Stores_Screen(db, shared_Data_Registry, this, shared_Data_Registry.get_Stores_AL());
+        tp.add("Edit Ingredient Stores", stores_Screen);
+
+        // Resize GUI
+        resizeGUI();
+    }
+
+    @Override
+    public void window_Closed_Event()
+    {
+        meal_plan_screen.remove_Ingredients_Info_Screen();
+        closeJFrame();
+    }
+
+    //##################################################################################################################
+    // Update Methods
+    //##################################################################################################################
+
+    public void update_Stores_JC()
+    {
+        ingredients_Screen.reload_Stores_JC();
+        edit_Ingredients_Screen.reload_Stores_JC();
+    }
+
+    public void update_Ingredients_Table_Names_Col(Ingredient_Name_ID_OBJ selected_ingredient_name_obj)
+    {
+        meal_plan_screen.redraw_Ingredients_Tables_Obj_Name_Col(selected_ingredient_name_obj);
+    }
+
+    public void update_Ingredients_Table_Type_Col(Ingredient_Type_ID_OBJ selected_ingredient_type_obj)
+    {
+        meal_plan_screen.redraw_Ingredients_Table_Obj_Type_Col(selected_ingredient_type_obj);
+    }
+
+    public void update_Ingredient_Name_Obj_Type_On_Ingredients_Table(Ingredient_Name_ID_OBJ selected_ingredient_name_obj)
+    {
+        meal_plan_screen.change_Ingredient_Name_Obj_Type_On_Ingredients_Table(selected_ingredient_name_obj);
+    }
+
+    public void update_Ingredient_Info_On_Ingredients_Table(Ingredient_Name_ID_OBJ ingredient_name_obj)
+    {
+        meal_plan_screen.update_Ingredient_Info_On_Ingredients_Table(ingredient_name_obj);
+    }
+
+    //###############################################
+    // Type JC
+    //###############################################
+    public void update_All_Types_JC()
+    {
+        update_Add_Types();
+        update_Edit_Types();
+    }
+
+    public void update_Add_Types()
+    {
+        ingredients_Screen.reload_Ingredient_Type_JC();
+    }
+
+    public void update_Edit_Types()
+    {
+        edit_Ingredients_Screen.reload_Ingredient_Type_JC();
+    }
+}
+

@@ -12,9 +12,9 @@ public abstract class Field_JTxtField_Parent<T> extends JTextField
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    protected String label;
-    protected int char_Limit;
-    protected Class<T> type_Cast;
+    protected final String label;
+    protected final int char_Limit;
+    protected final Class<T> type_Cast;
     
     //##################################################################################################################
     // Constructor

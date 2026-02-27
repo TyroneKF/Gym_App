@@ -14,7 +14,7 @@
         -- Enforces one draft per plan as this is the FK / Unique
         plan_id INTEGER PRIMARY KEY, -- FK has to be defined at the bottom
 
-        plan_version_id INTEGER NOT NULL,
+        plan_version_id INTEGER DEFAULT NULL, -- FK has to be defined at the bottom
 
         user_id INTEGER NOT NULL, -- FK has to be defined at the bottom
 
@@ -40,6 +40,9 @@
     -- ####################################################
         CREATE UNIQUE INDEX one_draft_per_user_for_active_plan
             ON draft_plans (user_id);
+
+        CREATE UNIQUE INDEX one_draft_per_plan_version
+             ON draft_plans (plan_version_id);
 
 
 

@@ -7,17 +7,21 @@ import java.awt.*;
 
 public class CollapsibleJPanel extends JPanel
 {
-    boolean isCollapsed = false;
-    String btnText;
-    JPanel collapsibleJPanel, southPanel, eastJPanel;
-    JButton iconBtn;
-    IconButton collapse_And_Expand_Btn;
-    Container parentContainer;
+    //##################################################################################################################
+    // Variables
+    //##################################################################################################################
+    protected boolean isCollapsed = false;
+    protected String btnText;
+    protected final JPanel collapsibleJPanel, southPanel, eastJPanel;
+    protected final JButton iconBtn;
+    protected final IconButton collapse_And_Expand_Btn;
 
-    public CollapsibleJPanel(Container parentContainer, String btnText, int btnWidth, int btnHeight)
+    //##################################################################################################################
+    // Constructor
+    //##################################################################################################################
+    public CollapsibleJPanel(String btnText, int btnWidth, int btnHeight)
     {
         this.btnText = btnText;
-        this.parentContainer = parentContainer;
 
         //####################################################
         // Defining JPanel Features
@@ -74,6 +78,9 @@ public class CollapsibleJPanel extends JPanel
         collapse_JPanel(); //HELLO Remove
     }
 
+    //##################################################################################################################
+    // Methods
+    //##################################################################################################################
     public JPanel get_East_JPanel()
     {
         return eastJPanel;
@@ -91,18 +98,12 @@ public class CollapsibleJPanel extends JPanel
 
     public void set_Icon_Btn_Text(String txt)
     {
-        if (txt!=null || txt.length() > 0)
+        if (txt!=null && ! txt.isEmpty())
         {
             btnText = txt;
             iconBtn.setText(btnText);
         }
     }
-
-    public String get_Btn_Text()
-    {
-        return btnText;
-    }
-
 
     public void expand_JPanel()
     {

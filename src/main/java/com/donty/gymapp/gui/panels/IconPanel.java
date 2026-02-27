@@ -5,14 +5,22 @@ import java.awt.*;
 
 public class IconPanel extends JPanel
 {
-    private GridBagConstraints gbc = new GridBagConstraints();
-    private JPanel iconPanel, iconAreaPanel;
+    //##################################################################################################################
+    // Variables
+    //##################################################################################################################
+    private final GridBagConstraints gbc = new GridBagConstraints();
+    private final JPanel iconPanel, iconAreaPanel;
 
+
+
+    //##################################################################################################################
+    // Constructor
+    //##################################################################################################################
     public IconPanel(int numberOfIcons, int hgap, String position)
     {
         //Creating JPanels for the area
         iconAreaPanel = new JPanel(new BorderLayout());
-        addToContainer(this, iconAreaPanel, 0, 0, 1, 1, 0.25, 0.25, "horizontal", "east");
+        addToContainer(this, iconAreaPanel);
 
         // Creating JPanel where icons will be inserted into
         GridLayout layout = new GridLayout(1, numberOfIcons);
@@ -37,6 +45,9 @@ public class IconPanel extends JPanel
         }
     }
 
+    //##################################################################################################################
+    // Methods
+    //##################################################################################################################
     public JPanel getIconJpanel()
     {
         return iconPanel;
@@ -46,17 +57,20 @@ public class IconPanel extends JPanel
         return iconAreaPanel;
     }
 
-    protected void addToContainer(Container container, Component addToContainer, int gridx, int gridy, int gridwidth,
-                                  int gridheight, double weightx, double weighty, String fill, String anchor)
+    protected void addToContainer
+    (
+            Container container,
+            Component addToContainer
+    )
     {
-        gbc.gridx = gridx;
-        gbc.gridy = gridy;
-        gbc.gridwidth = gridwidth;
-        gbc.gridheight = gridheight;
-        gbc.weightx = weightx;
-        gbc.weighty = weighty;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.weightx = 0.25;
+        gbc.weighty = 0.25;
 
-        switch (fill.toLowerCase())
+        switch ("horizontal".toLowerCase())
         {
             case "horizontal":
                 gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -70,7 +84,7 @@ public class IconPanel extends JPanel
                 break;
         }
 
-        switch (anchor.toLowerCase())
+        switch ("east".toLowerCase())
         {
             case "east":
                 gbc.anchor = GridBagConstraints.EAST;

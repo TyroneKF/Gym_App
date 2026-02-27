@@ -5,7 +5,7 @@ import com.donty.gymapp.domain.enums.db_enums.ViewNames;
 import com.donty.gymapp.domain.enums.db_enums.columnNames.views.Draft_Gui_Plan_Macro_Targets_Calc_Columns;
 import com.donty.gymapp.domain.enums.db_enums.columnNames.views.Draft_Gui_Plan_Macros_Left_Columns;
 import com.donty.gymapp.domain.enums.db_enums.columnNames.views.totalmeal.Draft_Gui_Total_Meal_Columns;
-import com.donty.gymapp.ui.meta.ids.MetaData_ID_Object.Sub_Meal_ID_OBJ;
+import com.donty.gymapp.ui.meta.ids.meta.Sub_Meal_ID_OBJ;
 import com.donty.gymapp.persistence.database.Fetched_Results;
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
 import com.donty.gymapp.persistence.database.batch.Batch_Fetch_Statements;
@@ -18,6 +18,7 @@ import com.donty.gymapp.persistence.database.statements.Upload_Statement_Full;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.gui.controls.IconButton;
 import com.donty.gymapp.gui.panels.IconPanel;
+import com.donty.gymapp.ui.meta.ids.storableIDs.*;
 import com.donty.gymapp.ui.screens.mealPlan.macroIndicator.MacroIndicators;
 import com.donty.gymapp.ui.screens.mealPlan.macroIndicator.ProgressWheelKey;
 import com.donty.gymapp.ui.tables.base.ColumnUiRules;
@@ -31,11 +32,10 @@ import com.donty.gymapp.domain.enums.db_enums.columnNames.views.totalmeal.Draft_
 import com.donty.gymapp.domain.enums.base.My_Enum;
 import com.donty.gymapp.ui.components.meal.MealManager;
 import com.donty.gymapp.gui.base.Screen_JFrame;
-import com.donty.gymapp.ui.meta.ids.Storable_Ingredient_IDS.*;
-import com.donty.gymapp.ui.screens.graphs.LineChart_Meal_Plan_Screen.LineChart_MPS;
-import com.donty.gymapp.ui.screens.graphs.PieChart_Meal_Plan_Screen.PieChart_Screen_MPS;
-import com.donty.gymapp.ui.screens.ingredientsAndInventory.Ingredients_Info.Ingredients_Info.Ingredients_Info_Screen;
-import com.donty.gymapp.ui.screens.loading.Loading_Screen;
+import com.donty.gymapp.ui.screens.graphs.mealPlanScreen.lineChart.LineChart_MPS;
+import com.donty.gymapp.ui.screens.graphs.mealPlanScreen.pieChart.PieChart_Screen_MPS;
+import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.Ingredients_Info_Screen;
+import com.donty.gymapp.ui.screens.loading.LoadingScreen;
 import com.donty.gymapp.ui.screens.macroTargets.Macros_Targets_Screen;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -48,6 +48,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
 import java.util.*;
+import java.util.List;
 
 public class Meal_Plan_Screen extends Screen_JFrame
 {
@@ -142,14 +143,14 @@ public class Meal_Plan_Screen extends Screen_JFrame
         shared_data_registry = new Shared_Data_Registry();
         mealManager_ArrayList = shared_data_registry.get_MealManager_ArrayList();
 
-        Loading_Screen loading_screen = new Loading_Screen(100);
+        LoadingScreen loading_screen = new LoadingScreen(100);
 
         UIManager.put("OptionPane.messageFont", new Font("Arial", Font.PLAIN, 16)); // Set up window msg font
 
         //###############################################################################
         //
         //###############################################################################
-        /**
+        /*
          *  #############################
          *   Context & Table Meta-Data:
          *  #############################
@@ -157,38 +158,37 @@ public class Meal_Plan_Screen extends Screen_JFrame
          *  2.) Getting Table Column Names                                  [2%]
          *  3.) Getting Table Column Positions                              [2%]
          *  4.) Setup Table Configurations Data                             [5%]
-         *
+
          *  #############################
          *   Reference DATA:
          *  #############################
          *  5.) Get Ingredient Names & Types                                [4%]
          *  6.) Get Stores Data                                             [3%]
-         *  7.) Get Measurement Material Type DATA                          [3%]
-         *  8.) Get Measurement DATA                                        [4%]
-         *  9.) System Variables DATA                                       [2%]
-         *
+         *  7.) Get Measurement DATA                                        [4%]
+         *  8.) System Variables DATA                                       [5%]
+
          *  #############################
          *   Draft Plan Construction
          *  #############################
-         *  10.) Transferring Plan Data To DRAFT Plan_Data                  [3%]
-         *  11.) Transfer Plan Targets                                      [3%]
-         *  12.) Transferring Meals Data                                    [3%]
-         *
+         *  9.) Transferring Plan Data To DRAFT Plan_Data                  [3%]
+         *  10.) Transfer Plan Targets                                      [3%]
+         *  11.) Transferring Meals Data                                    [3%]
+
          * #############################
          *  GET Computed Plan Data
          * #############################
-         * 13.) Get Meals & Sub-Meals DATA                                  [3%]
-         * 14.) Get Total Meals Data                                        [3%]
-         * 15.) Get Macros Targets DATA                                     [3%]
-         * 16.) Get Macros Left DATA                                        [3%]
-         *
+         * 12.) Get Meals & Sub-Meals DATA                                  [3%]
+         * 13.) Get Total Meals Data                                        [3%]
+         * 14.) Get Macros Targets DATA                                     [3%]
+         * 15.) Get Macros Left DATA                                        [3%]
+
          * #############################
          *   Build GUI
          * #############################
-         * 17.) North GUI Setup  : Icons                                    [5%]
-         * 18.) Update Macro Indicators                                     [2%]
-         * 19.) Bottom GUI Setup : Macro_Targets / Macro_Left Table         [5%]
-         * 20.) Centre GUI Setup : Create Meals                             [40%]
+         * 16.) North GUI Setup  : Icons                                    [5%]
+         * 17.) Update Macro Indicators                                     [2%]
+         * 18.) Bottom GUI Setup : Macro_Targets / Macro_Left Table         [5%]
+         * 19.) Centre GUI Setup : Create Meals                             [40%]
          */
 
         try // Get MetaData Methods
@@ -268,10 +268,10 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //##################################################################################################################
     // App Configuration Methods
     //##################################################################################################################
-    private void initialize_Context_And_Table_Metadata(Loading_Screen loading_screen) throws Exception
+    private void initialize_Context_And_Table_Metadata(LoadingScreen loading_screen) throws Exception
     {
         //  1.) Getting Selected User & Plan Info
-        setup_Get_User_And_Plan_Info(true, true, true, true);
+        setup_Get_User_And_Plan_Info();
         loading_screen.increaseBar(2);
 
         // 2.) Getting Table Column Names
@@ -287,7 +287,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         loading_screen.increaseBar(5);
     }
 
-    private void load_Reference_Data(Loading_Screen loading_screen) throws Exception
+    private void load_Reference_Data(LoadingScreen loading_screen) throws Exception
     {
         System.out.printf("\n\n%s \nGetting Meta Data Objects \n%s ", lineSeparator, lineSeparator);
 
@@ -299,54 +299,50 @@ public class Meal_Plan_Screen extends Screen_JFrame
         setup_Get_Stores_Data();
         loading_screen.increaseBar(3);
 
-        // 7.) Get Measurement Material Type DATA
-        setup_Get_Measurement_Material_Type_Data();
-        loading_screen.increaseBar(3);
-
-        // 8.) Get Measurement DATA
+        // 7.) Get Measurement DATA
         setup_Get_Measurement_Data();
         loading_screen.increaseBar(4);
 
-        // 9.) System Variables DATA
+        // 8.) System Variables DATA
         setup_Get_System_Variables();
-        loading_screen.increaseBar(2);
+        loading_screen.increaseBar(5);
     }
 
-    private void build_Draft_Plan_Data(Loading_Screen loading_screen) throws Exception
+    private void build_Draft_Plan_Data(LoadingScreen loading_screen) throws Exception
     {
-        // Transferring Plan Data To Draft Plan
+        // 9.) Transferring Plan Data To Draft Plan
         setup_Transfer_Plan_Data();
         loading_screen.increaseBar(3);
 
-        // Transferring Targets To Draft Plan
+        // 10.) Transferring Targets To Draft Plan
         setup_Transfer_Macro_Targets_Data(false);
         loading_screen.increaseBar(3);
 
-        // Transferring Plan Meals To Draft Meals
+        // 11.) Transferring Plan Meals To Draft Meals
         setup_Transfer_Meals_Data(false);
         loading_screen.increaseBar(3);
     }
 
-    private void load_Computed_Plan_Data(Loading_Screen loading_screen) throws Exception
+    private void load_Computed_Plan_Data(LoadingScreen loading_screen) throws Exception
     {
-        // Get Meals Data
+        // 12.) Get Meals & Sub-Meals Data
         meals_and_sub_meals_AL = setup_Get_Meal_Data();
         loading_screen.increaseBar(3);
 
-        // Get TotalMeals Data
+        // 13.) Get TotalMeals Data
         total_Meals_Data_Map = setup_Get_Total_Meals_Data();
         loading_screen.increaseBar(3);
 
-        // Get MacroTargets DATA
+        // 14.) Get MacroTargets DATA
         macros_targets_plan_data_AL = setup_Get_Macros_Targets_Data();
         loading_screen.increaseBar(3);
 
-        // Get MacrosLeft DATA
+        // 15.) Get MacrosLeft DATA
         macros_left_plan_data_AL = setup_Get_Macros_Left_Data();
         loading_screen.increaseBar(3);
     }
 
-    private void build_GUI_Layout(Loading_Screen loading_screen) throws Exception
+    private void build_GUI_Layout(LoadingScreen loading_screen) throws Exception
     {
         //#############################
         //
@@ -355,37 +351,37 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
         // Splitting Scroll JPanel
         scroll_JP_center = new JPanel(new GridBagLayout());
-        addToContainer(getScrollPaneJPanel(), scroll_JP_center, 0, 0, 1, 1, 0.25, 0.25, "both", 0, 0, "center");
+        addToContainer(getScrollPaneJPanel(), scroll_JP_center, 0, 0, "both", 0, "center");
 
         JPanel scroll_jpanel_bottom = new JPanel(new GridBagLayout());
-        addToContainer(getScrollPaneJPanel(), scroll_jpanel_bottom, 0, 1, 1, 1, 0.25, 0.25, "both", 0, 0, "end");
+        addToContainer(getScrollPaneJPanel(), scroll_jpanel_bottom, 0, 1, "both", 0, "end");
 
         //#############################
         // North :  JPanel
         //#############################
-        // 17.) North GUI Setup : Icons
+        // 16.) North GUI Setup : Icons
         build_North_GUI();
         loading_screen.increaseBar(5);
 
-        // 18.) Update Macro Indicators
+        // 17.) Update Macro Indicators
         update_Macro_Indicators();
         loading_screen.increaseBar(2);
 
         //#############################
         // Bottom : JPanel
         //#############################
-        // 19.) Bottom GUI Setup : Macro_Targets / Macro_Left Table
+        // 18.) Bottom GUI Setup : Macro_Targets / Macro_Left Table
         build_Bottom_GUI(scroll_jpanel_bottom, macros_targets_plan_data_AL, macros_left_plan_data_AL);
         loading_screen.increaseBar(5); // Increase Progress
 
         //#############################
         // Centre : JPanel (Meals)
         //#############################
-        // 20.) Centre GUI Setup : Create Meals
-        create_Meal_Objects_In_GUI(meals_and_sub_meals_AL, total_Meals_Data_Map, loading_screen, 40);     // Add Meals to GUI
+        // 19.) Centre GUI Setup : Create Meals
+        create_Meal_Objects_In_GUI(meals_and_sub_meals_AL, total_Meals_Data_Map, loading_screen);     // Add Meals to GUI
     }
 
-    private void build_Complete(Loading_Screen loading_screen)
+    private void build_Complete(LoadingScreen loading_screen)
     {
         if (loading_screen != null && ! loading_screen.isFinished())
         {
@@ -408,9 +404,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
         macros_left_plan_data_AL = null;
     }
 
-    private void failed_Start_UP(Loading_Screen loadingScreen)
+    private void failed_Start_UP(LoadingScreen loadingScreen)
     {
-        JOptionPane.showMessageDialog(getFrame(), "Failed to Initialize Application!");
+        JOptionPane.showMessageDialog(this, "Failed to Initialize Application!");
 
         try
         {
@@ -428,7 +424,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //#################################################
     // Context & Table Meta-Data:
     //#################################################
-    private void setup_Get_User_And_Plan_Info(boolean user_id, boolean plan_id, boolean plan_version_id, boolean plan_name) throws Exception
+    private void setup_Get_User_And_Plan_Info() throws Exception
     {
         // Variables
         String error_msg = "Error, Gathering Plan & Personal User Information!";
@@ -463,22 +459,14 @@ public class Meal_Plan_Screen extends Screen_JFrame
             ArrayList<ArrayList<Object>> db_results = db.get_2D_Query_AL_Object(fetch_statement, false);
 
             // App Must assume by default there is a selected user and 1 plan active otherwise this causes an error
-            if (user_id) // user_id
-            {
-                shared_data_registry.set_User_ID(((Integer) db_results.getFirst().getFirst()));
-            }
 
-            if (plan_id) { shared_data_registry.set_Selected_Plan_ID((Integer) db_results.getFirst().get(1)); }
+            shared_data_registry.set_User_ID(((Integer) db_results.getFirst().getFirst())); // user_id
 
-            if (plan_version_id) // plan version id
-            {
-                shared_data_registry.set_Selected_Plan_Version_ID((Integer) db_results.getFirst().get(2));
-            }
+            shared_data_registry.set_Selected_Plan_ID((Integer) db_results.getFirst().get(1)); // plan_id
 
-            if (plan_name) // plan name
-            {
-                shared_data_registry.set_Plan_Name((String) db_results.getFirst().get(3));
-            }
+            shared_data_registry.set_Selected_Plan_Version_ID((Integer) db_results.getFirst().get(2)); // plan version id
+
+            shared_data_registry.set_Plan_Name((String) db_results.getFirst().get(3)); // plan name
 
             System.out.printf("\n\nUser_ID : %s \nPlan_ID : %s \nPlan_Version_ID : %s \nPlan_Name : %s",
                     get_User_ID(),
@@ -780,7 +768,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // Go through Results
         //#######################################
         ObjectMapper mapper = new ObjectMapper();
-        HashMap<Ingredient_Type_ID_OBJ, ArrayList<Ingredient_Name_ID_OBJ>> mapped_Data = new HashMap<>();
 
         try
         {
@@ -880,46 +867,17 @@ public class Meal_Plan_Screen extends Screen_JFrame
         System.out.println("    \n.) Store Objects Successfully Transferred!");
     }
 
-    private void setup_Get_Measurement_Material_Type_Data() throws Exception
-    {
-        // Set Variables
-        String query = "SELECT * FROM measurement_material_type ORDER BY measurement_material_type_name;";
-        String error_msg = "Unable, to get Measurements Material Type Data";
-        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, null, error_msg);
-
-        // Execute Query
-        ArrayList<ArrayList<Object>> data;
-
-        try
-        {
-            data = db.get_2D_Query_AL_Object(fetch_statement, false);
-        }
-        catch (Exception e)
-        {
-            System.err.printf("\n\n%s \n%s Error \n%s  \n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
-            throw new Exception();
-        }
-
-        // Add Measurement OBJ
-        for (ArrayList<Object> row : data)
-        {
-            int id = (int) row.get(0);
-            String measurement_material_type_name = (String) row.get(1);
-
-            shared_data_registry.add_Measurement_Material_Type(
-                    new Measurement_Material_Type_ID_OBJ(id, true, measurement_material_type_name),
-                    false
-            );
-        }
-
-        // Return Output
-        System.out.println("    \n.) Measurement Material Type Objects Successfully Transferred!");
-    }
-
     private void setup_Get_Measurement_Data() throws Exception
     {
         // Set Variables
-        String query = "SELECT * FROM measurements ORDER BY unit_name;";
+        String query = """
+                SELECT
+                    measurement_id,
+                    is_system,
+                    unit_name
+                FROM measurements ORDER BY unit_name;""";
+
+
         String error_msg = "Unable, to get Measurements Data";
 
         Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, null, error_msg);
@@ -942,18 +900,10 @@ public class Meal_Plan_Screen extends Screen_JFrame
         {
             int id = (int) row.get(0);
             boolean is_system = ((int) row.get(1)) == 1; // 1 = true
-            String unit_Name = (String) row.get(2);
-            String unit_Symbol = (String) row.get(3);
-            int measurement_Material_Type_ID = (int) row.get(4);
+            String unit_name = (String) row.get(2);
 
             shared_data_registry.add_Measurement(
-                    new Measurement_ID_OBJ(
-                            id,
-                            is_system,
-                            unit_Name,
-                            unit_Symbol,
-                            shared_data_registry.get_Measurement_Material_Type_ID_OBJ(measurement_Material_Type_ID)
-                    ),
+                    new Measurement_ID_OBJ(id, is_system,unit_name),
                     false
             );
         }
@@ -1387,7 +1337,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 
                 SELECT
                     M.draft_meal_in_plan_id,
-                    M.meal_in_plan_id,
                     M.plan_id,
                     M.Meal_Name,
                     M.meal_time,
@@ -1471,15 +1420,13 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 // Get Create Meal ID Object
                 //#####################################################
                 int draft_meal_id = (int) row.get(0);     // Draft  Meal ID
-                int source_meal_id = (int) row.get(1);    // Source Meal ID
-                String meal_name = (String) row.get(3);   // Meal Name
+                String meal_name = (String) row.get(2);   // Meal Name
 
-                LocalTime meal_Time = LocalTime.parse((String) row.get(4), time_formatter);
+                LocalTime meal_Time = LocalTime.parse((String) row.get(3), time_formatter);
 
                 // Create Meal_And_Sub_Meals_OBJ Which Holds Meal ID Info & its Sub-Meals / Ingredients
                 Meal_And_Sub_Meals_OBJ meal_and_sub_meals_obj = new Meal_And_Sub_Meals_OBJ(
                         draft_meal_id,
-                        source_meal_id,
                         meal_name,
                         meal_Time
                 );
@@ -1490,7 +1437,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 // Parsing JSON DATA - Sub-Meals -> Ingredients
                 //#####################################################
                 ObjectMapper mapper = new ObjectMapper();
-                JsonNode ingredients_json_array = mapper.readTree((String) row.get(5));
+                JsonNode ingredients_json_array = mapper.readTree((String) row.get(4));
 
                 //######################################
                 // For Each Ingredient In Sub-Meal
@@ -1673,9 +1620,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //#######################
         // Configure North Panel
         //#######################
-        mainNorthPanel.setLayout(new BorderLayout());
-        mainNorthPanel.setBorder(BorderFactory.createLineBorder(Color.WHITE, 6));
-        mainNorthPanel.setPreferredSize(new Dimension(width, height));
+        getMainNorthPanel().setLayout(new BorderLayout());
+        getMainNorthPanel().setBorder(BorderFactory.createLineBorder(Color.WHITE, 6));
+        getMainNorthPanel().setPreferredSize(new Dimension(width, height));
 
         //#######################
         // West Side
@@ -1685,7 +1632,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         west_jp.setPreferredSize(new Dimension(700, height - 10));
         west_jp.setBorder(BorderFactory.createLineBorder(Color.WHITE, 3));
 
-        mainNorthPanel.add(west_jp, BorderLayout.WEST);
+        getMainNorthPanel().add(west_jp, BorderLayout.WEST);
 
         // Create Macro Indicators
         create_GUI_Indicators(west_jp);
@@ -1698,7 +1645,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         east_jp.setPreferredSize(new Dimension(800, height - 10));
         east_jp.setBorder(BorderFactory.createLineBorder(Color.WHITE, 3));
 
-        mainNorthPanel.add(east_jp, BorderLayout.EAST);
+        getMainNorthPanel().add(east_jp, BorderLayout.EAST);
 
         // Icon Setup
         icon_Setup(east_jp);
@@ -1706,8 +1653,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
     private void create_GUI_Indicators(JPanel jpanel)
     {
-        int x_pos = - 1;
-
         //#################################
         // Protein Macro Indicator
         //#################################
@@ -1726,7 +1671,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 25
         );
 
-        addToContainer(jpanel, protein_indicator, x_pos += 1, 0, 1, 1, 0.25, 0.25, "vertical", 10, 0, null);
+        addToContainer(jpanel, protein_indicator, 0, 0, "vertical", 10, null);
 
         //#################################
         // Carb Macro Indicator
@@ -1746,7 +1691,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 25
         );
 
-        addToContainer(jpanel, carbs_indicator, x_pos += 1, 0, 1, 1, 0.25, 0.25, "vertical", 10, 0, null);
+        addToContainer(jpanel, carbs_indicator, 1, 0, "vertical", 10, null);
 
         //#################################
         // Protein Macro Indicator
@@ -1766,7 +1711,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 25
         );
 
-        addToContainer(jpanel, fats_indicator, x_pos += 1, 0, 1, 1, 0.25, 0.25, "vertical", 10, 0, null);
+        addToContainer(jpanel, fats_indicator, 2, 0, "vertical", 10, null);
 
         //#################################
         // Calories  Indicator
@@ -1786,14 +1731,12 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 45
         );
 
-        addToContainer(jpanel, calories_indicator, x_pos += 1, 0, 1, 1, 0.25, 0.25, "vertical", 10, 0, null);
+        addToContainer(jpanel, calories_indicator, 3, 0, "vertical", 10, null);
     }
 
-    @Override
+
     protected void icon_Setup(Container jpanel)
     {
-        int width, height;
-
         //##############################################################################################################
         // Top Bar Icon AREA
         //##############################################################################################################
@@ -1802,233 +1745,247 @@ public class Meal_Plan_Screen extends Screen_JFrame
         IconPanel iconPanel = new IconPanel(6, 10, "East");
         JPanel iconPanelInsert = iconPanel.getIconJpanel();
 
-        addToContainer(jpanel, iconPanel.getIconAreaPanel(), 0, 0, 1, 1, 0.25, 0.25, "horizontal", 10, 0, null);
+        addToContainer(jpanel, iconPanel.getIconAreaPanel(), 0, 0, "horizontal", 10, null);
 
         //##########################
         // Clear
         //##########################
-        width = 53;
-        height = 50;
-
-        IconButton clear_Icon_Btn = new IconButton("/images/close_btn/delete.png", width, height, width, height,
-                "centre", "right"); // btn text is useless here , refactor
+        IconButton clear_Icon_Btn = new IconButton(
+                "/images/closeBtn/delete.png",
+                53,
+                50,
+                53,
+                50,
+                "centre",
+                "right"
+        ); // btn text is useless here , refactor
 
         clear_Icon_Btn.makeBTntransparent();
 
         JButton clear_Btn = clear_Icon_Btn.returnJButton();
         clear_Btn.setToolTipText("Clear Meal Plan"); //Hover message over icon
 
-        clear_Btn.addActionListener(ae -> {
-            clear_Btn_Action();
-        });
+        clear_Btn.addActionListener(ae -> clear_Btn_Action());
 
         iconPanelInsert.add(clear_Btn);
 
         //##########################
         // Recipe List
         //##########################
-        width = 53;
-        height = 50;
 
-        IconButton RecipeList_Icon_Btn = new IconButton("/images/RecipeList/recipeList1.png", width, height, width, height,
-                "centre", "right"); // btn text is useless here , refactor
+        IconButton RecipeList_Icon_Btn = new IconButton(
+                "/images/RecipeList/recipeList1.png",
+                53,
+                50,
+                53,
+                50,
+                "centre",
+                "right"
+        ); // btn text is useless here , refactor
 
         RecipeList_Icon_Btn.makeBTntransparent();
 
         JButton recipe_Btn = RecipeList_Icon_Btn.returnJButton();
         recipe_Btn.setToolTipText("Get Plan Recipe List"); //Hover message over icon
 
-        recipe_Btn.addActionListener(ae -> {
-            recipe_List_Btn_Action_Open_Screen();
-        });
+        recipe_Btn.addActionListener(ae -> recipe_List_Btn_Action_Open_Screen());
 
         iconPanelInsert.add(recipe_Btn);
 
         //##########################
         //  PieChart
         //##########################
-        width = 55;
-        height = 55;
-
-        IconButton pieChart_Icon_Btn = new IconButton("/images/graph/pie7.png", width, height, width, height,
-                "centre", "right"); // btn text is useless here , refactor
+        IconButton pieChart_Icon_Btn = new IconButton(
+                "/images/graph/pie7.png",
+                55,
+                55,
+                55,
+                55,
+                "centre",
+                "right"
+        );
 
         pieChart_Icon_Btn.makeBTntransparent();
 
         JButton pieChart_Btn = pieChart_Icon_Btn.returnJButton();
         pieChart_Btn.setToolTipText("Display Macronutrient Data in Pie"); //Hover message over icon
 
-        pieChart_Btn.addActionListener(ae -> {
-            pie_Chart_Btn_Action_Open_Screen();
-        });
+        pieChart_Btn.addActionListener(ae -> pie_Chart_Btn_Action_Open_Screen());
 
         iconPanelInsert.add(pieChart_Btn);
 
         //##########################
         //  LineChart
         //##########################
-        width = 51;
-        height = 53;
-
-        IconButton lineChart_Icon_Btn = new IconButton("/images/graph/bar1.png", width, height, width, height,
-                "centre", "right"); // btn text is useless here , refactor
+        IconButton lineChart_Icon_Btn = new IconButton(
+                "/images/graph/bar1.png",
+                51,
+                53,
+                51,
+                53,
+                "centre",
+                "right"
+        );
 
         lineChart_Icon_Btn.makeBTntransparent();
 
         JButton lineChart_Btn = lineChart_Icon_Btn.returnJButton();
         lineChart_Btn.setToolTipText("Display Macronutrient Data in LineChart"); //Hover message over icon
 
-        lineChart_Btn.addActionListener(ae -> {
-            line_Chart_Btn_Action_Open_Screen();
-        });
+        lineChart_Btn.addActionListener(ae -> line_Chart_Btn_Action_Open_Screen());
 
         iconPanelInsert.add(lineChart_Btn);
 
         //##########################
         //  ScrollBar Up
         //##########################
-        width = 51;
-        height = 53;
-
-        IconButton up_ScrollBar_Icon_Btn = new IconButton("/images/scrollBar_Up/scrollBar_Up.png", width, height, width, height,
-                "centre", "right"); // btn text is useless here , refactor
+        IconButton up_ScrollBar_Icon_Btn = new IconButton(
+                "/images/scrollUp/scrollBar_Up.png",
+                51,
+                53,
+                51,
+                53,
+                "centre",
+                "right"
+        );
 
         up_ScrollBar_Icon_Btn.makeBTntransparent();
 
         JButton up_ScrollBar_Btn = up_ScrollBar_Icon_Btn.returnJButton();
         up_ScrollBar_Btn.setToolTipText("Scroll to the top of Meal Plan"); //Hover message over icon
 
-        up_ScrollBar_Btn.addActionListener(ae -> {
-
-            scroll_Up_Btn_Action();
-        });
+        up_ScrollBar_Btn.addActionListener(ae -> scroll_Up_Btn_Action());
 
         iconPanelInsert.add(up_ScrollBar_Btn);
 
         //##########################
         // Refresh Icon
         //##########################
-        width = 50;
-        height = 50;
-
-        IconButton refresh_Icon_Btn = new IconButton("/images/refresh/++refresh.png", width, height, width, height,
-                "centre", "right"); // btn text is useless here , refactor
+        IconButton refresh_Icon_Btn = new IconButton(
+                "/images/refresh/++refresh.png",
+                50,
+                50,
+                50,
+                50,
+                "centre",
+                "right"
+        ); // btn text is useless here , refactor
 
         JButton refresh_Btn = refresh_Icon_Btn.returnJButton();
         refresh_Btn.setToolTipText("Restore All Meals Data"); //Hover message over icon
         refresh_Icon_Btn.makeBTntransparent();
 
-        refresh_Btn.addActionListener(ae -> {
-            refresh_Btn_Action();
-        });
+        refresh_Btn.addActionListener(ae -> refresh_Btn_Action());
 
         iconPanelInsert.add(refresh_Icon_Btn);
 
         //##########################
         //Add BTN
         //##########################
-        width = 50;
-        height = 52;
-
-        IconButton add_Icon_Btn = new IconButton("/images/add/++add.png", width, height, width, height,
-                "centre", "right");
+        IconButton add_Icon_Btn = new IconButton(
+                "/images/add/++add.png",
+                50,
+                52,
+                50,
+                52,
+                "centre",
+                "right"
+        );
 
         JButton add_Btn = add_Icon_Btn.returnJButton();
         add_Btn.setToolTipText("Add Meal"); //Hover message over icon
         add_Icon_Btn.makeBTntransparent();
 
-        add_Btn.addActionListener(ae -> {
-
-            add_Meal_Btn_Action();
-        });
+        add_Btn.addActionListener(ae -> add_Meal_Btn_Action());
 
         iconPanelInsert.add(add_Icon_Btn);
 
         //##########################
         // Save BTN
         //##########################
+        IconButton saveIcon_Icon_Btn = new IconButton(
+                "/images/save/+++save.png",
+                54,
+                57,
+                54,
+                57,
+                "centre",
+                "right"
+        );
 
-        width = 54;
-        height = 57;
-
-        IconButton saveIcon_Icon_Btn = new IconButton("/images/save/+++save.png", width, height, width, height,
-                "centre", "right"); // btn text is useless here , refactor
-        //saveIcon_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
         saveIcon_Icon_Btn.makeBTntransparent();
 
         JButton save_btn = saveIcon_Icon_Btn.returnJButton();
         save_btn.setToolTipText("Save All Meals"); //Hover message over icon
 
-        save_btn.addActionListener(ae -> {
-            save_Btn_Action();
-        });
+        save_btn.addActionListener(ae -> save_Btn_Action());
 
         iconPanelInsert.add(save_btn);
 
         //##########################
         //  Add_Ingredients Icon
         //##########################
+        IconButton add_Ingredients_Icon_Btn = new IconButton(
+                "/images/addIngredients/add_Ingredients.png",
+                54,
+                57,
+                54,
+                57,
+                "centre",
+                "right"
+        );
 
-        width = 54;
-        height = 57;
-
-        IconButton add_Ingredients_Icon_Btn = new IconButton("/images/add_Ingredients/add_Ingredients.png", width, height, width, height,
-                "centre", "right"); // btn text is useless here , refactor
-        //saveIcon_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
         add_Ingredients_Icon_Btn.makeBTntransparent();
 
         JButton add_Ingredients_Btn = add_Ingredients_Icon_Btn.returnJButton();
         add_Ingredients_Btn.setToolTipText("Add Ingredients"); //Hover message over icon
 
 
-        add_Ingredients_Btn.addActionListener(ae -> {
-
-            open_Ingredients_Screen();
-        });
+        add_Ingredients_Btn.addActionListener(ae -> open_Ingredients_Screen());
 
         iconPanelInsert.add(add_Ingredients_Btn);
 
         //##########################
         //  Macro_Targets Icon
         //##########################
+        IconButton macro_Targets_Icon_Btn = new IconButton(
+                "/images/targets/target.png",
+                54,
+                50,
+                54,
+                50,
+                "centre",
+                "right"
+        );
 
-        width = 54;
-        height = 50;
-
-        IconButton macro_Targets_Icon_Btn = new IconButton("/images/targets/target.png", width, height, width, height,
-                "centre", "right"); // btn text is useless here , refactor
-        //saveIcon_Icon_Btn.setBorder(BorderFactory.createLineBorder(Color.black));
         macro_Targets_Icon_Btn.makeBTntransparent();
 
         JButton macro_Tagets_Btn = macro_Targets_Icon_Btn.returnJButton();
         macro_Tagets_Btn.setToolTipText("Set Macro Targets"); //Hover message over icon
 
-
-        macro_Tagets_Btn.addActionListener(ae -> {
-
-            open_Macros_Targets_Screen();
-        });
+        macro_Tagets_Btn.addActionListener(ae -> open_Macros_Targets_Screen());
 
         iconPanelInsert.add(macro_Tagets_Btn);
 
         //##########################
         //  Scroll Bottom
         //##########################
-        width = 51;
-        height = 51;
-
-        IconButton down_ScrollBar_Icon_Btn = new IconButton("/images/scrollBar_Down/scrollBar_Down5.png", width, height, width, height,
-                "centre", "right"); // btn text is useless here , refactor
+        IconButton down_ScrollBar_Icon_Btn = new IconButton(
+                "/images/scrollDown/scrollBar_Down5.png",
+                51,
+                51,
+                51,
+                51,
+                "centre",
+                "right"
+        );
 
         down_ScrollBar_Icon_Btn.makeBTntransparent();
 
         JButton down_ScrollBar_Btn = down_ScrollBar_Icon_Btn.returnJButton();
         down_ScrollBar_Btn.setToolTipText("Scroll to Bottom Of Meal Plan"); //Hover message over icon
 
-        down_ScrollBar_Btn.addActionListener(ae -> {
-
-            scroll_Down_Btn_Action();
-        });
+        down_ScrollBar_Btn.addActionListener(ae -> scroll_Down_Btn_Action());
 
         iconPanelInsert.add(down_ScrollBar_Btn);
     }
@@ -2044,9 +2001,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     )
     {
         JPanel macrosInfoJPanel = new JPanel(new GridBagLayout());   // Add Bottom JPanel to GUI
-        addToContainer(scroll_jpanel_bottom, macrosInfoJPanel, 0, 0, 1, 1, 0.25, 0.25, "horizontal", 0, 0, "end");
-
-        int macrosInfoJP_YPos = 0;
+        addToContainer(scroll_jpanel_bottom, macrosInfoJPanel, 0, 0, "horizontal", 0, "end");
 
         /*//###################################
         // Setting up Horizontal Image Divider
@@ -2083,7 +2038,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //############################
         // MacroTargets Table
         //############################
-        ArrayList<Draft_Gui_Plan_Macro_Targets_Calc_Columns> macro_targets_columns_to_hide = new ArrayList<>(Arrays.asList(
+        ArrayList<Draft_Gui_Plan_Macro_Targets_Calc_Columns> macro_targets_columns_to_hide = new ArrayList<>(List.of(
                 Draft_Gui_Plan_Macro_Targets_Calc_Columns.PLAN_ID
         ));
 
@@ -2104,12 +2059,12 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 macros_targets_column_ui_rules
         );
 
-        addToContainer(macrosInfoJPanel, macros_targets_table, 0, macrosInfoJP_YPos += 1, + 1, 1, 0.25, 0.25, "both", 40, 0, null);
+        addToContainer(macrosInfoJPanel, macros_targets_table, 0, 0, "both", 40, null);
 
         //############################
         // plan_Macros_Left Table
         //############################
-        ArrayList<Draft_Gui_Plan_Macros_Left_Columns> plan_macros_left_columns_to_hide = new ArrayList<>(Arrays.asList(
+        ArrayList<Draft_Gui_Plan_Macros_Left_Columns> plan_macros_left_columns_to_hide = new ArrayList<>(List.of(
                 Draft_Gui_Plan_Macros_Left_Columns.PLAN_ID
         ));
 
@@ -2128,7 +2083,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 macros_left_column_ui_rules
         );
 
-        addToContainer(macrosInfoJPanel, macros_left_table, 0, macrosInfoJP_YPos += 1, 1, 1, 0.25, 0.25, "both", 30, 0, null);
+        addToContainer(macrosInfoJPanel, macros_left_table, 0, 1, "both", 30, null);
     }
 
     //#####################
@@ -2138,8 +2093,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     (
             ArrayList<Meal_And_Sub_Meals_OBJ> meals_and_sub_meals_AL,
             LinkedHashMap<Integer, ArrayList<Object>> total_Meals_Data_Map,
-            Loading_Screen loading_Screen,
-            double allocated_task_percentage
+            LoadingScreen loading_Screen
 
     ) throws Exception
     {
@@ -2153,6 +2107,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
              * - This method owns allocated_task_percentage of the bar
              * - Each meal and sub-meal is a unit of work
              * - Progress is increased incrementally per meal iteration
+             *   Has the progress of 40
              * -----------------------------------------------------------
              */
 
@@ -2160,7 +2115,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             int no_of_meals = counts.getValue0();
             int no_of_sub_meals = counts.getValue1();
 
-            double progress_per_unit = allocated_task_percentage / (no_of_meals + no_of_sub_meals); // % per unit
+            double progress_per_unit = (double) 40 / (no_of_meals + no_of_sub_meals); // % per unit
 
             double carry = 0.0; // handles fractional increments / fractional accumulator
 
@@ -2184,7 +2139,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                         total_Meal_DATA
                 );
 
-                if (! meal_Manager.is_Object_Created()) { throw new Exception("Meal Creation Failed"); }
+                if (meal_Manager.is_Object_Not_Created()) { throw new Exception("Meal Creation Failed"); }
 
                 add_And_Replace_MealManger_POS_GUI(meal_Manager, false, false); // Add to GUI
 
@@ -2282,8 +2237,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###############################################
         if (! reOrder) // Just add to GUI / Add to GUI Meal Manager & Its Space Divider
         {
-            addToContainer(scroll_JP_center, mealManager.get_Collapsible_JP_Obj(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
-            addToContainer(scroll_JP_center, mealManager.getSpaceDividerForMealManager(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 50, 0, null);
+            addToContainer(scroll_JP_center, mealManager.get_Collapsible_JP_Obj(), 0, getAndIncreaseContainerYPos(), "horizontal", 0, null);
+            addToContainer(scroll_JP_center, mealManager.getSpaceDividerForMealManager(), 0, getAndIncreaseContainerYPos(), "both", 50, null);
         }
         else // Clear and Redraw
         {
@@ -2326,7 +2281,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
         if (! is_There_Any_Meals_In_Plan()) // No Meals in Plan
         {
-            JOptionPane.showMessageDialog(getFrame(), "There are no meals to clear!");
+            JOptionPane.showMessageDialog(this, "There are no meals to clear!");
             return;
         }
 
@@ -2430,11 +2385,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
         pie_chart_screen.update_PieChart_MealTime(mealManager);
     }
 
-    private void update_Pie_Chart_DATA(MealManager mealManager)
+    private void update_Pie_Chart_DATA()
     {
         if (! is_Pie_Chart_Screen_Open()) { return; }
 
-        pie_chart_screen.updateData(mealManager);
+        pie_chart_screen.updateData();
     }
 
     private void add_Meal_To_Pie_Chart_Screen(MealManager mealManager)
@@ -2542,7 +2497,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
         if (! refresh_Data_And_Build_GUI(refresh_macros))
         {
-            JOptionPane.showMessageDialog(getFrame(), ("Failed Refresh, please restart the application!"));
+            JOptionPane.showMessageDialog(this, ("Failed Refresh, please restart the application!"));
             return;
         }
 
@@ -2581,9 +2536,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
         }
 
         // No Meals Data has changed
-        if(! has_Data_changed())
+        if (! has_Data_changed())
         {
-            JOptionPane.showMessageDialog(getFrame(), "No Data in this Plan has changed to refresh!");
+            JOptionPane.showMessageDialog(this, "No Data in this Plan has changed to refresh!");
             return false;
         }
 
@@ -2592,17 +2547,17 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
     private boolean refresh_Data_And_Build_GUI(boolean refresh_Macros)
     {
-        /**
+        /*
          *  1.) Transfer Plan Targets
          *  2.) Transferring Meals Data
-         *
+
          *  3.) Get Meals & Sub-Meals DATA
          *  4.) Get TotalMeals Data
-         *
+
          *  5.) Clear GUI & Old  Data
-         *
+
          *  6.) Build Centre Of GUI
-         *
+
          *  7.) Build Complete
          *  8.) Refresh Indicators
          */
@@ -2626,7 +2581,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             clear_GUI_And_Meal_DATA();
 
             // 6.) Build Centre Of GUI
-            create_Meal_Objects_In_GUI(meals_and_sub_meals_AL, total_Meals_Data_Map, null, 40);
+            create_Meal_Objects_In_GUI(meals_and_sub_meals_AL, total_Meals_Data_Map, null);
 
             build_Complete(null);   // 7.) Build Complete
 
@@ -2650,7 +2605,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // ##############################################
         if (! has_Macro_Targets_Changed()) { return false; }
 
-        int reply = JOptionPane.showConfirmDialog(this, String.format("Would you like to refresh your MacroTargets Too?"),
+        int reply = JOptionPane.showConfirmDialog(this, "Would you like to refresh your MacroTargets Too?",
                 "Refresh Macro Targets", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
         return reply == JOptionPane.YES_OPTION;
@@ -2678,7 +2633,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //###############################################
         // If Object Creation Failed Exit
         //###############################################
-        if (! mealManager.is_Object_Created()) { return; }
+        if (mealManager.is_Object_Not_Created()) { return; }
 
         JOptionPane.showMessageDialog(null, String.format("Successfully Created Meal in %s at [%s]",
                 mealManager.get_Current_Meal_Name(), mealManager.get_Current_Meal_Time()));
@@ -2710,8 +2665,8 @@ public class Meal_Plan_Screen extends Screen_JFrame
             mm.collapse_MealManager(); // Collapse all meals
 
             // Add MealManager and its Space Separator to GUI
-            addToContainer(scroll_JP_center, mm.get_Collapsible_JP_Obj(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "horizontal", 0, 0, null);
-            addToContainer(scroll_JP_center, mm.getSpaceDividerForMealManager(), 0, getAndIncreaseContainerYPos(), 1, 1, 0.25, 0.25, "both", 50, 0, null);
+            addToContainer(scroll_JP_center, mm.get_Collapsible_JP_Obj(), 0, getAndIncreaseContainerYPos(), "horizontal", 0, null);
+            addToContainer(scroll_JP_center, mm.getSpaceDividerForMealManager(), 0, getAndIncreaseContainerYPos(), "both", 50, null);
         }
 
         scroll_JP_center.repaint();
@@ -2804,11 +2759,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
         try
         {
-            int pos = - 1;
-
             if (any_session_created_meals)
             {
-                ArrayList<ArrayList<Object>> new_meals = results.get_Fetched_Result_2D_AL(pos += 1);
+                ArrayList<ArrayList<Object>> new_meals = results.get_Fetched_Result_2D_AL(0);
 
                 new_meals.forEach(e -> {
                     meal_id_map.put((Integer) e.get(0), (Integer) e.get(1)); // draft_meal_in_plan_id & meal_in_plan_id
@@ -2816,14 +2769,14 @@ public class Meal_Plan_Screen extends Screen_JFrame
             }
             if (any_session_created_sub_meals)
             {
-                ArrayList<ArrayList<Object>> new_sub_meals = results.get_Fetched_Result_2D_AL(pos += 1);
+                ArrayList<ArrayList<Object>> new_sub_meals = results.get_Fetched_Result_2D_AL(1);
 
                 new_sub_meals.forEach(e -> {
                     sub_meal_id_map.put((Integer) e.get(0), (Integer) e.get(1)); // draft_div_meal_sections_id & div_meal_sections_id
                 });
             }
 
-            new_plan_vs_id = (Integer) results.get_1D_Result_Into_Object(pos += 1);
+            new_plan_vs_id = (Integer) results.get_1D_Result_Into_Object(2);
         }
         catch (Exception e)
         {
@@ -2842,18 +2795,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
         // ########################################
         for (MealManager mealManager : mealManager_ArrayList)
         {
-            // Set MealManager Source ID
-            if (any_session_created_meals)
-            {
-                int draft_meal_id = mealManager.get_Draft_Meal_ID();
-
-                if (meal_id_map.containsKey(draft_meal_id))
-                {
-                    int source_meal_id = meal_id_map.remove(draft_meal_id);
-                    mealManager.set_Source_Meal_ID(source_meal_id);
-                }
-            }
-
             // Save MealManager
             mealManager.save_Data_Action();
             mealManager.set_MealManager_In_DB(true);
@@ -3888,15 +3829,29 @@ public class Meal_Plan_Screen extends Screen_JFrame
         return ingredients_info_screen != null;
     }
 
-    public void update_Ingredients_Name_And_Types_In_JTables(boolean ingredientsAddedOrRemove)
+    // Ingredients Table
+    public void redraw_Ingredients_Tables_Obj_Name_Col(Ingredient_Name_ID_OBJ ingredient_name_id_obj)
     {
-        if (ingredientsAddedOrRemove)
-        {
-            //#####################################
-            // Save Plan & Refresh Plan
-            //#####################################
+        mealManager_ArrayList.forEach(e -> e.redraw_Ingredients_Table_Obj_Name_Col(ingredient_name_id_obj));
+    }
 
-        }
+    public void redraw_Ingredients_Table_Obj_Type_Col(Ingredient_Type_ID_OBJ ingredient_type_id_obj)
+    {
+        mealManager_ArrayList.forEach(e -> e.redraw_Ingredients_Table_Obj_Type_Col(ingredient_type_id_obj));
+    }
+
+    public void change_Ingredient_Name_Obj_Type_On_Ingredients_Table(Ingredient_Name_ID_OBJ selected_ingredient_name_obj)
+    {
+        mealManager_ArrayList.forEach(e ->
+                e.change_Ingredient_Name_Obj_Type_On_Ingredients_Table(selected_ingredient_name_obj)
+        );
+    }
+
+    public void update_Ingredient_Info_On_Ingredients_Table(Ingredient_Name_ID_OBJ ingredient_name_obj)
+    {
+        mealManager_ArrayList.forEach(e ->
+                e.update_Ingredient_Info_On_Ingredients_Table(ingredient_name_obj)
+        );
     }
 
     // ###############################################################
@@ -4039,7 +3994,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             {
                 update_Line_Chart_Data(mealManager, previousMealTime, currentMealTime);   // Update LineChart Data
 
-                update_Pie_Chart_DATA(mealManager);  // Update PieChart DATA
+                update_Pie_Chart_DATA();  // Update PieChart DATA
             }
             case "delete" -> // Deleted MealManager
             {
@@ -4056,11 +4011,11 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 update_Pie_Chart_Meal_Time(mealManager);
             }
             case "mealName" ->  // Meal Name on MealManager Changed
-            {
+
                 // LineChart = Nothing Changes
 
-                update_Pie_Chart_Meal_Name(mealManager);  // Change PieChart MealName
-            }
+                    update_Pie_Chart_Meal_Name(mealManager);  // Change PieChart MealName
+
             case "refresh" ->   // Change Meal Managers Data
             {
                 // Refresh MealManager

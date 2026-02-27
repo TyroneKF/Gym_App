@@ -1,0 +1,30 @@
+package com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.base.screen;
+
+import com.donty.gymapp.gui.panels.CollapsibleJPanel;
+import com.donty.gymapp.gui.base.Screen_JPanel;
+
+import java.awt.*;
+
+public class Parent_Forms_OBJ extends Screen_JPanel // Shop Form and Ingredients Form
+{
+    //##################################################################################################################
+    // Variables
+    //##################################################################################################################
+    protected final CollapsibleJPanel collapsibleJPanel;
+    
+    //##################################################################################################################
+    // Constructor
+    //##################################################################################################################
+    public Parent_Forms_OBJ(Container parentContainer, String btnText)
+    {
+        super(parentContainer, false);  // Super & Variables
+
+
+        // Collapsible JPanel Creation
+        collapsibleJPanel = new CollapsibleJPanel(btnText, 250, 50);
+        collapsibleJPanel.expand_JPanel();
+        
+        get_ScrollPane_JPanel().setLayout(new GridLayout(1, 1));
+        get_ScrollPane_JPanel().add(collapsibleJPanel);
+    }
+}

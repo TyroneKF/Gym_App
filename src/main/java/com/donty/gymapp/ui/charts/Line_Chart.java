@@ -15,14 +15,18 @@ import java.awt.geom.Ellipse2D;
 
 public class Line_Chart extends JPanel
 {
-    // ############################################################################################
+    // #################################################################################################################
     // Variables
-    // ############################################################################################
-    JFreeChart chart;
+    // #################################################################################################################
+       protected final JFreeChart chart;
 
-    // ############################################################################################
+
+
+
+
+    // #################################################################################################################
     // Constructor
-    // ############################################################################################
+    // #################################################################################################################
     public Line_Chart(String title, int frameWidth, int frameHeight, TimeSeriesCollection dataset)
     {
         //############################################
@@ -85,8 +89,8 @@ public class Line_Chart extends JPanel
         titleObject.setFont(new Font("Serif", Font.PLAIN, 27));
 
         // Label font size on diagram
-        plot.getRangeAxis().setLabelFont(new Font("SansSerif", Font.BOLD, 22));;
-        plot.getDomainAxis().setLabelFont(new Font("SansSerif", Font.BOLD, 22));;
+        plot.getRangeAxis().setLabelFont(new Font("SansSerif", Font.BOLD, 22));
+        plot.getDomainAxis().setLabelFont(new Font("SansSerif", Font.BOLD, 22));
 
         // Legend Font Size
         chart.getLegend().setItemFont(new Font("Serif", Font.PLAIN, 21));
@@ -104,9 +108,9 @@ public class Line_Chart extends JPanel
         add(chartPanel);
     }
 
-    // ############################################################################################
+    // #################################################################################################################
     // Methods
-    // ############################################################################################
+    // #################################################################################################################
     public void setTitle(String meal_name)
     {
         chart.setTitle(String.format("%s Macros Over 24 Hours", meal_name));

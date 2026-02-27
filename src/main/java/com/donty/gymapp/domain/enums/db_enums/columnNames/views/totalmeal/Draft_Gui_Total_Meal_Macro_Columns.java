@@ -1,10 +1,6 @@
 package com.donty.gymapp.domain.enums.db_enums.columnNames.views.totalmeal;
 
 import com.donty.gymapp.domain.enums.db_enums.columnNames.base.Table_Enum;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public enum Draft_Gui_Total_Meal_Macro_Columns implements Table_Enum
 {
@@ -26,19 +22,10 @@ public enum Draft_Gui_Total_Meal_Macro_Columns implements Table_Enum
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    private static final String SOURCE_NAME = "draft_gui_total_meal_view";
-
-    private final String source_name;
-
-
     private final String key;
 
-    private static final Map<String, Draft_Gui_Total_Meal_Macro_Columns> BY_KEY =
-            Arrays.stream(values())
-                    .collect(Collectors.toMap(
-                            Draft_Gui_Total_Meal_Macro_Columns :: key,
-                            Function.identity()
-                    ));
+
+
 
     //##################################################################################################################
     // Constructor
@@ -46,8 +33,9 @@ public enum Draft_Gui_Total_Meal_Macro_Columns implements Table_Enum
     Draft_Gui_Total_Meal_Macro_Columns(String key)
     {
         this.key = key;
-        this.source_name = SOURCE_NAME;
     }
+
+
 
     //##################################################################################################################
     // Methods
@@ -57,11 +45,5 @@ public enum Draft_Gui_Total_Meal_Macro_Columns implements Table_Enum
     public String key()
     {
         return key;
-    }
-
-    @Override
-    public String source_Name()
-    {
-        return source_name;
     }
 }

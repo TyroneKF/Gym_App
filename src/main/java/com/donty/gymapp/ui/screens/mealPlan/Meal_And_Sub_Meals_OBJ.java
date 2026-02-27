@@ -1,7 +1,7 @@
 package com.donty.gymapp.ui.screens.mealPlan;
 
-import com.donty.gymapp.ui.meta.ids.MetaData_ID_Object.Meal_ID_OBJ;
-import com.donty.gymapp.ui.meta.ids.MetaData_ID_Object.Sub_Meal_ID_OBJ;
+import com.donty.gymapp.ui.meta.ids.meta.Meal_ID_OBJ;
+import com.donty.gymapp.ui.meta.ids.meta.Sub_Meal_ID_OBJ;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,12 +21,11 @@ public class Meal_And_Sub_Meals_OBJ
     public Meal_And_Sub_Meals_OBJ
     (
             int draft_meal_id,
-            int source_meal_id,
             String meal_name,
             LocalTime meal_time
     )
     {
-         meal_id_obj = new Meal_ID_OBJ(draft_meal_id, source_meal_id, meal_name, meal_time);
+         meal_id_obj = new Meal_ID_OBJ(draft_meal_id, meal_name, meal_time);
     }
 
     //##################################################################################################################
@@ -50,33 +49,38 @@ public class Meal_And_Sub_Meals_OBJ
     //##################################################################################################################
     // Accessor Methods
     //##################################################################################################################
-    // Objects
-    public Meal_ID_OBJ get_Meal_ID_OBJ()
-    {
-        return meal_id_obj;
-    }
-
     public boolean is_Sub_Meal_In_List(int draft_sub_meal_id)
     {
         return sub_meal_id_map.containsKey(draft_sub_meal_id);
     }
 
+
     // #######################################
-    // Integer
+    // Meal ID Object Values
+    // #######################################
+    public int get_Draft_Meal_ID()
+    {
+        return meal_id_obj.get_Draft_Meal_ID();
+    }
+
+    public String get_Meal_Name()
+    {
+       return meal_id_obj.get_Meal_Name();
+    }
+
+    public LocalTime get_Meal_Time()
+    {
+        return meal_id_obj.get_Meal_Time();
+    }
+
+    // #######################################
+    // Collections
     // #######################################
     public int get_No_Of_Sub_Meals_In_Meal()
     {
         return sub_meal_id_map.size();
     }
 
-    public int get_Draft_Meal_ID()
-    {
-        return meal_id_obj.get_Draft_Meal_ID();
-    }
-
-    // #######################################
-    // Collections
-    // #######################################
     public HashMap<Integer, Sub_Meal_ID_OBJ> get_Sub_Meal_ID_Map()
     {
         return sub_meal_id_map;

@@ -1,13 +1,26 @@
 
+
+Add Ingredient
+    Ingredient Table should see ingredient name under type if already on GUI - ticked
+    Edit Ingredients - ingredient names should be updated
+
+Edit Ingredient Remove Un-Assigned after changed
+
+#####################################################
+
+
+
+
+
 mvn javafx:run "-DmainClass=Tests.ToggleSwitchDemo"
 
-
+.) Use enums on edit screens for tables and fields
 .) Delete btn Ingredients on edit screen
-
+.) delete btn fk in edit screens
 
 CREATE TEMPORARY TABLE
 
-
+.) Changing ingredient value doesnt update on table if its already there
 
 Edit Views to match on plan_id as well as meal_id
 

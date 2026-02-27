@@ -10,8 +10,6 @@ import com.donty.gymapp.persistence.database.statements.Upload_Statement_Full;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import java.math.RoundingMode;
-import java.sql.Connection;
-import java.sql.SQLException;
 import javax.swing.*;
 import java.math.BigDecimal;
 import java.sql.*;
@@ -33,8 +31,7 @@ public class MyJDBC_Sqlite  // remove extends eventually
     private final String db_Connection_Address;
 
     private final String
-            line_Separator = "############################################################################################################################",
-            middle_line_Separator = "###############################################################";
+            line_Separator = "############################################################################################################################";
 
     private boolean db_Connection_Status = false;
 
@@ -138,27 +135,6 @@ public class MyJDBC_Sqlite  // remove extends eventually
 
         // 🔑 THIS IS THE IMPORTANT LINE
         hikariConfig.setDataSourceProperties(sqliteConfig.toProperties());
-        
-        /*
-        
-               HikariConfig config = new HikariConfig();
-            
-            // SQLite connection PRAGMAs:
-            // Required SQLite connection initialization for correctness, concurrency, and stability
-            // - foreign_keys        : Enforces FK constraints (OFF by default in SQLite)
-            // - journal_mode = WAL  : Improves concurrency and reduces locking
-            // - synchronous = NORMAL: Balanced durability vs performance
-            // - busy_timeout        : Waits for locks instead of failing immediately
-            config.setJdbcUrl(connection_Address);
-            config.setMaximumPoolSize(1); // sqlite can only handle 1 connection / not good at concurrency
-            config.setConnectionTestQuery("SELECT 1");
-            config.setConnectionInitSql(
-                    "PRAGMA foreign_keys = ON;" +
-                            "PRAGMA journal_mode = WAL;" +
-                            "PRAGMA synchronous = NORMAL;" +
-                            "PRAGMA busy_timeout = 5000;"
-            );
-         */
 
         // ####################################################
         //  Create pool
@@ -507,12 +483,6 @@ public class MyJDBC_Sqlite  // remove extends eventually
     //######################################################
     // Different Types Of Single Column Collections
     //######################################################
-    public ArrayList<String> get_Single_Col_Query_String(Fetch_Statement_Full full_fetch_statement, boolean allow_No_Results) throws Exception
-    {
-        String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
-        return get_Single_Column_Internally(full_fetch_statement, method_Name, allow_No_Results, String.class, ArrayList :: new);
-    }
-
     public ArrayList<Object> get_Single_Col_Query_Obj(Fetch_Statement_Full full_fetch_statement, boolean allow_No_Results) throws Exception
     {
         String method_Name = String.format("%s()", new Object() { }.getClass().getEnclosingMethod().getName());
@@ -794,7 +764,7 @@ public class MyJDBC_Sqlite  // remove extends eventually
             case Integer i -> statement.setInt(pos, i); // Integer
             case Boolean b -> statement.setInt(pos, b ? 1 : 0); // Boolean are represented as Integers
             case BigDecimal bigDecimal -> // BigDecimal to Integer
-            {
+
                 /*long long_conversion = bigDecimal
                         .movePointRight(2)
                         .longValueExact();
@@ -802,7 +772,7 @@ public class MyJDBC_Sqlite  // remove extends eventually
                 statement.setLong(pos, long_conversion);  */
 
                 statement.setBigDecimal(pos, bigDecimal);
-            }
+
             case Timestamp timestamp -> statement.setTimestamp(pos, timestamp);  // TimeStamp / LocalDateTime
             case LocalDateTime localDateTime -> // Local Date Time
                     statement.setTimestamp(pos, Timestamp.valueOf(localDateTime));
@@ -813,7 +783,7 @@ public class MyJDBC_Sqlite  // remove extends eventually
 
             // Exception clause
             default -> throw new Exception(String.format("Unable to configure param dataType of object being '%s' - %s"
-                    , object.toString(), object.getClass().getSimpleName()));
+                    , object, object.getClass().getSimpleName()));
         }
     }
 
@@ -830,9 +800,9 @@ public class MyJDBC_Sqlite  // remove extends eventually
     //###############################################################################
     // Validation Methods
     //###############################################################################
-    public boolean get_DB_Connection_Status()
+    public boolean is_DB_Connection_Status_Not_Available()
     {
-        return db_Connection_Status;
+        return ! db_Connection_Status;
     }
 
     private boolean process_Params(Object[] params) throws Exception
@@ -877,6 +847,7 @@ public class MyJDBC_Sqlite  // remove extends eventually
         //#############################
         try (connection)
         {
+            String middle_line_Separator = "###############################################################";
             try
             {
                 if (connection.getAutoCommit()) { return; } // IF Rollback wasn't executed return
@@ -941,12 +912,28 @@ public class MyJDBC_Sqlite  // remove extends eventually
     private void print_Internal_Method_Err_MSG(String method_Name, String query, Object[] params, Exception e)
     {
         System.err.printf("""
-                \n\n%s
+                
+                %s
                 MyJDBC_MySQL.java %s Error
                 %s
-                \nQuery : \n\n\"\"\" \n\n%s \n\n\"\"\"
-                \nParams: \n%s%n
-                \nError MSG:  \n\n\"\"\" \n%s \n\"\"\"""", line_Separator, method_Name, line_Separator, query, Arrays.toString(params), e);
+                
+                Query :
+                
+                \"""
+                
+                %s
+                
+                \"""
+                
+                Params:
+                %s%n
+                
+                Error MSG:
+                
+                \"""
+                %s
+                \"""
+                """, line_Separator, method_Name, line_Separator, query, Arrays.toString(params), e);
     }
 
     //###############################################

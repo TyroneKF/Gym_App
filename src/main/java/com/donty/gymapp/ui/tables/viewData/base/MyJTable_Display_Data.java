@@ -17,7 +17,7 @@ public abstract class MyJTable_Display_Data <T extends Enum<T> & Table_Enum> ext
     //##################################################################################################################
     // Variables
     //##################################################################################################################
-    protected int update_Row = 0;
+    protected final int update_Row = 0;
     
     //##################################################################################################################
     // Constructor
@@ -86,10 +86,7 @@ public abstract class MyJTable_Display_Data <T extends Enum<T> & Table_Enum> ext
     
     @Override
     protected boolean format_Table_Data(ArrayList<ArrayList<Object>> table_data) { return true; }
-    
-    @Override
-    protected void format_Table_Row_Data(ArrayList<Object> table_data) throws Exception { }
-    
+
     @Override
     protected void set_Cell_Renderer()
     {
@@ -138,7 +135,7 @@ public abstract class MyJTable_Display_Data <T extends Enum<T> & Table_Enum> ext
     protected boolean table_Data_Changed_Action(int row_Model, int column_Model, Object newValue) { return false; }
     
     @Override
-    protected boolean has_Cell_Data_Changed(Class<?> type, Object old_Value, Object new_Value, int col) throws Exception
+    protected boolean has_Cell_Data_Changed(Class<?> type, Object old_Value, Object new_Value) throws Exception
     {
         throw new Exception(String.format("%s -> doesn't need a has_Cell_Data_Changed() Method to called, logic Error!", table_name));
     }

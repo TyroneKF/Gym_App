@@ -4,34 +4,20 @@ import com.donty.gymapp.domain.enums.db_enums.columnNames.base.Table_Enum;
 
 import java.util.ArrayList;
 
-public class ColumnUiRules<T extends Enum<T> & Table_Enum>
+/**
+ * @param column_Names ################################################################################################################## Variable##################################################################################################################
+ */
+public record ColumnUiRules<T extends Enum<T> & Table_Enum>
+(
+        ArrayList<String> column_Names,
+        ArrayList<T> editable_Column_Names,
+        ArrayList<T> col_To_Avoid_Centering,
+        ArrayList<T> columns_To_Hide
+)
 {
-    //##################################################################################################################
-    // Variable
-    //##################################################################################################################
-    private final ArrayList<String> column_Names;
-    private final ArrayList<T> editable_Column_Names;
-    private final ArrayList<T> col_To_Avoid_Centering;
-    private final ArrayList<T> columns_To_Hide;
-
     //##################################################################################################################
     // Constructor
     //##################################################################################################################
-    public ColumnUiRules
-    (
-            ArrayList<String> column_Names,
-
-            ArrayList<T> editable_Column_Names,
-            ArrayList<T> col_To_Avoid_Centering,
-            ArrayList<T> columns_To_Hide
-    )
-    {
-        this.column_Names = column_Names;
-
-        this.editable_Column_Names = editable_Column_Names;
-        this.col_To_Avoid_Centering = col_To_Avoid_Centering;
-        this.columns_To_Hide = columns_To_Hide;
-    }
 
     //##################################################################################################################
     // Method
@@ -48,7 +34,7 @@ public class ColumnUiRules<T extends Enum<T> & Table_Enum>
 
     public boolean is_Columns_To_Hide_Null()
     {
-        return columns_To_Hide != null || ! columns_To_Hide.isEmpty();
+        return columns_To_Hide != null && ! columns_To_Hide.isEmpty();
     }
 
     public ArrayList<T> get_Editable_Column_Names()
