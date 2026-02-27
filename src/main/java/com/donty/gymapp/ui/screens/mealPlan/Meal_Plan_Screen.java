@@ -3892,19 +3892,19 @@ public class Meal_Plan_Screen extends Screen_JFrame
         mealManager_ArrayList.forEach(e -> e.redraw_Ingredients_Table_Obj_Type_Col(ingredient_type_id_obj));
     }
 
-    public void change_Ingredient_Name_Obj_Type_On_Ingredients_Table
-    (
-            Ingredient_Name_ID_OBJ selected_ingredient_name_obj,
-            Ingredient_Type_ID_OBJ new_ingredient_type
-    )
+    public void change_Ingredient_Name_Obj_Type_On_Ingredients_Table(Ingredient_Name_ID_OBJ selected_ingredient_name_obj)
     {
         mealManager_ArrayList.forEach(e ->
-                e.change_Ingredient_Name_Obj_Type_On_Ingredients_Table(
-                        selected_ingredient_name_obj,
-                        new_ingredient_type)
+                e.change_Ingredient_Name_Obj_Type_On_Ingredients_Table(selected_ingredient_name_obj)
         );
     }
 
+    public void update_Ingredient_Info_On_Ingredients_Table(Ingredient_Name_ID_OBJ ingredient_name_obj)
+    {
+        mealManager_ArrayList.forEach(e ->
+                e.update_Ingredient_Info_On_Ingredients_Table(ingredient_name_obj)
+        );
+    }
 
     // ###############################################################
     // Macro Targets Screen & Target Methods

@@ -676,21 +676,42 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
        Ingredient_Type_ID_OBJ new_ingredient_type
     )
     {
-        int type_column_pos = get_Ingredient_Type_Col(false);
-        int name_column_pos = get_Ingredient_Name_Col(true);
+        int type_table_column_pos = get_Ingredient_Type_Col(false);
+        int name_model_column_pos = get_Ingredient_Name_Col(true);
 
         JTable table = get_JTable();
 
         for (int row = 0; row < get_Rows_In_Table(); row++)
         {
-            Ingredient_Name_ID_OBJ name_obj_on_table = (Ingredient_Name_ID_OBJ) get_Value_On_Model_Data(row, name_column_pos);
+            Ingredient_Name_ID_OBJ name_obj_on_table = (Ingredient_Name_ID_OBJ) get_Value_On_Model_Data(row, name_model_column_pos);
 
             if (name_obj_on_table.equals(selected_ingredient_name_obj))
             {
-                table.setValueAt(new_ingredient_type, row, type_column_pos);
+                table.setValueAt(new_ingredient_type, row, type_table_column_pos);
             }
         }
 
+    }
+
+    public void update_Ingredient_Info(Ingredient_Name_ID_OBJ ingredient_name_obj)
+    {
+        int ingredient_index_model_pos = get_Ingredient_Index_Model_Col();
+        int name_model_column_pos = get_Ingredient_Name_Col(true);
+        int quantity_model_column_pos = get_Quantity_Model_Col();
+
+        for (int row = 0; row < get_Rows_In_Table(); row++)
+        {
+            Ingredient_Name_ID_OBJ name_obj_on_table = (Ingredient_Name_ID_OBJ) get_Value_On_Model_Data(row, name_model_column_pos);
+
+            if (name_obj_on_table.equals(ingredient_name_obj))
+            {
+                int ingredient_index = (Integer) get_Value_On_Model_Data(row, ingredient_index_model_pos);
+
+                BigDecimal quantity = (BigDecimal) get_Value_On_Model_Data(row, quantity_model_column_pos);
+
+                update_Table_Values_By_Quantity(row, ingredient_index, quantity);
+            }
+        }
     }
 
 

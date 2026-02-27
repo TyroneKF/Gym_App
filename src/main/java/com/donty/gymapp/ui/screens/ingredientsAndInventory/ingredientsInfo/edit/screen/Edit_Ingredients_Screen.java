@@ -35,7 +35,8 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
     protected boolean
             allow_Name_Action_Listener = true,
             has_Ingredient_Name_Changed = false,
-            has_Ingredient_Type_Changed = false;
+            has_Ingredient_Type_Changed = false,
+            has_ingredient_data_changed = false;
 
     //##################################################################################################################
     // Constructor
@@ -224,6 +225,8 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
             has_Ingredient_Type_Changed = edit_Ingredients_Form.has_Ingredient_Type_Changed();
 
             has_Ingredient_Name_Changed = edit_Ingredients_Form.has_Ingredient_Name_Changed();
+
+            has_ingredient_data_changed = edit_Ingredients_Form.has_Any_Ingredient_Value_Changed();
         }
         catch (Exception e)
         {
@@ -307,17 +310,18 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
         {
             reload_Main_Ingredient_Type_JC();
 
-
-            ingredients_info_screen.update_Ingredient_Name_Obj_Type_On_Ingredients_Table(
-                    selected_ingredients_name_obj,
-                    selected_ingredients_name_obj.get_Ingredient_Type_Obj()
-            );
+            ingredients_info_screen.update_Ingredient_Name_Obj_Type_On_Ingredients_Table(selected_ingredients_name_obj);
         }
 
         // Update Ingredients Name Related Things
         if (has_Ingredient_Name_Changed)
         {
             ingredients_info_screen.update_Ingredients_Table_Names_Col(selected_ingredients_name_obj);
+        }
+
+        if(has_ingredient_data_changed)
+        {
+            ingredients_info_screen.update_Ingredient_Info_On_Ingredients_Table(selected_ingredients_name_obj);
         }
     }
 
@@ -340,6 +344,7 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
     {
         has_Ingredient_Name_Changed = false;
         has_Ingredient_Type_Changed = false;
+        has_ingredient_data_changed = false;
         selected_ingredients_name_obj = null;
     }
 

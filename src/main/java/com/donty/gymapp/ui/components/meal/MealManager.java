@@ -1631,14 +1631,19 @@ public class MealManager
     }
 
     // Change Ingredients Type
-    public void change_Ingredient_Name_Obj_Type_On_Ingredients_Table
-    (
-            Ingredient_Name_ID_OBJ selected_ingredient_name_obj,
-            Ingredient_Type_ID_OBJ new_ingredient_type
-    )
+    public void change_Ingredient_Name_Obj_Type_On_Ingredients_Table(Ingredient_Name_ID_OBJ selected_ingredient_name_obj)
     {
+        Ingredient_Type_ID_OBJ new_ingredient_type = selected_ingredient_name_obj.get_Ingredient_Type_Obj();
+
         ingredient_tables_AL.forEach(e ->
                 e.change_Ingredient_Name_Obj_Type(selected_ingredient_name_obj,new_ingredient_type)
+        );
+    }
+
+    public void update_Ingredient_Info_On_Ingredients_Table(Ingredient_Name_ID_OBJ ingredient_name_obj)
+    {
+        ingredient_tables_AL.forEach(e ->
+                e.update_Ingredient_Info(ingredient_name_obj)
         );
     }
 

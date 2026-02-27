@@ -10,6 +10,7 @@ import com.donty.gymapp.gui.controls.combobox.base.storableID.base.Field_JCombo_
 import com.donty.gymapp.gui.controls.textfields.base.Field_JTxtField_Parent;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.add.ingredients.Ingredients_Form;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.base.ingredients.Ingredient_Binding;
+
 import java.awt.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -97,7 +98,7 @@ public class Edit_Ingredients_Form extends Ingredients_Form
         if (form_value.getClass() != db_value.getClass()) // Type MisMatch
         {
             throw new Exception(String.format("""
-                         
+                            
                             %s Error Different Object Types
                             
                             Form
@@ -136,6 +137,18 @@ public class Edit_Ingredients_Form extends Ingredients_Form
     public boolean has_Ingredient_Name_Changed() throws Exception
     {
         return has_Field_Value_Changed_From_DB_Data("name");
+    }
+
+    public boolean has_Any_Ingredient_Value_Changed() throws Exception
+    {
+        for (String key : field_Items_Map.keySet())
+        {
+            if (has_Field_Value_Changed_From_DB_Data(key))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     //##########################################
