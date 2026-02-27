@@ -143,12 +143,12 @@ public abstract class Parent_Ingredients_Screen extends Screen_JPanel
         Are you sure you want to upload these values as they may have been changed / adapted
         to fit our data type format ?""";
 
-        if (! are_You_Sure(title_Upload, message_Upload)) { return; }
+        if (are_You_Not_Sure(title_Upload, message_Upload)) { return; }
 
         //#################################
         // Ask to Add Ingredient / Products
         //#################################
-        if (! are_You_Sure(get_Question_Prompt_Title(), get_Task_Question_Prompt())) { return; }
+        if (are_You_Not_Sure(get_Question_Prompt_Title(), get_Task_Question_Prompt())) { return; }
 
 
         //##################################

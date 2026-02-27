@@ -106,13 +106,7 @@ public class Shared_Data_Registry
     //##################
     private final HashMap<Integer, Ingredient_Name_ID_OBJ> ingredient_Names_Obj_Map = new HashMap<>();
     private final ArrayList<Ingredient_Name_ID_OBJ> ingredient_Names_Obj_AL = new ArrayList<>();
-    
-    //##################
-    // Material Type
-    //##################
-    private final HashMap<Integer, Measurement_Material_Type_ID_OBJ> measurement_Material_Type_Obj_Map = new HashMap<>();
-    private final ArrayList<Measurement_Material_Type_ID_OBJ> measurement_Material_Type_Obj_AL = new ArrayList<>();
-    
+
     //##################
     // Measurements
     //##################
@@ -605,21 +599,7 @@ public class Shared_Data_Registry
     {
         return stores_Obj_Map.get(id);
     }
-    
-    
-    //#################################################################
-    // Measurement Material Type
-    //#################################################################
-    public void add_Measurement_Material_Type(Measurement_Material_Type_ID_OBJ measurement_material_id_obj, boolean sort)
-    {
-        add_ID_Object(measurement_material_id_obj, measurement_Material_Type_Obj_AL, sort, measurement_Material_Type_Obj_Map);
-    }
-    
-    public Measurement_Material_Type_ID_OBJ get_Measurement_Material_Type_ID_OBJ(int id)
-    {
-        return measurement_Material_Type_Obj_Map.get(id);
-    }
-    
+
     //#################################################################
     // Measurement
     //#################################################################

@@ -164,32 +164,31 @@ public class Meal_Plan_Screen extends Screen_JFrame
          *  #############################
          *  5.) Get Ingredient Names & Types                                [4%]
          *  6.) Get Stores Data                                             [3%]
-         *  7.) Get Measurement Material Type DATA                          [3%]
-         *  8.) Get Measurement DATA                                        [4%]
-         *  9.) System Variables DATA                                       [2%]
+         *  7.) Get Measurement DATA                                        [4%]
+         *  8.) System Variables DATA                                       [5%]
 
          *  #############################
          *   Draft Plan Construction
          *  #############################
-         *  10.) Transferring Plan Data To DRAFT Plan_Data                  [3%]
-         *  11.) Transfer Plan Targets                                      [3%]
-         *  12.) Transferring Meals Data                                    [3%]
+         *  9.) Transferring Plan Data To DRAFT Plan_Data                  [3%]
+         *  10.) Transfer Plan Targets                                      [3%]
+         *  11.) Transferring Meals Data                                    [3%]
 
          * #############################
          *  GET Computed Plan Data
          * #############################
-         * 13.) Get Meals & Sub-Meals DATA                                  [3%]
-         * 14.) Get Total Meals Data                                        [3%]
-         * 15.) Get Macros Targets DATA                                     [3%]
-         * 16.) Get Macros Left DATA                                        [3%]
+         * 12.) Get Meals & Sub-Meals DATA                                  [3%]
+         * 13.) Get Total Meals Data                                        [3%]
+         * 14.) Get Macros Targets DATA                                     [3%]
+         * 15.) Get Macros Left DATA                                        [3%]
 
          * #############################
          *   Build GUI
          * #############################
-         * 17.) North GUI Setup  : Icons                                    [5%]
-         * 18.) Update Macro Indicators                                     [2%]
-         * 19.) Bottom GUI Setup : Macro_Targets / Macro_Left Table         [5%]
-         * 20.) Centre GUI Setup : Create Meals                             [40%]
+         * 16.) North GUI Setup  : Icons                                    [5%]
+         * 17.) Update Macro Indicators                                     [2%]
+         * 18.) Bottom GUI Setup : Macro_Targets / Macro_Left Table         [5%]
+         * 19.) Centre GUI Setup : Create Meals                             [40%]
          */
 
         try // Get MetaData Methods
@@ -300,49 +299,45 @@ public class Meal_Plan_Screen extends Screen_JFrame
         setup_Get_Stores_Data();
         loading_screen.increaseBar(3);
 
-        // 7.) Get Measurement Material Type DATA
-        setup_Get_Measurement_Material_Type_Data();
-        loading_screen.increaseBar(3);
-
-        // 8.) Get Measurement DATA
+        // 7.) Get Measurement DATA
         setup_Get_Measurement_Data();
         loading_screen.increaseBar(4);
 
-        // 9.) System Variables DATA
+        // 8.) System Variables DATA
         setup_Get_System_Variables();
-        loading_screen.increaseBar(2);
+        loading_screen.increaseBar(5);
     }
 
     private void build_Draft_Plan_Data(LoadingScreen loading_screen) throws Exception
     {
-        // Transferring Plan Data To Draft Plan
+        // 9.) Transferring Plan Data To Draft Plan
         setup_Transfer_Plan_Data();
         loading_screen.increaseBar(3);
 
-        // Transferring Targets To Draft Plan
+        // 10.) Transferring Targets To Draft Plan
         setup_Transfer_Macro_Targets_Data(false);
         loading_screen.increaseBar(3);
 
-        // Transferring Plan Meals To Draft Meals
+        // 11.) Transferring Plan Meals To Draft Meals
         setup_Transfer_Meals_Data(false);
         loading_screen.increaseBar(3);
     }
 
     private void load_Computed_Plan_Data(LoadingScreen loading_screen) throws Exception
     {
-        // Get Meals Data
+        // 12.) Get Meals & Sub-Meals Data
         meals_and_sub_meals_AL = setup_Get_Meal_Data();
         loading_screen.increaseBar(3);
 
-        // Get TotalMeals Data
+        // 13.) Get TotalMeals Data
         total_Meals_Data_Map = setup_Get_Total_Meals_Data();
         loading_screen.increaseBar(3);
 
-        // Get MacroTargets DATA
+        // 14.) Get MacroTargets DATA
         macros_targets_plan_data_AL = setup_Get_Macros_Targets_Data();
         loading_screen.increaseBar(3);
 
-        // Get MacrosLeft DATA
+        // 15.) Get MacrosLeft DATA
         macros_left_plan_data_AL = setup_Get_Macros_Left_Data();
         loading_screen.increaseBar(3);
     }
@@ -364,25 +359,25 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //#############################
         // North :  JPanel
         //#############################
-        // 17.) North GUI Setup : Icons
+        // 16.) North GUI Setup : Icons
         build_North_GUI();
         loading_screen.increaseBar(5);
 
-        // 18.) Update Macro Indicators
+        // 17.) Update Macro Indicators
         update_Macro_Indicators();
         loading_screen.increaseBar(2);
 
         //#############################
         // Bottom : JPanel
         //#############################
-        // 19.) Bottom GUI Setup : Macro_Targets / Macro_Left Table
+        // 18.) Bottom GUI Setup : Macro_Targets / Macro_Left Table
         build_Bottom_GUI(scroll_jpanel_bottom, macros_targets_plan_data_AL, macros_left_plan_data_AL);
         loading_screen.increaseBar(5); // Increase Progress
 
         //#############################
         // Centre : JPanel (Meals)
         //#############################
-        // 20.) Centre GUI Setup : Create Meals
+        // 19.) Centre GUI Setup : Create Meals
         create_Meal_Objects_In_GUI(meals_and_sub_meals_AL, total_Meals_Data_Map, loading_screen);     // Add Meals to GUI
     }
 
@@ -872,42 +867,6 @@ public class Meal_Plan_Screen extends Screen_JFrame
         System.out.println("    \n.) Store Objects Successfully Transferred!");
     }
 
-    private void setup_Get_Measurement_Material_Type_Data() throws Exception
-    {
-        // Set Variables
-        String query = "SELECT * FROM measurement_material_type ORDER BY measurement_material_type_name;";
-        String error_msg = "Unable, to get Measurements Material Type Data";
-        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, null, error_msg);
-
-        // Execute Query
-        ArrayList<ArrayList<Object>> data;
-
-        try
-        {
-            data = db.get_2D_Query_AL_Object(fetch_statement, false);
-        }
-        catch (Exception e)
-        {
-            System.err.printf("\n\n%s \n%s Error \n%s  \n%s", lineSeparator, get_Class_And_Method_Name(), lineSeparator, e);
-            throw new Exception();
-        }
-
-        // Add Measurement OBJ
-        for (ArrayList<Object> row : data)
-        {
-            int id = (int) row.get(0);
-            String measurement_material_type_name = (String) row.get(1);
-
-            shared_data_registry.add_Measurement_Material_Type(
-                    new Measurement_Material_Type_ID_OBJ(id, true, measurement_material_type_name),
-                    false
-            );
-        }
-
-        // Return Output
-        System.out.println("    \n.) Measurement Material Type Objects Successfully Transferred!");
-    }
-
     private void setup_Get_Measurement_Data() throws Exception
     {
         // Set Variables
@@ -915,9 +874,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 SELECT
                     measurement_id,
                     is_system,
-                    unit_name,
-                    unit_symbol,
-                    measurement_material_type_id
+                    unit_name
                 FROM measurements ORDER BY unit_name;""";
 
 
@@ -944,18 +901,9 @@ public class Meal_Plan_Screen extends Screen_JFrame
             int id = (int) row.get(0);
             boolean is_system = ((int) row.get(1)) == 1; // 1 = true
             String unit_name = (String) row.get(2);
-            String unit_symbol = (String) row.get(3);
-
-            int measurement_Material_Type_ID = (int) row.get(4);
 
             shared_data_registry.add_Measurement(
-                    new Measurement_ID_OBJ(
-                            id,
-                            is_system,
-                            unit_name,
-                            unit_symbol,
-                            shared_data_registry.get_Measurement_Material_Type_ID_OBJ(measurement_Material_Type_ID)
-                    ),
+                    new Measurement_ID_OBJ(id, is_system,unit_name),
                     false
             );
         }

@@ -96,15 +96,11 @@ public class Screen_JPanel extends JPanel
     //##################################################################################################################
     // Actions
     //##################################################################################################################
-    protected Boolean are_You_Sure(String title, String msg)
+    protected boolean are_You_Not_Sure(String title, String msg)
     {
         int reply = JOptionPane.showConfirmDialog(this, msg, title, JOptionPane.YES_NO_OPTION); //HELLO Edit
 
-        if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION)
-        {
-            return false;
-        }
-        return true;
+        return reply != JOptionPane.YES_NO_OPTION;
     }
 
     protected JPanel create_Label_JP(String title, Font font, Color color)
