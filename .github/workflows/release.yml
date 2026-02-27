@@ -29,11 +29,11 @@ jobs:
       # -----------------------------------------------------------
       # Setup Java
       # -----------------------------------------------------------
-      - name: Set up Java 25
+      - name: Set up Java 21
         uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
-          java-version: '25'
+          java-version: '21'
           cache: 'maven'
 
       # -----------------------------------------------------------
@@ -102,7 +102,7 @@ jobs:
       # Upload installer artifact (temporary)
       # -----------------------------------------------------------
       - name: Upload Windows artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: GymApp-Windows
           path: dist/*.exe
@@ -130,11 +130,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Set up Java 25
+      - name: Set up Java 21
         uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
-          java-version: '25'
+          java-version: '21'
           cache: 'maven'
 
       - name: Build with Maven
@@ -151,7 +151,7 @@ jobs:
           --dest dist
 
       - name: Upload macOS artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: GymApp-macOS
           path: dist/*.dmg
@@ -169,11 +169,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Set up Java 25
+      - name: Set up Java 21
         uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
-          java-version: '25'
+          java-version: '21'
           cache: 'maven'
 
       - name: Build with Maven
@@ -190,7 +190,7 @@ jobs:
           --dest dist
 
       - name: Upload Linux artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: GymApp-Linux
           path: dist/*.deb
