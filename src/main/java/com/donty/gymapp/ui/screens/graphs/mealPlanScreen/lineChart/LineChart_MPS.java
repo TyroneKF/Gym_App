@@ -110,16 +110,6 @@ public class LineChart_MPS extends Screen_JFrame
     }
     
     //##################################################
-    //  Update  Methods
-    //##################################################
-    public void update_LineChart_Title()
-    {
-        lineChart_Main_Macros_MPS.update_LineChart_Title();  // LineChart Main Macros
-
-        lineChart_Bigger_Macros_MPS.update_LineChart_Title(); // LineChart Water & Calories Macros
-    }
-    
-    //##################################################
     //  Add
     //##################################################
     public void add_New_MealManager_Data(MealManager mealManager)

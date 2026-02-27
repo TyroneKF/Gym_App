@@ -135,7 +135,7 @@ public abstract class MyJTable_Display_Data <T extends Enum<T> & Table_Enum> ext
     protected boolean table_Data_Changed_Action(int row_Model, int column_Model, Object newValue) { return false; }
     
     @Override
-    protected boolean has_Cell_Data_Changed(Class<?> type, Object old_Value, Object new_Value, int col) throws Exception
+    protected boolean has_Cell_Data_Changed(Class<?> type, Object old_Value, Object new_Value) throws Exception
     {
         throw new Exception(String.format("%s -> doesn't need a has_Cell_Data_Changed() Method to called, logic Error!", table_name));
     }

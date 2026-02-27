@@ -90,7 +90,7 @@ public class Shop_Form extends Parent_Forms_OBJ
         //##################
         // Store Section
         //##################
-        JPanel store_JP = create_Section_JP(Color.LIGHT_GRAY, 150, 25, 0, 10);
+        JPanel store_JP = create_Section_JP(150, 25, 0, 10);
         form_Labels_Section.add(store_JP, BorderLayout.WEST);
 
         // Store Label
@@ -106,7 +106,7 @@ public class Shop_Form extends Parent_Forms_OBJ
         //########################
         // Centre Left
         //########################
-        JPanel centre_Left_JP = create_Section_JP(Color.LIGHT_GRAY, 330, 34, 0, 5);
+        JPanel centre_Left_JP = create_Section_JP(330, 34, 0, 5);
         centre_JPanel.add(centre_Left_JP, BorderLayout.WEST);
 
         // Product Name Label
@@ -116,7 +116,7 @@ public class Shop_Form extends Parent_Forms_OBJ
         //########################
         // Centre Middle
         //########################
-        JPanel centre_Middle_JP = create_Section_JP(Color.LIGHT_GRAY, 5, 25, 0, 0);
+        JPanel centre_Middle_JP = create_Section_JP(5, 25, 0, 0);
         centre_JPanel.add(centre_Middle_JP, BorderLayout.CENTER);
 
         // Price Label
@@ -126,7 +126,7 @@ public class Shop_Form extends Parent_Forms_OBJ
         //########################
         // Centre Right
         //########################
-        JPanel centre_Right_JP = create_Section_JP(Color.LIGHT_GRAY, 90, 34, 5, 0);
+        JPanel centre_Right_JP = create_Section_JP(90, 34, 5, 0);
         centre_JPanel.add(centre_Right_JP, BorderLayout.EAST);
 
         // Quantity Label
@@ -136,7 +136,7 @@ public class Shop_Form extends Parent_Forms_OBJ
         //############################################
         // East
         //############################################
-        JPanel east_JPanel = create_Section_JP(Color.LIGHT_GRAY, 110, 34, 5, 0);
+        JPanel east_JPanel = create_Section_JP(110, 34, 5, 0);
         form_Labels_Section.add(east_JPanel, BorderLayout.EAST);
 
         // Delete Btn Label

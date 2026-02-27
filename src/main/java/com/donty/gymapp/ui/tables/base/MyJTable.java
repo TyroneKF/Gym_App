@@ -393,7 +393,7 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
                 if (add_JTable_Action && ! is_row_Being_Edited)
                 {
                     // If Nothing Changed Exit
-                    if (! has_Cell_Data_Changed(getColumnClass(col), old_Value, newValue, col)) { return; }
+                    if (! has_Cell_Data_Changed(getColumnClass(col), old_Value, newValue)) { return; }
 
                     set_Row_Being_Edited(true);
                     boolean tabled_Action_Check = table_Data_Changed_Action(row, col, newValue);
@@ -522,7 +522,7 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
         }
     }
 
-    protected abstract boolean has_Cell_Data_Changed(Class<?> type, Object old_Value, Object new_Value, int col) throws Exception;
+    protected abstract boolean has_Cell_Data_Changed(Class<?> type, Object old_Value, Object new_Value) throws Exception;
 
     //##############################################
     // Table Model Methods

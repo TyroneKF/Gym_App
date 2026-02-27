@@ -119,12 +119,12 @@ public class Screen_JPanel extends JPanel
         return title_JP;  // Return JP
     }
 
-    protected JPanel create_Section_JP(Color color, int width, int height, int left_padding, int right_padding)
+    protected JPanel create_Section_JP(int width, int height, int left_padding, int right_padding)
     {
         JPanel jp = new JPanel(new GridLayout(1, 1));
         jp.setBorder(new EmptyBorder(0, left_padding, 0, right_padding));
         jp.setPreferredSize(new Dimension(width, height)); // width, height
-        jp.setBackground(color);
+        jp.setBackground(Color.LIGHT_GRAY);
         return jp;
     }
 

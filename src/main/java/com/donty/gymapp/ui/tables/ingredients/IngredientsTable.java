@@ -519,7 +519,7 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
     }
 
     @Override
-    protected boolean has_Cell_Data_Changed(Class<?> type, Object old_Value, Object new_Value, int col) throws Exception
+    protected boolean has_Cell_Data_Changed(Class<?> type, Object old_Value, Object new_Value) throws Exception
     {
         //########################################
         //  Comparison For Other Types
