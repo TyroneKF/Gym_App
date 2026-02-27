@@ -212,15 +212,34 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
     }
 
     @Override
-    protected void update_Other_Screens()
+    protected void update_Data()
     {
-        // Update Ingredients Types Objects If Changed On This Screen & related things
-        if (has_Ingredient_Type_Changed) { reload_Main_Ingredient_Type_JC(); }
-
-        // Update Ingredients Name Related Things
-        if (has_Ingredient_Name_Changed)
+        //################################
+        // Update Variables
+        //################################
+        try
         {
-          ingredients_info_screen.update_Ingredients_Table_Names_Col(selected_ingredients_name_obj);
+            Edit_Ingredients_Form edit_Ingredients_Form = (Edit_Ingredients_Form) ingredients_Form; // Cast to Type
+
+            has_Ingredient_Type_Changed = edit_Ingredients_Form.has_Ingredient_Type_Changed();
+
+            has_Ingredient_Name_Changed = edit_Ingredients_Form.has_Ingredient_Name_Changed();
+        }
+        catch (Exception e)
+        {
+            return;
+        }
+
+        //################################
+        // Update Shared Data / GUI
+        //################################
+        if (! update_Shared_Data()) // Update Shared Data with Fetched Results
+        {
+            JOptionPane.showMessageDialog(null, "Failed To Update GUI With Ingredient Info, Reload App to Fix Issues!");
+        }
+        else
+        {
+            update_Other_Screens(); // Update Other Screens
         }
     }
 
@@ -238,19 +257,17 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
             Ingredient_Name_ID_OBJ ingredient_name_id_obj = ingredient_Main_Name_JC.get_Selected_Item();
 
             // Update Ingredient Type in Shared Data if Changed
-            if (edit_Ingredients_Form.has_Ingredient_Type_Changed())
+            if (has_Ingredient_Type_Changed)
             {
                 if (! update_Ingredient_Type_Shared_Data(ingredient_name_id_obj, edit_Ingredients_Form)) // Failed Update
                 {
                     return false;
                 }
-                has_Ingredient_Type_Changed = true;
             }
 
-            if (edit_Ingredients_Form.has_Ingredient_Name_Changed()) // Update Ingredient Name in Shared Data if Changed
+            if (has_Ingredient_Name_Changed) // Update Ingredient Name in Shared Data if Changed
             {
                 update_Ingredient_Name_Shared_Data(ingredient_name_id_obj, edit_Ingredients_Form);
-                has_Ingredient_Name_Changed = true;
             }
 
             return true; // Output
@@ -258,8 +275,8 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
         catch (Exception e)
         {
             System.err.printf("\n\n%s -> \n\n%s", get_Class_And_Method_Name(), e);
+            return false;
         }
-        return false;
     }
 
     protected void update_Ingredient_Name_Shared_Data(Ingredient_Name_ID_OBJ ingredient_name_id_obj, Edit_Ingredients_Form edit_ingredients_form) throws Exception
@@ -277,6 +294,31 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
 
         // Change Ingredient Type on Ingredient Name
         return shared_data_registry.change_Ingredient_Type(ingredient_type_id_obj, ingredient_name_id_obj);
+    }
+
+    //############################################
+    // Other Screens
+    //############################################
+    @Override
+    protected void update_Other_Screens()
+    {
+        // Update Ingredients Types Objects If Changed On This Screen & related things
+        if (has_Ingredient_Type_Changed)
+        {
+            reload_Main_Ingredient_Type_JC();
+
+
+            ingredients_info_screen.update_Ingredient_Name_Obj_Type_On_Ingredients_Table(
+                    selected_ingredients_name_obj,
+                    selected_ingredients_name_obj.get_Ingredient_Type_Obj()
+            );
+        }
+
+        // Update Ingredients Name Related Things
+        if (has_Ingredient_Name_Changed)
+        {
+            ingredients_info_screen.update_Ingredients_Table_Names_Col(selected_ingredients_name_obj);
+        }
     }
 
     //######################################################################

@@ -163,9 +163,21 @@ public abstract class Parent_Ingredients_Screen extends Screen_JPanel
         // Generate Update MSG depending on what was updated
         JOptionPane.showMessageDialog(get_Frame(), "\n\nUpdated Ingredient Info & Product Info ! ");
 
-        //##################################
-        // Update Shared Data
-        //##################################
+        //################################
+        // Update Data
+        //################################
+        update_Data();
+
+
+
+        //################################
+        // Reset Form & Update GUI
+        //################################
+        clear_Interface();
+    }
+
+    protected void update_Data()
+    {
         if (! update_Shared_Data()) // Update Shared Data with Fetched Results
         {
             JOptionPane.showMessageDialog(null, "Failed To Update GUI With Ingredient Info, Reload App to Fix Issues!");
@@ -174,11 +186,6 @@ public abstract class Parent_Ingredients_Screen extends Screen_JPanel
         {
             update_Other_Screens(); // Update Other Screens
         }
-
-        //################################
-        // Reset Form & Update GUI
-        //################################
-        clear_Interface();
     }
 
     protected abstract String get_Task_Question_Prompt();

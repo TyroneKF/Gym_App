@@ -402,33 +402,6 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
         setup_Delete_Btn_Column(get_Delete_BTN_View_Col());
     }
 
-    public void redraw_Ingredient_Name_Col(Ingredient_Name_ID_OBJ ingredient_name_obj)
-    {
-        int column_pos = get_Ingredient_Name_Col(true);
-
-        update_Storable_Column(Ingredient_Name_ID_OBJ.class, ingredient_name_obj, column_pos);
-    }
-
-    public void redraw_Ingredient_Type_Col(Ingredient_Type_ID_OBJ ingredient_type_obj)
-    {
-        int column_pos = get_Ingredient_Type_Col(true);
-
-        update_Storable_Column(Ingredient_Type_ID_OBJ.class, ingredient_type_obj, column_pos);
-    }
-
-    private <T extends Storable_IDS_Parent> void update_Storable_Column(Class<T> class_type, T obj_1, int column_pos)
-    {
-        for (int row = 0; row < get_Rows_In_Table(); row++)
-        {
-            T obj_2 = class_type.cast(get_Value_On_Model_Data(row, column_pos));
-
-            if (obj_1.equals(obj_2))
-            {
-                get_Table_Model().fireTableCellUpdated(row, column_pos);
-            }
-        }
-    }
-
     //###################################
     // Delete Row Btn
     //###################################
@@ -666,6 +639,60 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
             return false;
         }
     }
+
+    //#####################################
+    // External Calls
+    //#####################################
+    public void redraw_Ingredient_Name_Col(Ingredient_Name_ID_OBJ ingredient_name_obj)
+    {
+        int column_pos = get_Ingredient_Name_Col(true);
+
+        update_Storable_Column(Ingredient_Name_ID_OBJ.class, ingredient_name_obj, column_pos);
+    }
+
+    public void redraw_Ingredient_Type_Col(Ingredient_Type_ID_OBJ ingredient_type_obj)
+    {
+        int column_pos = get_Ingredient_Type_Col(true);
+
+        update_Storable_Column(Ingredient_Type_ID_OBJ.class, ingredient_type_obj, column_pos);
+    }
+
+    private <T extends Storable_IDS_Parent> void update_Storable_Column(Class<T> class_type, T obj_1, int column_pos)
+    {
+        for (int row = 0; row < get_Rows_In_Table(); row++)
+        {
+            T obj_2 = class_type.cast(get_Value_On_Model_Data(row, column_pos));
+
+            if (obj_1.equals(obj_2))
+            {
+                get_Table_Model().fireTableCellUpdated(row, column_pos);
+            }
+        }
+    }
+
+    public void change_Ingredient_Name_Obj_Type
+    (
+       Ingredient_Name_ID_OBJ selected_ingredient_name_obj,
+       Ingredient_Type_ID_OBJ new_ingredient_type
+    )
+    {
+        int type_column_pos = get_Ingredient_Type_Col(false);
+        int name_column_pos = get_Ingredient_Name_Col(true);
+
+        JTable table = get_JTable();
+
+        for (int row = 0; row < get_Rows_In_Table(); row++)
+        {
+            Ingredient_Name_ID_OBJ name_obj_on_table = (Ingredient_Name_ID_OBJ) get_Value_On_Model_Data(row, name_column_pos);
+
+            if (name_obj_on_table.equals(selected_ingredient_name_obj))
+            {
+                table.setValueAt(new_ingredient_type, row, type_column_pos);
+            }
+        }
+
+    }
+
 
     //##################################################################################################################
     // Button Events

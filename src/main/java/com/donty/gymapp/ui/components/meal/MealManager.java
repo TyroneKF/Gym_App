@@ -1618,6 +1618,8 @@ public class MealManager
     //############################
     // Update Ingredients Table
     //############################
+
+    // Redraw Ingredients Table
     public void redraw_Ingredients_Table_Obj_Name_Col(Ingredient_Name_ID_OBJ ingredient_name_id_obj)
     {
         ingredient_tables_AL.forEach(e -> e.redraw_Ingredient_Name_Col(ingredient_name_id_obj));
@@ -1626,6 +1628,18 @@ public class MealManager
     public void redraw_Ingredients_Table_Obj_Type_Col(Ingredient_Type_ID_OBJ ingredient_type_id_obj)
     {
         ingredient_tables_AL.forEach(e -> e.redraw_Ingredient_Type_Col(ingredient_type_id_obj));
+    }
+
+    // Change Ingredients Type
+    public void change_Ingredient_Name_Obj_Type_On_Ingredients_Table
+    (
+            Ingredient_Name_ID_OBJ selected_ingredient_name_obj,
+            Ingredient_Type_ID_OBJ new_ingredient_type
+    )
+    {
+        ingredient_tables_AL.forEach(e ->
+                e.change_Ingredient_Name_Obj_Type(selected_ingredient_name_obj,new_ingredient_type)
+        );
     }
 
     //##################################################################################################################

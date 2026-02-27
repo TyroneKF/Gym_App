@@ -103,6 +103,18 @@ public class Ingredients_Info_Screen extends Screen_JFrame
         meal_plan_screen.redraw_Ingredients_Table_Obj_Type_Col(selected_ingredient_type_obj);
     }
 
+    public void update_Ingredient_Name_Obj_Type_On_Ingredients_Table
+    (
+            Ingredient_Name_ID_OBJ selected_ingredient_name_obj,
+            Ingredient_Type_ID_OBJ new_ingredient_type
+    )
+    {
+        meal_plan_screen.change_Ingredient_Name_Obj_Type_On_Ingredients_Table(
+                selected_ingredient_name_obj,
+                new_ingredient_type
+        );
+    }
+
     //###############################################
     // Type JC
     //###############################################
