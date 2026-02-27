@@ -40,16 +40,20 @@ public class Field_JC_Ingredient_Type extends Field_JCombo_Storable_ID<Ingredien
     @Override
     protected boolean remove_Item_From_JC_Model(Ingredient_Type_ID_OBJ iteration_item)
     {
-        if (hide_system_var && iteration_item.get_is_System()) // IF hide System var && the item is a system Var
+        // Only remove items when we are hiding system vars AND the item is a system var
+        if (! (hide_system_var && iteration_item.get_is_System()))
         {
-            // IF allow un-assigned & the item is un-assigned type id return true else false
-
-            if (allow_un_assigned && iteration_item.get_ID().equals(un_assigned_type_id)) { return false; }
-
-            return true;
+            return false;
         }
 
-        return false;
+        // If we get to this section we are removing system variables
+        boolean is_unassigned_item = iteration_item.get_ID().equals(un_assigned_type_id);
+
+        /*
+            If item isn't the un_assigned item remove it
+            IF the item is the un_assigned item and allow un_aissnged is false = remove
+        */
+        return ! is_unassigned_item || ! allow_un_assigned ;
     }
 
     @Override

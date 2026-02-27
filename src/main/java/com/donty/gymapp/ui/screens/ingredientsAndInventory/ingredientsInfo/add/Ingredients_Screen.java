@@ -117,7 +117,7 @@ public class Ingredients_Screen extends Parent_Ingredients_Screen
     }
 
     @Override
-    protected boolean update_Shared_Data()
+    protected boolean has_Update_Shared_Data_Failed()
     {
         try
         {
@@ -151,12 +151,12 @@ public class Ingredients_Screen extends Parent_Ingredients_Screen
                     true
             );
 
-            return true;
+            return false;
         }
         catch (Exception e)
         {
             System.err.printf("\n\n%s Error \n\n%s", get_Class_And_Method_Name(), e);
-            return false;
+            return true;
         }
     }
 

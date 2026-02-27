@@ -492,7 +492,7 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
             // ######################################################
             // Validation Checks
             // ######################################################
-            validate_source_data(get_Method_Name(3), source_Data);
+            validate_Source_Data(get_Method_Name(3), source_Data);
 
             // ######################################################
             // Create DataSet by manually adding each Cell
@@ -533,7 +533,17 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
         return tableModel.getValueAt(row, col);
     }
 
-    private void validate_source_data(String method_name, ArrayList<?> source_Data) throws Exception
+    private void validate_Source_Data(String method_name, ArrayList<ArrayList<Object>> source_Data) throws Exception
+    {
+        if (source_Data == null || source_Data.isEmpty()) // null data causes an error
+        {
+            throw new Exception(String.format("\n\n%s Error \nSource_Data cannot be null / empty!", get_Class_And_Method_Name()));
+        }
+
+        validate_Source_Data_Row(method_name, source_Data.getFirst());
+    }
+
+    private void validate_Source_Data_Row(String method_name, ArrayList<Object> source_Data) throws Exception
     {
         if (source_Data == null || source_Data.isEmpty()) // null data causes an error
         {
@@ -541,10 +551,8 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
         }
 
         int column_name_size = column_Names.size();
+        int source_data_size = source_Data.size();
 
-        boolean is_2D = source_Data.getFirst() instanceof ArrayList<?>;
-
-        int source_data_size = is_2D ? ((ArrayList<ArrayList<?>>) source_Data).getFirst().size() : source_Data.size();
 
         if (source_data_size != column_name_size) // Source Data has to provide data for each expected column
         {
@@ -600,7 +608,7 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
         //########################################################################
         try
         {
-            validate_source_data(get_Method_Name(3), update_Data);
+            validate_Source_Data_Row(get_Method_Name(3), update_Data);
         }
         catch (Exception e)
         {
@@ -636,14 +644,11 @@ public abstract class MyJTable<T extends Enum<T> & Table_Enum> extends JPanel
     //##################################################################################################################
     // Action Methods
     //##################################################################################################################
-    protected Boolean are_You_Sure(String process)
+    protected boolean are_You_Not_Sure(String msg)
     {
-        int reply = JOptionPane.showConfirmDialog(null, String.format("Are you sure you want to %s, \nany unsaved changes will be lost in this Table! \nDo you want to %s?", process, process),
-                "Notification", JOptionPane.YES_NO_OPTION); //HELLO Edit
+        int reply = JOptionPane.showConfirmDialog(null, msg, "Notification", JOptionPane.YES_NO_OPTION); //HELLO Edit
 
-        if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION) { return false; }
-
-        return true;
+        return reply != JOptionPane.YES_NO_OPTION;
     }
 
     //##################################################################################################################

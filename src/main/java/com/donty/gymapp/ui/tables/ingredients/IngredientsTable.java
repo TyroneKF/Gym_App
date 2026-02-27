@@ -672,8 +672,8 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
 
     public void change_Ingredient_Name_Obj_Type
     (
-       Ingredient_Name_ID_OBJ selected_ingredient_name_obj,
-       Ingredient_Type_ID_OBJ new_ingredient_type
+            Ingredient_Name_ID_OBJ selected_ingredient_name_obj,
+            Ingredient_Type_ID_OBJ new_ingredient_type
     )
     {
         int type_table_column_pos = get_Ingredient_Type_Col(false);
@@ -812,7 +812,9 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
         //###########################
         // Exit : Edge Cases
         //###########################
-        if (! are_You_Sure("Refresh Data")) { return; } // Ask For Permission
+        String msg = "\nAny unsaved changes will be lost in this Table! \n\nAre you sure you want to refresh sub-meals data?";
+        if (are_You_Not_Sure(msg)) { return; } // Ask For Permission
+
 
         if (! is_Sub_Meal_Saved()) // If Meal Is not in DB, then refresh does nothing
         {
@@ -969,7 +971,7 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
     //###################################################
     private void save_Btn_Action()
     {
-        if (! are_You_Sure("Save Data")) { return; }
+        if (are_You_Not_Sure("Are you sure you want to Save this sub-meals data?")) { return; }
 
         save_Data_Action();
 
@@ -994,7 +996,7 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
     //####################################################
     private void delete_Table_BTN_Action()
     {
-        if (! are_You_Sure("Delete")) { return; }
+        if (are_You_Not_Sure("Are you sure you want to delete this sub-meal?")) { return; }
 
         delete_Table_Action();
     }
@@ -1077,7 +1079,10 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
         //##########################################
         // User Confirmation
         //##########################################
-        if (! are_You_Sure(String.format("change Sub-Meal name from '%s' to '%s'", get_Current_Sub_Meal_Name(), new_sub_meal_name)))
+        String msg = String.format("Are you sure you want to change this Sub-Meal name from '%s' to '%s'?",
+                get_Current_Sub_Meal_Name(), new_sub_meal_name);
+
+        if (are_You_Not_Sure(msg))
         {
             return;
         }
@@ -1302,10 +1307,10 @@ public class IngredientsTable extends MyJTable<Draft_Gui_Ingredients_Calc_Column
         //#############################################################################
         // User Confirmation
         //#############################################################################
-        if (! are_You_Sure(String.format("change meal time from '%s' to '%s'", get_Current_Sub_Meal_Time().toString(), input_meal_time_string)))
-        {
-            return null;
-        }
+        String msg = String.format("Are you sure you want change sub-meal time from '%s' to '%s'?",
+                get_Current_Sub_Meal_Time().toString(), input_meal_time_string);
+
+        if (are_You_Not_Sure(msg)) { return null; }
 
         //################################################################
         // Return Value

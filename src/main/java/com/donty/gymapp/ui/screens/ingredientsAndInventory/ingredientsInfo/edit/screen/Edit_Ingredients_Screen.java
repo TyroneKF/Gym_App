@@ -236,7 +236,7 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
         //################################
         // Update Shared Data / GUI
         //################################
-        if (! update_Shared_Data()) // Update Shared Data with Fetched Results
+        if (has_Update_Shared_Data_Failed()) // Update Shared Data with Fetched Results
         {
             JOptionPane.showMessageDialog(null, "Failed To Update GUI With Ingredient Info, Reload App to Fix Issues!");
         }
@@ -250,7 +250,7 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
     // Shared Data Updates
     //############################################
     @Override
-    protected boolean update_Shared_Data()
+    protected boolean has_Update_Shared_Data_Failed()
     {
         try
         {
@@ -264,7 +264,7 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
             {
                 if (! update_Ingredient_Type_Shared_Data(ingredient_name_id_obj, edit_Ingredients_Form)) // Failed Update
                 {
-                    return false;
+                    return true;
                 }
             }
 
@@ -273,12 +273,12 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
                 update_Ingredient_Name_Shared_Data(ingredient_name_id_obj, edit_Ingredients_Form);
             }
 
-            return true; // Output
+            return false; // Output
         }
         catch (Exception e)
         {
             System.err.printf("\n\n%s -> \n\n%s", get_Class_And_Method_Name(), e);
-            return false;
+            return true;
         }
     }
 

@@ -178,7 +178,7 @@ public abstract class Parent_Ingredients_Screen extends Screen_JPanel
 
     protected void update_Data()
     {
-        if (! update_Shared_Data()) // Update Shared Data with Fetched Results
+        if (has_Update_Shared_Data_Failed()) // Update Shared Data with Fetched Results
         {
             JOptionPane.showMessageDialog(null, "Failed To Update GUI With Ingredient Info, Reload App to Fix Issues!");
         }
@@ -202,7 +202,7 @@ public abstract class Parent_Ingredients_Screen extends Screen_JPanel
     //###########################
     protected abstract boolean update_Both_Forms();
 
-    protected abstract boolean update_Shared_Data();
+    protected abstract boolean has_Update_Shared_Data_Failed();
 
     protected abstract void update_Other_Screens();
 
