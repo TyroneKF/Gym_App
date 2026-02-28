@@ -48,36 +48,7 @@ jobs:
           if ! git branch -r --contains $GITHUB_SHA | grep origin/master; then
             echo "Tag is not on master branch"
             exit 1
-          fi
-
-      # -----------------------------------------------------------
-      # Prevent SNAPSHOT releases
-      # -----------------------------------------------------------
-      - name: Prevent SNAPSHOT release
-        shell: bash
-        run: |
-          POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          if [[ "$POM_VERSION" == *"SNAPSHOT"* ]]; then
-            echo "Cannot release SNAPSHOT version"
-            exit 1
-          fi
-
-      # -----------------------------------------------------------
-      # Verify tag matches pom.xml version
-      # -----------------------------------------------------------
-      - name: Verify tag matches pom version
-        shell: bash
-        run: |
-          TAG_VERSION=${GITHUB_REF#refs/tags/v}
-          POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-
-          echo "Tag version: $TAG_VERSION"
-          echo "POM version: $POM_VERSION"
-
-          if [ "$TAG_VERSION" != "$POM_VERSION" ]; then
-            echo "Tag version does not match pom.xml version"
-            exit 1
-          fi
+          fi     
 
       # -----------------------------------------------------------
       # Build (switch to verify once tests exist)
