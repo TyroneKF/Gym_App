@@ -9,7 +9,7 @@ on:
       - master
 
 concurrency:
-  group: ci-validation
+  group: ci-validation-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
