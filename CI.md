@@ -293,6 +293,81 @@ git checkout -b feature/macro-calculator
 
 git commit -m "feat: add macro calculator"
 
+---
+
+## 🔒 Commit Message Enforcement (Portable Setup)
+
+### 🎯 Objective
+
+Ensure all commits follow the **Conventional Commits** standard without requiring any local developer setup.
+
+This prevents:
+
+- Broken semantic versioning
+- Release Please failures
+- History rewrites and rebases
+- Invalid PR merges into `master`
+
+---
+
+## 🏗 Architecture Decision
+
+Commit message validation is enforced **entirely in GitHub Actions (CI)**.
+
+We intentionally:
+
+- ❌ Do NOT require Husky
+- ❌ Do NOT require local Node installation
+- ❌ Do NOT depend on Git hooks
+- ✅ Enforce validation server-side
+- ✅ Keep the repository fully portable
+
+This ensures:
+
+> A fresh clone on any OS behaves identically.
+
+---
+
+## ⚙️ GitHub Action: Commitlint
+
+File: `.github/workflows/commitlint.yml`
+
+```yaml
+name: Commit Message Lint
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  commitlint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm install --no-save @commitlint/cli @commitlint/config-conventional
+
+      - run: |
+          npx commitlint \
+            --from ${{ github.event.before }} \
+            --to ${{ github.sha }} \
+            --verbose
+
+
+
+
+
 
 ---
 
