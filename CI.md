@@ -308,6 +308,149 @@ Never use `--force` alone.
 
 Never rewrite history on `master`.
 
+###  🔧 Fixing Invalid Commit Messages (Commitlint Recovery Guide)
+
+When This Is Needed
+
+If a pull request fails due to commitlint errors such as:
+
+- ✖ header must not be longer than 100 characters
+- ✖ type must be one of [feat, fix, docs, chore, refactor, test, ci]
+- ✖ subject may not be empty
+- ✖ invalid format (e.g. docs : instead of docs:)
+
+
+#### ✅ Case 1 — Fix the Most Recent Commit
+If the invalid commit is the latest one:
+
+- git commit --amend
+
+Update the message to follow Conventional Commits:
+
+ Correct format:
+
+-  type: short description
+
+Example:
+- docs: update CI documentation
+
+Then push:
+- git push --force-with-lease
+
+✅ Case 2 — Fix an Older Commit (Interactive Rebase)
+
+If the invalid commit is not the latest one:
+
+Step 1 — Start Interactive Rebase
+
+If the commit is within the last 3 commits:
+
+- git rebase -i HEAD~3
+
+Step 2 — Mark the Commit for Reword
+
+You will see something like:
+
+- pick 0561bb27 feat: test automated release pipeline
+
+- pick 1c2f2ab2 docs : ci docs update
+
+- pick c9a3c0be ci: automating release with release-please (#21)
+
+Change only the incorrect commit:
+
+- pick 0561bb27 feat: test automated release pipeline
+
+- reword 1c2f2ab2 docs : ci docs update
+
+- pick c9a3c0be ci: automating release with release-please (#21)
+
+⚠ Commands are case-sensitive (must be lowercase).
+
+Save and exit (:wq).
+
+Step 3 — Edit the Commit Message
+
+When prompted, correct the message:
+
+❌ Incorrect:
+- docs : ci docs update
+
+✅ Correct:
+- docs: ci docs update
+
+Save and exit.
+
+Step 4 — Continue Rebase
+
+If Git pauses:
+- git rebase --continue
+
+Repeat until rebase completes.
+
+Step 5 — Force Push
+
+Since history was rewritten:
+
+- git push --force-with-lease
+
+This safely updates the remote branch.
+
+🚨 If Rebase Breaks (Invalid PICK / Syntax Errors)
+
+If you see:
+- error: invalid line 1: PICK ...
+
+Abort cleanly:
+- git rebase --abort
+
+Then restart the rebase process.
+
+🛑 Important Rules
+- Never use git push --force
+- Always use git push --force-with-lease
+- Rebase commands must be lowercase
+- Do not edit unrelated commits
+- Do not rewrite history on master
+
+🔎 How to Verify Fix
+After finishing:
+- git log --oneline -n 3
+
+Ensure the commit now follows:
+- type: description
+
+🎯 Why We Enforce This
+
+Commitlint ensures:
+
+- Automated semantic versioning works correctly
+- Release Please detects version bumps
+- Changelogs are generated automatically
+- CI/CD remains deterministic
+
+Invalid commit messages can break automated releases.
+
+🧠 Recommended Editor Configuration (Optional)
+
+To avoid Vim during rebase:
+- git config --global core.editor "code --wait"
+
+Or IntelliJ:
+- git config --global core.editor "idea --wait"
+
+🔥 Summary
+
+- Fix latest commit	= git commit --amend
+- Fix older commit	= git rebase -i HEAD~N
+- Continue rebase = git rebase --continue
+- Abort rebase    = git rebase --abort
+- Update remote	= git push --force-with-lease
+
+This keeps your CI pipeline stable and production-grade.
+
+
+
 ---
 
 ## 8.4 Push Branch
