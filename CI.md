@@ -447,7 +447,7 @@ Or IntelliJ:
 - Abort rebase    = git rebase --abort
 - Update remote	= git push --force-with-lease
 
-This keeps your CI pipeline stable and production-grade.
+This keeps your CI pipeline stable and production-grade..
 
 
 
