@@ -10,7 +10,7 @@ public final class GymAppLauncher
 
     private GymAppLauncher()
     {
-        // prevent instantiation !
+        // prevent instantiation !!
     }
 
     public static void main(String[] args)
