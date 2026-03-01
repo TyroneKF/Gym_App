@@ -11,20 +11,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 20
 
       - run: npm install --no-save @commitlint/cli @commitlint/config-conventional
 
       - name: Lint commit messages
-        run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.sha }}
-          else
-            npx commitlint --from ${{ github.event.before }} --to ${{ github.sha }}
-          fi
+        run: npx commitlint --verbose --last
