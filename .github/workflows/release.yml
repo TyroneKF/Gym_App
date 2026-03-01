@@ -85,15 +85,13 @@ jobs:
           ref: ${{ github.event.workflow_run.head_sha }}
           fetch-depth: 0
 
-      - name: Set up Java 21
-        uses: actions/setup-java@v5
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '21'
           cache: maven
 
-      - name: Build with Maven
-        run: mvn -B clean package -DskipTests
+      - run: mvn -B clean package -DskipTests
 
       - name: Create macOS installer
         run: >
@@ -136,15 +134,13 @@ jobs:
           ref: ${{ github.event.workflow_run.head_sha }}
           fetch-depth: 0
 
-      - name: Set up Java 21
-        uses: actions/setup-java@v5
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
           cache: maven
 
-      - name: Build with Maven
-        run: mvn -B clean package -DskipTests
+      - run: mvn -B clean package -DskipTests
 
       - name: Create Linux installer
         run: >
