@@ -1,26 +1,30 @@
 name: Commit Message Lint
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
   push:
     branches:
       - '**'
+  pull_request:
 
 jobs:
   commitlint:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
 
       - run: npm install --no-save @commitlint/cli @commitlint/config-conventional
 
-      - name: Lint commits
-        run: npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.sha }} --verbose
+      - name: Lint commit messages
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.sha }}
+          else
+            npx commitlint --from ${{ github.event.before }} --to ${{ github.sha }}
+          fi
