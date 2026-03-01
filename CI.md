@@ -1,317 +1,411 @@
-> ###                CI / CD Documentation – Gym_App
+# Gym_App – CI / CD Documentation
 
+---
 
+# 1. Overview
 
+Gym_App uses a **PR-driven CI/CD architecture** with:
 
-> ###### Overview
-
-This repository uses a PR-driven release workflow with automated semantic versioning, tagging, and multi-platform installer builds.
-
-The system consists of:
-
-- CI Validation Workflow (runs on PRs)
-
-- Release PR Automation (Release Please)
-
-- Tag-triggered Release Build Pipeline
-
-- Protected master branch with required checks
-
-This setup ensures:
-
-- No direct commits to master (PR-only)
-
-- Automatic version management
-
-- Automatic tag creation
-
-- Automatic Windows/macOS/Linux installers
-
+- Protected `master` branch
+- Mandatory CI validation
+- Conventional Commits
+- Automated semantic versioning (Release Please)
+- Automated tagging
+- Automated multi-platform installer builds
 - Automatic GitHub Releases
+- Automatic SNAPSHOT version bump
 
-- Automatic next snapshot version bump
+This system ensures:
 
-> ### Branch Strategy
+- No direct commits to production
+- Deterministic versioning
+- Clean audit history
+- Reproducible builds
+- No manual tagging errors
+- Enterprise-grade workflow discipline
 
-> ###### Protected Branch
+---
 
-master is protected with:
+# 2. Branch Protection Strategy
 
-✅ Require pull request before merging
+## Protected Branch: `master`
 
-✅ Require status checks to pass
+The `master` branch is protected via GitHub Rulesets.
 
-✅ Require branches to be up to date before merging
+Enforced policies:
 
-✅ Block force pushes
+- Require pull request before merging
+- Require status checks to pass
+- Require branches to be up to date before merging
+- Require conversation resolution before merging
+- Block force pushes
+- Require linear history
+- Optional approval requirement (enabled when multi-account review is active)
 
-✅ Require linear history
+Direct pushes to `master` are prohibited unless admin override is used.
 
-✅ Repository admin bypass (optional emergency override)
+---
 
-No direct pushes allowed unless admin bypass is used.
+# 3. Commit Convention (Conventional Commits)
 
-> ###  Commit Convention (Required)
+All commits merged into `master` must follow:
 
-This project follows Conventional Commits.
+---
 
-All commits merged into master should follow:
+## 3.1 Supported Commit Types
 
- Supported Types:
+### feat:
+Purpose: New feature  
+Version impact: Minor bump
 
-> ###### feat:
-- Purpose : New Feature
-- Version Impact: Minor bump
+### fix:
+Purpose: Bug fix  
+Version impact: Patch bump
 
-> ###### fix:
-- Purpose : Bug fix
-- Version Impact: Patch bump
+### perf:
+Purpose: Performance improvement  
+Version impact: Patch bump
 
-> ###### refactor:
-- Purpose : Internal restructuring
-- Version Impact:  No bump
+### refactor:
+Purpose: Internal restructuring (no behavior change)  
+Version impact: No bump
 
-> ###### chore:
-- Purpose : Maintenance / tooling / CI updates
-- Version Impact: No bump
+### test:
+Purpose: Add or update tests  
+Version impact: No bump
 
-> ###### test:
-- Purpose : Test additions or updates
-- Version Impact: No bump
+### chore:
+Purpose: Maintenance / tooling  
+Version impact: No bump
+
+### ci:
+Purpose: CI/CD workflow changes  
+Version impact: No bump
+
+### build:
+Purpose: Dependency or build system changes  
+Version impact: No bump
+
+### docs:
+Purpose: Documentation updates  
+Version impact: No bump
+
+---
+
+## 3.2 Examples
+- feat: add macro calculator
+- fix: correct macro rounding logic
+- ci: configure release-please workflow
+- refactor: extract plan version service
+- docs: update CI documentation
 
 
-> ####  Examples
+---
 
-feat: add macro calculator
+## 3.3 Breaking Changes
 
-fix: correct macro rounding logic
-
-chore: update GitHub workflow permissions
-
-refactor: extract plan version service
-
-
-> #####   Breaking Changes
+### Option 1 – Exclamation
 feat!: change plan schema structure
 
-> #####   or
 
+### Option 2 – Footer
 feat: change plan schema structure
 
 BREAKING CHANGE: draft table renamed
 
-This triggers a major version bump.
+
+Breaking changes trigger a **major version bump**.
+
+---
+
+# 4. CI Validation Workflow
+
+## Trigger
+
+on:
+pull_request:
+branches: [ master ]
 
 
-> ### CI Validation Workflow
+---
 
-Triggered on:
+## Validations Performed
 
-> #### pull_request
-
-> #### Validates:
-
-- Maven build
-
-- Tests (mvn clean verify)
-
+- Maven compilation
+- Unit tests
+- Integration tests
+- `mvn clean verify`
 - Static analysis (Qodana)
-
 - Code quality checks
 
-> #### Required status checks:
+---
 
-- validate
+## Required Status Checks
 
-- qodana
+The following checks must pass before merging:
 
-PR cannot merge unless these pass.
+- `CI Validation / validate`
+- `Qodana / qodana`
 
-> ### Release Process (Automated – Pattern 1)
+If status checks are misaligned with workflow job names, merging will be blocked.
 
-Releases are PR-driven using release-please.
+---
 
-There is NO manual tagging.
+# 5. Release Process (Automated – Release Please)
 
-> #### Step 1 – Merge Feature PRs
+Releases are fully automated.
+
+Manual tagging is not permitted.
+
+---
+
+## 5.1 Step 1 – Merge Feature PRs
+
+Feature branches are merged into `master`.
 
 Example:
 
 - feat: add macro calculator
-- fix: correct macro rounding
+- fix: correct rounding issue
 
-Merged into master.
 
-> ####  Step 2 – Release PR Opens Automatically
+---
+
+## 5.2 Step 2 – Release PR Creation
 
 Release Please analyzes commits since last tag.
 
-It opens a PR:
+It creates a PR:
 
-- chore: release 1.0.X
+chore(master): release X.Y.Z
+
 
 This PR:
 
-- Removes -SNAPSHOT from pom.xml
+- Removes `-SNAPSHOT` from `pom.xml`
+- Bumps version
+- Generates changelog
+- Prepares release notes
 
-- Updates version
+---
 
-- Generates release notes
+## 5.3 Step 3 – Merge Release PR
 
-You review and merge this PR.
+Merging the release PR automatically:
 
-> #### Step 3 – Tag Is Created Automatically
-
-After merging release PR:
-
-- Tag vX.Y.Z is created automatically
-
-- release.yml pipeline is triggered
-
-> ###  Release Build Pipeline
-
-Triggered on:
-
-push:
-
-tags:
-
--- 'v*.*.*'
-
-> #### Jobs:
-
-> #####  1️⃣ Windows Build
-
-- Verifies tag is on master
-
-- Ensures version is not SNAPSHOT
-
-- Ensures tag matches pom.xml version
-
-- Runs mvn clean verify
-
-- Builds .exe installer via jpackage
-
+- Creates tag `vX.Y.Z`
+- Triggers release build pipeline
 - Creates GitHub Release
+- Uploads platform installers
+- Bumps version to next `X.Y.(Z+1)-SNAPSHOT`
 
-- Uploads Windows artifact
+---
 
-> ##### 2️⃣ macOS Build
+# 6. Release Build Pipeline
 
-- Builds .dmg
+## Trigger
 
-- Uploads artifact
-
-> ##### 3️⃣ Linux Build
-
-- Builds .deb
-
-- Uploads artifact
-
-> ##### Artifacts:
-
-- GymApp-Windows
-
-- GymApp-macOS
-
-- GymApp-Linux
-
-GitHub Release includes generated release notes.
-
-> ### Versioning Rules
+on:
+push:
+tags:
+- 'v*..'
 
 
+---
 
-> ###### Project follows Semantic Versioning:
+## Pipeline Jobs
+
+### Windows
+
+- Validate tag on master
+- Validate version match
+- Ensure non-SNAPSHOT
+- Run `mvn clean verify`
+- Build `.exe` via `jpackage`
+- Create GitHub Release
+- Upload artifact
+
+### macOS
+
+- Build `.dmg`
+- Upload artifact
+
+### Linux
+
+- Build `.deb`
+- Upload artifact
+
+---
+
+## Artifacts
+
+- GymApp-Windows.exe
+- GymApp-macOS.dmg
+- GymApp-Linux.deb
+
+Release notes auto-generated from commit history.
+
+---
+
+# 7. Versioning Rules
+
+Gym_App follows Semantic Versioning:
 
 MAJOR.MINOR.PATCH
 
-> ###### Between releases:
+MAJOR.MINOR.PATCH
+
+Development versions use:
 
 X.Y.Z-SNAPSHOT
 
-> ###### Example lifecycle:
 
-- 1.0.4-SNAPSHOT   ← development
-- Release PR → 1.0.4
-- Tag created → v1.0.4
-- Next PR → 1.0.5-SNAPSHOT
 
-You never manually edit pom.xml for versioning anymore.
+---
 
-> ### Developer Workflow
+## Example Lifecycle
 
-> ###### Create Feature Branch
+1.0.4-SNAPSHOT ← Development
+
+Release PR → 1.0.4
+
+Tag → v1.0.4
+
+Next development → 1.0.5-SNAPSHOT
+
+
+Manual editing of `pom.xml` versions is prohibited.
+
+---
+
+# 8. Developer Workflow
+
+---
+
+## 8.1 Create Feature Branch
+
 git checkout -b feature/macro-calculator
 
-> ###### Commit Properly
+
+---
+
+## 8.2 Commit Properly
+
 git commit -m "feat: add macro calculator"
 
-> ###### Push & Create PR
-- git push origin feature/macro-calculator
 
-Open PR → CI runs → Merge into master.
+---
 
-Release process continues automatically.
+## 8.3 Fixing Commit Messages (After Push)
 
-> ### Emergency Release (Admin Override)
+If a commit message is incorrect:
 
-If required:
+git commit --amend
 
-- Admin may push directly to master (bypass role).
+git push --force-with-lease
 
-- Tag manually:
+Never use `--force` alone.
+
+Never rewrite history on `master`.
+
+---
+
+## 8.4 Push Branch
+
+git push origin feature/macro-calculator
+
+
+Open PR → CI runs → Merge when green.
+
+---
+
+# 9. Status Check Alignment
+
+If merge is blocked due to:
+
+Expected — Waiting for status to be reported
+
+
+Ensure:
+
+- Ruleset required checks match actual workflow job names
+- Workflow permissions include:
+    - contents: write
+    - pull-requests: write
+
+---
+
+# 10. Emergency Release (Admin Override)
+
+Only for critical hotfixes.
 
 git tag -a v1.0.X -m "Release 1.0.X"
 
 git push origin v1.0.X
 
-This triggers release pipeline.
 
-Use only for critical hotfixes.
+Triggers release pipeline.
 
-> ### Security & Permissions
+Should be rare.
 
-Repository settings:
+---
 
-- Workflow permissions: Read and Write
+# 11. Security & Permissions
 
+Repository Settings:
+
+- Workflow permissions: Read & Write
 - Allow GitHub Actions to create PRs: Enabled
-
 - Required checks enforced
-
 - Linear history enforced
+- Force pushes blocked on `master`
 
-- Force pushes blocked
+---
 
-> ### Why This Architecture
+# 12. Common Failure Scenarios
 
-- This setup provides:
+### Commit message invalid
+Release not triggered.
 
-- Deterministic versioning
+### Required check mismatch
+Merge blocked.
 
-- Audit-friendly history
+### Version mismatch between tag and pom.xml
+Release pipeline fails.
 
-- No manual tag mistakes
+### SNAPSHOT tag pushed
+Release rejected.
 
-- No accidental SNAPSHOT releases
+---
 
-- Multi-platform build reproducibility
+# 13. Architectural Rationale
 
-- Professional CI/CD discipline
+This CI/CD architecture provides:
 
-This mirrors production-grade SaaS and enterprise Java pipelines.
+- Deterministic version control
+- Automated semantic releases
+- Full audit traceability
+- Zero manual tag risk
+- Cross-platform reproducibility
+- Enterprise-level development discipline
 
-> ### Summary
+This mirrors production SaaS pipelines.
 
-- Release = Merge Release PR
-- Build = Automatic
-- Tagging = Automatic
-- Version bump = Automatic
-- Installers = Automatic
+---
 
+# 14. System Summary
 
+Release = Merge Release PR  
+Build = Automatic  
+Tagging = Automatic  
+Version bump = Automatic  
+Installers = Automatic
 
-- No manual pom edits.
-- No manual tagging.
-- No direct master commits.
+No manual `pom.xml` edits.  
+No manual tagging.  
+No direct `master` commits.
+
+---
+
+End of Document.
+
