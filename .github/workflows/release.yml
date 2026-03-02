@@ -52,8 +52,8 @@ jobs:
           --main-class com.donty.gymapp.app.GymAppLauncher
           --dest dist
           --win-shortcut
-          --win-menu
-          --add-modules javafx.controls,javafx.fxml,javafx.graphics,javafx.swing
+          --vendor "Tyrone KF"
+          --app-version ${{ github.ref_name }}
 
       - name: Extract tag name
         id: get_tag
