@@ -53,6 +53,7 @@ jobs:
           --dest dist
           --win-shortcut
           --win-menu
+          --add-modules javafx.controls,javafx.fxml,javafx.graphics,javafx.swing
 
       - name: Extract tag name
         id: get_tag
