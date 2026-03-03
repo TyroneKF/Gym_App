@@ -9,12 +9,10 @@ import com.donty.gymapp.persistence.database.statements.Upload_Statement;
 import com.donty.gymapp.persistence.database.statements.Upload_Statement_Full;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import java.io.IOException;
+import java.io.File;
 import java.math.RoundingMode;
 import javax.swing.*;
 import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.sql.*;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -37,7 +35,6 @@ public class MyJDBC_Sqlite  // remove extends eventually
             line_Separator = "############################################################################################################################";
 
     private boolean db_Connection_Status = false;
-    private boolean testing = false;
 
     private HikariDataSource dataSource; // shared connection pool
 
@@ -48,41 +45,29 @@ public class MyJDBC_Sqlite  // remove extends eventually
     {
         class_Name = this.getClass().getSimpleName();
 
-        String appDir = getAppDataDirectory();
-        db_Connection_Address = "jdbc:sqlite:" + appDir + "\\gym_app00001.db"; // Production
-    }
+        String dbDirectory = getAppDataDirectory();
+        String dbFilePath = dbDirectory + File.separator + "gym_app00001";
 
-    public MyJDBC_Sqlite(boolean testing)
-    {
-        class_Name = this.getClass().getSimpleName();
-        db_Connection_Address = "jdbc:sqlite:file:./data/gym_app00001;";
+        db_Connection_Address = "jdbc:sqlite:" + dbFilePath;
     }
 
     public static String getAppDataDirectory()
     {
         String localAppData = System.getenv("LOCALAPPDATA");
-
-        if (localAppData == null || localAppData.isBlank())
+        if (localAppData == null)
         {
             throw new IllegalStateException("LOCALAPPDATA environment variable not found.");
         }
 
-        Path appPath = Path.of(localAppData, "GymApp");
+        File dir = new File(localAppData, "GymApp");
 
-        try
+        if (!dir.exists() && !dir.mkdirs())
         {
-            Files.createDirectories(appPath);
-        }
-        catch (IOException e)
-        {
-            throw new IllegalStateException(
-                    "Failed to create application data directory: " + appPath, e
-            );
+            throw new IllegalStateException("Failed to create app data directory: " + dir.getAbsolutePath());
         }
 
-        return appPath.toString();
+        return dir.getAbsolutePath();
     }
-
     public void begin_migration() throws Exception
     {
         //#############################################
