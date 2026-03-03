@@ -46,30 +46,29 @@ public class MyJDBC_Sqlite  // remove extends eventually
     {
         class_Name = this.getClass().getSimpleName();
 
-        String appDir = getAppDataDirectory();
-        db_Connection_Address = "jdbc:sqlite:" + appDir + "\\gym_app00001.db"; // Production
-    }
+        String dbDirectory = getAppDataDirectory();
+        String dbFilePath = dbDirectory + File.separator + "gym_app00001";
 
-    public MyJDBC_Sqlite(boolean testing)
-    {
-        class_Name = this.getClass().getSimpleName();
-        db_Connection_Address = "jdbc:sqlite:file:./data/gym_app00001;";
+        db_Connection_Address = "jdbc:sqlite:" + dbFilePath;
     }
 
     public static String getAppDataDirectory()
     {
         String localAppData = System.getenv("LOCALAPPDATA");
-        String appDir = localAppData + "\\GymApp";
-
-        File dir = new File(appDir);
-        if (! dir.exists())
+        if (localAppData == null)
         {
-            dir.mkdirs();
+            throw new IllegalStateException("LOCALAPPDATA environment variable not found.");
         }
 
-        return appDir;
-    }
+        File dir = new File(localAppData, "GymApp");
 
+        if (!dir.exists() && !dir.mkdirs())
+        {
+            throw new IllegalStateException("Failed to create app data directory: " + dir.getAbsolutePath());
+        }
+
+        return dir.getAbsolutePath();
+    }
     public void begin_migration() throws Exception
     {
         //#############################################
@@ -82,6 +81,11 @@ public class MyJDBC_Sqlite  // remove extends eventually
         */
         try
         {
+
+            System.out.printf("\n\n%s DB URL: %s " , line_Separator, db_Connection_Address);
+
+            System.out.println("Working dir: " + System.getProperty("user.dir"));
+            System.out.println("DB URL: " + db_Connection_Address);
 
             Flyway flyway = Flyway.configure()
                     .dataSource(db_Connection_Address, null, null)
