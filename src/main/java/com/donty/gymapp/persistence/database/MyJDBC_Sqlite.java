@@ -96,6 +96,9 @@ public class MyJDBC_Sqlite  // remove extends eventually
         try
         {
 
+            System.out.printf("\n\n%s DB URL: %s " , line_Separator, db_Connection_Address);
+
+            System.out.println("Working dir: " + System.getProperty("user.dir"));
             System.out.println("DB URL: " + db_Connection_Address);
 
             Flyway flyway = Flyway.configure()
