@@ -35,6 +35,7 @@ public class MyJDBC_Sqlite  // remove extends eventually
             line_Separator = "#############################################################################################################################";
 
     private boolean db_Connection_Status = false;
+    private boolean testing = false;
 
     private HikariDataSource dataSource; // shared connection pool
 
