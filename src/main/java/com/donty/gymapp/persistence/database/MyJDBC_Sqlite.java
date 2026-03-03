@@ -9,6 +9,7 @@ import com.donty.gymapp.persistence.database.statements.Upload_Statement;
 import com.donty.gymapp.persistence.database.statements.Upload_Statement_Full;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import java.io.File;
 import java.math.RoundingMode;
 import javax.swing.*;
 import java.math.BigDecimal;
@@ -34,6 +35,7 @@ public class MyJDBC_Sqlite  // remove extends eventually
             line_Separator = "############################################################################################################################";
 
     private boolean db_Connection_Status = false;
+    private boolean testing = false;
 
     private HikariDataSource dataSource; // shared connection pool
 
@@ -42,13 +44,30 @@ public class MyJDBC_Sqlite  // remove extends eventually
     //##################################################################################################################
     public MyJDBC_Sqlite()
     {
-        //#############################################
-        // Variables
-        //#############################################
         class_Name = this.getClass().getSimpleName();
-        // Sqlite ignores username / password
 
-        db_Connection_Address = "jdbc:sqlite:file:./data/gym_app00001;";  // Production
+        String appDir = getAppDataDirectory();
+        db_Connection_Address = "jdbc:sqlite:" + appDir + "\\gym_app00001.db"; // Production
+    }
+
+    public MyJDBC_Sqlite(boolean testing)
+    {
+        class_Name = this.getClass().getSimpleName();
+        db_Connection_Address = "jdbc:sqlite:file:./data/gym_app00001;";
+    }
+
+    public static String getAppDataDirectory()
+    {
+        String localAppData = System.getenv("LOCALAPPDATA");
+        String appDir = localAppData + "\\GymApp";
+
+        File dir = new File(appDir);
+        if (! dir.exists())
+        {
+            dir.mkdirs();
+        }
+
+        return appDir;
     }
 
     public void begin_migration() throws Exception
@@ -76,6 +95,8 @@ public class MyJDBC_Sqlite  // remove extends eventually
         {
             handleException_MYSQL(e, get_Method_Name(), null, "Error, initializing DB!");
             close_Connection();
+
+            System.out.printf("\n\n%s \n%s ", get_Class_And_Method_Name(), e);
 
             throw new Exception("Failed Migration!");
         }
@@ -771,7 +792,7 @@ public class MyJDBC_Sqlite  // remove extends eventually
                 
                 statement.setLong(pos, long_conversion);  */
 
-                statement.setBigDecimal(pos, bigDecimal);
+                    statement.setBigDecimal(pos, bigDecimal);
 
             case Timestamp timestamp -> statement.setTimestamp(pos, timestamp);  // TimeStamp / LocalDateTime
             case LocalDateTime localDateTime -> // Local Date Time
