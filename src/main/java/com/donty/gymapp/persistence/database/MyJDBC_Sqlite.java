@@ -9,10 +9,12 @@ import com.donty.gymapp.persistence.database.statements.Upload_Statement;
 import com.donty.gymapp.persistence.database.statements.Upload_Statement_Full;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import java.io.File;
+import java.io.IOException;
 import java.math.RoundingMode;
 import javax.swing.*;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.*;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -59,15 +61,26 @@ public class MyJDBC_Sqlite  // remove extends eventually
     public static String getAppDataDirectory()
     {
         String localAppData = System.getenv("LOCALAPPDATA");
-        String appDir = localAppData + "\\GymApp";
 
-        File dir = new File(appDir);
-        if (! dir.exists())
+        if (localAppData == null || localAppData.isBlank())
         {
-            dir.mkdirs();
+            throw new IllegalStateException("LOCALAPPDATA environment variable not found.");
         }
 
-        return appDir;
+        Path appPath = Path.of(localAppData, "GymApp");
+
+        try
+        {
+            Files.createDirectories(appPath);
+        }
+        catch (IOException e)
+        {
+            throw new IllegalStateException(
+                    "Failed to create application data directory: " + appPath, e
+            );
+        }
+
+        return appPath.toString();
     }
 
     public void begin_migration() throws Exception
@@ -82,6 +95,8 @@ public class MyJDBC_Sqlite  // remove extends eventually
         */
         try
         {
+
+            System.out.println("DB URL: " + db_Connection_Address);
 
             Flyway flyway = Flyway.configure()
                     .dataSource(db_Connection_Address, null, null)
