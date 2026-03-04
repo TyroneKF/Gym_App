@@ -15,12 +15,12 @@ concurrency:
 jobs:
 
   build-windows:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    # if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: windows-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
           fetch-depth: 0
@@ -69,7 +69,7 @@ jobs:
 
 
   build-macos:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    # if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: macos-latest
     needs: build-windows
 
@@ -119,7 +119,7 @@ jobs:
 
 
   build-linux:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+   #  if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     needs: build-windows
 
