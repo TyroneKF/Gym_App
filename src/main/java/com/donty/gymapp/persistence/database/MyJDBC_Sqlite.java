@@ -32,10 +32,9 @@ public class MyJDBC_Sqlite  // remove extends eventually
     private final String db_Connection_Address;
 
     private final String
-            line_Separator = "#############################################################################################################################";
+            line_Separator = "##############################################################################################################################";
 
     private boolean db_Connection_Status = false;
-    private boolean testing = false;
 
     private HikariDataSource dataSource; // shared connection pool
 
