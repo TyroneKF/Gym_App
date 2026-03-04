@@ -348,9 +348,9 @@ public class MyJDBC_Sqlite  // remove extends eventually
      *      * to MYSQL's type
      *      * Although all params can be passed as strings the statement type conversion should match the type the schema expects
      *      * as MYSQL does this internally and if it fails will cause the following errors:
-     *      * .) silent truncation,
-     *      * .) rounding errors,
-     *      * .)  or outright SQL exceptions.
+     *      * . silent truncation,
+     *      * . rounding errors,
+     *      * .  or outright SQL exceptions.
      *      *
      *      * So it's better to convert before MYSQL handles it.
      *
