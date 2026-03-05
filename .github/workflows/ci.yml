@@ -16,6 +16,7 @@ concurrency:
 
 jobs:
   validate:
+    name: validate
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v6
