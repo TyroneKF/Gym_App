@@ -5,10 +5,17 @@
 
 name: Qodana
 on:
-  push:
+  pull_request:
     branches:
       - master
-  pull_request:
+    types: [opened, synchronize, reopened]
+
+  pull_request_target:
+    branches:
+      - master
+    types: [opened, synchronize, reopened]
+
+  push:
     branches:
       - master
 
