@@ -1,19 +1,13 @@
 name: Commit Message Lint
 
 on:
-  push:
+  pull_request_target:
     branches:
       - '**'
 
-  pull_request:
+  push:
     branches:
       - master
-    types: [opened, synchronize, reopened]
-
-  pull_request_target:
-    branches:
-      - master
-    types: [opened, synchronize, reopened]
 
 jobs:
   commitlint:
