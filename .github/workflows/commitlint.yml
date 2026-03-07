@@ -26,12 +26,25 @@ jobs:
         if: github.event_name == 'push'
         shell: bash
         run: |
-          if [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
+          BEFORE="${{ github.event.before }}"
+          AFTER="${{ github.sha }}"
+
+          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            echo "Initial push detected, linting last commit only"
+            npx commitlint --last --verbose
+          elif ! git rev-parse --verify "$BEFORE^{commit}" >/dev/null 2>&1; then
+            echo "Before SHA not found in local history, linting last commit only"
             npx commitlint --last --verbose
           else
-            npx commitlint --from "${{ github.event.before }}" --to "${{ github.sha }}" --verbose
+            echo "Linting commit range: $BEFORE..$AFTER"
+            npx commitlint --from "$BEFORE" --to "$AFTER" --verbose
           fi
 
       - name: Run commitlint for pull request
         if: github.event_name == 'pull_request'
-        run: npx commitlint --from "${{ github.event.pull_request.base.sha }}" --to "${{ github.event.pull_request.head.sha }}" --verbose
+        shell: bash
+        run: |
+          BASE="${{ github.event.pull_request.base.sha }}"
+          HEAD="${{ github.event.pull_request.head.sha }}"
+          echo "Linting PR commit range: $BASE..$HEAD"
+          npx commitlint --from "$BASE" --to "$HEAD" --verbose
