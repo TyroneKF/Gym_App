@@ -1,17 +1,13 @@
 name: Commit Message Lint
 
 on:
-  pull_request_target:
-    branches:
-      - '**'
-
+  pull_request:
+    branches: [master]
   push:
-    branches:
-      - master
+    branches: ['**']
 
 jobs:
   commitlint:
-    name: commitlint
     runs-on: ubuntu-latest
 
     steps:
@@ -23,7 +19,19 @@ jobs:
         with:
           node-version: 20
 
-      - run: npm install --no-save @commitlint/cli @commitlint/config-conventional
+      - name: Install commitlint
+        run: npm install --no-save @commitlint/config-conventional @commitlint/cli
 
-      - name: Lint commit messages
-        run: npx commitlint --verbose --last
+      - name: Run commitlint for push
+        if: github.event_name == 'push'
+        shell: bash
+        run: |
+          if [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
+            npx commitlint --last --verbose
+          else
+            npx commitlint --from "${{ github.event.before }}" --to "${{ github.sha }}" --verbose
+          fi
+
+      - name: Run commitlint for pull request
+        if: github.event_name == 'pull_request'
+        run: npx commitlint --from "${{ github.event.pull_request.base.sha }}" --to "${{ github.event.pull_request.head.sha }}" --verbose
