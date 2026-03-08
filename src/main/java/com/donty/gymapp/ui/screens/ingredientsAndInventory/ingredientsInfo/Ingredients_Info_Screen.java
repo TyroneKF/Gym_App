@@ -4,6 +4,7 @@ package com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo;
 import com.donty.gymapp.persistence.database.MyJDBC_Sqlite;
 import com.donty.gymapp.persistence.Shared_Data_Registry;
 import com.donty.gymapp.gui.base.Screen_JFrame;
+import com.donty.gymapp.ui.components.meal.MealManager;
 import com.donty.gymapp.ui.meta.ids.storableIDs.Ingredient_Name_ID_OBJ;
 import com.donty.gymapp.ui.meta.ids.storableIDs.Ingredient_Type_ID_OBJ;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.add.Ingredients_Screen;
@@ -11,8 +12,10 @@ import com.donty.gymapp.ui.screens.ingredientsAndInventory.ingredientsInfo.edit.
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.storesAndIngredientTypes.ingredientTypes.Ingredients_Types_Screen;
 import com.donty.gymapp.ui.screens.ingredientsAndInventory.storesAndIngredientTypes.stores.Ingredient_Stores_Screen;
 import com.donty.gymapp.ui.screens.mealPlan.Meal_Plan_Screen;
+
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class Ingredients_Info_Screen extends Screen_JFrame
 {
@@ -27,6 +30,7 @@ public class Ingredients_Info_Screen extends Screen_JFrame
     private final Ingredients_Screen ingredients_Screen;
     private final Edit_Ingredients_Screen edit_Ingredients_Screen;
 
+    private final ArrayList<MealManager> meals;
 
     //##################################################################################################################
     // Constructor
@@ -43,7 +47,7 @@ public class Ingredients_Info_Screen extends Screen_JFrame
 
         // Variables
         this.meal_plan_screen = meal_plan_screen;
-
+        this.meals = shared_Data_Registry.get_MealManager_ArrayList();
 
         // Frame Set-Up
         set_Resizable(false);
@@ -93,24 +97,34 @@ public class Ingredients_Info_Screen extends Screen_JFrame
         edit_Ingredients_Screen.reload_Stores_JC();
     }
 
-    public void update_Ingredients_Table_Names_Col(Ingredient_Name_ID_OBJ selected_ingredient_name_obj)
+    //#########################
+    // Redraw Text Values
+    //#########################
+    public void update_Ingredients_Table_Names_Col(Ingredient_Name_ID_OBJ ingredient_name_obj)
     {
-        meal_plan_screen.redraw_Ingredients_Tables_Obj_Name_Col(selected_ingredient_name_obj);
+        meals.forEach(e -> e.redraw_Ingredients_Table_Name_Col(ingredient_name_obj));
     }
 
-    public void update_Ingredients_Table_Type_Col(Ingredient_Type_ID_OBJ selected_ingredient_type_obj)
+    public void update_Ingredients_Table_Type_Col(Ingredient_Type_ID_OBJ ingredient_type_obj)
     {
-        meal_plan_screen.redraw_Ingredients_Table_Obj_Type_Col(selected_ingredient_type_obj);
+        meals.forEach(e -> e.redraw_Ingredients_Table_Type_Col(ingredient_type_obj));
     }
 
-    public void update_Ingredient_Name_Obj_Type_On_Ingredients_Table(Ingredient_Name_ID_OBJ selected_ingredient_name_obj)
+    //#########################
+    // Change Values
+    //#########################
+    public void update_Ingredient_Name_Obj_Type_On_Ingredients_Table(Ingredient_Name_ID_OBJ ingredient_name_obj)
     {
-        meal_plan_screen.change_Ingredient_Name_Obj_Type_On_Ingredients_Table(selected_ingredient_name_obj);
+        meals.forEach(e ->
+                e.change_Ingredient_Name_Obj_Type_On_Ingredients_Table(ingredient_name_obj)
+        );
     }
 
     public void update_Ingredient_Info_On_Ingredients_Table(Ingredient_Name_ID_OBJ ingredient_name_obj)
     {
-        meal_plan_screen.update_Ingredient_Info_On_Ingredients_Table(ingredient_name_obj);
+        meals.forEach(e ->
+                e.update_Ingredient_Info_On_Ingredients_Table(ingredient_name_obj)
+        );
     }
 
     //###############################################
