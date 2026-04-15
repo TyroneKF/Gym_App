@@ -1,5 +1,5 @@
 <!--- Main Title -->
-<h1 align="center">  Student Peak Group Project </h1>
+<h1 align="center">  Nutrition Gym App  </h1>
 
 [//]: <> (#################################################################################.)
 <!--- Youtube Gif & Link -->
