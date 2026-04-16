@@ -222,19 +222,26 @@ GitHub Actions validates the project on pushes and pull requests by:
 
 <h2 align="left"> 🛡️ Code Quality & Governance </h2>
 
-- Conventional commits enforced via commitlint
-- Protected master branch
-- PR-based workflow only
-- Qodana static analysis checks
-- Linear history enforced
+Additional automation supports repository quality:
+
+- **Commitlint** enforces Conventional Commit formatting
+- **Protected branch rules** enforce PR-based changes
+- **Qodana** provides static analysis and quality gates
+- Linear history and up-to-date branch requirements improve repo hygiene
 
 [//]: <> (#################################################################################.)
 ##
-<!--- Creating Packages -->
+<!--- Release Automation -->
 
 <h2 align="left"> 📦 Release Automation </h2>
 
-- Managed via Release Please
+The release pipeline uses **Release Please** for semantic versioning and automated release management.
+- Version bumps are driven by conventional commits
+- Release metadata is generated automatically
+- Release tags stay aligned with project versions
+- Native desktop packages are built for release distribution
+  
+Managed via Release Please
 - Features:
   - Semantic versioning
   - Automated changelogs
@@ -247,21 +254,32 @@ GitHub Actions validates the project on pushes and pull requests by:
 
 <h2 align="left"> 🖥️ Packaging </h2>
 
+The desktop application is packaged using **jpackage**, allowing the project to move toward professional installer-based distribution rather than manual jar execution.
+
 - Built using jpackage
 - Produces native desktop installers (e.g. .exe)
 - Eliminates need for manual JAR execution
 
 [//]: <> (#################################################################################.)
 ##
-<!---  Packaging -->
+<!---  Archetecture Overview -->
 
 <h2 align="left"> 🧩 Architecture Overview </h2>
 
-The system follows a layered design:
+The project is designed with maintainability in mind:
+
+- Desktop UI layer for user interaction
+- Service layer abstraction for business logic and external integrations
+- Database layer for version-controlled persistence and analytics
+- Planned serverless integration layer for secure API access
 
 <br>
 
- <img width="390" height="180" alt="Capture" src="https://github.com/user-attachments/assets/9379236d-e24d-4380-ac3d-e726f21fd391" />
+This separation helps the application scale from a local desktop planner into a more production-oriented system with cleaner boundaries between client, persistence, and cloud services.
+
+<br>
+
+<img width="390" height="180" alt="Capture" src="https://github.com/user-attachments/assets/9379236d-e24d-4380-ac3d-e726f21fd391" />
 
 [//]: <> (#################################################################################.)
 ##
