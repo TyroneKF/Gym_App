@@ -175,6 +175,7 @@ Macro rollups refer to the aggregation of nutritional values from ingredients up
 ##
 <!--- DB Integrity -->
 
+<br>
 <h2 align="left"> 🔒 Integrity & Constraints </h2>
 
 The schema uses several mechanisms to enforce correctness:
