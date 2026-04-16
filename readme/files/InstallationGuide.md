@@ -76,10 +76,10 @@ Expected output should include:
 
 <h5 align="left"> 📥 Step 2 — Download the JAR </h5>
 
-- 1.) Go to the releases page:
+- **1.)** Go to the releases page:
   - 👉 https://github.com/TyroneKF/Gym_App/releases
   
-- 2.) Download the .jar file from the latest release
+- **2.)** Download the .jar file from the latest release
 
 [//]: <> (#################################################################################.)
 ##
@@ -102,11 +102,11 @@ For consistent behaviour:
 
 **Windows:**
 
-- 1.) Open Environment Variables
-- 2.) Add:
+- **1.)** Open Environment Variables
+- **2.)** Add:
   - JAVA_HOME = C:\Program Files\Java\jdk-21
   
-- 3.) Add to Path:
+- **3.)** Add to Path:
   - %JAVA_HOME%\bin
 
 
@@ -114,25 +114,34 @@ For consistent behaviour:
 ##
 <!--- Comparison -->
 
-<h5 align="left">  ⚠️ Optional (Recommended) — Set JAVA_HOME </h5>
+<h5 align="left">  🆚 Comparison — Set JAVA_HOME </h5>
 
-🆚 Comparison
-Feature	Installer (.exe)	Manual (Java + JAR)
-Ease of use	⭐⭐⭐⭐⭐	⭐⭐
-Requires Java install	❌ No	✅ Yes
-Control	⭐⭐	⭐⭐⭐⭐⭐
-Setup time	Very fast	Moderate
-Recommended	✅ Yes	⚙️ Advanced users
-🛠️ Troubleshooting
-App won’t start (Manual method)
-Ensure Java 21 is installed
-Run java -version to confirm
-Verify the .jar file is not corrupted
-Permission issues (Installer)
-Run installer as Administrator
-Ensure access to C:\Program Files
-Java not recognised
-Check PATH and JAVA_HOME configuration
-📌 Summary
-Use the .exe installer for the simplest experience
-Use the manual Java method for full control and transparency
+<img width="822" height="336" alt="Capture" src="https://github.com/user-attachments/assets/8eefcb72-aec0-4999-a4ac-3c11dc113b44" />
+
+
+[//]: <> (#################################################################################.)
+##
+<!--- Troubleshooting -->
+
+<h2 align="left">  🛠️ Troubleshooting </h2>
+
+**App won’t start (Manual method)**
+- Ensure Java 21 is installed
+- Run java -version to confirm
+- Verify the .jar file is not corrupted
+
+**Permission issues (Installer)**
+- Run installer as Administrator
+-  Ensure access to C:\Program Files
+  
+**Java not recognised**
+- Check PATH and JAVA_HOME configuration
+
+[//]: <> (#################################################################################.)
+##
+<!--- Summary -->
+
+<h2 align="left"> 📌 Summary </h2>
+
+- Use the .exe installer for the simplest experience
+- Use the manual Java method for full control and transparency
