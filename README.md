@@ -15,30 +15,31 @@
 
 <h2 align="left">🏋️ Gym Nutrition Planner </h2>
 
-Gym Nutrition Planner is a Java-based desktop application for creating, managing, and optimising personalised meal plans aligned with fitness goals.
+Gym Nutrition Planner is a Java-based desktop application for creating, managing and optimising personalised meal plans aligned with fitness goals. It combines a structured desktop UI with a version-controlled relational database model, allowing users to safely edit draft plans while preserving immutable historical versions for auditability and rollback.
 
-It combines a structured desktop UI with a version-controlled relational database model, allowing users to safely edit draft plans while preserving immutable historical versions for auditability and rollback.
+The application is built around a **hierarchical nutrition data model** being; **Plan → Meal → Sub-meal → Ingredient** with SQL-driven macro calculations and analytics powering real-time nutritional insights. Its database architecture is designed to prioritise **data integrity, version control and maintainability** using: relational constraints triggers, views and migration based schema management.
 
-The system is built around a hierarchical nutrition model and leverages SQL-driven analytics to deliver real-time macro insights, while maintaining strong data integrity through constraints, triggers, and schema versioning.
+From an engineering perspective, the project goes beyond a typical CRUD desktop app as it includes a **professionally structured CI/CD pipeline**, automated validation workflows, semantic versioning, release automation and release packaging for desktop distribution. The wider architecture also supports a clean separation between the desktop client and backend integrations, including a planned **AWS Lambda/API Gateway proxy layer** for securely consuming third-party nutrition APIs without exposing credentials in the client.
 
 [//]: <> (#################################################################################.)
 ##
 <!--- Features -->
 
-<h2 align="left"> 🚀 Features </h2>
+<h2 align="left"> 🚀 Features / Capabilities </h2>
 
 - Create and manage personalised meal plans
-- Edit mutable draft plans during active work
-- Save immutable historical versions for tracking and rollback
+- Edit **mutable draft plans** during active work
+- Save **immutable historical versions** for tracking and rollback
 - Hierarchical data model: Plan → Meal → Sub-meal → Ingredient
-- Real-time macro analysis via SQL aggregations and views
+- **Real-time macro analysis** via SQL aggregations and views
 - Enforced data integrity using constraints, triggers, and indexes
-- Schema evolution managed with Flyway migrations
+- Schema evolution managed with **Flyway migrations**
 - Clean service-layer architecture for extensibility
-- Desktop packaging using jpackage
+- Package the desktop application for distribution using **jpackage**
 - Automated CI validation with GitHub Actions
-- Repository governance via commitlint and PR checks
-- Automated versioning and releases using Release Please
+- Validate builds automatically through **GitHub Actions CI**
+- Enforced repository standards through **commitlint, PR checks, and release workflows**
+- Automated versioning and releases using **Release Please**
 
 
 [//]: <> (#################################################################################.)
