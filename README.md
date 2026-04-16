@@ -52,8 +52,7 @@ The system is built around a hierarchical nutrition model and leverages SQL-driv
 -  [🔗 DB Shcema READ.MD](https://github.com/TyroneKF/Gym_App/blob/master/src/main/resources/db/README.md)
 -  [🔗 CI/CD ReadME.MD](https://github.com/TyroneKF/Gym_App/blob/master/CI_v2.md)
 
-
-
+<br>
 
 
 [//]: <> (#################################################################################.)
@@ -145,15 +144,15 @@ The application uses a dual-layer versioning model:
 
 <h2 align="left"> 📊 Data Hierarchy </h2>
 
-Plan
- └── Meal
-      └── Sub-meal
-           └── Ingredient
+<br>
+
+<img width="273" height="118" alt="Capture" src="https://github.com/user-attachments/assets/eca58c2f-48c1-4415-9996-bd46565acf6f" />
 
 [//]: <> (#################################################################################.)
 ##
 <!--- DB Design -->
 
+<br>
 <h2 align="left"> 🔒 Integrity & Constraints </h2>
 
 - Foreign key constraints
@@ -227,13 +226,9 @@ The production schema consists of ~24 tables and ~23 views, supporting a robust 
 
 The system follows a layered design:
 
-[ Desktop UI (Swing + JavaFX) ]
-                ↓
-[ Service Layer (Business Logic) ]
-                ↓
-[ Database Layer (SQLite + SQL Analytics) ]
-                ↓
-[ (Planned) AWS Lambda API Layer ]
+<br>
+
+ <img width="390" height="180" alt="Capture" src="https://github.com/user-attachments/assets/9379236d-e24d-4380-ac3d-e726f21fd391" />
 
 [//]: <> (#################################################################################.)
 ##
@@ -249,7 +244,7 @@ The system follows a layered design:
 
 [//]: <> (#################################################################################.)
 ##
-<!---  Future Features -->
+<!---  Summary -->
 
 <h2 align="left"> 📌 Summary </h2>
 
