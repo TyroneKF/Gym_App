@@ -19,3 +19,7 @@
 <a href="https://www.linkedin.com/in/tyrone-friday/">
   <img align="right" alt="LinkedIn" width="21px" src="readme/images/linkedin-big-logo.svg"/>
 </a>
+
+<a href="https://github.com/TyroneKF/Tyrone-Friday/blob/main/README.md">
+  <img align="right" alt="LinkedIn" width="21px" src="readme/images/homepage.svg" />
+</a>
