@@ -78,8 +78,8 @@ The system is built around a hierarchical nutrition model and leverages SQL-driv
 - Java 21
 - Swing + JavaFX
 - Maven
-- JFreeChart
-- JUnit 5
+- JFreeChart for visualisation
+- JUnit 5 for testing
 
 [//]: <> (#################################################################################.)
 ##
@@ -87,9 +87,9 @@ The system is built around a hierarchical nutrition model and leverages SQL-driv
 
 <h2 align="left"> Database & Persistence </h2>
 
-- SQLite
-- HikariCP
-- Flyway
+- SQLite for embedded desktop persistence
+- HikariCP for connection management
+- Flyway for schema versioning and migrations
 
 [//]: <> (#################################################################################.)
 ##
@@ -100,6 +100,8 @@ The system is built around a hierarchical nutrition model and leverages SQL-driv
 - AWS Lambda
 - Amazon API Gateway
 - AWS Secrets Manager
+- Optional AWS Secrets Manager
+- Planned secure serverless proxy for third-party nutrition APIs
 
 [//]: <> (#################################################################################.)
 ##
@@ -110,8 +112,8 @@ The system is built around a hierarchical nutrition model and leverages SQL-driv
 - GitHub Actions
 - Commitlint
 - Release Please
-- Qodana
-- jpackage
+- Qodana static analysis
+- jpackage for native installer generation
 
 [//]: <> (#################################################################################.)
 ##
