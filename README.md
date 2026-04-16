@@ -15,31 +15,11 @@
 
 <h2 align="left">🏋️ Gym Nutrition Planner </h2>
 
-Gym Nutrition Planner is a Java-based desktop application for creating, managing, and optimising personalised meal plans aligned with fitness goals.
+Gym Nutrition Planner is a Java-based desktop application for creating, managing and optimising personalised meal plans aligned with fitness goals. It combines a structured desktop UI with a version-controlled relational database model, allowing users to safely edit draft plans while preserving immutable historical versions for auditability and rollback.
 
-It combines a structured desktop UI with a version-controlled relational database model, allowing users to safely edit draft plans while preserving immutable historical versions for auditability and rollback.
+The application is built around a **hierarchical nutrition data model** being; **Plan → Meal → Sub-meal → Ingredient** with SQL-driven macro calculations and analytics powering real-time nutritional insights. Its database architecture is designed to prioritise **data integrity, version control and maintainability** using: relational constraints triggers, views and migration based schema management.
 
-The system is built around a hierarchical nutrition model and leverages SQL-driven analytics to deliver real-time macro insights, while maintaining strong data integrity through constraints, triggers, and schema versioning.
-
-[//]: <> (#################################################################################.)
-##
-<!--- Features -->
-
-<h2 align="left"> 🚀 Features </h2>
-
-- Create and manage personalised meal plans
-- Edit mutable draft plans during active work
-- Save immutable historical versions for tracking and rollback
-- Hierarchical data model: Plan → Meal → Sub-meal → Ingredient
-- Real-time macro analysis via SQL aggregations and views
-- Enforced data integrity using constraints, triggers, and indexes
-- Schema evolution managed with Flyway migrations
-- Clean service-layer architecture for extensibility
-- Desktop packaging using jpackage
-- Automated CI validation with GitHub Actions
-- Repository governance via commitlint and PR checks
-- Automated versioning and releases using Release Please
-
+From an engineering perspective, the project goes beyond a typical CRUD desktop app as it includes a **professionally structured CI/CD pipeline**, automated validation workflows, semantic versioning, release automation and release packaging for desktop distribution. The wider architecture also supports a clean separation between the desktop client and backend integrations, including a planned **AWS Lambda/API Gateway proxy layer** for securely consuming third-party nutrition APIs without exposing credentials in the client.
 
 [//]: <> (#################################################################################.)
 ##
@@ -47,13 +27,32 @@ The system is built around a hierarchical nutrition model and leverages SQL-driv
 
 <h2 align="left"> Project Files </h2>
 
-<!--- -  [🔗Installation Guide](https://github.com/TyroneKF/Gym_App/edit/ReadMe2/README.md) -->
-
--  [🔗 DB Shcema READ.MD](https://github.com/TyroneKF/Gym_App/blob/master/src/main/resources/db/README.md)
--  [🔗 CI/CD ReadME.MD](https://github.com/TyroneKF/Gym_App/blob/master/CI_v2.md)
+-  [🔗Installation Guide](https://github.com/TyroneKF/Gym_App/blob/master/readme/files/InstallationGuide.md)
+-  [🔗 DB  Shcema READ.MD](https://github.com/TyroneKF/Gym_App/blob/master/src/main/resources/db/README.md)
+-  [🔗 CI/CD  ReadME.MD](https://github.com/TyroneKF/Gym_App/blob/master/CI_v2.md)
 
 <br>
 
+
+[//]: <> (#################################################################################.)
+##
+<!--- Features -->
+
+<h2 align="left"> 🚀 Features / Capabilities </h2>
+
+- Create and manage personalised meal plans
+- Edit **mutable draft plans** during active work
+- Save **immutable historical versions** for tracking and rollback
+- Hierarchical data model: Plan → Meal → Sub-meal → Ingredient
+- **Real-time macro analysis** via SQL aggregations and views
+- Enforced data integrity using constraints, triggers, and indexes
+- Schema evolution managed with **Flyway migrations**
+- Clean service-layer architecture for extensibility
+- Package the desktop application for distribution using **jpackage**
+- Automated CI validation with GitHub Actions
+- Validate builds automatically through **GitHub Actions CI**
+- Enforced repository standards through **commitlint, PR checks, and release workflows**
+- Automated versioning and releases using **Release Please**
 
 [//]: <> (#################################################################################.)
 ##
@@ -63,11 +62,11 @@ The system is built around a hierarchical nutrition model and leverages SQL-driv
 
 <h3 align="left">  Languages  </h3>
 
-- Java — core application logic
-- SQL — schema design, queries, analytics
-- YAML — CI/CD workflows
-- JavaScript (Node tooling) — commitlint & release automation
-- (Planned) Python / Go — AWS Lambda backend
+- **Java** — primary desktop application language
+- **SQL** — relational schema, views, triggers, and analytics
+- **YAML** — CI/CD workflow configuration
+- **JavaScript /Node.js tooling** — commitlint & release automation
+- **Planned backend support**: Python or Go for AWS Lambda integration
 
 [//]: <> (#################################################################################.)
 ##
@@ -75,21 +74,21 @@ The system is built around a hierarchical nutrition model and leverages SQL-driv
 
 <h2 align="left"> Desktop Application </h2>
 
-- Java 21
-- Swing + JavaFX
-- Maven
-- JFreeChart
-- JUnit 5
+- **Java 21**
+- **Swing + JavaFX**
+- **Maven**
+- **JFreeChart** for visualisation
+- **JUnit** 5 for testing
 
 [//]: <> (#################################################################################.)
 ##
 <!--- Database  -->
 
-<h2 align="left"> Database & Persistence </h2>
+<h2 align="left"> Database / Persistence </h2>
 
-- SQLite
-- HikariCP
-- Flyway
+- **SQLite**  for embedded desktop persistence
+- **HikariCP**  for connection management
+- **Flyway**  for schema versioning and migrations
 
 [//]: <> (#################################################################################.)
 ##
@@ -97,9 +96,17 @@ The system is built around a hierarchical nutrition model and leverages SQL-driv
 
 <h2 align="left"> Cloud / Backend </h2>
 
-- AWS Lambda
-- Amazon API Gateway
+<br>
+
+Everything below in this section is planned for future developement: 
+
+<br>
+
+- **AWS Lambda**
+- **Amazon API Gateway**
 - AWS Secrets Manager
+- Optional **AWS Secrets Manager**
+- Planned secure serverless proxy for third-party nutrition APIs
 
 [//]: <> (#################################################################################.)
 ##
@@ -107,11 +114,16 @@ The system is built around a hierarchical nutrition model and leverages SQL-driv
 
 <h2 align="left"> CI/CD & DevOps </h2>
 
-- GitHub Actions
-- Commitlint
-- Release Please
-- Qodana
-- jpackage
+- **GitHub Actions** - Automates CI/CD pipelines to build, test, and package the Gym App, ensuring consistent and reliable releases.
+  
+- **Commitlint** - Enforces structured commit message conventions to maintain clean versioning and enable automated release workflows.
+  
+- **Release Please** - Automatically manages semantic versioning, changelog generation, and GitHub releases based on commit history.
+  
+- **Qodana Static Analysis** - Performs automated code quality and security analysis to detect bugs, code smells, and enforce maintainability standards before merging changes.
+
+  
+- **jpackage** for native installer generation
 
 [//]: <> (#################################################################################.)
 ##
@@ -119,24 +131,28 @@ The system is built around a hierarchical nutrition model and leverages SQL-driv
 
 <h2 align="left"> 🗄️ Database Design </h2>
 
+
+The database is one of the core strengths of the project. It is designed around a dual-layer versioning model:
+
 <br>
+<h3 align="left"> 1.)  📝 Draft Layer </h3>
 
-The application uses a dual-layer versioning model:
+This layer stores the user’s current working data and is fully editable.
+ 
+- Draft plans can be created and modified freely
+- Draft meals, sub-meals, and ingredients can be added, changed, or removed
+- Used for active meal planning and iteration
 
 <br>
+<h3 align="left"> 2.) 📦 Versioned Layer </h3>
 
-<h3 align="left"> 📝 Draft Layer </h3>
- 
-- Fully editable working data
-- Used during active plan creation
-- Supports insert, update, delete operations
+This layer stores immutable historical snapshots.
 
-<h3 align="left">  📦 Versioned Layer </h3>
- 
+- Saving a plan creates a versioned snapshot
 - Immutable historical snapshots
-- Created on save
+- Historical records cannot be edited or deleted directly
 - Prevents updates/deletes via triggers
-- Enables rollback and auditability
+- Ensures auditability, reproducibility, and rollback safety
 
 [//]: <> (#################################################################################.)
 ##
@@ -146,26 +162,35 @@ The application uses a dual-layer versioning model:
 
 <br>
 
+The schema follows this domain structure:
+
 <img width="273" height="118" alt="Capture" src="https://github.com/user-attachments/assets/eca58c2f-48c1-4415-9996-bd46565acf6f" />
+
+This structure supports both usability in the UI and accurate macro rollups in SQL.
+
+Macro rollups refer to the aggregation of nutritional values from ingredients up through sub-meals, meals, and entire plans using SQL. This allows accurate, real-time calculation of totals without duplicating data, ensuring consistency and scalability.
 
 [//]: <> (#################################################################################.)
 ##
-<!--- DB Design -->
+<!--- DB Integrity -->
 
-<br>
 <h2 align="left"> 🔒 Integrity & Constraints </h2>
 
-- Foreign key constraints
-- Composite keys & partial indexes
-- SQL views for analytics and UI queries
+The schema uses several mechanisms to enforce correctness:
+- **Foreign key constraints**
+- **Composite keys & partial indexes**
+- **SQL views for nutritional analytics and UI queries**
 
+<br>
 
-- Triggers for:
-  - Immutability enforcement
-  - Timestamp propagation
-  - Parent-child consistency
+Triggers for:
+  - **Immutability enforcement**
+  - **Timestamp propagation and parent updates**
+  - **Parent-child consistency**
 
-The production schema consists of ~24 tables and ~23 views, supporting a robust relational architecture.
+<br>
+
+The production schema consists of ~24 tables and ~23 views, supporting a robust relational architecture reflecting a more serious relational architecture than a simple local desktop database.
 
 [//]: <> (#################################################################################.)
 ##
@@ -173,7 +198,14 @@ The production schema consists of ~24 tables and ~23 views, supporting a robust 
 
 <h2 align="left"> ⚙️ CI/CD Pipeline </h2>
 
-✅ Continuous Integration
+The project includes a structured CI/CD setup to improve reliability, consistency, and release quality.
+
+<h4 align="left"> Continuous Integration </h4>
+
+GitHub Actions validates the project on pushes and pull requests by:
+
+- Enforcing branch protection requirements
+- Preventing invalid changes from reaching master
 - Triggered on push & pull requests
 - Runs:
   - mvn clean verify
@@ -189,19 +221,26 @@ The production schema consists of ~24 tables and ~23 views, supporting a robust 
 
 <h2 align="left"> 🛡️ Code Quality & Governance </h2>
 
-- Conventional commits enforced via commitlint
-- Protected master branch
-- PR-based workflow only
-- Qodana static analysis checks
-- Linear history enforced
+Additional automation supports repository quality:
+
+- **Commitlint** enforces Conventional Commit formatting
+- **Protected branch rules** enforce PR-based changes
+- **Qodana** provides static analysis and quality gates
+- Linear history and up-to-date branch requirements improve repo hygiene
 
 [//]: <> (#################################################################################.)
 ##
-<!--- Creating Packages -->
+<!--- Release Automation -->
 
 <h2 align="left"> 📦 Release Automation </h2>
 
-- Managed via Release Please
+The release pipeline uses **Release Please** for semantic versioning and automated release management.
+- Version bumps are driven by conventional commits
+- Release metadata is generated automatically
+- Release tags stay aligned with project versions
+- Native desktop packages are built for release distribution
+  
+Managed via Release Please
 - Features:
   - Semantic versioning
   - Automated changelogs
@@ -214,21 +253,32 @@ The production schema consists of ~24 tables and ~23 views, supporting a robust 
 
 <h2 align="left"> 🖥️ Packaging </h2>
 
+The desktop application is packaged using **jpackage**, allowing the project to move toward professional installer-based distribution rather than manual jar execution.
+
 - Built using jpackage
 - Produces native desktop installers (e.g. .exe)
 - Eliminates need for manual JAR execution
 
 [//]: <> (#################################################################################.)
 ##
-<!---  Packaging -->
+<!---  Archetecture Overview -->
 
 <h2 align="left"> 🧩 Architecture Overview </h2>
 
-The system follows a layered design:
+The project is designed with maintainability in mind:
+
+- Desktop UI layer for user interaction
+- Service layer abstraction for business logic and external integrations
+- Database layer for version-controlled persistence and analytics
+- Planned serverless integration layer for secure API access
 
 <br>
 
- <img width="390" height="180" alt="Capture" src="https://github.com/user-attachments/assets/9379236d-e24d-4380-ac3d-e726f21fd391" />
+This separation helps the application scale from a local desktop planner into a more production-oriented system with cleaner boundaries between client, persistence, and cloud services.
+
+<br>
+
+<img width="390" height="180" alt="Capture" src="https://github.com/user-attachments/assets/9379236d-e24d-4380-ac3d-e726f21fd391" />
 
 [//]: <> (#################################################################################.)
 ##
