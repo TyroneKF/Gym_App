@@ -64,11 +64,11 @@ From an engineering perspective, the project goes beyond a typical CRUD desktop 
 
 <h3 align="left">  Languages  </h3>
 
-- Java — core application logic
-- SQL — schema design, queries, analytics
-- YAML — CI/CD workflows
-- JavaScript (Node tooling) — commitlint & release automation
-- (Planned) Python / Go — AWS Lambda backend
+- **Java** — primary desktop application language
+- **SQL** — relational schema, views, triggers, and analytics
+- **YAML** — CI/CD workflow configuration
+- **JavaScript /Node.js tooling** — commitlint & release automation
+- **Planned backend support**: Python or Go for AWS Lambda integration
 
 [//]: <> (#################################################################################.)
 ##
@@ -76,21 +76,21 @@ From an engineering perspective, the project goes beyond a typical CRUD desktop 
 
 <h2 align="left"> Desktop Application </h2>
 
-- Java 21
-- Swing + JavaFX
-- Maven
-- JFreeChart for visualisation
-- JUnit 5 for testing
+- **Java 21**
+- **Swing + JavaFX**
+- **Maven**
+- **JFreeChart** for visualisation
+- **JUnit** 5 for testing
 
 [//]: <> (#################################################################################.)
 ##
 <!--- Database  -->
 
-<h2 align="left"> Database & Persistence </h2>
+<h2 align="left"> Database / Persistence </h2>
 
-- SQLite for embedded desktop persistence
-- HikariCP for connection management
-- Flyway for schema versioning and migrations
+- **SQLite**  for embedded desktop persistence
+- **HikariCP**  for connection management
+- **Flyway**  for schema versioning and migrations
 
 [//]: <> (#################################################################################.)
 ##
