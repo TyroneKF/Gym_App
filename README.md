@@ -55,7 +55,6 @@ From an engineering perspective, the project goes beyond a typical CRUD desktop 
 
 <br>
 
-
 [//]: <> (#################################################################################.)
 ##
 <!--- Languages  -->
@@ -98,10 +97,16 @@ From an engineering perspective, the project goes beyond a typical CRUD desktop 
 
 <h2 align="left"> Cloud / Backend </h2>
 
-- AWS Lambda
-- Amazon API Gateway
+<br>
+
+Everything below in this section is planned for future developement: 
+
+<br>
+
+- **AWS Lambda**
+- **Amazon API Gateway**
 - AWS Secrets Manager
-- Optional AWS Secrets Manager
+- Optional **AWS Secrets Manager**
 - Planned secure serverless proxy for third-party nutrition APIs
 
 [//]: <> (#################################################################################.)
@@ -110,11 +115,16 @@ From an engineering perspective, the project goes beyond a typical CRUD desktop 
 
 <h2 align="left"> CI/CD & DevOps </h2>
 
-- GitHub Actions
-- Commitlint
-- Release Please
-- Qodana static analysis
-- jpackage for native installer generation
+- **GitHub Actions** - Automates CI/CD pipelines to build, test, and package the Gym App, ensuring consistent and reliable releases.
+  
+- **Commitlint** - Enforces structured commit message conventions to maintain clean versioning and enable automated release workflows.
+  
+- **Release Please** - Automatically manages semantic versioning, changelog generation, and GitHub releases based on commit history.
+  
+- **Qodana Static Analysis** - Performs automated code quality and security analysis to detect bugs, code smells, and enforce maintainability standards before merging changes.
+
+  
+- **jpackage** for native installer generation
 
 [//]: <> (#################################################################################.)
 ##
@@ -122,24 +132,28 @@ From an engineering perspective, the project goes beyond a typical CRUD desktop 
 
 <h2 align="left"> 🗄️ Database Design </h2>
 
+
+The database is one of the core strengths of the project. It is designed around a dual-layer versioning model:
+
 <br>
+<h3 align="left"> 1.)  📝 Draft Layer </h3>
 
-The application uses a dual-layer versioning model:
+This layer stores the user’s current working data and is fully editable.
+ 
+- Draft plans can be created and modified freely
+- Draft meals, sub-meals, and ingredients can be added, changed, or removed
+- Used for active meal planning and iteration
 
 <br>
+<h3 align="left"> 2.) 📦 Versioned Layer </h3>
 
-<h3 align="left"> 📝 Draft Layer </h3>
- 
-- Fully editable working data
-- Used during active plan creation
-- Supports insert, update, delete operations
+This layer stores immutable historical snapshots.
 
-<h3 align="left">  📦 Versioned Layer </h3>
- 
+- Saving a plan creates a versioned snapshot
 - Immutable historical snapshots
-- Created on save
+- Historical records cannot be edited or deleted directly
 - Prevents updates/deletes via triggers
-- Enables rollback and auditability
+- Ensures auditability, reproducibility, and rollback safety
 
 [//]: <> (#################################################################################.)
 ##
@@ -149,26 +163,35 @@ The application uses a dual-layer versioning model:
 
 <br>
 
+The schema follows this domain structure:
+
 <img width="273" height="118" alt="Capture" src="https://github.com/user-attachments/assets/eca58c2f-48c1-4415-9996-bd46565acf6f" />
+
+This structure supports both usability in the UI and accurate macro rollups in SQL.
+
+Macro rollups refer to the aggregation of nutritional values from ingredients up through sub-meals, meals, and entire plans using SQL. This allows accurate, real-time calculation of totals without duplicating data, ensuring consistency and scalability.
 
 [//]: <> (#################################################################################.)
 ##
-<!--- DB Design -->
+<!--- DB Integrity -->
 
-<br>
 <h2 align="left"> 🔒 Integrity & Constraints </h2>
 
-- Foreign key constraints
-- Composite keys & partial indexes
-- SQL views for analytics and UI queries
+The schema uses several mechanisms to enforce correctness:
+- **Foreign key constraints**
+- **Composite keys & partial indexes**
+- **SQL views for nutritional analytics and UI queries**
 
+<br>
 
-- Triggers for:
-  - Immutability enforcement
-  - Timestamp propagation
-  - Parent-child consistency
+Triggers for:
+  - **Immutability enforcement**
+  - **Timestamp propagation and parent updates**
+  - **Parent-child consistency**
 
-The production schema consists of ~24 tables and ~23 views, supporting a robust relational architecture.
+<br>
+
+The production schema consists of ~24 tables and ~23 views, supporting a robust relational architecture reflecting a more serious relational architecture than a simple local desktop database.
 
 [//]: <> (#################################################################################.)
 ##
@@ -176,7 +199,14 @@ The production schema consists of ~24 tables and ~23 views, supporting a robust 
 
 <h2 align="left"> ⚙️ CI/CD Pipeline </h2>
 
-✅ Continuous Integration
+The project includes a structured CI/CD setup to improve reliability, consistency, and release quality.
+
+<h4 align="left"> Continuous Integration </h4>
+
+GitHub Actions validates the project on pushes and pull requests by:
+
+- Enforcing branch protection requirements
+- Preventing invalid changes from reaching master
 - Triggered on push & pull requests
 - Runs:
   - mvn clean verify
