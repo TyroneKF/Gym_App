@@ -29,8 +29,8 @@ This is the easiest and preferred method. No Java installation is required.
     - Follow the installation prompts
       
 - **4.)**  After installation:
-      - The application will be installed to:
-        - C:\Program Files\GymApp
+    - The application will be installed to:
+    - C:\Program Files\GymApp
 
 - **5.)**  Launch the application:
     - Navigate to the install directory, or
@@ -129,15 +129,21 @@ For consistent behaviour:
 
 <h2 align="left">  🛠️ Troubleshooting </h2>
 
+<br>
+
 **App won’t start (Manual method)**
 - Ensure Java 21 is installed
 - Run java -version to confirm
 - Verify the .jar file is not corrupted
 
+<br>
+
 **Permission issues (Installer)**
 - Run installer as Administrator
 -  Ensure access to C:\Program Files
-  
+
+<br>
+
 **Java not recognised**
 - Check PATH and JAVA_HOME configuration
 
