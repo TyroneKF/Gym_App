@@ -20,14 +20,18 @@ This is the easiest and preferred method. No Java installation is required.
 
 - **1.)**  Go to the releases page:
       - 👉 https://github.com/TyroneKF/Gym_App/releases
+  
 - **2.)**  Download the latest installer:
       - File format: .exe
-- **3.)**  Run the installer:
-      - Double-click the downloaded .exe
-      - Follow the installation prompts
+  
+- **3.)** Run the installer:
+    - Double click the downloaded .exe
+    - Follow the installation prompts
+      
 - **4.)**  After installation:
       - The application will be installed to:
         - C:\Program Files\GymApp
+
 - **5.)**  Launch the application:
     - Navigate to the install directory, or
     - Use the Start Menu shortcut (if enabled)
@@ -62,13 +66,13 @@ Recommended distributions:
 
 Download and install Java 21, then verify:
 
-java -version
+- java -version
 
 <br>
 
 Expected output should include:
 
-21.x.x
+- 21.x.x
 
 [//]: <> (#################################################################################.)
 ##
