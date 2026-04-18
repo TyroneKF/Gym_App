@@ -19,7 +19,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.time.LocalDateTime;
 import java.util.function.Supplier;
-
 import org.flywaydb.core.Flyway;
 import org.sqlite.SQLiteConfig;
 
@@ -68,6 +67,7 @@ public class MyJDBC_Sqlite  // remove extends eventually
 
         return dir.getAbsolutePath();
     }
+
     public void begin_migration() throws Exception
     {
         //#############################################
@@ -286,7 +286,7 @@ public class MyJDBC_Sqlite  // remove extends eventually
                 boolean failed_upload = statement.executeUpdate() == 0;
                 if (must_Affect_Rows && failed_upload) // 0 rows updated = fails (doesn't include dropping / creating tables)
                 {
-                    throw new RuntimeException(String.format("\n\n%s \n\nUpdated 0 Rows \n%s", query, Arrays.toString(params)));
+                    throw new Exception(String.format("\n\nUpdated 0 Rows \n\nQuery: \n%s \nParams: \n%s", query, Arrays.toString(params)));
                 }
             }
             catch (Exception e)
