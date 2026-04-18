@@ -72,7 +72,7 @@ public class Button_Column extends AbstractCellEditor implements TableCellRender
                 
                 int ingredients_Index = (Integer) ingredients_Table.get_Value_On_Model_Data(row, ingredients_Index_Column);
                
-                ingredients_Table.delete_Row_Action(ingredients_Index, row); // command to update db
+                ingredients_Table.delete_Row_Btn_Action(row); // command to update db
                 
             }
         };
