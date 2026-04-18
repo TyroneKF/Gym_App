@@ -8,6 +8,9 @@
         is_system INTEGER NOT NULL DEFAULT 0 -- DEFAULT FALSE
             CHECK (is_system IN (0,1)),
 
+        is_active  INTEGER NOT NULL DEFAULT 1 CHECK (is_active IN (0,1)),
+        archived_at TEXT NULL,
+
         measurement_id INTEGER NOT NULL, -- FK has to be defined at the bottom
         ingredient_type_id INTEGER NOT NULL, -- FK has to be defined at the bottom
 
@@ -44,8 +47,13 @@
     -- ####################################################
     -- Constraints (Unique Keys)
     -- ####################################################
-        CREATE UNIQUE INDEX no_repeat_ingredient_names
-            ON ingredients_info (ingredient_name);
+       CREATE UNIQUE INDEX no_repeat_active_ingredient_names
+           ON ingredients_info(lower(trim(ingredient_name)))
+           WHERE is_active = 1;
+
+        --CREATE UNIQUE INDEX no_repeat_active_ingredient_names
+        --    ON ingredients_info(user_id, lower(trim(name)))
+        --    WHERE is_active = 1;
 
 
 -- ##############################################################################################################

@@ -271,18 +271,21 @@
         liquid_content,
         calories
     )
-    VALUES
-
-    (
+    SELECT
         1,
         (SELECT entity_id_value FROM seed_registry WHERE seed_key = 'na_measurement_id'),
         'None Of The Above',
         (SELECT entity_id_value FROM seed_registry WHERE seed_key = 'na_type_id'),
         0,0,0,0,0,0,0,0,0,0,0,0
-    )
-    ON CONFLICT(ingredient_name) -- In case of duplicate, ensures fields match correctly to new insert
-        DO UPDATE SET
-        ingredient_name = excluded.ingredient_name; -- On update triggered by PK or unique Key
+
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM ingredients_info
+        WHERE
+          -- user_id = 1 AND
+          lower(trim(ingredient_name)) = lower(trim( 'None Of The Above'))
+          AND is_active = 1
+    );
 
     -- ####################################################################
     -- Variables : Insert Into Seed Registry Table
@@ -301,8 +304,8 @@
         )
         ON CONFLICT(seed_key)   -- In case of duplicate, ensures fields match correctly to new insert
             DO UPDATE SET
-
             entity_id_value = excluded.entity_id_value; -- On update triggered by PK or unique Key
+
 
 -- ##############################################################################################################
  -- Creating Ingredient_in_Shops
