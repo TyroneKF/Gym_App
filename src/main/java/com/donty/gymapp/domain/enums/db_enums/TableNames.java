@@ -7,9 +7,11 @@ public enum TableNames implements My_Enum
     //##################################################################################################################
     // Enums
     //##################################################################################################################
-    DRAFT_INGREDIENTS_IN_SECTIONS_OF_MEAL("draft_ingredients_in_sections_of_meal"),
-    DRAFT_MEALS_IN_PLAN("draft_meals_in_plan"),
-    MACROS_PER_POUND_AND_LIMITS("macros_per_pound_and_limits");
+    MACROS("macros_per_pound_and_limits"),
+    INGREDIENTS_INFO("ingredients_info"),
+    DRAFT_MEALS("draft_meals_in_plan"),
+    DRAFT_SUB_MEALS("draft_divided_meal_sections"),
+    DRAFT_INGREDIENTS("draft_ingredients_in_sections_of_meal");
 
 
     //##################################################################################################################
