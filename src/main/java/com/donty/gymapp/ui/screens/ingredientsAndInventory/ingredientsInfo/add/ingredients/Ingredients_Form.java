@@ -46,13 +46,13 @@ public class Ingredients_Form extends Parent_Forms_OBJ
 
     protected final JPanel northPanel = new JPanel(new GridBagLayout());
 
-    // Salt JC Object
-    protected final ArrayList<String> salt_Values_AL = new ArrayList<>(Arrays.asList("mg", "g"));
-    protected final Field_JCombo_Default<String> salt_JC = new Field_JCombo_Default<>("Salt", String.class, salt_Values_AL);
-
     protected final Field_JC_Ingredient_Form_Type field_jc_ingredient_type;
 
     protected final Field_JTxtField_String ingredient_Name_JT = new Field_JTxtField_String("Ingredient Name", text_Char_Limit);
+
+    // Salt JC Object
+    protected final ArrayList<String> salt_Values_AL = new ArrayList<>(Arrays.asList("mg", "g"));
+    protected final Field_JCombo_Default<String> salt_JC = new Field_JCombo_Default<>("Salt", String.class, salt_Values_AL);
 
     //############
     // Maps
@@ -123,7 +123,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                             "Ingredient Measurement In",
                             new Field_JC_Measurements(shared_data_registry),
                             Ingredient_Info_Columns.MEASUREMENT_ID,
-                            2,
+                            4,
                             "serving_unit"
                     )
             );
@@ -134,7 +134,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                             "Ingredient Name",
                             ingredient_Name_JT,
                             Ingredient_Info_Columns.INGREDIENT_NAME,
-                            4,
+                            6,
                             "food_name"
                     )
             );
@@ -144,7 +144,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                             "Ingredient Type",
                            field_jc_ingredient_type,
                             Ingredient_Info_Columns.INGREDIENT_TYPE_ID,
-                            3
+                            5
                     )
             );
             put(
@@ -153,7 +153,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                             "Based On Quantity",
                             new Field_JTxtField_BD("Based On Quantity", digit_Char_Limit, false),
                             Ingredient_Info_Columns.BASED_ON_QUANTITY,
-                            5,
+                            7,
                             "serving_weight_grams"
                     )
             );
@@ -163,7 +163,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                             "Glycemic Index",
                             new Field_JTxtField_INT("Glycemic Index", digit_Char_Limit, true, 0, 100),
                             Ingredient_Info_Columns.GLYCEMIC_INDEX,
-                            6
+                            8
                     )
             );
             put(
@@ -172,7 +172,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                             "Protein",
                             new Field_JTxtField_BD("Protein", digit_Char_Limit),
                             Ingredient_Info_Columns.PROTEIN,
-                            7,
+                            9,
                             "nf_protein"
                     )
             );
@@ -182,7 +182,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                             "Carbohydrates",
                             new Field_JTxtField_BD("Carbohydrates", digit_Char_Limit),
                             Ingredient_Info_Columns.CARBOHYDRATES,
-                            8,
+                            10,
                             "nf_total_carbohydrate"
                     )
             );
@@ -192,7 +192,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                             "Sugars Of Carbs",
                             new Field_JTxtField_BD("Sugars Of Carbs", digit_Char_Limit),
                             Ingredient_Info_Columns.SUGARS_OF_CARBS,
-                            9,
+                            11,
                             "nf_sugars"
                     )
             );
@@ -202,7 +202,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                             "Fibre",
                             new Field_JTxtField_BD("Fibre", digit_Char_Limit),
                             Ingredient_Info_Columns.FIBRE,
-                            10,
+                            12,
                             "nf_dietary_fiber"
                     )
             );
@@ -212,7 +212,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                             "Fat",
                             new Field_JTxtField_BD("Fat", digit_Char_Limit),
                             Ingredient_Info_Columns.FAT,
-                            11,
+                            13,
                             "nf_total_fat"
                     )
             );
@@ -222,7 +222,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                             "Saturated Fat",
                             new Field_JTxtField_BD("Saturated Fat", digit_Char_Limit),
                             Ingredient_Info_Columns.SATURATED_FAT,
-                            12,
+                            14,
                             "nf_saturated_fat"
                     )
             );
@@ -232,7 +232,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                             "Salt",
                             new Field_JTxtField_BD("Salt", digit_Char_Limit),
                             Ingredient_Info_Columns.SALT,
-                            13,
+                            15,
                             "nf_sodium"
                     )
             );
@@ -242,7 +242,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                             "Water Content",
                             new Field_JTxtField_BD("Water Content", digit_Char_Limit),
                             Ingredient_Info_Columns.WATER_CONTENT,
-                            14
+                            16
                     )
             );
             put(
@@ -251,7 +251,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                             "Liquid Content",
                             new Field_JTxtField_BD("Liquid Content", digit_Char_Limit),
                             Ingredient_Info_Columns.LIQUID_CONTENT,
-                            15
+                            17
                     )
             );
             put(
@@ -260,7 +260,7 @@ public class Ingredients_Form extends Parent_Forms_OBJ
                             "Calories",
                             new Field_JTxtField_BD("Calories", digit_Char_Limit),
                             Ingredient_Info_Columns.CALORIES,
-                            16,
+                            18,
                             "nf_calories"
                     )
             );
@@ -350,13 +350,13 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         // Creating area for North JPanel (Refresh Icon)
         //#####################################################
 
-        JPanel iconArea = new JPanel(new GridBagLayout());
-        add_To_Container(northPanel, iconArea, 0, 1, 0.25, "both", 0, 0);
+        JPanel icon_area = new JPanel(new GridBagLayout());
+        add_To_Container(northPanel, icon_area, 0, 1, 0.25, "both", 0, 0);
 
-        IconPanel iconPanel = new IconPanel(1, 10, "East");
-        JPanel iconPanelInsert = iconPanel.getIconJpanel();
+        IconPanel icon_panel = new IconPanel(1, 10, "East");
+        JPanel icon_panel_insert = icon_panel.getIconJpanel();
 
-        add_To_Container(iconArea, iconPanel.getIconAreaPanel(), 0, 0, 0.25, "horizontal", 10, 0);
+        add_To_Container(icon_area, icon_panel.getIconAreaPanel(), 0, 0, 0.25, "horizontal", 10, 0);
 
         //##########################
         // Refresh Icon
@@ -364,14 +364,24 @@ public class Ingredients_Form extends Parent_Forms_OBJ
         int width = 30;
         int height = 30;
 
-        IconButton refresh_Icon_Btn = new IconButton("/images/refresh/++refresh.png", width, height, width, height, "centre", "right"); // btn text is useless here , refactor
+        IconButton refresh_icon_btn = new IconButton("/images/refresh/++refresh.png", width, height, width, height, "centre", "right"); // btn text is useless here , refactor
 
-        JButton refresh_Btn = refresh_Icon_Btn.returnJButton();
-        refresh_Icon_Btn.makeBTntransparent();
+        JButton refresh_btn = refresh_icon_btn.returnJButton();
+        refresh_icon_btn.makeBTntransparent();
 
-        refresh_Btn.addActionListener(ae -> clear_Ingredients_Form());
+        refresh_btn.addActionListener(ae -> clear_Ingredients_Form());
 
-        iconPanelInsert.add(refresh_Icon_Btn);
+        icon_panel_insert.add(refresh_icon_btn);
+
+        //##########################
+        // Extra Buttons
+        //##########################
+        create_Extra_Icons(icon_panel_insert);
+    }
+
+    protected void create_Extra_Icons(JPanel icon_panel_insert)
+    {
+
     }
 
     //##############################
