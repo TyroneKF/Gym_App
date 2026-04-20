@@ -59,9 +59,21 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
     @Override
     protected void create_GUI_Objects()
     {
-        ingredients_Form = new Edit_Ingredients_Form(scroll_JPanel, db, shared_data_registry, "Edit Ingredients Info");
+        ingredients_Form = new Edit_Ingredients_Form(
+                scroll_JPanel,
+                ingredients_info_screen,
+                this,
+                db,
+                shared_data_registry,
+                "Edit Ingredients Info"
+        );
 
-        shop_Form = new Edit_Shop_Form(scroll_JPanel, " Edit / Add Suppliers", this, shared_data_registry);
+        shop_Form = new Edit_Shop_Form(
+                scroll_JPanel,
+                " Edit / Add Suppliers",
+                this,
+                shared_data_registry
+        );
     }
 
     @Override
@@ -329,7 +341,7 @@ public class Edit_Ingredients_Screen extends Parent_Ingredients_Screen
     // Clear / Reset Methods
     //######################################################################
     @Override
-    protected void clear_Interface() // only available to reset screen
+    public void clear_Interface() // only available to reset screen
     {
         reset_Variables(); // Reset Variables
 
