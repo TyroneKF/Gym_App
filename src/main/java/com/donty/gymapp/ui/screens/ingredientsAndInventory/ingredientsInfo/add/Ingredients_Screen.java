@@ -170,7 +170,7 @@ public class Ingredients_Screen extends Parent_Ingredients_Screen
     // Clearing GUI Methods
     //##################################################################
     @Override
-    protected void clear_Interface() // only available to reset screen
+    public void clear_Interface() // only available to reset screen
     {
         clear_All_Screens();
         fetched_Results = null;
