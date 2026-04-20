@@ -35,7 +35,7 @@ public class MacrosTargets_Table extends MyJTable_Display_Data<Draft_Gui_Plan_Ma
                 new TableMeta<>(
                         Draft_Gui_Plan_Macro_Targets_Calc_Columns.PLAN_ID,
                         "Macro Targets Table",
-                        TableNames.MACROS_PER_POUND_AND_LIMITS,
+                        TableNames.MACROS,
                        ViewNames.DRAFT_GUI_PLAN_MACRO_TARGET_CALCULATIONS
                 ),
 
