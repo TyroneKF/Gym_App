@@ -628,7 +628,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         TableMeta<Draft_Gui_Ingredients_Calc_Columns> ingredients_table_meta_Data = new TableMeta<>(
                 Draft_Gui_Ingredients_Calc_Columns.DRAFT_INGREDIENTS_INDEX,
                 "Ingredients Table",
-                TableNames.DRAFT_INGREDIENTS_IN_SECTIONS_OF_MEAL,
+                TableNames.DRAFT_INGREDIENTS,
                 ViewNames.DRAFT_GUI_INGREDIENTS_IN_SECTIONS_OF_MEAL_CALCULATION
         );
 
@@ -685,7 +685,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
         TableMeta<Draft_Gui_Total_Meal_Columns> total_meal_meta_data = new TableMeta<>(
                 Draft_Gui_Total_Meal_Columns.DRAFT_MEAL_IN_PLAN_ID,
                 "Total Meal Table",
-                TableNames.DRAFT_MEALS_IN_PLAN,
+                TableNames.DRAFT_MEALS,
                 ViewNames.DRAFT_GUI_TOTAL_MEAL_VIEW);
 
         shared_data_registry.set_Total_Meal_Table_Meta(total_meal_meta_data);
