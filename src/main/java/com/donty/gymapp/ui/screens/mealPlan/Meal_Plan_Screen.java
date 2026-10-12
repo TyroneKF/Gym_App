@@ -1306,7 +1306,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 
                     FROM draft_meals_anchor AS M
                 
-                    INNER JOIN (SELECT DISTINCT div_meal_sections_version_id, meal_in_plan_version_id FROM active_ingredients) 
+                    INNER JOIN (SELECT DISTINCT div_meal_sections_version_id, meal_in_plan_version_id FROM active_ingredients)
                     AS V
                         ON M.meal_in_plan_version_id = V.meal_in_plan_version_id
                 
