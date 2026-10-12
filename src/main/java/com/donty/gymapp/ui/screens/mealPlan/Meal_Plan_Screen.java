@@ -714,7 +714,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
     //#################################################
     //  Reference DATA:
     //#################################################
-    private void setup_Get_Ingredient_Types_And_Ingredient_Names() throws Exception
+     private void setup_Get_Ingredient_Types_And_Ingredient_Names() throws Exception
     {
         //#######################################
         // Create Get Query Results
@@ -740,14 +740,20 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     ) AS matched_ingredients
                 
                 FROM  ingredient_types T
-                LEFT JOIN  ingredients_info I ON T.ingredient_type_id = I.ingredient_type_id
+                
+                LEFT JOIN  ingredients_info I
+                    ON T.ingredient_type_id = I.ingredient_type_id
+                
+                WHERE I.is_active = ?
                 
                 GROUP BY T.ingredient_type_id, T.ingredient_type_name
                 ORDER BY T.ingredient_type_name ASC;""";
 
+        Object[] params = new Object[]{ 1 };
+
         String error_msg = "Unable to get Ingredient Types & Ingredient Names";
 
-        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, null, error_msg);
+        Fetch_Statement_Full fetch_statement = new Fetch_Statement_Full(query, params, error_msg);
 
         //#######################################
         // Execute Query
@@ -903,7 +909,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
             String unit_name = (String) row.get(2);
 
             shared_data_registry.add_Measurement(
-                    new Measurement_ID_OBJ(id, is_system,unit_name),
+                    new Measurement_ID_OBJ(id, is_system, unit_name),
                     false
             );
         }
@@ -1119,7 +1125,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
 
 
         //################################################################
-        // Transferring Meals From Versioned to Draft Meals
+        // Delete From Draft Plan Draft Meals If Applicable
         //################################################################
         if (is_this_refresh && is_There_Any_Meals_In_Plan()) // prevents error expecting rows to be changed if there are no meals to delete
         {
@@ -1127,41 +1133,108 @@ public class Meal_Plan_Screen extends Screen_JFrame
             batch_Upload.add_Uploads(new Upload_Statement(query_00, new Object[]{ get_Selected_Plan_ID() }, true));
         }
 
-        // Copy Versioned Meals From Plan_Version Into Temp Table ORDERED by meal_in_plan_version_id
-        String query_01 = "DROP TABLE IF EXISTS temp.draft_meals_anchor;";
-        batch_Upload.add_Uploads(new Upload_Statement(query_01, null, false));
+        //################################################################
+        // Transfer Valid Meals / Sub-Meals From Versioned Data to CTE
+        //################################################################
 
-        String query_02 = """
+        // Delete Old Temp Table If Exists
+        String query_00 = "DROP TABLE IF EXISTS temp.active_ingredients;";
+        batch_Upload.add_Uploads(new Upload_Statement(query_00, null, false));
+
+        /*
+            From the plan
+                -> Get all the meals
+                -> Get all the sub-meals
+                -> Get all the ingredients that aren't archived
+
+                Then filter which meals and sub-meals are available based on if they have available
+                ingredients then populated sub-meals and meals
+        */
+
+        String query_01 = """
+                CREATE TEMP TABLE active_ingredients AS
+                
+                SELECT
+                
+                    P.plan_id,
+                
+                    M.meal_in_plan_id,
+                    M.meal_in_plan_version_id,
+                
+                    D.div_meal_sections_version_id,
+                    D.div_meal_sections_id,
+               
+                    I.ingredients_index,
+                    I.ingredient_id
+                
+                FROM plan_versions AS P
+                
+                INNER JOIN meals_in_plan_versions AS M
+                    ON P.plan_version_id = M.plan_version_id
+                
+                INNER JOIN divided_meal_sections_versions AS D
+                    ON D.meal_in_plan_version_id = M.meal_in_plan_version_id
+                
+                INNER JOIN ingredients_in_sections_of_meal AS I
+                    ON D.div_meal_sections_version_id = I.div_meal_sections_version_id
+                
+                INNER JOIN ingredients_info AS Q
+                    ON I.ingredient_id = Q.ingredient_id
+                
+                WHERE
+                    P.plan_version_id = ?
+                    AND Q.is_active = ?;
+                """;
+
+        batch_Upload.add_Uploads(new Upload_Statement(
+                query_01,
+                new Object[]{get_Selected_Plan_Version_ID(), 1},
+                true)
+        );
+
+        //################################################################
+        // Transfer Versioned Meals to Draft Meals FROM Valid Ingredients
+        //################################################################
+        /*
+            Select distinct meals ID from the active ingredients
+            Then gather the meals information from the versioned meals data
+        */
+
+        String query_02 = "DROP TABLE IF EXISTS temp.draft_meals_anchor;";
+        batch_Upload.add_Uploads(new Upload_Statement(query_02, null, false));
+
+        String query_03 = """
                 CREATE TEMPORARY TABLE draft_meals_anchor AS
                 
                     SELECT
-                        ROW_NUMBER() OVER (ORDER BY meal_in_plan_version_id ASC) AS rn,
+                        ROW_NUMBER() OVER (ORDER BY V.meal_in_plan_version_id ASC) AS rn,
                 
                         NULL AS draft_meal_in_plan_id,
                 
-                        M.meal_in_plan_version_id,
-                        M.meal_in_plan_id,
-                
-                        P.plan_id,
-                        M.plan_version_id,
+                        V.meal_in_plan_version_id,
+                        V.meal_in_plan_id,
+                        V.plan_id,
                 
                         M.date_time_last_edited,
                         M.meal_name,
                         M.meal_time
                 
-                    FROM meals_in_plan_versions M
+                    FROM meals_in_plan_versions AS M
                 
-                    INNER JOIN plan_versions P
-                        ON M.plan_version_id = P.plan_version_id
-                
-                    WHERE M.plan_version_id = ?
-                
-                    ORDER BY M.meal_in_plan_version_id ASC;""";
+                    INNER JOIN (
+                        SELECT
+                            DISTINCT meal_in_plan_version_id,
+                            meal_in_plan_id, plan_id
+                        FROM active_ingredients
+                        GROUP BY meal_in_plan_version_id
+                    ) AS V
+                        ON M.meal_in_plan_version_id = V.meal_in_plan_version_id;
+                """;
 
-        batch_Upload.add_Uploads(new Upload_Statement(query_02, new Object[]{ get_Selected_Plan_Version_ID() }, false));
+        batch_Upload.add_Uploads(new Upload_Statement(query_03, null, false));
 
-        // Insert Into Draft Meals Using Meal Versions MetaData
-        String query_03 = """
+        // Insert Into Draft Meals Using Meals Anchor Table
+        String query_04 = """
                 INSERT INTO draft_meals_in_plan
                 (
                     meal_in_plan_id,
@@ -1170,6 +1243,7 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     meal_name,
                     meal_time
                 )
+                
                 SELECT
                 
                     meal_in_plan_id,
@@ -1181,60 +1255,68 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 FROM draft_meals_anchor
                 ORDER BY rn;""";
 
-        batch_Upload.add_Uploads(new Upload_Statement(query_03, null, true));
+        batch_Upload.add_Uploads(new Upload_Statement(query_04, null, true));
 
-        // Update Anchor table with
-        String query_04 = """
+        // Update Anchor table with draft_meal_in_plan_id
+        String query_05 = """
                 UPDATE draft_meals_anchor AS D
                     SET draft_meal_in_plan_id =
                     (
                         SELECT
                             draft_meal_in_plan_id
-                        FROM draft_meals_in_plan A
+                        FROM draft_meals_in_plan AS A
                         WHERE
                             D.meal_in_plan_id = A.meal_in_plan_id
                     );""";
 
-        batch_Upload.add_Uploads(new Upload_Statement(query_04, null, true));
+        batch_Upload.add_Uploads(new Upload_Statement(query_05, null, true));
 
         //################################################################
         // Transferring Versioned Sub-Meals To Draft
         //################################################################
 
-        // Insert All Sub-Meals From Versioned Into Temp
-        String query_05 = "DROP TABLE IF EXISTS temp.draft_sub_meals_anchor;";
-        batch_Upload.add_Uploads(new Upload_Statement(query_05, null, false));
+        // Drop Temp Sub-Meals Table if it already exists
+        String query_06 = "DROP TABLE IF EXISTS temp.draft_sub_meals_anchor;";
+        batch_Upload.add_Uploads(new Upload_Statement(query_06, null, false));
 
-        String query_06 = """
+        /*
+            Select distinct sub-meals ID from the active ingredients
+            Then link this to the Meals Anchor Table
+            Then gather the meals information from the versioned meals data
+        */
+        String query_07 = """
                 CREATE TEMPORARY TABLE draft_sub_meals_anchor AS
                 
                     SELECT
                 
-                        ROW_NUMBER() OVER (ORDER BY D.div_meal_sections_version_id ASC) AS rn,
+                        ROW_NUMBER() OVER (ORDER BY V.div_meal_sections_version_id ASC) AS rn,
                 
                         NULL AS draft_div_meal_sections_id,
+                
                         D.div_meal_sections_id,
                         D.div_meal_sections_version_id,
                 
+                        M.meal_in_plan_version_id,
                         M.draft_meal_in_plan_id,
-                        D.meal_in_plan_version_id,
-                
                         M.plan_id,
                 
                         D.date_time_last_edited,
-                
                         D.sub_meal_name,
                         D.sub_meal_time
                 
-                    FROM draft_meals_anchor M
+                    FROM draft_meals_anchor AS M
                 
-                    INNER JOIN divided_meal_sections_versions D
-                        ON M.meal_in_plan_version_id = D.meal_in_plan_version_id;""";
+                    INNER JOIN (SELECT DISTINCT div_meal_sections_version_id, meal_in_plan_version_id FROM active_ingredients) 
+                    AS V
+                        ON M.meal_in_plan_version_id = V.meal_in_plan_version_id
+                
+                    INNER JOIN divided_meal_sections_versions AS D
+                        ON V.div_meal_sections_version_id = D.div_meal_sections_version_id;""";
 
-        batch_Upload.add_Uploads(new Upload_Statement(query_06, null, true));
+        batch_Upload.add_Uploads(new Upload_Statement(query_07, null, true));
 
-        // Insert Versioned Sub-Meals Into Draft Sub-Meals In Order
-        String query_07 = """
+        // Insert Versioned Sub-Meals Data Into Draft Sub-Meals In Order
+        String query_08 = """
                 INSERT INTO draft_divided_meal_sections
                 (
                     div_meal_sections_id,
@@ -1252,19 +1334,19 @@ public class Meal_Plan_Screen extends Screen_JFrame
                     sub_meal_name,
                     sub_meal_time
                 
-                FROM draft_sub_meals_anchor S
+                FROM draft_sub_meals_anchor AS S
                 ORDER BY rn;""";
 
-        batch_Upload.add_Uploads(new Upload_Statement(query_07, null, true));
+        batch_Upload.add_Uploads(new Upload_Statement(query_08, null, true));
 
-        //
+        // Update draft_div_meal_sections_id from draft_sub_meals_anchor
         String query_09 = """
                 UPDATE draft_sub_meals_anchor AS D
                     SET draft_div_meal_sections_id =
                     (
                         SELECT
                             draft_div_meal_sections_id
-                        FROM draft_divided_meal_sections A
+                        FROM draft_divided_meal_sections AS A
                         WHERE
                             D.div_meal_sections_id = A.div_meal_sections_id
                     );""";
@@ -1274,8 +1356,12 @@ public class Meal_Plan_Screen extends Screen_JFrame
         //################################################################
         // Transferring Ingredients From Versioned Sub-Meals To Draft
         //################################################################
+        /*
+            Insert Ingredients From active_ingredients
+            Then link this to the Sub-Meals Anchor Table
+            Then gather the ingredients information from the versioned ingredients data
+        */
 
-        // Insert Ingredients By Sub-Meal Order then by Index Order (Creation Order)
         String query_10 = """
                 INSERT INTO draft_ingredients_in_sections_of_meal
                 (
@@ -1287,13 +1373,17 @@ public class Meal_Plan_Screen extends Screen_JFrame
                 SELECT
                 
                       T.draft_div_meal_sections_id,
+                
                       I.ingredient_id,
                       I.pdid,
                       I.quantity
                 
-                FROM ingredients_in_sections_of_meal I
+                FROM active_ingredients AS V
                 
-                INNER JOIN draft_sub_meals_anchor T
+                INNER JOIN ingredients_in_sections_of_meal AS I
+                    ON V.ingredients_index = I.ingredients_index
+                
+                INNER JOIN draft_sub_meals_anchor AS T
                     ON I.div_meal_sections_version_id = T.div_meal_sections_version_id;""";
 
         batch_Upload.add_Uploads(new Upload_Statement(query_10, null, true));
