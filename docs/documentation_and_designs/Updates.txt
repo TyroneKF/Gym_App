@@ -1,4 +1,4 @@
-
+C:\Users\DonTy\AppData\Local\GymApp
 
 Add Ingredient
     Ingredient Table should see ingredient name under type if already on GUI - ticked
@@ -36,7 +36,7 @@ replace all column names with enums
 
 
 When doing insert don't do 
-	insert select * from table it willl silently fail
+	insert select * from table it will silently fail
 	always mention the column names
 
 
